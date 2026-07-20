@@ -1,0 +1,292 @@
+/*
+ * @mcat/ui-web component styles. Import AFTER @mcat/design-tokens/tokens.css.
+ * Selectors are intentionally flat (single class) to avoid specificity conflicts.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--mc-canvas);
+  color: var(--mc-ink);
+  font-family: var(--mc-font-body);
+  font-size: var(--mc-text-17);
+  line-height: var(--mc-leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--mc-font-display);
+  line-height: var(--mc-leading-tight);
+  font-weight: 560;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+  max-width: var(--mc-reading-measure);
+}
+
+a {
+  color: var(--mc-primary-text);
+}
+
+:focus-visible {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+  border-radius: 4px;
+}
+
+/* Accessibility helpers */
+.mc-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mc-skip-link {
+  position: absolute;
+  left: var(--mc-space-3);
+  top: -60px;
+  z-index: 100;
+  background: var(--mc-surface);
+  color: var(--mc-ink);
+  padding: var(--mc-space-2) var(--mc-space-4);
+  border-radius: var(--mc-radius-control);
+  box-shadow: var(--mc-shadow-card);
+  transition: top var(--mc-motion-control) var(--mc-ease);
+}
+.mc-skip-link:focus {
+  top: var(--mc-space-3);
+}
+
+/* Eyebrow */
+.mc-eyebrow {
+  font-family: var(--mc-font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  color: var(--mc-primary-text);
+  margin: 0;
+}
+
+/* Card */
+.mc-card {
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-card);
+  padding: var(--mc-space-5);
+}
+.mc-card--elevated {
+  box-shadow: var(--mc-shadow-card);
+  border-color: transparent;
+}
+
+/* Buttons */
+.mc-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mc-space-2);
+  font-family: var(--mc-font-body);
+  font-weight: 600;
+  font-size: var(--mc-text-17);
+  border-radius: var(--mc-radius-pill);
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 0 var(--mc-space-5);
+  min-height: 44px;
+  transition:
+    transform var(--mc-motion-fast) var(--mc-ease),
+    background-color var(--mc-motion-control) var(--mc-ease),
+    box-shadow var(--mc-motion-control) var(--mc-ease);
+}
+.mc-button:active {
+  transform: translateY(1px);
+}
+.mc-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.mc-button--lg {
+  min-height: var(--mc-touch);
+  padding: 0 var(--mc-space-6);
+  font-size: var(--mc-text-22);
+}
+.mc-button--full {
+  width: 100%;
+}
+
+.mc-button--primary {
+  color: var(--mc-on-primary);
+  /* Guaranteed-contrast solid base under a subtle decorative sheen. */
+  background-color: var(--mc-primary);
+  background-image: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--mc-primary) 88%, #5cd8cf) 0%,
+    var(--mc-primary) 46%,
+    color-mix(in srgb, var(--mc-primary) 82%, #9dcef9) 100%
+  );
+  box-shadow: var(--mc-shadow-card);
+}
+.mc-button--primary:hover:not(:disabled) {
+  background-color: var(--mc-primary-hover);
+}
+
+.mc-button--secondary {
+  color: var(--mc-ink);
+  background: var(--mc-surface);
+  border-color: var(--mc-border);
+}
+.mc-button--secondary:hover:not(:disabled) {
+  background: var(--mc-surface-2);
+}
+
+.mc-button--text {
+  color: var(--mc-primary-text);
+  background: transparent;
+  padding: 0 var(--mc-space-2);
+}
+.mc-button--text:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.mc-button--danger {
+  color: #fff;
+  background: var(--mc-danger);
+}
+
+.mc-button__spinner {
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: mc-spin 0.7s linear infinite;
+}
+@keyframes mc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc-button__spinner {
+    animation-duration: 0s;
+  }
+}
+
+/* Callouts */
+.mc-callout {
+  display: flex;
+  gap: var(--mc-space-3);
+  align-items: flex-start;
+  padding: var(--mc-space-4);
+  border-radius: var(--mc-radius-control);
+  border: 1px solid var(--mc-border);
+  background: var(--mc-surface-2);
+}
+.mc-callout__label {
+  flex: none;
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: var(--mc-radius-pill);
+  border: 1px solid currentColor;
+}
+.mc-callout__title {
+  display: block;
+  margin-bottom: 2px;
+}
+.mc-callout--info .mc-callout__label {
+  color: var(--mc-info);
+}
+.mc-callout--success .mc-callout__label {
+  color: var(--mc-primary-text);
+}
+.mc-callout--warning {
+  border-color: color-mix(in srgb, var(--mc-warning) 40%, var(--mc-border));
+}
+.mc-callout--warning .mc-callout__label {
+  color: var(--mc-warning);
+}
+.mc-callout--danger {
+  border-color: color-mix(in srgb, var(--mc-danger) 45%, var(--mc-border));
+}
+.mc-callout--danger .mc-callout__label {
+  color: var(--mc-danger);
+}
+
+/* Mastery badge — color + glyph + ring pattern (never color alone) */
+.mc-mastery {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+  font-size: var(--mc-text-14);
+  color: var(--mc-ink);
+}
+.mc-mastery__ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4em;
+  height: 1.4em;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+}
+.mc-mastery__glyph {
+  font-size: 0.8em;
+  line-height: 1;
+}
+.mc-mastery__refresh {
+  color: var(--mc-state-refresh);
+  font-weight: 600;
+}
+.mc-mastery--not_assessed .mc-mastery__ring {
+  color: var(--mc-state-not-assessed);
+  border-style: dotted;
+}
+.mc-mastery--foundation_needed .mc-mastery__ring {
+  color: var(--mc-state-foundation);
+  border-style: dashed;
+}
+.mc-mastery--learning .mc-mastery__ring {
+  color: var(--mc-state-learning);
+}
+.mc-mastery--independent .mc-mastery__ring {
+  color: var(--mc-state-independent);
+}
+.mc-mastery--retained .mc-mastery__ring {
+  color: var(--mc-state-retained);
+  border-width: 3px;
+  border-style: double;
+}
+.mc-mastery--strong .mc-mastery__ring {
+  color: var(--mc-state-strong);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--mc-state-strong) 30%, transparent);
+}
+.mc-mastery--exam_ready_now .mc-mastery__ring {
+  color: var(--mc-state-exam-ready);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--mc-state-exam-ready) 35%, transparent);
+}

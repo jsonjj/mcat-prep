@@ -1,0 +1,130 @@
+/*
+ * MCAT Mastery design tokens (canonical CSS custom properties).
+ * Source: docs/design/frontend-design-brief.md. Iridescent "glow" tokens are
+ * decorative-only (the Evidence Atlas material) and must never carry text,
+ * status, or control meaning. All text/control colors meet WCAG 2.2 AA.
+ */
+
+:root {
+  /* Typography */
+  --mc-font-display: 'Fraunces Variable', 'Fraunces', Georgia, 'Times New Roman', serif;
+  --mc-font-body: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mc-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --mc-text-12: 0.75rem;
+  --mc-text-14: 0.875rem;
+  --mc-text-15: 0.9375rem;
+  --mc-text-17: 1.0625rem;
+  --mc-text-22: 1.375rem;
+  --mc-text-28: 1.75rem;
+  --mc-text-36: 2.25rem;
+  --mc-text-48: 3rem;
+
+  --mc-leading-tight: 1.15;
+  --mc-leading-body: 1.55;
+
+  /* Spacing scale */
+  --mc-space-1: 4px;
+  --mc-space-2: 8px;
+  --mc-space-3: 12px;
+  --mc-space-4: 16px;
+  --mc-space-5: 24px;
+  --mc-space-6: 32px;
+  --mc-space-7: 48px;
+  --mc-space-8: 64px;
+
+  /* Radii & control sizing */
+  --mc-radius-control: 12px;
+  --mc-radius-card: 20px;
+  --mc-radius-hero: 28px;
+  --mc-radius-pill: 999px;
+  --mc-touch: 48px;
+  --mc-reading-measure: 68ch;
+
+  /* Focus */
+  --mc-focus-width: 3px;
+  --mc-focus-offset: 2px;
+
+  /* Motion (see reduced-motion override below) */
+  --mc-motion-fast: 120ms;
+  --mc-motion-control: 180ms;
+  --mc-motion-route: 280ms;
+  --mc-motion-camera: 560ms;
+  --mc-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Light theme (default) */
+  --mc-canvas: #f5f8f8;
+  --mc-surface: #ffffff;
+  --mc-surface-2: #eef4f4;
+  --mc-ink: #10222e;
+  --mc-ink-muted: #4a5a66;
+  --mc-border: #d5e0e2;
+  --mc-primary: #0b6a63;
+  --mc-primary-hover: #095a54;
+  --mc-primary-text: #0e7c74;
+  --mc-on-primary: #ffffff;
+  --mc-info: #1e5a96;
+  --mc-retained: #574a9e;
+  --mc-warning: #7a4b00;
+  --mc-danger: #a3283d;
+  --mc-focus: #0e7c74;
+
+  /* Decorative iridescence (Evidence Atlas material only) */
+  --mc-glow-mint: #d9f5f1;
+  --mc-glow-aqua: #cfeaf4;
+  --mc-glow-lavender: #ded6ec;
+  --mc-glow-cream: #fbe8c6;
+  --mc-glow-rose: #ebd5d6;
+
+  /* Mastery state accents (always paired with icon + label + pattern) */
+  --mc-state-not-assessed: #6b7a83;
+  --mc-state-foundation: #7a4b00;
+  --mc-state-learning: #0e7c74;
+  --mc-state-independent: #1e5a96;
+  --mc-state-retained: #574a9e;
+  --mc-state-strong: #0b6a63;
+  --mc-state-exam-ready: #8a6d1f;
+  --mc-state-refresh: #a3283d;
+
+  --mc-shadow-card: 0 1px 2px rgba(16, 34, 46, 0.06), 0 8px 24px rgba(16, 34, 46, 0.06);
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --mc-canvas: #0a1620;
+  --mc-surface: #12242f;
+  --mc-surface-2: #17303d;
+  --mc-ink: #eaf3f4;
+  --mc-ink-muted: #a9bec6;
+  --mc-border: #23414f;
+  --mc-primary: #2bb6a8;
+  --mc-primary-hover: #46cabd;
+  --mc-primary-text: #4fd1c4;
+  --mc-on-primary: #06231f;
+  --mc-info: #7fbbf2;
+  --mc-retained: #c3b8ff;
+  --mc-warning: #f0c56b;
+  --mc-danger: #ff9aa6;
+  --mc-focus: #4fd1c4;
+
+  --mc-state-not-assessed: #9fb0b8;
+  --mc-state-foundation: #f0c56b;
+  --mc-state-learning: #4fd1c4;
+  --mc-state-independent: #7fbbf2;
+  --mc-state-retained: #c3b8ff;
+  --mc-state-strong: #46cabd;
+  --mc-state-exam-ready: #e9cd83;
+  --mc-state-refresh: #ff9aa6;
+
+  --mc-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --mc-motion-fast: 0ms;
+    --mc-motion-control: 0ms;
+    --mc-motion-route: 0ms;
+    --mc-motion-camera: 0ms;
+  }
+}
