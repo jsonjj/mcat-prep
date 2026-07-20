@@ -1,0 +1,36 @@
+{
+  "name": "@mcat/learner-web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "^5.0.0",
+    "@fontsource/atkinson-hyperlegible": "^5.0.0",
+    "@fontsource/ibm-plex-mono": "^5.0.0",
+    "@mcat/authority-core": "workspace:*",
+    "@mcat/client-core": "workspace:*",
+    "@mcat/contracts": "workspace:*",
+    "@mcat/content": "workspace:*",
+    "@mcat/design-tokens": "workspace:*",
+    "@mcat/domain": "workspace:*",
+    "@mcat/platform-web": "workspace:*",
+    "@mcat/ui-web": "workspace:*",
+    "@tanstack/react-query": "5.62.11",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "6.28.1"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.18",
+    "@types/react-dom": "18.3.5",
+    "@vitejs/plugin-react": "4.3.4",
+    "typescript": "5.7.3",
+    "vite": "6.0.7"
+  }
+}

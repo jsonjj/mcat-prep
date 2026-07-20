@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="MCAT Mastery — a calm, personalized, evidence-based way to prepare for the MCAT."
+    />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>MCAT Mastery</title>
+    <script>
+      // Set theme before first paint to avoid a flash.
+      (function () {
+        try {
+          var t = localStorage.getItem('mc.theme');
+          var d =
+            t === 'dark' ||
+            ((t === null || t === 'system') &&
+              matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = d ? 'dark' : 'light';
+        } catch (e) {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
