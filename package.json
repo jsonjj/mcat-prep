@@ -1,0 +1,35 @@
+{
+  "name": "mcat-mastery",
+  "version": "0.0.0",
+  "private": true,
+  "description": "MCAT Mastery — personalized, evidence-based MCAT learning platform (browser-first).",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=9.0.0"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "typecheck": "turbo run typecheck",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,css,yaml,yml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md,css,yaml,yml}\"",
+    "scan:protected": "node tools/scanners/protected-field-scan.mjs",
+    "verify": "pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run scan:protected"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.17.0",
+    "@types/node": "22.10.5",
+    "eslint": "9.17.0",
+    "globals": "15.14.0",
+    "prettier": "3.4.2",
+    "turbo": "2.3.3",
+    "typescript": "5.7.3",
+    "typescript-eslint": "8.19.1",
+    "vitest": "2.1.8"
+  }
+}

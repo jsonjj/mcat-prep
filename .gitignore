@@ -1,0 +1,46 @@
+# Dependencies & package-manager state
+node_modules/
+.pnpm-store/
+.pnpm-cache/
+.pnpm-state/
+.npm-cache/
+.tooling/
+
+# Build output
+dist/
+build/
+out/
+coverage/
+*.tsbuildinfo
+.turbo/
+.vite/
+.react-router/
+
+# Local env & secrets (NEVER commit secrets; server secrets live in AWS Secrets Manager)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+
+# Test / tooling artifacts
+playwright-report/
+test-results/
+.vitest/
+
+# Copyright guardrail: never commit source PDFs or any derivative of the reference
+# question/passage material (screenshots, OCR text, embeddings, extracted pages).
+*.pdf
+.tmp_pg_inspect/
+research-derivatives/
+
+# Protected content compilation output must never be committed (goes to private S3 in prod;
+# local candidate output stays out of git).
+generated/protected/
+content/**/protected-compiled/
+*.answer-key.json
