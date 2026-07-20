@@ -42,10 +42,11 @@ for (const file of files) {
   }
 }
 
-// Scan text sources for the canary token.
+// Scan text sources for the canary token (excluding this scanner, which defines it).
 const TEXT_EXT = /\.(ts|tsx|js|mjs|json|md|css|html)$/i;
 for (const file of files) {
   if (!TEXT_EXT.test(file)) continue;
+  if (file.includes('tools/scanners/')) continue;
   try {
     const content = readFileSync(file, 'utf8');
     if (content.includes(CANARY)) {
