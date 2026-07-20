@@ -36,6 +36,50 @@ importers:
         specifier: 2.1.8
         version: 2.1.8(@types/node@22.10.5)
 
+  packages/authority-core:
+    dependencies:
+      '@mcat/content':
+        specifier: workspace:*
+        version: link:../content
+      '@mcat/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@mcat/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@mcat/policies':
+        specifier: workspace:*
+        version: link:../policies
+    devDependencies:
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
+      vitest:
+        specifier: 2.1.8
+        version: 2.1.8(@types/node@22.10.5)
+
+  packages/client-core:
+    dependencies:
+      '@mcat/authority-core':
+        specifier: workspace:*
+        version: link:../authority-core
+      '@mcat/content':
+        specifier: workspace:*
+        version: link:../content
+      '@mcat/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@mcat/domain':
+        specifier: workspace:*
+        version: link:../domain
+    devDependencies:
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
+      vitest:
+        specifier: 2.1.8
+        version: 2.1.8(@types/node@22.10.5)
+
   packages/content:
     dependencies:
       '@mcat/contracts':
@@ -89,6 +133,19 @@ importers:
       vitest:
         specifier: 2.1.8
         version: 2.1.8(@types/node@22.10.5)
+
+  packages/platform-web:
+    dependencies:
+      '@mcat/client-core':
+        specifier: workspace:*
+        version: link:../client-core
+      '@mcat/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+    devDependencies:
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
 
   packages/policies:
     dependencies:
