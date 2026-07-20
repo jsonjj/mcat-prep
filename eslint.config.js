@@ -14,7 +14,9 @@ export default tseslint.config(
       '**/node_modules/**',
       '.tooling/**',
       '.pnpm-store/**',
+      '.tmp/**',
       'generated/**',
+      '**/public/**',
     ],
   },
   js.configs.recommended,
@@ -46,8 +48,8 @@ export default tseslint.config(
     },
   },
   {
-    // Tests may use console freely and relax a few rules.
-    files: ['**/*.test.ts', '**/*.test.tsx', 'tests/**/*.{ts,tsx}'],
+    // Tests and CLI/dev tooling may use console freely.
+    files: ['**/*.test.ts', '**/*.test.tsx', 'tests/**/*.{ts,tsx}', 'tools/**/*.{ts,mjs}'],
     rules: {
       'no-console': 'off',
     },

@@ -1,0 +1,16 @@
+{
+  "name": "@mcat/tests-architecture",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mcat/content": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "5.7.3",
+    "vitest": "2.1.8"
+  }
+}

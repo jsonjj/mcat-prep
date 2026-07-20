@@ -1,0 +1,116 @@
+{
+  "$ref": "#/definitions/Stimulus",
+  "definitions": {
+    "Stimulus": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "version": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "reviewed",
+            "published",
+            "retired"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "passage",
+            "experiment",
+            "figure",
+            "dataset"
+          ]
+        },
+        "section": {
+          "type": "string",
+          "enum": [
+            "cp",
+            "cars",
+            "bb",
+            "ps"
+          ]
+        },
+        "body": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "media_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Stimulus/properties/id"
+          },
+          "default": []
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "origin": {
+              "type": "string",
+              "enum": [
+                "original",
+                "licensed"
+              ]
+            },
+            "source_refs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            },
+            "rights_status": {
+              "type": "string",
+              "enum": [
+                "cleared",
+                "pending",
+                "restricted"
+              ]
+            },
+            "ai_assisted": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "required": [
+            "origin",
+            "rights_status"
+          ],
+          "additionalProperties": false
+        },
+        "test_only": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "version",
+        "status",
+        "type",
+        "section",
+        "body",
+        "provenance"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

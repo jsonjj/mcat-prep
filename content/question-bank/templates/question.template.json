@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "id": "<section>-<topic>-0001",
+  "version": 1,
+  "status": "draft",
+  "section": "bb",
+  "skill_cluster": "BB1",
+  "internal_skill_ids": ["<internal-skill-id>"],
+  "template_tags": ["K", "D"],
+  "learning_objective": "<one observable knowledge-in-use objective>",
+  "format": "discrete_mcq",
+  "difficulty": 3,
+  "stimulus_id": null,
+  "stem": "<original question stem — no answer-key leakage>",
+  "choices": [
+    { "id": "A", "text": "<choice A>", "distractor_families": [] },
+    { "id": "B", "text": "<choice B>", "distractor_families": ["wrong_relationship"] },
+    { "id": "C", "text": "<choice C>", "distractor_families": ["unit_or_sign"] },
+    { "id": "D", "text": "<choice D>", "distractor_families": ["scope_or_relevance"] }
+  ],
+  "correct_choice_id": "A",
+  "rationales": {
+    "correct": "<complete independently verified solution>",
+    "choices": {
+      "A": "<why A is correct>",
+      "B": "<why B is wrong>",
+      "C": "<why C is wrong>",
+      "D": "<why D is wrong>"
+    }
+  },
+  "prerequisite_ids": [],
+  "content_tags": [],
+  "estimated_seconds": 90,
+  "media_ids": [],
+  "family_id": "<item-family-id>",
+  "provenance": { "origin": "original", "source_refs": [], "rights_status": "cleared", "ai_assisted": false },
+  "review": {
+    "content_status": "pending",
+    "copy_status": "pending",
+    "accessibility_status": "pending",
+    "reviewer_ids": []
+  },
+  "delivery": { "diagnostic_eligible": false, "mastery_eligible": false, "protected": true, "test_only": false }
+}

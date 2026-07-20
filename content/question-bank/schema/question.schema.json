@@ -1,0 +1,360 @@
+{
+  "$ref": "#/definitions/Question",
+  "definitions": {
+    "Question": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "version": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "reviewed",
+            "published",
+            "retired"
+          ]
+        },
+        "section": {
+          "type": "string",
+          "enum": [
+            "cp",
+            "cars",
+            "bb",
+            "ps"
+          ]
+        },
+        "skill_cluster": {
+          "type": "string",
+          "enum": [
+            "R1",
+            "R2",
+            "R3",
+            "CP1",
+            "CP2",
+            "CP3",
+            "BB1",
+            "BB2",
+            "BB3",
+            "BB4",
+            "PS1",
+            "PS2",
+            "PS3",
+            "CA1",
+            "CA2"
+          ]
+        },
+        "internal_skill_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "template_tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "K",
+              "Q",
+              "E",
+              "D",
+              "P",
+              "A",
+              "I",
+              "T"
+            ]
+          },
+          "minItems": 1
+        },
+        "learning_objective": {
+          "type": "string",
+          "minLength": 1
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "discrete_mcq",
+            "passage_mcq",
+            "graph_mcq",
+            "experiment_mcq"
+          ]
+        },
+        "difficulty": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "stimulus_id": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Question/properties/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stem": {
+          "type": "string",
+          "minLength": 1
+        },
+        "choices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "enum": [
+                  "A",
+                  "B",
+                  "C",
+                  "D"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "distractor_families": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "missing_knowledge",
+                    "wrong_relationship",
+                    "unit_or_sign",
+                    "calculation",
+                    "graph_or_data",
+                    "experimental_design",
+                    "misread_condition",
+                    "scope_or_relevance",
+                    "outside_knowledge",
+                    "pacing_or_guess",
+                    "answer_change",
+                    "other"
+                  ]
+                },
+                "default": []
+              }
+            },
+            "required": [
+              "id",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "correct_choice_id": {
+          "type": "string",
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ]
+        },
+        "rationales": {
+          "type": "object",
+          "properties": {
+            "correct": {
+              "type": "string",
+              "minLength": 1
+            },
+            "choices": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "minLength": 1
+              },
+              "propertyNames": {
+                "enum": [
+                  "A",
+                  "B",
+                  "C",
+                  "D"
+                ]
+              }
+            }
+          },
+          "required": [
+            "correct",
+            "choices"
+          ],
+          "additionalProperties": false
+        },
+        "prerequisite_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "content_tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "estimated_seconds": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        },
+        "media_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Question/properties/id"
+          },
+          "default": []
+        },
+        "family_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "origin": {
+              "type": "string",
+              "enum": [
+                "original",
+                "licensed"
+              ]
+            },
+            "source_refs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            },
+            "rights_status": {
+              "type": "string",
+              "enum": [
+                "cleared",
+                "pending",
+                "restricted"
+              ]
+            },
+            "ai_assisted": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "required": [
+            "origin",
+            "rights_status"
+          ],
+          "additionalProperties": false
+        },
+        "review": {
+          "type": "object",
+          "properties": {
+            "content_status": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "approved",
+                "changes_requested"
+              ]
+            },
+            "copy_status": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "approved",
+                "changes_requested"
+              ]
+            },
+            "accessibility_status": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "approved",
+                "changes_requested"
+              ]
+            },
+            "reviewer_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            }
+          },
+          "required": [
+            "content_status",
+            "copy_status",
+            "accessibility_status"
+          ],
+          "additionalProperties": false
+        },
+        "delivery": {
+          "type": "object",
+          "properties": {
+            "diagnostic_eligible": {
+              "type": "boolean"
+            },
+            "mastery_eligible": {
+              "type": "boolean"
+            },
+            "protected": {
+              "type": "boolean"
+            },
+            "test_only": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "diagnostic_eligible",
+            "mastery_eligible",
+            "protected",
+            "test_only"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "version",
+        "status",
+        "section",
+        "skill_cluster",
+        "internal_skill_ids",
+        "template_tags",
+        "learning_objective",
+        "format",
+        "difficulty",
+        "stimulus_id",
+        "stem",
+        "choices",
+        "correct_choice_id",
+        "rationales",
+        "estimated_seconds",
+        "family_id",
+        "provenance",
+        "review",
+        "delivery"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
