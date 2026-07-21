@@ -13,6 +13,7 @@ export default defineWorkspace([
         'packages/content/**/*.test.ts',
         'packages/authority-core/**/*.test.ts',
         'packages/client-core/**/*.test.ts',
+        'packages/ai-gateway/**/*.test.ts',
         'packages/learner-core/**/*.test.ts',
         'packages/scene-core/**/*.test.ts',
         'packages/analytics-events/**/*.test.ts',

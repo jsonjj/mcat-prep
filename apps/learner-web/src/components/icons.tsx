@@ -37,6 +37,17 @@ export const IconMistakes = (p: SVGProps<SVGSVGElement>) => (
     <path d="M12 10v4M12 17h.01" />
   </svg>
 );
+export const IconMistakesX = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M9 9l6 6M15 9l-6 6" />
+  </svg>
+);
+export const IconPlay = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)} fill="currentColor" stroke="none">
+    <path d="M8 5.5v13l11-6.5-11-6.5Z" />
+  </svg>
+);
 export const IconProgress = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}>
     <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />

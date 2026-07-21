@@ -3,8 +3,11 @@ import type { LearnerSafeQuestion } from '@mcat/content';
 import type {
   ErrorEntryView,
   MasteryMapEntry,
+  PracticeItemView,
+  PracticeResult,
   StudyStepView,
   TodayView,
+  WrappedView,
 } from '@mcat/authority-core';
 
 /**
@@ -46,6 +49,10 @@ export interface AuthorityPort {
   getMasteryMap(): Promise<MasteryMapEntry[]>;
   getErrorLog(): Promise<ErrorEntryView[]>;
   getSkills(): Promise<SkillSummary[]>;
+  getPracticeItem(questionId: string): Promise<PracticeItemView | null>;
+  checkPractice(questionId: string, choiceId: string | null): Promise<PracticeResult>;
+  recordCarsDuel(): Promise<void>;
+  getWrapped(): Promise<WrappedView>;
   resetProgress(): Promise<void>;
 }
 

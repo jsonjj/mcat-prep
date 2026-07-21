@@ -7,6 +7,9 @@ import type {
 } from '@mcat/contracts';
 import type { EvidenceRecord, MasterySkillState, Task } from '@mcat/domain';
 import type { LearnerSafeQuestion } from '@mcat/content';
+import type { GhostView } from '@mcat/policies';
+
+export type { GhostView, GhostState } from '@mcat/policies';
 
 /** Authoritative per-learner state. Events are append-only; evidence is a derived cache. */
 export interface LearnerState {
@@ -109,9 +112,39 @@ export interface TodayView {
   continueTaskId: string | null;
   tasks: Task[];
   reviewSharePct: number;
+  /** 1-based study day since the account was created. */
+  dayNumber: number;
+  /** Total days until the test date, if scheduled; otherwise null (rolling plan). */
+  totalDays: number | null;
+  /** Small home-screen status counts. */
+  reviewsDue: number;
+  repairsOpen: number;
+  /** Supportive self-pacing companion state (never peer comparison, never blocks). */
+  ghost: GhostView;
 }
 
 export interface MasteryMapEntry extends MasterySkillState {
   cluster: string;
   title: string;
+}
+
+export interface PracticeItemView {
+  question: LearnerSafeQuestion;
+  stimulus: StimulusView | null;
+}
+
+export interface PracticeResult {
+  correct: boolean;
+  correctChoiceId: string;
+  rationale: string;
+  choiceRationale: string | null;
+}
+
+export interface WrappedView {
+  dayNumber: number;
+  skillsTouched: number;
+  skillsGlowing: number;
+  evidenceCounts: Record<string, number>;
+  repairsCompleted: number;
+  protectedPassed: number;
 }

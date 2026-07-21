@@ -97,6 +97,22 @@ export class InProcessAuthorityClient implements AuthorityPort {
     return this.mutate((s) => this.authority.getErrorLog(s));
   }
 
+  async getPracticeItem(questionId: string) {
+    return this.authority.getPracticeItem(questionId);
+  }
+
+  async checkPractice(questionId: string, choiceId: string | null) {
+    return this.mutate((s) => this.authority.checkPractice(s, questionId, choiceId));
+  }
+
+  async recordCarsDuel() {
+    return this.mutate((s) => this.authority.recordCarsDuel(s));
+  }
+
+  async getWrapped() {
+    return this.mutate((s) => this.authority.getWrapped(s));
+  }
+
   async getSkills(): Promise<SkillSummary[]> {
     return this.authority.bank.skillGraph.skills.map((sk) => ({
       skillId: sk.skillId,

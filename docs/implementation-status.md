@@ -1,6 +1,6 @@
 # Implementation status
 
-Snapshot of what is built and verified versus what remains. Verification gates that pass today: `eslint` clean, `turbo run typecheck` 13/13, `vitest` 42/42, protected-content scan OK, `learner-web` + `admin-web` Vite builds green, and the built learner app serves (index/JS/manifest/SW all 200).
+Snapshot of what is built and verified versus what remains. Verification gates that pass today: `eslint` clean, `turbo run typecheck` 13/13, `vitest` 42/42, protected-content scan OK, `learner-web` + `admin-web` Vite builds green (three.js isolated in a lazy `BrainScene` chunk), and the built learner app serves and renders the interactive 3D Evidence Atlas (verified via headless WebGL screenshot).
 
 ## Built and verified
 
@@ -15,7 +15,10 @@ Snapshot of what is built and verified versus what remains. Verification gates t
 | Content system | `@mcat/content`, `content/`, `tools/content-cli` | Done — schemas, safe/protected compilation, validation, synthetic BB1 bank, folder contract, CLI, generated JSON Schemas |
 | Authority engine | `@mcat/authority-core` | Done — guest/bootstrap, placement, Today, full study loop (Diagnose-Before-Reveal, transfer, passage, simulation, protected, recall), evidence + mastery |
 | Client seam + platform | `@mcat/client-core`, `@mcat/platform-web` | Done — AuthorityPort, in-process adapter, localStorage store, capabilities |
-| Learner website | `apps/learner-web` | Done (web) — onboarding, Home/Today/Study/Recall/Mistakes/Progress/Skills/Profile, PWA shell |
+| Learner website | `apps/learner-web` | Done (web) — onboarding, unified Home hub (greeting + hero + up-next + today's plan), Study/Recall/Mistakes/Progress/Skills/Profile, Practice hub, PWA shell |
+| Reference-matched UI | `apps/learner-web`, `@mcat/design-tokens` | Done — light "Evidence Atlas" look (default light theme, full-bleed pastel wash, Fraunces serif), frosted "Up next" card + play button, status pills, brain/circled-X nav icons |
+| Interactive 3D brain | `apps/learner-web` (`EvidenceAtlas`, `BrainScene`) | Done — lives in the **Progress** tab as the "progress brain" that starts empty and fills as regions earn mastery. react-three-fiber WebGL brain (cerebrum + cerebellum + brainstem, iridescent vertex sheen), 15 clickable regions colored by per-cluster mastery → skill route, drag + slow auto-rotate, reduced-motion aware, lazy-loaded (three.js in its own chunk), WebGL-gated with still-image + Skills-list fallback. Home + Welcome show the calm still glass-brain hero (feathered into the wash). |
+| Engagement hooks | `apps/learner-web` (Practice hub) | Done — Passage of the Day, CARS Duel (original copy), past-self Ghost Rival, private Wrapped, Focus-mode ritual |
 | Admin console | `apps/admin-web` | Shell — coverage, library, empty-bank, server-only keys |
 | Architecture guards | `tests/architecture`, `tools/scanners` | Done — boundary + protected-payload + copyright scans |
 
@@ -25,8 +28,8 @@ Snapshot of what is built and verified versus what remains. Verification gates t
 |---|---|---|
 | Phase 4 — AWS authority | CDK stacks, Aurora/RDS Proxy, Cognito, API Gateway/Lambda, S3, Step Functions publication, sync API, export/deletion, analytics lake, Web Push | Requires AWS org/accounts/credentials + operations `GO` (external). Local authority stands in via ADR 0004; the `AuthorityPort` swap is an adapter change. |
 | Phase 5 — full breadth | Real content beyond the synthetic BB1 slice; calibrated MD-CAT in shadow | Depends on the content program + calibration data. |
-| Phase 6 — 3D brain | Segmented WebGL brain (`scene-web`) with camera/quality tiers | 2D Evidence Atlas + list route ship now; 3D asset is long-lead. |
-| Phase 7 — hooks | CARS Duel, Passage of the Day, Wrapped, past-self Ghost, companion/avatar, Focus mode, notifications | Authored-content + feature-flag layer; not yet built. |
+| Phase 6 — remaining polish | Enzyme **simulation** depth (currently a text-parity placeholder), a real segmented brain GLTF mesh to replace the procedural one, and the full responsive/device/a11y matrix | The interactive segmented WebGL brain + reference design system are **shipped**; these are refinements. Procedural brain is data-driven, so swapping in a modeled mesh is localized to `BrainScene`. |
+| Phase 7 — remaining hooks | Companion/avatar, real Web Push notifications, section/scenario readiness trend | Core hooks (Passage of the Day, CARS Duel, Ghost Rival, Wrapped, Focus) are **shipped** in the Practice hub. Push needs server-side VAPID/delivery (rides on Phase 4 AWS); avatar + trend are content/design follow-ups. |
 | Phase 8 — content program | Full original, reviewed, calibrated curriculum/bank | Human-led SME/psychometric program (9–15+ months). |
 | Phase 9 — deferred features | Bring Your Deck, live AI, speech, social/normative Ghost, expanded sims | Provider evaluation + consent + governance gates. |
 | Phase 10 — validation | Calibrated MD-CAT/mastery/readiness/score-prediction activation | Requires consented outcomes + psychometric validation; numeric prediction stays off. |

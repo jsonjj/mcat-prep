@@ -2,21 +2,19 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { SkipLink, useTheme } from '@mcat/ui-web';
 import { useBootstrap } from '../app/queries';
 import {
+  IconBrain,
   IconHome,
-  IconMistakes,
+  IconMistakesX,
   IconMoon,
   IconProgress,
-  IconRecall,
   IconSun,
-  IconToday,
   IconUser,
 } from '../components/icons';
 
 const NAV = [
   { to: '/app', end: true, label: 'Home', Icon: IconHome },
-  { to: '/app/today', end: false, label: 'Today', Icon: IconToday },
-  { to: '/app/recall', end: false, label: 'Recall', Icon: IconRecall },
-  { to: '/app/mistakes', end: false, label: 'Mistakes', Icon: IconMistakes },
+  { to: '/app/recall', end: false, label: 'Recall', Icon: IconBrain },
+  { to: '/app/mistakes', end: false, label: 'Mistakes', Icon: IconMistakesX },
   { to: '/app/progress', end: false, label: 'Progress', Icon: IconProgress },
 ];
 

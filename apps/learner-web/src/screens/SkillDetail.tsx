@@ -56,7 +56,7 @@ export function SkillDetail() {
             );
           })}
           <Button variant="primary" size="lg" onClick={() => navigate('/app/learn')}>
-            Start learning
+            Practice this cluster
           </Button>
         </Stack>
       ) : (

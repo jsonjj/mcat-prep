@@ -1,5 +1,7 @@
 import {
   ContentIdSchema,
+  SKILL_CLUSTERS,
+  daysBetween,
   newEventId,
   newIdempotencyKey,
   newLearnerId,
@@ -9,11 +11,13 @@ import {
   type LearnerEvent,
   type MasteryState,
   type ProbableCause,
+  type UtcTimestamp,
 } from '@mcat/contracts';
 import { EvidenceRecordSchema, scoreAttempt, type EvidenceKind, type Task } from '@mcat/domain';
 import {
   activePolicyVersions,
   classifyCapacity,
+  computeGhost,
   evaluateMastery,
 } from '@mcat/policies';
 import { loadSyntheticBank, type LoadedBank } from '@mcat/content';
@@ -21,10 +25,13 @@ import type {
   ErrorEntryView,
   LearnerState,
   MasteryMapEntry,
+  PracticeItemView,
+  PracticeResult,
   SessionSummary,
   StudyPhase,
   StudyStepView,
   TodayView,
+  WrappedView,
 } from './types';
 
 interface PathActivity {
@@ -205,11 +212,45 @@ export class Authority {
         requiresConnection: false,
       },
     ];
+    const dayNumber = Math.max(1, Math.floor(daysBetween(state.createdAt, this.clock.now())) + 1);
+    const totalDays = state.goal?.testDate
+      ? Math.max(1, Math.round(daysBetween(state.createdAt, state.goal.testDate as unknown as UtcTimestamp)))
+      : null;
+    const repairsOpen = this.getErrorLog(state).filter((e) => !e.repaired).length;
+
+    // Ghost companion: derived only from the learner's own goal, timeline, and coverage.
+    const clustersWithEvidence = new Set(
+      this.getMasteryMap(state)
+        .filter((m) => m.base !== 'not_assessed')
+        .map((m) => m.cluster),
+    );
+    const coveragePct = clustersWithEvidence.size / SKILL_CLUSTERS.length;
+    let lastEvidenceAt: string | null = null;
+    for (const e of state.evidence) {
+      if (lastEvidenceAt === null || e.occurredAt > lastEvidenceAt) lastEvidenceAt = e.occurredAt;
+    }
+    const lastActiveDaysAgo =
+      lastEvidenceAt !== null
+        ? Math.floor(daysBetween(lastEvidenceAt as unknown as UtcTimestamp, this.clock.now()))
+        : null;
+    const ghost = computeGhost({
+      scheduled: Boolean(state.goal?.testDate),
+      dayNumber,
+      totalDays,
+      coveragePct,
+      lastActiveDaysAgo,
+    });
+
     return {
       capacityLabel,
       continueTaskId: 'task-enzyme',
       tasks,
       reviewSharePct: 0.25,
+      dayNumber,
+      totalDays,
+      reviewsDue: 0,
+      repairsOpen,
+      ghost,
     };
   }
 
@@ -446,6 +487,85 @@ export class Authority {
     });
   }
 
+  // ---- Practice hooks (Passage of the Day, etc.) ------------------------
+
+  getPracticeItem(questionId: string): PracticeItemView | null {
+    const compiled = this.bank.compiled.get(questionId);
+    if (!compiled) return null;
+    const stimulus =
+      compiled.safe.stimulus_id !== null
+        ? this.bank.stimuli.find((s) => s.id === compiled.safe.stimulus_id) ?? null
+        : null;
+    return {
+      question: compiled.safe,
+      stimulus: stimulus ? { id: stimulus.id, body: stimulus.body } : null,
+    };
+  }
+
+  checkPractice(state: LearnerState, questionId: string, choiceId: string | null): PracticeResult {
+    const compiled = this.bank.compiled.get(questionId)!;
+    const correctId = compiled.protected.correct_choice_id;
+    const correct = choiceId === correctId;
+    this.recordEvent(
+      state,
+      this.attemptEvent(state, questionId, choiceId, { assistanceLevel: 'A0', isDiagnosticRetry: false }),
+    );
+    // Low-stakes daily practice: contextual evidence only (never mastery).
+    const skillId = this.bank.questions.find((q) => q.id === questionId)?.internal_skill_ids[0] ?? ENZYME_SKILL;
+    this.appendEvidence(state, {
+      skillId,
+      kind: 'placement',
+      questionId,
+      phase: 'independent',
+      correct,
+      independent: false,
+      changeDimensions: [],
+    });
+    const rationales = compiled.protected.rationales.choices as Record<string, string>;
+    return {
+      correct,
+      correctChoiceId: correctId,
+      rationale: compiled.protected.rationales.correct,
+      choiceRationale: choiceId && choiceId !== correctId ? rationales[choiceId] ?? null : null,
+    };
+  }
+
+  /**
+   * CARS Duel is an AI sparring session, so it can never mint mastery. It logs
+   * contextual (placement-kind) evidence to the two CARS clusters so the Atlas
+   * reflects the reps without treating an AI as proof.
+   */
+  recordCarsDuel(state: LearnerState): void {
+    for (const cluster of ['CA1', 'CA2'] as const) {
+      this.appendEvidence(state, {
+        skillId: `cars-${cluster.toLowerCase()}`,
+        kind: 'placement',
+        questionId: 'cars-duel',
+        phase: 'independent',
+        correct: true,
+        independent: false,
+        changeDimensions: [],
+        cluster,
+        operation: 'A',
+        familyId: 'fam-cars-duel',
+      });
+    }
+  }
+
+  getWrapped(state: LearnerState): WrappedView {
+    const map = this.getMasteryMap(state);
+    const counts: Record<string, number> = {};
+    for (const e of state.evidence) counts[e.kind] = (counts[e.kind] ?? 0) + 1;
+    return {
+      dayNumber: Math.max(1, Math.floor(daysBetween(state.createdAt, this.clock.now())) + 1),
+      skillsTouched: map.filter((m) => m.base !== 'not_assessed').length,
+      skillsGlowing: map.filter((m) => ['independent', 'retained', 'strong'].includes(m.base)).length,
+      evidenceCounts: counts,
+      repairsCompleted: this.getErrorLog(state).filter((e) => e.repaired).length,
+      protectedPassed: state.evidence.filter((e) => e.kind === 'protected' && e.outcome === 'correct').length,
+    };
+  }
+
   getErrorLog(state: LearnerState): ErrorEntryView[] {
     const causeByQuestion = new Map<string, ProbableCause>();
     for (const ev of state.events) {
@@ -564,21 +684,25 @@ export class Authority {
       independent: boolean;
       changeDimensions: string[];
       conditions?: { mixed?: boolean; passage?: boolean; timed?: boolean; protected?: boolean };
+      /** Overrides for evidence not backed by a bank question (e.g., CARS Duel). */
+      cluster?: string;
+      operation?: string;
+      familyId?: string;
     },
   ): void {
     const q = this.bank.questions.find((x) => x.id === input.questionId);
     const record = EvidenceRecordSchema.parse({
       evidenceId: crypto.randomUUID(),
       skillId: input.skillId,
-      cluster: q?.skill_cluster ?? 'BB1',
-      operation: q?.template_tags[0] ?? 'K',
+      cluster: input.cluster ?? q?.skill_cluster ?? 'BB1',
+      operation: input.operation ?? q?.template_tags[0] ?? 'K',
       kind: input.kind,
       independent: input.independent,
       assistanceLevel: 'A0',
       contentBearingHint: false,
       questionId: input.questionId,
       itemVersion: 1,
-      familyId: q?.family_id ?? 'fam-unknown',
+      familyId: input.familyId ?? q?.family_id ?? 'fam-unknown',
       changeDimensions: input.changeDimensions,
       conditions: {
         mixed: input.conditions?.mixed ?? false,

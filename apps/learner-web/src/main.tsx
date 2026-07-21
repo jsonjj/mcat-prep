@@ -21,7 +21,7 @@ if (!rootEl) throw new Error('#root not found');
 createRoot(rootEl).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider initial="system">
+      <ThemeProvider initial="light">
         <RouterProvider router={router} />
       </ThemeProvider>
     </QueryClientProvider>

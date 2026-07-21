@@ -14,11 +14,9 @@
       // Set theme before first paint to avoid a flash.
       (function () {
         try {
+          // Default to the light "Evidence Atlas" look; dark only if explicitly chosen.
           var t = localStorage.getItem('mc.theme');
-          var d =
-            t === 'dark' ||
-            ((t === null || t === 'system') &&
-              matchMedia('(prefers-color-scheme: dark)').matches);
+          var d = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
           document.documentElement.dataset.theme = d ? 'dark' : 'light';
         } catch (e) {
           document.documentElement.dataset.theme = 'light';

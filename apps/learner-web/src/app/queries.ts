@@ -80,3 +80,22 @@ export function useResetProgress() {
   const qc = useQueryClient();
   return useMutation({ mutationFn: () => authority.resetProgress(), onSuccess: () => invalidateLearner(qc) });
 }
+
+export const useWrapped = () => useQuery({ queryKey: ['wrapped'], queryFn: () => authority.getWrapped() });
+
+export const usePracticeItem = (questionId: string) =>
+  useQuery({ queryKey: ['practice', questionId], queryFn: () => authority.getPracticeItem(questionId) });
+
+export function useCheckPractice() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (v: { questionId: string; choiceId: string | null }) =>
+      authority.checkPractice(v.questionId, v.choiceId),
+    onSuccess: () => invalidateLearner(qc),
+  });
+}
+
+export function useRecordCarsDuel() {
+  const qc = useQueryClient();
+  return useMutation({ mutationFn: () => authority.recordCarsDuel(), onSuccess: () => invalidateLearner(qc) });
+}
