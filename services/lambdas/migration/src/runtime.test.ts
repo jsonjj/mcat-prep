@@ -302,6 +302,14 @@ describe('migration runtime security boundary', () => {
       maxConnections: 1,
       applicationName: 'mcat-migration',
     });
+    expect(pool.calls).toContainEqual({
+      text: `select
+  set_config('application_name', $1, false),
+  set_config('statement_timeout', $2, false),
+  set_config('lock_timeout', $3, false),
+  set_config('idle_in_transaction_session_timeout', $4, false)`,
+      values: ['mcat-migration', '60000', '5000', '60000'],
+    });
     expect(poolOptions?.connectionString).toContain(encodeURIComponent(ADMIN_PASSWORD));
     expect(result).toMatchObject({
       ok: true,

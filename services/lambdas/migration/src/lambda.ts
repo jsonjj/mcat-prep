@@ -16,13 +16,9 @@ const poolFactory: RuntimePoolFactory = (options) =>
   new Pool({
     connectionString: options.connectionString,
     ssl: options.ssl,
-    application_name: options.applicationName,
     max: options.maxConnections,
     connectionTimeoutMillis: 5_000,
     idleTimeoutMillis: 30_000,
-    statement_timeout: 60_000,
-    lock_timeout: 5_000,
-    idle_in_transaction_session_timeout: 60_000,
     allowExitOnIdle: true,
   });
 

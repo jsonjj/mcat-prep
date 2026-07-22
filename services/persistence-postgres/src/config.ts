@@ -16,6 +16,12 @@ export interface PostgresPoolOptions {
   readonly idleInTransactionTimeoutMs?: number;
 }
 
+const CONFIGURE_SESSION_SQL = `select
+  set_config('application_name', $1, false),
+  set_config('statement_timeout', $2, false),
+  set_config('lock_timeout', $3, false),
+  set_config('idle_in_transaction_session_timeout', $4, false)`;
+
 function positiveInteger(name: string, value: number, maximum: number): number {
   if (!Number.isInteger(value) || value <= 0 || value > maximum) {
     throw new PersistenceError({
@@ -79,13 +85,17 @@ export function createPgPool(options: PostgresPoolOptions): PostgresPool {
 
   return new Pool({
     connectionString: options.connectionString,
-    application_name: options.applicationName ?? 'mcat-authority',
     max,
     connectionTimeoutMillis,
     idleTimeoutMillis,
-    statement_timeout: statementTimeout,
-    lock_timeout: lockTimeout,
-    idle_in_transaction_session_timeout: idleInTransactionSessionTimeout,
+    onConnect: async (client) => {
+      await client.query(CONFIGURE_SESSION_SQL, [
+        options.applicationName ?? 'mcat-authority',
+        String(statementTimeout),
+        String(lockTimeout),
+        String(idleInTransactionSessionTimeout),
+      ]);
+    },
     ssl,
     allowExitOnIdle: true,
   });

@@ -31,6 +31,11 @@ const REVOKE_PUBLIC_FUNCTION_EXECUTE_DDL =
   'revoke execute on all functions in schema public from public';
 const REVOKE_PUBLIC_DEFAULT_FUNCTION_EXECUTE_DDL =
   'alter default privileges revoke execute on functions from public';
+const CONFIGURE_SESSION_SQL = `select
+  set_config('application_name', $1, false),
+  set_config('statement_timeout', $2, false),
+  set_config('lock_timeout', $3, false),
+  set_config('idle_in_transaction_session_timeout', $4, false)`;
 
 export interface MigrationEnvironment {
   readonly region: typeof EXPECTED_REGION;
@@ -84,6 +89,7 @@ export type MigrationFailureStage =
   | 'request_validation'
   | 'secret_loading'
   | 'database_connect'
+  | 'session_configuration'
   | 'database_lock'
   | 'migrations'
   | 'role_grants'
@@ -651,6 +657,8 @@ export function createMigrationHandler(
         maxConnections: 1,
       });
       client = await pool.connect();
+      failureStage = 'session_configuration';
+      await query(client, CONFIGURE_SESSION_SQL, ['mcat-migration', '60000', '5000', '60000']);
       failureStage = 'database_lock';
       await query(client, 'select pg_advisory_lock($1)', [RUNTIME_ADVISORY_LOCK_ID]);
       fullLockHeld = true;
