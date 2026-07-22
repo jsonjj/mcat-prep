@@ -1,12 +1,6 @@
-import { InProcessAuthorityClient, type AuthorityPort } from '@mcat/client-core';
-import { createLocalStateStore } from '@mcat/platform-web';
-import type { LearnerState } from '@mcat/authority-core';
+import { HttpAuthorityClient, type AuthorityPort } from '@mcat/client-core';
 
-/**
- * The app's authority client. Locally this is the in-process engine over
- * localStorage; in production this becomes an HTTP adapter to API Gateway with no
- * change to callers. (See ADR 0004.)
- */
-const store = createLocalStateStore<LearnerState>('mc.learner-state.v1');
+const baseUrl = import.meta.env.VITE_AUTHORITY_BASE_URL;
+if (!baseUrl) throw new Error('VITE_AUTHORITY_BASE_URL is required');
 
-export const authority: AuthorityPort = new InProcessAuthorityClient(store);
+export const authority: AuthorityPort = new HttpAuthorityClient({ baseUrl });

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
-import type { PracticeResult } from '@mcat/authority-core';
+import type { PracticeResult } from '@mcat/contracts';
 import { useCheckPractice, usePracticeItem } from '../app/queries';
 
 const DAILY_ITEM = 'q-enz-passage-1';
