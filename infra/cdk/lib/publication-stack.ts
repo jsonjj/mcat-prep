@@ -83,6 +83,7 @@ export class PublicationStack extends Stack {
         'Key.$': '$.source.key',
         'VersionId.$': '$.source.versionId',
       },
+      iamAction: 's3:GetObjectVersion',
       iamResources: [quarantineObjectsArn],
       resultPath: '$.quarantineHead',
     });

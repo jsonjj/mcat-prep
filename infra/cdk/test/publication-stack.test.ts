@@ -86,6 +86,7 @@ describe('PublicationStack', () => {
   it('logs executions and does not grant delivery-bucket writes while activation is disabled', () => {
     const template = Template.fromStack(createPublication());
     const serialized = JSON.stringify(template.toJSON());
+    const policies = JSON.stringify(template.findResources('AWS::IAM::Policy'));
 
     template.hasResourceProperties('AWS::Logs::LogGroup', {
       KmsKeyId: Match.anyValue(),
@@ -93,6 +94,8 @@ describe('PublicationStack', () => {
     });
     expect(serialized).not.toContain('s3:*');
     expect(serialized).not.toContain('states:SendTaskSuccess');
+    expect(policies).toContain('s3:GetObjectVersion');
+    expect(policies).not.toContain('s3:headObject');
   });
 
   it('has no unsuppressed AWS Solutions findings', () => {
