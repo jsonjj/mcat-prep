@@ -6,7 +6,7 @@ A personalized, evidence-based MCAT learning platform. Browser-first (responsive
 
 ## What this is
 
-MCAT Mastery organizes study around **15 understandable skill clusters** backed by smaller internal skills. It decides what to study next, teaches missing prerequisites, fades assistance, diagnoses *why* an answer was wrong before revealing it, schedules spaced recall, and requires **changed, delayed, mixed, passage-level, timed, and protected** evidence before treating a skill as current mastery.
+MCAT Mastery organizes study around **15 understandable skill clusters** backed by smaller internal skills. It decides what to study next, teaches missing prerequisites, fades assistance, diagnoses _why_ an answer was wrong before revealing it, schedules spaced recall, and requires **changed, delayed, mixed, passage-level, timed, and protected** evidence before treating a skill as current mastery.
 
 The core learner product is **content-independent**: its learning content flows through versioned,
 reviewed content contracts rather than app code. The standalone landing Snapshot currently carries a
@@ -36,7 +36,7 @@ packages/
   ai-speech-contracts/ Provider ports + deterministic fallbacks (providers off by default)
   test-fixtures/   Unmistakably synthetic fixtures (production publication rejects them)
 services/
-  local-authority/ Local dev server implementing the API authority (stands in for AWS Lambdas)
+  local-authority/ In-process authority adapter used by tests and local tooling
 content/           Curriculum ledger, controlled vocabularies, schemas, templates, question-bank contract
 database/          PostgreSQL schema, migrations, seeds (controlled labels only)
 tools/             Content CLI, scanners, verification utilities
@@ -61,6 +61,12 @@ pnpm --filter @mcat/learner-web dev   # learner website
 pnpm --filter @mcat/admin-web dev      # admin console
 ```
 
+The deployed AWS-backed learner website is
+<https://d2j72l2zhhn7o7.cloudfront.net>. The development authority intentionally accepts browser
+traffic only through that CloudFront origin. The Vite learner command requires a compatible
+`VITE_AUTHORITY_BASE_URL`; the repository does not currently ship a standalone local HTTP
+authority server.
+
 The landing Snapshot keeps answer keys in its server bundle. For a production-like run, use
 `pnpm --filter @mcat/landing-web build` followed by
 `pnpm --filter @mcat/landing-web start`; serving `apps/landing-web/dist` alone will not provide
@@ -74,7 +80,7 @@ lead service and a shared durable rate-limit/attempt store.
 
 ## Authority boundaries (non-negotiable)
 
-- The server (AWS in production; `services/local-authority` in local dev) is authoritative for correctness, protected scoring, planning, FSRS, mastery, and synchronization.
+- The server (AWS for deployed development; the in-process `services/local-authority` adapter for tests/tooling) is authoritative for correctness, protected scoring, planning, FSRS, mastery, and synchronization.
 - The client is authoritative for presentation, interaction state, local cache, and an offline event queue — never for correctness, answer keys, mastery, or protected scoring.
 - Answer keys, rationales, and protected assessment payloads never enter client bundles, prerendered HTML, caches, analytics, or ordinary logs.
 

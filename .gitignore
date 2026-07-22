@@ -17,6 +17,7 @@ coverage/
 .turbo/
 .vite/
 .react-router/
+cdk.out/
 
 # Local env & secrets (NEVER commit secrets; server secrets live in AWS Secrets Manager)
 .env
@@ -49,9 +50,9 @@ generated/protected/
 content/**/protected-compiled/
 *.answer-key.json
 
-# Raw question candidates carry answer keys + rationales (protected). Keep the raw
-# source out of git; only compiled learner-safe payloads may ever be committed/shipped.
-question-bank/
+# Raw question candidate drops may carry protected evaluation material. Keep JSONL
+# drops out of git; only compiled learner-safe payloads may ever be committed/shipped.
+/question-bank/*.jsonl
 
 # Optional 3D model assets: commit ONLY vetted CC0/licensed models (with ATTRIBUTION.md)
 # via an explicit `git add -f`, so an unlicensed model can't be committed by accident.

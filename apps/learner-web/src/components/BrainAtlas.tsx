@@ -1,4 +1,4 @@
-import type { MasteryMapEntry } from '@mcat/authority-core';
+import type { MasteryMapEntry } from '@mcat/contracts';
 
 /**
  * The Evidence Atlas hero — an iridescent glass brain (original generated asset).

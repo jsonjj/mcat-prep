@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: mcat_test
+      POSTGRES_PASSWORD: mcat_test
+      POSTGRES_DB: mcat_test
+    ports:
+      - '55432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U mcat_test -d mcat_test']
+      interval: 2s
+      timeout: 2s
+      retries: 20

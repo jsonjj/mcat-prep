@@ -4,6 +4,23 @@ import { z } from 'zod';
 export const UtcTimestampSchema = z.string().datetime({ offset: true }).brand<'UtcTimestamp'>();
 export type UtcTimestamp = z.infer<typeof UtcTimestampSchema>;
 
+/** Calendar date without a timezone, used for learner-local dates such as test day. */
+export const DateOnlySchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .refine((value) => {
+    const [year, month, day] = value.split('-').map(Number);
+    if (year === undefined || month === undefined || day === undefined) return false;
+    const parsed = new Date(Date.UTC(year, month - 1, day));
+    return (
+      parsed.getUTCFullYear() === year &&
+      parsed.getUTCMonth() === month - 1 &&
+      parsed.getUTCDate() === day
+    );
+  }, 'Invalid calendar date')
+  .brand<'DateOnly'>();
+export type DateOnly = z.infer<typeof DateOnlySchema>;
+
 /** A clock abstraction so policies/tests are deterministic and time-injectable. */
 export interface Clock {
   now(): UtcTimestamp;

@@ -1,0 +1,24 @@
+{
+  "name": "@mcat/persistence-postgres",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:integration": "vitest run src/*.integration.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mcat/database": "workspace:*",
+    "pg": "8.22.0"
+  },
+  "devDependencies": {
+    "@types/pg": "8.20.0",
+    "typescript": "5.7.3",
+    "vitest": "2.1.8"
+  }
+}
