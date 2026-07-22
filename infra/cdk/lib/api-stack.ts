@@ -167,7 +167,7 @@ export class ApiStack extends Stack {
     const apiWebAcl = new wafv2.CfnWebACL(this, 'ApiWebAcl', {
       name: 'mcat-dev-api',
       description:
-        'Managed request filtering for the API origin; client-IP throttling runs at CloudFront.',
+        'Managed request filtering for the API origin, client-IP throttling runs at CloudFront.',
       scope: 'REGIONAL',
       defaultAction: { allow: {} },
       visibilityConfig: {

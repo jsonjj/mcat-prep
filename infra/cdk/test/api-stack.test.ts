@@ -77,6 +77,12 @@ describe('ApiStack', () => {
       Scope: 'REGIONAL',
     });
     const webAcls = Object.values(template.findResources('AWS::WAFv2::WebACL'));
+    const wafDescriptionPattern = /^[\w+=:#@/,\-.][\w+=:#@/,\-.\s]+[\w+=:#@/,\-.]$/;
+    for (const webAcl of webAcls) {
+      expect((webAcl.Properties as { Description: string }).Description).toMatch(
+        wafDescriptionPattern,
+      );
+    }
     const regional = webAcls.find(
       (resource) => (resource.Properties as { Scope?: string }).Scope === 'REGIONAL',
     );
