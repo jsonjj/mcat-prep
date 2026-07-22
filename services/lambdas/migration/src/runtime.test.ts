@@ -377,4 +377,28 @@ describe('migration runtime security boundary', () => {
       stage: 'migrations',
     });
   });
+
+  it('classifies pool construction failures as database connection failures', async () => {
+    const fixture = await fixtureMigration();
+    const logs: Parameters<MigrationLogger>[0][] = [];
+
+    await expect(
+      createMigrationHandler({
+        environment: environment(fixture.directory),
+        secrets: secrets(),
+        poolFactory: () => {
+          throw new Error(`unsafe-driver-detail:${ADMIN_PASSWORD}`);
+        },
+        logger: (event) => logs.push(event),
+      })(migrationEvent(fixture)),
+    ).rejects.toThrow('Database migration failed');
+
+    expect(logs.at(-1)).toEqual({
+      event: 'migration.failed',
+      code: 'migration_failed',
+      stage: 'database_connect',
+    });
+    expect(JSON.stringify(logs)).not.toContain(ADMIN_PASSWORD);
+    expect(JSON.stringify(logs)).not.toContain('unsafe-driver-detail');
+  });
 });

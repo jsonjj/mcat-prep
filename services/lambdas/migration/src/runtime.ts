@@ -594,13 +594,13 @@ export function createMigrationHandler(
         loadSecret(dependencies.secrets, environment.learnerSecretArn, LEARNER_ROLE),
         loadSecret(dependencies.secrets, environment.workerSecretArn, WORKER_ROLE),
       ]);
+      failureStage = 'database_connect';
       pool = dependencies.poolFactory({
         connectionString: databaseUrl(environment, adminSecret),
         ssl: { rejectUnauthorized: true },
         applicationName: 'mcat-migration',
         maxConnections: 1,
       });
-      failureStage = 'database_connect';
       client = await pool.connect();
       failureStage = 'database_lock';
       await query(client, 'select pg_advisory_lock($1)', [RUNTIME_ADVISORY_LOCK_ID]);
