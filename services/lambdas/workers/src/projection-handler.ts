@@ -47,7 +47,7 @@ function parseMessage(record: ProjectionQueueRecord): ProjectionMessage {
   if (!isObject(raw)) throw new Error('Projection message body must be an object.');
 
   const { messageId, learnerId, sequence, topic, payload, createdAt } = raw;
-  if (typeof messageId !== 'string' || !UUID.test(messageId) || messageId !== record.messageId) {
+  if (typeof messageId !== 'string' || !UUID.test(messageId)) {
     throw new Error('Projection message identifier is invalid.');
   }
   if (typeof learnerId !== 'string' || !UUID.test(learnerId)) {

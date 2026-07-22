@@ -24,9 +24,13 @@ class MemoryProjectionStore implements ProjectionConsumerStore {
   }
 }
 
-function record(message: ProjectionMessage, messageGroupId = message.learnerId) {
+function record(
+  message: ProjectionMessage,
+  messageGroupId = message.learnerId,
+  queueMessageId = message.messageId,
+) {
   return {
-    messageId: message.messageId,
+    messageId: queueMessageId,
     body: JSON.stringify(message),
     attributes: { MessageGroupId: messageGroupId },
   };
@@ -42,6 +46,22 @@ const message: ProjectionMessage = {
 };
 
 describe('createProjectionHandler', () => {
+  it('accepts an application message identifier that differs from the SQS delivery identifier', async () => {
+    const store = new MemoryProjectionStore();
+    const handler = createProjectionHandler({
+      consumerName: 'mastery-v1',
+      store,
+      apply: async () => undefined,
+    });
+
+    expect(
+      await handler({ Records: [record(message, message.learnerId, crypto.randomUUID())] }),
+    ).toEqual({
+      batchItemFailures: [],
+    });
+    expect(store.appliedSequences).toEqual([1]);
+  });
+
   it('acknowledges a duplicate delivery without applying it twice', async () => {
     const store = new MemoryProjectionStore();
     const applied: number[] = [];
