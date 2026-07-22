@@ -1,18 +1,15 @@
 #!/usr/bin/env node
 /**
- * Copyright & protected-content guardrail (CI gate).
+ * Copyright and protected-content guardrail (CI gate).
  *
- * Fails if the repository tracks anything it must never contain:
- *  - reference PDFs or their derivatives (screenshots, OCR, extracted pages)
- *  - committed answer-key artifacts
- *  - a protected-content canary token
- *
- * NOTE: a full learner-bundle answer-key scan activates in Phase 4, once the
- * authority engine moves server-side. In the local build the in-process authority
- * intentionally bundles content (see ADR 0004), so bundle key-scanning is deferred.
+ * This scanner rejects tracked reference derivatives, answer-key artifacts,
+ * protected-content canaries, and answer-bearing JSONL outside the one
+ * deliberately server-only test-fixture location.
  */
 import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const CANARY = 'MCAT_PROTECTED_CANARY';
 const FORBIDDEN_PATH_PATTERNS = [
@@ -21,6 +18,52 @@ const FORBIDDEN_PATH_PATTERNS = [
   /(^|\/)\.tmp_pg_inspect\//i,
   /\.answer-key\.json$/i,
 ];
+const TEXT_FILE_PATTERN = /\.(?:ts|tsx|js|mjs|json|jsonl|md|css|html)$/i;
+const SERVER_ONLY_FIXTURE_PATTERN =
+  /^tests\/fixtures\/server-only\/protected\/(?:[^/]+\/)*[^/]+\.jsonl$/i;
+
+export const PROTECTED_FIELD_PATTERN =
+  /"(?:proposed_key|correct_choice_id|option_rationales|rationale_correct|rationale_incorrect|protected_rationale|rationales)"\s*:/i;
+
+export function scanTrackedFiles(files, readText) {
+  const problems = [];
+
+  for (const file of files) {
+    for (const pattern of FORBIDDEN_PATH_PATTERNS) {
+      if (pattern.test(file)) {
+        problems.push(`Forbidden tracked file: ${file} (matches ${pattern})`);
+      }
+    }
+
+    if (!TEXT_FILE_PATTERN.test(file)) {
+      continue;
+    }
+
+    let content;
+    try {
+      content = readText(file);
+    } catch {
+      problems.push(`Unable to inspect tracked text file: ${file}`);
+      continue;
+    }
+
+    if (file !== 'tools/scanners/protected-field-scan.mjs' && content.includes(CANARY)) {
+      problems.push(`Protected canary token found in tracked file: ${file}`);
+    }
+
+    if (
+      /\.jsonl$/i.test(file) &&
+      !SERVER_ONLY_FIXTURE_PATTERN.test(file) &&
+      PROTECTED_FIELD_PATTERN.test(content)
+    ) {
+      problems.push(
+        `Protected fields found in tracked JSONL outside the server-only fixture allowlist: ${file}`,
+      );
+    }
+  }
+
+  return problems;
+}
 
 function trackedFiles() {
   try {
@@ -31,36 +74,21 @@ function trackedFiles() {
   }
 }
 
-const problems = [];
-const files = trackedFiles();
+function main() {
+  const files = trackedFiles();
+  const problems = scanTrackedFiles(files, (file) => readFileSync(file, 'utf8'));
 
-for (const file of files) {
-  for (const pattern of FORBIDDEN_PATH_PATTERNS) {
-    if (pattern.test(file)) {
-      problems.push(`Forbidden tracked file: ${file} (matches ${pattern})`);
-    }
+  if (problems.length > 0) {
+    console.error('protected-field-scan FAILED:');
+    for (const problem of problems) console.error(`  - ${problem}`);
+    process.exitCode = 1;
+    return;
   }
+
+  console.log(`protected-field-scan OK (${files.length} tracked files checked).`);
 }
 
-// Scan text sources for the canary token (excluding this scanner, which defines it).
-const TEXT_EXT = /\.(ts|tsx|js|mjs|json|md|css|html)$/i;
-for (const file of files) {
-  if (!TEXT_EXT.test(file)) continue;
-  if (file.includes('tools/scanners/')) continue;
-  try {
-    const content = readFileSync(file, 'utf8');
-    if (content.includes(CANARY)) {
-      problems.push(`Protected canary token found in tracked file: ${file}`);
-    }
-  } catch {
-    /* unreadable/binary — ignore */
-  }
+const invokedPath = process.argv[1] ? resolve(process.argv[1]) : undefined;
+if (invokedPath === fileURLToPath(import.meta.url)) {
+  main();
 }
-
-if (problems.length > 0) {
-  console.error('protected-field-scan FAILED:');
-  for (const p of problems) console.error(`  - ${p}`);
-  process.exit(1);
-}
-
-console.log(`protected-field-scan OK (${files.length} tracked files checked).`);
