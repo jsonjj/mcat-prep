@@ -14,6 +14,10 @@ import {
 } from './migrate';
 
 const migrationUrl = new URL('../migrations/0001_authority.sql', import.meta.url);
+const workerGuardMigrationUrl = new URL(
+  '../migrations/0003_projection_deduplication.sql',
+  import.meta.url,
+);
 
 describe('0001 authority migration', () => {
   it('defines immutable event and transactional outbox constraints', () => {
@@ -68,6 +72,16 @@ describe('0001 authority migration', () => {
     );
     expect(sql).not.toMatch(/\btimestamp\s+(?!with time zone)/);
     expect(sql).not.toMatch(/\b(serial|varchar|char)\s*\(/);
+  });
+});
+
+describe('0003 projection deduplication migration', () => {
+  it('enforces one consumed sequence per consumer and learner', () => {
+    const sql = readFileSync(workerGuardMigrationUrl, 'utf8').toLowerCase();
+
+    expect(sql).toContain('create unique index inbox_deduplication_consumer_sequence_uidx');
+    expect(sql).toContain('(consumer_name, learner_id, sequence)');
+    expect(sql).toContain('where learner_id is not null and sequence is not null');
   });
 });
 
