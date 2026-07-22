@@ -29,11 +29,23 @@ export class HttpAiChat implements AiChat {
     } catch {
       throw new AiUnavailableError('Could not reach the AI service');
     }
-    if (res.status === 404 || res.status === 503) {
-      throw new AiUnavailableError();
+    if (res.status === 503) {
+      throw new AiUnavailableError('AI key not configured (restart the dev server after setting it)');
+    }
+    if (res.status === 404) {
+      throw new AiUnavailableError('AI proxy not found (are you on the dev server?)');
     }
     if (!res.ok) {
-      throw new Error(`AI request failed (${res.status})`);
+      let detail = '';
+      try {
+        const body = (await res.json()) as { error?: string; status?: number; detail?: string };
+        if (body?.error) {
+          detail = ` — ${body.error}${body.status ? ` (${body.status})` : ''}${body.detail ? `: ${body.detail}` : ''}`;
+        }
+      } catch {
+        /* non-JSON error body */
+      }
+      throw new Error(`Gateway request failed (${res.status})${detail}`);
     }
     const data = (await res.json()) as { text?: string };
     return { text: data.text ?? '' };

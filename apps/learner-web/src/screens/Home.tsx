@@ -1,7 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { useMasteryMap, useToday } from '../app/queries';
-import { BrainAtlas, countGlowing } from '../components/BrainAtlas';
+import { countGlowing } from '../components/BrainAtlas';
+import { EvidenceAtlas } from '../components/EvidenceAtlas';
 import { GhostCompanion } from '../components/GhostCompanion';
 import { WrappedCard } from '../components/WrappedCard';
 import { IconPlay, IconRecall, IconMistakesX, IconProgress } from '../components/icons';
@@ -58,7 +59,7 @@ export function Home() {
       <GhostCompanion />
       <WrappedCard />
 
-      <BrainAtlas glowing={glowing} />
+      <EvidenceAtlas variant="home" />
 
       {upNext ? (
         <Link to="/app/learn" className="mc-upnext" aria-label={`Continue: ${upNext.title}`}>
@@ -96,6 +97,15 @@ export function Home() {
           <span className="mc-upnext__eyebrow">Daily rep · optional</span>
           <span className="mc-daily__title">Passage of the Day</span>
           <span className="mc-upnext__meta">A short reading rep to keep your stamina warm.</span>
+        </div>
+        <span className="mc-daily__arrow" aria-hidden="true">→</span>
+      </Link>
+
+      <Link to="/app/cars" className="mc-daily" aria-label="CARS Duel">
+        <div className="mc-daily__text">
+          <span className="mc-upnext__eyebrow">AI practice · optional</span>
+          <span className="mc-daily__title">CARS Duel</span>
+          <span className="mc-upnext__meta">Debate an AI opponent to sharpen your reasoning.</span>
         </div>
         <span className="mc-daily__arrow" aria-hidden="true">→</span>
       </Link>

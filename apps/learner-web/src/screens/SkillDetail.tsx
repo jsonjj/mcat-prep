@@ -37,6 +37,22 @@ export function SkillDetail() {
         <p className="mc-muted">{info.tested}</p>
       </header>
 
+      {info.section === 'cars' ? (
+        <Card elevated>
+          <Stack gap={2}>
+            <Eyebrow>AI practice</Eyebrow>
+            <p className="mc-task__title">CARS Duel</p>
+            <p className="mc-muted mc-fineprint">
+              Debate an AI opponent on a short passage or topic — it sharpens the reasoning this
+              cluster tests. Contextual practice; it never counts toward mastery.
+            </p>
+            <Button variant="primary" onClick={() => navigate('/app/cars')}>
+              Start a CARS Duel
+            </Button>
+          </Stack>
+        </Card>
+      ) : null}
+
       {hasContent ? (
         <Stack gap={3}>
           {clusterSkills.map((s) => {

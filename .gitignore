@@ -46,3 +46,13 @@ research-derivatives/
 generated/protected/
 content/**/protected-compiled/
 *.answer-key.json
+
+# Raw question candidates carry answer keys + rationales (protected). Keep the raw
+# source out of git; only compiled learner-safe payloads may ever be committed/shipped.
+question-bank/
+
+# Optional 3D model assets: commit ONLY vetted CC0/licensed models (with ATTRIBUTION.md)
+# via an explicit `git add -f`, so an unlicensed model can't be committed by accident.
+apps/learner-web/public/models/*.glb
+apps/learner-web/public/models/*.gltf
+apps/learner-web/public/models/*.bin

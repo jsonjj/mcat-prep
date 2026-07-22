@@ -40,23 +40,32 @@ const POSITIONS: Record<SkillCluster, [number, number, number]> = {
 
 const regionLabel = (r: string) => r.replace(/-/g, ' ');
 
-export function EvidenceAtlas() {
+/**
+ * variant "home": a full, always-colorful, spinnable brain (all regions lit,
+ * decorative, no drilling panel) — the aspirational hero.
+ * variant "progress": the mastery brain that starts empty and fills in, with
+ * clickable regions that open a cluster.
+ */
+export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'progress' } = {}) {
   const navigate = useNavigate();
   const mastery = useMasteryMap();
   const caps = useMemo(() => detectCapabilities(), []);
   const [selected, setSelected] = useState<SkillCluster | null>(null);
+  const isHome = variant === 'home';
 
   const regions: AtlasRegion[] = useMemo(() => {
     const data = mastery.data ?? [];
     return SKILL_CLUSTERS.map((cluster) => {
       const entries = data.filter((m) => m.cluster === cluster);
-      const state = entries.reduce<BaseMasteryState>(
-        (best, e) =>
-          baseStateRank(e.base as BaseMasteryState) > baseStateRank(best)
-            ? (e.base as BaseMasteryState)
-            : best,
-        'not_assessed',
-      );
+      const state: BaseMasteryState = isHome
+        ? 'strong'
+        : entries.reduce<BaseMasteryState>(
+            (best, e) =>
+              baseStateRank(e.base as BaseMasteryState) > baseStateRank(best)
+                ? (e.base as BaseMasteryState)
+                : best,
+            'not_assessed',
+          );
       return {
         cluster,
         title: CLUSTER_INFO[cluster].title,
@@ -65,36 +74,39 @@ export function EvidenceAtlas() {
         position: POSITIONS[cluster],
       };
     });
-  }, [mastery.data]);
+  }, [mastery.data, isHome]);
 
   const sel = selected ? (regions.find((r) => r.cluster === selected) ?? null) : null;
 
   if (!caps.webgl) {
     return (
       <div className="mc-atlas">
-        <BrainAtlas glowing={countGlowing(mastery.data)} />
-        <p className="mc-atlas__hint mc-muted mc-fineprint">
-          Interactive 3D needs WebGL — showing the calm still view. Everything is also on the Skills
-          list.
-        </p>
+        <BrainAtlas glowing={isHome ? 6 : countGlowing(mastery.data)} />
+        {!isHome ? (
+          <p className="mc-atlas__hint mc-muted mc-fineprint">
+            Interactive 3D needs WebGL — showing the calm still view. Everything is also on the Skills
+            list.
+          </p>
+        ) : null}
       </div>
     );
   }
 
   return (
     <div className="mc-atlas">
-      <Suspense fallback={<BrainAtlas glowing={countGlowing(mastery.data)} />}>
+      <Suspense fallback={<BrainAtlas glowing={isHome ? 6 : countGlowing(mastery.data)} />}>
         <BrainScene
           regions={regions}
           reducedMotion={caps.reducedMotion}
           selected={selected}
+          interactive={!isHome}
           onSelect={setSelected}
         />
       </Suspense>
       <p className="mc-atlas__hint mc-muted mc-fineprint" aria-hidden="true">
-        Drag to rotate · tap a glowing region
+        {isHome ? 'Drag to spin' : 'Drag to rotate · tap a glowing region'}
       </p>
-      {sel ? (
+      {!isHome && sel ? (
         <div className="mc-atlas__panel" role="status">
           <div className="mc-atlas__paneltop">
             <div>

@@ -47,6 +47,7 @@ export function CarsDuel() {
   const [busy, setBusy] = useState(false);
   const [reflection, setReflection] = useState<string | null>(null);
   const [unavailable, setUnavailable] = useState(false);
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
 
   const rounds = shown.filter((m) => m.role === 'user').length;
   const canReflect = shown.some((m) => m.role === 'user');
@@ -58,6 +59,7 @@ export function CarsDuel() {
       return text;
     } catch (err) {
       setUnavailable(true);
+      setErrorDetail(err instanceof Error ? err.message : String(err));
       if (import.meta.env.DEV) console.error('CARS Duel AI error', err);
       return null;
     } finally {
@@ -115,13 +117,29 @@ export function CarsDuel() {
         <Eyebrow>CARS Duel</Eyebrow>
         <h1 className="mc-h1">Your sparring partner is offline</h1>
         <Callout tone="info" title="AI opponent not connected">
-          The debate opponent needs an AI key, which is added server-side in development (see
-          <code> apps/learner-web/.env.example</code>) and ships with the backend in production. Your
-          key never touches the browser.
+          The debate opponent runs through the dev AI proxy (see{' '}
+          <code>apps/learner-web/.env</code>). After setting/changing the key you must fully restart
+          the dev server — Vite only reads the key at startup. Your key never touches the browser.
         </Callout>
-        <Button variant="secondary" onClick={() => navigate('/app')}>
-          Back to Home
-        </Button>
+        {errorDetail ? (
+          <Callout tone="warning" title="What went wrong">
+            {errorDetail}
+          </Callout>
+        ) : null}
+        <Stack gap={2}>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setUnavailable(false);
+              setErrorDetail(null);
+            }}
+          >
+            Try again
+          </Button>
+          <Button variant="secondary" onClick={() => navigate('/app')}>
+            Back to Home
+          </Button>
+        </Stack>
       </div>
     );
   }

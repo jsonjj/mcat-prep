@@ -35,14 +35,29 @@ function aiProxy(env: Record<string, string>): Plugin {
             };
             const messages = Array.isArray(body.messages) ? body.messages.slice(-20) : [];
             const maxTokens = Math.min(Number(body.maxOutputTokens) || 320, 320);
-            const temperature = typeof body.temperature === 'number' ? body.temperature : 0.7;
+            // Note: `temperature` intentionally omitted — some newer models (e.g. claude-sonnet-5)
+            // reject it as deprecated. Models use their own default.
 
             const upstream = await fetch(`${baseUrl}/chat/completions`, {
               method: 'POST',
-              headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
-              body: JSON.stringify({ model, messages, max_tokens: maxTokens, temperature }),
+              headers: {
+                'content-type': 'application/json',
+                authorization: `Bearer ${apiKey}`,
+                // TrueFoundry/promptlens gateways may require these (from the Playground snippet).
+                'X-TFY-METADATA': '{}',
+                'X-TFY-LOGGING-CONFIG': '{"enabled": true}',
+              },
+              body: JSON.stringify({ model, messages, max_tokens: maxTokens }),
             });
-            if (!upstream.ok) return json(502, { error: 'upstream_error', status: upstream.status });
+            if (!upstream.ok) {
+              let detail = '';
+              try {
+                detail = (await upstream.text()).slice(0, 300);
+              } catch {
+                /* ignore unreadable body */
+              }
+              return json(502, { error: 'upstream_error', status: upstream.status, detail });
+            }
             const data = (await upstream.json()) as {
               choices?: { message?: { content?: string } }[];
             };
