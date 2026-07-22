@@ -73,7 +73,20 @@ export type MigrationLogEvent =
       readonly appliedCount: number;
       readonly alreadyAppliedCount: number;
     }
-  | { readonly event: 'migration.failed'; readonly code: 'migration_failed' };
+  | {
+      readonly event: 'migration.failed';
+      readonly code: 'migration_failed';
+      readonly stage: MigrationFailureStage;
+    };
+
+export type MigrationFailureStage =
+  | 'request_validation'
+  | 'secret_loading'
+  | 'database_connect'
+  | 'database_lock'
+  | 'migrations'
+  | 'role_grants'
+  | 'verification';
 
 export type MigrationLogger = (event: MigrationLogEvent) => void;
 
@@ -564,6 +577,7 @@ export function createMigrationHandler(
     let pool: RuntimePool | undefined;
     let client: MigrationClient | undefined;
     let fullLockHeld = false;
+    let failureStage: MigrationFailureStage = 'request_validation';
     try {
       const environment = parseMigrationEnvironment(dependencies.environment);
       const event = parseEvent(rawEvent);
@@ -574,6 +588,7 @@ export function createMigrationHandler(
         migrationCount: local.length,
       });
 
+      failureStage = 'secret_loading';
       const [adminSecret, learnerSecret, workerSecret] = await Promise.all([
         loadSecret(dependencies.secrets, environment.adminSecretArn, 'mcat_admin'),
         loadSecret(dependencies.secrets, environment.learnerSecretArn, LEARNER_ROLE),
@@ -585,12 +600,16 @@ export function createMigrationHandler(
         applicationName: 'mcat-migration',
         maxConnections: 1,
       });
+      failureStage = 'database_connect';
       client = await pool.connect();
+      failureStage = 'database_lock';
       await query(client, 'select pg_advisory_lock($1)', [RUNTIME_ADVISORY_LOCK_ID]);
       fullLockHeld = true;
 
+      failureStage = 'migrations';
       const before = await appliedMigrations(client);
       await runMigrations(singleClientPool(client), environment.migrationsDir);
+      failureStage = 'role_grants';
       await transaction(client, async () => {
         await executeFormattedDdl(client!, REVOKE_PUBLIC_DATABASE_DDL);
         await query(client!, REVOKE_PUBLIC_SCHEMA_DDL);
@@ -599,6 +618,7 @@ export function createMigrationHandler(
         await configureRole(client!, ROLE_SPECS[0]!, learnerSecret.password);
         await configureRole(client!, ROLE_SPECS[1]!, workerSecret.password);
       });
+      failureStage = 'verification';
       const after = await appliedMigrations(client);
       validateApplied(local, after);
 
@@ -625,7 +645,11 @@ export function createMigrationHandler(
       });
       return result;
     } catch {
-      safeLog(dependencies.logger, { event: 'migration.failed', code: 'migration_failed' });
+      safeLog(dependencies.logger, {
+        event: 'migration.failed',
+        code: 'migration_failed',
+        stage: failureStage,
+      });
       throw new MigrationRuntimeError();
     } finally {
       try {

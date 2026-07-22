@@ -371,6 +371,10 @@ describe('migration runtime security boundary', () => {
     expect(serializedLogs).not.toContain(LEARNER_PASSWORD);
     expect(serializedLogs).not.toContain(WORKER_PASSWORD);
     expect(serializedLogs).not.toContain('unsafe-driver-detail');
-    expect(logs.at(-1)).toEqual({ event: 'migration.failed', code: 'migration_failed' });
+    expect(logs.at(-1)).toEqual({
+      event: 'migration.failed',
+      code: 'migration_failed',
+      stage: 'migrations',
+    });
   });
 });
