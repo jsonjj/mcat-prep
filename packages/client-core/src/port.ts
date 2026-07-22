@@ -1,33 +1,23 @@
-import type { BootstrapResponse, ProbableCause } from '@mcat/contracts';
-import type { LearnerSafeQuestion } from '@mcat/content';
 import type {
+  BootstrapResponse,
+  DiagnosticNext,
   ErrorEntryView,
   MasteryMapEntry,
   PracticeItemView,
   PracticeResult,
+  ProbableCause,
+  SkillSummary,
   StudyStepView,
   TodayView,
   WrappedView,
-} from '@mcat/authority-core';
+} from '@mcat/contracts';
+
+export type { DiagnosticNext, SkillSummary } from '@mcat/contracts';
 
 /**
- * The client's view of server authority. In production this is an HTTP adapter to
- * API Gateway; locally it is the in-process adapter over @mcat/authority-core.
- * Everything is async so swapping adapters never changes callers.
+ * Goal input stays unbranded for existing form callers; the asynchronous HTTP
+ * authority validates it at the wire boundary.
  */
-export interface DiagnosticNext {
-  done: boolean;
-  question: LearnerSafeQuestion | null;
-  progress: number;
-}
-
-export interface SkillSummary {
-  skillId: string;
-  cluster: string;
-  title: string;
-  objective: string;
-}
-
 export interface GoalInput {
   testDate: string | null;
   targetScore: number | null;
@@ -60,5 +50,14 @@ export interface AuthorityPort {
 export interface StatePort<T> {
   load(): T | null;
   save(state: T): void;
+  clear(): void;
+}
+
+/** Session values must be backed by memory-only platform storage. */
+export interface SessionPort {
+  getAccessToken(): string | null;
+  setAccessToken(token: string | null): void;
+  getCsrfToken(): string | null;
+  setCsrfToken(token: string | null): void;
   clear(): void;
 }

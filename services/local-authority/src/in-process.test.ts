@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { fixedClock } from '@mcat/contracts';
 import type { LearnerState } from '@mcat/authority-core';
+import type { StatePort } from '@mcat/client-core';
 import { InProcessAuthorityClient } from './in-process';
-import type { StatePort } from './port';
 
 function memoryStore<T>(): StatePort<T> {
   let value: T | null = null;
   return {
     load: () => value,
-    save: (s) => {
-      value = s;
+    save: (state) => {
+      value = state;
     },
     clear: () => {
       value = null;
@@ -17,7 +17,7 @@ function memoryStore<T>(): StatePort<T> {
   };
 }
 
-describe('InProcessAuthorityClient (client seam)', () => {
+describe('InProcessAuthorityClient (synthetic local seam)', () => {
   it('drives the full vertical through the async port', async () => {
     const client = new InProcessAuthorityClient(
       memoryStore<LearnerState>(),
@@ -44,23 +44,22 @@ describe('InProcessAuthorityClient (client seam)', () => {
 
     expect((await client.getSession()).kind).toBe('complete');
     const mastery = await client.getMasteryMap();
-    const enzyme = mastery.find((m) => m.skillId === 'bb1-enzyme-inhibition');
+    const enzyme = mastery.find((entry) => entry.skillId === 'bb1-enzyme-inhibition');
     expect(enzyme).toBeDefined();
   });
 
   it('persists across client instances via the shared store', async () => {
     const store = memoryStore<LearnerState>();
     const clock = fixedClock('2026-07-20T12:00:00.000Z');
-    const a = new InProcessAuthorityClient(store, clock);
-    await a.bootstrap();
-    let next = await a.getDiagnosticNext();
+    const first = new InProcessAuthorityClient(store, clock);
+    await first.bootstrap();
+    let next = await first.getDiagnosticNext();
     while (!next.done) {
-      await a.submitDiagnostic(next.question!.id, 'A');
-      next = await a.getDiagnosticNext();
+      await first.submitDiagnostic(next.question!.id, 'A');
+      next = await first.getDiagnosticNext();
     }
-    // A fresh client over the same store sees the in-progress onboarding.
-    const b = new InProcessAuthorityClient(store, clock);
-    const boot = await b.bootstrap();
-    expect(boot.accountState).toBe('guest');
+
+    const second = new InProcessAuthorityClient(store, clock);
+    expect((await second.bootstrap()).accountState).toBe('guest');
   });
 });
