@@ -5,6 +5,7 @@ import {
   Stack,
   Validations,
   type StackProps,
+  aws_cloudwatch as cloudwatch,
   aws_logs as logs,
   aws_sqs as sqs,
   aws_stepfunctions as sfn,
@@ -56,6 +57,18 @@ export class PublicationStack extends Stack {
       retentionPeriod: Duration.days(4),
       visibilityTimeout: Duration.minutes(5),
       deadLetterQueue: { queue: approvalDlq, maxReceiveCount: 5 },
+    });
+    new cloudwatch.Alarm(this, 'PublicationApprovalDlqAlarm', {
+      alarmName: 'mcat-dev-publication-approval-dlq-visible',
+      alarmDescription: 'Messages are waiting in the publication approval dead-letter queue.',
+      metric: approvalDlq.metricApproximateNumberOfMessagesVisible({
+        period: Duration.minutes(1),
+        statistic: 'Maximum',
+      }),
+      threshold: 1,
+      evaluationPeriods: 1,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
     });
 
     const syntheticRejected = new sfn.Fail(this, 'SyntheticContentRejected', {

@@ -10,13 +10,9 @@ import { getEnvironment } from '../config/environments.js';
 import { ApiStack } from '../lib/api-stack.js';
 import { DataStack } from '../lib/data-stack.js';
 import { FoundationStack } from '../lib/foundation-stack.js';
-import { IdentityStack } from '../lib/identity-stack.js';
+import { WebStack } from '../lib/web-stack.js';
 
 const environment = getEnvironment('dev');
-const webOrigins = {
-  learner: 'https://learner.example.test',
-  staff: 'https://admin.example.test',
-} as const;
 const repoRoot = fileURLToPath(new URL('../../../', import.meta.url));
 const learnerEntry = path.join(repoRoot, 'services/lambdas/learner-api/src/lambda.ts');
 
@@ -29,18 +25,13 @@ function createApi(): { readonly app: App; readonly stack: ApiStack } {
     environment,
     foundation: foundation.resources,
   });
-  const identity = new IdentityStack(app, 'McatDevIdentity', {
-    env,
-    environment,
-    webOrigins,
-  });
+  const web = new WebStack(app, 'McatDevWeb', { env, environment });
   const stack = new ApiStack(app, 'McatDevApi', {
     env,
     environment,
     foundation: foundation.resources,
     data: data.resources,
-    identity: identity.resources,
-    allowedOrigins: [webOrigins.learner],
+    web: web.resources,
     learnerRuntimeEntry: learnerEntry,
   });
   return { app, stack };
@@ -76,6 +67,109 @@ describe('ApiStack', () => {
     );
   });
 
+  it('associates the regional API WAF without rate-limiting shared CloudFront edge IPs', () => {
+    const { stack } = createApi();
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties('AWS::WAFv2::WebACL', {
+      DefaultAction: { Allow: {} },
+      Rules: Match.arrayWith([Match.objectLike({ Name: 'AWSManagedCommonRuleSet' })]),
+      Scope: 'REGIONAL',
+    });
+    const webAcls = Object.values(template.findResources('AWS::WAFv2::WebACL'));
+    const regional = webAcls.find(
+      (resource) => (resource.Properties as { Scope?: string }).Scope === 'REGIONAL',
+    );
+    const edge = webAcls.find(
+      (resource) => (resource.Properties as { Scope?: string }).Scope === 'CLOUDFRONT',
+    );
+    expect(JSON.stringify(regional)).not.toContain('SourceIpRateLimit');
+    expect(JSON.stringify(edge)).toContain('SourceIpRateLimit');
+    expect(regional?.Properties).toMatchObject({
+      Rules: expect.arrayContaining([
+        expect.objectContaining({
+          Action: { Block: {} },
+          Name: 'RequireCloudFrontOriginVerification',
+          Priority: 0,
+          Statement: {
+            NotStatement: {
+              Statement: expect.objectContaining({
+                ByteMatchStatement: expect.objectContaining({
+                  FieldToMatch: { SingleHeader: { Name: 'x-mcat-origin-verify' } },
+                  PositionalConstraint: 'EXACTLY',
+                }),
+              }),
+            },
+          },
+        }),
+      ]),
+    });
+    template.resourceCountIs('AWS::WAFv2::WebACLAssociation', 1);
+  });
+
+  it('serves the learner API from the same CloudFront origin without caching writes', () => {
+    const { stack } = createApi();
+    const template = Template.fromStack(stack);
+    const distributions = Object.values(template.findResources('AWS::CloudFront::Distribution'));
+
+    expect(distributions).toHaveLength(2);
+    const learner = distributions.find((resource) =>
+      JSON.stringify(resource).includes('MCAT development learner PWA'),
+    );
+    expect(learner).toBeDefined();
+    const config = (learner?.Properties as { DistributionConfig: Record<string, unknown> })
+      .DistributionConfig;
+    expect(config).not.toHaveProperty('CustomErrorResponses');
+    expect(config).toMatchObject({
+      HttpVersion: 'http2and3',
+      Restrictions: {
+        GeoRestriction: { Locations: ['US'], RestrictionType: 'whitelist' },
+      },
+      WebACLId: expect.any(Object),
+    });
+    expect(config.CacheBehaviors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          AllowedMethods: ['GET', 'HEAD', 'OPTIONS', 'PUT', 'PATCH', 'POST', 'DELETE'],
+          CachePolicyId: '4135ea2d-6df8-44a3-9df3-4b5a84be39ad',
+          OriginRequestPolicyId: 'b689b0a8-53d0-40ab-baf2-68738e2966ac',
+          PathPattern: 'v1/*',
+        }),
+      ]),
+    );
+    const serialized = JSON.stringify(learner);
+    expect(serialized).toContain('x-mcat-origin-verify');
+    expect(serialized).toContain('{{resolve:secretsmanager:');
+    template.resourceCountIs('AWS::CloudFront::OriginAccessControl', 2);
+    template.resourceCountIs('AWS::CloudFront::Function', 2);
+  });
+
+  it('owns exact OAC bucket policies without introducing a reverse web-stack dependency', () => {
+    const { stack } = createApi();
+    const template = Template.fromStack(stack);
+    const policies = JSON.stringify(template.findResources('AWS::S3::BucketPolicy'));
+
+    template.resourceCountIs('AWS::S3::BucketPolicy', 2);
+    expect(policies).toContain('cloudfront.amazonaws.com');
+    expect(policies).toContain('AWS:SourceArn');
+    expect(policies).toContain('distribution/');
+    expect(policies).not.toContain('distribution/*');
+  });
+
+  it('applies edge security headers, SPA rewrites, and two WAF scopes', () => {
+    const { stack } = createApi();
+    const template = Template.fromStack(stack);
+    const serialized = JSON.stringify(template.toJSON());
+
+    template.resourceCountIs('AWS::WAFv2::WebACL', 2);
+    expect(serialized).toContain('CLOUDFRONT');
+    expect(serialized).toContain('REGIONAL');
+    expect(serialized).toContain("default-src 'none'");
+    expect(serialized).toContain("frame-ancestors 'none'");
+    expect(serialized).toContain('noindex, nofollow, noarchive');
+    expect(serialized).toContain("request.uri = '/index.html'");
+  });
+
   it('uses exact learner CORS and no-store error responses', () => {
     const { stack } = createApi();
     const template = Template.fromStack(stack);
@@ -83,8 +177,9 @@ describe('ApiStack', () => {
     template.hasResourceProperties('AWS::Lambda::Function', {
       Environment: {
         Variables: Match.objectLike({
-          LEARNER_WEB_ORIGIN: webOrigins.learner,
+          LEARNER_WEB_ORIGIN: Match.anyValue(),
           NODE_EXTRA_CA_CERTS: '/var/runtime/ca-cert.pem',
+          ORIGIN_VERIFICATION_SECRET_ARN: Match.anyValue(),
           RATE_LIMIT_PEPPER_SECRET_ARN: Match.anyValue(),
         }),
       },
@@ -143,6 +238,7 @@ describe('ApiStack', () => {
     const policies = JSON.stringify(template.findResources('AWS::IAM::Policy'));
 
     expect(policies).toContain('secretsmanager:GetSecretValue');
+    expect(policies).toContain('OriginVerificationSecret');
     expect(policies).toContain('kms:Decrypt');
     expect(policies).not.toContain('rds-db:connect');
     template.hasResourceProperties('AWS::EC2::SecurityGroupEgress', {
@@ -157,11 +253,32 @@ describe('ApiStack', () => {
     });
   });
 
+  it('uses only one Secrets Manager dynamic reference for the origin proof value', () => {
+    const { stack } = createApi();
+    const template = Template.fromStack(stack);
+    const serialized = JSON.stringify(template.toJSON());
+    const dynamicReferences = serialized.match(/\{\{resolve:secretsmanager:/g) ?? [];
+
+    expect(dynamicReferences).toHaveLength(2);
+    expect(serialized).toContain(':SecretString:::}}');
+    expect(serialized).not.toMatch(/x-mcat-origin-verify[^}]{0,300}[A-Za-z0-9]{64}/);
+  });
+
   it('exports the stage base URL so versioned clients do not request /v1/v1', () => {
     const { stack } = createApi();
     const outputs = Template.fromStack(stack).findOutputs('LearnerApiUrl');
 
     expect(JSON.stringify(outputs)).not.toContain('v1');
+  });
+
+  it('exports learner/admin delivery origins and distribution IDs from the API stack', () => {
+    const { stack } = createApi();
+    const outputs = Template.fromStack(stack).toJSON().Outputs;
+
+    expect(outputs).toHaveProperty('LearnerWebUrl');
+    expect(outputs).toHaveProperty('AdminWebUrl');
+    expect(outputs).toHaveProperty('LearnerDistributionId');
+    expect(outputs).toHaveProperty('AdminDistributionId');
   });
 
   it('retains access logs and applies the sandbox boundary to every role', () => {

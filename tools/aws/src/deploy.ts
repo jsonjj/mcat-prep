@@ -16,8 +16,8 @@ import {
 export const EXACT_STACK_ORDER = APPROVED_STACKS;
 
 export const DEPLOYMENT_WAVES = {
-  foundation: EXACT_STACK_ORDER.slice(0, 4),
-  authority: EXACT_STACK_ORDER.slice(4, 8),
+  foundation: EXACT_STACK_ORDER.slice(0, 3),
+  authority: EXACT_STACK_ORDER.slice(3, 8),
   edge: EXACT_STACK_ORDER.slice(8),
 } as const;
 
@@ -61,6 +61,7 @@ export function validateWavePrerequisite(
       'goal-idempotency',
       'authorized-reads',
       'protected-negative-boundaries',
+      'direct-origin-blocked',
     ].every((check) => attestation.checks?.includes(check) === true)
   ) {
     throw new Error('smoke attestation is missing a required boundary check');
@@ -132,9 +133,15 @@ export async function deployReviewedWave(options: {
   validateWavePrerequisite(options.wave, preflight.review.gitCommit, options.attestation);
   const prerequisiteStacks =
     options.wave === 'authority'
-      ? ['mcat-dev-foundation', 'mcat-dev-data', 'mcat-dev-web', 'mcat-dev-identity']
+      ? ['mcat-dev-foundation', 'mcat-dev-data', 'mcat-dev-web']
       : options.wave === 'edge'
-        ? ['mcat-dev-api', 'mcat-dev-async', 'mcat-dev-publication', 'mcat-dev-operations']
+        ? [
+            'mcat-dev-api',
+            'mcat-dev-identity',
+            'mcat-dev-async',
+            'mcat-dev-publication',
+            'mcat-dev-operations',
+          ]
         : [];
   for (const stackName of prerequisiteStacks) {
     await readStackOutputs(runner, stackName, []);

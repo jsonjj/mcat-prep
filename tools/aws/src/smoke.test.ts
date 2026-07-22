@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { runLearnerApiSmoke, validateBootstrapCookies } from './smoke';
+import { resolveSmokeConfiguration, runLearnerApiSmoke, validateBootstrapCookies } from './smoke';
+import type { CommandRunner } from './command';
 
 function jsonResponse(
   status: number,
@@ -14,6 +15,39 @@ function jsonResponse(
 }
 
 describe('deployed learner API smoke client', () => {
+  it('targets the CloudFront learner origin for both browser origin and API requests', async () => {
+    const runner: CommandRunner = {
+      run: async () => ({
+        exitCode: 0,
+        stderr: '',
+        stdout: JSON.stringify({
+          Stacks: [
+            {
+              StackName: 'mcat-dev-api',
+              StackStatus: 'UPDATE_COMPLETE',
+              Outputs: [
+                {
+                  OutputKey: 'LearnerWebUrl',
+                  OutputValue: 'https://d1234567890abc.cloudfront.net',
+                },
+                {
+                  OutputKey: 'LearnerApiUrl',
+                  OutputValue: 'https://abc123.execute-api.us-east-1.amazonaws.com/dev/',
+                },
+              ],
+            },
+          ],
+        }),
+      }),
+    };
+
+    await expect(resolveSmokeConfiguration(runner)).resolves.toEqual({
+      apiBaseUrl: 'https://d1234567890abc.cloudfront.net',
+      directApiBaseUrl: 'https://abc123.execute-api.us-east-1.amazonaws.com/dev',
+      learnerOrigin: 'https://d1234567890abc.cloudfront.net',
+    });
+  });
+
   it('rejects Domain cookies and duplicate security-cookie names', () => {
     expect(() =>
       validateBootstrapCookies([
@@ -38,6 +72,9 @@ describe('deployed learner API smoke client', () => {
         'access-control-allow-methods': 'GET,POST,PUT,OPTIONS',
         'access-control-allow-headers': 'content-type,x-csrf-token',
       };
+      if (url.hostname === 'direct-api.example.test') {
+        return jsonResponse(403, { message: 'Forbidden' });
+      }
       if (url.pathname === '/v1/health') {
         return jsonResponse(200, { status: 'ok' }, originHeaders);
       }
@@ -89,6 +126,7 @@ describe('deployed learner API smoke client', () => {
 
     const report = await runLearnerApiSmoke({
       apiBaseUrl: 'https://api.example.test/v1/',
+      directApiBaseUrl: 'https://direct-api.example.test/dev/',
       learnerOrigin: 'https://learner.example.test',
       fetcher,
       now: () => '2026-07-21T12:00:00.000Z',
@@ -97,6 +135,7 @@ describe('deployed learner API smoke client', () => {
 
     expect(report.checks).toContain('protected-negative-boundaries');
     expect(report.checks).toContain('goal-idempotency');
+    expect(report.checks).toContain('direct-origin-blocked');
     expect(report.apiBaseUrl).toBe('https://api.example.test');
   });
 });

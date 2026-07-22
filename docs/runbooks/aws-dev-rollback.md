@@ -27,7 +27,8 @@ unexpected stateful replacement.
 ## Web artifact rollback
 
 Prefer republishing the last known-good immutable build whose manifest and SHA-256 hashes were
-recorded. Resolve the learner/admin bucket and distribution only from `mcat-dev-web` outputs.
+recorded. Resolve learner/admin artifact buckets only from `mcat-dev-web`; resolve distribution
+IDs and web origins only from `mcat-dev-api`.
 
 1. Verify the previous artifact manifest belongs to the same account, region, and application.
 2. Re-scan the artifact for protected fields, source maps, secrets, and unknown files.

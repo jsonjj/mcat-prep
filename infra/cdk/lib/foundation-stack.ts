@@ -6,6 +6,7 @@ import {
   type StackProps,
   aws_budgets as budgets,
   aws_ec2 as ec2,
+  aws_iam as iam,
   aws_kms as kms,
 } from 'aws-cdk-lib';
 import type { Construct } from 'constructs';
@@ -105,6 +106,59 @@ export class FoundationStack extends Stack {
       rotationPeriod: Duration.days(365),
       removalPolicy: RemovalPolicy.RETAIN,
     });
+    const cloudWatchLogsActions = [
+      'kms:Encrypt',
+      'kms:Decrypt',
+      'kms:ReEncrypt*',
+      'kms:GenerateDataKey*',
+      'kms:DescribeKey',
+    ];
+    const regionalLogsPrincipal = new iam.ServicePrincipal(
+      `logs.${props.environment.region}.amazonaws.com`,
+    );
+    appKey.addToResourcePolicy(
+      new iam.PolicyStatement({
+        sid: 'AllowOwnedApplicationLogGroups',
+        principals: [regionalLogsPrincipal],
+        actions: cloudWatchLogsActions,
+        resources: ['*'],
+        conditions: {
+          ArnLike: {
+            'kms:EncryptionContext:aws:logs:arn': `arn:aws:logs:${props.environment.region}:${props.environment.account}:log-group:/aws/vendedlogs/states/mcat-dev-*`,
+          },
+        },
+      }),
+    );
+    auditKey.addToResourcePolicy(
+      new iam.PolicyStatement({
+        sid: 'AllowOwnedAuditLogGroups',
+        principals: [regionalLogsPrincipal],
+        actions: cloudWatchLogsActions,
+        resources: ['*'],
+        conditions: {
+          ArnLike: {
+            'kms:EncryptionContext:aws:logs:arn': [
+              `arn:aws:logs:${props.environment.region}:${props.environment.account}:log-group:/aws/vpc/mcat-dev-*`,
+              `arn:aws:logs:${props.environment.region}:${props.environment.account}:log-group:/aws/kinesisfirehose/mcat-dev-*`,
+            ],
+          },
+        },
+      }),
+    );
+    auditKey.addToResourcePolicy(
+      new iam.PolicyStatement({
+        sid: 'AllowCloudWatchAlarmNotifications',
+        principals: [new iam.ServicePrincipal('cloudwatch.amazonaws.com')],
+        actions: ['kms:Decrypt', 'kms:GenerateDataKey*'],
+        resources: ['*'],
+        conditions: {
+          StringEquals: { 'aws:SourceAccount': props.environment.account },
+          ArnLike: {
+            'aws:SourceArn': `arn:aws:cloudwatch:${props.environment.region}:${props.environment.account}:alarm:mcat-dev-*`,
+          },
+        },
+      }),
+    );
 
     const budgetName = 'mcat-dev-monthly';
     new budgets.CfnBudget(this, 'MonthlyBudget', {

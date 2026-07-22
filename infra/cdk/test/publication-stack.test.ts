@@ -69,6 +69,20 @@ describe('PublicationStack', () => {
     });
   });
 
+  it('alarms when the publication approval dead-letter queue receives a message', () => {
+    const template = Template.fromStack(createPublication());
+
+    template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+      AlarmName: 'mcat-dev-publication-approval-dlq-visible',
+      ComparisonOperator: 'GreaterThanOrEqualToThreshold',
+      EvaluationPeriods: 1,
+      MetricName: 'ApproximateNumberOfMessagesVisible',
+      Namespace: 'AWS/SQS',
+      Threshold: 1,
+      TreatMissingData: 'notBreaching',
+    });
+  });
+
   it('logs executions and does not grant delivery-bucket writes while activation is disabled', () => {
     const template = Template.fromStack(createPublication());
     const serialized = JSON.stringify(template.toJSON());

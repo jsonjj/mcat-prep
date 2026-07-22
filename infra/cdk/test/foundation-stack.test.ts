@@ -59,6 +59,53 @@ describe('FoundationStack', () => {
     });
   });
 
+  it('allows regional CloudWatch Logs to use each key only for its owned log groups', () => {
+    const { stack } = createFoundation();
+    const keys = Template.fromStack(stack).findResources('AWS::KMS::Key');
+    const byDescription = (description: string) => {
+      const resource = Object.values(keys).find(
+        (candidate) =>
+          (candidate.Properties as { readonly Description?: string }).Description === description,
+      );
+      expect(resource).toBeDefined();
+      return JSON.stringify(resource);
+    };
+
+    const applicationKey = byDescription('Encrypts MCAT Mastery development application data.');
+    expect(applicationKey).toContain('logs.us-east-1.amazonaws.com');
+    expect(applicationKey).toContain(
+      'arn:aws:logs:us-east-1:056956104102:log-group:/aws/vendedlogs/states/mcat-dev-*',
+    );
+    expect(applicationKey).toContain('kms:EncryptionContext:aws:logs:arn');
+
+    const auditKey = byDescription('Encrypts MCAT Mastery development analytics and audit data.');
+    expect(auditKey).toContain('logs.us-east-1.amazonaws.com');
+    expect(auditKey).toContain('arn:aws:logs:us-east-1:056956104102:log-group:/aws/vpc/mcat-dev-*');
+    expect(auditKey).toContain(
+      'arn:aws:logs:us-east-1:056956104102:log-group:/aws/kinesisfirehose/mcat-dev-*',
+    );
+    expect(auditKey).toContain('kms:EncryptionContext:aws:logs:arn');
+  });
+
+  it('allows CloudWatch alarms to use the audit key for encrypted SNS notifications', () => {
+    const { stack } = createFoundation();
+    const keys = Template.fromStack(stack).findResources('AWS::KMS::Key');
+    const auditKey = Object.values(keys).find(
+      (resource) =>
+        (resource.Properties as { readonly Description?: string }).Description ===
+        'Encrypts MCAT Mastery development analytics and audit data.',
+    );
+    const serialized = JSON.stringify(auditKey);
+
+    expect(serialized).toContain('cloudwatch.amazonaws.com');
+    expect(serialized).toContain('kms:Decrypt');
+    expect(serialized).toContain('kms:GenerateDataKey*');
+    expect(serialized).toContain('aws:SourceAccount');
+    expect(serialized).toContain('056956104102');
+    expect(serialized).toContain('aws:SourceArn');
+    expect(serialized).toContain('arn:aws:cloudwatch:us-east-1:056956104102:alarm:mcat-dev-*');
+  });
+
   it('does not grant the S3 logging service broad access to the analytics audit key', () => {
     const { stack } = createFoundation();
     const template = Template.fromStack(stack);

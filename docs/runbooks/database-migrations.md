@@ -27,11 +27,14 @@ row from `authority_schema_migrations`, or edit an already-applied SQL file.
 
 - The reviewed deployment manifest and clean Git preflight from
   [aws-dev-deploy.md](./aws-dev-deploy.md) pass.
-- `McatDevFoundation`, `McatDevData`, and `McatDevIdentity` are complete.
+- `McatDevFoundation`, `McatDevData`, and the storage-only `McatDevWeb` are complete. Identity is
+  intentionally deployed after this migration attestation as part of the authority wave.
 - The data stack's one-shot migration Lambda runs in the private VPC, reaches only the TLS RDS
   Proxy, reads the database secret through an approved endpoint, and imports the committed
   `@mcat/database` migration engine.
-- Aurora backup/PITR status and database alarms are healthy.
+- Aurora is available and its backup retention/PITR configuration is verified directly. If
+  `McatDevOperations` already exists during an update, its database alarms must also be healthy;
+  alarms are not a prerequisite for the first deployment because Operations follows migration.
 - The exact migration diff has application and PostgreSQL review. Destructive DDL, long table
   rewrites, and locks over the interactive one-second budget require a separate approved plan.
 
@@ -66,8 +69,10 @@ authority deployment wave refuses to run without this commit-bound attestation.
 ## Post-migration verification
 
 1. Confirm the migration Lambda invocation has no function error, timeout, or throttle.
-2. Confirm RDS Proxy and Aurora connection/error/capacity alarms remain healthy.
-3. Confirm the outbox/projection queues and DLQs did not accumulate unexpected work.
+2. Confirm Aurora and RDS Proxy are available. If `McatDevOperations` already exists, also confirm
+   its connection/error/capacity alarms remain healthy.
+3. If the authority/operations stacks already exist, confirm the outbox/projection queues and DLQs
+   did not accumulate unexpected work.
 4. Deploy the authority wave and run the API smoke suite.
 5. Record the Git commit, manifest hash, exact version/checksum list, invocation request ID, and
    timestamp in the non-secret deployment evidence.

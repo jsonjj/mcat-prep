@@ -50,6 +50,21 @@ describe('AWS development preflight', () => {
     expect(() => validatePreflightEvidence(evidence)).toThrow(message);
   });
 
+  it('ignores organization-managed staging labels while still rejecting MCAT staging stacks', () => {
+    expect(() =>
+      validatePreflightEvidence({
+        ...validEvidence,
+        deployedStackNames: ['StackSet-CloudFixOrgStackSet-staging-12345678'],
+      }),
+    ).not.toThrow();
+    expect(() =>
+      validatePreflightEvidence({
+        ...validEvidence,
+        deployedStackNames: ['StackSet-CloudFixOrgStackSet-staging-12345678', 'mcat-staging-api'],
+      }),
+    ).toThrow('staging/production stack is present');
+  });
+
   it('accepts only a reviewed artifact whose bytes and Git commit still match', () => {
     expect(
       verifyReviewedArtifact(

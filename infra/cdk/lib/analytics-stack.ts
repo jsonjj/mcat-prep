@@ -41,16 +41,19 @@ export class AnalyticsStack extends Stack {
 
     const analyticsBucketArn = `arn:aws:s3:::mcat-dev-analytics-${props.environment.account}-${props.environment.region}`;
 
+    const firehoseLogGroupName = '/aws/kinesisfirehose/mcat-dev-first-party-events';
+    const firehoseLogStreamName = 's3-delivery';
     const firehoseLogGroup = new logs.LogGroup(this, 'FirehoseLogGroup', {
-      logGroupName: '/aws/kinesisfirehose/mcat-dev-first-party-events',
+      logGroupName: firehoseLogGroupName,
       encryptionKey: props.auditKey,
       retention: logs.RetentionDays.THREE_MONTHS,
       removalPolicy: RemovalPolicy.DESTROY,
     });
     const firehoseLogStream = new logs.LogStream(this, 'FirehoseLogStream', {
       logGroup: firehoseLogGroup,
-      logStreamName: 's3-delivery',
+      logStreamName: firehoseLogStreamName,
     });
+    const firehoseLogStreamArn = `arn:aws:logs:${props.environment.region}:${props.environment.account}:log-group:${firehoseLogGroupName}:log-stream:${firehoseLogStreamName}`;
     const deliveryRole = new iam.Role(this, 'FirehoseDeliveryRole', {
       roleName: 'mcat-dev-firehose-delivery',
       assumedBy: new iam.ServicePrincipal('firehose.amazonaws.com', {
@@ -88,9 +91,7 @@ export class AnalyticsStack extends Stack {
       new iam.PolicyStatement({
         sid: 'WriteFirehoseDeliveryLogs',
         actions: ['logs:PutLogEvents'],
-        resources: [
-          `${firehoseLogGroup.logGroupArn}:log-stream:${firehoseLogStream.logStreamName}`,
-        ],
+        resources: [firehoseLogStreamArn],
       }),
     );
     const firehoseWildcardReason =

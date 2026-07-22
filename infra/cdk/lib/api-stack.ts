@@ -1,6 +1,7 @@
 import {
   CfnOutput,
   Duration,
+  Lazy,
   RemovalPolicy,
   Size,
   Stack,
@@ -12,27 +13,22 @@ import {
   aws_lambda_nodejs as nodejs,
   aws_logs as logs,
   aws_kms as kms,
+  aws_wafv2 as wafv2,
 } from 'aws-cdk-lib';
 import type { Construct } from 'constructs';
 
 import type { EnvironmentConfig } from '../config/environments.js';
-import type {
-  ApiResources,
-  DataResources,
-  FoundationResources,
-  IdentityResources,
-} from './interfaces.js';
+import type { ApiResources, DataResources, FoundationResources } from './interfaces.js';
 import { acknowledgeCdkNagFinding } from './nag.js';
-import { assertExactHttpsOrigin } from './origins.js';
 import { applySandboxPermissionsBoundary } from './permissions-boundary.js';
 import { applyRequiredTags } from './tags.js';
+import { createWebDelivery, type WebResources } from './web-stack.js';
 
 export interface ApiStackProps extends StackProps {
   readonly environment: EnvironmentConfig;
   readonly foundation: FoundationResources;
   readonly data: DataResources;
-  readonly identity: IdentityResources;
-  readonly allowedOrigins: readonly string[];
+  readonly web: WebResources;
   readonly learnerRuntimeEntry: string;
 }
 
@@ -42,10 +38,6 @@ export class ApiStack extends Stack {
   public constructor(scope: Construct, id: string, props: ApiStackProps) {
     super(scope, id, props);
 
-    if (props.allowedOrigins.length !== 1) {
-      throw new Error('Exactly one learner web origin is required.');
-    }
-    for (const origin of props.allowedOrigins) assertExactHttpsOrigin(origin);
     applySandboxPermissionsBoundary(this);
     applyRequiredTags(this, 'restricted');
 
@@ -89,6 +81,8 @@ export class ApiStack extends Stack {
       retention: logs.RetentionDays.THREE_MONTHS,
       removalPolicy: RemovalPolicy.DESTROY,
     });
+    const originVerificationValue = props.data.originVerificationSecret.secretValue.unsafeUnwrap();
+    const deliveryReference: { learnerOrigin?: string } = {};
     const learnerHandler = new nodejs.NodejsFunction(this, 'LearnerApiFunction', {
       functionName: 'mcat-dev-learner-api',
       description: 'Authoritative MCAT learner command and projection API.',
@@ -108,8 +102,16 @@ export class ApiStack extends Stack {
         DB_NAME: 'mcat',
         DB_PROXY_ENDPOINT: props.data.proxy.endpoint,
         DB_SECRET_ARN: props.data.learnerApiDbSecret.secretArn,
+        ORIGIN_VERIFICATION_SECRET_ARN: props.data.originVerificationSecret.secretArn,
         RATE_LIMIT_PEPPER_SECRET_ARN: props.data.rateLimitPepperSecret.secretArn,
-        LEARNER_WEB_ORIGIN: props.allowedOrigins[0]!,
+        LEARNER_WEB_ORIGIN: Lazy.string({
+          produce: () => {
+            if (deliveryReference.learnerOrigin === undefined) {
+              throw new Error('Learner web delivery is unresolved.');
+            }
+            return deliveryReference.learnerOrigin;
+          },
+        }),
         NODE_EXTRA_CA_CERTS: '/var/runtime/ca-cert.pem',
         NODE_OPTIONS: '--enable-source-maps',
       },
@@ -121,6 +123,7 @@ export class ApiStack extends Stack {
     });
     props.data.learnerApiDbSecret.grantRead(learnerHandler);
     props.data.rateLimitPepperSecret.grantRead(learnerHandler);
+    props.data.originVerificationSecret.grantRead(learnerHandler);
     const appKey = kms.Key.fromKeyArn(
       this,
       'ApplicationKeyReference',
@@ -161,6 +164,57 @@ export class ApiStack extends Stack {
         proxy: true,
       }),
     });
+    const apiWebAcl = new wafv2.CfnWebACL(this, 'ApiWebAcl', {
+      name: 'mcat-dev-api',
+      description:
+        'Managed request filtering for the API origin; client-IP throttling runs at CloudFront.',
+      scope: 'REGIONAL',
+      defaultAction: { allow: {} },
+      visibilityConfig: {
+        cloudWatchMetricsEnabled: true,
+        metricName: 'mcat-dev-api-waf',
+        sampledRequestsEnabled: false,
+      },
+      rules: [
+        {
+          name: 'RequireCloudFrontOriginVerification',
+          priority: 0,
+          action: { block: {} },
+          statement: {
+            notStatement: {
+              statement: {
+                byteMatchStatement: {
+                  fieldToMatch: {
+                    singleHeader: { Name: 'x-mcat-origin-verify' },
+                  },
+                  positionalConstraint: 'EXACTLY',
+                  searchString: originVerificationValue,
+                  textTransformations: [{ priority: 0, type: 'NONE' }],
+                },
+              },
+            },
+          },
+          visibilityConfig: {
+            cloudWatchMetricsEnabled: true,
+            metricName: 'mcat-dev-api-origin-verification',
+            sampledRequestsEnabled: false,
+          },
+        },
+        managedRule('AWSManagedCommonRuleSet', 'AWSManagedRulesCommonRuleSet', 10),
+        managedRule('AWSManagedKnownBadInputsRuleSet', 'AWSManagedRulesKnownBadInputsRuleSet', 20),
+      ],
+    });
+    new wafv2.CfnWebACLAssociation(this, 'ApiWebAclAssociation', {
+      resourceArn: restApi.deploymentStage.stageArn,
+      webAclArn: apiWebAcl.attrArn,
+    });
+    const delivery = createWebDelivery(this, {
+      restApi,
+      apiStageName: 'dev',
+      originVerificationHeaderValue: originVerificationValue,
+      web: props.web,
+    });
+    deliveryReference.learnerOrigin = delivery.learnerOrigin;
     for (const [constructId, responseType] of [
       ['Default4xxNoStore', apigateway.ResponseType.DEFAULT_4XX],
       ['Default5xxNoStore', apigateway.ResponseType.DEFAULT_5XX],
@@ -185,17 +239,32 @@ export class ApiStack extends Stack {
       value: learnerHandler.functionName,
       exportName: 'mcat-dev-learner-api-function-name',
     });
+    new CfnOutput(this, 'ApiWebAclArn', {
+      value: apiWebAcl.attrArn,
+      exportName: 'mcat-dev-api-web-acl-arn',
+    });
+    new CfnOutput(this, 'LearnerWebUrl', {
+      value: delivery.learnerOrigin,
+      exportName: 'mcat-dev-learner-web-origin',
+    });
+    new CfnOutput(this, 'AdminWebUrl', {
+      value: delivery.adminOrigin,
+      exportName: 'mcat-dev-admin-web-origin',
+    });
+    new CfnOutput(this, 'LearnerDistributionId', {
+      value: delivery.learnerDistribution.distributionId,
+      exportName: 'mcat-dev-learner-web-distribution-id',
+    });
+    new CfnOutput(this, 'AdminDistributionId', {
+      value: delivery.adminDistribution.distributionId,
+      exportName: 'mcat-dev-admin-web-distribution-id',
+    });
 
     Validations.of(restApi).acknowledge(
       {
         id: 'AwsSolutions-APIG2',
         reason:
           'The Lambda runtime applies versioned Zod validation, strict content types, and a 64 KiB body ceiling before command dispatch; generic API Gateway models cannot represent the route-specific unions.',
-      },
-      {
-        id: 'AwsSolutions-APIG3',
-        reason:
-          'The development WAF is intentionally composed with the web and operations edge stacks so rate rules and alarms are deployed as one reviewed control plane.',
       },
       {
         id: 'AwsSolutions-APIG4',
@@ -238,6 +307,30 @@ export class ApiStack extends Stack {
       learnerHandler,
       serviceEndpointSecurityGroup: endpointSecurityGroup,
       apiUrl,
+      learnerDistribution: delivery.learnerDistribution,
+      adminDistribution: delivery.adminDistribution,
+      learnerOrigin: delivery.learnerOrigin,
+      adminOrigin: delivery.adminOrigin,
     };
   }
+}
+
+function managedRule(
+  name: string,
+  managedRuleGroupName: string,
+  priority: number,
+): wafv2.CfnWebACL.RuleProperty {
+  return {
+    name,
+    priority,
+    overrideAction: { none: {} },
+    statement: {
+      managedRuleGroupStatement: { name: managedRuleGroupName, vendorName: 'AWS' },
+    },
+    visibilityConfig: {
+      cloudWatchMetricsEnabled: true,
+      metricName: `mcat-dev-${name.toLowerCase()}`,
+      sampledRequestsEnabled: false,
+    },
+  };
 }

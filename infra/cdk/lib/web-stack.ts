@@ -1,4 +1,5 @@
 import {
+  ArnFormat,
   CfnOutput,
   Duration,
   RemovalPolicy,
@@ -9,7 +10,8 @@ import {
   aws_s3 as s3,
   aws_wafv2 as wafv2,
 } from 'aws-cdk-lib';
-import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import type { aws_apigateway as apigateway } from 'aws-cdk-lib';
+import { HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import type { Construct } from 'constructs';
 
 import type { EnvironmentConfig } from '../config/environments.js';
@@ -23,6 +25,10 @@ export interface WebStackProps extends StackProps {
 export interface WebResources {
   readonly learnerBucket: s3.IBucket;
   readonly adminBucket: s3.IBucket;
+  readonly accessLogs: s3.IBucket;
+}
+
+export interface WebDeliveryResources {
   readonly learnerDistribution: cloudfront.IDistribution;
   readonly adminDistribution: cloudfront.IDistribution;
   readonly learnerOrigin: string;
@@ -86,85 +92,13 @@ export class WebStack extends Stack {
       accessLogs,
     );
 
-    const edgeWebAcl = new wafv2.CfnWebACL(this, 'EdgeWebAcl', {
-      name: 'mcat-dev-web',
-      description: 'Managed edge protections and source-IP rate limiting for development web apps.',
-      scope: 'CLOUDFRONT',
-      defaultAction: { allow: {} },
-      visibilityConfig: {
-        cloudWatchMetricsEnabled: true,
-        metricName: 'mcat-dev-web-waf',
-        sampledRequestsEnabled: false,
-      },
-      rules: [
-        managedRule('AWSManagedCommonRuleSet', 'AWSManagedRulesCommonRuleSet', 10),
-        managedRule('AWSManagedKnownBadInputsRuleSet', 'AWSManagedRulesKnownBadInputsRuleSet', 20),
-        {
-          name: 'SourceIpRateLimit',
-          priority: 30,
-          action: { block: {} },
-          statement: {
-            rateBasedStatement: {
-              aggregateKeyType: 'IP',
-              evaluationWindowSec: 300,
-              limit: 2_000,
-            },
-          },
-          visibilityConfig: {
-            cloudWatchMetricsEnabled: true,
-            metricName: 'mcat-dev-web-source-ip-rate-limit',
-            sampledRequestsEnabled: false,
-          },
-        },
-      ],
-    });
-
-    const publicHeaders = createResponseHeadersPolicy(this, 'PublicResponseHeaders', false);
-    const privateHeaders = createResponseHeadersPolicy(this, 'PrivateResponseHeaders', true);
-    const adminHeaders = createResponseHeadersPolicy(this, 'AdminResponseHeaders', true);
-
-    const learnerDistribution = createDistribution(this, 'LearnerDistribution', {
-      comment: 'MCAT development learner PWA',
-      bucket: learnerBucket,
-      accessLogs,
-      responseHeadersPolicy: publicHeaders,
-      privateResponseHeadersPolicy: privateHeaders,
-      webAclId: edgeWebAcl.attrArn,
-    });
-    const adminDistribution = createDistribution(this, 'AdminDistribution', {
-      comment: 'MCAT development admin console (artifact publishing remains disabled)',
-      bucket: adminBucket,
-      accessLogs,
-      responseHeadersPolicy: adminHeaders,
-      privateResponseHeadersPolicy: adminHeaders,
-      webAclId: edgeWebAcl.attrArn,
-    });
-
-    const learnerOrigin = `https://${learnerDistribution.distributionDomainName}`;
-    const adminOrigin = `https://${adminDistribution.distributionDomainName}`;
-    new CfnOutput(this, 'LearnerWebUrl', {
-      value: learnerOrigin,
-      exportName: 'mcat-dev-learner-web-origin',
-    });
-    new CfnOutput(this, 'AdminWebUrl', {
-      value: adminOrigin,
-      exportName: 'mcat-dev-admin-web-origin',
-    });
     new CfnOutput(this, 'LearnerArtifactBucketName', {
       value: learnerBucket.bucketName,
       exportName: 'mcat-dev-learner-web-bucket-name',
     });
-    new CfnOutput(this, 'LearnerDistributionId', {
-      value: learnerDistribution.distributionId,
-      exportName: 'mcat-dev-learner-web-distribution-id',
-    });
     new CfnOutput(this, 'AdminArtifactBucketName', {
       value: adminBucket.bucketName,
       exportName: 'mcat-dev-admin-web-bucket-name',
-    });
-    new CfnOutput(this, 'AdminDistributionId', {
-      value: adminDistribution.distributionId,
-      exportName: 'mcat-dev-admin-web-distribution-id',
     });
 
     Validations.of(accessLogs).acknowledge({
@@ -172,30 +106,112 @@ export class WebStack extends Stack {
       reason:
         'This is the dedicated CloudFront and S3 access-log sink; recursive server-access logging would create an unbounded loop.',
     });
-    for (const distribution of [learnerDistribution, adminDistribution]) {
-      Validations.of(distribution).acknowledge(
-        {
-          id: 'AwsSolutions-CFR3',
-          reason:
-            'CloudFront standard access logging is enabled to the dedicated retained access-log bucket; real-time logging is intentionally deferred for cost containment in development.',
-        },
-        {
-          id: 'AwsSolutions-CFR4',
-          reason:
-            'Development uses the generated cloudfront.net hostname because no reviewed custom domain or ACM certificate exists yet. The default CloudFront certificate cannot accept a configurable minimum TLS policy; HTTPS redirect remains mandatory, and a TLSv1.2_2021 custom certificate is a production promotion gate.',
-        },
-      );
+    for (const bucket of [learnerBucket, adminBucket]) {
+      Validations.of(bucket).acknowledge({
+        id: 'AwsSolutions-S10',
+        reason:
+          'The API delivery stack installs the final bucket policy because it owns the exact CloudFront distribution ARN. The storage-only stack deploys empty, public-blocked buckets before that policy is composed.',
+      });
     }
-
-    this.resources = {
-      learnerBucket,
-      adminBucket,
-      learnerDistribution,
-      adminDistribution,
-      learnerOrigin,
-      adminOrigin,
-    };
+    this.resources = { learnerBucket, adminBucket, accessLogs };
   }
+}
+
+export function createWebDelivery(
+  scope: Construct,
+  options: {
+    readonly restApi: apigateway.RestApiBase;
+    readonly apiStageName: string;
+    readonly originVerificationHeaderValue: string;
+    readonly web: WebResources;
+  },
+): WebDeliveryResources {
+  const edgeWebAcl = new wafv2.CfnWebACL(scope, 'EdgeWebAcl', {
+    name: 'mcat-dev-web',
+    description: 'Managed edge protections and source-IP rate limiting for development web apps.',
+    scope: 'CLOUDFRONT',
+    defaultAction: { allow: {} },
+    visibilityConfig: {
+      cloudWatchMetricsEnabled: true,
+      metricName: 'mcat-dev-web-waf',
+      sampledRequestsEnabled: false,
+    },
+    rules: [
+      managedRule('AWSManagedCommonRuleSet', 'AWSManagedRulesCommonRuleSet', 10),
+      managedRule('AWSManagedKnownBadInputsRuleSet', 'AWSManagedRulesKnownBadInputsRuleSet', 20),
+      {
+        name: 'SourceIpRateLimit',
+        priority: 30,
+        action: { block: {} },
+        statement: {
+          rateBasedStatement: {
+            aggregateKeyType: 'IP',
+            evaluationWindowSec: 300,
+            limit: 2_000,
+          },
+        },
+        visibilityConfig: {
+          cloudWatchMetricsEnabled: true,
+          metricName: 'mcat-dev-web-source-ip-rate-limit',
+          sampledRequestsEnabled: false,
+        },
+      },
+    ],
+  });
+  const publicHeaders = createResponseHeadersPolicy(scope, 'PublicResponseHeaders', false);
+  const privateHeaders = createResponseHeadersPolicy(scope, 'PrivateResponseHeaders', true);
+  const adminHeaders = createResponseHeadersPolicy(scope, 'AdminResponseHeaders', true);
+  const learnerDistribution = createDistribution(scope, 'LearnerDistribution', {
+    comment: 'MCAT development learner PWA',
+    bucket: options.web.learnerBucket,
+    accessLogs: options.web.accessLogs,
+    responseHeadersPolicy: publicHeaders,
+    privateResponseHeadersPolicy: privateHeaders,
+    webAclId: edgeWebAcl.attrArn,
+    restApi: options.restApi,
+    apiStageName: options.apiStageName,
+    apiOriginVerificationHeaderValue: options.originVerificationHeaderValue,
+  });
+  const adminDistribution = createDistribution(scope, 'AdminDistribution', {
+    comment: 'MCAT development admin console (artifact publishing remains disabled)',
+    bucket: options.web.adminBucket,
+    accessLogs: options.web.accessLogs,
+    responseHeadersPolicy: adminHeaders,
+    privateResponseHeadersPolicy: adminHeaders,
+    webAclId: edgeWebAcl.attrArn,
+  });
+  createArtifactBucketPolicy(
+    scope,
+    'LearnerArtifactsBucketPolicy',
+    options.web.learnerBucket,
+    learnerDistribution,
+  );
+  createArtifactBucketPolicy(
+    scope,
+    'AdminArtifactsBucketPolicy',
+    options.web.adminBucket,
+    adminDistribution,
+  );
+  for (const distribution of [learnerDistribution, adminDistribution]) {
+    Validations.of(distribution).acknowledge(
+      {
+        id: 'AwsSolutions-CFR3',
+        reason:
+          'CloudFront standard access logging is enabled to the dedicated retained access-log bucket; real-time logging is intentionally deferred for cost containment in development.',
+      },
+      {
+        id: 'AwsSolutions-CFR4',
+        reason:
+          'Development uses the generated cloudfront.net hostname because no reviewed custom domain or ACM certificate exists yet. HTTPS redirect remains mandatory; a custom ACM certificate is a production promotion gate.',
+      },
+    );
+  }
+  return {
+    learnerDistribution,
+    adminDistribution,
+    learnerOrigin: `https://${learnerDistribution.distributionDomainName}`,
+    adminOrigin: `https://${adminDistribution.distributionDomainName}`,
+  };
 }
 
 function createArtifactBucket(
@@ -208,7 +224,7 @@ function createArtifactBucket(
     bucketName,
     blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     encryption: s3.BucketEncryption.S3_MANAGED,
-    enforceSSL: true,
+    enforceSSL: false,
     versioned: true,
     serverAccessLogsBucket: accessLogs,
     serverAccessLogsPrefix: `${id.toLowerCase()}/`,
@@ -292,6 +308,9 @@ interface DistributionOptions {
   readonly responseHeadersPolicy: cloudfront.IResponseHeadersPolicy;
   readonly privateResponseHeadersPolicy: cloudfront.IResponseHeadersPolicy;
   readonly webAclId: string;
+  readonly restApi?: apigateway.RestApiBase;
+  readonly apiStageName?: string;
+  readonly apiOriginVerificationHeaderValue?: string;
 }
 
 function createDistribution(
@@ -299,9 +318,32 @@ function createDistribution(
   id: string,
   options: DistributionOptions,
 ): cloudfront.Distribution {
-  const origin = S3BucketOrigin.withOriginAccessControl(options.bucket, {
-    originAccessLevels: [cloudfront.AccessLevel.READ],
+  const originAccessControl = new cloudfront.S3OriginAccessControl(
+    scope,
+    `${id}OriginAccessControl`,
+    {
+      originAccessControlName: `mcat-dev-${id.replaceAll(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`,
+    },
+  );
+  const origin = new ExplicitPolicyS3Origin(options.bucket, originAccessControl);
+  const spaRewrite = new cloudfront.Function(scope, `${id}SpaRewrite`, {
+    functionName: `mcat-dev-${id.toLowerCase()}-spa-rewrite`,
+    comment: 'Rewrites extensionless browser routes to the static SPA shell.',
+    code: cloudfront.FunctionCode.fromInline(`function handler(event) {
+  var request = event.request;
+  var uri = request.uri;
+  if (!uri.startsWith('/v1/') && !uri.startsWith('/assets/') && uri.indexOf('.') === -1) {
+    request.uri = '/index.html';
+  }
+  return request;
+}`),
   });
+  const functionAssociations = [
+    {
+      eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+      function: spaRewrite,
+    },
+  ];
   const distribution = new cloudfront.Distribution(scope, id, {
     comment: options.comment,
     defaultRootObject: 'index.html',
@@ -311,6 +353,7 @@ function createDistribution(
       cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
       cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
       compress: true,
+      functionAssociations,
       responseHeadersPolicy: options.responseHeadersPolicy,
       viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     },
@@ -330,16 +373,34 @@ function createDistribution(
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
         cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
         compress: true,
+        functionAssociations,
         responseHeadersPolicy: options.privateResponseHeadersPolicy,
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       },
+      ...(options.restApi === undefined
+        ? {}
+        : {
+            'v1/*': {
+              origin: new HttpOrigin(
+                `${options.restApi.restApiId}.execute-api.${Stack.of(scope).region}.${Stack.of(scope).urlSuffix}`,
+                {
+                  originPath: `/${options.apiStageName ?? 'dev'}`,
+                  protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
+                  originSslProtocols: [cloudfront.OriginSslPolicy.TLS_V1_2],
+                  customHeaders: {
+                    'x-mcat-origin-verify': options.apiOriginVerificationHeaderValue ?? '',
+                  },
+                },
+              ),
+              allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+              cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
+              cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+              compress: true,
+              originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+              viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            },
+          }),
     },
-    errorResponses: [403, 404].map((httpStatus) => ({
-      httpStatus,
-      responseHttpStatus: 200,
-      responsePagePath: '/index.html',
-      ttl: Duration.seconds(0),
-    })),
     enableIpv6: true,
     enableLogging: true,
     geoRestriction: cloudfront.GeoRestriction.allowlist('US'),
@@ -352,4 +413,61 @@ function createDistribution(
   });
 
   return distribution;
+}
+
+class ExplicitPolicyS3Origin extends cloudfront.OriginBase {
+  public constructor(bucket: s3.IBucket, originAccessControl: cloudfront.IOriginAccessControl) {
+    super(bucket.bucketRegionalDomainName, {
+      originAccessControlId: originAccessControl.originAccessControlId,
+    });
+  }
+
+  protected override renderS3OriginConfig(): cloudfront.CfnDistribution.S3OriginConfigProperty {
+    return { originAccessIdentity: '' };
+  }
+}
+
+function createArtifactBucketPolicy(
+  scope: Construct,
+  id: string,
+  bucket: s3.IBucket,
+  distribution: cloudfront.IDistribution,
+): void {
+  const stack = Stack.of(scope);
+  const distributionArn = stack.formatArn({
+    service: 'cloudfront',
+    region: '',
+    resource: 'distribution',
+    resourceName: distribution.distributionId,
+    arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
+  });
+  new s3.CfnBucketPolicy(scope, id, {
+    bucket: bucket.bucketName,
+    policyDocument: {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Sid: 'DenyInsecureTransport',
+          Effect: 'Deny',
+          Principal: '*',
+          Action: 's3:*',
+          Resource: [bucket.bucketArn, bucket.arnForObjects('*')],
+          Condition: { Bool: { 'aws:SecureTransport': 'false' } },
+        },
+        {
+          Sid: 'AllowExactCloudFrontDistributionRead',
+          Effect: 'Allow',
+          Principal: { Service: 'cloudfront.amazonaws.com' },
+          Action: 's3:GetObject',
+          Resource: bucket.arnForObjects('*'),
+          Condition: {
+            StringEquals: {
+              'AWS:SourceAccount': stack.account,
+              'AWS:SourceArn': distributionArn,
+            },
+          },
+        },
+      ],
+    },
+  });
 }

@@ -22,6 +22,7 @@ export interface LearnerApiEnvironment {
   readonly region: 'us-east-1';
   readonly secretArn: string;
   readonly rateLimitPepperSecretArn: string;
+  readonly originVerificationSecretArn: string;
   readonly endpoint: string;
   readonly port: 5432;
   readonly database: string;
@@ -90,12 +91,25 @@ export async function loadRateLimitPepper(
   return pepper;
 }
 
+export async function loadOriginVerificationSecret(
+  client: SecretCommandClient,
+  secretArn: string,
+): Promise<string> {
+  const response = await client.send(new GetSecretValueCommand({ SecretId: secretArn }));
+  const secret = response.SecretString;
+  if (secret === undefined || !/^[A-Za-z0-9_-]{64}$/.test(secret)) {
+    throw new Error('Origin-verification secret is invalid.');
+  }
+  return secret;
+}
+
 export function parseLearnerApiEnvironment(
   environment: Readonly<Record<string, string | undefined>>,
 ): LearnerApiEnvironment {
   const region = environment.AWS_REGION;
   const secretArn = environment.DB_SECRET_ARN;
   const rateLimitPepperSecretArn = environment.RATE_LIMIT_PEPPER_SECRET_ARN;
+  const originVerificationSecretArn = environment.ORIGIN_VERIFICATION_SECRET_ARN;
   const endpoint = environment.DB_PROXY_ENDPOINT;
   const database = environment.DB_NAME;
   const learnerWebOrigin = environment.LEARNER_WEB_ORIGIN;
@@ -122,6 +136,10 @@ export function parseLearnerApiEnvironment(
     !/^arn:aws:secretsmanager:us-east-1:056956104102:secret:\/mcat\/dev\/rate-limit\/pepper-[A-Za-z0-9]+$/.test(
       rateLimitPepperSecretArn,
     ) ||
+    originVerificationSecretArn === undefined ||
+    !/^arn:aws:secretsmanager:us-east-1:056956104102:secret:\/mcat\/dev\/origin\/verification-[A-Za-z0-9]+$/.test(
+      originVerificationSecretArn,
+    ) ||
     endpoint === undefined ||
     !/^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?\.rds\.amazonaws\.com$/i.test(endpoint) ||
     database === undefined ||
@@ -135,6 +153,7 @@ export function parseLearnerApiEnvironment(
     region,
     secretArn,
     rateLimitPepperSecretArn,
+    originVerificationSecretArn,
     endpoint,
     port: 5432,
     database,
@@ -150,7 +169,6 @@ export function createGuestProjection(learnerId: string, now: string): LearnerPr
   const authority = new Authority(undefined, fixedClock(now));
   const state = authority.createGuest();
   state.learnerId = learnerId as LearnerId;
-  state.onboarding.diagnosticComplete = true;
   return toProjectionRecord(state, 0, now);
 }
 
@@ -163,9 +181,10 @@ const logger: SafeLogger = {
 async function createRuntime(): Promise<LearnerApi> {
   const environment = parseLearnerApiEnvironment(process.env);
   const secrets = new SecretsManagerClient({ region: environment.region });
-  const [secret, rateLimitPepper] = await Promise.all([
+  const [secret, rateLimitPepper, originVerificationSecret] = await Promise.all([
     loadDatabaseSecret(secrets, environment.secretArn),
     loadRateLimitPepper(secrets, environment.rateLimitPepperSecretArn),
+    loadOriginVerificationSecret(secrets, environment.originVerificationSecretArn),
   ]);
   const pool = createPgPool({
     connectionString: databaseUrl(environment, secret),
@@ -183,6 +202,7 @@ async function createRuntime(): Promise<LearnerApi> {
     sessions: new PostgresGuestSessionService(pool, createGuestProjection),
     rateLimiter: new PostgresFixedWindowRateLimiter(pool),
     rateLimitPepper,
+    originVerificationSecret,
     allowedOrigins: [environment.learnerWebOrigin],
     logger,
   });

@@ -19,22 +19,26 @@ Do not deploy while any prerequisite or abort condition below is unresolved.
 - The profile region is `us-east-1` and CDK bootstrap parameter
   `/cdk-bootstrap/hnb659fds/version` is at least `32`.
 - The CDK app contains exactly these IDs in this dependency order:
-  `McatDevFoundation`, `McatDevData`, `McatDevIdentity`, `McatDevApi`, `McatDevAsync`,
-  `McatDevPublication`, `McatDevAnalytics`, `McatDevWeb`, and `McatDevOperations`.
-- The data stack exports `MigrationFunctionArn`; the API stack exports `LearnerApiUrl`; the
-  web stack exports `LearnerArtifactBucketName`, `LearnerDistributionId`,
-  `AdminArtifactBucketName`, `AdminDistributionId`, and `LearnerWebUrl`.
+  `McatDevFoundation`, `McatDevData`, `McatDevWeb`, `McatDevApi`, `McatDevIdentity`,
+  `McatDevAsync`, `McatDevPublication`, `McatDevOperations`, and `McatDevAnalytics`.
+- The data stack exports `MigrationFunctionArn`; the web stack exports
+  `LearnerArtifactBucketName` and `AdminArtifactBucketName`; the API stack exports
+  `LearnerApiUrl`, `LearnerWebUrl`, `AdminWebUrl`, `LearnerDistributionId`, and
+  `AdminDistributionId`.
 - Exact learner and staff HTTPS origins have been approved. Empty, wildcard, localhost,
   HTTP, and placeholder origins are not acceptable deployment values.
-- The admin app no longer embeds answer keys or protected rationales and has staff
-  authentication. Until then, `publish:web` must fail its built-artifact scan; do not bypass it.
+- The data stack owns a retained generated `/mcat/dev/origin/verification` secret. Its value may
+  appear only as a Secrets Manager dynamic reference in the reviewed assembly; never print or
+  copy the resolved value.
+- `publish:web` publishes only the learner application. The admin application remains excluded
+  until it no longer embeds protected material and staff authentication is complete.
 
 ## Abort conditions
 
 Stop without deploying if any command reports a different account, profile, region, repository,
 bootstrap version, commit, artifact hash, stack set/order, or CloudFormation output. Also stop on:
 
-- any staging or production stack, including one in a failed or in-progress state;
+- any MCAT-owned staging or production stack, including one in a failed or in-progress state;
 - an unreviewed CDK diff or a replacement of Aurora, KMS keys, Cognito pools, or retained S3;
 - a failed test, type check, build, CDK validation, protected-field scan, or migration attestation;
 - an unexpected public database/bucket, NAT gateway, wildcard IAM grant, or browser credential;
@@ -53,13 +57,16 @@ aws --profile sbsandbox --region us-east-1 sts get-caller-identity
 aws --profile sbsandbox configure get region
 aws --profile sbsandbox --region us-east-1 ssm get-parameter --name /cdk-bootstrap/hnb659fds/version
 aws --profile sbsandbox --region us-east-1 cloudformation list-stacks --output table
+aws --profile sbsandbox --region us-east-1 cloudtrail describe-trails --include-shadow-trails --output table
 pnpm run verify
 pnpm run build
 ```
 
 Expected: clean Git, the private `jsonjj/mcat-prep` repository, account `056956104102`, region
 `us-east-1`, bootstrap version `32` or newer, no staging/production stack, and all local checks at
-exit code `0`.
+exit code `0`. The sandbox must have at least one multi-region organization trail with log-file
+validation. Run `aws cloudtrail get-trail-status --name EXACT_TRAIL_ARN` for each candidate and
+require at least one to report `IsLogging: true` with a recent successful delivery before deploy.
 
 ## 2. Produce an immutable review packet
 
@@ -72,20 +79,19 @@ export AWS_REGION=us-east-1
 export CDK_DEFAULT_ACCOUNT=056956104102
 export CDK_DEFAULT_REGION=us-east-1
 export MCAT_STAGE=dev
-export MCAT_REVIEW_DIRECTORY=/tmp/mcat-dev-review-$(git rev-parse HEAD)
-mkdir -p "$MCAT_REVIEW_DIRECTORY"
+export MCAT_REVIEW_DIRECTORY="$(mktemp -d /tmp/mcat-dev-review-XXXXXXXX)"
 ```
 
 Synthesize all nine exact stacks into the review directory:
 
 ```bash
-pnpm --filter @mcat/infra-cdk exec cdk synth McatDevFoundation McatDevData McatDevWeb McatDevIdentity McatDevApi McatDevAsync McatDevPublication McatDevOperations McatDevAnalytics --strict --output "$MCAT_REVIEW_DIRECTORY/cdk.out"
+pnpm --filter @mcat/infra-cdk exec cdk synth McatDevFoundation McatDevData McatDevWeb McatDevApi McatDevIdentity McatDevAsync McatDevPublication McatDevOperations McatDevAnalytics --strict --output "$MCAT_REVIEW_DIRECTORY/cdk.out"
 ```
 
 Create a no-change-set diff from that assembly and preserve its exact bytes:
 
 ```bash
-pnpm --filter @mcat/infra-cdk exec cdk diff McatDevFoundation McatDevData McatDevWeb McatDevIdentity McatDevApi McatDevAsync McatDevPublication McatDevOperations McatDevAnalytics --app "$MCAT_REVIEW_DIRECTORY/cdk.out" --change-set=false --no-color > "$MCAT_REVIEW_DIRECTORY/diff.txt"
+pnpm --filter @mcat/infra-cdk exec cdk diff McatDevFoundation McatDevData McatDevWeb McatDevApi McatDevIdentity McatDevAsync McatDevPublication McatDevOperations McatDevAnalytics --app "$MCAT_REVIEW_DIRECTORY/cdk.out" --change-set=false --no-color > "$MCAT_REVIEW_DIRECTORY/diff.txt"
 ```
 
 Generate the draft. This hashes every file in `cdk.out`, not only `manifest.json`:
@@ -119,10 +125,9 @@ export MCAT_DEPLOY_WAVE=foundation
 pnpm --filter @mcat/aws-tools deploy:dev
 ```
 
-This deploys only `McatDevFoundation`, `McatDevData`, `McatDevWeb`, then `McatDevIdentity`, each with
+This deploys only `McatDevFoundation`, `McatDevData`, then the storage-only `McatDevWeb`, each with
 `--exclusively` from the reviewed assembly. Confirm every physical stack is complete and inspect
-CloudWatch, CloudTrail, budget, KMS, S3 public-access blocks, Aurora/RDS Proxy, and Cognito before
-continuing.
+CloudWatch, CloudTrail, budget, KMS, S3 public-access blocks, and Aurora/RDS Proxy before continuing.
 
 ## 5. Apply forward-only database migrations
 
@@ -145,12 +150,17 @@ export MCAT_SMOKE_ATTESTATION_PATH="$MCAT_REVIEW_DIRECTORY/authority-smoke-attes
 pnpm --filter @mcat/aws-tools smoke
 ```
 
-The wave deploys `McatDevApi`, `McatDevAsync`, fail-closed `McatDevPublication`, then
-`McatDevOperations`. WAF association, VPC flow logs, and actionable alarms are therefore active
-before the first API smoke. The smoke client resolves the exact CloudFront learner origin and API
-URL from stack outputs and
+The wave deploys `McatDevApi`, `McatDevIdentity`, `McatDevAsync`, fail-closed
+`McatDevPublication`, then `McatDevOperations`. The API stack atomically creates API Gateway, its
+regional WAF, both CloudFront distributions, the edge WAF, exact OAC policies, and the same-origin
+`/v1/*` behavior before the first smoke. CloudFront overwrites the private origin-verification
+header; the regional WAF and Lambda both reject missing/wrong values before learner storage work.
+The smoke client resolves the exact CloudFront learner origin from API-stack outputs and uses it
+for both browser origin and API requests. It also calls the exported direct API URL without the
+private header and requires a no-CORS `403`. It
 checks health, CORS, two secure `__Host-` cookies, CSRF, idempotent goal replay, authenticated
-reads, unauthenticated/CSRF/ownership negatives, and protected-field absence.
+reads, unauthenticated/CSRF/ownership negatives, direct-origin rejection, and protected-field
+absence.
 
 ## 7. Deploy the edge and operations wave
 
@@ -162,8 +172,8 @@ export MCAT_SMOKE_ATTESTATION_PATH="$MCAT_REVIEW_DIRECTORY/edge-smoke-attestatio
 pnpm --filter @mcat/aws-tools smoke
 ```
 
-This deploys `McatDevAnalytics`. The second smoke resolves both API and learner origins from exact
-stack outputs and verifies that the final stack did not regress the authority boundary.
+This deploys `McatDevAnalytics`. The second smoke resolves the same-origin learner/API URL from
+exact stack outputs and verifies that the final stack did not regress the authority boundary.
 
 Confirm publication activation, notification campaigns, live AI/speech, federation, QuickSight,
 and research datasets remain disabled.
@@ -178,9 +188,9 @@ export MCAT_WEB_PUBLISH_MANIFEST=/tmp/mcat-dev-web-publish.json
 pnpm --filter @mcat/aws-tools publish:web
 ```
 
-The command resolves bucket/distribution/API coordinates only from `mcat-dev-web` and
-`mcat-dev-api`, reruns the protected scan, injects the normalized API stage root into the learner
-build, scans the learner tree, computes a SHA-256 manifest, uploads fingerprinted assets with
+The command resolves storage coordinates from `mcat-dev-web` and distribution/same-origin
+coordinates from `mcat-dev-api`, reruns the protected scan, injects the exact CloudFront learner
+origin into the learner build, scans the learner tree, computes a SHA-256 manifest, uploads fingerprinted assets with
 one-year immutable caching, uploads shells with no-cache, and invalidates only shell paths. It
 never uses `s3 sync --delete`.
 
@@ -209,10 +219,11 @@ aws --profile sbsandbox --region us-east-1 cloudformation describe-stacks --quer
 aws --profile sbsandbox --region us-east-1 cloudwatch describe-alarms --alarm-name-prefix mcat-dev --state-value ALARM --query "MetricAlarms[].{Name:AlarmName,Reason:StateReason}" --output table
 aws --profile sbsandbox --region us-east-1 budgets describe-budget --account-id 056956104102 --budget-name mcat-dev-monthly --query "Budget.{Name:BudgetName,Limit:BudgetLimit,Actual:CalculatedSpend.ActualSpend,Forecast:CalculatedSpend.ForecastedSpend}" --output table
 aws --profile sbsandbox --region us-east-1 sqs list-queues --queue-name-prefix mcat-dev --output table
+aws --profile sbsandbox --region us-east-1 cloudtrail describe-trails --include-shadow-trails --output table
 ```
 
-For every DLQ URL returned by the operations stack, run the following and require both visible and
-in-flight counts to be `0`:
+For every queue URL returned above whose name ends in `-dlq`, run the following and require both
+visible and in-flight counts to be `0`:
 
 ```bash
 aws --profile sbsandbox --region us-east-1 sqs get-queue-attributes --queue-url EXACT_DLQ_URL_FROM_STACK_OUTPUT --attribute-names ApproximateNumberOfMessages ApproximateNumberOfMessagesNotVisible --output table
@@ -224,6 +235,7 @@ aws --profile sbsandbox --region us-east-1 sqs get-queue-attributes --queue-url 
 - QuickSight, live AI/speech, federation, live push campaigns, research datasets, and cross-region
   disaster recovery are intentionally absent.
 - Database rollback is forward-fix only; see the migration runbook.
-- Web publication is deliberately unavailable while the admin bundle contains protected content.
+- Admin-web publication is deliberately unavailable while its protected-content and staff-auth
+  blockers remain; learner-web publication is enabled.
 
 For any failed deployment or verification step, use [aws-dev-rollback.md](./aws-dev-rollback.md).

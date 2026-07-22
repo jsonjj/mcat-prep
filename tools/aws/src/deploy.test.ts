@@ -13,21 +13,17 @@ describe('development deployment plan', () => {
       'McatDevFoundation',
       'McatDevData',
       'McatDevWeb',
-      'McatDevIdentity',
       'McatDevApi',
+      'McatDevIdentity',
       'McatDevAsync',
       'McatDevPublication',
       'McatDevOperations',
       'McatDevAnalytics',
     ]);
-    expect(DEPLOYMENT_WAVES.foundation).toEqual([
-      'McatDevFoundation',
-      'McatDevData',
-      'McatDevWeb',
-      'McatDevIdentity',
-    ]);
+    expect(DEPLOYMENT_WAVES.foundation).toEqual(['McatDevFoundation', 'McatDevData', 'McatDevWeb']);
     expect(DEPLOYMENT_WAVES.authority).toEqual([
       'McatDevApi',
+      'McatDevIdentity',
       'McatDevAsync',
       'McatDevPublication',
       'McatDevOperations',
@@ -82,6 +78,25 @@ describe('development deployment plan', () => {
         evidenceSha256: 'c'.repeat(64),
         verifiedAt: '2026-07-21T12:00:00.000Z',
         checks: ['health'],
+      }),
+    ).toThrow('required boundary check');
+    expect(() =>
+      validateWavePrerequisite('edge', commit, {
+        schemaVersion: 1,
+        kind: 'smoke',
+        account: '056956104102',
+        region: 'us-east-1',
+        gitCommit: commit,
+        evidenceSha256: 'c'.repeat(64),
+        verifiedAt: '2026-07-21T12:00:00.000Z',
+        checks: [
+          'health',
+          'cors',
+          'guest-bootstrap-cookies',
+          'goal-idempotency',
+          'authorized-reads',
+          'protected-negative-boundaries',
+        ],
       }),
     ).toThrow('required boundary check');
   });

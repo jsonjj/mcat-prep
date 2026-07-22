@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   createGuestProjection,
   loadDatabaseSecret,
+  loadOriginVerificationSecret,
   loadRateLimitPepper,
   parseLearnerApiEnvironment,
 } from './lambda';
@@ -21,7 +22,7 @@ describe('learner Lambda runtime composition', () => {
       state: {
         learnerId,
         accountState: 'guest',
-        onboarding: { diagnosticComplete: true, planConfirmed: false },
+        onboarding: { diagnosticComplete: false, planConfirmed: false },
       },
       updatedAt: now,
     });
@@ -34,6 +35,8 @@ describe('learner Lambda runtime composition', () => {
         'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/learner-api-AbCd12',
       RATE_LIMIT_PEPPER_SECRET_ARN:
         'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/rate-limit/pepper-AbCd12',
+      ORIGIN_VERIFICATION_SECRET_ARN:
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/origin/verification-AbCd12',
       DB_PROXY_ENDPOINT: 'mcat-dev-proxy.proxy-abc.us-east-1.rds.amazonaws.com',
       DB_NAME: 'mcat',
       LEARNER_WEB_ORIGIN: 'https://d1234567890.cloudfront.net',
@@ -92,6 +95,22 @@ describe('learner Lambda runtime composition', () => {
       loadRateLimitPepper(
         { send: async () => ({ SecretString: 'short' }) },
         'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/rate-limit/pepper-AbCd12',
+      ),
+    ).rejects.toThrow('invalid');
+  });
+
+  it('loads only an exact 64-character origin-verification secret', async () => {
+    const secret = 'o'.repeat(64);
+    await expect(
+      loadOriginVerificationSecret(
+        { send: async () => ({ SecretString: secret }) },
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/origin/verification-AbCd12',
+      ),
+    ).resolves.toBe(secret);
+    await expect(
+      loadOriginVerificationSecret(
+        { send: async () => ({ SecretString: 'o'.repeat(63) }) },
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/origin/verification-AbCd12',
       ),
     ).rejects.toThrow('invalid');
   });

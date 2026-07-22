@@ -6,15 +6,82 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildArtifactManifest,
+  formatPublishedArtifacts,
   planWebPublish,
+  resolveWebPublishingConfiguration,
   webAppsForDeployment,
   verifyArtifactFile,
   verifyUploadedObject,
 } from './publish-web';
+import type { CommandRunner } from './command';
 
 describe('immutable web publication', () => {
+  it('reports only the applications that were actually published', () => {
+    expect(
+      formatPublishedArtifacts([
+        {
+          schemaVersion: 1,
+          app: 'learner',
+          gitCommit: 'a'.repeat(40),
+          sha256: 'b'.repeat(64),
+          files: [],
+        },
+      ]),
+    ).toBe(`Published immutable learner artifact: ${'b'.repeat(64)}.\n`);
+  });
+
   it('publishes only the learner application while admin artifacts remain protected', () => {
     expect(webAppsForDeployment()).toEqual(['learner']);
+  });
+
+  it('builds the learner against its same-origin CloudFront API and reads outputs from their owning stacks', async () => {
+    const inspectedStacks: string[] = [];
+    const runner: CommandRunner = {
+      run: async (spec) => {
+        const stackName = spec.args[spec.args.indexOf('--stack-name') + 1] ?? '';
+        inspectedStacks.push(stackName);
+        const outputs =
+          stackName === 'mcat-dev-web'
+            ? [
+                {
+                  OutputKey: 'LearnerArtifactBucketName',
+                  OutputValue: 'mcat-dev-learner-web-056956104102-us-east-1',
+                },
+                {
+                  OutputKey: 'AdminArtifactBucketName',
+                  OutputValue: 'mcat-dev-admin-web-056956104102-us-east-1',
+                },
+              ]
+            : [
+                { OutputKey: 'LearnerDistributionId', OutputValue: 'E1234567890ABC' },
+                { OutputKey: 'AdminDistributionId', OutputValue: 'EABCDEFGHIJ123' },
+                {
+                  OutputKey: 'LearnerWebUrl',
+                  OutputValue: 'https://d1234567890abc.cloudfront.net',
+                },
+              ];
+        return {
+          exitCode: 0,
+          stderr: '',
+          stdout: JSON.stringify({
+            Stacks: [{ StackName: stackName, StackStatus: 'CREATE_COMPLETE', Outputs: outputs }],
+          }),
+        };
+      },
+    };
+
+    await expect(resolveWebPublishingConfiguration(runner)).resolves.toEqual({
+      authorityBaseUrl: 'https://d1234567890abc.cloudfront.net',
+      learnerTarget: {
+        bucket: 'mcat-dev-learner-web-056956104102-us-east-1',
+        distributionId: 'E1234567890ABC',
+      },
+      adminTarget: {
+        bucket: 'mcat-dev-admin-web-056956104102-us-east-1',
+        distributionId: 'EABCDEFGHIJ123',
+      },
+    });
+    expect(inspectedStacks).toEqual(['mcat-dev-web', 'mcat-dev-api']);
   });
 
   it('hashes bytes and assigns immutable cache only to fingerprinted assets', async () => {

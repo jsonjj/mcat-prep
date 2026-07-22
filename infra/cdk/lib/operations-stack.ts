@@ -10,7 +10,6 @@ import {
   aws_logs as logs,
   aws_sns as sns,
   aws_sns_subscriptions as subscriptions,
-  aws_wafv2 as wafv2,
 } from 'aws-cdk-lib';
 import type {
   aws_apigateway as apigateway,
@@ -43,7 +42,6 @@ export interface OperationsStackProps extends StackProps {
 
 export interface OperationsResources {
   readonly dashboard: cloudwatch.Dashboard;
-  readonly apiWebAcl: wafv2.CfnWebACL;
   readonly alarms: readonly cloudwatch.Alarm[];
   readonly notificationTopic: sns.ITopic;
 }
@@ -84,43 +82,6 @@ export class OperationsStack extends Stack {
     notificationTopic.addSubscription(
       new subscriptions.EmailSubscription(props.environment.budgetEmail),
     );
-
-    const apiWebAcl = new wafv2.CfnWebACL(this, 'ApiWebAcl', {
-      name: 'mcat-dev-api',
-      description: 'Managed request filtering and source-IP throttling for the learner API.',
-      scope: 'REGIONAL',
-      defaultAction: { allow: {} },
-      visibilityConfig: {
-        cloudWatchMetricsEnabled: true,
-        metricName: 'mcat-dev-api-waf',
-        sampledRequestsEnabled: false,
-      },
-      rules: [
-        managedRule('AWSManagedCommonRuleSet', 'AWSManagedRulesCommonRuleSet', 10),
-        managedRule('AWSManagedKnownBadInputsRuleSet', 'AWSManagedRulesKnownBadInputsRuleSet', 20),
-        {
-          name: 'SourceIpRateLimit',
-          priority: 30,
-          action: { block: {} },
-          statement: {
-            rateBasedStatement: {
-              aggregateKeyType: 'IP',
-              evaluationWindowSec: 300,
-              limit: 1_000,
-            },
-          },
-          visibilityConfig: {
-            cloudWatchMetricsEnabled: true,
-            metricName: 'mcat-dev-api-source-ip-rate-limit',
-            sampledRequestsEnabled: false,
-          },
-        },
-      ],
-    });
-    new wafv2.CfnWebACLAssociation(this, 'ApiWebAclAssociation', {
-      resourceArn: props.restApi.deploymentStage.stageArn,
-      webAclArn: apiWebAcl.attrArn,
-    });
 
     const apiMetricDimensions = {
       ApiName: props.restApi.restApiName,
@@ -311,37 +272,13 @@ export class OperationsStack extends Stack {
       value: dashboard.dashboardName,
       exportName: 'mcat-dev-operations-dashboard-name',
     });
-    new CfnOutput(this, 'ApiWebAclArn', {
-      value: apiWebAcl.attrArn,
-      exportName: 'mcat-dev-api-web-acl-arn',
-    });
     new CfnOutput(this, 'OperationsNotificationTopicArn', {
       value: notificationTopic.topicArn,
       exportName: 'mcat-dev-operations-notification-topic-arn',
     });
 
-    this.resources = { dashboard, apiWebAcl, alarms, notificationTopic };
+    this.resources = { dashboard, alarms, notificationTopic };
   }
-}
-
-function managedRule(
-  name: string,
-  managedRuleGroupName: string,
-  priority: number,
-): wafv2.CfnWebACL.RuleProperty {
-  return {
-    name,
-    priority,
-    overrideAction: { none: {} },
-    statement: {
-      managedRuleGroupStatement: { name: managedRuleGroupName, vendorName: 'AWS' },
-    },
-    visibilityConfig: {
-      cloudWatchMetricsEnabled: true,
-      metricName: `mcat-dev-${name.toLowerCase()}`,
-      sampledRequestsEnabled: false,
-    },
-  };
 }
 
 function createAlarm(

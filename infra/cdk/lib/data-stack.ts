@@ -146,6 +146,17 @@ export class DataStack extends Stack {
       },
     });
     rateLimitPepperSecret.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    const originVerificationSecret = new secretsmanager.Secret(this, 'OriginVerificationSecret', {
+      secretName: '/mcat/dev/origin/verification',
+      description: 'Verifies that learner API requests passed through the owned CloudFront origin.',
+      encryptionKey: appKey,
+      generateSecretString: {
+        excludePunctuation: true,
+        includeSpace: false,
+        passwordLength: 64,
+      },
+    });
+    originVerificationSecret.applyRemovalPolicy(RemovalPolicy.RETAIN);
 
     const auroraLogGroup = new logs.LogGroup(this, 'AuroraPostgresqlLogGroup', {
       logGroupName: '/aws/rds/cluster/mcat-dev-aurora/postgresql',
@@ -367,7 +378,13 @@ export class DataStack extends Stack {
       reason:
         'This bucket is the dedicated encrypted server-access-log sink; recursive access logging would create an unbounded logging loop.',
     });
-    for (const secret of [dbSecret, learnerApiDbSecret, workersDbSecret, rateLimitPepperSecret]) {
+    for (const secret of [
+      dbSecret,
+      learnerApiDbSecret,
+      workersDbSecret,
+      rateLimitPepperSecret,
+      originVerificationSecret,
+    ]) {
       Validations.of(secret).acknowledge({
         id: 'AwsSolutions-SMG4',
         reason:
@@ -407,6 +424,7 @@ export class DataStack extends Stack {
       learnerApiDbSecret,
       workersDbSecret,
       rateLimitPepperSecret,
+      originVerificationSecret,
       migrationFunction,
       buckets,
       projectionQueue,

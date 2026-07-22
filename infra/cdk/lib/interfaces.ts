@@ -2,6 +2,7 @@ import type {
   aws_ec2 as ec2,
   aws_apigateway as apigateway,
   aws_cognito as cognito,
+  aws_cloudfront as cloudfront,
   aws_kms as kms,
   aws_lambda as lambda,
   aws_rds as rds,
@@ -39,6 +40,7 @@ export interface DataResources {
   readonly learnerApiDbSecret: secretsmanager.ISecret;
   readonly workersDbSecret: secretsmanager.ISecret;
   readonly rateLimitPepperSecret: secretsmanager.ISecret;
+  readonly originVerificationSecret: secretsmanager.ISecret;
   readonly migrationFunction: lambda.IFunction;
   readonly buckets: DataBuckets;
   readonly projectionQueue: sqs.IQueue;
@@ -61,6 +63,10 @@ export interface ApiResources {
   readonly learnerHandler: lambda.IFunction;
   readonly serviceEndpointSecurityGroup: ec2.ISecurityGroup;
   readonly apiUrl: string;
+  readonly learnerDistribution: cloudfront.IDistribution;
+  readonly adminDistribution: cloudfront.IDistribution;
+  readonly learnerOrigin: string;
+  readonly adminOrigin: string;
 }
 
 export interface AsyncResources {

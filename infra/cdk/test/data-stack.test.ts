@@ -51,7 +51,7 @@ describe('DataStack', () => {
     const { stack } = createData();
     const template = Template.fromStack(stack);
 
-    template.resourceCountIs('AWS::SecretsManager::Secret', 4);
+    template.resourceCountIs('AWS::SecretsManager::Secret', 5);
     template.hasResourceProperties('AWS::SecretsManager::Secret', {
       Description: 'Generated administrator credentials for the MCAT development Aurora cluster.',
       KmsKeyId: Match.anyValue(),
@@ -65,6 +65,14 @@ describe('DataStack', () => {
     });
     template.hasResourceProperties('AWS::SecretsManager::Secret', {
       Name: '/mcat/dev/rate-limit/pepper',
+    });
+    template.hasResourceProperties('AWS::SecretsManager::Secret', {
+      GenerateSecretString: {
+        ExcludePunctuation: true,
+        PasswordLength: 64,
+      },
+      KmsKeyId: Match.anyValue(),
+      Name: '/mcat/dev/origin/verification',
     });
     template.resourceCountIs('AWS::RDS::DBProxy', 1);
     template.hasResourceProperties('AWS::RDS::DBProxy', {
@@ -85,6 +93,32 @@ describe('DataStack', () => {
       DebugLogging: false,
       RequireTLS: true,
     });
+  });
+
+  it('retains the generated origin-verification secret without synthesizing its value', () => {
+    const { stack } = createData();
+    const template = Template.fromStack(stack);
+    const secrets = template.findResources('AWS::SecretsManager::Secret');
+    const originVerification = Object.values(secrets).find(
+      (resource) =>
+        (resource.Properties as { readonly Name?: string }).Name ===
+        '/mcat/dev/origin/verification',
+    );
+
+    expect(originVerification).toBeDefined();
+    expect(originVerification).toMatchObject({
+      DeletionPolicy: 'Retain',
+      UpdateReplacePolicy: 'Retain',
+      Properties: {
+        GenerateSecretString: {
+          ExcludePunctuation: true,
+          PasswordLength: 64,
+        },
+      },
+    });
+    expect(
+      (originVerification as { readonly Properties?: Record<string, unknown> }).Properties,
+    ).not.toHaveProperty('SecretString');
   });
 
   it('runs a one-shot migration Lambda with all principals and private endpoint access', () => {

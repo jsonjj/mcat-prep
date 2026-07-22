@@ -1,7 +1,7 @@
-import { createHash, createHmac, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import {
-  AuthorityKernel,
   AuthorityKernelError,
+  type AuthorityKernel,
   type AuthorityKernelDependencies,
   type Principal,
 } from '@mcat/authority-kernel';
@@ -26,7 +26,18 @@ import {
   type SafeLogger,
   normalizedHeaders,
 } from './http';
-import { ROUTES, allowedMethodsFor, routeFor, type RouteDefinition } from './routes';
+import {
+  ROUTES,
+  allowedMethodsFor,
+  practiceQuestionId,
+  routeFor,
+  type CauseCommandBody,
+  type ContinueCommandBody,
+  type PracticeAttemptCommandBody,
+  type RecallCommandBody,
+  type RevealCommandBody,
+  type RouteDefinition,
+} from './routes';
 import {
   CSRF_COOKIE,
   SESSION_COOKIE,
@@ -36,16 +47,57 @@ import {
   type GuestSessionService,
   type ResolvedGuestSession,
 } from './session';
+import { RepositoryLearnerKernel } from './workflow';
 
 interface KernelPort {
   handle(input: unknown, principal: Principal): ReturnType<AuthorityKernel['handle']>;
   snapshot(principal: Principal): ReturnType<AuthorityKernel['snapshot']>;
+  diagnosticNext(principal: Principal): ReturnType<RepositoryLearnerKernel['diagnosticNext']>;
+  handleAttempt(
+    input: unknown,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleAttempt']>;
+  handleCause(
+    input: CauseCommandBody,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleCause']>;
+  handleReveal(
+    input: RevealCommandBody,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleReveal']>;
+  handleContinue(
+    input: ContinueCommandBody,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleContinue']>;
+  handleRecall(
+    input: RecallCommandBody,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleRecall']>;
+  skills(principal: Principal): ReturnType<RepositoryLearnerKernel['skills']>;
+  practiceItem(
+    questionId: Parameters<RepositoryLearnerKernel['practiceItem']>[0],
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['practiceItem']>;
+  wrapped(principal: Principal): ReturnType<RepositoryLearnerKernel['wrapped']>;
+  handlePractice(
+    input: PracticeAttemptCommandBody,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handlePractice']>;
+  handleCarsDuel(
+    input: ContinueCommandBody,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleCarsDuel']>;
+  handleReset(
+    input: ContinueCommandBody,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleReset']>;
 }
 
 export interface LearnerApiDependencies {
   readonly kernel: KernelPort;
   readonly sessions: GuestSessionService;
   readonly allowedOrigins: readonly string[];
+  readonly originVerificationSecret: string;
   readonly rateLimitPepper: string;
   readonly rateLimiter: RateLimiter;
   readonly logger: SafeLogger;
@@ -84,6 +136,15 @@ function containsControlCharacter(value: string): boolean {
     const code = character.charCodeAt(0);
     return code <= 31 || code === 127;
   });
+}
+
+function verifyOriginSecret(provided: string | undefined, expected: string): boolean {
+  if (provided === undefined) return false;
+  const providedBytes = Buffer.from(provided, 'utf8');
+  const expectedBytes = Buffer.from(expected, 'utf8');
+  return (
+    providedBytes.length === expectedBytes.length && timingSafeEqual(providedBytes, expectedBytes)
+  );
 }
 
 function statusForCode(code: string): number {
@@ -250,6 +311,9 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
     }),
   );
   if (allowedOrigins.size === 0) throw new Error('At least one allowed origin is required.');
+  if (!/^[A-Za-z0-9_-]{64}$/.test(dependencies.originVerificationSecret)) {
+    throw new Error('Origin-verification secret must be an exact generated value.');
+  }
   if (
     dependencies.rateLimitPepper.length < 32 ||
     dependencies.rateLimitPepper.length > 128 ||
@@ -273,6 +337,18 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
     let response: ApiGatewayV2Result | undefined;
 
     try {
+      if (
+        !verifyOriginSecret(headers['x-mcat-origin-verify'], dependencies.originVerificationSecret)
+      ) {
+        response = errorResponse(
+          'forbidden',
+          'Request verification failed.',
+          undefined,
+          requestIdValue,
+        );
+        return response;
+      }
+
       if (event.rawQueryString !== undefined && event.rawQueryString !== '') {
         response = errorResponse(
           'validation_error',
@@ -302,7 +378,7 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
           statusCode: 204,
           headers: {
             ...responseHeaders(allowedOrigin, requestIdValue),
-            'access-control-allow-methods': 'GET, POST, PUT, OPTIONS',
+            'access-control-allow-methods': 'DELETE, GET, POST, PUT, OPTIONS',
             'access-control-allow-headers': 'content-type, authorization, x-csrf-token',
             'access-control-max-age': '600',
           },
@@ -333,27 +409,6 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       }
       if (route.stateChanging && allowedOrigin === undefined) {
         response = errorResponse('forbidden', 'Origin is required.', undefined, requestIdValue);
-        return response;
-      }
-
-      const sourceRateKey = rateLimitKey(
-        dependencies.rateLimitPepper,
-        `source:${event.requestContext.http.sourceIp}`,
-      );
-      if (
-        !(await dependencies.rateLimiter.allow({
-          key: sourceRateKey,
-          route: route.path,
-          method,
-        }))
-      ) {
-        response = errorResponse(
-          'rate_limited',
-          'Too many requests. Try again later.',
-          allowedOrigin,
-          requestIdValue,
-          { status: 429, retryable: true },
-        );
         return response;
       }
 
@@ -447,7 +502,7 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       dependencies.logger.info({
         requestId: requestIdValue,
         route: routeLabel,
-        method: /^(GET|POST|PUT|OPTIONS)$/.test(method) ? method : 'UNKNOWN',
+        method: /^(DELETE|GET|POST|PUT|OPTIONS)$/.test(method) ? method : 'UNKNOWN',
         status,
         latencyMs: Math.max(0, nowMs() - startedAt),
         principalKind: principal?.kind ?? 'anonymous',
@@ -517,10 +572,118 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
           requestIdValue,
         );
       }
-      const result = AcceptedCommandResponseSchema.parse(
-        await dependencies.kernel.handle(parsed.data, principal),
+      switch (route.id) {
+        case 'attempt':
+          return jsonResponse(
+            200,
+            AcceptedCommandResponseSchema.parse(
+              await dependencies.kernel.handleAttempt(parsed.data, principal),
+            ),
+            origin,
+            requestIdValue,
+          );
+        case 'cause':
+          return jsonResponse(
+            200,
+            await dependencies.kernel.handleCause(parsed.data as CauseCommandBody, principal),
+            origin,
+            requestIdValue,
+          );
+        case 'reveal':
+          return jsonResponse(
+            200,
+            await dependencies.kernel.handleReveal(parsed.data as RevealCommandBody, principal),
+            origin,
+            requestIdValue,
+          );
+        case 'continue':
+          return jsonResponse(
+            200,
+            await dependencies.kernel.handleContinue(parsed.data as ContinueCommandBody, principal),
+            origin,
+            requestIdValue,
+          );
+        case 'recall':
+          return jsonResponse(
+            200,
+            await dependencies.kernel.handleRecall(parsed.data as RecallCommandBody, principal),
+            origin,
+            requestIdValue,
+          );
+        case 'practiceAttempt':
+          return jsonResponse(
+            200,
+            await dependencies.kernel.handlePractice(
+              parsed.data as PracticeAttemptCommandBody,
+              principal,
+            ),
+            origin,
+            requestIdValue,
+          );
+        case 'carsDuel':
+          return jsonResponse(
+            200,
+            await dependencies.kernel.handleCarsDuel(parsed.data as ContinueCommandBody, principal),
+            origin,
+            requestIdValue,
+          );
+        case 'resetProgress':
+          return jsonResponse(
+            200,
+            await dependencies.kernel.handleReset(parsed.data as ContinueCommandBody, principal),
+            origin,
+            requestIdValue,
+          );
+        default:
+          return jsonResponse(
+            200,
+            AcceptedCommandResponseSchema.parse(
+              await dependencies.kernel.handle(parsed.data, principal),
+            ),
+            origin,
+            requestIdValue,
+          );
+      }
+    }
+
+    if (route.id === 'diagnosticNext') {
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.diagnosticNext(principal)),
+        origin,
+        requestIdValue,
       );
-      return jsonResponse(200, result, origin, requestIdValue);
+    }
+
+    if (route.id === 'skills') {
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.skills(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'practiceItem') {
+      const questionId = practiceQuestionId(event.rawPath);
+      if (questionId === null) {
+        return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
+      }
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.practiceItem(questionId, principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'wrapped') {
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.wrapped(principal)),
+        origin,
+        requestIdValue,
+      );
     }
 
     const snapshot = await dependencies.kernel.snapshot(principal);
@@ -570,7 +733,7 @@ export function createRepositoryLearnerApi(
   const { repository, clock, bank, ...apiDependencies } = dependencies;
   return createLearnerApi({
     ...apiDependencies,
-    kernel: new AuthorityKernel({ repository, clock, bank }),
+    kernel: new RepositoryLearnerKernel({ repository, clock, bank }),
   });
 }
 

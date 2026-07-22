@@ -71,6 +71,17 @@ describe('AnalyticsStack', () => {
     );
   });
 
+  it('authorizes Firehose to write only to the real pre-created log stream ARN', () => {
+    const template = Template.fromStack(createAnalytics());
+    const policies = template.findResources('AWS::IAM::Policy');
+    const serialized = JSON.stringify(policies);
+    const expected =
+      'arn:aws:logs:us-east-1:056956104102:log-group:/aws/kinesisfirehose/mcat-dev-first-party-events:log-stream:s3-delivery';
+
+    expect(serialized).toContain(expected);
+    expect(serialized).not.toContain(':*:log-stream:s3-delivery');
+  });
+
   it('defines a strict allowlisted Glue schema without research or sensitive payload fields', () => {
     const template = Template.fromStack(createAnalytics());
     const serialized = JSON.stringify(template.toJSON());

@@ -77,6 +77,15 @@ export function webAppsForDeployment(): readonly ['learner'] {
   return ['learner'];
 }
 
+export function formatPublishedArtifacts(
+  manifests: readonly WebArtifactManifest[],
+): string {
+  const applications = manifests.map((manifest) => manifest.app).join('/');
+  const hashes = manifests.map((manifest) => manifest.sha256).join(', ');
+  const noun = manifests.length === 1 ? 'artifact' : 'artifacts';
+  return `Published immutable ${applications} ${noun}: ${hashes}.\n`;
+}
+
 function digest(value: Uint8Array | string): string {
   return createHash('sha256').update(value).digest('hex');
 }
@@ -209,37 +218,35 @@ function authorityBaseUrl(value: string): string {
     url.protocol !== 'https:' ||
     url.username !== '' ||
     url.password !== '' ||
-    !url.hostname.endsWith(`.execute-api.${EXPECTED_REGION}.amazonaws.com`)
+    !/^d[a-z0-9]+\.cloudfront\.net$/.test(url.hostname) ||
+    url.origin !== value
   ) {
-    throw new Error('LearnerApiUrl output is not the expected regional API Gateway URL');
+    throw new Error('LearnerWebUrl output is not the expected exact CloudFront origin');
   }
-  url.pathname = url.pathname.replace(/\/+$/, '').replace(/\/v1$/, '');
-  url.search = '';
-  url.hash = '';
-  return url.toString().replace(/\/$/, '');
+  return url.origin;
 }
 
 export async function resolveWebPublishingConfiguration(
   runner: CommandRunner,
 ): Promise<WebPublishingConfiguration> {
-  const [web, api] = await Promise.all([
-    readStackOutputs(runner, 'mcat-dev-web', [
-      'LearnerArtifactBucketName',
-      'LearnerDistributionId',
-      'AdminArtifactBucketName',
-      'AdminDistributionId',
-    ]),
-    readStackOutputs(runner, 'mcat-dev-api', ['LearnerApiUrl']),
+  const web = await readStackOutputs(runner, 'mcat-dev-web', [
+    'LearnerArtifactBucketName',
+    'AdminArtifactBucketName',
+  ]);
+  const api = await readStackOutputs(runner, 'mcat-dev-api', [
+    'LearnerDistributionId',
+    'AdminDistributionId',
+    'LearnerWebUrl',
   ]);
   const configuration = {
-    authorityBaseUrl: authorityBaseUrl(api.LearnerApiUrl ?? ''),
+    authorityBaseUrl: authorityBaseUrl(api.LearnerWebUrl ?? ''),
     learnerTarget: {
       bucket: web.LearnerArtifactBucketName ?? '',
-      distributionId: web.LearnerDistributionId ?? '',
+      distributionId: api.LearnerDistributionId ?? '',
     },
     adminTarget: {
       bucket: web.AdminArtifactBucketName ?? '',
-      distributionId: web.AdminDistributionId ?? '',
+      distributionId: api.AdminDistributionId ?? '',
     },
   };
   validateTarget('learner', configuration.learnerTarget);
@@ -406,8 +413,7 @@ export async function publishWeb(options: {
   }> = [];
   for (let index = 0; index < manifests.length; index += 1) {
     const manifest = manifests[index];
-    const target =
-      manifest?.app === 'learner' ? options.learnerTarget : options.adminTarget;
+    const target = manifest?.app === 'learner' ? options.learnerTarget : options.adminTarget;
     if (manifest === undefined || target === undefined)
       throw new Error('Web publication plan is incomplete');
     const root = join(options.repositoryRoot, 'apps', `${manifest.app}-web`, 'dist');
@@ -464,7 +470,5 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
     learnerTarget: configuration.learnerTarget,
     adminTarget: configuration.adminTarget,
   });
-  process.stdout.write(
-    `Published immutable learner/admin artifacts: ${manifests.map((manifest) => manifest.sha256).join(', ')}.\n`,
-  );
+  process.stdout.write(formatPublishedArtifacts(manifests));
 }

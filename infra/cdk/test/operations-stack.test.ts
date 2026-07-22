@@ -85,18 +85,11 @@ function createOperations(): OperationsStack {
 }
 
 describe('OperationsStack', () => {
-  it('associates a regional managed-rule and rate-limit WAF with the learner API', () => {
+  it('monitors but does not own the API WAF association', () => {
     const template = Template.fromStack(createOperations());
 
-    template.hasResourceProperties('AWS::WAFv2::WebACL', {
-      DefaultAction: { Allow: {} },
-      Rules: Match.arrayWith([
-        Match.objectLike({ Name: 'AWSManagedCommonRuleSet' }),
-        Match.objectLike({ Name: 'SourceIpRateLimit' }),
-      ]),
-      Scope: 'REGIONAL',
-    });
-    template.resourceCountIs('AWS::WAFv2::WebACLAssociation', 1);
+    template.resourceCountIs('AWS::WAFv2::WebACL', 0);
+    template.resourceCountIs('AWS::WAFv2::WebACLAssociation', 0);
   });
 
   it('creates an operations dashboard covering API, compute, data, queue, publication, and edge', () => {

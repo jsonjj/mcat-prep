@@ -14,8 +14,8 @@ export const APPROVED_STACKS = [
   'McatDevFoundation',
   'McatDevData',
   'McatDevWeb',
-  'McatDevIdentity',
   'McatDevApi',
+  'McatDevIdentity',
   'McatDevAsync',
   'McatDevPublication',
   'McatDevOperations',
@@ -24,6 +24,7 @@ export const APPROVED_STACKS = [
 
 const APPROVED_STACK_SET = new Set<string>(APPROVED_STACKS);
 const NON_DEV_STACK = /(?:staging|production)|(?:^|[-_])(?:stage|prod)(?:$|[-_])/i;
+const MCAT_OWNED_STACK = /^(?:mcat(?:[-_]|$)|Mcat)/;
 const SHA256 = /^[a-f0-9]{64}$/;
 const GIT_COMMIT = /^[a-f0-9]{40}$/;
 
@@ -130,7 +131,9 @@ export function validatePreflightEvidence(evidence: PreflightEvidence): Prefligh
   ) {
     throw new Error('Preflight rejected: origin must be github.com/jsonjj/mcat-prep');
   }
-  const unsafeStack = evidence.deployedStackNames.find((stack) => NON_DEV_STACK.test(stack));
+  const unsafeStack = evidence.deployedStackNames.find(
+    (stack) => MCAT_OWNED_STACK.test(stack) && NON_DEV_STACK.test(stack),
+  );
   if (unsafeStack !== undefined) {
     throw new Error(`Preflight rejected: staging/production stack is present (${unsafeStack})`);
   }

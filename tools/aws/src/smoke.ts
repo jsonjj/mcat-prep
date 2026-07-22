@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { processCommandRunner } from './command';
+import { processCommandRunner, type CommandRunner } from './command';
 import { readStackOutputs } from './outputs';
 import { runLivePreflight } from './preflight';
 
@@ -21,6 +21,7 @@ const PROTECTED_MARKERS = [
 
 export interface SmokeOptions {
   readonly apiBaseUrl: string;
+  readonly directApiBaseUrl: string;
   readonly learnerOrigin: string;
   readonly fetcher?: typeof fetch;
   readonly now?: () => string;
@@ -29,8 +30,27 @@ export interface SmokeOptions {
 
 export interface SmokeReport {
   readonly apiBaseUrl: string;
+  readonly directApiBaseUrl: string;
   readonly learnerOrigin: string;
   readonly checks: readonly string[];
+}
+
+export interface SmokeConfiguration {
+  readonly apiBaseUrl: string;
+  readonly directApiBaseUrl: string;
+  readonly learnerOrigin: string;
+}
+
+export async function resolveSmokeConfiguration(
+  runner: CommandRunner,
+): Promise<SmokeConfiguration> {
+  const api = await readStackOutputs(runner, 'mcat-dev-api', ['LearnerWebUrl', 'LearnerApiUrl']);
+  const learnerOrigin = exactHttpsOrigin(api.LearnerWebUrl ?? '', 'Learner origin');
+  if (!/^d[a-z0-9]+\.cloudfront\.net$/.test(new URL(learnerOrigin).hostname)) {
+    throw new Error('Learner origin must use the reviewed CloudFront distribution');
+  }
+  const directApiBaseUrl = normalizeApiBase(api.LearnerApiUrl ?? '');
+  return { apiBaseUrl: learnerOrigin, directApiBaseUrl, learnerOrigin };
 }
 
 interface BootstrapPayload {
@@ -150,6 +170,7 @@ export async function runLearnerApiSmoke(options: SmokeOptions): Promise<SmokeRe
   const now = options.now ?? (() => new Date().toISOString());
   const uuid = options.uuid ?? randomUUID;
   const apiBaseUrl = normalizeApiBase(options.apiBaseUrl);
+  const directApiBaseUrl = normalizeApiBase(options.directApiBaseUrl);
   const learnerOrigin = exactHttpsOrigin(options.learnerOrigin, 'Learner origin');
   const checks: string[] = [];
 
@@ -344,7 +365,21 @@ export async function runLearnerApiSmoke(options: SmokeOptions): Promise<SmokeRe
   await responseBody(evil, 'evil-origin write');
   checks.push('protected-negative-boundaries');
 
-  return { apiBaseUrl, learnerOrigin, checks };
+  const directOrigin = await fetcher(`${directApiBaseUrl}/v1/bootstrap`, {
+    method: 'POST',
+    headers: { origin: learnerOrigin, 'content-type': 'application/json' },
+    body: '{}',
+  });
+  if (directOrigin.status !== 403) {
+    throw new Error(`Direct API origin returned ${directOrigin.status}, expected 403`);
+  }
+  if (directOrigin.headers.has('access-control-allow-origin')) {
+    throw new Error('Direct API origin exposed an allow-origin header');
+  }
+  protectedSafe(await directOrigin.text(), 'direct-origin body');
+  checks.push('direct-origin-blocked');
+
+  return { apiBaseUrl, directApiBaseUrl, learnerOrigin, checks };
 }
 
 const invokedPath = process.argv[1] === undefined ? undefined : resolve(process.argv[1]);
@@ -360,17 +395,8 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
     reviewManifestPath,
     runner: processCommandRunner,
   });
-  const api = await readStackOutputs(processCommandRunner, 'mcat-dev-api', ['LearnerApiUrl']);
-  const configuredLearnerOrigin = process.env.MCAT_LEARNER_WEB_ORIGIN;
-  const learnerOrigin =
-    configuredLearnerOrigin ??
-    (await readStackOutputs(processCommandRunner, 'mcat-dev-web', ['LearnerWebUrl']))
-      .LearnerWebUrl ??
-    '';
-  const report = await runLearnerApiSmoke({
-    apiBaseUrl: api.LearnerApiUrl ?? '',
-    learnerOrigin,
-  });
+  const configuration = await resolveSmokeConfiguration(processCommandRunner);
+  const report = await runLearnerApiSmoke(configuration);
   const evidenceSha256 = createHash('sha256').update(JSON.stringify(report)).digest('hex');
   const destination = resolve(attestationPath);
   await mkdir(dirname(destination), { recursive: true });

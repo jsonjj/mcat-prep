@@ -81,18 +81,6 @@ export function createMcatApp(options: CreateMcatAppOptions): App {
     terminationProtection: true,
   });
   web.addDependency(data);
-  const identity = new IdentityStack(app, 'McatDevIdentity', {
-    stackName: 'mcat-dev-identity',
-    description: 'MCAT Mastery development learner and staff identity boundary.',
-    env,
-    environment,
-    webOrigins: {
-      learner: web.resources.learnerOrigin,
-      staff: web.resources.adminOrigin,
-    },
-    terminationProtection: true,
-  });
-  identity.addDependency(web);
   const api = new ApiStack(app, 'McatDevApi', {
     stackName: 'mcat-dev-api',
     description: 'MCAT Mastery development authoritative learner REST API.',
@@ -100,13 +88,24 @@ export function createMcatApp(options: CreateMcatAppOptions): App {
     environment,
     foundation: foundation.resources,
     data: data.resources,
-    identity: identity.resources,
-    allowedOrigins: [web.resources.learnerOrigin],
+    web: web.resources,
     learnerRuntimeEntry: options.learnerRuntimeEntry,
     terminationProtection: true,
   });
   api.addDependency(data);
-  api.addDependency(identity);
+  api.addDependency(web);
+  const identity = new IdentityStack(app, 'McatDevIdentity', {
+    stackName: 'mcat-dev-identity',
+    description: 'MCAT Mastery development learner and staff identity boundary.',
+    env,
+    environment,
+    webOrigins: {
+      learner: api.resources.learnerOrigin,
+      staff: api.resources.adminOrigin,
+    },
+    terminationProtection: true,
+  });
+  identity.addDependency(api);
   const async = new AsyncStack(app, 'McatDevAsync', {
     stackName: 'mcat-dev-async',
     description: 'MCAT Mastery development outbox and projection workers.',
@@ -117,7 +116,7 @@ export function createMcatApp(options: CreateMcatAppOptions): App {
     runtimeEntries: options.workerRuntimeEntries,
     terminationProtection: true,
   });
-  async.addDependency(api);
+  async.addDependency(identity);
   const publication = new PublicationStack(app, 'McatDevPublication', {
     stackName: 'mcat-dev-publication',
     description: 'MCAT Mastery development fail-closed content publication workflow.',
@@ -148,7 +147,7 @@ export function createMcatApp(options: CreateMcatAppOptions): App {
     proxy: data.resources.proxy,
     dlqs: [data.resources.projectionDlq, ...Object.values(data.resources.asyncDlqs)],
     publicationStateMachine: publication.resources.stateMachine,
-    distributions: [web.resources.learnerDistribution, web.resources.adminDistribution],
+    distributions: [api.resources.learnerDistribution, api.resources.adminDistribution],
     budgetName: foundation.resources.budgetName,
     terminationProtection: true,
   });
