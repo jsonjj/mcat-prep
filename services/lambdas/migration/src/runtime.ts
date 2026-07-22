@@ -21,6 +21,7 @@ const SHA256 = /^[a-f0-9]{64}$/;
 const GIT_COMMIT = /^[a-f0-9]{40}$/;
 const SECRET_SUFFIX = '[A-Za-z0-9]{6}';
 
+const ADMIN_ROLE = 'mcat_admin';
 const LEARNER_ROLE = 'mcat_learner_api';
 const WORKER_ROLE = 'mcat_workers';
 const REVOKE_PUBLIC_DATABASE_DDL =
@@ -280,8 +281,19 @@ export function parseDatabaseSecret(
     throw new Error('Database secret has an invalid shape.');
   }
   const record = value as Record<string, unknown>;
+  const keys = Object.keys(record).sort().join(',');
+  const credentialOnly = keys === 'password,username';
+  const attachedAuroraAdmin =
+    expectedUsername === ADMIN_ROLE &&
+    keys === 'dbClusterIdentifier,dbname,engine,host,password,port,username' &&
+    record.engine === 'postgres' &&
+    typeof record.host === 'string' &&
+    /^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?\.rds\.amazonaws\.com$/i.test(record.host) &&
+    record.port === 5432 &&
+    record.dbname === 'mcat' &&
+    record.dbClusterIdentifier === 'mcat-dev-aurora';
   if (
-    Object.keys(record).sort().join(',') !== 'password,username' ||
+    (!credentialOnly && !attachedAuroraAdmin) ||
     record.username !== expectedUsername ||
     typeof record.password !== 'string' ||
     record.password.length < 16 ||

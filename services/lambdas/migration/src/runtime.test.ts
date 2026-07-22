@@ -254,6 +254,23 @@ describe('migration runtime security boundary', () => {
     ).toThrow('Database secret has an invalid shape');
   });
 
+  it('accepts the exact Aurora-managed connection metadata attached to the admin secret', () => {
+    expect(
+      parseDatabaseSecret(
+        JSON.stringify({
+          username: 'mcat_admin',
+          password: ADMIN_PASSWORD,
+          engine: 'postgres',
+          host: 'mcat-dev-aurora.cluster-example.us-east-1.rds.amazonaws.com',
+          port: 5432,
+          dbname: 'mcat',
+          dbClusterIdentifier: 'mcat-dev-aurora',
+        }),
+        'mcat_admin',
+      ),
+    ).toEqual({ username: 'mcat_admin', password: ADMIN_PASSWORD });
+  });
+
   it('uses server-side literal quoting for rotating fixed role passwords', async () => {
     const fixture = await fixtureMigration();
     const pool = new FakePool(String(fixture.bytes));
