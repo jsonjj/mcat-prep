@@ -13,7 +13,7 @@ Agent skills are user-level development tools, not product artifacts. This file 
 | subagent-driven-development | github.com/obra/superpowers | Worktree/handoff/review orchestration | installed |
 | postgresql-table-design | github.com/wshobson/agents | Aurora schema/index review | installed |
 | e2e-testing-patterns | github.com/wshobson/agents | Maintainable E2E suites | pending install |
-| aws-cdk (official) | github.com/aws/agent-toolkit-for-aws | CDK guidance (Phase 4) | pending install |
+| aws-cdk (official) | `https://github.com/aws/agent-toolkit-for-aws/tree/fae975d565b6c1752e3f4795c499fb3951039777/skills/core-skills/aws-cdk` | CDK guidance (Phase 4) | installed; Apache-2.0; aggregate SHA-256 `e56191e279fa47e467d33a59653e180b6f84706abec148a38606764981c2f32f`; instruction-only Markdown reviewed, no executable payloads |
 | llm-evaluation | github.com/wshobson/agents | AI eval (Phase 9) | pending install |
 | vercel-react-native-skills | github.com/vercel-labs/agent-skills | Native (Phase 13) | pending install |
 
