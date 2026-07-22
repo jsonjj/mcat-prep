@@ -63,8 +63,8 @@ exit code `0`.
 
 ## 2. Produce an immutable review packet
 
-Use a directory outside the repository so review artifacts do not dirty Git. Substitute the two
-approved origins; do not use examples in a deployment.
+Use a directory outside the repository so review artifacts do not dirty Git. The learner and
+staff origins are produced by the reviewed CloudFront stack and are not supplied manually.
 
 ```bash
 export AWS_PROFILE=sbsandbox
@@ -72,8 +72,6 @@ export AWS_REGION=us-east-1
 export CDK_DEFAULT_ACCOUNT=056956104102
 export CDK_DEFAULT_REGION=us-east-1
 export MCAT_STAGE=dev
-export MCAT_LEARNER_WEB_ORIGIN=https://APPROVED_LEARNER_ORIGIN
-export MCAT_STAFF_WEB_ORIGIN=https://APPROVED_STAFF_ORIGIN
 export MCAT_REVIEW_DIRECTORY=/tmp/mcat-dev-review-$(git rev-parse HEAD)
 mkdir -p "$MCAT_REVIEW_DIRECTORY"
 ```
@@ -81,13 +79,13 @@ mkdir -p "$MCAT_REVIEW_DIRECTORY"
 Synthesize all nine exact stacks into the review directory:
 
 ```bash
-pnpm --filter @mcat/infra-cdk exec cdk synth McatDevFoundation McatDevData McatDevIdentity McatDevApi McatDevAsync McatDevPublication McatDevAnalytics McatDevWeb McatDevOperations --strict --output "$MCAT_REVIEW_DIRECTORY/cdk.out"
+pnpm --filter @mcat/infra-cdk exec cdk synth McatDevFoundation McatDevData McatDevWeb McatDevIdentity McatDevApi McatDevAsync McatDevPublication McatDevAnalytics McatDevOperations --strict --output "$MCAT_REVIEW_DIRECTORY/cdk.out"
 ```
 
 Create a no-change-set diff from that assembly and preserve its exact bytes:
 
 ```bash
-pnpm --filter @mcat/infra-cdk exec cdk diff McatDevFoundation McatDevData McatDevIdentity McatDevApi McatDevAsync McatDevPublication McatDevAnalytics McatDevWeb McatDevOperations --app "$MCAT_REVIEW_DIRECTORY/cdk.out" --change-set=false --no-color > "$MCAT_REVIEW_DIRECTORY/diff.txt"
+pnpm --filter @mcat/infra-cdk exec cdk diff McatDevFoundation McatDevData McatDevWeb McatDevIdentity McatDevApi McatDevAsync McatDevPublication McatDevAnalytics McatDevOperations --app "$MCAT_REVIEW_DIRECTORY/cdk.out" --change-set=false --no-color > "$MCAT_REVIEW_DIRECTORY/diff.txt"
 ```
 
 Generate the draft. This hashes every file in `cdk.out`, not only `manifest.json`:
@@ -121,7 +119,7 @@ export MCAT_DEPLOY_WAVE=foundation
 pnpm --filter @mcat/aws-tools deploy:dev
 ```
 
-This deploys only `McatDevFoundation`, then `McatDevData`, then `McatDevIdentity`, each with
+This deploys only `McatDevFoundation`, `McatDevData`, `McatDevWeb`, then `McatDevIdentity`, each with
 `--exclusively` from the reviewed assembly. Confirm every physical stack is complete and inspect
 CloudWatch, CloudTrail, budget, KMS, S3 public-access blocks, Aurora/RDS Proxy, and Cognito before
 continuing.
@@ -143,13 +141,12 @@ pnpm --filter @mcat/aws-tools migrate:dev
 export MCAT_DEPLOY_WAVE=authority
 export MCAT_MIGRATION_ATTESTATION_PATH="$MCAT_REVIEW_DIRECTORY/migration-attestation.json"
 pnpm --filter @mcat/aws-tools deploy:dev
-export MCAT_LEARNER_WEB_ORIGIN=https://APPROVED_LEARNER_ORIGIN
 export MCAT_SMOKE_ATTESTATION_PATH="$MCAT_REVIEW_DIRECTORY/authority-smoke-attestation.json"
 pnpm --filter @mcat/aws-tools smoke
 ```
 
-The wave deploys only `McatDevApi` and `McatDevAsync`. Before the web stack exists, the smoke
-client uses the exact approved learner origin. It resolves the API URL from `mcat-dev-api` and
+The wave deploys only `McatDevApi` and `McatDevAsync`. The smoke client resolves the exact
+CloudFront learner origin and API URL from stack outputs and
 checks health, CORS, two secure `__Host-` cookies, CSRF, idempotent goal replay, authenticated
 reads, unauthenticated/CSRF/ownership negatives, and protected-field absence.
 
@@ -159,12 +156,11 @@ reads, unauthenticated/CSRF/ownership negatives, and protected-field absence.
 export MCAT_DEPLOY_WAVE=edge
 export MCAT_SMOKE_ATTESTATION_PATH="$MCAT_REVIEW_DIRECTORY/authority-smoke-attestation.json"
 pnpm --filter @mcat/aws-tools deploy:dev
-unset MCAT_LEARNER_WEB_ORIGIN
 export MCAT_SMOKE_ATTESTATION_PATH="$MCAT_REVIEW_DIRECTORY/edge-smoke-attestation.json"
 pnpm --filter @mcat/aws-tools smoke
 ```
 
-This deploys, in order, `McatDevPublication`, `McatDevAnalytics`, `McatDevWeb`, and
+This deploys, in order, `McatDevPublication`, `McatDevAnalytics`, and
 `McatDevOperations`. The second smoke resolves both API and learner origins from exact stack
 outputs.
 
@@ -183,12 +179,12 @@ pnpm --filter @mcat/aws-tools publish:web
 
 The command resolves bucket/distribution/API coordinates only from `mcat-dev-web` and
 `mcat-dev-api`, reruns the protected scan, injects the normalized API stage root into the learner
-build, scans both built trees, computes SHA-256 manifests, uploads fingerprinted assets with
+build, scans the learner tree, computes a SHA-256 manifest, uploads fingerprinted assets with
 one-year immutable caching, uploads shells with no-cache, and invalidates only shell paths. It
 never uses `s3 sync --delete`.
 
-If the admin build still includes synthetic answer-bearing material, publication must stop before
-the first upload. That is a required protection, not an overrideable warning.
+The admin build is deliberately excluded until its synthetic authority dependency and
+answer-bearing material are removed. There is no override that publishes it in this phase.
 
 ## 9. Record evidence
 
@@ -197,7 +193,7 @@ Record, without secrets:
 - commit and reviewed assembly/diff hashes;
 - stack IDs, physical names, IDs, statuses, and output URLs;
 - migration manifest hash and applied/already-applied versions;
-- learner/admin artifact hashes and CloudFront invalidation IDs;
+- learner artifact hash and CloudFront invalidation ID;
 - test/smoke exit codes, alarm/DLQ/budget state, reviewer, and timestamps.
 
 Do not claim development deployment complete until the integration tests, security tests, smoke,
