@@ -1,0 +1,30 @@
+{
+  "name": "@mcat/landing-web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build && vite build --ssr server/production-server.ts --outDir dist-server --emptyOutDir && node server/verify-client-bundle.mjs",
+    "preview": "vite preview",
+    "start": "node dist-server/production-server.js",
+    "typecheck": "tsc --noEmit",
+    "verify:bundle": "node server/verify-client-bundle.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "^5.0.0",
+    "@fontsource/atkinson-hyperlegible": "^5.0.0",
+    "@fontsource/ibm-plex-mono": "^5.0.0",
+    "@mcat/design-tokens": "workspace:*",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.5",
+    "@types/react": "18.3.18",
+    "@types/react-dom": "18.3.5",
+    "@vitejs/plugin-react": "4.3.4",
+    "typescript": "5.7.3",
+    "vite": "6.0.7"
+  }
+}
