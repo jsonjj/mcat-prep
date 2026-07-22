@@ -1,0 +1,89 @@
+name: AWS backend CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, 'codex/**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aws-backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: mcat_test
+          POSTGRES_PASSWORD: mcat_test
+          POSTGRES_DB: mcat_test
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U mcat_test -d mcat_test"
+          --health-interval 2s
+          --health-timeout 2s
+          --health-retries 30
+
+    env:
+      CI: 'true'
+      CDK_DEFAULT_ACCOUNT: '056956104102'
+      CDK_DEFAULT_REGION: us-east-1
+      TEST_DATABASE_URL: postgres://mcat_test:mcat_test@127.0.0.1:55432/mcat_test
+      VITE_AUTHORITY_BASE_URL: https://api.example.invalid
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install immutable dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Reject high-severity production dependencies
+        run: pnpm audit --prod --audit-level high
+
+      - name: Apply PostgreSQL migrations
+        run: |
+          for migration in database/migrations/*.sql; do
+            psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f "$migration"
+          done
+
+      - name: Verify source and contracts
+        run: pnpm run verify
+
+      - name: Verify PostgreSQL authority integrations
+        run: |
+          pnpm --filter @mcat/persistence-postgres test:integration
+          pnpm exec vitest run \
+            services/lambdas/learner-api/src/postgres-api.integration.test.ts \
+            services/lambdas/workers/src/postgres-store.integration.test.ts
+
+      - name: Build browser artifacts
+        run: pnpm run build
+
+      - name: Verify CDK assertions and synthesis
+        run: |
+          pnpm --filter @mcat/infra-cdk test
+          pnpm --filter @mcat/infra-cdk typecheck
+          pnpm --filter @mcat/infra-cdk synth -- --quiet
+
+      - name: Scan built learner artifact
+        run: |
+          if rg -n "correct_choice_id|option_rationales|@mcat/authority-core|@mcat/content" apps/learner-web/dist; then
+            echo "Protected or server-only material found in learner artifact" >&2
+            exit 1
+          fi
