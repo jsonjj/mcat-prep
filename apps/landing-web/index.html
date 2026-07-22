@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f5f8f8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="A standalone preview of calmer, evidence-led MCAT preparation with a 12-question Prep Pattern Snapshot."
+    />
+    <meta property="og:title" content="MCAT Mastery — Landing Page Preview" />
+    <meta
+      property="og:description"
+      content="One clear next step for your MCAT prep, backed by evidence that improves as you study."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>MCAT Mastery — Landing Page Preview</title>
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('mc.landing.theme');
+          var dark = saved === 'dark';
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+          document.querySelector('meta[name="theme-color"]').content = dark ? '#0a1620' : '#f5f8f8';
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.querySelector('meta[name="theme-color"]').content = '#f5f8f8';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

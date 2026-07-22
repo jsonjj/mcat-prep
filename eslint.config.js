@@ -7,6 +7,7 @@ export default tseslint.config(
   {
     ignores: [
       '**/dist/**',
+      '**/dist-server/**',
       '**/build/**',
       '**/coverage/**',
       '**/.react-router/**',
@@ -46,7 +47,12 @@ export default tseslint.config(
   },
   {
     // Browser code
-    files: ['apps/**/*.{ts,tsx}', 'packages/ui-web/**/*.{ts,tsx}', 'packages/platform-web/**/*.ts', 'packages/scene-web/**/*.{ts,tsx}'],
+    files: [
+      'apps/**/*.{ts,tsx}',
+      'packages/ui-web/**/*.{ts,tsx}',
+      'packages/platform-web/**/*.ts',
+      'packages/scene-web/**/*.{ts,tsx}',
+    ],
     languageOptions: {
       globals: { ...globals.browser },
     },

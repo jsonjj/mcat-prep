@@ -8,12 +8,16 @@ A personalized, evidence-based MCAT learning platform. Browser-first (responsive
 
 MCAT Mastery organizes study around **15 understandable skill clusters** backed by smaller internal skills. It decides what to study next, teaches missing prerequisites, fades assistance, diagnoses _why_ an answer was wrong before revealing it, schedules spaced recall, and requires **changed, delayed, mixed, passage-level, timed, and protected** evidence before treating a skill as current mastery.
 
-The product is **content-independent**: no learner question, passage, choice, explanation, or answer key is hard-coded. All learning content flows through versioned, reviewed content contracts.
+The core learner product is **content-independent**: its learning content flows through versioned,
+reviewed content contracts rather than app code. The standalone landing Snapshot currently carries a
+fixed 12-item pilot form; its answer keys and scoring remain in the isolated server bundle and never
+enter the client.
 
 ## Repository layout
 
 ```
 apps/
+  landing-web/     Standalone landing + isolated snapshot scorer; no learner runtime or product connection
   learner-web/     Vite + React Router responsive website / PWA (SPA, ssr disabled)
   admin-web/       Browser-based content administration console (desktop-optimized)
 packages/
@@ -52,6 +56,7 @@ pnpm install
 pnpm run typecheck
 pnpm run test
 pnpm run build
+pnpm --filter @mcat/landing-web dev   # landing page + Prep Pattern Snapshot
 pnpm --filter @mcat/learner-web dev   # learner website
 pnpm --filter @mcat/admin-web dev      # admin console
 ```
@@ -62,9 +67,20 @@ traffic only through that CloudFront origin. The Vite learner command requires a
 `VITE_AUTHORITY_BASE_URL`; the repository does not currently ship a standalone local HTTP
 authority server.
 
+The landing Snapshot keeps answer keys in its server bundle. For a production-like run, use
+`pnpm --filter @mcat/landing-web build` followed by
+`pnpm --filter @mcat/landing-web start`; serving `apps/landing-web/dist` alone will not provide
+scoring or beta-update capture. Optional beta-update emails are appended to
+`BETA_LEAD_STORE_PATH` (default: `.data/beta-leads.jsonl`) with explicit consent and no Snapshot
+answers or client identifier. A real deployment must point that variable at a private persistent
+volume with restricted access, retention, deletion, and backup controls; a stateless filesystem
+will lose leads. The JSONL lead sink and one-use Snapshot attempt store are suitable only for a
+single-process pilot. A public, multi-instance deployment must replace them with a transactional
+lead service and a shared durable rate-limit/attempt store.
+
 ## Authority boundaries (non-negotiable)
 
-- The server (AWS in production; `services/local-authority` in local dev) is authoritative for correctness, protected scoring, planning, FSRS, mastery, and synchronization.
+- The server (AWS for deployed development; the in-process `services/local-authority` adapter for tests/tooling) is authoritative for correctness, protected scoring, planning, FSRS, mastery, and synchronization.
 - The client is authoritative for presentation, interaction state, local cache, and an offline event queue — never for correctness, answer keys, mastery, or protected scoring.
 - Answer keys, rationales, and protected assessment payloads never enter client bundles, prerendered HTML, caches, analytics, or ordinary logs.
 
