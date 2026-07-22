@@ -20,6 +20,8 @@ export default defineWorkspace([
         'packages/ai-speech-contracts/**/*.test.ts',
         'packages/test-fixtures/**/*.test.ts',
         'services/**/*.test.ts',
+        'database/**/*.test.ts',
+        'infra/cdk/**/*.test.ts',
         'tools/**/*.test.ts',
       ],
     },
