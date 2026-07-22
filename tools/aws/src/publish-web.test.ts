@@ -7,11 +7,16 @@ import { describe, expect, it } from 'vitest';
 import {
   buildArtifactManifest,
   planWebPublish,
+  webAppsForDeployment,
   verifyArtifactFile,
   verifyUploadedObject,
 } from './publish-web';
 
 describe('immutable web publication', () => {
+  it('publishes only the learner application while admin artifacts remain protected', () => {
+    expect(webAppsForDeployment()).toEqual(['learner']);
+  });
+
   it('hashes bytes and assigns immutable cache only to fingerprinted assets', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'mcat-web-'));
     await mkdir(join(directory, 'assets'));

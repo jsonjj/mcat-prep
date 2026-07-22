@@ -73,6 +73,10 @@ export interface WebPublishingConfiguration {
   readonly adminTarget: WebPublishTarget;
 }
 
+export function webAppsForDeployment(): readonly ['learner'] {
+  return ['learner'];
+}
+
 function digest(value: Uint8Array | string): string {
   return createHash('sha256').update(value).digest('hex');
 }
@@ -373,29 +377,26 @@ export async function publishWeb(options: {
     args: ['run', 'scan:protected'],
     cwd: options.repositoryRoot,
   });
-  for (const app of ['learner-web', 'admin-web'] as const) {
+  const deploymentApps = webAppsForDeployment();
+  for (const app of deploymentApps) {
     await runChecked(runner, {
       command: 'pnpm',
-      args: ['--filter', `@mcat/${app}`, 'build'],
+      args: ['--filter', `@mcat/${app}-web`, 'build'],
       cwd: options.repositoryRoot,
-      ...(app === 'learner-web'
+      ...(app === 'learner'
         ? { env: { VITE_AUTHORITY_BASE_URL: authorityBaseUrl(options.authorityBaseUrl) } }
         : {}),
     });
   }
-  const manifests = await Promise.all([
-    buildArtifactManifest(
-      'learner',
-      join(options.repositoryRoot, 'apps', 'learner-web', 'dist'),
-      preflight.review.gitCommit,
+  const manifests = await Promise.all(
+    deploymentApps.map((app) =>
+      buildArtifactManifest(
+        app,
+        join(options.repositoryRoot, 'apps', `${app}-web`, 'dist'),
+        preflight.review.gitCommit,
+      ),
     ),
-    buildArtifactManifest(
-      'admin',
-      join(options.repositoryRoot, 'apps', 'admin-web', 'dist'),
-      preflight.review.gitCommit,
-    ),
-  ]);
-  const targets = [options.learnerTarget, options.adminTarget] as const;
+  );
   const publications: Array<{
     readonly app: 'learner' | 'admin';
     readonly bucket: string;
@@ -405,7 +406,8 @@ export async function publishWeb(options: {
   }> = [];
   for (let index = 0; index < manifests.length; index += 1) {
     const manifest = manifests[index];
-    const target = targets[index];
+    const target =
+      manifest?.app === 'learner' ? options.learnerTarget : options.adminTarget;
     if (manifest === undefined || target === undefined)
       throw new Error('Web publication plan is incomplete');
     const root = join(options.repositoryRoot, 'apps', `${manifest.app}-web`, 'dist');
