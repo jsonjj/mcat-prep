@@ -10,6 +10,7 @@ export default tseslint.config(
       '**/build/**',
       '**/coverage/**',
       '**/.react-router/**',
+      '**/cdk.out/**',
       '**/.turbo/**',
       '**/node_modules/**',
       '.tooling/**',
