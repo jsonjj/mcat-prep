@@ -89,6 +89,8 @@ export function applyAuthorityCommand(
 ): AppliedAuthorityCommand {
   if ('goal' in command) {
     authority.confirmPlan(state, command.goal);
+    authority.startSession(state);
+    authority.continueStep(state);
     return { eventType: 'goal_updated', payload: toJsonObject(command) };
   }
   return applyAttempt(authority, state, command);

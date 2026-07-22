@@ -149,6 +149,7 @@ describe('AuthorityKernel', () => {
 
     expect(accepted).toMatchObject({ sequence: 1, streamVersion: 1 });
     expect(snapshot.today).not.toBeNull();
+    expect(snapshot.session.kind).toBe('question');
     expect(JSON.stringify(snapshot)).not.toMatch(/correct_choice_id|rationales|sessionHash/i);
   });
 
