@@ -99,6 +99,28 @@ function quoteLiteral(value: string): string {
   return `'${value.replaceAll("'", "''")}'`;
 }
 
+interface FakeRoleAttributes {
+  readonly rolsuper: boolean;
+  readonly rolcreatedb: boolean;
+  readonly rolcreaterole: boolean;
+  readonly rolcanlogin: boolean;
+  readonly rolinherit: boolean;
+  readonly rolreplication: boolean;
+  readonly rolbypassrls: boolean;
+  readonly has_role_memberships: boolean;
+}
+
+const SAFE_ROLE_ATTRIBUTES: FakeRoleAttributes = {
+  rolsuper: false,
+  rolcreatedb: false,
+  rolcreaterole: false,
+  rolcanlogin: true,
+  rolinherit: false,
+  rolreplication: false,
+  rolbypassrls: false,
+  has_role_memberships: false,
+};
+
 class FakePool implements RuntimePool {
   readonly calls: QueryCall[] = [];
   readonly applied = new Map<string, string>();
@@ -108,6 +130,8 @@ class FakePool implements RuntimePool {
   constructor(
     readonly migrationSql: string,
     readonly failOn?: string,
+    readonly roleAttributes: Partial<FakeRoleAttributes> = {},
+    readonly roleRowCount = 1,
   ) {}
 
   async connect() {
@@ -171,6 +195,14 @@ class FakePool implements RuntimePool {
           return {
             rows: [...this.applied].map(
               ([version, checksum]) => ({ version, checksum }) as unknown as Row,
+            ),
+          };
+        }
+        if (text.startsWith('select rolsuper, rolcreatedb, rolcreaterole')) {
+          return {
+            rows: Array.from(
+              { length: this.roleRowCount },
+              () => ({ ...SAFE_ROLE_ATTRIBUTES, ...this.roleAttributes }) as unknown as Row,
             ),
           };
         }
@@ -345,15 +377,81 @@ describe('migration runtime security boundary', () => {
     expect(sql).toContain('revoke execute on all functions in schema public from public');
     expect(sql).toContain('alter default privileges revoke execute on functions from public');
     expect(sql).toContain(
-      'alter role mcat_learner_api with login nosuperuser nocreatedb nocreaterole noinherit noreplication nobypassrls',
+      'alter role mcat_learner_api with login nocreatedb nocreaterole noinherit',
     );
-    expect(sql).toContain(
-      'alter role mcat_workers with login nosuperuser nocreatedb nocreaterole noinherit noreplication nobypassrls',
+    expect(sql).toContain('alter role mcat_workers with login nocreatedb nocreaterole noinherit');
+    const alteredRoles = sql.filter((statement) => statement.startsWith('alter role'));
+    expect(alteredRoles.join('\n')).not.toMatch(/\b(?:nosuperuser|noreplication|nobypassrls)\b/);
+    const learnerAuditIndex = pool.calls.findIndex(
+      (call) => call.text.startsWith('select rolsuper') && call.values[0] === 'mcat_learner_api',
     );
+    const learnerPasswordIndex = sql.findIndex((statement) =>
+      statement.startsWith('alter role mcat_learner_api password'),
+    );
+    const learnerGrantIndex = sql.indexOf('grant insert on table learners to mcat_learner_api');
+    expect(learnerAuditIndex).toBeGreaterThan(-1);
+    expect(learnerAuditIndex).toBeLessThan(learnerPasswordIndex);
+    expect(learnerAuditIndex).toBeLessThan(learnerGrantIndex);
     const grants = sql.filter((statement) => statement.startsWith('grant '));
     expect(grants.join('\n')).not.toMatch(/\bgrant\s+(?:all|create|alter|drop)\b/);
     expect(grants.join('\n')).not.toMatch(/\bdelete\b/);
     expect(grants.join('\n')).not.toMatch(/content_objects|content_releases|publication_runs/);
+  });
+
+  it.each([
+    ['rolsuper', { rolsuper: true }],
+    ['rolcreatedb', { rolcreatedb: true }],
+    ['rolcreaterole', { rolcreaterole: true }],
+    ['rolcanlogin', { rolcanlogin: false }],
+    ['rolinherit', { rolinherit: true }],
+    ['rolreplication', { rolreplication: true }],
+    ['rolbypassrls', { rolbypassrls: true }],
+    ['role membership', { has_role_memberships: true }],
+  ] satisfies readonly (readonly [string, Partial<FakeRoleAttributes>])[])(
+    'fails closed before password or data grants for unsafe %s state',
+    async (_label, roleAttributes) => {
+      const fixture = await fixtureMigration();
+      const pool = new FakePool(String(fixture.bytes), undefined, roleAttributes);
+      const logs: Parameters<MigrationLogger>[0][] = [];
+
+      await expect(
+        createMigrationHandler({
+          environment: environment(fixture.directory),
+          secrets: secrets(),
+          poolFactory: () => pool,
+          logger: (event) => logs.push(event),
+        })(migrationEvent(fixture)),
+      ).rejects.toThrow('Database migration failed');
+
+      const sql = pool.calls.map((call) => call.text.toLowerCase());
+      expect(sql.some((statement) => statement.includes(' password '))).toBe(false);
+      expect(sql).not.toContain('grant insert on table learners to mcat_learner_api');
+      expect(sql).toContain('rollback');
+      expect(logs.at(-1)).toEqual({
+        event: 'migration.failed',
+        code: 'migration_failed',
+        stage: 'role_grants',
+        reason: 'unclassified',
+      });
+    },
+  );
+
+  it.each([0, 2])('fails closed when role verification returns %i rows', async (roleRowCount) => {
+    const fixture = await fixtureMigration();
+    const pool = new FakePool(String(fixture.bytes), undefined, {}, roleRowCount);
+
+    await expect(
+      createMigrationHandler({
+        environment: environment(fixture.directory),
+        secrets: secrets(),
+        poolFactory: () => pool,
+        logger: () => undefined,
+      })(migrationEvent(fixture)),
+    ).rejects.toThrow('Database migration failed');
+
+    expect(pool.calls.map((call) => call.text.toLowerCase())).not.toContain(
+      'grant insert on table learners to mcat_learner_api',
+    );
   });
 
   it('rolls back and emits only non-sensitive failure metadata when a migration fails', async () => {

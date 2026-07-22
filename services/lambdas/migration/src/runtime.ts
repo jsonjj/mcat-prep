@@ -173,7 +173,19 @@ interface DdlRow extends Record<string, unknown> {
   ddl: string;
 }
 
+interface RoleAttributesRow extends Record<string, unknown> {
+  rolsuper: boolean;
+  rolcreatedb: boolean;
+  rolcreaterole: boolean;
+  rolcanlogin: boolean;
+  rolinherit: boolean;
+  rolreplication: boolean;
+  rolbypassrls: boolean;
+  has_role_memberships: boolean;
+}
+
 interface RoleSpec {
+  readonly name: typeof LEARNER_ROLE | typeof WORKER_ROLE;
   readonly createSql: string;
   readonly hardenSql: string;
   readonly passwordFormatSql: string;
@@ -189,6 +201,7 @@ interface RoleSpec {
 
 const ROLE_SPECS: readonly RoleSpec[] = [
   {
+    name: LEARNER_ROLE,
     createSql: `do $role$
 begin
   if not exists (select 1 from pg_roles where rolname = 'mcat_learner_api') then
@@ -196,8 +209,7 @@ begin
   end if;
 end
 $role$`,
-    hardenSql:
-      'alter role mcat_learner_api with login nosuperuser nocreatedb nocreaterole noinherit noreplication nobypassrls',
+    hardenSql: 'alter role mcat_learner_api with login nocreatedb nocreaterole noinherit',
     passwordFormatSql: "select format('alter role mcat_learner_api password %L', $1::text) as ddl",
     revokeDatabaseFormatSql:
       "select format('revoke all privileges on database %I from mcat_learner_api', current_database()) as ddl",
@@ -218,6 +230,7 @@ $role$`,
     ],
   },
   {
+    name: WORKER_ROLE,
     createSql: `do $role$
 begin
   if not exists (select 1 from pg_roles where rolname = 'mcat_workers') then
@@ -225,8 +238,7 @@ begin
   end if;
 end
 $role$`,
-    hardenSql:
-      'alter role mcat_workers with login nosuperuser nocreatedb nocreaterole noinherit noreplication nobypassrls',
+    hardenSql: 'alter role mcat_workers with login nocreatedb nocreaterole noinherit',
     passwordFormatSql: "select format('alter role mcat_workers password %L', $1::text) as ddl",
     revokeDatabaseFormatSql:
       "select format('revoke all privileges on database %I from mcat_workers', current_database()) as ddl",
@@ -521,6 +533,40 @@ async function executeFormattedDdl(
   await query(client, ddl);
 }
 
+async function assertSecureRoleAttributes(
+  client: MigrationClient,
+  roleName: RoleSpec['name'],
+): Promise<void> {
+  const result = await query<RoleAttributesRow>(
+    client,
+    `select rolsuper, rolcreatedb, rolcreaterole, rolcanlogin, rolinherit,
+  rolreplication, rolbypassrls,
+  exists (
+    select 1
+    from pg_catalog.pg_auth_members
+    where member = pg_roles.oid
+  ) as has_role_memberships
+from pg_catalog.pg_roles
+where rolname = $1`,
+    [roleName],
+  );
+  const role = result.rows[0];
+  if (
+    result.rows.length !== 1 ||
+    role === undefined ||
+    role.rolsuper !== false ||
+    role.rolcreatedb !== false ||
+    role.rolcreaterole !== false ||
+    role.rolcanlogin !== true ||
+    role.rolinherit !== false ||
+    role.rolreplication !== false ||
+    role.rolbypassrls !== false ||
+    role.has_role_memberships !== false
+  ) {
+    throw new Error('Database role hardening failed.');
+  }
+}
+
 async function configureRole(
   client: MigrationClient,
   spec: RoleSpec,
@@ -528,6 +574,7 @@ async function configureRole(
 ): Promise<void> {
   await query(client, spec.createSql);
   await query(client, spec.hardenSql);
+  await assertSecureRoleAttributes(client, spec.name);
   await executeFormattedDdl(client, spec.passwordFormatSql, [password]);
   await executeFormattedDdl(client, spec.revokeDatabaseFormatSql);
   await query(client, spec.revokeSchemaSql);
