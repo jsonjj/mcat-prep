@@ -56,14 +56,13 @@ jobs:
       - name: Reject high-severity production dependencies
         run: pnpm audit --prod --audit-level high
 
-      - name: Apply PostgreSQL migrations
-        run: |
-          for migration in database/migrations/*.sql; do
-            psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f "$migration"
-          done
-
       - name: Verify source and contracts
-        run: pnpm run verify
+        run: env -u TEST_DATABASE_URL pnpm run verify
+
+      - name: Verify migration runtime privileges
+        run: >-
+          pnpm exec vitest run
+          services/lambdas/migration/src/runtime.integration.test.ts
 
       - name: Verify PostgreSQL authority integrations
         run: |
