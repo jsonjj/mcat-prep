@@ -375,6 +375,7 @@ describe('migration runtime security boundary', () => {
       event: 'migration.failed',
       code: 'migration_failed',
       stage: 'migrations',
+      reason: 'unclassified',
     });
   });
 
@@ -387,7 +388,9 @@ describe('migration runtime security boundary', () => {
         environment: environment(fixture.directory),
         secrets: secrets(),
         poolFactory: () => {
-          throw new Error(`unsafe-driver-detail:${ADMIN_PASSWORD}`);
+          throw Object.assign(new Error(`unsafe-driver-detail:${ADMIN_PASSWORD}`), {
+            code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+          });
         },
         logger: (event) => logs.push(event),
       })(migrationEvent(fixture)),
@@ -397,6 +400,7 @@ describe('migration runtime security boundary', () => {
       event: 'migration.failed',
       code: 'migration_failed',
       stage: 'database_connect',
+      reason: 'certificate_validation_failed',
     });
     expect(JSON.stringify(logs)).not.toContain(ADMIN_PASSWORD);
     expect(JSON.stringify(logs)).not.toContain('unsafe-driver-detail');

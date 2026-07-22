@@ -77,6 +77,7 @@ export type MigrationLogEvent =
       readonly event: 'migration.failed';
       readonly code: 'migration_failed';
       readonly stage: MigrationFailureStage;
+      readonly reason: MigrationFailureReason;
     };
 
 export type MigrationFailureStage =
@@ -87,6 +88,15 @@ export type MigrationFailureStage =
   | 'migrations'
   | 'role_grants'
   | 'verification';
+
+export type MigrationFailureReason =
+  | 'authentication_failed'
+  | 'certificate_validation_failed'
+  | 'connection_refused'
+  | 'connection_timeout'
+  | 'dns_failed'
+  | 'network_unreachable'
+  | 'unclassified';
 
 export type MigrationLogger = (event: MigrationLogEvent) => void;
 
@@ -570,6 +580,32 @@ function safeLog(logger: MigrationLogger, event: MigrationLogEvent): void {
   }
 }
 
+function classifyFailureReason(
+  stage: MigrationFailureStage,
+  error: unknown,
+): MigrationFailureReason {
+  if (stage !== 'database_connect' || !isRecord(error) || typeof error.code !== 'string') {
+    return 'unclassified';
+  }
+  if (['28P01', '28000'].includes(error.code)) return 'authentication_failed';
+  if (
+    [
+      'CERT_HAS_EXPIRED',
+      'DEPTH_ZERO_SELF_SIGNED_CERT',
+      'ERR_TLS_CERT_ALTNAME_INVALID',
+      'SELF_SIGNED_CERT_IN_CHAIN',
+      'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+    ].includes(error.code)
+  ) {
+    return 'certificate_validation_failed';
+  }
+  if (error.code === 'ECONNREFUSED') return 'connection_refused';
+  if (error.code === 'ETIMEDOUT') return 'connection_timeout';
+  if (['EAI_AGAIN', 'ENOTFOUND'].includes(error.code)) return 'dns_failed';
+  if (['EHOSTUNREACH', 'ENETUNREACH'].includes(error.code)) return 'network_unreachable';
+  return 'unclassified';
+}
+
 export function createMigrationHandler(
   dependencies: MigrationHandlerDependencies,
 ): (event: unknown) => Promise<MigrationResult> {
@@ -644,11 +680,12 @@ export function createMigrationHandler(
         alreadyAppliedCount: result.alreadyAppliedCount,
       });
       return result;
-    } catch {
+    } catch (error) {
       safeLog(dependencies.logger, {
         event: 'migration.failed',
         code: 'migration_failed',
         stage: failureStage,
+        reason: classifyFailureReason(failureStage, error),
       });
       throw new MigrationRuntimeError();
     } finally {
