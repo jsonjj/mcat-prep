@@ -1,4 +1,5 @@
 import type { AcceptedCommand, LearnerProjectionRecord, OutboxRecord } from '@mcat/database';
+import type { PoolClient } from 'pg';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createPgPool, type PostgresPool } from './config';
@@ -53,9 +54,10 @@ function outboxRecord(command: AcceptedCommand): OutboxRecord {
 
 describeWithPostgres('PostgresAuthorityRepository', () => {
   let pool: PostgresPool;
+  let suiteLock: PoolClient;
   let repository: PostgresAuthorityRepository;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     pool = createPgPool({
       connectionString: DATABASE_URL!,
       tls: false,
@@ -66,9 +68,14 @@ describeWithPostgres('PostgresAuthorityRepository', () => {
       idleInTransactionTimeoutMs: 5_000,
     });
     repository = new PostgresAuthorityRepository(pool, { newGuestProjection });
+    suiteLock = await pool.connect();
+    await suiteLock.query('set lock_timeout = 0');
+    await suiteLock.query('select pg_advisory_lock(72004002)');
   });
 
   afterAll(async () => {
+    await suiteLock.query('select pg_advisory_unlock(72004002)');
+    suiteLock.release();
     await pool.end();
   });
 
