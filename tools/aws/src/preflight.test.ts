@@ -66,31 +66,36 @@ describe('AWS development preflight', () => {
   });
 
   it('accepts only a reviewed artifact whose bytes and Git commit still match', () => {
-    expect(
-      verifyReviewedArtifact(
-        {
-          schemaVersion: 1,
-          stage: 'dev',
-          account: EXPECTED_ACCOUNT,
-          region: EXPECTED_REGION,
-          profile: EXPECTED_PROFILE,
-          gitCommit: 'a'.repeat(40),
-          stacks: ['McatDevFoundation'],
-          synth: { path: 'synth.json', sha256: 'b'.repeat(64) },
-          diff: { path: 'diff.txt', sha256: 'c'.repeat(64) },
-          review: {
-            approved: true,
-            reviewer: 'security-owner@example.com',
-            reviewedAt: '2026-07-21T12:00:00.000Z',
-          },
-        },
-        {
-          gitCommit: 'a'.repeat(40),
-          synthSha256: 'b'.repeat(64),
-          diffSha256: 'c'.repeat(64),
-        },
-      ).stacks,
-    ).toEqual(['McatDevFoundation']);
+    const review = {
+      schemaVersion: 1 as const,
+      stage: 'dev' as const,
+      account: EXPECTED_ACCOUNT,
+      region: EXPECTED_REGION,
+      profile: EXPECTED_PROFILE,
+      gitCommit: 'a'.repeat(40),
+      stacks: ['McatDevFoundation'],
+      synth: { path: 'synth.json', sha256: 'b'.repeat(64) },
+      diff: { path: 'diff.txt', sha256: 'c'.repeat(64) },
+      review: {
+        approved: true,
+        reviewer: 'security-owner@example.com',
+        reviewedAt: '2026-07-21T12:00:00.000Z',
+      },
+    };
+    const actual = {
+      gitCommit: 'a'.repeat(40),
+      synthSha256: 'b'.repeat(64),
+      diffSha256: 'c'.repeat(64),
+      diffText: 'Stack McatDevFoundation\nThere were no differences\n',
+    };
+
+    expect(verifyReviewedArtifact(review, actual).stacks).toEqual(['McatDevFoundation']);
+    expect(() =>
+      verifyReviewedArtifact(review, {
+        ...actual,
+        diffText: ' \n',
+      }),
+    ).toThrow('diff must not be empty');
   });
 
   it('rejects stale, unreviewed, or over-broad deployment evidence', () => {
@@ -162,6 +167,16 @@ describe('AWS development preflight', () => {
     );
     await writeFile(join(assembly, 'McatDevFoundation.template.json'), '{}');
     const diff = join(directory, 'diff.txt');
+    await writeFile(diff, '');
+
+    await expect(
+      createDeploymentReviewDraft({
+        synthPath: assembly,
+        diffPath: diff,
+        gitCommit: 'a'.repeat(40),
+      }),
+    ).rejects.toThrow('diff must not be empty');
+
     await writeFile(diff, 'There were no differences\n');
 
     const draft = await createDeploymentReviewDraft({

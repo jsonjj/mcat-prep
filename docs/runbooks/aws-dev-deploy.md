@@ -91,7 +91,7 @@ pnpm --filter @mcat/infra-cdk exec cdk synth McatDevFoundation McatDevData McatD
 Create a no-change-set diff from that assembly and preserve its exact bytes:
 
 ```bash
-pnpm --filter @mcat/infra-cdk exec cdk diff McatDevFoundation McatDevData McatDevWeb McatDevApi McatDevIdentity McatDevAsync McatDevPublication McatDevOperations McatDevAnalytics --app "$MCAT_REVIEW_DIRECTORY/cdk.out" --change-set=false --no-color > "$MCAT_REVIEW_DIRECTORY/diff.txt"
+pnpm --filter @mcat/infra-cdk exec cdk diff McatDevFoundation McatDevData McatDevWeb McatDevApi McatDevIdentity McatDevAsync McatDevPublication McatDevOperations McatDevAnalytics --app "$MCAT_REVIEW_DIRECTORY/cdk.out" --change-set=false --no-color > "$MCAT_REVIEW_DIRECTORY/diff.txt" 2>&1
 ```
 
 Generate the draft. This hashes every file in `cdk.out`, not only `manifest.json`:

@@ -212,6 +212,9 @@ export function verifyReviewedArtifact(
   if (!SHA256.test(review.diff.sha256) || review.diff.sha256 !== actual.diffSha256) {
     throw new Error('Reviewed diff SHA-256 does not match current bytes');
   }
+  if (actual.diffText !== undefined && actual.diffText.trim().length === 0) {
+    throw new Error('Reviewed diff must not be empty');
+  }
   if (
     actual.cdkStackIds !== undefined &&
     (actual.cdkStackIds.length !== APPROVED_STACKS.length ||
@@ -372,6 +375,9 @@ export async function createDeploymentReviewDraft(options: {
     stackIds.some((stack, index) => stack !== APPROVED_STACKS[index])
   ) {
     throw new Error('CDK assembly does not contain the exact development stack allowlist');
+  }
+  if (diffBytes.toString('utf8').trim().length === 0) {
+    throw new Error('Reviewed diff must not be empty');
   }
   if (!GIT_COMMIT.test(options.gitCommit))
     throw new Error('A full lowercase Git commit is required');
