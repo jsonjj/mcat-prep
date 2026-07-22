@@ -317,6 +317,26 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
         return response;
       }
 
+      const sourceRateKey = pseudonymousHash(
+        `source:${event.requestContext.http.sourceIp}`,
+      );
+      if (
+        !(await dependencies.rateLimiter.allow({
+          key: sourceRateKey,
+          route: route.path,
+          method,
+        }))
+      ) {
+        response = errorResponse(
+          'rate_limited',
+          'Too many requests. Try again later.',
+          allowedOrigin,
+          requestIdValue,
+          { status: 429, retryable: true },
+        );
+        return response;
+      }
+
       const cookies = parseCookies(event.cookies, headers.cookie);
       let resolved: ResolvedGuestSession | null = null;
       if (route.auth === 'session') {
@@ -334,8 +354,14 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
         principal = resolved.principal;
       }
 
-      const rateKey = pseudonymousHash(principal?.sessionId ?? event.requestContext.http.sourceIp);
-      if (!(await dependencies.rateLimiter.allow({ key: rateKey, route: route.path, method }))) {
+      if (
+        principal !== undefined &&
+        !(await dependencies.rateLimiter.allow({
+          key: pseudonymousHash(`session:${principal.sessionId}`),
+          route: route.path,
+          method,
+        }))
+      ) {
         response = errorResponse(
           'rate_limited',
           'Too many requests. Try again later.',

@@ -10,7 +10,12 @@ import { describe, expect, it } from 'vitest';
 
 import { createRepositoryLearnerApi } from './handler';
 import { hashOpaqueToken, type GuestSessionService } from './session';
-import type { ApiGatewayV1Event, ApiGatewayV2Event, SafeLogEvent } from './http';
+import type {
+  ApiGatewayV1Event,
+  ApiGatewayV2Event,
+  RateLimitInput,
+  SafeLogEvent,
+} from './http';
 
 const APP_ORIGIN = 'https://learner.example.test';
 const EVIL_ORIGIN = 'https://evil.example.test';
@@ -70,7 +75,13 @@ function request(
   };
 }
 
-function harness(options: { allowRate?: boolean; maxBodyBytes?: number } = {}) {
+function harness(
+  options: {
+    allowRate?: boolean;
+    rateDecisions?: readonly boolean[];
+    maxBodyBytes?: number;
+  } = {},
+) {
   const authority = new Authority(undefined, clock);
   const state = authority.createGuest();
   state.onboarding.diagnosticComplete = true;
@@ -85,6 +96,7 @@ function harness(options: { allowRate?: boolean; maxBodyBytes?: number } = {}) {
     learnerId: state.learnerId,
     sessionId: crypto.randomUUID(),
   };
+  let sessionResolveCalls = 0;
   const sessions: GuestSessionService = {
     bootstrap: async () => ({
       principal,
@@ -92,22 +104,41 @@ function harness(options: { allowRate?: boolean; maxBodyBytes?: number } = {}) {
       csrfToken: CSRF_TOKEN,
       maxAgeSeconds: 3600,
     }),
-    resolve: async (token) =>
-      token === SESSION_TOKEN ? { principal, csrfTokenHash: hashOpaqueToken(CSRF_TOKEN) } : null,
+    resolve: async (token) => {
+      sessionResolveCalls += 1;
+      return token === SESSION_TOKEN
+        ? { principal, csrfTokenHash: hashOpaqueToken(CSRF_TOKEN) }
+        : null;
+    },
   };
   const logs: SafeLogEvent[] = [];
+  const rateInputs: RateLimitInput[] = [];
   const api = createRepositoryLearnerApi({
     repository,
     clock,
     bank: authority.bank,
     sessions,
     allowedOrigins: [APP_ORIGIN],
-    rateLimiter: { allow: async () => options.allowRate ?? true },
+    rateLimiter: {
+      allow: async (input) => {
+        rateInputs.push(input);
+        return options.rateDecisions?.[rateInputs.length - 1] ?? options.allowRate ?? true;
+      },
+    },
     logger: { info: (event) => logs.push(event) },
     nowMs: () => Date.parse(NOW),
     ...(options.maxBodyBytes === undefined ? {} : { maxBodyBytes: options.maxBodyBytes }),
   });
-  return { api, authority, kernel, logs, principal, repository };
+  return {
+    api,
+    authority,
+    kernel,
+    logs,
+    principal,
+    rateInputs,
+    repository,
+    sessionResolveCalls: () => sessionResolveCalls,
+  };
 }
 
 function responseBody(response: { body?: string }): unknown {
@@ -265,6 +296,52 @@ describe('learner Lambda API security boundary', () => {
     expect(preflight.headers?.['access-control-allow-credentials']).toBe('true');
     expect(preflight.headers?.['access-control-allow-methods']).toBe('GET, POST, PUT, OPTIONS');
     expect(throttled.statusCode).toBe(429);
+  });
+
+  it('applies pre-authentication throttling before resolving a supplied session', async () => {
+    const { api, rateInputs, sessionResolveCalls } = harness({ allowRate: false });
+
+    const response = await api.handle(
+      request('GET', '/v1/plan/today', undefined, {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+
+    expect(response.statusCode).toBe(429);
+    expect(sessionResolveCalls()).toBe(0);
+    expect(rateInputs).toHaveLength(1);
+  });
+
+  it('applies a separate per-session throttle after successful session resolution', async () => {
+    const { api, rateInputs, sessionResolveCalls } = harness({ rateDecisions: [true, false] });
+
+    const response = await api.handle(
+      request('GET', '/v1/plan/today', undefined, {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+
+    expect(response.statusCode).toBe(429);
+    expect(sessionResolveCalls()).toBe(1);
+    expect(rateInputs).toHaveLength(2);
+    expect(rateInputs[0]?.key).not.toBe(rateInputs[1]?.key);
+  });
+
+  it('does not double-count anonymous or bootstrap routes', async () => {
+    const healthHarness = harness();
+    const bootstrapHarness = harness();
+
+    const health = await healthHarness.api.handle(request('GET', '/v1/health'));
+    const bootstrap = await bootstrapHarness.api.handle(
+      request('POST', '/v1/bootstrap', undefined, { origin: APP_ORIGIN }),
+    );
+
+    expect(health.statusCode).toBe(200);
+    expect(bootstrap.statusCode).toBe(200);
+    expect(healthHarness.rateInputs).toHaveLength(1);
+    expect(bootstrapHarness.rateInputs).toHaveLength(1);
   });
 
   it('logs allowlisted metadata without request secrets or protected material', async () => {
