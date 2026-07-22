@@ -388,9 +388,7 @@ describe('migration runtime security boundary', () => {
         environment: environment(fixture.directory),
         secrets: secrets(),
         poolFactory: () => {
-          throw Object.assign(new Error(`unsafe-driver-detail:${ADMIN_PASSWORD}`), {
-            code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
-          });
+          throw new Error(`unable to get local issuer certificate:${ADMIN_PASSWORD}`);
         },
         logger: (event) => logs.push(event),
       })(migrationEvent(fixture)),

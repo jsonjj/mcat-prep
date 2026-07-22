@@ -584,10 +584,11 @@ function classifyFailureReason(
   stage: MigrationFailureStage,
   error: unknown,
 ): MigrationFailureReason {
-  if (stage !== 'database_connect' || !isRecord(error) || typeof error.code !== 'string') {
+  if (stage !== 'database_connect' || !isRecord(error)) {
     return 'unclassified';
   }
-  if (['28P01', '28000'].includes(error.code)) return 'authentication_failed';
+  const code = typeof error.code === 'string' ? error.code : '';
+  if (['28P01', '28000'].includes(code)) return 'authentication_failed';
   if (
     [
       'CERT_HAS_EXPIRED',
@@ -595,14 +596,26 @@ function classifyFailureReason(
       'ERR_TLS_CERT_ALTNAME_INVALID',
       'SELF_SIGNED_CERT_IN_CHAIN',
       'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
-    ].includes(error.code)
+    ].includes(code)
   ) {
     return 'certificate_validation_failed';
   }
-  if (error.code === 'ECONNREFUSED') return 'connection_refused';
-  if (error.code === 'ETIMEDOUT') return 'connection_timeout';
-  if (['EAI_AGAIN', 'ENOTFOUND'].includes(error.code)) return 'dns_failed';
-  if (['EHOSTUNREACH', 'ENETUNREACH'].includes(error.code)) return 'network_unreachable';
+  if (code === 'ECONNREFUSED') return 'connection_refused';
+  if (code === 'ETIMEDOUT') return 'connection_timeout';
+  if (['EAI_AGAIN', 'ENOTFOUND'].includes(code)) return 'dns_failed';
+  if (['EHOSTUNREACH', 'ENETUNREACH'].includes(code)) return 'network_unreachable';
+
+  const message = typeof error.message === 'string' ? error.message.toLowerCase() : '';
+  if (/certificate|issuer|self[- ]signed|\b(?:ssl|tls)\b/.test(message)) {
+    return 'certificate_validation_failed';
+  }
+  if (/authentication|credential|password|\bsasl\b/.test(message)) return 'authentication_failed';
+  if (/timed? out|timeout/.test(message)) return 'connection_timeout';
+  if (/getaddrinfo|name or service not known|\bdns\b/.test(message)) return 'dns_failed';
+  if (/connection refused/.test(message)) return 'connection_refused';
+  if (/host unreachable|network unreachable|no route to host/.test(message)) {
+    return 'network_unreachable';
+  }
   return 'unclassified';
 }
 
