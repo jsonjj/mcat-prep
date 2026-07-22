@@ -1,3 +1,7 @@
+import { access, mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -5,9 +9,32 @@ import {
   EXACT_STACK_ORDER,
   planDeploymentCommands,
   validateWavePrerequisite,
+  withIsolatedCloudAssembly,
 } from './deploy';
 
 describe('development deployment plan', () => {
+  it('keeps the reviewed assembly immutable when CDK writes its deployment cache', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'mcat-reviewed-assembly-'));
+    const reviewed = join(directory, 'cdk.out');
+    await mkdir(reviewed);
+    await writeFile(join(reviewed, 'manifest.json'), '{"reviewed":true}');
+
+    let isolated = '';
+    await withIsolatedCloudAssembly(reviewed, async (path) => {
+      isolated = path;
+      expect(path).not.toBe(reviewed);
+      await mkdir(join(path, '.cache'));
+      await writeFile(join(path, '.cache', 'asset.zip'), 'cdk cache');
+      await writeFile(join(path, 'manifest.json'), '{"mutated":true}');
+    });
+
+    await expect(readFile(join(reviewed, 'manifest.json'), 'utf8')).resolves.toBe(
+      '{"reviewed":true}',
+    );
+    await expect(access(join(reviewed, '.cache'))).rejects.toThrow();
+    await expect(access(isolated)).rejects.toThrow();
+  });
+
   it('deploys only the exact allowlist, serially and in dependency order', () => {
     expect(EXACT_STACK_ORDER).toEqual([
       'McatDevFoundation',

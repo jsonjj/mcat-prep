@@ -1,5 +1,6 @@
-import { readFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { cp, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { processCommandRunner, runChecked, type CommandRunner, type CommandSpec } from './command';
@@ -102,6 +103,25 @@ export function planDeploymentCommands(
   }));
 }
 
+export async function withIsolatedCloudAssembly<T>(
+  reviewedCloudAssembly: string,
+  operation: (isolatedCloudAssembly: string) => Promise<T>,
+): Promise<T> {
+  const temporaryDirectory = await mkdtemp(join(tmpdir(), 'mcat-cdk-deploy-'));
+  const isolatedCloudAssembly = join(temporaryDirectory, 'cdk.out');
+  try {
+    await cp(resolve(reviewedCloudAssembly), isolatedCloudAssembly, {
+      recursive: true,
+      force: false,
+      errorOnExist: true,
+      preserveTimestamps: true,
+    });
+    return await operation(isolatedCloudAssembly);
+  } finally {
+    await rm(temporaryDirectory, { recursive: true, force: true });
+  }
+}
+
 export async function deployReviewedWave(options: {
   readonly repositoryRoot: string;
   readonly reviewManifestPath: string;
@@ -146,15 +166,19 @@ export async function deployReviewedWave(options: {
   for (const stackName of prerequisiteStacks) {
     await readStackOutputs(runner, stackName, []);
   }
-  for (const command of planDeploymentCommands(EXACT_STACK_ORDER, cloudAssembly).filter((command) =>
-    wave.some((stack) => command.args.includes(stack)),
-  )) {
+  for (const stack of wave) {
     await assertMutationBoundary(runner, options.repositoryRoot, preflight.review.gitCommit);
     await assertReviewedArtifactUnchanged(cloudAssembly, preflight.review.synth.sha256);
-    await runChecked(runner, {
-      ...command,
-      cwd: options.repositoryRoot,
-      env: { AWS_PROFILE: EXPECTED_PROFILE, AWS_REGION: EXPECTED_REGION, MCAT_STAGE: 'dev' },
+    await withIsolatedCloudAssembly(cloudAssembly, async (isolatedCloudAssembly) => {
+      const command = planDeploymentCommands(EXACT_STACK_ORDER, isolatedCloudAssembly).find(
+        (candidate) => candidate.args.includes(stack),
+      );
+      if (command === undefined) throw new Error(`No reviewed deployment command for ${stack}`);
+      await runChecked(runner, {
+        ...command,
+        cwd: options.repositoryRoot,
+        env: { AWS_PROFILE: EXPECTED_PROFILE, AWS_REGION: EXPECTED_REGION, MCAT_STAGE: 'dev' },
+      });
     });
   }
 }
