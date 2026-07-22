@@ -9,7 +9,7 @@
     "test": "vitest run --config vitest.config.ts",
     "synth": "cdk synth --strict",
     "diff:dev": "cdk diff 'McatDev*' --profile sbsandbox",
-    "deploy:dev": "cdk deploy 'McatDev*' --profile sbsandbox --require-approval never"
+    "deploy:dev": "pnpm --filter @mcat/aws-tools deploy:dev"
   },
   "dependencies": {
     "aws-cdk-lib": "2.261.0",

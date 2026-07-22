@@ -17,8 +17,8 @@ export const EXACT_STACK_ORDER = APPROVED_STACKS;
 
 export const DEPLOYMENT_WAVES = {
   foundation: EXACT_STACK_ORDER.slice(0, 4),
-  authority: EXACT_STACK_ORDER.slice(4, 6),
-  edge: EXACT_STACK_ORDER.slice(6),
+  authority: EXACT_STACK_ORDER.slice(4, 8),
+  edge: EXACT_STACK_ORDER.slice(8),
 } as const;
 
 export interface WaveAttestation {
@@ -134,7 +134,7 @@ export async function deployReviewedWave(options: {
     options.wave === 'authority'
       ? ['mcat-dev-foundation', 'mcat-dev-data', 'mcat-dev-web', 'mcat-dev-identity']
       : options.wave === 'edge'
-        ? ['mcat-dev-api', 'mcat-dev-async']
+        ? ['mcat-dev-api', 'mcat-dev-async', 'mcat-dev-publication', 'mcat-dev-operations']
         : [];
   for (const stackName of prerequisiteStacks) {
     await readStackOutputs(runner, stackName, []);

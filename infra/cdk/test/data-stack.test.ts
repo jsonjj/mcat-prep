@@ -47,27 +47,82 @@ describe('DataStack', () => {
     });
   });
 
-  it('creates an encrypted database secret and TLS-only RDS Proxy', () => {
+  it('creates separate encrypted principals and a TLS-only RDS Proxy', () => {
     const { stack } = createData();
     const template = Template.fromStack(stack);
 
-    template.resourceCountIs('AWS::SecretsManager::Secret', 1);
+    template.resourceCountIs('AWS::SecretsManager::Secret', 4);
     template.hasResourceProperties('AWS::SecretsManager::Secret', {
       Description: 'Generated administrator credentials for the MCAT development Aurora cluster.',
       KmsKeyId: Match.anyValue(),
       Name: '/mcat/dev/database/admin',
     });
+    template.hasResourceProperties('AWS::SecretsManager::Secret', {
+      Name: '/mcat/dev/database/learner-api',
+    });
+    template.hasResourceProperties('AWS::SecretsManager::Secret', {
+      Name: '/mcat/dev/database/workers',
+    });
+    template.hasResourceProperties('AWS::SecretsManager::Secret', {
+      Name: '/mcat/dev/rate-limit/pepper',
+    });
     template.resourceCountIs('AWS::RDS::DBProxy', 1);
     template.hasResourceProperties('AWS::RDS::DBProxy', {
-      Auth: [
+      Auth: Match.arrayWith([
         Match.objectLike({
           AuthScheme: 'SECRETS',
           IAMAuth: 'DISABLED',
         }),
-      ],
+        Match.objectLike({
+          AuthScheme: 'SECRETS',
+          IAMAuth: 'DISABLED',
+        }),
+        Match.objectLike({
+          AuthScheme: 'SECRETS',
+          IAMAuth: 'DISABLED',
+        }),
+      ]),
       DebugLogging: false,
       RequireTLS: true,
     });
+  });
+
+  it('runs a one-shot migration Lambda with all principals and private endpoint access', () => {
+    const { stack } = createData();
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties('AWS::Lambda::Function', {
+      FunctionName: 'mcat-dev-migration-runner',
+      Handler: 'index.handler',
+      Runtime: 'nodejs22.x',
+      Environment: {
+        Variables: Match.objectLike({
+          ADMIN_DB_SECRET_ARN: Match.anyValue(),
+          LEARNER_API_DB_SECRET_ARN: Match.anyValue(),
+          WORKERS_DB_SECRET_ARN: Match.anyValue(),
+          DB_NAME: 'mcat',
+          DB_PROXY_ENDPOINT: Match.anyValue(),
+          MIGRATIONS_DIR: '/var/task/migrations',
+          NODE_EXTRA_CA_CERTS: '/var/runtime/ca-cert.pem',
+        }),
+      },
+      VpcConfig: Match.objectLike({
+        SecurityGroupIds: Match.anyValue(),
+        SubnetIds: Match.anyValue(),
+      }),
+    });
+    template.hasResourceProperties('AWS::EC2::SecurityGroupEgress', {
+      FromPort: 443,
+      IpProtocol: 'tcp',
+      ToPort: 443,
+    });
+    template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
+      FromPort: 443,
+      IpProtocol: 'tcp',
+      SourceSecurityGroupId: Match.anyValue(),
+      ToPort: 443,
+    });
+    template.hasOutput('MigrationFunctionArn', { Value: Match.anyValue() });
   });
 
   it('creates private versioned buckets with a server-log-compatible encrypted audit sink', () => {

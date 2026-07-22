@@ -91,6 +91,7 @@ describeWithPostgres('PostgreSQL-backed learner API vertical', () => {
       rateLimiter: new PostgresFixedWindowRateLimiter(pool, {
         now: () => Date.parse(NOW),
       }),
+      rateLimitPepper: 'p'.repeat(32),
       allowedOrigins: [ORIGIN],
       logger: { info: () => undefined },
       nowMs: () => Date.parse(NOW),

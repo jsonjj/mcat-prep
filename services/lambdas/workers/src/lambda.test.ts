@@ -11,20 +11,20 @@ describe('worker Lambda cold-start dependencies', () => {
           calls.push(command.input);
           return {
             SecretString: JSON.stringify({
-              username: 'mcat_admin',
+              username: 'mcat_workers',
               password: 'a-secure-40-character-database-password-value',
             }),
           };
         },
       },
-      'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/admin-AbCd12',
+      'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/workers-AbCd12',
     );
 
-    expect(secret.username).toBe('mcat_admin');
+    expect(secret.username).toBe('mcat_workers');
     expect(calls).toEqual([
       {
         SecretId:
-          'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/admin-AbCd12',
+          'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/workers-AbCd12',
       },
     ]);
   });
@@ -33,7 +33,7 @@ describe('worker Lambda cold-start dependencies', () => {
     await expect(
       loadDatabaseSecret(
         { send: async () => ({}) },
-        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/admin-AbCd12',
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/workers-AbCd12',
       ),
     ).rejects.toThrow('did not return a string');
   });

@@ -21,6 +21,7 @@ interface DatabaseSecret {
 export interface LearnerApiEnvironment {
   readonly region: 'us-east-1';
   readonly secretArn: string;
+  readonly rateLimitPepperSecretArn: string;
   readonly endpoint: string;
   readonly port: 5432;
   readonly database: string;
@@ -29,6 +30,13 @@ export interface LearnerApiEnvironment {
 
 export interface SecretCommandClient {
   send(command: GetSecretValueCommand): Promise<{ readonly SecretString?: string }>;
+}
+
+function containsControlCharacter(value: string): boolean {
+  return [...value].some((character) => {
+    const code = character.charCodeAt(0);
+    return code <= 31 || code === 127;
+  });
 }
 
 function parseDatabaseSecret(secretString: string): DatabaseSecret {
@@ -44,15 +52,14 @@ function parseDatabaseSecret(secretString: string): DatabaseSecret {
   const record = value as Record<string, unknown>;
   if (
     Object.keys(record).sort().join(',') !== 'password,username' ||
-    typeof record.username !== 'string' ||
-    !/^[A-Za-z_][A-Za-z0-9_]{0,62}$/.test(record.username) ||
+    record.username !== 'mcat_learner_api' ||
     typeof record.password !== 'string' ||
     record.password.length < 16 ||
     record.password.length > 1024
   ) {
     throw new Error('Database secret has an invalid shape.');
   }
-  return { username: record.username, password: record.password };
+  return { username: 'mcat_learner_api', password: record.password };
 }
 
 export async function loadDatabaseSecret(
@@ -66,11 +73,29 @@ export async function loadDatabaseSecret(
   return parseDatabaseSecret(response.SecretString);
 }
 
+export async function loadRateLimitPepper(
+  client: SecretCommandClient,
+  secretArn: string,
+): Promise<string> {
+  const response = await client.send(new GetSecretValueCommand({ SecretId: secretArn }));
+  const pepper = response.SecretString;
+  if (
+    pepper === undefined ||
+    pepper.length < 32 ||
+    pepper.length > 128 ||
+    containsControlCharacter(pepper)
+  ) {
+    throw new Error('Rate-limit pepper secret is invalid.');
+  }
+  return pepper;
+}
+
 export function parseLearnerApiEnvironment(
   environment: Readonly<Record<string, string | undefined>>,
 ): LearnerApiEnvironment {
   const region = environment.AWS_REGION;
   const secretArn = environment.DB_SECRET_ARN;
+  const rateLimitPepperSecretArn = environment.RATE_LIMIT_PEPPER_SECRET_ARN;
   const endpoint = environment.DB_PROXY_ENDPOINT;
   const database = environment.DB_NAME;
   const learnerWebOrigin = environment.LEARNER_WEB_ORIGIN;
@@ -90,8 +115,12 @@ export function parseLearnerApiEnvironment(
   if (
     region !== 'us-east-1' ||
     secretArn === undefined ||
-    !/^arn:aws:secretsmanager:us-east-1:056956104102:secret:\/mcat\/dev\/database\/admin-[A-Za-z0-9]+$/.test(
+    !/^arn:aws:secretsmanager:us-east-1:056956104102:secret:\/mcat\/dev\/database\/learner-api-[A-Za-z0-9]+$/.test(
       secretArn,
+    ) ||
+    rateLimitPepperSecretArn === undefined ||
+    !/^arn:aws:secretsmanager:us-east-1:056956104102:secret:\/mcat\/dev\/rate-limit\/pepper-[A-Za-z0-9]+$/.test(
+      rateLimitPepperSecretArn,
     ) ||
     endpoint === undefined ||
     !/^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?\.rds\.amazonaws\.com$/i.test(endpoint) ||
@@ -105,6 +134,7 @@ export function parseLearnerApiEnvironment(
   return {
     region,
     secretArn,
+    rateLimitPepperSecretArn,
     endpoint,
     port: 5432,
     database,
@@ -132,10 +162,11 @@ const logger: SafeLogger = {
 
 async function createRuntime(): Promise<LearnerApi> {
   const environment = parseLearnerApiEnvironment(process.env);
-  const secret = await loadDatabaseSecret(
-    new SecretsManagerClient({ region: environment.region }),
-    environment.secretArn,
-  );
+  const secrets = new SecretsManagerClient({ region: environment.region });
+  const [secret, rateLimitPepper] = await Promise.all([
+    loadDatabaseSecret(secrets, environment.secretArn),
+    loadRateLimitPepper(secrets, environment.rateLimitPepperSecretArn),
+  ]);
   const pool = createPgPool({
     connectionString: databaseUrl(environment, secret),
     applicationName: 'mcat-learner-api',
@@ -151,6 +182,7 @@ async function createRuntime(): Promise<LearnerApi> {
     bank: authority.bank,
     sessions: new PostgresGuestSessionService(pool, createGuestProjection),
     rateLimiter: new PostgresFixedWindowRateLimiter(pool),
+    rateLimitPepper,
     allowedOrigins: [environment.learnerWebOrigin],
     logger,
   });

@@ -1,4 +1,7 @@
+import { fileURLToPath } from 'node:url';
+
 import {
+  CfnOutput,
   Duration,
   RemovalPolicy,
   Stack,
@@ -6,6 +9,8 @@ import {
   type StackProps,
   aws_ec2 as ec2,
   aws_kms as kms,
+  aws_lambda as lambda,
+  aws_lambda_nodejs as nodejs,
   aws_logs as logs,
   aws_rds as rds,
   aws_s3 as s3,
@@ -23,10 +28,13 @@ import type {
 } from './interfaces.js';
 import { applySandboxPermissionsBoundary } from './permissions-boundary.js';
 import { applyRequiredTags } from './tags.js';
+import { acknowledgeCdkNagFinding } from './nag.js';
 
 export interface DataStackProps extends StackProps {
   readonly environment: EnvironmentConfig;
   readonly foundation: FoundationResources;
+  readonly migrationRuntimeEntry?: string;
+  readonly migrationsDirectory?: string;
 }
 
 interface BucketOptions {
@@ -49,6 +57,13 @@ const ASYNC_QUEUE_DOMAINS = [
   'privacy',
   'notifications',
 ] as const satisfies readonly AsyncQueueDomain[];
+
+const DEFAULT_MIGRATION_RUNTIME_ENTRY = fileURLToPath(
+  new URL('../../../services/lambdas/migration/src/lambda.ts', import.meta.url),
+);
+const DEFAULT_MIGRATIONS_DIRECTORY = fileURLToPath(
+  new URL('../../../database/migrations/', import.meta.url),
+);
 
 export class DataStack extends Stack {
   public readonly resources: DataResources;
@@ -105,6 +120,32 @@ export class DataStack extends Stack {
       },
     });
     dbSecret.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    const learnerApiDbSecret = createDatabasePrincipalSecret(
+      this,
+      'LearnerApiDatabaseSecret',
+      '/mcat/dev/database/learner-api',
+      'mcat_learner_api',
+      'Generated least-privilege credentials for the MCAT learner API.',
+      appKey,
+    );
+    const workersDbSecret = createDatabasePrincipalSecret(
+      this,
+      'WorkersDatabaseSecret',
+      '/mcat/dev/database/workers',
+      'mcat_workers',
+      'Generated least-privilege credentials for MCAT asynchronous workers.',
+      appKey,
+    );
+    const rateLimitPepperSecret = new secretsmanager.Secret(this, 'RateLimitPepperSecret', {
+      secretName: '/mcat/dev/rate-limit/pepper',
+      description: 'Keys irreversible source rate-limit identifiers for the learner API.',
+      encryptionKey: appKey,
+      generateSecretString: {
+        excludePunctuation: true,
+        passwordLength: 64,
+      },
+    });
+    rateLimitPepperSecret.applyRemovalPolicy(RemovalPolicy.RETAIN);
 
     const auroraLogGroup = new logs.LogGroup(this, 'AuroraPostgresqlLogGroup', {
       logGroupName: '/aws/rds/cluster/mcat-dev-aurora/postgresql',
@@ -146,10 +187,97 @@ export class DataStack extends Stack {
       debugLogging: false,
       iamAuth: false,
       requireTLS: true,
-      secrets: [dbSecret],
+      secrets: [dbSecret, learnerApiDbSecret, workersDbSecret],
       securityGroups: [proxySecurityGroup],
       vpc: props.foundation.vpc,
       vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
+    });
+
+    const migrationSecurityGroup = new ec2.SecurityGroup(this, 'MigrationSecurityGroup', {
+      vpc: props.foundation.vpc,
+      allowAllOutbound: false,
+      description: 'Allows the one-shot migration Lambda to reach only the proxy and endpoints.',
+      securityGroupName: 'mcat-dev-migration',
+    });
+    migrationSecurityGroup.addEgressRule(
+      proxySecurityGroup,
+      ec2.Port.tcp(5432),
+      'Connect to the TLS-only RDS Proxy.',
+    );
+    migrationSecurityGroup.addEgressRule(
+      props.foundation.serviceEndpointSecurityGroup,
+      ec2.Port.tcp(443),
+      'Read approved database secrets through the private endpoint.',
+    );
+    new ec2.CfnSecurityGroupIngress(this, 'ProxyIngressFromMigration', {
+      groupId: proxySecurityGroup.securityGroupId,
+      sourceSecurityGroupId: migrationSecurityGroup.securityGroupId,
+      ipProtocol: 'tcp',
+      fromPort: 5432,
+      toPort: 5432,
+      description: 'Allow PostgreSQL only from the migration Lambda security group.',
+    });
+    new ec2.CfnSecurityGroupIngress(this, 'EndpointIngressFromMigration', {
+      groupId: props.foundation.serviceEndpointSecurityGroup.securityGroupId,
+      sourceSecurityGroupId: migrationSecurityGroup.securityGroupId,
+      ipProtocol: 'tcp',
+      fromPort: 443,
+      toPort: 443,
+      description: 'Allow only the migration Lambda to call approved AWS services.',
+    });
+    const migrationLogGroup = new logs.LogGroup(this, 'MigrationLogGroup', {
+      logGroupName: '/aws/lambda/mcat-dev-migration',
+      retention: logs.RetentionDays.THREE_MONTHS,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+    const migrationsDirectory = props.migrationsDirectory ?? DEFAULT_MIGRATIONS_DIRECTORY;
+    const migrationFunction = new nodejs.NodejsFunction(this, 'MigrationFunction', {
+      functionName: 'mcat-dev-migration-runner',
+      description: 'Applies reviewed forward-only migrations and least-privilege role grants.',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      entry: props.migrationRuntimeEntry ?? DEFAULT_MIGRATION_RUNTIME_ENTRY,
+      handler: 'handler',
+      logGroup: migrationLogGroup,
+      memorySize: 512,
+      timeout: Duration.minutes(5),
+      reservedConcurrentExecutions: 1,
+      tracing: lambda.Tracing.ACTIVE,
+      vpc: props.foundation.vpc,
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
+      securityGroups: [migrationSecurityGroup],
+      environment: {
+        AWS_ACCOUNT_ID: props.environment.account,
+        ADMIN_DB_SECRET_ARN: dbSecret.secretArn,
+        LEARNER_API_DB_SECRET_ARN: learnerApiDbSecret.secretArn,
+        WORKERS_DB_SECRET_ARN: workersDbSecret.secretArn,
+        DB_PROXY_ENDPOINT: proxy.endpoint,
+        DB_NAME: 'mcat',
+        MIGRATIONS_DIR: '/var/task/migrations',
+        NODE_EXTRA_CA_CERTS: '/var/runtime/ca-cert.pem',
+        NODE_OPTIONS: '--enable-source-maps',
+      },
+      bundling: {
+        target: 'node22',
+        minify: true,
+        sourceMap: false,
+        commandHooks: {
+          beforeBundling: () => [],
+          beforeInstall: () => [],
+          afterBundling: (_inputDir, outputDir) => [
+            `cp -R ${shellQuote(migrationsDirectory)} ${shellQuote(`${outputDir}/migrations`)}`,
+          ],
+        },
+      },
+    });
+    for (const secret of [dbSecret, learnerApiDbSecret, workersDbSecret, rateLimitPepperSecret]) {
+      secret.grantRead(migrationFunction);
+    }
+    appKey.grantDecrypt(migrationFunction);
+
+    new CfnOutput(this, 'MigrationFunctionArn', {
+      value: migrationFunction.functionArn,
+      exportName: 'mcat-dev-migration-function-arn',
     });
 
     const bucketSuffix = `${props.environment.account}-${props.environment.region}`;
@@ -239,28 +367,83 @@ export class DataStack extends Stack {
       reason:
         'This bucket is the dedicated encrypted server-access-log sink; recursive access logging would create an unbounded logging loop.',
     });
-    Validations.of(dbSecret).acknowledge({
-      id: 'AwsSolutions-SMG4',
-      reason:
-        'Automatic secret rotation is deferred until the private Secrets Manager endpoint and migration-safe credential rotation workflow are installed with the API stack.',
-    });
+    for (const secret of [dbSecret, learnerApiDbSecret, workersDbSecret, rateLimitPepperSecret]) {
+      Validations.of(secret).acknowledge({
+        id: 'AwsSolutions-SMG4',
+        reason:
+          'Automatic rotation is deferred until the migration-safe three-principal rotation workflow is exercised in development; generated credentials remain encrypted and are never exposed to browsers.',
+      });
+    }
     Validations.of(cluster).acknowledge({
       id: 'AwsSolutions-RDS10',
       reason:
         'Deletion protection is intentionally disabled only in the isolated development account; the cluster still snapshots on replacement and deletion.',
     });
+    acknowledgeCdkNagFinding(
+      migrationFunction,
+      'AwsSolutions-L1',
+      'The function uses the current project-standard Node.js 22 managed runtime.',
+    );
+    acknowledgeCdkNagFinding(
+      migrationFunction,
+      'AwsSolutions-IAM4[Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole]',
+      'The CDK-managed Lambda role uses the AWS basic execution policy only for writes to the function-owned log group.',
+    );
+    acknowledgeCdkNagFinding(
+      migrationFunction,
+      'AwsSolutions-IAM4[Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole]',
+      'The CDK-managed Lambda VPC policy provides only the ENI lifecycle permissions required for isolated-subnet execution.',
+    );
+    acknowledgeCdkNagFinding(
+      migrationFunction,
+      'AwsSolutions-IAM5[Resource::*]',
+      'AWS X-Ray and EC2 network-interface lifecycle actions require wildcard resources; all secret and KMS grants remain resource-scoped.',
+    );
 
     this.resources = {
       cluster,
       proxy,
       dbSecret,
+      learnerApiDbSecret,
+      workersDbSecret,
+      rateLimitPepperSecret,
+      migrationFunction,
       buckets,
       projectionQueue,
       projectionDlq,
       asyncQueues,
       asyncDlqs,
+      databaseSecurityGroup,
+      proxySecurityGroup,
     };
   }
+}
+
+function createDatabasePrincipalSecret(
+  scope: Construct,
+  id: string,
+  secretName: string,
+  username: string,
+  description: string,
+  encryptionKey: FoundationResources['appKey'],
+): secretsmanager.Secret {
+  const secret = new secretsmanager.Secret(scope, id, {
+    secretName,
+    description,
+    encryptionKey,
+    generateSecretString: {
+      secretStringTemplate: JSON.stringify({ username }),
+      generateStringKey: 'password',
+      excludeCharacters: ' %+~`#$&*()|[]{}:;<>?!\'"\\/@',
+      passwordLength: 40,
+    },
+  });
+  secret.applyRemovalPolicy(RemovalPolicy.RETAIN);
+  return secret;
+}
+
+function shellQuote(value: string): string {
+  return `'${value.replaceAll("'", `'\\''`)}'`;
 }
 
 function createBucket(scope: Construct, id: string, options: BucketOptions): s3.Bucket {

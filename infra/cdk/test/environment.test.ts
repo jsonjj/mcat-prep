@@ -10,6 +10,14 @@ import {
 import { applyRequiredTags } from '../lib/tags.js';
 
 describe('AWS environment configuration', () => {
+  it('routes development deployment through the guarded AWS tooling', () => {
+    const packageJson = JSON.parse(
+      readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+    ) as { readonly scripts?: Readonly<Record<string, string>> };
+
+    expect(packageJson.scripts?.['deploy:dev']).toBe('pnpm --filter @mcat/aws-tools deploy:dev');
+  });
+
   it('pins the development account and region', () => {
     expect(getEnvironment('dev')).toEqual({
       stage: 'dev',
@@ -94,3 +102,4 @@ describe('required AWS resource tags', () => {
     expect(() => applyRequiredTags(stack, '  ')).toThrow('Data classification is required');
   });
 });
+import { readFileSync } from 'node:fs';

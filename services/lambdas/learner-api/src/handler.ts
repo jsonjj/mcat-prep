@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomUUID } from 'node:crypto';
 import {
   AuthorityKernel,
   AuthorityKernelError,
@@ -46,6 +46,7 @@ export interface LearnerApiDependencies {
   readonly kernel: KernelPort;
   readonly sessions: GuestSessionService;
   readonly allowedOrigins: readonly string[];
+  readonly rateLimitPepper: string;
   readonly rateLimiter: RateLimiter;
   readonly logger: SafeLogger;
   readonly nowMs?: () => number;
@@ -72,6 +73,17 @@ function requestId(value: string): string {
 
 function pseudonymousHash(value: string): string {
   return createHash('sha256').update(value, 'utf8').digest('hex').slice(0, 24);
+}
+
+function rateLimitKey(pepper: string, value: string): string {
+  return createHmac('sha256', pepper).update(value, 'utf8').digest('hex');
+}
+
+function containsControlCharacter(value: string): boolean {
+  return [...value].some((character) => {
+    const code = character.charCodeAt(0);
+    return code <= 31 || code === 127;
+  });
 }
 
 function statusForCode(code: string): number {
@@ -238,6 +250,13 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
     }),
   );
   if (allowedOrigins.size === 0) throw new Error('At least one allowed origin is required.');
+  if (
+    dependencies.rateLimitPepper.length < 32 ||
+    dependencies.rateLimitPepper.length > 128 ||
+    containsControlCharacter(dependencies.rateLimitPepper)
+  ) {
+    throw new Error('Rate-limit pepper must be a bounded secret value.');
+  }
   const nowMs = dependencies.nowMs ?? Date.now;
   const maxBodyBytes = dependencies.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES;
 
@@ -317,7 +336,8 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
         return response;
       }
 
-      const sourceRateKey = pseudonymousHash(
+      const sourceRateKey = rateLimitKey(
+        dependencies.rateLimitPepper,
         `source:${event.requestContext.http.sourceIp}`,
       );
       if (
@@ -357,7 +377,7 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       if (
         principal !== undefined &&
         !(await dependencies.rateLimiter.allow({
-          key: pseudonymousHash(`session:${principal.sessionId}`),
+          key: rateLimitKey(dependencies.rateLimitPepper, `session:${principal.sessionId}`),
           route: route.path,
           method,
         }))

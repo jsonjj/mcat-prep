@@ -59,6 +59,37 @@ export class FoundationStack extends Stack {
       service: ec2.GatewayVpcEndpointAwsService.S3,
       subnets: [{ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }],
     });
+    const serviceEndpointSecurityGroup = new ec2.SecurityGroup(
+      this,
+      'ServiceEndpointSecurityGroup',
+      {
+        vpc,
+        allowAllOutbound: false,
+        description: 'Accepts HTTPS only from explicitly approved private workload groups.',
+        securityGroupName: 'mcat-dev-service-endpoints',
+      },
+    );
+    const endpointOptions = {
+      open: false,
+      privateDnsEnabled: true,
+      securityGroups: [serviceEndpointSecurityGroup],
+      subnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
+    };
+    new ec2.InterfaceVpcEndpoint(this, 'SecretsManagerEndpoint', {
+      vpc,
+      ...endpointOptions,
+      service: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
+    });
+    new ec2.InterfaceVpcEndpoint(this, 'SqsEndpoint', {
+      vpc,
+      ...endpointOptions,
+      service: ec2.InterfaceVpcEndpointAwsService.SQS,
+    });
+    new ec2.InterfaceVpcEndpoint(this, 'XrayEndpoint', {
+      vpc,
+      ...endpointOptions,
+      service: ec2.InterfaceVpcEndpointAwsService.XRAY,
+    });
 
     const appKey = new kms.Key(this, 'ApplicationKey', {
       alias: 'alias/mcat/dev/application',
@@ -97,7 +128,7 @@ export class FoundationStack extends Stack {
         'VPC flow-log delivery is intentionally owned by the Phase 4C operations stack so log retention, encryption, and alarms are configured together before deployment.',
     });
 
-    this.resources = { vpc, appKey, auditKey, budgetName };
+    this.resources = { vpc, appKey, auditKey, budgetName, serviceEndpointSecurityGroup };
   }
 }
 

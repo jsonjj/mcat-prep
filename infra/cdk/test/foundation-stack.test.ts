@@ -27,13 +27,26 @@ describe('FoundationStack', () => {
     template.resourceCountIs('AWS::EC2::NatGateway', 0);
   });
 
-  it('creates an S3 gateway endpoint', () => {
+  it('creates the no-NAT gateway and shared private service endpoints', () => {
     const { stack } = createFoundation();
+    const template = Template.fromStack(stack);
 
-    Template.fromStack(stack).hasResourceProperties('AWS::EC2::VPCEndpoint', {
+    template.resourceCountIs('AWS::EC2::VPCEndpoint', 4);
+    template.hasResourceProperties('AWS::EC2::VPCEndpoint', {
       ServiceName: Match.objectLike({ 'Fn::Join': Match.anyValue() }),
       VpcEndpointType: 'Gateway',
     });
+    const endpoints = JSON.stringify(template.findResources('AWS::EC2::VPCEndpoint'));
+    expect(endpoints).toContain('secretsmanager');
+    expect(endpoints).toContain('sqs');
+    expect(endpoints).toContain('xray');
+    expect(endpoints).not.toContain('0.0.0.0/0');
+    expect(JSON.stringify(template.findResources('AWS::EC2::SecurityGroupIngress'))).not.toContain(
+      'CidrIp',
+    );
+    expect(JSON.stringify(template.findResources('AWS::EC2::SecurityGroup'))).not.toContain(
+      'CidrBlock',
+    );
   });
 
   it('creates independently rotating application and audit keys', () => {

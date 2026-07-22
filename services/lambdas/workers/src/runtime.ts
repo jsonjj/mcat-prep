@@ -27,7 +27,7 @@ export function parseWorkerEnvironment(
   if (
     region !== 'us-east-1' ||
     secretArn === undefined ||
-    !/^arn:aws:secretsmanager:us-east-1:056956104102:secret:\/mcat\/dev\/database\/admin-[A-Za-z0-9]+$/.test(
+    !/^arn:aws:secretsmanager:us-east-1:056956104102:secret:\/mcat\/dev\/database\/workers-[A-Za-z0-9]+$/.test(
       secretArn,
     ) ||
     endpoint === undefined ||
@@ -62,15 +62,14 @@ export function parseDatabaseSecret(secretString: string): DatabaseSecret {
   const record = value as Record<string, unknown>;
   if (
     Object.keys(record).sort().join(',') !== 'password,username' ||
-    typeof record.username !== 'string' ||
-    !/^[A-Za-z_][A-Za-z0-9_]{0,62}$/.test(record.username) ||
+    record.username !== 'mcat_workers' ||
     typeof record.password !== 'string' ||
     record.password.length < 16 ||
     record.password.length > 1024
   ) {
     throw new Error('Database secret has an invalid shape.');
   }
-  return { username: record.username, password: record.password };
+  return { username: 'mcat_workers', password: record.password };
 }
 
 export function buildDatabaseUrl(options: {

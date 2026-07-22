@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { createGuestProjection, loadDatabaseSecret, parseLearnerApiEnvironment } from './lambda';
+import {
+  createGuestProjection,
+  loadDatabaseSecret,
+  loadRateLimitPepper,
+  parseLearnerApiEnvironment,
+} from './lambda';
 
 describe('learner Lambda runtime composition', () => {
   it('creates the initial synthetic projection for the supplied learner identity', () => {
@@ -26,7 +31,9 @@ describe('learner Lambda runtime composition', () => {
     const environment = parseLearnerApiEnvironment({
       AWS_REGION: 'us-east-1',
       DB_SECRET_ARN:
-        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/admin-AbCd12',
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/learner-api-AbCd12',
+      RATE_LIMIT_PEPPER_SECRET_ARN:
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/rate-limit/pepper-AbCd12',
       DB_PROXY_ENDPOINT: 'mcat-dev-proxy.proxy-abc.us-east-1.rds.amazonaws.com',
       DB_NAME: 'mcat',
       LEARNER_WEB_ORIGIN: 'https://d1234567890.cloudfront.net',
@@ -43,20 +50,49 @@ describe('learner Lambda runtime composition', () => {
       {
         send: async () => ({
           SecretString: JSON.stringify({
-            username: 'mcat_admin',
+            username: 'mcat_learner_api',
             password: 'a-secure-40-character-database-password-value',
           }),
         }),
       },
-      'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/admin-AbCd12',
+      'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/learner-api-AbCd12',
     );
 
-    expect(secret.username).toBe('mcat_admin');
+    expect(secret.username).toBe('mcat_learner_api');
+    await expect(
+      loadDatabaseSecret(
+        {
+          send: async () => ({
+            SecretString: JSON.stringify({
+              username: 'mcat_admin',
+              password: 'a-secure-40-character-database-password-value',
+            }),
+          }),
+        },
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/learner-api-AbCd12',
+      ),
+    ).rejects.toThrow('invalid shape');
     await expect(
       loadDatabaseSecret(
         { send: async () => ({}) },
-        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/admin-AbCd12',
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/learner-api-AbCd12',
       ),
     ).rejects.toThrow('did not return a string');
+  });
+
+  it('loads a bounded raw rate-limit pepper', async () => {
+    const pepper = 'p'.repeat(64);
+    await expect(
+      loadRateLimitPepper(
+        { send: async () => ({ SecretString: pepper }) },
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/rate-limit/pepper-AbCd12',
+      ),
+    ).resolves.toBe(pepper);
+    await expect(
+      loadRateLimitPepper(
+        { send: async () => ({ SecretString: 'short' }) },
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/rate-limit/pepper-AbCd12',
+      ),
+    ).rejects.toThrow('invalid');
   });
 });

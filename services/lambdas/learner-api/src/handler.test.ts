@@ -10,12 +10,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createRepositoryLearnerApi } from './handler';
 import { hashOpaqueToken, type GuestSessionService } from './session';
-import type {
-  ApiGatewayV1Event,
-  ApiGatewayV2Event,
-  RateLimitInput,
-  SafeLogEvent,
-} from './http';
+import type { ApiGatewayV1Event, ApiGatewayV2Event, RateLimitInput, SafeLogEvent } from './http';
 
 const APP_ORIGIN = 'https://learner.example.test';
 const EVIL_ORIGIN = 'https://evil.example.test';
@@ -79,6 +74,7 @@ function harness(
   options: {
     allowRate?: boolean;
     rateDecisions?: readonly boolean[];
+    rateLimitPepper?: string;
     maxBodyBytes?: number;
   } = {},
 ) {
@@ -119,6 +115,7 @@ function harness(
     bank: authority.bank,
     sessions,
     allowedOrigins: [APP_ORIGIN],
+    rateLimitPepper: options.rateLimitPepper ?? 'p'.repeat(32),
     rateLimiter: {
       allow: async (input) => {
         rateInputs.push(input);
@@ -342,6 +339,17 @@ describe('learner Lambda API security boundary', () => {
     expect(bootstrap.statusCode).toBe(200);
     expect(healthHarness.rateInputs).toHaveLength(1);
     expect(bootstrapHarness.rateInputs).toHaveLength(1);
+  });
+
+  it('keys source throttles with a deployment secret instead of a reversible IP digest', async () => {
+    const first = harness({ rateLimitPepper: 'a'.repeat(32) });
+    const second = harness({ rateLimitPepper: 'b'.repeat(32) });
+
+    await first.api.handle(request('GET', '/v1/health'));
+    await second.api.handle(request('GET', '/v1/health'));
+
+    expect(first.rateInputs[0]?.key).toMatch(/^[a-f0-9]{64}$/);
+    expect(first.rateInputs[0]?.key).not.toBe(second.rateInputs[0]?.key);
   });
 
   it('logs allowlisted metadata without request secrets or protected material', async () => {

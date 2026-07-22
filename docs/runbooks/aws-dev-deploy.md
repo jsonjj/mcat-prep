@@ -79,13 +79,13 @@ mkdir -p "$MCAT_REVIEW_DIRECTORY"
 Synthesize all nine exact stacks into the review directory:
 
 ```bash
-pnpm --filter @mcat/infra-cdk exec cdk synth McatDevFoundation McatDevData McatDevWeb McatDevIdentity McatDevApi McatDevAsync McatDevPublication McatDevAnalytics McatDevOperations --strict --output "$MCAT_REVIEW_DIRECTORY/cdk.out"
+pnpm --filter @mcat/infra-cdk exec cdk synth McatDevFoundation McatDevData McatDevWeb McatDevIdentity McatDevApi McatDevAsync McatDevPublication McatDevOperations McatDevAnalytics --strict --output "$MCAT_REVIEW_DIRECTORY/cdk.out"
 ```
 
 Create a no-change-set diff from that assembly and preserve its exact bytes:
 
 ```bash
-pnpm --filter @mcat/infra-cdk exec cdk diff McatDevFoundation McatDevData McatDevWeb McatDevIdentity McatDevApi McatDevAsync McatDevPublication McatDevAnalytics McatDevOperations --app "$MCAT_REVIEW_DIRECTORY/cdk.out" --change-set=false --no-color > "$MCAT_REVIEW_DIRECTORY/diff.txt"
+pnpm --filter @mcat/infra-cdk exec cdk diff McatDevFoundation McatDevData McatDevWeb McatDevIdentity McatDevApi McatDevAsync McatDevPublication McatDevOperations McatDevAnalytics --app "$MCAT_REVIEW_DIRECTORY/cdk.out" --change-set=false --no-color > "$MCAT_REVIEW_DIRECTORY/diff.txt"
 ```
 
 Generate the draft. This hashes every file in `cdk.out`, not only `manifest.json`:
@@ -145,8 +145,10 @@ export MCAT_SMOKE_ATTESTATION_PATH="$MCAT_REVIEW_DIRECTORY/authority-smoke-attes
 pnpm --filter @mcat/aws-tools smoke
 ```
 
-The wave deploys only `McatDevApi` and `McatDevAsync`. The smoke client resolves the exact
-CloudFront learner origin and API URL from stack outputs and
+The wave deploys `McatDevApi`, `McatDevAsync`, fail-closed `McatDevPublication`, then
+`McatDevOperations`. WAF association, VPC flow logs, and actionable alarms are therefore active
+before the first API smoke. The smoke client resolves the exact CloudFront learner origin and API
+URL from stack outputs and
 checks health, CORS, two secure `__Host-` cookies, CSRF, idempotent goal replay, authenticated
 reads, unauthenticated/CSRF/ownership negatives, and protected-field absence.
 
@@ -160,9 +162,8 @@ export MCAT_SMOKE_ATTESTATION_PATH="$MCAT_REVIEW_DIRECTORY/edge-smoke-attestatio
 pnpm --filter @mcat/aws-tools smoke
 ```
 
-This deploys, in order, `McatDevPublication`, `McatDevAnalytics`, and
-`McatDevOperations`. The second smoke resolves both API and learner origins from exact stack
-outputs.
+This deploys `McatDevAnalytics`. The second smoke resolves both API and learner origins from exact
+stack outputs and verifies that the final stack did not regress the authority boundary.
 
 Confirm publication activation, notification campaigns, live AI/speech, federation, QuickSight,
 and research datasets remain disabled.

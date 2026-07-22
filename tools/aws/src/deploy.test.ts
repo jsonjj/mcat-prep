@@ -17,14 +17,20 @@ describe('development deployment plan', () => {
       'McatDevApi',
       'McatDevAsync',
       'McatDevPublication',
-      'McatDevAnalytics',
       'McatDevOperations',
+      'McatDevAnalytics',
     ]);
     expect(DEPLOYMENT_WAVES.foundation).toEqual([
       'McatDevFoundation',
       'McatDevData',
       'McatDevWeb',
       'McatDevIdentity',
+    ]);
+    expect(DEPLOYMENT_WAVES.authority).toEqual([
+      'McatDevApi',
+      'McatDevAsync',
+      'McatDevPublication',
+      'McatDevOperations',
     ]);
 
     const commands = planDeploymentCommands(EXACT_STACK_ORDER);

@@ -10,7 +10,7 @@ import {
 describe('worker runtime configuration', () => {
   it('parses only the expected database secret shape and URL-encodes credentials', () => {
     const secret = parseDatabaseSecret(
-      JSON.stringify({ username: 'mcat_user', password: 'p@ss:/?#[]word1234' }),
+      JSON.stringify({ username: 'mcat_workers', password: 'p@ss:/?#[]word1234' }),
     );
 
     expect(
@@ -21,10 +21,18 @@ describe('worker runtime configuration', () => {
         secret,
       }),
     ).toBe(
-      'postgresql://mcat_user:p%40ss%3A%2F%3F%23%5B%5Dword1234@mcat-dev-proxy.proxy-abc.us-east-1.rds.amazonaws.com:5432/mcat',
+      'postgresql://mcat_workers:p%40ss%3A%2F%3F%23%5B%5Dword1234@mcat-dev-proxy.proxy-abc.us-east-1.rds.amazonaws.com:5432/mcat',
     );
     expect(() =>
       parseDatabaseSecret(JSON.stringify({ username: 'mcat_user', password: 'safe', extra: true })),
+    ).toThrow('invalid shape');
+    expect(() =>
+      parseDatabaseSecret(
+        JSON.stringify({
+          username: 'mcat_admin',
+          password: 'p@ss:/?#[]word1234',
+        }),
+      ),
     ).toThrow('invalid shape');
   });
 
@@ -80,7 +88,7 @@ describe('worker runtime configuration', () => {
     const environment = parseWorkerEnvironment({
       AWS_REGION: 'us-east-1',
       DB_SECRET_ARN:
-        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/admin-AbCd12',
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/workers-AbCd12',
       DB_PROXY_ENDPOINT: 'mcat-dev-proxy.proxy-abc.us-east-1.rds.amazonaws.com',
       DB_NAME: 'mcat',
       PROJECTION_QUEUE_URL:

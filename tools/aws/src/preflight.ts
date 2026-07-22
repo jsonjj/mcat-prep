@@ -18,8 +18,8 @@ export const APPROVED_STACKS = [
   'McatDevApi',
   'McatDevAsync',
   'McatDevPublication',
-  'McatDevAnalytics',
   'McatDevOperations',
+  'McatDevAnalytics',
 ] as const;
 
 const APPROVED_STACK_SET = new Set<string>(APPROVED_STACKS);
