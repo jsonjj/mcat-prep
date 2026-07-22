@@ -13,12 +13,12 @@ export const MINIMUM_BOOTSTRAP_VERSION = 32;
 export const APPROVED_STACKS = [
   'McatDevFoundation',
   'McatDevData',
+  'McatDevWeb',
   'McatDevIdentity',
   'McatDevApi',
   'McatDevAsync',
   'McatDevPublication',
   'McatDevAnalytics',
-  'McatDevWeb',
   'McatDevOperations',
 ] as const;
 

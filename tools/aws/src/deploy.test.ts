@@ -1,19 +1,30 @@
 import { describe, expect, it } from 'vitest';
 
-import { EXACT_STACK_ORDER, planDeploymentCommands, validateWavePrerequisite } from './deploy';
+import {
+  DEPLOYMENT_WAVES,
+  EXACT_STACK_ORDER,
+  planDeploymentCommands,
+  validateWavePrerequisite,
+} from './deploy';
 
 describe('development deployment plan', () => {
   it('deploys only the exact allowlist, serially and in dependency order', () => {
     expect(EXACT_STACK_ORDER).toEqual([
       'McatDevFoundation',
       'McatDevData',
+      'McatDevWeb',
       'McatDevIdentity',
       'McatDevApi',
       'McatDevAsync',
       'McatDevPublication',
       'McatDevAnalytics',
-      'McatDevWeb',
       'McatDevOperations',
+    ]);
+    expect(DEPLOYMENT_WAVES.foundation).toEqual([
+      'McatDevFoundation',
+      'McatDevData',
+      'McatDevWeb',
+      'McatDevIdentity',
     ]);
 
     const commands = planDeploymentCommands(EXACT_STACK_ORDER);
