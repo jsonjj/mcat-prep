@@ -40,6 +40,12 @@ describe('IdentityStack', () => {
       DeletionProtection: 'ACTIVE',
       MfaConfiguration: 'ON',
       EnabledMfas: ['SOFTWARE_TOKEN_MFA'],
+      Policies: {
+        SignInPolicy: { AllowedFirstAuthFactors: ['PASSWORD'] },
+      },
+      WebAuthnFactorConfiguration: 'MULTI_FACTOR_WITH_USER_VERIFICATION',
+      WebAuthnRelyingPartyID: 'admin.example.test',
+      WebAuthnUserVerification: 'required',
     });
     for (const resource of Object.values(template.findResources('AWS::Cognito::UserPool'))) {
       expect(resource.DeletionPolicy).toBe('Retain');

@@ -1,7 +1,9 @@
 import {
   Duration,
+  Fn,
   RemovalPolicy,
   Stack,
+  Token,
   Validations,
   type StackProps,
   aws_cognito as cognito,
@@ -26,6 +28,12 @@ const STAFF_GROUPS = [
   ['privacy-operator', 20, 'Operates governed export and deletion workflows.'],
   ['sre', 10, 'Operates reliability and incident-response controls.'],
 ] as const;
+
+function relyingPartyId(origin: string): string {
+  return Token.isUnresolved(origin)
+    ? Fn.select(1, Fn.split('https://', origin))
+    : new URL(origin).hostname;
+}
 
 export class IdentityStack extends Stack {
   public readonly resources: IdentityResources;
@@ -100,7 +108,6 @@ export class IdentityStack extends Stack {
       signInPolicy: {
         allowedFirstAuthFactors: {
           password: true,
-          passkey: true,
         },
       },
       passwordPolicy: {
@@ -114,6 +121,10 @@ export class IdentityStack extends Stack {
       },
       removalPolicy: RemovalPolicy.RETAIN,
     });
+    const staffUserPoolResource = staffUserPool.node.defaultChild as cognito.CfnUserPool;
+    staffUserPoolResource.webAuthnFactorConfiguration = 'MULTI_FACTOR_WITH_USER_VERIFICATION';
+    staffUserPoolResource.webAuthnRelyingPartyId = relyingPartyId(props.webOrigins.staff);
+    staffUserPoolResource.webAuthnUserVerification = 'required';
     const staffClient = staffUserPool.addClient('StaffWebClient', {
       userPoolClientName: 'mcat-dev-staff-web',
       generateSecret: false,
