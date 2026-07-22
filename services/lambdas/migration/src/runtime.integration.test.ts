@@ -191,6 +191,7 @@ describeWithPostgres('migration PostgreSQL principals', () => {
         learner_schema_create: boolean;
         learner_stream_write: boolean;
         learner_stream_delete: boolean;
+        learner_rate_limit_delete: boolean;
         learner_content_read: boolean;
         worker_connect: boolean;
         worker_create: boolean;
@@ -210,6 +211,7 @@ describeWithPostgres('migration PostgreSQL principals', () => {
            has_schema_privilege('mcat_learner_api', 'public', 'CREATE') as learner_schema_create,
            has_table_privilege('mcat_learner_api', 'learner_streams', 'SELECT,INSERT,UPDATE') as learner_stream_write,
            has_table_privilege('mcat_learner_api', 'learner_streams', 'DELETE') as learner_stream_delete,
+           has_table_privilege('mcat_learner_api', 'api_rate_limits', 'DELETE') as learner_rate_limit_delete,
            has_table_privilege('mcat_learner_api', 'content_objects', 'SELECT') as learner_content_read,
            has_database_privilege('mcat_workers', current_database(), 'CONNECT') as worker_connect,
            has_database_privilege('mcat_workers', current_database(), 'CREATE') as worker_create,
@@ -229,6 +231,7 @@ describeWithPostgres('migration PostgreSQL principals', () => {
         learner_schema_create: false,
         learner_stream_write: true,
         learner_stream_delete: false,
+        learner_rate_limit_delete: false,
         learner_content_read: false,
         worker_connect: true,
         worker_create: false,
@@ -240,6 +243,143 @@ describeWithPostgres('migration PostgreSQL principals', () => {
         worker_inbox_read_insert: true,
         worker_learner_read: false,
       });
+
+      const admin = await verifier.query<{ current_user: string; current_database: string }>(
+        'select current_user, current_database()',
+      );
+      const cleanupFunction = await verifier.query<{
+        owner: string;
+        security_definer: boolean;
+        configuration: string[] | null;
+        public_execute: boolean;
+        learner_execute: boolean;
+        worker_execute: boolean;
+      }>(
+        `select
+           owner.rolname as owner,
+           procedure.prosecdef as security_definer,
+           procedure.proconfig as configuration,
+           has_function_privilege('public', procedure.oid, 'EXECUTE') as public_execute,
+           has_function_privilege('mcat_learner_api', procedure.oid, 'EXECUTE') as learner_execute,
+           has_function_privilege('mcat_workers', procedure.oid, 'EXECUTE') as worker_execute
+         from pg_proc as procedure
+         join pg_namespace as namespace on namespace.oid = procedure.pronamespace
+         join pg_roles as owner on owner.oid = procedure.proowner
+         where namespace.nspname = 'public'
+           and procedure.proname = 'prune_expired_api_rate_limits'
+           and pg_get_function_identity_arguments(procedure.oid) = ''`,
+      );
+      expect(cleanupFunction.rows).toEqual([
+        {
+          owner: admin.rows[0]?.current_user,
+          security_definer: true,
+          configuration: ['search_path=pg_catalog'],
+          public_execute: false,
+          learner_execute: false,
+          worker_execute: false,
+        },
+      ]);
+
+      await verifier.query('drop function if exists public.synthetic_runtime_function()');
+      await verifier.query(`
+        create function public.synthetic_runtime_function() returns text
+        language sql
+        as 'select ''unsafe-public-function''::text'
+      `);
+      try {
+        for (const role of ['mcat_learner_api', 'mcat_workers']) {
+          await verifier.query(`set role ${role}`);
+          try {
+            await expect(
+              verifier.query('select public.synthetic_runtime_function()'),
+            ).rejects.toMatchObject({ code: '42501' });
+            await expect(
+              verifier.query(
+                "select pg_catalog.current_database() as database_name, pg_catalog.length('mcat') as value_length",
+              ),
+            ).resolves.toMatchObject({
+              rows: [
+                {
+                  database_name: admin.rows[0]?.current_database,
+                  value_length: 4,
+                },
+              ],
+            });
+          } finally {
+            await verifier.query('reset role');
+          }
+        }
+      } finally {
+        await verifier.query('drop function public.synthetic_runtime_function()');
+      }
+
+      await verifier.query('truncate table api_rate_limits');
+      await verifier.query(
+        'alter table api_rate_limits disable trigger api_rate_limits_prune_expired',
+      );
+      await verifier.query(
+        `insert into api_rate_limits (
+           rate_key, route, method, window_started_at, request_count, updated_at
+         ) values
+           ($1, '/v1/health', 'GET', statement_timestamp() - interval '25 hours', 1, statement_timestamp() - interval '25 hours'),
+           ($2, '/v1/health', 'GET', statement_timestamp() - interval '23 hours', 2, statement_timestamp() - interval '23 hours'),
+           ($3, '/v1/health', 'GET', date_trunc('minute', statement_timestamp()), 3, statement_timestamp())`,
+        ['a'.repeat(24), 'b'.repeat(24), 'c'.repeat(24)],
+      );
+      await verifier.query(
+        'alter table api_rate_limits enable trigger api_rate_limits_prune_expired',
+      );
+
+      const lockPool = new Pool({ connectionString: DATABASE_URL!, ssl: false, max: 1 });
+      try {
+        await lockPool.query('select pg_advisory_lock(72004005)');
+        await verifier.query("set statement_timeout = '500ms'");
+        await verifier.query('set role mcat_learner_api');
+        try {
+          await verifier.query(
+            `insert into api_rate_limits (
+               rate_key, route, method, window_started_at, request_count, updated_at
+             ) values ($1, '/v1/health', 'GET', date_trunc('minute', statement_timestamp()), 1, statement_timestamp())
+             on conflict (rate_key, route, method, window_started_at)
+             do update set
+               request_count = api_rate_limits.request_count + 1,
+               updated_at = excluded.updated_at`,
+            ['c'.repeat(24)],
+          );
+        } finally {
+          await verifier.query('reset role');
+          await verifier.query('reset statement_timeout');
+        }
+        const whileLocked = await verifier.query<{ request_count: number }>(
+          'select request_count from api_rate_limits where rate_key = $1',
+          ['a'.repeat(24)],
+        );
+        expect(whileLocked.rows).toEqual([{ request_count: 1 }]);
+      } finally {
+        await lockPool.query('select pg_advisory_unlock(72004005)');
+        await lockPool.end();
+      }
+
+      await verifier.query('set role mcat_learner_api');
+      try {
+        await verifier.query(
+          `insert into api_rate_limits (
+             rate_key, route, method, window_started_at, request_count, updated_at
+           ) values ($1, '/v1/health', 'GET', date_trunc('minute', statement_timestamp()), 1, statement_timestamp())`,
+          ['d'.repeat(24)],
+        );
+      } finally {
+        await verifier.query('reset role');
+      }
+      const retainedRateLimits = await verifier.query<{
+        rate_key: string;
+        request_count: number;
+      }>('select rate_key, request_count from api_rate_limits order by rate_key');
+      expect(retainedRateLimits.rows).toEqual([
+        { rate_key: 'b'.repeat(24), request_count: 2 },
+        { rate_key: 'c'.repeat(24), request_count: 4 },
+        { rate_key: 'd'.repeat(24), request_count: 1 },
+      ]);
     } finally {
       await verifier.end();
     }

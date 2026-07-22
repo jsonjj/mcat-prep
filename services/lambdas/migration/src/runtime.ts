@@ -26,6 +26,10 @@ const WORKER_ROLE = 'mcat_workers';
 const REVOKE_PUBLIC_DATABASE_DDL =
   "select format('revoke create, temporary on database %I from public', current_database()) as ddl";
 const REVOKE_PUBLIC_SCHEMA_DDL = 'revoke create on schema public from public';
+const REVOKE_PUBLIC_FUNCTION_EXECUTE_DDL =
+  'revoke execute on all functions in schema public from public';
+const REVOKE_PUBLIC_DEFAULT_FUNCTION_EXECUTE_DDL =
+  'alter default privileges revoke execute on functions from public';
 
 export interface MigrationEnvironment {
   readonly region: typeof EXPECTED_REGION;
@@ -578,6 +582,8 @@ export function createMigrationHandler(
       await transaction(client, async () => {
         await executeFormattedDdl(client!, REVOKE_PUBLIC_DATABASE_DDL);
         await query(client!, REVOKE_PUBLIC_SCHEMA_DDL);
+        await query(client!, REVOKE_PUBLIC_FUNCTION_EXECUTE_DDL);
+        await query(client!, REVOKE_PUBLIC_DEFAULT_FUNCTION_EXECUTE_DDL);
         await configureRole(client!, ROLE_SPECS[0]!, learnerSecret.password);
         await configureRole(client!, ROLE_SPECS[1]!, workerSecret.password);
       });

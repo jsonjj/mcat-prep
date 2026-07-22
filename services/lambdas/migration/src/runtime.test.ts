@@ -317,6 +317,8 @@ describe('migration runtime security boundary', () => {
     expect(sql).toContain('grant usage on schema public to mcat_workers');
     expect(sql).toContain('revoke create, temporary on database mcat from public');
     expect(sql).toContain('revoke create on schema public from public');
+    expect(sql).toContain('revoke execute on all functions in schema public from public');
+    expect(sql).toContain('alter default privileges revoke execute on functions from public');
     expect(sql).toContain(
       'alter role mcat_learner_api with login nosuperuser nocreatedb nocreaterole noinherit noreplication nobypassrls',
     );
