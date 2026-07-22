@@ -41,6 +41,21 @@ describe('WebStack', () => {
     expect(JSON.stringify(template.toJSON())).not.toContain('PublicRead');
   });
 
+  it('uses S3-managed encryption for learner-safe web artifacts without an OAC KMS wildcard', () => {
+    const template = Template.fromStack(createWeb());
+
+    template.resourceCountIs('AWS::KMS::Key', 0);
+    template.allResourcesProperties('AWS::S3::Bucket', {
+      BucketEncryption: {
+        ServerSideEncryptionConfiguration: [
+          {
+            ServerSideEncryptionByDefault: { SSEAlgorithm: 'AES256' },
+          },
+        ],
+      },
+    });
+  });
+
   it('enforces HTTPS and SPA fallback without caching errors', () => {
     const template = Template.fromStack(createWeb());
 

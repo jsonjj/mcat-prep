@@ -6,7 +6,6 @@ import {
   Validations,
   type StackProps,
   aws_cloudfront as cloudfront,
-  aws_kms as kms,
   aws_s3 as s3,
   aws_wafv2 as wafv2,
 } from 'aws-cdk-lib';
@@ -59,13 +58,6 @@ export class WebStack extends Stack {
     applySandboxPermissionsBoundary(this);
     applyRequiredTags(this, 'internal');
 
-    const webKey = new kms.Key(this, 'WebArtifactsKey', {
-      alias: 'alias/mcat/dev/web-artifacts',
-      description: 'Encrypts private MCAT development web artifacts at rest.',
-      enableKeyRotation: true,
-      rotationPeriod: Duration.days(365),
-      removalPolicy: RemovalPolicy.RETAIN,
-    });
     const accessLogs = new s3.Bucket(this, 'WebAccessLogsBucket', {
       bucketName: `mcat-dev-web-access-logs-${props.environment.account}-${props.environment.region}`,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
@@ -85,14 +77,12 @@ export class WebStack extends Stack {
       this,
       'LearnerArtifactsBucket',
       `mcat-dev-learner-web-${props.environment.account}-${props.environment.region}`,
-      webKey,
       accessLogs,
     );
     const adminBucket = createArtifactBucket(
       this,
       'AdminArtifactsBucket',
       `mcat-dev-admin-web-${props.environment.account}-${props.environment.region}`,
-      webKey,
       accessLogs,
     );
 
@@ -212,15 +202,12 @@ function createArtifactBucket(
   scope: Construct,
   id: string,
   bucketName: string,
-  encryptionKey: kms.IKey,
   accessLogs: s3.IBucket,
 ): s3.Bucket {
   return new s3.Bucket(scope, id, {
     bucketName,
     blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-    encryption: s3.BucketEncryption.KMS,
-    encryptionKey,
-    bucketKeyEnabled: true,
+    encryption: s3.BucketEncryption.S3_MANAGED,
     enforceSSL: true,
     versioned: true,
     serverAccessLogsBucket: accessLogs,
