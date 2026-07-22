@@ -107,6 +107,20 @@ describe('immutable web publication', () => {
     ).rejects.toThrow('changed after scanning');
   });
 
+  it('publishes the Home brain GLB with an explicit binary glTF content type', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'mcat-web-glb-'));
+    await mkdir(join(directory, 'models'));
+    await writeFile(join(directory, 'index.html'), '<!doctype html><main>safe</main>');
+    await writeFile(join(directory, 'models', 'brain.glb'), Buffer.from('glTF'));
+
+    const manifest = await buildArtifactManifest('learner', directory, 'a'.repeat(40));
+
+    expect(manifest.files.find((file) => file.path === 'models/brain.glb')).toMatchObject({
+      contentType: 'model/gltf-binary',
+      cacheControl: 'no-cache,must-revalidate',
+    });
+  });
+
   it('blocks protected fields, source maps, and non-fingerprinted assets', async () => {
     const protectedDirectory = await mkdtemp(join(tmpdir(), 'mcat-web-protected-'));
     await writeFile(protectedDirectory + '/index.html', '{"correct_choice_id":"choice-b"}');

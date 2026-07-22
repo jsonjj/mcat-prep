@@ -42,6 +42,27 @@ describe('learner browser authority boundary', () => {
     expect(profile).not.toContain('/app/preview');
     expect(existsSync(join(learnerRoot, 'src/screens/QuestionPreview.tsx'))).toBe(false);
   });
+
+  it('renders the interactive Evidence Atlas on Home', () => {
+    const home = read('apps/learner-web/src/screens/Home.tsx');
+
+    expect(home).toContain("import { countGlowing } from '../components/BrainAtlas'");
+    expect(home).toContain("import { EvidenceAtlas } from '../components/EvidenceAtlas'");
+    expect(home).toContain('<EvidenceAtlas variant="home" />');
+  });
+
+  it('ships the real GLB model expected by the Home Evidence Atlas', () => {
+    const modelPath = join(learnerRoot, 'public/models/brain.glb');
+
+    expect(existsSync(modelPath)).toBe(true);
+
+    const model = readFileSync(modelPath);
+    expect(model.subarray(0, 4).toString('ascii')).toBe('glTF');
+    expect(model.readUInt32LE(4)).toBe(2);
+    expect(model.readUInt32LE(8)).toBe(model.byteLength);
+    expect(model.byteLength).toBeLessThan(8 * 1024 * 1024);
+    expect(existsSync(join(learnerRoot, 'public/models/ATTRIBUTION.md'))).toBe(true);
+  });
 });
 
 describe('service-worker cache boundary', () => {

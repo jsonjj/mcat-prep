@@ -31,6 +31,7 @@ const TEXT_EXTENSIONS = new Set([
 ]);
 const CONTENT_TYPES: Readonly<Record<string, string>> = {
   '.css': 'text/css; charset=utf-8',
+  '.glb': 'model/gltf-binary',
   '.html': 'text/html; charset=utf-8',
   '.ico': 'image/x-icon',
   '.js': 'text/javascript; charset=utf-8',
