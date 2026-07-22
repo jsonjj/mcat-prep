@@ -11,12 +11,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "3.1092.0",
+    "@mcat/authority-core": "workspace:*",
     "@mcat/authority-kernel": "workspace:*",
     "@mcat/contracts": "workspace:*",
-    "@mcat/database": "workspace:*"
+    "@mcat/database": "workspace:*",
+    "@mcat/persistence-postgres": "workspace:*"
   },
   "devDependencies": {
-    "@mcat/authority-core": "workspace:*",
+    "@types/pg": "8.20.0",
     "typescript": "5.7.3",
     "vitest": "2.1.8"
   }
