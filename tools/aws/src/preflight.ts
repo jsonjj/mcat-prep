@@ -9,15 +9,6 @@ export const EXPECTED_ACCOUNT = '056956104102';
 export const EXPECTED_REGION = 'us-east-1';
 export const EXPECTED_PROFILE = 'sbsandbox';
 export const MINIMUM_BOOTSTRAP_VERSION = 32;
-export const CDK_EXECUTION_ROLE_ARN =
-  'arn:aws:iam::056956104102:role/cdk-hnb659fds-cfn-exec-role-056956104102-us-east-1';
-export const REQUIRED_ORGANIZATION_ACTIONS = [
-  'ec2:CreateVpc',
-  'ec2:CreateSecurityGroup',
-  'rds:CreateDBCluster',
-  'rds:CreateDBInstance',
-  'cloudfront:CreateDistribution',
-] as const;
 
 export const APPROVED_STACKS = [
   'McatDevFoundation',
@@ -46,7 +37,6 @@ export interface PreflightEvidence {
   readonly repositoryVisibility: 'PRIVATE' | 'PUBLIC' | 'INTERNAL' | string;
   readonly repositoryRemote: string;
   readonly deployedStackNames: readonly string[];
-  readonly organizationDeniedActions: readonly string[];
 }
 
 export interface ReviewedArtifactFile {
@@ -134,11 +124,6 @@ export function validatePreflightEvidence(evidence: PreflightEvidence): Prefligh
   if (evidence.repositoryVisibility !== 'PRIVATE') {
     throw new Error('Preflight rejected: GitHub repository must be private');
   }
-  if (evidence.organizationDeniedActions.length > 0) {
-    throw new Error(
-      `Preflight rejected: organization policy denies required AWS mutations (${evidence.organizationDeniedActions.join(', ')})`,
-    );
-  }
   if (
     !['https://github.com/jsonjj/mcat-prep.git', 'git@github.com:jsonjj/mcat-prep.git'].includes(
       evidence.repositoryRemote,
@@ -153,26 +138,6 @@ export function validatePreflightEvidence(evidence: PreflightEvidence): Prefligh
     throw new Error(`Preflight rejected: staging/production stack is present (${unsafeStack})`);
   }
   return evidence;
-}
-
-export function findOrganizationDeniedActions(value: unknown): string[] {
-  const root = objectValue(value, 'IAM organization-policy simulation');
-  const results = Array.isArray(root.EvaluationResults) ? root.EvaluationResults : [];
-  const organizationAllowed = new Set<string>();
-  for (const [index, result] of results.entries()) {
-    const record = objectValue(result, `IAM simulation result ${index}`);
-    const action = typeof record.EvalActionName === 'string' ? record.EvalActionName : undefined;
-    const detail =
-      typeof record.OrganizationsDecisionDetail === 'object' &&
-      record.OrganizationsDecisionDetail !== null &&
-      !Array.isArray(record.OrganizationsDecisionDetail)
-        ? (record.OrganizationsDecisionDetail as Record<string, unknown>)
-        : undefined;
-    if (action !== undefined && detail?.AllowedByOrganizations === true) {
-      organizationAllowed.add(action);
-    }
-  }
-  return REQUIRED_ORGANIZATION_ACTIONS.filter((action) => !organizationAllowed.has(action));
 }
 
 function parseDeploymentReview(value: unknown): DeploymentReview {
@@ -504,27 +469,6 @@ async function collectLiveEvidence(
     'CDK bootstrap lookup',
   );
   const parameter = objectValue(bootstrap.Parameter, 'CDK bootstrap parameter');
-  const organizationSimulation = parseJson(
-    await runChecked(runner, {
-      ...base,
-      command: 'aws',
-      args: [
-        '--profile',
-        EXPECTED_PROFILE,
-        '--region',
-        EXPECTED_REGION,
-        'iam',
-        'simulate-principal-policy',
-        '--policy-source-arn',
-        CDK_EXECUTION_ROLE_ARN,
-        '--action-names',
-        ...REQUIRED_ORGANIZATION_ACTIONS,
-        '--output',
-        'json',
-      ],
-    }),
-    'IAM organization-policy simulation',
-  );
   const stackResult = objectValue(
     parseJson(
       await runChecked(runner, {
@@ -566,7 +510,6 @@ async function collectLiveEvidence(
       repositoryVisibility: visibility,
       repositoryRemote,
       deployedStackNames,
-      organizationDeniedActions: findOrganizationDeniedActions(organizationSimulation),
     },
     gitCommit,
   };

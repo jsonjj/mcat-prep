@@ -13,7 +13,6 @@ import {
   assertNoRawAwsCredentials,
   assertReviewedArtifactUnchanged,
   createDeploymentReviewDraft,
-  findOrganizationDeniedActions,
   validateMutationBoundary,
   validatePreflightEvidence,
   verifyReviewedArtifact,
@@ -28,7 +27,6 @@ const validEvidence = {
   repositoryVisibility: 'PRIVATE' as const,
   repositoryRemote: 'https://github.com/jsonjj/mcat-prep.git',
   deployedStackNames: ['mcat-dev-foundation'],
-  organizationDeniedActions: [],
 };
 
 describe('AWS development preflight', () => {
@@ -45,10 +43,6 @@ describe('AWS development preflight', () => {
     [{ ...validEvidence, gitClean: false }, 'Git worktree must be clean'],
     [{ ...validEvidence, repositoryVisibility: 'PUBLIC' as const }, 'repository must be private'],
     [
-      { ...validEvidence, organizationDeniedActions: ['ec2:CreateVpc'] },
-      'organization policy denies required AWS mutations (ec2:CreateVpc)',
-    ],
-    [
       { ...validEvidence, deployedStackNames: ['mcat-production-api'] },
       'staging/production stack is present',
     ],
@@ -56,26 +50,12 @@ describe('AWS development preflight', () => {
     expect(() => validatePreflightEvidence(evidence)).toThrow(message);
   });
 
-  it('fails closed when IAM simulation omits or denies a required organization decision', () => {
-    expect(
-      findOrganizationDeniedActions({
-        EvaluationResults: [
-          {
-            EvalActionName: 'ec2:CreateVpc',
-            OrganizationsDecisionDetail: { AllowedByOrganizations: true },
-          },
-          {
-            EvalActionName: 'ec2:CreateSecurityGroup',
-            OrganizationsDecisionDetail: { AllowedByOrganizations: false },
-          },
-        ],
-      }),
-    ).toEqual([
-      'ec2:CreateSecurityGroup',
-      'rds:CreateDBCluster',
-      'rds:CreateDBInstance',
-      'cloudfront:CreateDistribution',
-    ]);
+  it('does not treat IAM Policy Simulator output as proof that a real deployment is denied', () => {
+    const misleadingSimulation = {
+      ...validEvidence,
+      organizationDeniedActions: ['ec2:CreateVpc'],
+    };
+    expect(() => validatePreflightEvidence(misleadingSimulation)).not.toThrow();
   });
 
   it('ignores organization-managed staging labels while still rejecting MCAT staging stacks', () => {

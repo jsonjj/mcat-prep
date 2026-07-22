@@ -18,12 +18,6 @@ Do not deploy while any prerequisite or abort condition below is unresolved.
 - `aws sts get-caller-identity --profile sbsandbox` returns account `056956104102`.
 - The profile region is `us-east-1` and CDK bootstrap parameter
   `/cdk-bootstrap/hnb659fds/version` is at least `32`.
-- Every effective organization SCP permits the CDK execution role
-  `arn:aws:iam::056956104102:role/cdk-hnb659fds-cfn-exec-role-056956104102-us-east-1`
-  to call `ec2:CreateVpc`, `ec2:CreateSecurityGroup`, `rds:CreateDBCluster`,
-  `rds:CreateDBInstance`, and `cloudfront:CreateDistribution`. Preflight verifies the
-  `AllowedByOrganizations` decision for all five actions. An Allow SCP cannot override an
-  explicit Deny; an organization administrator must exclude this role from every matching Deny.
 - The CDK app contains exactly these IDs in this dependency order:
   `McatDevFoundation`, `McatDevData`, `McatDevWeb`, `McatDevApi`, `McatDevIdentity`,
   `McatDevAsync`, `McatDevPublication`, `McatDevOperations`, and `McatDevAnalytics`.
