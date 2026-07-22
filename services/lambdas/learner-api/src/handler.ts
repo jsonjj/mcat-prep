@@ -1,0 +1,531 @@
+import { createHash, randomUUID } from 'node:crypto';
+import {
+  AuthorityKernel,
+  AuthorityKernelError,
+  type AuthorityKernelDependencies,
+  type Principal,
+} from '@mcat/authority-kernel';
+import {
+  AcceptedCommandResponseSchema,
+  GuestBootstrapResponseSchema,
+  HttpApiErrorSchema,
+  type Clock,
+  type HttpErrorCode,
+} from '@mcat/contracts';
+import type { AuthorityRepository } from '@mcat/database';
+
+import {
+  type ApiGatewayV1Event,
+  type ApiGatewayV1Result,
+  type ApiGatewayV2Event,
+  type ApiGatewayV2Result,
+  type LambdaApiGatewayEvent,
+  type LambdaApiGatewayResult,
+  type RateLimiter,
+  type SafeLogEvent,
+  type SafeLogger,
+  normalizedHeaders,
+} from './http';
+import { ROUTES, allowedMethodsFor, routeFor, type RouteDefinition } from './routes';
+import {
+  CSRF_COOKIE,
+  SESSION_COOKIE,
+  parseCookies,
+  secureCookie,
+  verifyDoubleSubmitCsrf,
+  type GuestSessionService,
+  type ResolvedGuestSession,
+} from './session';
+
+interface KernelPort {
+  handle(input: unknown, principal: Principal): ReturnType<AuthorityKernel['handle']>;
+  snapshot(principal: Principal): ReturnType<AuthorityKernel['snapshot']>;
+}
+
+export interface LearnerApiDependencies {
+  readonly kernel: KernelPort;
+  readonly sessions: GuestSessionService;
+  readonly allowedOrigins: readonly string[];
+  readonly rateLimiter: RateLimiter;
+  readonly logger: SafeLogger;
+  readonly nowMs?: () => number;
+  readonly maxBodyBytes?: number;
+}
+
+export interface RepositoryLearnerApiDependencies extends Omit<LearnerApiDependencies, 'kernel'> {
+  readonly repository: AuthorityRepository;
+  readonly clock: Clock;
+  readonly bank: AuthorityKernelDependencies['bank'];
+}
+
+export interface LearnerApi {
+  handle(event: ApiGatewayV2Event): Promise<ApiGatewayV2Result>;
+  handler(event: ApiGatewayV1Event, context?: unknown): Promise<ApiGatewayV1Result>;
+  handler(event: ApiGatewayV2Event, context?: unknown): Promise<ApiGatewayV2Result>;
+}
+
+const DEFAULT_MAX_BODY_BYTES = 64 * 1024;
+
+function requestId(value: string): string {
+  return /^[A-Za-z0-9_-]{1,128}$/.test(value) ? value : randomUUID();
+}
+
+function pseudonymousHash(value: string): string {
+  return createHash('sha256').update(value, 'utf8').digest('hex').slice(0, 24);
+}
+
+function statusForCode(code: string): number {
+  switch (code) {
+    case 'unauthorized':
+      return 401;
+    case 'forbidden':
+      return 403;
+    case 'not_found':
+      return 404;
+    case 'conflict':
+    case 'content_version_conflict':
+    case 'stream_conflict':
+      return 409;
+    case 'rate_limited':
+      return 429;
+    case 'unavailable':
+      return 503;
+    default:
+      return 400;
+  }
+}
+
+function responseHeaders(origin: string | undefined, requestIdValue: string) {
+  return {
+    'cache-control': 'no-store',
+    pragma: 'no-cache',
+    'content-type': 'application/json; charset=utf-8',
+    'x-content-type-options': 'nosniff',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains',
+    'referrer-policy': 'no-referrer',
+    'x-request-id': requestIdValue,
+    vary: 'Origin',
+    ...(origin === undefined
+      ? {}
+      : {
+          'access-control-allow-origin': origin,
+          'access-control-allow-credentials': 'true',
+        }),
+  } as const;
+}
+
+function jsonResponse(
+  statusCode: number,
+  payload: unknown,
+  origin: string | undefined,
+  requestIdValue: string,
+  options: {
+    readonly cookies?: readonly string[];
+    readonly extraHeaders?: Record<string, string>;
+  } = {},
+): ApiGatewayV2Result {
+  return {
+    statusCode,
+    headers: { ...responseHeaders(origin, requestIdValue), ...options.extraHeaders },
+    ...(options.cookies === undefined ? {} : { cookies: options.cookies }),
+    body: JSON.stringify(payload),
+  };
+}
+
+function errorResponse(
+  code: HttpErrorCode,
+  message: string,
+  origin: string | undefined,
+  requestIdValue: string,
+  options: {
+    readonly status?: number;
+    readonly retryable?: boolean;
+    readonly currentStreamVersion?: number;
+  } = {},
+): ApiGatewayV2Result {
+  const payload = HttpApiErrorSchema.parse({
+    code,
+    message,
+    requestId: requestIdValue,
+    retryable: options.retryable ?? false,
+    ...(options.currentStreamVersion === undefined
+      ? {}
+      : { currentStreamVersion: options.currentStreamVersion }),
+  });
+  return jsonResponse(options.status ?? statusForCode(code), payload, origin, requestIdValue);
+}
+
+function parseBody(
+  event: ApiGatewayV2Event,
+  headers: Readonly<Record<string, string>>,
+  maxBodyBytes: number,
+): { ok: true; value: unknown } | { ok: false; status: 400 | 413 | 415; message: string } {
+  const contentType = headers['content-type']?.split(';', 1)[0]?.trim().toLowerCase();
+  if (contentType !== 'application/json') {
+    return { ok: false, status: 415, message: 'Content-Type must be application/json.' };
+  }
+  const raw = event.body ?? '';
+  let bytes: Buffer;
+  try {
+    bytes = Buffer.from(raw, event.isBase64Encoded ? 'base64' : 'utf8');
+  } catch {
+    return { ok: false, status: 400, message: 'The request body is invalid.' };
+  }
+  if (bytes.byteLength > maxBodyBytes) {
+    return { ok: false, status: 413, message: 'The request body is too large.' };
+  }
+  try {
+    return { ok: true, value: JSON.parse(bytes.toString('utf8')) as unknown };
+  } catch {
+    return { ok: false, status: 400, message: 'The request body is invalid JSON.' };
+  }
+}
+
+function safeOrigin(origin: string | undefined, allowed: ReadonlySet<string>): string | undefined {
+  return origin !== undefined && allowed.has(origin) ? origin : undefined;
+}
+
+function outcomeFor(status: number): SafeLogEvent['outcome'] {
+  if (status < 400) return 'success';
+  if (status === 401 || status === 403 || status === 429) return 'denied';
+  if (status < 500) return 'invalid';
+  return 'error';
+}
+
+function isV2Event(event: LambdaApiGatewayEvent): event is ApiGatewayV2Event {
+  return 'version' in event && event.version === '2.0';
+}
+
+function v1ToV2Event(event: Exclude<LambdaApiGatewayEvent, ApiGatewayV2Event>): ApiGatewayV2Event {
+  const rawQueryString = Object.entries(event.queryStringParameters ?? {})
+    .filter((entry): entry is [string, string] => entry[1] !== undefined)
+    .map(([name, value]) => `${encodeURIComponent(name)}=${encodeURIComponent(value)}`)
+    .join('&');
+  return {
+    version: '2.0',
+    rawPath: event.path,
+    rawQueryString,
+    headers: event.headers,
+    requestContext: {
+      requestId: event.requestContext.requestId,
+      http: {
+        method: event.httpMethod,
+        path: event.path,
+        sourceIp: event.requestContext.identity.sourceIp,
+      },
+    },
+    body: event.body ?? undefined,
+    isBase64Encoded: event.isBase64Encoded ?? false,
+  };
+}
+
+function v2ToV1Result(response: ApiGatewayV2Result): ApiGatewayV1Result {
+  const { cookies, ...rest } = response;
+  return {
+    ...rest,
+    ...(cookies === undefined ? {} : { multiValueHeaders: { 'set-cookie': cookies } }),
+  };
+}
+
+export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerApi {
+  const allowedOrigins = new Set(
+    dependencies.allowedOrigins.map((origin) => {
+      const parsed = new URL(origin);
+      if (parsed.origin !== origin || parsed.protocol !== 'https:') {
+        throw new Error('Allowed origins must be exact HTTPS origins.');
+      }
+      return origin;
+    }),
+  );
+  if (allowedOrigins.size === 0) throw new Error('At least one allowed origin is required.');
+  const nowMs = dependencies.nowMs ?? Date.now;
+  const maxBodyBytes = dependencies.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES;
+
+  async function handle(event: ApiGatewayV2Event): Promise<ApiGatewayV2Result> {
+    const startedAt = nowMs();
+    const headers = normalizedHeaders(event.headers);
+    const method = event.requestContext.http.method.toUpperCase();
+    const path = event.rawPath;
+    const requestIdValue = requestId(event.requestContext.requestId);
+    const requestOrigin = headers.origin;
+    const allowedOrigin = safeOrigin(requestOrigin, allowedOrigins);
+    let routeLabel = '<unmatched>';
+    let principal: Principal | undefined;
+    let response: ApiGatewayV2Result | undefined;
+
+    try {
+      if (event.rawQueryString !== undefined && event.rawQueryString !== '') {
+        response = errorResponse(
+          'validation_error',
+          'Query parameters are not accepted on this route.',
+          allowedOrigin,
+          requestIdValue,
+        );
+        return response;
+      }
+
+      if (method === 'OPTIONS') {
+        if (allowedOrigin === undefined) {
+          response = errorResponse(
+            'forbidden',
+            'Origin is not allowed.',
+            undefined,
+            requestIdValue,
+          );
+          return response;
+        }
+        const methods = allowedMethodsFor(path);
+        if (methods.length === 0) {
+          response = errorResponse('not_found', 'Route not found.', allowedOrigin, requestIdValue);
+          return response;
+        }
+        response = {
+          statusCode: 204,
+          headers: {
+            ...responseHeaders(allowedOrigin, requestIdValue),
+            'access-control-allow-methods': 'GET, POST, PUT, OPTIONS',
+            'access-control-allow-headers': 'content-type, authorization, x-csrf-token',
+            'access-control-max-age': '600',
+          },
+        };
+        return response;
+      }
+
+      const route = routeFor(method, path);
+      if (route === undefined) {
+        const allowedMethods = allowedMethodsFor(path);
+        response = errorResponse(
+          allowedMethods.length === 0 ? 'not_found' : 'validation_error',
+          allowedMethods.length === 0 ? 'Route not found.' : 'Method not allowed.',
+          allowedOrigin,
+          requestIdValue,
+          {
+            status: allowedMethods.length === 0 ? 404 : 405,
+            ...(allowedMethods.length === 0 ? {} : { retryable: false }),
+          },
+        );
+        return response;
+      }
+      routeLabel = route.path;
+
+      if (route.auth !== 'public' && requestOrigin !== undefined && allowedOrigin === undefined) {
+        response = errorResponse('forbidden', 'Origin is not allowed.', undefined, requestIdValue);
+        return response;
+      }
+      if (route.stateChanging && allowedOrigin === undefined) {
+        response = errorResponse('forbidden', 'Origin is required.', undefined, requestIdValue);
+        return response;
+      }
+
+      const cookies = parseCookies(event.cookies, headers.cookie);
+      let resolved: ResolvedGuestSession | null = null;
+      if (route.auth === 'session') {
+        const token = cookies[SESSION_COOKIE];
+        resolved = token === undefined ? null : await dependencies.sessions.resolve(token);
+        if (resolved === null) {
+          response = errorResponse(
+            'unauthorized',
+            'A valid learner session is required.',
+            allowedOrigin,
+            requestIdValue,
+          );
+          return response;
+        }
+        principal = resolved.principal;
+      }
+
+      const rateKey = pseudonymousHash(principal?.sessionId ?? event.requestContext.http.sourceIp);
+      if (!(await dependencies.rateLimiter.allow({ key: rateKey, route: route.path, method }))) {
+        response = errorResponse(
+          'rate_limited',
+          'Too many requests. Try again later.',
+          allowedOrigin,
+          requestIdValue,
+          { status: 429, retryable: true },
+        );
+        return response;
+      }
+
+      if (route.stateChanging && route.auth === 'session') {
+        if (
+          resolved === null ||
+          !verifyDoubleSubmitCsrf(
+            headers['x-csrf-token'],
+            cookies[CSRF_COOKIE],
+            resolved.csrfTokenHash,
+          )
+        ) {
+          response = errorResponse(
+            'forbidden',
+            'CSRF validation failed.',
+            allowedOrigin,
+            requestIdValue,
+          );
+          return response;
+        }
+      }
+
+      response = await dispatch(
+        route,
+        event,
+        headers,
+        cookies,
+        principal,
+        (resolvedPrincipal) => {
+          principal = resolvedPrincipal;
+        },
+        allowedOrigin,
+        requestIdValue,
+      );
+      return response;
+    } catch (error) {
+      if (error instanceof AuthorityKernelError) {
+        response = errorResponse(error.code, error.message, allowedOrigin, requestIdValue, {
+          retryable: error.retryable,
+          ...(error.currentStreamVersion === undefined
+            ? {}
+            : { currentStreamVersion: error.currentStreamVersion }),
+        });
+      } else {
+        response = errorResponse(
+          'unavailable',
+          'The learner service is temporarily unavailable.',
+          allowedOrigin,
+          requestIdValue,
+          { status: 503, retryable: true },
+        );
+      }
+      return response;
+    } finally {
+      const status = response?.statusCode ?? 503;
+      dependencies.logger.info({
+        requestId: requestIdValue,
+        route: routeLabel,
+        method: /^(GET|POST|PUT|OPTIONS)$/.test(method) ? method : 'UNKNOWN',
+        status,
+        latencyMs: Math.max(0, nowMs() - startedAt),
+        principalKind: principal?.kind ?? 'anonymous',
+        ...(principal === undefined ? {} : { learnerHash: pseudonymousHash(principal.learnerId) }),
+        outcome: outcomeFor(status),
+      });
+    }
+  }
+
+  async function dispatch(
+    route: RouteDefinition,
+    event: ApiGatewayV2Event,
+    headers: Readonly<Record<string, string>>,
+    cookies: Readonly<Record<string, string>>,
+    principal: Principal | undefined,
+    setPrincipal: (principal: Principal) => void,
+    origin: string | undefined,
+    requestIdValue: string,
+  ): Promise<ApiGatewayV2Result> {
+    if (route.id === 'health') {
+      return jsonResponse(200, { status: 'ok' }, origin, requestIdValue);
+    }
+    if (route.id === 'bootstrap') {
+      const bootstrapped = await dependencies.sessions.bootstrap(cookies[SESSION_COOKIE] ?? null);
+      principal = bootstrapped.principal;
+      setPrincipal(principal);
+      const snapshot = await dependencies.kernel.snapshot(principal);
+      const payload = GuestBootstrapResponseSchema.parse({
+        learnerId: principal.learnerId,
+        accountState: principal.kind,
+        bankStatus: 'loaded',
+        contentRelease: snapshot.contentRelease,
+        apiVersion: 'v1',
+        onboardingComplete: snapshot.today !== null && snapshot.session.kind !== 'locked',
+        serverTime: new Date(nowMs()).toISOString(),
+        streamVersion: snapshot.streamVersion,
+        csrfToken: bootstrapped.csrfToken,
+      });
+      return jsonResponse(200, payload, origin, requestIdValue, {
+        cookies: [
+          secureCookie(SESSION_COOKIE, bootstrapped.sessionToken, bootstrapped.maxAgeSeconds),
+          secureCookie(CSRF_COOKIE, bootstrapped.csrfToken, bootstrapped.maxAgeSeconds),
+        ],
+      });
+    }
+    if (principal === undefined) {
+      return errorResponse(
+        'unauthorized',
+        'A valid learner session is required.',
+        origin,
+        requestIdValue,
+      );
+    }
+    if (route.bodySchema !== undefined) {
+      const parsedBody = parseBody(event, headers, maxBodyBytes);
+      if (!parsedBody.ok) {
+        return errorResponse('validation_error', parsedBody.message, origin, requestIdValue, {
+          status: parsedBody.status,
+        });
+      }
+      const parsed = route.bodySchema.safeParse(parsedBody.value);
+      if (!parsed.success) {
+        return errorResponse(
+          'validation_error',
+          'The request body does not match the route contract.',
+          origin,
+          requestIdValue,
+        );
+      }
+      const result = AcceptedCommandResponseSchema.parse(
+        await dependencies.kernel.handle(parsed.data, principal),
+      );
+      return jsonResponse(200, result, origin, requestIdValue);
+    }
+
+    const snapshot = await dependencies.kernel.snapshot(principal);
+    let selected: unknown;
+    switch (route.id) {
+      case 'today':
+        if (snapshot.today === null) {
+          return errorResponse(
+            'conflict',
+            'Complete onboarding before requesting Today.',
+            origin,
+            requestIdValue,
+          );
+        }
+        selected = snapshot.today;
+        break;
+      case 'session':
+        selected = snapshot.session;
+        break;
+      case 'mastery':
+        selected = snapshot.masteryMap;
+        break;
+      case 'errors':
+        selected = snapshot.errorLog;
+        break;
+      default:
+        return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
+    }
+    return jsonResponse(200, route.responseSchema?.parse(selected), origin, requestIdValue);
+  }
+
+  async function handler(event: ApiGatewayV1Event, _context?: unknown): Promise<ApiGatewayV1Result>;
+  async function handler(event: ApiGatewayV2Event, _context?: unknown): Promise<ApiGatewayV2Result>;
+  async function handler(
+    event: LambdaApiGatewayEvent,
+    _context?: unknown,
+  ): Promise<LambdaApiGatewayResult> {
+    if (isV2Event(event)) return handle(event);
+    return v2ToV1Result(await handle(v1ToV2Event(event)));
+  }
+  return { handle, handler };
+}
+
+export function createRepositoryLearnerApi(
+  dependencies: RepositoryLearnerApiDependencies,
+): LearnerApi {
+  const { repository, clock, bank, ...apiDependencies } = dependencies;
+  return createLearnerApi({
+    ...apiDependencies,
+    kernel: new AuthorityKernel({ repository, clock, bank }),
+  });
+}
+
+export const SUPPORTED_LEARNER_ROUTES = ROUTES;
