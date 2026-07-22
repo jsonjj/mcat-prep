@@ -157,8 +157,18 @@ describe('immutable web publication', () => {
 
     expect(commands[0]).toMatchObject({
       command: 'aws',
+      args: expect.arrayContaining([
+        's3api',
+        'head-bucket',
+        '--expected-bucket-owner',
+        '056956104102',
+      ]),
+    });
+    expect(commands[1]).toMatchObject({
+      command: 'aws',
       args: expect.arrayContaining(['s3', 'cp']),
     });
+    expect(commands[1]?.args).not.toContain('--expected-bucket-owner');
     expect(commands.at(-1)?.args).toEqual(
       expect.arrayContaining(['cloudfront', 'create-invalidation', '/index.html', '/sw.js']),
     );

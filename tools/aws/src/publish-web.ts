@@ -77,9 +77,7 @@ export function webAppsForDeployment(): readonly ['learner'] {
   return ['learner'];
 }
 
-export function formatPublishedArtifacts(
-  manifests: readonly WebArtifactManifest[],
-): string {
+export function formatPublishedArtifacts(manifests: readonly WebArtifactManifest[]): string {
   const applications = manifests.map((manifest) => manifest.app).join('/');
   const hashes = manifests.map((manifest) => manifest.sha256).join(', ');
   const noun = manifests.length === 1 ? 'artifact' : 'artifacts';
@@ -281,8 +279,6 @@ export function planWebPublish(
       `sha256=${file.sha256}`,
       '--checksum-algorithm',
       'SHA256',
-      '--expected-bucket-owner',
-      EXPECTED_ACCOUNT,
       '--only-show-errors',
     ],
   }));
@@ -291,6 +287,21 @@ export function planWebPublish(
       ? ['/', '/index.html', '/manifest.webmanifest', '/sw.js']
       : ['/', '/index.html'];
   return [
+    {
+      command: 'aws',
+      args: [
+        '--profile',
+        EXPECTED_PROFILE,
+        '--region',
+        EXPECTED_REGION,
+        's3api',
+        'head-bucket',
+        '--bucket',
+        target.bucket,
+        '--expected-bucket-owner',
+        EXPECTED_ACCOUNT,
+      ],
+    },
     ...uploads,
     {
       command: 'aws',
@@ -419,9 +430,14 @@ export async function publishWeb(options: {
     const root = join(options.repositoryRoot, 'apps', `${manifest.app}-web`, 'dist');
     const files = orderedArtifactFiles(manifest);
     const commands = planWebPublish(manifest, root, target);
+    const bucketOwnershipCommand = commands[0];
+    if (bucketOwnershipCommand === undefined)
+      throw new Error('Web bucket ownership check is missing');
+    await assertMutationBoundary(runner, options.repositoryRoot, preflight.review.gitCommit);
+    await runChecked(runner, bucketOwnershipCommand);
     for (let fileIndex = 0; fileIndex < files.length; fileIndex += 1) {
       const file = files[fileIndex];
-      const command = commands[fileIndex];
+      const command = commands[fileIndex + 1];
       if (file === undefined || command === undefined)
         throw new Error('Web upload plan is incomplete');
       await assertMutationBoundary(runner, options.repositoryRoot, preflight.review.gitCommit);
