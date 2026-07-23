@@ -1,15 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { syntheticV3LessonDefinition, type ActivityDefinition } from '@mcat/content';
 import {
+  ActivityDefinitionSchema,
+  syntheticV3LessonDefinition,
+  type ActivityDefinition,
+} from '@mcat/content';
+import {
+  LessonActionCommandSchema,
   LessonRunPinsSchema,
   type LessonActionInput,
-  type LessonResponseOutcome,
   type LessonRunState,
 } from '@mcat/contracts';
 import {
   buildLessonStepView,
   dispatchLessonRunAction,
+  dispatchLessonRunCommand,
   evaluateLessonResponse,
+  initializeLessonReentryRun,
   initializeLessonRun,
   reduceLessonRun,
   replayLessonRun,
@@ -20,8 +26,10 @@ const pins = LessonRunPinsSchema.parse({
   runId: '11111111-1111-4111-8111-111111111111',
   lessonId: syntheticV3LessonDefinition.id,
   definitionVersion: syntheticV3LessonDefinition.definitionVersion,
+  reviewedContentHash: syntheticV3LessonDefinition.contentDigest.sha256,
   contentRelease: syntheticV3LessonDefinition.contentRelease,
-  policies: [{ policyId: 'lesson-runtime', version: 'v3-foundation-1' }],
+  registry: syntheticV3LessonDefinition.registryBinding.registry,
+  policies: [{ policyId: 'lesson-runtime', version: 'v3-foundation-2' }],
 });
 
 function event(
@@ -33,16 +41,18 @@ function event(
   const sequence = state.lastSequence + 1;
   const suffix = String(sequence + 1).padStart(12, '0');
   return {
-    schemaVersion: '1.0',
+    schemaVersion: '1.1',
     eventId: `10000000-0000-4000-8000-${suffix}`,
     idempotencyKey: `20000000-0000-4000-8000-${suffix}`,
     runId: state.pins.runId,
     lessonId: state.pins.lessonId,
     definitionVersion: state.pins.definitionVersion,
+    reviewedContentHash: state.pins.reviewedContentHash,
     contentRelease: state.pins.contentRelease,
+    registry: state.pins.registry,
     policies: state.pins.policies,
     sequence,
-    occurredAt: '2026-07-23T06:00:00.000Z',
+    occurredAt: '2026-07-23T16:41:00.000Z',
     type,
     payload,
     ...over,
@@ -53,8 +63,11 @@ const apply = (state: LessonRunState, type: string, payload: Record<string, unkn
   reduceLessonRun(state, event(state, type, payload), syntheticV3LessonDefinition, 'test_fixture');
 
 function freshStarted(): LessonRunState {
-  const initial = initializeLessonRun(syntheticV3LessonDefinition, pins, 'test_fixture');
-  return apply(initial, 'lesson_run_started');
+  return startLessonRun(
+    initializeLessonRun(syntheticV3LessonDefinition, pins, 'test_fixture'),
+    syntheticV3LessonDefinition,
+    'test_fixture',
+  ).state;
 }
 
 function activity(state: LessonRunState): ActivityDefinition {
@@ -65,272 +78,395 @@ function activity(state: LessonRunState): ActivityDefinition {
   throw new Error('Expected a current synthetic activity.');
 }
 
+const act = (state: LessonRunState, action: LessonActionInput): LessonRunState =>
+  dispatchLessonRunAction(state, syntheticV3LessonDefinition, action, 'test_fixture').state;
+
 function present(state: LessonRunState): LessonRunState {
-  const current = activity(state);
-  return apply(state, 'lesson_activity_presented', {
-    kcId: current.kcId,
-    activityId: current.id,
-    familyId: current.familyId,
-  });
+  return act(state, { type: 'present', activityId: activity(state).id });
 }
 
-function respond(
+function submit(
   state: LessonRunState,
-  outcome: LessonResponseOutcome,
-  signalIds: string[] = [],
-  options: { assisted?: boolean; revealed?: boolean } = {},
+  choiceId: 'ready' | 'prerequisite' | 'swap' | 'aligned' | 'offset' = 'aligned',
 ): LessonRunState {
   const current = activity(state);
-  const isExit = current.phase === 'exit_near' || current.phase === 'exit_changed';
-  return apply(state, 'lesson_response_evaluated', {
-    kcId: current.kcId,
+  const effectiveChoice =
+    current.phase === 'enter_routing' && choiceId === 'offset'
+      ? current.id.endsWith('ENTRY-1') || current.id.endsWith('ENTRY-3')
+        ? 'ready'
+        : 'prerequisite'
+      : choiceId;
+  return act(state, {
+    type: 'submit_response',
     activityId: current.id,
-    familyId: current.familyId,
-    outcome,
-    assistanceLevel: state.assistanceLevel,
-    assisted: options.assisted ?? false,
-    revealed: options.revealed ?? false,
-    diagnosticSignalIds: signalIds,
-    ...(isExit
-      ? {}
-      : {
-          feedback: [
-            {
-              activityId: current.id,
-              tone: outcome === 'correct' ? 'correct' : 'incorrect',
-              message: 'Synthetic evaluated feedback.',
-            },
-          ],
-        }),
+    response: { kind: 'choice', choiceId: effectiveChoice },
   });
 }
 
 function completeCurrent(
   state: LessonRunState,
-  outcome: LessonResponseOutcome = 'correct',
-  signalIds: string[] = [],
-  options: { assisted?: boolean; revealed?: boolean } = {},
+  choiceId: 'ready' | 'prerequisite' | 'swap' | 'aligned' | 'offset' = 'aligned',
 ): LessonRunState {
   const current = activity(state);
   let next = present(state);
-  if (current.response.kind !== 'none') {
-    next = respond(next, outcome, signalIds, options);
-  }
-  return apply(next, 'lesson_activity_completed', {
-    kcId: current.kcId,
-    activityId: current.id,
-  });
+  if (current.response.kind !== 'none') next = submit(next, choiceId);
+  return act(next, { type: 'continue', activityId: current.id });
 }
 
-function reachRoutePending(
-  signalId: string,
-  outcomes: LessonResponseOutcome[] = ['correct', 'correct'],
+function reachCompletion(
+  entryChoice: 'ready' | 'prerequisite' | 'swap' | 'offset' = 'offset',
 ): LessonRunState {
   let state = freshStarted();
-  state = completeCurrent(state, outcomes[0]!, [signalId]);
-  state = completeCurrent(state, outcomes[1]!, [signalId]);
-  expect(state.status).toBe('awaiting_route');
+  state = completeCurrent(state, entryChoice);
+  state = completeCurrent(state, entryChoice);
+  for (let guard = 0; guard < 10 && state.phase !== 'completion'; guard += 1) {
+    state = completeCurrent(state);
+  }
+  expect(state.phase).toBe('completion');
   return state;
 }
 
-function selectRoute(
-  state: LessonRunState,
-  route: 'concise' | 'standard' | 'prerequisite' | 'misconception',
-): LessonRunState {
-  return apply(state, 'lesson_route_selected', {
-    kcId: state.currentKcId,
-    route,
-  });
+function establishA0(state: LessonRunState): LessonRunState {
+  let next = state;
+  for (let guard = 0; guard < 8 && next.phase === 'completion'; guard += 1) {
+    next = completeCurrent(next, 'aligned');
+  }
+  return next;
 }
 
-function reachFirstExit(route: 'concise' | 'standard' = 'standard'): LessonRunState {
-  const firstKc = syntheticV3LessonDefinition.knowledgeComponents[0]!;
-  const signal =
-    route === 'concise'
-      ? firstKc.microcycle.entryRouting.routes.find((candidate) => candidate.route === 'concise')!
-          .criteria.signalIds[0]!
-      : 'unused-standard-signal';
-  let state = selectRoute(reachRoutePending(signal), route);
+function reachFirstExit(): LessonRunState {
+  let state = establishA0(reachCompletion());
   while (state.phase !== 'exit_near') state = completeCurrent(state);
   return state;
 }
 
-function releaseExitFeedback(state: LessonRunState): LessonRunState {
-  const entries = state.sealedExitResults.map((result) => ({
-    activityId: result.activityId,
-    tone: result.passedUnsupported ? 'correct' : 'incorrect',
-    message: `Synthetic sealed feedback for ${result.role}.`,
-  }));
-  return apply(state, 'lesson_exit_feedback_released', {
-    kcId: state.currentKcId,
-    feedback: entries,
-  });
+function submitExitPair(
+  state: LessonRunState,
+  near: 'aligned' | 'offset',
+  changed: 'aligned' | 'offset',
+): LessonRunState {
+  let next = submit(present(state), near);
+  expect(next.phase).toBe('exit_changed');
+  next = submit(present(next), changed);
+  return next;
 }
 
-function submitExitPair(state: LessonRunState, outcome: LessonResponseOutcome): LessonRunState {
-  let next = present(state);
-  next = respond(next, outcome);
-  next = present(next);
-  return respond(next, outcome);
+function beginRepair(state: LessonRunState): LessonRunState {
+  expect(state.status).toBe('awaiting_repair');
+  return act(state, { type: 'continue', activityId: null });
 }
 
-describe('V3 lesson run initialization and routing', () => {
-  it('requires an explicit test-fixture mode and fails production closed', () => {
+describe('V3 lesson initialization, routing, and sealed entry evidence', () => {
+  it('requires exact content, review, and registry pins and fails fixtures closed in production', () => {
     const fixture = initializeLessonRun(syntheticV3LessonDefinition, pins, 'test_fixture');
     const production = initializeLessonRun(syntheticV3LessonDefinition, pins, 'production');
+    const wrongHash = initializeLessonRun(
+      syntheticV3LessonDefinition,
+      { ...pins, reviewedContentHash: '0'.repeat(64) },
+      'test_fixture',
+    );
 
     expect(fixture.status).toBe('ready');
     expect(production.status).toBe('invalid_content');
-    expect(production.invalidIssues).toContain('test_only_content_forbidden');
+    expect(production.invalidIssues).toContain('unpublished_or_test_content_forbidden');
+    expect(wrongHash.invalidIssues).toContain('reviewed_content_hash_pin_mismatch');
   });
 
-  it('fails malformed lesson content to a non-interactive invalid state', () => {
-    const malformed = structuredClone(syntheticV3LessonDefinition);
-    malformed.orderedKcIds.reverse();
-    const state = initializeLessonRun(malformed, pins, 'test_fixture');
-    const view = buildLessonStepView(malformed, state);
+  it('keeps all entry rationale sealed until both probes commit and routing finalizes', () => {
+    let state = freshStarted();
+    state = submit(present(state), 'ready');
+    let view = buildLessonStepView(syntheticV3LessonDefinition, state);
+    expect(state.authorityPrivateFeedback.sealedEntry).toHaveLength(1);
+    expect(state.groupedFeedback).toBeNull();
+    expect(JSON.stringify(view)).not.toContain('fits the invented rule');
 
-    expect(state.status).toBe('invalid_content');
-    expect(view.status).toBe('invalid_content');
-    expect(view.availableActions).toEqual([]);
+    state = act(state, { type: 'continue', activityId: activity(state).id });
+    state = submit(present(state), 'ready');
+    view = buildLessonStepView(syntheticV3LessonDefinition, state);
+    expect(state.authorityPrivateFeedback.sealedEntry).toHaveLength(2);
+    expect(JSON.stringify(view)).not.toContain('fits the invented rule');
+
+    state = act(state, { type: 'continue', activityId: activity(state).id });
+    view = buildLessonStepView(syntheticV3LessonDefinition, state);
+    expect(state.route).toBe('concise');
+    expect(state.authorityPrivateFeedback.sealedEntry).toEqual([]);
+    expect(state.groupedFeedback?.entries).toHaveLength(2);
+    expect(JSON.stringify(view)).toContain('Correct under the invented fixture rule');
   });
 
   it.each([
-    ['concise', 'ready'],
+    ['ready', 'concise'],
     ['prerequisite', 'prerequisite'],
-    ['misconception', 'misconception'],
-  ] as const)('selects the %s route only after two-family evidence', (route, signalTail) => {
-    const kc = syntheticV3LessonDefinition.knowledgeComponents[0]!;
-    const selected = kc.microcycle.entryRouting.routes.find(
-      (candidate) => candidate.route === route,
-    )!;
-    const signalId =
-      selected.criteria.kind === 'convergent_evidence'
-        ? selected.criteria.signalIds[0]!
-        : `signal-synth-001-${signalTail}`;
-    const state = selectRoute(reachRoutePending(signalId), route);
-
-    expect(state.status).toBe('active');
-    expect(state.route).toBe(route);
-  });
-
-  it('uses standard as the deterministic fallback without targeted evidence', () => {
-    const state = selectRoute(reachRoutePending('unmapped-signal'), 'standard');
-
-    expect(state.status).toBe('active');
-    expect(state.route).toBe('standard');
-  });
-
-  it('does not treat one distractor family as a misconception diagnosis', () => {
-    const kc = syntheticV3LessonDefinition.knowledgeComponents[0]!;
-    const misconception = kc.microcycle.entryRouting.routes.find(
-      (candidate) => candidate.route === 'misconception',
-    )!;
-    const signalId =
-      misconception.criteria.kind === 'convergent_evidence'
-        ? misconception.criteria.signalIds[0]!
-        : 'unreachable';
+    ['swap', 'misconception'],
+    ['offset', 'standard'],
+  ] as const)('selects %s probe evidence into the %s route', (choice, expectedRoute) => {
     let state = freshStarted();
-    state = completeCurrent(state, 'incorrect', [signalId]);
-    state = completeCurrent(state, 'correct', []);
-    state = selectRoute(state, 'misconception');
+    state = completeCurrent(state, choice);
+    state = completeCurrent(state, choice);
+
+    expect(state.route).toBe(expectedRoute);
+    expect(state.status).toBe('active');
+  });
+
+  it('rejects a targeted route when only one family supports its signal', () => {
+    let state = freshStarted();
+    state = completeCurrent(state, 'swap');
+    const second = activity(state);
+    state = submit(present(state), 'prerequisite');
+    state = apply(state, 'lesson_activity_completed', {
+      kcId: second.kcId,
+      activityId: second.id,
+    });
+    expect(state.status).toBe('awaiting_route');
+    state = apply(state, 'lesson_route_selected', {
+      kcId: state.currentKcId,
+      route: 'misconception',
+    });
 
     expect(state.status).toBe('blocked');
     expect(state.transitionErrors).toContain('route_requires_convergent_evidence');
   });
 });
 
-describe('V3 lesson fading, exits, and repair', () => {
-  it('fades A3 through A0 only on successful unsupported completion performance', () => {
-    let state = selectRoute(reachRoutePending('fallback'), 'standard');
-    while (state.phase !== 'completion') state = completeCurrent(state);
+describe('performance-contingent completion and exact paired feedback', () => {
+  it('holds support on wrong work and hands off after the finite A3 pool is exhausted', () => {
+    let state = reachCompletion();
+    const used: string[] = [];
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      used.push(activity(state).id);
+      state = completeCurrent(state, 'offset');
+      expect(state.assistanceLevel).toBe('A3');
+    }
 
-    state = completeCurrent(state, 'incorrect');
-    expect(state.assistanceLevel).toBe('A3');
-    state = completeCurrent(state, 'correct');
-    expect(state.assistanceLevel).toBe('A2');
-    state = completeCurrent(state, 'correct', [], { assisted: true });
-    expect(state.assistanceLevel).toBe('A2');
+    expect(new Set(used).size).toBe(2);
+    expect(state.status).toBe('paused');
+    expect(state.pauseReason).toBe('completion_exhausted');
+    expect(state.plannerReentryRequired).toBe(true);
+    expect(state.phase).toBe('handoff');
+    expect(state.sequenceActivityIds.some((id) => id.includes('CONTRAST'))).toBe(false);
   });
 
-  it('seals paired feedback until both fresh unsupported checks are submitted', () => {
+  it('requires unsupported A0 success before contrast or exit becomes reachable', () => {
+    let state = reachCompletion();
+    const levels: string[] = [];
+    while (state.phase === 'completion') {
+      levels.push(state.assistanceLevel);
+      state = completeCurrent(state, 'aligned');
+    }
+
+    expect(levels).toEqual(['A3', 'A2', 'A1', 'A0']);
+    expect(state.phase).toBe('contrast_bound');
+    expect(state.completionReadyForExit).toBe(false);
+  });
+
+  it('preserves each answer-specific exit rationale privately and releases both together', () => {
     let state = reachFirstExit();
-    state = present(state);
-    state = respond(state, 'correct');
+    const nearId = activity(state).id;
+    state = submit(present(state), 'aligned');
     let view = buildLessonStepView(syntheticV3LessonDefinition, state);
-    expect(JSON.stringify(view)).not.toContain('Synthetic sealed feedback');
+    expect(state.authorityPrivateFeedback.sealedExit).toHaveLength(1);
+    expect(JSON.stringify(view)).not.toContain('Correct under the invented fixture rule');
 
-    state = present(state);
-    state = respond(state, 'correct');
-    expect(state.status).toBe('awaiting_exit_feedback');
-    expect(state.feedback?.sealed).toBe(true);
+    const changedId = activity(state).id;
+    state = submit(present(state), 'offset');
     view = buildLessonStepView(syntheticV3LessonDefinition, state);
-    expect(view.status).toBe('feedback_pending');
-    expect(JSON.stringify(view)).not.toContain('Synthetic sealed feedback');
 
-    state = releaseExitFeedback(state);
-    view = buildLessonStepView(syntheticV3LessonDefinition, state);
-    expect(JSON.stringify(view)).toContain('Synthetic sealed feedback');
+    expect(state.status).toBe('awaiting_repair');
+    expect(state.authorityPrivateFeedback.sealedExit).toEqual([]);
+    expect(state.groupedFeedback?.entries.map((entry) => entry.activityId)).toEqual([
+      nearId,
+      changedId,
+    ]);
+    expect(state.groupedFeedback?.entries[0]?.message).toBe(
+      'Correct under the invented fixture rule.',
+    );
+    expect(state.groupedFeedback?.entries[1]?.message).toBe(
+      'The selected answer conflicts with the synthetic rule.',
+    );
+    expect(JSON.stringify(view)).not.toContain('authorityPrivateFeedback');
   });
 
-  it('marks a previously exposed exit family as contaminated', () => {
-    let state = reachFirstExit();
-    const current = activity(state);
-    state = {
-      ...state,
-      exposures: [
-        ...state.exposures,
-        {
-          familyId: current.familyId,
-          activityIds: [current.id],
-          firstSeenSequence: 0,
-          revealed: false,
-          feedbackSeen: false,
-        },
-      ],
-    };
-    state = present(state);
-    state = respond(state, 'correct');
+  it('uses fresh cycle-specific repair and recovery activities in cycle two', () => {
+    let state = submitExitPair(reachFirstExit(), 'offset', 'offset');
+    state = beginRepair(state);
+    const cycleOneRepair = activity(state);
+    const cycleOneRepresentation = cycleOneRepair.representationIds[0];
+    state = completeCurrent(state);
+    state = establishA0(state);
+    state = submitExitPair(state, 'offset', 'offset');
+    state = beginRepair(state);
+    const cycleTwoRepair = activity(state);
 
-    expect(state.sealedExitResults[0]).toMatchObject({
-      passedUnsupported: false,
-      contamination: 'prior_family_exposure',
-    });
+    expect(state.repairCycles).toBe(2);
+    expect(cycleTwoRepair.id).not.toBe(cycleOneRepair.id);
+    expect(cycleTwoRepair.familyId).not.toBe(cycleOneRepair.familyId);
+    expect(cycleTwoRepair.representationIds[0]).not.toBe(cycleOneRepresentation);
+    expect(cycleTwoRepair.id).toContain('REPAIR-C2');
   });
 
   it('caps repair at two cycles and pauses for planner reentry', () => {
-    let state = submitExitPair(reachFirstExit(), 'incorrect');
-    state = releaseExitFeedback(state);
-
-    for (let cycle = 1; cycle <= 2; cycle += 1) {
-      expect(state.status).toBe('awaiting_repair');
-      const kc = syntheticV3LessonDefinition.knowledgeComponents[0]!;
-      const generic = kc.microcycle.repairs.mappings.find((mapping) => mapping.kind === 'generic')!;
-      state = apply(state, 'lesson_repair_started', {
-        kcId: state.currentKcId,
-        repairRouteId: generic.id,
-      });
-      while (state.phase !== 'exit_near') state = completeCurrent(state);
-      state = submitExitPair(state, 'incorrect');
-      state = releaseExitFeedback(state);
+    let state = submitExitPair(reachFirstExit(), 'offset', 'offset');
+    for (let cycle = 0; cycle < 2; cycle += 1) {
+      state = beginRepair(state);
+      state = completeCurrent(state);
+      state = establishA0(state);
+      state = submitExitPair(state, 'offset', 'offset');
     }
 
     expect(state.status).toBe('paused');
+    expect(state.pauseReason).toBe('repair_exhausted');
     expect(state.repairCycles).toBe(2);
-    expect(state.plannerReentryRequired).toBe(true);
-    expect(buildLessonStepView(syntheticV3LessonDefinition, state).availableActions).not.toContain(
-      'resume',
-    );
-
-    state = apply(state, 'lesson_planner_reentry_handoff', {
-      nextRunId: '44444444-4444-4444-8444-444444444444',
-    });
-    expect(state.status).toBe('handoff');
-    expect(state.handoffRunId).toBe('44444444-4444-4444-8444-444444444444');
+    expect(buildLessonStepView(syntheticV3LessonDefinition, state).availableActions).toEqual([]);
   });
 });
 
-describe('V3 lesson replay, checkpoints, and safe views', () => {
+describe('planner reentry lineage and cross-run exposure', () => {
+  const repairExhausted = (): LessonRunState => {
+    let state = submitExitPair(reachFirstExit(), 'offset', 'offset');
+    for (let cycle = 0; cycle < 2; cycle += 1) {
+      state = beginRepair(state);
+      state = completeCurrent(state);
+      state = establishA0(state);
+      state = submitExitPair(state, 'offset', 'offset');
+    }
+    return state;
+  };
+
+  it('rejects same-run handoff IDs and mismatched version pins', () => {
+    const exhausted = repairExhausted();
+    const sameRunLineage = {
+      rootRunId: exhausted.lineage.rootRunId,
+      parentRunId: exhausted.pins.runId,
+      generation: 1,
+      inheritedFromRunIds: [exhausted.pins.runId],
+      reviewedContentPins: exhausted.lineage.reviewedContentPins,
+    };
+    const sameRun = apply(exhausted, 'lesson_planner_reentry_handoff', {
+      nextRunPins: exhausted.pins,
+      nextLineage: sameRunLineage,
+    });
+    expect(sameRun.status).toBe('blocked');
+
+    const mismatchedPins = {
+      ...exhausted.pins,
+      runId: '44444444-4444-4444-8444-444444444444',
+      reviewedContentHash: '0'.repeat(64),
+    };
+    const mismatch = apply(exhausted, 'lesson_planner_reentry_handoff', {
+      nextRunPins: mismatchedPins,
+      nextLineage: sameRunLineage,
+    });
+    expect(mismatch.status).toBe('blocked');
+  });
+
+  it('inherits exposure and selects untouched entry and exit replacement families', () => {
+    let parent = repairExhausted();
+    const nextPins = LessonRunPinsSchema.parse({
+      ...parent.pins,
+      runId: '44444444-4444-4444-8444-444444444444',
+    });
+    const nextLineage = {
+      rootRunId: parent.lineage.rootRunId,
+      parentRunId: parent.pins.runId,
+      generation: 1,
+      inheritedFromRunIds: [parent.pins.runId],
+      reviewedContentPins: parent.lineage.reviewedContentPins,
+    };
+    parent = apply(parent, 'lesson_planner_reentry_handoff', {
+      nextRunPins: nextPins,
+      nextLineage,
+    });
+    expect(parent.status).toBe('handoff');
+
+    const child = initializeLessonReentryRun(
+      syntheticV3LessonDefinition,
+      nextPins,
+      'test_fixture',
+      parent,
+    );
+    const inheritedFamilies = new Set(parent.exposures.map((exposure) => exposure.familyId));
+    const selectedEntry = activity(child);
+
+    expect(child.status).toBe('ready');
+    expect(child.lineage.parentRunId).toBe(parent.pins.runId);
+    expect(child.exposures).toEqual(parent.exposures);
+    expect(inheritedFamilies.has(selectedEntry.familyId)).toBe(false);
+    expect(selectedEntry.id).toContain('ENTRY-3');
+  });
+});
+
+describe('deterministic scoring, replay, and HTTP-command idempotency', () => {
+  it('evaluates simultaneous token and numeric criteria without an LLM', () => {
+    const base = syntheticV3LessonDefinition.knowledgeComponents[0]!.activities.find(
+      (candidate) => candidate.response.kind === 'choice',
+    )!;
+    const constructed = ActivityDefinitionSchema.parse({
+      ...base,
+      response: {
+        kind: 'text',
+        label: 'State the concepts and numeric result.',
+        placeholder: null,
+        allowNotSure: true,
+        rubric: {
+          criteria: [
+            {
+              id: 'concepts',
+              label: 'Required concepts',
+              required: true,
+              matcher: {
+                kind: 'required_tokens',
+                tokens: ['glimmer', 'markers'],
+                minimumMatches: 2,
+                normalization: {
+                  trim: true,
+                  collapseWhitespace: true,
+                  case: 'lowercase',
+                  stripPunctuation: true,
+                },
+              },
+              correctFeedback: 'Both concepts are present.',
+              incorrectFeedback: 'Name both concepts.',
+              diagnosticSignalIds: [],
+              objectiveFeatureIds: ['feature-concepts'],
+            },
+            {
+              id: 'value',
+              label: 'Numeric result',
+              required: true,
+              matcher: {
+                kind: 'numeric',
+                target: 5,
+                absoluteTolerance: 0.1,
+                acceptedUnits: ['m/s'],
+                requireUnit: true,
+              },
+              correctFeedback: 'The value and unit are correct.',
+              incorrectFeedback: 'Check the value and unit.',
+              diagnosticSignalIds: [],
+              objectiveFeatureIds: ['feature-value'],
+            },
+          ],
+          correctFeedback: 'All required criteria pass.',
+          incorrectFeedback: 'One or more required criteria failed.',
+          notSureFeedback: 'Not sure keeps support.',
+        },
+      },
+    });
+
+    expect(
+      evaluateLessonResponse(constructed, {
+        kind: 'text',
+        text: 'The glimmer markers produce 5 m/s.',
+      }).outcome,
+    ).toBe('correct');
+    const failed = evaluateLessonResponse(constructed, {
+      kind: 'text',
+      text: 'The glimmer marker produces 4 m/s.',
+    });
+    expect(failed.outcome).toBe('incorrect');
+    expect(failed.objectiveFeatureIds).toEqual(['feature-concepts', 'feature-value']);
+  });
+
   it('replays idempotently and ignores duplicate event identities', () => {
     const initial = initializeLessonRun(syntheticV3LessonDefinition, pins, 'test_fixture');
     const started = event(initial, 'lesson_run_started', {});
@@ -346,104 +482,84 @@ describe('V3 lesson replay, checkpoints, and safe views', () => {
     expect(duplicated.appliedEventIds).toHaveLength(1);
   });
 
-  it('resumes the exact paused checkpoint with immutable pins and exposure state', () => {
-    let state = reachFirstExit();
-    const checkpoint = {
-      currentActivityId: state.currentActivityId,
-      sequencePosition: state.sequencePosition,
-      assistanceLevel: state.assistanceLevel,
-      exposures: structuredClone(state.exposures),
-      pins: structuredClone(state.pins),
-    };
-    state = apply(state, 'lesson_run_paused', { reason: 'interruption' });
-    expect(state.status).toBe('paused');
-    state = apply(state, 'lesson_run_resumed');
-
-    expect(state).toMatchObject(checkpoint);
-    expect(state.status).toBe('active');
-  });
-
-  it('blocks an event with mismatched content or policy pins', () => {
+  it('deduplicates an identical HTTP lesson command without emitting fresh events', () => {
     const state = freshStarted();
-    const current = activity(state);
-    const mismatched = event(
-      state,
-      'lesson_activity_presented',
-      {
-        kcId: current.kcId,
-        activityId: current.id,
-        familyId: current.familyId,
+    const command = LessonActionCommandSchema.parse({
+      envelope: {
+        eventId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        idempotencyKey: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+        occurredAt: '2026-07-23T16:41:00.000Z',
+        expectedStreamVersion: state.lastSequence + 1,
+        contentRelease: state.pins.contentRelease,
+        taskInstanceId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
       },
-      { contentRelease: 'other-release' },
-    );
-    const next = reduceLessonRun(state, mismatched, syntheticV3LessonDefinition, 'test_fixture');
+      runId: state.pins.runId,
+      action: { type: 'present', activityId: activity(state).id },
+    });
 
-    expect(next.status).toBe('blocked');
-    expect(next.transitionErrors).toContain('event_pin_mismatch');
+    const first = dispatchLessonRunCommand(
+      state,
+      syntheticV3LessonDefinition,
+      command,
+      'test_fixture',
+    );
+    const retry = dispatchLessonRunCommand(
+      first.state,
+      syntheticV3LessonDefinition,
+      command,
+      'test_fixture',
+    );
+
+    expect(first.events).toHaveLength(1);
+    expect(first.events[0]?.eventId).toBe(command.envelope.eventId);
+    expect(retry.duplicate).toBe(true);
+    expect(retry.events).toEqual([]);
+    expect(retry.state).toEqual(first.state);
   });
 
-  it('evaluates protected choices server-side and strips keys from learner views', () => {
+  it('strips keys, exact private buffers, and matchers from learner DTOs', () => {
     const state = freshStarted();
-    const current = activity(state);
-    const evaluated = evaluateLessonResponse(current, {
-      kind: 'choice',
-      choiceId: 'ready',
-    });
     const view = buildLessonStepView(syntheticV3LessonDefinition, state);
     const json = JSON.stringify(view);
 
-    expect(evaluated.outcome).toBe('correct');
+    expect(view.progress.exitedKcCount).toBe(0);
+    expect(view.progress.kcOrdinal).toBe(1);
     expect(json).not.toContain('correctChoiceIds');
     expect(json).not.toContain('diagnosticSignalIds');
-    expect(json).not.toContain('acceptedAnswers');
+    expect(json).not.toContain('authorityPrivateFeedback');
+    expect(json).not.toContain('matcher');
   });
+});
 
-  it('derives multi-KC lesson completion only from all KC instructional exits', () => {
-    let state = startLessonRun(
-      initializeLessonRun(syntheticV3LessonDefinition, pins, 'test_fixture'),
-      syntheticV3LessonDefinition,
-      'test_fixture',
-    ).state;
-
-    for (let guard = 0; guard < 200 && state.status !== 'complete'; guard += 1) {
+describe('multi-KC completion semantics', () => {
+  it('derives shell completion only after every required KC instructional exit', () => {
+    let state = freshStarted();
+    for (let guard = 0; guard < 400 && state.status !== 'complete'; guard += 1) {
       const view = buildLessonStepView(syntheticV3LessonDefinition, state);
       if (view.status === 'active') {
         let action: LessonActionInput;
         if (view.availableActions.includes('present')) {
-          action = { type: 'present' as const, activityId: view.activity.id };
+          action = { type: 'present', activityId: view.activity.id };
         } else if (view.availableActions.includes('submit_response')) {
           const canonical = activity(state);
-          if (canonical.response.kind !== 'choice') {
-            throw new Error('Synthetic completion expects choice responses.');
-          }
+          if (canonical.response.kind !== 'choice') throw new Error('Expected fixture choice.');
           action = {
-            type: 'submit_response' as const,
+            type: 'submit_response',
             activityId: view.activity.id,
             response: {
-              kind: 'choice' as const,
+              kind: 'choice',
               choiceId: canonical.response.correctChoiceIds[0]!,
             },
           };
         } else {
-          action = { type: 'continue' as const, activityId: view.activity.id };
+          action = { type: 'continue', activityId: view.activity.id };
         }
-        state = dispatchLessonRunAction(
-          state,
-          syntheticV3LessonDefinition,
-          action,
-          'test_fixture',
-        ).state;
+        state = act(state, action);
       } else if (
         (view.status === 'feedback_pending' || view.status === 'repair_pending') &&
-        view.availableActions.includes('continue') &&
-        view.activity
+        view.availableActions.includes('continue')
       ) {
-        state = dispatchLessonRunAction(
-          state,
-          syntheticV3LessonDefinition,
-          { type: 'continue', activityId: view.activity.id },
-          'test_fixture',
-        ).state;
+        state = act(state, { type: 'continue', activityId: null });
       } else {
         throw new Error(`Unexpected synthetic runtime status ${view.status}.`);
       }
