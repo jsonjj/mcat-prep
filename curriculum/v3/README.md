@@ -50,6 +50,25 @@ Focused hardening checks use Node's built-in test runner:
 node --test scripts/generate-v3-lesson-authoring-manifest.test.mjs
 ```
 
+## Cloud authoring orchestration
+
+The deterministic one-lesson-per-agent plan is generated from this checked manifest:
+
+```sh
+node scripts/generate-v3-cloud-authoring-plan.mjs
+node scripts/generate-v3-cloud-authoring-plan.mjs --check
+node --test scripts/generate-v3-cloud-authoring-plan.test.mjs
+```
+
+- `v3-cloud-authoring-jobs.json` contains all 114 jobs, exact KC microcycles, relation-backed inputs,
+  acceptance gates, role-separation slots, and the fixed 11-wave schedule.
+- `v3-cloud-authoring-runbook.md` defines clean-room inputs, the lesson contract, independent review
+  pipeline, integration checkpoints, publication boundary, and unresolved launch constraints.
+
+Do not hand-edit the generated job manifest. Its five prototype jobs are an internal port pilot, not
+production lesson definitions; all generated content remains internal draft until the runbook's
+rights, scientific review, reviewed-hash, and efficacy gates pass.
+
 ## Included
 
 `v3-lesson-authoring-manifest.json` contains:
