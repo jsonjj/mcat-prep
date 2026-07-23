@@ -21,7 +21,12 @@ Regenerate or verify from the repository root:
 ```sh
 node scripts/generate-v3-cloud-authoring-plan.mjs
 node scripts/generate-v3-cloud-authoring-plan.mjs --check
-node --test scripts/generate-v3-cloud-authoring-plan.test.mjs
+node scripts/validate-v3-cloud-authoring-wave-overlay.mjs check-template \
+  V3-AUTH-W00-PILOT-PORT \
+  curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json
+node --test \
+  scripts/generate-v3-cloud-authoring-plan.test.mjs \
+  scripts/validate-v3-cloud-authoring-wave-overlay.test.mjs
 ```
 
 The generator has no timestamp or random input. It verifies the checked curriculum and contract
@@ -32,7 +37,8 @@ pins, uses normalized relation IDs, and fails if its checked output is stale.
 Each author agent receives exactly:
 
 1. The shared manifest, V3 README, canonical design contract, and its one job record.
-2. Independently authored factual references whose use and model-processing rights are recorded.
+2. Current authoritative/open factual sources only through the approved source ledger described
+   below.
 3. For a pilot-port job only, the matching approved prototype after its artifact location, immutable
    hash, processing rights, and review provenance have been supplied.
 
@@ -45,20 +51,85 @@ Original figures, tables, passages, examples, and items are required unless expl
 exist. Record source provenance, input rights, and source-output similarity evidence. The
 similarity auditor—not the author—may compare drafts after authoring.
 
-Before launch, replace every null `assignee_agent_run_id` in the selected wave with an actual cloud
-run ID. One author run may own only one lesson in that wave. Enforce all
-`must_be_distinct_from_slot_ids` constraints; at minimum:
+### Immutable plan and wave-assignment overlay
 
-```text
-author ≠ content/pedagogy auditor
-author ≠ blind solver
-author ≠ accessibility/technical auditor
-author ≠ similarity auditor
-author ≠ final approver
+Never add identities or evidence to `v3-cloud-authoring-jobs.json`. Its assignment objects are role
+slots, not mutable operational records. Create a separate overlay for exactly one wave:
+
+```sh
+node scripts/validate-v3-cloud-authoring-wave-overlay.mjs template \
+  V3-AUTH-W01 \
+  .tmp/v3-wave-overlays/V3-AUTH-W01.json
+
+# Materialize only that separate file, then:
+node scripts/validate-v3-cloud-authoring-wave-overlay.mjs validate \
+  .tmp/v3-wave-overlays/V3-AUTH-W01.json
 ```
 
-The blind solver and final approver must also be different people or agents. A controller must
-reject missing, reused, or self-attested assignments before work starts.
+The checked template is an unmaterialized W00 example. `template` computes the SHA-256 of the exact
+checked plan bytes and copies its registry, freeze, source-manifest, wave, job, lesson, slot, role,
+and specialty pins. `validate` is read-only. It rejects a stale plan hash, any changed pin or wave
+membership, missing/extra/duplicate slot, role mismatch, null identity, or attempt to use the plan
+itself as an overlay. Regenerate a new overlay after any plan change; never carry assignments across
+plan hashes.
+
+Every materialized overlay records an actual person ID and actual execution/run ID for each slot,
+plus explicit controller and wave-integrator identities. The validator enforces:
+
+```text
+one author run/person = exactly one wave lesson
+all wave author run/person IDs are unique
+no wave author = any auditor, solver, rights reviewer, fact checker, integrator, or approver
+author ≠ every nonauthor slot declared by its job
+blind solver ≠ final approver
+CARS passage-subject fact checker ≠ author and CARS reasoning editor
+controller ≠ wave integrator ≠ every job assignment
+```
+
+One qualified nonauthor may cover the same role across multiple jobs only when there is no
+same-job or cross-role reuse, every assignment carries qualification evidence, and one
+`reviewer_reuse_declarations[]` record lists the exact person, role, jobs, slots, qualifications,
+and rationale. Undeclared reuse fails.
+
+### Source ledger
+
+Each job must have a rights-reviewer-approved
+`mcat-v3-authoring-source-ledger-1`. Every factual source entry records a stable source ID and kind,
+title, HTTPS URL, access date, license/terms, model-processing-rights status and basis, whether the
+author model received it, source ceiling, retrieval SHA-256, and rights-review slot. Sources marked
+human-review-only may not be given to an author model. Every entry is factual-use-only and must set
+`copied_expressive_prose_allowed: false`.
+
+This permits separately recorded, current authoritative/open factual inputs. It does not permit
+copying a source's wording, examples, passages, item structures, figures, or other expressive
+content. The overlay binds the hashed ledger, input-rights approval, output-rights/originality
+approval, candidate hash, and source-output similarity report to the independent rights-reviewer
+slot. Missing or stale evidence fails.
+
+### Sanitized blind-solve and accessibility bundles
+
+A blind solver must never receive the author branch, branch history, server definition files, or
+any key-bearing artifact. The accessibility reviewer receives the same restricted distribution
+because keys are unnecessary for that review. Each reviewer receives only a separately stored
+sanitized artifact or dedicated sanitized branch recorded in the overlay.
+
+Each `mcat-v3-sanitized-review-bundle-1` is text-only in v1 and contains:
+
+- `bundle-manifest.json`, pinned to source-plan SHA, reviewed-candidate SHA, wave, job, lesson, bundle
+  kind, content classes, and explicit exclusion/distribution flags;
+- `learner-safe-activities.json`;
+- `deterministic-run-behavior.json`, representing learner-safe states and reviewer outcome controls
+  rather than scoring authority; and
+- `accessibility-behavior.json` for `ACCESSIBILITY_ONLY`.
+
+The bundle must exclude all answer keys, correct-answer fields, rationales, diagnostic/construct
+mappings, protected/server files, and author-branch history. The validator rejects symlinks,
+binaries, unsupported file types, forbidden paths/fields, malformed required documents, and pin
+mismatches. It computes a deterministic sorted-file bundle hash and protected-field scan-report
+hash; both must equal the overlay record. The distribution record must name the exact recipient
+slot, sanitized ref/channel, `author_branch_provided: false`, and
+`key_bearing_artifacts_provided: false`. Hashes do not replace storage ACLs: the controller must
+enforce those access restrictions when issuing the artifact/ref.
 
 ## Exact lesson contract
 
@@ -107,27 +178,53 @@ an efficacy claim.
 
 Every lesson follows this order:
 
-1. **Author.** Pin and lint the job, elicit/reconcile expert task models, create the shell and KC
+1. **Source-ledger/input-rights review.** The independent rights reviewer approves every source,
+   use ceiling, retrieval hash, and model-processing decision before an author receives it.
+2. **Author.** Pin and lint the job, elicit/reconcile expert task models, create the shell and KC
    microcycles, bind relations and attachments, isolate item families, and self-check all paths.
-2. **Independent content/pedagogy audit.** A nonauthor verifies source ceiling, factual and
-   scientific accuracy, KC boundaries, objective/activity alignment, representation use, fading,
-   feedback, repair, family isolation, and domain-specific fact-check sign-off. Findings return to
-   the author; changed content is re-audited.
-3. **Blind solve.** A solver without keys/rationales completes every instructional and assessment
-   path. Exercise correct, incorrect, omission, help, retry, reveal, interruption, resume,
-   invalid-item, mixed-route, and repair-limit behavior with fresh families.
-4. **Accessibility/technical audit.** Verify construct-equivalent alternatives and deterministic
-   activity-graph/checkpoint behavior as well as accessibility requirements.
-5. **Cross-lesson similarity audit.** Compare every draft with its current wave and the immediately
-   prior integrated wave across and within domains. Check copied language, repeated scenarios,
-   representational monoculture, answer-pattern leakage, family leakage, and template overfitting.
-6. **Reviewed hash.** Resolve findings, rerun affected stages, freeze one candidate, and bind every
-   approval to its exact content hash. Any mutation invalidates the affected approvals.
-7. **Publication gate.** A distinct final approver verifies all 12 machine-listed gates, rights,
-   scientific/domain review, exact reviewed hash, and the preregistered efficacy/subgroup evidence.
-   Before that decision the artifact remains internal draft, even if merged at a wave checkpoint.
+3. **Independent content/pedagogy audit.** A nonauthor verifies KC boundaries,
+   objective/activity alignment, representation use, fading, feedback, repair, and family
+   isolation. Findings return to the author; changed content is re-audited.
+4. **Domain/scientific review.** Every machine-listed specialty slot independently verifies the
+   candidate against the approved source ceiling, facts, assumptions, equations, representations,
+   and boundary conditions. One record per required specialty is mandatory.
+5. **CARS passage-subject review, when applicable.** After the author selects an original passage
+   subject, an additional subject-matter checker—distinct from the author and CARS reasoning
+   editor—reviews that subject's facts and ceiling.
+6. **Output-rights/originality review.** The input-rights reviewer independently checks provenance,
+   output rights, originality, and source-output similarity against the same candidate hash.
+7. **Sanitized-bundle build and scan.** The release-hash integrator creates separate blind-solve
+   and accessibility-only bundles, runs the protected-field scan, and records both bundle/report
+   hashes in the overlay.
+8. **Blind solve.** The assigned solver receives only the sanitized bundle and exercises correct,
+   incorrect, omission, help, retry, reveal, interruption, resume, invalid-item, mixed-route, and
+   repair-limit behavior with fresh families.
+9. **Accessibility/technical audit.** From the accessibility-only bundle, verify
+   construct-equivalent alternatives, deterministic activity/checkpoint behavior, keyboard, focus,
+   semantics, contrast, reflow, reduced motion, and accommodations.
+10. **Cross-lesson similarity audit.** Compare every draft with its current wave and the immediately
+    prior integrated wave across and within domains. Check copied language, repeated scenarios,
+    representational monoculture, answer-pattern leakage, family leakage, and template overfitting.
+11. **Reviewed hash.** Resolve findings, rerun affected stages, freeze one candidate, and bind every
+    approval to its exact content hash. Any mutation invalidates the affected approvals.
+12. **Publication gate.** A distinct final approver verifies all 12 machine-listed gates, rights,
+    scientific/domain review, exact reviewed hash, and the preregistered efficacy/subgroup evidence.
+    Before that decision the artifact remains internal draft, even if merged at a wave checkpoint.
 
 An author assertion is not audit evidence. Missing or ambiguous evidence fails closed.
+
+## Finding severity and blocking rules
+
+| Severity | Meaning                                                                                                                                                                                                             | Internal-draft integration                                                                               | Publication             |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **P0**   | Critical integrity/safety failure: plan-pin or canonical-scope corruption, protected/key exposure, unauthorized rights use, held-scope activation, bypass activation, or a failure requiring immediate containment. | Blocked; stop the wave, contain exposure, invalidate affected artifacts/hashes, resolve, and revalidate. | Blocked.                |
+| **P1**   | Major correctness/process failure: material factual/key error, missing independent role, invalid KC/activity alignment, broken deterministic path, inaccessible essential path, or failed G01–G10 evidence.         | Blocked until resolved and affected stages rerun.                                                        | Blocked.                |
+| **P2**   | Bounded moderate defect that does not invalidate G01–G10 and does not expose learners, but requires correction.                                                                                                     | Allowed only as internal draft with recorded containment, owner, due date, and publication block.        | Blocked until resolved. |
+| **P3**   | Minor editorial/maintainability issue with no material correctness, rights, accessibility, evidence, or execution effect.                                                                                           | Not blocked; track an owner.                                                                             | Not blocked.            |
+
+An unresolved G01–G10 requirement is P1 or P0, never downgraded to P2. The overlay validator rejects
+open P0/P1 at an internal-integration checkpoint and requires complete containment metadata for each
+open P2. G11/G12 and final publication still fail while any P0, P1, or P2 is open.
 
 ## Deterministic waves
 
@@ -169,13 +266,16 @@ Wave eligibility uses only explicit stable relations:
 
 Do not start the next wave until the integration controller:
 
-1. Confirms every expected job and distinct assignment, with no extra lesson output.
-2. Resolves all severity-one/two findings and records G01–G10 evidence for internal integration.
+1. Rehashes the immutable plan and validates the materialized wave overlay, exact job/slot set,
+   controller/integrator identities, separation edges, source ledgers, G05/G10 assignments/evidence,
+   sanitized bundle hashes, and protected-field scan hashes.
+2. Confirms no extra lesson output, no open P0/P1, and complete containment/owner/due-date/publication
+   blocks for every open P2; G01–G10 must pass for internal integration.
 3. Completes current-plus-prior-wave similarity review and a cross-domain template review.
-4. Regenerates/checks the job manifest and runs formatting, lint, tests, protected-field scanning,
-   rights scanning, and reference/attachment checks.
-5. Integrates reviewed drafts in one auditable wave checkpoint and records artifact hashes, issues,
-   approvals, and rollback coordinates.
+4. Regenerates/checks the job manifest and overlay template and runs formatting, lint, tests,
+   repository protected-field scanning, rights scanning, and reference/attachment checks.
+5. Integrates reviewed drafts in one auditable wave checkpoint and records candidate/artifact
+   hashes, findings, approvals, rollback coordinates, and the exact validated overlay hash.
 
 The checkpoint is an internal-draft integration boundary, not publication. G11 and G12 remain
 release gates. A failure pauses the next wave; it does not justify deleting scope, moving a job,
@@ -185,9 +285,13 @@ changing curriculum order, or relaxing separation of duties.
 
 - Locations, hashes, processing-rights records, and review provenance for all five prototype
   artifacts still need to be supplied.
-- Actual author/auditor/solver/integrator/approver identities are unassigned.
-- The AAMC authority ceiling has not been refreshed beyond the supplied 2020 source.
-- Lesson content, scientific sign-off, rights evidence, calibrated evidence recipes, learner
-  validation, and efficacy/subgroup results do not yet exist.
+- Actual controller/integrator, author, rights-reviewer, specialty fact-checker, CARS subject
+  reviewer, auditor, solver, and approver identities are intentionally unassigned.
+- Job source ledgers and present-day authority refreshes have not been materialized; the architecture
+  remains bounded by the supplied 2020 AAMC ceiling.
+- Sanitized review artifacts/branches, their storage ACLs, protected-field scans, and distribution
+  records do not yet exist.
+- Lesson content, specialty sign-off, rights/originality evidence, calibrated evidence recipes,
+  learner validation, and efficacy/subgroup results do not yet exist.
 - Complexity and risk points are deterministic structural triage estimates, not person-hours,
   difficulty calibration, safety clearance, or efficacy evidence.

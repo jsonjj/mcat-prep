@@ -57,17 +57,28 @@ The deterministic one-lesson-per-agent plan is generated from this checked manif
 ```sh
 node scripts/generate-v3-cloud-authoring-plan.mjs
 node scripts/generate-v3-cloud-authoring-plan.mjs --check
-node --test scripts/generate-v3-cloud-authoring-plan.test.mjs
+node scripts/validate-v3-cloud-authoring-wave-overlay.mjs check-template \
+  V3-AUTH-W00-PILOT-PORT \
+  curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json
+node --test \
+  scripts/generate-v3-cloud-authoring-plan.test.mjs \
+  scripts/validate-v3-cloud-authoring-wave-overlay.test.mjs
 ```
 
 - `v3-cloud-authoring-jobs.json` contains all 114 jobs, exact KC microcycles, relation-backed inputs,
   acceptance gates, role-separation slots, and the fixed 11-wave schedule.
+- `v3-cloud-authoring-wave-assignment-overlay.template.json` is a deterministic unmaterialized
+  W00 example. The overlay CLI generates one separate plan-hash-pinned file per wave and validates
+  actual person/run assignments, source ledgers, rights/domain evidence, and sanitized review
+  bundles.
 - `v3-cloud-authoring-runbook.md` defines clean-room inputs, the lesson contract, independent review
   pipeline, integration checkpoints, publication boundary, and unresolved launch constraints.
 
-Do not hand-edit the generated job manifest. Its five prototype jobs are an internal port pilot, not
-production lesson definitions; all generated content remains internal draft until the runbook's
-rights, scientific review, reviewed-hash, and efficacy gates pass.
+Do not hand-edit or materialize identities in the generated job manifest. Put operational
+assignments/evidence only in a separate overlay; stale plan hashes fail closed. The five prototype
+jobs are an internal port pilot, not production lesson definitions; all generated content remains
+internal draft until the runbook's rights, scientific review, reviewed-hash, and efficacy gates
+pass.
 
 ## Included
 
