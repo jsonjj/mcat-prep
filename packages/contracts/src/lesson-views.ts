@@ -9,10 +9,10 @@ import {
 import {
   GroupedLessonFeedbackSchema,
   LessonActivityPhaseSchema,
-  LessonDefinitionVersionSchema,
   LessonFeedbackEntrySchema,
   LessonRouteSchema,
 } from './lesson-run';
+import { LessonDefinitionVersionSchema } from './lesson-pins';
 import { AssistanceLevelSchema } from './vocab';
 
 const RepresentationAlternativeSchema = z
@@ -401,6 +401,7 @@ export const LearnerLessonActivitySchema = z
         currentLevel: AssistanceLevelSchema,
         visibleHint: z.string().min(1).nullable(),
         canRequestMore: z.boolean(),
+        canReveal: z.boolean(),
       })
       .strict(),
     feedback: z
@@ -417,8 +418,12 @@ export type LearnerLessonActivity = z.infer<typeof LearnerLessonActivitySchema>;
 export const LessonRunnerActionSchema = z.enum([
   'present',
   'submit_response',
+  'retry_response',
+  'record_confidence',
+  'record_learner_cause',
   'continue',
-  'request_assistance',
+  'request_hint',
+  'request_reveal',
   'pause',
   'resume',
 ]);
@@ -426,7 +431,7 @@ export type LessonRunnerActionName = z.infer<typeof LessonRunnerActionSchema>;
 
 const LessonStepCommonShape = {
   kind: z.literal('v3_lesson'),
-  schemaVersion: z.literal('1.2'),
+  schemaVersion: z.literal('2.0'),
   runId: LessonRunIdSchema,
   /** Public concurrency version; authority-private feedback/state remains absent. */
   runVersion: z.number().int().min(-1),
@@ -436,6 +441,7 @@ const LessonStepCommonShape = {
   kcId: V3KcIdSchema.nullable(),
   kcTitle: z.string().min(1).nullable(),
   route: LessonRouteSchema.nullable(),
+  checkpointId: z.string().min(1).nullable(),
   progress: z
     .object({
       kcOrdinal: z.number().int().positive().nullable(),
@@ -459,7 +465,13 @@ export const ActiveLessonStepViewSchema = z
 export const WaitingLessonStepViewSchema = z
   .object({
     ...LessonStepCommonShape,
-    status: z.enum(['route_pending', 'feedback_pending', 'repair_pending']),
+    status: z.enum([
+      'planner_resolution_required',
+      'blocked_for_predecessor',
+      'feedback_pending',
+      'repair_pending',
+      'reentry_pending',
+    ]),
     activity: LearnerLessonActivitySchema.nullable(),
     availableActions: z.array(LessonRunnerActionSchema),
     message: z.string().min(1),
@@ -487,6 +499,7 @@ export const CompleteLessonStepViewSchema = z
     completion: z
       .object({
         kind: z.literal('lesson_completion'),
+        orderedRequiredKcIds: z.array(V3KcIdSchema),
         instructionalExitKcIds: z.array(V3KcIdSchema),
       })
       .strict(),

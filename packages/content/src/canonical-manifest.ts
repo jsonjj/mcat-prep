@@ -312,6 +312,7 @@ export const CanonicalLessonRegistryBindingSchema = z
         conciseScope: z.string().min(1),
         scopeExclusions: z.array(z.string()),
         orderedKcIds: z.array(V3KcIdSchema).min(1).max(5),
+        orderedRequiredKcIds: z.array(V3KcIdSchema).min(1).max(5),
         hardPrerequisiteLessonIds: z.array(V3LessonIdSchema),
         helpfulPrerequisiteLessonIds: z.array(V3LessonIdSchema),
         directSuccessorLessonIds: z.array(V3LessonIdSchema),
@@ -646,6 +647,9 @@ export function compileCanonicalLessonBinding(
       conciseScope: lesson.concise_scope,
       scopeExclusions: [...lesson.scope_exclusions],
       orderedKcIds: [...lesson.nested_kc_ids],
+      // Adaptive bypass is not released. The registry-derived delivery
+      // denominator therefore remains the exact ordered member-KC list.
+      orderedRequiredKcIds: [...lesson.nested_kc_ids],
       hardPrerequisiteLessonIds: [...lesson.hard_prerequisite_lesson_ids],
       helpfulPrerequisiteLessonIds: [...lesson.helpful_prerequisite_lesson_ids],
       directSuccessorLessonIds: [...lesson.direct_successor_lesson_ids],

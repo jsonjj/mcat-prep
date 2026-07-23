@@ -7,9 +7,12 @@ import {
 import {
   LessonActionCommandSchema,
   LessonRunPinsSchema,
+  PlannerInstructionResolutionSchema,
+  fixedClock,
   type LessonActionInput,
   type LessonRunPins,
   type LessonRunState,
+  type PlannerInstructionResolution,
 } from '@mcat/contracts';
 import {
   buildLessonStepView,
@@ -22,16 +25,193 @@ import {
   replayLessonRun,
   startLessonRun,
 } from './lesson-run';
+import { acceptPlannerInstructionResolution } from './planner-instruction';
+
+const clock = fixedClock('2026-07-23T16:41:00.000Z');
 
 const pins = LessonRunPinsSchema.parse({
   runId: '11111111-1111-4111-8111-111111111111',
+  learnerId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+  streamId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+  taskInstanceId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+  taskKind: 'lesson_initial_instruction',
+  targetKcId: syntheticV3LessonDefinition.orderedRequiredKcIds[0],
+  plannerResolutionId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+  evidenceCutoff: '2026-07-23T16:40:00.000Z',
   lessonId: syntheticV3LessonDefinition.id,
   definitionVersion: syntheticV3LessonDefinition.definitionVersion,
   reviewedContentHash: syntheticV3LessonDefinition.contentDigest.sha256,
   contentRelease: syntheticV3LessonDefinition.contentRelease,
   registry: syntheticV3LessonDefinition.registryBinding.registry,
-  policies: [{ policyId: 'lesson-runtime', version: 'v3-foundation-2' }],
+  policies: [{ policyId: 'lesson-runtime', version: 'v4-reconciled-test' }],
 });
+
+function plannerResolution(
+  targetPins: LessonRunPins,
+  requestedRoute:
+    | 'concise'
+    | 'standard'
+    | 'misconception'
+    | 'prerequisite_support' = 'standard',
+  prior: PlannerInstructionResolution | null = null,
+  over: Record<string, unknown> = {},
+): PlannerInstructionResolution {
+  const decision =
+    requestedRoute === 'concise'
+      ? {
+          decisionClass: 'concise_eligible',
+          recommendedAction: 'deliver_concise_instruction',
+        }
+      : requestedRoute === 'misconception'
+        ? {
+            decisionClass: 'misconception_hypothesis',
+            recommendedAction: 'deliver_misconception_repair',
+          }
+        : requestedRoute === 'prerequisite_support'
+          ? {
+              decisionClass: 'prerequisite_gap',
+              recommendedAction: 'deliver_bounded_prerequisite_bridge',
+            }
+          : {
+              decisionClass: 'standard_required',
+              recommendedAction: 'deliver_standard_instruction',
+            };
+  const candidate = {
+    candidateId: 'synthetic-prerequisite-candidate',
+    predecessorKcId: 'V3-KC-SYNTH-PREDECESSOR',
+    edgeId: 'SYNTHETIC-HARD-EDGE',
+    edgeKind: 'hard_prerequisite',
+    pointOfUseId: 'synthetic-point-of-use',
+    gapId: 'synthetic-gap',
+    gapClass: 'narrow_bridge',
+    qualification: {
+      policy: { policyId: 'prerequisite-evidence', version: 'v1-test' },
+      status: 'qualified',
+      requiredDistinctFamilies: 2,
+      observedDistinctFamilies: 2,
+      freshnessWindowSeconds: 86_400,
+      allEvidenceValid: true,
+      sameFamilyExcluded: true,
+      indirectEvidenceExcluded: true,
+    },
+  };
+  const rootResolutionId =
+    prior?.supersession.rootResolutionId ?? targetPins.plannerResolutionId;
+  return PlannerInstructionResolutionSchema.parse({
+    schemaVersion: '1.0',
+    resolutionId: targetPins.plannerResolutionId,
+    learnerId: targetPins.learnerId,
+    lessonId: targetPins.lessonId,
+    kcId: targetPins.targetKcId,
+    taskKind: targetPins.taskKind,
+    definitionVersion: targetPins.definitionVersion,
+    reviewedContentHash: targetPins.reviewedContentHash,
+    requestedRoute,
+    diagnosticProvenance: {
+      decisionId: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+      ...decision,
+      sourceEventIds: [
+        'f0000000-0000-4000-8000-000000000001',
+        'f0000000-0000-4000-8000-000000000002',
+      ],
+      observedAt: targetPins.evidenceCutoff,
+      freshness: 'fresh',
+      conflict: false,
+      diagnosticPolicy: { policyId: 'diagnostic', version: 'v1-test' },
+      modelVersions: [],
+    },
+    prerequisiteCandidate:
+      requestedRoute === 'prerequisite_support' ? candidate : null,
+    blockingCandidates: [],
+    selectedBlockingCandidateId: null,
+    directPointOfUseObservations:
+      requestedRoute === 'prerequisite_support'
+        ? [
+            {
+              observationId: 'f1000000-0000-4000-8000-000000000001',
+              predecessorKcId: candidate.predecessorKcId,
+              edgeId: candidate.edgeId,
+              pointOfUseId: candidate.pointOfUseId,
+              familyId: 'synthetic-prerequisite-family-1',
+              outcome: 'failed',
+              observedAt: targetPins.evidenceCutoff,
+              valid: true,
+              assistanceLevel: 'A0',
+              contentBearingHintUsed: false,
+            },
+            {
+              observationId: 'f1000000-0000-4000-8000-000000000002',
+              predecessorKcId: candidate.predecessorKcId,
+              edgeId: candidate.edgeId,
+              pointOfUseId: candidate.pointOfUseId,
+              familyId: 'synthetic-prerequisite-family-2',
+              outcome: 'uncertain',
+              observedAt: targetPins.evidenceCutoff,
+              valid: true,
+              assistanceLevel: 'A0',
+              contentBearingHintUsed: false,
+            },
+          ]
+        : [],
+    origin: {
+      sequenceRelationId: 'TEST-ONLY-FIRST-DELIVERY',
+      lessonId: targetPins.lessonId,
+      kcId: targetPins.targetKcId,
+      checkpointId: `kc-${targetPins.targetKcId.endsWith('001') ? '001' : '002'}.enter`,
+      state: 'not_started',
+    },
+    reentry:
+      prior === null
+        ? null
+        : {
+            sequenceRelationId: 'TEST-ONLY-SEQUENCE-REENTRY',
+            lessonId: targetPins.lessonId,
+            kcId: targetPins.targetKcId,
+            checkpointId: `kc-${targetPins.targetKcId.endsWith('001') ? '001' : '002'}.enter`,
+            state: 'in_progress',
+            failedExitFunction: null,
+            preservedExitFunctions: [],
+          },
+    evidenceCutoff: targetPins.evidenceCutoff,
+    issuedAt: '2026-07-23T16:40:00.000Z',
+    expiresAt: '2026-07-24T16:40:00.000Z',
+    registry: targetPins.registry,
+    policies: targetPins.policies,
+    supersession: {
+      rootResolutionId,
+      supersedesResolutionId: prior?.resolutionId ?? null,
+      generation: (prior?.supersession.generation ?? -1) + 1,
+    },
+    ...over,
+  });
+}
+
+const initialResolution = plannerResolution(pins);
+
+function nextRunArtifacts(
+  parent: LessonRunState,
+  runId: string,
+  targetKcId = parent.currentKcId ?? parent.pins.targetKcId,
+) {
+  const nextPins = LessonRunPinsSchema.parse({
+    ...parent.pins,
+    runId,
+    taskInstanceId: runId,
+    taskKind: 'sequence_reentry',
+    targetKcId,
+    plannerResolutionId: runId,
+  });
+  const nextResolution = plannerResolution(
+    nextPins,
+    'standard',
+    parent.plannerResolutionHistory.at(-1) ?? null,
+  );
+  return {
+    nextPins,
+    nextResolution,
+    nextLineage: nextLineageFor(parent, nextPins),
+  };
+}
 
 function event(
   state: LessonRunState,
@@ -42,16 +222,10 @@ function event(
   const sequence = state.lastSequence + 1;
   const suffix = String(sequence + 1).padStart(12, '0');
   return {
-    schemaVersion: '1.2',
+    schemaVersion: '2.0',
     eventId: `10000000-0000-4000-8000-${suffix}`,
     idempotencyKey: `20000000-0000-4000-8000-${suffix}`,
-    runId: state.pins.runId,
-    lessonId: state.pins.lessonId,
-    definitionVersion: state.pins.definitionVersion,
-    reviewedContentHash: state.pins.reviewedContentHash,
-    contentRelease: state.pins.contentRelease,
-    registry: state.pins.registry,
-    policies: state.pins.policies,
+    ...state.pins,
     sequence,
     occurredAt: '2026-07-23T16:41:00.000Z',
     type,
@@ -64,8 +238,7 @@ const apply = (state: LessonRunState, type: string, payload: Record<string, unkn
   reduceLessonRun(state, event(state, type, payload), syntheticV3LessonDefinition, 'test_fixture');
 
 function nextLineageFor(parent: LessonRunState, nextPins: LessonRunPins) {
-  const targetKcId = parent.currentKcId;
-  if (targetKcId === null) throw new Error('Expected an exact reentry target KC.');
+  const targetKcId = nextPins.targetKcId;
   const inheritedFromRunIds = [
     ...new Set([...parent.lineage.inheritedFromRunIds, parent.pins.runId]),
   ];
@@ -106,9 +279,16 @@ function nextLineageFor(parent: LessonRunState, nextPins: LessonRunPins) {
 
 function freshStarted(): LessonRunState {
   return startLessonRun(
-    initializeLessonRun(syntheticV3LessonDefinition, pins, 'test_fixture'),
+    initializeLessonRun(
+      syntheticV3LessonDefinition,
+      pins,
+      initialResolution,
+      'test_fixture',
+      clock,
+    ),
     syntheticV3LessonDefinition,
     'test_fixture',
+    clock,
   ).state;
 }
 
@@ -142,6 +322,7 @@ function submit(
     type: 'submit_response',
     activityId: current.id,
     response: { kind: 'choice', choiceId: effectiveChoice },
+    elapsedMs: null,
   });
 }
 
@@ -200,12 +381,26 @@ function beginRepair(state: LessonRunState): LessonRunState {
 
 describe('V3 lesson initialization, routing, and sealed entry evidence', () => {
   it('requires exact content, review, and registry pins and fails fixtures closed in production', () => {
-    const fixture = initializeLessonRun(syntheticV3LessonDefinition, pins, 'test_fixture');
-    const production = initializeLessonRun(syntheticV3LessonDefinition, pins, 'production');
+    const fixture = initializeLessonRun(
+      syntheticV3LessonDefinition,
+      pins,
+      initialResolution,
+      'test_fixture',
+      clock,
+    );
+    const production = initializeLessonRun(
+      syntheticV3LessonDefinition,
+      pins,
+      initialResolution,
+      'production',
+      clock,
+    );
     const wrongHash = initializeLessonRun(
       syntheticV3LessonDefinition,
       { ...pins, reviewedContentHash: '0'.repeat(64) },
+      initialResolution,
       'test_fixture',
+      clock,
     );
 
     expect(fixture.status).toBe('ready');
@@ -214,8 +409,9 @@ describe('V3 lesson initialization, routing, and sealed entry evidence', () => {
     expect(wrongHash.invalidIssues).toContain('reviewed_content_hash_pin_mismatch');
   });
 
-  it('keeps all entry rationale sealed until both probes commit and routing finalizes', () => {
+  it('keeps elicitation rationale sealed without allowing probes to change the planner route', () => {
     let state = freshStarted();
+    expect(state.route).toBe('standard');
     state = submit(present(state), 'ready');
     let view = buildLessonStepView(syntheticV3LessonDefinition, state);
     expect(state.authorityPrivateFeedback.sealedEntry).toHaveLength(1);
@@ -230,7 +426,7 @@ describe('V3 lesson initialization, routing, and sealed entry evidence', () => {
 
     state = act(state, { type: 'continue', activityId: activity(state).id });
     view = buildLessonStepView(syntheticV3LessonDefinition, state);
-    expect(state.route).toBe('concise');
+    expect(state.route).toBe('standard');
     expect(state.authorityPrivateFeedback.sealedEntry).toEqual([]);
     expect(state.groupedFeedback?.entries).toHaveLength(2);
     expect(JSON.stringify(view)).toContain('Correct under the invented fixture rule');
@@ -238,19 +434,33 @@ describe('V3 lesson initialization, routing, and sealed entry evidence', () => {
 
   it.each([
     ['ready', 'concise'],
-    ['prerequisite', 'prerequisite'],
+    ['prerequisite', 'standard'],
     ['swap', 'misconception'],
-    ['offset', 'standard'],
-  ] as const)('selects %s probe evidence into the %s route', (choice, expectedRoute) => {
-    let state = freshStarted();
+    ['offset', 'prerequisite_support'],
+  ] as const)('keeps the planner route for %s probe responses (%s)', (choice, routeName) => {
+    const requestedRoute = routeName;
+    const resolution = plannerResolution(pins, requestedRoute);
+    let state = startLessonRun(
+      initializeLessonRun(
+        syntheticV3LessonDefinition,
+        pins,
+        resolution,
+        'test_fixture',
+        clock,
+      ),
+      syntheticV3LessonDefinition,
+      'test_fixture',
+      clock,
+    ).state;
     state = completeCurrent(state, choice);
-    state = completeCurrent(state, choice);
+    state = completeCurrent(state, choice === 'offset' ? 'prerequisite' : choice);
 
-    expect(state.route).toBe(expectedRoute);
-    expect(state.status).toBe('active');
+    expect(state.route).toBe(
+      requestedRoute === 'prerequisite_support' ? 'prerequisite' : requestedRoute,
+    );
   });
 
-  it('routes repeated not-sure responses through deterministic convergent evidence', () => {
+  it('records repeated not-sure elicitation without changing the accepted route', () => {
     let state = freshStarted();
     for (let probe = 0; probe < 2; probe += 1) {
       const current = activity(state);
@@ -258,33 +468,105 @@ describe('V3 lesson initialization, routing, and sealed entry evidence', () => {
         type: 'submit_response',
         activityId: current.id,
         response: { kind: 'not_sure' },
+        elapsedMs: null,
       });
       state = act(state, { type: 'continue', activityId: current.id });
     }
 
-    expect(state.route).toBe('prerequisite');
+    expect(state.route).toBe('standard');
     expect(
       state.signals.find((signal) => signal.signalId.endsWith('-prerequisite'))?.familyIds,
     ).toHaveLength(2);
   });
 
-  it('rejects a targeted route when only one family supports its signal', () => {
-    let state = freshStarted();
-    state = completeCurrent(state, 'swap');
-    const second = activity(state);
-    state = submit(present(state), 'prerequisite');
-    state = apply(state, 'lesson_activity_completed', {
-      kcId: second.kcId,
-      activityId: second.id,
+  it('fails closed for missing/wrong/diagnostic resolutions and downgrades stale provenance', () => {
+    const missing = initializeLessonRun(
+      syntheticV3LessonDefinition,
+      pins,
+      null,
+      'test_fixture',
+      clock,
+    );
+    expect(missing.status).toBe('awaiting_planner_resolution');
+    expect(buildLessonStepView(syntheticV3LessonDefinition, missing)).toMatchObject({
+      status: 'planner_resolution_required',
+      activity: null,
+      availableActions: [],
     });
-    expect(state.status).toBe('awaiting_route');
-    state = apply(state, 'lesson_route_selected', {
-      kcId: state.currentKcId,
-      route: 'misconception',
+    const wrongLearner = {
+      ...initialResolution,
+      learnerId: '99999999-9999-4999-8999-999999999999',
+    };
+    expect(
+      acceptPlannerInstructionResolution(wrongLearner, {
+        pins,
+        now: clock.now(),
+        priorResolution: null,
+      }),
+    ).toMatchObject({
+      kind: 'rejected',
+      reasonCodes: ['LEARNER_IDENTITY_MISMATCH'],
     });
 
-    expect(state.status).toBe('blocked');
-    expect(state.transitionErrors).toContain('route_requires_convergent_evidence');
+    const diagnostic = { ...initialResolution, taskKind: 'diagnostic_probe' };
+    expect(
+      acceptPlannerInstructionResolution(diagnostic, {
+        pins,
+        now: clock.now(),
+        priorResolution: null,
+      }),
+    ).toMatchObject({
+      kind: 'rejected',
+      reasonCodes: expect.arrayContaining(['DIAGNOSTIC_PROBE_FORBIDDEN']),
+    });
+
+    const concise = plannerResolution(pins, 'concise');
+    const staleConcise = {
+      ...concise,
+      diagnosticProvenance: {
+        ...concise.diagnosticProvenance,
+        freshness: 'stale',
+      },
+    };
+    expect(
+      acceptPlannerInstructionResolution(staleConcise, {
+        pins,
+        now: clock.now(),
+        priorResolution: null,
+      }),
+    ).toMatchObject({
+      kind: 'accepted',
+      validated: {
+        disposition: 'downgraded',
+        effectiveRoute: 'standard',
+        reasonCodes: ['CONCISE_PROVENANCE_STALE'],
+      },
+    });
+
+    const prerequisite = plannerResolution(pins, 'prerequisite_support');
+    const unqualified = {
+      ...prerequisite,
+      prerequisiteCandidate: {
+        ...prerequisite.prerequisiteCandidate!,
+        qualification: {
+          ...prerequisite.prerequisiteCandidate!.qualification,
+          status: 'not_qualified',
+        },
+      },
+    };
+    expect(
+      acceptPlannerInstructionResolution(unqualified, {
+        pins,
+        now: clock.now(),
+        priorResolution: null,
+      }),
+    ).toMatchObject({
+      kind: 'accepted',
+      validated: {
+        effectiveRoute: 'standard',
+        supportReturnedToPlanner: true,
+      },
+    });
   });
 });
 
@@ -311,7 +593,7 @@ describe('performance-contingent completion and exact paired feedback', () => {
     const assistedActivity = activity(state);
     state = present(state);
     state = act(state, {
-      type: 'request_assistance',
+      type: 'request_hint',
       activityId: assistedActivity.id,
     });
 
@@ -341,15 +623,16 @@ describe('performance-contingent completion and exact paired feedback', () => {
     const view = buildLessonStepView(syntheticV3LessonDefinition, state);
     expect(view.status).toBe('active');
     if (view.status !== 'active') throw new Error('Expected an active completion view.');
-    expect(view.availableActions).not.toContain('request_assistance');
+    expect(view.availableActions).not.toContain('request_hint');
     expect(view.activity.assistance.canRequestMore).toBe(false);
-    expect(() => act(state, { type: 'request_assistance', activityId: a0Activity.id })).toThrow(
+    expect(() => act(state, { type: 'request_hint', activityId: a0Activity.id })).toThrow(
       'Support cannot be added after this response is committed',
     );
 
     const directAttempt = apply(state, 'lesson_assistance_revealed', {
       kcId: a0Activity.kcId,
       activityId: a0Activity.id,
+      fromLevel: 'A0',
       level: 'A1',
     });
     expect(directAttempt.status).toBe('blocked');
@@ -470,61 +753,81 @@ describe('planner reentry lineage and cross-run exposure', () => {
     return state;
   };
 
+  const handoff = (
+    parent: LessonRunState,
+    artifacts: ReturnType<typeof nextRunArtifacts>,
+    definition = syntheticV3LessonDefinition,
+  ): LessonRunState =>
+    reduceLessonRun(
+      parent,
+      event(parent, 'lesson_planner_reentry_handoff', {
+        nextRunPins: artifacts.nextPins,
+        nextLineage: artifacts.nextLineage,
+        nextResolution: artifacts.nextResolution,
+      }),
+      definition,
+      'test_fixture',
+    );
+
   it('rejects same-run handoff IDs and mismatched version pins', () => {
     const exhausted = repairExhausted();
     const sameRunLineage = nextLineageFor(exhausted, exhausted.pins);
     const sameRun = apply(exhausted, 'lesson_planner_reentry_handoff', {
       nextRunPins: exhausted.pins,
       nextLineage: sameRunLineage,
+      nextResolution: initialResolution,
     });
     expect(sameRun.status).toBe('blocked');
 
+    const valid = nextRunArtifacts(
+      exhausted,
+      '44444444-4444-4444-8444-444444444444',
+    );
     const mismatchedPins = {
-      ...exhausted.pins,
-      runId: '44444444-4444-4444-8444-444444444444',
+      ...valid.nextPins,
       reviewedContentHash: '0'.repeat(64),
     };
     const mismatch = apply(exhausted, 'lesson_planner_reentry_handoff', {
       nextRunPins: mismatchedPins,
-      nextLineage: sameRunLineage,
+      nextLineage: valid.nextLineage,
+      nextResolution: valid.nextResolution,
     });
     expect(mismatch.status).toBe('blocked');
 
-    const validNextPins = LessonRunPinsSchema.parse({
-      ...exhausted.pins,
-      runId: '55555555-5555-4555-8555-555555555555',
-    });
+    const dropped = nextRunArtifacts(
+      exhausted,
+      '55555555-5555-4555-8555-555555555555',
+    );
     const droppedExposure = apply(exhausted, 'lesson_planner_reentry_handoff', {
-      nextRunPins: validNextPins,
+      nextRunPins: dropped.nextPins,
       nextLineage: {
-        ...nextLineageFor(exhausted, validNextPins),
+        ...dropped.nextLineage,
         inheritedExposure: {
-          ...nextLineageFor(exhausted, validNextPins).inheritedExposure,
-          families: nextLineageFor(exhausted, validNextPins).inheritedExposure.families.slice(1),
+          ...dropped.nextLineage.inheritedExposure,
+          families: dropped.nextLineage.inheritedExposure.families.slice(1),
         },
       },
+      nextResolution: dropped.nextResolution,
     });
     expect(droppedExposure.status).toBe('blocked');
   });
 
   it('inherits exposure and selects untouched entry and exit replacement families', () => {
     let parent = repairExhausted();
-    const nextPins = LessonRunPinsSchema.parse({
-      ...parent.pins,
-      runId: '44444444-4444-4444-8444-444444444444',
-    });
-    const nextLineage = nextLineageFor(parent, nextPins);
-    parent = apply(parent, 'lesson_planner_reentry_handoff', {
-      nextRunPins: nextPins,
-      nextLineage,
-    });
+    const artifacts = nextRunArtifacts(
+      parent,
+      '44444444-4444-4444-8444-444444444444',
+    );
+    parent = handoff(parent, artifacts);
     expect(parent.status).toBe('handoff');
 
     const child = initializeLessonReentryRun(
       syntheticV3LessonDefinition,
-      nextPins,
+      artifacts.nextPins,
+      artifacts.nextResolution,
       'test_fixture',
       parent,
+      clock,
     );
     const inheritedFamilies = new Set(parent.exposures.map((exposure) => exposure.familyId));
     const selectedEntry = activity(child);
@@ -569,23 +872,21 @@ describe('planner reentry lineage and cross-run exposure', () => {
     mixedLimits.knowledgeComponents[0]!.microcycle.fading.maxReentryGenerations = 1;
     mixedLimits.knowledgeComponents[1]!.microcycle.fading.maxReentryGenerations = 0;
     let parent = repairExhausted();
-    const nextPins = LessonRunPinsSchema.parse({
-      ...parent.pins,
-      runId: '66666666-6666-4666-8666-666666666666',
-    });
-    const nextLineage = nextLineageFor(parent, nextPins);
-    parent = reduceLessonRun(
+    const artifacts = nextRunArtifacts(
       parent,
-      event(parent, 'lesson_planner_reentry_handoff', {
-        nextRunPins: nextPins,
-        nextLineage,
-      }),
-      mixedLimits,
-      'test_fixture',
+      '66666666-6666-4666-8666-666666666666',
     );
+    parent = handoff(parent, artifacts, mixedLimits);
 
     expect(parent.status).toBe('handoff');
-    const child = initializeLessonReentryRun(mixedLimits, nextPins, 'test_fixture', parent);
+    const child = initializeLessonReentryRun(
+      mixedLimits,
+      artifacts.nextPins,
+      artifacts.nextResolution,
+      'test_fixture',
+      parent,
+      clock,
+    );
     expect(child.status).toBe('ready');
     expect(child.currentKcId).toBe(mixedLimits.knowledgeComponents[0]!.id);
     expect(child.exposures).toEqual(parent.exposures);
@@ -595,19 +896,19 @@ describe('planner reentry lineage and cross-run exposure', () => {
     const kcOneId = syntheticV3LessonDefinition.knowledgeComponents[0]!.id;
     const kcTwoId = syntheticV3LessonDefinition.knowledgeComponents[1]!.id;
     let kcOneParent = repairExhausted();
-    const kcOnePins = LessonRunPinsSchema.parse({
-      ...kcOneParent.pins,
-      runId: '77777777-7777-4777-8777-777777777777',
-    });
-    kcOneParent = apply(kcOneParent, 'lesson_planner_reentry_handoff', {
-      nextRunPins: kcOnePins,
-      nextLineage: nextLineageFor(kcOneParent, kcOnePins),
-    });
+    const kcOneArtifacts = nextRunArtifacts(
+      kcOneParent,
+      '77777777-7777-4777-8777-777777777777',
+      kcOneId,
+    );
+    kcOneParent = handoff(kcOneParent, kcOneArtifacts);
     const kcOneChild = initializeLessonReentryRun(
       syntheticV3LessonDefinition,
-      kcOnePins,
+      kcOneArtifacts.nextPins,
+      kcOneArtifacts.nextResolution,
       'test_fixture',
       kcOneParent,
+      clock,
     );
     expect(kcOneChild.lineage.kcReentryCounts).toEqual([{ kcId: kcOneId, count: 1 }]);
 
@@ -615,52 +916,50 @@ describe('planner reentry lineage and cross-run exposure', () => {
     progressed = submitExitPair(progressed, 'aligned', 'aligned');
     progressed = act(progressed, { type: 'continue', activityId: null });
     expect(progressed.currentKcId).toBe(kcTwoId);
+    expect(progressed.status).toBe('awaiting_planner_resolution');
     expect(progressed.exitedKcIds).toContain(kcOneId);
 
-    let kcTwoParent = exhaustCurrentKc(progressed);
-    const kcTwoPins = LessonRunPinsSchema.parse({
-      ...kcTwoParent.pins,
-      runId: '88888888-8888-4888-8888-888888888888',
-    });
-    const kcTwoLineage = nextLineageFor(kcTwoParent, kcTwoPins);
-    expect(kcTwoLineage.generation).toBe(2);
-    expect(kcTwoLineage.kcReentryCounts).toEqual([
+    const kcTwoArtifacts = nextRunArtifacts(
+      progressed,
+      '88888888-8888-4888-8888-888888888888',
+      kcTwoId,
+    );
+    expect(kcTwoArtifacts.nextLineage.generation).toBe(2);
+    expect(kcTwoArtifacts.nextLineage.kcReentryCounts).toEqual([
       { kcId: kcOneId, count: 1 },
       { kcId: kcTwoId, count: 1 },
     ]);
-    const forgedCounts = apply(kcTwoParent, 'lesson_planner_reentry_handoff', {
-      nextRunPins: kcTwoPins,
+    const forgedCounts = apply(progressed, 'lesson_planner_reentry_handoff', {
+      nextRunPins: kcTwoArtifacts.nextPins,
       nextLineage: {
-        ...kcTwoLineage,
+        ...kcTwoArtifacts.nextLineage,
         kcReentryCounts: [{ kcId: kcOneId, count: 1 }],
       },
+      nextResolution: kcTwoArtifacts.nextResolution,
     });
     expect(forgedCounts.status).toBe('blocked');
 
-    kcTwoParent = apply(kcTwoParent, 'lesson_planner_reentry_handoff', {
-      nextRunPins: kcTwoPins,
-      nextLineage: kcTwoLineage,
-    });
+    let kcTwoParent = handoff(progressed, kcTwoArtifacts);
     expect(kcTwoParent.status).toBe('handoff');
     const kcTwoChild = initializeLessonReentryRun(
       syntheticV3LessonDefinition,
-      kcTwoPins,
+      kcTwoArtifacts.nextPins,
+      kcTwoArtifacts.nextResolution,
       'test_fixture',
       kcTwoParent,
+      clock,
     );
     expect(kcTwoChild.status).toBe('ready');
     expect(kcTwoChild.currentKcId).toBe(kcTwoId);
     expect(kcTwoChild.lineage.generation).toBe(2);
 
     const overLimitParent = exhaustCurrentKc(kcTwoChild);
-    const overLimitPins = LessonRunPinsSchema.parse({
-      ...overLimitParent.pins,
-      runId: '99999999-9999-4999-8999-999999999999',
-    });
-    const overLimit = apply(overLimitParent, 'lesson_planner_reentry_handoff', {
-      nextRunPins: overLimitPins,
-      nextLineage: nextLineageFor(overLimitParent, overLimitPins),
-    });
+    const overLimitArtifacts = nextRunArtifacts(
+      overLimitParent,
+      '99999999-9999-4999-8999-999999999999',
+      kcTwoId,
+    );
+    const overLimit = handoff(overLimitParent, overLimitArtifacts);
     expect(overLimit.status).toBe('blocked');
     expect(overLimit.transitionErrors).toContain('planner_handoff_not_allowed');
   });

@@ -23,6 +23,16 @@ const timing = {
   maximumSeconds: 120,
 } as const;
 
+const segmentDurationModel = {
+  scope: 'uninterrupted_segment' as const,
+  p50Seconds: 15,
+  p80Seconds: 30,
+  p90Seconds: 45,
+  maximumSeconds: 120,
+  basis: 'authored_estimate' as const,
+  completionThreshold: 'none' as const,
+};
+
 const supportOrder: AssistanceLevel[] = ['A3', 'A2', 'A1', 'A0'];
 
 const assistanceFor = (level: AssistanceLevel, exit = false) => {
@@ -42,6 +52,7 @@ const assistanceFor = (level: AssistanceLevel, exit = false) => {
       .slice(0, Math.max(1, levelIndex + 1))
       .filter((candidate) => candidate !== 'A0')
       .map((candidate) => ({
+        id: `synthetic-${candidate.toLowerCase()}-hint`,
         level: candidate,
         text: `Synthetic ${candidate} support for the invented rule.`,
         contentBearing: candidate !== 'A1',
@@ -55,6 +66,7 @@ const instructionAssistance = () => ({
   initialLevel: 'A3' as const,
   hints: [
     {
+      id: 'synthetic-a3-instruction-hint',
       level: 'A3' as const,
       text: 'Synthetic content-bearing instruction for the invented rule.',
       contentBearing: true,
@@ -85,6 +97,7 @@ function contentActivity(
     response: { kind: 'none' },
     assistance: instructionAssistance(),
     timing,
+    durationModel: segmentDurationModel,
   });
 }
 
@@ -176,6 +189,7 @@ function choiceActivity(
       options.exit || options.unassisted,
     ),
     timing,
+    durationModel: segmentDurationModel,
   });
 }
 
@@ -521,43 +535,30 @@ function makeKc(
     activities,
     microcycle: {
       entryRouting: {
-        feedbackSealedUntilRouteFinalized: true,
+        selectionAuthority: 'planner_instruction_resolution',
+        probesInfluenceInitialRoute: false,
+        probesOptional: true,
+        feedbackSealedUntilElicitationComplete: true,
         probeCount: 2,
         probeActivityIds: probeIds,
         routes: [
           {
             route: 'concise',
-            criteria: {
-              kind: 'convergent_evidence',
-              signalIds: [signals.ready],
-              minimumDistinctFamilies: 2,
-            },
             initialAssistanceLevel: 'A1',
             instructionActivityIds: [orientByRoute.concise!, build, expert],
           },
           {
             route: 'standard',
-            criteria: { kind: 'default', signalIds: [], minimumDistinctFamilies: 0 },
             initialAssistanceLevel: 'A3',
             instructionActivityIds: [orientByRoute.standard!, build, expert],
           },
           {
             route: 'prerequisite',
-            criteria: {
-              kind: 'convergent_evidence',
-              signalIds: [signals.prerequisite],
-              minimumDistinctFamilies: 2,
-            },
             initialAssistanceLevel: 'A3',
             instructionActivityIds: [orientByRoute.prerequisite!, build, expert],
           },
           {
             route: 'misconception',
-            criteria: {
-              kind: 'convergent_evidence',
-              signalIds: [signals.misconception],
-              minimumDistinctFamilies: 2,
-            },
             initialAssistanceLevel: 'A3',
             instructionActivityIds: [orientByRoute.misconception!, build, expert],
           },
@@ -580,8 +581,37 @@ function makeKc(
         maximumCycles: 2,
         cycles: [repairCycles[0]!, repairCycles[1]!],
       },
+      checkpointMap: {
+        enter: `kc-${suffix}.enter`,
+        orientElicit: `kc-${suffix}.orient-elicit`,
+        buildModel: `kc-${suffix}.build-model`,
+        showExpertDecisions: `kc-${suffix}.show-expert-decisions`,
+        completion: {
+          A3: `kc-${suffix}.completion-a3`,
+          A2: `kc-${suffix}.completion-a2`,
+          A1: `kc-${suffix}.completion-a1`,
+          A0: `kc-${suffix}.completion-a0`,
+        },
+        contrastBound: `kc-${suffix}.contrast-bound`,
+        exitNear: `kc-${suffix}.exit-near`,
+        exitChanged: `kc-${suffix}.exit-changed`,
+        repairCycle1: `kc-${suffix}.repair-cycle-1`,
+        repairCycle2: `kc-${suffix}.repair-cycle-2`,
+        blockedForPredecessor: `kc-${suffix}.blocked-for-predecessor`,
+        plannerHandoff: `kc-${suffix}.planner-handoff`,
+        exited: `kc-${suffix}.exited`,
+      },
     },
     timing: { minimumSeconds: 60, targetSeconds: 480, maximumSeconds: 1_800 },
+    durationModel: {
+      scope: 'kc_microcycle',
+      p50Seconds: 360,
+      p80Seconds: 600,
+      p90Seconds: 900,
+      maximumSeconds: 1_800,
+      basis: 'authored_estimate',
+      completionThreshold: 'none',
+    },
   });
 }
 
@@ -620,9 +650,9 @@ const artifacts = [
 ];
 
 const fixtureInput: Record<string, unknown> = {
-  schemaVersion: '3.2.0',
+  schemaVersion: '4.0.0',
   id: 'V3-LES-SYNTH-FOUNDATION',
-  definitionVersion: '3.2.0-test.1',
+  definitionVersion: '4.0.0-test.1',
   contentRelease: 'synthetic-v3-foundation-test-only',
   registryBinding: {
     mode: 'synthetic_test_fixture',
@@ -643,6 +673,7 @@ const fixtureInput: Record<string, unknown> = {
       conciseScope: 'Invented fixture behavior only.',
       scopeExclusions: ['All real MCAT and scientific content.'],
       orderedKcIds,
+      orderedRequiredKcIds: orderedKcIds,
       hardPrerequisiteLessonIds: [],
       helpfulPrerequisiteLessonIds: [],
       directSuccessorLessonIds: [],
@@ -686,10 +717,35 @@ const fixtureInput: Record<string, unknown> = {
   summary:
     'Test-only multi-KC shell for deterministic routing, fading, paired exits, repair, and handoff.',
   orderedKcIds,
+  orderedRequiredKcIds: orderedKcIds,
+  adaptiveBypassEnabled: false,
   knowledgeComponents: [kcOne, kcTwo],
   artifactReferences: artifacts,
   reviewedAssets: [],
   timing: { minimumSeconds: 120, targetSeconds: 960, maximumSeconds: 3_600 },
+  durationModel: {
+    scope: 'lesson_shell',
+    p50Seconds: 720,
+    p80Seconds: 1_200,
+    p90Seconds: 1_800,
+    maximumSeconds: 3_600,
+    basis: 'authored_estimate',
+    completionThreshold: 'none',
+  },
+  timingPolicy: {
+    policyId: 'synthetic-uninterrupted-segment-duration',
+    policyVersion: 'v1-test-only',
+    provisionalUninterruptedSegmentP90Seconds: 1_080,
+    appliesTo: 'uninterrupted_segment',
+    completionThreshold: 'none',
+  },
+  shellCheckpointMap: {
+    notStarted: 'shell.not-started',
+    inProgress: 'shell.in-progress',
+    paused: 'shell.paused',
+    blockedForPredecessor: 'shell.blocked-for-predecessor',
+    deliveryComplete: 'shell.delivery-complete',
+  },
   status: 'draft',
   provenance: { origin: 'original', sourceRefs: [], aiAssisted: false, cleanRoom: true },
   reviewEnvelope: {

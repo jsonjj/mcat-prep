@@ -23,7 +23,7 @@ import {
 import { deterministicJson } from './deterministic-json';
 import { ContentStatusSchema } from './schema';
 
-export const LESSON_DEFINITION_SCHEMA_VERSION = '3.2.0' as const;
+export const LESSON_DEFINITION_SCHEMA_VERSION = '4.0.0' as const;
 
 const TimedRangeSchema = z
   .object({
@@ -43,6 +43,80 @@ const TimedRangeSchema = z
       });
     }
   });
+
+export const LessonDurationModelSchema = z
+  .object({
+    scope: z.enum(['uninterrupted_segment', 'kc_microcycle', 'lesson_shell']),
+    p50Seconds: z.number().int().positive(),
+    p80Seconds: z.number().int().positive(),
+    p90Seconds: z.number().int().positive(),
+    maximumSeconds: z.number().int().positive(),
+    basis: z.enum(['authored_estimate', 'pilot_observation', 'validated_observation']),
+    completionThreshold: z.literal('none'),
+  })
+  .strict()
+  .superRefine((duration, ctx) => {
+    if (
+      duration.p50Seconds > duration.p80Seconds ||
+      duration.p80Seconds > duration.p90Seconds ||
+      duration.p90Seconds > duration.maximumSeconds
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'duration quantiles must satisfy p50 <= p80 <= p90 <= maximum',
+      });
+    }
+  });
+export type LessonDurationModel = z.infer<typeof LessonDurationModelSchema>;
+
+export const LessonTimingPolicySchema = z
+  .object({
+    policyId: z.string().min(1),
+    policyVersion: z.string().min(1),
+    provisionalUninterruptedSegmentP90Seconds: z.literal(1_080),
+    appliesTo: z.literal('uninterrupted_segment'),
+    completionThreshold: z.literal('none'),
+  })
+  .strict();
+
+const CheckpointIdSchema = z
+  .string()
+  .regex(/^[a-z][a-z0-9_.:-]*$/, 'stable lowercase checkpoint id');
+
+export const LessonShellCheckpointMapSchema = z
+  .object({
+    notStarted: CheckpointIdSchema,
+    inProgress: CheckpointIdSchema,
+    paused: CheckpointIdSchema,
+    blockedForPredecessor: CheckpointIdSchema,
+    deliveryComplete: CheckpointIdSchema,
+  })
+  .strict();
+
+export const KcCheckpointMapSchema = z
+  .object({
+    enter: CheckpointIdSchema,
+    orientElicit: CheckpointIdSchema,
+    buildModel: CheckpointIdSchema,
+    showExpertDecisions: CheckpointIdSchema,
+    completion: z
+      .object({
+        A3: CheckpointIdSchema,
+        A2: CheckpointIdSchema,
+        A1: CheckpointIdSchema,
+        A0: CheckpointIdSchema,
+      })
+      .strict(),
+    contrastBound: CheckpointIdSchema,
+    exitNear: CheckpointIdSchema,
+    exitChanged: CheckpointIdSchema,
+    repairCycle1: CheckpointIdSchema,
+    repairCycle2: CheckpointIdSchema,
+    blockedForPredecessor: CheckpointIdSchema,
+    plannerHandoff: CheckpointIdSchema,
+    exited: CheckpointIdSchema,
+  })
+  .strict();
 
 /**
  * Content and learner views intentionally share the same closed representation
@@ -269,6 +343,7 @@ const ActivityAssistanceSchema = z
       .array(
         z
           .object({
+            id: z.string().min(1),
             level: AssistanceLevelSchema,
             text: z.string().min(1),
             contentBearing: z.boolean(),
@@ -296,33 +371,17 @@ export const ActivityDefinitionSchema = z
     response: ActivityResponseDefinitionSchema,
     assistance: ActivityAssistanceSchema,
     timing: TimedRangeSchema,
+    durationModel: LessonDurationModelSchema.refine(
+      (duration) => duration.scope === 'uninterrupted_segment',
+      'activity duration models must describe an uninterrupted segment',
+    ),
   })
   .strict();
 export type ActivityDefinition = z.infer<typeof ActivityDefinitionSchema>;
 
-const DefaultRouteCriteriaSchema = z
-  .object({
-    kind: z.literal('default'),
-    signalIds: z.array(z.string()).length(0),
-    minimumDistinctFamilies: z.literal(0),
-  })
-  .strict();
-
-const ConvergentRouteCriteriaSchema = z
-  .object({
-    kind: z.literal('convergent_evidence'),
-    signalIds: z.array(z.string().min(1)).min(1),
-    minimumDistinctFamilies: z.number().int().min(2),
-  })
-  .strict();
-
 const EntryRouteSchema = z
   .object({
     route: LessonRouteSchema,
-    criteria: z.discriminatedUnion('kind', [
-      DefaultRouteCriteriaSchema,
-      ConvergentRouteCriteriaSchema,
-    ]),
     initialAssistanceLevel: AssistanceLevelSchema,
     instructionActivityIds: z.array(V3ActivityIdSchema).min(3),
   })
@@ -396,9 +455,12 @@ export const KcMicrocycleSchema = z
   .object({
     entryRouting: z
       .object({
-        feedbackSealedUntilRouteFinalized: z.literal(true),
-        probeCount: z.number().int().min(2).max(3),
-        probeActivityIds: z.array(V3ActivityIdSchema).min(2),
+        selectionAuthority: z.literal('planner_instruction_resolution'),
+        probesInfluenceInitialRoute: z.literal(false),
+        probesOptional: z.literal(true),
+        feedbackSealedUntilElicitationComplete: z.literal(true),
+        probeCount: z.number().int().min(0).max(3),
+        probeActivityIds: z.array(V3ActivityIdSchema),
         routes: z.array(EntryRouteSchema).length(4),
       })
       .strict(),
@@ -428,6 +490,7 @@ export const KcMicrocycleSchema = z
         cycles: z.tuple([RepairCycleSchema, RepairCycleSchema]),
       })
       .strict(),
+    checkpointMap: KcCheckpointMapSchema,
   })
   .strict();
 export type KcMicrocycle = z.infer<typeof KcMicrocycleSchema>;
@@ -493,6 +556,10 @@ export const KnowledgeComponentDefinitionSchema = z
     activities: z.array(ActivityDefinitionSchema).min(1),
     microcycle: KcMicrocycleSchema,
     timing: TimedRangeSchema,
+    durationModel: LessonDurationModelSchema.refine(
+      (duration) => duration.scope === 'kc_microcycle',
+      'KC duration models must describe a KC microcycle',
+    ),
   })
   .strict();
 export type KnowledgeComponentDefinition = z.infer<typeof KnowledgeComponentDefinitionSchema>;
@@ -618,10 +685,18 @@ const LessonDefinitionBaseSchema = z
     title: z.string().min(1),
     summary: z.string().min(1),
     orderedKcIds: z.array(V3KcIdSchema).min(1),
+    orderedRequiredKcIds: z.array(V3KcIdSchema).min(1),
+    adaptiveBypassEnabled: z.literal(false),
     knowledgeComponents: z.array(KnowledgeComponentDefinitionSchema).min(1),
     artifactReferences: z.array(ArtifactReferenceSchema).default([]),
     reviewedAssets: z.array(ReviewedLessonAssetSchema).default([]),
     timing: TimedRangeSchema,
+    durationModel: LessonDurationModelSchema.refine(
+      (duration) => duration.scope === 'lesson_shell',
+      'lesson duration models must describe a lesson shell',
+    ),
+    timingPolicy: LessonTimingPolicySchema,
+    shellCheckpointMap: LessonShellCheckpointMapSchema,
     status: ContentStatusSchema,
     provenance: z
       .object({
@@ -811,6 +886,16 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
     );
   }
   if (
+    lesson.orderedRequiredKcIds.length !== lesson.orderedKcIds.length ||
+    lesson.orderedRequiredKcIds.some((id, index) => id !== lesson.orderedKcIds[index])
+  ) {
+    addIssue(
+      ctx,
+      ['orderedRequiredKcIds'],
+      'adaptive bypass is disabled, so orderedRequiredKcIds must exactly equal orderedKcIds',
+    );
+  }
+  if (
     lesson.accessibility.readingOrder.length !== lesson.orderedKcIds.length ||
     lesson.accessibility.readingOrder.some((id, index) => id !== lesson.orderedKcIds[index])
   ) {
@@ -825,9 +910,17 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
   if (
     binding.lesson.id !== lesson.id ||
     binding.lesson.orderedKcIds.length !== lesson.orderedKcIds.length ||
-    binding.lesson.orderedKcIds.some((id, index) => id !== lesson.orderedKcIds[index])
+    binding.lesson.orderedKcIds.some((id, index) => id !== lesson.orderedKcIds[index]) ||
+    binding.lesson.orderedRequiredKcIds.length !== lesson.orderedRequiredKcIds.length ||
+    binding.lesson.orderedRequiredKcIds.some(
+      (id, index) => id !== lesson.orderedRequiredKcIds[index],
+    )
   ) {
-    addIssue(ctx, ['registryBinding'], 'lesson ID and KC order must match the registry binding');
+    addIssue(
+      ctx,
+      ['registryBinding'],
+      'lesson ID, KC order, and required denominator must match the registry binding',
+    );
   }
   lesson.knowledgeComponents.forEach((kc, index) => {
     const canonicalKc = binding.kcs[index];
@@ -919,12 +1012,46 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
   const globalFamilyIds = new Set<string>();
   const globalRepresentationIds = new Set<string>();
   const globalExitPairIds = new Set<string>();
+  const shellCheckpointIds = Object.values(lesson.shellCheckpointMap);
+  const globalCheckpointIds = new Set(shellCheckpointIds);
+  if (globalCheckpointIds.size !== shellCheckpointIds.length) {
+    addIssue(
+      ctx,
+      ['shellCheckpointMap'],
+      'shell checkpoint IDs must be unique within the immutable definition',
+    );
+  }
   lesson.knowledgeComponents.forEach((kc, kcIndex) => {
     const basePath: (string | number)[] = ['knowledgeComponents', kcIndex];
     const activityById = new Map(kc.activities.map((activity) => [activity.id, activity]));
     const representationIds = new Set(
       kc.representations.map((representation) => representation.id),
     );
+    const kcCheckpointIds = [
+      kc.microcycle.checkpointMap.enter,
+      kc.microcycle.checkpointMap.orientElicit,
+      kc.microcycle.checkpointMap.buildModel,
+      kc.microcycle.checkpointMap.showExpertDecisions,
+      ...Object.values(kc.microcycle.checkpointMap.completion),
+      kc.microcycle.checkpointMap.contrastBound,
+      kc.microcycle.checkpointMap.exitNear,
+      kc.microcycle.checkpointMap.exitChanged,
+      kc.microcycle.checkpointMap.repairCycle1,
+      kc.microcycle.checkpointMap.repairCycle2,
+      kc.microcycle.checkpointMap.blockedForPredecessor,
+      kc.microcycle.checkpointMap.plannerHandoff,
+      kc.microcycle.checkpointMap.exited,
+    ];
+    kcCheckpointIds.forEach((checkpointId) => {
+      if (globalCheckpointIds.has(checkpointId)) {
+        addIssue(
+          ctx,
+          [...basePath, 'microcycle', 'checkpointMap'],
+          `checkpoint ${checkpointId} must be lesson-global unique`,
+        );
+      }
+      globalCheckpointIds.add(checkpointId);
+    });
     kc.representations.forEach((representation) => {
       if (globalRepresentationIds.has(representation.id)) {
         addIssue(
@@ -1008,6 +1135,16 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
           `${activity.id} assistance levels must be unique`,
         );
       }
+      if (
+        activity.durationModel.p90Seconds >
+        lesson.timingPolicy.provisionalUninterruptedSegmentP90Seconds
+      ) {
+        addIssue(
+          ctx,
+          [...basePath, 'activities'],
+          `${activity.id} exceeds the provisional uninterrupted-segment p90 policy`,
+        );
+      }
     });
 
     const referenced = new Set<string>();
@@ -1045,7 +1182,7 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
       addIssue(
         ctx,
         [...basePath, 'microcycle', 'entryRouting', 'probeActivityIds'],
-        `entry routing needs ${requiredProbeCount} fresh probes for allowed reentry generations`,
+        `instructional elicitation needs ${requiredProbeCount} fresh probes for allowed reentry generations`,
       );
     }
     const probes = kc.microcycle.entryRouting.probeActivityIds.map((id) =>
@@ -1071,7 +1208,7 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
         addIssue(
           ctx,
           [...basePath, 'microcycle', 'entryRouting'],
-          `${probe.id} must be a sealed, unsupported, non-reveal A0 routing response`,
+          `${probe.id} must be a sealed, unsupported, non-reveal A0 elicitation response`,
         );
       }
       if (
@@ -1097,17 +1234,10 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
       addIssue(
         ctx,
         [...basePath, 'microcycle', 'entryRouting', 'routes'],
-        'entry routing must define every route exactly once',
+        'planner-selectable instruction must define every route exactly once',
       );
     }
     routes.forEach((route) => {
-      if ((route.route === 'standard') !== (route.criteria.kind === 'default')) {
-        addIssue(
-          ctx,
-          [...basePath, 'microcycle', 'entryRouting', 'routes'],
-          'standard is the only default; targeted routes require convergent evidence',
-        );
-      }
       const routeActivities = route.instructionActivityIds.map((id) => requireActivity(id));
       const phases = routeActivities.map((activity) => activity?.phase);
       routeActivities.forEach((activity) => {
@@ -1138,74 +1268,6 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
           );
         }
       });
-    });
-    const probeGenerations = Array.from(
-      { length: kc.microcycle.fading.maxReentryGenerations + 1 },
-      (_, generation) =>
-        probes
-          .slice(
-            generation * kc.microcycle.entryRouting.probeCount,
-            (generation + 1) * kc.microcycle.entryRouting.probeCount,
-          )
-          .filter((probe): probe is ActivityDefinition => probe !== undefined),
-    );
-    routes.forEach((route) => {
-      if (route.criteria.kind !== 'convergent_evidence') return;
-      probeGenerations.forEach((generationProbes, generation) => {
-        const emittingFamilies = new Set<string>();
-        const emittedSignals = new Set<string>();
-        generationProbes.forEach((probe) => {
-          const evidence = potentialResponseEvidence(probe);
-          if (route.criteria.signalIds.some((id) => evidence.signalIds.has(id))) {
-            emittingFamilies.add(probe.familyId);
-          }
-          route.criteria.signalIds.forEach((id) => {
-            if (evidence.signalIds.has(id)) emittedSignals.add(id);
-          });
-        });
-        if (
-          emittedSignals.size !== new Set(route.criteria.signalIds).size ||
-          emittingFamilies.size < route.criteria.minimumDistinctFamilies
-        ) {
-          addIssue(
-            ctx,
-            [...basePath, 'microcycle', 'entryRouting', 'routes'],
-            `${route.route} signals cannot reach ${route.criteria.minimumDistinctFamilies} distinct entry families in generation ${generation}`,
-          );
-        }
-      });
-    });
-    probeGenerations.forEach((generationProbes, generation) => {
-      if (
-        generationProbes.length !== kc.microcycle.entryRouting.probeCount ||
-        !generationProbes.every(
-          (probe) => probe.response.kind !== 'none' && probe.response.allowNotSure,
-        )
-      ) {
-        return;
-      }
-      const notSureEvidence = generationProbes.map((probe) => ({
-        familyId: probe.familyId,
-        signalIds: new Set(notSureSignals(probe)),
-      }));
-      const resolvesTargetedRoute = routes.some((route) => {
-        if (route.criteria.kind !== 'convergent_evidence') return false;
-        const criteriaSignals = new Set(route.criteria.signalIds);
-        return (
-          new Set(
-            notSureEvidence
-              .filter((entry) => [...entry.signalIds].some((id) => criteriaSignals.has(id)))
-              .map((entry) => entry.familyId),
-          ).size >= route.criteria.minimumDistinctFamilies
-        );
-      });
-      if (!resolvesTargetedRoute) {
-        addIssue(
-          ctx,
-          [...basePath, 'microcycle', 'entryRouting', 'routes'],
-          `repeated not-sure responses silently fall through to standard in generation ${generation}`,
-        );
-      }
     });
 
     kc.microcycle.workedDecisionActivityIds.forEach((id) =>

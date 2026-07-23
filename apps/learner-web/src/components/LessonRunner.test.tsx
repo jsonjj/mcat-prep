@@ -5,15 +5,16 @@ import { LessonRunner, PresentationAttemptRegistry } from './LessonRunner';
 
 const common = {
   kind: 'v3_lesson',
-  schemaVersion: '1.2',
+  schemaVersion: '2.0',
   runId: '11111111-1111-4111-8111-111111111111',
   runVersion: 7,
   lessonId: 'V3-LES-SYNTH-COMPONENT',
-  definitionVersion: '3.2.0-test.1',
+  definitionVersion: '4.0.0-test.1',
   lessonTitle: 'Synthetic component fixture',
   kcId: 'V3-KC-SYNTH-COMPONENT',
   kcTitle: 'Fictional control',
   route: 'standard',
+  checkpointId: 'kc-component.completion-a2',
   progress: { kcOrdinal: 1, kcCount: 2, exitedKcCount: 0 },
   groupedFeedback: null,
 } as const;
@@ -144,10 +145,15 @@ const activeStep = LessonStepViewSchema.parse({
       ],
       allowNotSure: true,
     },
-    assistance: { currentLevel: 'A2', visibleHint: null, canRequestMore: true },
+    assistance: {
+      currentLevel: 'A2',
+      visibleHint: null,
+      canRequestMore: true,
+      canReveal: true,
+    },
     feedback: null,
   },
-  availableActions: ['submit_response', 'request_assistance', 'pause'],
+  availableActions: ['submit_response', 'request_hint', 'request_reveal', 'pause'],
   message: null,
 });
 
@@ -291,6 +297,10 @@ describe('LessonRunner accessibility and safe rendering', () => {
       message: 'Every required KC reached instructional exit.',
       completion: {
         kind: 'lesson_completion',
+        orderedRequiredKcIds: [
+          'V3-KC-SYNTH-COMPONENT',
+          'V3-KC-SYNTH-COMPONENT-2',
+        ],
         instructionalExitKcIds: ['V3-KC-SYNTH-COMPONENT', 'V3-KC-SYNTH-COMPONENT-2'],
       },
     });

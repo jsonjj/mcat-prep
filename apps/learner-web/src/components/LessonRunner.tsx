@@ -166,9 +166,11 @@ export function LessonRunner({ step, pending = false, onAction }: LessonRunnerPr
         />
       ) : null}
 
-      {step.status === 'route_pending' ||
+      {step.status === 'planner_resolution_required' ||
+      step.status === 'blocked_for_predecessor' ||
       step.status === 'feedback_pending' ||
-      step.status === 'repair_pending' ? (
+      step.status === 'repair_pending' ||
+      step.status === 'reentry_pending' ? (
         <WaitingStep step={step} pending={pending} headingRef={headingRef} onAction={onAction} />
       ) : null}
 
@@ -231,15 +233,26 @@ function WaitingStep({
 }: {
   step: Extract<
     LessonStepView,
-    { status: 'route_pending' | 'feedback_pending' | 'repair_pending' }
+    {
+      status:
+        | 'planner_resolution_required'
+        | 'blocked_for_predecessor'
+        | 'feedback_pending'
+        | 'repair_pending'
+        | 'reentry_pending';
+    }
   >;
   pending: boolean;
   headingRef: RefObject<HTMLHeadingElement>;
   onAction: (action: LessonActionInput) => Promise<void>;
 }) {
   const title =
-    step.status === 'route_pending'
-      ? 'Selecting your route'
+    step.status === 'planner_resolution_required'
+      ? 'Planner instruction required'
+      : step.status === 'blocked_for_predecessor'
+        ? 'Predecessor support required'
+        : step.status === 'reentry_pending'
+          ? 'Resuming exact repair point'
       : step.status === 'repair_pending'
         ? 'Repair ready'
         : 'Feedback ready';
@@ -338,7 +351,12 @@ function ActiveActivity({
     } else if (activity.response.kind === 'ordered_steps' && stepLines.length > 0) {
       response = { kind: 'ordered_steps', steps: stepLines };
     } else return;
-    void onAction({ type: 'submit_response', activityId: activity.id, response });
+    void onAction({
+      type: 'submit_response',
+      activityId: activity.id,
+      response,
+      elapsedMs: null,
+    });
   };
 
   return (
@@ -508,13 +526,22 @@ function ActiveActivity({
             Continue
           </Button>
         ) : null}
-        {availableActions.includes('request_assistance') ? (
+        {availableActions.includes('request_hint') ? (
           <Button
             variant="secondary"
             disabled={pending}
-            onClick={() => void onAction({ type: 'request_assistance', activityId: activity.id })}
+            onClick={() => void onAction({ type: 'request_hint', activityId: activity.id })}
           >
             Add support
+          </Button>
+        ) : null}
+        {availableActions.includes('request_reveal') ? (
+          <Button
+            variant="text"
+            disabled={pending}
+            onClick={() => void onAction({ type: 'request_reveal', activityId: activity.id })}
+          >
+            Reveal support
           </Button>
         ) : null}
         {availableActions.includes('pause') ? (

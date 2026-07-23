@@ -76,6 +76,30 @@ export const LessonActionInputSchema = z.discriminatedUnion('type', [
       type: z.literal('submit_response'),
       activityId: V3ActivityIdSchema,
       response: LessonActivityResponseInputSchema,
+      elapsedMs: z.number().int().nonnegative().nullable().default(null),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal('retry_response'),
+      activityId: V3ActivityIdSchema,
+      retryOf: EventIdSchema,
+      response: LessonActivityResponseInputSchema,
+      elapsedMs: z.number().int().nonnegative().nullable().default(null),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal('record_confidence'),
+      attemptId: EventIdSchema,
+      confidence: z.number().min(0).max(1),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal('record_learner_cause'),
+      attemptId: EventIdSchema,
+      cause: z.string().min(1).max(200),
     })
     .strict(),
   z
@@ -86,7 +110,13 @@ export const LessonActionInputSchema = z.discriminatedUnion('type', [
     .strict(),
   z
     .object({
-      type: z.literal('request_assistance'),
+      type: z.literal('request_hint'),
+      activityId: V3ActivityIdSchema,
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal('request_reveal'),
       activityId: V3ActivityIdSchema,
     })
     .strict(),
