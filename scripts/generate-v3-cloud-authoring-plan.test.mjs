@@ -162,3 +162,22 @@ test('production waves stay reviewable, mixed-domain, and dependency ordered', (
     }
   }
 });
+
+test('W00 is blocked on exact signed foundation pins and similarity history is cumulative', () => {
+  assert(
+    checkedPlan.unresolved_constraints.some(
+      (constraint) => constraint.constraint_id === 'UC05_HARDENED_FOUNDATION_INTEGRATION_PINS',
+    ),
+  );
+  for (const [index, wave] of checkedPlan.waves.entries()) {
+    assert(
+      wave.checkpoint.entry_requires.includes(
+        'externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized',
+      ),
+    );
+    assert.deepEqual(
+      wave.similarity_comparison_wave_ids,
+      checkedPlan.waves.slice(0, index + 1).map((candidate) => candidate.wave_id),
+    );
+  }
+});

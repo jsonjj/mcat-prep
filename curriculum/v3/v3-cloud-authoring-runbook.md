@@ -13,8 +13,9 @@ not authorize lesson publication and does not define application/runtime behavio
 - The five approved prototypes are a port pilot only:
   `V3-LES-329622`, `V3-LES-765609`, `V3-LES-443492`, `V3-LES-225658`, and
   `V3-LES-386478`. They are not production `LessonDefinition` records.
-- Generated content is an internal draft until rights, scientific review, reviewed hashes, and
-  efficacy gates pass.
+- Generated content is an internal draft until rights, scientific review, signed/verifiable review
+  receipts, exact reviewed-artifact hashes, and efficacy gates pass. A hash is an integrity
+  identifier, not proof of who produced evidence or whether the asserted event occurred.
 
 Regenerate or verify from the repository root:
 
@@ -63,7 +64,8 @@ node scripts/validate-v3-cloud-authoring-wave-overlay.mjs template \
 
 # Materialize only that separate file, then:
 node scripts/validate-v3-cloud-authoring-wave-overlay.mjs validate \
-  .tmp/v3-wave-overlays/V3-AUTH-W01.json
+  .tmp/v3-wave-overlays/V3-AUTH-W01.json \
+  --integration-trust-root /secure/out-of-overlay/integration-authority-public-key.pem
 ```
 
 The checked template is an unmaterialized W00 example. `template` computes the SHA-256 of the exact
@@ -72,6 +74,14 @@ and specialty pins. `validate` is read-only. It rejects a stale plan hash, any c
 membership, missing/extra/duplicate slot, role mismatch, null identity, or attempt to use the plan
 itself as an overlay. Regenerate a new overlay after any plan change; never carry assignments across
 plan hashes.
+
+Production validation never trusts a public key supplied only by the overlay. The CLI requires an
+external integration-authority public key. That key verifies a signed pinset and signed reviewer
+credentials; the pinset in turn binds the exact foundation commit, candidate/runtime and learner
+DTO schemas, candidate validator, learner-safe compiler, review harness, scoring-service builds,
+their exact IDs/versions/artifact hashes, and compiler/harness signing keys.
+`FIXTURE_ONLY_NON_PRODUCTION` pinsets are accepted only by the
+test API's explicit fixture option and cannot satisfy the CLI.
 
 Every materialized overlay records an actual person ID and actual execution/run ID for each slot,
 plus explicit controller and wave-integrator identities. The validator enforces:
@@ -103,63 +113,76 @@ be later than the overlay's materialization instant.
 
 This permits separately recorded, current authoritative/open factual inputs. It does not permit
 copying a source's wording, examples, passages, item structures, figures, or other expressive
-content. The overlay binds the hashed ledger, input-rights approval, output-rights/originality
-approval, candidate hash, and source-output similarity report to the independent rights-reviewer
-slot. Missing or stale evidence fails.
+content. Closed source-output and rights reports bind the recomputed ledger and candidate to the
+assigned rights reviewer's person/run/slot and externally credentialed signing key. The validator
+rereads each path, verifies bytes and detached signatures, and rejects missing, stale, misbound, or
+unknown fields.
 
-### Candidate artifact, closed clients, and blind runtime
+### Pinned candidate, derived clients, and signed blind runtime
 
-The controller first freezes one candidate directory. Its strict `candidate-manifest.json` binds
-the source-plan SHA, wave, job, lesson, and runtime contract and declares that the artifact contains
-the key-bearing server definition. The overlay records every relative file/hash and a deterministic
-directory hash; validation rereads every file. Any candidate mutation invalidates every G01–G10
-record.
+The controller freezes one candidate directory. `candidate-manifest.json` must match the exact
+runtime version, `LessonDefinition` schema ID/hash, candidate-validator build, and key-bearing
+definition path from the signed integration pinset. The validator inventories bounded regular
+files, rejects duplicate manifest paths and symlinks, recomputes the directory hash, parses the
+definition under bounded JSON limits, and validates it against the pinned schema. Any candidate
+mutation invalidates candidate-bound G01–G10 evidence.
 
-A solver or accessibility reviewer must never receive that directory, its branch/history, server
-definitions, protected scoring material, diagnostic mappings, or pre-response rationales. They
-receive separate `mcat-v3-closed-sanitized-review-bundle-1` clients. V1 allows root-level JSON only,
-rejects unknown fields at every nested schema level, recursively rejects protected aliases such as
-`key`, `solution`, and `expected`, resolves real paths to prevent parent-symlink escape, and permits
-exactly:
+A solver or accessibility reviewer never receives that directory, its branch/history, server
+definitions, scoring authority, diagnostic mappings, or pre-response rationales. The exact
+pinset-bound candidate→learner-safe compiler emits a detached-signature-verified derivation report
+that binds the candidate file manifest, compiler build/key, runtime/DTO schema pins, review-harness
+build, and every output file/hash. The validator requires byte-for-byte agreement between each
+closed client and that signed output; a hand-authored client naming an unrelated candidate hash
+fails.
+
+`mcat-v3-closed-sanitized-review-bundle-2` permits exactly:
 
 ```text
 BLIND_SOLVE
   blind-client-runtime.json
   bundle-manifest.json
-  learner-safe-activities.json
-  learner-safe-views.json
+  learner-safe-envelope.json
 
 ACCESSIBILITY_ONLY
-  accessibility-behavior.json
-  accessibility-path-simulation.json
+  accessibility-harness-config.json
   bundle-manifest.json
-  learner-safe-activities.json
-  learner-safe-views.json
+  learner-safe-envelope.json
 ```
 
-Activities use canonical prompt/response/support shapes. Views are schema-bound plain text,
-equations, tables, numeric series, or node/edge diagrams; arbitrary Markdown, TXT, SVG, HTML, code,
-and extra files are forbidden. Each bundle and scan-report hash binds the exact candidate hash,
-plan/job pins, and recipient slot. Outcome simulation is allowed only in
-`accessibility-path-simulation.json`; it is never blind-solve evidence.
+The envelope wraps the exact shared learner DTO validated against the signed-pinset schema, plus
+immutable media digests (and transcript/caption digests for audio/video). Its manifest declares
+support for every representation and action kind in that DTO contract, including charts,
+simulations, animation, audio/video, deterministic activity graphs, and nonvisual alternatives.
+Unknown fields and extra files fail. Recursive protected-field scanning remains defense in depth;
+it is not semantic proof that no key leaked. Arbitrary Markdown, TXT, SVG, HTML, scripts, and
+reviewer-controlled outcomes are forbidden.
 
-For a genuine blind solve, the integrator deploys the exact key-bearing candidate to an ephemeral
-opaque service. The closed client submits real responses and receives only ordinary
-learner-authorized outcomes/feedback. It has no client scoring authority or outcome overrides. A
-hashed ACL/branch-isolation attestation binds the candidate hash, safe-client hash, service
-deployment/artifact hash, solver person/run IDs, and wave-integrator identity, and asserts that the
-source branch, server definition, protected scoring material, pre-response rationales, and override
-controls are not exposed.
+For G08, a pinset-bound standard review harness must execute the accessibility client in a browser.
+The harness signs a report that binds a closed browser-evidence artifact and exact checks for
+keyboard-only operation, focus order, semantics, contrast, 320px reflow, 200% zoom, reduced motion,
+nonvisual alternatives, and media transcripts/captions. Static JSON claims and path strings cannot
+satisfy G08.
 
-The service logs hashed real submissions, learner outcomes, and path IDs. G07 requires a hashed
-attempt log covering correct, incorrect, omission, help, retry, reveal, interruption/resume,
-invalid-item, mixed-route, and repair-limit paths, plus an approved report bound to the same
-candidate and safe-client hashes. Hashes supplement rather than replace actual service/storage ACL
-enforcement.
+For G07, the integrator deploys the exact candidate to an ephemeral opaque service built from the
+signed scoring-service pin. The deployment artifact has a closed file set and recomputed manifest.
+An integration-authority-signed deployment/ACL attestation binds that artifact, candidate, safe
+client, solver/integrator identities, and a unique per-deployment Ed25519 receipt-key fingerprint,
+while attesting that source, protected material, pre-response rationales, and override controls are
+not exposed.
 
-This is an authoring-side evidence/interface contract for the still-separate lesson runtime: the
-opaque deployment must consume that runtime's eventual key-bearing candidate contract without this
-branch defining, editing, or merging runtime/application code.
+The service signs one detached receipt for every request/response. Every receipt binds session,
+contiguous sequence, canonical monotonically increasing timestamp, attempt/request/activity IDs,
+protocol request kind, submitted-response hash or required null, learner outcome/feedback hash,
+prior and next state hashes, candidate, safe client, deployment artifact, and receipt-key
+fingerprint. The service also signs the closed session manifest. The validator verifies every
+signature, request/outcome pairing, state transition, activity reference, and request ID. It derives
+rather than trusts coverage for correct, incorrect, omission, help, retry, reveal,
+interruption→resume, invalid item, mixed route, and multi-cycle repair-limit paths.
+
+The validator enforces profile-specific regular-file count, per-file, total-byte, JSON depth,
+collection, and string limits before or immediately after bounded reads. This is an authoring-side
+evidence/interface contract only: this branch does not implement or modify the separate runtime,
+compiler, harness, or scoring service.
 
 ## Exact lesson contract
 
@@ -209,22 +232,28 @@ an efficacy claim.
 `MATERIALIZED` with target `INTERNAL_DRAFT_INTEGRATION` means G01–G10 evidence is complete, not
 merely assigned. The validator requires:
 
-- the recomputed candidate file manifest/hash and candidate plan/job manifest;
-- approved, hashed G01–G04 canonical/reference, identity/KC, content/runtime, attachment/repair, and
-  no-bypass lint reports;
-- G05 source-ledger/input/output-rights/originality records;
-- an approved independent G06 content/pedagogy report;
-- the G07 closed client, opaque-service deployment/ACL attestation, real-response attempt/path log,
-  recipient identity, and blind-solve approval;
-- an approved G08 accessibility/technical report bound to the accessibility client;
-- one approved wave-level G09 report binding every current candidate hash, every similarity-review
-  slot, and the generated current-plus-prior comparison-wave list; and
-- every G10 specialty record and conditional CARS passage-subject record.
+- the externally verified signed integration pinset and exact pinned schema/build artifacts;
+- the recomputed candidate file manifest plus pinned-schema-valid key-bearing definition;
+- signed assigned-reviewer G01–G04 reports for canonical/reference, identity/KC, runtime/content,
+  attachment/repair, and no-bypass checks;
+- closed, reread, signed G05 source-output and rights/originality reports bound to the recomputed
+  source ledger;
+- a signed assigned-auditor G06 content/pedagogy report;
+- the compiler-signed derived G07 client, recomputed service deployment, authority-signed ACL
+  attestation, signed request/response session, protocol-derived path coverage, and signed solver
+  approval;
+- harness-signed browser/a11y execution plus signed assigned-auditor G08 approval;
+- one multi-reviewer-signed G09 report binding every current candidate and an
+  integration-authority-signed cumulative corpus manifest containing every prior wave/job; and
+- closed, reread, signed G10 specialty reports and any conditional CARS subject report.
 
-Every record repeats the source-plan, wave, job/lesson, candidate, reviewer slot, and applicable
-review-artifact hashes. Missing, false, stale, differently bound, or post-review-mutated evidence
-fails. G11 reviewed-publication hash and G12 efficacy/publication approval remain explicitly
-`PENDING` at this internal-draft boundary.
+Each consequential report binds the source-plan, wave, job/lesson, candidate, assigned reviewer
+slot and person/run identity, signing-key fingerprint, and applicable artifact hashes. The external
+authority signs each reviewer identity/key/role credential. Missing paths, unknown fields, invalid
+signatures, stale bytes, false status, different bindings, or post-review mutation fail. Hashes
+detect byte identity only; signatures and pinned trust roots establish report origin, while
+execution/rights review establishes the underlying fact. G11 reviewed-publication hash and G12
+efficacy/publication approval remain explicitly `PENDING` at this internal-draft boundary.
 
 ## Required pipeline
 
@@ -245,22 +274,24 @@ Every lesson follows this order:
    editor—reviews that subject's facts and ceiling.
 6. **Output-rights/originality review.** The input-rights reviewer independently checks provenance,
    output rights, originality, and source-output similarity against the same candidate hash.
-7. **Candidate freeze and G01–G06 evidence.** The release-hash integrator freezes and hashes the
-   candidate file manifest, then records candidate-bound lint, rights, content/pedagogy, and domain
-   evidence. Any later byte change restarts affected gates.
-8. **Closed clients and opaque service.** Build/scan the exact closed blind/accessibility clients;
-   deploy the candidate to the ephemeral opaque service; bind service, ACL/isolation, client, and
-   candidate hashes.
+7. **Candidate freeze and G01–G06 evidence.** The release integrator validates the key-bearing
+   definition against the exact signed-pinset schema, freezes the bounded file manifest, and
+   verifies signed assigned-reviewer reports. Any later byte change restarts affected gates.
+8. **Derived clients and opaque service.** Verify compiler-signed derivation of the exact closed
+   clients, deploy the candidate with the pinned scoring build, recompute the closed deployment
+   artifact, and verify the integration-authority-signed deployment/ACL attestation.
 9. **Blind solve.** The assigned solver submits real answers through only the closed client and
-   opaque service. Record the solver identity, real-response attempts/outcomes, required path
-   coverage, log hash, and approval. Reviewer-controlled outcomes are forbidden.
-10. **Accessibility/technical audit.** From the accessibility-only client, verify
-    construct-equivalent alternatives, deterministic activity/checkpoint behavior, keyboard, focus,
-    semantics, contrast, reflow, reduced motion, and accommodations.
-11. **Cross-lesson similarity audit.** Compare every candidate with its current wave and all
-    generated prior comparison waves across and within domains. Bind every candidate hash and
-    similarity-review slot in one approved wave report. Check copied language, repeated scenarios,
-    representational monoculture, answer-pattern leakage, family leakage, and template overfitting.
+   opaque service. Verify the service-signed closed session, every ordered request/response and state
+   transition, derived path coverage, solver identity, and signed approval. Self-asserted path
+   labels and reviewer-controlled outcomes are forbidden.
+10. **Accessibility/technical audit.** Execute the accessibility client through the pinned standard
+    browser harness; verify construct-equivalent alternatives, graph behavior, keyboard, focus,
+    semantics, contrast, 320px reflow, 200% zoom, reduced motion, nonvisual alternatives,
+    transcripts/captions, signed execution evidence, and assigned-auditor approval.
+11. **Cross-lesson similarity audit.** Compare every current candidate with all current peers and
+    the signed cumulative corpus for every previously integrated wave. All assigned similarity
+    reviewers sign one report. Check copied language, repeated scenarios, representational
+    monoculture, answer-pattern leakage, family leakage, and template overfitting.
 12. **Reviewed hash.** Resolve findings, rerun affected stages, freeze one publication candidate,
     and bind every approval to its exact content hash. Any mutation invalidates affected approvals.
 13. **Publication gate.** A distinct final approver verifies all 12 machine-listed gates, rights,
@@ -271,12 +302,12 @@ An author assertion is not audit evidence. Missing or ambiguous evidence fails c
 
 ## Finding severity and blocking rules
 
-| Severity | Meaning                                                                                                                                                                                                             | Internal-draft integration                                                                               | Publication             |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------- |
-| **P0**   | Critical integrity/safety failure: plan-pin or canonical-scope corruption, protected/key exposure, unauthorized rights use, held-scope activation, bypass activation, or a failure requiring immediate containment. | Blocked; stop the wave, contain exposure, invalidate affected artifacts/hashes, resolve, and revalidate. | Blocked.                |
-| **P1**   | Major correctness/process failure: material factual/key error, missing independent role, invalid KC/activity alignment, broken deterministic path, inaccessible essential path, or failed G01–G10 evidence.         | Blocked until resolved and affected stages rerun.                                                        | Blocked.                |
-| **P2**   | Bounded moderate defect that does not invalidate G01–G10 and does not expose learners, but requires correction.                                                                                                     | Allowed only as internal draft with recorded containment, owner, due date, and publication block.        | Blocked until resolved. |
-| **P3**   | Minor editorial/maintainability issue with no material correctness, rights, accessibility, evidence, or execution effect.                                                                                           | Not blocked; track an owner.                                                                             | Not blocked.            |
+| Severity | Meaning                                                                                                                                                                                                             | Internal-draft integration                                                                                 | Publication             |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **P0**   | Critical integrity/safety failure: plan-pin or canonical-scope corruption, protected/key exposure, unauthorized rights use, held-scope activation, bypass activation, or a failure requiring immediate containment. | Blocked; stop the wave, contain exposure, invalidate affected artifacts/evidence, resolve, and revalidate. | Blocked.                |
+| **P1**   | Major correctness/process failure: material factual/key error, missing independent role, invalid KC/activity alignment, broken deterministic path, inaccessible essential path, or failed G01–G10 evidence.         | Blocked until resolved and affected stages rerun.                                                          | Blocked.                |
+| **P2**   | Bounded moderate defect that does not invalidate G01–G10 and does not expose learners, but requires correction.                                                                                                     | Allowed only as internal draft with recorded containment, owner, due date, and publication block.          | Blocked until resolved. |
+| **P3**   | Minor editorial/maintainability issue with no material correctness, rights, accessibility, evidence, or execution effect.                                                                                           | Not blocked; track an owner.                                                                               | Not blocked.            |
 
 An unresolved G01–G10 requirement is P1 or P0, never downgraded to P2. The overlay validator rejects
 open P0/P1 at an internal-integration checkpoint and requires complete containment metadata for each
@@ -323,17 +354,19 @@ Wave eligibility uses only explicit stable relations:
 Do not start the next wave until the integration controller:
 
 1. Rehashes the immutable plan and validates the materialized wave overlay, exact job/slot set,
-   controller/integrator identities, separation edges, real source dates, candidate file
-   manifests/hashes, closed clients, opaque-service/ACL/attempt evidence, and every candidate-bound
-   G01–G10 record.
+   controller/integrator identities, separation edges, real source dates, the external trust root,
+   signed pinset/credentials, schema-valid candidate, compiler-derived clients, service
+   deployment/attestation/receipts, harness execution, and every signed candidate-bound G01–G10
+   record.
 2. Confirms no extra lesson output, no open P0/P1, and complete containment/owner/due-date/publication
    blocks for every open P2; G01–G10 must pass for internal integration.
-3. Recomputes the wave-level current-plus-prior similarity report over every candidate hash and
-   completes the cross-domain template review.
+3. Verifies the cumulative corpus manifest contains every prior wave/job, then completes the
+   multi-reviewer-signed current-plus-complete-history cross-domain similarity report.
 4. Regenerates/checks the job manifest and overlay template and runs formatting, lint, tests,
    repository protected-field scanning, rights scanning, and reference/attachment checks.
-5. Integrates reviewed drafts in one auditable wave checkpoint and records candidate/artifact
-   hashes, findings, approvals, rollback coordinates, and the exact validated overlay hash.
+5. Integrates reviewed drafts in one auditable wave checkpoint and records artifact integrity
+   identifiers, verified receipts/signatures, findings, approvals, rollback coordinates, and the
+   exact validated overlay bytes.
 
 The checkpoint is an internal-draft integration boundary, not publication. G11 and G12 remain
 release gates. A failure pauses the next wave; it does not justify deleting scope, moving a job,
@@ -341,14 +374,21 @@ changing curriculum order, or relaxing separation of duties.
 
 ## Known launch blockers
 
+- **W00 cannot launch.** The corrected lesson-platform foundation commit and exact
+  `LessonDefinition`/runtime schema, shared learner DTO schema, candidate validator, learner-safe
+  compiler, browser/a11y review harness, scoring-service builds, build signing keys, production
+  integration-authority trust root, and signed pinset have not been supplied. No temporary
+  production hashes are guessed. The positive cryptographic fixtures are explicitly
+  `FIXTURE_ONLY_NON_PRODUCTION` and cannot satisfy the CLI.
 - Locations, hashes, processing-rights records, and review provenance for all five prototype
   artifacts still need to be supplied.
 - Actual controller/integrator, author, rights-reviewer, specialty fact-checker, CARS subject
   reviewer, auditor, solver, and approver identities are intentionally unassigned.
 - Job source ledgers and present-day authority refreshes have not been materialized; the architecture
   remains bounded by the supplied 2020 AAMC ceiling.
-- Candidate artifacts, closed review clients, opaque scoring deployments, service/storage ACL
-  attestations, real-response attempt logs, and complete G01–G10 reports do not yet exist.
+- Candidate artifacts, compiler derivation reports, closed review clients, opaque scoring
+  deployments, signed service/ACL receipts, browser execution artifacts, reviewer credentials, and
+  complete signed G01–G10 reports do not yet exist.
 - Lesson content, specialty sign-off, rights/originality evidence, calibrated evidence recipes,
   learner validation, and efficacy/subgroup results do not yet exist.
 - Complexity and risk points are deterministic structural triage estimates, not person-hours,

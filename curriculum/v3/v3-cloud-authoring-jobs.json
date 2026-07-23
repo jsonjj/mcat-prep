@@ -49,7 +49,7 @@
       "required_evidence": [
         "An independent rights reviewer approves a source ledger recording URLs, access dates, licenses or terms, model-processing rights, and source ceilings before authoring.",
         "All model inputs exclude protected items, answer keys, copied expressive prose, and unauthorized prototype material.",
-        "Figures, tables, passages, examples, and items are original or explicitly licensed, with provenance and source-output similarity results recorded."
+        "Figures, tables, passages, examples, and items are original or explicitly licensed; closed G05 and source-output reports are reread, hash-checked, assigned-reviewer-identity-bound, and signature-verified."
       ],
       "stage": "rights_review"
     },
@@ -70,7 +70,8 @@
       "required_evidence": [
         "A solver distinct from the author and final approver answers real learner-safe activities through a closed safe client connected to an ephemeral opaque integrator-controlled scoring service.",
         "The service deploys the exact candidate hash server-side, accepts submitted responses, returns ordinary learner-authorized feedback, and exposes no source branch, server definition, protected scoring material, pre-response rationales, or outcome overrides.",
-        "Candidate, safe-client, service-deployment, ACL/isolation-attestation, attempt-log, path-coverage, solver-recipient, and approval hashes/identities are bound in the overlay."
+        "Every request/response has an ordered detached-signature-verified service receipt; path coverage is derived from valid request/outcome/state traces rather than trusted labels.",
+        "The service deployment is recomputed from a closed manifest, its receipt key is bound by an externally signed deployment/ACL attestation, and unsigned/self-asserted logs cannot satisfy G07."
       ],
       "stage": "blind_solve"
     },
@@ -80,8 +81,8 @@
       "gate_id": "G08_ACCESSIBILITY_TECHNICAL_AUDIT",
       "required_evidence": [
         "The reviewer receives a closed accessibility-only client with the same protected-material and branch exclusions as blind solve.",
-        "Reviewer-controlled outcome simulation is confined to accessibility/technical path testing and is not accepted as blind-solve evidence.",
-        "Keyboard, focus, semantics, contrast, zoom/reflow, reduced-motion, nonvisual representation, and accommodation behavior pass.",
+        "A pinset-bound standard browser harness signs execution evidence; static accessibility assertions or path strings cannot satisfy G08.",
+        "Keyboard, focus, semantics, contrast, 320px reflow, 200% zoom, reduced-motion, nonvisual representation, transcript/caption, and accommodation behavior pass.",
         "Accessible alternatives preserve the intended construct and activity-graph behavior."
       ],
       "stage": "accessibility_technical_audit"
@@ -91,7 +92,7 @@
       "blocks_publication": true,
       "gate_id": "G09_CROSS_LESSON_SIMILARITY_AUDIT",
       "required_evidence": [
-        "The draft is compared with its wave and prior integrated wave for copied language, repeated scenarios, answer-pattern leakage, and template overfitting.",
+        "The candidate is compared with its wave and a signed cumulative manifest covering every previously integrated wave for copied language, repeated scenarios, answer-pattern leakage, and template overfitting.",
         "Any intentional reuse is bounded, justified, and does not collapse distinct KC identities or item families."
       ],
       "stage": "cross_lesson_similarity_audit"
@@ -105,8 +106,8 @@
       "gate_id": "G10_DOMAIN_FACT_CHECK_AND_SCIENTIFIC_REVIEW",
       "required_assignment_roles": ["DOMAIN_SCIENTIFIC_FACT_CHECKER"],
       "required_evidence": [
-        "One explicit independent fact-check assignment exists for every required job specialty and signs off against the declared source ceiling, scope, assumptions, equations, representations, and boundary conditions.",
-        "After a CARS passage subject is selected, an additional passage-subject fact checker distinct from the author and CARS reasoning editor signs off.",
+        "One explicit independent fact-check assignment exists for every required job specialty; each closed report is reread, hash-checked, identity/slot/specialty-bound, and detached-signature-verified.",
+        "After a CARS passage subject is selected, an additional checker distinct from the author and CARS reasoning editor signs a subject- and candidate-bound closed report.",
         "Present-day authority limitations and unresolved holds are not converted into current endorsement or efficacy claims."
       ],
       "stage": "domain_review"
@@ -151,15 +152,20 @@
     "opaque_blind_service_evidence": [
       "exact_candidate_sha256",
       "closed_safe_client_sha256",
-      "service_deployment_artifact_sha256",
-      "acl_branch_isolation_attestation_sha256",
+      "recomputed_closed_service_deployment_artifact_sha256",
+      "externally_signed_acl_branch_isolation_attestation",
+      "pinned_per_deployment_receipt_signing_key",
       "solver_person_and_run_ids",
-      "real_response_attempt_log_sha256",
-      "required_path_coverage",
-      "blind_solve_approval"
+      "detached_signature_verified_request_response_receipts",
+      "protocol_derived_semantic_path_coverage",
+      "signed_blind_solve_approval"
     ],
+    "production_trust_requirement": "The validator requires an external integration trust-root public key; overlay-supplied keys alone are not trusted.",
+    "report_authenticity": "Consequential G01-G10 reports require externally credentialed assigned-reviewer identities and detached signatures; build-issued reports require signed pinset-bound keys.",
+    "rights_and_domain_report_contract": "Every G05 rights/source-similarity and G10 specialty/CARS-subject record has a repository-relative path, closed unknown-field-rejecting schema, recomputed byte hash, exact ledger/candidate/slot/person/run/specialty/subject pins, and detached signature.",
+    "safe_projection_and_accessibility_contract": "Compiler-signed exact output manifests prove derivation from the pinned candidate; harness-signed closed browser evidence and assigned-auditor approval are required for G08.",
     "stale_or_missing_evidence_behavior": "FAIL_CLOSED",
-    "wave_similarity_scope": "current_wave_plus_declared_prior_comparison_waves"
+    "wave_similarity_scope": "current_wave_plus_integration_authority_signed_complete_previously_integrated_corpus"
   },
   "jobs": [
     {
@@ -342,7 +348,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -706,7 +712,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CROSS_CUTTING_SIRS",
       "grouping": {
@@ -1618,7 +1624,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -2364,7 +2370,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -2889,7 +2895,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CARS",
       "grouping": {
@@ -3342,7 +3348,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -3891,7 +3897,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -4437,7 +4443,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -5032,7 +5038,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -5537,7 +5543,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -6081,7 +6087,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -6536,7 +6542,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -7070,7 +7076,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -7645,7 +7651,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -8172,7 +8178,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -8837,7 +8843,7 @@
       "cross_lesson_similarity_audit": {
         "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CARS",
       "grouping": {
@@ -9457,9 +9463,9 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+        "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -9993,9 +9999,9 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+        "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -10540,9 +10546,9 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+        "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -11426,9 +11432,9 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+        "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -11971,9 +11977,9 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+        "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -12477,9 +12483,9 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+        "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -13130,9 +13136,9 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+        "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -13771,9 +13777,9 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+        "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -14352,9 +14358,9 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+        "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -15002,9 +15008,9 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+        "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -15475,9 +15481,9 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+        "comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CARS",
       "grouping": {
@@ -15913,9 +15919,14 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -16512,9 +16523,14 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -17013,9 +17029,14 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -17587,9 +17608,14 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -17987,9 +18013,14 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -18444,9 +18475,14 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -18940,9 +18976,14 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -19439,9 +19480,14 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -19950,9 +19996,14 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -20522,9 +20573,14 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -21216,9 +21272,14 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CARS",
       "grouping": {
@@ -21677,9 +21738,15 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -22099,9 +22166,15 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -22679,9 +22752,15 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -23197,9 +23276,15 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -23932,9 +24017,15 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -24390,9 +24481,15 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -24939,9 +25036,15 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -25675,9 +25778,15 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -26169,9 +26278,15 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CROSS_CUTTING_SIRS",
       "grouping": {
@@ -26698,9 +26813,15 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_CHEM_SHARED",
       "grouping": {
@@ -27221,9 +27342,15 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -27614,9 +27741,16 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -28133,9 +28267,16 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -28608,9 +28749,16 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -29167,9 +29315,16 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -29897,9 +30052,16 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -30355,9 +30517,16 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -30975,9 +31144,16 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -31481,9 +31657,16 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -31979,9 +32162,16 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_CHEM_SHARED",
       "grouping": {
@@ -32599,9 +32789,16 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CARS",
       "grouping": {
@@ -33031,9 +33228,16 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CROSS_CUTTING_SIRS",
       "grouping": {
@@ -33643,9 +33847,17 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -34031,9 +34243,17 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -34519,9 +34739,17 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -35000,9 +35228,17 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -35637,9 +35873,17 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -36055,9 +36299,17 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -36598,9 +36850,17 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -37208,9 +37468,17 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -37663,9 +37931,17 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -38286,9 +38562,17 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -38765,9 +39049,17 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CARS",
       "grouping": {
@@ -39396,9 +39688,18 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -40032,9 +40333,18 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -40524,9 +40834,18 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -41074,9 +41393,18 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -41556,9 +41884,18 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -42042,9 +42379,18 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -42458,9 +42804,18 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -43222,9 +43577,18 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CROSS_CUTTING_SIRS",
       "grouping": {
@@ -43802,9 +44166,18 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_CHEM_SHARED",
       "grouping": {
@@ -44444,9 +44817,18 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -44912,9 +45294,18 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -45469,9 +45860,19 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -45992,9 +46393,19 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -46569,9 +46980,19 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -47039,9 +47460,19 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -47583,9 +48014,19 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -48132,9 +48573,19 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -48564,9 +49015,19 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CARS",
       "grouping": {
@@ -48946,9 +49407,19 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CROSS_CUTTING_SIRS",
       "grouping": {
@@ -49633,9 +50104,19 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_CHEM_SHARED",
       "grouping": {
@@ -50188,9 +50669,19 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -50651,9 +51142,19 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -51425,9 +51926,20 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -51854,9 +52366,20 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -52465,9 +52988,20 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -52913,9 +53447,20 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -53521,9 +54066,20 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -54291,9 +54847,20 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -54881,9 +55448,20 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CARS",
       "grouping": {
@@ -55541,9 +56119,20 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CROSS_CUTTING_SIRS",
       "grouping": {
@@ -56113,9 +56702,20 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_CHEM_SHARED",
       "grouping": {
@@ -56633,9 +57233,20 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -57234,9 +57845,20 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -57903,9 +58525,21 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W09", "V3-AUTH-W10"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09",
+          "V3-AUTH-W10"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -58556,9 +59190,21 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W09", "V3-AUTH-W10"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09",
+          "V3-AUTH-W10"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -59187,9 +59833,21 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W09", "V3-AUTH-W10"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09",
+          "V3-AUTH-W10"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -60077,9 +60735,21 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W09", "V3-AUTH-W10"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09",
+          "V3-AUTH-W10"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -60831,9 +61501,21 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W09", "V3-AUTH-W10"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09",
+          "V3-AUTH-W10"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CROSS_CUTTING_SIRS",
       "grouping": {
@@ -62017,9 +62699,21 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W09", "V3-AUTH-W10"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09",
+          "V3-AUTH-W10"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_CHEM_SHARED",
       "grouping": {
@@ -62637,9 +63331,21 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W09", "V3-AUTH-W10"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09",
+          "V3-AUTH-W10"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "BIO_BIOCHEM",
       "grouping": {
@@ -63082,9 +63788,21 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W09", "V3-AUTH-W10"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09",
+          "V3-AUTH-W10"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CHEM_PHYS",
       "grouping": {
@@ -63885,9 +64603,21 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W09", "V3-AUTH-W10"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09",
+          "V3-AUTH-W10"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "PSYCH_SOC",
       "grouping": {
@@ -64506,9 +65236,21 @@
         }
       },
       "cross_lesson_similarity_audit": {
-        "comparison_wave_ids": ["V3-AUTH-W09", "V3-AUTH-W10"],
+        "comparison_wave_ids": [
+          "V3-AUTH-W00-PILOT-PORT",
+          "V3-AUTH-W01",
+          "V3-AUTH-W02",
+          "V3-AUTH-W03",
+          "V3-AUTH-W04",
+          "V3-AUTH-W05",
+          "V3-AUTH-W06",
+          "V3-AUTH-W07",
+          "V3-AUTH-W08",
+          "V3-AUTH-W09",
+          "V3-AUTH-W10"
+        ],
         "required": true,
-        "scope": "Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain."
+        "scope": "Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain."
       },
       "domain_bucket": "CARS",
       "grouping": {
@@ -65266,10 +66008,71 @@
   },
   "orchestration_policy": {
     "actual_maximum_concurrent_authors": 11,
+    "artifact_resource_limits": {
+      "enforcement": "Resolve real paths, inventory regular files, and enforce file-count/per-file/total-byte limits before whole-file reads; then enforce JSON nesting, collection-entry, and UTF-8 string limits before schema validation.",
+      "profiles": {
+        "browser_evidence": {
+          "max_file_bytes": 524288,
+          "max_json_collection_entries": 2000,
+          "max_json_depth": 24,
+          "max_json_string_bytes": 131072,
+          "max_regular_file_count": 32,
+          "max_total_bytes": 4194304
+        },
+        "build": {
+          "max_file_bytes": 2097152,
+          "max_json_collection_entries": 2000,
+          "max_json_depth": 24,
+          "max_json_string_bytes": 131072,
+          "max_regular_file_count": 64,
+          "max_total_bytes": 16777216
+        },
+        "candidate": {
+          "max_file_bytes": 2097152,
+          "max_json_collection_entries": 20000,
+          "max_json_depth": 64,
+          "max_json_string_bytes": 524288,
+          "max_regular_file_count": 128,
+          "max_total_bytes": 33554432
+        },
+        "receipt_log": {
+          "max_file_bytes": 524288,
+          "max_json_collection_entries": 5000,
+          "max_json_depth": 24,
+          "max_json_string_bytes": 131072,
+          "max_regular_file_count": 512,
+          "max_total_bytes": 33554432
+        },
+        "report": {
+          "max_file_bytes": 524288,
+          "max_json_collection_entries": 5000,
+          "max_json_depth": 32,
+          "max_json_string_bytes": 131072,
+          "max_regular_file_count": 32,
+          "max_total_bytes": 4194304
+        },
+        "review_bundle": {
+          "max_file_bytes": 2097152,
+          "max_json_collection_entries": 20000,
+          "max_json_depth": 64,
+          "max_json_string_bytes": 524288,
+          "max_regular_file_count": 16,
+          "max_total_bytes": 16777216
+        },
+        "service_deployment": {
+          "max_file_bytes": 524288,
+          "max_json_collection_entries": 2000,
+          "max_json_depth": 24,
+          "max_json_string_bytes": 131072,
+          "max_regular_file_count": 8,
+          "max_total_bytes": 2097152
+        }
+      }
+    },
     "assignment_materialization": "Never modify this generated plan. Generate a separate wave overlay, materialize all person/run identities and evidence there, and validate it against the SHA-256 of the exact checked plan bytes.",
     "assignment_overlay": {
       "generated_plan_mutation_forbidden": true,
-      "schema_version": "mcat-v3-cloud-authoring-wave-assignment-overlay-2",
+      "schema_version": "mcat-v3-cloud-authoring-wave-assignment-overlay-3",
       "stale_source_plan_hash_behavior": "FAIL_CLOSED",
       "template_path": "curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json",
       "validator_path": "scripts/validate-v3-cloud-authoring-wave-overlay.mjs"
@@ -65277,6 +66080,23 @@
     "authoring_unit": "one_lesson_per_author_agent",
     "clean_room": "New-authoring agents receive only shared allowlisted architecture/contract inputs and their own job record. Pilot agents additionally receive only their matching approved prototype after rights clearance.",
     "first_delivery_policy": "Use normalized relation IDs and their explicit fields. First-delivery ordinal is a deterministic ready-job tie-break, not a prerequisite inferred from array proximity.",
+    "foundation_integration_contract": {
+      "current_status": "BLOCKED_PENDING_SIGNED_HARDENED_FOUNDATION_PINSET",
+      "no_temporary_production_hashes": true,
+      "required_external_trust": "Production overlay validation requires an integration-authority public key supplied outside the overlay.",
+      "required_signed_pinset_fields": [
+        "exact_hardened_foundation_commit_sha",
+        "runtime_contract_version",
+        "lesson_definition_schema_id_and_sha256",
+        "exact_key_bearing_candidate_definition_path",
+        "candidate_validator_build_id_version_and_artifact_sha256",
+        "learner_dto_schema_id_sha256_and_all_representation_action_kinds",
+        "safe_projection_compiler_build_id_version_sha256_and_report_key_fingerprint",
+        "review_harness_build_id_version_sha256_and_report_key_fingerprint",
+        "scoring_service_build_id_version_and_artifact_sha256"
+      ],
+      "wave_entry_behavior": "W00_AND_ALL_LATER_WAVES_FAIL_CLOSED"
+    },
     "hard_dependency_policy": "A prior authoring wave is required only for a cross-lesson HARD_PREREQUISITE whose target is a nested KC point of use. Hard capstone requirements remain recorded but do not manufacture shell-first-delivery order.",
     "pilot_policy": "The five exact approved prototypes form one structure-and-port pilot. They remain internal drafts and confer no production publication status.",
     "production_author_batch_range": {
@@ -65299,28 +66119,26 @@
       "preregistered_efficacy_and_subgroup_gates",
       "final_publication_approval"
     ],
-    "statement": "Generated content is an internal draft until rights, scientific review, reviewed hashes, and efficacy gates pass."
+    "statement": "Generated content is an internal draft until rights, scientific review, reviewed hashes (integrity identifiers, not proof by themselves), signed/verifiable evidence, and efficacy gates pass."
   },
   "review_bundle_contract": {
     "allowed_bundle_kinds": ["BLIND_SOLVE", "ACCESSIBILITY_ONLY"],
     "author_branch_access_prohibited": true,
     "blind_solve_execution": "The solver submits real responses through the closed client to an ephemeral opaque integrator-controlled service that deploys the exact key-bearing candidate server-side and exposes no outcome overrides or protected authority.",
-    "bundle_manifest_schema_version": "mcat-v3-closed-sanitized-review-bundle-1",
+    "bundle_manifest_schema_version": "mcat-v3-closed-sanitized-review-bundle-2",
     "bundle_sha256_required": true,
     "closed_schema_unknown_field_behavior": "REJECT",
+    "derivation_requirement": "Every learner-safe file must match a detached-signature-verified report from the exact compiler build in the externally trusted integration pinset.",
     "exact_allowed_file_sets": {
       "ACCESSIBILITY_ONLY": [
-        "accessibility-behavior.json",
-        "accessibility-path-simulation.json",
+        "accessibility-harness-config.json",
         "bundle-manifest.json",
-        "learner-safe-activities.json",
-        "learner-safe-views.json"
+        "learner-safe-envelope.json"
       ],
       "BLIND_SOLVE": [
         "blind-client-runtime.json",
         "bundle-manifest.json",
-        "learner-safe-activities.json",
-        "learner-safe-views.json"
+        "learner-safe-envelope.json"
       ]
     },
     "excluded_content_classes": [
@@ -65334,17 +66152,17 @@
     "key_bearing_artifact_access_prohibited": true,
     "protected_field_scan_report_sha256_required": true,
     "reviewed_candidate_sha256_required": true,
-    "reviewer_outcome_simulation_policy": "Allowed only in the closed ACCESSIBILITY_ONLY path-simulation document; forbidden as BLIND_SOLVE evidence.",
-    "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V1",
+    "reviewer_outcome_simulation_policy": "Self-asserted path labels or reviewer-controlled outcomes are never accepted as blind-solve or accessibility evidence.",
+    "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V2",
     "structured_json_only_v1": true
   },
-  "schema_version": "mcat-v3-cloud-authoring-orchestration-3",
+  "schema_version": "mcat-v3-cloud-authoring-orchestration-4",
   "severity_taxonomy": [
     {
       "blocks_internal_draft_integration": true,
       "blocks_publication": true,
       "definition": "Critical integrity or safety failure: plan-pin/canonical-scope corruption, protected-content or key exposure, unauthorized rights use, held-scope activation, bypass activation, or a defect requiring immediate containment.",
-      "required_disposition": "Stop the wave, contain exposure, invalidate affected artifacts/hashes, and resolve before revalidation.",
+      "required_disposition": "Stop the wave, contain exposure, invalidate affected artifacts/evidence, and resolve before revalidation.",
       "severity": "P0"
     },
     {
@@ -65406,6 +66224,10 @@
     {
       "constraint_id": "UC04_EMPIRICAL_GATES",
       "effect": "Learner validation, calibrated evidence recipes, exact efficacy thresholds, and broad-publication evidence do not yet exist; no wave checkpoint can waive them."
+    },
+    {
+      "constraint_id": "UC05_HARDENED_FOUNDATION_INTEGRATION_PINS",
+      "effect": "W00 and every later wave are blocked until the exact corrected foundation commit, LessonDefinition/runtime schema, learner DTO schema, candidate validator, safe-projection compiler, standard browser/accessibility harness, scoring-service builds, report-signing keys, and external integration trust root are materialized in a detached-signature-verified pinset. This authoring branch does not guess or implement those runtime assets."
     }
   ],
   "waves": [
@@ -65417,10 +66239,11 @@
         "entry_requires": [
           "source_plan_check_passes",
           "all_required_prior_wave_checkpoints_merged",
-          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256"
+          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256",
+          "externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized"
         ],
         "exit_requires": [
-          "materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence",
+          "materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence",
           "no_open_p0_or_p1_findings",
           "every_open_p2_has_containment_owner_due_date_and_publication_block",
           "opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete",
@@ -65463,10 +66286,11 @@
         "entry_requires": [
           "source_plan_check_passes",
           "all_required_prior_wave_checkpoints_merged",
-          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256"
+          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256",
+          "externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized"
         ],
         "exit_requires": [
-          "materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence",
+          "materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence",
           "no_open_p0_or_p1_findings",
           "every_open_p2_has_containment_owner_due_date_and_publication_block",
           "opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete",
@@ -65521,10 +66345,11 @@
         "entry_requires": [
           "source_plan_check_passes",
           "all_required_prior_wave_checkpoints_merged",
-          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256"
+          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256",
+          "externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized"
         ],
         "exit_requires": [
-          "materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence",
+          "materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence",
           "no_open_p0_or_p1_findings",
           "every_open_p2_has_containment_owner_due_date_and_publication_block",
           "opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete",
@@ -65566,7 +66391,7 @@
         "V3-LES-631070"
       ],
       "required_prior_wave_ids": ["V3-AUTH-W01"],
-      "similarity_comparison_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W02"],
+      "similarity_comparison_wave_ids": ["V3-AUTH-W00-PILOT-PORT", "V3-AUTH-W01", "V3-AUTH-W02"],
       "wave_id": "V3-AUTH-W02",
       "wave_kind": "new_clean_room_authoring",
       "wave_ordinal": 2
@@ -65579,10 +66404,11 @@
         "entry_requires": [
           "source_plan_check_passes",
           "all_required_prior_wave_checkpoints_merged",
-          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256"
+          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256",
+          "externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized"
         ],
         "exit_requires": [
-          "materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence",
+          "materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence",
           "no_open_p0_or_p1_findings",
           "every_open_p2_has_containment_owner_due_date_and_publication_block",
           "opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete",
@@ -65624,7 +66450,12 @@
         "V3-LES-867084"
       ],
       "required_prior_wave_ids": [],
-      "similarity_comparison_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W03"],
+      "similarity_comparison_wave_ids": [
+        "V3-AUTH-W00-PILOT-PORT",
+        "V3-AUTH-W01",
+        "V3-AUTH-W02",
+        "V3-AUTH-W03"
+      ],
       "wave_id": "V3-AUTH-W03",
       "wave_kind": "new_clean_room_authoring",
       "wave_ordinal": 3
@@ -65637,10 +66468,11 @@
         "entry_requires": [
           "source_plan_check_passes",
           "all_required_prior_wave_checkpoints_merged",
-          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256"
+          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256",
+          "externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized"
         ],
         "exit_requires": [
-          "materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence",
+          "materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence",
           "no_open_p0_or_p1_findings",
           "every_open_p2_has_containment_owner_due_date_and_publication_block",
           "opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete",
@@ -65688,7 +66520,13 @@
         "V3-LES-546762"
       ],
       "required_prior_wave_ids": ["V3-AUTH-W02"],
-      "similarity_comparison_wave_ids": ["V3-AUTH-W03", "V3-AUTH-W04"],
+      "similarity_comparison_wave_ids": [
+        "V3-AUTH-W00-PILOT-PORT",
+        "V3-AUTH-W01",
+        "V3-AUTH-W02",
+        "V3-AUTH-W03",
+        "V3-AUTH-W04"
+      ],
       "wave_id": "V3-AUTH-W04",
       "wave_kind": "new_clean_room_authoring",
       "wave_ordinal": 4
@@ -65701,10 +66539,11 @@
         "entry_requires": [
           "source_plan_check_passes",
           "all_required_prior_wave_checkpoints_merged",
-          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256"
+          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256",
+          "externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized"
         ],
         "exit_requires": [
-          "materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence",
+          "materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence",
           "no_open_p0_or_p1_findings",
           "every_open_p2_has_containment_owner_due_date_and_publication_block",
           "opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete",
@@ -65753,7 +66592,14 @@
         "V3-LES-789208"
       ],
       "required_prior_wave_ids": ["V3-AUTH-W04"],
-      "similarity_comparison_wave_ids": ["V3-AUTH-W04", "V3-AUTH-W05"],
+      "similarity_comparison_wave_ids": [
+        "V3-AUTH-W00-PILOT-PORT",
+        "V3-AUTH-W01",
+        "V3-AUTH-W02",
+        "V3-AUTH-W03",
+        "V3-AUTH-W04",
+        "V3-AUTH-W05"
+      ],
       "wave_id": "V3-AUTH-W05",
       "wave_kind": "new_clean_room_authoring",
       "wave_ordinal": 5
@@ -65766,10 +66612,11 @@
         "entry_requires": [
           "source_plan_check_passes",
           "all_required_prior_wave_checkpoints_merged",
-          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256"
+          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256",
+          "externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized"
         ],
         "exit_requires": [
-          "materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence",
+          "materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence",
           "no_open_p0_or_p1_findings",
           "every_open_p2_has_containment_owner_due_date_and_publication_block",
           "opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete",
@@ -65811,7 +66658,15 @@
         "V3-LES-269427"
       ],
       "required_prior_wave_ids": ["V3-AUTH-W05"],
-      "similarity_comparison_wave_ids": ["V3-AUTH-W05", "V3-AUTH-W06"],
+      "similarity_comparison_wave_ids": [
+        "V3-AUTH-W00-PILOT-PORT",
+        "V3-AUTH-W01",
+        "V3-AUTH-W02",
+        "V3-AUTH-W03",
+        "V3-AUTH-W04",
+        "V3-AUTH-W05",
+        "V3-AUTH-W06"
+      ],
       "wave_id": "V3-AUTH-W06",
       "wave_kind": "new_clean_room_authoring",
       "wave_ordinal": 6
@@ -65824,10 +66679,11 @@
         "entry_requires": [
           "source_plan_check_passes",
           "all_required_prior_wave_checkpoints_merged",
-          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256"
+          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256",
+          "externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized"
         ],
         "exit_requires": [
-          "materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence",
+          "materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence",
           "no_open_p0_or_p1_findings",
           "every_open_p2_has_containment_owner_due_date_and_publication_block",
           "opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete",
@@ -65875,7 +66731,16 @@
         "V3-LES-774232"
       ],
       "required_prior_wave_ids": ["V3-AUTH-W01", "V3-AUTH-W04"],
-      "similarity_comparison_wave_ids": ["V3-AUTH-W06", "V3-AUTH-W07"],
+      "similarity_comparison_wave_ids": [
+        "V3-AUTH-W00-PILOT-PORT",
+        "V3-AUTH-W01",
+        "V3-AUTH-W02",
+        "V3-AUTH-W03",
+        "V3-AUTH-W04",
+        "V3-AUTH-W05",
+        "V3-AUTH-W06",
+        "V3-AUTH-W07"
+      ],
       "wave_id": "V3-AUTH-W07",
       "wave_kind": "new_clean_room_authoring",
       "wave_ordinal": 7
@@ -65888,10 +66753,11 @@
         "entry_requires": [
           "source_plan_check_passes",
           "all_required_prior_wave_checkpoints_merged",
-          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256"
+          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256",
+          "externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized"
         ],
         "exit_requires": [
-          "materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence",
+          "materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence",
           "no_open_p0_or_p1_findings",
           "every_open_p2_has_containment_owner_due_date_and_publication_block",
           "opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete",
@@ -65940,7 +66806,17 @@
         "V3-LES-258629"
       ],
       "required_prior_wave_ids": ["V3-AUTH-W02", "V3-AUTH-W04", "V3-AUTH-W05", "V3-AUTH-W07"],
-      "similarity_comparison_wave_ids": ["V3-AUTH-W07", "V3-AUTH-W08"],
+      "similarity_comparison_wave_ids": [
+        "V3-AUTH-W00-PILOT-PORT",
+        "V3-AUTH-W01",
+        "V3-AUTH-W02",
+        "V3-AUTH-W03",
+        "V3-AUTH-W04",
+        "V3-AUTH-W05",
+        "V3-AUTH-W06",
+        "V3-AUTH-W07",
+        "V3-AUTH-W08"
+      ],
       "wave_id": "V3-AUTH-W08",
       "wave_kind": "new_clean_room_authoring",
       "wave_ordinal": 8
@@ -65953,10 +66829,11 @@
         "entry_requires": [
           "source_plan_check_passes",
           "all_required_prior_wave_checkpoints_merged",
-          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256"
+          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256",
+          "externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized"
         ],
         "exit_requires": [
-          "materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence",
+          "materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence",
           "no_open_p0_or_p1_findings",
           "every_open_p2_has_containment_owner_due_date_and_publication_block",
           "opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete",
@@ -66005,7 +66882,18 @@
         "V3-LES-563427"
       ],
       "required_prior_wave_ids": [],
-      "similarity_comparison_wave_ids": ["V3-AUTH-W08", "V3-AUTH-W09"],
+      "similarity_comparison_wave_ids": [
+        "V3-AUTH-W00-PILOT-PORT",
+        "V3-AUTH-W01",
+        "V3-AUTH-W02",
+        "V3-AUTH-W03",
+        "V3-AUTH-W04",
+        "V3-AUTH-W05",
+        "V3-AUTH-W06",
+        "V3-AUTH-W07",
+        "V3-AUTH-W08",
+        "V3-AUTH-W09"
+      ],
       "wave_id": "V3-AUTH-W09",
       "wave_kind": "new_clean_room_authoring",
       "wave_ordinal": 9
@@ -66018,10 +66906,11 @@
         "entry_requires": [
           "source_plan_check_passes",
           "all_required_prior_wave_checkpoints_merged",
-          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256"
+          "separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256",
+          "externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized"
         ],
         "exit_requires": [
-          "materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence",
+          "materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence",
           "no_open_p0_or_p1_findings",
           "every_open_p2_has_containment_owner_due_date_and_publication_block",
           "opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete",
@@ -66073,7 +66962,19 @@
         "V3-AUTH-W02",
         "V3-AUTH-W08"
       ],
-      "similarity_comparison_wave_ids": ["V3-AUTH-W09", "V3-AUTH-W10"],
+      "similarity_comparison_wave_ids": [
+        "V3-AUTH-W00-PILOT-PORT",
+        "V3-AUTH-W01",
+        "V3-AUTH-W02",
+        "V3-AUTH-W03",
+        "V3-AUTH-W04",
+        "V3-AUTH-W05",
+        "V3-AUTH-W06",
+        "V3-AUTH-W07",
+        "V3-AUTH-W08",
+        "V3-AUTH-W09",
+        "V3-AUTH-W10"
+      ],
       "wave_id": "V3-AUTH-W10",
       "wave_kind": "new_clean_room_authoring",
       "wave_ordinal": 10
@@ -66120,31 +67021,31 @@
     {
       "assignment_key": "release_integrator",
       "order": 7,
-      "output": "candidate_file_manifest_hash_and_candidate_bound_gate_reports",
+      "output": "schema_valid_candidate_file_manifest_and_assigned_reviewer_signed_gate_reports",
       "stage": "candidate_artifact_freeze_and_g01_g06_evidence"
     },
     {
       "assignment_key": "release_integrator",
       "order": 8,
-      "output": "closed_client_hashes_service_hash_and_acl_isolation_attestation",
+      "output": "compiler_signed_closed_clients_recomputed_service_deployment_and_authority_signed_acl_attestation",
       "stage": "closed_clients_and_opaque_blind_service_deployment"
     },
     {
       "assignment_key": "blind_solver",
       "order": 9,
-      "output": "real_response_attempt_log_path_coverage_and_approval",
+      "output": "service_signed_receipts_protocol_derived_path_coverage_and_signed_approval",
       "stage": "blind_solve"
     },
     {
       "assignment_key": "accessibility_technical_auditor",
       "order": 10,
-      "output": "accessibility_technical_record",
+      "output": "harness_signed_browser_evidence_and_assigned_auditor_signed_approval",
       "stage": "accessibility_technical_audit"
     },
     {
       "assignment_key": "similarity_auditor",
       "order": 11,
-      "output": "wave_similarity_record",
+      "output": "complete_cumulative_corpus_manifest_and_multi_reviewer_signed_similarity_report",
       "stage": "cross_lesson_similarity_audit"
     },
     {

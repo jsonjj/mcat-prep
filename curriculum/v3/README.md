@@ -69,8 +69,11 @@ node --test \
   acceptance gates, role-separation slots, and the fixed 11-wave schedule.
 - `v3-cloud-authoring-wave-assignment-overlay.template.json` is a deterministic unmaterialized
   W00 example. The overlay CLI generates one separate plan-hash-pinned file per wave and validates
-  actual person/run assignments, source ledgers, recomputed candidate artifacts, closed review
-  clients, opaque blind-service evidence, and complete candidate-bound G01–G10 records.
+  actual person/run assignments, externally signed foundation pins and reviewer credentials,
+  pinned-schema-valid candidate artifacts, compiler-derived closed clients, signed opaque-service
+  receipts, browser/a11y execution, cumulative-corpus similarity, and complete signed
+  candidate-bound G01–G10 records. Production `validate` additionally requires
+  `--integration-trust-root` pointing to a public key supplied outside the overlay.
 - `v3-cloud-authoring-runbook.md` defines clean-room inputs, the lesson contract, independent review
   pipeline, integration checkpoints, publication boundary, and unresolved launch constraints.
 
@@ -79,6 +82,13 @@ assignments/evidence only in a separate overlay; stale plan hashes fail closed. 
 jobs are an internal port pilot, not production lesson definitions; all generated content remains
 internal draft until the runbook's rights, scientific review, reviewed-hash, and efficacy gates
 pass.
+
+W00 is intentionally blocked until the corrected lesson-platform foundation provides an exact
+commit, runtime/candidate and learner DTO schemas, candidate validator, learner-safe compiler,
+standard browser/a11y harness, scoring-service builds, build signing keys, external integration
+trust root, and signed pinset. Test fixtures are visibly fixture-only and cannot satisfy production
+validation. Artifact hashes identify exact bytes; they are not evidence of authorship or execution
+without the required signatures, trust roots, and execution/review records.
 
 ## Included
 

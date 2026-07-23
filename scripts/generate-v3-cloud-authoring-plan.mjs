@@ -112,7 +112,7 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     required_evidence: [
       'An independent rights reviewer approves a source ledger recording URLs, access dates, licenses or terms, model-processing rights, and source ceilings before authoring.',
       'All model inputs exclude protected items, answer keys, copied expressive prose, and unauthorized prototype material.',
-      'Figures, tables, passages, examples, and items are original or explicitly licensed, with provenance and source-output similarity results recorded.',
+      'Figures, tables, passages, examples, and items are original or explicitly licensed; closed G05 and source-output reports are reread, hash-checked, assigned-reviewer-identity-bound, and signature-verified.',
     ],
   },
   {
@@ -133,7 +133,8 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     required_evidence: [
       'A solver distinct from the author and final approver answers real learner-safe activities through a closed safe client connected to an ephemeral opaque integrator-controlled scoring service.',
       'The service deploys the exact candidate hash server-side, accepts submitted responses, returns ordinary learner-authorized feedback, and exposes no source branch, server definition, protected scoring material, pre-response rationales, or outcome overrides.',
-      'Candidate, safe-client, service-deployment, ACL/isolation-attestation, attempt-log, path-coverage, solver-recipient, and approval hashes/identities are bound in the overlay.',
+      'Every request/response has an ordered detached-signature-verified service receipt; path coverage is derived from valid request/outcome/state traces rather than trusted labels.',
+      'The service deployment is recomputed from a closed manifest, its receipt key is bound by an externally signed deployment/ACL attestation, and unsigned/self-asserted logs cannot satisfy G07.',
     ],
   },
   {
@@ -143,8 +144,8 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     blocks_publication: true,
     required_evidence: [
       'The reviewer receives a closed accessibility-only client with the same protected-material and branch exclusions as blind solve.',
-      'Reviewer-controlled outcome simulation is confined to accessibility/technical path testing and is not accepted as blind-solve evidence.',
-      'Keyboard, focus, semantics, contrast, zoom/reflow, reduced-motion, nonvisual representation, and accommodation behavior pass.',
+      'A pinset-bound standard browser harness signs execution evidence; static accessibility assertions or path strings cannot satisfy G08.',
+      'Keyboard, focus, semantics, contrast, 320px reflow, 200% zoom, reduced-motion, nonvisual representation, transcript/caption, and accommodation behavior pass.',
       'Accessible alternatives preserve the intended construct and activity-graph behavior.',
     ],
   },
@@ -154,7 +155,7 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     blocks_internal_draft_integration: true,
     blocks_publication: true,
     required_evidence: [
-      'The draft is compared with its wave and prior integrated wave for copied language, repeated scenarios, answer-pattern leakage, and template overfitting.',
+      'The candidate is compared with its wave and a signed cumulative manifest covering every previously integrated wave for copied language, repeated scenarios, answer-pattern leakage, and template overfitting.',
       'Any intentional reuse is bounded, justified, and does not collapse distinct KC identities or item families.',
     ],
   },
@@ -171,8 +172,8 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     ],
     required_assignment_roles: ['DOMAIN_SCIENTIFIC_FACT_CHECKER'],
     required_evidence: [
-      'One explicit independent fact-check assignment exists for every required job specialty and signs off against the declared source ceiling, scope, assumptions, equations, representations, and boundary conditions.',
-      'After a CARS passage subject is selected, an additional passage-subject fact checker distinct from the author and CARS reasoning editor signs off.',
+      'One explicit independent fact-check assignment exists for every required job specialty; each closed report is reread, hash-checked, identity/slot/specialty-bound, and detached-signature-verified.',
+      'After a CARS passage subject is selected, an additional checker distinct from the author and CARS reasoning editor signs a subject- and candidate-bound closed report.',
       'Present-day authority limitations and unresolved holds are not converted into current endorsement or efficacy claims.',
     ],
   },
@@ -241,31 +242,32 @@ const WORKFLOW_STAGES = Object.freeze([
     order: 7,
     stage: 'candidate_artifact_freeze_and_g01_g06_evidence',
     assignment_key: 'release_integrator',
-    output: 'candidate_file_manifest_hash_and_candidate_bound_gate_reports',
+    output: 'schema_valid_candidate_file_manifest_and_assigned_reviewer_signed_gate_reports',
   },
   {
     order: 8,
     stage: 'closed_clients_and_opaque_blind_service_deployment',
     assignment_key: 'release_integrator',
-    output: 'closed_client_hashes_service_hash_and_acl_isolation_attestation',
+    output:
+      'compiler_signed_closed_clients_recomputed_service_deployment_and_authority_signed_acl_attestation',
   },
   {
     order: 9,
     stage: 'blind_solve',
     assignment_key: 'blind_solver',
-    output: 'real_response_attempt_log_path_coverage_and_approval',
+    output: 'service_signed_receipts_protocol_derived_path_coverage_and_signed_approval',
   },
   {
     order: 10,
     stage: 'accessibility_technical_audit',
     assignment_key: 'accessibility_technical_auditor',
-    output: 'accessibility_technical_record',
+    output: 'harness_signed_browser_evidence_and_assigned_auditor_signed_approval',
   },
   {
     order: 11,
     stage: 'cross_lesson_similarity_audit',
     assignment_key: 'similarity_auditor',
-    output: 'wave_similarity_record',
+    output: 'complete_cumulative_corpus_manifest_and_multi_reviewer_signed_similarity_report',
   },
   {
     order: 12,
@@ -289,7 +291,7 @@ const SEVERITY_TAXONOMY = Object.freeze([
     blocks_internal_draft_integration: true,
     blocks_publication: true,
     required_disposition:
-      'Stop the wave, contain exposure, invalidate affected artifacts/hashes, and resolve before revalidation.',
+      'Stop the wave, contain exposure, invalidate affected artifacts/evidence, and resolve before revalidation.',
   },
   {
     severity: 'P1',
@@ -1287,9 +1289,10 @@ function buildWaves(baseJobs) {
           'source_plan_check_passes',
           'all_required_prior_wave_checkpoints_merged',
           'separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256',
+          'externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized',
         ],
         exit_requires: [
-          'materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence',
+          'materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence',
           'no_open_p0_or_p1_findings',
           'every_open_p2_has_containment_owner_due_date_and_publication_block',
           'opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete',
@@ -1310,10 +1313,9 @@ function buildWaves(baseJobs) {
       ),
       lesson_ids: group.jobs.map((job) => job.lesson_id),
       required_prior_wave_ids: dependencyWaveIds,
-      similarity_comparison_wave_ids: [
-        ...(index > 0 ? [waveJobGroups[index - 1].wave_id] : []),
-        group.wave_id,
-      ],
+      similarity_comparison_wave_ids: waveJobGroups
+        .slice(0, index + 1)
+        .map((waveGroup) => waveGroup.wave_id),
       wave_id: group.wave_id,
       wave_kind: group.wave_kind,
       wave_ordinal: group.wave_ordinal,
@@ -1353,7 +1355,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
           comparison_wave_ids: wave.similarity_comparison_wave_ids,
           required: true,
           scope:
-            'Compare against every draft in this wave and the immediately prior integrated wave, across domains as well as within the job domain.',
+            'Compare against every candidate in this wave and the cryptographically pinned complete previously integrated corpus, across domains as well as within the job domain.',
         },
         wave_assignment: {
           wave_id: wave.wave_id,
@@ -1435,14 +1437,94 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'Never modify this generated plan. Generate a separate wave overlay, materialize all person/run identities and evidence there, and validate it against the SHA-256 of the exact checked plan bytes.',
       assignment_overlay: {
         generated_plan_mutation_forbidden: true,
-        schema_version: 'mcat-v3-cloud-authoring-wave-assignment-overlay-2',
+        schema_version: 'mcat-v3-cloud-authoring-wave-assignment-overlay-3',
         stale_source_plan_hash_behavior: 'FAIL_CLOSED',
         template_path: 'curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json',
         validator_path: 'scripts/validate-v3-cloud-authoring-wave-overlay.mjs',
       },
+      artifact_resource_limits: {
+        enforcement:
+          'Resolve real paths, inventory regular files, and enforce file-count/per-file/total-byte limits before whole-file reads; then enforce JSON nesting, collection-entry, and UTF-8 string limits before schema validation.',
+        profiles: {
+          browser_evidence: {
+            max_file_bytes: 524288,
+            max_json_collection_entries: 2000,
+            max_json_depth: 24,
+            max_json_string_bytes: 131072,
+            max_regular_file_count: 32,
+            max_total_bytes: 4194304,
+          },
+          build: {
+            max_file_bytes: 2097152,
+            max_json_collection_entries: 2000,
+            max_json_depth: 24,
+            max_json_string_bytes: 131072,
+            max_regular_file_count: 64,
+            max_total_bytes: 16777216,
+          },
+          candidate: {
+            max_file_bytes: 2097152,
+            max_json_collection_entries: 20000,
+            max_json_depth: 64,
+            max_json_string_bytes: 524288,
+            max_regular_file_count: 128,
+            max_total_bytes: 33554432,
+          },
+          receipt_log: {
+            max_file_bytes: 524288,
+            max_json_collection_entries: 5000,
+            max_json_depth: 24,
+            max_json_string_bytes: 131072,
+            max_regular_file_count: 512,
+            max_total_bytes: 33554432,
+          },
+          report: {
+            max_file_bytes: 524288,
+            max_json_collection_entries: 5000,
+            max_json_depth: 32,
+            max_json_string_bytes: 131072,
+            max_regular_file_count: 32,
+            max_total_bytes: 4194304,
+          },
+          review_bundle: {
+            max_file_bytes: 2097152,
+            max_json_collection_entries: 20000,
+            max_json_depth: 64,
+            max_json_string_bytes: 524288,
+            max_regular_file_count: 16,
+            max_total_bytes: 16777216,
+          },
+          service_deployment: {
+            max_file_bytes: 524288,
+            max_json_collection_entries: 2000,
+            max_json_depth: 24,
+            max_json_string_bytes: 131072,
+            max_regular_file_count: 8,
+            max_total_bytes: 2097152,
+          },
+        },
+      },
       authoring_unit: 'one_lesson_per_author_agent',
       clean_room:
         'New-authoring agents receive only shared allowlisted architecture/contract inputs and their own job record. Pilot agents additionally receive only their matching approved prototype after rights clearance.',
+      foundation_integration_contract: {
+        current_status: 'BLOCKED_PENDING_SIGNED_HARDENED_FOUNDATION_PINSET',
+        no_temporary_production_hashes: true,
+        required_external_trust:
+          'Production overlay validation requires an integration-authority public key supplied outside the overlay.',
+        required_signed_pinset_fields: [
+          'exact_hardened_foundation_commit_sha',
+          'runtime_contract_version',
+          'lesson_definition_schema_id_and_sha256',
+          'exact_key_bearing_candidate_definition_path',
+          'candidate_validator_build_id_version_and_artifact_sha256',
+          'learner_dto_schema_id_sha256_and_all_representation_action_kinds',
+          'safe_projection_compiler_build_id_version_sha256_and_report_key_fingerprint',
+          'review_harness_build_id_version_sha256_and_report_key_fingerprint',
+          'scoring_service_build_id_version_and_artifact_sha256',
+        ],
+        wave_entry_behavior: 'W00_AND_ALL_LATER_WAVES_FAIL_CLOSED',
+      },
       first_delivery_policy:
         'Use normalized relation IDs and their explicit fields. First-delivery ordinal is a deterministic ready-job tie-break, not a prerequisite inferred from array proximity.',
       hard_dependency_policy:
@@ -1462,7 +1544,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       author_branch_access_prohibited: true,
       blind_solve_execution:
         'The solver submits real responses through the closed client to an ephemeral opaque integrator-controlled service that deploys the exact key-bearing candidate server-side and exposes no outcome overrides or protected authority.',
-      bundle_manifest_schema_version: 'mcat-v3-closed-sanitized-review-bundle-1',
+      bundle_manifest_schema_version: 'mcat-v3-closed-sanitized-review-bundle-2',
       bundle_sha256_required: true,
       closed_schema_unknown_field_behavior: 'REJECT',
       excluded_content_classes: [
@@ -1475,25 +1557,24 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       ],
       exact_allowed_file_sets: {
         ACCESSIBILITY_ONLY: [
-          'accessibility-behavior.json',
-          'accessibility-path-simulation.json',
+          'accessibility-harness-config.json',
           'bundle-manifest.json',
-          'learner-safe-activities.json',
-          'learner-safe-views.json',
+          'learner-safe-envelope.json',
         ],
         BLIND_SOLVE: [
           'blind-client-runtime.json',
           'bundle-manifest.json',
-          'learner-safe-activities.json',
-          'learner-safe-views.json',
+          'learner-safe-envelope.json',
         ],
       },
       key_bearing_artifact_access_prohibited: true,
       protected_field_scan_report_sha256_required: true,
       reviewed_candidate_sha256_required: true,
+      derivation_requirement:
+        'Every learner-safe file must match a detached-signature-verified report from the exact compiler build in the externally trusted integration pinset.',
       reviewer_outcome_simulation_policy:
-        'Allowed only in the closed ACCESSIBILITY_ONLY path-simulation document; forbidden as BLIND_SOLVE evidence.',
-      scanner_id: 'V3_CLOSED_REVIEW_BUNDLE_SCAN_V1',
+        'Self-asserted path labels or reviewer-controlled outcomes are never accepted as blind-solve or accessibility evidence.',
+      scanner_id: 'V3_CLOSED_REVIEW_BUNDLE_SCAN_V2',
       structured_json_only_v1: true,
     },
     internal_integration_evidence_contract: {
@@ -1503,15 +1584,25 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       opaque_blind_service_evidence: [
         'exact_candidate_sha256',
         'closed_safe_client_sha256',
-        'service_deployment_artifact_sha256',
-        'acl_branch_isolation_attestation_sha256',
+        'recomputed_closed_service_deployment_artifact_sha256',
+        'externally_signed_acl_branch_isolation_attestation',
+        'pinned_per_deployment_receipt_signing_key',
         'solver_person_and_run_ids',
-        'real_response_attempt_log_sha256',
-        'required_path_coverage',
-        'blind_solve_approval',
+        'detached_signature_verified_request_response_receipts',
+        'protocol_derived_semantic_path_coverage',
+        'signed_blind_solve_approval',
       ],
+      production_trust_requirement:
+        'The validator requires an external integration trust-root public key; overlay-supplied keys alone are not trusted.',
+      report_authenticity:
+        'Consequential G01-G10 reports require externally credentialed assigned-reviewer identities and detached signatures; build-issued reports require signed pinset-bound keys.',
+      rights_and_domain_report_contract:
+        'Every G05 rights/source-similarity and G10 specialty/CARS-subject record has a repository-relative path, closed unknown-field-rejecting schema, recomputed byte hash, exact ledger/candidate/slot/person/run/specialty/subject pins, and detached signature.',
+      safe_projection_and_accessibility_contract:
+        'Compiler-signed exact output manifests prove derivation from the pinned candidate; harness-signed closed browser evidence and assigned-auditor approval are required for G08.',
       stale_or_missing_evidence_behavior: 'FAIL_CLOSED',
-      wave_similarity_scope: 'current_wave_plus_declared_prior_comparison_waves',
+      wave_similarity_scope:
+        'current_wave_plus_integration_authority_signed_complete_previously_integrated_corpus',
     },
     severity_taxonomy: SEVERITY_TAXONOMY,
     source_ledger_contract: {
@@ -1551,9 +1642,9 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'final_publication_approval',
       ],
       statement:
-        'Generated content is an internal draft until rights, scientific review, reviewed hashes, and efficacy gates pass.',
+        'Generated content is an internal draft until rights, scientific review, reviewed hashes (integrity identifiers, not proof by themselves), signed/verifiable evidence, and efficacy gates pass.',
     },
-    schema_version: 'mcat-v3-cloud-authoring-orchestration-3',
+    schema_version: 'mcat-v3-cloud-authoring-orchestration-4',
     unresolved_constraints: [
       {
         constraint_id: 'UC01_PROTOTYPE_ARTIFACTS',
@@ -1575,6 +1666,11 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         effect:
           'Learner validation, calibrated evidence recipes, exact efficacy thresholds, and broad-publication evidence do not yet exist; no wave checkpoint can waive them.',
       },
+      {
+        constraint_id: 'UC05_HARDENED_FOUNDATION_INTEGRATION_PINS',
+        effect:
+          'W00 and every later wave are blocked until the exact corrected foundation commit, LessonDefinition/runtime schema, learner DTO schema, candidate validator, safe-projection compiler, standard browser/accessibility harness, scoring-service builds, report-signing keys, and external integration trust root are materialized in a detached-signature-verified pinset. This authoring branch does not guess or implement those runtime assets.',
+      },
     ],
     waves,
     workflow: WORKFLOW_STAGES,
@@ -1586,7 +1682,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
 
 function validateAuthoringPlan(plan, sourceManifest) {
   const indexes = validateSourceManifest(sourceManifest);
-  assert.equal(plan.schema_version, 'mcat-v3-cloud-authoring-orchestration-3');
+  assert.equal(plan.schema_version, 'mcat-v3-cloud-authoring-orchestration-4');
   assert.equal(plan.jobs.length, EXPECTED.counts.lessons);
 
   const canonicalReferencePattern =
@@ -1844,6 +1940,13 @@ function validateAuthoringPlan(plan, sourceManifest) {
   assert.equal(pilotWave.wave_id, 'V3-AUTH-W00-PILOT-PORT');
   assertExactArray(pilotWave.lesson_ids, PROTOTYPE_LESSON_IDS, 'pilot wave lessons');
   assert.equal(pilotWave.job_count, PROTOTYPE_LESSON_IDS.length);
+  for (const [index, wave] of plan.waves.entries()) {
+    assertExactArray(
+      wave.similarity_comparison_wave_ids,
+      plan.waves.slice(0, index + 1).map((candidate) => candidate.wave_id),
+      `${wave.wave_id} cumulative similarity waves`,
+    );
+  }
 
   const waveOrdinalByLessonId = new Map(
     plan.waves.flatMap((wave) => wave.lesson_ids.map((lessonId) => [lessonId, wave.wave_ordinal])),
@@ -1870,12 +1973,24 @@ function validateAuthoringPlan(plan, sourceManifest) {
 
   assert.equal(plan.orchestration_policy.production_publication_default, false);
   assert.equal(
+    plan.orchestration_policy.foundation_integration_contract.current_status,
+    'BLOCKED_PENDING_SIGNED_HARDENED_FOUNDATION_PINSET',
+  );
+  assert.equal(
+    plan.orchestration_policy.artifact_resource_limits.profiles.candidate.max_regular_file_count,
+    128,
+  );
+  assert.equal(
+    plan.orchestration_policy.artifact_resource_limits.profiles.report.max_file_bytes,
+    524288,
+  );
+  assert.equal(
     plan.orchestration_policy.assignment_overlay.schema_version,
-    'mcat-v3-cloud-authoring-wave-assignment-overlay-2',
+    'mcat-v3-cloud-authoring-wave-assignment-overlay-3',
   );
   assert.equal(
     plan.review_bundle_contract.bundle_manifest_schema_version,
-    'mcat-v3-closed-sanitized-review-bundle-1',
+    'mcat-v3-closed-sanitized-review-bundle-2',
   );
   assert.equal(
     plan.orchestration_policy.assignment_overlay.generated_plan_mutation_forbidden,
@@ -1891,7 +2006,7 @@ function validateAuthoringPlan(plan, sourceManifest) {
   );
   assert.equal(
     plan.publication_policy.statement,
-    'Generated content is an internal draft until rights, scientific review, reviewed hashes, and efficacy gates pass.',
+    'Generated content is an internal draft until rights, scientific review, reviewed hashes (integrity identifiers, not proof by themselves), signed/verifiable evidence, and efficacy gates pass.',
   );
   return true;
 }
