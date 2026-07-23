@@ -523,8 +523,6 @@ export function compileCanonicalLessonBinding(
       association === null ||
       (association === 'owner' && capstone.owning_lesson_id !== lessonId) ||
       (association === 'referenced' && capstone.owning_lesson_id === lessonId) ||
-      (association === 'referenced' &&
-        !lesson.nested_kc_ids.some((kcId) => capstone.component_kc_ids.includes(kcId))) ||
       capstone.placement_freeze_id !== manifest.metadata.registry.freeze_ids.sequence
     ) {
       throw new Error(`canonical capstone association mismatch for ${id}`);

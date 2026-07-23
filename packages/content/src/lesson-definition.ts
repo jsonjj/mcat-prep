@@ -747,9 +747,10 @@ const potentialResponseEvidence = (activity: z.infer<typeof ActivityDefinitionSc
   const signalIds = new Set<string>();
   const objectiveFeatureIds = new Set<string>();
   if (activity.response.kind === 'choice') {
+    const correctChoiceIds = activity.response.correctChoiceIds;
     activity.response.choices.forEach((choice) => {
       choice.diagnosticSignalIds.forEach((id) => signalIds.add(id));
-      if (!activity.response.correctChoiceIds.includes(choice.id)) {
+      if (!correctChoiceIds.includes(choice.id)) {
         choice.objectiveFeatureIds.forEach((id) => objectiveFeatureIds.add(id));
       }
     });

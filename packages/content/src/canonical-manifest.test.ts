@@ -84,6 +84,18 @@ describe('canonical V3 authoring manifest compiler', () => {
     for (const lessonId of ['V3-LES-067950', 'V3-LES-191915', 'V3-LES-315313', 'V3-LES-329622']) {
       expect(() => compileCanonicalLessonBinding(manifestInput, lessonId)).not.toThrow();
     }
+
+    const sequenceReferenced = compileCanonicalLessonBinding(manifestInput, 'V3-LES-915978');
+    const sequenceReferencedCapstone = sequenceReferenced.attachments.find(
+      (attachment) => attachment.id === 'V3-CAP-359390',
+    );
+    expect(sequenceReferencedCapstone?.lessonRelation).toBe('referenced');
+    expect(
+      sequenceReferenced.lesson.orderedKcIds.some((kcId) =>
+        sequenceReferencedCapstone?.componentKcIds.includes(kcId),
+      ),
+    ).toBe(false);
+    expect(sequenceReferenced.sequenceRelationIds).toContain('R14-INTERNAL-915978');
   });
 
   it('keeps hard and helpful prerequisite projections distinct and exact', () => {
