@@ -22,6 +22,7 @@ import {
   type BootstrapResponse,
   type HttpApiError,
   type HttpErrorCode,
+  type LessonActionCommand,
 } from '@mcat/contracts';
 import type { AuthorityPort, GoalInput, SessionPort } from './port';
 
@@ -125,6 +126,7 @@ export class HttpAuthorityClient implements AuthorityPort {
   private streamVersion: number | undefined;
   private contentRelease: string | undefined;
   private currentQuestionId: string | undefined;
+  private readonly pendingLessonCommands = new Map<string, LessonActionCommand>();
 
   constructor(options: HttpAuthorityClientOptions) {
     const url = new URL(options.baseUrl);
@@ -321,12 +323,24 @@ export class HttpAuthorityClient implements AuthorityPort {
     runId: Parameters<AuthorityPort['dispatchLessonAction']>[0],
     action: Parameters<AuthorityPort['dispatchLessonAction']>[1],
   ): Promise<void> {
-    const command = LessonActionCommandSchema.parse({
-      envelope: await this.commandEnvelope(),
-      runId,
-      action,
-    });
-    await this.acceptedCommand('/v1/learning/lesson/action', command);
+    const commandKey = JSON.stringify([runId, action]);
+    const command =
+      this.pendingLessonCommands.get(commandKey) ??
+      LessonActionCommandSchema.parse({
+        envelope: await this.commandEnvelope(),
+        runId,
+        action,
+      });
+    this.pendingLessonCommands.set(commandKey, command);
+    try {
+      await this.acceptedCommand('/v1/learning/lesson/action', command);
+      this.pendingLessonCommands.delete(commandKey);
+    } catch (error) {
+      if (error instanceof ApiClientError && !error.retryable) {
+        this.pendingLessonCommands.delete(commandKey);
+      }
+      throw error;
+    }
   }
 
   async getMasteryMap() {

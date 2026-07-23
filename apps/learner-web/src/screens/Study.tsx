@@ -73,7 +73,7 @@ export function Study() {
       <LessonRunner
         step={step}
         pending={lessonAction.isPending}
-        onAction={(action) => lessonAction.mutate({ runId: step.runId, action })}
+        onAction={(action) => lessonAction.mutateAsync({ runId: step.runId, action })}
       />
     );
   }

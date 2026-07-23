@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { AcceptedCommandResponseSchema, GoalCommandSchema } from '@mcat/contracts';
+import {
+  AcceptedCommandResponseSchema,
+  GoalCommandSchema,
+  LessonActionCommandSchema,
+  LessonRunIdSchema,
+  V3ActivityIdSchema,
+} from '@mcat/contracts';
 import { ApiClientError, HttpAuthorityClient, MemorySession } from './http';
 
 const bootstrapResponse = {
@@ -120,5 +126,42 @@ describe('HttpAuthorityClient', () => {
     });
 
     await expect(client.bootstrap()).rejects.toMatchObject({ name: 'ZodError' });
+  });
+
+  it('retries a transient lesson mutation with the identical command identity', async () => {
+    const lessonBodies: string[] = [];
+    let lessonAttempt = 0;
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      fetch: async (url, init) => {
+        if (String(url).endsWith('/v1/bootstrap')) return Response.json(bootstrapResponse);
+        lessonBodies.push(String(init?.body));
+        lessonAttempt += 1;
+        if (lessonAttempt === 1) throw new TypeError('temporary network failure');
+        const command = LessonActionCommandSchema.parse(JSON.parse(String(init?.body)));
+        return Response.json(
+          AcceptedCommandResponseSchema.parse({
+            eventId: command.envelope.eventId,
+            sequence: 8,
+            streamVersion: 8,
+            acceptedAt: '2026-07-22T00:00:01.000Z',
+          }),
+        );
+      },
+    });
+    const runId = LessonRunIdSchema.parse('11111111-1111-4111-8111-111111111111');
+    const action = {
+      type: 'present' as const,
+      activityId: V3ActivityIdSchema.parse('V3-ACT-SYNTH-CLIENT-1'),
+    };
+
+    await client.bootstrap();
+    await expect(client.dispatchLessonAction(runId, action)).rejects.toThrow(
+      'temporary network failure',
+    );
+    await client.dispatchLessonAction(runId, action);
+
+    expect(lessonBodies).toHaveLength(2);
+    expect(lessonBodies[1]).toBe(lessonBodies[0]);
   });
 });
