@@ -78,6 +78,17 @@ will lose leads. The JSONL lead sink and one-use Snapshot attempt store are suit
 single-process pilot. A public, multi-instance deployment must replace them with a transactional
 lead service and a shared durable rate-limit/attempt store.
 
+## Database (local)
+
+The data layer reads its Postgres connection from the environment (`DATABASE_URL`, `DATABASE_SSL`) via `@mcat/persistence-postgres` `createDatabasePoolFromEnv` — nothing is hardcoded. To configure it locally:
+
+1. `cp .env.example .env` and fill in your connection string (local Postgres, Supabase, or Aurora). **`.env` is gitignored — never commit it.**
+2. Run Node entrypoints/tooling with Node's native env-file loader (Node ≥ 20.6; no `dotenv` dependency), e.g. `node --env-file=.env <script>`.
+
+`DATABASE_SSL`: `require` (verify cert, default) · `no-verify` (managed Postgres such as Supabase) · `disable` (local only).
+
+**Full guide:** [`docs/database.md`](docs/database.md) — how to **add / edit / read** questions, the `questions` vs `question_protected` tables, the `@mcat/persistence-postgres` read seam, migrations, and a commands cheat-sheet. See also [`docs/question-storage-plan.md`](docs/question-storage-plan.md) (design + integration boundary).
+
 ## Authority boundaries (non-negotiable)
 
 - The server (AWS for deployed development; the in-process `services/local-authority` adapter for tests/tooling) is authoritative for correctness, protected scoring, planning, FSRS, mastery, and synchronization.

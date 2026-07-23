@@ -31,6 +31,16 @@ describe('protected content scanner', () => {
     ]);
   });
 
+  it('rejects v7 answer-bearing JSONL (correct_answer + explanations) outside the allowlist', () => {
+    const problems = scanTrackedFiles(['content/question-bank/items/bb/item.jsonl'], () =>
+      JSON.stringify({ correct_answer: 'B', explanations: { A: 'x', B: 'y' } }),
+    );
+
+    expect(problems).toEqual([
+      'Protected fields found in tracked JSONL outside the server-only fixture allowlist: content/question-bank/items/bb/item.jsonl',
+    ]);
+  });
+
   it('allows protected JSONL only in the explicit server-only fixture path', () => {
     expect(
       scanTrackedFiles(['tests/fixtures/server-only/protected/item.jsonl'], () =>

@@ -1,4 +1,5 @@
 export * from './schema';
+export * from './engine-schema';
 export * from './instruction';
 export * from './canonical-manifest';
 export * from './deterministic-json';
@@ -8,4 +9,5 @@ export * from './synthetic/v3-lesson-foundation';
 export * from './compile';
 export * from './validate';
 export * from './bank';
-export * from './import-candidates';
+export * from './load-v7';
+export * from './v7-cluster-map';

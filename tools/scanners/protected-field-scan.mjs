@@ -23,7 +23,7 @@ const SERVER_ONLY_FIXTURE_PATTERN =
   /^tests\/fixtures\/server-only\/protected\/(?:[^/]+\/)*[^/]+\.jsonl$/i;
 
 export const PROTECTED_FIELD_PATTERN =
-  /"(?:proposed_key|correct_choice_id|option_rationales|rationale_correct|rationale_incorrect|protected_rationale|rationales)"\s*:/i;
+  /"(?:proposed_key|correct_choice_id|correct_answer|option_rationales|rationale_correct|rationale_incorrect|protected_rationale|rationales|explanations)"\s*:/i;
 
 export function scanTrackedFiles(files, readText) {
   const problems = [];
