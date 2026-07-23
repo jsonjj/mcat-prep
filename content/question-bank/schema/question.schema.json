@@ -6,105 +6,20 @@
       "properties": {
         "schema_version": {
           "type": "string",
-          "const": "1.0"
+          "default": "v7"
         },
         "id": {
           "type": "string",
-          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-        },
-        "version": {
-          "type": "integer",
-          "exclusiveMinimum": 0
-        },
-        "status": {
-          "type": "string",
-          "enum": [
-            "draft",
-            "reviewed",
-            "published",
-            "retired"
-          ]
+          "minLength": 1
         },
         "section": {
           "type": "string",
           "enum": [
-            "cp",
-            "cars",
-            "bb",
-            "ps"
-          ]
-        },
-        "skill_cluster": {
-          "type": "string",
-          "enum": [
-            "R1",
-            "R2",
-            "R3",
-            "CP1",
-            "CP2",
-            "CP3",
-            "BB1",
-            "BB2",
-            "BB3",
-            "BB4",
-            "PS1",
-            "PS2",
-            "PS3",
-            "CA1",
-            "CA2"
-          ]
-        },
-        "internal_skill_ids": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
-          "minItems": 1
-        },
-        "template_tags": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "K",
-              "Q",
-              "E",
-              "D",
-              "P",
-              "A",
-              "I",
-              "T"
-            ]
-          },
-          "minItems": 1
-        },
-        "learning_objective": {
-          "type": "string",
-          "minLength": 1
-        },
-        "format": {
-          "type": "string",
-          "enum": [
-            "discrete_mcq",
-            "passage_mcq",
-            "graph_mcq",
-            "experiment_mcq"
-          ]
-        },
-        "difficulty": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 5
-        },
-        "stimulus_id": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/Question/properties/id"
-            },
-            {
-              "type": "null"
-            }
+            "BB",
+            "CARS",
+            "CP",
+            "PS",
+            "CROSS_SECTION"
           ]
         },
         "stem": {
@@ -112,55 +27,38 @@
           "minLength": 1
         },
         "choices": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "enum": [
-                  "A",
-                  "B",
-                  "C",
-                  "D"
-                ]
-              },
-              "text": {
-                "type": "string",
-                "minLength": 1
-              },
-              "distractor_families": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "missing_knowledge",
-                    "wrong_relationship",
-                    "unit_or_sign",
-                    "calculation",
-                    "graph_or_data",
-                    "experimental_design",
-                    "misread_condition",
-                    "scope_or_relevance",
-                    "outside_knowledge",
-                    "pacing_or_guess",
-                    "answer_change",
-                    "other"
-                  ]
-                },
-                "default": []
-              }
+          "type": "object",
+          "properties": {
+            "A": {
+              "type": "string",
+              "minLength": 1
             },
-            "required": [
-              "id",
-              "text"
-            ],
-            "additionalProperties": false
+            "B": {
+              "type": "string",
+              "minLength": 1
+            },
+            "C": {
+              "type": "string",
+              "minLength": 1
+            },
+            "D": {
+              "type": "string",
+              "minLength": 1
+            }
           },
-          "minItems": 4,
-          "maxItems": 4
+          "required": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "additionalProperties": false
         },
-        "correct_choice_id": {
+        "passage": {
+          "type": "string",
+          "default": ""
+        },
+        "correct_answer": {
           "type": "string",
           "enum": [
             "A",
@@ -169,191 +67,176 @@
             "D"
           ]
         },
-        "rationales": {
+        "explanations": {
           "type": "object",
-          "properties": {
-            "correct": {
-              "type": "string",
-              "minLength": 1
-            },
-            "choices": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string",
-                "minLength": 1
-              },
-              "propertyNames": {
-                "enum": [
-                  "A",
-                  "B",
-                  "C",
-                  "D"
-                ]
-              }
-            }
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
           },
-          "required": [
-            "correct",
-            "choices"
-          ],
-          "additionalProperties": false
+          "propertyNames": {
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D"
+            ]
+          }
         },
-        "prerequisite_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": []
+        "subject": {
+          "type": "string"
         },
-        "content_tags": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": []
-        },
-        "estimated_seconds": {
-          "type": "integer",
-          "exclusiveMinimum": 0
-        },
-        "media_ids": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Question/properties/id"
-          },
-          "default": []
-        },
-        "family_id": {
+        "primary_skill": {
           "type": "string",
           "minLength": 1
         },
-        "provenance": {
-          "type": "object",
-          "properties": {
-            "origin": {
-              "type": "string",
-              "enum": [
-                "original",
-                "licensed"
-              ]
-            },
-            "source_refs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "default": []
-            },
-            "rights_status": {
-              "type": "string",
-              "enum": [
-                "cleared",
-                "pending",
-                "restricted"
-              ]
-            },
-            "ai_assisted": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          "required": [
-            "origin",
-            "rights_status"
-          ],
-          "additionalProperties": false
+        "primary_kc_id": {
+          "type": "string"
         },
-        "review": {
-          "type": "object",
-          "properties": {
-            "content_status": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "approved",
-                "changes_requested"
-              ]
-            },
-            "copy_status": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "approved",
-                "changes_requested"
-              ]
-            },
-            "accessibility_status": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "approved",
-                "changes_requested"
-              ]
-            },
-            "reviewer_ids": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "default": []
-            }
-          },
-          "required": [
-            "content_status",
-            "copy_status",
-            "accessibility_status"
-          ],
-          "additionalProperties": false
+        "primary_kc_label": {
+          "type": "string"
         },
-        "delivery": {
+        "secondary_skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "secondary_kc_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "covered_kc_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "family_id": {
+          "type": "string"
+        },
+        "dok_level": {
+          "type": "integer"
+        },
+        "dok_rationale": {
+          "type": "string"
+        },
+        "construct": {
           "type": "object",
           "properties": {
-            "diagnostic_eligible": {
-              "type": "boolean"
+            "reasoning_operation_id": {
+              "type": "string"
             },
-            "mastery_eligible": {
-              "type": "boolean"
-            },
-            "protected": {
-              "type": "boolean"
-            },
-            "test_only": {
-              "type": "boolean"
+            "topic_id": {
+              "type": "string"
             }
           },
-          "required": [
-            "diagnostic_eligible",
-            "mastery_eligible",
-            "protected",
-            "test_only"
-          ],
-          "additionalProperties": false
+          "additionalProperties": true
+        },
+        "surface": {
+          "type": "object",
+          "properties": {
+            "context_domain": {
+              "type": "string"
+            },
+            "distractor_structure": {
+              "type": "string"
+            },
+            "representation": {
+              "type": "string"
+            },
+            "value_set": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "transfer_dimensions_changed": {},
+        "lesson_id": {
+          "type": "string"
+        },
+        "lesson_label": {
+          "type": "string"
+        },
+        "pool": {
+          "type": "string"
+        },
+        "source_item_id": {
+          "type": "string"
+        },
+        "source_pool": {
+          "type": "string"
+        },
+        "quality": {},
+        "status": {
+          "type": "string"
+        },
+        "error_models": {},
+        "empirical_calibration": {},
+        "exposure_status": {},
+        "human_sme_review": {},
+        "certification_stage": {},
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "table",
+                  "plot",
+                  "diagram",
+                  "molecule_2d",
+                  "molecule_3d",
+                  "equation",
+                  "annotated_diagram"
+                ]
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "needed",
+                  "generating",
+                  "ready"
+                ],
+                "default": "needed"
+              },
+              "spec": {
+                "type": "string",
+                "default": ""
+              },
+              "alt": {
+                "type": "string",
+                "default": ""
+              },
+              "storage_key": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": true
+          },
+          "default": []
         }
       },
       "required": [
-        "schema_version",
         "id",
-        "version",
-        "status",
         "section",
-        "skill_cluster",
-        "internal_skill_ids",
-        "template_tags",
-        "learning_objective",
-        "format",
-        "difficulty",
-        "stimulus_id",
         "stem",
         "choices",
-        "correct_choice_id",
-        "rationales",
-        "estimated_seconds",
-        "family_id",
-        "provenance",
-        "review",
-        "delivery"
+        "correct_answer",
+        "explanations"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     }
   },
   "$schema": "http://json-schema.org/draft-07/schema#"

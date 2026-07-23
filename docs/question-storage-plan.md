@@ -1,0 +1,154 @@
+# Question Storage Plan — v7 as the schema of record
+
+**Status:** IMPLEMENTED (2026-07-23). v7 is the canonical schema; the loader validates all 2,108 questions; the KC→cluster mapping is wired in; a Postgres migration + seed path exist. Loading into a **live** Postgres is the only remaining step and needs a running Postgres (local docker / Neon / Supabase) — see "Build status" below.
+**Date:** 2026-07-23
+
+## Build status (implemented)
+- `packages/content/src/schema.ts` — v7 canonical schema (+ `assets` list).
+- `packages/content/src/v7-cluster-map.ts` (+ `data/v3-cluster-map.data.ts`) — KC→lesson→cluster + section rollup; resolves all 2,108 with **zero gaps** (verified). Locked labels applied (SIRS4→R2, CARS_RWT→CA1). CROSS_SECTION is its own reasoning strand.
+- `packages/content/src/compile.ts` — splits `correct_answer` + `explanations` into a **server-only** payload (learner-safe payload cannot represent them).
+- `database/migrations/0006_question_bank.sql` — `questions` (learner-safe) + `question_protected` (server-only answer key + explanations).
+- `tools/content-cli` — `load-v7` (validate/compile) and `db-seed` (emit a gitignored `seed.sql` with derived cluster/section; protected answers split out).
+
+**DB recommendation:** it's Postgres either way. Use **local docker Postgres** for dev (`database/docker-compose.test.yml`), or **Supabase** (managed Postgres) for a hosted/shared DB. Same SQL.
+
+**Load into a live Postgres (the remaining step):**
+```bash
+export DATABASE_URL=...            # local docker, Neon, or Supabase connection string
+pnpm --filter @mcat/content-cli start -- db-seed   # regenerates content/question-bank/.local/v7-load/seed.sql (gitignored; has answers)
+psql "$DATABASE_URL" -f database/migrations/0006_question_bank.sql
+psql "$DATABASE_URL" -f content/question-bank/.local/v7-load/seed.sql
+psql "$DATABASE_URL" -c 'select section, count(*) from questions group by section order by section;'  # bb 580 / cars 160 / cp 705 / cross_section 133 / ps 530
+```
+The seed file carries answer keys and is **gitignored** — it is never committed. Question DATA lives in the DB, not in git.
+**Decision:** Keep questions in the **v7 shape** (the generated JSONL format). We are **not** converting v7 into the repo's current `QuestionSchema`. Instead, **v7 becomes the official schema**, and the repo's content system will be updated to match it.
+
+---
+
+## TL;DR
+- **Don't pick a new database.** Reuse what the repo already has: **PostgreSQL** (AWS **Aurora**-compatible).
+- **Three layers:** v7 question records → **Postgres/Aurora** (serving) → **S3** (images / 3D / big files; the record stores a *link*, never the binary).
+- **v7 is now canonical.** Update the repo's schema, importer, and templates to speak v7 — instead of remapping v7 into the old schema.
+- **One new `assets` list per question** (for the image/table/3D/etc. that will be generated later). Empty for now.
+- **Must-keep protection:** even though v7 stores the answer key and explanations inline, the server must still split those out so they **never** reach the browser.
+
+---
+
+## 1) Storage recommendation (recap)
+Reuse the repo's existing choice — **PostgreSQL, Aurora-compatible**. No new database.
+
+Three layers:
+1. **Question records** — stored in **v7 shape** (source of truth for a question).
+2. **Postgres / Aurora** — the serving database (fast lookup, learner data, keeps answer keys server-only).
+3. **S3 (object storage)** — where the actual **images, 3D molecules, tables-as-images, big files** live. The question record only holds a **`storage_key`** (a link). Binaries never go in the DB.
+
+Loop: **edit the record → load into Postgres → media sits in S3.**
+
+---
+
+## 2) Adopt v7 as the canonical schema
+From inspecting the file (`generated-v7-dok-dynamic-final.jsonl`, **2,108 records**), here are the v7 fields grouped by role.
+
+### Learner-facing core (required)
+| Field | Notes |
+|---|---|
+| `id` | Unique id, e.g. `v7-relabel-a538789a9daa94d4` |
+| `section` | Values seen: **BB, CARS, CP, PS, CROSS_SECTION** |
+| `stem` | Question text |
+| `passage` | Present on **all 2,108 rows** (may be a full CARS passage or a short vignette) |
+| `choices` | Object keyed `"A"/"B"/"C"/"D"` → choice text |
+
+### Protected — SERVER-ONLY (never sent to the browser)
+| Field | Notes |
+|---|---|
+| `correct_answer` | Single letter, e.g. `"B"` |
+| `explanations` | Object keyed `"A".."D"` → per-choice rationale |
+
+### Classification / routing metadata (used for diagnostics, coverage, mastery)
+| Field | Notes |
+|---|---|
+| `subject` | e.g. biochemistry, physics, organic_chemistry, sociology, critical_analysis, cross_section |
+| `primary_skill` | Values seen: **SIRS1–SIRS4** (science inquiry skills), **CARS_FOC / CARS_RBT / CARS_RWT** |
+| `primary_kc_id`, `primary_kc_label` | Knowledge-concept id + label |
+| `secondary_skills`, `secondary_kc_ids`, `covered_kc_ids` | Extra skill/KC tags |
+| `family_id` | Item family (e.g. `fam-…`) — needed so a family fills a mastery slot once |
+| `dok_level`, `dok_rationale` | Depth-of-knowledge (int) + reason |
+| `construct` | `{ reasoning_operation_id, topic_id }` |
+| `surface` | `{ context_domain, distractor_structure, representation, value_set }` |
+| `transfer_dimensions_changed`, `lesson_id`, `lesson_label` | Transfer + lesson linkage |
+
+### Internal / pipeline bookkeeping (never shipped; authoring + QA only)
+`error_models`, `empirical_calibration`, `exposure_status`, `human_sme_review`, `certification_stage`, `status` (e.g. `production_candidate`), `pool`, `source_item_id`, `source_pool`, `quality`, `label_rationale`, `capstone_ids`, `extension_ids`, `prerequisite_kc_ids_used`, `prerequisite_lesson_ids_used`, `solution_path_id`.
+
+> Rule of thumb for later: **3 buckets** — learner-safe (ships to browser), protected (server-only: `correct_answer` + `explanations`), internal (pipeline only, never ships).
+
+---
+
+## 3) NEW: one `assets` section per question (the key addition)
+Add a single, flexible **list** to every v7 question — **not** a separate field per media type.
+
+```json
+"assets": [
+  { "type": "plot", "status": "needed", "spec": "data/description used to generate it", "alt": "", "storage_key": null }
+]
+```
+
+- **`type`** enum: `none | table | plot | diagram | molecule_2d | molecule_3d | equation | annotated_diagram`
+- **`status`**: `needed | generating | ready` — everything starts empty / `needed` for now
+- **`spec`**: the data/description used to *generate* the asset (doubles as the source for accessibility text)
+- **`alt`**: accessibility alt text
+- **`storage_key`**: link to the file in S3 (`null` for now)
+
+Why one list:
+- Handles **0, 1, or several** assets on the same question (e.g. a plot *and* a table).
+- Adding a **new asset type later** doesn't change the shape — just a new `type` value.
+- Mirrors how the repo already references media by id.
+
+---
+
+## 4) What changes in the repo to adopt v7 (checklist — NOT built now)
+- **Rewrite `packages/content/src/schema.ts`** — replace `QuestionSchema` (and `Stimulus` / `Media`) with the **v7 shape + the new `assets` section**.
+- **Regenerate `content/question-bank/schema/*.json`** from the new Zod (they're generated artifacts).
+- **Replace `packages/content/src/import-candidates.ts`** — swap the "remap candidate → canonical" logic for a straight **"validate v7 JSONL → load"** path (v7 is now canonical, so no remap needed).
+- **Update templates** — `content/question-bank/templates/question.template.json` and the CSV to the v7 shape.
+- **CRITICAL — keep server-only protection.** v7 stores `correct_answer` + `explanations` **inline**. The compile step must still **split those into a protected payload** so they never reach the browser or any learner-safe surface. This is a must-keep, non-negotiable.
+- **Section / skill mapping — a real decision (flag, don't solve now):**
+  - v7 sections **BB / CARS / CP / PS / CROSS_SECTION** vs repo **cp / cars / bb / ps** (case + the extra `CROSS_SECTION`).
+  - v7 skills **SIRS1–4 + CARS_FOC/RBT/RWT** (7 skills) vs the repo's **15 clusters (R1…CA2)**.
+  - **`CROSS_SECTION` needs a home** (its own bucket, or split by subject).
+  - Decide later: adopt v7's skill taxonomy, keep the 15 clusters, or map between them. This choice affects the diagnostic + planner.
+
+---
+
+## 5) Add / remove / edit workflow
+- **Add:** add a v7 question record (a file, or a DB row once loaded).
+- **Remove:** delete the record (or mark `status` retired — keeps an audit trail).
+- **Edit:** change the record's fields.
+- **Add an image (or any asset):** fill in that asset's `spec` → generate/upload the file to **S3** → set its `storage_key` (and `alt`). Flip `status` to `ready`.
+- **Later:** the `admin-web` console gives a clickable GUI for all of this (no code editing to manage content).
+
+---
+
+## 6) Cheap hosting path (same SQL the whole way)
+- **Now:** local Postgres (the repo already runs Postgres for dev/test).
+- **Shared dev:** a free managed Postgres (**Neon** or **Supabase**).
+- **Deploy:** **AWS Aurora PostgreSQL**.
+- Same Postgres/SQL throughout — moving up the ladder doesn't require rewriting.
+
+---
+
+## 7) Archive constraint (do not violate)
+- The v7 JSONL currently lives in the LOCAL archive:
+  `/Users/jonat/Desktop/mcat-prep_LOCAL_ONLY_DO_NOT_PUSH_20260721_131303`
+- **Read it read-only** for import. **Never copy that archive into the repo, and never push it.**
+- The canonical store (repo files and/or the database) is **separate** from that archive.
+
+---
+
+## 8) Still open (decide next)
+- **Skill/section taxonomy:** adopt v7's SIRS/CARS skills, keep the 15 clusters, or map between them? (Impacts the diagnostic + planner.) And where does **CROSS_SECTION** go?
+- **Files vs DB for the source of truth:** 2,108 records — keep as JSON/JSONL files in git, or load straight into DB rows as canonical? (Files = easy diffing/review; DB = easier querying/editing at scale.)
+- **Shared passages:** several CARS items share one passage (e.g. `value_set: passage-library-quiet`). Store each passage **once** and reference it, or keep it **inline** per question as v7 does now?
+- **Difficulty:** v7 uses `dok_level` (small integer). The old schema used `difficulty` 1–5. Pick one and standardize.
+- **Field buckets:** finalize exactly which fields are learner-safe vs protected vs internal.
+- **Asset generation pipeline:** how assets get generated and reviewed (later).

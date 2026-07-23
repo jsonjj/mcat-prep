@@ -6,12 +6,25 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 // Repo root, independent of the current working directory (tools/content-cli/src -> up 3).
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 import {
+  AssetSchema,
   QuestionSchema,
   StimulusSchema,
+  compileV7Bank,
+  compileV7Question,
   loadSyntheticBank,
-  validateQuestion,
+  loadV7Jsonl,
+  resolveV7Placement,
+  summarizeV7,
+  validateV7Question,
   type ValidationIssue,
 } from '@mcat/content';
+
+/**
+ * Default v7 corpus location. This lives in the LOCAL-ONLY archive OUTSIDE the
+ * repo and must never be copied into the repo or committed. We only read it.
+ */
+const DEFAULT_V7_PATH =
+  '/Users/jonat/Desktop/mcat-prep_LOCAL_ONLY_DO_NOT_PUSH_20260721_131303/question-corpus/generated/v7-dok-dynamic-textonly-2026-07-23/repairs_2026-07-23/generated-v7-dok-dynamic-final.jsonl';
 
 const args = process.argv.slice(2).filter((a) => a !== '--');
 const command = args[0];
@@ -49,7 +62,7 @@ function cmdManifest(): void {
 
 function cmdDryRun(): void {
   const bank = loadSyntheticBank();
-  console.log('Dry run (synthetic bank):');
+  console.log('Dry run (synthetic engine bank):');
   console.log(`  release: ${bank.contentRelease}`);
   console.log(`  questions: ${bank.manifest.counts.questions}`);
   console.log(`  stimuli: ${bank.manifest.counts.stimuli}`);
@@ -61,6 +74,7 @@ function cmdDryRun(): void {
   console.log('  NOTE: synthetic content is rejected by production publication.');
 }
 
+/** Validate canonical v7 JSON content (one file per record) under a directory. */
 function cmdValidate(dir: string): void {
   const files = listJsonFiles(dir);
   if (files.length === 0) {
@@ -70,7 +84,7 @@ function cmdValidate(dir: string): void {
   let errors = 0;
   for (const file of files) {
     const raw = JSON.parse(readFileSync(file, 'utf8'));
-    const isStimulus = typeof raw?.type === 'string' && !('choices' in raw);
+    const isStimulus = !('choices' in raw) && Array.isArray(raw?.body);
     const parsed = isStimulus ? StimulusSchema.safeParse(raw) : QuestionSchema.safeParse(raw);
     if (!parsed.success) {
       errors += 1;
@@ -81,7 +95,7 @@ function cmdValidate(dir: string): void {
       continue;
     }
     if (!isStimulus) {
-      const semantic = validateQuestion(parsed.data as never).filter((i) => i.severity === 'error');
+      const semantic = validateV7Question(parsed.data as never).filter((i) => i.severity === 'error');
       if (semantic.length > 0) {
         errors += 1;
         console.error(`FAIL ${file}`);
@@ -101,9 +115,165 @@ function cmdSchemas(): void {
   mkdirSync(outDir, { recursive: true });
   const question = zodToJsonSchema(QuestionSchema, 'Question');
   const stimulus = zodToJsonSchema(StimulusSchema, 'Stimulus');
+  const asset = zodToJsonSchema(AssetSchema, 'Asset');
   writeFileSync(join(outDir, 'question.schema.json'), JSON.stringify(question, null, 2) + '\n');
   writeFileSync(join(outDir, 'stimulus.schema.json'), JSON.stringify(stimulus, null, 2) + '\n');
+  writeFileSync(join(outDir, 'asset.schema.json'), JSON.stringify(asset, null, 2) + '\n');
   console.log(`Wrote schemas to ${outDir}`);
+}
+
+/**
+ * Read a v7 JSONL corpus READ-ONLY, validate every record, compile the safe +
+ * protected split, and write a gitignored local bundle + report. Never copies the
+ * source into the repo and never writes tracked answer-bearing output.
+ */
+function cmdLoadV7(path: string): void {
+  let text: string;
+  try {
+    text = readFileSync(path, 'utf8');
+  } catch (err) {
+    console.error(`Could not read v7 corpus at:\n  ${path}\n${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+    return;
+  }
+
+  const result = loadV7Jsonl([{ name: path, text }]);
+  const summary = summarizeV7(result);
+
+  console.log('v7 load report');
+  console.log(`  source: ${path} (read-only)`);
+  console.log(`  valid records: ${summary.total}`);
+  console.log(`  schema-rejected lines: ${summary.schemaErrors}`);
+  console.log(`  semantic errors: ${summary.semanticErrors}  warnings: ${summary.semanticWarnings}`);
+  console.log(`  with passage: ${summary.withPassage}  with assets: ${summary.withAssets}`);
+  console.log('  by section:');
+  for (const [section, n] of Object.entries(summary.bySection).sort()) {
+    console.log(`    ${section}: ${n}`);
+  }
+  if (result.errors.length > 0) {
+    console.log('  first schema errors:');
+    for (const e of result.errors.slice(0, 10)) {
+      console.log(`    line ${e.line}: ${e.message.split('\n')[0]}`);
+    }
+  }
+
+  // Compile + write a LOCAL, gitignored bundle (never tracked). The protected
+  // bundle carries answer material and must stay out of git / off learner surfaces.
+  const compiled = compileV7Bank(result.items);
+  const outDir = join(REPO_ROOT, 'content', 'question-bank', '.local', 'v7-load');
+  mkdirSync(outDir, { recursive: true });
+  const safeJsonl = compiled.map((c) => JSON.stringify(c.safe)).join('\n') + '\n';
+  const protectedJsonl = compiled.map((c) => JSON.stringify(c.protected)).join('\n') + '\n';
+  writeFileSync(join(outDir, 'learner-safe.jsonl'), safeJsonl);
+  writeFileSync(join(outDir, 'protected.jsonl'), protectedJsonl);
+  writeFileSync(
+    join(outDir, 'report.json'),
+    JSON.stringify({ generatedAt: new Date().toISOString(), source: path, summary }, null, 2) + '\n',
+  );
+  console.log(`\nWrote local (gitignored) bundle to ${outDir}`);
+  console.log('  - learner-safe.jsonl (no keys/explanations)');
+  console.log('  - protected.jsonl (server-only: correct_answer + explanations)');
+  console.log('  - report.json');
+  console.log('\nNOTE: DB load is a separate step (Postgres provisioning is still an open decision).');
+}
+
+// ---- SQL emit helpers (single-quote escaping; jsonb literals) --------------
+const sqlStr = (s: string | null | undefined): string =>
+  s === null || s === undefined ? 'null' : `'${s.replace(/'/g, "''")}'`;
+const sqlNum = (n: number | null | undefined): string =>
+  n === null || n === undefined ? 'null' : String(n);
+const sqlJson = (v: unknown): string => `'${JSON.stringify(v).replace(/'/g, "''")}'::jsonb`;
+
+/**
+ * Read the v7 corpus READ-ONLY, derive each question's section + 15-cluster
+ * rollup (via the KC path), split the answer key/explanations into the protected
+ * table, and emit a gitignored `seed.sql`. The seed carries answer material and
+ * MUST stay out of git (it is written under the gitignored `.local/` bundle).
+ */
+function cmdDbSeed(path: string): void {
+  let text: string;
+  try {
+    text = readFileSync(path, 'utf8');
+  } catch (err) {
+    console.error(`Could not read v7 corpus at:\n  ${path}\n${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+    return;
+  }
+
+  const result = loadV7Jsonl([{ name: path, text }]);
+  if (result.errors.length > 0) {
+    console.error(`Refusing to seed: ${result.errors.length} schema-invalid line(s). Fix the corpus first.`);
+    process.exit(1);
+    return;
+  }
+
+  const byCluster: Record<string, number> = {};
+  const bySection: Record<string, number> = {};
+  let unresolved = 0;
+
+  const lines: string[] = [
+    '-- AUTO-GENERATED seed for the MCAT v7 question bank.',
+    '-- Contains ANSWER KEYS + explanations (question_protected). NEVER commit this file.',
+    '-- Apply after database/migrations/0006_question_bank.sql. Idempotent (on conflict do nothing).',
+    'begin;',
+  ];
+
+  for (const q of result.items) {
+    const { safe, protected: prot } = compileV7Question(q);
+    const placement = resolveV7Placement(q);
+    const dbSection = placement.crossSection ? 'cross_section' : placement.section;
+    if (!placement.cluster) unresolved += 1;
+    byCluster[placement.cluster ?? 'UNRESOLVED'] = (byCluster[placement.cluster ?? 'UNRESOLVED'] ?? 0) + 1;
+    bySection[dbSection ?? 'null'] = (bySection[dbSection ?? 'null'] ?? 0) + 1;
+
+    lines.push(
+      'insert into questions (question_id, content_release, section, cluster, kc_id, lesson_id, family_id, ' +
+        'subject, primary_skill, dok_level, stem, passage, choices, assets, status) values (' +
+        [
+          sqlStr(q.id),
+          sqlStr('v7-local'),
+          sqlStr(dbSection),
+          sqlStr(placement.cluster),
+          sqlStr(q.primary_kc_id),
+          sqlStr(q.lesson_id),
+          sqlStr(q.family_id),
+          sqlStr(q.subject),
+          sqlStr(q.primary_skill),
+          sqlNum(q.dok_level),
+          sqlStr(safe.stem),
+          sqlStr(safe.passage),
+          sqlJson(safe.choices),
+          sqlJson(safe.assets),
+          sqlStr(q.status),
+        ].join(', ') +
+        ') on conflict (question_id) do nothing;',
+    );
+    lines.push(
+      'insert into question_protected (question_id, correct_answer, explanations) values (' +
+        [sqlStr(q.id), sqlStr(prot.correct_answer), sqlJson(prot.explanations)].join(', ') +
+        ') on conflict (question_id) do nothing;',
+    );
+  }
+  lines.push('commit;');
+
+  const outDir = join(REPO_ROOT, 'content', 'question-bank', '.local', 'v7-load');
+  mkdirSync(outDir, { recursive: true });
+  const seedPath = join(outDir, 'seed.sql');
+  writeFileSync(seedPath, lines.join('\n') + '\n');
+
+  console.log('v7 db-seed report');
+  console.log(`  source: ${path} (read-only)`);
+  console.log(`  questions: ${result.items.length}`);
+  console.log(`  unresolved cluster: ${unresolved}`);
+  console.log('  by section:');
+  for (const [s, n] of Object.entries(bySection).sort()) console.log(`    ${s}: ${n}`);
+  console.log('  by cluster:');
+  for (const [c, n] of Object.entries(byCluster).sort()) console.log(`    ${c}: ${n}`);
+  console.log(`\nWrote gitignored seed to ${seedPath} (contains answer keys — do NOT commit).`);
+  console.log('\nTo load into a real Postgres (local docker / Neon / Supabase), set DATABASE_URL then run:');
+  console.log('  psql "$DATABASE_URL" -f database/migrations/0006_question_bank.sql');
+  console.log('  psql "$DATABASE_URL" -f content/question-bank/.local/v7-load/seed.sql');
+  console.log("  psql \"$DATABASE_URL\" -c 'select section, count(*) from questions group by section order by section;'");
 }
 
 switch (command) {
@@ -119,8 +289,20 @@ switch (command) {
   case 'schemas':
     cmdSchemas();
     break;
+  case 'load-v7':
+    cmdLoadV7(arg ?? DEFAULT_V7_PATH);
+    break;
+  case 'db-seed':
+    cmdDbSeed(arg ?? DEFAULT_V7_PATH);
+    break;
   default:
     console.log(
-      'MCAT content CLI\n\nCommands:\n  manifest            Print the (synthetic) bank manifest\n  dry-run             Coverage summary for the synthetic bank\n  validate [dir]      Validate canonical JSON content in a directory\n  schemas             Generate JSON Schemas into content/question-bank/schema/\n',
+      'MCAT content CLI\n\nCommands:\n' +
+        '  manifest            Print the (synthetic) engine bank manifest\n' +
+        '  dry-run             Coverage summary for the synthetic engine bank\n' +
+        '  validate [dir]      Validate canonical v7 JSON content in a directory\n' +
+        '  schemas             Generate JSON Schemas into content/question-bank/schema/\n' +
+        '  load-v7 [path]      Validate + compile the v7 JSONL corpus (read-only) into a local bundle\n' +
+        '  db-seed [path]      Emit a gitignored seed.sql (questions + protected answers) with derived cluster/section\n',
     );
 }

@@ -1,6 +1,6 @@
 import type { z } from 'zod';
 import type { SkillGraphSchema } from '@mcat/domain';
-import type { QuestionSchema, StimulusSchema } from '../schema';
+import type { EngineQuestionSchema, EngineStimulusSchema } from '../engine-schema';
 import type {
   HintLadderSchema,
   LessonSchema,
@@ -15,8 +15,8 @@ import type {
  * production publication rejects it. Not learner content.
  */
 
-type QuestionInput = z.input<typeof QuestionSchema>;
-type StimulusInput = z.input<typeof StimulusSchema>;
+type QuestionInput = z.input<typeof EngineQuestionSchema>;
+type StimulusInput = z.input<typeof EngineStimulusSchema>;
 type LessonInput = z.input<typeof LessonSchema>;
 type HintLadderInput = z.input<typeof HintLadderSchema>;
 type RecallInput = z.input<typeof RecallPromptSchema>;
