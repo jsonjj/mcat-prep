@@ -67,6 +67,11 @@ traffic only through that CloudFront origin. The Vite learner command requires a
 `VITE_AUTHORITY_BASE_URL`; the repository does not currently ship a standalone local HTTP
 authority server.
 
+> **First-time local setup:** before `pnpm --filter @mcat/learner-web dev`, copy the env template so
+> the client knows the authority origin — `cp apps/learner-web/.env.example apps/learner-web/.env.local`.
+> The template already points at the dev origin above. `.env.local` is gitignored; never commit it.
+> Skipping this makes the learner app throw `VITE_AUTHORITY_BASE_URL is required` and render blank.
+
 The landing Snapshot keeps answer keys in its server bundle. For a production-like run, use
 `pnpm --filter @mcat/landing-web build` followed by
 `pnpm --filter @mcat/landing-web start`; serving `apps/landing-web/dist` alone will not provide
