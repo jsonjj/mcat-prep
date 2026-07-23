@@ -174,6 +174,9 @@ describe('architecture boundaries', () => {
     expect(learnerView).not.toContain('correctChoiceIds');
     expect(learnerView).not.toContain('acceptedAnswers');
     expect(learnerView).not.toContain('diagnosticSignalIds');
+    expect(learnerView).not.toContain('authorityPrivateFeedback');
+    expect(learnerView).not.toContain('sealedEntry');
+    expect(learnerView).not.toContain('sealedExit');
   });
 
   it('keeps V3 evaluation and fixture activation behind server-only packages', () => {
@@ -188,9 +191,22 @@ describe('architecture boundaries', () => {
 
     expect(authorityRuntime).toContain('evaluateLessonResponse');
     expect(authorityRuntime).toContain("mode === 'production'");
-    expect(authorityRuntime).toContain('test_only_content_forbidden');
+    expect(authorityRuntime).toContain('unpublished_or_test_content_forbidden');
     expect(syntheticFixture).toContain('SYNTHETIC, TEST-ONLY');
     expect(syntheticFixture).toContain('testOnly: true');
+  });
+
+  it('keeps the canonical manifest compiler out of learner bundles', () => {
+    expect(Object.keys(deps('apps/learner-web'))).not.toContain('@mcat/content');
+
+    for (const file of sourceFiles('apps/learner-web/src')) {
+      const source = readFileSync(join(root, file), 'utf8');
+      expect(source, `${file} must not import server-side canonical content tooling`).not.toContain(
+        '@mcat/content',
+      );
+      expect(source).not.toContain('compileCanonicalLessonBinding');
+      expect(source).not.toContain('validateCanonicalLessonBinding');
+    }
   });
 
   it('every compiled learner-safe question is free of answer keys and rationales', () => {
