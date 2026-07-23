@@ -368,6 +368,9 @@ describe('migration runtime security boundary', () => {
     );
     expect(sql).toContain('grant select, insert on table accepted_events to mcat_learner_api');
     expect(sql).toContain('grant insert on table outbox to mcat_learner_api');
+    expect(sql.join('\n')).toContain('question_protected_versions');
+    expect(sql.join('\n')).toContain('question_selection_receipts');
+    expect(sql.join('\n')).toContain('learner_question_family_reservations');
     expect(sql).toContain('grant select, update on table outbox to mcat_workers');
     expect(sql).toContain('grant select, insert on table inbox_deduplication to mcat_workers');
     expect(sql).toContain('grant usage on schema public to mcat_learner_api');

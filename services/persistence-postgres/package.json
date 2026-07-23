@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./server/question-scoring": "./src/question-scoring-repository.ts"
   },
   "types": "./src/index.ts",
   "scripts": {
@@ -13,6 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@mcat/contracts": "workspace:*",
     "@mcat/database": "workspace:*",
     "pg": "8.22.0"
   },

@@ -227,6 +227,21 @@ $role$`,
       'grant select, insert, update on table guest_sessions, learner_streams, api_rate_limits to mcat_learner_api',
       'grant select, insert on table accepted_events to mcat_learner_api',
       'grant insert on table outbox to mcat_learner_api',
+      `grant select on table
+        question_serving_versions,
+        question_version_mappings,
+        question_version_review_approvals,
+        question_protected_versions,
+        question_version_invalidations
+       to mcat_learner_api`,
+      `grant select, insert on table
+        question_selection_requests,
+        question_selection_receipts,
+        learner_question_family_reservations,
+        learner_question_dependence_reservations,
+        question_presentations,
+        question_family_exposures
+       to mcat_learner_api`,
     ],
   },
   {

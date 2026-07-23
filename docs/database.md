@@ -7,19 +7,24 @@ How the MCAT Mastery database works, and how to **add**, **edit**, and **read** 
 ---
 
 ## 1) Overview
+
 - **Engine:** PostgreSQL. Use **local Postgres** for development, or **Supabase** (managed Postgres) for a hosted/shared DB — the SQL is identical either way.
-- **What's stored:** the **2,108 v7 questions** (our generated MCAT question corpus), plus the app's authority data.
+- **Question inventory:** the v7 loader reports 2,108 schema-valid rows. Those counts are inventory, not production eligibility or evidence of calibration, originality, rights clearance, accessibility, or certification.
 - **KC-centric model:** what a learner "knows" is tracked at the **knowledge-component (KC)** level. The **4 sections** (`bb`, `cp`, `ps`, `cars`) and the **15 clusters** (`R1`…`CA2`) are a **rollup/label derived from each question's KC** (`primary_kc_id` → owning lesson → module → cluster) — not the source of truth. `CROSS_SECTION` is its own reasoning strand.
 
 ## 2) Tables
-The full schema lives in `database/migrations/*.sql`. The question bank is `database/migrations/0006_question_bank.sql`.
 
-- **`questions`** — the **learner-safe** record. Columns: `question_id`, `content_release`, `section`, `cluster`, `kc_id`, `lesson_id`, `family_id`, `subject`, `primary_skill`, `dok_level`, `stem`, `passage`, `choices` (jsonb), `assets` (jsonb), `status`, `created_at`. **No answer key here.**
-- **`question_protected`** — **server-only**. `question_id`, `correct_answer` (`A`–`D`), `explanations` (jsonb, per choice).
-- **Why they're separate:** the answer key + explanations must **never** reach the browser/learner. Splitting them into a different table means a learner-safe read *cannot* return them, even by mistake.
+The full schema lives in `database/migrations/*.sql`. Imported inventory is in `0006_question_bank.sql`; fail-closed serving is in `0007_question_serving_eligibility.sql`.
+
+- **`questions`** — administrative imported inventory. It excludes answer values but includes family, KC, lesson, skill, DOK, status, and other learner cues. It is not a learner DTO or selector.
+- **`question_protected`** — server-only legacy unversioned answer material for inspection/backfill.
+- **`question_serving_versions`**, mappings, and approvals — immutable exact reviewed snapshots. Existing imported rows receive no automatic serving version and therefore remain ineligible.
+- **`question_protected_versions`** — server-only answer material bound to exact item versions.
+- **selection/receipt/reservation/presentation/exposure/invalidation tables** — atomic authority state that prevents fresh-family and local-dependence reuse.
 - The **other authority tables** (learners, events, projections, sessions, rate limits, …) are also in `database/migrations/` (`0001`–`0005`). The same database serves the whole app authority.
 
 ## 3) Connecting
+
 The connection is **env-driven** — nothing is hardcoded.
 
 1. `cp .env.example .env`, then edit `.env`. **`.env` is gitignored — never commit it.**
@@ -29,44 +34,64 @@ The connection is **env-driven** — nothing is hardcoded.
 3. Load it with Node's native loader (Node ≥ 20.6; no `dotenv` dependency): `node --env-file=.env <script>`.
 
 ## 4) Reading
+
 Read through the `@mcat/persistence-postgres` seam — don't hand-write answer queries in app code.
 
-**Learner-safe** (explicit column allowlist — cannot return the answer key):
+**Administrative inventory** (metadata-bearing; never return directly to learners):
+
 ```ts
 import {
   createDatabasePoolFromEnv,
-  getLearnerSafeQuestion,
-  listLearnerSafeQuestions,
+  getAdministrativeQuestion,
+  listAdministrativeQuestions,
   countQuestions,
   countQuestionsBySection,
 } from '@mcat/persistence-postgres';
 
-const pool = createDatabasePoolFromEnv();                 // reads DATABASE_URL / DATABASE_SSL
-const q = await getLearnerSafeQuestion(pool, 'v7-…');     // stem, choices, assets — NO answer
-const cars = await listLearnerSafeQuestions(pool, { section: 'cars', cluster: 'CA1', limit: 20 });
-const total = await countQuestions(pool);                 // 2108
+const pool = createDatabasePoolFromEnv(); // reads DATABASE_URL / DATABASE_SSL
+const q = await getAdministrativeQuestion(pool, 'v7-…');
+const cars = await listAdministrativeQuestions(pool, {
+  section: 'cars',
+  cluster: 'CA1',
+  limit: 20,
+});
+const total = await countQuestions(pool); // inventory count only
 const bySection = await countQuestionsBySection(pool);
 ```
 
-**Server-only** (scoring authority only — NEVER send to the browser):
+**Production authorization** applies all contextual gates and records exposure atomically:
+
 ```ts
-import { getQuestionAnswer } from '@mcat/persistence-postgres';
-const answer = await getQuestionAnswer(pool, 'v7-…');     // { correct_answer, explanations }
+import { authorizeQuestionPresentation } from '@mcat/persistence-postgres';
+const authorization = await authorizeQuestionPresentation(pool, authorityRequest, {
+  selectionAuthoritySecret: process.env.QUESTION_SELECTION_SECRET!,
+});
+// Only authorization.learner_view may cross the learner boundary.
 ```
 
-**The rule:** answers come **only** from `getQuestionAnswer` (the `question_protected` table). Everything learner-facing uses the learner-safe functions.
+**Server-only scoring** is an explicit subpath and requires presentation + learner identity:
+
+```ts
+import { getVersionBoundProtectedAnswer } from '@mcat/persistence-postgres/server/question-scoring';
+const answer = await getVersionBoundProtectedAnswer(pool, presentationId, learnerId);
+```
+
+The legacy `getLegacyAdministrativeQuestionAnswer` accessor is inspection/backfill-only and must not score production attempts.
 
 ## 5) Adding / editing questions
+
 Questions are authored in the **v7 shape**. The canonical schema is Zod in `packages/content/src/schema.ts`; generated JSON Schemas are in `content/question-bank/schema/`.
 
 A v7 record needs at least: `id`, `section` (`BB|CP|PS|CARS|CROSS_SECTION`), `stem`, `choices` `{A,B,C,D}`, `correct_answer`, `explanations` `{A..D}`, plus classification (`primary_kc_id`, `lesson_id`, `primary_skill`, …) and an **`assets`** list.
 
 **`assets`** (figures/tables/3D — generated later): each is `{ type, status, spec, alt, storage_key }`.
+
 - `type` ∈ `none | table | plot | diagram | molecule_2d | molecule_3d | equation | annotated_diagram`
 - `status` ∈ `needed | generating | ready` (starts empty / `needed`)
 - Fill `spec` (what to generate) later; once rendered, upload the file to storage and set `storage_key`.
 
 **Pipeline — v7 JSONL → validated → DB:**
+
 ```bash
 # 1) validate the corpus (Zod shape + semantic checks)
 pnpm --filter @mcat/content-cli start -- load-v7 [path-to-v7.jsonl]
@@ -77,6 +102,7 @@ pnpm --filter @mcat/content-cli start -- db-seed [path-to-v7.jsonl]
 psql "$DATABASE_URL" -f database/migrations/0006_question_bank.sql
 psql "$DATABASE_URL" -f content/question-bank/.local/v7-load/seed.sql
 ```
+
 - **Add:** put the new record in the v7 JSONL, re-run `db-seed`, re-apply `seed.sql`. The inserts use `on conflict (question_id) do nothing`, so re-running is safe and won't duplicate.
 - **Edit:** because of `on conflict do nothing`, the seed will **not** overwrite an existing row. To change one, either `delete from questions where question_id = '…'` first (it cascades to `question_protected`) and re-seed, or run a targeted `update`.
 - **Retire:** update its `status`, or `delete from questions where question_id = '…'` (cascades to the protected row).
@@ -84,18 +110,23 @@ psql "$DATABASE_URL" -f content/question-bank/.local/v7-load/seed.sql
 
 Answer material stays server-only end-to-end: `compileV7Question` (`packages/content/src/compile.ts`) splits `correct_answer` + `explanations` out of the learner-safe payload, and the seed writes them only into `question_protected`.
 
+This import workflow populates administrative inventory only. It does not create `question_serving_versions`, review approvals, family/local-dependence decisions, or versioned protected answers. Migration 0007 intentionally has no bulk backfill.
+
 ## 6) Migrations
+
 - SQL migrations live in `database/migrations/NNNN_name.sql` and apply in filename order.
-- The runner is `database/src/migrate.ts` → `runMigrations(pool, migrationsDir)`: it creates an `authority_schema_migrations` table, takes an advisory lock, and applies each *unapplied* file in a transaction, with a checksum guard against edits to already-applied files. (AWS runs it via the migration Lambda; locally you can apply files with `psql -f`.)
-- **Add a migration:** create the next-numbered file, e.g. `database/migrations/0007_description.sql`, following the existing style (lowercase SQL, `check` constraints, `timestamptz`). **Never edit an already-applied migration** — the checksum guard will fail.
+- The runner is `database/src/migrate.ts` → `runMigrations(pool, migrationsDir)`: it creates an `authority_schema_migrations` table, takes an advisory lock, and applies each _unapplied_ file in a transaction, with a checksum guard against edits to already-applied files. (AWS runs it via the migration Lambda; locally you can apply files with `psql -f`.)
+- **Add a migration:** create the next-numbered file, e.g. `database/migrations/0008_description.sql`, following the existing style (lowercase SQL, `check` constraints, `timestamptz`). **Never edit an already-applied migration** — the checksum guard will fail.
 
 ## 7) Safety rules (please read)
+
 - **Never commit `.env` or any secret.** Only `.env.example` (placeholders) is committed.
-- **Never put `correct_answer` / `explanations` in a learner-safe payload.** Learner reads use the safe functions; answers come only from `getQuestionAnswer`.
+- **Never put protected answer material or routing/review cues in a learner payload.** Production delivery returns only the minimal view created by atomic presentation authorization.
 - The **protected-content scan** (`pnpm run scan:protected`, part of `pnpm run verify`) fails the build if answer fields appear in tracked learner-safe files. Keep `verify` green before pushing.
 - The `.local/` seed bundle (which contains answers) is **gitignored** — never commit it.
 
 ## Commands cheat-sheet
+
 ```bash
 # install + full gate (lint, typecheck, tests, protected-content scan)
 pnpm install
@@ -110,6 +141,7 @@ pnpm --filter @mcat/content-cli start -- schemas           # regenerate JSON Sch
 # connect + apply to a DB (PLACEHOLDERS ONLY — never paste a real URL/password here)
 cp .env.example .env                                       # then edit .env (gitignored)
 psql "$DATABASE_URL" -f database/migrations/0006_question_bank.sql
+psql "$DATABASE_URL" -f database/migrations/0007_question_serving_eligibility.sql
 psql "$DATABASE_URL" -f content/question-bank/.local/v7-load/seed.sql
 psql "$DATABASE_URL" -c 'select section, count(*) from questions group by section order by section;'
 ```

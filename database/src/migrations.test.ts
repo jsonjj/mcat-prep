@@ -18,6 +18,10 @@ const workerGuardMigrationUrl = new URL(
   '../migrations/0003_projection_deduplication.sql',
   import.meta.url,
 );
+const questionServingMigrationUrl = new URL(
+  '../migrations/0007_question_serving_eligibility.sql',
+  import.meta.url,
+);
 
 describe('0001 authority migration', () => {
   it('defines immutable event and transactional outbox constraints', () => {
@@ -82,6 +86,28 @@ describe('0003 projection deduplication migration', () => {
     expect(sql).toContain('create unique index inbox_deduplication_consumer_sequence_uidx');
     expect(sql).toContain('(consumer_name, learner_id, sequence)');
     expect(sql).toContain('where learner_id is not null and sequence is not null');
+  });
+});
+
+describe('0007 question serving eligibility migration', () => {
+  it('is additive, fail-closed, version-bound, and records exposure atomically', () => {
+    const sql = readFileSync(questionServingMigrationUrl, 'utf8').toLowerCase();
+
+    expect(sql).toContain('create table question_serving_versions');
+    expect(sql).toContain('absence means ineligible');
+    expect(sql).toContain('create table question_version_review_approvals');
+    expect(sql).toContain('create table question_protected_versions');
+    expect(sql).toContain('primary key (question_id, item_version)');
+    expect(sql).toContain('create table learner_question_family_reservations');
+    expect(sql).toContain('primary key (learner_id, family_id)');
+    expect(sql).toContain('create table learner_question_dependence_reservations');
+    expect(sql).toContain('create table question_selection_receipts');
+    expect(sql).toContain('create table question_family_exposures');
+    expect(sql).toContain('create table question_version_invalidations');
+    expect(sql).toContain('question_serving_versions_immutable');
+    expect(sql).toContain('question_version_mappings_close_after_review');
+    expect(sql).not.toMatch(/alter table questions\s+alter column/);
+    expect(sql).not.toMatch(/insert into question_serving_versions\s+select/);
   });
 });
 

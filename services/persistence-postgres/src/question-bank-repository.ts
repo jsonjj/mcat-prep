@@ -1,19 +1,16 @@
 import type { Pool } from 'pg';
 
 /**
- * Read seam for the v7 question bank (see database/migrations/0006_question_bank.sql).
+ * Administrative inventory reads for the imported v7 rows from migration 0006.
  *
- * Two strictly separated paths:
- *  - LEARNER-SAFE reads select an explicit column ALLOWLIST from `questions`.
- *    The answer key + explanations are physically in a different table
- *    (`question_protected`) and are never named here — a learner-safe read
- *    cannot return them even by mistake.
- *  - The SERVER-ONLY answer accessor reads `question_protected` and must only be
- *    used by the scoring authority — never returned to a learner surface.
+ * These rows exclude answer material, but they include routing, family, skill,
+ * DOK, status, and source-adjacent metadata. They are NOT learner DTOs and are
+ * NOT a production selector. Production presentation must go through
+ * `authorizeQuestionPresentation` in `question-serving-repository.ts`.
  */
 
-/** Learner-safe columns. Deliberately excludes correct_answer + explanations. */
-export const LEARNER_SAFE_COLUMNS = [
+/** Administrative allowlist. Deliberately excludes protected answer material. */
+export const ADMINISTRATIVE_QUESTION_COLUMNS = [
   'question_id',
   'content_release',
   'section',
@@ -32,9 +29,9 @@ export const LEARNER_SAFE_COLUMNS = [
   'created_at',
 ] as const;
 
-const SAFE_SELECT = `select ${LEARNER_SAFE_COLUMNS.join(', ')} from questions`;
+const ADMINISTRATIVE_SELECT = `select ${ADMINISTRATIVE_QUESTION_COLUMNS.join(', ')} from questions`;
 
-export interface LearnerSafeQuestion {
+export interface AdministrativeQuestionRow {
   question_id: string;
   content_release: string;
   section: string;
@@ -59,18 +56,20 @@ export interface QuestionListFilter {
   limit?: number;
 }
 
-export async function getLearnerSafeQuestion(
+export async function getAdministrativeQuestion(
   pool: Pool,
   questionId: string,
-): Promise<LearnerSafeQuestion | null> {
-  const { rows } = await pool.query(`${SAFE_SELECT} where question_id = $1`, [questionId]);
-  return (rows[0] as LearnerSafeQuestion | undefined) ?? null;
+): Promise<AdministrativeQuestionRow | null> {
+  const { rows } = await pool.query(`${ADMINISTRATIVE_SELECT} where question_id = $1`, [
+    questionId,
+  ]);
+  return (rows[0] as AdministrativeQuestionRow | undefined) ?? null;
 }
 
-export async function listLearnerSafeQuestions(
+export async function listAdministrativeQuestions(
   pool: Pool,
   filter: QuestionListFilter = {},
-): Promise<LearnerSafeQuestion[]> {
+): Promise<AdministrativeQuestionRow[]> {
   const conditions: string[] = [];
   const values: unknown[] = [];
   if (filter.section !== undefined) {
@@ -85,10 +84,10 @@ export async function listLearnerSafeQuestions(
   const limit = Math.min(Math.max(filter.limit ?? 50, 1), 500);
   values.push(limit);
   const { rows } = await pool.query(
-    `${SAFE_SELECT}${where} order by question_id limit $${values.length}`,
+    `${ADMINISTRATIVE_SELECT}${where} order by question_id limit $${values.length}`,
     values,
   );
-  return rows as LearnerSafeQuestion[];
+  return rows as AdministrativeQuestionRow[];
 }
 
 export async function countQuestions(pool: Pool): Promise<number> {
@@ -106,19 +105,18 @@ export async function countQuestionsBySection(pool: Pool): Promise<Record<string
 }
 
 /**
- * SERVER-ONLY. The answer key + per-choice explanations for scoring. NEVER call
- * this on a learner-safe surface and NEVER return the result to the browser.
+ * @deprecated Administrative alias retained for compatibility. This is not a
+ * production learner DTO; use `getAdministrativeQuestion`.
  */
-export interface QuestionAnswer {
-  question_id: string;
-  correct_answer: 'A' | 'B' | 'C' | 'D';
-  explanations: Record<string, string>;
-}
+export const getLearnerSafeQuestion = getAdministrativeQuestion;
 
-export async function getQuestionAnswer(pool: Pool, questionId: string): Promise<QuestionAnswer | null> {
-  const { rows } = await pool.query(
-    'select question_id, correct_answer, explanations from question_protected where question_id = $1',
-    [questionId],
-  );
-  return (rows[0] as QuestionAnswer | undefined) ?? null;
-}
+/**
+ * @deprecated Administrative alias retained for compatibility. This is not a
+ * production selector or learner DTO; use `listAdministrativeQuestions`.
+ */
+export const listLearnerSafeQuestions = listAdministrativeQuestions;
+
+/** @deprecated Use `ADMINISTRATIVE_QUESTION_COLUMNS`. */
+export const LEARNER_SAFE_COLUMNS = ADMINISTRATIVE_QUESTION_COLUMNS;
+/** @deprecated Use `AdministrativeQuestionRow`. */
+export type LearnerSafeQuestion = AdministrativeQuestionRow;

@@ -193,6 +193,10 @@ describeWithPostgres('migration PostgreSQL principals', () => {
         learner_stream_delete: boolean;
         learner_rate_limit_delete: boolean;
         learner_content_read: boolean;
+        learner_serving_read: boolean;
+        learner_protected_read: boolean;
+        learner_receipt_write: boolean;
+        learner_invalidation_write: boolean;
         worker_connect: boolean;
         worker_create: boolean;
         worker_temp: boolean;
@@ -213,6 +217,10 @@ describeWithPostgres('migration PostgreSQL principals', () => {
            has_table_privilege('mcat_learner_api', 'learner_streams', 'DELETE') as learner_stream_delete,
            has_table_privilege('mcat_learner_api', 'api_rate_limits', 'DELETE') as learner_rate_limit_delete,
            has_table_privilege('mcat_learner_api', 'content_objects', 'SELECT') as learner_content_read,
+           has_table_privilege('mcat_learner_api', 'question_serving_versions', 'SELECT') as learner_serving_read,
+           has_table_privilege('mcat_learner_api', 'question_protected_versions', 'SELECT') as learner_protected_read,
+           has_table_privilege('mcat_learner_api', 'question_selection_receipts', 'SELECT,INSERT') as learner_receipt_write,
+           has_table_privilege('mcat_learner_api', 'question_version_invalidations', 'INSERT') as learner_invalidation_write,
            has_database_privilege('mcat_workers', current_database(), 'CONNECT') as worker_connect,
            has_database_privilege('mcat_workers', current_database(), 'CREATE') as worker_create,
            has_database_privilege('mcat_workers', current_database(), 'TEMPORARY') as worker_temp,
@@ -233,6 +241,10 @@ describeWithPostgres('migration PostgreSQL principals', () => {
         learner_stream_delete: false,
         learner_rate_limit_delete: false,
         learner_content_read: false,
+        learner_serving_read: true,
+        learner_protected_read: true,
+        learner_receipt_write: true,
+        learner_invalidation_write: false,
         worker_connect: true,
         worker_create: false,
         worker_temp: false,
