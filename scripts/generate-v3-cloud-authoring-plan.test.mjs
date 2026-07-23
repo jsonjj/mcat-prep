@@ -7,6 +7,7 @@ import {
   HELD_GOVERNANCE_ONLY_ENTITY_IDS,
   PROTOTYPE_LESSON_IDS,
   buildAuthoringPlan,
+  getAssignmentSlots,
   hashText,
   renderPlan,
   validateAuthoringPlan,
@@ -99,10 +100,33 @@ test('accelerated bypass is disabled in every source relation and authoring job'
 test('every job assigns independent audits distinct from its author slot', () => {
   for (const job of checkedPlan.jobs) {
     const authorSlotId = job.assignments.author.slot_id;
-    for (const [assignmentKey, assignment] of Object.entries(job.assignments)) {
-      if (assignmentKey === 'author') continue;
+    const assignmentSlots = getAssignmentSlots(job);
+    for (const assignment of assignmentSlots) {
+      assert.equal(Object.hasOwn(assignment, 'assignee_agent_run_id'), false);
+      if (assignment.slot_id === authorSlotId) continue;
       assert.notEqual(assignment.slot_id, authorSlotId);
       assert(assignment.must_be_distinct_from_slot_ids.includes(authorSlotId));
+    }
+    assert.equal(
+      job.assignments.input_output_rights_reviewer.role,
+      'INDEPENDENT_INPUT_OUTPUT_RIGHTS_REVIEWER',
+    );
+    assert.deepEqual(
+      job.assignments.domain_scientific_fact_checkers
+        .map((assignment) => assignment.specialty)
+        .sort(),
+      [...job.required_domain_fact_check_specialties].sort(),
+    );
+    if (job.domain_bucket === 'CARS') {
+      const subjectReviewer = job.assignments.cars_passage_subject_fact_checker;
+      const reasoningEditor = job.assignments.domain_scientific_fact_checkers.find(
+        (assignment) => assignment.specialty === 'CARS_PASSAGE_REASONING_EDITOR',
+      );
+      assert(subjectReviewer);
+      assert(reasoningEditor);
+      assert(subjectReviewer.must_be_distinct_from_slot_ids.includes(reasoningEditor.slot_id));
+    } else {
+      assert.equal(job.assignments.cars_passage_subject_fact_checker, null);
     }
     assert(
       job.assignments.blind_solver.must_be_distinct_from_slot_ids.includes(

@@ -108,8 +108,10 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     stage: 'rights_review',
     blocks_internal_draft_integration: true,
     blocks_publication: true,
+    required_assignment_roles: ['INDEPENDENT_INPUT_OUTPUT_RIGHTS_REVIEWER'],
     required_evidence: [
-      'All model inputs have documented processing rights and exclude protected items, answer keys, copied textbook prose, and unauthorized prototype material.',
+      'An independent rights reviewer approves a source ledger recording URLs, access dates, licenses or terms, model-processing rights, and source ceilings before authoring.',
+      'All model inputs exclude protected items, answer keys, copied expressive prose, and unauthorized prototype material.',
       'Figures, tables, passages, examples, and items are original or explicitly licensed, with provenance and source-output similarity results recorded.',
     ],
   },
@@ -129,7 +131,8 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     blocks_internal_draft_integration: true,
     blocks_publication: true,
     required_evidence: [
-      'A solver distinct from the author completes every path without answer keys or rationales.',
+      'A solver distinct from the author and final approver completes every path from a separately distributed sanitized bundle without access to the author branch, keys, rationales, diagnostic mappings, or protected server files.',
+      'The overlay binds the solver, sanitized bundle hash, and passing protected-field scan/report hash to the exact source-plan hash.',
       'Correct, incorrect, omission, help, retry, reveal, interruption, resume, invalid-item, mixed-route, and repair-limit paths are exercised.',
     ],
   },
@@ -139,6 +142,7 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     blocks_internal_draft_integration: true,
     blocks_publication: true,
     required_evidence: [
+      'The reviewer receives an accessibility-only sanitized bundle with the same key, rationale, diagnostic-mapping, protected-server-file, and author-branch exclusions as blind solve.',
       'Keyboard, focus, semantics, contrast, zoom/reflow, reduced-motion, nonvisual representation, and accommodation behavior pass.',
       'Accessible alternatives preserve the intended construct and activity-graph behavior.',
     ],
@@ -158,8 +162,16 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     stage: 'domain_review',
     blocks_internal_draft_integration: true,
     blocks_publication: true,
+    conditional_required_assignment_roles: [
+      {
+        condition: 'job.domain_bucket == CARS',
+        role: 'CARS_PASSAGE_SUBJECT_FACT_CHECKER',
+      },
+    ],
+    required_assignment_roles: ['DOMAIN_SCIENTIFIC_FACT_CHECKER'],
     required_evidence: [
-      'Every required job specialty signs off against the declared source ceiling, scope, assumptions, equations, representations, and boundary conditions.',
+      'One explicit independent fact-check assignment exists for every required job specialty and signs off against the declared source ceiling, scope, assumptions, equations, representations, and boundary conditions.',
+      'After a CARS passage subject is selected, an additional passage-subject fact checker distinct from the author and CARS reasoning editor signs off.',
       'Present-day authority limitations and unresolved holds are not converted into current endorsement or efficacy claims.',
     ],
   },
@@ -189,45 +201,114 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
 const WORKFLOW_STAGES = Object.freeze([
   {
     order: 1,
+    stage: 'source_ledger_and_input_rights_review',
+    assignment_key: 'input_output_rights_reviewer',
+    output: 'approved_source_ledger_and_input_rights_record',
+  },
+  {
+    order: 2,
     stage: 'author',
     assignment_key: 'author',
     output: 'one_lesson_internal_draft_candidate',
   },
   {
-    order: 2,
+    order: 3,
     stage: 'independent_content_pedagogy_audit',
     assignment_key: 'content_pedagogy_auditor',
     output: 'resolved_audit_record',
   },
   {
-    order: 3,
+    order: 4,
+    stage: 'domain_scientific_fact_check',
+    assignment_collection_key: 'domain_scientific_fact_checkers',
+    output: 'specialty_fact_check_records',
+  },
+  {
+    order: 5,
+    stage: 'cars_passage_subject_fact_check',
+    assignment_key: 'cars_passage_subject_fact_checker',
+    conditional: 'required_for_cars_after_original_passage_subject_selection',
+    output: 'cars_passage_subject_fact_check_record',
+  },
+  {
+    order: 6,
+    stage: 'output_rights_and_originality_review',
+    assignment_key: 'input_output_rights_reviewer',
+    output: 'output_rights_and_originality_record',
+  },
+  {
+    order: 7,
+    stage: 'sanitized_review_bundle_build_and_scan',
+    assignment_key: 'release_integrator',
+    output: 'blind_solve_and_accessibility_bundle_hashes_and_scan_reports',
+  },
+  {
+    order: 8,
     stage: 'blind_solve',
     assignment_key: 'blind_solver',
     output: 'blind_solve_record',
   },
   {
-    order: 4,
+    order: 9,
     stage: 'accessibility_technical_audit',
     assignment_key: 'accessibility_technical_auditor',
     output: 'accessibility_technical_record',
   },
   {
-    order: 5,
+    order: 10,
     stage: 'cross_lesson_similarity_audit',
     assignment_key: 'similarity_auditor',
     output: 'wave_similarity_record',
   },
   {
-    order: 6,
+    order: 11,
     stage: 'reviewed_hash',
     assignment_key: 'release_integrator',
     output: 'immutable_reviewed_content_hash',
   },
   {
-    order: 7,
+    order: 12,
     stage: 'publication_gate',
     assignment_key: 'final_approver',
     output: 'publication_decision',
+  },
+]);
+
+const SEVERITY_TAXONOMY = Object.freeze([
+  {
+    severity: 'P0',
+    definition:
+      'Critical integrity or safety failure: plan-pin/canonical-scope corruption, protected-content or key exposure, unauthorized rights use, held-scope activation, bypass activation, or a defect requiring immediate containment.',
+    blocks_internal_draft_integration: true,
+    blocks_publication: true,
+    required_disposition:
+      'Stop the wave, contain exposure, invalidate affected artifacts/hashes, and resolve before revalidation.',
+  },
+  {
+    severity: 'P1',
+    definition:
+      'Major correctness or process failure: material factual/key error, missing required independent role, invalid KC/activity alignment, broken deterministic path, inaccessible essential path, or failed G01-G10 evidence.',
+    blocks_internal_draft_integration: true,
+    blocks_publication: true,
+    required_disposition: 'Resolve and rerun every affected review stage before integration.',
+  },
+  {
+    severity: 'P2',
+    definition:
+      'Moderate bounded defect that does not invalidate a G01-G10 requirement or expose learners, but requires correction before publication.',
+    blocks_internal_draft_integration: false,
+    blocks_publication: true,
+    required_disposition:
+      'Internal-draft integration requires documented containment, owner, due date, and publication block; resolve before G12.',
+  },
+  {
+    severity: 'P3',
+    definition:
+      'Minor editorial or maintainability defect with no material correctness, rights, accessibility, evidence, or execution effect.',
+    blocks_internal_draft_integration: false,
+    blocks_publication: false,
+    required_disposition:
+      'Track with an owner; fix opportunistically or before the next ordinary revision.',
   },
 ]);
 
@@ -588,13 +669,14 @@ function compactRepairRelation(reference) {
   };
 }
 
-function makeAssignmentSlots(jobId) {
+function makeAssignmentSlots(jobId, requiredSpecialties, domainBucket) {
   const roleNames = {
     accessibility_technical_auditor: 'ACCESSIBILITY_TECHNICAL_AUDITOR',
     author: 'LESSON_AUTHOR',
     blind_solver: 'INDEPENDENT_BLIND_SOLVER',
     content_pedagogy_auditor: 'INDEPENDENT_CONTENT_PEDAGOGY_AUDITOR',
     final_approver: 'FINAL_PUBLICATION_APPROVER',
+    input_output_rights_reviewer: 'INDEPENDENT_INPUT_OUTPUT_RIGHTS_REVIEWER',
     release_integrator: 'RELEASE_HASH_INTEGRATOR',
     similarity_auditor: 'CROSS_LESSON_SIMILARITY_AUDITOR',
   };
@@ -610,15 +692,15 @@ function makeAssignmentSlots(jobId) {
     blind_solver: ['author', 'final_approver'],
     content_pedagogy_auditor: ['author'],
     final_approver: ['author', 'blind_solver'],
+    input_output_rights_reviewer: ['author'],
     release_integrator: ['author'],
     similarity_auditor: ['author'],
   };
-  return Object.fromEntries(
+  const coreSlots = Object.fromEntries(
     Object.entries(roleNames).map(([key, role]) => {
       return [
         key,
         {
-          assignee_agent_run_id: null,
           must_be_distinct_from_slot_ids: mustDifferByKey[key].map((otherKey) => slotIds[otherKey]),
           role,
           slot_id: slotIds[key],
@@ -626,6 +708,47 @@ function makeAssignmentSlots(jobId) {
       ];
     }),
   );
+  const carsReasoningSlotId = `${jobId}::DOMAIN_SCIENTIFIC_FACT_CHECKER::CARS_PASSAGE_REASONING_EDITOR`;
+  const carsPassageSubjectSlotId = `${jobId}::CARS_PASSAGE_SUBJECT_FACT_CHECKER`;
+  const domainScientificFactCheckers = requiredSpecialties.map((specialty) => ({
+    must_be_distinct_from_slot_ids: [
+      slotIds.author,
+      ...(specialty === 'CARS_PASSAGE_REASONING_EDITOR' ? [carsPassageSubjectSlotId] : []),
+    ],
+    role: 'DOMAIN_SCIENTIFIC_FACT_CHECKER',
+    slot_id: `${jobId}::DOMAIN_SCIENTIFIC_FACT_CHECKER::${specialty}`,
+    specialty,
+  }));
+  const carsPassageSubjectFactChecker =
+    domainBucket === 'CARS'
+      ? {
+          must_be_distinct_from_slot_ids: [slotIds.author, carsReasoningSlotId],
+          role: 'CARS_PASSAGE_SUBJECT_FACT_CHECKER',
+          slot_id: carsPassageSubjectSlotId,
+          specialty: 'SELECT_AFTER_ORIGINAL_PASSAGE_SUBJECT',
+        }
+      : null;
+
+  return {
+    ...coreSlots,
+    cars_passage_subject_fact_checker: carsPassageSubjectFactChecker,
+    domain_scientific_fact_checkers: domainScientificFactCheckers,
+  };
+}
+
+function getAssignmentSlots(job) {
+  const slots = [];
+  for (const [key, value] of Object.entries(job.assignments)) {
+    if (key === 'domain_scientific_fact_checkers') {
+      assert(Array.isArray(value), `${job.job_id} domain fact-check slots must be an array`);
+      slots.push(...value);
+      continue;
+    }
+    if (key === 'cars_passage_subject_fact_checker' && value === null) continue;
+    assert(value && typeof value === 'object', `${job.job_id} assignment ${key} is invalid`);
+    slots.push(value);
+  }
+  return slots.sort((left, right) => compareText(left.slot_id, right.slot_id));
 }
 
 function complexityEstimate({
@@ -850,6 +973,7 @@ function buildBaseJob(sourceManifest, lesson, indexes) {
   const domainBucket = deriveDomainBucket(lesson.source_sections);
   const jobId = `V3-AUTHORING-JOB::${lesson.lesson_id}`;
   const isPrototype = PROTOTYPE_LESSON_IDS.includes(lesson.lesson_id);
+  const requiredFactCheckSpecialties = deriveFactCheckSpecialties(lesson.source_sections);
 
   const complexity = complexityEstimate({
     activeAttachmentCount: attachments.filter(
@@ -876,7 +1000,7 @@ function buildBaseJob(sourceManifest, lesson, indexes) {
       required_gate_ids: [...REQUIRED_ACCEPTANCE_GATE_IDS],
     },
     accelerated_bypass_authorized: false,
-    assignments: makeAssignmentSlots(jobId),
+    assignments: makeAssignmentSlots(jobId, requiredFactCheckSpecialties, domainBucket),
     attachments: {
       capstones: directCapstones,
       extensions: directExtensions,
@@ -958,7 +1082,7 @@ function buildBaseJob(sourceManifest, lesson, indexes) {
             'Rebind and independently review against this job; do not inherit prototype publication status, hashes, rights, or efficacy.',
         }
       : null,
-    required_domain_fact_check_specialties: deriveFactCheckSpecialties(lesson.source_sections),
+    required_domain_fact_check_specialties: requiredFactCheckSpecialties,
     risk,
     sequence: {
       first_delivery: {
@@ -998,8 +1122,10 @@ function buildBaseJob(sourceManifest, lesson, indexes) {
         'this_job_record_only',
       ],
       other_lesson_drafts_allowed: false,
+      separately_ledgered_current_authoritative_open_factual_sources_allowed: true,
       protected_items_or_answer_keys_allowed: false,
       prototype_input_allowed: isPrototype,
+      source_ledger_required: true,
       source_prose_copying_allowed: false,
     },
     source_sections: lesson.source_sections,
@@ -1148,14 +1274,17 @@ function buildWaves(baseJobs) {
     return {
       author_concurrency_limit: group.jobs.length,
       checkpoint: {
+        blocking_severities_for_internal_draft_integration: ['P0', 'P1'],
+        blocking_severities_for_publication: ['P0', 'P1', 'P2'],
         entry_requires: [
           'source_plan_check_passes',
           'all_required_prior_wave_checkpoints_merged',
-          'assignment_slots_materialized_with_distinct_agent_run_ids',
+          'separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256',
         ],
         exit_requires: [
           'all_internal_draft_blocking_acceptance_gates_pass',
-          'all_severity_one_and_two_findings_resolved',
+          'no_open_p0_or_p1_findings',
+          'every_open_p2_has_containment_owner_due_date_and_publication_block',
           'cross_lesson_similarity_audit_complete',
           'deterministic_plan_and_repository_checks_pass',
           'reviewed_drafts_integrated_at_one_wave_checkpoint',
@@ -1295,7 +1424,14 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         ...waves.map((wave) => wave.author_concurrency_limit),
       ),
       assignment_materialization:
-        'Before launching a wave, replace null assignee_agent_run_id values with actual run IDs and enforce every declared separation-of-duties edge.',
+        'Never modify this generated plan. Generate a separate wave overlay, materialize all person/run identities and evidence there, and validate it against the SHA-256 of the exact checked plan bytes.',
+      assignment_overlay: {
+        generated_plan_mutation_forbidden: true,
+        schema_version: 'mcat-v3-cloud-authoring-wave-assignment-overlay-1',
+        stale_source_plan_hash_behavior: 'FAIL_CLOSED',
+        template_path: 'curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json',
+        validator_path: 'scripts/validate-v3-cloud-authoring-wave-overlay.mjs',
+      },
       authoring_unit: 'one_lesson_per_author_agent',
       clean_room:
         'New-authoring agents receive only shared allowlisted architecture/contract inputs and their own job record. Pilot agents additionally receive only their matching approved prototype after rights clearance.',
@@ -1313,6 +1449,51 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       },
       production_publication_default: false,
     },
+    review_bundle_contract: {
+      allowed_bundle_kinds: ['BLIND_SOLVE', 'ACCESSIBILITY_ONLY'],
+      author_branch_access_prohibited: true,
+      bundle_manifest_schema_version: 'mcat-v3-sanitized-review-bundle-1',
+      bundle_sha256_required: true,
+      deterministic_run_behavior_required: true,
+      excluded_content_classes: [
+        'answer_keys',
+        'rationales',
+        'diagnostic_mappings',
+        'protected_server_files',
+        'author_branch_history',
+      ],
+      key_bearing_artifact_access_prohibited: true,
+      protected_field_scan_report_sha256_required: true,
+      reviewed_candidate_sha256_required: true,
+      required_content_files: [
+        'learner-safe-activities.json',
+        'deterministic-run-behavior.json',
+        'accessibility-behavior.json for ACCESSIBILITY_ONLY',
+      ],
+      scanner_id: 'V3_SANITIZED_REVIEW_BUNDLE_SCAN_V1',
+      text_only_v1: true,
+    },
+    severity_taxonomy: SEVERITY_TAXONOMY,
+    source_ledger_contract: {
+      copied_expressive_prose_allowed: false,
+      required_entry_fields: [
+        'source_id',
+        'source_kind',
+        'title',
+        'url',
+        'access_date',
+        'license_or_terms',
+        'model_processing_rights',
+        'source_ceiling',
+        'retrieved_content_sha256',
+        'provided_to_author_model',
+        'factual_use_only',
+        'rights_review_slot_id',
+      ],
+      schema_version: 'mcat-v3-authoring-source-ledger-1',
+      statement:
+        'Separately recorded current authoritative/open factual sources may be used when URL, access date, license or terms, model-processing rights, source ceiling, and exact retrieval hash are reviewed; copied expressive prose remains forbidden.',
+    },
     publication_policy: {
       default_status: 'INTERNAL_DRAFT',
       production_definition_only_after: [
@@ -1329,7 +1510,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       statement:
         'Generated content is an internal draft until rights, scientific review, reviewed hashes, and efficacy gates pass.',
     },
-    schema_version: 'mcat-v3-cloud-authoring-orchestration-1',
+    schema_version: 'mcat-v3-cloud-authoring-orchestration-2',
     unresolved_constraints: [
       {
         constraint_id: 'UC01_PROTOTYPE_ARTIFACTS',
@@ -1344,7 +1525,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       {
         constraint_id: 'UC03_ASSIGNMENTS',
         effect:
-          'Actual author, auditor, blind-solver, integrator, and approver agent run IDs are intentionally unassigned and must be materialized with separation of duties before each wave.',
+          'Actual controller, integrator, author, rights reviewer, domain fact-checker, auditor, blind-solver, and approver person/run IDs are intentionally absent from this immutable plan and must be materialized in a separately validated wave overlay.',
       },
       {
         constraint_id: 'UC04_EMPIRICAL_GATES',
@@ -1362,7 +1543,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
 
 function validateAuthoringPlan(plan, sourceManifest) {
   const indexes = validateSourceManifest(sourceManifest);
-  assert.equal(plan.schema_version, 'mcat-v3-cloud-authoring-orchestration-1');
+  assert.equal(plan.schema_version, 'mcat-v3-cloud-authoring-orchestration-2');
   assert.equal(plan.jobs.length, EXPECTED.counts.lessons);
 
   const canonicalReferencePattern =
@@ -1414,6 +1595,30 @@ function validateAuthoringPlan(plan, sourceManifest) {
 
   const acceptanceGateIds = new Set(plan.acceptance_gate_catalog.map((gate) => gate.gate_id));
   assert.deepEqual(acceptanceGateIds, new Set(REQUIRED_ACCEPTANCE_GATE_IDS));
+  const gateById = new Map(plan.acceptance_gate_catalog.map((gate) => [gate.gate_id, gate]));
+  assert.deepEqual(
+    gateById.get('G05_CLEAN_ROOM_RIGHTS_AND_ORIGINALITY').required_assignment_roles,
+    ['INDEPENDENT_INPUT_OUTPUT_RIGHTS_REVIEWER'],
+  );
+  assert.deepEqual(
+    gateById.get('G10_DOMAIN_FACT_CHECK_AND_SCIENTIFIC_REVIEW').required_assignment_roles,
+    ['DOMAIN_SCIENTIFIC_FACT_CHECKER'],
+  );
+  assert.equal(
+    gateById.get('G10_DOMAIN_FACT_CHECK_AND_SCIENTIFIC_REVIEW')
+      .conditional_required_assignment_roles[0].role,
+    'CARS_PASSAGE_SUBJECT_FACT_CHECKER',
+  );
+  const workflowStages = new Set(plan.workflow.map((stage) => stage.stage));
+  for (const requiredStage of [
+    'source_ledger_and_input_rights_review',
+    'domain_scientific_fact_check',
+    'cars_passage_subject_fact_check',
+    'output_rights_and_originality_review',
+    'sanitized_review_bundle_build_and_scan',
+  ]) {
+    assert(workflowStages.has(requiredStage), `Missing required workflow stage ${requiredStage}`);
+  }
 
   for (const { job, kc } of allKcMicrocycles) {
     const canonicalKc = indexes.kcById.get(kc.kc_id);
@@ -1509,13 +1714,52 @@ function validateAuthoringPlan(plan, sourceManifest) {
       }
     }
 
-    const assignmentSlots = Object.values(job.assignments);
+    const assignmentSlots = getAssignmentSlots(job);
     assert.equal(new Set(assignmentSlots.map((slot) => slot.slot_id)).size, assignmentSlots.length);
     const authorSlotId = job.assignments.author.slot_id;
-    for (const [key, slot] of Object.entries(job.assignments)) {
-      if (key === 'author') continue;
+    for (const slot of assignmentSlots) {
+      assert.equal(
+        Object.hasOwn(slot, 'assignee_agent_run_id'),
+        false,
+        `${slot.slot_id} must define a role slot only; identities belong in the wave overlay`,
+      );
+      if (slot.slot_id === authorSlotId) continue;
       assert.notEqual(slot.slot_id, authorSlotId);
       assert(slot.must_be_distinct_from_slot_ids.includes(authorSlotId));
+    }
+    assert.equal(
+      job.assignments.input_output_rights_reviewer.role,
+      'INDEPENDENT_INPUT_OUTPUT_RIGHTS_REVIEWER',
+    );
+    const requiredSpecialties = job.required_domain_fact_check_specialties;
+    assert.equal(new Set(requiredSpecialties).size, requiredSpecialties.length);
+    assert.equal(
+      job.assignments.domain_scientific_fact_checkers.length,
+      requiredSpecialties.length,
+    );
+    assert.deepEqual(
+      job.assignments.domain_scientific_fact_checkers
+        .map((slot) => slot.specialty)
+        .sort(compareText),
+      [...requiredSpecialties].sort(compareText),
+    );
+    assert(
+      job.assignments.domain_scientific_fact_checkers.every(
+        (slot) => slot.role === 'DOMAIN_SCIENTIFIC_FACT_CHECKER',
+      ),
+    );
+    if (job.domain_bucket === 'CARS') {
+      const subjectSlot = job.assignments.cars_passage_subject_fact_checker;
+      const reasoningSlot = job.assignments.domain_scientific_fact_checkers.find(
+        (slot) => slot.specialty === 'CARS_PASSAGE_REASONING_EDITOR',
+      );
+      assert(subjectSlot);
+      assert(reasoningSlot);
+      assert.equal(subjectSlot.role, 'CARS_PASSAGE_SUBJECT_FACT_CHECKER');
+      assert(subjectSlot.must_be_distinct_from_slot_ids.includes(reasoningSlot.slot_id));
+      assert(reasoningSlot.must_be_distinct_from_slot_ids.includes(subjectSlot.slot_id));
+    } else {
+      assert.equal(job.assignments.cars_passage_subject_fact_checker, null);
     }
     assert(
       job.assignments.blind_solver.must_be_distinct_from_slot_ids.includes(
@@ -1581,6 +1825,18 @@ function validateAuthoringPlan(plan, sourceManifest) {
   }
 
   assert.equal(plan.orchestration_policy.production_publication_default, false);
+  assert.equal(
+    plan.orchestration_policy.assignment_overlay.generated_plan_mutation_forbidden,
+    true,
+  );
+  assert.equal(
+    plan.orchestration_policy.assignment_overlay.stale_source_plan_hash_behavior,
+    'FAIL_CLOSED',
+  );
+  assert.deepEqual(
+    plan.severity_taxonomy.map((entry) => entry.severity),
+    ['P0', 'P1', 'P2', 'P3'],
+  );
   assert.equal(
     plan.publication_policy.statement,
     'Generated content is an internal draft until rights, scientific review, reviewed hashes, and efficacy gates pass.',
@@ -1658,7 +1914,9 @@ export {
   HELD_GOVERNANCE_ONLY_ENTITY_IDS,
   PROTOTYPE_LESSON_IDS,
   REQUIRED_ACCEPTANCE_GATE_IDS,
+  SEVERITY_TAXONOMY,
   buildAuthoringPlan,
+  getAssignmentSlots,
   hashText,
   renderPlan,
   validateAuthoringPlan,
