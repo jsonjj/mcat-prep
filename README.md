@@ -85,7 +85,9 @@ The data layer reads its Postgres connection from the environment (`DATABASE_URL
 1. `cp .env.example .env` and fill in your connection string (local Postgres, Supabase, or Aurora). **`.env` is gitignored — never commit it.**
 2. Run Node entrypoints/tooling with Node's native env-file loader (Node ≥ 20.6; no `dotenv` dependency), e.g. `node --env-file=.env <script>`.
 
-`DATABASE_SSL`: `require` (verify cert, default) · `no-verify` (managed Postgres such as Supabase) · `disable` (local only). The v7 question-bank read seam and the current integration boundary are documented in [`docs/question-storage-plan.md`](docs/question-storage-plan.md).
+`DATABASE_SSL`: `require` (verify cert, default) · `no-verify` (managed Postgres such as Supabase) · `disable` (local only).
+
+**Full guide:** [`docs/database.md`](docs/database.md) — how to **add / edit / read** questions, the `questions` vs `question_protected` tables, the `@mcat/persistence-postgres` read seam, migrations, and a commands cheat-sheet. See also [`docs/question-storage-plan.md`](docs/question-storage-plan.md) (design + integration boundary).
 
 ## Authority boundaries (non-negotiable)
 
