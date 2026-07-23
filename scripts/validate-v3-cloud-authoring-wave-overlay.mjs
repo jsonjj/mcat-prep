@@ -1,26 +1,37 @@
 #!/usr/bin/env node
 
 import assert from 'node:assert/strict';
-import { lstat, mkdir, readFile, readdir, realpath, writeFile } from 'node:fs/promises';
-import { basename, dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { lstat, mkdir, readFile, realpath, writeFile } from 'node:fs/promises';
+import { basename, dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { format } from 'prettier';
 
 import { getAssignmentSlots, hashText } from './generate-v3-cloud-authoring-plan.mjs';
+import {
+  BUNDLE_FILES,
+  CLOSED_BUNDLE_SCANNER_ID,
+  CLOSED_BUNDLE_SCHEMA_VERSION,
+  EXCLUDED_CONTENT_CLASSES,
+  HASH_PATTERN,
+  REQUIRED_BLIND_PATH_IDS,
+  createClosedReviewBundleManifest,
+  validateAndHashCandidateArtifact,
+  validateAndHashClosedReviewBundle,
+  validateHashedAttemptLog,
+  validateHashedGateReport,
+  validateHashedOpaqueServiceAttestation,
+  validateHashedWaveSimilarityReport,
+} from './v3-cloud-authoring-evidence-contract.mjs';
 
 const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SOURCE_PLAN_PATH = 'curriculum/v3/v3-cloud-authoring-jobs.json';
 const CHECKED_TEMPLATE_PATH =
   'curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json';
-const OVERLAY_SCHEMA_VERSION = 'mcat-v3-cloud-authoring-wave-assignment-overlay-1';
+const OVERLAY_SCHEMA_VERSION = 'mcat-v3-cloud-authoring-wave-assignment-overlay-2';
 const SOURCE_LEDGER_SCHEMA_VERSION = 'mcat-v3-authoring-source-ledger-1';
-const BUNDLE_SCHEMA_VERSION = 'mcat-v3-sanitized-review-bundle-1';
-const BUNDLE_SCANNER_ID = 'V3_SANITIZED_REVIEW_BUNDLE_SCAN_V1';
-const HASH_PATTERN = /^[a-f0-9]{64}$/;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const RFC3339_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?Z$/;
 const IDENTITY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:@/+~-]*$/;
-const ALLOWED_TEXT_EXTENSIONS = new Set(['.json', '.md', '.svg', '.txt']);
 const ALLOWED_SOURCE_KINDS = new Set([
   'CURRENT_AUTHORITATIVE_OPEN_FACTUAL',
   'INDEPENDENT_EXPERT_FACTUAL_INPUT',
@@ -31,49 +42,12 @@ const MODEL_RIGHTS_STATUSES = new Set([
   'AUTHORIZED_FOR_MODEL_PROCESSING',
   'HUMAN_REVIEW_ONLY_NOT_MODEL_INPUT',
 ]);
-const EXCLUDED_BUNDLE_CONTENT_CLASSES = Object.freeze([
-  'answer_keys',
-  'rationales',
-  'diagnostic_mappings',
-  'protected_server_files',
-  'author_branch_history',
+const INTERNAL_INTEGRATION_GATE_IDS = Object.freeze([
+  'G01_RELEASE_PIN_AND_REFERENCE_LINT',
+  'G02_CANONICAL_SHELL_AND_KC_OWNERSHIP',
+  'G03_LESSON_CONTRACT_COMPLETENESS',
+  'G04_ATTACHMENTS_REPAIR_AND_NO_BYPASS',
 ]);
-const INCLUDED_CONTENT_CLASSES = Object.freeze({
-  ACCESSIBILITY_ONLY: [
-    'accessibility_behavior',
-    'deterministic_run_behavior',
-    'learner_safe_activities',
-  ],
-  BLIND_SOLVE: ['deterministic_run_behavior', 'learner_safe_activities'],
-});
-const BUNDLE_CONTENT_FILE_BY_CLASS = Object.freeze({
-  accessibility_behavior: 'accessibility-behavior.json',
-  deterministic_run_behavior: 'deterministic-run-behavior.json',
-  learner_safe_activities: 'learner-safe-activities.json',
-});
-const FORBIDDEN_JSON_FIELD_NAMES = new Set([
-  'answer_key',
-  'answer_keys',
-  'choice_rationale',
-  'choice_rationales',
-  'correct_answer',
-  'correct_option',
-  'correct_response',
-  'diagnostic_mapping',
-  'diagnostic_mappings',
-  'diagnostic_q_matrix',
-  'primary_construct_mapping',
-  'protected_content',
-  'rationale',
-  'rationales',
-  'required_secondary_mappings',
-  'server_definition',
-  'server_only',
-]);
-const FORBIDDEN_BUNDLE_PATH_PATTERN =
-  /(?:^|[/_.-])(?:answer[-_]?keys?|diagnostic[-_]?mappings?|protected|rationales?|server)(?:$|[/_.-])/i;
-const FORBIDDEN_TEXT_CONTENT_PATTERN =
-  /\b(?:answer[ _-]?key|rationales?|correct[ _-]?(?:answer|option|response)|diagnostic[ _-]?mapping|protected[ _-]?content|server[ _-]?(?:definition|only))\b/i;
 
 function compareText(left, right) {
   return left < right ? -1 : left > right ? 1 : 0;
@@ -157,9 +131,25 @@ function createBundleEvidenceTemplate(job, wave, bundleKind, sourcePlanSha256) {
       passed: null,
       report_sha256: null,
       scanned_file_count: null,
-      scanner_id: BUNDLE_SCANNER_ID,
+      scanner_id: CLOSED_BUNDLE_SCANNER_ID,
     },
     reviewed_candidate_sha256: null,
+    source_plan_sha256: sourcePlanSha256,
+    wave_id: wave.wave_id,
+  };
+}
+
+function createGateEvidenceTemplate({ gateId, job, reviewerSlotId, sourcePlanSha256, wave }) {
+  return {
+    approved: null,
+    candidate_sha256: null,
+    gate_id: gateId,
+    job_id: job.job_id,
+    lesson_id: job.lesson_id,
+    report_path: null,
+    report_sha256: null,
+    reviewed_artifact_sha256: null,
+    reviewer_slot_id: reviewerSlotId,
     source_plan_sha256: sourcePlanSha256,
     wave_id: wave.wave_id,
   };
@@ -187,35 +177,123 @@ function createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId) {
         'ACCESSIBILITY_ONLY',
         sourcePlanSha256,
       ),
+      accessibility_technical_review: createGateEvidenceTemplate({
+        gateId: 'G08_ACCESSIBILITY_TECHNICAL_AUDIT',
+        job,
+        reviewerSlotId: job.assignments.accessibility_technical_auditor.slot_id,
+        sourcePlanSha256,
+        wave,
+      }),
+      blind_solve_review: {
+        approval_evidence: createGateEvidenceTemplate({
+          gateId: 'G07_INDEPENDENT_BLIND_SOLVE',
+          job,
+          reviewerSlotId: job.assignments.blind_solver.slot_id,
+          sourcePlanSha256,
+          wave,
+        }),
+        approved: null,
+        attempt_log_path: null,
+        attempt_log_sha256: null,
+        candidate_sha256: null,
+        job_id: job.job_id,
+        lesson_id: job.lesson_id,
+        opaque_scoring_service: {
+          accepts_real_submitted_responses: true,
+          acl_branch_isolation_attestation_path: null,
+          acl_branch_isolation_attestation_sha256: null,
+          deployment_ref: null,
+          ephemeral: true,
+          exact_key_bearing_candidate_deployed: true,
+          ordinary_learner_authorized_feedback_only: true,
+          outcome_override_controls_exposed: false,
+          protected_scoring_material_exposed: false,
+          rationales_before_response_exposed: false,
+          server_definition_exposed: false,
+          service_deployment_artifact_sha256: null,
+          source_branch_exposed: false,
+        },
+        required_path_coverage: [...REQUIRED_BLIND_PATH_IDS],
+        safe_client_sha256: null,
+        solver_recipient_identity: {
+          person_id: null,
+          run_id: null,
+        },
+        source_plan_sha256: sourcePlanSha256,
+        wave_id: wave.wave_id,
+      },
       blind_solve_bundle: createBundleEvidenceTemplate(job, wave, 'BLIND_SOLVE', sourcePlanSha256),
+      candidate_artifact: {
+        artifact_path: null,
+        candidate_sha256: null,
+        file_manifest: [],
+        job_id: job.job_id,
+        lesson_id: job.lesson_id,
+        source_plan_sha256: sourcePlanSha256,
+        wave_id: wave.wave_id,
+      },
+      canonical_runtime_content_gate_reports: INTERNAL_INTEGRATION_GATE_IDS.map((gateId) =>
+        createGateEvidenceTemplate({
+          gateId,
+          job,
+          reviewerSlotId: job.assignments.release_integrator.slot_id,
+          sourcePlanSha256,
+          wave,
+        }),
+      ),
+      content_pedagogy_audit: createGateEvidenceTemplate({
+        gateId: 'G06_INDEPENDENT_CONTENT_PEDAGOGY_AUDIT',
+        job,
+        reviewerSlotId: job.assignments.content_pedagogy_auditor.slot_id,
+        sourcePlanSha256,
+        wave,
+      }),
       domain_scientific_review: {
+        candidate_sha256: null,
         cars_passage_subject_record:
           job.domain_bucket === 'CARS'
             ? {
                 approved: null,
+                candidate_sha256: null,
                 review_record_sha256: null,
                 reviewer_slot_id: job.assignments.cars_passage_subject_fact_checker.slot_id,
                 selected_passage_subject: null,
               }
             : null,
+        gate_id: 'G10_DOMAIN_FACT_CHECK_AND_SCIENTIFIC_REVIEW',
+        job_id: job.job_id,
+        lesson_id: job.lesson_id,
         reviewed_candidate_sha256: null,
+        source_plan_sha256: sourcePlanSha256,
         specialty_records: job.assignments.domain_scientific_fact_checkers.map((slot) => ({
           approved: null,
+          candidate_sha256: null,
           review_record_sha256: null,
           reviewer_slot_id: slot.slot_id,
           specialty: slot.specialty,
         })),
+        wave_id: wave.wave_id,
       },
       job_id: job.job_id,
       lesson_id: job.lesson_id,
+      pending_publication_gates: [
+        { gate_id: 'G11_EXACT_REVIEWED_CONTENT_HASH', status: 'PENDING' },
+        { gate_id: 'G12_EFFICACY_AND_PUBLICATION_APPROVAL', status: 'PENDING' },
+      ],
       rights_and_originality_review: {
+        candidate_sha256: null,
+        gate_id: 'G05_CLEAN_ROOM_RIGHTS_AND_ORIGINALITY',
         input_rights_approved: null,
+        job_id: job.job_id,
+        lesson_id: job.lesson_id,
         output_rights_and_originality_approved: null,
         review_record_sha256: null,
         reviewed_candidate_sha256: null,
         reviewer_slot_id: job.assignments.input_output_rights_reviewer.slot_id,
         source_ledger_sha256: null,
         source_output_similarity_report_sha256: null,
+        source_plan_sha256: sourcePlanSha256,
+        wave_id: wave.wave_id,
       },
       selected_original_passage_subject: null,
       source_ledger: {
@@ -273,6 +351,22 @@ function createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId) {
       wave_id: wave.wave_id,
       wave_ordinal: wave.wave_ordinal,
     },
+    wave_similarity_review: {
+      approved: null,
+      candidate_bindings: wave.job_ids.map((jobId) => ({
+        candidate_sha256: null,
+        job_id: jobId,
+      })),
+      comparison_wave_ids: wave.similarity_comparison_wave_ids,
+      gate_id: 'G09_CROSS_LESSON_SIMILARITY_AUDIT',
+      report_path: null,
+      report_sha256: null,
+      reviewer_slot_ids: wave.job_ids.map(
+        (jobId) => jobById.get(jobId).assignments.similarity_auditor.slot_id,
+      ),
+      source_plan_sha256: sourcePlanSha256,
+      wave_id: wave.wave_id,
+    },
     wave_integrator_identity: {
       person_id: null,
       run_id: null,
@@ -302,157 +396,55 @@ function createSanitizedReviewBundleManifest({
   sourcePlanSha256,
   waveId,
 }) {
-  assert(Object.hasOwn(INCLUDED_CONTENT_CLASSES, bundleKind), `Unknown bundle kind ${bundleKind}`);
-  requireNonemptyString(reviewedCandidateSha256, 'reviewed candidate SHA-256', HASH_PATTERN);
-  return sortObjectKeys({
-    author_branch_included: false,
-    bundle_kind: bundleKind,
-    content_files: INCLUDED_CONTENT_CLASSES[bundleKind].map((contentClass) => ({
-      content_class: contentClass,
-      path: BUNDLE_CONTENT_FILE_BY_CLASS[contentClass],
-    })),
-    deterministic_run_behavior: {
-      reviewer_outcome_controls: [
-        'simulate_correct_path',
-        'simulate_incorrect_path',
-        'simulate_interruption_and_resume',
-        'simulate_invalid_activity',
-        'simulate_omission',
-        'simulate_repair_limit',
-      ],
-      state_graph_included: true,
-    },
-    excluded_content_classes: [...EXCLUDED_BUNDLE_CONTENT_CLASSES],
-    included_content_classes: [...INCLUDED_CONTENT_CLASSES[bundleKind]],
-    job_id: jobId,
-    key_bearing_artifacts_included: false,
-    learner_safe_only: true,
-    lesson_id: lessonId,
-    reviewed_candidate_sha256: reviewedCandidateSha256,
-    schema_version: BUNDLE_SCHEMA_VERSION,
-    source_plan_sha256: sourcePlanSha256,
-    wave_id: waveId,
-  });
-}
-
-function scanJsonFields(value, path, violations) {
-  if (Array.isArray(value)) {
-    value.forEach((item, index) => scanJsonFields(item, `${path}[${index}]`, violations));
-    return;
-  }
-  if (value === null || typeof value !== 'object') return;
-  for (const [key, item] of Object.entries(value)) {
-    if (FORBIDDEN_JSON_FIELD_NAMES.has(key.toLowerCase())) {
-      violations.push(`${path}.${key}: forbidden protected field`);
-    }
-    scanJsonFields(item, `${path}.${key}`, violations);
-  }
-}
-
-async function listBundleFiles(rootPath, currentPath = rootPath) {
-  const rootStats = await lstat(currentPath);
-  assert(!rootStats.isSymbolicLink(), `Sanitized bundle may not contain symlinks: ${currentPath}`);
-  if (rootStats.isFile()) return [currentPath];
-  assert(rootStats.isDirectory(), `Unsupported sanitized bundle entry: ${currentPath}`);
-  const entries = await readdir(currentPath, { withFileTypes: true });
-  const files = [];
-  for (const entry of entries.sort((left, right) => compareText(left.name, right.name))) {
-    const absolutePath = join(currentPath, entry.name);
-    if (entry.isSymbolicLink()) {
-      throw new Error(`Sanitized bundle may not contain symlinks: ${absolutePath}`);
-    }
-    if (entry.isDirectory()) {
-      files.push(...(await listBundleFiles(rootPath, absolutePath)));
-    } else if (entry.isFile()) {
-      files.push(absolutePath);
-    } else {
-      throw new Error(`Unsupported sanitized bundle entry: ${absolutePath}`);
-    }
-  }
-  return files;
-}
-
-async function scanSanitizedReviewBundle(bundleRootPath) {
-  const absoluteRoot = resolve(bundleRootPath);
-  const stats = await lstat(absoluteRoot);
-  assert(
-    stats.isDirectory() && !stats.isSymbolicLink(),
-    'Sanitized bundle root must be a directory',
+  return sortObjectKeys(
+    createClosedReviewBundleManifest({
+      bundleKind,
+      jobId,
+      lessonId,
+      reviewedCandidateSha256,
+      sourcePlanSha256,
+      waveId,
+    }),
   );
-  const absoluteFiles = await listBundleFiles(absoluteRoot);
-  assert(absoluteFiles.length > 0, 'Sanitized bundle must contain files');
-  const violations = [];
-  const files = [];
-  const jsonDocuments = new Map();
-  let bundleManifest = null;
-
-  for (const absoluteFile of absoluteFiles) {
-    const relativePath = relative(absoluteRoot, absoluteFile).split(sep).join('/');
-    if (FORBIDDEN_BUNDLE_PATH_PATTERN.test(relativePath)) {
-      violations.push(`${relativePath}: forbidden protected/server path`);
-    }
-    const extension = extname(relativePath).toLowerCase();
-    if (!ALLOWED_TEXT_EXTENSIONS.has(extension)) {
-      violations.push(`${relativePath}: non-text or unsupported extension`);
-      continue;
-    }
-    const contents = await readFile(absoluteFile);
-    const text = contents.toString('utf8');
-    if (!Buffer.from(text, 'utf8').equals(contents) || text.includes('\u0000')) {
-      violations.push(`${relativePath}: bundle files must be UTF-8 text`);
-      continue;
-    }
-    files.push({ path: relativePath, sha256: hashText(contents) });
-    if (extension === '.json') {
-      try {
-        const value = JSON.parse(text);
-        scanJsonFields(value, relativePath, violations);
-        jsonDocuments.set(relativePath, value);
-        if (relativePath === 'bundle-manifest.json') bundleManifest = value;
-        if (relativePath !== 'bundle-manifest.json' && FORBIDDEN_TEXT_CONTENT_PATTERN.test(text)) {
-          violations.push(`${relativePath}: forbidden protected-content marker`);
-        }
-      } catch {
-        violations.push(`${relativePath}: invalid JSON`);
-      }
-    } else if (FORBIDDEN_TEXT_CONTENT_PATTERN.test(text)) {
-      violations.push(`${relativePath}: forbidden protected-content marker`);
-    }
-  }
-
-  files.sort((left, right) => compareText(left.path, right.path));
-  const bundleSha256 = hashText(files.map((file) => `${file.path}\u0000${file.sha256}\n`).join(''));
-  const report = sortObjectKeys({
-    bundle_sha256: bundleSha256,
-    files,
-    scanner_id: BUNDLE_SCANNER_ID,
-    violations: [...violations].sort(compareText),
-  });
-  return {
-    bundle_manifest: bundleManifest,
-    bundle_sha256: bundleSha256,
-    files,
-    json_documents: jsonDocuments,
-    passed: violations.length === 0,
-    report_sha256: hashText(JSON.stringify(report)),
-    scanner_id: BUNDLE_SCANNER_ID,
-    violations: report.violations,
-  };
 }
 
-function resolveRepositoryRelativePath(repositoryRoot, value, label) {
-  requireNonemptyString(value, label);
-  assert.equal(isAbsolute(value), false, `${label} must be repository-relative`);
-  const absoluteRoot = resolve(repositoryRoot);
-  const absolutePath = resolve(absoluteRoot, value);
+function validateSourceAccessDate(value, materializedAt, label) {
+  requireNonemptyString(value, label, ISO_DATE_PATTERN);
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  assert.equal(Number.isNaN(parsed.valueOf()), false, `${label} must be a real calendar date`);
+  assert.equal(parsed.toISOString().slice(0, 10), value, `${label} must be a real calendar date`);
   assert(
-    absolutePath === absoluteRoot || absolutePath.startsWith(`${absoluteRoot}${sep}`),
-    `${label} escapes the repository root`,
+    parsed.valueOf() <= materializedAt.valueOf(),
+    `${label} may not be later than overlay materialization`,
   );
-  return absolutePath;
 }
 
-function validateSourceLedger(ledger, job, assignmentBySlotId) {
+function parseMaterializedAt(value) {
+  requireNonemptyString(value, 'materialized_at', RFC3339_PATTERN);
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?Z$/.exec(value);
+  assert(match);
+  const parsed = new Date(value);
+  assert.equal(
+    Number.isNaN(parsed.valueOf()),
+    false,
+    'materialized_at must be a real RFC 3339 instant',
+  );
+  assert.deepEqual(
+    [
+      parsed.getUTCFullYear(),
+      parsed.getUTCMonth() + 1,
+      parsed.getUTCDate(),
+      parsed.getUTCHours(),
+      parsed.getUTCMinutes(),
+      parsed.getUTCSeconds(),
+    ],
+    match.slice(1, 7).map(Number),
+    'materialized_at must be a real RFC 3339 instant',
+  );
+  return parsed;
+}
+
+function validateSourceLedger(ledger, job, assignmentBySlotId, materializedAt) {
   assert.equal(ledger.schema_version, SOURCE_LEDGER_SCHEMA_VERSION);
   assert.equal(ledger.job_id, job.job_id);
   requireNonemptyString(ledger.ledger_id, `${job.job_id} source ledger ID`);
@@ -477,7 +469,7 @@ function validateSourceLedger(ledger, job, assignmentBySlotId) {
     requireNonemptyString(entry.title, `${entry.source_id} title`);
     const url = new URL(requireNonemptyString(entry.url, `${entry.source_id} URL`));
     assert.equal(url.protocol, 'https:', `${entry.source_id} URL must use HTTPS`);
-    requireNonemptyString(entry.access_date, `${entry.source_id} access date`, ISO_DATE_PATTERN);
+    validateSourceAccessDate(entry.access_date, materializedAt, `${entry.source_id} access date`);
     requireNonemptyString(entry.license_or_terms, `${entry.source_id} license or terms`);
     assert(
       entry.model_processing_rights && typeof entry.model_processing_rights === 'object',
@@ -521,12 +513,25 @@ function validateSourceLedger(ledger, job, assignmentBySlotId) {
   );
 }
 
-function validateRightsAndDomainEvidence(evidence, job, assignmentBySlotId) {
+function validateRightsAndDomainEvidence(
+  evidence,
+  job,
+  assignmentBySlotId,
+  candidateSha256,
+  sourcePlanSha256,
+  wave,
+) {
   const rightsReview = evidence.rights_and_originality_review;
   assert(
     rightsReview && typeof rightsReview === 'object',
     `${job.job_id} lacks rights/originality evidence`,
   );
+  assert.equal(rightsReview.gate_id, 'G05_CLEAN_ROOM_RIGHTS_AND_ORIGINALITY');
+  assert.equal(rightsReview.source_plan_sha256, sourcePlanSha256);
+  assert.equal(rightsReview.wave_id, wave.wave_id);
+  assert.equal(rightsReview.job_id, job.job_id);
+  assert.equal(rightsReview.lesson_id, job.lesson_id);
+  assert.equal(rightsReview.candidate_sha256, candidateSha256);
   assert.equal(rightsReview.reviewer_slot_id, job.assignments.input_output_rights_reviewer.slot_id);
   assert(assignmentBySlotId.has(rightsReview.reviewer_slot_id));
   assert.equal(rightsReview.input_rights_approved, true);
@@ -537,6 +542,7 @@ function validateRightsAndDomainEvidence(evidence, job, assignmentBySlotId) {
     `${job.job_id} rights-reviewed candidate SHA-256`,
     HASH_PATTERN,
   );
+  assert.equal(rightsReview.reviewed_candidate_sha256, candidateSha256);
   requireNonemptyString(
     rightsReview.source_output_similarity_report_sha256,
     `${job.job_id} source-output similarity report SHA-256`,
@@ -553,6 +559,12 @@ function validateRightsAndDomainEvidence(evidence, job, assignmentBySlotId) {
     domainReview && typeof domainReview === 'object',
     `${job.job_id} lacks domain/scientific evidence`,
   );
+  assert.equal(domainReview.gate_id, 'G10_DOMAIN_FACT_CHECK_AND_SCIENTIFIC_REVIEW');
+  assert.equal(domainReview.source_plan_sha256, sourcePlanSha256);
+  assert.equal(domainReview.wave_id, wave.wave_id);
+  assert.equal(domainReview.job_id, job.job_id);
+  assert.equal(domainReview.lesson_id, job.lesson_id);
+  assert.equal(domainReview.candidate_sha256, candidateSha256);
   assert.equal(
     domainReview.reviewed_candidate_sha256,
     rightsReview.reviewed_candidate_sha256,
@@ -575,6 +587,7 @@ function validateRightsAndDomainEvidence(evidence, job, assignmentBySlotId) {
     assert(record, `${job.job_id} lacks domain review for ${slot.specialty}`);
     assert(assignmentBySlotId.has(slot.slot_id));
     assert.equal(record.specialty, slot.specialty);
+    assert.equal(record.candidate_sha256, candidateSha256);
     assert.equal(record.approved, true);
     requireNonemptyString(
       record.review_record_sha256,
@@ -594,6 +607,7 @@ function validateRightsAndDomainEvidence(evidence, job, assignmentBySlotId) {
       subjectRecord.selected_passage_subject,
       evidence.selected_original_passage_subject,
     );
+    assert.equal(subjectRecord.candidate_sha256, candidateSha256);
     assert.equal(subjectRecord.approved, true);
     requireNonemptyString(
       subjectRecord.review_record_sha256,
@@ -602,71 +616,6 @@ function validateRightsAndDomainEvidence(evidence, job, assignmentBySlotId) {
     );
   } else {
     assert.equal(domainReview.cars_passage_subject_record, null);
-  }
-}
-
-function validateBundleManifest(manifest, scan, expected) {
-  assert(manifest, `${expected.job.job_id} ${expected.bundleKind} lacks bundle-manifest.json`);
-  assert.equal(manifest.schema_version, BUNDLE_SCHEMA_VERSION);
-  assert.equal(manifest.bundle_kind, expected.bundleKind);
-  assert.equal(manifest.source_plan_sha256, expected.sourcePlanSha256);
-  assert.equal(manifest.wave_id, expected.wave.wave_id);
-  assert.equal(manifest.job_id, expected.job.job_id);
-  assert.equal(manifest.lesson_id, expected.job.lesson_id);
-  assert.equal(manifest.reviewed_candidate_sha256, expected.reviewedCandidateSha256);
-  assert.equal(manifest.author_branch_included, false);
-  assert.equal(manifest.key_bearing_artifacts_included, false);
-  assert.equal(manifest.learner_safe_only, true);
-  assert.equal(manifest.deterministic_run_behavior?.state_graph_included, true);
-  assert.deepEqual(
-    [...manifest.included_content_classes].sort(compareText),
-    [...INCLUDED_CONTENT_CLASSES[expected.bundleKind]].sort(compareText),
-  );
-  assert.deepEqual(
-    [...manifest.excluded_content_classes].sort(compareText),
-    [...EXCLUDED_BUNDLE_CONTENT_CLASSES].sort(compareText),
-  );
-  const expectedContentFiles = INCLUDED_CONTENT_CLASSES[expected.bundleKind]
-    .map((contentClass) => ({
-      content_class: contentClass,
-      path: BUNDLE_CONTENT_FILE_BY_CLASS[contentClass],
-    }))
-    .sort((left, right) => compareText(left.content_class, right.content_class));
-  assert.deepEqual(
-    [...manifest.content_files].sort((left, right) =>
-      compareText(left.content_class, right.content_class),
-    ),
-    expectedContentFiles,
-  );
-  const scannedPaths = new Set(scan.files.map((file) => file.path));
-  for (const contentFile of expectedContentFiles) {
-    assert(
-      scannedPaths.has(contentFile.path),
-      `${expected.job.job_id} ${expected.bundleKind} lacks ${contentFile.path}`,
-    );
-  }
-  const activities = scan.json_documents.get(BUNDLE_CONTENT_FILE_BY_CLASS.learner_safe_activities);
-  assert.equal(activities?.schema_version, 'mcat-v3-learner-safe-activities-1');
-  assert(
-    Array.isArray(activities.activities) && activities.activities.length > 0,
-    `${expected.job.job_id} ${expected.bundleKind} lacks learner-safe activities`,
-  );
-  const runBehavior = scan.json_documents.get(
-    BUNDLE_CONTENT_FILE_BY_CLASS.deterministic_run_behavior,
-  );
-  assert.equal(runBehavior?.schema_version, 'mcat-v3-deterministic-review-run-behavior-1');
-  assert.equal(typeof runBehavior.initial_state, 'string');
-  assert(Array.isArray(runBehavior.states) && runBehavior.states.length > 0);
-  assert(Array.isArray(runBehavior.transitions) && runBehavior.transitions.length > 0);
-  if (expected.bundleKind === 'ACCESSIBILITY_ONLY') {
-    const accessibility = scan.json_documents.get(
-      BUNDLE_CONTENT_FILE_BY_CLASS.accessibility_behavior,
-    );
-    assert.equal(accessibility?.schema_version, 'mcat-v3-accessibility-review-behavior-1');
-    assert(
-      Array.isArray(accessibility.checks) && accessibility.checks.length > 0,
-      `${expected.job.job_id} accessibility bundle lacks review checks`,
-    );
   }
 }
 
@@ -691,30 +640,276 @@ async function validateReviewBundle(
   requireNonemptyString(bundle.distribution.ref, `${job.job_id} ${bundleKind} distribution ref`);
   assert.equal(bundle.distribution.author_branch_provided, false);
   assert.equal(bundle.distribution.key_bearing_artifacts_provided, false);
-  const bundlePath = resolveRepositoryRelativePath(
-    repositoryRoot,
-    bundle.bundle_path,
-    `${job.job_id} ${bundleKind} bundle path`,
-  );
-  const scan = await scanSanitizedReviewBundle(bundlePath);
-  assert(
-    scan.passed,
-    `${job.job_id} ${bundleKind} protected-field scan failed: ${scan.violations.join('; ')}`,
-  );
-  validateBundleManifest(scan.bundle_manifest, scan, {
+  const scan = await validateAndHashClosedReviewBundle({
     bundleKind,
-    job,
+    bundlePath: bundle.bundle_path,
+    jobId: job.job_id,
+    lessonId: job.lesson_id,
+    repositoryRoot,
     reviewedCandidateSha256,
     sourcePlanSha256,
-    wave,
+    waveId: wave.wave_id,
   });
   requireNonemptyString(bundle.bundle_sha256, `${job.job_id} ${bundleKind} SHA-256`, HASH_PATTERN);
   assert.equal(bundle.bundle_sha256, scan.bundle_sha256);
-  assert.equal(bundle.protected_field_scan.scanner_id, BUNDLE_SCANNER_ID);
+  assert.equal(bundle.protected_field_scan.scanner_id, CLOSED_BUNDLE_SCANNER_ID);
   assert.equal(bundle.protected_field_scan.passed, true);
   assert.equal(bundle.protected_field_scan.bundle_sha256, scan.bundle_sha256);
   assert.equal(bundle.protected_field_scan.report_sha256, scan.report_sha256);
   assert.equal(bundle.protected_field_scan.scanned_file_count, scan.files.length);
+  return scan;
+}
+
+function assertGateEvidencePins(
+  evidence,
+  { candidateSha256, gateId, job, reviewerSlotId, sourcePlanSha256, wave },
+) {
+  assert.equal(evidence.gate_id, gateId);
+  assert.equal(evidence.source_plan_sha256, sourcePlanSha256);
+  assert.equal(evidence.wave_id, wave.wave_id);
+  assert.equal(evidence.job_id, job.job_id);
+  assert.equal(evidence.lesson_id, job.lesson_id);
+  assert.equal(evidence.candidate_sha256, candidateSha256);
+  assert.equal(evidence.reviewer_slot_id, reviewerSlotId);
+  assert.equal(evidence.approved, true);
+  requireNonemptyString(evidence.report_path, `${job.job_id} ${gateId} report path`);
+  requireNonemptyString(
+    evidence.report_sha256,
+    `${job.job_id} ${gateId} report SHA-256`,
+    HASH_PATTERN,
+  );
+  requireNonemptyString(
+    evidence.reviewed_artifact_sha256,
+    `${job.job_id} ${gateId} reviewed artifact SHA-256`,
+    HASH_PATTERN,
+  );
+}
+
+async function validateGateEvidence(
+  evidence,
+  {
+    candidateSha256,
+    gateId,
+    job,
+    repositoryRoot,
+    reviewedArtifactSha256,
+    reviewerSlotId,
+    sourcePlanSha256,
+    wave,
+  },
+) {
+  assertGateEvidencePins(evidence, {
+    candidateSha256,
+    gateId,
+    job,
+    reviewerSlotId,
+    sourcePlanSha256,
+    wave,
+  });
+  assert.equal(evidence.reviewed_artifact_sha256, reviewedArtifactSha256);
+  await validateHashedGateReport({
+    candidateSha256,
+    descriptor: evidence,
+    gateId,
+    jobId: job.job_id,
+    lessonId: job.lesson_id,
+    repositoryRoot,
+    reviewedArtifactSha256,
+    sourcePlanSha256,
+    waveId: wave.wave_id,
+  });
+}
+
+async function validateCandidateArtifactEvidence(
+  candidate,
+  { job, repositoryRoot, sourcePlanSha256, wave },
+) {
+  assert.equal(candidate.source_plan_sha256, sourcePlanSha256);
+  assert.equal(candidate.wave_id, wave.wave_id);
+  assert.equal(candidate.job_id, job.job_id);
+  assert.equal(candidate.lesson_id, job.lesson_id);
+  requireNonemptyString(candidate.artifact_path, `${job.job_id} candidate artifact path`);
+  requireNonemptyString(
+    candidate.candidate_sha256,
+    `${job.job_id} candidate SHA-256`,
+    HASH_PATTERN,
+  );
+  assert(Array.isArray(candidate.file_manifest) && candidate.file_manifest.length > 1);
+  return validateAndHashCandidateArtifact({
+    artifactPath: candidate.artifact_path,
+    expectedFileManifest: candidate.file_manifest,
+    expectedSha256: candidate.candidate_sha256,
+    jobId: job.job_id,
+    lessonId: job.lesson_id,
+    repositoryRoot,
+    sourcePlanSha256,
+    waveId: wave.wave_id,
+  });
+}
+
+function assertArtifactIsolation(candidateRealPath, safeClientRealPath, label) {
+  assert.notEqual(
+    candidateRealPath,
+    safeClientRealPath,
+    `${label} may not be the candidate artifact`,
+  );
+  assert(
+    !safeClientRealPath.startsWith(`${candidateRealPath}${sep}`) &&
+      !candidateRealPath.startsWith(`${safeClientRealPath}${sep}`),
+    `${label} and candidate artifact must be isolated directories`,
+  );
+}
+
+async function validateBlindSolveReview(
+  review,
+  {
+    assignmentBySlotId,
+    candidateScan,
+    job,
+    repositoryRoot,
+    safeClientScan,
+    sourcePlanSha256,
+    wave,
+    waveIntegratorIdentity,
+  },
+) {
+  const candidateSha256 = candidateScan.artifact_sha256;
+  assert.equal(review.source_plan_sha256, sourcePlanSha256);
+  assert.equal(review.wave_id, wave.wave_id);
+  assert.equal(review.job_id, job.job_id);
+  assert.equal(review.lesson_id, job.lesson_id);
+  assert.equal(review.candidate_sha256, candidateSha256);
+  assert.equal(review.safe_client_sha256, safeClientScan.bundle_sha256);
+  assert.equal(review.approved, true);
+  assert.deepEqual(review.required_path_coverage, [...REQUIRED_BLIND_PATH_IDS]);
+  const solverAssignment = assignmentBySlotId.get(job.assignments.blind_solver.slot_id);
+  assert(solverAssignment);
+  const solverIdentity = {
+    person_id: solverAssignment.assignee_person_id,
+    run_id: solverAssignment.assignee_run_id,
+  };
+  assert.deepEqual(review.solver_recipient_identity, solverIdentity);
+
+  const service = review.opaque_scoring_service;
+  requireNonemptyString(service.deployment_ref, `${job.job_id} opaque service deployment ref`);
+  requireNonemptyString(
+    service.service_deployment_artifact_sha256,
+    `${job.job_id} opaque service deployment artifact SHA-256`,
+    HASH_PATTERN,
+  );
+  assert.equal(service.ephemeral, true);
+  assert.equal(service.exact_key_bearing_candidate_deployed, true);
+  assert.equal(service.accepts_real_submitted_responses, true);
+  assert.equal(service.ordinary_learner_authorized_feedback_only, true);
+  assert.equal(service.source_branch_exposed, false);
+  assert.equal(service.server_definition_exposed, false);
+  assert.equal(service.protected_scoring_material_exposed, false);
+  assert.equal(service.rationales_before_response_exposed, false);
+  assert.equal(service.outcome_override_controls_exposed, false);
+  requireNonemptyString(
+    service.acl_branch_isolation_attestation_path,
+    `${job.job_id} opaque service ACL attestation path`,
+  );
+  requireNonemptyString(
+    service.acl_branch_isolation_attestation_sha256,
+    `${job.job_id} opaque service ACL attestation SHA-256`,
+    HASH_PATTERN,
+  );
+  await validateHashedOpaqueServiceAttestation({
+    attestationPath: service.acl_branch_isolation_attestation_path,
+    attestationSha256: service.acl_branch_isolation_attestation_sha256,
+    candidateSha256,
+    integratorIdentity: waveIntegratorIdentity,
+    jobId: job.job_id,
+    lessonId: job.lesson_id,
+    repositoryRoot,
+    safeClientSha256: safeClientScan.bundle_sha256,
+    serviceDeploymentArtifactSha256: service.service_deployment_artifact_sha256,
+    solverIdentity,
+    sourcePlanSha256,
+    waveId: wave.wave_id,
+  });
+  requireNonemptyString(review.attempt_log_path, `${job.job_id} blind attempt log path`);
+  requireNonemptyString(
+    review.attempt_log_sha256,
+    `${job.job_id} blind attempt log SHA-256`,
+    HASH_PATTERN,
+  );
+  await validateHashedAttemptLog({
+    attemptLogPath: review.attempt_log_path,
+    attemptLogSha256: review.attempt_log_sha256,
+    candidateSha256,
+    jobId: job.job_id,
+    lessonId: job.lesson_id,
+    repositoryRoot,
+    safeClientSha256: safeClientScan.bundle_sha256,
+    serviceDeploymentArtifactSha256: service.service_deployment_artifact_sha256,
+    solverIdentity,
+    sourcePlanSha256,
+    waveId: wave.wave_id,
+  });
+  await validateGateEvidence(review.approval_evidence, {
+    candidateSha256,
+    gateId: 'G07_INDEPENDENT_BLIND_SOLVE',
+    job,
+    repositoryRoot,
+    reviewedArtifactSha256: safeClientScan.bundle_sha256,
+    reviewerSlotId: job.assignments.blind_solver.slot_id,
+    sourcePlanSha256,
+    wave,
+  });
+  assertArtifactIsolation(
+    candidateScan.real_path,
+    safeClientScan.real_path,
+    `${job.job_id} blind safe client`,
+  );
+}
+
+function validatePendingPublicationGates(value, job) {
+  assert.deepEqual(
+    value,
+    [
+      { gate_id: 'G11_EXACT_REVIEWED_CONTENT_HASH', status: 'PENDING' },
+      { gate_id: 'G12_EFFICACY_AND_PUBLICATION_APPROVAL', status: 'PENDING' },
+    ],
+    `${job.job_id} G11/G12 must remain explicitly pending for internal integration`,
+  );
+}
+
+async function validateWaveSimilarityReview(
+  review,
+  { candidateShaByJobId, jobById, repositoryRoot, sourcePlanSha256, wave },
+) {
+  assert.equal(review.gate_id, 'G09_CROSS_LESSON_SIMILARITY_AUDIT');
+  assert.equal(review.source_plan_sha256, sourcePlanSha256);
+  assert.equal(review.wave_id, wave.wave_id);
+  assert.equal(review.approved, true);
+  const candidateBindings = wave.job_ids.map((jobId) => ({
+    candidate_sha256: candidateShaByJobId.get(jobId),
+    job_id: jobId,
+  }));
+  const reviewerSlotIds = wave.job_ids.map(
+    (jobId) => jobById.get(jobId).assignments.similarity_auditor.slot_id,
+  );
+  assert.deepEqual(review.candidate_bindings, candidateBindings);
+  assert.deepEqual(review.comparison_wave_ids, wave.similarity_comparison_wave_ids);
+  assert.deepEqual(review.reviewer_slot_ids, reviewerSlotIds);
+  requireNonemptyString(review.report_path, `${wave.wave_id} similarity report path`);
+  requireNonemptyString(
+    review.report_sha256,
+    `${wave.wave_id} similarity report SHA-256`,
+    HASH_PATTERN,
+  );
+  await validateHashedWaveSimilarityReport({
+    candidateBindings,
+    comparisonWaveIds: wave.similarity_comparison_wave_ids,
+    reportPath: review.report_path,
+    reportSha256: review.report_sha256,
+    repositoryRoot,
+    reviewerSlotIds,
+    sourcePlanSha256,
+    waveId: wave.wave_id,
+  });
 }
 
 function assignmentIdentity(assignment) {
@@ -959,7 +1154,7 @@ async function validateWaveAssignmentOverlay(
   assert.equal(overlay.schema_version, OVERLAY_SCHEMA_VERSION);
   assert.equal(overlay.materialization_status, 'MATERIALIZED');
   requireNonemptyString(overlay.overlay_id, 'overlay ID', IDENTITY_PATTERN);
-  requireNonemptyString(overlay.materialized_at, 'materialized_at', RFC3339_PATTERN);
+  const materializedAt = parseMaterializedAt(overlay.materialized_at);
   assert.equal(overlay.validation_target, 'INTERNAL_DRAFT_INTEGRATION');
   assert.equal(overlay.source_plan.path, SOURCE_PLAN_PATH);
   requireNonemptyString(overlay.source_plan.sha256, 'overlay source-plan SHA-256', HASH_PATTERN);
@@ -1005,12 +1200,21 @@ async function validateWaveAssignmentOverlay(
   }
   assert.deepEqual(new Set(evidenceByJobId.keys()), new Set(wave.job_ids));
   const jobById = new Map(plan.jobs.map((job) => [job.job_id, job]));
+  const candidateShaByJobId = new Map();
   for (const jobId of wave.job_ids) {
     const job = jobById.get(jobId);
     const evidence = evidenceByJobId.get(jobId);
     assert(job && evidence);
     assert.equal(evidence.lesson_id, job.lesson_id);
-    validateSourceLedger(evidence.source_ledger, job, assignmentBySlotId);
+    validateSourceLedger(evidence.source_ledger, job, assignmentBySlotId, materializedAt);
+    const candidateScan = await validateCandidateArtifactEvidence(evidence.candidate_artifact, {
+      job,
+      repositoryRoot,
+      sourcePlanSha256,
+      wave,
+    });
+    const candidateSha256 = candidateScan.artifact_sha256;
+    candidateShaByJobId.set(job.job_id, candidateSha256);
     if (job.domain_bucket === 'CARS') {
       requireNonemptyString(
         evidence.selected_original_passage_subject,
@@ -1026,24 +1230,105 @@ async function validateWaveAssignmentOverlay(
     } else {
       assert.equal(evidence.selected_original_passage_subject, null);
     }
-    validateRightsAndDomainEvidence(evidence, job, assignmentBySlotId);
-    await validateReviewBundle(evidence.blind_solve_bundle, {
+    validateRightsAndDomainEvidence(
+      evidence,
+      job,
+      assignmentBySlotId,
+      candidateSha256,
+      sourcePlanSha256,
+      wave,
+    );
+    assert.equal(
+      evidence.canonical_runtime_content_gate_reports.length,
+      INTERNAL_INTEGRATION_GATE_IDS.length,
+    );
+    assert.deepEqual(
+      evidence.canonical_runtime_content_gate_reports.map((record) => record.gate_id),
+      [...INTERNAL_INTEGRATION_GATE_IDS],
+    );
+    for (const gateId of INTERNAL_INTEGRATION_GATE_IDS) {
+      const gateEvidence = evidence.canonical_runtime_content_gate_reports.find(
+        (record) => record.gate_id === gateId,
+      );
+      await validateGateEvidence(gateEvidence, {
+        candidateSha256,
+        gateId,
+        job,
+        repositoryRoot,
+        reviewedArtifactSha256: candidateSha256,
+        reviewerSlotId: job.assignments.release_integrator.slot_id,
+        sourcePlanSha256,
+        wave,
+      });
+    }
+    await validateGateEvidence(evidence.content_pedagogy_audit, {
+      candidateSha256,
+      gateId: 'G06_INDEPENDENT_CONTENT_PEDAGOGY_AUDIT',
+      job,
+      repositoryRoot,
+      reviewedArtifactSha256: candidateSha256,
+      reviewerSlotId: job.assignments.content_pedagogy_auditor.slot_id,
+      sourcePlanSha256,
+      wave,
+    });
+    const blindClientScan = await validateReviewBundle(evidence.blind_solve_bundle, {
       bundleKind: 'BLIND_SOLVE',
       job,
       repositoryRoot,
-      reviewedCandidateSha256: evidence.rights_and_originality_review.reviewed_candidate_sha256,
+      reviewedCandidateSha256: candidateSha256,
       sourcePlanSha256,
       wave,
     });
-    await validateReviewBundle(evidence.accessibility_review_bundle, {
-      bundleKind: 'ACCESSIBILITY_ONLY',
+    const accessibilityClientScan = await validateReviewBundle(
+      evidence.accessibility_review_bundle,
+      {
+        bundleKind: 'ACCESSIBILITY_ONLY',
+        job,
+        repositoryRoot,
+        reviewedCandidateSha256: candidateSha256,
+        sourcePlanSha256,
+        wave,
+      },
+    );
+    await validateBlindSolveReview(evidence.blind_solve_review, {
+      assignmentBySlotId,
+      candidateScan,
       job,
       repositoryRoot,
-      reviewedCandidateSha256: evidence.rights_and_originality_review.reviewed_candidate_sha256,
+      safeClientScan: blindClientScan,
+      sourcePlanSha256,
+      wave,
+      waveIntegratorIdentity: integratorIdentity,
+    });
+    await validateGateEvidence(evidence.accessibility_technical_review, {
+      candidateSha256,
+      gateId: 'G08_ACCESSIBILITY_TECHNICAL_AUDIT',
+      job,
+      repositoryRoot,
+      reviewedArtifactSha256: accessibilityClientScan.bundle_sha256,
+      reviewerSlotId: job.assignments.accessibility_technical_auditor.slot_id,
       sourcePlanSha256,
       wave,
     });
+    assertArtifactIsolation(
+      candidateScan.real_path,
+      accessibilityClientScan.real_path,
+      `${job.job_id} accessibility safe client`,
+    );
+    assert.notEqual(
+      blindClientScan.real_path,
+      accessibilityClientScan.real_path,
+      `${job.job_id} blind and accessibility clients must be separate artifacts`,
+    );
+    validatePendingPublicationGates(evidence.pending_publication_gates, job);
   }
+  await validateWaveSimilarityReview(overlay.wave_similarity_review, {
+    candidateShaByJobId,
+    jobById,
+    repositoryRoot,
+    sourcePlanSha256,
+    wave,
+  });
   validateFindings(overlay.findings, wave);
   return {
     assignment_count: overlay.assignments.length,
@@ -1179,17 +1464,19 @@ if (isMain) {
 }
 
 export {
-  BUNDLE_SCANNER_ID,
+  BUNDLE_FILES,
   CHECKED_TEMPLATE_PATH,
-  EXCLUDED_BUNDLE_CONTENT_CLASSES,
-  INCLUDED_CONTENT_CLASSES,
+  CLOSED_BUNDLE_SCANNER_ID,
+  CLOSED_BUNDLE_SCHEMA_VERSION,
+  EXCLUDED_CONTENT_CLASSES,
   OVERLAY_SCHEMA_VERSION,
+  REQUIRED_BLIND_PATH_IDS,
   SOURCE_PLAN_PATH,
   computeSourceLedgerSha256,
   createSanitizedReviewBundleManifest,
   createWaveAssignmentOverlayTemplate,
   loadCheckedPlan,
   renderJson,
-  scanSanitizedReviewBundle,
+  validateAndHashClosedReviewBundle as scanSanitizedReviewBundle,
   validateWaveAssignmentOverlay,
 };

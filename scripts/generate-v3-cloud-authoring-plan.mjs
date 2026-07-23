@@ -131,9 +131,9 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     blocks_internal_draft_integration: true,
     blocks_publication: true,
     required_evidence: [
-      'A solver distinct from the author and final approver completes every path from a separately distributed sanitized bundle without access to the author branch, keys, rationales, diagnostic mappings, or protected server files.',
-      'The overlay binds the solver, sanitized bundle hash, and passing protected-field scan/report hash to the exact source-plan hash.',
-      'Correct, incorrect, omission, help, retry, reveal, interruption, resume, invalid-item, mixed-route, and repair-limit paths are exercised.',
+      'A solver distinct from the author and final approver answers real learner-safe activities through a closed safe client connected to an ephemeral opaque integrator-controlled scoring service.',
+      'The service deploys the exact candidate hash server-side, accepts submitted responses, returns ordinary learner-authorized feedback, and exposes no source branch, server definition, protected scoring material, pre-response rationales, or outcome overrides.',
+      'Candidate, safe-client, service-deployment, ACL/isolation-attestation, attempt-log, path-coverage, solver-recipient, and approval hashes/identities are bound in the overlay.',
     ],
   },
   {
@@ -142,7 +142,8 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     blocks_internal_draft_integration: true,
     blocks_publication: true,
     required_evidence: [
-      'The reviewer receives an accessibility-only sanitized bundle with the same key, rationale, diagnostic-mapping, protected-server-file, and author-branch exclusions as blind solve.',
+      'The reviewer receives a closed accessibility-only client with the same protected-material and branch exclusions as blind solve.',
+      'Reviewer-controlled outcome simulation is confined to accessibility/technical path testing and is not accepted as blind-solve evidence.',
       'Keyboard, focus, semantics, contrast, zoom/reflow, reduced-motion, nonvisual representation, and accommodation behavior pass.',
       'Accessible alternatives preserve the intended construct and activity-graph behavior.',
     ],
@@ -238,36 +239,42 @@ const WORKFLOW_STAGES = Object.freeze([
   },
   {
     order: 7,
-    stage: 'sanitized_review_bundle_build_and_scan',
+    stage: 'candidate_artifact_freeze_and_g01_g06_evidence',
     assignment_key: 'release_integrator',
-    output: 'blind_solve_and_accessibility_bundle_hashes_and_scan_reports',
+    output: 'candidate_file_manifest_hash_and_candidate_bound_gate_reports',
   },
   {
     order: 8,
-    stage: 'blind_solve',
-    assignment_key: 'blind_solver',
-    output: 'blind_solve_record',
+    stage: 'closed_clients_and_opaque_blind_service_deployment',
+    assignment_key: 'release_integrator',
+    output: 'closed_client_hashes_service_hash_and_acl_isolation_attestation',
   },
   {
     order: 9,
+    stage: 'blind_solve',
+    assignment_key: 'blind_solver',
+    output: 'real_response_attempt_log_path_coverage_and_approval',
+  },
+  {
+    order: 10,
     stage: 'accessibility_technical_audit',
     assignment_key: 'accessibility_technical_auditor',
     output: 'accessibility_technical_record',
   },
   {
-    order: 10,
+    order: 11,
     stage: 'cross_lesson_similarity_audit',
     assignment_key: 'similarity_auditor',
     output: 'wave_similarity_record',
   },
   {
-    order: 11,
+    order: 12,
     stage: 'reviewed_hash',
     assignment_key: 'release_integrator',
     output: 'immutable_reviewed_content_hash',
   },
   {
-    order: 12,
+    order: 13,
     stage: 'publication_gate',
     assignment_key: 'final_approver',
     output: 'publication_decision',
@@ -1282,10 +1289,11 @@ function buildWaves(baseJobs) {
           'separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256',
         ],
         exit_requires: [
-          'all_internal_draft_blocking_acceptance_gates_pass',
+          'materialized_overlay_recomputes_candidate_hashes_and_requires_complete_candidate_bound_g01_g10_evidence',
           'no_open_p0_or_p1_findings',
           'every_open_p2_has_containment_owner_due_date_and_publication_block',
-          'cross_lesson_similarity_audit_complete',
+          'opaque_real_response_blind_solve_and_acl_attempt_path_evidence_complete',
+          'wave_similarity_report_binds_every_current_candidate_and_declared_comparison_wave',
           'deterministic_plan_and_repository_checks_pass',
           'reviewed_drafts_integrated_at_one_wave_checkpoint',
         ],
@@ -1427,7 +1435,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'Never modify this generated plan. Generate a separate wave overlay, materialize all person/run identities and evidence there, and validate it against the SHA-256 of the exact checked plan bytes.',
       assignment_overlay: {
         generated_plan_mutation_forbidden: true,
-        schema_version: 'mcat-v3-cloud-authoring-wave-assignment-overlay-1',
+        schema_version: 'mcat-v3-cloud-authoring-wave-assignment-overlay-2',
         stale_source_plan_hash_behavior: 'FAIL_CLOSED',
         template_path: 'curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json',
         validator_path: 'scripts/validate-v3-cloud-authoring-wave-overlay.mjs',
@@ -1452,26 +1460,58 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
     review_bundle_contract: {
       allowed_bundle_kinds: ['BLIND_SOLVE', 'ACCESSIBILITY_ONLY'],
       author_branch_access_prohibited: true,
-      bundle_manifest_schema_version: 'mcat-v3-sanitized-review-bundle-1',
+      blind_solve_execution:
+        'The solver submits real responses through the closed client to an ephemeral opaque integrator-controlled service that deploys the exact key-bearing candidate server-side and exposes no outcome overrides or protected authority.',
+      bundle_manifest_schema_version: 'mcat-v3-closed-sanitized-review-bundle-1',
       bundle_sha256_required: true,
-      deterministic_run_behavior_required: true,
+      closed_schema_unknown_field_behavior: 'REJECT',
       excluded_content_classes: [
         'answer_keys',
-        'rationales',
+        'rationales_before_response',
         'diagnostic_mappings',
-        'protected_server_files',
+        'protected_scoring_material',
+        'server_definitions',
         'author_branch_history',
       ],
+      exact_allowed_file_sets: {
+        ACCESSIBILITY_ONLY: [
+          'accessibility-behavior.json',
+          'accessibility-path-simulation.json',
+          'bundle-manifest.json',
+          'learner-safe-activities.json',
+          'learner-safe-views.json',
+        ],
+        BLIND_SOLVE: [
+          'blind-client-runtime.json',
+          'bundle-manifest.json',
+          'learner-safe-activities.json',
+          'learner-safe-views.json',
+        ],
+      },
       key_bearing_artifact_access_prohibited: true,
       protected_field_scan_report_sha256_required: true,
       reviewed_candidate_sha256_required: true,
-      required_content_files: [
-        'learner-safe-activities.json',
-        'deterministic-run-behavior.json',
-        'accessibility-behavior.json for ACCESSIBILITY_ONLY',
+      reviewer_outcome_simulation_policy:
+        'Allowed only in the closed ACCESSIBILITY_ONLY path-simulation document; forbidden as BLIND_SOLVE evidence.',
+      scanner_id: 'V3_CLOSED_REVIEW_BUNDLE_SCAN_V1',
+      structured_json_only_v1: true,
+    },
+    internal_integration_evidence_contract: {
+      candidate_artifact_hash_recomputed_from_exact_file_manifest: true,
+      candidate_bound_gate_ids: REQUIRED_ACCEPTANCE_GATE_IDS.slice(0, 10),
+      g11_g12_status_for_internal_drafts: 'EXPLICITLY_PENDING',
+      opaque_blind_service_evidence: [
+        'exact_candidate_sha256',
+        'closed_safe_client_sha256',
+        'service_deployment_artifact_sha256',
+        'acl_branch_isolation_attestation_sha256',
+        'solver_person_and_run_ids',
+        'real_response_attempt_log_sha256',
+        'required_path_coverage',
+        'blind_solve_approval',
       ],
-      scanner_id: 'V3_SANITIZED_REVIEW_BUNDLE_SCAN_V1',
-      text_only_v1: true,
+      stale_or_missing_evidence_behavior: 'FAIL_CLOSED',
+      wave_similarity_scope: 'current_wave_plus_declared_prior_comparison_waves',
     },
     severity_taxonomy: SEVERITY_TAXONOMY,
     source_ledger_contract: {
@@ -1488,11 +1528,14 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'retrieved_content_sha256',
         'provided_to_author_model',
         'factual_use_only',
+        'copied_expressive_prose_allowed',
         'rights_review_slot_id',
       ],
       schema_version: 'mcat-v3-authoring-source-ledger-1',
       statement:
         'Separately recorded current authoritative/open factual sources may be used when URL, access date, license or terms, model-processing rights, source ceiling, and exact retrieval hash are reviewed; copied expressive prose remains forbidden.',
+      temporal_rule:
+        'Access dates must be real calendar dates no later than overlay materialization time.',
     },
     publication_policy: {
       default_status: 'INTERNAL_DRAFT',
@@ -1510,7 +1553,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       statement:
         'Generated content is an internal draft until rights, scientific review, reviewed hashes, and efficacy gates pass.',
     },
-    schema_version: 'mcat-v3-cloud-authoring-orchestration-2',
+    schema_version: 'mcat-v3-cloud-authoring-orchestration-3',
     unresolved_constraints: [
       {
         constraint_id: 'UC01_PROTOTYPE_ARTIFACTS',
@@ -1543,7 +1586,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
 
 function validateAuthoringPlan(plan, sourceManifest) {
   const indexes = validateSourceManifest(sourceManifest);
-  assert.equal(plan.schema_version, 'mcat-v3-cloud-authoring-orchestration-2');
+  assert.equal(plan.schema_version, 'mcat-v3-cloud-authoring-orchestration-3');
   assert.equal(plan.jobs.length, EXPECTED.counts.lessons);
 
   const canonicalReferencePattern =
@@ -1615,7 +1658,8 @@ function validateAuthoringPlan(plan, sourceManifest) {
     'domain_scientific_fact_check',
     'cars_passage_subject_fact_check',
     'output_rights_and_originality_review',
-    'sanitized_review_bundle_build_and_scan',
+    'candidate_artifact_freeze_and_g01_g06_evidence',
+    'closed_clients_and_opaque_blind_service_deployment',
   ]) {
     assert(workflowStages.has(requiredStage), `Missing required workflow stage ${requiredStage}`);
   }
@@ -1825,6 +1869,14 @@ function validateAuthoringPlan(plan, sourceManifest) {
   }
 
   assert.equal(plan.orchestration_policy.production_publication_default, false);
+  assert.equal(
+    plan.orchestration_policy.assignment_overlay.schema_version,
+    'mcat-v3-cloud-authoring-wave-assignment-overlay-2',
+  );
+  assert.equal(
+    plan.review_bundle_contract.bundle_manifest_schema_version,
+    'mcat-v3-closed-sanitized-review-bundle-1',
+  );
   assert.equal(
     plan.orchestration_policy.assignment_overlay.generated_plan_mutation_forbidden,
     true,

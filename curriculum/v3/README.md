@@ -69,8 +69,8 @@ node --test \
   acceptance gates, role-separation slots, and the fixed 11-wave schedule.
 - `v3-cloud-authoring-wave-assignment-overlay.template.json` is a deterministic unmaterialized
   W00 example. The overlay CLI generates one separate plan-hash-pinned file per wave and validates
-  actual person/run assignments, source ledgers, rights/domain evidence, and sanitized review
-  bundles.
+  actual person/run assignments, source ledgers, recomputed candidate artifacts, closed review
+  clients, opaque blind-service evidence, and complete candidate-bound G01–G10 records.
 - `v3-cloud-authoring-runbook.md` defines clean-room inputs, the lesson contract, independent review
   pipeline, integration checkpoints, publication boundary, and unresolved launch constraints.
 
