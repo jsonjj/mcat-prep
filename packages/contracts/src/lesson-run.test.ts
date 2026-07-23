@@ -9,8 +9,15 @@ import {
 
 const pins = LessonRunPinsSchema.parse({
   runId: '11111111-1111-4111-8111-111111111111',
+  learnerId: '88888888-8888-4888-8888-888888888888',
+  streamId: '99999999-9999-4999-8999-999999999999',
+  taskInstanceId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+  taskKind: 'lesson_initial_instruction',
+  targetKcId: 'V3-KC-SYNTH-CONTRACT',
+  plannerResolutionId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+  evidenceCutoff: '2026-07-23T05:59:00.000Z',
   lessonId: 'V3-LES-SYNTH-CONTRACT',
-  definitionVersion: '3.0.0-test.1',
+  definitionVersion: '4.0.0-test.1',
   reviewedContentHash: 'a'.repeat(64),
   contentRelease: 'synthetic-contract-test',
   registry: {
@@ -45,9 +52,27 @@ describe('lesson run contracts', () => {
     expect(command.expectedRunVersion).toBe(7);
   });
 
+  it('does not permit a learner command to claim lesson delivery completion', () => {
+    expect(
+      LessonActionCommandSchema.safeParse({
+        envelope: {
+          eventId: '19191919-1919-4191-8191-191919191919',
+          idempotencyKey: '20202020-2020-4202-8202-202020202020',
+          occurredAt: '2026-07-23T19:02:00.000Z',
+          expectedStreamVersion: 41,
+          contentRelease: pins.contentRelease,
+          taskInstanceId: pins.taskInstanceId,
+        },
+        runId: pins.runId,
+        expectedRunVersion: 7,
+        action: { type: 'lesson_delivery_completed' },
+      }).success,
+    ).toBe(false);
+  });
+
   it('validates an append-only, version-pinned typed event', () => {
     const parsed = LessonRunEventSchema.parse({
-      schemaVersion: '1.2',
+      schemaVersion: '2.0',
       eventId: '22222222-2222-4222-8222-222222222222',
       idempotencyKey: '33333333-3333-4333-8333-333333333333',
       ...pins,
@@ -65,7 +90,7 @@ describe('lesson run contracts', () => {
 
   it('rejects untyped payload fields and malformed canonical ids', () => {
     const result = LessonRunEventSchema.safeParse({
-      schemaVersion: '1.2',
+      schemaVersion: '2.0',
       eventId: '22222222-2222-4222-8222-222222222222',
       idempotencyKey: '33333333-3333-4333-8333-333333333333',
       ...pins,
@@ -79,9 +104,75 @@ describe('lesson run contracts', () => {
     expect(result.success).toBe(false);
   });
 
+  it('keeps validity incidents void and learner omissions explicitly not-sure', () => {
+    const base = {
+      schemaVersion: '2.0',
+      eventId: '26262626-2626-4262-8262-262626262626',
+      idempotencyKey: '27272727-2727-4272-8272-272727272727',
+      ...pins,
+      sequence: 0,
+      occurredAt: '2026-07-23T06:00:00.000Z',
+      type: 'lesson_response_evaluated',
+      payload: {
+        kcId: pins.targetKcId,
+        activityId: 'V3-ACT-SYNTH-CONTRACT',
+        familyId: 'synthetic-family',
+        responseDigest: 'c'.repeat(64),
+        responseKind: 'omission',
+        elapsedMs: null,
+        assistanceLevel: 'A0',
+        assisted: false,
+        revealed: false,
+        diagnosticSignalIds: [],
+        objectiveFeatureIds: [],
+        authorityFeedback: [
+          {
+            activityId: 'V3-ACT-SYNTH-CONTRACT',
+            tone: 'information',
+            message: 'Synthetic administration record.',
+          },
+        ],
+      },
+    };
+
+    expect(
+      LessonRunEventSchema.safeParse({
+        ...base,
+        payload: {
+          ...base.payload,
+          outcome: null,
+          omissionType: 'inaccessible',
+          validForEvidence: false,
+        },
+      }).success,
+    ).toBe(true);
+    expect(
+      LessonRunEventSchema.safeParse({
+        ...base,
+        payload: {
+          ...base.payload,
+          outcome: 'incorrect',
+          omissionType: 'inaccessible',
+          validForEvidence: true,
+        },
+      }).success,
+    ).toBe(false);
+    expect(
+      LessonRunEventSchema.safeParse({
+        ...base,
+        payload: {
+          ...base.payload,
+          outcome: 'not_sure',
+          omissionType: 'intentional_skip',
+          validForEvidence: true,
+        },
+      }).success,
+    ).toBe(true);
+  });
+
   it('cannot represent an aggregate mastery field in strict run state', () => {
     const state = LessonRunStateSchema.parse({
-      schemaVersion: '1.2',
+      schemaVersion: '2.0',
       pins,
       lineage: {
         rootRunId: pins.runId,
@@ -104,6 +195,10 @@ describe('lesson run contracts', () => {
       currentActivityId: 'V3-ACT-SYNTH-CONTRACT',
       phase: 'enter_routing',
       route: null,
+      validatedPlannerInstruction: null,
+      plannerResolutionHistory: [],
+      plannerResolutionRejectionCodes: [],
+      returnSupportToPlanner: false,
       sequenceActivityIds: ['V3-ACT-SYNTH-CONTRACT'],
       sequencePosition: 0,
       sequencePurpose: 'entry',
@@ -115,6 +210,17 @@ describe('lesson run contracts', () => {
       completionA0Successes: 0,
       completionReadyForExit: false,
       repairCycles: 0,
+      repairReentry: {
+        failedExitFunction: null,
+        originState: null,
+        originCheckpointId: null,
+        originExitPairId: null,
+        preservedSuccesses: [],
+        preservationDecision: null,
+        invalidationReason: null,
+        reentryState: null,
+        reentryCheckpointId: null,
+      },
       exitedKcIds: [],
       signals: [],
       objectiveFeatures: [],
@@ -128,12 +234,21 @@ describe('lesson run contracts', () => {
       feedback: null,
       groupedFeedback: null,
       authorityPrivateFeedback: { sealedEntry: [], sealedExit: [] },
+      currentCheckpoint: null,
+      kcCheckpoints: [],
+      checkpointCommits: [],
+      timing: {
+        shellStartedAt: null,
+        currentKcStartedAt: null,
+        observations: [],
+      },
       resumeStatus: null,
       pauseReason: null,
       plannerReentryRequired: false,
       handoffRunId: null,
       handoffPins: null,
       handoffLineage: null,
+      handoffResolution: null,
       appliedEventIds: [],
       appliedIdempotencyKeys: [],
       lastSequence: -1,

@@ -104,6 +104,57 @@ describe('V3 lesson definition schema', () => {
     expect(microcycle.repairs.cycles.map((cycle) => cycle.cycle)).toEqual([1, 2]);
   });
 
+  it('fails closed unless the required denominator is registry-derived with bypass disabled', () => {
+    expect(syntheticV3LessonDefinition.adaptiveBypassEnabled).toBe(false);
+    expect(syntheticV3LessonDefinition.orderedRequiredKcIds).toEqual(
+      syntheticV3LessonDefinition.orderedKcIds,
+    );
+    expect(syntheticV3LessonDefinition.registryBinding.lesson.orderedRequiredKcIds).toEqual(
+      syntheticV3LessonDefinition.orderedRequiredKcIds,
+    );
+
+    const droppedRequiredKc = structuredClone(syntheticV3LessonDefinition);
+    droppedRequiredKc.orderedRequiredKcIds.pop();
+    expect(LessonDefinitionSchema.safeParse(droppedRequiredKc).success).toBe(false);
+
+    const bypassActivated = structuredClone(syntheticV3LessonDefinition) as unknown as Record<
+      string,
+      unknown
+    >;
+    bypassActivated.adaptiveBypassEnabled = true;
+    expect(LessonDefinitionSchema.safeParse(bypassActivated).success).toBe(false);
+  });
+
+  it('models segment, KC, and shell duration without a completion-time threshold', () => {
+    const definition = syntheticV3LessonDefinition;
+    expect(definition.timingPolicy).toMatchObject({
+      provisionalUninterruptedSegmentP90Seconds: 1_080,
+      appliesTo: 'uninterrupted_segment',
+      completionThreshold: 'none',
+    });
+    expect(definition.durationModel).toMatchObject({
+      scope: 'lesson_shell',
+      completionThreshold: 'none',
+    });
+    definition.knowledgeComponents.forEach((kc) => {
+      expect(kc.durationModel).toMatchObject({
+        scope: 'kc_microcycle',
+        completionThreshold: 'none',
+      });
+      kc.activities.forEach((activity) => {
+        expect(activity.durationModel).toMatchObject({
+          scope: 'uninterrupted_segment',
+          completionThreshold: 'none',
+        });
+      });
+    });
+
+    const perKcThresholdMistake = structuredClone(definition);
+    perKcThresholdMistake.knowledgeComponents[0]!.activities[0]!.durationModel.p90Seconds = 1_081;
+    perKcThresholdMistake.knowledgeComponents[0]!.activities[0]!.durationModel.maximumSeconds = 1_200;
+    expect(LessonDefinitionSchema.safeParse(perKcThresholdMistake).success).toBe(false);
+  });
+
   it('rejects aggregate ordering or canonical statements that drift from the binding', () => {
     const wrongOrder = structuredClone(syntheticV3LessonDefinition);
     wrongOrder.orderedKcIds.reverse();
@@ -178,7 +229,7 @@ describe('V3 lesson definition schema', () => {
     }
   });
 
-  it('rejects impossible fading, contaminated entry probes, and unreachable route evidence', () => {
+  it('rejects impossible fading and contaminated instructional elicitation probes', () => {
     const invalid = structuredClone(syntheticV3LessonDefinition);
     const kc = invalid.knowledgeComponents[0]!;
     kc.microcycle.fading.successesToFade = 3;
@@ -190,13 +241,6 @@ describe('V3 lesson definition schema', () => {
     firstProbe.assistance.revealAllowed = true;
     if (firstProbe.response.kind !== 'choice') throw new Error('Expected a choice entry probe.');
     firstProbe.response.notSureDiagnosticSignalIds = [];
-    const prerequisite = kc.microcycle.entryRouting.routes.find(
-      (route) => route.route === 'prerequisite',
-    )!;
-    if (prerequisite.criteria.kind !== 'convergent_evidence') {
-      throw new Error('Expected convergent prerequisite criteria.');
-    }
-    prerequisite.criteria.signalIds = ['signal-that-no-probe-can-emit'];
 
     const result = LessonDefinitionSchema.safeParse(invalid);
     expect(result.success).toBe(false);
@@ -205,7 +249,6 @@ describe('V3 lesson definition schema', () => {
       expect(messages).toContain('maxAttemptsPerLevel');
       expect(messages).toContain('unsupported');
       expect(messages).toContain('not-sure');
-      expect(messages).toContain('cannot reach');
     }
   });
 

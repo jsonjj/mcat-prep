@@ -350,9 +350,7 @@ export const ValidatedPlannerInstructionSchema = z
     blockedForPredecessor: z.boolean(),
   })
   .strict();
-export type ValidatedPlannerInstruction = z.infer<
-  typeof ValidatedPlannerInstructionSchema
->;
+export type ValidatedPlannerInstruction = z.infer<typeof ValidatedPlannerInstructionSchema>;
 
 export const LessonOmissionTypeSchema = z.enum([
   'intentional_skip',
@@ -372,14 +370,7 @@ export const LessonAttemptRecordSchema = z
     administration: z.enum(['first', 'retry']),
     retryOf: EventIdSchema.nullable(),
     responseDigest: Sha256DigestSchema,
-    responseKind: z.enum([
-      'choice',
-      'text',
-      'numeric',
-      'ordered_steps',
-      'not_sure',
-      'omission',
-    ]),
+    responseKind: z.enum(['choice', 'text', 'numeric', 'ordered_steps', 'not_sure', 'omission']),
     outcome: LessonResponseOutcomeSchema.nullable(),
     omissionType: LessonOmissionTypeSchema.nullable(),
     assistanceLevel: AssistanceLevelSchema,
@@ -410,12 +401,25 @@ export const LessonAttemptRecordSchema = z
         message: 'omission responses require exactly one omission type',
       });
     }
+    const validityIncident = ['technical', 'inaccessible', 'telemetry_missing'].includes(
+      attempt.omissionType ?? '',
+    );
+    const learnerOmission = ['intentional_skip', 'valid_timeout', 'abandonment'].includes(
+      attempt.omissionType ?? '',
+    );
     if (
-      ['technical', 'inaccessible', 'telemetry_missing'].includes(
-        attempt.omissionType ?? '',
-      ) &&
-      attempt.validForEvidence
+      (attempt.responseKind !== 'omission' && attempt.outcome === null) ||
+      (validityIncident && attempt.outcome !== null) ||
+      (learnerOmission && attempt.outcome !== 'not_sure')
     ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['outcome'],
+        message:
+          'validity incidents have no outcome; learner omissions are administered as not-sure',
+      });
+    }
+    if (validityIncident && attempt.validForEvidence) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['validForEvidence'],
@@ -526,9 +530,7 @@ export const LessonDurationObservationSchema = z
     completionThresholdApplied: z.literal(false),
   })
   .strict();
-export type LessonDurationObservation = z.infer<
-  typeof LessonDurationObservationSchema
->;
+export type LessonDurationObservation = z.infer<typeof LessonDurationObservationSchema>;
 
 export const LessonRuntimeCheckpointSchema = z
   .object({
@@ -724,10 +726,8 @@ export const LessonRunStateSchema = z
       if (
         index === 0
           ? resolution.supersession.generation !== 0
-          : resolution.supersession.generation !==
-              previous!.supersession.generation + 1 ||
-            resolution.supersession.rootResolutionId !==
-              previous!.supersession.rootResolutionId ||
+          : resolution.supersession.generation !== previous!.supersession.generation + 1 ||
+            resolution.supersession.rootResolutionId !== previous!.supersession.rootResolutionId ||
             resolution.supersession.supersedesResolutionId !== previous!.resolutionId
       ) {
         ctx.addIssue({
@@ -759,8 +759,7 @@ export const LessonRunStateSchema = z
       .filter((attempt) => attempt.administration === 'retry')
       .forEach((retry, index) => {
         const original = state.attempts.find(
-          (attempt) =>
-            attempt.attemptId === retry.retryOf && attempt.administration === 'first',
+          (attempt) => attempt.attemptId === retry.retryOf && attempt.administration === 'first',
         );
         if (
           !original ||
@@ -823,18 +822,81 @@ export const LessonRunStateSchema = z
       });
     }
     const latestCommit = state.checkpointCommits.at(-1);
+    const expectedCommittedEvents = state.lastSequence + 1;
     if (
-      latestCommit &&
-      (latestCommit.shell.eventStreamSequence > state.lastSequence ||
-        (state.currentCheckpoint !== null &&
-          state.currentCheckpoint.eventStreamSequence > state.lastSequence))
+      state.appliedEventIds.length !== expectedCommittedEvents ||
+      state.appliedIdempotencyKeys.length !== expectedCommittedEvents ||
+      state.checkpointCommits.length !== expectedCommittedEvents
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['checkpointCommits'],
-        message: 'a checkpoint cannot lead the accepted lesson event stream',
+        message:
+          'every accepted lesson event must have exactly one transactional checkpoint commit',
       });
     }
+    if (
+      new Set(state.appliedEventIds).size !== state.appliedEventIds.length ||
+      new Set(state.appliedIdempotencyKeys).size !== state.appliedIdempotencyKeys.length
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['appliedEventIds'],
+        message: 'accepted event and idempotency identities must be unique',
+      });
+    }
+    state.checkpointCommits.forEach((commit, index) => {
+      if (
+        commit.shell.eventStreamSequence !== index ||
+        commit.shell.committedByEventId !== state.appliedEventIds[index] ||
+        commit.shell.definitionHash !== state.pins.reviewedContentHash ||
+        commit.shell.lessonId !== state.pins.lessonId ||
+        (commit.kc !== null &&
+          (commit.kc.eventStreamSequence !== index ||
+            commit.kc.definitionHash !== state.pins.reviewedContentHash ||
+            commit.kc.lessonId !== state.pins.lessonId))
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['checkpointCommits', index],
+          message:
+            'checkpoint commits must exactly bind event order, identity, lesson, and definition hash',
+        });
+      }
+    });
+    const expectedCurrentCheckpoint =
+      latestCommit === undefined ? null : (latestCommit.kc ?? latestCommit.shell);
+    if (JSON.stringify(state.currentCheckpoint) !== JSON.stringify(expectedCurrentCheckpoint)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['currentCheckpoint'],
+        message: 'the current checkpoint must be the latest committed event checkpoint',
+      });
+    }
+    const checkpointKcIds = state.kcCheckpoints.map((checkpoint) => checkpoint.kcId);
+    if (
+      checkpointKcIds.some((kcId) => kcId === null) ||
+      new Set(checkpointKcIds).size !== checkpointKcIds.length
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['kcCheckpoints'],
+        message: 'per-KC checkpoint state must contain one unique checkpoint per KC',
+      });
+    }
+    state.kcCheckpoints.forEach((checkpoint, index) => {
+      const latestForKc = [...state.checkpointCommits]
+        .reverse()
+        .map((commit) => commit.kc)
+        .find((candidate) => candidate?.kcId === checkpoint.kcId);
+      if (latestForKc !== undefined && JSON.stringify(checkpoint) !== JSON.stringify(latestForKc)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['kcCheckpoints', index],
+          message: 'per-KC checkpoint state must equal its latest transactional commit',
+        });
+      }
+    });
     state.lineage.inheritedExposure.families.forEach((inherited) => {
       const current = state.exposures.find((exposure) => exposure.familyId === inherited.familyId);
       if (
@@ -895,30 +957,25 @@ export const LessonRunStartedEventSchema = withEvent('lesson_run_started', z.obj
 
 export const LessonActivityPresentedEventSchema = withEvent(
   'lesson_activity_presented',
-  z.object({
-    kcId: V3KcIdSchema,
-    activityId: V3ActivityIdSchema,
-    familyId: z.string().min(1),
-    attemptSlot: z.enum(['first', 'retry', 'substitute']),
-  }),
+  z
+    .object({
+      kcId: V3KcIdSchema,
+      activityId: V3ActivityIdSchema,
+      familyId: z.string().min(1),
+      attemptSlot: z.enum(['first', 'retry', 'substitute']),
+    })
+    .strict(),
 );
 
-export const LessonResponseEvaluatedEventSchema = withEvent(
+const LessonResponseEvaluatedEventObjectSchema = withEvent(
   'lesson_response_evaluated',
   z.object({
     kcId: V3KcIdSchema,
     activityId: V3ActivityIdSchema,
     familyId: z.string().min(1),
-    outcome: LessonResponseOutcomeSchema,
+    outcome: LessonResponseOutcomeSchema.nullable(),
     responseDigest: Sha256DigestSchema,
-    responseKind: z.enum([
-      'choice',
-      'text',
-      'numeric',
-      'ordered_steps',
-      'not_sure',
-      'omission',
-    ]),
+    responseKind: z.enum(['choice', 'text', 'numeric', 'ordered_steps', 'not_sure', 'omission']),
     omissionType: LessonOmissionTypeSchema.nullable(),
     validForEvidence: z.boolean(),
     elapsedMs: z.number().int().nonnegative().nullable(),
@@ -930,6 +987,67 @@ export const LessonResponseEvaluatedEventSchema = withEvent(
     authorityFeedback: z.array(LessonFeedbackEntrySchema).min(1),
   }),
 );
+
+const LessonResponseEvaluatedPayloadSemanticsSchema = z
+  .object({
+    kcId: V3KcIdSchema,
+    activityId: V3ActivityIdSchema,
+    familyId: z.string().min(1),
+    outcome: LessonResponseOutcomeSchema.nullable(),
+    responseDigest: Sha256DigestSchema,
+    responseKind: z.enum(['choice', 'text', 'numeric', 'ordered_steps', 'not_sure', 'omission']),
+    omissionType: LessonOmissionTypeSchema.nullable(),
+    validForEvidence: z.boolean(),
+    elapsedMs: z.number().int().nonnegative().nullable(),
+    assistanceLevel: AssistanceLevelSchema,
+    assisted: z.boolean(),
+    revealed: z.boolean(),
+    diagnosticSignalIds: z.array(z.string().min(1)),
+    objectiveFeatureIds: z.array(z.string().min(1)),
+    authorityFeedback: z.array(LessonFeedbackEntrySchema).min(1),
+  })
+  .strict()
+  .superRefine((payload, ctx) => {
+    const isOmission = payload.responseKind === 'omission';
+    const validityIncident = ['technical', 'inaccessible', 'telemetry_missing'].includes(
+      payload.omissionType ?? '',
+    );
+    const learnerOmission = ['intentional_skip', 'valid_timeout', 'abandonment'].includes(
+      payload.omissionType ?? '',
+    );
+    if (isOmission !== (payload.omissionType !== null)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['omissionType'],
+        message: 'omission response events require exactly one omission type',
+      });
+    }
+    if (
+      (!isOmission && payload.outcome === null) ||
+      (validityIncident && (payload.outcome !== null || payload.validForEvidence)) ||
+      (learnerOmission && (payload.outcome !== 'not_sure' || !payload.validForEvidence))
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['outcome'],
+        message:
+          'validity incidents are void; learner omissions are valid not-sure administrations',
+      });
+    }
+  });
+
+export const LessonResponseEvaluatedEventSchema =
+  LessonResponseEvaluatedEventObjectSchema.superRefine((event, ctx) => {
+    const semantic = LessonResponseEvaluatedPayloadSemanticsSchema.safeParse(event.payload);
+    if (!semantic.success) {
+      semantic.error.issues.forEach((issue) =>
+        ctx.addIssue({
+          ...issue,
+          path: ['payload', ...issue.path],
+        }),
+      );
+    }
+  });
 
 export const LessonActivityCompletedEventSchema = withEvent(
   'lesson_activity_completed',
@@ -1015,10 +1133,7 @@ export const LessonRepairStartedEventSchema = withEvent(
     kcId: V3KcIdSchema,
     repairRouteId: z.string().min(1),
     failedExitFunction: LessonFailedExitFunctionSchema,
-    preservationDecision: z.enum([
-      'preserve_valid_successes',
-      'invalidate_and_restart_near_use',
-    ]),
+    preservationDecision: z.enum(['preserve_valid_successes', 'invalidate_and_restart_near_use']),
     invalidationReason: z.string().min(1).nullable(),
   }),
 );
@@ -1031,13 +1146,7 @@ export const LessonRetryObservedEventSchema = withEvent(
     familyId: z.string().min(1),
     retryOf: EventIdSchema,
     responseDigest: Sha256DigestSchema,
-    responseKind: z.enum([
-      'choice',
-      'text',
-      'numeric',
-      'ordered_steps',
-      'not_sure',
-    ]),
+    responseKind: z.enum(['choice', 'text', 'numeric', 'ordered_steps', 'not_sure']),
     outcome: LessonResponseOutcomeSchema,
     assistanceLevel: AssistanceLevelSchema,
     elapsedMs: z.number().int().nonnegative().nullable(),
@@ -1069,10 +1178,7 @@ export const KcResumedAtReentryEventSchema = withEvent(
     failedExitFunction: LessonFailedExitFunctionSchema,
     originCheckpointId: z.string().min(1),
     reentryCheckpointId: z.string().min(1),
-    preservationDecision: z.enum([
-      'preserve_valid_successes',
-      'invalidate_and_restart_near_use',
-    ]),
+    preservationDecision: z.enum(['preserve_valid_successes', 'invalidate_and_restart_near_use']),
     invalidationReason: z.string().min(1).nullable(),
   }),
 );
@@ -1120,7 +1226,7 @@ export const LessonInvalidContentDetectedEventSchema = withEvent(
   }),
 );
 
-export const LessonRunEventSchema = z.discriminatedUnion('type', [
+export const LessonRunEventSchema = z.union([
   LessonRunStartedEventSchema,
   LessonActivityPresentedEventSchema,
   LessonResponseEvaluatedEventSchema,

@@ -30,28 +30,35 @@ const routeToRuntime = (
 ): ValidatedPlannerInstruction['effectiveRoute'] =>
   route === 'prerequisite_support' ? 'prerequisite' : route;
 
-const prerequisiteQualified = (
+const prerequisiteCandidateQualified = (
   resolution: PlannerInstructionResolution,
+  candidate: NonNullable<PlannerInstructionResolution['prerequisiteCandidate']>,
+  hardEdgeRequired: boolean,
 ): boolean => {
-  const candidate = resolution.prerequisiteCandidate;
-  if (!candidate || candidate.edgeKind !== 'hard_prerequisite') return false;
+  if (hardEdgeRequired && candidate.edgeKind !== 'hard_prerequisite') return false;
   const qualification = candidate.qualification;
-  const observations = resolution.directPointOfUseObservations.filter(
+  const candidateObservations = resolution.directPointOfUseObservations.filter(
     (observation) =>
       observation.predecessorKcId === candidate.predecessorKcId &&
       observation.edgeId === candidate.edgeId &&
-      observation.pointOfUseId === candidate.pointOfUseId &&
+      observation.pointOfUseId === candidate.pointOfUseId,
+  );
+  const qualifiedObservations = candidateObservations.filter(
+    (observation) =>
       observation.valid &&
       observation.assistanceLevel === 'A0' &&
       !observation.contentBearingHintUsed &&
       ['failed', 'uncertain'].includes(observation.outcome),
   );
+  const observedDistinctFamilies = new Set(
+    qualifiedObservations.map((observation) => observation.familyId),
+  ).size;
   return (
     qualification.status === 'qualified' &&
     qualification.allEvidenceValid &&
-    qualification.observedDistinctFamilies >= qualification.requiredDistinctFamilies &&
-    new Set(observations.map((observation) => observation.familyId)).size >=
-      qualification.requiredDistinctFamilies
+    candidateObservations.length === qualifiedObservations.length &&
+    qualification.observedDistinctFamilies === observedDistinctFamilies &&
+    observedDistinctFamilies >= qualification.requiredDistinctFamilies
   );
 };
 
@@ -74,9 +81,7 @@ const lineageReplayable = (
   );
 };
 
-const guessedIdentity = (
-  input: unknown,
-): { resolutionId: string | null; kcId: string | null } => {
+const guessedIdentity = (input: unknown): { resolutionId: string | null; kcId: string | null } => {
   if (typeof input !== 'object' || input === null || Array.isArray(input)) {
     return { resolutionId: null, kcId: null };
   }
@@ -143,6 +148,9 @@ export function acceptPlannerInstructionResolution(
   if (Date.parse(resolution.expiresAt) <= Date.parse(context.now)) {
     fatal.push('RESOLUTION_EXPIRED');
   }
+  if (Date.parse(resolution.issuedAt) > Date.parse(context.now)) {
+    fatal.push('RESOLUTION_NOT_YET_VALID');
+  }
   if (!lineageReplayable(resolution, context.priorResolution)) {
     fatal.push('SUPERSESSION_LINEAGE_UNREPLAYABLE');
   }
@@ -183,16 +191,21 @@ export function acceptPlannerInstructionResolution(
   let supportReturnedToPlanner = false;
   let blockedForPredecessor = false;
   if (resolution.requestedRoute === 'prerequisite_support') {
-    if (!prerequisiteQualified(resolution)) {
+    const prerequisite = resolution.prerequisiteCandidate;
+    const selectedBlocking = resolution.blockingCandidates.find(
+      (candidate) => candidate.candidateId === resolution.selectedBlockingCandidateId,
+    );
+    const prerequisiteIsQualified =
+      prerequisite !== null && prerequisiteCandidateQualified(resolution, prerequisite, false);
+    const blockingSelectionIsQualified =
+      selectedBlocking === undefined ||
+      prerequisiteCandidateQualified(resolution, selectedBlocking, true);
+    if (!prerequisiteIsQualified || !blockingSelectionIsQualified) {
       downgrade.push('PREREQUISITE_QUALIFICATION_INVALID');
       downgrade.push('PREREQUISITE_SUPPORT_RETURNED_TO_PLANNER');
       supportReturnedToPlanner = true;
     } else {
-      const selected = resolution.blockingCandidates.find(
-        (candidate) =>
-          candidate.candidateId === resolution.selectedBlockingCandidateId,
-      );
-      blockedForPredecessor = selected?.gapClass === 'blocking_predecessor';
+      blockedForPredecessor = selectedBlocking?.gapClass === 'blocking_predecessor';
     }
   }
 

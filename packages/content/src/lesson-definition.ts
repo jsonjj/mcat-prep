@@ -21,7 +21,7 @@ import {
   validateCanonicalLessonBinding,
 } from './canonical-manifest';
 import { deterministicJson } from './deterministic-json';
-import { ContentStatusSchema } from './schema';
+import { ContentStatusSchema } from './engine-schema';
 
 export const LESSON_DEFINITION_SCHEMA_VERSION = '4.0.0' as const;
 

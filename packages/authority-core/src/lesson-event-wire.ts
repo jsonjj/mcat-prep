@@ -21,20 +21,14 @@ const deterministicUuid = (seed: string): string => {
   return `${joined.slice(0, 8)}-${joined.slice(8, 12)}-${joined.slice(12, 16)}-${joined.slice(16, 20)}-${joined.slice(20)}`;
 };
 
-const route = (
-  value: 'concise' | 'standard' | 'prerequisite' | 'misconception',
-) =>
+const route = (value: 'concise' | 'standard' | 'prerequisite' | 'misconception') =>
   value === 'prerequisite'
     ? ('PREREQUISITE_SUPPORT' as const)
     : (value.toUpperCase() as 'CONCISE' | 'STANDARD' | 'MISCONCEPTION');
 
-const upper = <T extends string>(value: T): Uppercase<T> =>
-  value.toUpperCase() as Uppercase<T>;
+const upper = <T extends string>(value: T): Uppercase<T> => value.toUpperCase() as Uppercase<T>;
 
-const activity = (
-  definition: LessonDefinition,
-  activityId: string,
-) =>
+const activity = (definition: LessonDefinition, activityId: string) =>
   definition.knowledgeComponents
     .flatMap((kc) => kc.activities)
     .find((candidate) => candidate.id === activityId);
@@ -69,6 +63,31 @@ export function translateLessonRunEventsToCanonical(
 
   events.forEach((event) => {
     const commit = commitFor(event);
+    const previousCommit = state.checkpointCommits.find(
+      (candidate) => candidate.shell.eventStreamSequence === event.sequence - 1,
+    );
+    const plannerInstruction =
+      commit.kc?.validatedPlannerInstruction ?? commit.shell.validatedPlannerInstruction;
+    const policyVersions = [
+      ...event.policies,
+      ...(plannerInstruction
+        ? [
+            plannerInstruction.resolution.diagnosticProvenance.diagnosticPolicy,
+            ...(plannerInstruction.resolution.prerequisiteCandidate
+              ? [plannerInstruction.resolution.prerequisiteCandidate.qualification.policy]
+              : []),
+            ...plannerInstruction.resolution.blockingCandidates.map(
+              (candidate) => candidate.qualification.policy,
+            ),
+          ]
+        : []),
+    ].filter(
+      (policy, index, policies) =>
+        policies.findIndex(
+          (candidate) =>
+            candidate.policyId === policy.policyId && candidate.version === policy.version,
+        ) === index,
+    );
     let eventOffset = 0;
     const emit = (
       eventType: CanonicalLessonEventType,
@@ -78,16 +97,12 @@ export function translateLessonRunEventsToCanonical(
       const id =
         eventOffset === 0
           ? event.eventId
-          : EventIdSchema.parse(
-              deterministicUuid(`${event.eventId}:canonical:${eventOffset}`),
-            );
+          : EventIdSchema.parse(deterministicUuid(`${event.eventId}:canonical:${eventOffset}`));
       const idempotencyKey =
         eventOffset === 0
           ? event.idempotencyKey
           : IdempotencyKeySchema.parse(
-              deterministicUuid(
-                `${event.idempotencyKey}:canonical:${eventOffset}`,
-              ),
+              deterministicUuid(`${event.idempotencyKey}:canonical:${eventOffset}`),
             );
       result.push(
         CanonicalLearnerEventSchema.parse({
@@ -117,8 +132,8 @@ export function translateLessonRunEventsToCanonical(
             contentRelease: event.contentRelease,
             definitionVersion: event.definitionVersion,
             reviewedContentHash: event.reviewedContentHash,
-            policyVersions: event.policies,
-            modelVersions: [],
+            policyVersions,
+            modelVersions: plannerInstruction?.resolution.diagnosticProvenance.modelVersions ?? [],
           },
           payload,
         }),
@@ -128,25 +143,36 @@ export function translateLessonRunEventsToCanonical(
 
     if (event.type === 'lesson_run_started') {
       const instruction = commit.shell.validatedPlannerInstruction!;
-      emit(
-        'LESSON_SHELL_STARTED',
-        {
-          runId: event.runId,
-          lessonId: event.lessonId,
-          taskInstanceId: event.taskInstanceId,
-          resolutionId: instruction.resolution.resolutionId,
-          orderedRequiredKcIds: definition.orderedRequiredKcIds,
-        },
-        'SYSTEM',
-      );
+      if (state.lineage.generation === 0) {
+        emit(
+          'LESSON_SHELL_STARTED',
+          {
+            runId: event.runId,
+            lessonId: event.lessonId,
+            taskInstanceId: event.taskInstanceId,
+            resolutionId: instruction.resolution.resolutionId,
+            orderedRequiredKcIds: definition.orderedRequiredKcIds,
+          },
+          'SYSTEM',
+        );
+      } else {
+        emit(
+          'LESSON_SHELL_RESUMED',
+          {
+            runId: event.runId,
+            lessonId: event.lessonId,
+            checkpointId: commit.shell.checkpointId,
+          },
+          'SYSTEM',
+        );
+      }
       emit(
         'KC_MICROCYCLE_STARTED',
         {
           runId: event.runId,
           lessonId: event.lessonId,
           kcId: instruction.resolution.kcId,
-          ordinal:
-            definition.orderedRequiredKcIds.indexOf(instruction.resolution.kcId) + 1,
+          ordinal: definition.orderedRequiredKcIds.indexOf(instruction.resolution.kcId) + 1,
           resolutionId: instruction.resolution.resolutionId,
           checkpointId: commit.kc!.checkpointId,
         },
@@ -187,8 +213,7 @@ export function translateLessonRunEventsToCanonical(
       if (instruction.blockedForPredecessor) {
         const selected = instruction.resolution.blockingCandidates.find(
           (candidate) =>
-            candidate.candidateId ===
-            instruction.resolution.selectedBlockingCandidateId,
+            candidate.candidateId === instruction.resolution.selectedBlockingCandidateId,
         )!;
         emit(
           'KC_PAUSED_FOR_PREDECESSOR',
@@ -262,12 +287,9 @@ export function translateLessonRunEventsToCanonical(
           familyId: event.payload.familyId,
           attemptKind: 'FIRST',
           responseKind: upper(event.payload.responseKind),
-          outcome:
-            event.payload.outcome === null ? null : upper(event.payload.outcome),
+          outcome: event.payload.outcome === null ? null : upper(event.payload.outcome),
           omissionType:
-            event.payload.omissionType === null
-              ? null
-              : upper(event.payload.omissionType),
+            event.payload.omissionType === null ? null : upper(event.payload.omissionType),
           assistanceLevel: event.payload.assistanceLevel,
           hinted: event.payload.assisted,
           revealed: event.payload.revealed,
@@ -278,9 +300,7 @@ export function translateLessonRunEventsToCanonical(
       );
       const definitionActivity = activity(definition, event.payload.activityId)!;
       if (
-        !['enter_routing', 'exit_near', 'exit_changed'].includes(
-          definitionActivity.phase,
-        ) &&
+        !['enter_routing', 'exit_near', 'exit_changed'].includes(definitionActivity.phase) &&
         event.payload.validForEvidence
       ) {
         emit(
@@ -344,17 +364,15 @@ export function translateLessonRunEventsToCanonical(
         },
         'LEARNER',
       );
-    } else if (event.type === 'lesson_assistance_revealed') {
       emit(
-        'ASSISTANCE_CHANGED',
+        'FEEDBACK_DELIVERED',
         {
           runId: event.runId,
           lessonId: event.lessonId,
           kcId: event.payload.kcId,
-          activityId: event.payload.activityId,
-          fromLevel: event.payload.fromLevel,
-          toLevel: event.payload.level,
-          reason: 'HINT_CONSUMED',
+          activityIds: [event.payload.activityId],
+          grouped: false,
+          answerSpecific: true,
         },
         'AUTHORITY',
       );
@@ -478,8 +496,7 @@ export function translateLessonRunEventsToCanonical(
       );
     } else if (event.type === 'lesson_run_resumed') {
       const prior = state.checkpointCommits.find(
-        (candidate) =>
-          candidate.shell.eventStreamSequence === event.sequence - 1,
+        (candidate) => candidate.shell.eventStreamSequence === event.sequence - 1,
       );
       emit(
         'LESSON_SHELL_RESUMED',
@@ -509,17 +526,19 @@ export function translateLessonRunEventsToCanonical(
         {
           runId: event.runId,
           lessonId: event.lessonId,
-          kcId: event.targetKcId,
+          kcId: resolution.kcId,
           reason:
-            state.pauseReason === 'repair_exhausted'
-              ? 'REPAIR_EXHAUSTED'
-              : state.pauseReason === 'entry_pool_exhausted'
-                ? 'ENTRY_POOL_EXHAUSTED'
-                : state.pauseReason === 'exit_pool_exhausted'
-                  ? 'EXIT_POOL_EXHAUSTED'
-                  : state.pauseReason === 'blocked_for_predecessor'
-                    ? 'BLOCKED_FOR_PREDECESSOR'
-                    : 'COMPLETION_POOL_EXHAUSTED',
+            event.targetKcId !== resolution.kcId
+              ? 'NEXT_REQUIRED_KC'
+              : state.pauseReason === 'repair_exhausted'
+                ? 'REPAIR_EXHAUSTED'
+                : state.pauseReason === 'entry_pool_exhausted'
+                  ? 'ENTRY_POOL_EXHAUSTED'
+                  : state.pauseReason === 'exit_pool_exhausted'
+                    ? 'EXIT_POOL_EXHAUSTED'
+                    : state.pauseReason === 'blocked_for_predecessor'
+                      ? 'BLOCKED_FOR_PREDECESSOR'
+                      : 'COMPLETION_POOL_EXHAUSTED',
           checkpointId: commit.kc?.checkpointId ?? commit.shell.checkpointId,
         },
         'PLANNER',
@@ -531,15 +550,11 @@ export function translateLessonRunEventsToCanonical(
           lessonId: event.lessonId,
           kcId: resolution.kcId,
           resolutionId: resolution.resolutionId,
-          originSequenceRelationId:
-            resolution.origin.sequenceRelationId,
+          originSequenceRelationId: resolution.origin.sequenceRelationId,
           reentrySequenceRelationId:
-            resolution.reentry?.sequenceRelationId ??
-            resolution.origin.sequenceRelationId,
+            resolution.reentry?.sequenceRelationId ?? resolution.origin.sequenceRelationId,
           originCheckpointId: resolution.origin.checkpointId,
-          reentryCheckpointId:
-            resolution.reentry?.checkpointId ??
-            resolution.origin.checkpointId,
+          reentryCheckpointId: resolution.reentry?.checkpointId ?? resolution.origin.checkpointId,
         },
         'PLANNER',
       );
@@ -562,6 +577,42 @@ export function translateLessonRunEventsToCanonical(
           runId: event.runId,
           lessonId: event.lessonId,
           issueCodes: event.payload.issueCodes,
+        },
+        'AUTHORITY',
+      );
+    }
+
+    const priorAssistance = previousCommit?.kc?.actualAssistanceLevel;
+    const currentAssistance = commit.kc?.actualAssistanceLevel;
+    const assistanceActivityId =
+      commit.kc?.nodeId ??
+      ('activityId' in event.payload && typeof event.payload.activityId === 'string'
+        ? event.payload.activityId
+        : null);
+    if (
+      priorAssistance !== undefined &&
+      currentAssistance !== undefined &&
+      priorAssistance !== currentAssistance &&
+      commit.kc?.kcId !== null &&
+      assistanceActivityId !== null
+    ) {
+      emit(
+        'ASSISTANCE_CHANGED',
+        {
+          runId: event.runId,
+          lessonId: event.lessonId,
+          kcId: commit.kc!.kcId,
+          activityId: assistanceActivityId,
+          fromLevel: priorAssistance,
+          toLevel: currentAssistance,
+          reason:
+            event.type === 'lesson_response_evaluated'
+              ? 'PERFORMANCE_POLICY'
+              : event.type === 'lesson_assistance_revealed'
+                ? 'HINT_CONSUMED'
+                : event.type === 'lesson_repair_started'
+                  ? 'REPAIR_START'
+                  : 'PLANNER_ROUTE',
         },
         'AUTHORITY',
       );

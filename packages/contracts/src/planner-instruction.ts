@@ -1,11 +1,6 @@
 import { z } from 'zod';
 import { AssistanceLevelSchema } from './vocab';
-import {
-  EventIdSchema,
-  LearnerIdSchema,
-  V3KcIdSchema,
-  V3LessonIdSchema,
-} from './ids';
+import { EventIdSchema, LearnerIdSchema, V3KcIdSchema, V3LessonIdSchema } from './ids';
 import {
   LessonDefinitionVersionSchema,
   Sha256DigestSchema,
@@ -99,9 +94,7 @@ export const PlannerPrerequisiteCandidateSchema = z
     qualification: PlannerEvidencePolicyQualificationSchema,
   })
   .strict();
-export type PlannerPrerequisiteCandidate = z.infer<
-  typeof PlannerPrerequisiteCandidateSchema
->;
+export type PlannerPrerequisiteCandidate = z.infer<typeof PlannerPrerequisiteCandidateSchema>;
 
 export const PlannerPointOfUseObservationSchema = z
   .object({
@@ -179,14 +172,16 @@ export const PlannerInstructionResolutionSchema = z
   })
   .strict()
   .superRefine((resolution, ctx) => {
-    const candidateIds = resolution.blockingCandidates.map(
-      (candidate) => candidate.candidateId,
-    );
+    const allCandidates = [
+      ...(resolution.prerequisiteCandidate ? [resolution.prerequisiteCandidate] : []),
+      ...resolution.blockingCandidates,
+    ];
+    const candidateIds = allCandidates.map((candidate) => candidate.candidateId);
     if (new Set(candidateIds).size !== candidateIds.length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['blockingCandidates'],
-        message: 'blocking prerequisite candidate IDs must be unique',
+        path: ['prerequisiteCandidate'],
+        message: 'prerequisite candidate IDs must be unique across the resolution',
       });
     }
     const observationIds = resolution.directPointOfUseObservations.map(
@@ -207,6 +202,17 @@ export const PlannerInstructionResolutionSchema = z
       });
     }
     if (
+      Date.parse(resolution.diagnosticProvenance.observedAt) >
+        Date.parse(resolution.evidenceCutoff) ||
+      Date.parse(resolution.evidenceCutoff) > Date.parse(resolution.issuedAt)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['evidenceCutoff'],
+        message: 'diagnostic observation and evidence cutoff must not follow resolution issuance',
+      });
+    }
+    if (
       resolution.origin.lessonId !== resolution.lessonId ||
       resolution.origin.kcId !== resolution.kcId
     ) {
@@ -218,7 +224,9 @@ export const PlannerInstructionResolutionSchema = z
     }
     if (
       resolution.selectedBlockingCandidateId !== null &&
-      !candidateIds.includes(resolution.selectedBlockingCandidateId)
+      !resolution.blockingCandidates.some(
+        (candidate) => candidate.candidateId === resolution.selectedBlockingCandidateId,
+      )
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -226,25 +234,60 @@ export const PlannerInstructionResolutionSchema = z
         message: 'selected blocking candidate must be declared',
       });
     }
-    if (resolution.supersession.generation === 0) {
-      if (
-        resolution.supersession.rootResolutionId !== resolution.resolutionId ||
-        resolution.supersession.supersedesResolutionId !== null
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['supersession'],
-          message: 'root planner resolutions must identify themselves and supersede nothing',
-        });
-      }
-    } else if (resolution.supersession.supersedesResolutionId === null) {
+    if (
+      resolution.reentry !== null &&
+      (resolution.reentry.lessonId !== resolution.lessonId ||
+        resolution.reentry.kcId !== resolution.kcId)
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['supersession'],
-        message: 'non-root planner resolutions must identify the superseded resolution',
+        path: ['reentry'],
+        message: 'planner reentry coordinates must identify the resolution target',
       });
     }
+    if (resolution.taskKind === 'lesson_initial_instruction' && resolution.reentry !== null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['reentry'],
+        message: 'initial lesson instruction cannot carry a reentry coordinate',
+      });
+    }
+    if (
+      ['exact_kc_repair', 'sequence_reentry'].includes(resolution.taskKind) &&
+      resolution.reentry === null
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['reentry'],
+        message: 'repair and sequence reentry instructions require an exact coordinate',
+      });
+    }
+    if (
+      resolution.reentry !== null &&
+      new Set(resolution.reentry.preservedExitFunctions).size !==
+        resolution.reentry.preservedExitFunctions.length
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['reentry', 'preservedExitFunctions'],
+        message: 'preserved exit functions must be unique',
+      });
+    }
+    const pinnedPolicies = new Set(
+      resolution.policies.map((policy) => `${policy.policyId}\u0000${policy.version}`),
+    );
+    const requiredPolicies = [
+      resolution.diagnosticProvenance.diagnosticPolicy,
+      ...allCandidates.map((candidate) => candidate.qualification.policy),
+    ];
+    requiredPolicies.forEach((policy) => {
+      if (!pinnedPolicies.has(`${policy.policyId}\u0000${policy.version}`)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['policies'],
+          message: `planner policy ${policy.policyId}@${policy.version} is not pinned`,
+        });
+      }
+    });
   });
-export type PlannerInstructionResolution = z.infer<
-  typeof PlannerInstructionResolutionSchema
->;
+export type PlannerInstructionResolution = z.infer<typeof PlannerInstructionResolutionSchema>;

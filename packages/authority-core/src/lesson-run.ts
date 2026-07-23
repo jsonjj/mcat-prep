@@ -30,7 +30,6 @@ import {
   type LessonRunLineage,
   type LessonRunPins,
   type LessonRunState,
-  type PlannerInstructionResolution,
   type ValidatedPlannerInstruction,
   type LessonStepView,
   newEventId,
@@ -206,21 +205,6 @@ function currentKc(
   );
 }
 
-function reentryTargetKc(
-  definition: LessonDefinition,
-  state: LessonRunState,
-): KnowledgeComponentDefinition | null {
-  const current =
-    definition.knowledgeComponents.find(
-      (kc) => kc.id === state.currentKcId && !state.exitedKcIds.includes(kc.id),
-    ) ?? null;
-  return (
-    current ??
-    definition.knowledgeComponents.find((kc) => !state.exitedKcIds.includes(kc.id)) ??
-    null
-  );
-}
-
 function currentActivity(
   definition: LessonDefinition,
   state: LessonRunState,
@@ -324,8 +308,7 @@ function startKc(
   state.validatedPlannerInstruction = structuredClone(instruction);
   if (
     !state.plannerResolutionHistory.some(
-      (resolution) =>
-        resolution.resolutionId === instruction.resolution.resolutionId,
+      (resolution) => resolution.resolutionId === instruction.resolution.resolutionId,
     )
   ) {
     state.plannerResolutionHistory.push(structuredClone(instruction.resolution));
@@ -382,9 +365,7 @@ export function initializeLessonRun(
     return LessonRunStateSchema.parse(state);
   }
   const state = invalidState(pins, []);
-  const target = checked.definition.knowledgeComponents.find(
-    (kc) => kc.id === pins.targetKcId,
-  )!;
+  const target = checked.definition.knowledgeComponents.find((kc) => kc.id === pins.targetKcId)!;
   startKc(state, target, 'ready', accepted.validated);
   state.invalidIssues = [];
   return LessonRunStateSchema.parse(state);
@@ -484,7 +465,7 @@ export function initializeLessonReentryRun(
   }
   if (!reentryPinsCompatible(parent.pins, pins)) issues.push('reentry_content_pin_mismatch');
   const target = checked.definition
-    ? checked.definition.knowledgeComponents.find((kc) => kc.id === pins.targetKcId) ?? null
+    ? (checked.definition.knowledgeComponents.find((kc) => kc.id === pins.targetKcId) ?? null)
     : null;
   const accepted = acceptPlannerInstructionResolution(resolutionInput, {
     pins,
@@ -725,20 +706,15 @@ function exitFunctionPassed(
   return (
     state.repairReentry.preservedSuccesses.some(
       (success) => success.exitFunction === exitFunction,
-    ) ||
-    state.sealedExitResults.some(
-      (result) => result.role === role && result.passedUnsupported,
-    )
+    ) || state.sealedExitResults.some((result) => result.role === role && result.passedUnsupported)
   );
 }
 
 const exitChecksComplete = (state: LessonRunState): boolean =>
-  exitFunctionObserved(state, 'near_use') &&
-  exitFunctionObserved(state, 'changed_task');
+  exitFunctionObserved(state, 'near_use') && exitFunctionObserved(state, 'changed_task');
 
 const exitChecksPass = (state: LessonRunState): boolean =>
-  exitFunctionPassed(state, 'near_use') &&
-  exitFunctionPassed(state, 'changed_task');
+  exitFunctionPassed(state, 'near_use') && exitFunctionPassed(state, 'changed_task');
 
 function successfulExitAttemptId(
   state: LessonRunState,
@@ -750,9 +726,8 @@ function successfulExitAttemptId(
   if (preserved) return preserved.attemptId;
   const role = exitFunction === 'near_use' ? 'near' : 'changed';
   return (
-    state.sealedExitResults.find(
-      (result) => result.role === role && result.passedUnsupported,
-    )?.attemptId ?? null
+    state.sealedExitResults.find((result) => result.role === role && result.passedUnsupported)
+      ?.attemptId ?? null
   );
 }
 
@@ -849,11 +824,9 @@ function reduceLessonRunTransition(
     state.currentActivityId = null;
     state.phase = null;
     state.invalidIssues = checked.issues;
-    recordEvent(state, event);
     return LessonRunStateSchema.parse(state);
   }
   const definition = checked.definition;
-  recordEvent(state, event);
 
   if (event.type === 'lesson_invalid_content_detected') {
     state.status = 'invalid_content';
@@ -904,8 +877,7 @@ function reduceLessonRunTransition(
           state.resumeStatus !== null &&
           state.checkpointCommits.at(-1)?.shell.checkpointId ===
             definition.shellCheckpointMap.paused &&
-          state.checkpointCommits.at(-1)?.shell.eventStreamSequence ===
-            state.lastSequence,
+          state.checkpointCommits.at(-1)?.shell.eventStreamSequence === state.lastSequence,
         'resume_not_allowed',
       )
     ) {
@@ -925,14 +897,11 @@ function reduceLessonRunTransition(
         ? expectedReentryLineage(state, nextPins, target.id)
         : null;
     const maxTargetReentries = target?.microcycle.fading.maxReentryGenerations ?? 0;
-    const nextInstruction = acceptPlannerInstructionResolution(
-      event.payload.nextResolution,
-      {
-        pins: nextPins,
-        now: event.occurredAt,
-        priorResolution: state.plannerResolutionHistory.at(-1) ?? null,
-      },
-    );
+    const nextInstruction = acceptPlannerInstructionResolution(event.payload.nextResolution, {
+      pins: nextPins,
+      now: event.occurredAt,
+      priorResolution: state.plannerResolutionHistory.at(-1) ?? null,
+    });
     if (
       transitionError(
         state,
@@ -970,9 +939,7 @@ function reduceLessonRunTransition(
           definition.orderedRequiredKcIds.every((kcId) =>
             event.payload.instructionalExitKcIds.includes(kcId),
           ) &&
-          definition.orderedRequiredKcIds.every((kcId) =>
-            state.exitedKcIds.includes(kcId),
-          ),
+          definition.orderedRequiredKcIds.every((kcId) => state.exitedKcIds.includes(kcId)),
         'lesson_delivery_completion_not_allowed',
       )
     ) {
@@ -1075,8 +1042,7 @@ function reduceLessonRunTransition(
     const activity = currentActivity(definition, state);
     const hint = activity?.assistance.hints.find(
       (candidate) =>
-        candidate.id === event.payload.hintId &&
-        candidate.level === event.payload.level,
+        candidate.id === event.payload.hintId && candidate.level === event.payload.level,
     );
     if (
       transitionError(
@@ -1098,6 +1064,7 @@ function reduceLessonRunTransition(
 
   if (event.type === 'lesson_reveal_requested') {
     const activity = currentActivity(definition, state);
+    const exposure = activity ? exposureFor(state, activity.familyId) : undefined;
     if (
       transitionError(
         state,
@@ -1107,13 +1074,40 @@ function reduceLessonRunTransition(
           state.lastResponse?.activityId !== activity.id &&
           event.payload.kcId === kc.id &&
           event.payload.activityId === activity.id &&
-          activity.assistance.revealAllowed,
+          activity.assistance.revealAllowed &&
+          exposure !== undefined &&
+          !exposure.revealed,
         'reveal_request_not_allowed',
       )
     ) {
       return state;
     }
-    exposureFor(state, activity!.familyId)!.revealed = true;
+    exposure!.revealed = true;
+    exposure!.feedbackSeen = true;
+    exposure!.answerKeySeen = true;
+    const answerSummary =
+      activity!.response.kind === 'choice'
+        ? `Revealed answer: ${activity!.response.choices
+            .filter((choice) =>
+              activity!.response.kind === 'choice'
+                ? activity!.response.correctChoiceIds.includes(choice.id)
+                : false,
+            )
+            .map((choice) => choice.label)
+            .join(', ')}. ${activity!.response.correctFeedback}`
+        : activity!.response.kind === 'none'
+          ? 'No response key is defined for this instruction node.'
+          : activity!.response.rubric.correctFeedback;
+    state.feedback = {
+      sealed: false,
+      entries: [
+        {
+          activityId: activity!.id,
+          tone: 'information',
+          message: answerSummary,
+        },
+      ],
+    };
     return LessonRunStateSchema.parse(state);
   }
 
@@ -1125,8 +1119,7 @@ function reduceLessonRunTransition(
         state.status === 'active' &&
           state.route === null &&
           state.validatedPlannerInstruction !== null &&
-          deterministicJson(instruction) ===
-            deterministicJson(state.validatedPlannerInstruction) &&
+          deterministicJson(instruction) === deterministicJson(state.validatedPlannerInstruction) &&
           instruction.resolution.kcId === kc.id,
         'route_selection_not_allowed',
       )
@@ -1161,8 +1154,7 @@ function reduceLessonRunTransition(
           event.payload.familyId === activity.familyId &&
           activity.response.kind !== 'none' &&
           !state.attempts.some(
-            (attempt) =>
-              attempt.activityId === activity.id && attempt.administration === 'first',
+            (attempt) => attempt.activityId === activity.id && attempt.administration === 'first',
           ) &&
           event.payload.assistanceLevel === state.assistanceLevel &&
           activity.assistance.allowedLevels.includes(event.payload.assistanceLevel) &&
@@ -1317,8 +1309,7 @@ function reduceLessonRunTransition(
   if (event.type === 'lesson_retry_observed') {
     const original = state.attempts.find(
       (attempt) =>
-        attempt.attemptId === event.payload.retryOf &&
-        attempt.administration === 'first',
+        attempt.attemptId === event.payload.retryOf && attempt.administration === 'first',
     );
     if (
       transitionError(
@@ -1365,9 +1356,7 @@ function reduceLessonRunTransition(
         event.payload.kcId === kc.id &&
           attempt !== undefined &&
           kc.activities.some((activity) => activity.id === attempt.activityId) &&
-          !state.confidenceRecords.some(
-            (record) => record.attemptId === attempt.attemptId,
-          ),
+          !state.confidenceRecords.some((record) => record.attemptId === attempt.attemptId),
         'confidence_record_not_allowed',
       )
     ) {
@@ -1391,9 +1380,7 @@ function reduceLessonRunTransition(
         event.payload.kcId === kc.id &&
           attempt !== undefined &&
           kc.activities.some((activity) => activity.id === attempt.activityId) &&
-          !state.learnerCauseRecords.some(
-            (record) => record.attemptId === attempt.attemptId,
-          ),
+          !state.learnerCauseRecords.some((record) => record.attemptId === attempt.attemptId),
         'learner_cause_record_not_allowed',
       )
     ) {
@@ -1412,9 +1399,8 @@ function reduceLessonRunTransition(
     const attempt =
       event.payload.attemptId === null
         ? null
-        : state.attempts.find(
-            (candidate) => candidate.attemptId === event.payload.attemptId,
-          ) ?? null;
+        : (state.attempts.find((candidate) => candidate.attemptId === event.payload.attemptId) ??
+          null);
     if (
       transitionError(
         state,
@@ -1422,9 +1408,7 @@ function reduceLessonRunTransition(
           activity.familyId === event.payload.familyId &&
           (event.payload.attemptId === null || attempt !== null) &&
           !state.invalidatedItems.some(
-            (item) =>
-              item.activityId === activity.id &&
-              item.attemptId === event.payload.attemptId,
+            (item) => item.activityId === activity.id && item.attemptId === event.payload.attemptId,
           ),
         'item_invalidation_not_allowed',
       )
@@ -1541,8 +1525,7 @@ function reduceLessonRunTransition(
           event.payload.kcId === kc.id &&
           exitChecksComplete(state) &&
           state.sealedExitResults.length >= 1 &&
-          state.authorityPrivateFeedback.sealedExit.length ===
-            state.sealedExitResults.length &&
+          state.authorityPrivateFeedback.sealedExit.length === state.sealedExitResults.length &&
           state.authorityPrivateFeedback.sealedExit.every((entry) =>
             sealedIds.includes(entry.activityId),
           ),
@@ -1568,7 +1551,9 @@ function reduceLessonRunTransition(
       return LessonRunStateSchema.parse(state);
     }
     const failedResult =
-      state.sealedExitResults.find((result) => result.role === 'near' && !result.passedUnsupported) ??
+      state.sealedExitResults.find(
+        (result) => result.role === 'near' && !result.passedUnsupported,
+      ) ??
       state.sealedExitResults.find(
         (result) => result.role === 'changed' && !result.passedUnsupported,
       )!;
@@ -1594,9 +1579,8 @@ function reduceLessonRunTransition(
           })),
       ].filter(
         (success, index, successes) =>
-          successes.findIndex(
-            (candidate) => candidate.exitFunction === success.exitFunction,
-          ) === index,
+          successes.findIndex((candidate) => candidate.exitFunction === success.exitFunction) ===
+          index,
       ),
       preservationDecision: null,
       invalidationReason: null,
@@ -1691,10 +1675,7 @@ function reduceLessonRunTransition(
     const preservedFunctions = new Set(
       repair.preservedSuccesses.map((success) => success.exitFunction),
     );
-    if (
-      repair.failedExitFunction === 'changed_task' &&
-      !preservedFunctions.has('near_use')
-    ) {
+    if (repair.failedExitFunction === 'changed_task' && !preservedFunctions.has('near_use')) {
       return block(state, 'changed_task_reentry_requires_preserved_near_use');
     }
     state.sequenceActivityIds =
@@ -1721,10 +1702,8 @@ function reduceLessonRunTransition(
           exitChecksComplete(state) &&
           exitChecksPass(state) &&
           event.payload.kcId === kc.id &&
-          event.payload.nearUseAttemptId ===
-            successfulExitAttemptId(state, 'near_use') &&
-          event.payload.changedTaskAttemptId ===
-            successfulExitAttemptId(state, 'changed_task'),
+          event.payload.nearUseAttemptId === successfulExitAttemptId(state, 'near_use') &&
+          event.payload.changedTaskAttemptId === successfulExitAttemptId(state, 'changed_task'),
         'kc_exit_not_allowed',
       )
     ) {
@@ -1783,10 +1762,7 @@ function reduceLessonRunTransition(
   return block(state, 'unsupported_lesson_event');
 }
 
-function shellCheckpointId(
-  definition: LessonDefinition,
-  state: LessonRunState,
-): string {
+function shellCheckpointId(definition: LessonDefinition, state: LessonRunState): string {
   if (state.status === 'complete') return definition.shellCheckpointMap.deliveryComplete;
   if (state.status === 'blocked_for_predecessor') {
     return definition.shellCheckpointMap.blockedForPredecessor;
@@ -1801,16 +1777,13 @@ function shellCheckpointId(
 function kcCheckpointId(
   kc: KnowledgeComponentDefinition,
   state: LessonRunState,
-  kcId: string,
+  kcId: KnowledgeComponentDefinition['id'],
 ): string {
   if (state.exitedKcIds.includes(kcId)) return kc.microcycle.checkpointMap.exited;
   if (state.status === 'blocked_for_predecessor') {
     return kc.microcycle.checkpointMap.blockedForPredecessor;
   }
-  if (
-    state.status === 'handoff' ||
-    (state.status === 'paused' && state.plannerReentryRequired)
-  ) {
+  if (state.status === 'handoff' || (state.status === 'paused' && state.plannerReentryRequired)) {
     return kc.microcycle.checkpointMap.plannerHandoff;
   }
   if (state.phase === 'orient_elicit') return kc.microcycle.checkpointMap.orientElicit;
@@ -1840,20 +1813,15 @@ function appendTransactionalCheckpoint(
 ): LessonRunState {
   if (next.lastSequence === prior.lastSequence) return next;
   const payloadKcId =
-    'kcId' in event.payload && typeof event.payload.kcId === 'string'
-      ? event.payload.kcId
-      : null;
+    'kcId' in event.payload && typeof event.payload.kcId === 'string' ? event.payload.kcId : null;
   const checkpointKcId = payloadKcId ?? next.currentKcId;
   const kc =
     checkpointKcId === null
       ? null
-      : definition.knowledgeComponents.find(
-          (candidate) => candidate.id === checkpointKcId,
-        ) ?? null;
-  const instruction =
-    next.validatedPlannerInstruction ?? prior.validatedPlannerInstruction;
-  const kcOrdinal =
-    kc === null ? null : definition.orderedRequiredKcIds.indexOf(kc.id) + 1;
+      : (definition.knowledgeComponents.find((candidate) => candidate.id === checkpointKcId) ??
+        null);
+  const instruction = next.validatedPlannerInstruction ?? prior.validatedPlannerInstruction;
+  const kcOrdinal = kc === null ? null : definition.orderedRequiredKcIds.indexOf(kc.id) + 1;
   const shellState =
     next.status === 'complete'
       ? 'delivery_complete'
@@ -1880,14 +1848,12 @@ function appendTransactionalCheckpoint(
     definitionHash: next.pins.reviewedContentHash,
     lessonId: next.pins.lessonId,
     kcId: kc?.id ?? null,
-    kcOrdinal: kcOrdinal > 0 ? kcOrdinal : null,
+    kcOrdinal: kcOrdinal !== null && kcOrdinal > 0 ? kcOrdinal : null,
     shellState,
     kcState,
     nodeId: next.currentKcId === kc?.id ? next.currentActivityId : null,
     actualAssistanceLevel: next.assistanceLevel,
-    validatedPlannerInstruction: instruction
-      ? structuredClone(instruction)
-      : null,
+    validatedPlannerInstruction: instruction ? structuredClone(instruction) : null,
     attempts:
       kc === null
         ? structuredClone(next.attempts)
@@ -1955,8 +1921,19 @@ export function reduceLessonRun(
   const next = reduceLessonRunTransition(prior, eventInput, definitionInput, mode);
   const event = LessonRunEventSchema.safeParse(eventInput);
   const definition = LessonDefinitionSchema.safeParse(definitionInput);
-  if (!event.success || !definition.success) return next;
-  return appendTransactionalCheckpoint(prior, next, definition.data, event.data);
+  if (
+    !event.success ||
+    !definition.success ||
+    prior.appliedEventIds.includes(event.data.eventId) ||
+    prior.appliedIdempotencyKeys.includes(event.data.idempotencyKey) ||
+    !eventPinsMatch(prior, event.data) ||
+    event.data.sequence !== prior.lastSequence + 1
+  ) {
+    return next;
+  }
+  const recorded = structuredClone(next);
+  recordEvent(recorded, event.data);
+  return appendTransactionalCheckpoint(prior, recorded, definition.data, event.data);
 }
 
 export function replayLessonRun(
@@ -2288,7 +2265,9 @@ function safeActivity(
         !(exposureFor(state, activity.familyId)?.revealed ?? false),
     },
     feedback:
-      state.feedback && state.lastResponse?.activityId === activity.id
+      state.feedback &&
+      (state.lastResponse?.activityId === activity.id ||
+        (exposureFor(state, activity.familyId)?.answerKeySeen ?? false))
         ? structuredClone(state.feedback)
         : null,
   };
@@ -2316,9 +2295,8 @@ function safeCommon(definition: LessonDefinition | null, state: LessonRunState) 
       kcOrdinal: kcIndex >= 0 ? kcIndex + 1 : null,
       kcCount: definition?.orderedRequiredKcIds.length ?? 1,
       exitedKcCount:
-        definition?.orderedRequiredKcIds.filter((kcId) =>
-          state.exitedKcIds.includes(kcId),
-        ).length ?? 0,
+        definition?.orderedRequiredKcIds.filter((kcId) => state.exitedKcIds.includes(kcId))
+          .length ?? 0,
     },
     groupedFeedback: state.groupedFeedback ? structuredClone(state.groupedFeedback) : null,
   };
@@ -2465,12 +2443,7 @@ export function buildLessonStepView(
   }
 
   const actions: Array<
-    | 'present'
-    | 'submit_response'
-    | 'continue'
-    | 'request_hint'
-    | 'request_reveal'
-    | 'pause'
+    'present' | 'submit_response' | 'continue' | 'request_hint' | 'request_reveal' | 'pause'
   > = [];
   if (state.activePresentation === null) actions.push('present');
   else if (activity.response.kind === 'none' || state.lastResponse?.activityId === activity.id) {
@@ -2634,9 +2607,7 @@ function dispatchWithIdentity(
       activityId: activity.id,
       familyId: activity.familyId,
       outcome: evaluated.outcome,
-      responseDigest: createHash('sha256')
-        .update(deterministicJson(action.response))
-        .digest('hex'),
+      responseDigest: createHash('sha256').update(deterministicJson(action.response)).digest('hex'),
       responseKind: action.response.kind,
       omissionType: evaluated.omissionType,
       validForEvidence: evaluated.validForEvidence,
@@ -2650,9 +2621,7 @@ function dispatchWithIdentity(
     });
     if (
       evaluated.omissionType !== null &&
-      ['technical', 'inaccessible', 'telemetry_missing'].includes(
-        evaluated.omissionType,
-      )
+      ['technical', 'inaccessible', 'telemetry_missing'].includes(evaluated.omissionType)
     ) {
       append('lesson_item_invalidated', {
         kcId: kc.id,
@@ -2689,9 +2658,7 @@ function dispatchWithIdentity(
       activityId: activity.id,
       familyId: activity.familyId,
       retryOf: action.retryOf,
-      responseDigest: createHash('sha256')
-        .update(deterministicJson(action.response))
-        .digest('hex'),
+      responseDigest: createHash('sha256').update(deterministicJson(action.response)).digest('hex'),
       responseKind: action.response.kind,
       outcome: evaluated.outcome,
       assistanceLevel: state.assistanceLevel,
@@ -2711,7 +2678,11 @@ function dispatchWithIdentity(
         nearUseAttemptId,
         changedTaskAttemptId,
       });
-      if (state.status === 'awaiting_delivery_completion') {
+      if (
+        definition.orderedRequiredKcIds.every((requiredKcId) =>
+          state.exitedKcIds.includes(requiredKcId),
+        )
+      ) {
         append('lesson_delivery_completed', {
           orderedRequiredKcIds: definition.orderedRequiredKcIds,
           instructionalExitKcIds: state.exitedKcIds,
@@ -2892,9 +2863,7 @@ export function startLessonRun(
   }
   const selected = LessonRunEventSchema.parse({
     schemaVersion: '2.0',
-    eventId: EventIdSchema.parse(
-      deterministicUuid(`${rootEventId}:lesson-child-event:1`),
-    ),
+    eventId: EventIdSchema.parse(deterministicUuid(`${rootEventId}:lesson-child-event:1`)),
     idempotencyKey: IdempotencyKeySchema.parse(
       deterministicUuid(`${rootIdempotencyKey}:lesson-child-idempotency:1`),
     ),
@@ -2903,6 +2872,7 @@ export function startLessonRun(
     occurredAt,
     type: 'lesson_route_selected',
     payload: {
+      kcId: state.pins.targetKcId,
       validatedInstruction: state.validatedPlannerInstruction,
     },
   });

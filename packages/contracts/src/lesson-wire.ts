@@ -50,9 +50,7 @@ export const CanonicalLessonEventTypeSchema = z.enum([
   'LESSON_DELIVERY_COMPLETED',
   'LESSON_CONTENT_INVALIDATED',
 ]);
-export type CanonicalLessonEventType = z.infer<
-  typeof CanonicalLessonEventTypeSchema
->;
+export type CanonicalLessonEventType = z.infer<typeof CanonicalLessonEventTypeSchema>;
 
 export const CanonicalLessonRouteWireSchema = z.enum([
   'CONCISE',
@@ -61,13 +59,8 @@ export const CanonicalLessonRouteWireSchema = z.enum([
   'PREREQUISITE_SUPPORT',
 ]);
 
-export const CanonicalFailedExitFunctionSchema = z.enum([
-  'NEAR_USE',
-  'CHANGED_TASK',
-]);
-export type CanonicalFailedExitFunction = z.infer<
-  typeof CanonicalFailedExitFunctionSchema
->;
+export const CanonicalFailedExitFunctionSchema = z.enum(['NEAR_USE', 'CHANGED_TASK']);
+export type CanonicalFailedExitFunction = z.infer<typeof CanonicalFailedExitFunctionSchema>;
 
 export const CanonicalOmissionTypeSchema = z.enum([
   'INTENTIONAL_SKIP',
@@ -99,6 +92,7 @@ export const CanonicalPlannerResolutionReasonCodeSchema = z.enum([
   'REGISTRY_PIN_MISMATCH',
   'POLICY_PIN_MISMATCH',
   'EVIDENCE_CUTOFF_MISMATCH',
+  'RESOLUTION_NOT_YET_VALID',
   'RESOLUTION_EXPIRED',
   'SUPERSESSION_LINEAGE_UNREPLAYABLE',
 ]);
@@ -124,9 +118,7 @@ export const LearnerEventDecisionContextSchema = z
     modelVersions: z.array(PolicyVersionSchema),
   })
   .strict();
-export type LearnerEventDecisionContext = z.infer<
-  typeof LearnerEventDecisionContextSchema
->;
+export type LearnerEventDecisionContext = z.infer<typeof LearnerEventDecisionContextSchema>;
 
 const RunContextShape = {
   runId: LessonRunIdSchema,
@@ -249,14 +241,7 @@ const AttemptObservedPayloadSchema = z
     activityId: V3ActivityIdSchema,
     familyId: z.string().min(1),
     attemptKind: z.literal('FIRST'),
-    responseKind: z.enum([
-      'CHOICE',
-      'TEXT',
-      'NUMERIC',
-      'ORDERED_STEPS',
-      'NOT_SURE',
-      'OMISSION',
-    ]),
+    responseKind: z.enum(['CHOICE', 'TEXT', 'NUMERIC', 'ORDERED_STEPS', 'NOT_SURE', 'OMISSION']),
     outcome: z.enum(['CORRECT', 'INCORRECT', 'NOT_SURE']).nullable(),
     omissionType: CanonicalOmissionTypeSchema.nullable(),
     assistanceLevel: z.enum(['A3', 'A2', 'A1', 'A0']),
@@ -412,6 +397,7 @@ const KcPlannerHandoffRequestedPayloadSchema = z
       'COMPLETION_POOL_EXHAUSTED',
       'EXIT_POOL_EXHAUSTED',
       'BLOCKED_FOR_PREDECESSOR',
+      'NEXT_REQUIRED_KC',
     ]),
     checkpointId: z.string().min(1),
   })
@@ -502,26 +488,14 @@ export const CanonicalLearnerEventSchema = z.discriminatedUnion('eventType', [
   withCanonicalEvent('KC_PAUSED_FOR_PREDECESSOR', KcPausedForPredecessorPayloadSchema),
   withCanonicalEvent('KC_RESUMED_AT_REENTRY', KcResumedAtReentryPayloadSchema),
   withCanonicalEvent('SEQUENCE_REENTRY_RECORDED', SequenceReentryRecordedPayloadSchema),
-  withCanonicalEvent(
-    'KC_PLANNER_HANDOFF_REQUESTED',
-    KcPlannerHandoffRequestedPayloadSchema,
-  ),
-  withCanonicalEvent(
-    'KC_INSTRUCTIONAL_EXIT_RECORDED',
-    KcInstructionalExitRecordedPayloadSchema,
-  ),
+  withCanonicalEvent('KC_PLANNER_HANDOFF_REQUESTED', KcPlannerHandoffRequestedPayloadSchema),
+  withCanonicalEvent('KC_INSTRUCTIONAL_EXIT_RECORDED', KcInstructionalExitRecordedPayloadSchema),
   withCanonicalEvent('LESSON_DELIVERY_COMPLETED', LessonDeliveryCompletedPayloadSchema),
   withCanonicalEvent('LESSON_CONTENT_INVALIDATED', LessonContentInvalidatedPayloadSchema),
 ]);
 export type CanonicalLearnerEvent = z.infer<typeof CanonicalLearnerEventSchema>;
 
-type JsonValue =
-  | null
-  | boolean
-  | number
-  | string
-  | JsonValue[]
-  | { [key: string]: JsonValue };
+type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -532,17 +506,11 @@ const camelToSnake = (key: string): string =>
 const snakeToCamel = (key: string): string =>
   key.replace(/_([a-z0-9])/g, (_, character: string) => character.toUpperCase());
 
-const mapKeysDeep = (
-  value: unknown,
-  convert: (key: string) => string,
-): unknown => {
+const mapKeysDeep = (value: unknown, convert: (key: string) => string): unknown => {
   if (Array.isArray(value)) return value.map((entry) => mapKeysDeep(entry, convert));
   if (!isRecord(value)) return value;
   return Object.fromEntries(
-    Object.entries(value).map(([key, entry]) => [
-      convert(key),
-      mapKeysDeep(entry, convert),
-    ]),
+    Object.entries(value).map(([key, entry]) => [convert(key), mapKeysDeep(entry, convert)]),
   );
 };
 
