@@ -281,6 +281,106 @@ describe('V3 lesson definition schema', () => {
     }
   });
 
+  it('requires activity family IDs to be unique across the complete lesson shell', () => {
+    const invalid = structuredClone(syntheticV3LessonDefinition);
+    invalid.knowledgeComponents[1]!.activities[0]!.familyId =
+      invalid.knowledgeComponents[0]!.activities[0]!.familyId;
+
+    const result = LessonDefinitionSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(
+        result.error.issues.some((issue) => issue.message.includes('lesson-global unique')),
+      ).toBe(true);
+    }
+  });
+
+  it('binds worked-decision declarations exactly to route-reachable expert activities', () => {
+    const listedNowhere = structuredClone(syntheticV3LessonDefinition);
+    const firstKc = listedNowhere.knowledgeComponents[0]!;
+    const expertId = firstKc.microcycle.workedDecisionActivityIds[0]!;
+    const expert = firstKc.activities.find((activity) => activity.id === expertId)!;
+    const unreachableExpert = {
+      ...structuredClone(expert),
+      id: 'V3-ACT-SYNTH-001-EXPERT-UNREACHABLE' as typeof expert.id,
+      familyId: 'family-v3-act-synth-001-expert-unreachable',
+    };
+    firstKc.activities.push(unreachableExpert);
+    firstKc.microcycle.workedDecisionActivityIds.push(unreachableExpert.id);
+
+    const listedNowhereResult = LessonDefinitionSchema.safeParse(listedNowhere);
+    expect(listedNowhereResult.success).toBe(false);
+    if (!listedNowhereResult.success) {
+      expect(
+        listedNowhereResult.error.issues.some((issue) =>
+          issue.message.includes('exactly match expert-decision activities'),
+        ),
+      ).toBe(true);
+    }
+
+    const omitted = structuredClone(syntheticV3LessonDefinition);
+    const omittedKc = omitted.knowledgeComponents[0]!;
+    const omittedExpert = {
+      ...structuredClone(
+        omittedKc.activities.find(
+          (activity) => activity.id === omittedKc.microcycle.workedDecisionActivityIds[0],
+        )!,
+      ),
+      id: 'V3-ACT-SYNTH-001-EXPERT-OMITTED' as (typeof omittedKc.activities)[number]['id'],
+      familyId: 'family-v3-act-synth-001-expert-omitted',
+    };
+    omittedKc.activities.push(omittedExpert);
+    omittedKc.microcycle.entryRouting.routes[0]!.instructionActivityIds.push(omittedExpert.id);
+
+    const omittedResult = LessonDefinitionSchema.safeParse(omitted);
+    expect(omittedResult.success).toBe(false);
+    if (!omittedResult.success) {
+      expect(
+        omittedResult.error.issues.some((issue) =>
+          issue.message.includes('exactly match expert-decision activities'),
+        ),
+      ).toBe(true);
+    }
+  });
+
+  it('rejects duplicate correct IDs and failure features attached only to correct choices', () => {
+    const duplicate = structuredClone(syntheticV3LessonDefinition);
+    const duplicateResponse = duplicate.knowledgeComponents[0]!.activities[0]!.response;
+    if (duplicateResponse.kind !== 'choice') throw new Error('Expected fixture choice response.');
+    duplicateResponse.correctChoiceIds.push(duplicateResponse.correctChoiceIds[0]!);
+    const duplicateResult = LessonDefinitionSchema.safeParse(duplicate);
+    expect(duplicateResult.success).toBe(false);
+    if (!duplicateResult.success) {
+      expect(
+        duplicateResult.error.issues.some((issue) =>
+          issue.message.includes('correct choice IDs must be unique'),
+        ),
+      ).toBe(true);
+    }
+
+    const correctOnlyFeature = structuredClone(syntheticV3LessonDefinition);
+    const featureKc = correctOnlyFeature.knowledgeComponents[0]!;
+    featureKc.microcycle.entryRouting.probeActivityIds.forEach((probeId) => {
+      const response = featureKc.activities.find((activity) => activity.id === probeId)!.response;
+      if (response.kind !== 'choice') throw new Error('Expected fixture choice response.');
+      response.choices
+        .filter((choice) => response.correctChoiceIds.includes(choice.id))
+        .forEach((choice) => choice.objectiveFeatureIds.push('feature-correct-only'));
+    });
+    const targeted = featureKc.microcycle.repairs.cycles[0].mappings.find(
+      (mapping) => mapping.kind === 'targeted',
+    )!;
+    targeted.signalIds = [];
+    targeted.objectiveFeatureIds = ['feature-correct-only'];
+
+    const featureResult = LessonDefinitionSchema.safeParse(correctOnlyFeature);
+    expect(featureResult.success).toBe(false);
+    if (!featureResult.success) {
+      const messages = featureResult.error.issues.map((issue) => issue.message).join(' ');
+      expect(messages).toContain('failure-only objective features');
+    }
+  });
+
   it('keeps structured diagram, chart, equation, and simulation data learner-safe', () => {
     const representations = syntheticV3LessonDefinition.knowledgeComponents[0]!.representations;
     const diagram = representations.find((representation) => representation.kind === 'diagram');

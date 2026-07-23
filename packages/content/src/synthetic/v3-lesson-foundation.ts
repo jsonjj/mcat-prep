@@ -109,7 +109,7 @@ function choiceActivity(
           label: 'The two fictional markers align.',
           feedback: 'This response fits the invented rule.',
           diagnosticSignalIds: [options.entrySignals.ready],
-          objectiveFeatureIds: ['feature-ready'],
+          objectiveFeatureIds: [],
         },
         {
           id: 'prerequisite',

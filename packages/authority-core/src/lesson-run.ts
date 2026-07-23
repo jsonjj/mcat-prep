@@ -54,6 +54,8 @@ const initialLineage = (pins: LessonRunPins): LessonRunLineage =>
     rootRunId: pins.runId,
     parentRunId: null,
     generation: 0,
+    reentryHistory: [],
+    kcReentryCounts: [],
     inheritedFromRunIds: [],
     inheritedExposure: { sourceRunIds: [], families: [] },
     reviewedContentPins: [contentPin(pins)],
@@ -65,7 +67,7 @@ function invalidState(
   lineage: LessonRunLineage = initialLineage(pins),
 ): LessonRunState {
   return LessonRunStateSchema.parse({
-    schemaVersion: '1.1',
+    schemaVersion: '1.2',
     pins,
     lineage,
     status: 'invalid_content',
@@ -326,6 +328,7 @@ export function initializeLessonRun(
 const expectedReentryLineage = (
   parent: LessonRunState,
   nextPins: LessonRunPins,
+  targetKcId: KnowledgeComponentDefinition['id'],
 ): LessonRunLineage => {
   const pins = [...parent.lineage.reviewedContentPins];
   const nextContentPin = contentPin(nextPins);
@@ -342,10 +345,17 @@ const expectedReentryLineage = (
   const inheritedFromRunIds = [
     ...new Set([...parent.lineage.inheritedFromRunIds, parent.pins.runId]),
   ];
+  const reentryHistory = [...parent.lineage.reentryHistory, { runId: nextPins.runId, targetKcId }];
+  const kcReentryCounts = structuredClone(parent.lineage.kcReentryCounts);
+  const targetCount = kcReentryCounts.find((entry) => entry.kcId === targetKcId);
+  if (targetCount) targetCount.count += 1;
+  else kcReentryCounts.push({ kcId: targetKcId, count: 1 });
   return LessonRunLineageSchema.parse({
     rootRunId: parent.lineage.rootRunId,
     parentRunId: parent.pins.runId,
     generation: parent.lineage.generation + 1,
+    reentryHistory,
+    kcReentryCounts,
     inheritedFromRunIds,
     inheritedExposure: {
       sourceRunIds: inheritedFromRunIds,
@@ -354,6 +364,9 @@ const expectedReentryLineage = (
     reviewedContentPins: pins,
   });
 };
+
+const kcReentryCount = (lineage: LessonRunLineage, kcId: string): number =>
+  lineage.kcReentryCounts.find((entry) => entry.kcId === kcId)?.count ?? 0;
 
 const pinsMatchExceptRun = (left: LessonRunPins, right: LessonRunPins): boolean => {
   const { runId: _leftRun, ...leftRest } = left;
@@ -380,16 +393,25 @@ export function initializeLessonReentryRun(
   if (!parent.handoffPins || deterministicJson(parent.handoffPins) !== deterministicJson(pins)) {
     issues.push('handoff_pin_mismatch');
   }
-  const expectedLineage = expectedReentryLineage(parent, pins);
+  const target = checked.definition ? reentryTargetKc(checked.definition, parent) : null;
+  const lineageTargetKcId = target?.id ?? parent.currentKcId;
+  const expectedLineage =
+    lineageTargetKcId === null
+      ? initialLineage(pins)
+      : pins.runId === parent.pins.runId
+        ? parent.lineage
+        : expectedReentryLineage(parent, pins, lineageTargetKcId);
+  if (!target) issues.push('reentry_target_missing');
   if (
     !parent.handoffLineage ||
     deterministicJson(parent.handoffLineage) !== deterministicJson(expectedLineage)
   ) {
     issues.push('handoff_lineage_mismatch');
   }
-  const target = checked.definition ? reentryTargetKc(checked.definition, parent) : null;
-  const maxGeneration = target?.microcycle.fading.maxReentryGenerations ?? 0;
-  if (expectedLineage.generation > maxGeneration) issues.push('reentry_generation_exhausted');
+  const maxTargetReentries = target?.microcycle.fading.maxReentryGenerations ?? 0;
+  if (target && kcReentryCount(expectedLineage, target.id) > maxTargetReentries) {
+    issues.push('kc_reentry_limit_exhausted');
+  }
   if (!checked.definition || issues.length > 0) {
     return invalidState(pins, issues, expectedLineage);
   }
@@ -670,9 +692,12 @@ export function reduceLessonRun(
   }
   if (event.type === 'lesson_planner_reentry_handoff') {
     const nextPins = event.payload.nextRunPins;
-    const expected = expectedReentryLineage(state, nextPins);
     const target = reentryTargetKc(definition, state);
-    const maxGeneration = target?.microcycle.fading.maxReentryGenerations ?? 0;
+    const expected =
+      target && nextPins.runId !== state.pins.runId
+        ? expectedReentryLineage(state, nextPins, target.id)
+        : null;
+    const maxTargetReentries = target?.microcycle.fading.maxReentryGenerations ?? 0;
     if (
       transitionError(
         state,
@@ -680,9 +705,10 @@ export function reduceLessonRun(
           state.plannerReentryRequired &&
           nextPins.runId !== state.pins.runId &&
           pinsMatchExceptRun(state.pins, nextPins) &&
+          expected !== null &&
           deterministicJson(event.payload.nextLineage) === deterministicJson(expected) &&
           target !== null &&
-          expected.generation <= maxGeneration,
+          kcReentryCount(expected, target.id) <= maxTargetReentries,
         'planner_handoff_not_allowed',
       )
     ) {
@@ -749,6 +775,7 @@ export function reduceLessonRun(
           event.payload.kcId === kc.id &&
           event.payload.activityId === activity.id &&
           !['exit_near', 'exit_changed'].includes(activity.phase) &&
+          state.lastResponse?.activityId !== activity.id &&
           hint !== undefined &&
           activity.assistance.allowedLevels.includes(event.payload.level) &&
           supportIndex(event.payload.level) <= supportIndex(state.assistanceLevel),
@@ -1126,10 +1153,32 @@ const normalizeText = (
   },
 ): string => {
   let result = normalization.trim ? value.trim() : value;
+  if (normalization.stripPunctuation) result = result.replace(/[^\p{L}\p{N}\s.+-]/gu, ' ');
   if (normalization.collapseWhitespace) result = result.replace(/\s+/g, ' ');
-  if (normalization.stripPunctuation) result = result.replace(/[^\p{L}\p{N}\s.+-]/gu, '');
-  if (normalization.case === 'lowercase') result = result.toLocaleLowerCase();
+  if (normalization.trim) result = result.trim();
+  if (normalization.case === 'lowercase') result = result.toLowerCase();
   return result;
+};
+
+const TOKEN_WORD_CHARACTER = /[\p{L}\p{N}\p{M}_]/u;
+
+const containsNormalizedToken = (text: string, token: string): boolean => {
+  if (token.length === 0) return false;
+  let fromIndex = 0;
+  while (fromIndex <= text.length - token.length) {
+    const matchIndex = text.indexOf(token, fromIndex);
+    if (matchIndex < 0) return false;
+    const before = Array.from(text.slice(0, matchIndex)).at(-1);
+    const after = Array.from(text.slice(matchIndex + token.length))[0];
+    if (
+      (before === undefined || !TOKEN_WORD_CHARACTER.test(before)) &&
+      (after === undefined || !TOKEN_WORD_CHARACTER.test(after))
+    ) {
+      return true;
+    }
+    fromIndex = matchIndex + 1;
+  }
+  return false;
 };
 
 const responseText = (response: LessonActivityResponseInput): string | null => {
@@ -1164,7 +1213,7 @@ function matcherPasses(
     if (text === null) return false;
     const normalized = normalizeText(text, matcher.normalization);
     const matches = matcher.tokens.filter((token) =>
-      normalized.includes(normalizeText(token, matcher.normalization)),
+      containsNormalizedToken(normalized, normalizeText(token, matcher.normalization)),
     ).length;
     return matches >= matcher.minimumMatches;
   }
@@ -1186,8 +1235,8 @@ function matcherPasses(
       (unit !== null &&
         matcher.acceptedUnits.some(
           (accepted) =>
-            accepted.toLocaleLowerCase().replace(/[.,:;]+$/u, '') ===
-            unit!.toLocaleLowerCase().replace(/[.,:;]+$/u, ''),
+            accepted.toLowerCase().replace(/[.,:;]+$/u, '') ===
+            unit!.toLowerCase().replace(/[.,:;]+$/u, ''),
         ));
     return unitPasses && Math.abs(value - matcher.target) <= matcher.absoluteTolerance;
   }
@@ -1337,6 +1386,7 @@ function safeActivity(
       : (activity.assistance.hints.find((hint) => hint.level === state.visibleAssistanceLevel)
           ?.text ?? null);
   const canRequestMore =
+    state.lastResponse?.activityId !== activity.id &&
     !['exit_near', 'exit_changed'].includes(activity.phase) &&
     activity.assistance.hints.some(
       (hint) =>
@@ -1597,7 +1647,7 @@ function dispatchWithIdentity(
   const append = (type: LessonRunEvent['type'], payload: Record<string, unknown>) => {
     const eventIdentity = identity(events.length);
     const event = LessonRunEventSchema.parse({
-      schemaVersion: '1.1',
+      schemaVersion: '1.2',
       eventId: eventIdentity.eventId,
       idempotencyKey: eventIdentity.idempotencyKey,
       runId: state.pins.runId,
@@ -1642,6 +1692,9 @@ function dispatchWithIdentity(
   if (action.type === 'request_assistance') {
     if (!activity || action.activityId !== activity.id) {
       throw new Error('The assistance request does not match the current activity.');
+    }
+    if (state.lastResponse?.activityId === activity.id) {
+      throw new Error('Support cannot be added after this response is committed.');
     }
     const hint = nextAssistanceHint(activity, state);
     if (!hint) throw new Error('No additional deterministic support is available.');
@@ -1783,7 +1836,7 @@ export function startLessonRun(
 ): LessonDispatchResult {
   const state = LessonRunStateSchema.parse(stateInput);
   const event = LessonRunEventSchema.parse({
-    schemaVersion: '1.1',
+    schemaVersion: '1.2',
     eventId: newEventId(),
     idempotencyKey: newIdempotencyKey(),
     runId: state.pins.runId,

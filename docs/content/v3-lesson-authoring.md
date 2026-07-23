@@ -80,7 +80,10 @@ remote assets are invalid.
 
 Each `ActivityDefinition` has a stable `V3-ACT-*` ID, item-family ID, construct
 ID, phase, representations, assistance rules, response contract, and timing.
-Exit activities must be A0-only, reveal-disabled, and response-bearing.
+Activity family IDs are lesson-global identities; they cannot be reused across
+KCs because exposure and convergent evidence are lesson-global. Required-token
+matchers use normalized Unicode letter/number boundaries, not substring
+matching. Exit activities must be A0-only, reveal-disabled, and response-bearing.
 
 ## Required KC microcycle
 
@@ -96,6 +99,10 @@ Each of the four routes—`concise`, `standard`, `prerequisite`, and
 7. Fresh unsupported near-use exit.
 8. Fresh unsupported construct-preserving changed-task exit.
 9. Targeted repair or KC handoff.
+
+`workedDecisionActivityIds` must exactly name the `show_expert_decisions`
+activities reachable from route instruction sequences; it is not a separate
+unscheduled pool.
 
 `standard` is the sole fallback route. Every other route needs convergent
 evidence from at least two distinct item families. A selected distractor can
@@ -135,6 +142,9 @@ authority:
   is the public token checked only against the lesson run;
 - planner reentry uses a new run ID, explicit lineage, reviewed content pins,
   and an inherited family/key/feedback/reveal exposure envelope;
+- lineage retains immutable reentry history plus exact per-KC counts; the global
+  generation remains an audit ordinal, while each target KC enforces its own
+  `maxReentryGenerations`;
 - entry-probe feedback remains authority-private until all probes commit and
   route selection finalizes;
 - exit feedback remains sealed until both responses exist;

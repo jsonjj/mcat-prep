@@ -40,6 +40,18 @@ describe('canonical V3 authoring manifest compiler', () => {
     expect(validateCanonicalLessonBinding(binding, manifestInput)).toEqual([]);
   });
 
+  it('compiles and exactly validates every one of the 114 frozen lesson bindings', () => {
+    const manifest = parseCanonicalLessonAuthoringManifest(manifestInput);
+    const bindings = manifest.curriculum.lessons.map((lesson) =>
+      compileCanonicalLessonBinding(manifest, lesson.lesson_id),
+    );
+
+    expect(bindings).toHaveLength(114);
+    bindings.forEach((binding) => {
+      expect(validateCanonicalLessonBinding(binding, manifest)).toEqual([]);
+    });
+  });
+
   it('preserves owned and shared referenced capstone ownership, components, and placement', () => {
     const owned = compileCanonicalLessonBinding(manifestInput, 'V3-LES-320512');
     const ownedCapstone = owned.attachments.find((attachment) => attachment.id === 'V3-CAP-359390');
@@ -124,5 +136,27 @@ describe('canonical V3 authoring manifest compiler', () => {
     drifted.attachments.find((attachment) => attachment.id === 'V3-CAP-537139')!.activation =
       'required_separate';
     expect(validateCanonicalLessonBinding(drifted, manifestInput)).not.toEqual([]);
+  });
+
+  it('rejects duplicate identities in unordered exact-member projections', () => {
+    const duplicated = structuredClone(manifestInput) as {
+      sequence: {
+        normalized_relations: {
+          lesson_internal_order_relations: Array<{
+            relation_id: string;
+            ordered_entity_ids: string[];
+          }>;
+        };
+      };
+    };
+    const internal = duplicated.sequence.normalized_relations.lesson_internal_order_relations.find(
+      (relation) => relation.relation_id === 'R14-INTERNAL-006619',
+    )!;
+    internal.ordered_entity_ids[internal.ordered_entity_ids.length - 1] =
+      internal.ordered_entity_ids[internal.ordered_entity_ids.length - 2]!;
+
+    expect(() => compileCanonicalLessonBinding(duplicated, 'V3-LES-006619')).toThrow(
+      'canonical capstone internal-order mismatch',
+    );
   });
 });

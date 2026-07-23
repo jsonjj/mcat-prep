@@ -74,6 +74,29 @@ export const LessonDiagramSpecSchema = z
   .strict()
   .superRefine((diagram, ctx) => {
     const nodeIds = new Set(diagram.nodes.map((node) => node.id));
+    if (nodeIds.size !== diagram.nodes.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['nodes'],
+        message: 'diagram node IDs must be unique',
+      });
+    }
+    diagram.nodes.forEach((node, index) => {
+      const horizontalRadius = node.shape === 'circle' ? 36 : 54;
+      const verticalRadius = node.shape === 'circle' ? 36 : 30;
+      if (
+        node.x - horizontalRadius < 0 ||
+        node.x + horizontalRadius > diagram.width ||
+        node.y - verticalRadius < 0 ||
+        node.y + verticalRadius > diagram.height
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['nodes', index],
+          message: 'diagram nodes must fit completely inside the declared view bounds',
+        });
+      }
+    });
     diagram.edges.forEach((edge, index) => {
       if (!nodeIds.has(edge.from) || !nodeIds.has(edge.to)) {
         ctx.addIssue({
@@ -123,7 +146,40 @@ export const LessonChartSpecSchema = z
       .min(1),
     dataTable: LessonTableSpecSchema,
   })
-  .strict();
+  .strict()
+  .superRefine((chart, ctx) => {
+    const seriesIds = chart.series.map((series) => series.id);
+    if (new Set(seriesIds).size !== seriesIds.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['series'],
+        message: 'chart series IDs must be unique',
+      });
+    }
+    chart.series.forEach((series, seriesIndex) => {
+      series.points.forEach((point, pointIndex) => {
+        if (
+          point.x < chart.xAxis.min ||
+          point.x > chart.xAxis.max ||
+          point.y < chart.yAxis.min ||
+          point.y > chart.yAxis.max
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['series', seriesIndex, 'points', pointIndex],
+            message: 'chart points must remain inside the declared axes',
+          });
+        }
+      });
+    });
+    if (chart.chartType === 'bar' && chart.yAxis.min !== 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['yAxis', 'min'],
+        message: 'bar charts require a nonnegative zero baseline',
+      });
+    }
+  });
 
 export const LessonSimulationSpecSchema = z
   .object({

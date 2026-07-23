@@ -8,6 +8,7 @@ import {
   LessonActionCommandSchema,
   LessonRunPinsSchema,
   type LessonActionInput,
+  type LessonRunPins,
   type LessonRunState,
 } from '@mcat/contracts';
 import {
@@ -41,7 +42,7 @@ function event(
   const sequence = state.lastSequence + 1;
   const suffix = String(sequence + 1).padStart(12, '0');
   return {
-    schemaVersion: '1.1',
+    schemaVersion: '1.2',
     eventId: `10000000-0000-4000-8000-${suffix}`,
     idempotencyKey: `20000000-0000-4000-8000-${suffix}`,
     runId: state.pins.runId,
@@ -61,6 +62,47 @@ function event(
 
 const apply = (state: LessonRunState, type: string, payload: Record<string, unknown> = {}) =>
   reduceLessonRun(state, event(state, type, payload), syntheticV3LessonDefinition, 'test_fixture');
+
+function nextLineageFor(parent: LessonRunState, nextPins: LessonRunPins) {
+  const targetKcId = parent.currentKcId;
+  if (targetKcId === null) throw new Error('Expected an exact reentry target KC.');
+  const inheritedFromRunIds = [
+    ...new Set([...parent.lineage.inheritedFromRunIds, parent.pins.runId]),
+  ];
+  const reentryHistory = [...parent.lineage.reentryHistory, { runId: nextPins.runId, targetKcId }];
+  const kcReentryCounts = structuredClone(parent.lineage.kcReentryCounts);
+  const targetCount = kcReentryCounts.find((entry) => entry.kcId === targetKcId);
+  if (targetCount) targetCount.count += 1;
+  else kcReentryCounts.push({ kcId: targetKcId, count: 1 });
+  const reviewedContentPins = [...parent.lineage.reviewedContentPins];
+  if (
+    !reviewedContentPins.some(
+      (pin) =>
+        pin.lessonId === nextPins.lessonId &&
+        pin.definitionVersion === nextPins.definitionVersion &&
+        pin.reviewedContentHash === nextPins.reviewedContentHash,
+    )
+  ) {
+    reviewedContentPins.push({
+      lessonId: nextPins.lessonId,
+      definitionVersion: nextPins.definitionVersion,
+      reviewedContentHash: nextPins.reviewedContentHash,
+    });
+  }
+  return {
+    rootRunId: parent.lineage.rootRunId,
+    parentRunId: parent.pins.runId,
+    generation: parent.lineage.generation + 1,
+    reentryHistory,
+    kcReentryCounts,
+    inheritedFromRunIds,
+    inheritedExposure: {
+      sourceRunIds: inheritedFromRunIds,
+      families: structuredClone(parent.exposures),
+    },
+    reviewedContentPins,
+  };
+}
 
 function freshStarted(): LessonRunState {
   return startLessonRun(
@@ -286,6 +328,38 @@ describe('performance-contingent completion and exact paired feedback', () => {
     expect(state.assistanceLevel).toBe('A3');
   });
 
+  it('rejects assistance after an A0 response commits and preserves valid exit scheduling', () => {
+    let state = reachCompletion();
+    while (state.phase === 'completion' && state.assistanceLevel !== 'A0') {
+      state = completeCurrent(state, 'aligned');
+    }
+    const a0Activity = activity(state);
+    state = submit(present(state), 'aligned');
+
+    expect(state.assistanceLevel).toBe('A0');
+    expect(state.completionReadyForExit).toBe(true);
+    const view = buildLessonStepView(syntheticV3LessonDefinition, state);
+    expect(view.status).toBe('active');
+    if (view.status !== 'active') throw new Error('Expected an active completion view.');
+    expect(view.availableActions).not.toContain('request_assistance');
+    expect(view.activity.assistance.canRequestMore).toBe(false);
+    expect(() => act(state, { type: 'request_assistance', activityId: a0Activity.id })).toThrow(
+      'Support cannot be added after this response is committed',
+    );
+
+    const directAttempt = apply(state, 'lesson_assistance_revealed', {
+      kcId: a0Activity.kcId,
+      activityId: a0Activity.id,
+      level: 'A1',
+    });
+    expect(directAttempt.status).toBe('blocked');
+    expect(directAttempt.transitionErrors).toContain('assistance_reveal_not_allowed');
+
+    state = act(state, { type: 'continue', activityId: a0Activity.id });
+    expect(state.phase).toBe('contrast_bound');
+    expect(state.assistanceLevel).toBe('A0');
+  });
+
   it('requires unsupported A0 success before contrast or exit becomes reachable', () => {
     let state = reachCompletion();
     const levels: string[] = [];
@@ -361,6 +435,30 @@ describe('performance-contingent completion and exact paired feedback', () => {
 });
 
 describe('planner reentry lineage and cross-run exposure', () => {
+  const advanceCurrentKcToExit = (input: LessonRunState): LessonRunState => {
+    let state =
+      input.status === 'ready'
+        ? startLessonRun(input, syntheticV3LessonDefinition, 'test_fixture').state
+        : input;
+    for (let guard = 0; guard < 80 && state.phase !== 'exit_near'; guard += 1) {
+      state = completeCurrent(state, state.phase === 'enter_routing' ? 'ready' : 'aligned');
+    }
+    expect(state.phase).toBe('exit_near');
+    return state;
+  };
+
+  const exhaustCurrentKc = (input: LessonRunState): LessonRunState => {
+    let state = submitExitPair(advanceCurrentKcToExit(input), 'offset', 'offset');
+    for (let cycle = 0; cycle < 2; cycle += 1) {
+      state = beginRepair(state);
+      state = completeCurrent(state);
+      state = establishA0(state);
+      state = submitExitPair(state, 'offset', 'offset');
+    }
+    expect(state.status).toBe('paused');
+    return state;
+  };
+
   const repairExhausted = (): LessonRunState => {
     let state = submitExitPair(reachFirstExit(), 'offset', 'offset');
     for (let cycle = 0; cycle < 2; cycle += 1) {
@@ -374,17 +472,7 @@ describe('planner reentry lineage and cross-run exposure', () => {
 
   it('rejects same-run handoff IDs and mismatched version pins', () => {
     const exhausted = repairExhausted();
-    const sameRunLineage = {
-      rootRunId: exhausted.lineage.rootRunId,
-      parentRunId: exhausted.pins.runId,
-      generation: 1,
-      inheritedFromRunIds: [exhausted.pins.runId],
-      inheritedExposure: {
-        sourceRunIds: [exhausted.pins.runId],
-        families: structuredClone(exhausted.exposures),
-      },
-      reviewedContentPins: exhausted.lineage.reviewedContentPins,
-    };
+    const sameRunLineage = nextLineageFor(exhausted, exhausted.pins);
     const sameRun = apply(exhausted, 'lesson_planner_reentry_handoff', {
       nextRunPins: exhausted.pins,
       nextLineage: sameRunLineage,
@@ -409,10 +497,10 @@ describe('planner reentry lineage and cross-run exposure', () => {
     const droppedExposure = apply(exhausted, 'lesson_planner_reentry_handoff', {
       nextRunPins: validNextPins,
       nextLineage: {
-        ...sameRunLineage,
+        ...nextLineageFor(exhausted, validNextPins),
         inheritedExposure: {
-          ...sameRunLineage.inheritedExposure,
-          families: sameRunLineage.inheritedExposure.families.slice(1),
+          ...nextLineageFor(exhausted, validNextPins).inheritedExposure,
+          families: nextLineageFor(exhausted, validNextPins).inheritedExposure.families.slice(1),
         },
       },
     });
@@ -425,17 +513,7 @@ describe('planner reentry lineage and cross-run exposure', () => {
       ...parent.pins,
       runId: '44444444-4444-4444-8444-444444444444',
     });
-    const nextLineage = {
-      rootRunId: parent.lineage.rootRunId,
-      parentRunId: parent.pins.runId,
-      generation: 1,
-      inheritedFromRunIds: [parent.pins.runId],
-      inheritedExposure: {
-        sourceRunIds: [parent.pins.runId],
-        families: structuredClone(parent.exposures),
-      },
-      reviewedContentPins: parent.lineage.reviewedContentPins,
-    };
+    const nextLineage = nextLineageFor(parent, nextPins);
     parent = apply(parent, 'lesson_planner_reentry_handoff', {
       nextRunPins: nextPins,
       nextLineage,
@@ -458,6 +536,9 @@ describe('planner reentry lineage and cross-run exposure', () => {
       sourceRunIds: [parent.pins.runId],
       families: parent.exposures,
     });
+    expect(new Set(child.exposures.map((exposure) => exposure.familyId)).size).toBe(
+      child.exposures.length,
+    );
     expect(inheritedFamilies.has(selectedEntry.familyId)).toBe(false);
     expect(selectedEntry.id).toContain('ENTRY-3');
 
@@ -492,17 +573,7 @@ describe('planner reentry lineage and cross-run exposure', () => {
       ...parent.pins,
       runId: '66666666-6666-4666-8666-666666666666',
     });
-    const nextLineage = {
-      rootRunId: parent.lineage.rootRunId,
-      parentRunId: parent.pins.runId,
-      generation: 1,
-      inheritedFromRunIds: [parent.pins.runId],
-      inheritedExposure: {
-        sourceRunIds: [parent.pins.runId],
-        families: structuredClone(parent.exposures),
-      },
-      reviewedContentPins: parent.lineage.reviewedContentPins,
-    };
+    const nextLineage = nextLineageFor(parent, nextPins);
     parent = reduceLessonRun(
       parent,
       event(parent, 'lesson_planner_reentry_handoff', {
@@ -518,6 +589,80 @@ describe('planner reentry lineage and cross-run exposure', () => {
     expect(child.status).toBe('ready');
     expect(child.currentKcId).toBe(mixedLimits.knowledgeComponents[0]!.id);
     expect(child.exposures).toEqual(parent.exposures);
+  });
+
+  it('counts reentry independently for each KC while retaining global audit generation', () => {
+    const kcOneId = syntheticV3LessonDefinition.knowledgeComponents[0]!.id;
+    const kcTwoId = syntheticV3LessonDefinition.knowledgeComponents[1]!.id;
+    let kcOneParent = repairExhausted();
+    const kcOnePins = LessonRunPinsSchema.parse({
+      ...kcOneParent.pins,
+      runId: '77777777-7777-4777-8777-777777777777',
+    });
+    kcOneParent = apply(kcOneParent, 'lesson_planner_reentry_handoff', {
+      nextRunPins: kcOnePins,
+      nextLineage: nextLineageFor(kcOneParent, kcOnePins),
+    });
+    const kcOneChild = initializeLessonReentryRun(
+      syntheticV3LessonDefinition,
+      kcOnePins,
+      'test_fixture',
+      kcOneParent,
+    );
+    expect(kcOneChild.lineage.kcReentryCounts).toEqual([{ kcId: kcOneId, count: 1 }]);
+
+    let progressed = advanceCurrentKcToExit(kcOneChild);
+    progressed = submitExitPair(progressed, 'aligned', 'aligned');
+    progressed = act(progressed, { type: 'continue', activityId: null });
+    expect(progressed.currentKcId).toBe(kcTwoId);
+    expect(progressed.exitedKcIds).toContain(kcOneId);
+
+    let kcTwoParent = exhaustCurrentKc(progressed);
+    const kcTwoPins = LessonRunPinsSchema.parse({
+      ...kcTwoParent.pins,
+      runId: '88888888-8888-4888-8888-888888888888',
+    });
+    const kcTwoLineage = nextLineageFor(kcTwoParent, kcTwoPins);
+    expect(kcTwoLineage.generation).toBe(2);
+    expect(kcTwoLineage.kcReentryCounts).toEqual([
+      { kcId: kcOneId, count: 1 },
+      { kcId: kcTwoId, count: 1 },
+    ]);
+    const forgedCounts = apply(kcTwoParent, 'lesson_planner_reentry_handoff', {
+      nextRunPins: kcTwoPins,
+      nextLineage: {
+        ...kcTwoLineage,
+        kcReentryCounts: [{ kcId: kcOneId, count: 1 }],
+      },
+    });
+    expect(forgedCounts.status).toBe('blocked');
+
+    kcTwoParent = apply(kcTwoParent, 'lesson_planner_reentry_handoff', {
+      nextRunPins: kcTwoPins,
+      nextLineage: kcTwoLineage,
+    });
+    expect(kcTwoParent.status).toBe('handoff');
+    const kcTwoChild = initializeLessonReentryRun(
+      syntheticV3LessonDefinition,
+      kcTwoPins,
+      'test_fixture',
+      kcTwoParent,
+    );
+    expect(kcTwoChild.status).toBe('ready');
+    expect(kcTwoChild.currentKcId).toBe(kcTwoId);
+    expect(kcTwoChild.lineage.generation).toBe(2);
+
+    const overLimitParent = exhaustCurrentKc(kcTwoChild);
+    const overLimitPins = LessonRunPinsSchema.parse({
+      ...overLimitParent.pins,
+      runId: '99999999-9999-4999-8999-999999999999',
+    });
+    const overLimit = apply(overLimitParent, 'lesson_planner_reentry_handoff', {
+      nextRunPins: overLimitPins,
+      nextLineage: nextLineageFor(overLimitParent, overLimitPins),
+    });
+    expect(overLimit.status).toBe('blocked');
+    expect(overLimit.transitionErrors).toContain('planner_handoff_not_allowed');
   });
 });
 
@@ -591,6 +736,61 @@ describe('deterministic scoring, replay, and HTTP-command idempotency', () => {
     });
     expect(failed.outcome).toBe('incorrect');
     expect(failed.objectiveFeatureIds).toEqual(['feature-concepts', 'feature-value']);
+  });
+
+  it('matches required tokens and phrases at Unicode-safe semantic boundaries', () => {
+    const base = syntheticV3LessonDefinition.knowledgeComponents[0]!.activities.find(
+      (candidate) => candidate.response.kind === 'choice',
+    )!;
+    const boundaryActivity = ActivityDefinitionSchema.parse({
+      ...base,
+      response: {
+        kind: 'text',
+        label: 'Use each required term.',
+        placeholder: null,
+        allowNotSure: true,
+        rubric: {
+          criteria: [
+            {
+              id: 'bounded-terms',
+              label: 'Bounded terms',
+              required: true,
+              matcher: {
+                kind: 'required_tokens',
+                tokens: ['ion', 'oxidizing agent', 'NAD+'],
+                minimumMatches: 3,
+                normalization: {
+                  trim: true,
+                  collapseWhitespace: true,
+                  case: 'lowercase',
+                  stripPunctuation: true,
+                },
+              },
+              correctFeedback: 'Every bounded term is present.',
+              incorrectFeedback: 'Use each exact term.',
+              diagnosticSignalIds: [],
+              objectiveFeatureIds: ['feature-bounded-terms'],
+            },
+          ],
+          correctFeedback: 'All terms matched.',
+          incorrectFeedback: 'One or more terms did not match.',
+          notSureFeedback: 'Not sure keeps support.',
+        },
+      },
+    });
+
+    expect(
+      evaluateLessonResponse(boundaryActivity, {
+        kind: 'text',
+        text: 'The ion is handled by an oxidizing agent while NAD+ is present.',
+      }).outcome,
+    ).toBe('correct');
+    expect(
+      evaluateLessonResponse(boundaryActivity, {
+        kind: 'text',
+        text: 'The reaction mentions oxidizing agents and NADH.',
+      }).outcome,
+    ).toBe('incorrect');
   });
 
   it('replays idempotently and ignores duplicate event identities', () => {

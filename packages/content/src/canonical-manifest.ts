@@ -363,7 +363,10 @@ const exactArray = (left: readonly string[], right: readonly string[]): boolean 
   left.length === right.length && left.every((entry, index) => entry === right[index]);
 
 const exactMembers = (left: readonly string[], right: readonly string[]): boolean =>
-  left.length === right.length && left.every((entry) => right.includes(entry));
+  left.length === right.length &&
+  new Set(left).size === left.length &&
+  new Set(right).size === right.length &&
+  left.every((entry) => right.includes(entry));
 
 const heldInternalEntityId = (entry: z.infer<typeof HeldInternalEntitySchema>): string =>
   typeof entry === 'string' ? entry : entry.entity_id;

@@ -225,6 +225,39 @@ export const ActivityResponseDefinitionSchema = z
         message: 'maximumSteps must be at least minimumSteps',
       });
     }
+    if (response.kind === 'choice') {
+      const choiceIds = response.choices.map((choice) => choice.id);
+      if (new Set(choiceIds).size !== choiceIds.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['choices'],
+          message: 'choice IDs must be unique',
+        });
+      }
+      if (new Set(response.correctChoiceIds).size !== response.correctChoiceIds.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['correctChoiceIds'],
+          message: 'correct choice IDs must be unique',
+        });
+      }
+      response.correctChoiceIds.forEach((id, index) => {
+        const choice = response.choices.find((candidate) => candidate.id === id);
+        if (!choice) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['correctChoiceIds', index],
+            message: `unknown correct choice ${id}`,
+          });
+        } else if (choice.objectiveFeatureIds.length > 0) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['choices'],
+            message: 'correct choices cannot declare failure-only objective features',
+          });
+        }
+      });
+    }
   });
 export type ActivityResponseDefinition = z.infer<typeof ActivityResponseDefinitionSchema>;
 
@@ -716,7 +749,9 @@ const potentialResponseEvidence = (activity: z.infer<typeof ActivityDefinitionSc
   if (activity.response.kind === 'choice') {
     activity.response.choices.forEach((choice) => {
       choice.diagnosticSignalIds.forEach((id) => signalIds.add(id));
-      choice.objectiveFeatureIds.forEach((id) => objectiveFeatureIds.add(id));
+      if (!activity.response.correctChoiceIds.includes(choice.id)) {
+        choice.objectiveFeatureIds.forEach((id) => objectiveFeatureIds.add(id));
+      }
     });
     activity.response.notSureDiagnosticSignalIds.forEach((id) => signalIds.add(id));
     activity.response.notSureObjectiveFeatureIds.forEach((id) => objectiveFeatureIds.add(id));
@@ -880,6 +915,7 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
   }
 
   const globalActivityIds = new Set<string>();
+  const globalFamilyIds = new Set<string>();
   const globalRepresentationIds = new Set<string>();
   const globalExitPairIds = new Set<string>();
   lesson.knowledgeComponents.forEach((kc, kcIndex) => {
@@ -931,6 +967,14 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
         addIssue(ctx, [...basePath, 'activities'], `duplicate activity ${activity.id}`);
       }
       globalActivityIds.add(activity.id);
+      if (globalFamilyIds.has(activity.familyId)) {
+        addIssue(
+          ctx,
+          [...basePath, 'activities'],
+          `activity family ${activity.familyId} must be lesson-global unique`,
+        );
+      }
+      globalFamilyIds.add(activity.familyId);
       if (activity.kcId !== kc.id) {
         addIssue(
           ctx,
@@ -962,21 +1006,6 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
           [...basePath, 'activities'],
           `${activity.id} assistance levels must be unique`,
         );
-      }
-      if (activity.response.kind === 'choice') {
-        const choiceIds = activity.response.choices.map((choice) => choice.id);
-        if (new Set(choiceIds).size !== choiceIds.length) {
-          addIssue(ctx, [...basePath, 'activities'], `${activity.id} choice IDs must be unique`);
-        }
-        activity.response.correctChoiceIds.forEach((id) => {
-          if (!choiceIds.includes(id)) {
-            addIssue(
-              ctx,
-              [...basePath, 'activities'],
-              `${activity.id} has unknown correct choice ${id}`,
-            );
-          }
-        });
       }
     });
 
@@ -1181,6 +1210,25 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
     kc.microcycle.workedDecisionActivityIds.forEach((id) =>
       requireActivity(id, 'show_expert_decisions'),
     );
+    const routeWorkedDecisionIds = [
+      ...new Set(
+        routes
+          .flatMap((route) => route.instructionActivityIds)
+          .filter((id) => activityById.get(id)?.phase === 'show_expert_decisions'),
+      ),
+    ];
+    if (
+      new Set(kc.microcycle.workedDecisionActivityIds).size !==
+        kc.microcycle.workedDecisionActivityIds.length ||
+      routeWorkedDecisionIds.length !== kc.microcycle.workedDecisionActivityIds.length ||
+      routeWorkedDecisionIds.some((id) => !kc.microcycle.workedDecisionActivityIds.includes(id))
+    ) {
+      addIssue(
+        ctx,
+        [...basePath, 'microcycle', 'workedDecisionActivityIds'],
+        'worked-decision declarations must exactly match expert-decision activities reachable from routes',
+      );
+    }
     if (
       kc.microcycle.fading.maxAttemptsPerLevel < kc.microcycle.fading.successesToFade ||
       kc.microcycle.fading.maxAttemptsPerLevel < kc.microcycle.fading.requiredA0Successes

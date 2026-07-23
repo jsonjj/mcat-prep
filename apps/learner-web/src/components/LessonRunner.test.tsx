@@ -182,6 +182,50 @@ describe('LessonRunner accessibility and safe rendering', () => {
     expect(html).not.toContain('<script');
   });
 
+  it('renders bars from the reviewed zero baseline', () => {
+    const input = structuredClone(activeStep);
+    const chartRepresentation = input.activity?.representations.find(
+      (representation) => representation.kind === 'chart',
+    );
+    if (!chartRepresentation || chartRepresentation.kind !== 'chart') {
+      throw new Error('Expected the synthetic chart representation.');
+    }
+    chartRepresentation.chart.chartType = 'bar';
+    chartRepresentation.chart.yAxis = { label: 'Output', unit: null, min: 0, max: 10 };
+    chartRepresentation.chart.series[0]!.points = [
+      { x: 0, y: 5, label: null },
+      { x: 1, y: 10, label: null },
+    ];
+    const html = render(LessonStepViewSchema.parse(input));
+
+    expect(html).toContain('<rect');
+    expect(html).toContain('height="130"');
+    expect(html).toContain('height="260"');
+  });
+
+  it('does not render assistance after the current response is committed', () => {
+    const input = structuredClone(activeStep);
+    if (!input.activity) throw new Error('Expected the active synthetic activity.');
+    input.activity.assistance.canRequestMore = false;
+    input.availableActions = ['continue', 'pause'];
+    input.activity.feedback = {
+      sealed: false,
+      entries: [
+        {
+          activityId: input.activity.id,
+          tone: 'correct',
+          message: 'The synthetic response was committed.',
+        },
+      ],
+    };
+    const html = render(LessonStepViewSchema.parse(input));
+
+    expect(html).toContain('The synthetic response was committed.');
+    expect(html).toContain('>Continue<');
+    expect(html).not.toContain('Add support');
+    expect(html).not.toContain('Submit response');
+  });
+
   it('announces grouped feedback once through one atomic live region', () => {
     if (!activeStep.activity)
       throw new Error('Expected the active fixture to include an activity.');

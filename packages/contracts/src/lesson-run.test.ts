@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   LessonActionCommandSchema,
   LessonRunEventSchema,
+  LessonRunLineageSchema,
   LessonRunPinsSchema,
   LessonRunStateSchema,
 } from './index';
@@ -46,7 +47,7 @@ describe('lesson run contracts', () => {
 
   it('validates an append-only, version-pinned typed event', () => {
     const parsed = LessonRunEventSchema.parse({
-      schemaVersion: '1.1',
+      schemaVersion: '1.2',
       eventId: '22222222-2222-4222-8222-222222222222',
       idempotencyKey: '33333333-3333-4333-8333-333333333333',
       ...pins,
@@ -64,7 +65,7 @@ describe('lesson run contracts', () => {
 
   it('rejects untyped payload fields and malformed canonical ids', () => {
     const result = LessonRunEventSchema.safeParse({
-      schemaVersion: '1.1',
+      schemaVersion: '1.2',
       eventId: '22222222-2222-4222-8222-222222222222',
       idempotencyKey: '33333333-3333-4333-8333-333333333333',
       ...pins,
@@ -80,12 +81,14 @@ describe('lesson run contracts', () => {
 
   it('cannot represent an aggregate mastery field in strict run state', () => {
     const state = LessonRunStateSchema.parse({
-      schemaVersion: '1.1',
+      schemaVersion: '1.2',
       pins,
       lineage: {
         rootRunId: pins.runId,
         parentRunId: null,
         generation: 0,
+        reentryHistory: [],
+        kcReentryCounts: [],
         inheritedFromRunIds: [],
         inheritedExposure: { sourceRunIds: [], families: [] },
         reviewedContentPins: [
@@ -144,5 +147,43 @@ describe('lesson run contracts', () => {
     };
 
     expect(LessonRunStateSchema.safeParse(aggregateState).success).toBe(false);
+  });
+
+  it('derives per-KC reentry counts exactly from immutable lineage history', () => {
+    const firstChildRunId = '44444444-4444-4444-8444-444444444444';
+    const secondChildRunId = '55555555-5555-4555-8555-555555555555';
+    const valid = {
+      rootRunId: pins.runId,
+      parentRunId: firstChildRunId,
+      generation: 2,
+      reentryHistory: [
+        { runId: firstChildRunId, targetKcId: 'V3-KC-SYNTH-FIRST' },
+        { runId: secondChildRunId, targetKcId: 'V3-KC-SYNTH-SECOND' },
+      ],
+      kcReentryCounts: [
+        { kcId: 'V3-KC-SYNTH-FIRST', count: 1 },
+        { kcId: 'V3-KC-SYNTH-SECOND', count: 1 },
+      ],
+      inheritedFromRunIds: [pins.runId, firstChildRunId],
+      inheritedExposure: {
+        sourceRunIds: [pins.runId, firstChildRunId],
+        families: [],
+      },
+      reviewedContentPins: [
+        {
+          lessonId: pins.lessonId,
+          definitionVersion: pins.definitionVersion,
+          reviewedContentHash: pins.reviewedContentHash,
+        },
+      ],
+    };
+
+    expect(LessonRunLineageSchema.safeParse(valid).success).toBe(true);
+    expect(
+      LessonRunLineageSchema.safeParse({
+        ...valid,
+        kcReentryCounts: [{ kcId: 'V3-KC-SYNTH-SECOND', count: 1 }],
+      }).success,
+    ).toBe(false);
   });
 });

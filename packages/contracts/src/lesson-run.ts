@@ -98,7 +98,16 @@ export const FamilyExposureSchema = z
     feedbackSeen: z.boolean(),
     answerKeySeen: z.boolean(),
   })
-  .strict();
+  .strict()
+  .superRefine((exposure, ctx) => {
+    if (new Set(exposure.activityIds).size !== exposure.activityIds.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['activityIds'],
+        message: 'family exposure activity IDs must be unique',
+      });
+    }
+  });
 export type FamilyExposure = z.infer<typeof FamilyExposureSchema>;
 
 export const ReviewedLessonContentPinSchema = z
@@ -135,17 +144,80 @@ export const InheritedLessonExposureEnvelopeSchema = z
   });
 export type InheritedLessonExposureEnvelope = z.infer<typeof InheritedLessonExposureEnvelopeSchema>;
 
+export const LessonReentryHistoryEntrySchema = z
+  .object({
+    runId: LessonRunIdSchema,
+    targetKcId: V3KcIdSchema,
+  })
+  .strict();
+export type LessonReentryHistoryEntry = z.infer<typeof LessonReentryHistoryEntrySchema>;
+
+export const LessonKcReentryCountSchema = z
+  .object({
+    kcId: V3KcIdSchema,
+    count: z.number().int().positive(),
+  })
+  .strict();
+export type LessonKcReentryCount = z.infer<typeof LessonKcReentryCountSchema>;
+
 export const LessonRunLineageSchema = z
   .object({
     rootRunId: LessonRunIdSchema,
     parentRunId: LessonRunIdSchema.nullable(),
     generation: z.number().int().nonnegative(),
+    reentryHistory: z.array(LessonReentryHistoryEntrySchema),
+    kcReentryCounts: z.array(LessonKcReentryCountSchema),
     inheritedFromRunIds: z.array(LessonRunIdSchema),
     inheritedExposure: InheritedLessonExposureEnvelopeSchema,
     reviewedContentPins: z.array(ReviewedLessonContentPinSchema).min(1),
   })
   .strict()
   .superRefine((lineage, ctx) => {
+    if (new Set(lineage.inheritedFromRunIds).size !== lineage.inheritedFromRunIds.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['inheritedFromRunIds'],
+        message: 'inherited lesson run IDs must be unique',
+      });
+    }
+    const historyRunIds = lineage.reentryHistory.map((entry) => entry.runId);
+    if (new Set(historyRunIds).size !== historyRunIds.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['reentryHistory'],
+        message: 'reentry history run IDs must be unique',
+      });
+    }
+    if (
+      lineage.generation !== lineage.reentryHistory.length ||
+      lineage.generation !== lineage.inheritedFromRunIds.length
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['generation'],
+        message: 'global generation must exactly equal immutable reentry history length',
+      });
+    }
+    const expectedCounts: { kcId: string; count: number }[] = [];
+    lineage.reentryHistory.forEach((entry) => {
+      const existing = expectedCounts.find((candidate) => candidate.kcId === entry.targetKcId);
+      if (existing) existing.count += 1;
+      else expectedCounts.push({ kcId: entry.targetKcId, count: 1 });
+    });
+    if (
+      expectedCounts.length !== lineage.kcReentryCounts.length ||
+      expectedCounts.some(
+        (expected, index) =>
+          expected.kcId !== lineage.kcReentryCounts[index]?.kcId ||
+          expected.count !== lineage.kcReentryCounts[index]?.count,
+      )
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['kcReentryCounts'],
+        message: 'per-KC reentry counts must be the exact projection of immutable history',
+      });
+    }
     if (
       lineage.inheritedFromRunIds.length !== lineage.inheritedExposure.sourceRunIds.length ||
       lineage.inheritedFromRunIds.some(
@@ -161,12 +233,29 @@ export const LessonRunLineageSchema = z
     if (
       lineage.generation === 0 &&
       (lineage.parentRunId !== null ||
+        lineage.reentryHistory.length > 0 ||
+        lineage.kcReentryCounts.length > 0 ||
         lineage.inheritedFromRunIds.length > 0 ||
         lineage.inheritedExposure.families.length > 0)
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'root lesson runs cannot claim inherited exposure',
+      });
+    }
+    if (
+      lineage.generation > 0 &&
+      (lineage.parentRunId === null ||
+        lineage.inheritedFromRunIds[0] !== lineage.rootRunId ||
+        lineage.inheritedFromRunIds[lineage.inheritedFromRunIds.length - 1] !==
+          lineage.parentRunId ||
+        lineage.reentryHistory
+          .slice(0, -1)
+          .some((entry, index) => entry.runId !== lineage.inheritedFromRunIds[index + 1]))
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'reentry ancestry, history, root, and parent identities must remain contiguous',
       });
     }
   });
@@ -249,7 +338,7 @@ export type AuthorityPrivateLessonFeedback = z.infer<typeof AuthorityPrivateLess
 
 export const LessonRunStateSchema = z
   .object({
-    schemaVersion: z.literal('1.1'),
+    schemaVersion: z.literal('1.2'),
     pins: LessonRunPinsSchema,
     lineage: LessonRunLineageSchema,
     status: LessonRunStatusSchema,
@@ -327,6 +416,25 @@ export const LessonRunStateSchema = z
   })
   .strict()
   .superRefine((state, ctx) => {
+    const exposureFamilyIds = state.exposures.map((exposure) => exposure.familyId);
+    if (new Set(exposureFamilyIds).size !== exposureFamilyIds.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['exposures'],
+        message: 'lesson run exposure families must be unique',
+      });
+    }
+    const currentLineageRunId =
+      state.lineage.generation === 0
+        ? state.lineage.rootRunId
+        : state.lineage.reentryHistory[state.lineage.reentryHistory.length - 1]?.runId;
+    if (currentLineageRunId !== state.pins.runId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['lineage'],
+        message: 'run state pins must identify the immutable lineage tip',
+      });
+    }
     state.lineage.inheritedExposure.families.forEach((inherited) => {
       const current = state.exposures.find((exposure) => exposure.familyId === inherited.familyId);
       if (
@@ -352,7 +460,7 @@ export type LessonRunState = z.infer<typeof LessonRunStateSchema>;
 
 const LessonRunEventBaseSchema = z
   .object({
-    schemaVersion: z.literal('1.1'),
+    schemaVersion: z.literal('1.2'),
     eventId: EventIdSchema,
     idempotencyKey: IdempotencyKeySchema,
     runId: LessonRunIdSchema,

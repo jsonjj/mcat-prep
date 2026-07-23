@@ -727,6 +727,7 @@ function ChartRepresentation({
     ((value - chart.yAxis.min) / (chart.yAxis.max - chart.yAxis.min)) * innerHeight;
   const totalPoints = chart.series.reduce((count, series) => count + series.points.length, 0);
   const barWidth = Math.max(8, (innerWidth / Math.max(totalPoints, 1)) * 0.55);
+  const barBaselineY = scaleY(0);
   return (
     <figure className="mc-lesson-runner__alternative">
       <figcaption>{representation.label}</figcaption>
@@ -784,7 +785,7 @@ function ChartRepresentation({
                     x={scaleX(point.x) - barWidth / 2}
                     y={scaleY(point.y)}
                     width={barWidth}
-                    height={top + innerHeight - scaleY(point.y)}
+                    height={barBaselineY - scaleY(point.y)}
                   />
                 ) : (
                   <circle key={pointIndex} cx={scaleX(point.x)} cy={scaleY(point.y)} r="5" />
