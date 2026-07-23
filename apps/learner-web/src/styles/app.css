@@ -140,7 +140,9 @@ body {
   position: sticky;
   bottom: 0;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  /* minmax(0, 1fr) lets all five equal tracks shrink below content so a long
+     label (Curriculum) never forces horizontal page overflow. */
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 2px;
   padding: var(--mc-space-1) var(--mc-space-1) max(var(--mc-space-1), env(safe-area-inset-bottom));
   background: color-mix(in srgb, var(--mc-canvas) 82%, transparent);
@@ -153,6 +155,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 3px;
+  min-width: 0;
   min-height: var(--mc-touch);
   padding: var(--mc-space-1);
   text-decoration: none;
@@ -160,12 +163,36 @@ body {
   border-radius: var(--mc-radius-control);
   font-size: var(--mc-text-12);
 }
+.mc-tab__label {
+  max-width: 100%;
+  font-size: var(--mc-text-12);
+  text-align: center;
+}
 .mc-tab.active {
   color: var(--mc-primary-text);
   font-weight: 700;
 }
 .mc-tab.active .mc-tab__icon {
   stroke-width: 2.2;
+}
+/* Very narrow phones (~320px): keep the full "Curriculum" label visible with a
+   small typographic step-down and trimmed chrome — no clipping or ellipsis. */
+@media (max-width: 400px) {
+  .mc-bottomnav {
+    gap: 1px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .mc-tab {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .mc-tab__label {
+    /* Keep the documented 12px type token even at 320px; buy room with zero
+       padding above and a slight tracking tweak rather than shrinking the font. */
+    font-size: var(--mc-text-12);
+    letter-spacing: -0.02em;
+  }
 }
 
 /* ---- Desktop layout ---- */
@@ -920,6 +947,338 @@ body {
 }
 .mc-duel__reflection {
   white-space: pre-wrap;
+}
+
+/* ---- Curriculum (browse-only V3 path) ---- */
+.mc-curriculum {
+  --mc-curr-node: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-5);
+  padding-top: var(--mc-space-2);
+}
+.mc-curriculum__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+
+/* Phase path / stepper — the single visual signature. Selection, not progress:
+   the connector line is uniform and never "fills" toward the current phase. */
+.mc-curriculum__path {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--mc-space-2);
+  margin-inline: calc(-1 * var(--mc-space-2));
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.mc-curriculum__steps {
+  display: flex;
+  align-items: flex-start;
+}
+.mc-curriculum__step {
+  position: relative;
+  flex: 1 0 0;
+  min-width: clamp(84px, 20vw, 128px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mc-space-2);
+  min-height: var(--mc-touch);
+  padding: var(--mc-space-2) var(--mc-space-1) 0;
+  border: 0;
+  background: transparent;
+  color: var(--mc-ink-muted);
+  font: inherit;
+  cursor: pointer;
+  text-align: center;
+}
+.mc-curriculum__step:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--mc-space-2) + var(--mc-curr-node) / 2);
+  right: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--mc-border);
+  transform: translateY(-50%);
+  z-index: 0;
+}
+.mc-curriculum__step-node {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--mc-curr-node);
+  height: var(--mc-curr-node);
+  border-radius: 50%;
+  background: var(--mc-surface);
+  border: 1.5px solid var(--mc-border);
+  transition:
+    border-color var(--mc-motion-control) var(--mc-ease),
+    background-color var(--mc-motion-control) var(--mc-ease);
+}
+.mc-curriculum__step-num {
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-15);
+  font-weight: 500;
+  color: var(--mc-ink-muted);
+}
+.mc-curriculum__step-label {
+  font-size: var(--mc-text-12);
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.mc-curriculum__step:hover:not(.mc-curriculum__step--active) .mc-curriculum__step-node {
+  border-color: var(--mc-primary-text);
+}
+.mc-curriculum__step--active .mc-curriculum__step-node {
+  background: var(--mc-primary);
+  border-color: var(--mc-primary);
+}
+.mc-curriculum__step--active .mc-curriculum__step-num {
+  color: var(--mc-on-primary);
+}
+.mc-curriculum__step--active .mc-curriculum__step-label {
+  color: var(--mc-primary-text);
+  font-weight: 700;
+}
+
+/* Selected phase panel */
+.mc-curriculum__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-4);
+}
+.mc-curriculum__phase {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mc-curriculum__phase-step {
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-12);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mc-primary-text);
+}
+.mc-curriculum__phase-title {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-28);
+  line-height: var(--mc-leading-tight);
+}
+.mc-curriculum__phase-sub {
+  font-size: var(--mc-text-15);
+}
+.mc-curriculum__phase-meta {
+  margin-top: var(--mc-space-1);
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-12);
+  color: var(--mc-ink-muted);
+}
+
+/* Modules — accessible collapsible sections. Every module (lessons, integration
+   checkpoints, and Phase-5 revisits) uses the same button + region disclosure. */
+.mc-curriculum__modules {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-curriculum__module {
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-card);
+  background: color-mix(in srgb, var(--mc-surface) 70%, transparent);
+  backdrop-filter: blur(8px);
+}
+.mc-curriculum__module-h {
+  margin: 0;
+  font: inherit;
+}
+.mc-curriculum__module-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-3);
+  width: 100%;
+  min-height: var(--mc-touch);
+  padding: var(--mc-space-3) var(--mc-space-4);
+  border: 0;
+  border-radius: calc(var(--mc-radius-card) - 1px);
+  background: transparent;
+  color: var(--mc-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--mc-motion-control) var(--mc-ease);
+}
+.mc-curriculum__module-toggle:hover {
+  background: color-mix(in srgb, var(--mc-surface) 55%, transparent);
+}
+.mc-curriculum__module-toggle[aria-expanded='true'] {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.mc-curriculum__module-titles {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mc-curriculum__module-title {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-17);
+  line-height: 1.25;
+}
+.mc-curriculum__module-count {
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-12);
+  color: var(--mc-ink-muted);
+}
+.mc-curriculum__lane {
+  flex: none;
+  align-self: center;
+  padding: 3px 10px;
+  border-radius: var(--mc-radius-pill);
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 22%, transparent);
+  background: color-mix(in srgb, var(--mc-primary) 12%, transparent);
+  color: var(--mc-primary-text);
+  font-size: var(--mc-text-12);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.mc-curriculum__chev {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid var(--mc-ink-muted);
+  border-bottom: 2px solid var(--mc-ink-muted);
+  transform: rotate(45deg);
+  transition: transform var(--mc-motion-control) var(--mc-ease);
+}
+.mc-curriculum__module-toggle[aria-expanded='true'] .mc-curriculum__chev {
+  transform: rotate(-135deg);
+}
+.mc-curriculum__region {
+  padding: var(--mc-space-1) var(--mc-space-4) var(--mc-space-4);
+}
+/* Truthful body for zero-lesson modules (integration checkpoints and Phase-5
+   revisit modules), shown inside the same collapsible region as lesson lists. */
+.mc-curriculum__note {
+  margin: 0;
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-15);
+  line-height: var(--mc-leading-body);
+}
+
+/* Lessons — quiet, readable cards */
+.mc-curriculum__lessons {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-curriculum__lesson {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+  padding: var(--mc-space-3) var(--mc-space-4);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface);
+}
+.mc-curriculum__lesson-main {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mc-space-3);
+}
+.mc-curriculum__ordinal {
+  flex: none;
+  padding-top: 2px;
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-14);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--mc-primary-text);
+}
+.mc-curriculum__lesson-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-curriculum__lesson-title {
+  margin: 0;
+  font-family: var(--mc-font-body);
+  font-weight: 700;
+  font-size: var(--mc-text-17);
+  line-height: 1.3;
+}
+.mc-curriculum__kc {
+  border-top: 1px solid color-mix(in srgb, var(--mc-border) 70%, transparent);
+}
+.mc-curriculum__kc-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+  min-height: var(--mc-touch);
+  list-style: none;
+  color: var(--mc-primary-text);
+  font-size: var(--mc-text-14);
+  font-weight: 600;
+  cursor: pointer;
+}
+.mc-curriculum__kc-summary::-webkit-details-marker {
+  display: none;
+}
+.mc-curriculum__kc-chev {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--mc-motion-control) var(--mc-ease);
+}
+.mc-curriculum__kc[open] .mc-curriculum__kc-chev {
+  transform: rotate(-135deg);
+}
+.mc-curriculum__kc-list {
+  margin: 0 0 var(--mc-space-2);
+  padding-left: var(--mc-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+  color: var(--mc-ink);
+  font-size: var(--mc-text-15);
+}
+.mc-curriculum__kc-item {
+  line-height: 1.4;
+}
+.mc-curriculum__lesson-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+  flex-wrap: wrap;
+}
+.mc-curriculum__soon {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-surface-2);
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 /* ---- Focus mode ---- */

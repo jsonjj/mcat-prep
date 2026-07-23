@@ -1,7 +1,8 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const assetsDirectory = new URL('../dist/assets/', import.meta.url);
+const assetsDirectory = fileURLToPath(new URL('../dist/assets/', import.meta.url));
 const protectedScoringMarkers = [
   'REFERENCE_POINT',
   'MODEL_SELECTION',
@@ -14,7 +15,7 @@ const protectedScoringMarkers = [
 
 const javascriptFiles = readdirSync(assetsDirectory)
   .filter((file) => file.endsWith('.js'))
-  .map((file) => join(assetsDirectory.pathname, file));
+  .map((file) => join(assetsDirectory, file));
 
 const leakedMarkers = [];
 for (const file of javascriptFiles) {
