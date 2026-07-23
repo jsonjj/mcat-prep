@@ -4,12 +4,14 @@ import type { ChoiceId, ProbableCause, StudyStepView } from '@mcat/contracts';
 import { Button, Callout, Card, Eyebrow, MasteryBadge, Stack } from '@mcat/ui-web';
 import {
   useContinueStep,
+  useLessonAction,
   useRequestReveal,
   useSelectCause,
   useSession,
   useSubmitAttempt,
   useSubmitRecall,
 } from '../app/queries';
+import { LessonRunner } from '../components/LessonRunner';
 
 const CAUSES: { value: ProbableCause; label: string }[] = [
   { value: 'did_not_know_content', label: 'I did not know the content' },
@@ -38,6 +40,7 @@ export function Study() {
   const requestReveal = useRequestReveal();
   const continueStep = useContinueStep();
   const submitRecall = useSubmitRecall();
+  const lessonAction = useLessonAction();
 
   const [choice, setChoice] = useState<ChoiceId | null>(null);
   const [recallText, setRecallText] = useState('');
@@ -61,6 +64,16 @@ export function Study() {
           Finish setup
         </Button>
       </div>
+    );
+  }
+
+  if (step.kind === 'v3_lesson') {
+    return (
+      <LessonRunner
+        step={step}
+        pending={lessonAction.isPending}
+        onAction={(action) => lessonAction.mutate({ runId: step.runId, action })}
+      />
     );
   }
 

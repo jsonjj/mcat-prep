@@ -8,6 +8,7 @@ import {
   GuestBootstrapResponseSchema,
   HTTP_API,
   HttpApiErrorSchema,
+  LessonActionCommandSchema,
   MasteryMapEntrySchema,
   PracticeItemViewSchema,
   PracticeResultSchema,
@@ -314,6 +315,18 @@ export class HttpAuthorityClient implements AuthorityPort {
     });
     await this.bootstrap();
     return response.correct;
+  }
+
+  async dispatchLessonAction(
+    runId: Parameters<AuthorityPort['dispatchLessonAction']>[0],
+    action: Parameters<AuthorityPort['dispatchLessonAction']>[1],
+  ): Promise<void> {
+    const command = LessonActionCommandSchema.parse({
+      envelope: await this.commandEnvelope(),
+      runId,
+      action,
+    });
+    await this.acceptedCommand('/v1/learning/lesson/action', command);
   }
 
   async getMasteryMap() {

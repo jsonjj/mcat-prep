@@ -4,7 +4,11 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import type { ProbableCause } from '@mcat/contracts';
+import type {
+  LessonActionInput,
+  LessonRunId,
+  ProbableCause,
+} from '@mcat/contracts';
 import type { GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 
@@ -72,6 +76,15 @@ export function useSubmitRecall() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (answer: string) => authority.submitRecall(answer),
+    onSuccess: () => invalidateLearner(qc),
+  });
+}
+
+export function useLessonAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { runId: LessonRunId; action: LessonActionInput }) =>
+      authority.dispatchLessonAction(input.runId, input.action),
     onSuccess: () => invalidateLearner(qc),
   });
 }

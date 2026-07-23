@@ -11,6 +11,8 @@ import {
   WrappedViewSchema,
   type BootstrapResponse,
   type Clock,
+  type LessonActionInput,
+  type LessonRunId,
   type ProbableCause,
 } from '@mcat/contracts';
 import { Authority, type LearnerState } from '@mcat/authority-core';
@@ -91,6 +93,13 @@ export class InProcessAuthorityClient implements AuthorityPort {
 
   async submitRecall(answer: string): Promise<boolean> {
     return this.mutate((state) => this.authority.submitRecall(state, answer));
+  }
+
+  async dispatchLessonAction(
+    _runId: LessonRunId,
+    _action: LessonActionInput,
+  ): Promise<void> {
+    throw new Error('No V3 lesson definition is loaded in the legacy local fixture.');
   }
 
   async getMasteryMap() {
