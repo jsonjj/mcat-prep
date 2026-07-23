@@ -164,4 +164,37 @@ describe('HttpAuthorityClient', () => {
     expect(lessonBodies).toHaveLength(2);
     expect(lessonBodies[1]).toBe(lessonBodies[0]);
   });
+
+  it('coalesces concurrent identical lesson actions behind one HTTP command', async () => {
+    const lessonBodies: string[] = [];
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      fetch: async (url, init) => {
+        if (String(url).endsWith('/v1/bootstrap')) return Response.json(bootstrapResponse);
+        lessonBodies.push(String(init?.body));
+        const command = LessonActionCommandSchema.parse(JSON.parse(String(init?.body)));
+        return Response.json(
+          AcceptedCommandResponseSchema.parse({
+            eventId: command.envelope.eventId,
+            sequence: 8,
+            streamVersion: 8,
+            acceptedAt: '2026-07-22T00:00:01.000Z',
+          }),
+        );
+      },
+    });
+    const runId = LessonRunIdSchema.parse('11111111-1111-4111-8111-111111111111');
+    const action = {
+      type: 'present' as const,
+      activityId: V3ActivityIdSchema.parse('V3-ACT-SYNTH-CLIENT-1'),
+    };
+
+    await client.bootstrap();
+    await Promise.all([
+      client.dispatchLessonAction(runId, action),
+      client.dispatchLessonAction(runId, action),
+    ]);
+
+    expect(lessonBodies).toHaveLength(1);
+  });
 });

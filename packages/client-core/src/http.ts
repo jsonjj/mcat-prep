@@ -127,6 +127,7 @@ export class HttpAuthorityClient implements AuthorityPort {
   private contentRelease: string | undefined;
   private currentQuestionId: string | undefined;
   private readonly pendingLessonCommands = new Map<string, LessonActionCommand>();
+  private readonly inFlightLessonActions = new Map<string, Promise<void>>();
 
   constructor(options: HttpAuthorityClientOptions) {
     const url = new URL(options.baseUrl);
@@ -324,22 +325,35 @@ export class HttpAuthorityClient implements AuthorityPort {
     action: Parameters<AuthorityPort['dispatchLessonAction']>[1],
   ): Promise<void> {
     const commandKey = JSON.stringify([runId, action]);
-    const command =
-      this.pendingLessonCommands.get(commandKey) ??
-      LessonActionCommandSchema.parse({
-        envelope: await this.commandEnvelope(),
-        runId,
-        action,
-      });
-    this.pendingLessonCommands.set(commandKey, command);
-    try {
-      await this.acceptedCommand('/v1/learning/lesson/action', command);
-      this.pendingLessonCommands.delete(commandKey);
-    } catch (error) {
-      if (error instanceof ApiClientError && !error.retryable) {
+    const inFlight = this.inFlightLessonActions.get(commandKey);
+    if (inFlight) return inFlight;
+
+    const request = (async () => {
+      const command =
+        this.pendingLessonCommands.get(commandKey) ??
+        LessonActionCommandSchema.parse({
+          envelope: await this.commandEnvelope(),
+          runId,
+          action,
+        });
+      this.pendingLessonCommands.set(commandKey, command);
+      try {
+        await this.acceptedCommand('/v1/learning/lesson/action', command);
         this.pendingLessonCommands.delete(commandKey);
+      } catch (error) {
+        if (error instanceof ApiClientError && !error.retryable) {
+          this.pendingLessonCommands.delete(commandKey);
+        }
+        throw error;
       }
-      throw error;
+    })();
+    this.inFlightLessonActions.set(commandKey, request);
+    try {
+      await request;
+    } finally {
+      if (this.inFlightLessonActions.get(commandKey) === request) {
+        this.inFlightLessonActions.delete(commandKey);
+      }
     }
   }
 

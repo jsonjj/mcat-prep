@@ -63,6 +63,7 @@ describe('lesson run contracts', () => {
         parentRunId: null,
         generation: 0,
         inheritedFromRunIds: [],
+        inheritedExposure: { sourceRunIds: [], families: [] },
         reviewedContentPins: [
           {
             lessonId: pins.lessonId,

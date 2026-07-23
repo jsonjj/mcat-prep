@@ -12,6 +12,58 @@ const refreshDigest = (definition: Record<string, unknown>): void => {
   (definition.reviewEnvelope as { reviewedContentHash: string }).reviewedContentHash = digest;
 };
 
+const configureApprovedProduction = (definition: Record<string, unknown>): void => {
+  definition.status = 'published';
+  definition.publicationIntent = 'production';
+  definition.testOnly = false;
+  (definition.registryBinding as { mode: string }).mode = 'canonical';
+  const review = definition.reviewEnvelope as Record<string, unknown>;
+  review.publicationFreezeId = 'CONTENT-FREEZE-1';
+  review.authorIds = ['fixture-author'];
+  review.independentContentReview = {
+    status: 'approved',
+    reviewerIds: ['content-reviewer'],
+    reportId: 'content-report',
+  };
+  review.independentDomainReview = {
+    status: 'approved',
+    reviewerIds: ['domain-reviewer'],
+    reportId: 'domain-report',
+  };
+  review.copyReview = {
+    status: 'approved',
+    reviewerIds: ['copy-reviewer'],
+    reportId: 'copy-report',
+  };
+  review.accessibilityReview = {
+    status: 'approved',
+    reviewerIds: ['accessibility-reviewer'],
+    reportId: 'accessibility-report',
+  };
+  review.blindSolve = {
+    status: 'passed',
+    solverIds: ['blind-solver'],
+    keysHidden: true,
+    reportId: 'blind-report',
+  };
+  review.rightsReview = {
+    status: 'cleared',
+    reviewerIds: ['rights-reviewer'],
+    sourceRightsCleared: true,
+    modelProcessingRightsCleared: true,
+    similarity: {
+      status: 'cleared',
+      reviewerIds: ['similarity-reviewer'],
+      reportId: 'similarity-report',
+    },
+  };
+  review.finalApproval = {
+    status: 'approved',
+    reviewerIds: ['final-approver'],
+    reportId: 'final-report',
+  };
+};
+
 describe('V3 lesson definition schema', () => {
   it('computes standards-compatible, key-order-stable SHA-256 content digests', () => {
     expect(computeLessonContentDigest({ foo: 'bar' })).toBe(
@@ -154,42 +206,12 @@ describe('V3 lesson definition schema', () => {
       string,
       unknown
     >;
-    invalid.status = 'published';
-    invalid.publicationIntent = 'production';
-    invalid.testOnly = false;
-    (invalid.registryBinding as { mode: string }).mode = 'canonical';
+    configureApprovedProduction(invalid);
     const review = invalid.reviewEnvelope as Record<string, unknown>;
-    const approved = {
+    review.independentContentReview = {
       status: 'approved',
-      reviewerIds: ['synthetic-fixture-author'],
-      reportId: 'review-report',
-    };
-    review.publicationFreezeId = 'CONTENT-FREEZE-1';
-    review.independentContentReview = approved;
-    review.independentDomainReview = approved;
-    review.copyReview = approved;
-    review.accessibilityReview = approved;
-    review.blindSolve = {
-      status: 'passed',
-      solverIds: ['blind-solver'],
-      keysHidden: true,
-      reportId: 'blind-report',
-    };
-    review.rightsReview = {
-      status: 'cleared',
-      reviewerIds: ['rights-reviewer'],
-      sourceRightsCleared: true,
-      modelProcessingRightsCleared: true,
-      similarity: {
-        status: 'cleared',
-        reviewerIds: ['similarity-reviewer'],
-        reportId: 'similarity-report',
-      },
-    };
-    review.finalApproval = {
-      status: 'approved',
-      reviewerIds: ['final-approver'],
-      reportId: 'final-report',
+      reviewerIds: ['fixture-author'],
+      reportId: 'content-report',
     };
     refreshDigest(invalid);
 
@@ -197,6 +219,26 @@ describe('V3 lesson definition schema', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues.some((issue) => issue.message.includes('authors'))).toBe(true);
+    }
+  });
+
+  it('rejects stale reviewed hashes after any digest-bearing content change', () => {
+    const invalid = structuredClone(syntheticV3LessonDefinition) as unknown as Record<
+      string,
+      unknown
+    >;
+    configureApprovedProduction(invalid);
+    refreshDigest(invalid);
+    expect(LessonDefinitionSchema.safeParse(invalid).success).toBe(true);
+
+    invalid.summary = 'Changed after independent review.';
+    const result = LessonDefinitionSchema.safeParse(invalid);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(
+        result.error.issues.some((issue) => issue.message.includes('recomputed SHA-256')),
+      ).toBe(true);
     }
   });
 

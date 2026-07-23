@@ -110,15 +110,66 @@ export const ReviewedLessonContentPinSchema = z
   .strict();
 export type ReviewedLessonContentPin = z.infer<typeof ReviewedLessonContentPinSchema>;
 
+export const InheritedLessonExposureEnvelopeSchema = z
+  .object({
+    sourceRunIds: z.array(LessonRunIdSchema),
+    families: z.array(FamilyExposureSchema),
+  })
+  .strict()
+  .superRefine((envelope, ctx) => {
+    if (new Set(envelope.sourceRunIds).size !== envelope.sourceRunIds.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['sourceRunIds'],
+        message: 'inherited exposure source run IDs must be unique',
+      });
+    }
+    const familyIds = envelope.families.map((exposure) => exposure.familyId);
+    if (new Set(familyIds).size !== familyIds.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['families'],
+        message: 'inherited exposure families must be unique',
+      });
+    }
+  });
+export type InheritedLessonExposureEnvelope = z.infer<typeof InheritedLessonExposureEnvelopeSchema>;
+
 export const LessonRunLineageSchema = z
   .object({
     rootRunId: LessonRunIdSchema,
     parentRunId: LessonRunIdSchema.nullable(),
     generation: z.number().int().nonnegative(),
     inheritedFromRunIds: z.array(LessonRunIdSchema),
+    inheritedExposure: InheritedLessonExposureEnvelopeSchema,
     reviewedContentPins: z.array(ReviewedLessonContentPinSchema).min(1),
   })
-  .strict();
+  .strict()
+  .superRefine((lineage, ctx) => {
+    if (
+      lineage.inheritedFromRunIds.length !== lineage.inheritedExposure.sourceRunIds.length ||
+      lineage.inheritedFromRunIds.some(
+        (runId, index) => runId !== lineage.inheritedExposure.sourceRunIds[index],
+      )
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['inheritedExposure', 'sourceRunIds'],
+        message: 'inherited exposure sources must exactly match run lineage',
+      });
+    }
+    if (
+      lineage.generation === 0 &&
+      (lineage.parentRunId !== null ||
+        lineage.inheritedFromRunIds.length > 0 ||
+        lineage.inheritedExposure.families.length > 0)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'root lesson runs cannot claim inherited exposure',
+      });
+    }
+  });
 export type LessonRunLineage = z.infer<typeof LessonRunLineageSchema>;
 
 export const SignalEvidenceSchema = z
@@ -274,7 +325,29 @@ export const LessonRunStateSchema = z
     invalidIssues: z.array(z.string().min(1)),
     transitionErrors: z.array(z.string().min(1)),
   })
-  .strict();
+  .strict()
+  .superRefine((state, ctx) => {
+    state.lineage.inheritedExposure.families.forEach((inherited) => {
+      const current = state.exposures.find((exposure) => exposure.familyId === inherited.familyId);
+      if (
+        !current ||
+        current.activityIds.length !== inherited.activityIds.length ||
+        current.activityIds.some(
+          (activityId, activityIndex) => activityId !== inherited.activityIds[activityIndex],
+        ) ||
+        current.firstSeenSequence !== inherited.firstSeenSequence ||
+        current.revealed !== inherited.revealed ||
+        current.feedbackSeen !== inherited.feedbackSeen ||
+        current.answerKeySeen !== inherited.answerKeySeen
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['exposures'],
+          message: `run state must preserve inherited exposure family ${inherited.familyId}`,
+        });
+      }
+    });
+  });
 export type LessonRunState = z.infer<typeof LessonRunStateSchema>;
 
 const LessonRunEventBaseSchema = z

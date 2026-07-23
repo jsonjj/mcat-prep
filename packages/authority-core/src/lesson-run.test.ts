@@ -246,6 +246,28 @@ describe('performance-contingent completion and exact paired feedback', () => {
     expect(state.sequenceActivityIds.some((id) => id.includes('CONTRAST'))).toBe(false);
   });
 
+  it('records content-bearing assistance as reveal exposure and does not fade support', () => {
+    let state = reachCompletion();
+    const assistedActivity = activity(state);
+    state = present(state);
+    state = act(state, {
+      type: 'request_assistance',
+      activityId: assistedActivity.id,
+    });
+
+    expect(
+      state.exposures.find((exposure) => exposure.familyId === assistedActivity.familyId)?.revealed,
+    ).toBe(true);
+
+    state = submit(state, 'aligned');
+    expect(state.lastResponse).toMatchObject({ assisted: true, revealed: true });
+    expect(state.assistanceLevel).toBe('A3');
+    state = act(state, { type: 'continue', activityId: assistedActivity.id });
+
+    expect(activity(state).id).not.toBe(assistedActivity.id);
+    expect(state.assistanceLevel).toBe('A3');
+  });
+
   it('requires unsupported A0 success before contrast or exit becomes reachable', () => {
     let state = reachCompletion();
     const levels: string[] = [];
@@ -339,6 +361,10 @@ describe('planner reentry lineage and cross-run exposure', () => {
       parentRunId: exhausted.pins.runId,
       generation: 1,
       inheritedFromRunIds: [exhausted.pins.runId],
+      inheritedExposure: {
+        sourceRunIds: [exhausted.pins.runId],
+        families: structuredClone(exhausted.exposures),
+      },
       reviewedContentPins: exhausted.lineage.reviewedContentPins,
     };
     const sameRun = apply(exhausted, 'lesson_planner_reentry_handoff', {
@@ -357,6 +383,22 @@ describe('planner reentry lineage and cross-run exposure', () => {
       nextLineage: sameRunLineage,
     });
     expect(mismatch.status).toBe('blocked');
+
+    const validNextPins = LessonRunPinsSchema.parse({
+      ...exhausted.pins,
+      runId: '55555555-5555-4555-8555-555555555555',
+    });
+    const droppedExposure = apply(exhausted, 'lesson_planner_reentry_handoff', {
+      nextRunPins: validNextPins,
+      nextLineage: {
+        ...sameRunLineage,
+        inheritedExposure: {
+          ...sameRunLineage.inheritedExposure,
+          families: sameRunLineage.inheritedExposure.families.slice(1),
+        },
+      },
+    });
+    expect(droppedExposure.status).toBe('blocked');
   });
 
   it('inherits exposure and selects untouched entry and exit replacement families', () => {
@@ -370,6 +412,10 @@ describe('planner reentry lineage and cross-run exposure', () => {
       parentRunId: parent.pins.runId,
       generation: 1,
       inheritedFromRunIds: [parent.pins.runId],
+      inheritedExposure: {
+        sourceRunIds: [parent.pins.runId],
+        families: structuredClone(parent.exposures),
+      },
       reviewedContentPins: parent.lineage.reviewedContentPins,
     };
     parent = apply(parent, 'lesson_planner_reentry_handoff', {
@@ -390,8 +436,33 @@ describe('planner reentry lineage and cross-run exposure', () => {
     expect(child.status).toBe('ready');
     expect(child.lineage.parentRunId).toBe(parent.pins.runId);
     expect(child.exposures).toEqual(parent.exposures);
+    expect(child.lineage.inheritedExposure).toEqual({
+      sourceRunIds: [parent.pins.runId],
+      families: parent.exposures,
+    });
     expect(inheritedFamilies.has(selectedEntry.familyId)).toBe(false);
     expect(selectedEntry.id).toContain('ENTRY-3');
+
+    let reentered = startLessonRun(child, syntheticV3LessonDefinition, 'test_fixture').state;
+    reentered = completeCurrent(reentered, 'ready');
+    reentered = completeCurrent(reentered, 'ready');
+    for (let guard = 0; guard < 10 && reentered.phase !== 'completion'; guard += 1) {
+      reentered = completeCurrent(reentered);
+    }
+    reentered = establishA0(reentered);
+    while (reentered.phase !== 'exit_near') reentered = completeCurrent(reentered);
+
+    const selectedPair =
+      syntheticV3LessonDefinition.knowledgeComponents[0]!.microcycle.pairedExit.pairs.find(
+        (pair) => pair.id === reentered.activeExitPairId,
+      )!;
+    const selectedExitFamilies = [
+      activity(reentered).familyId,
+      syntheticV3LessonDefinition.knowledgeComponents[0]!.activities.find(
+        (candidate) => candidate.id === selectedPair.changedActivityId,
+      )!.familyId,
+    ];
+    expect(selectedExitFamilies.every((familyId) => !inheritedFamilies.has(familyId))).toBe(true);
   });
 });
 
@@ -515,6 +586,52 @@ describe('deterministic scoring, replay, and HTTP-command idempotency', () => {
     expect(retry.duplicate).toBe(true);
     expect(retry.events).toEqual([]);
     expect(retry.state).toEqual(first.state);
+  });
+
+  it('derives identical child event identities for duplicate multi-event commands', () => {
+    let state = freshStarted();
+    state = completeCurrent(state, 'ready');
+    state = submit(present(state), 'ready');
+    const current = activity(state);
+    const command = LessonActionCommandSchema.parse({
+      envelope: {
+        eventId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+        idempotencyKey: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+        occurredAt: '2026-07-23T16:41:00.000Z',
+        expectedStreamVersion: state.lastSequence + 1,
+        contentRelease: state.pins.contentRelease,
+        taskInstanceId: 'ffffffff-ffff-4fff-8fff-ffffffffffff',
+      },
+      runId: state.pins.runId,
+      action: { type: 'continue', activityId: current.id },
+    });
+
+    const first = dispatchLessonRunCommand(
+      state,
+      syntheticV3LessonDefinition,
+      command,
+      'test_fixture',
+    );
+    const concurrentDuplicate = dispatchLessonRunCommand(
+      state,
+      syntheticV3LessonDefinition,
+      command,
+      'test_fixture',
+    );
+    const retry = dispatchLessonRunCommand(
+      first.state,
+      syntheticV3LessonDefinition,
+      command,
+      'test_fixture',
+    );
+
+    expect(first.events.map((event) => event.type)).toEqual([
+      'lesson_activity_completed',
+      'lesson_route_selected',
+    ]);
+    expect(first.events).toEqual(concurrentDuplicate.events);
+    expect(first.events[1]?.eventId).not.toBe(command.envelope.eventId);
+    expect(retry).toMatchObject({ duplicate: true, events: [] });
   });
 
   it('strips keys, exact private buffers, and matchers from learner DTOs', () => {

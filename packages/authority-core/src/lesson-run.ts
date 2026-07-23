@@ -54,6 +54,7 @@ const initialLineage = (pins: LessonRunPins): LessonRunLineage =>
     parentRunId: null,
     generation: 0,
     inheritedFromRunIds: [],
+    inheritedExposure: { sourceRunIds: [], families: [] },
     reviewedContentPins: [contentPin(pins)],
   });
 
@@ -85,7 +86,7 @@ function invalidState(
     exitedKcIds: [],
     signals: [],
     objectiveFeatures: [],
-    exposures: [],
+    exposures: structuredClone(lineage.inheritedExposure.families),
     activePresentation: null,
     lastResponse: null,
     sealedExitResults: [],
@@ -333,11 +334,18 @@ const expectedReentryLineage = (
   ) {
     pins.push(nextContentPin);
   }
+  const inheritedFromRunIds = [
+    ...new Set([...parent.lineage.inheritedFromRunIds, parent.pins.runId]),
+  ];
   return LessonRunLineageSchema.parse({
     rootRunId: parent.lineage.rootRunId,
     parentRunId: parent.pins.runId,
     generation: parent.lineage.generation + 1,
-    inheritedFromRunIds: [...new Set([...parent.lineage.inheritedFromRunIds, parent.pins.runId])],
+    inheritedFromRunIds,
+    inheritedExposure: {
+      sourceRunIds: inheritedFromRunIds,
+      families: structuredClone(parent.exposures),
+    },
     reviewedContentPins: pins,
   });
 };
@@ -387,7 +395,7 @@ export function initializeLessonReentryRun(
   }
 
   const state = invalidState(pins, [], expectedLineage);
-  state.exposures = structuredClone(parent.exposures);
+  state.exposures = structuredClone(expectedLineage.inheritedExposure.families);
   state.exitedKcIds = [...parent.exitedKcIds];
   state.usedExitPairIds = [...parent.usedExitPairIds];
   const target =
@@ -754,6 +762,9 @@ export function reduceLessonRun(
     }
     state.assistanceLevel = event.payload.level;
     state.visibleAssistanceLevel = event.payload.level;
+    if (hint!.contentBearing) {
+      exposureFor(state, activity!.familyId)!.revealed = true;
+    }
     return LessonRunStateSchema.parse(state);
   }
 
