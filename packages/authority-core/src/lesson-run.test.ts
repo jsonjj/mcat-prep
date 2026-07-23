@@ -321,6 +321,12 @@ describe('V3 lesson fading, exits, and repair', () => {
     expect(buildLessonStepView(syntheticV3LessonDefinition, state).availableActions).not.toContain(
       'resume',
     );
+
+    state = apply(state, 'lesson_planner_reentry_handoff', {
+      nextRunId: '44444444-4444-4444-8444-444444444444',
+    });
+    expect(state.status).toBe('handoff');
+    expect(state.handoffRunId).toBe('44444444-4444-4444-8444-444444444444');
   });
 });
 
