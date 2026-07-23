@@ -7,7 +7,7 @@ import Ajv from 'ajv';
 
 const HASH_PATTERN = /^[a-f0-9]{64}$/;
 const IDENTITY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:@/+~-]*$/;
-const INTEGRATION_PINSET_SCHEMA_VERSION = 'mcat-v3-integration-pinset-2';
+const INTEGRATION_PINSET_SCHEMA_VERSION = 'mcat-v3-integration-pinset-4';
 const REVIEWER_CREDENTIAL_SCHEMA_VERSION = 'mcat-v3-reviewer-signing-credential-1';
 const SIGNATURE_ALGORITHM = 'ED25519';
 const BUILD_MANIFEST_SCHEMA_VERSION = 'mcat-v3-pinned-build-manifest-2';
@@ -15,7 +15,31 @@ const BUILD_PROVENANCE_SCHEMA_VERSION = 'mcat-v3-signed-build-provenance-1';
 const CANDIDATE_SEMANTIC_PROFILE_SCHEMA_VERSION = 'mcat-v3-candidate-semantic-profile-1';
 const LEARNER_VIEW_SEMANTIC_PROFILE_SCHEMA_VERSION = 'mcat-v3-learner-view-semantic-profile-1';
 const ACTION_TRANSITION_PROFILE_SCHEMA_VERSION = 'mcat-v3-action-transition-profile-1';
+const LEARNER_EXPERIENCE_CONTRACT_SCHEMA_VERSION =
+  'mcat-v3-learner-experience-projection-contract-2';
+const CANONICAL_WIRE_CONTRACT_SCHEMA_VERSION = 'mcat-v3-canonical-wire-contract-2';
+const WIRE_CODEC_CONFORMANCE_REPORT_SCHEMA_VERSION =
+  'mcat-v3-signed-wire-codec-conformance-report-2';
+const WIRE_CODEC_TEST_VECTOR_SCHEMA_VERSION = 'mcat-v3-wire-codec-test-vector-2';
+const CANONICAL_BYTE_HASH_ALGORITHM =
+  'UTF8_JSON_SORTED_OBJECT_KEYS_PRESERVE_ARRAY_ORDER_NO_WHITESPACE_SHA256_V1';
 const JSON_POINTER_PATTERN = /^(?:\/(?:[^~/]|~[01])*)+$/;
+const UPPER_SNAKE_CASE_PATTERN = /^[A-Z][A-Z0-9_]*$/;
+const REQUIRED_LEARNER_EXPERIENCE_STAGES = Object.freeze([
+  'ORIENTATION',
+  'MODEL',
+  'WORKED_EXAMPLE',
+  'GUIDED_PRACTICE',
+  'LESS_HELP_PRACTICE',
+  'SOLO_PRACTICE',
+  'DUAL_EXIT_NEAR',
+  'DUAL_EXIT_TRANSFER',
+]);
+const REQUIRED_WIRE_CODEC_VECTOR_FILES = Object.freeze({
+  LEARNER_ACTION: 'vectors/learner-action.json',
+  LEARNER_VIEW: 'vectors/learner-view.json',
+  SERVICE_RECEIPT: 'vectors/service-receipt.json',
+});
 
 const ARTIFACT_LIMITS = Object.freeze({
   browser_evidence: Object.freeze({
@@ -104,6 +128,122 @@ function sortJsonValue(value) {
 
 function hashCanonicalJson(value) {
   return hashBytes(JSON.stringify(sortJsonValue(value)));
+}
+
+function camelToSnakeCase(value) {
+  return value
+    .replaceAll(/([a-z0-9])([A-Z])/g, '$1_$2')
+    .replaceAll(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+    .toLowerCase();
+}
+
+function snakeToCamelCase(value) {
+  return value.replaceAll(/_([a-z0-9])/g, (_, character) => character.toUpperCase());
+}
+
+function mapCodecValue(value, keyMapper, label) {
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value)) {
+    return value.map((item, index) => mapCodecValue(item, keyMapper, `${label}[${index}]`));
+  }
+  if (value === null || typeof value !== 'object') return value;
+  const output = {};
+  for (const [key, item] of Object.entries(value)) {
+    const mappedKey = keyMapper(key);
+    assert(
+      !Object.hasOwn(output, mappedKey),
+      `${label} contains fields that collide at canonical wire key ${mappedKey}`,
+    );
+    output[mappedKey] = mapCodecValue(item, keyMapper, `${label}.${key}`);
+  }
+  return output;
+}
+
+function setJsonPointerValue(value, pointer, replacement, label) {
+  requireString(pointer, `${label} JSON pointer`, JSON_POINTER_PATTERN);
+  const tokens = pointer
+    .slice(1)
+    .split('/')
+    .map((token) => token.replaceAll('~1', '/').replaceAll('~0', '~'));
+  let current = value;
+  for (const token of tokens.slice(0, -1)) {
+    current = Array.isArray(current) ? current[Number(token)] : current[token];
+    assert(current !== undefined, `${label} JSON pointer does not resolve`);
+  }
+  const finalToken = tokens.at(-1);
+  assert(finalToken !== undefined);
+  if (Array.isArray(current)) {
+    const index = Number(finalToken);
+    assert(Number.isInteger(index) && index >= 0 && index < current.length);
+    current[index] = replacement;
+  } else {
+    assertPlainObject(current, `${label} JSON pointer parent`);
+    assert(Object.hasOwn(current, finalToken), `${label} JSON pointer does not resolve`);
+    current[finalToken] = replacement;
+  }
+}
+
+function validateCodecEnumBindings(bindings, internalValue, canonicalWireContract) {
+  assert(Array.isArray(bindings) && bindings.length > 0, 'Codec vector enum bindings are required');
+  const observedMappings = [];
+  for (const [index, binding] of bindings.entries()) {
+    const label = `codec enum binding[${index}]`;
+    assertExactKeys(binding, ['internal_pointer', 'mapping_group', 'wire_pointer'], label);
+    requireString(binding.internal_pointer, `${label}.internal_pointer`, JSON_POINTER_PATTERN);
+    requireString(binding.wire_pointer, `${label}.wire_pointer`, JSON_POINTER_PATTERN);
+    requireString(binding.mapping_group, `${label}.mapping_group`, IDENTITY_PATTERN);
+    const mappings = canonicalWireContract.internal_to_wire_enum_mappings[binding.mapping_group];
+    assert(mappings, `${label} references unknown mapping group ${binding.mapping_group}`);
+    const internal = resolveJsonPointer(internalValue, binding.internal_pointer, label);
+    const mapping = mappings.find((candidate) => candidate.internal === internal);
+    assert(mapping, `${label} does not resolve to a pinned internal enum value`);
+    observedMappings.push({
+      group: binding.mapping_group,
+      internal: mapping.internal,
+      wire: mapping.wire,
+    });
+  }
+  return observedMappings;
+}
+
+function projectInternalToCanonicalWire(value, canonicalWireContract, enumBindings = []) {
+  const projected = mapCodecValue(value, camelToSnakeCase, 'internal codec value');
+  for (const [index, binding] of enumBindings.entries()) {
+    const internal = resolveJsonPointer(
+      value,
+      binding.internal_pointer,
+      `codec enum binding[${index}]`,
+    );
+    const mapping = canonicalWireContract.internal_to_wire_enum_mappings[
+      binding.mapping_group
+    ].find((candidate) => candidate.internal === internal);
+    assert(mapping);
+    setJsonPointerValue(
+      projected,
+      binding.wire_pointer,
+      mapping.wire,
+      `codec enum binding[${index}]`,
+    );
+  }
+  return projected;
+}
+
+function projectCanonicalWireToInternal(value, canonicalWireContract, enumBindings = []) {
+  const projected = mapCodecValue(value, snakeToCamelCase, 'canonical wire codec value');
+  for (const [index, binding] of enumBindings.entries()) {
+    const wire = resolveJsonPointer(value, binding.wire_pointer, `codec enum binding[${index}]`);
+    const mapping = canonicalWireContract.internal_to_wire_enum_mappings[
+      binding.mapping_group
+    ].find((candidate) => candidate.wire === wire);
+    assert(mapping);
+    setJsonPointerValue(
+      projected,
+      binding.internal_pointer,
+      mapping.internal,
+      `codec enum binding[${index}]`,
+    );
+  }
+  return projected;
 }
 
 function assertPlainObject(value, label) {
@@ -689,9 +829,10 @@ function validateLearnerViewContract(contract) {
     [
       'action_schema_id',
       'action_schema_sha256',
+      'internal_action_kinds',
+      'internal_response_kinds',
       'representation_kinds',
       'semantic_profile',
-      'transition_profile',
       'view_schema_id',
       'view_schema_sha256',
     ],
@@ -701,9 +842,10 @@ function validateLearnerViewContract(contract) {
   requireHash(contract.action_schema_sha256, 'learner action schema SHA-256');
   requireString(contract.view_schema_id, 'learner view schema ID');
   requireHash(contract.view_schema_sha256, 'learner view schema SHA-256');
+  validateSortedUniqueStrings(contract.internal_action_kinds, 'internal learner action kinds');
+  validateSortedUniqueStrings(contract.internal_response_kinds, 'internal learner response kinds');
   validateSortedUniqueStrings(contract.representation_kinds, 'learner representation kinds');
   validateLearnerViewSemanticProfile(contract.semantic_profile);
-  validateTransitionProfile(contract.transition_profile);
   assert(
     contract.representation_kinds.includes(contract.semantic_profile.media_profile.audio_kind),
     'Learner representation kinds omit the signed audio kind',
@@ -712,6 +854,146 @@ function validateLearnerViewContract(contract) {
     contract.representation_kinds.includes(contract.semantic_profile.media_profile.video_kind),
     'Learner representation kinds omit the signed video kind',
   );
+}
+
+function validateLearnerExperienceContract(contract) {
+  assertExactKeys(
+    contract,
+    [
+      'focus_now_max_characters',
+      'learner_control_plane_excluded',
+      'max_question_groups_per_screen',
+      'one_primary_action_per_screen',
+      'one_primary_objective_per_screen',
+      'required_stage_order',
+      'schema_id',
+      'schema_sha256',
+      'schema_version',
+    ],
+    'learner-experience projection contract',
+  );
+  assert.equal(contract.schema_version, LEARNER_EXPERIENCE_CONTRACT_SCHEMA_VERSION);
+  requireString(contract.schema_id, 'learner-experience schema ID', IDENTITY_PATTERN);
+  requireHash(contract.schema_sha256, 'learner-experience schema SHA-256');
+  assert.equal(contract.focus_now_max_characters, 120);
+  assert.equal(contract.learner_control_plane_excluded, true);
+  assert.equal(contract.max_question_groups_per_screen, 1);
+  assert.equal(contract.one_primary_action_per_screen, true);
+  assert.equal(contract.one_primary_objective_per_screen, true);
+  assert.deepEqual(
+    contract.required_stage_order,
+    [...REQUIRED_LEARNER_EXPERIENCE_STAGES],
+    'Learner-experience stage order must implement teach-show-ask and dual exit',
+  );
+}
+
+function validateBijection(mappings, internalValues, wireValues, label) {
+  assert(Array.isArray(mappings) && mappings.length > 0, `${label} mappings must not be empty`);
+  for (const [index, mapping] of mappings.entries()) {
+    assertExactKeys(mapping, ['internal', 'wire'], `${label} mapping[${index}]`);
+    requireString(mapping.internal, `${label} mapping[${index}].internal`, IDENTITY_PATTERN);
+    requireString(mapping.wire, `${label} mapping[${index}].wire`, UPPER_SNAKE_CASE_PATTERN);
+  }
+  assert.deepEqual(
+    mappings.map((mapping) => mapping.internal),
+    [...internalValues].sort(compareText),
+    `${label} internal mappings must be exact, unique, and sorted`,
+  );
+  assert.equal(
+    new Set(mappings.map((mapping) => mapping.internal)).size,
+    mappings.length,
+    `${label} internal mappings are not one-to-one`,
+  );
+  assert.deepEqual(
+    mappings.map((mapping) => mapping.wire).sort(compareText),
+    [...wireValues],
+    `${label} wire mappings must be a complete bijection`,
+  );
+  assert.equal(
+    new Set(mappings.map((mapping) => mapping.wire)).size,
+    mappings.length,
+    `${label} wire mappings are not one-to-one`,
+  );
+}
+
+function validateCanonicalWireContract(contract, learnerViewContract) {
+  assertExactKeys(
+    contract,
+    [
+      'canonical_byte_hash_algorithm',
+      'codec_build',
+      'enum_value_case',
+      'field_name_case',
+      'internal_to_wire_enum_mappings',
+      'round_trip_required',
+      'schema_id',
+      'schema_sha256',
+      'schema_version',
+      'semantic_parity_required',
+      'transition_profile',
+    ],
+    'canonical wire contract',
+  );
+  assert.equal(contract.schema_version, CANONICAL_WIRE_CONTRACT_SCHEMA_VERSION);
+  assert.equal(contract.field_name_case, 'SNAKE_CASE');
+  assert.equal(contract.enum_value_case, 'UPPER_SNAKE_CASE');
+  assert.equal(contract.canonical_byte_hash_algorithm, CANONICAL_BYTE_HASH_ALGORITHM);
+  assert.equal(contract.round_trip_required, true);
+  assert.equal(contract.semantic_parity_required, true);
+  requireString(contract.schema_id, 'canonical wire schema ID', IDENTITY_PATTERN);
+  requireHash(contract.schema_sha256, 'canonical wire schema SHA-256');
+  validateBuildPin(contract.codec_build, 'wire codec build pin', true);
+  validateTransitionProfile(contract.transition_profile);
+  for (const values of [
+    contract.transition_profile.action_kinds,
+    contract.transition_profile.event_kinds,
+    contract.transition_profile.response_outcomes,
+    contract.transition_profile.semantic_statuses,
+  ]) {
+    values.forEach((value) =>
+      requireString(value, 'canonical wire enum value', UPPER_SNAKE_CASE_PATTERN),
+    );
+  }
+  assertExactKeys(
+    contract.internal_to_wire_enum_mappings,
+    ['actions', 'events', 'outcomes', 'representations', 'response_kinds', 'statuses'],
+    'internal-to-wire enum mappings',
+  );
+  validateBijection(
+    contract.internal_to_wire_enum_mappings.actions,
+    learnerViewContract.internal_action_kinds,
+    contract.transition_profile.action_kinds,
+    'action',
+  );
+  validateBijection(
+    contract.internal_to_wire_enum_mappings.representations,
+    learnerViewContract.representation_kinds,
+    contract.internal_to_wire_enum_mappings.representations
+      .map((mapping) => mapping.wire)
+      .sort(compareText),
+    'representation',
+  );
+  validateBijection(
+    contract.internal_to_wire_enum_mappings.response_kinds,
+    learnerViewContract.internal_response_kinds,
+    contract.internal_to_wire_enum_mappings.response_kinds
+      .map((mapping) => mapping.wire)
+      .sort(compareText),
+    'learner response kind',
+  );
+  for (const [key, wireValues] of [
+    ['events', contract.transition_profile.event_kinds],
+    ['outcomes', contract.transition_profile.response_outcomes],
+    ['statuses', contract.transition_profile.semantic_statuses],
+  ]) {
+    const mappings = contract.internal_to_wire_enum_mappings[key];
+    validateBijection(
+      mappings,
+      mappings.map((mapping) => mapping.internal),
+      wireValues,
+      key,
+    );
+  }
 }
 
 function validateBuildPin(build, label, signingKeyRequired) {
@@ -731,8 +1013,10 @@ function validatePinsetDocument(pinset, expectedMode) {
     pinset,
     [
       'builds',
+      'canonical_wire_contract',
       'foundation_commit_sha',
       'issued_at',
+      'learner_experience_contract',
       'learner_view_contract',
       'pinset_id',
       'runtime_contract',
@@ -805,6 +1089,8 @@ function validatePinsetDocument(pinset, expectedMode) {
   requireString(pinset.runtime_contract.runtime_contract_version, 'runtime contract version');
   validateCandidateSemanticProfile(pinset.runtime_contract.candidate_semantic_profile);
   validateLearnerViewContract(pinset.learner_view_contract);
+  validateLearnerExperienceContract(pinset.learner_experience_contract);
+  validateCanonicalWireContract(pinset.canonical_wire_contract, pinset.learner_view_contract);
   assertExactKeys(
     pinset.builds,
     ['review_harness', 'safe_projection_compiler', 'scoring_service'],
@@ -1069,13 +1355,16 @@ async function validatePinnedIntegrationArtifacts({
   assertExactKeys(
     descriptors,
     [
+      'canonical_wire_schema',
       'candidate_schema',
       'candidate_validator_build',
       'learner_action_schema',
+      'learner_experience_schema',
       'learner_view_schema',
       'review_harness_build',
       'safe_projection_compiler_build',
       'scoring_service_build',
+      'wire_codec_build',
     ],
     'pinned integration artifacts',
   );
@@ -1094,6 +1383,16 @@ async function validatePinnedIntegrationArtifacts({
     descriptors.learner_view_schema.path,
     'learner view schema path',
   );
+  const learnerExperienceSchemaPath = await resolveRealPathInsideRoot(
+    repositoryRoot,
+    descriptors.learner_experience_schema.path,
+    'learner-experience projection schema path',
+  );
+  const canonicalWireSchemaPath = await resolveRealPathInsideRoot(
+    repositoryRoot,
+    descriptors.canonical_wire_schema.path,
+    'canonical wire schema path',
+  );
   for (const [descriptor, expectedHash, label] of [
     [
       descriptors.candidate_schema,
@@ -1110,6 +1409,16 @@ async function validatePinnedIntegrationArtifacts({
       pinset.learner_view_contract.view_schema_sha256,
       'learner view schema',
     ],
+    [
+      descriptors.learner_experience_schema,
+      pinset.learner_experience_contract.schema_sha256,
+      'learner-experience projection schema',
+    ],
+    [
+      descriptors.canonical_wire_schema,
+      pinset.canonical_wire_contract.schema_sha256,
+      'canonical wire schema',
+    ],
   ]) {
     assertExactKeys(descriptor, ['path', 'sha256'], `${label} descriptor`);
     requireHash(descriptor.sha256, `${label} descriptor SHA-256`);
@@ -1118,12 +1427,22 @@ async function validatePinnedIntegrationArtifacts({
         ? candidateSchemaPath.realTarget
         : label === 'learner action schema'
           ? learnerActionSchemaPath.realTarget
-          : learnerViewSchemaPath.realTarget;
+          : label === 'learner view schema'
+            ? learnerViewSchemaPath.realTarget
+            : label === 'learner-experience projection schema'
+              ? learnerExperienceSchemaPath.realTarget
+              : canonicalWireSchemaPath.realTarget;
     const bytes = await readLimitedFile(resolved, label, ARTIFACT_LIMITS.single_file);
     assert.equal(hashBytes(bytes), descriptor.sha256, `${label} hash is stale`);
     assert.equal(descriptor.sha256, expectedHash, `${label} does not match signed pinset`);
   }
-  const [candidateSchemaJson, learnerActionSchemaJson, learnerViewSchemaJson] = await Promise.all([
+  const [
+    candidateSchemaJson,
+    learnerActionSchemaJson,
+    learnerViewSchemaJson,
+    learnerExperienceSchemaJson,
+    canonicalWireSchemaJson,
+  ] = await Promise.all([
     readLimitedJson(
       candidateSchemaPath.realTarget,
       'candidate schema',
@@ -1139,9 +1458,19 @@ async function validatePinnedIntegrationArtifacts({
       'learner view schema',
       ARTIFACT_LIMITS.single_file,
     ),
+    readLimitedJson(
+      learnerExperienceSchemaPath.realTarget,
+      'learner-experience projection schema',
+      ARTIFACT_LIMITS.single_file,
+    ),
+    readLimitedJson(
+      canonicalWireSchemaPath.realTarget,
+      'canonical wire schema',
+      ARTIFACT_LIMITS.single_file,
+    ),
   ]);
   const commonPin = { foundation_commit_sha: pinset.foundation_commit_sha };
-  const [candidateValidator, compiler, harness, scoring] = await Promise.all([
+  const [candidateValidator, compiler, harness, scoring, wireCodec] = await Promise.all([
     validatePinnedBuildArtifact({
       buildKind: 'CANDIDATE_VALIDATOR',
       descriptor: descriptors.candidate_validator_build,
@@ -1181,15 +1510,27 @@ async function validatePinnedIntegrationArtifacts({
       repositoryRoot,
       reportSigningKeyRequired: false,
     }),
+    validatePinnedBuildArtifact({
+      buildKind: 'WIRE_CODEC',
+      descriptor: descriptors.wire_codec_build,
+      integrationTrustRoot,
+      pin: { ...commonPin, ...pinset.canonical_wire_contract.codec_build },
+      repositoryRoot,
+      reportSigningKeyRequired: true,
+    }),
   ]);
   const ajv = new Ajv({ allErrors: true, strict: true });
   let candidateValidatorFunction;
   let learnerActionValidatorFunction;
+  let learnerExperienceValidatorFunction;
   let learnerViewValidatorFunction;
+  let canonicalWireValidatorFunction;
   try {
     candidateValidatorFunction = ajv.compile(candidateSchemaJson.value);
     learnerActionValidatorFunction = ajv.compile(learnerActionSchemaJson.value);
     learnerViewValidatorFunction = ajv.compile(learnerViewSchemaJson.value);
+    learnerExperienceValidatorFunction = ajv.compile(learnerExperienceSchemaJson.value);
+    canonicalWireValidatorFunction = ajv.compile(canonicalWireSchemaJson.value);
   } catch (error) {
     throw new Error(`Pinned foundation JSON schema is invalid: ${error.message}`);
   }
@@ -1197,14 +1538,256 @@ async function validatePinnedIntegrationArtifacts({
     candidate_schema: candidateSchemaJson.value,
     candidate_validator: candidateValidator,
     candidate_validator_function: candidateValidatorFunction,
+    canonical_wire_schema: canonicalWireSchemaJson.value,
+    canonical_wire_validator_function: canonicalWireValidatorFunction,
     compiler,
     harness,
     learner_action_schema: learnerActionSchemaJson.value,
     learner_action_validator_function: learnerActionValidatorFunction,
+    learner_experience_schema: learnerExperienceSchemaJson.value,
+    learner_experience_validator_function: learnerExperienceValidatorFunction,
     learner_view_schema: learnerViewSchemaJson.value,
     learner_view_validator_function: learnerViewValidatorFunction,
     scoring,
+    wire_codec: wireCodec,
   };
+}
+
+function validateWireCodecVector(value, expected) {
+  assertExactKeys(
+    value,
+    ['cases', 'schema_version', 'vector_id'],
+    `${expected.vectorId} wire codec vector`,
+  );
+  assert.equal(value.schema_version, WIRE_CODEC_TEST_VECTOR_SCHEMA_VERSION);
+  assert.equal(value.vector_id, expected.vectorId);
+  assert(
+    Array.isArray(value.cases) && value.cases.length > 0 && value.cases.length <= 256,
+    `${expected.vectorId} wire codec vector must contain 1-256 cases`,
+  );
+  const validator =
+    expected.vectorId === 'LEARNER_ACTION'
+      ? expected.learnerActionValidator
+      : expected.vectorId === 'LEARNER_VIEW'
+        ? expected.learnerViewValidator
+        : expected.canonicalWireValidator;
+  const observedMappings = [];
+  const caseIds = new Set();
+  for (const [index, testCase] of value.cases.entries()) {
+    const label = `${expected.vectorId} wire codec case[${index}]`;
+    assertExactKeys(
+      testCase,
+      ['case_id', 'enum_bindings', 'internal_input', 'round_trip_internal', 'wire_output'],
+      label,
+    );
+    requireString(testCase.case_id, `${label}.case_id`, IDENTITY_PATTERN);
+    assert(
+      !caseIds.has(testCase.case_id),
+      `${expected.vectorId} wire codec case IDs must be unique`,
+    );
+    caseIds.add(testCase.case_id);
+    observedMappings.push(
+      ...validateCodecEnumBindings(
+        testCase.enum_bindings,
+        testCase.internal_input,
+        expected.canonicalWireContract,
+      ),
+    );
+    assert.deepEqual(
+      testCase.wire_output,
+      projectInternalToCanonicalWire(
+        testCase.internal_input,
+        expected.canonicalWireContract,
+        testCase.enum_bindings,
+      ),
+      `${testCase.case_id} wire output is not the exact canonical projection`,
+    );
+    assert.deepEqual(
+      testCase.round_trip_internal,
+      projectCanonicalWireToInternal(
+        testCase.wire_output,
+        expected.canonicalWireContract,
+        testCase.enum_bindings,
+      ),
+      `${testCase.case_id} parser output is not the exact inverse projection`,
+    );
+    assert.deepEqual(
+      testCase.round_trip_internal,
+      testCase.internal_input,
+      `${testCase.case_id} codec does not round-trip exactly`,
+    );
+    const valueToValidate =
+      expected.vectorId === 'SERVICE_RECEIPT' ? testCase.wire_output : testCase.internal_input;
+    assert(
+      validator(valueToValidate),
+      `${testCase.case_id} fails its pinned schema: ${JSON.stringify(validator.errors)}`,
+    );
+  }
+  return {
+    observed_mappings: observedMappings,
+    report_record: {
+      case_count: value.cases.length,
+      cases_sha256: hashCanonicalJson(value.cases),
+      semantic_parity: true,
+      vector_id: expected.vectorId,
+    },
+  };
+}
+
+function validateWireCodecConformanceReport(value, expected) {
+  assertExactKeys(
+    value,
+    [
+      'canonical_byte_hash_algorithm',
+      'codec_build_id',
+      'codec_build_sha256',
+      'codec_build_version',
+      'conformance_artifact_sha256',
+      'enum_value_case',
+      'enum_mapping_coverage_sha256',
+      'field_name_case',
+      'foundation_commit_sha',
+      'internal_action_schema_id',
+      'internal_action_schema_sha256',
+      'internal_view_schema_id',
+      'internal_view_schema_sha256',
+      'report_id',
+      'schema_version',
+      'signing_key_fingerprint',
+      'status',
+      'test_vectors',
+      'wire_schema_id',
+      'wire_schema_sha256',
+    ],
+    'wire codec conformance report',
+  );
+  assert.equal(value.schema_version, WIRE_CODEC_CONFORMANCE_REPORT_SCHEMA_VERSION);
+  requireString(value.report_id, 'wire codec conformance report ID', IDENTITY_PATTERN);
+  assert.equal(value.status, 'EXECUTED_AND_PASSED');
+  assert.equal(value.foundation_commit_sha, expected.pinset.foundation_commit_sha);
+  assert.equal(value.codec_build_id, expected.wireCodecBuild.manifest.build_id);
+  assert.equal(value.codec_build_version, expected.wireCodecBuild.manifest.build_version);
+  assert.equal(value.codec_build_sha256, expected.wireCodecBuild.artifact_sha256);
+  assert.equal(value.conformance_artifact_sha256, expected.conformanceArtifactSha256);
+  assert.equal(value.signing_key_fingerprint, expected.wireCodecBuild.signing_key.fingerprint);
+  assert.equal(
+    value.canonical_byte_hash_algorithm,
+    expected.pinset.canonical_wire_contract.canonical_byte_hash_algorithm,
+  );
+  assert.equal(value.field_name_case, 'SNAKE_CASE');
+  assert.equal(value.enum_value_case, 'UPPER_SNAKE_CASE');
+  assert.equal(value.enum_mapping_coverage_sha256, expected.enumMappingCoverageSha256);
+  assert.equal(
+    value.internal_action_schema_id,
+    expected.pinset.learner_view_contract.action_schema_id,
+  );
+  assert.equal(
+    value.internal_action_schema_sha256,
+    expected.pinset.learner_view_contract.action_schema_sha256,
+  );
+  assert.equal(value.internal_view_schema_id, expected.pinset.learner_view_contract.view_schema_id);
+  assert.equal(
+    value.internal_view_schema_sha256,
+    expected.pinset.learner_view_contract.view_schema_sha256,
+  );
+  assert.equal(value.wire_schema_id, expected.pinset.canonical_wire_contract.schema_id);
+  assert.equal(value.wire_schema_sha256, expected.pinset.canonical_wire_contract.schema_sha256);
+  assert.deepEqual(value.test_vectors, expected.testVectors);
+}
+
+async function validateSignedWireCodecConformance({
+  artifactDescriptor,
+  canonicalWireValidator,
+  descriptor,
+  learnerActionValidator,
+  learnerViewValidator,
+  pinset,
+  repositoryRoot,
+  wireCodecBuild,
+}) {
+  const requiredFiles = Object.values(REQUIRED_WIRE_CODEC_VECTOR_FILES).sort(compareText);
+  const artifact = await validateArtifactDescriptor(artifactDescriptor, {
+    label: 'wire codec conformance artifact',
+    limits: ARTIFACT_LIMITS.report,
+    repositoryRoot,
+    requiredFiles,
+  });
+  const testVectors = [];
+  const observedMappings = [];
+  for (const [vectorId, path] of Object.entries(REQUIRED_WIRE_CODEC_VECTOR_FILES)) {
+    const { value } = await readLimitedJson(
+      join(artifact.real_path, path),
+      `${vectorId} wire codec conformance vector`,
+      ARTIFACT_LIMITS.report,
+    );
+    const validated = validateWireCodecVector(value, {
+      canonicalWireContract: pinset.canonical_wire_contract,
+      canonicalWireValidator,
+      learnerActionValidator,
+      learnerViewValidator,
+      vectorId,
+    });
+    testVectors.push(validated.report_record);
+    observedMappings.push(...validated.observed_mappings);
+  }
+  const expectedMappings = Object.entries(
+    pinset.canonical_wire_contract.internal_to_wire_enum_mappings,
+  )
+    .flatMap(([group, mappings]) =>
+      mappings.map((mapping) => ({
+        group,
+        internal: mapping.internal,
+        wire: mapping.wire,
+      })),
+    )
+    .sort((left, right) =>
+      compareText(`${left.group}\u0000${left.internal}`, `${right.group}\u0000${right.internal}`),
+    );
+  const uniqueObservedMappings = [
+    ...new Map(
+      observedMappings.map((mapping) => [`${mapping.group}\u0000${mapping.internal}`, mapping]),
+    ).values(),
+  ].sort((left, right) =>
+    compareText(`${left.group}\u0000${left.internal}`, `${right.group}\u0000${right.internal}`),
+  );
+  assert.deepEqual(
+    uniqueObservedMappings,
+    expectedMappings,
+    'Wire codec vectors do not cover every signed enum mapping',
+  );
+  assertExactKeys(
+    descriptor,
+    [
+      'report_path',
+      'report_sha256',
+      'report_signature_path',
+      'report_signature_sha256',
+      'signer_key_fingerprint',
+    ],
+    'wire codec conformance report descriptor',
+  );
+  requireString(descriptor.report_path, 'wire codec conformance report path');
+  requireHash(descriptor.report_sha256, 'wire codec conformance report SHA-256');
+  requireString(descriptor.report_signature_path, 'wire codec conformance signature path');
+  requireHash(descriptor.report_signature_sha256, 'wire codec conformance signature SHA-256');
+  assert.equal(descriptor.signer_key_fingerprint, wireCodecBuild.signing_key.fingerprint);
+  const signed = await readAndVerifySignedJson({
+    documentPath: descriptor.report_path,
+    documentSha256: descriptor.report_sha256,
+    label: 'wire codec conformance report',
+    publicKeyPem: wireCodecBuild.signing_key.pem,
+    repositoryRoot,
+    signaturePath: descriptor.report_signature_path,
+    signatureSha256: descriptor.report_signature_sha256,
+  });
+  validateWireCodecConformanceReport(signed.value, {
+    conformanceArtifactSha256: artifact.artifact_sha256,
+    enumMappingCoverageSha256: hashCanonicalJson(expectedMappings),
+    pinset,
+    testVectors,
+    wireCodecBuild,
+  });
+  return { artifact, report: signed.value };
 }
 
 function validateReviewerCredentialDocument(document, expected) {
@@ -1330,12 +1913,18 @@ export {
   ARTIFACT_LIMITS,
   BUILD_MANIFEST_SCHEMA_VERSION,
   BUILD_PROVENANCE_SCHEMA_VERSION,
+  CANONICAL_BYTE_HASH_ALGORITHM,
+  CANONICAL_WIRE_CONTRACT_SCHEMA_VERSION,
   CANDIDATE_SEMANTIC_PROFILE_SCHEMA_VERSION,
   HASH_PATTERN,
   INTEGRATION_PINSET_SCHEMA_VERSION,
+  LEARNER_EXPERIENCE_CONTRACT_SCHEMA_VERSION,
   LEARNER_VIEW_SEMANTIC_PROFILE_SCHEMA_VERSION,
+  REQUIRED_WIRE_CODEC_VECTOR_FILES,
   REVIEWER_CREDENTIAL_SCHEMA_VERSION,
   SIGNATURE_ALGORITHM,
+  WIRE_CODEC_CONFORMANCE_REPORT_SCHEMA_VERSION,
+  WIRE_CODEC_TEST_VECTOR_SCHEMA_VERSION,
   assertExactKeys,
   assertPlainObject,
   assertUniqueManifestPaths,
@@ -1347,6 +1936,8 @@ export {
   identityKey,
   loadAndVerifyIntegrationPinset,
   parseLimitedJson,
+  projectCanonicalWireToInternal,
+  projectInternalToCanonicalWire,
   publicKeyFingerprint,
   readAndVerifySignedJson,
   readLimitedFile,
@@ -1363,5 +1954,6 @@ export {
   validatePinnedBuildArtifact,
   validatePinnedIntegrationArtifacts,
   validateReviewerCredentials,
+  validateSignedWireCodecConformance,
   verifyBytesSignature,
 };

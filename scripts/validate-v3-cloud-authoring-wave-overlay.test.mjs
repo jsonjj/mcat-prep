@@ -9,27 +9,42 @@ import { promisify } from 'node:util';
 
 import Ajv from 'ajv';
 
-import { hashText } from './generate-v3-cloud-authoring-plan.mjs';
 import {
+  PROTOTYPE_LESSON_IDS,
+  SHOWCASE_LANE_ID,
+  hashText,
+} from './generate-v3-cloud-authoring-plan.mjs';
+import {
+  ACCESSIBILITY_EXECUTION_REPORT_SCHEMA_VERSION,
   CLOSED_BUNDLE_SCANNER_ID,
+  NOVICE_UX_REPORT_SCHEMA_VERSION,
   REQUIRED_ACCESSIBILITY_CHECK_IDS,
   REQUIRED_GATE_CHECK_IDS,
+  REQUIRED_NOVICE_UX_CHECK_IDS,
   REQUIRED_SERVICE_INTEGRATION_CHECK_IDS,
   createClosedReviewBundleManifest,
   validateSignedCumulativeCorpusManifest,
 } from './v3-cloud-authoring-evidence-contract.mjs';
 import {
   ARTIFACT_LIMITS,
+  CANONICAL_BYTE_HASH_ALGORITHM,
+  REQUIRED_WIRE_CODEC_VECTOR_FILES,
+  WIRE_CODEC_CONFORMANCE_REPORT_SCHEMA_VERSION,
+  WIRE_CODEC_TEST_VECTOR_SCHEMA_VERSION,
   directoryHash,
   hashArtifactDirectory,
   hashBytes,
   hashCanonicalJson,
+  projectCanonicalWireToInternal,
+  projectInternalToCanonicalWire,
   publicKeyFingerprint,
   validatePinnedBuildArtifact,
 } from './v3-cloud-authoring-trust-contract.mjs';
 import {
   computeSourceLedgerSha256,
+  createShowcaseOverlayTemplate,
   createWaveAssignmentOverlayTemplate,
+  validateShowcaseOverlay,
   validateWaveAssignmentOverlay,
 } from './validate-v3-cloud-authoring-wave-overlay.mjs';
 
@@ -38,6 +53,8 @@ const execFileAsync = promisify(execFile);
 const planPath = 'curriculum/v3/v3-cloud-authoring-jobs.json';
 const checkedTemplatePath =
   'curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json';
+const checkedShowcaseTemplatePath =
+  'curriculum/v3/v3-cloud-authoring-showcase-overlay.template.json';
 const planText = await readFile(planPath, 'utf8');
 const plan = JSON.parse(planText);
 const sourcePlanSha256 = hashText(planText);
@@ -49,6 +66,8 @@ const FOUNDATION_COMMIT = 'FIXTURE_ONLY_HARDENED_FOUNDATION_COMMIT';
 const CANDIDATE_SCHEMA_ID = 'FIXTURE_ONLY_LESSON_DEFINITION_SCHEMA_V1';
 const LEARNER_ACTION_SCHEMA_ID = 'FIXTURE_ONLY_LESSON_ACTION_INPUT_SCHEMA_V1';
 const LEARNER_VIEW_SCHEMA_ID = 'FIXTURE_ONLY_LESSON_STEP_VIEW_SCHEMA_V1';
+const LEARNER_EXPERIENCE_SCHEMA_ID = 'FIXTURE_ONLY_LEARNER_EXPERIENCE_PROJECTION_SCHEMA_V1';
+const CANONICAL_WIRE_SCHEMA_ID = 'FIXTURE_ONLY_CANONICAL_WIRE_SCHEMA_V1';
 const RUNTIME_CONTRACT_VERSION = 'FIXTURE_ONLY_RUNTIME_CONTRACT_V1';
 const REPRESENTATION_KINDS = [
   'animation',
@@ -61,7 +80,7 @@ const REPRESENTATION_KINDS = [
   'text',
   'video',
 ];
-const ACTION_KINDS = [
+const INTERNAL_ACTION_KINDS = [
   'continue',
   'pause',
   'present',
@@ -69,6 +88,8 @@ const ACTION_KINDS = [
   'resume',
   'submit_response',
 ];
+const INTERNAL_RESPONSE_KINDS = ['choice', 'not_sure'];
+const ACTION_KINDS = INTERNAL_ACTION_KINDS.map((kind) => kind.toUpperCase()).sort();
 const SIGNING_ROLES = new Set([
   'ACCESSIBILITY_TECHNICAL_AUDITOR',
   'CARS_PASSAGE_SUBJECT_FACT_CHECKER',
@@ -77,6 +98,7 @@ const SIGNING_ROLES = new Set([
   'INDEPENDENT_BLIND_SOLVER',
   'INDEPENDENT_CONTENT_PEDAGOGY_AUDITOR',
   'INDEPENDENT_INPUT_OUTPUT_RIGHTS_REVIEWER',
+  'NOVICE_LEARNER_UX_REVIEWER',
   'RELEASE_HASH_INTEGRATOR',
 ]);
 
@@ -153,7 +175,7 @@ async function artifactDescriptor(repositoryRoot, artifactPath, limits) {
 function learnerActionSchema() {
   return {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    oneOf: ACTION_KINDS.map((kind) => {
+    oneOf: INTERNAL_ACTION_KINDS.map((kind) => {
       const properties = { type: { const: kind } };
       const required = ['type'];
       if (['continue', 'present', 'request_assistance', 'submit_response'].includes(kind)) {
@@ -207,7 +229,7 @@ function learnerViewSchema() {
           },
         ],
       },
-      availableActions: { items: { enum: ACTION_KINDS }, type: 'array' },
+      availableActions: { items: { enum: INTERNAL_ACTION_KINDS }, type: 'array' },
       lessonId: { minLength: 1, type: 'string' },
       schemaVersion: { const: '1.2' },
       status: { enum: ['active', 'paused', 'repair_pending', 'route_pending'] },
@@ -258,6 +280,210 @@ function candidateSchema() {
   };
 }
 
+function learnerExperienceSchema() {
+  const disclosure = {
+    additionalProperties: false,
+    properties: {
+      collapsed: { const: true },
+      label: { minLength: 1, type: 'string' },
+    },
+    required: ['collapsed', 'label'],
+    type: 'object',
+  };
+  const redoxAccounting = {
+    additionalProperties: false,
+    properties: {
+      accounting_equation: { type: 'string' },
+      animation_claim: { type: 'string' },
+      highlighted_changes: { items: { type: 'string' }, type: 'array' },
+      unchanged_tail_treatment: { type: 'string' },
+    },
+    required: [
+      'accounting_equation',
+      'animation_claim',
+      'highlighted_changes',
+      'unchanged_tail_treatment',
+    ],
+    type: 'object',
+  };
+  const model = {
+    additionalProperties: false,
+    properties: {
+      accessible_equivalent: { minLength: 1, type: 'string' },
+      description: { minLength: 1, type: 'string' },
+      figure_title: { minLength: 1, type: 'string' },
+      redox_accounting: { anyOf: [{ type: 'null' }, redoxAccounting] },
+      reduced_motion_fallback: { const: true },
+      static_fallback: { const: true },
+      visual_kind: { minLength: 1, type: 'string' },
+    },
+    required: [
+      'accessible_equivalent',
+      'description',
+      'figure_title',
+      'redox_accounting',
+      'reduced_motion_fallback',
+      'static_fallback',
+      'visual_kind',
+    ],
+    type: 'object',
+  };
+  const questionGroup = {
+    additionalProperties: false,
+    properties: {
+      activity_ref: { minLength: 1, type: 'string' },
+      consequential: { type: 'boolean' },
+      counts_as_instructional_exit: { type: 'boolean' },
+      family_ref: { minLength: 1, type: 'string' },
+      feedback_policy: { minLength: 1, type: 'string' },
+      low_stakes: { type: 'boolean' },
+      question_count: { const: 1 },
+    },
+    required: [
+      'activity_ref',
+      'consequential',
+      'counts_as_instructional_exit',
+      'family_ref',
+      'feedback_policy',
+      'low_stakes',
+      'question_count',
+    ],
+    type: 'object',
+  };
+  const screen = {
+    additionalProperties: false,
+    properties: {
+      explanation: { type: ['string', 'null'] },
+      fading_ladder_visible: { const: false },
+      focus_now: { minLength: 1, type: 'string' },
+      glossary: { anyOf: [{ type: 'null' }, disclosure] },
+      model: { anyOf: [{ type: 'null' }, model] },
+      optional_details: { anyOf: [{ type: 'null' }, disclosure] },
+      primary_action: {
+        additionalProperties: false,
+        properties: {
+          kind: { minLength: 1, type: 'string' },
+          label: { minLength: 1, type: 'string' },
+        },
+        required: ['kind', 'label'],
+        type: 'object',
+      },
+      primary_objective: { minLength: 1, type: 'string' },
+      question_group: { anyOf: [{ type: 'null' }, questionGroup] },
+      screen_ref: { minLength: 1, type: 'string' },
+      sidebars: { maxItems: 0, type: 'array' },
+      stage: {
+        enum: [
+          'DUAL_EXIT_NEAR',
+          'DUAL_EXIT_TRANSFER',
+          'ENTRY_CHECK',
+          'GUIDED_PRACTICE',
+          'LESS_HELP_PRACTICE',
+          'MODEL',
+          'ORIENTATION',
+          'SOLO_PRACTICE',
+          'WORKED_EXAMPLE',
+        ],
+      },
+    },
+    required: [
+      'explanation',
+      'fading_ladder_visible',
+      'focus_now',
+      'glossary',
+      'model',
+      'optional_details',
+      'primary_action',
+      'primary_objective',
+      'question_group',
+      'screen_ref',
+      'sidebars',
+      'stage',
+    ],
+    type: 'object',
+  };
+  return {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    additionalProperties: false,
+    properties: {
+      constructs: {
+        items: {
+          additionalProperties: false,
+          properties: {
+            construct_ref: { minLength: 1, type: 'string' },
+            screens: { items: screen, minItems: 8, type: 'array' },
+          },
+          required: ['construct_ref', 'screens'],
+          type: 'object',
+        },
+        minItems: 1,
+        type: 'array',
+      },
+      lesson_title: { minLength: 1, type: 'string' },
+    },
+    required: ['constructs', 'lesson_title'],
+    type: 'object',
+  };
+}
+
+function canonicalWireSchema() {
+  return {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    additionalProperties: false,
+    properties: {
+      action_kind: { enum: ACTION_KINDS },
+      activity_id: { type: ['string', 'null'] },
+      after_state: { type: 'object' },
+      attempt_id: { minLength: 1, type: 'string' },
+      before_state: { type: 'object' },
+      candidate_sha256: { pattern: '^[a-f0-9]{64}$', type: 'string' },
+      deployment_id: { minLength: 1, type: 'string' },
+      event_trace_sha256: { pattern: '^[a-f0-9]{64}$', type: 'string' },
+      event_types: { items: { pattern: '^[A-Z][A-Z0-9_]*$', type: 'string' }, type: 'array' },
+      learner_feedback_sha256: { pattern: '^[a-f0-9]{64}$', type: 'string' },
+      receipt_signing_key_fingerprint: { pattern: '^[a-f0-9]{64}$', type: 'string' },
+      request_id: { minLength: 1, type: 'string' },
+      response_outcome: { type: ['string', 'null'] },
+      safe_client_sha256: { pattern: '^[a-f0-9]{64}$', type: 'string' },
+      schema_version: { type: 'string' },
+      sequence: { minimum: 1, type: 'integer' },
+      service_deployment_artifact_sha256: { pattern: '^[a-f0-9]{64}$', type: 'string' },
+      service_timestamp: { type: 'string' },
+      session_id: { minLength: 1, type: 'string' },
+      submitted_response_sha256: { type: ['string', 'null'] },
+      transition_profile_id: { type: 'string' },
+    },
+    required: [
+      'action_kind',
+      'activity_id',
+      'after_state',
+      'attempt_id',
+      'before_state',
+      'candidate_sha256',
+      'deployment_id',
+      'event_trace_sha256',
+      'event_types',
+      'learner_feedback_sha256',
+      'receipt_signing_key_fingerprint',
+      'request_id',
+      'response_outcome',
+      'safe_client_sha256',
+      'schema_version',
+      'sequence',
+      'service_deployment_artifact_sha256',
+      'service_timestamp',
+      'session_id',
+      'submitted_response_sha256',
+      'transition_profile_id',
+    ],
+    type: 'object',
+  };
+}
+
+function wireEnum(value) {
+  return value === null ? null : value.toUpperCase();
+}
+
 const ANY_STATE_CONSTRAINT = Object.freeze({
   assistance_revealed: null,
   planner_reentry_required: null,
@@ -282,12 +508,20 @@ function semanticStep({
   transition = {},
 }) {
   return {
-    action_kind: actionKind,
-    after: { ...ANY_STATE_CONSTRAINT, ...after },
-    before: { ...ANY_STATE_CONSTRAINT, ...before },
+    action_kind: wireEnum(actionKind),
+    after: {
+      ...ANY_STATE_CONSTRAINT,
+      ...after,
+      status: after.status === undefined ? null : wireEnum(after.status),
+    },
+    before: {
+      ...ANY_STATE_CONSTRAINT,
+      ...before,
+      status: before.status === undefined ? null : wireEnum(before.status),
+    },
     relation_to_previous: { ...ANY_RELATIONS, ...previous },
-    required_event_kinds: [...events].sort(),
-    response_outcome: outcome,
+    required_event_kinds: events.map(wireEnum).sort(),
+    response_outcome: wireEnum(outcome),
     state_transition: { ...ANY_RELATIONS, ...transition },
   };
 }
@@ -295,45 +529,45 @@ function semanticStep({
 const TRANSITION_PROFILE = Object.freeze({
   action_contracts: [
     {
-      action_kind: 'continue',
+      action_kind: wireEnum('continue'),
       activity_binding: 'OPTIONAL',
       allowed_response_outcomes: [],
       required_event_kinds: [],
       response_hash: 'NULL',
     },
     {
-      action_kind: 'pause',
+      action_kind: wireEnum('pause'),
       activity_binding: 'NONE',
       allowed_response_outcomes: [],
-      required_event_kinds: ['lesson_run_paused'],
+      required_event_kinds: [wireEnum('lesson_run_paused')],
       response_hash: 'NULL',
     },
     {
-      action_kind: 'present',
+      action_kind: wireEnum('present'),
       activity_binding: 'REQUIRED',
       allowed_response_outcomes: [],
-      required_event_kinds: ['lesson_activity_presented'],
+      required_event_kinds: [wireEnum('lesson_activity_presented')],
       response_hash: 'NULL',
     },
     {
-      action_kind: 'request_assistance',
+      action_kind: wireEnum('request_assistance'),
       activity_binding: 'REQUIRED',
       allowed_response_outcomes: [],
-      required_event_kinds: ['lesson_assistance_revealed'],
+      required_event_kinds: [wireEnum('lesson_assistance_revealed')],
       response_hash: 'NULL',
     },
     {
-      action_kind: 'resume',
+      action_kind: wireEnum('resume'),
       activity_binding: 'NONE',
       allowed_response_outcomes: [],
-      required_event_kinds: ['lesson_run_resumed'],
+      required_event_kinds: [wireEnum('lesson_run_resumed')],
       response_hash: 'NULL',
     },
     {
-      action_kind: 'submit_response',
+      action_kind: wireEnum('submit_response'),
       activity_binding: 'REQUIRED',
-      allowed_response_outcomes: ['correct', 'incorrect', 'not_sure'],
-      required_event_kinds: ['lesson_response_evaluated'],
+      allowed_response_outcomes: ['correct', 'incorrect', 'not_sure'].map(wireEnum).sort(),
+      required_event_kinds: [wireEnum('lesson_response_evaluated')],
       response_hash: 'REQUIRED',
     },
   ],
@@ -346,7 +580,9 @@ const TRANSITION_PROFILE = Object.freeze({
     'lesson_route_selected',
     'lesson_run_paused',
     'lesson_run_resumed',
-  ],
+  ]
+    .map(wireEnum)
+    .sort(),
   path_contracts: [
     {
       path_id: 'ALTERNATE_ROUTE_SELECTION',
@@ -475,14 +711,17 @@ const TRANSITION_PROFILE = Object.freeze({
     },
   ],
   profile_id: 'FIXTURE-ONLY-FOUNDATION-ACTION-TRANSITION-PROFILE',
-  response_outcomes: ['correct', 'incorrect', 'not_sure'],
+  response_outcomes: ['correct', 'incorrect', 'not_sure'].map(wireEnum).sort(),
   schema_version: 'mcat-v3-action-transition-profile-1',
-  semantic_statuses: ['active', 'paused', 'repair_pending', 'route_pending'],
+  semantic_statuses: ['active', 'paused', 'repair_pending', 'route_pending'].map(wireEnum).sort(),
   technical_service_check_ids: REQUIRED_SERVICE_INTEGRATION_CHECK_IDS,
 });
 
 function activityId(job, index) {
-  return `${job.lesson_id}-ACTIVITY-${index}`;
+  return learnerEnvelope(job)
+    .constructs.flatMap((construct) => construct.screens)
+    .map((screen) => screen.question_group?.activity_ref)
+    .filter(Boolean)[index];
 }
 
 function learnerStepViews(job) {
@@ -514,7 +753,7 @@ function learnerStepViews(job) {
           ];
     return {
       activity: { id: activityId(job, index), representations },
-      availableActions: ACTION_KINDS,
+      availableActions: INTERNAL_ACTION_KINDS,
       lessonId: job.lesson_id,
       schemaVersion: '1.2',
       status: 'active',
@@ -523,27 +762,81 @@ function learnerStepViews(job) {
 }
 
 function learnerEnvelope(job) {
-  const views = learnerStepViews(job);
   return {
-    lesson_step_views: views,
-    media_digests: [
-      {
-        asset_ref: `/lesson-assets/${job.lesson_id.toLowerCase()}-audio.mp3`,
-        captions_sha256: null,
-        media_kind: 'audio',
-        media_sha256: hashText(`audio-${job.job_id}`),
-        transcript_sha256: hashCanonicalJson(['audio fixture transcript']),
-      },
-      {
-        asset_ref: `/lesson-assets/${job.lesson_id.toLowerCase()}-video.mp4`,
-        captions_sha256: hashText(`captions-${job.job_id}`),
-        media_kind: 'video',
-        media_sha256: hashText(`video-${job.job_id}`),
-        transcript_sha256: hashCanonicalJson(['video fixture transcript']),
-      },
-    ],
-    schema_version: 'mcat-v3-learner-safe-view-envelope-2',
-    view_schema_id: LEARNER_VIEW_SCHEMA_ID,
+    constructs: job.ordered_required_kc_ids.map((kcId, constructIndex) => {
+      const constructRef = kcId;
+      const stages = [
+        'ENTRY_CHECK',
+        ...job.knowledge_component_microcycles[constructIndex].learner_experience
+          .required_screen_sequence,
+      ];
+      return {
+        construct_ref: constructRef,
+        screens: stages.map((stage, screenIndex) => {
+          const hasQuestion = [
+            'ENTRY_CHECK',
+            'GUIDED_PRACTICE',
+            'LESS_HELP_PRACTICE',
+            'SOLO_PRACTICE',
+            'DUAL_EXIT_NEAR',
+            'DUAL_EXIT_TRANSFER',
+          ].includes(stage);
+          const isEntry = stage === 'ENTRY_CHECK';
+          const hasModel = stage === 'MODEL' || stage === 'WORKED_EXAMPLE';
+          const isRedox = kcId === 'V3-KC-271440' && stage === 'MODEL';
+          return {
+            explanation: ['ORIENTATION', 'WORKED_EXAMPLE'].includes(stage)
+              ? `Plain-language fixture explanation for ${constructRef}.`
+              : null,
+            fading_ladder_visible: false,
+            focus_now: `Focus now on ${constructIndex + 1}.`,
+            glossary: { collapsed: true, label: 'Glossary' },
+            model: hasModel
+              ? {
+                  accessible_equivalent: `Text-equivalent model for ${constructRef}.`,
+                  description: `Construct-preserving fixture model for ${constructRef}.`,
+                  figure_title: `Model for ${constructRef}`,
+                  redox_accounting: isRedox
+                    ? {
+                        accounting_equation: 'Q + 2 H+ + 2 e- -> QH2',
+                        animation_claim: 'ACCOUNTING_NOT_ASSERTED_ELEMENTARY_MECHANISM',
+                        highlighted_changes: [
+                          'CHANGING_OXYGEN_1_AND_BOND',
+                          'CHANGING_OXYGEN_2_AND_BOND',
+                        ],
+                        unchanged_tail_treatment: 'GRAYED',
+                      }
+                    : null,
+                  reduced_motion_fallback: true,
+                  static_fallback: true,
+                  visual_kind: isRedox ? 'REDOX_ACCOUNTING_DIAGRAM' : 'CONSTRUCT_MODEL',
+                }
+              : null,
+            optional_details: { collapsed: true, label: 'Optional details' },
+            primary_action: {
+              kind: hasQuestion ? 'RESPOND' : 'CONTINUE',
+              label: hasQuestion ? 'Answer' : 'Continue',
+            },
+            primary_objective: `Complete ${stage.toLowerCase().replaceAll('_', ' ')}.`,
+            question_group: hasQuestion
+              ? {
+                  activity_ref: `${job.lesson_id}-ACTIVITY-${constructIndex}-${screenIndex}`,
+                  consequential: !isEntry,
+                  counts_as_instructional_exit: stage.startsWith('DUAL_EXIT_'),
+                  family_ref: `${job.lesson_id}-FAMILY-${constructIndex}-${screenIndex}`,
+                  feedback_policy: isEntry ? 'DELAYED_NONCONTAMINATING' : 'ORDINARY',
+                  low_stakes: isEntry,
+                  question_count: 1,
+                }
+              : null,
+            screen_ref: `${constructRef}-SCREEN-${screenIndex + 1}`,
+            sidebars: [],
+            stage,
+          };
+        }),
+      };
+    }),
+    lesson_title: `Fixture lesson ${job.lesson_id.slice(-6)}`,
   };
 }
 
@@ -613,8 +906,11 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
   const candidateValidatorKey = createSigningKey();
   const compilerKey = createSigningKey();
   const harnessKey = createSigningKey();
+  const wireCodecKey = createSigningKey();
   const candidateSchemaPath = 'integration/candidate-schema.json';
+  const canonicalWireSchemaPath = 'integration/canonical-wire-schema.json';
   const learnerActionSchemaPath = 'integration/learner-action-schema.json';
+  const learnerExperienceSchemaPath = 'integration/learner-experience-schema.json';
   const learnerViewSchemaPath = 'integration/learner-view-schema.json';
   const candidateSchemaWritten = await writeJson(
     join(repositoryRoot, candidateSchemaPath),
@@ -624,9 +920,17 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
     join(repositoryRoot, learnerActionSchemaPath),
     learnerActionSchema(),
   );
+  const learnerExperienceSchemaWritten = await writeJson(
+    join(repositoryRoot, learnerExperienceSchemaPath),
+    learnerExperienceSchema(),
+  );
   const learnerViewSchemaWritten = await writeJson(
     join(repositoryRoot, learnerViewSchemaPath),
     learnerViewSchema(),
+  );
+  const canonicalWireSchemaWritten = await writeJson(
+    join(repositoryRoot, canonicalWireSchemaPath),
+    canonicalWireSchema(),
   );
   const candidateValidatorBuild = await writeBuildArtifact({
     buildId: 'FIXTURE-CANDIDATE-VALIDATOR-BUILD',
@@ -659,6 +963,14 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
     provenanceKey: integrationRoot,
     repositoryRoot,
   });
+  const wireCodecBuild = await writeBuildArtifact({
+    buildId: 'FIXTURE-WIRE-CODEC-BUILD',
+    buildKind: 'WIRE_CODEC',
+    key: wireCodecKey,
+    path: 'integration/wire-codec',
+    provenanceKey: integrationRoot,
+    repositoryRoot,
+  });
   const pinset = {
     builds: {
       review_harness: {
@@ -679,11 +991,73 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
         build_version: 'FIXTURE-1.0.0',
       },
     },
+    canonical_wire_contract: {
+      canonical_byte_hash_algorithm: CANONICAL_BYTE_HASH_ALGORITHM,
+      codec_build: {
+        artifact_sha256: wireCodecBuild.artifact_sha256,
+        build_id: 'FIXTURE-WIRE-CODEC-BUILD',
+        build_version: 'FIXTURE-1.0.0',
+        report_signing_key_fingerprint: wireCodecKey.fingerprint,
+      },
+      enum_value_case: 'UPPER_SNAKE_CASE',
+      field_name_case: 'SNAKE_CASE',
+      internal_to_wire_enum_mappings: {
+        actions: INTERNAL_ACTION_KINDS.map((internal) => ({
+          internal,
+          wire: wireEnum(internal),
+        })),
+        events: TRANSITION_PROFILE.event_kinds
+          .map((wire) => ({ internal: wire.toLowerCase(), wire }))
+          .sort((left, right) => left.internal.localeCompare(right.internal)),
+        outcomes: TRANSITION_PROFILE.response_outcomes
+          .map((wire) => ({ internal: wire.toLowerCase(), wire }))
+          .sort((left, right) => left.internal.localeCompare(right.internal)),
+        representations: REPRESENTATION_KINDS.map((internal) => ({
+          internal,
+          wire: wireEnum(internal),
+        })),
+        response_kinds: INTERNAL_RESPONSE_KINDS.map((internal) => ({
+          internal,
+          wire: wireEnum(internal),
+        })),
+        statuses: TRANSITION_PROFILE.semantic_statuses
+          .map((wire) => ({ internal: wire.toLowerCase(), wire }))
+          .sort((left, right) => left.internal.localeCompare(right.internal)),
+      },
+      round_trip_required: true,
+      schema_id: CANONICAL_WIRE_SCHEMA_ID,
+      schema_sha256: canonicalWireSchemaWritten.sha256,
+      schema_version: 'mcat-v3-canonical-wire-contract-2',
+      semantic_parity_required: true,
+      transition_profile: clone(TRANSITION_PROFILE),
+    },
     foundation_commit_sha: FOUNDATION_COMMIT,
     issued_at: '2026-07-23T18:00:00Z',
+    learner_experience_contract: {
+      focus_now_max_characters: 120,
+      learner_control_plane_excluded: true,
+      max_question_groups_per_screen: 1,
+      one_primary_action_per_screen: true,
+      one_primary_objective_per_screen: true,
+      required_stage_order: [
+        'ORIENTATION',
+        'MODEL',
+        'WORKED_EXAMPLE',
+        'GUIDED_PRACTICE',
+        'LESS_HELP_PRACTICE',
+        'SOLO_PRACTICE',
+        'DUAL_EXIT_NEAR',
+        'DUAL_EXIT_TRANSFER',
+      ],
+      schema_id: LEARNER_EXPERIENCE_SCHEMA_ID,
+      schema_sha256: learnerExperienceSchemaWritten.sha256,
+      schema_version: 'mcat-v3-learner-experience-projection-contract-2',
+    },
     learner_view_contract: {
       action_schema_id: LEARNER_ACTION_SCHEMA_ID,
       action_schema_sha256: learnerActionSchemaWritten.sha256,
+      internal_action_kinds: INTERNAL_ACTION_KINDS,
+      internal_response_kinds: INTERNAL_RESPONSE_KINDS,
       representation_kinds: REPRESENTATION_KINDS,
       semantic_profile: {
         activity_id_pointer: '/id',
@@ -705,7 +1079,6 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
         schema_version: 'mcat-v3-learner-view-semantic-profile-1',
         view_schema_version_pointer: '/schemaVersion',
       },
-      transition_profile: clone(TRANSITION_PROFILE),
       view_schema_id: LEARNER_VIEW_SCHEMA_ID,
       view_schema_sha256: learnerViewSchemaWritten.sha256,
     },
@@ -731,7 +1104,7 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
       candidate_validator_report_signing_key_fingerprint: candidateValidatorKey.fingerprint,
       runtime_contract_version: RUNTIME_CONTRACT_VERSION,
     },
-    schema_version: 'mcat-v3-integration-pinset-2',
+    schema_version: 'mcat-v3-integration-pinset-4',
     validation_mode: 'FIXTURE_ONLY_NON_PRODUCTION',
   };
   const signedPinset = await writeSignedJson({
@@ -752,6 +1125,10 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
     validation_mode: 'FIXTURE_ONLY_NON_PRODUCTION',
   };
   overlay.pinned_integration_artifacts = {
+    canonical_wire_schema: {
+      path: canonicalWireSchemaPath,
+      sha256: canonicalWireSchemaWritten.sha256,
+    },
     candidate_schema: {
       path: candidateSchemaPath,
       sha256: candidateSchemaWritten.sha256,
@@ -761,6 +1138,10 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
       path: learnerActionSchemaPath,
       sha256: learnerActionSchemaWritten.sha256,
     },
+    learner_experience_schema: {
+      path: learnerExperienceSchemaPath,
+      sha256: learnerExperienceSchemaWritten.sha256,
+    },
     learner_view_schema: {
       path: learnerViewSchemaPath,
       sha256: learnerViewSchemaWritten.sha256,
@@ -768,6 +1149,7 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
     review_harness_build: harnessBuild,
     safe_projection_compiler_build: compilerBuild,
     scoring_service_build: scoringBuild,
+    wire_codec_build: wireCodecBuild,
   };
   return {
     candidateValidatorKey,
@@ -776,7 +1158,257 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
     integrationRoot,
     pinset,
     trustRootPath,
+    wireCodecBuild,
+    wireCodecKey,
   };
+}
+
+async function materializeWireCodecConformance({
+  overlay,
+  pinset,
+  repositoryRoot,
+  wireCodecBuild,
+  wireCodecKey,
+}) {
+  const canonicalServiceReceipt = {
+    action_kind: 'SUBMIT_RESPONSE',
+    activity_id: 'V3-ACT-CODEC-FIXTURE',
+    after_state: {
+      activity_id: 'V3-ACT-CODEC-FIXTURE',
+      assistance_revealed: false,
+      family_id: 'FAMILY-CODEC-FIXTURE',
+      planner_reentry_required: false,
+      repair_cycle: 0,
+      representation_kinds: ['DIAGRAM'],
+      route_id: 'ROUTE-CODEC-FIXTURE',
+      state_sha256: hashText('codec-after-state'),
+      status: 'ACTIVE',
+    },
+    attempt_id: 'ATTEMPT-CODEC-FIXTURE',
+    before_state: {
+      activity_id: 'V3-ACT-CODEC-FIXTURE',
+      assistance_revealed: false,
+      family_id: 'FAMILY-CODEC-FIXTURE',
+      planner_reentry_required: false,
+      repair_cycle: 0,
+      representation_kinds: ['DIAGRAM'],
+      route_id: 'ROUTE-CODEC-FIXTURE',
+      state_sha256: hashText('codec-before-state'),
+      status: 'ACTIVE',
+    },
+    candidate_sha256: hashText('codec-candidate'),
+    deployment_id: 'DEPLOY-CODEC-FIXTURE',
+    event_trace_sha256: hashCanonicalJson(['LESSON_RESPONSE_EVALUATED']),
+    event_types: ['LESSON_RESPONSE_EVALUATED'],
+    learner_feedback_sha256: hashText('codec-feedback'),
+    receipt_signing_key_fingerprint: hashText('codec-receipt-key'),
+    request_id: 'REQUEST-CODEC-FIXTURE',
+    response_outcome: 'CORRECT',
+    safe_client_sha256: hashText('codec-safe-client'),
+    schema_version: 'mcat-v3-service-action-transition-receipt-3',
+    sequence: 1,
+    service_deployment_artifact_sha256: hashText('codec-deployment'),
+    service_timestamp: '2026-07-23T18:00:01Z',
+    session_id: 'SESSION-CODEC-FIXTURE',
+    submitted_response_sha256: hashText('codec-response'),
+    transition_profile_id: TRANSITION_PROFILE.profile_id,
+  };
+  const firstJob = jobById.get(wave.job_ids[0]);
+  assert(firstJob);
+  const mappings = pinset.canonical_wire_contract.internal_to_wire_enum_mappings;
+  const createCodecCase = ({ caseId, enumBindings, internalInput }) => {
+    const wireOutput = projectInternalToCanonicalWire(
+      internalInput,
+      pinset.canonical_wire_contract,
+      enumBindings,
+    );
+    return {
+      case_id: caseId,
+      enum_bindings: enumBindings,
+      internal_input: internalInput,
+      round_trip_internal: projectCanonicalWireToInternal(
+        wireOutput,
+        pinset.canonical_wire_contract,
+        enumBindings,
+      ),
+      wire_output: wireOutput,
+    };
+  };
+  const learnerActionCases = INTERNAL_ACTION_KINDS.flatMap((actionKind) => {
+    const responseKinds = actionKind === 'submit_response' ? INTERNAL_RESPONSE_KINDS : [null];
+    return responseKinds.map((responseKind) => {
+      const internalInput = { type: actionKind };
+      if (['continue', 'present', 'request_assistance', 'submit_response'].includes(actionKind)) {
+        internalInput.activityId = actionKind === 'continue' ? null : 'V3-ACT-CODEC-FIXTURE';
+      }
+      if (responseKind !== null) internalInput.response = { kind: responseKind };
+      const enumBindings = [
+        { internal_pointer: '/type', mapping_group: 'actions', wire_pointer: '/type' },
+      ];
+      if (responseKind !== null) {
+        enumBindings.push({
+          internal_pointer: '/response/kind',
+          mapping_group: 'response_kinds',
+          wire_pointer: '/response/kind',
+        });
+      }
+      return createCodecCase({
+        caseId: `LEARNER-ACTION-${wireEnum(actionKind)}${
+          responseKind === null ? '' : `-${wireEnum(responseKind)}`
+        }`,
+        enumBindings,
+        internalInput,
+      });
+    });
+  });
+  const learnerViewCases = mappings.statuses.map((statusMapping) => {
+    const internalInput = clone(learnerStepViews(firstJob)[0]);
+    internalInput.status = statusMapping.internal;
+    const enumBindings = [
+      ...internalInput.availableActions.map((unused, index) => ({
+        internal_pointer: `/availableActions/${index}`,
+        mapping_group: 'actions',
+        wire_pointer: `/available_actions/${index}`,
+      })),
+      ...internalInput.activity.representations.map((unused, index) => ({
+        internal_pointer: `/activity/representations/${index}/kind`,
+        mapping_group: 'representations',
+        wire_pointer: `/activity/representations/${index}/kind`,
+      })),
+      { internal_pointer: '/status', mapping_group: 'statuses', wire_pointer: '/status' },
+    ];
+    return createCodecCase({
+      caseId: `LEARNER-VIEW-${statusMapping.wire}`,
+      enumBindings,
+      internalInput,
+    });
+  });
+  const serviceReceiptCases = mappings.outcomes.map((outcomeMapping, index) => {
+    const canonicalInput = clone(canonicalServiceReceipt);
+    canonicalInput.event_types = mappings.events.map((mapping) => mapping.wire);
+    canonicalInput.event_trace_sha256 = hashCanonicalJson(canonicalInput.event_types);
+    canonicalInput.response_outcome = outcomeMapping.wire;
+    canonicalInput.before_state.status =
+      mappings.statuses[(index * 2) % mappings.statuses.length].wire;
+    canonicalInput.after_state.status =
+      mappings.statuses[(index * 2 + 1) % mappings.statuses.length].wire;
+    canonicalInput.before_state.representation_kinds = mappings.representations.map(
+      (mapping) => mapping.wire,
+    );
+    canonicalInput.after_state.representation_kinds = mappings.representations.map(
+      (mapping) => mapping.wire,
+    );
+    const enumBindings = [
+      {
+        internal_pointer: '/actionKind',
+        mapping_group: 'actions',
+        wire_pointer: '/action_kind',
+      },
+      ...canonicalInput.event_types.map((unused, eventIndex) => ({
+        internal_pointer: `/eventTypes/${eventIndex}`,
+        mapping_group: 'events',
+        wire_pointer: `/event_types/${eventIndex}`,
+      })),
+      {
+        internal_pointer: '/responseOutcome',
+        mapping_group: 'outcomes',
+        wire_pointer: '/response_outcome',
+      },
+      {
+        internal_pointer: '/beforeState/status',
+        mapping_group: 'statuses',
+        wire_pointer: '/before_state/status',
+      },
+      {
+        internal_pointer: '/afterState/status',
+        mapping_group: 'statuses',
+        wire_pointer: '/after_state/status',
+      },
+      ...canonicalInput.before_state.representation_kinds.map((unused, representationIndex) => ({
+        internal_pointer: `/beforeState/representationKinds/${representationIndex}`,
+        mapping_group: 'representations',
+        wire_pointer: `/before_state/representation_kinds/${representationIndex}`,
+      })),
+      ...canonicalInput.after_state.representation_kinds.map((unused, representationIndex) => ({
+        internal_pointer: `/afterState/representationKinds/${representationIndex}`,
+        mapping_group: 'representations',
+        wire_pointer: `/after_state/representation_kinds/${representationIndex}`,
+      })),
+    ];
+    const internalInput = projectCanonicalWireToInternal(
+      canonicalInput,
+      pinset.canonical_wire_contract,
+      enumBindings,
+    );
+    return createCodecCase({
+      caseId: `SERVICE-RECEIPT-${outcomeMapping.wire}`,
+      enumBindings,
+      internalInput,
+    });
+  });
+  const casesByVector = {
+    LEARNER_ACTION: learnerActionCases,
+    LEARNER_VIEW: learnerViewCases,
+    SERVICE_RECEIPT: serviceReceiptCases,
+  };
+  const artifactPath = 'integration/wire-codec-conformance';
+  const testVectors = [];
+  for (const [vectorId, path] of Object.entries(REQUIRED_WIRE_CODEC_VECTOR_FILES)) {
+    const cases = casesByVector[vectorId];
+    await writeJson(join(repositoryRoot, artifactPath, path), {
+      cases,
+      schema_version: WIRE_CODEC_TEST_VECTOR_SCHEMA_VERSION,
+      vector_id: vectorId,
+    });
+    testVectors.push({
+      case_count: cases.length,
+      cases_sha256: hashCanonicalJson(cases),
+      semantic_parity: true,
+      vector_id: vectorId,
+    });
+  }
+  const enumMappingCoverage = Object.entries(mappings)
+    .flatMap(([group, groupMappings]) =>
+      groupMappings.map((mapping) => ({
+        group,
+        internal: mapping.internal,
+        wire: mapping.wire,
+      })),
+    )
+    .sort((left, right) => {
+      const leftKey = `${left.group}\u0000${left.internal}`;
+      const rightKey = `${right.group}\u0000${right.internal}`;
+      return leftKey < rightKey ? -1 : leftKey > rightKey ? 1 : 0;
+    });
+  const artifact = await artifactDescriptor(repositoryRoot, artifactPath, ARTIFACT_LIMITS.report);
+  const report = await writeSignedJson({
+    document: {
+      canonical_byte_hash_algorithm: pinset.canonical_wire_contract.canonical_byte_hash_algorithm,
+      codec_build_id: pinset.canonical_wire_contract.codec_build.build_id,
+      codec_build_sha256: wireCodecBuild.artifact_sha256,
+      codec_build_version: pinset.canonical_wire_contract.codec_build.build_version,
+      conformance_artifact_sha256: artifact.artifact_sha256,
+      enum_value_case: 'UPPER_SNAKE_CASE',
+      enum_mapping_coverage_sha256: hashCanonicalJson(enumMappingCoverage),
+      field_name_case: 'SNAKE_CASE',
+      foundation_commit_sha: pinset.foundation_commit_sha,
+      internal_action_schema_id: pinset.learner_view_contract.action_schema_id,
+      internal_action_schema_sha256: pinset.learner_view_contract.action_schema_sha256,
+      internal_view_schema_id: pinset.learner_view_contract.view_schema_id,
+      internal_view_schema_sha256: pinset.learner_view_contract.view_schema_sha256,
+      report_id: 'FIXTURE-WIRE-CODEC-CONFORMANCE',
+      schema_version: WIRE_CODEC_CONFORMANCE_REPORT_SCHEMA_VERSION,
+      signing_key_fingerprint: wireCodecKey.fingerprint,
+      status: 'EXECUTED_AND_PASSED',
+      test_vectors: testVectors,
+      wire_schema_id: pinset.canonical_wire_contract.schema_id,
+      wire_schema_sha256: pinset.canonical_wire_contract.schema_sha256,
+    },
+    documentPath: 'integration/wire-codec-conformance-report.json',
+    key: wireCodecKey,
+    repositoryRoot,
+  });
+  overlay.wire_codec_conformance = { artifact, report };
 }
 
 async function materializeReviewerCredentials(overlay, repositoryRoot, integrationRoot) {
@@ -924,10 +1556,19 @@ async function writeCandidate({ candidateValidatorKey, evidence, job, pinset, re
       schemaVersion: '3.2.0',
       serverOnly: {
         answerKeys: Object.fromEntries(
-          learnerStepViews(job).map((view) => [view.activity.id, 'fixture-correct-response']),
+          learnerEnvelope(job)
+            .constructs.flatMap((construct) => construct.screens)
+            .filter((screen) => screen.question_group !== null)
+            .map((screen) => [screen.question_group.activity_ref, 'fixture-correct-response']),
         ),
         rationales: Object.fromEntries(
-          learnerStepViews(job).map((view) => [view.activity.id, 'Fixture-only server rationale.']),
+          learnerEnvelope(job)
+            .constructs.flatMap((construct) => construct.screens)
+            .filter((screen) => screen.question_group !== null)
+            .map((screen) => [
+              screen.question_group.activity_ref,
+              'Fixture-only server rationale.',
+            ]),
         ),
       },
     },
@@ -987,42 +1628,52 @@ async function writeCompilerOutputs(job, repositoryRoot, pinset) {
   const paths = {
     ACCESSIBILITY_ONLY: `bundles/${job.lesson_id}/accessibility_only`,
     BLIND_SOLVE: `bundles/${job.lesson_id}/blind_solve`,
+    NOVICE_WALKTHROUGH: `bundles/${job.lesson_id}/novice_walkthrough`,
   };
-  await writeJson(join(repositoryRoot, paths.BLIND_SOLVE, 'learner-safe-envelope.json'), envelope);
+  await writeJson(join(repositoryRoot, paths.BLIND_SOLVE, 'learner-experience.json'), envelope);
   await writeJson(join(repositoryRoot, paths.BLIND_SOLVE, 'blind-client-runtime.json'), {
-    action_schema_id: pinset.learner_view_contract.action_schema_id,
-    action_schema_sha256: pinset.learner_view_contract.action_schema_sha256,
-    client_scoring_authority: false,
-    outcome_override_controls: false,
-    rationales_before_response: false,
-    request_action_kinds: pinset.learner_view_contract.transition_profile.action_kinds,
-    response_fields: ['learner_feedback', 'learner_step_view', 'service_receipt'],
-    schema_version: 'mcat-v3-opaque-blind-client-runtime-3',
-    service_protocol_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
+    client_mode: 'OPAQUE_SCORING_NO_LOCAL_AUTHORITY',
+    learner_action_kinds: pinset.canonical_wire_contract.transition_profile.action_kinds,
+    response_fields: ['learner_feedback', 'next_learner_experience'],
     submit_endpoint_path: '/submit',
-    view_schema_id: pinset.learner_view_contract.view_schema_id,
   });
   await writeJson(
-    join(repositoryRoot, paths.ACCESSIBILITY_ONLY, 'learner-safe-envelope.json'),
+    join(repositoryRoot, paths.ACCESSIBILITY_ONLY, 'learner-experience.json'),
     envelope,
   );
   await writeJson(
     join(repositoryRoot, paths.ACCESSIBILITY_ONLY, 'accessibility-harness-config.json'),
     {
       browser_execution_required: true,
+      learner_experience_schema_id: pinset.learner_experience_contract.schema_id,
       learner_action_schema_id: pinset.learner_view_contract.action_schema_id,
       learner_view_schema_id: pinset.learner_view_contract.view_schema_id,
+      minimum_touch_target_px: 44,
       required_check_ids: REQUIRED_ACCESSIBILITY_CHECK_IDS,
+      required_viewport_widths_px: [320, 375, 1440],
       review_harness_build_id: pinset.builds.review_harness.build_id,
       review_harness_build_sha256: pinset.builds.review_harness.artifact_sha256,
       review_harness_build_version: pinset.builds.review_harness.build_version,
-      schema_version: 'mcat-v3-accessibility-harness-config-2',
+      schema_version: 'mcat-v3-accessibility-harness-config-3',
       supported_representation_kinds: pinset.learner_view_contract.representation_kinds,
-      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
+      transition_profile_id: pinset.canonical_wire_contract.transition_profile.profile_id,
+    },
+  );
+  await writeJson(
+    join(repositoryRoot, paths.NOVICE_WALKTHROUGH, 'learner-experience.json'),
+    envelope,
+  );
+  await writeJson(
+    join(repositoryRoot, paths.NOVICE_WALKTHROUGH, 'novice-walkthrough-config.json'),
+    {
+      internal_walkthrough_not_learner_validation: true,
+      required_questions: ['WHAT_CHANGED', 'WHAT_DO_I_DO_NEXT', 'WHAT_SHOULD_I_FOCUS_ON'],
+      required_viewport_widths_px: [375, 1440],
+      schema_version: 'mcat-v3-novice-walkthrough-config-1',
     },
   );
   const outputs = [];
-  for (const bundleKind of ['ACCESSIBILITY_ONLY', 'BLIND_SOLVE']) {
+  for (const bundleKind of ['ACCESSIBILITY_ONLY', 'BLIND_SOLVE', 'NOVICE_WALKTHROUGH']) {
     const scan = await hashArtifactDirectory({
       artifactPath: paths[bundleKind],
       label: `${bundleKind} compiler output`,
@@ -1059,20 +1710,29 @@ async function materializeProjectionAndBundles({
       compiler_build_sha256: pinset.builds.safe_projection_compiler.artifact_sha256,
       compiler_build_version: pinset.builds.safe_projection_compiler.build_version,
       compiler_signing_key_fingerprint: compilerKey.fingerprint,
+      construct_bindings: job.ordered_required_kc_ids.map((kcId) => ({
+        construct_ref: kcId,
+        kc_id: kcId,
+      })),
       job_id: job.job_id,
+      learner_experience_schema_id: pinset.learner_experience_contract.schema_id,
+      learner_experience_schema_sha256: pinset.learner_experience_contract.schema_sha256,
       learner_view_schema_id: pinset.learner_view_contract.view_schema_id,
       learner_view_schema_sha256: pinset.learner_view_contract.view_schema_sha256,
       lesson_id: job.lesson_id,
+      media_digests: [],
       outputs: outputs.outputs,
       report_id: `${job.lesson_id}-SAFE-PROJECTION`,
       review_harness_build_sha256: pinset.builds.review_harness.artifact_sha256,
       review_harness_build_version: pinset.builds.review_harness.build_version,
       runtime_contract_version: pinset.runtime_contract.runtime_contract_version,
-      schema_version: 'mcat-v3-safe-projection-report-2',
+      schema_version: 'mcat-v3-safe-projection-report-3',
       source_plan_sha256: sourcePlanSha256,
       status: 'DERIVED_BY_PINNED_COMPILER',
-      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
+      transition_profile_id: pinset.canonical_wire_contract.transition_profile.profile_id,
       wave_id: waveId,
+      wire_schema_id: pinset.canonical_wire_contract.schema_id,
+      wire_schema_sha256: pinset.canonical_wire_contract.schema_sha256,
     },
     documentPath: `projection/${job.lesson_id}/report.json`,
     key: compilerKey,
@@ -1085,14 +1745,16 @@ async function materializeProjectionAndBundles({
     report_signature_path: projectionSigned.report_signature_path,
     report_signature_sha256: projectionSigned.report_signature_sha256,
   };
-  for (const bundleKind of ['BLIND_SOLVE', 'ACCESSIBILITY_ONLY']) {
+  for (const bundleKind of ['BLIND_SOLVE', 'ACCESSIBILITY_ONLY', 'NOVICE_WALKTHROUGH']) {
     const bundlePath = outputs.paths[bundleKind];
     await writeJson(
       join(repositoryRoot, bundlePath, 'bundle-manifest.json'),
       createClosedReviewBundleManifest({
         bundleKind,
+        canonicalWireContract: pinset.canonical_wire_contract,
         compilerBuild: pinset.builds.safe_projection_compiler,
         jobId: job.job_id,
+        learnerExperienceContract: pinset.learner_experience_contract,
         learnerViewContract: pinset.learner_view_contract,
         lessonId: job.lesson_id,
         projectionReportSha256: projectionSigned.report_sha256,
@@ -1112,7 +1774,9 @@ async function materializeProjectionAndBundles({
     const bundleEvidence =
       bundleKind === 'BLIND_SOLVE'
         ? evidence.blind_solve_bundle
-        : evidence.accessibility_review_bundle;
+        : bundleKind === 'ACCESSIBILITY_ONLY'
+          ? evidence.accessibility_review_bundle
+          : evidence.novice_walkthrough_bundle;
     bundleEvidence.bundle_path = bundlePath;
     bundleEvidence.bundle_sha256 = scan.artifact_sha256;
     bundleEvidence.distribution.ref = `fixture://${waveId}/${job.lesson_id}/${bundleKind}`;
@@ -1277,25 +1941,24 @@ async function materializeRightsAndDomain({
 }
 
 function semanticState(job, activityIndex, stateVersion, overrides = {}) {
-  const activity = learnerStepViews(job)[activityIndex]?.activity ?? null;
+  const learnerActivityId = activityId(job, activityIndex) ?? null;
   const payload = {
     activity_family_sha256:
-      activity === null ? null : hashText(`${job.job_id}-FAMILY-${activityIndex}`),
-    activity_id: activity?.id ?? null,
+      learnerActivityId === null ? null : hashText(`${job.job_id}-FAMILY-${activityIndex}`),
+    activity_id: learnerActivityId,
     activity_representation_sha256s:
-      activity === null
-        ? []
-        : activity.representations.map((representation) => hashText(representation.id)).sort(),
-    assistance_level: activity === null ? null : 'A2',
+      learnerActivityId === null ? [] : [hashText(`${learnerActivityId}-REPRESENTATION`)],
+    assistance_level: learnerActivityId === null ? null : 'LEVEL_TWO',
     assistance_revealed: false,
     available_action_kinds: ACTION_KINDS,
     planner_reentry_required: false,
     repair_cycle: 0,
     route_sha256: null,
     state_version: stateVersion,
-    status: 'active',
+    status: 'ACTIVE',
     ...overrides,
   };
+  payload.status = wireEnum(payload.status);
   return { ...payload, state_sha256: hashCanonicalJson(payload) };
 }
 
@@ -1368,7 +2031,7 @@ function receiptScenario(job) {
     },
     {
       action: 'continue',
-      afterActivity: 6,
+      afterActivity: 1,
       afterOverrides: {
         repair_cycle: 2,
         route_sha256: hashText(`${job.job_id}-ALTERNATE-ROUTE`),
@@ -1377,7 +2040,7 @@ function receiptScenario(job) {
     },
     {
       action: 'submit_response',
-      afterActivity: 6,
+      afterActivity: 1,
       afterOverrides: {
         planner_reentry_required: true,
         repair_cycle: 2,
@@ -1389,14 +2052,15 @@ function receiptScenario(job) {
   ];
   let before = semanticState(job, 0, 0);
   return specifications.map((specification, index) => {
+    const actionKind = wireEnum(specification.action);
     const actionContract = TRANSITION_PROFILE.action_contracts.find(
-      (contract) => contract.action_kind === specification.action,
+      (contract) => contract.action_kind === actionKind,
     );
     const events =
       specification.events ??
       (actionContract.required_event_kinds.length > 0
         ? actionContract.required_event_kinds
-        : ['lesson_activity_presented']);
+        : [wireEnum('lesson_activity_presented')]);
     const after = semanticState(
       job,
       specification.afterActivity,
@@ -1404,12 +2068,12 @@ function receiptScenario(job) {
       specification.afterOverrides,
     );
     const step = {
-      action_kind: specification.action,
+      action_kind: actionKind,
       activity_id: actionContract.activity_binding === 'NONE' ? null : before.activity_id,
       after_state: after,
       before_state: before,
-      event_types: events,
-      response_outcome: specification.outcome ?? null,
+      event_types: events.map(wireEnum),
+      response_outcome: wireEnum(specification.outcome ?? null),
     };
     before = after;
     return step;
@@ -1432,8 +2096,6 @@ async function materializeBlindService({
   const scenario = receiptScenario(job);
   const initialState = scenario[0].before_state.state_sha256;
   await writeJson(join(repositoryRoot, servicePath, 'deployment-manifest.json'), {
-    action_schema_id: pinset.learner_view_contract.action_schema_id,
-    action_schema_sha256: pinset.learner_view_contract.action_schema_sha256,
     candidate_sha256: candidateSha256,
     candidate_validator_execution_report_sha256:
       evidence.candidate_validator_execution.report_sha256,
@@ -1444,13 +2106,15 @@ async function materializeBlindService({
     lesson_id: job.lesson_id,
     receipt_signing_key_fingerprint: receiptKey.fingerprint,
     safe_client_sha256: evidence.blind_solve_bundle.bundle_sha256,
-    schema_version: 'mcat-v3-opaque-service-deployment-manifest-2',
+    schema_version: 'mcat-v3-opaque-service-deployment-manifest-3',
     scoring_service_build_id: pinset.builds.scoring_service.build_id,
     scoring_service_build_sha256: pinset.builds.scoring_service.artifact_sha256,
     scoring_service_build_version: pinset.builds.scoring_service.build_version,
     source_plan_sha256: sourcePlanSha256,
-    transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
+    transition_profile_id: pinset.canonical_wire_contract.transition_profile.profile_id,
     wave_id: waveId,
+    wire_schema_id: pinset.canonical_wire_contract.schema_id,
+    wire_schema_sha256: pinset.canonical_wire_contract.schema_sha256,
   });
   await writeBytes(
     join(repositoryRoot, servicePath, 'receipt-signing-public-key.pem'),
@@ -1469,8 +2133,6 @@ async function materializeBlindService({
   const attestationSigned = await writeSignedJson({
     document: {
       accepts_real_submitted_responses: true,
-      action_schema_id: pinset.learner_view_contract.action_schema_id,
-      action_schema_sha256: pinset.learner_view_contract.action_schema_sha256,
       candidate_sha256: candidateSha256,
       candidate_validator_execution_report_sha256:
         evidence.candidate_validator_execution.report_sha256,
@@ -1486,14 +2148,16 @@ async function materializeBlindService({
       rationales_before_response_exposed: false,
       receipt_signing_key_fingerprint: receiptKey.fingerprint,
       safe_client_sha256: evidence.blind_solve_bundle.bundle_sha256,
-      schema_version: 'mcat-v3-signed-opaque-service-deployment-attestation-3',
+      schema_version: 'mcat-v3-signed-opaque-service-deployment-attestation-4',
       server_definition_exposed: false,
       service_deployment_artifact_sha256: deployment.artifact_sha256,
       solver_identity: solverIdentity,
       source_branch_exposed: false,
       source_plan_sha256: sourcePlanSha256,
-      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
+      transition_profile_id: pinset.canonical_wire_contract.transition_profile.profile_id,
       wave_id: waveId,
+      wire_schema_id: pinset.canonical_wire_contract.schema_id,
+      wire_schema_sha256: pinset.canonical_wire_contract.schema_sha256,
     },
     documentPath: `service/${job.lesson_id}/deployment-attestation.json`,
     key: integrationRoot,
@@ -1518,16 +2182,16 @@ async function materializeBlindService({
       request_id: `${job.lesson_id}-REQUEST-${sequence}`,
       response_outcome: step.response_outcome,
       safe_client_sha256: evidence.blind_solve_bundle.bundle_sha256,
-      schema_version: 'mcat-v3-service-action-transition-receipt-2',
+      schema_version: 'mcat-v3-service-action-transition-receipt-3',
       sequence,
       service_deployment_artifact_sha256: deployment.artifact_sha256,
       service_timestamp: new Date(Date.UTC(2026, 6, 23, 18, 0, sequence)).toISOString(),
       session_id: `${job.lesson_id}-SESSION`,
       submitted_response_sha256:
-        step.action_kind === 'submit_response'
+        step.action_kind === 'SUBMIT_RESPONSE'
           ? hashText(`${job.job_id}-RESPONSE-${sequence}`)
           : null,
-      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
+      transition_profile_id: pinset.canonical_wire_contract.transition_profile.profile_id,
     };
     const documentPath = `receipts/${String(sequence).padStart(4, '0')}.json`;
     const signaturePath = `receipts/${String(sequence).padStart(4, '0')}.sig`;
@@ -1538,6 +2202,7 @@ async function materializeBlindService({
       receiptKey.privateKey,
     );
     entries.push({
+      canonical_receipt_sha256: hashCanonicalJson(receipt),
       receipt_path: documentPath,
       receipt_sha256: written.sha256,
       sequence,
@@ -1546,18 +2211,19 @@ async function materializeBlindService({
     });
   }
   const manifest = {
-    action_schema_id: pinset.learner_view_contract.action_schema_id,
     candidate_sha256: candidateSha256,
     deployment_id: deploymentId,
     entries,
     receipt_count: entries.length,
     receipt_signing_key_fingerprint: receiptKey.fingerprint,
     safe_client_sha256: evidence.blind_solve_bundle.bundle_sha256,
-    schema_version: 'mcat-v3-service-receipt-manifest-2',
+    schema_version: 'mcat-v3-service-receipt-manifest-3',
     service_deployment_artifact_sha256: deployment.artifact_sha256,
     session_closed: true,
     session_id: `${job.lesson_id}-SESSION`,
-    transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
+    transition_profile_id: pinset.canonical_wire_contract.transition_profile.profile_id,
+    wire_schema_id: pinset.canonical_wire_contract.schema_id,
+    wire_schema_sha256: pinset.canonical_wire_contract.schema_sha256,
   };
   const manifestWritten = await writeJson(
     join(repositoryRoot, receiptPath, 'receipt-manifest.json'),
@@ -1575,10 +2241,8 @@ async function materializeBlindService({
   );
   const serviceIntegrationReport = await writeSignedJson({
     document: {
-      action_schema_id: pinset.learner_view_contract.action_schema_id,
-      action_schema_sha256: pinset.learner_view_contract.action_schema_sha256,
       candidate_sha256: candidateSha256,
-      checks: pinset.learner_view_contract.transition_profile.technical_service_check_ids.map(
+      checks: pinset.canonical_wire_contract.transition_profile.technical_service_check_ids.map(
         (checkId) => ({ check_id: checkId, status: 'PASS' }),
       ),
       deployment_id: deploymentId,
@@ -1586,15 +2250,17 @@ async function materializeBlindService({
       lesson_id: job.lesson_id,
       report_id: `${job.lesson_id}-SERVICE-INTEGRATION`,
       safe_client_sha256: evidence.blind_solve_bundle.bundle_sha256,
-      schema_version: 'mcat-v3-signed-service-integration-report-1',
+      schema_version: 'mcat-v3-signed-service-integration-report-2',
       scoring_service_build_id: pinset.builds.scoring_service.build_id,
       scoring_service_build_sha256: pinset.builds.scoring_service.artifact_sha256,
       scoring_service_build_version: pinset.builds.scoring_service.build_version,
       signing_key_fingerprint: receiptKey.fingerprint,
       source_plan_sha256: sourcePlanSha256,
       status: 'EXECUTED_AND_PASSED',
-      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
+      transition_profile_id: pinset.canonical_wire_contract.transition_profile.profile_id,
       wave_id: waveId,
+      wire_schema_id: pinset.canonical_wire_contract.schema_id,
+      wire_schema_sha256: pinset.canonical_wire_contract.schema_sha256,
     },
     documentPath: `service/${job.lesson_id}/integration-report.json`,
     key: receiptKey,
@@ -1617,7 +2283,7 @@ async function materializeBlindService({
   };
   evidence.blind_solve_review.receipt_artifact = receiptArtifact;
   evidence.blind_solve_review.required_path_coverage =
-    pinset.learner_view_contract.transition_profile.path_contracts.map((path) => path.path_id);
+    pinset.canonical_wire_contract.transition_profile.path_contracts.map((path) => path.path_id);
   evidence.blind_solve_review.service_integration_report = serviceIntegrationReport;
   evidence.blind_solve_review.solver_recipient_identity = solverIdentity;
   await materializeGateReport({
@@ -1670,6 +2336,37 @@ async function materializeAccessibility({
     browserPath,
     ARTIFACT_LIMITS.browser_evidence,
   );
+  const learnerRegressionPath = `accessibility/${job.lesson_id}/learner-regression`;
+  const pngBytes = Buffer.concat([
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    Buffer.from('FIXTURE_ONLY_LEARNER_REGRESSION_SCREENSHOT'),
+  ]);
+  await Promise.all(
+    ['desktop-1440.png', 'mobile-320.png', 'mobile-375.png'].map((path) =>
+      writeBytes(join(repositoryRoot, learnerRegressionPath, path), pngBytes),
+    ),
+  );
+  await writeJson(join(repositoryRoot, learnerRegressionPath, 'learner-regression-trace.json'), {
+    learner_only_capture: true,
+    reviewer_controls_rendered: false,
+    schema_version: 'mcat-v3-learner-mobile-desktop-regression-trace-1',
+    viewports: [320, 375, 1440].map((width) => ({
+      color_only_progress: false,
+      figure_title_description_pass: true,
+      focus_order_pass: true,
+      height_px: width === 320 ? 568 : width === 375 ? 812 : 900,
+      mandatory_wide_scroll: false,
+      minimum_touch_target_px: 44,
+      primary_action_visible: true,
+      primary_visual_visible: true,
+      width_px: width,
+    })),
+  });
+  const learnerRegressionArtifact = await artifactDescriptor(
+    repositoryRoot,
+    learnerRegressionPath,
+    ARTIFACT_LIMITS.browser_evidence,
+  );
   const assignment = assignmentForSlot(
     overlay,
     job.assignments.accessibility_technical_auditor.slot_id,
@@ -1684,24 +2381,30 @@ async function materializeAccessibility({
       harness_build_sha256: pinset.builds.review_harness.artifact_sha256,
       harness_build_version: pinset.builds.review_harness.build_version,
       harness_signing_key_fingerprint: harnessKey.fingerprint,
+      internal_dto_artifacts_are_not_canonical_wire: true,
       job_id: job.job_id,
       learner_action_schema_id: pinset.learner_view_contract.action_schema_id,
+      learner_experience_schema_id: pinset.learner_experience_contract.schema_id,
+      learner_regression_artifact_sha256: learnerRegressionArtifact.artifact_sha256,
       learner_view_schema_id: pinset.learner_view_contract.view_schema_id,
       lesson_id: job.lesson_id,
-      media_digests: learnerEnvelope(job).media_digests,
+      media_digests: [],
       reviewer_identity: {
         person_id: assignment.assignee_person_id,
         run_id: assignment.assignee_run_id,
       },
       reviewer_slot_id: assignment.slot_id,
+      reviewer_evidence_separate_from_learner_artifact: true,
       safe_client_sha256: evidence.accessibility_review_bundle.bundle_sha256,
-      schema_version: 'mcat-v3-signed-accessibility-execution-report-2',
+      schema_version: ACCESSIBILITY_EXECUTION_REPORT_SCHEMA_VERSION,
       source_plan_sha256: sourcePlanSha256,
       status: 'EXECUTED_AND_PASSED',
-      supported_action_kinds: pinset.learner_view_contract.transition_profile.action_kinds,
+      supported_action_kinds: pinset.canonical_wire_contract.transition_profile.action_kinds,
       supported_representation_kinds: pinset.learner_view_contract.representation_kinds,
-      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
+      transition_profile_id: pinset.canonical_wire_contract.transition_profile.profile_id,
       wave_id: waveId,
+      wire_schema_id: pinset.canonical_wire_contract.schema_id,
+      wire_schema_sha256: pinset.canonical_wire_contract.schema_sha256,
     },
     documentPath: `accessibility/${job.lesson_id}/execution-report.json`,
     key: harnessKey,
@@ -1710,6 +2413,7 @@ async function materializeAccessibility({
   evidence.accessibility_execution_evidence = {
     browser_evidence_artifact: browserEvidence,
     execution_report: executionSigned,
+    learner_regression_artifact: learnerRegressionArtifact,
   };
   await materializeGateReport({
     candidateSha256,
@@ -1722,6 +2426,90 @@ async function materializeAccessibility({
     reviewedArtifactSha256: executionSigned.report_sha256,
     reviewerSlotId: assignment.slot_id,
   });
+}
+
+async function materializeNoviceUx({
+  candidateSha256,
+  evidence,
+  job,
+  keyByIdentity,
+  overlay,
+  repositoryRoot,
+}) {
+  const artifactPath = `novice-ux/${job.lesson_id}/browser-evidence`;
+  const pngBytes = Buffer.concat([
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    Buffer.from('FIXTURE_ONLY_SCREENSHOT'),
+  ]);
+  await writeBytes(join(repositoryRoot, artifactPath, 'desktop-1440.png'), pngBytes);
+  await writeBytes(join(repositoryRoot, artifactPath, 'mobile-375.png'), pngBytes);
+  await writeJson(join(repositoryRoot, artifactPath, 'walkthrough-trace.json'), {
+    learner_questions: [
+      { answered_without_reviewer_help: true, question_id: 'WHAT_CHANGED' },
+      { answered_without_reviewer_help: true, question_id: 'WHAT_DO_I_DO_NEXT' },
+      { answered_without_reviewer_help: true, question_id: 'WHAT_SHOULD_I_FOCUS_ON' },
+    ],
+    schema_version: 'mcat-v3-novice-walkthrough-browser-trace-1',
+    screen_audit: {
+      competing_sidebars_present: false,
+      focus_now_cue_present: true,
+      multiple_question_groups_present: false,
+      one_primary_action: true,
+      one_primary_objective: true,
+      optional_details_collapsed: true,
+      stacked_fading_ladder_present: false,
+    },
+    viewports: [375, 1440].map((width) => ({
+      color_only_progress: false,
+      figure_title_description_pass: true,
+      focus_order_pass: true,
+      height_px: width === 375 ? 812 : 900,
+      mandatory_wide_scroll: false,
+      minimum_touch_target_px: 44,
+      primary_action_visible: true,
+      primary_visual_visible: true,
+      width_px: width,
+    })),
+  });
+  const walkthroughArtifact = await artifactDescriptor(
+    repositoryRoot,
+    artifactPath,
+    ARTIFACT_LIMITS.browser_evidence,
+  );
+  const assignment = assignmentForSlot(overlay, job.assignments.novice_learner_ux_reviewer.slot_id);
+  const key = keyForAssignment(keyByIdentity, assignment);
+  const report = await writeSignedJson({
+    document: {
+      candidate_sha256: candidateSha256,
+      checks: REQUIRED_NOVICE_UX_CHECK_IDS.map((checkId) => ({
+        check_id: checkId,
+        status: 'PASS',
+      })),
+      internal_walkthrough_not_learner_validation: true,
+      job_id: job.job_id,
+      lesson_id: job.lesson_id,
+      report_author_identity: {
+        person_id: assignment.assignee_person_id,
+        run_id: assignment.assignee_run_id,
+      },
+      report_id: `${job.lesson_id}-NOVICE-UX`,
+      reviewer_slot_id: assignment.slot_id,
+      safe_client_sha256: evidence.novice_walkthrough_bundle.bundle_sha256,
+      schema_version: NOVICE_UX_REPORT_SCHEMA_VERSION,
+      signing_key_fingerprint: key.fingerprint,
+      source_plan_sha256: sourcePlanSha256,
+      status: 'APPROVED_INTERNAL_USABILITY_WALKTHROUGH',
+      walkthrough_artifact_sha256: walkthroughArtifact.artifact_sha256,
+      wave_id: waveId,
+    },
+    documentPath: `novice-ux/${job.lesson_id}/report.json`,
+    key,
+    repositoryRoot,
+  });
+  evidence.novice_ux_review = {
+    report,
+    walkthrough_artifact: walkthroughArtifact,
+  };
 }
 
 async function materializeSimilarity({
@@ -1829,6 +2617,13 @@ async function createValidFixture() {
       assignment.role === 'LESSON_AUTHOR' ? [] : [`QUAL-SLOT-${index}`];
   });
   const integration = await materializeIntegrationTrust(overlay, repositoryRoot);
+  await materializeWireCodecConformance({
+    overlay,
+    pinset: integration.pinset,
+    repositoryRoot,
+    wireCodecBuild: integration.wireCodecBuild,
+    wireCodecKey: integration.wireCodecKey,
+  });
   const keyByIdentity = await materializeReviewerCredentials(
     overlay,
     repositoryRoot,
@@ -1943,6 +2738,14 @@ async function createValidFixture() {
       pinset: integration.pinset,
       repositoryRoot,
     });
+    await materializeNoviceUx({
+      candidateSha256: candidate.artifact_sha256,
+      evidence,
+      job,
+      keyByIdentity,
+      overlay,
+      repositoryRoot,
+    });
   }
   await materializeSimilarity({
     candidateBindings,
@@ -1972,6 +2775,89 @@ async function validateFixture(fixture, overlay = fixture.overlay) {
 
 async function withFixture(callback) {
   const fixture = await createValidFixture();
+  try {
+    return await callback(fixture);
+  } finally {
+    await rm(fixture.repositoryRoot, { force: true, recursive: true });
+  }
+}
+
+async function createValidShowcaseFixture() {
+  const repositoryRoot = await mkdtemp(join(tmpdir(), 'v3-showcase-overlay-'));
+  const overlay = createShowcaseOverlayTemplate(plan, sourcePlanSha256);
+  overlay.materialization_status = 'MATERIALIZED';
+  overlay.materialized_at = '2026-07-23T19:00:00Z';
+  overlay.overlay_id = 'SHOWCASE-FIXTURE-001';
+  overlay.ownership_assignments.forEach((assignment, index) => {
+    assignment.assignee_person_id = `SHOWCASE-PERSON-${index}`;
+    assignment.assignee_run_id = `SHOWCASE-RUN-${index}`;
+    assignment.qualification_evidence_ids = [`SHOWCASE-QUAL-${index}`];
+  });
+  const artifactPath = 'showcase-artifact';
+  await writeJson(join(repositoryRoot, artifactPath, 'ux-shell.json'), {
+    learner_reviewer_modes_separate: true,
+    mode: 'LEARNER_ONLY',
+    primary_screen_policy: 'ONE_OBJECTIVE_ONE_ACTION',
+  });
+  await writeJson(join(repositoryRoot, artifactPath, 'local-simulation.json'), {
+    network_access: false,
+    production_api_access: false,
+    public_deployment: false,
+    publishes_evidence: false,
+    publishes_mastery: false,
+    publishes_readiness: false,
+  });
+  for (const lessonId of PROTOTYPE_LESSON_IDS) {
+    const job = [...jobById.values()].find((candidate) => candidate.lesson_id === lessonId);
+    assert(job);
+    await writeJson(join(repositoryRoot, artifactPath, `pilots/${lessonId}.json`), {
+      client_bundled_keys: false,
+      definition_mode: 'STATIC_REVIEWED_INTERNAL_SHOWCASE',
+      learner_experience: learnerEnvelope(job),
+      lesson_id: lessonId,
+      local_simulation_only: true,
+      ordered_required_kc_ids: job.ordered_required_kc_ids,
+      review_status: 'REVIEWED_FOR_INTERNAL_SHOWCASE_ONLY',
+    });
+  }
+  overlay.local_showcase_artifact = await artifactDescriptor(
+    repositoryRoot,
+    artifactPath,
+    ARTIFACT_LIMITS.review_bundle,
+  );
+  const qaAssignment = overlay.ownership_assignments.find(
+    (assignment) => assignment.role === 'SHOWCASE_FINAL_ADVERSARIAL_QA',
+  );
+  assert(qaAssignment);
+  const qaPath = 'showcase-final-qa.json';
+  const qaWritten = await writeJson(join(repositoryRoot, qaPath), {
+    artifact_sha256: overlay.local_showcase_artifact.artifact_sha256,
+    checks: [
+      { check_id: 'CLIENT_KEY_LEAKAGE_SCAN', status: 'PASS' },
+      { check_id: 'MOBILE_375', status: 'PASS' },
+      { check_id: 'PROHIBITED_CLAIMS', status: 'PASS' },
+      { check_id: 'PRODUCTION_API_ISOLATION', status: 'PASS' },
+      { check_id: 'REVIEWER_LEARNER_SEPARATION', status: 'PASS' },
+    ],
+    lane_id: SHOWCASE_LANE_ID,
+    report_author_identity: {
+      person_id: qaAssignment.assignee_person_id,
+      run_id: qaAssignment.assignee_run_id,
+    },
+    reviewer_slot_id: qaAssignment.slot_id,
+    status: 'APPROVED_INTERNAL_SHOWCASE_ONLY',
+  });
+  overlay.final_adversarial_qa = {
+    approved: true,
+    report_path: qaPath,
+    report_sha256: qaWritten.sha256,
+    reviewer_slot_id: qaAssignment.slot_id,
+  };
+  return { overlay, repositoryRoot };
+}
+
+async function withShowcaseFixture(callback) {
+  const fixture = await createValidShowcaseFixture();
   try {
     return await callback(fixture);
   } finally {
@@ -2018,6 +2904,7 @@ async function mutateSignedReceiptTrace(fixture, evidence, mutate) {
   mutate(receipts);
   for (const [index, entry] of manifest.entries.entries()) {
     receipts[index].event_trace_sha256 = hashCanonicalJson(receipts[index].event_types);
+    entry.canonical_receipt_sha256 = hashCanonicalJson(receipts[index]);
     const written = await writeJson(join(root, entry.receipt_path), receipts[index]);
     const signature = await writeSignature(
       join(root, entry.signature_path),
@@ -2041,6 +2928,62 @@ test('checked template is deterministic and explicitly blocks missing foundation
   assert.deepEqual(checked, createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId));
   assert.equal(checked.integration_readiness.status, 'BLOCKED_PENDING_SIGNED_FOUNDATION_PINSET');
   assert.equal(checked.integration_trust.pinset_path, null);
+  assert.deepEqual(checked.wire_codec_conformance, {
+    artifact: { artifact_path: null, artifact_sha256: null, file_manifest: [] },
+    report: {
+      report_path: null,
+      report_sha256: null,
+      report_signature_path: null,
+      report_signature_sha256: null,
+      signer_key_fingerprint: null,
+    },
+  });
+  const checkedShowcase = JSON.parse(await readFile(checkedShowcaseTemplatePath, 'utf8'));
+  assert.deepEqual(checkedShowcase, createShowcaseOverlayTemplate(plan, sourcePlanSha256));
+});
+
+test('non-production showcase validates static learner definitions without satisfying W00', async () => {
+  await withShowcaseFixture(async ({ overlay, repositoryRoot }) => {
+    const result = await validateShowcaseOverlay(overlay, {
+      plan,
+      repositoryRoot,
+      sourcePlanSha256,
+    });
+    assert.equal(result.ownership_assignment_count, 9);
+    assert.equal(overlay.controls.satisfies_w00, false);
+    assert.equal(overlay.controls.satisfies_any_production_gate, false);
+    assert(overlay.exit_criteria_to_w00.every((criterion) => criterion.status === 'DEFERRED'));
+  });
+});
+
+test('showcase rejects learner leakage and overlapping ownership', async () => {
+  await withShowcaseFixture(async ({ overlay, repositoryRoot }) => {
+    const pilotPath = join(
+      repositoryRoot,
+      overlay.local_showcase_artifact.artifact_path,
+      `pilots/${PROTOTYPE_LESSON_IDS[0]}.json`,
+    );
+    const pilot = JSON.parse(await readFile(pilotPath, 'utf8'));
+    pilot.learner_experience.constructs[0].screens[0].registrySha256 = 'a'.repeat(64);
+    await writeJson(pilotPath, pilot);
+    overlay.local_showcase_artifact = await artifactDescriptor(
+      repositoryRoot,
+      overlay.local_showcase_artifact.artifact_path,
+      ARTIFACT_LIMITS.review_bundle,
+    );
+    await assert.rejects(
+      validateShowcaseOverlay(overlay, { plan, repositoryRoot, sourcePlanSha256 }),
+      /forbidden in learner-facing payloads/,
+    );
+  });
+  await withShowcaseFixture(async ({ overlay, repositoryRoot }) => {
+    overlay.ownership_assignments[1].assignee_person_id =
+      overlay.ownership_assignments[0].assignee_person_id;
+    await assert.rejects(
+      validateShowcaseOverlay(overlay, { plan, repositoryRoot, sourcePlanSha256 }),
+      /ownership must be disjoint by person/,
+    );
+  });
 });
 
 test('all waves compare current work against the complete historical corpus', () => {
@@ -2198,33 +3141,11 @@ test('fabricated service receipts and unsigned ACL changes fail signature verifi
 test('validly signed receipts still fail semantic request/outcome and path predicates', async () => {
   await rejectMutation(async (overlay, fixture) => {
     const evidence = firstEvidence(overlay);
-    const review = evidence.blind_solve_review;
-    const key = fixture.receiptKeyByJobId.get(evidence.job_id);
-    const root = join(fixture.repositoryRoot, review.receipt_artifact.artifact_path);
-    const manifestPath = join(root, 'receipt-manifest.json');
-    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    for (const entry of manifest.entries) {
-      const receiptPath = join(root, entry.receipt_path);
-      const receipt = JSON.parse(await readFile(receiptPath, 'utf8'));
-      if (receipt.response_outcome === 'correct') {
-        receipt.response_outcome = 'incorrect';
-        const written = await writeJson(receiptPath, receipt);
-        const signature = await writeSignature(
-          join(root, entry.signature_path),
-          written.bytes,
-          key.privateKey,
-        );
-        entry.receipt_sha256 = written.sha256;
-        entry.signature_sha256 = signature.sha256;
+    await mutateSignedReceiptTrace(fixture, evidence, (receipts) => {
+      for (const receipt of receipts) {
+        if (receipt.response_outcome === 'CORRECT') receipt.response_outcome = 'INCORRECT';
       }
-    }
-    const manifestWritten = await writeJson(manifestPath, manifest);
-    await writeSignature(join(root, 'receipt-manifest.sig'), manifestWritten.bytes, key.privateKey);
-    review.receipt_artifact = await artifactDescriptor(
-      fixture.repositoryRoot,
-      review.receipt_artifact.artifact_path,
-      ARTIFACT_LIMITS.receipt_log,
-    );
+    });
   }, /CORRECT_RESPONSE lacks a signed-profile-valid ordered receipt trace/);
 });
 
@@ -2239,37 +3160,37 @@ for (const { expected, mutate, name } of [
   {
     expected: /FRESH_ACTIVITY_RETRY lacks a signed-profile-valid ordered receipt trace/,
     mutate(receipts) {
-      receipts[4].action_kind = 'request_assistance';
-      receipts[4].event_types = ['lesson_assistance_revealed'];
+      receipts[4].action_kind = 'REQUEST_ASSISTANCE';
+      receipts[4].event_types = ['LESSON_ASSISTANCE_REVEALED'];
     },
     name: 'fresh retry requires a new activity and family through supported actions',
   },
   {
     expected: /ASSISTANCE_REVEAL lacks a signed-profile-valid ordered receipt trace/,
     mutate(receipts) {
-      const receipt = receipts.find((item) => item.action_kind === 'request_assistance');
-      receipt.action_kind = 'present';
-      receipt.event_types = ['lesson_activity_presented'];
+      const receipt = receipts.find((item) => item.action_kind === 'REQUEST_ASSISTANCE');
+      receipt.action_kind = 'PRESENT';
+      receipt.event_types = ['LESSON_ACTIVITY_PRESENTED'];
     },
     name: 'reveal-capable help is an assistance transition rather than an invented reveal action',
   },
   {
     expected: /PAUSE_AND_RESUME lacks a signed-profile-valid ordered receipt trace/,
     mutate(receipts) {
-      const pause = receipts.find((item) => item.action_kind === 'pause');
-      const resume = receipts.find((item) => item.action_kind === 'resume');
-      pause.action_kind = 'resume';
-      pause.event_types = ['lesson_run_resumed'];
-      resume.action_kind = 'pause';
-      resume.event_types = ['lesson_run_paused'];
+      const pause = receipts.find((item) => item.action_kind === 'PAUSE');
+      const resume = receipts.find((item) => item.action_kind === 'RESUME');
+      pause.action_kind = 'RESUME';
+      pause.event_types = ['LESSON_RUN_RESUMED'];
+      resume.action_kind = 'PAUSE';
+      resume.event_types = ['LESSON_RUN_PAUSED'];
     },
     name: 'resume may not precede the signed pause transition',
   },
   {
     expected: /ALTERNATE_ROUTE_SELECTION lacks a signed-profile-valid ordered receipt trace/,
     mutate(receipts) {
-      const receipt = receipts.find((item) => item.event_types.includes('lesson_route_selected'));
-      receipt.event_types = ['lesson_activity_presented'];
+      const receipt = receipts.find((item) => item.event_types.includes('LESSON_ROUTE_SELECTED'));
+      receipt.event_types = ['LESSON_ACTIVITY_PRESENTED'];
     },
     name: 'alternate-route coverage requires the pinned route-selection event',
   },
@@ -2277,8 +3198,8 @@ for (const { expected, mutate, name } of [
     expected: /REPAIR_LIMIT_PLANNER_REENTRY lacks a signed-profile-valid ordered receipt trace/,
     mutate(receipts) {
       const receipt = receipts.find((item) => item.after_state.repair_cycle === 2);
-      receipt.action_kind = 'present';
-      receipt.event_types = ['lesson_activity_presented'];
+      receipt.action_kind = 'PRESENT';
+      receipt.event_types = ['LESSON_ACTIVITY_PRESENTED'];
     },
     name: 'repair-limit coverage requires distinct ordered repair cycles and planner reentry',
   },
@@ -2306,10 +3227,9 @@ test('invalid activity rejection is technical service evidence, not a learner re
 test('unrelated learner-safe output cannot claim candidate derivation', async () => {
   await rejectMutation(async (overlay, fixture) => {
     const bundle = firstEvidence(overlay).blind_solve_bundle;
-    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-safe-envelope.json');
+    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-experience.json');
     const envelope = JSON.parse(await readFile(path, 'utf8'));
-    envelope.lesson_step_views[0].activity.representations[0].label =
-      'Unrelated hand-authored projection.';
+    envelope.constructs[0].screens[0].focus_now = 'Unrelated hand-authored projection.';
     await writeJson(path, envelope);
   }, /is not the signed compiler output/);
 });
@@ -2317,18 +3237,18 @@ test('unrelated learner-safe output cannot claim candidate derivation', async ()
 test('closed bundles reject protected aliases, unknown view fields, and extra files', async () => {
   await rejectMutation(async (overlay, fixture) => {
     const bundle = firstEvidence(overlay).blind_solve_bundle;
-    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-safe-envelope.json');
+    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-experience.json');
     const envelope = JSON.parse(await readFile(path, 'utf8'));
-    envelope.lesson_step_views[0].activity.key = 'Option A';
+    envelope.constructs[0].key = 'Option A';
     await writeJson(path, envelope);
   }, /forbidden protected field/);
   await rejectMutation(async (overlay, fixture) => {
     const bundle = firstEvidence(overlay).blind_solve_bundle;
-    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-safe-envelope.json');
+    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-experience.json');
     const envelope = JSON.parse(await readFile(path, 'utf8'));
-    envelope.lesson_step_views[0].activity.representations[0].script = 'alert(1)';
+    envelope.constructs[0].screens[0].script = 'alert(1)';
     await writeJson(path, envelope);
-  }, /fails pinned schema/);
+  }, /fails pinned projection schema/);
   await rejectMutation(async (overlay, fixture) => {
     const bundle = firstEvidence(overlay).blind_solve_bundle;
     await writeBytes(
@@ -2338,7 +3258,111 @@ test('closed bundles reject protected aliases, unknown view fields, and extra fi
   }, /exact closed file set/);
 });
 
+test('learner payloads reject control-plane hashes, IDs, telemetry, labels, and jump controls', async () => {
+  for (const mutate of [
+    (experience) => {
+      experience.constructs[0].screens[0].registrySha256 = 'a'.repeat(64);
+    },
+    (experience) => {
+      experience.constructs[0].screens[0].runId = 'RUN-LEAK';
+    },
+    (experience) => {
+      experience.constructs[0].screens[0].focus_now = 'Internal A1 assistance label';
+    },
+    (experience) => {
+      experience.constructs[0].screens[0].primary_action.label = 'Jump to checkpoint';
+    },
+    (experience) => {
+      experience.lesson_title = `Policy hash ${'b'.repeat(64)}`;
+    },
+    (experience) => {
+      experience.constructs[0].screens[0].eventTelemetry = { exposureCount: 1 };
+    },
+    (experience) => {
+      experience.constructs[0].screens[0].explanation =
+        'Simulation warning repeated on this teaching screen.';
+    },
+  ]) {
+    await rejectMutation(async (overlay, fixture) => {
+      const bundle = firstEvidence(overlay).blind_solve_bundle;
+      const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-experience.json');
+      const experience = JSON.parse(await readFile(path, 'utf8'));
+      mutate(experience);
+      await writeJson(path, experience);
+    }, /forbidden in learner-facing payloads|contains learner-facing control prose/);
+  }
+});
+
+test('teach-show-ask, progressive disclosure, entry isolation, and redox exemplar fail closed', async () => {
+  await rejectMutation(async (overlay, fixture) => {
+    const bundle = firstEvidence(overlay).blind_solve_bundle;
+    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-experience.json');
+    const experience = JSON.parse(await readFile(path, 'utf8'));
+    const screens = experience.constructs[0].screens;
+    [screens[2], screens[3]] = [screens[3], screens[2]];
+    await writeJson(path, experience);
+  }, /must follow orientation -> model -> worked -> guided -> less help -> solo -> dual exit/);
+  await rejectMutation(async (overlay, fixture) => {
+    const bundle = firstEvidence(overlay).blind_solve_bundle;
+    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-experience.json');
+    const experience = JSON.parse(await readFile(path, 'utf8'));
+    experience.constructs[0].screens[0].question_group.counts_as_instructional_exit = true;
+    await writeJson(path, experience);
+  }, /fails pinned projection schema|Expected values to be strictly equal/);
+  await rejectMutation(async (overlay, fixture) => {
+    const bundle = firstEvidence(overlay).blind_solve_bundle;
+    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-experience.json');
+    const experience = JSON.parse(await readFile(path, 'utf8'));
+    experience.constructs[0].screens[0].question_group.family_ref =
+      experience.constructs[0].screens[4].question_group.family_ref;
+    await writeJson(path, experience);
+  }, /entry-check family contaminates consequential practice/);
+  await rejectMutation(async (overlay, fixture) => {
+    const bundle = firstEvidence(overlay).blind_solve_bundle;
+    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-experience.json');
+    const experience = JSON.parse(await readFile(path, 'utf8'));
+    experience.constructs[0].screens[1].focus_now = 'x'.repeat(121);
+    await writeJson(path, experience);
+  }, /exceeds the signed short-cue limit/);
+  await rejectMutation(async (overlay, fixture) => {
+    const bundle = firstEvidence(overlay).blind_solve_bundle;
+    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-experience.json');
+    const experience = JSON.parse(await readFile(path, 'utf8'));
+    experience.constructs[0].screens[1].sidebars = ['Competing help'];
+    await writeJson(path, experience);
+  }, /fails pinned projection schema|may not have competing sidebars/);
+  await rejectMutation(async (overlay, fixture) => {
+    const bundle = firstEvidence(overlay).blind_solve_bundle;
+    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-experience.json');
+    const experience = JSON.parse(await readFile(path, 'utf8'));
+    experience.constructs
+      .find((construct) => construct.construct_ref === 'V3-KC-271440')
+      .screens.find(
+        (screen) => screen.stage === 'MODEL',
+      ).model.redox_accounting.accounting_equation = 'Q + H+ + e- -> QH';
+    await writeJson(path, experience);
+  }, /Expected values to be strictly equal/);
+});
+
 test('static accessibility claims cannot replace signed harness execution', async () => {
+  await rejectMutation(async (overlay, fixture) => {
+    const descriptor =
+      firstEvidence(overlay).accessibility_execution_evidence.learner_regression_artifact;
+    const path = join(
+      fixture.repositoryRoot,
+      descriptor.artifact_path,
+      'learner-regression-trace.json',
+    );
+    const trace = JSON.parse(await readFile(path, 'utf8'));
+    trace.viewports.find((viewport) => viewport.width_px === 320).mandatory_wide_scroll = true;
+    await writeJson(path, trace);
+    firstEvidence(overlay).accessibility_execution_evidence.learner_regression_artifact =
+      await artifactDescriptor(
+        fixture.repositoryRoot,
+        descriptor.artifact_path,
+        ARTIFACT_LIMITS.browser_evidence,
+      );
+  }, /learner regression viewport.*wide scroll|Expected values to be strictly equal/);
   await rejectMutation(async (overlay, fixture) => {
     const descriptor = firstEvidence(overlay).accessibility_execution_evidence.execution_report;
     const path = join(fixture.repositoryRoot, descriptor.report_path);
@@ -2347,6 +3371,51 @@ test('static accessibility claims cannot replace signed harness execution', asyn
     const written = await writeJson(path, value);
     descriptor.report_sha256 = written.sha256;
   }, /detached signature is invalid/);
+});
+
+test('novice learner-UX evidence is signed, nonvalidating, and role-separated', async () => {
+  await rejectMutation(async (overlay) => {
+    const job = jobById.get(firstEvidence(overlay).job_id);
+    const novice = assignmentForSlot(overlay, job.assignments.novice_learner_ux_reviewer.slot_id);
+    const accessibility = assignmentForSlot(
+      overlay,
+      job.assignments.accessibility_technical_auditor.slot_id,
+    );
+    novice.assignee_person_id = accessibility.assignee_person_id;
+    novice.assignee_run_id = accessibility.assignee_run_id;
+  }, /distinctness|Wave author may not fill nonauthor slot/);
+  await rejectMutation(async (overlay, fixture) => {
+    const evidence = firstEvidence(overlay);
+    const job = jobById.get(evidence.job_id);
+    const assignment = assignmentForSlot(
+      overlay,
+      job.assignments.novice_learner_ux_reviewer.slot_id,
+    );
+    await mutateSignedReport(
+      evidence.novice_ux_review.report,
+      fixture,
+      keyForAssignment(fixture.keyByIdentity, assignment),
+      (report) => {
+        report.internal_walkthrough_not_learner_validation = false;
+      },
+    );
+  }, /Expected values to be strictly equal/);
+  await rejectMutation(async (overlay, fixture) => {
+    const evidence = firstEvidence(overlay);
+    const job = jobById.get(evidence.job_id);
+    const assignment = assignmentForSlot(
+      overlay,
+      job.assignments.novice_learner_ux_reviewer.slot_id,
+    );
+    await mutateSignedReport(
+      evidence.novice_ux_review.report,
+      fixture,
+      keyForAssignment(fixture.keyByIdentity, assignment),
+      (report) => {
+        report.report_author_identity.person_id = 'PERSON-FORGED-NOVICE';
+      },
+    );
+  }, /does not match assigned identity|Expected values to be strictly deep-equal/);
 });
 
 test('G05 and G10 reject stale, misbound, and unknown signed report fields', async () => {
@@ -2473,20 +3542,53 @@ test('AJV shape validation cannot replace the signed production validator superR
   }, /Candidate validator report is stale|Expected values to be strictly equal/);
 });
 
-test('snake_case catalog fixtures cannot masquerade as the pinned LessonStepView contract', async () => {
+test('raw camelCase evidence cannot masquerade as canonical cross-spec wire', async () => {
   await rejectMutation(async (overlay, fixture) => {
-    const bundle = firstEvidence(overlay).blind_solve_bundle;
-    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-safe-envelope.json');
-    const envelope = JSON.parse(await readFile(path, 'utf8'));
-    const view = envelope.lesson_step_views[0];
-    view.schema_version = view.schemaVersion;
-    view.lesson_id = view.lessonId;
-    view.activity.activity_id = view.activity.id;
-    delete view.schemaVersion;
-    delete view.lessonId;
-    delete view.activity.id;
-    await writeJson(path, envelope);
-  }, /Learner step view fails pinned schema|JSON pointer does not resolve/);
+    await mutateSignedReceiptTrace(fixture, firstEvidence(overlay), (receipts) => {
+      receipts[0].actionKind = receipts[0].action_kind;
+      delete receipts[0].action_kind;
+    });
+  }, /service receipt 1 has missing or unknown fields|canonical wire schema/);
+});
+
+test('wire codec conformance requires exact signed round-trip and semantic parity evidence', async () => {
+  await rejectMutation(async (overlay, fixture) => {
+    const artifact = overlay.wire_codec_conformance.artifact;
+    const path = join(
+      fixture.repositoryRoot,
+      artifact.artifact_path,
+      REQUIRED_WIRE_CODEC_VECTOR_FILES.LEARNER_VIEW,
+    );
+    const vector = JSON.parse(await readFile(path, 'utf8'));
+    vector.cases[0].round_trip_internal.lessonId = 'V3-LES-WRONG';
+    await writeJson(path, vector);
+    overlay.wire_codec_conformance.artifact = await artifactDescriptor(
+      fixture.repositoryRoot,
+      artifact.artifact_path,
+      ARTIFACT_LIMITS.report,
+    );
+  }, /parser output is not the exact inverse projection|does not round-trip exactly/);
+  await rejectMutation(async (overlay, fixture) => {
+    const artifact = overlay.wire_codec_conformance.artifact;
+    const path = join(
+      fixture.repositoryRoot,
+      artifact.artifact_path,
+      REQUIRED_WIRE_CODEC_VECTOR_FILES.LEARNER_ACTION,
+    );
+    const vector = JSON.parse(await readFile(path, 'utf8'));
+    vector.cases = vector.cases.filter(
+      (testCase) => testCase.case_id !== 'LEARNER-ACTION-SUBMIT_RESPONSE-CHOICE',
+    );
+    await writeJson(path, vector);
+    overlay.wire_codec_conformance.artifact = await artifactDescriptor(
+      fixture.repositoryRoot,
+      artifact.artifact_path,
+      ARTIFACT_LIMITS.report,
+    );
+  }, /do not cover every signed enum mapping/);
+  await rejectMutation(async (overlay) => {
+    overlay.wire_codec_conformance.report.report_sha256 = '0'.repeat(64);
+  }, /wire codec conformance report hash is stale/);
 });
 
 test('stale service deployment artifacts fail closed', async () => {

@@ -11,6 +11,7 @@ import {
   hashBytes,
   hashCanonicalJson,
   readAndVerifySignedJson,
+  readLimitedFile,
   readLimitedJson,
   readPublicKey,
   requireHash,
@@ -20,21 +21,22 @@ import {
   validateArtifactDescriptor,
 } from './v3-cloud-authoring-trust-contract.mjs';
 
-const CLOSED_BUNDLE_SCHEMA_VERSION = 'mcat-v3-closed-sanitized-review-bundle-3';
-const CLOSED_BUNDLE_SCANNER_ID = 'V3_CLOSED_REVIEW_BUNDLE_SCAN_V3';
+const CLOSED_BUNDLE_SCHEMA_VERSION = 'mcat-v3-closed-sanitized-review-bundle-4';
+const CLOSED_BUNDLE_SCANNER_ID = 'V3_CLOSED_REVIEW_BUNDLE_SCAN_V4';
 const CANDIDATE_MANIFEST_SCHEMA_VERSION = 'mcat-v3-candidate-artifact-manifest-3';
 const CANDIDATE_VALIDATOR_EXECUTION_REPORT_SCHEMA_VERSION =
   'mcat-v3-signed-candidate-validator-execution-report-1';
 const GATE_REPORT_SCHEMA_VERSION = 'mcat-v3-signed-gate-evidence-report-2';
-const SAFE_PROJECTION_REPORT_SCHEMA_VERSION = 'mcat-v3-safe-projection-report-2';
+const SAFE_PROJECTION_REPORT_SCHEMA_VERSION = 'mcat-v3-safe-projection-report-3';
 const OPAQUE_SERVICE_ATTESTATION_SCHEMA_VERSION =
-  'mcat-v3-signed-opaque-service-deployment-attestation-3';
-const SERVICE_DEPLOYMENT_MANIFEST_SCHEMA_VERSION = 'mcat-v3-opaque-service-deployment-manifest-2';
-const SERVICE_RECEIPT_SCHEMA_VERSION = 'mcat-v3-service-action-transition-receipt-2';
-const SERVICE_RECEIPT_MANIFEST_SCHEMA_VERSION = 'mcat-v3-service-receipt-manifest-2';
-const SERVICE_INTEGRATION_REPORT_SCHEMA_VERSION = 'mcat-v3-signed-service-integration-report-1';
+  'mcat-v3-signed-opaque-service-deployment-attestation-4';
+const SERVICE_DEPLOYMENT_MANIFEST_SCHEMA_VERSION = 'mcat-v3-opaque-service-deployment-manifest-3';
+const SERVICE_RECEIPT_SCHEMA_VERSION = 'mcat-v3-service-action-transition-receipt-3';
+const SERVICE_RECEIPT_MANIFEST_SCHEMA_VERSION = 'mcat-v3-service-receipt-manifest-3';
+const SERVICE_INTEGRATION_REPORT_SCHEMA_VERSION = 'mcat-v3-signed-service-integration-report-2';
 const ACCESSIBILITY_EXECUTION_REPORT_SCHEMA_VERSION =
-  'mcat-v3-signed-accessibility-execution-report-2';
+  'mcat-v3-signed-accessibility-execution-report-4';
+const NOVICE_UX_REPORT_SCHEMA_VERSION = 'mcat-v3-signed-novice-ux-walkthrough-report-1';
 const RIGHTS_REPORT_SCHEMA_VERSION = 'mcat-v3-signed-rights-review-report-1';
 const SOURCE_OUTPUT_SIMILARITY_SCHEMA_VERSION = 'mcat-v3-signed-source-output-similarity-report-1';
 const DOMAIN_REPORT_SCHEMA_VERSION = 'mcat-v3-signed-domain-review-report-1';
@@ -45,12 +47,17 @@ const BUNDLE_FILES = Object.freeze({
   ACCESSIBILITY_ONLY: Object.freeze([
     'accessibility-harness-config.json',
     'bundle-manifest.json',
-    'learner-safe-envelope.json',
+    'learner-experience.json',
   ]),
   BLIND_SOLVE: Object.freeze([
     'blind-client-runtime.json',
     'bundle-manifest.json',
-    'learner-safe-envelope.json',
+    'learner-experience.json',
+  ]),
+  NOVICE_WALKTHROUGH: Object.freeze([
+    'bundle-manifest.json',
+    'learner-experience.json',
+    'novice-walkthrough-config.json',
   ]),
 });
 
@@ -83,14 +90,29 @@ const REQUIRED_SERVICE_INTEGRATION_CHECK_IDS = Object.freeze([
 
 const REQUIRED_ACCESSIBILITY_CHECK_IDS = Object.freeze([
   'CONTRAST',
+  'FIGURE_TITLE_DESCRIPTION',
   'FOCUS_ORDER',
   'KEYBOARD_ONLY',
+  'LEARNER_REVIEW_ARTIFACT_SEPARATION',
   'MEDIA_TRANSCRIPTS_CAPTIONS',
   'NONVISUAL_ALTERNATIVES',
+  'NO_COLOR_ONLY_PROGRESS',
+  'PRIMARY_ACTION_NO_WIDE_SCROLL',
   'REDUCED_MOTION',
   'REFLOW_320PX',
+  'REFLOW_375PX',
   'SEMANTICS',
+  'TOUCH_TARGETS_44PX',
   'ZOOM_200_PERCENT',
+]);
+
+const REQUIRED_NOVICE_UX_CHECK_IDS = Object.freeze([
+  'DESKTOP_AND_375PX_BROWSER_EVIDENCE',
+  'FOCUS_NOW_UNDERSTOOD',
+  'NO_COMPETING_OR_STACKED_UI',
+  'ONE_PRIMARY_OBJECTIVE_AND_ACTION',
+  'WHAT_CHANGED_UNDERSTOOD',
+  'WHAT_TO_DO_NEXT_UNDERSTOOD',
 ]);
 
 const REQUIRED_GATE_CHECK_IDS = Object.freeze({
@@ -140,6 +162,57 @@ const FORBIDDEN_FIELD_NAMES = new Set([
   'solutions',
 ]);
 
+const LEARNER_FORBIDDEN_FIELD_NAMES = new Set([
+  ...FORBIDDEN_FIELD_NAMES,
+  'assistance_level',
+  'checkpoint_jump',
+  'checkpoint_jump_control',
+  'definition_version',
+  'event',
+  'event_id',
+  'event_log',
+  'event_types',
+  'events',
+  'exposure',
+  'exposure_count',
+  'exposure_id',
+  'exposure_telemetry',
+  'gate',
+  'gate_status',
+  'governance',
+  'governance_prose',
+  'policy_sha256',
+  'policy_hash',
+  'registry_sha256',
+  'registry_hash',
+  'review_controls',
+  'reviewer_controls',
+  'run',
+  'run_id',
+  'runid',
+  'run_version',
+  'runversion',
+  'schema_id',
+  'schemaid',
+  'schema_version',
+  'schemaversion',
+  'telemetry',
+  'view_schema_id',
+]);
+const LEARNER_FORBIDDEN_STRING_PATTERNS = Object.freeze([
+  /\b[a-f0-9]{64}\b/i,
+  /\bA[012]\b/i,
+  /\b(?:jump|skip)\s+(?:to\s+)?checkpoint\b/i,
+  /\bgovernance\b/i,
+  /\b(?:registry|policy)\s+(?:hash|sha-?256)\b/i,
+  /\breviewer control\b/i,
+  /\b(?:run|schema)\s+id\b/i,
+  /\bsimulation warning\b/i,
+]);
+const NORMALIZED_LEARNER_FORBIDDEN_FIELD_NAMES = new Set(
+  [...LEARNER_FORBIDDEN_FIELD_NAMES].map((key) => key.replaceAll(/[^a-z0-9]/g, '')),
+);
+
 function compareText(left, right) {
   return left < right ? -1 : left > right ? 1 : 0;
 }
@@ -159,6 +232,30 @@ function assertNoForbiddenFields(value, path = '$') {
   }
 }
 
+function assertNoLearnerControlPlaneLeakage(value, path = '$') {
+  if (typeof value === 'string') {
+    for (const pattern of LEARNER_FORBIDDEN_STRING_PATTERNS) {
+      assert.equal(pattern.test(value), false, `${path} contains learner-facing control prose`);
+    }
+    return;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => assertNoLearnerControlPlaneLeakage(item, `${path}[${index}]`));
+    return;
+  }
+  if (value === null || typeof value !== 'object') return;
+  for (const [key, item] of Object.entries(value)) {
+    const normalizedKey = key.toLowerCase().replaceAll(/[^a-z0-9]/g, '');
+    assert(
+      !NORMALIZED_LEARNER_FORBIDDEN_FIELD_NAMES.has(normalizedKey) &&
+        !normalizedKey.endsWith('hash') &&
+        !normalizedKey.endsWith('sha256'),
+      `${path}.${key} is forbidden in learner-facing payloads`,
+    );
+    assertNoLearnerControlPlaneLeakage(item, `${path}.${key}`);
+  }
+}
+
 function assertIdentityEqual(actual, expected, label) {
   requireIdentity(actual, label);
   assert.deepEqual(actual, expected, `${label} does not match assigned identity`);
@@ -166,7 +263,9 @@ function assertIdentityEqual(actual, expected, label) {
 
 function createClosedReviewBundleManifest({
   bundleKind,
+  canonicalWireContract,
   compilerBuild,
+  learnerExperienceContract,
   learnerViewContract,
   lessonId,
   jobId,
@@ -191,6 +290,9 @@ function createClosedReviewBundleManifest({
     excluded_content_classes: [...EXCLUDED_CONTENT_CLASSES],
     included_files: [...BUNDLE_FILES[bundleKind]],
     job_id: jobId,
+    learner_experience_schema_id: learnerExperienceContract.schema_id,
+    learner_experience_schema_sha256: learnerExperienceContract.schema_sha256,
+    learner_payload_files: ['learner-experience.json'],
     learner_view_schema_id: learnerViewContract.view_schema_id,
     learner_view_schema_sha256: learnerViewContract.view_schema_sha256,
     lesson_id: lessonId,
@@ -205,9 +307,11 @@ function createClosedReviewBundleManifest({
     schema_version: CLOSED_BUNDLE_SCHEMA_VERSION,
     server_definition_included: false,
     source_plan_sha256: sourcePlanSha256,
-    supported_action_kinds: [...learnerViewContract.transition_profile.action_kinds],
+    supported_action_kinds: [...canonicalWireContract.transition_profile.action_kinds],
     supported_representation_kinds: [...learnerViewContract.representation_kinds],
-    transition_profile_id: learnerViewContract.transition_profile.profile_id,
+    transition_profile_id: canonicalWireContract.transition_profile.profile_id,
+    wire_schema_id: canonicalWireContract.schema_id,
+    wire_schema_sha256: canonicalWireContract.schema_sha256,
     wave_id: waveId,
   };
 }
@@ -228,6 +332,9 @@ function validateBundleManifest(value, expected) {
       'excluded_content_classes',
       'included_files',
       'job_id',
+      'learner_experience_schema_id',
+      'learner_experience_schema_sha256',
+      'learner_payload_files',
       'learner_view_schema_id',
       'learner_view_schema_sha256',
       'lesson_id',
@@ -246,6 +353,8 @@ function validateBundleManifest(value, expected) {
       'supported_representation_kinds',
       'transition_profile_id',
       'wave_id',
+      'wire_schema_id',
+      'wire_schema_sha256',
     ],
     'bundle manifest',
   );
@@ -253,190 +362,250 @@ function validateBundleManifest(value, expected) {
   assert.deepEqual(value, canonical, 'Bundle manifest does not match signed integration pins');
 }
 
-function validateLearnerSafeEnvelope(envelope, expected, learnerViewValidator) {
+function validateCollapsedDisclosure(value, label) {
+  if (value === null) return;
+  assertExactKeys(value, ['collapsed', 'label'], label);
+  assert.equal(value.collapsed, true, `${label} must be collapsed by default`);
+  requireString(value.label, `${label}.label`);
+}
+
+function validateLearnerQuestionGroup(group, expectedStage, label) {
   assertExactKeys(
-    envelope,
-    ['lesson_step_views', 'media_digests', 'schema_version', 'view_schema_id'],
-    'learner-safe envelope',
+    group,
+    [
+      'activity_ref',
+      'consequential',
+      'counts_as_instructional_exit',
+      'family_ref',
+      'feedback_policy',
+      'low_stakes',
+      'question_count',
+    ],
+    label,
   );
-  assert.equal(envelope.schema_version, 'mcat-v3-learner-safe-view-envelope-2');
-  assert.equal(envelope.view_schema_id, expected.learnerViewContract.view_schema_id);
-  assert(
-    Array.isArray(envelope.lesson_step_views) && envelope.lesson_step_views.length > 0,
-    'Learner-safe envelope must contain individual lesson step views',
-  );
-  const profile = expected.learnerViewContract.semantic_profile;
-  const transitionProfile = expected.learnerViewContract.transition_profile;
-  const activityIds = new Set();
-  const referencedMedia = new Map();
-  for (const [viewIndex, view] of envelope.lesson_step_views.entries()) {
+  requireString(group.activity_ref, `${label}.activity_ref`);
+  requireString(group.family_ref, `${label}.family_ref`);
+  assert.equal(group.question_count, 1, `${label} must contain exactly one question`);
+  if (expectedStage === 'ENTRY_CHECK') {
+    assert.equal(group.low_stakes, true);
+    assert.equal(group.consequential, false);
+    assert.equal(group.counts_as_instructional_exit, false);
     assert(
-      learnerViewValidator(view),
-      `Learner step view fails pinned schema: ${JSON.stringify(learnerViewValidator.errors)}`,
+      ['NONE', 'DELAYED_NONCONTAMINATING'].includes(group.feedback_policy),
+      `${label} entry feedback could contaminate later families`,
     );
+  } else {
+    assert.equal(group.low_stakes, false);
+    assert.equal(group.consequential, true);
     assert.equal(
-      resolveJsonPointer(view, profile.view_schema_version_pointer, `learner view[${viewIndex}]`),
-      profile.expected_view_schema_version,
-      'Learner view schemaVersion does not match the signed semantic profile',
+      group.counts_as_instructional_exit,
+      expectedStage === 'DUAL_EXIT_NEAR' || expectedStage === 'DUAL_EXIT_TRANSFER',
     );
-    assert.equal(
-      resolveJsonPointer(view, profile.lesson_id_pointer, `learner view[${viewIndex}]`),
-      expected.lessonId,
-      'Learner view lessonId does not match the job lesson',
+    requireString(group.feedback_policy, `${label}.feedback_policy`);
+  }
+}
+
+function validateLearnerModel(model, label) {
+  assertExactKeys(
+    model,
+    [
+      'accessible_equivalent',
+      'description',
+      'figure_title',
+      'redox_accounting',
+      'reduced_motion_fallback',
+      'static_fallback',
+      'visual_kind',
+    ],
+    label,
+  );
+  requireString(model.accessible_equivalent, `${label}.accessible_equivalent`);
+  requireString(model.description, `${label}.description`);
+  requireString(model.figure_title, `${label}.figure_title`);
+  requireString(model.visual_kind, `${label}.visual_kind`);
+  assert.equal(model.reduced_motion_fallback, true);
+  assert.equal(model.static_fallback, true);
+}
+
+function validateRedoxExemplar(model, label) {
+  assert.equal(model.visual_kind, 'REDOX_ACCOUNTING_DIAGRAM');
+  assertExactKeys(
+    model.redox_accounting,
+    ['accounting_equation', 'animation_claim', 'highlighted_changes', 'unchanged_tail_treatment'],
+    `${label}.redox_accounting`,
+  );
+  assert.equal(model.redox_accounting.accounting_equation, 'Q + 2 H+ + 2 e- -> QH2');
+  assert.equal(
+    model.redox_accounting.animation_claim,
+    'ACCOUNTING_NOT_ASSERTED_ELEMENTARY_MECHANISM',
+  );
+  assert.deepEqual(model.redox_accounting.highlighted_changes, [
+    'CHANGING_OXYGEN_1_AND_BOND',
+    'CHANGING_OXYGEN_2_AND_BOND',
+  ]);
+  assert.equal(model.redox_accounting.unchanged_tail_treatment, 'GRAYED');
+}
+
+function validateLearnerExperience(
+  experience,
+  { constructBindings, learnerExperienceContract, lessonId },
+  learnerExperienceValidator,
+) {
+  assertNoLearnerControlPlaneLeakage(experience, 'learner-experience.json');
+  assert(
+    learnerExperienceValidator(experience),
+    `Learner experience fails pinned projection schema: ${JSON.stringify(
+      learnerExperienceValidator.errors,
+    )}`,
+  );
+  assertExactKeys(experience, ['constructs', 'lesson_title'], 'learner experience');
+  requireString(experience.lesson_title, 'learner experience lesson title');
+  assert(Array.isArray(experience.constructs) && experience.constructs.length > 0);
+  assert.deepEqual(
+    experience.constructs.map((construct) => construct.construct_ref),
+    constructBindings.map((binding) => binding.construct_ref),
+    'Learner constructs do not match the compiler-signed candidate projection',
+  );
+  const activityIds = new Set();
+  for (const [constructIndex, construct] of experience.constructs.entries()) {
+    const label = `learner construct[${constructIndex}]`;
+    assertExactKeys(construct, ['construct_ref', 'screens'], label);
+    requireString(construct.construct_ref, `${label}.construct_ref`);
+    assert(Array.isArray(construct.screens));
+    const hasEntryCheck = construct.screens[0]?.stage === 'ENTRY_CHECK';
+    const instructionalScreens = hasEntryCheck ? construct.screens.slice(1) : construct.screens;
+    assert.deepEqual(
+      instructionalScreens.map((screen) => screen.stage),
+      learnerExperienceContract.required_stage_order,
+      `${label} must follow orientation -> model -> worked -> guided -> less help -> solo -> dual exit`,
     );
-    const availableActions = resolveJsonPointer(
-      view,
-      profile.available_actions_pointer,
-      `learner view[${viewIndex}]`,
-    );
-    assert(Array.isArray(availableActions), 'Learner view available actions must be an array');
-    for (const actionKind of availableActions) {
+    const familyRefs = new Set();
+    for (const [screenIndex, screen] of construct.screens.entries()) {
+      const screenLabel = `${label}.screens[${screenIndex}]`;
+      assertExactKeys(
+        screen,
+        [
+          'explanation',
+          'fading_ladder_visible',
+          'focus_now',
+          'glossary',
+          'model',
+          'optional_details',
+          'primary_action',
+          'primary_objective',
+          'question_group',
+          'screen_ref',
+          'sidebars',
+          'stage',
+        ],
+        screenLabel,
+      );
+      requireString(screen.screen_ref, `${screenLabel}.screen_ref`);
+      requireString(screen.focus_now, `${screenLabel}.focus_now`);
       assert(
-        transitionProfile.action_kinds.includes(actionKind),
-        `Learner view exposes unsupported action ${actionKind}`,
+        [...screen.focus_now].length <= learnerExperienceContract.focus_now_max_characters,
+        `${screenLabel}.focus_now exceeds the signed short-cue limit`,
       );
-    }
-    const activity = resolveJsonPointer(
-      view,
-      profile.activity_pointer,
-      `learner view[${viewIndex}]`,
-    );
-    if (activity === null) continue;
-    const activityId = resolveJsonPointer(
-      activity,
-      profile.activity_id_pointer,
-      `learner view[${viewIndex}] activity`,
-    );
-    requireString(activityId, `learner view[${viewIndex}] activity ID`);
-    assert(!activityIds.has(activityId), `Duplicate learner-safe activity ${activityId}`);
-    activityIds.add(activityId);
-    const representations = resolveJsonPointer(
-      activity,
-      profile.representations_pointer,
-      `learner view[${viewIndex}] activity`,
-    );
-    assert(Array.isArray(representations), 'Learner activity representations must be an array');
-    for (const [representationIndex, representation] of representations.entries()) {
-      const label = `learner view[${viewIndex}] representation[${representationIndex}]`;
-      const kind = resolveJsonPointer(representation, profile.representation_kind_pointer, label);
-      assert(
-        expected.learnerViewContract.representation_kinds.includes(kind),
-        `${label} uses unsupported representation kind ${kind}`,
-      );
-      const mediaProfile = profile.media_profile;
-      if (kind !== mediaProfile.audio_kind && kind !== mediaProfile.video_kind) continue;
-      const assetRef = resolveJsonPointer(representation, mediaProfile.asset_ref_pointer, label);
-      const transcript = resolveJsonPointer(representation, mediaProfile.transcript_pointer, label);
-      const captionsRef = resolveJsonPointer(
-        representation,
-        mediaProfile.captions_ref_pointer,
-        label,
-      );
-      requireString(assetRef, `${label} asset reference`);
-      assert(Array.isArray(transcript) && transcript.length > 0, `${label} needs a transcript`);
-      transcript.forEach((line, lineIndex) =>
-        requireString(line, `${label} transcript[${lineIndex}]`),
-      );
-      const captionsRequired =
-        kind === mediaProfile.audio_kind
-          ? mediaProfile.audio_captions_required
-          : mediaProfile.video_captions_required;
-      if (captionsRequired) requireString(captionsRef, `${label} captions reference`);
-      else assert(captionsRef === null || typeof captionsRef === 'string');
-      const mediaRecord = {
-        captions_present: captionsRef !== null,
-        kind,
-        transcript_sha256: hashCanonicalJson(transcript),
-      };
-      if (referencedMedia.has(assetRef)) {
-        assert.deepEqual(
-          referencedMedia.get(assetRef),
-          mediaRecord,
-          `${assetRef} has inconsistent learner-safe media semantics`,
+      requireString(screen.primary_objective, `${screenLabel}.primary_objective`);
+      assertExactKeys(screen.primary_action, ['kind', 'label'], `${screenLabel}.primary_action`);
+      requireString(screen.primary_action.kind, `${screenLabel}.primary_action.kind`);
+      requireString(screen.primary_action.label, `${screenLabel}.primary_action.label`);
+      assert.equal(screen.fading_ladder_visible, false);
+      assert.deepEqual(screen.sidebars, [], `${screenLabel} may not have competing sidebars`);
+      validateCollapsedDisclosure(screen.optional_details, `${screenLabel}.optional_details`);
+      validateCollapsedDisclosure(screen.glossary, `${screenLabel}.glossary`);
+      if (screen.explanation !== null) {
+        requireString(screen.explanation, `${screenLabel}.explanation`);
+      }
+      if (screen.model !== null) validateLearnerModel(screen.model, `${screenLabel}.model`);
+      if (screen.question_group !== null) {
+        validateLearnerQuestionGroup(
+          screen.question_group,
+          screen.stage,
+          `${screenLabel}.question`,
         );
-      } else {
-        referencedMedia.set(assetRef, mediaRecord);
+        assert(
+          !activityIds.has(screen.question_group.activity_ref),
+          `Duplicate learner activity ${screen.question_group.activity_ref}`,
+        );
+        activityIds.add(screen.question_group.activity_ref);
+        familyRefs.add(screen.question_group.family_ref);
       }
     }
-  }
-  assert(activityIds.size > 0, 'Learner-safe envelope has no active activity view');
-  assert(Array.isArray(envelope.media_digests), 'media_digests must be an array');
-  assert.equal(
-    envelope.media_digests.length,
-    referencedMedia.size,
-    'Media digests must exactly cover learner-view media references',
-  );
-  const mediaRefs = new Set();
-  for (const [index, media] of envelope.media_digests.entries()) {
-    const label = `media_digests[${index}]`;
-    assertExactKeys(
-      media,
-      ['asset_ref', 'captions_sha256', 'media_kind', 'media_sha256', 'transcript_sha256'],
-      label,
-    );
-    requireString(media.asset_ref, `${label}.asset_ref`);
-    requireString(media.media_kind, `${label}.media_kind`);
-    requireHash(media.media_sha256, `${label}.media_sha256`);
-    requireHash(media.transcript_sha256, `${label}.transcript_sha256`);
-    assert(!mediaRefs.has(media.asset_ref), `Duplicate media digest ${media.asset_ref}`);
-    mediaRefs.add(media.asset_ref);
-    const referenced = referencedMedia.get(media.asset_ref);
-    assert(referenced, `${label} does not correspond to learner-view media`);
-    assert.equal(media.media_kind, referenced.kind);
-    assert.equal(media.transcript_sha256, referenced.transcript_sha256);
-    if (referenced.captions_present) {
-      requireHash(media.captions_sha256, `${label}.captions_sha256`);
-    } else {
-      assert.equal(media.captions_sha256, null);
+    if (hasEntryCheck) {
+      assert.equal(construct.screens[0].stage, 'ENTRY_CHECK');
+      assert(construct.screens[0].question_group !== null);
     }
+    for (const stage of ['ORIENTATION', 'MODEL', 'WORKED_EXAMPLE']) {
+      const screen = instructionalScreens.find((candidate) => candidate.stage === stage);
+      assert(screen);
+      if (stage === 'ORIENTATION') requireString(screen.explanation, `${label} orientation`);
+      if (stage === 'MODEL') assert(screen.model, `${label} model screen lacks a model/visual`);
+      if (stage === 'WORKED_EXAMPLE') {
+        requireString(screen.explanation, `${label} worked explanation`);
+        assert(screen.model, `${label} worked example lacks a model/visual`);
+      }
+    }
+    for (const stage of [
+      'GUIDED_PRACTICE',
+      'LESS_HELP_PRACTICE',
+      'SOLO_PRACTICE',
+      'DUAL_EXIT_NEAR',
+      'DUAL_EXIT_TRANSFER',
+    ]) {
+      assert(
+        instructionalScreens.find((screen) => screen.stage === stage)?.question_group,
+        `${label} ${stage} lacks one consequential question group`,
+      );
+    }
+    const exitFamilies = instructionalScreens
+      .filter((screen) => screen.stage.startsWith('DUAL_EXIT_'))
+      .map((screen) => screen.question_group.family_ref);
+    assert.equal(new Set(exitFamilies).size, 2, `${label} dual exits must use distinct families`);
+    const practiceFamilies = instructionalScreens
+      .filter((screen) => screen.question_group !== null)
+      .map((screen) => screen.question_group.family_ref);
+    assert.equal(
+      new Set(practiceFamilies).size,
+      practiceFamilies.length,
+      `${label} consequential practice families must remain isolated`,
+    );
+    if (hasEntryCheck) {
+      assert(
+        !practiceFamilies.includes(construct.screens[0].question_group.family_ref),
+        `${label} entry-check family contaminates consequential practice`,
+      );
+    }
+    assert(familyRefs.size >= 5, `${label} practice families are not sufficiently isolated`);
   }
-  assert.deepEqual(
-    envelope.media_digests.map((media) => media.asset_ref),
-    [...mediaRefs].sort(compareText),
-    'Media digests must be asset-reference sorted',
-  );
+  if (lessonId === 'V3-LES-329622') {
+    const redoxBinding = constructBindings.find((binding) => binding.kc_id === 'V3-KC-271440');
+    assert(redoxBinding, 'Redox pilot lacks its compiler-signed construct binding');
+    const redoxConstruct = experience.constructs.find(
+      (construct) => construct.construct_ref === redoxBinding.construct_ref,
+    );
+    const redoxModel = redoxConstruct?.screens.find((screen) => screen.stage === 'MODEL')?.model;
+    assert(redoxModel, 'Redox pilot lacks its required model');
+    validateRedoxExemplar(redoxModel, 'redox model');
+  }
+  assert(activityIds.size > 0, 'Learner experience has no practice activities');
   return activityIds;
 }
 
 function validateBlindClientRuntime(value, expected) {
   assertExactKeys(
     value,
-    [
-      'action_schema_id',
-      'action_schema_sha256',
-      'client_scoring_authority',
-      'outcome_override_controls',
-      'rationales_before_response',
-      'request_action_kinds',
-      'response_fields',
-      'schema_version',
-      'service_protocol_profile_id',
-      'submit_endpoint_path',
-      'view_schema_id',
-    ],
+    ['client_mode', 'learner_action_kinds', 'response_fields', 'submit_endpoint_path'],
     'blind client runtime',
   );
-  assert.equal(value.schema_version, 'mcat-v3-opaque-blind-client-runtime-3');
-  assert.equal(value.action_schema_id, expected.learnerViewContract.action_schema_id);
-  assert.equal(value.action_schema_sha256, expected.learnerViewContract.action_schema_sha256);
-  assert.equal(value.view_schema_id, expected.learnerViewContract.view_schema_id);
-  assert.equal(
-    value.service_protocol_profile_id,
-    expected.learnerViewContract.transition_profile.profile_id,
-  );
+  assertNoLearnerControlPlaneLeakage(value, 'blind-client-runtime.json');
+  assert.equal(value.client_mode, 'OPAQUE_SCORING_NO_LOCAL_AUTHORITY');
   assert.equal(value.submit_endpoint_path, '/submit');
   assert.deepEqual(
-    value.request_action_kinds,
-    expected.learnerViewContract.transition_profile.action_kinds,
+    value.learner_action_kinds,
+    expected.canonicalWireContract.transition_profile.action_kinds,
   );
-  assert.deepEqual(value.response_fields, [
-    'learner_feedback',
-    'learner_step_view',
-    'service_receipt',
-  ]);
-  assert.equal(value.client_scoring_authority, false);
-  assert.equal(value.outcome_override_controls, false);
-  assert.equal(value.rationales_before_response, false);
+  assert.deepEqual(value.response_fields, ['learner_feedback', 'next_learner_experience']);
   assert.equal(expected.bundleKind, 'BLIND_SOLVE');
 }
 
@@ -445,9 +614,12 @@ function validateAccessibilityHarnessConfig(value, expected) {
     value,
     [
       'browser_execution_required',
+      'learner_experience_schema_id',
       'learner_action_schema_id',
       'learner_view_schema_id',
+      'minimum_touch_target_px',
       'required_check_ids',
+      'required_viewport_widths_px',
       'review_harness_build_id',
       'review_harness_build_sha256',
       'review_harness_build_version',
@@ -457,17 +629,20 @@ function validateAccessibilityHarnessConfig(value, expected) {
     ],
     'accessibility harness config',
   );
-  assert.equal(value.schema_version, 'mcat-v3-accessibility-harness-config-2');
+  assert.equal(value.schema_version, 'mcat-v3-accessibility-harness-config-3');
   assert.equal(value.browser_execution_required, true);
+  assert.equal(value.learner_experience_schema_id, expected.learnerExperienceContract.schema_id);
   assert.equal(value.learner_action_schema_id, expected.learnerViewContract.action_schema_id);
   assert.equal(value.learner_view_schema_id, expected.learnerViewContract.view_schema_id);
   assert.equal(value.review_harness_build_id, expected.reviewHarnessBuild.build_id);
   assert.equal(value.review_harness_build_sha256, expected.reviewHarnessBuild.artifact_sha256);
   assert.equal(value.review_harness_build_version, expected.reviewHarnessBuild.build_version);
   assert.deepEqual(value.required_check_ids, [...REQUIRED_ACCESSIBILITY_CHECK_IDS]);
+  assert.deepEqual(value.required_viewport_widths_px, [320, 375, 1440]);
+  assert.equal(value.minimum_touch_target_px, 44);
   assert.equal(
     value.transition_profile_id,
-    expected.learnerViewContract.transition_profile.profile_id,
+    expected.canonicalWireContract.transition_profile.profile_id,
   );
   assert.deepEqual(
     value.supported_representation_kinds,
@@ -475,13 +650,37 @@ function validateAccessibilityHarnessConfig(value, expected) {
   );
 }
 
+function validateNoviceWalkthroughConfig(value, expected) {
+  assertExactKeys(
+    value,
+    [
+      'internal_walkthrough_not_learner_validation',
+      'required_questions',
+      'required_viewport_widths_px',
+      'schema_version',
+    ],
+    'novice walkthrough config',
+  );
+  assert.equal(value.schema_version, 'mcat-v3-novice-walkthrough-config-1');
+  assert.equal(value.internal_walkthrough_not_learner_validation, true);
+  assert.deepEqual(value.required_viewport_widths_px, [375, 1440]);
+  assert.deepEqual(value.required_questions, [
+    'WHAT_CHANGED',
+    'WHAT_DO_I_DO_NEXT',
+    'WHAT_SHOULD_I_FOCUS_ON',
+  ]);
+  assert.equal(expected.bundleKind, 'NOVICE_WALKTHROUGH');
+}
+
 async function validateAndHashClosedReviewBundle({
   bundleKind,
   bundlePath,
+  canonicalWireContract,
   compilerBuild,
   jobId,
+  learnerExperienceContract,
+  learnerExperienceValidator,
   learnerViewContract,
-  learnerViewValidator,
   lessonId,
   projectionReport,
   projectionReportSha256,
@@ -492,6 +691,7 @@ async function validateAndHashClosedReviewBundle({
   sourcePlanSha256,
   waveId,
 }) {
+  assert(Object.hasOwn(BUNDLE_FILES, bundleKind), `Unknown bundle kind ${bundleKind}`);
   const descriptor = {
     artifact_path: bundlePath,
     artifact_sha256: '0'.repeat(64),
@@ -522,8 +722,10 @@ async function validateAndHashClosedReviewBundle({
   }
   const expected = {
     bundleKind,
+    canonicalWireContract,
     compilerBuild,
     jobId,
+    learnerExperienceContract,
     learnerViewContract,
     lessonId,
     projectionReportSha256,
@@ -534,10 +736,14 @@ async function validateAndHashClosedReviewBundle({
     waveId,
   };
   validateBundleManifest(documents.get('bundle-manifest.json'), expected);
-  const activityIds = validateLearnerSafeEnvelope(
-    documents.get('learner-safe-envelope.json'),
-    { learnerViewContract, lessonId },
-    learnerViewValidator,
+  const activityIds = validateLearnerExperience(
+    documents.get('learner-experience.json'),
+    {
+      constructBindings: projectionReport.construct_bindings,
+      learnerExperienceContract,
+      lessonId,
+    },
+    learnerExperienceValidator,
   );
   const output = projectionReport.outputs.find((item) => item.bundle_kind === bundleKind);
   assert(output, `Signed compiler report lacks ${bundleKind} output`);
@@ -556,11 +762,13 @@ async function validateAndHashClosedReviewBundle({
   );
   if (bundleKind === 'BLIND_SOLVE') {
     validateBlindClientRuntime(documents.get('blind-client-runtime.json'), expected);
-  } else {
+  } else if (bundleKind === 'ACCESSIBILITY_ONLY') {
     validateAccessibilityHarnessConfig(
       documents.get('accessibility-harness-config.json'),
       expected,
     );
+  } else {
+    validateNoviceWalkthroughConfig(documents.get('novice-walkthrough-config.json'), expected);
   }
   const report = {
     bundle_kind: bundleKind,
@@ -835,10 +1043,14 @@ function validateSafeProjectionReportDocument(value, expected) {
       'compiler_build_sha256',
       'compiler_build_version',
       'compiler_signing_key_fingerprint',
+      'construct_bindings',
       'job_id',
+      'learner_experience_schema_id',
+      'learner_experience_schema_sha256',
       'learner_view_schema_id',
       'learner_view_schema_sha256',
       'lesson_id',
+      'media_digests',
       'outputs',
       'report_id',
       'review_harness_build_sha256',
@@ -849,6 +1061,8 @@ function validateSafeProjectionReportDocument(value, expected) {
       'status',
       'transition_profile_id',
       'wave_id',
+      'wire_schema_id',
+      'wire_schema_sha256',
     ],
     'safe-projection compiler report',
   );
@@ -869,9 +1083,16 @@ function validateSafeProjectionReportDocument(value, expected) {
   assert.equal(value.action_schema_sha256, expected.learnerViewContract.action_schema_sha256);
   assert.equal(value.learner_view_schema_id, expected.learnerViewContract.view_schema_id);
   assert.equal(value.learner_view_schema_sha256, expected.learnerViewContract.view_schema_sha256);
+  assert.equal(value.learner_experience_schema_id, expected.learnerExperienceContract.schema_id);
+  assert.equal(
+    value.learner_experience_schema_sha256,
+    expected.learnerExperienceContract.schema_sha256,
+  );
+  assert.equal(value.wire_schema_id, expected.canonicalWireContract.schema_id);
+  assert.equal(value.wire_schema_sha256, expected.canonicalWireContract.schema_sha256);
   assert.equal(
     value.transition_profile_id,
-    expected.learnerViewContract.transition_profile.profile_id,
+    expected.canonicalWireContract.transition_profile.profile_id,
   );
   assert.equal(value.compiler_build_id, expected.compilerBuild.build_id);
   assert.equal(value.compiler_build_sha256, expected.compilerBuild.artifact_sha256);
@@ -881,7 +1102,30 @@ function validateSafeProjectionReportDocument(value, expected) {
   assert.equal(value.review_harness_build_version, expected.reviewHarnessBuild.build_version);
   assert.equal(value.status, 'DERIVED_BY_PINNED_COMPILER');
   requireString(value.report_id, 'safe-projection report ID');
-  assert(Array.isArray(value.outputs) && value.outputs.length === 2);
+  assert(Array.isArray(value.media_digests), 'media_digests must be an array');
+  value.media_digests.forEach((digest, index) => {
+    assertExactKeys(digest, ['asset_ref', 'sha256'], `media digest[${index}]`);
+    requireString(digest.asset_ref, `media digest[${index}].asset_ref`);
+    requireHash(digest.sha256, `media digest[${index}].sha256`);
+  });
+  assert.deepEqual(
+    value.media_digests.map((digest) => digest.asset_ref),
+    [...new Set(value.media_digests.map((digest) => digest.asset_ref))].sort(compareText),
+    'Media digests must be unique and asset-reference sorted',
+  );
+  assert(Array.isArray(value.construct_bindings), 'construct_bindings must be an array');
+  assert.equal(value.construct_bindings.length, expected.orderedKcIds.length);
+  for (const [index, binding] of value.construct_bindings.entries()) {
+    assertExactKeys(binding, ['construct_ref', 'kc_id'], `construct binding[${index}]`);
+    requireString(binding.construct_ref, `construct binding[${index}].construct_ref`);
+    assert.equal(binding.kc_id, expected.orderedKcIds[index]);
+  }
+  assert.equal(
+    new Set(value.construct_bindings.map((binding) => binding.construct_ref)).size,
+    value.construct_bindings.length,
+    'Construct bindings duplicate a learner-safe construct reference',
+  );
+  assert(Array.isArray(value.outputs) && value.outputs.length === 3);
   const outputKinds = [];
   for (const [index, output] of value.outputs.entries()) {
     const label = `safe-projection outputs[${index}]`;
@@ -900,18 +1144,25 @@ function validateSafeProjectionReportDocument(value, expected) {
     );
     outputKinds.push(output.bundle_kind);
   }
-  assert.deepEqual(outputKinds.sort(compareText), ['ACCESSIBILITY_ONLY', 'BLIND_SOLVE']);
+  assert.deepEqual(outputKinds.sort(compareText), [
+    'ACCESSIBILITY_ONLY',
+    'BLIND_SOLVE',
+    'NOVICE_WALKTHROUGH',
+  ]);
 }
 
 async function validateSafeProjectionEvidence({
   candidateFileManifest,
   candidateSha256,
   candidateValidatorExecutionReportSha256,
+  canonicalWireContract,
   compilerBuild,
   evidence,
   jobId,
+  learnerExperienceContract,
   learnerViewContract,
   lessonId,
+  orderedKcIds,
   repositoryRoot,
   reviewHarnessBuild,
   runtimeContract,
@@ -949,9 +1200,12 @@ async function validateSafeProjectionEvidence({
       build_version: compilerBuild.manifest.build_version,
     },
     compilerSigningKeyFingerprint: compilerBuild.signing_key.fingerprint,
+    canonicalWireContract,
     jobId,
+    learnerExperienceContract,
     learnerViewContract,
     lessonId,
+    orderedKcIds,
     reviewHarnessBuild: {
       artifact_sha256: reviewHarnessBuild.artifact_sha256,
       build_id: reviewHarnessBuild.manifest.build_id,
@@ -1104,8 +1358,6 @@ function validateServiceDeploymentManifest(value, expected) {
   assertExactKeys(
     value,
     [
-      'action_schema_id',
-      'action_schema_sha256',
       'candidate_sha256',
       'candidate_validator_execution_report_sha256',
       'deployment_id',
@@ -1122,6 +1374,8 @@ function validateServiceDeploymentManifest(value, expected) {
       'source_plan_sha256',
       'transition_profile_id',
       'wave_id',
+      'wire_schema_id',
+      'wire_schema_sha256',
     ],
     'service deployment manifest',
   );
@@ -1136,11 +1390,11 @@ function validateServiceDeploymentManifest(value, expected) {
     expected.candidateValidatorExecutionReportSha256,
   );
   assert.equal(value.safe_client_sha256, expected.safeClientSha256);
-  assert.equal(value.action_schema_id, expected.learnerViewContract.action_schema_id);
-  assert.equal(value.action_schema_sha256, expected.learnerViewContract.action_schema_sha256);
+  assert.equal(value.wire_schema_id, expected.canonicalWireContract.schema_id);
+  assert.equal(value.wire_schema_sha256, expected.canonicalWireContract.schema_sha256);
   assert.equal(
     value.transition_profile_id,
-    expected.learnerViewContract.transition_profile.profile_id,
+    expected.canonicalWireContract.transition_profile.profile_id,
   );
   assert.equal(value.scoring_service_build_id, expected.scoringBuild.build_id);
   assert.equal(value.scoring_service_build_sha256, expected.scoringBuild.artifact_sha256);
@@ -1154,9 +1408,9 @@ function validateServiceDeploymentManifest(value, expected) {
 async function validateServiceDeploymentArtifact({
   candidateSha256,
   candidateValidatorExecutionReportSha256,
+  canonicalWireContract,
   descriptor,
   jobId,
-  learnerViewContract,
   lessonId,
   repositoryRoot,
   safeClientSha256,
@@ -1185,9 +1439,9 @@ async function validateServiceDeploymentArtifact({
   validateServiceDeploymentManifest(manifestFile.value, {
     candidateSha256,
     candidateValidatorExecutionReportSha256,
+    canonicalWireContract,
     jobId,
     lessonId,
-    learnerViewContract,
     receiptKeyFingerprint: receiptKey.fingerprint,
     safeClientSha256,
     scoringBuild,
@@ -1202,8 +1456,6 @@ function validateOpaqueServiceAttestationDocument(value, expected) {
     value,
     [
       'accepts_real_submitted_responses',
-      'action_schema_id',
-      'action_schema_sha256',
       'candidate_sha256',
       'candidate_validator_execution_report_sha256',
       'deployment_id',
@@ -1226,6 +1478,8 @@ function validateOpaqueServiceAttestationDocument(value, expected) {
       'source_plan_sha256',
       'transition_profile_id',
       'wave_id',
+      'wire_schema_id',
+      'wire_schema_sha256',
     ],
     'opaque service deployment/ACL attestation',
   );
@@ -1239,11 +1493,11 @@ function validateOpaqueServiceAttestationDocument(value, expected) {
     value.candidate_validator_execution_report_sha256,
     expected.candidateValidatorExecutionReportSha256,
   );
-  assert.equal(value.action_schema_id, expected.learnerViewContract.action_schema_id);
-  assert.equal(value.action_schema_sha256, expected.learnerViewContract.action_schema_sha256);
+  assert.equal(value.wire_schema_id, expected.canonicalWireContract.schema_id);
+  assert.equal(value.wire_schema_sha256, expected.canonicalWireContract.schema_sha256);
   assert.equal(
     value.transition_profile_id,
-    expected.learnerViewContract.transition_profile.profile_id,
+    expected.canonicalWireContract.transition_profile.profile_id,
   );
   assert.equal(value.safe_client_sha256, expected.safeClientSha256);
   assert.equal(value.deployment_id, expected.deployment.manifest.deployment_id);
@@ -1268,12 +1522,12 @@ function validateOpaqueServiceAttestationDocument(value, expected) {
 async function validateSignedOpaqueServiceAttestation({
   candidateSha256,
   candidateValidatorExecutionReportSha256,
+  canonicalWireContract,
   deployment,
   descriptor,
   integrationTrustRootPem,
   integratorIdentity,
   jobId,
-  learnerViewContract,
   lessonId,
   repositoryRoot,
   safeClientSha256,
@@ -1303,10 +1557,10 @@ async function validateSignedOpaqueServiceAttestation({
   validateOpaqueServiceAttestationDocument(signed.value, {
     candidateSha256,
     candidateValidatorExecutionReportSha256,
+    canonicalWireContract,
     deployment,
     integratorIdentity,
     jobId,
-    learnerViewContract,
     lessonId,
     safeClientSha256,
     solverIdentity,
@@ -1602,7 +1856,6 @@ function validateReceiptManifest(value, expected) {
   assertExactKeys(
     value,
     [
-      'action_schema_id',
       'candidate_sha256',
       'deployment_id',
       'entries',
@@ -1614,14 +1867,17 @@ function validateReceiptManifest(value, expected) {
       'session_closed',
       'session_id',
       'transition_profile_id',
+      'wire_schema_id',
+      'wire_schema_sha256',
     ],
     'service receipt manifest',
   );
   assert.equal(value.schema_version, SERVICE_RECEIPT_MANIFEST_SCHEMA_VERSION);
-  assert.equal(value.action_schema_id, expected.learnerViewContract.action_schema_id);
+  assert.equal(value.wire_schema_id, expected.canonicalWireContract.schema_id);
+  assert.equal(value.wire_schema_sha256, expected.canonicalWireContract.schema_sha256);
   assert.equal(
     value.transition_profile_id,
-    expected.learnerViewContract.transition_profile.profile_id,
+    expected.canonicalWireContract.transition_profile.profile_id,
   );
   assert.equal(value.candidate_sha256, expected.candidateSha256);
   assert.equal(value.safe_client_sha256, expected.safeClientSha256);
@@ -1640,12 +1896,20 @@ function validateReceiptManifest(value, expected) {
     const label = `service receipt manifest.entries[${index}]`;
     assertExactKeys(
       entry,
-      ['receipt_path', 'receipt_sha256', 'sequence', 'signature_path', 'signature_sha256'],
+      [
+        'canonical_receipt_sha256',
+        'receipt_path',
+        'receipt_sha256',
+        'sequence',
+        'signature_path',
+        'signature_sha256',
+      ],
       label,
     );
     assert.equal(entry.sequence, index + 1, `${label}.sequence must be contiguous`);
     requireString(entry.receipt_path, `${label}.receipt_path`);
     requireHash(entry.receipt_sha256, `${label}.receipt_sha256`);
+    requireHash(entry.canonical_receipt_sha256, `${label}.canonical_receipt_sha256`);
     requireString(entry.signature_path, `${label}.signature_path`);
     requireHash(entry.signature_sha256, `${label}.signature_sha256`);
     for (const path of [entry.receipt_path, entry.signature_path]) {
@@ -1658,9 +1922,10 @@ function validateReceiptManifest(value, expected) {
 async function validateSignedServiceReceiptArtifact({
   activityIds,
   candidateSha256,
+  canonicalWireContract,
+  canonicalWireValidator,
   deployment,
   descriptor,
-  learnerViewContract,
   repositoryRoot,
   safeClientSha256,
 }) {
@@ -1687,8 +1952,8 @@ async function validateSignedServiceReceiptArtifact({
   });
   validateReceiptManifest(manifest, {
     candidateSha256,
+    canonicalWireContract,
     deployment,
-    learnerViewContract,
     safeClientSha256,
   });
   const expectedPaths = new Set(['receipt-manifest.json', 'receipt-manifest.sig']);
@@ -1723,8 +1988,19 @@ async function validateSignedServiceReceiptArtifact({
       safeClientSha256,
       sequence: entry.sequence,
       sessionId: manifest.session_id,
-      transitionProfile: learnerViewContract.transition_profile,
+      transitionProfile: canonicalWireContract.transition_profile,
     });
+    assert(
+      canonicalWireValidator(signed.value),
+      `Service receipt fails canonical wire schema: ${JSON.stringify(
+        canonicalWireValidator.errors,
+      )}`,
+    );
+    assert.equal(
+      hashCanonicalJson(signed.value),
+      entry.canonical_receipt_sha256,
+      'Service receipt canonical-byte hash is stale',
+    );
     assert(timestamp > previousTimestamp, 'Service receipt timestamps must be strictly increasing');
     if (previousState === null) {
       assert.equal(
@@ -1750,7 +2026,7 @@ async function validateSignedServiceReceiptArtifact({
     receipts,
     required_path_coverage: validateSemanticPathCoverage(
       receipts,
-      learnerViewContract.transition_profile,
+      canonicalWireContract.transition_profile,
     ),
     session_id: manifest.session_id,
   };
@@ -1760,8 +2036,6 @@ function validateServiceIntegrationReportDocument(value, expected) {
   assertExactKeys(
     value,
     [
-      'action_schema_id',
-      'action_schema_sha256',
       'candidate_sha256',
       'checks',
       'deployment_id',
@@ -1778,6 +2052,8 @@ function validateServiceIntegrationReportDocument(value, expected) {
       'status',
       'transition_profile_id',
       'wave_id',
+      'wire_schema_id',
+      'wire_schema_sha256',
     ],
     'service integration execution report',
   );
@@ -1789,11 +2065,11 @@ function validateServiceIntegrationReportDocument(value, expected) {
   assert.equal(value.candidate_sha256, expected.candidateSha256);
   assert.equal(value.safe_client_sha256, expected.safeClientSha256);
   assert.equal(value.deployment_id, expected.deployment.manifest.deployment_id);
-  assert.equal(value.action_schema_id, expected.learnerViewContract.action_schema_id);
-  assert.equal(value.action_schema_sha256, expected.learnerViewContract.action_schema_sha256);
+  assert.equal(value.wire_schema_id, expected.canonicalWireContract.schema_id);
+  assert.equal(value.wire_schema_sha256, expected.canonicalWireContract.schema_sha256);
   assert.equal(
     value.transition_profile_id,
-    expected.learnerViewContract.transition_profile.profile_id,
+    expected.canonicalWireContract.transition_profile.profile_id,
   );
   assert.equal(
     value.scoring_service_build_id,
@@ -1817,7 +2093,7 @@ function validateServiceIntegrationReportDocument(value, expected) {
   }
   assert.deepEqual(
     value.checks.map((check) => check.check_id),
-    expected.learnerViewContract.transition_profile.technical_service_check_ids,
+    expected.canonicalWireContract.transition_profile.technical_service_check_ids,
     'Service integration report is missing signed-profile technical checks',
   );
   assert.deepEqual(
@@ -1829,10 +2105,10 @@ function validateServiceIntegrationReportDocument(value, expected) {
 
 async function validateSignedServiceIntegrationReport({
   candidateSha256,
+  canonicalWireContract,
   deployment,
   descriptor,
   jobId,
-  learnerViewContract,
   lessonId,
   repositoryRoot,
   safeClientSha256,
@@ -1852,9 +2128,9 @@ async function validateSignedServiceIntegrationReport({
   });
   validateServiceIntegrationReportDocument(signed.value, {
     candidateSha256,
+    canonicalWireContract,
     deployment,
     jobId,
-    learnerViewContract,
     lessonId,
     safeClientSha256,
     sourcePlanSha256,
@@ -1896,6 +2172,92 @@ async function validateBrowserAccessibilityEvidenceArtifact({ descriptor, reposi
   return { ...scan, checks };
 }
 
+async function validateLearnerRegressionArtifact({ descriptor, repositoryRoot }) {
+  const requiredFiles = [
+    'desktop-1440.png',
+    'learner-regression-trace.json',
+    'mobile-320.png',
+    'mobile-375.png',
+  ];
+  const scan = await validateArtifactDescriptor(descriptor, {
+    label: 'learner-only mobile/desktop regression artifact',
+    limits: ARTIFACT_LIMITS.browser_evidence,
+    repositoryRoot,
+    requiredFiles,
+  });
+  const [desktop, mobile320, mobile375, traceFile] = await Promise.all([
+    readLimitedFile(
+      join(scan.real_path, 'desktop-1440.png'),
+      'learner-only desktop regression screenshot',
+      ARTIFACT_LIMITS.browser_evidence,
+    ),
+    readLimitedFile(
+      join(scan.real_path, 'mobile-320.png'),
+      'learner-only 320px regression screenshot',
+      ARTIFACT_LIMITS.browser_evidence,
+    ),
+    readLimitedFile(
+      join(scan.real_path, 'mobile-375.png'),
+      'learner-only 375px regression screenshot',
+      ARTIFACT_LIMITS.browser_evidence,
+    ),
+    readLimitedJson(
+      join(scan.real_path, 'learner-regression-trace.json'),
+      'learner-only mobile/desktop regression trace',
+      ARTIFACT_LIMITS.browser_evidence,
+    ),
+  ]);
+  const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  for (const screenshot of [desktop, mobile320, mobile375]) {
+    assert(screenshot.subarray(0, pngSignature.length).equals(pngSignature));
+  }
+  const trace = traceFile.value;
+  assertExactKeys(
+    trace,
+    ['learner_only_capture', 'reviewer_controls_rendered', 'schema_version', 'viewports'],
+    'learner regression trace',
+  );
+  assert.equal(trace.schema_version, 'mcat-v3-learner-mobile-desktop-regression-trace-1');
+  assert.equal(trace.learner_only_capture, true);
+  assert.equal(trace.reviewer_controls_rendered, false);
+  assert(Array.isArray(trace.viewports) && trace.viewports.length === 3);
+  assert.deepEqual(
+    trace.viewports.map((viewport) => viewport.width_px),
+    [320, 375, 1440],
+  );
+  for (const [index, viewport] of trace.viewports.entries()) {
+    const label = `learner regression viewport[${index}]`;
+    assertExactKeys(
+      viewport,
+      [
+        'color_only_progress',
+        'figure_title_description_pass',
+        'focus_order_pass',
+        'height_px',
+        'mandatory_wide_scroll',
+        'minimum_touch_target_px',
+        'primary_action_visible',
+        'primary_visual_visible',
+        'width_px',
+      ],
+      label,
+    );
+    assert(Number.isInteger(viewport.height_px) && viewport.height_px > 0);
+    assert.equal(viewport.mandatory_wide_scroll, false, `${label} requires wide scroll`);
+    assert.equal(viewport.minimum_touch_target_px >= 44, true, `${label} has small touch targets`);
+    assert.equal(viewport.focus_order_pass, true, `${label} has invalid focus order`);
+    assert.equal(
+      viewport.figure_title_description_pass,
+      true,
+      `${label} lacks a figure title/description`,
+    );
+    assert.equal(viewport.color_only_progress, false, `${label} uses color-only progress`);
+    assert.equal(viewport.primary_action_visible, true, `${label} hides the primary action`);
+    assert.equal(viewport.primary_visual_visible, true, `${label} hides the primary visual`);
+  }
+  return scan;
+}
+
 function validateAccessibilityExecutionReportDocument(value, expected) {
   assertExactKeys(
     value,
@@ -1908,13 +2270,17 @@ function validateAccessibilityExecutionReportDocument(value, expected) {
       'harness_build_sha256',
       'harness_build_version',
       'harness_signing_key_fingerprint',
+      'internal_dto_artifacts_are_not_canonical_wire',
       'job_id',
       'learner_action_schema_id',
+      'learner_experience_schema_id',
+      'learner_regression_artifact_sha256',
       'learner_view_schema_id',
       'lesson_id',
       'media_digests',
       'reviewer_identity',
       'reviewer_slot_id',
+      'reviewer_evidence_separate_from_learner_artifact',
       'safe_client_sha256',
       'schema_version',
       'source_plan_sha256',
@@ -1923,6 +2289,8 @@ function validateAccessibilityExecutionReportDocument(value, expected) {
       'supported_representation_kinds',
       'transition_profile_id',
       'wave_id',
+      'wire_schema_id',
+      'wire_schema_sha256',
     ],
     'accessibility execution report',
   );
@@ -1935,9 +2303,18 @@ function validateAccessibilityExecutionReportDocument(value, expected) {
   assert.equal(value.safe_client_sha256, expected.safeClientSha256);
   assert.equal(value.learner_action_schema_id, expected.learnerViewContract.action_schema_id);
   assert.equal(value.learner_view_schema_id, expected.learnerViewContract.view_schema_id);
+  assert.equal(value.learner_experience_schema_id, expected.learnerExperienceContract.schema_id);
+  assert.equal(
+    value.learner_regression_artifact_sha256,
+    expected.learnerRegression.artifact_sha256,
+  );
+  assert.equal(value.wire_schema_id, expected.canonicalWireContract.schema_id);
+  assert.equal(value.wire_schema_sha256, expected.canonicalWireContract.schema_sha256);
+  assert.equal(value.internal_dto_artifacts_are_not_canonical_wire, true);
+  assert.equal(value.reviewer_evidence_separate_from_learner_artifact, true);
   assert.equal(
     value.transition_profile_id,
-    expected.learnerViewContract.transition_profile.profile_id,
+    expected.canonicalWireContract.transition_profile.profile_id,
   );
   assert.equal(value.harness_build_id, expected.harnessBuild.manifest.build_id);
   assert.equal(value.harness_build_sha256, expected.harnessBuild.artifact_sha256);
@@ -1950,7 +2327,7 @@ function validateAccessibilityExecutionReportDocument(value, expected) {
   assert.equal(value.reviewer_slot_id, expected.reviewerSlotId);
   assert.deepEqual(
     value.supported_action_kinds,
-    expected.learnerViewContract.transition_profile.action_kinds,
+    expected.canonicalWireContract.transition_profile.action_kinds,
   );
   assert.deepEqual(
     value.supported_representation_kinds,
@@ -1986,9 +2363,12 @@ function validateAccessibilityExecutionReportDocument(value, expected) {
 async function validateSignedAccessibilityExecutionReport({
   browserEvidenceDescriptor,
   candidateSha256,
+  canonicalWireContract,
   descriptor,
   harnessBuild,
   jobId,
+  learnerExperienceContract,
+  learnerRegressionArtifactDescriptor,
   learnerViewContract,
   lessonId,
   mediaDigests,
@@ -1999,10 +2379,21 @@ async function validateSignedAccessibilityExecutionReport({
   sourcePlanSha256,
   waveId,
 }) {
-  const browserEvidence = await validateBrowserAccessibilityEvidenceArtifact({
-    descriptor: browserEvidenceDescriptor,
-    repositoryRoot,
-  });
+  const [browserEvidence, learnerRegression] = await Promise.all([
+    validateBrowserAccessibilityEvidenceArtifact({
+      descriptor: browserEvidenceDescriptor,
+      repositoryRoot,
+    }),
+    validateLearnerRegressionArtifact({
+      descriptor: learnerRegressionArtifactDescriptor,
+      repositoryRoot,
+    }),
+  ]);
+  assert.notEqual(
+    browserEvidence.real_path,
+    learnerRegression.real_path,
+    `${jobId} learner regression and reviewer evidence must be separate artifacts`,
+  );
   validateSignedDescriptor(descriptor, `${jobId} accessibility execution descriptor`);
   assert.equal(descriptor.signer_key_fingerprint, harnessBuild.signing_key.fingerprint);
   const signed = await readAndVerifySignedJson({
@@ -2017,8 +2408,11 @@ async function validateSignedAccessibilityExecutionReport({
   validateAccessibilityExecutionReportDocument(signed.value, {
     browserEvidence,
     candidateSha256,
+    canonicalWireContract,
     harnessBuild,
     jobId,
+    learnerExperienceContract,
+    learnerRegression,
     learnerViewContract,
     lessonId,
     mediaDigests,
@@ -2029,6 +2423,181 @@ async function validateSignedAccessibilityExecutionReport({
     waveId,
   });
   return signed.value;
+}
+
+async function validateNoviceWalkthroughArtifact({ descriptor, repositoryRoot }) {
+  const requiredFiles = ['desktop-1440.png', 'mobile-375.png', 'walkthrough-trace.json'];
+  const scan = await validateArtifactDescriptor(descriptor, {
+    label: 'novice walkthrough browser artifact',
+    limits: ARTIFACT_LIMITS.browser_evidence,
+    repositoryRoot,
+    requiredFiles,
+  });
+  const [desktop, mobile, traceFile] = await Promise.all([
+    readLimitedFile(
+      join(scan.real_path, 'desktop-1440.png'),
+      'novice desktop screenshot',
+      ARTIFACT_LIMITS.browser_evidence,
+    ),
+    readLimitedFile(
+      join(scan.real_path, 'mobile-375.png'),
+      'novice mobile screenshot',
+      ARTIFACT_LIMITS.browser_evidence,
+    ),
+    readLimitedJson(
+      join(scan.real_path, 'walkthrough-trace.json'),
+      'novice walkthrough trace',
+      ARTIFACT_LIMITS.browser_evidence,
+    ),
+  ]);
+  const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  assert(desktop.subarray(0, pngSignature.length).equals(pngSignature));
+  assert(mobile.subarray(0, pngSignature.length).equals(pngSignature));
+  const trace = traceFile.value;
+  assertExactKeys(
+    trace,
+    ['learner_questions', 'schema_version', 'screen_audit', 'viewports'],
+    'novice walkthrough trace',
+  );
+  assert.equal(trace.schema_version, 'mcat-v3-novice-walkthrough-browser-trace-1');
+  assert.deepEqual(trace.learner_questions, [
+    { answered_without_reviewer_help: true, question_id: 'WHAT_CHANGED' },
+    { answered_without_reviewer_help: true, question_id: 'WHAT_DO_I_DO_NEXT' },
+    { answered_without_reviewer_help: true, question_id: 'WHAT_SHOULD_I_FOCUS_ON' },
+  ]);
+  assert.deepEqual(trace.screen_audit, {
+    competing_sidebars_present: false,
+    focus_now_cue_present: true,
+    multiple_question_groups_present: false,
+    one_primary_action: true,
+    one_primary_objective: true,
+    optional_details_collapsed: true,
+    stacked_fading_ladder_present: false,
+  });
+  assert(Array.isArray(trace.viewports) && trace.viewports.length === 2);
+  assert.deepEqual(
+    trace.viewports.map((viewport) => viewport.width_px),
+    [375, 1440],
+  );
+  for (const [index, viewport] of trace.viewports.entries()) {
+    assertExactKeys(
+      viewport,
+      [
+        'color_only_progress',
+        'figure_title_description_pass',
+        'focus_order_pass',
+        'height_px',
+        'mandatory_wide_scroll',
+        'minimum_touch_target_px',
+        'primary_action_visible',
+        'primary_visual_visible',
+        'width_px',
+      ],
+      `novice viewport[${index}]`,
+    );
+    assert(Number.isInteger(viewport.height_px) && viewport.height_px > 0);
+    assert.equal(viewport.mandatory_wide_scroll, false);
+    assert.equal(viewport.primary_action_visible, true);
+    assert.equal(viewport.primary_visual_visible, true);
+    assert.equal(viewport.focus_order_pass, true);
+    assert.equal(viewport.figure_title_description_pass, true);
+    assert.equal(viewport.color_only_progress, false);
+    assert(viewport.minimum_touch_target_px >= 44);
+  }
+  return { ...scan, trace };
+}
+
+function validateNoviceUxReportDocument(value, expected) {
+  assertExactKeys(
+    value,
+    [
+      'candidate_sha256',
+      'checks',
+      'internal_walkthrough_not_learner_validation',
+      'job_id',
+      'lesson_id',
+      'report_author_identity',
+      'report_id',
+      'reviewer_slot_id',
+      'safe_client_sha256',
+      'schema_version',
+      'signing_key_fingerprint',
+      'source_plan_sha256',
+      'status',
+      'walkthrough_artifact_sha256',
+      'wave_id',
+    ],
+    'novice UX walkthrough report',
+  );
+  assert.equal(value.schema_version, NOVICE_UX_REPORT_SCHEMA_VERSION);
+  for (const key of [
+    'candidate_sha256',
+    'job_id',
+    'lesson_id',
+    'reviewer_slot_id',
+    'safe_client_sha256',
+    'source_plan_sha256',
+    'walkthrough_artifact_sha256',
+    'wave_id',
+  ]) {
+    assert.equal(value[key], expected[key]);
+  }
+  assert.deepEqual(value.report_author_identity, expected.report_author_identity);
+  assert.equal(value.signing_key_fingerprint, expected.signing_key_fingerprint);
+  assert.equal(value.internal_walkthrough_not_learner_validation, true);
+  assert.equal(value.status, 'APPROVED_INTERNAL_USABILITY_WALKTHROUGH');
+  requireString(value.report_id, 'novice UX report ID');
+  assert(Array.isArray(value.checks));
+  value.checks.forEach((check, index) => {
+    assertExactKeys(check, ['check_id', 'status'], `novice UX check[${index}]`);
+    assert.equal(check.status, 'PASS');
+  });
+  assert.deepEqual(
+    value.checks.map((check) => check.check_id),
+    [...REQUIRED_NOVICE_UX_CHECK_IDS],
+  );
+}
+
+async function validateSignedNoviceUxReport({
+  assignment,
+  candidateSha256,
+  credential,
+  descriptor,
+  jobId,
+  lessonId,
+  repositoryRoot,
+  safeClientSha256,
+  sourcePlanSha256,
+  walkthroughArtifactDescriptor,
+  waveId,
+}) {
+  const walkthroughArtifact = await validateNoviceWalkthroughArtifact({
+    descriptor: walkthroughArtifactDescriptor,
+    repositoryRoot,
+  });
+  const signed = await readAssignedSignedReport({
+    assignment,
+    credential,
+    descriptor,
+    label: `${jobId} novice learner-UX walkthrough report`,
+    repositoryRoot,
+  });
+  validateNoviceUxReportDocument(signed.value, {
+    candidate_sha256: candidateSha256,
+    job_id: jobId,
+    lesson_id: lessonId,
+    report_author_identity: {
+      person_id: assignment.assignee_person_id,
+      run_id: assignment.assignee_run_id,
+    },
+    reviewer_slot_id: assignment.slot_id,
+    safe_client_sha256: safeClientSha256,
+    signing_key_fingerprint: credential.public_key.fingerprint,
+    source_plan_sha256: sourcePlanSha256,
+    walkthrough_artifact_sha256: walkthroughArtifact.artifact_sha256,
+    wave_id: waveId,
+  });
+  return { report: signed.value, walkthrough_artifact: walkthroughArtifact };
 }
 
 function validateSourceOutputSimilarityDocument(value, expected) {
@@ -2490,10 +3059,12 @@ export {
   EXCLUDED_CONTENT_CLASSES,
   GATE_REPORT_SCHEMA_VERSION,
   HASH_PATTERN,
+  NOVICE_UX_REPORT_SCHEMA_VERSION,
   OPAQUE_SERVICE_ATTESTATION_SCHEMA_VERSION,
   REQUIRED_ACCESSIBILITY_CHECK_IDS,
   REQUIRED_BLIND_PATH_IDS,
   REQUIRED_GATE_CHECK_IDS,
+  REQUIRED_NOVICE_UX_CHECK_IDS,
   REQUIRED_SERVICE_INTEGRATION_CHECK_IDS,
   RIGHTS_REPORT_SCHEMA_VERSION,
   SAFE_PROJECTION_REPORT_SCHEMA_VERSION,
@@ -2504,6 +3075,7 @@ export {
   SOURCE_OUTPUT_SIMILARITY_SCHEMA_VERSION,
   WAVE_SIMILARITY_REPORT_SCHEMA_VERSION,
   createClosedReviewBundleManifest,
+  validateLearnerExperience,
   validateAndHashCandidateArtifact,
   validateAndHashClosedReviewBundle,
   validateMultiSignedWaveSimilarityReport,
@@ -2513,6 +3085,7 @@ export {
   validateSignedCumulativeCorpusManifest,
   validateSignedDomainReport,
   validateSignedGateReport,
+  validateSignedNoviceUxReport,
   validateSignedOpaqueServiceAttestation,
   validateSignedRightsEvidence,
   validateSignedServiceIntegrationReport,

@@ -6,6 +6,13 @@ import {
   EXPECTED,
   HELD_GOVERNANCE_ONLY_ENTITY_IDS,
   PROTOTYPE_LESSON_IDS,
+  RECONCILED_FLOW_CONTRACT,
+  SHOWCASE_ALLOWED_CLAIMS,
+  SHOWCASE_DEFERRED_GATES,
+  SHOWCASE_LANE_ID,
+  SHOWCASE_PROHIBITED_CLAIMS,
+  TEACH_SHOW_ASK_STAGES,
+  VISUAL_TRIGGER_ARCHETYPES,
   buildAuthoringPlan,
   getAssignmentSlots,
   hashText,
@@ -169,15 +176,96 @@ test('W00 is blocked on exact signed foundation pins and similarity history is c
       (constraint) => constraint.constraint_id === 'UC05_HARDENED_FOUNDATION_INTEGRATION_PINS',
     ),
   );
+  assert(
+    checkedPlan.unresolved_constraints.some(
+      (constraint) => constraint.constraint_id === 'UC06_RECONCILED_FLOW_CONTRACT_V0_3',
+    ),
+  );
+  assert.notEqual(
+    sourceManifest.metadata.canonical_contract.sha256,
+    RECONCILED_FLOW_CONTRACT.sha256,
+  );
   for (const [index, wave] of checkedPlan.waves.entries()) {
     assert(
       wave.checkpoint.entry_requires.includes(
         'externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized',
       ),
     );
+    assert(
+      wave.checkpoint.entry_requires.includes(
+        'exact_reconciled_flow_contract_v0_3_bytes_match_required_sha256',
+      ),
+    );
     assert.deepEqual(
       wave.similarity_comparison_wave_ids,
       checkedPlan.waves.slice(0, index + 1).map((candidate) => candidate.wave_id),
     );
+  }
+});
+
+test('jobs pin teach-show-ask, mobile cognition, routes, and construct-preserving visuals', () => {
+  for (const job of checkedPlan.jobs) {
+    assert.deepEqual(
+      job.ordered_required_kc_ids,
+      job.knowledge_component_microcycles.map((kc) => kc.kc_id),
+    );
+    assert.deepEqual(job.route_and_timing_contract, {
+      core_path_p90_hypothesis_minutes: 18,
+      exact_failed_function_reentry_required: true,
+      hypothesis_scope: 'RESUMABLE_SEGMENT_ONLY_NOT_WHOLE_LESSON_OR_KC',
+      planner_owned_routes: true,
+    });
+    assert.equal(
+      job.learner_experience_requirements.cognitive_load_validation.focus_now_max_characters,
+      120,
+    );
+    assert.deepEqual(
+      job.learner_experience_requirements.mobile_primary_visual_and_action.viewport_widths_px,
+      [320, 375],
+    );
+    for (const kc of job.knowledge_component_microcycles) {
+      assert.deepEqual(kc.learner_experience.required_screen_sequence, TEACH_SHOW_ASK_STAGES);
+      assert.equal(kc.learner_experience.entry_check_policy.counts_as_instructional_exit, false);
+      assert.equal(kc.learner_experience.entry_check_policy.consequential, false);
+      assert.deepEqual(kc.visual_requirement.trigger_archetypes, VISUAL_TRIGGER_ARCHETYPES);
+      assert.equal(kc.visual_requirement.accessible_equivalent_required, true);
+      assert.equal(kc.visual_requirement.reduced_motion_or_static_fallback_required, true);
+    }
+  }
+  const redox = checkedPlan.jobs
+    .flatMap((job) => job.knowledge_component_microcycles)
+    .find((kc) => kc.kc_id === 'V3-KC-271440');
+  assert.deepEqual(redox.visual_requirement.redox_acceptance_exemplar, {
+    accounting_equation: 'Q + 2 H+ + 2 e- -> QH2',
+    animation_claim: 'ACCOUNTING_NOT_ASSERTED_ELEMENTARY_MECHANISM',
+    highlighted_changes: ['CHANGING_OXYGEN_1_AND_BOND', 'CHANGING_OXYGEN_2_AND_BOND'],
+    unchanged_tail_treatment: 'GRAYED',
+  });
+});
+
+test('novice review, showcase isolation, and reconciled v0.3 pin remain explicit', () => {
+  assert.deepEqual(checkedPlan.metadata.reconciled_flow_contract, RECONCILED_FLOW_CONTRACT);
+  assert.equal(
+    checkedPlan.metadata.reconciled_flow_contract.sha256,
+    '81f0de7ac2a57b0c794467ed0af94714309abb8602d1b0df29ff7602aa88d642',
+  );
+  assert.equal(checkedPlan.showcase_lane.lane_id, SHOWCASE_LANE_ID);
+  assert.deepEqual(checkedPlan.showcase_lane.allowed_claims, SHOWCASE_ALLOWED_CLAIMS);
+  assert.deepEqual(checkedPlan.showcase_lane.deferred_gates, SHOWCASE_DEFERRED_GATES);
+  assert.deepEqual(checkedPlan.showcase_lane.prohibited_claims, SHOWCASE_PROHIBITED_CLAIMS);
+  assert.equal(checkedPlan.showcase_lane.does_not_satisfy_w00_or_any_production_gate, true);
+  assert.equal(checkedPlan.showcase_lane.public_deployment_allowed, false);
+  assert.equal(checkedPlan.showcase_lane.critical_path[0].depends_on_phase_ids.length, 0);
+  assert.match(checkedPlan.showcase_lane.critical_path[0].parallel_work, /concurrently/);
+  for (const job of checkedPlan.jobs) {
+    const novice = job.assignments.novice_learner_ux_reviewer;
+    assert.equal(novice.role, 'NOVICE_LEARNER_UX_REVIEWER');
+    for (const distinct of [
+      job.assignments.blind_solver,
+      job.assignments.accessibility_technical_auditor,
+      ...job.assignments.domain_scientific_fact_checkers,
+    ]) {
+      assert(novice.must_be_distinct_from_slot_ids.includes(distinct.slot_id));
+    }
   }
 });

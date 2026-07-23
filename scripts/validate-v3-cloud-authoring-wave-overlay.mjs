@@ -6,7 +6,16 @@ import { basename, dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { format } from 'prettier';
 
-import { getAssignmentSlots, hashText } from './generate-v3-cloud-authoring-plan.mjs';
+import {
+  PROTOTYPE_LESSON_IDS,
+  SHOWCASE_ALLOWED_CLAIMS,
+  SHOWCASE_DEFERRED_GATES,
+  SHOWCASE_LANE_ID,
+  SHOWCASE_PROHIBITED_CLAIMS,
+  TEACH_SHOW_ASK_STAGES,
+  getAssignmentSlots,
+  hashText,
+} from './generate-v3-cloud-authoring-plan.mjs';
 import {
   BUNDLE_FILES,
   CLOSED_BUNDLE_SCANNER_ID,
@@ -17,6 +26,7 @@ import {
   createClosedReviewBundleManifest,
   validateAndHashCandidateArtifact,
   validateAndHashClosedReviewBundle,
+  validateLearnerExperience,
   validateMultiSignedWaveSimilarityReport,
   validateSafeProjectionEvidence,
   validateSignedAccessibilityExecutionReport,
@@ -24,6 +34,7 @@ import {
   validateSignedCumulativeCorpusManifest,
   validateSignedDomainReport,
   validateSignedGateReport,
+  validateSignedNoviceUxReport,
   validateSignedOpaqueServiceAttestation,
   validateSignedRightsEvidence,
   validateSignedServiceIntegrationReport,
@@ -38,15 +49,25 @@ import {
   loadAndVerifyIntegrationPinset,
   readLimitedFile,
   readLimitedJson,
+  resolveRealPathInsideRoot,
+  validateArtifactDescriptor,
   validatePinnedIntegrationArtifacts,
   validateReviewerCredentials,
+  validateSignedWireCodecConformance,
 } from './v3-cloud-authoring-trust-contract.mjs';
 
 const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SOURCE_PLAN_PATH = 'curriculum/v3/v3-cloud-authoring-jobs.json';
 const CHECKED_TEMPLATE_PATH =
   'curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json';
-const OVERLAY_SCHEMA_VERSION = 'mcat-v3-cloud-authoring-wave-assignment-overlay-4';
+const CHECKED_SHOWCASE_TEMPLATE_PATH =
+  'curriculum/v3/v3-cloud-authoring-showcase-overlay.template.json';
+const OVERLAY_SCHEMA_VERSION = 'mcat-v3-cloud-authoring-wave-assignment-overlay-6';
+const SHOWCASE_OVERLAY_SCHEMA_VERSION = 'mcat-v3-non-production-internal-showcase-overlay-1';
+const SHOWCASE_LEARNER_EXPERIENCE_CONTRACT = Object.freeze({
+  focus_now_max_characters: 120,
+  required_stage_order: [...TEACH_SHOW_ASK_STAGES],
+});
 const SOURCE_LEDGER_SCHEMA_VERSION = 'mcat-v3-authoring-source-ledger-1';
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const RFC3339_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?Z$/;
@@ -75,6 +96,7 @@ const REPORT_SIGNING_ROLES = new Set([
   'INDEPENDENT_BLIND_SOLVER',
   'INDEPENDENT_CONTENT_PEDAGOGY_AUDITOR',
   'INDEPENDENT_INPUT_OUTPUT_RIGHTS_REVIEWER',
+  'NOVICE_LEARNER_UX_REVIEWER',
   'RELEASE_HASH_INTEGRATOR',
 ]);
 const ORCHESTRATION_JSON_LIMITS = Object.freeze({
@@ -126,6 +148,8 @@ function makePlanPins(plan) {
     plan_schema_version: plan.schema_version,
     registry_artifact_id: plan.metadata.registry.artifact_id,
     registry_sha256: plan.metadata.registry.sha256,
+    reconciled_flow_contract_sha256: plan.metadata.reconciled_flow_contract.sha256,
+    reconciled_flow_contract_version: plan.metadata.reconciled_flow_contract.version,
     source_manifest_sha256: plan.metadata.source_manifest_sha256,
   };
 }
@@ -167,7 +191,9 @@ function createBundleEvidenceTemplate(job, wave, bundleKind, sourcePlanSha256) {
   const recipientSlot =
     bundleKind === 'BLIND_SOLVE'
       ? job.assignments.blind_solver
-      : job.assignments.accessibility_technical_auditor;
+      : bundleKind === 'ACCESSIBILITY_ONLY'
+        ? job.assignments.accessibility_technical_auditor
+        : job.assignments.novice_learner_ux_reviewer;
   return {
     bundle_kind: bundleKind,
     bundle_path: null,
@@ -176,8 +202,10 @@ function createBundleEvidenceTemplate(job, wave, bundleKind, sourcePlanSha256) {
       author_branch_provided: false,
       channel: 'SANITIZED_ARTIFACT',
       key_bearing_artifacts_provided: false,
+      learner_payload_file_paths: ['learner-experience.json'],
       recipient_slot_id: recipientSlot.slot_id,
       ref: null,
+      reviewer_control_plane_rendered_to_learner: false,
     },
     protected_field_scan: {
       bundle_sha256: null,
@@ -239,6 +267,7 @@ function createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId) {
       accessibility_execution_evidence: {
         browser_evidence_artifact: createArtifactDescriptorTemplate(),
         execution_report: createSignedReportDescriptorTemplate(),
+        learner_regression_artifact: createArtifactDescriptorTemplate(),
       },
       blind_solve_review: {
         approval_evidence: createGateEvidenceTemplate({
@@ -306,6 +335,16 @@ function createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId) {
         sourcePlanSha256,
         wave,
       }),
+      novice_ux_review: {
+        report: createSignedReportDescriptorTemplate(),
+        walkthrough_artifact: createArtifactDescriptorTemplate(),
+      },
+      novice_walkthrough_bundle: createBundleEvidenceTemplate(
+        job,
+        wave,
+        'NOVICE_WALKTHROUGH',
+        sourcePlanSha256,
+      ),
       domain_scientific_review: {
         candidate_sha256: null,
         cars_passage_subject_record:
@@ -387,7 +426,10 @@ function createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId) {
     },
     findings: [],
     integration_readiness: {
-      blocking_constraint_id: 'UC05_HARDENED_FOUNDATION_INTEGRATION_PINS',
+      blocking_constraint_ids: [
+        'UC05_HARDENED_FOUNDATION_INTEGRATION_PINS',
+        'UC06_RECONCILED_FLOW_CONTRACT_V0_3',
+      ],
       status: 'BLOCKED_PENDING_SIGNED_FOUNDATION_PINSET',
     },
     integration_trust: {
@@ -403,13 +445,16 @@ function createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId) {
     materialized_at: null,
     overlay_id: null,
     pinned_integration_artifacts: {
+      canonical_wire_schema: { path: null, sha256: null },
       candidate_schema: { path: null, sha256: null },
       candidate_validator_build: createArtifactDescriptorTemplate(),
       learner_action_schema: { path: null, sha256: null },
+      learner_experience_schema: { path: null, sha256: null },
       learner_view_schema: { path: null, sha256: null },
       review_harness_build: createArtifactDescriptorTemplate(),
       safe_projection_compiler_build: createArtifactDescriptorTemplate(),
       scoring_service_build: createArtifactDescriptorTemplate(),
+      wire_codec_build: createArtifactDescriptorTemplate(),
     },
     plan_pins: makePlanPins(plan),
     reviewer_signing_credentials: [],
@@ -454,6 +499,68 @@ function createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId) {
     wave_integrator_identity: {
       person_id: null,
       run_id: null,
+    },
+    wire_codec_conformance: {
+      artifact: createArtifactDescriptorTemplate(),
+      report: createSignedReportDescriptorTemplate(),
+    },
+  });
+}
+
+function createShowcaseOverlayTemplate(plan, sourcePlanSha256) {
+  requireNonemptyString(sourcePlanSha256, 'source plan SHA-256', HASH_PATTERN);
+  const pilotWave = plan.waves.find((wave) => wave.wave_id === 'V3-AUTH-W00-PILOT-PORT');
+  assert(pilotWave);
+  assert.deepEqual(pilotWave.lesson_ids, [...PROTOTYPE_LESSON_IDS]);
+  return sortObjectKeys({
+    allowed_claims: [...SHOWCASE_ALLOWED_CLAIMS],
+    controls: {
+      client_bundled_keys: false,
+      enters_production_learner_apis: false,
+      public_deployment: false,
+      publishes_evidence: false,
+      publishes_mastery: false,
+      publishes_readiness: false,
+      satisfies_any_production_gate: false,
+      satisfies_w00: false,
+      static_reviewed_definitions_and_local_simulation_only: true,
+    },
+    deferred_gates: [...SHOWCASE_DEFERRED_GATES],
+    exit_criteria_to_w00: plan.showcase_lane.exit_criteria_to_w00.map((criterion_id) => ({
+      criterion_id,
+      status: 'DEFERRED',
+    })),
+    final_adversarial_qa: {
+      approved: null,
+      report_path: null,
+      report_sha256: null,
+      reviewer_slot_id: 'V3-SHOWCASE::FINAL_ADVERSARIAL_QA',
+    },
+    lane_id: SHOWCASE_LANE_ID,
+    local_showcase_artifact: createArtifactDescriptorTemplate(),
+    materialization_status: 'TEMPLATE_UNMATERIALIZED',
+    materialized_at: null,
+    overlay_id: null,
+    ownership_assignments: plan.showcase_lane.ownership_slots.map((slot) => ({
+      artifact_path: slot.artifact_path,
+      assignee_person_id: null,
+      assignee_run_id: null,
+      lesson_id: slot.lesson_id,
+      qualification_evidence_ids: [],
+      role: slot.role,
+      slot_id: slot.slot_id,
+    })),
+    plan_pins: makePlanPins(plan),
+    prohibited_claims: [...SHOWCASE_PROHIBITED_CLAIMS],
+    schema_version: SHOWCASE_OVERLAY_SCHEMA_VERSION,
+    source_plan: {
+      path: SOURCE_PLAN_PATH,
+      sha256: sourcePlanSha256,
+    },
+    wave: {
+      job_ids: pilotWave.job_ids,
+      lesson_ids: pilotWave.lesson_ids,
+      wave_id: pilotWave.wave_id,
     },
   });
 }
@@ -786,10 +893,12 @@ async function validateReviewBundle(
   bundle,
   {
     bundleKind,
+    canonicalWireContract,
     compilerBuild,
     job,
+    learnerExperienceContract,
+    learnerExperienceValidator,
     learnerViewContract,
-    learnerViewValidator,
     projectionReport,
     projectionReportSha256,
     repositoryRoot,
@@ -820,8 +929,10 @@ async function validateReviewBundle(
       'author_branch_provided',
       'channel',
       'key_bearing_artifacts_provided',
+      'learner_payload_file_paths',
       'recipient_slot_id',
       'ref',
+      'reviewer_control_plane_rendered_to_learner',
     ],
     `${job.job_id} ${bundleKind} distribution`,
   );
@@ -837,7 +948,9 @@ async function validateReviewBundle(
   const expectedRecipientSlotId =
     bundleKind === 'BLIND_SOLVE'
       ? job.assignments.blind_solver.slot_id
-      : job.assignments.accessibility_technical_auditor.slot_id;
+      : bundleKind === 'ACCESSIBILITY_ONLY'
+        ? job.assignments.accessibility_technical_auditor.slot_id
+        : job.assignments.novice_learner_ux_reviewer.slot_id;
   assert.equal(bundle.distribution.recipient_slot_id, expectedRecipientSlotId);
   assert(
     bundle.distribution.channel === 'SANITIZED_ARTIFACT' ||
@@ -847,13 +960,17 @@ async function validateReviewBundle(
   requireNonemptyString(bundle.distribution.ref, `${job.job_id} ${bundleKind} distribution ref`);
   assert.equal(bundle.distribution.author_branch_provided, false);
   assert.equal(bundle.distribution.key_bearing_artifacts_provided, false);
+  assert.deepEqual(bundle.distribution.learner_payload_file_paths, ['learner-experience.json']);
+  assert.equal(bundle.distribution.reviewer_control_plane_rendered_to_learner, false);
   const scan = await validateAndHashClosedReviewBundle({
     bundleKind,
     bundlePath: bundle.bundle_path,
+    canonicalWireContract,
     compilerBuild,
     jobId: job.job_id,
+    learnerExperienceContract,
+    learnerExperienceValidator,
     learnerViewContract,
-    learnerViewValidator,
     lessonId: job.lesson_id,
     projectionReport,
     projectionReportSha256,
@@ -1045,10 +1162,11 @@ async function validateBlindSolveReview(
   {
     assignmentBySlotId,
     candidateScan,
+    canonicalWireContract,
+    canonicalWireValidator,
     credentialsByIdentity,
     integrationTrustRootPem,
     job,
-    learnerViewContract,
     repositoryRoot,
     safeClientScan,
     scoringBuild,
@@ -1102,9 +1220,9 @@ async function validateBlindSolveReview(
   const deployment = await validateServiceDeploymentArtifact({
     candidateSha256,
     candidateValidatorExecutionReportSha256: candidateScan.validator_execution_report_sha256,
+    canonicalWireContract,
     descriptor: review.service_deployment_artifact,
     jobId: job.job_id,
-    learnerViewContract,
     lessonId: job.lesson_id,
     repositoryRoot,
     safeClientSha256: safeClientScan.bundle_sha256,
@@ -1119,12 +1237,12 @@ async function validateBlindSolveReview(
   await validateSignedOpaqueServiceAttestation({
     candidateSha256,
     candidateValidatorExecutionReportSha256: candidateScan.validator_execution_report_sha256,
+    canonicalWireContract,
     deployment,
     descriptor: review.deployment_attestation,
     integrationTrustRootPem,
     integratorIdentity: waveIntegratorIdentity,
     jobId: job.job_id,
-    learnerViewContract,
     lessonId: job.lesson_id,
     repositoryRoot,
     safeClientSha256: safeClientScan.bundle_sha256,
@@ -1135,19 +1253,20 @@ async function validateBlindSolveReview(
   const receiptResult = await validateSignedServiceReceiptArtifact({
     activityIds: safeClientScan.activity_ids,
     candidateSha256,
+    canonicalWireContract,
+    canonicalWireValidator,
     deployment,
     descriptor: review.receipt_artifact,
-    learnerViewContract,
     repositoryRoot,
     safeClientSha256: safeClientScan.bundle_sha256,
   });
   assert.deepEqual(receiptResult.required_path_coverage, review.required_path_coverage);
   await validateSignedServiceIntegrationReport({
     candidateSha256,
+    canonicalWireContract,
     deployment,
     descriptor: review.service_integration_report,
     jobId: job.job_id,
-    learnerViewContract,
     lessonId: job.lesson_id,
     repositoryRoot,
     safeClientSha256: safeClientScan.bundle_sha256,
@@ -1591,6 +1710,7 @@ async function validateWaveAssignmentOverlay(
       'wave',
       'wave_integrator_identity',
       'wave_similarity_review',
+      'wire_codec_conformance',
     ],
     'wave assignment overlay',
   );
@@ -1610,7 +1730,7 @@ async function validateWaveAssignmentOverlay(
   assert.deepEqual(overlay.plan_pins, makePlanPins(plan), 'Overlay may not mutate plan pins');
   assertExactKeys(
     overlay.integration_readiness,
-    ['blocking_constraint_id', 'status'],
+    ['blocking_constraint_ids', 'status'],
     'integration readiness',
   );
   assertExactKeys(
@@ -1630,19 +1750,45 @@ async function validateWaveAssignmentOverlay(
     repositoryRoot,
   });
   if (overlay.integration_trust.validation_mode === 'PRODUCTION') {
+    const reconciledContract = plan.metadata.reconciled_flow_contract;
+    const contractBytes = await readLimitedFile(
+      resolve(repositoryRoot, reconciledContract.path),
+      'reconciled flow contract v0.3',
+      ORCHESTRATION_JSON_LIMITS,
+    );
+    assert.equal(
+      hashBytes(contractBytes),
+      reconciledContract.sha256,
+      'W00 is blocked: checked flow-contract bytes do not match the required v0.3 successor pin',
+    );
     assert.equal(overlay.integration_readiness.status, 'READY_WITH_SIGNED_FOUNDATION_PINSET');
   } else {
     assert.equal(overlay.integration_readiness.status, 'FIXTURE_ONLY_NON_PRODUCTION');
   }
-  assert.equal(
-    overlay.integration_readiness.blocking_constraint_id,
+  assert.deepEqual(overlay.integration_readiness.blocking_constraint_ids, [
     'UC05_HARDENED_FOUNDATION_INTEGRATION_PINS',
-  );
+    'UC06_RECONCILED_FLOW_CONTRACT_V0_3',
+  ]);
   const pinnedArtifacts = await validatePinnedIntegrationArtifacts({
     descriptors: overlay.pinned_integration_artifacts,
     integrationTrustRoot: trust.trust_root,
     pinset: trust.pinset,
     repositoryRoot,
+  });
+  assertExactKeys(
+    overlay.wire_codec_conformance,
+    ['artifact', 'report'],
+    'wire codec conformance evidence',
+  );
+  await validateSignedWireCodecConformance({
+    artifactDescriptor: overlay.wire_codec_conformance.artifact,
+    canonicalWireValidator: pinnedArtifacts.canonical_wire_validator_function,
+    descriptor: overlay.wire_codec_conformance.report,
+    learnerActionValidator: pinnedArtifacts.learner_action_validator_function,
+    learnerViewValidator: pinnedArtifacts.learner_view_validator_function,
+    pinset: trust.pinset,
+    repositoryRoot,
+    wireCodecBuild: pinnedArtifacts.wire_codec,
   });
 
   const controllerIdentity = requireIdentity(overlay.controller_identity, 'controller identity');
@@ -1701,6 +1847,8 @@ async function validateWaveAssignmentOverlay(
         'domain_scientific_review',
         'job_id',
         'lesson_id',
+        'novice_ux_review',
+        'novice_walkthrough_bundle',
         'pending_publication_gates',
         'rights_and_originality_review',
         'safe_projection_evidence',
@@ -1806,11 +1954,14 @@ async function validateWaveAssignmentOverlay(
       candidateFileManifest: candidateScan.files,
       candidateSha256,
       candidateValidatorExecutionReportSha256: candidateScan.validator_execution_report_sha256,
+      canonicalWireContract: trust.pinset.canonical_wire_contract,
       compilerBuild: pinnedArtifacts.compiler,
       evidence: evidence.safe_projection_evidence,
       jobId: job.job_id,
+      learnerExperienceContract: trust.pinset.learner_experience_contract,
       learnerViewContract: trust.pinset.learner_view_contract,
       lessonId: job.lesson_id,
+      orderedKcIds: job.ordered_required_kc_ids,
       repositoryRoot,
       reviewHarnessBuild: pinnedArtifacts.harness,
       runtimeContract: trust.pinset.runtime_contract,
@@ -1819,10 +1970,12 @@ async function validateWaveAssignmentOverlay(
     });
     const blindClientScan = await validateReviewBundle(evidence.blind_solve_bundle, {
       bundleKind: 'BLIND_SOLVE',
+      canonicalWireContract: trust.pinset.canonical_wire_contract,
       compilerBuild: trust.pinset.builds.safe_projection_compiler,
       job,
+      learnerExperienceContract: trust.pinset.learner_experience_contract,
+      learnerExperienceValidator: pinnedArtifacts.learner_experience_validator_function,
       learnerViewContract: trust.pinset.learner_view_contract,
-      learnerViewValidator: pinnedArtifacts.learner_view_validator_function,
       projectionReport,
       projectionReportSha256: evidence.safe_projection_evidence.report_sha256,
       repositoryRoot,
@@ -1836,10 +1989,12 @@ async function validateWaveAssignmentOverlay(
       evidence.accessibility_review_bundle,
       {
         bundleKind: 'ACCESSIBILITY_ONLY',
+        canonicalWireContract: trust.pinset.canonical_wire_contract,
         compilerBuild: trust.pinset.builds.safe_projection_compiler,
         job,
+        learnerExperienceContract: trust.pinset.learner_experience_contract,
+        learnerExperienceValidator: pinnedArtifacts.learner_experience_validator_function,
         learnerViewContract: trust.pinset.learner_view_contract,
-        learnerViewValidator: pinnedArtifacts.learner_view_validator_function,
         projectionReport,
         projectionReportSha256: evidence.safe_projection_evidence.report_sha256,
         repositoryRoot,
@@ -1850,13 +2005,31 @@ async function validateWaveAssignmentOverlay(
         wave,
       },
     );
+    const noviceClientScan = await validateReviewBundle(evidence.novice_walkthrough_bundle, {
+      bundleKind: 'NOVICE_WALKTHROUGH',
+      canonicalWireContract: trust.pinset.canonical_wire_contract,
+      compilerBuild: trust.pinset.builds.safe_projection_compiler,
+      job,
+      learnerExperienceContract: trust.pinset.learner_experience_contract,
+      learnerExperienceValidator: pinnedArtifacts.learner_experience_validator_function,
+      learnerViewContract: trust.pinset.learner_view_contract,
+      projectionReport,
+      projectionReportSha256: evidence.safe_projection_evidence.report_sha256,
+      repositoryRoot,
+      reviewedCandidateSha256: candidateSha256,
+      reviewHarnessBuild: trust.pinset.builds.review_harness,
+      runtimeContract: trust.pinset.runtime_contract,
+      sourcePlanSha256,
+      wave,
+    });
     await validateBlindSolveReview(evidence.blind_solve_review, {
       assignmentBySlotId,
       candidateScan,
+      canonicalWireContract: trust.pinset.canonical_wire_contract,
+      canonicalWireValidator: pinnedArtifacts.canonical_wire_validator_function,
       credentialsByIdentity,
       integrationTrustRootPem: trust.trust_root.pem,
       job,
-      learnerViewContract: trust.pinset.learner_view_contract,
       repositoryRoot,
       safeClientScan: blindClientScan,
       scoringBuild: pinnedArtifacts.scoring,
@@ -1870,20 +2043,23 @@ async function validateWaveAssignmentOverlay(
     assert(accessibilityAssignment);
     assertExactKeys(
       evidence.accessibility_execution_evidence,
-      ['browser_evidence_artifact', 'execution_report'],
+      ['browser_evidence_artifact', 'execution_report', 'learner_regression_artifact'],
       `${job.job_id} accessibility execution evidence`,
     );
     await validateSignedAccessibilityExecutionReport({
       browserEvidenceDescriptor:
         evidence.accessibility_execution_evidence.browser_evidence_artifact,
       candidateSha256,
+      canonicalWireContract: trust.pinset.canonical_wire_contract,
       descriptor: evidence.accessibility_execution_evidence.execution_report,
       harnessBuild: pinnedArtifacts.harness,
       jobId: job.job_id,
+      learnerExperienceContract: trust.pinset.learner_experience_contract,
+      learnerRegressionArtifactDescriptor:
+        evidence.accessibility_execution_evidence.learner_regression_artifact,
       learnerViewContract: trust.pinset.learner_view_contract,
       lessonId: job.lesson_id,
-      mediaDigests: accessibilityClientScan.documents.get('learner-safe-envelope.json')
-        .media_digests,
+      mediaDigests: projectionReport.media_digests,
       repositoryRoot,
       reviewerIdentity: assignmentIdentity(accessibilityAssignment),
       reviewerSlotId: accessibilityAssignment.slot_id,
@@ -1904,6 +2080,33 @@ async function validateWaveAssignmentOverlay(
       sourcePlanSha256,
       wave,
     });
+    const noviceAssignment = assignmentBySlotId.get(
+      job.assignments.novice_learner_ux_reviewer.slot_id,
+    );
+    assert(noviceAssignment);
+    const { credential: noviceCredential } = credentialForAssignment(
+      credentialsByIdentity,
+      noviceAssignment,
+      'NOVICE_LEARNER_UX_REVIEWER',
+    );
+    assertExactKeys(
+      evidence.novice_ux_review,
+      ['report', 'walkthrough_artifact'],
+      `${job.job_id} novice UX review`,
+    );
+    await validateSignedNoviceUxReport({
+      assignment: noviceAssignment,
+      candidateSha256,
+      credential: noviceCredential,
+      descriptor: evidence.novice_ux_review.report,
+      jobId: job.job_id,
+      lessonId: job.lesson_id,
+      repositoryRoot,
+      safeClientSha256: noviceClientScan.bundle_sha256,
+      sourcePlanSha256,
+      walkthroughArtifactDescriptor: evidence.novice_ux_review.walkthrough_artifact,
+      waveId: wave.wave_id,
+    });
     assertArtifactIsolation(
       candidateScan.real_path,
       accessibilityClientScan.real_path,
@@ -1914,6 +2117,13 @@ async function validateWaveAssignmentOverlay(
       accessibilityClientScan.real_path,
       `${job.job_id} blind and accessibility clients must be separate artifacts`,
     );
+    for (const otherPath of [blindClientScan.real_path, accessibilityClientScan.real_path]) {
+      assert.notEqual(
+        noviceClientScan.real_path,
+        otherPath,
+        `${job.job_id} novice learner client must be a separate artifact`,
+      );
+    }
     validatePendingPublicationGates(evidence.pending_publication_gates, job);
   }
   await validateWaveSimilarityReview(overlay.wave_similarity_review, {
@@ -1935,6 +2145,289 @@ async function validateWaveAssignmentOverlay(
       (finding) => finding.status === 'OPEN' && finding.severity === 'P2',
     ).length,
     wave_id: wave.wave_id,
+  };
+}
+
+function assertShowcaseLearnerArtifactSafe(value, path = '$') {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => assertShowcaseLearnerArtifactSafe(item, `${path}[${index}]`));
+    return;
+  }
+  if (value === null || typeof value !== 'object') return;
+  const forbiddenKeys = new Set([
+    'answer',
+    'answer_key',
+    'correct_answer',
+    'key',
+    'keys',
+    'rationale',
+    'rationales',
+    'reviewer_controls',
+    'scoring_rule',
+    'solution',
+  ]);
+  for (const [key, item] of Object.entries(value)) {
+    assert(!forbiddenKeys.has(key.toLowerCase()), `${path}.${key} leaks protected material`);
+    assertShowcaseLearnerArtifactSafe(item, `${path}.${key}`);
+  }
+}
+
+async function validateShowcaseArtifact(descriptor, plan, repositoryRoot) {
+  const expectedFiles = [
+    ...plan.showcase_lane.ownership_slots
+      .map((slot) => slot.artifact_path)
+      .filter((path) => path !== null),
+    'local-simulation.json',
+  ].sort(compareText);
+  const scan = await validateArtifactDescriptor(descriptor, {
+    label: 'non-production internal showcase artifact',
+    limits: ARTIFACT_LIMITS.review_bundle,
+    repositoryRoot,
+    requiredFiles: expectedFiles,
+  });
+  const jobByLessonId = new Map(plan.jobs.map((job) => [job.lesson_id, job]));
+  const fixtureSchemaValidator = () => true;
+  for (const file of scan.file_manifest) {
+    const { value } = await readLimitedJson(
+      join(scan.real_path, file.path),
+      `showcase ${file.path}`,
+      ARTIFACT_LIMITS.review_bundle,
+    );
+    assertShowcaseLearnerArtifactSafe(value, file.path);
+    if (file.path === 'ux-shell.json') {
+      assert.deepEqual(value, {
+        learner_reviewer_modes_separate: true,
+        mode: 'LEARNER_ONLY',
+        primary_screen_policy: 'ONE_OBJECTIVE_ONE_ACTION',
+      });
+    } else if (file.path === 'local-simulation.json') {
+      assert.deepEqual(value, {
+        network_access: false,
+        production_api_access: false,
+        public_deployment: false,
+        publishes_evidence: false,
+        publishes_mastery: false,
+        publishes_readiness: false,
+      });
+    } else {
+      const lessonId = file.path.slice('pilots/'.length, -'.json'.length);
+      assert(PROTOTYPE_LESSON_IDS.includes(lessonId));
+      assertExactKeys(
+        value,
+        [
+          'client_bundled_keys',
+          'definition_mode',
+          'learner_experience',
+          'lesson_id',
+          'local_simulation_only',
+          'ordered_required_kc_ids',
+          'review_status',
+        ],
+        `${lessonId} showcase static definition`,
+      );
+      assert.equal(value.client_bundled_keys, false);
+      assert.equal(value.definition_mode, 'STATIC_REVIEWED_INTERNAL_SHOWCASE');
+      assert.equal(value.lesson_id, lessonId);
+      assert.equal(value.local_simulation_only, true);
+      assert.equal(value.review_status, 'REVIEWED_FOR_INTERNAL_SHOWCASE_ONLY');
+      const job = jobByLessonId.get(lessonId);
+      assert(job);
+      assert.deepEqual(value.ordered_required_kc_ids, job.ordered_required_kc_ids);
+      validateLearnerExperience(
+        value.learner_experience,
+        {
+          constructBindings: job.ordered_required_kc_ids.map((kcId) => ({
+            construct_ref: kcId,
+            kc_id: kcId,
+          })),
+          learnerExperienceContract: SHOWCASE_LEARNER_EXPERIENCE_CONTRACT,
+          lessonId,
+        },
+        fixtureSchemaValidator,
+      );
+    }
+  }
+  return scan;
+}
+
+async function validateShowcaseQaReport(evidence, { artifactSha256, assignment, repositoryRoot }) {
+  assertExactKeys(
+    evidence,
+    ['approved', 'report_path', 'report_sha256', 'reviewer_slot_id'],
+    'showcase final adversarial QA',
+  );
+  assert.equal(evidence.approved, true);
+  assert.equal(evidence.reviewer_slot_id, assignment.slot_id);
+  requireNonemptyString(evidence.report_path, 'showcase QA report path');
+  requireNonemptyString(evidence.report_sha256, 'showcase QA report SHA-256', HASH_PATTERN);
+  const resolved = await resolveRealPathInsideRoot(
+    repositoryRoot,
+    evidence.report_path,
+    'showcase QA report path',
+  );
+  const { bytes, value } = await readLimitedJson(
+    resolved.realTarget,
+    'showcase final adversarial QA report',
+    ARTIFACT_LIMITS.report,
+  );
+  assert.equal(hashBytes(bytes), evidence.report_sha256, 'Showcase QA report hash is stale');
+  assertExactKeys(
+    value,
+    [
+      'artifact_sha256',
+      'checks',
+      'lane_id',
+      'report_author_identity',
+      'reviewer_slot_id',
+      'status',
+    ],
+    'showcase QA report',
+  );
+  assert.equal(value.artifact_sha256, artifactSha256);
+  assert.equal(value.lane_id, SHOWCASE_LANE_ID);
+  assert.equal(value.reviewer_slot_id, assignment.slot_id);
+  assert.deepEqual(value.report_author_identity, assignmentIdentity(assignment));
+  assert.equal(value.status, 'APPROVED_INTERNAL_SHOWCASE_ONLY');
+  assert.deepEqual(value.checks, [
+    { check_id: 'CLIENT_KEY_LEAKAGE_SCAN', status: 'PASS' },
+    { check_id: 'MOBILE_375', status: 'PASS' },
+    { check_id: 'PROHIBITED_CLAIMS', status: 'PASS' },
+    { check_id: 'PRODUCTION_API_ISOLATION', status: 'PASS' },
+    { check_id: 'REVIEWER_LEARNER_SEPARATION', status: 'PASS' },
+  ]);
+}
+
+async function validateShowcaseOverlay(
+  overlay,
+  { plan, repositoryRoot = REPOSITORY_ROOT, sourcePlanSha256 },
+) {
+  assertExactKeys(
+    overlay,
+    [
+      'allowed_claims',
+      'controls',
+      'deferred_gates',
+      'exit_criteria_to_w00',
+      'final_adversarial_qa',
+      'lane_id',
+      'local_showcase_artifact',
+      'materialization_status',
+      'materialized_at',
+      'overlay_id',
+      'ownership_assignments',
+      'plan_pins',
+      'prohibited_claims',
+      'schema_version',
+      'source_plan',
+      'wave',
+    ],
+    'non-production internal showcase overlay',
+  );
+  assert.equal(overlay.schema_version, SHOWCASE_OVERLAY_SCHEMA_VERSION);
+  assert.equal(overlay.lane_id, SHOWCASE_LANE_ID);
+  assert.equal(overlay.materialization_status, 'MATERIALIZED');
+  parseMaterializedAt(overlay.materialized_at);
+  requireNonemptyString(overlay.overlay_id, 'showcase overlay ID', IDENTITY_PATTERN);
+  assert.deepEqual(overlay.source_plan, { path: SOURCE_PLAN_PATH, sha256: sourcePlanSha256 });
+  assert.deepEqual(overlay.plan_pins, makePlanPins(plan));
+  const pilotWave = plan.waves.find((wave) => wave.wave_id === 'V3-AUTH-W00-PILOT-PORT');
+  assert(pilotWave);
+  assert.deepEqual(overlay.wave, {
+    job_ids: pilotWave.job_ids,
+    lesson_ids: pilotWave.lesson_ids,
+    wave_id: pilotWave.wave_id,
+  });
+  assert.deepEqual(overlay.allowed_claims, [...SHOWCASE_ALLOWED_CLAIMS]);
+  assert.deepEqual(overlay.deferred_gates, [...SHOWCASE_DEFERRED_GATES]);
+  assert.deepEqual(overlay.prohibited_claims, [...SHOWCASE_PROHIBITED_CLAIMS]);
+  assert.deepEqual(overlay.controls, {
+    client_bundled_keys: false,
+    enters_production_learner_apis: false,
+    public_deployment: false,
+    publishes_evidence: false,
+    publishes_mastery: false,
+    publishes_readiness: false,
+    satisfies_any_production_gate: false,
+    satisfies_w00: false,
+    static_reviewed_definitions_and_local_simulation_only: true,
+  });
+  assert.deepEqual(
+    overlay.exit_criteria_to_w00,
+    plan.showcase_lane.exit_criteria_to_w00.map((criterion_id) => ({
+      criterion_id,
+      status: 'DEFERRED',
+    })),
+    'Showcase exit criteria are declarations only and cannot be satisfied by showcase evidence',
+  );
+  const expectedSlots = plan.showcase_lane.ownership_slots;
+  assert.equal(overlay.ownership_assignments.length, expectedSlots.length);
+  const assignmentBySlotId = new Map();
+  for (const assignment of overlay.ownership_assignments) {
+    assertExactKeys(
+      assignment,
+      [
+        'artifact_path',
+        'assignee_person_id',
+        'assignee_run_id',
+        'lesson_id',
+        'qualification_evidence_ids',
+        'role',
+        'slot_id',
+      ],
+      'showcase ownership assignment',
+    );
+    const expected = expectedSlots.find((slot) => slot.slot_id === assignment.slot_id);
+    assert(expected, `Unknown showcase ownership slot ${assignment.slot_id}`);
+    for (const key of ['artifact_path', 'lesson_id', 'role', 'slot_id']) {
+      assert.equal(assignment[key], expected[key]);
+    }
+    requireNonemptyString(assignment.assignee_person_id, `${assignment.slot_id} person ID`);
+    requireNonemptyString(assignment.assignee_run_id, `${assignment.slot_id} run ID`);
+    assert(
+      Array.isArray(assignment.qualification_evidence_ids) &&
+        assignment.qualification_evidence_ids.length > 0,
+      `${assignment.slot_id} lacks qualification evidence`,
+    );
+    assignmentBySlotId.set(assignment.slot_id, assignment);
+  }
+  assert.equal(assignmentBySlotId.size, expectedSlots.length);
+  assert.equal(
+    new Set(overlay.ownership_assignments.map((assignment) => assignment.assignee_person_id)).size,
+    expectedSlots.length,
+    'Showcase ownership must be disjoint by person',
+  );
+  assert.equal(
+    new Set(overlay.ownership_assignments.map((assignment) => assignment.assignee_run_id)).size,
+    expectedSlots.length,
+    'Showcase ownership must be disjoint by run',
+  );
+  for (const slot of expectedSlots) {
+    const assignment = assignmentBySlotId.get(slot.slot_id);
+    for (const distinctSlotId of slot.must_be_distinct_from_slot_ids) {
+      assert(
+        !sameIdentity(
+          assignmentIdentity(assignment),
+          assignmentIdentity(assignmentBySlotId.get(distinctSlotId)),
+        ),
+        `${slot.slot_id} violates showcase ownership separation`,
+      );
+    }
+  }
+  const artifact = await validateShowcaseArtifact(
+    overlay.local_showcase_artifact,
+    plan,
+    repositoryRoot,
+  );
+  const qaAssignment = assignmentBySlotId.get('V3-SHOWCASE::FINAL_ADVERSARIAL_QA');
+  assert(qaAssignment);
+  await validateShowcaseQaReport(overlay.final_adversarial_qa, {
+    artifactSha256: artifact.artifact_sha256,
+    assignment: qaAssignment,
+    repositoryRoot,
+  });
+  return {
+    artifact_sha256: artifact.artifact_sha256,
+    ownership_assignment_count: overlay.ownership_assignments.length,
   };
 }
 
@@ -1994,6 +2487,14 @@ function parseArguments(argv) {
     assert.equal(rest.length, 2, `Usage: ${command} <wave-id> <overlay-path>`);
     return { command, outputPath: rest[1], waveId: rest[0] };
   }
+  if (command === 'showcase-template' || command === 'check-showcase-template') {
+    assert.equal(rest.length, 1, `Usage: ${command} <overlay-path>`);
+    return { command, outputPath: rest[0] };
+  }
+  if (command === 'validate-showcase') {
+    assert.equal(rest.length, 1, 'Usage: validate-showcase <overlay-path>');
+    return { command, overlayPath: rest[0] };
+  }
   if (command === 'validate') {
     assert.equal(
       rest.length,
@@ -2008,13 +2509,34 @@ function parseArguments(argv) {
     };
   }
   throw new Error(
-    'Usage: validate-v3-cloud-authoring-wave-overlay.mjs <template|check-template|validate> ...',
+    'Usage: validate-v3-cloud-authoring-wave-overlay.mjs <template|check-template|showcase-template|check-showcase-template|validate|validate-showcase> ...',
   );
 }
 
 async function main() {
   const args = parseArguments(process.argv.slice(2));
   const checkedPlan = await loadCheckedPlan();
+  if (args.command === 'showcase-template' || args.command === 'check-showcase-template') {
+    const template = createShowcaseOverlayTemplate(checkedPlan.plan, checkedPlan.sha256);
+    const rendered = await renderJson(template);
+    const absoluteOutputPath = resolve(REPOSITORY_ROOT, args.outputPath);
+    await assertSeparateOverlayOutputPath(absoluteOutputPath, checkedPlan.absolute_path);
+    if (args.command === 'check-showcase-template') {
+      const checkedTemplate = await readLimitedFile(
+        absoluteOutputPath,
+        'checked showcase overlay template',
+        ORCHESTRATION_JSON_LIMITS,
+      );
+      assert.equal(checkedTemplate.toString('utf8'), rendered, `${args.outputPath} is stale`);
+      process.stdout.write(
+        `Validated non-production showcase template against ${checkedPlan.sha256}.\n`,
+      );
+      return;
+    }
+    await writeFile(absoluteOutputPath, rendered, 'utf8');
+    process.stdout.write(`Wrote non-production showcase template ${args.outputPath}.\n`);
+    return;
+  }
   if (args.command === 'template' || args.command === 'check-template') {
     const template = createWaveAssignmentOverlayTemplate(
       checkedPlan.plan,
@@ -2060,6 +2582,17 @@ async function main() {
     ORCHESTRATION_JSON_LIMITS,
   );
   const overlayText = overlayBytes.toString('utf8');
+  if (args.command === 'validate-showcase') {
+    const result = await validateShowcaseOverlay(overlay, {
+      plan: checkedPlan.plan,
+      repositoryRoot: REPOSITORY_ROOT,
+      sourcePlanSha256: checkedPlan.sha256,
+    });
+    process.stdout.write(
+      `Validated non-production showcase: ${result.ownership_assignment_count} disjoint owners; artifact SHA-256 ${result.artifact_sha256}; overlay SHA-256 ${hashText(overlayText)}. No W00 or production gate was satisfied.\n`,
+    );
+    return;
+  }
   const result = await validateWaveAssignmentOverlay(overlay, {
     externalTrustRootPublicKeyPath: args.externalTrustRootPublicKeyPath,
     plan: checkedPlan.plan,
@@ -2083,6 +2616,7 @@ if (isMain) {
 
 export {
   BUNDLE_FILES,
+  CHECKED_SHOWCASE_TEMPLATE_PATH,
   CHECKED_TEMPLATE_PATH,
   CLOSED_BUNDLE_SCANNER_ID,
   CLOSED_BUNDLE_SCHEMA_VERSION,
@@ -2090,11 +2624,14 @@ export {
   OVERLAY_SCHEMA_VERSION,
   REQUIRED_BLIND_PATH_IDS,
   SOURCE_PLAN_PATH,
+  SHOWCASE_OVERLAY_SCHEMA_VERSION,
   computeSourceLedgerSha256,
   createSanitizedReviewBundleManifest,
+  createShowcaseOverlayTemplate,
   createWaveAssignmentOverlayTemplate,
   loadCheckedPlan,
   renderJson,
   validateAndHashClosedReviewBundle as scanSanitizedReviewBundle,
   validateWaveAssignmentOverlay,
+  validateShowcaseOverlay,
 };

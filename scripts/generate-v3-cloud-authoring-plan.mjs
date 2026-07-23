@@ -16,13 +16,61 @@ const EXPECTED = Object.freeze({
   sourceSchemaVersion: 'mcat-v3-lesson-authoring-manifest-2',
   registryArtifactId: 'MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01',
   registrySha256: '635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a',
-  contractSha256: 'e56590830462987e2cc9ec8d523a702e75c903613020addb81da6edbcad3286b',
+  historicalSourceContractSha256:
+    'e56590830462987e2cc9ec8d523a702e75c903613020addb81da6edbcad3286b',
   counts: {
     lessons: 114,
     kcs: 422,
     groupings: 114,
   },
 });
+
+const RECONCILED_FLOW_CONTRACT = Object.freeze({
+  integrated_successor_to: 'Spec 03 v1.1',
+  materialization_status: 'REQUIRED_SUCCESSOR_BYTES_NOT_PRESENT_ON_THIS_BRANCH',
+  path: 'docs/design/mcat-complete-learning-flow.md',
+  sha256: '81f0de7ac2a57b0c794467ed0af94714309abb8602d1b0df29ff7602aa88d642',
+  version: '0.3',
+});
+
+const TEACH_SHOW_ASK_STAGES = Object.freeze([
+  'ORIENTATION',
+  'MODEL',
+  'WORKED_EXAMPLE',
+  'GUIDED_PRACTICE',
+  'LESS_HELP_PRACTICE',
+  'SOLO_PRACTICE',
+  'DUAL_EXIT_NEAR',
+  'DUAL_EXIT_TRANSFER',
+]);
+
+const VISUAL_TRIGGER_ARCHETYPES = Object.freeze([
+  'CONCEPTUAL_CAUSAL',
+  'MECHANISM',
+  'SPATIAL_STRUCTURAL',
+  'TRANSFORMATION',
+]);
+
+const SHOWCASE_LANE_ID = 'NON_PRODUCTION_INTERNAL_SHOWCASE';
+const SHOWCASE_ALLOWED_CLAIMS = Object.freeze([
+  'INTERNAL_DEMONSTRATION_OF_REVIEWED_STATIC_LEARNER_FLOW',
+  'INTERNAL_QUALITATIVE_USABILITY_FINDINGS',
+  'LOCAL_SIMULATION_PATH_EXECUTION',
+]);
+const SHOWCASE_DEFERRED_GATES = Object.freeze([
+  'ALL_114_LESSON_COMPLETION',
+  'CALIBRATION_AND_EFFICACY',
+  'G01_THROUGH_G12_PRODUCTION_EVIDENCE',
+  'SIGNED_PRODUCTION_FOUNDATION_INTEGRATION',
+  'V7_ELIGIBILITY',
+]);
+const SHOWCASE_PROHIBITED_CLAIMS = Object.freeze([
+  'EFFICACY',
+  'EXAM_READINESS',
+  'KC_OR_LESSON_MASTERY',
+  'PRODUCTION_ELIGIBILITY',
+  'VALIDATED_LEARNER_OUTCOME',
+]);
 
 const PROTOTYPE_LESSON_IDS = Object.freeze([
   'V3-LES-329622',
@@ -68,7 +116,7 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     blocks_internal_draft_integration: true,
     blocks_publication: true,
     required_evidence: [
-      'Registry artifact, registry SHA-256, freeze IDs, contract SHA-256, and source-manifest SHA-256 match the job.',
+      'Registry artifact, registry SHA-256, freeze IDs, reconciled flow-contract v0.3 SHA-256, and source-manifest SHA-256 match the job; the historical v0.2 bytes cannot satisfy the successor pin.',
       'Every canonical entity and normalized relation reference resolves without editing generated curriculum truth.',
     ],
   },
@@ -91,6 +139,8 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
       'The immutable LessonDefinition shell and every KC microcycle satisfy the contract in design specification sections 12 and 31.',
       'AJV shape validation is supplementary: an exact pinset-bound production validator implementation signs a candidate-byte- and schema/runtime/build-bound successful execution report that includes all cross-field refinements.',
       'Activity graphs terminate, bounded repairs reenter exactly, checkpoints resume, and instructional and downstream families remain isolated.',
+      'Except for an explicitly low-stakes pre-instruction ENTRY_CHECK, every assessed construct follows orientation -> model -> worked example -> guided -> less help -> solo -> dual exit; entry checks never count as exit and their feedback cannot contaminate later families.',
+      'Planner-owned routes, ordered_required_kc_ids, exact failed-function reentry, and the segment-only 18-minute operating hypothesis are preserved.',
     ],
   },
   {
@@ -121,9 +171,12 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     stage: 'independent_content_pedagogy_audit',
     blocks_internal_draft_integration: true,
     blocks_publication: true,
+    required_assignment_roles: ['INDEPENDENT_CONTENT_PEDAGOGY_AUDITOR'],
     required_evidence: [
       'A nonauthor independently verifies factual accuracy, scope, expert task models, objective-activity alignment, assistance fading, feedback, and repair design.',
       'Consequential expert disagreements are reconciled and documented.',
+      'A separate novice-walkthrough reviewer verifies that each screen has one primary objective/action, a short Focus-now cue, collapsed optional detail, no competing sidebars or stacked fading ladder, and that a novice can state what to focus on, what changed, and what to do next.',
+      'The walkthrough includes browser traces and screenshots at desktop and 375px and is explicitly internal usability evidence, not learner validation.',
     ],
   },
   {
@@ -134,6 +187,7 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     required_evidence: [
       'A solver distinct from the author and final approver answers real learner-safe activities through a closed safe client connected to an ephemeral opaque integrator-controlled scoring service.',
       'The service deploys the exact candidate hash server-side, accepts submitted responses, returns ordinary learner-authorized feedback, and exposes no source branch, server definition, protected scoring material, pre-response rationales, or outcome overrides.',
+      'Learner payload files exclude keys, rationales, reviewer controls, registry/policy hashes, run/schema IDs, event/exposure telemetry, gate/governance state, A0/A1/A2 labels, repeated simulation warnings, and checkpoint-jump controls; reviewer control-plane evidence remains in separate closed files and modes.',
       'Every supported learner action has an ordered detached-signature-verified service receipt; path coverage is derived from the signed foundation action/transition profile and before/after semantic states rather than trusted labels or invented request kinds.',
       'Invalid-activity and unsupported-action rejection are signed technical service-integration checks, not fabricated ordinary learner actions.',
       'The service deployment is recomputed from a closed manifest, its receipt key is bound by an externally signed deployment/ACL attestation, and unsigned/self-asserted logs cannot satisfy G07.',
@@ -144,11 +198,15 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     stage: 'accessibility_technical_audit',
     blocks_internal_draft_integration: true,
     blocks_publication: true,
+    required_assignment_roles: ['ACCESSIBILITY_TECHNICAL_AUDITOR', 'NOVICE_LEARNER_UX_REVIEWER'],
     required_evidence: [
       'The reviewer receives a closed accessibility-only client with the same protected-material and branch exclusions as blind solve.',
       'A pinset-bound standard browser harness signs execution evidence; static accessibility assertions or path strings cannot satisfy G08.',
-      'Keyboard, focus, semantics, contrast, 320px reflow, 200% zoom, reduced-motion, nonvisual representation, transcript/caption, and accommodation behavior pass.',
+      'Keyboard, focus, semantics, contrast, 320px and 375px reflow, 200% zoom, >=44px touch targets, no mandatory wide scroll for the primary visual/action, reduced-motion, nonvisual representation, figure title/description, no color-only progress, transcript/caption, and accommodation behavior pass.',
       'Accessible alternatives preserve the intended construct and activity-graph behavior.',
+      'Spatial, causal, transformation, and mechanism KCs have a reviewed construct-preserving diagram or interaction with an accessible equivalent and reduced-motion/static fallback.',
+      'The phenolic redox exemplar highlights the two changing oxygens/bonds, accounts for Q + 2 H+ + 2 e- -> QH2, grays the unchanged tail, and labels motion as accounting rather than an asserted elementary mechanism.',
+      'Learner-only mobile/desktop regression artifacts remain separate from reviewer evidence artifacts.',
     ],
   },
   {
@@ -269,18 +327,25 @@ const WORKFLOW_STAGES = Object.freeze([
   },
   {
     order: 11,
+    stage: 'independent_novice_learner_ux_walkthrough',
+    assignment_key: 'novice_learner_ux_reviewer',
+    output:
+      'signed_nonvalidating_novice_walkthrough_desktop_and_375px_screenshots_traces_and_progressive_disclosure_approval',
+  },
+  {
+    order: 12,
     stage: 'cross_lesson_similarity_audit',
     assignment_key: 'similarity_auditor',
     output: 'complete_cumulative_corpus_manifest_and_multi_reviewer_signed_similarity_report',
   },
   {
-    order: 12,
+    order: 13,
     stage: 'reviewed_hash',
     assignment_key: 'release_integrator',
     output: 'immutable_reviewed_content_hash',
   },
   {
-    order: 13,
+    order: 14,
     stage: 'publication_gate',
     assignment_key: 'final_approver',
     output: 'publication_decision',
@@ -504,7 +569,11 @@ function validateSourceManifest(sourceManifest) {
   assert.equal(sourceManifest.schema_version, EXPECTED.sourceSchemaVersion);
   assert.equal(sourceManifest.metadata.registry.artifact_id, EXPECTED.registryArtifactId);
   assert.equal(sourceManifest.metadata.registry.sha256, EXPECTED.registrySha256);
-  assert.equal(sourceManifest.metadata.canonical_contract.sha256, EXPECTED.contractSha256);
+  assert.equal(
+    sourceManifest.metadata.canonical_contract.sha256,
+    EXPECTED.historicalSourceContractSha256,
+    'Source manifest must retain the checked historical input bytes as provenance',
+  );
   assert.equal(sourceManifest.curriculum.lessons.length, EXPECTED.counts.lessons);
   assert.equal(sourceManifest.curriculum.kcs.length, EXPECTED.counts.kcs);
   assert.equal(sourceManifest.curriculum.groupings.length, EXPECTED.counts.groupings);
@@ -690,6 +759,7 @@ function makeAssignmentSlots(jobId, requiredSpecialties, domainBucket) {
     content_pedagogy_auditor: 'INDEPENDENT_CONTENT_PEDAGOGY_AUDITOR',
     final_approver: 'FINAL_PUBLICATION_APPROVER',
     input_output_rights_reviewer: 'INDEPENDENT_INPUT_OUTPUT_RIGHTS_REVIEWER',
+    novice_learner_ux_reviewer: 'NOVICE_LEARNER_UX_REVIEWER',
     release_integrator: 'RELEASE_HASH_INTEGRATOR',
     similarity_auditor: 'CROSS_LESSON_SIMILARITY_AUDITOR',
   };
@@ -700,12 +770,13 @@ function makeAssignmentSlots(jobId, requiredSpecialties, domainBucket) {
     ]),
   );
   const mustDifferByKey = {
-    accessibility_technical_auditor: ['author'],
+    accessibility_technical_auditor: ['author', 'novice_learner_ux_reviewer'],
     author: [],
-    blind_solver: ['author', 'final_approver'],
+    blind_solver: ['author', 'final_approver', 'novice_learner_ux_reviewer'],
     content_pedagogy_auditor: ['author'],
     final_approver: ['author', 'blind_solver'],
     input_output_rights_reviewer: ['author'],
+    novice_learner_ux_reviewer: ['author', 'blind_solver', 'accessibility_technical_auditor'],
     release_integrator: ['author'],
     similarity_auditor: ['author'],
   };
@@ -726,6 +797,7 @@ function makeAssignmentSlots(jobId, requiredSpecialties, domainBucket) {
   const domainScientificFactCheckers = requiredSpecialties.map((specialty) => ({
     must_be_distinct_from_slot_ids: [
       slotIds.author,
+      slotIds.novice_learner_ux_reviewer,
       ...(specialty === 'CARS_PASSAGE_REASONING_EDITOR' ? [carsPassageSubjectSlotId] : []),
     ],
     role: 'DOMAIN_SCIENTIFIC_FACT_CHECKER',
@@ -735,12 +807,21 @@ function makeAssignmentSlots(jobId, requiredSpecialties, domainBucket) {
   const carsPassageSubjectFactChecker =
     domainBucket === 'CARS'
       ? {
-          must_be_distinct_from_slot_ids: [slotIds.author, carsReasoningSlotId],
+          must_be_distinct_from_slot_ids: [
+            slotIds.author,
+            slotIds.novice_learner_ux_reviewer,
+            carsReasoningSlotId,
+          ],
           role: 'CARS_PASSAGE_SUBJECT_FACT_CHECKER',
           slot_id: carsPassageSubjectSlotId,
           specialty: 'SELECT_AFTER_ORIGINAL_PASSAGE_SUBJECT',
         }
       : null;
+  coreSlots.novice_learner_ux_reviewer.must_be_distinct_from_slot_ids.push(
+    ...domainScientificFactCheckers.map((slot) => slot.slot_id),
+    ...(carsPassageSubjectFactChecker === null ? [] : [carsPassageSubjectFactChecker.slot_id]),
+  );
+  coreSlots.novice_learner_ux_reviewer.must_be_distinct_from_slot_ids.sort(compareText);
 
   return {
     ...coreSlots,
@@ -857,6 +938,32 @@ function buildBaseJob(sourceManifest, lesson, indexes) {
       source_anchor_ids: kc.source_anchor_ids,
       statement_of_competence: kc.statement_of_competence,
       transfer_expectation: kc.transfer_expectation,
+      learner_experience: {
+        entry_check_policy: {
+          allowed_only_before_instruction: true,
+          consequential: false,
+          counts_as_instructional_exit: false,
+          feedback_policy: 'NONE_OR_DELAYED_NONCONTAMINATING',
+          must_use_isolated_family: true,
+        },
+        required_screen_sequence: [...TEACH_SHOW_ASK_STAGES],
+        teach_before_consequential_practice: true,
+      },
+      visual_requirement: {
+        accessible_equivalent_required: true,
+        reduced_motion_or_static_fallback_required: true,
+        reviewed_construct_preservation_required: true,
+        trigger_archetypes: [...VISUAL_TRIGGER_ARCHETYPES],
+        redox_acceptance_exemplar:
+          kc.kc_id === 'V3-KC-271440'
+            ? {
+                accounting_equation: 'Q + 2 H+ + 2 e- -> QH2',
+                animation_claim: 'ACCOUNTING_NOT_ASSERTED_ELEMENTARY_MECHANISM',
+                highlighted_changes: ['CHANGING_OXYGEN_1_AND_BOND', 'CHANGING_OXYGEN_2_AND_BOND'],
+                unchanged_tail_treatment: 'GRAYED',
+              }
+            : null,
+      },
     };
   });
 
@@ -1069,12 +1176,48 @@ function buildBaseJob(sourceManifest, lesson, indexes) {
       })),
       unique_canonical_representation_needs: uniqueRepresentations,
     },
+    learner_experience_requirements: {
+      cognitive_load_validation: {
+        browser_viewports_required_px: [375, 1440],
+        collapsed_glossary_and_optional_details: true,
+        competing_sidebars_allowed: false,
+        focus_now_max_characters: 120,
+        focus_now_cue_required: true,
+        novice_walkthrough_required: true,
+        question_groups_per_screen_maximum: 1,
+        one_primary_action_per_screen: true,
+        one_primary_objective_per_screen: true,
+        stacked_fading_ladder_allowed: false,
+        validation_basis: 'STRUCTURAL_SCREEN_AUDIT_PLUS_NOVICE_WALKTHROUGH_NOT_WORD_COUNT_ALONE',
+      },
+      learner_payload_excludes_review_control_plane: true,
+      learner_payload_forbidden_content_classes: [
+        'answer_keys_or_rationales',
+        'reviewer_controls',
+        'registry_or_policy_hashes',
+        'run_or_schema_ids',
+        'event_or_exposure_telemetry',
+        'gate_status_or_governance_prose',
+        'a0_a1_a2_labels',
+        'repeated_simulation_warnings',
+        'checkpoint_jump_controls',
+      ],
+      mobile_primary_visual_and_action: {
+        figure_title_description_or_equivalent_required: true,
+        focus_order_required: true,
+        mandatory_wide_scroll_allowed: false,
+        minimum_touch_target_px: 44,
+        progress_may_rely_on_color_alone: false,
+        viewport_widths_px: [320, 375],
+      },
+    },
     job_id: jobId,
     job_kind: isPrototype ? 'prototype_port' : 'new_authoring',
     knowledge_component_microcycles: orderedKcs,
-    lesson_contract_id: 'V3_LESSON_DEFINITION_CONTRACT_0_2',
+    lesson_contract_id: 'V3_LESSON_DEFINITION_CONTRACT_0_3',
     lesson_id: lesson.lesson_id,
     lesson_label: lesson.canonical_display_label,
+    ordered_required_kc_ids: orderedKcs.map((kc) => kc.kc_id),
     point_of_use_support_and_repair: {
       exact_remediation_relations: repairRelations,
       helpful_order_relations: helpfulOrderRelations,
@@ -1091,12 +1234,28 @@ function buildBaseJob(sourceManifest, lesson, indexes) {
           artifact_location: null,
           prototype_reviewed_hash: null,
           production_definition_status: 'NOT_A_PRODUCTION_DEFINITION',
+          showcase_lane: {
+            allowed_claims: [...SHOWCASE_ALLOWED_CLAIMS],
+            deferred_gates: [...SHOWCASE_DEFERRED_GATES],
+            lane_id: SHOWCASE_LANE_ID,
+            may_enter_production_learner_apis: false,
+            may_publish_evidence_mastery_or_readiness: false,
+            may_satisfy_w00_or_production_gate: false,
+            public_deployment_allowed: false,
+            static_reviewed_definition_and_local_simulation_only: true,
+          },
           port_rule:
             'Rebind and independently review against this job; do not inherit prototype publication status, hashes, rights, or efficacy.',
         }
       : null,
     required_domain_fact_check_specialties: requiredFactCheckSpecialties,
     risk,
+    route_and_timing_contract: {
+      core_path_p90_hypothesis_minutes: 18,
+      exact_failed_function_reentry_required: true,
+      hypothesis_scope: 'RESUMABLE_SEGMENT_ONLY_NOT_WHOLE_LESSON_OR_KC',
+      planner_owned_routes: true,
+    },
     sequence: {
       first_delivery: {
         global_delivery_event_ordinal: firstDelivery.global_delivery_event_ordinal,
@@ -1291,9 +1450,11 @@ function buildWaves(baseJobs) {
         blocking_severities_for_publication: ['P0', 'P1', 'P2'],
         entry_requires: [
           'source_plan_check_passes',
+          'exact_reconciled_flow_contract_v0_3_bytes_match_required_sha256',
           'all_required_prior_wave_checkpoints_merged',
           'separate_wave_assignment_overlay_validates_against_exact_source_plan_sha256',
           'externally_trusted_signed_hardened_foundation_pinset_and_artifacts_are_materialized',
+          'signed_wire_codec_round_trip_semantic_parity_conformance_validates',
         ],
         exit_requires: [
           'materialized_overlay_verifies_external_trust_pins_signed_receipts_and_complete_candidate_bound_g01_g10_evidence',
@@ -1339,6 +1500,120 @@ function sortObjectKeys(value) {
   );
 }
 
+function buildShowcaseLanePlan() {
+  const uxShellSlotId = 'V3-SHOWCASE::UX_SHELL_OWNER';
+  const visualReviewSlotId = 'V3-SHOWCASE::VISUAL_ACCESSIBILITY_REVIEWER';
+  const integratorSlotId = 'V3-SHOWCASE::INTEGRATOR';
+  const adversarialQaSlotId = 'V3-SHOWCASE::FINAL_ADVERSARIAL_QA';
+  const pilotContentSlots = PROTOTYPE_LESSON_IDS.map((lessonId) => ({
+    artifact_path: `pilots/${lessonId}.json`,
+    lesson_id: lessonId,
+    must_be_distinct_from_slot_ids: [
+      uxShellSlotId,
+      visualReviewSlotId,
+      integratorSlotId,
+      adversarialQaSlotId,
+    ],
+    role: 'SHOWCASE_PILOT_CONTENT_OWNER',
+    slot_id: `V3-SHOWCASE::PILOT_CONTENT_OWNER::${lessonId}`,
+  }));
+  const allContentSlotIds = pilotContentSlots.map((slot) => slot.slot_id);
+  return {
+    allowed_claims: [...SHOWCASE_ALLOWED_CLAIMS],
+    critical_path: [
+      {
+        depends_on_phase_ids: [],
+        parallel_work:
+          'The shared UX shell and all five disjoint pilot content files start concurrently.',
+        phase_id: 'SHOWCASE-P1-PARALLEL-SHELL-AND-PILOTS',
+      },
+      {
+        depends_on_phase_ids: ['SHOWCASE-P1-PARALLEL-SHELL-AND-PILOTS'],
+        parallel_work:
+          'Visual/accessibility review starts per pilot as soon as that pilot and shell slice are ready; it does not wait for unrelated pilot edits.',
+        phase_id: 'SHOWCASE-P2-ROLLING-VISUAL-ACCESSIBILITY-REVIEW',
+      },
+      {
+        depends_on_phase_ids: ['SHOWCASE-P2-ROLLING-VISUAL-ACCESSIBILITY-REVIEW'],
+        parallel_work:
+          'One integrator assembles only reviewed static definitions and local simulation.',
+        phase_id: 'SHOWCASE-P3-INTEGRATE',
+      },
+      {
+        depends_on_phase_ids: ['SHOWCASE-P3-INTEGRATE'],
+        parallel_work:
+          'Final adversarial QA checks leakage, prohibited claims, mobile behavior, and production isolation.',
+        phase_id: 'SHOWCASE-P4-ADVERSARIAL-QA',
+      },
+    ],
+    deferred_gates: [...SHOWCASE_DEFERRED_GATES],
+    does_not_satisfy_w00_or_any_production_gate: true,
+    exit_criteria_to_w00: [
+      'EXACT_RECONCILED_FLOW_V0_3_BYTES_MATCH_PIN',
+      'PRODUCTION_SIGNED_FOUNDATION_PINSET_AND_WIRE_CODEC',
+      'PROTOTYPE_RIGHTS_AND_PROVENANCE_VERIFIED',
+      'ALL_STANDARD_W00_ASSIGNMENTS_MATERIALIZED',
+      'CANDIDATE_AND_G01_THROUGH_G10_EVIDENCE_COMPLETE',
+      'NO_PUBLIC_OR_PRODUCTION_API_DEPLOYMENT_HISTORY_WITH_CLIENT_KEYS',
+    ],
+    lane_id: SHOWCASE_LANE_ID,
+    ownership_slots: [
+      {
+        artifact_path: 'ux-shell.json',
+        lesson_id: null,
+        must_be_distinct_from_slot_ids: [
+          ...allContentSlotIds,
+          visualReviewSlotId,
+          integratorSlotId,
+          adversarialQaSlotId,
+        ],
+        role: 'SHOWCASE_UX_SHELL_OWNER',
+        slot_id: uxShellSlotId,
+      },
+      ...pilotContentSlots,
+      {
+        artifact_path: null,
+        lesson_id: null,
+        must_be_distinct_from_slot_ids: [
+          uxShellSlotId,
+          ...allContentSlotIds,
+          integratorSlotId,
+          adversarialQaSlotId,
+        ],
+        role: 'SHOWCASE_VISUAL_ACCESSIBILITY_REVIEWER',
+        slot_id: visualReviewSlotId,
+      },
+      {
+        artifact_path: null,
+        lesson_id: null,
+        must_be_distinct_from_slot_ids: [
+          uxShellSlotId,
+          ...allContentSlotIds,
+          visualReviewSlotId,
+          adversarialQaSlotId,
+        ],
+        role: 'SHOWCASE_INTEGRATOR',
+        slot_id: integratorSlotId,
+      },
+      {
+        artifact_path: null,
+        lesson_id: null,
+        must_be_distinct_from_slot_ids: [
+          uxShellSlotId,
+          ...allContentSlotIds,
+          visualReviewSlotId,
+          integratorSlotId,
+        ],
+        role: 'SHOWCASE_FINAL_ADVERSARIAL_QA',
+        slot_id: adversarialQaSlotId,
+      },
+    ],
+    prohibited_claims: [...SHOWCASE_PROHIBITED_CLAIMS],
+    public_deployment_allowed: false,
+    static_reviewed_definitions_and_local_simulation_only: true,
+  };
+}
+
 function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
   const indexes = validateSourceManifest(sourceManifest);
   assert.match(sourceManifestSha256, /^[a-f0-9]{64}$/);
@@ -1378,7 +1653,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
     acceptance_gate_catalog: ACCEPTANCE_GATE_CATALOG,
     jobs,
     lesson_contract: {
-      contract_id: 'V3_LESSON_DEFINITION_CONTRACT_0_2',
+      contract_id: 'V3_LESSON_DEFINITION_CONTRACT_0_3',
       forbidden_outputs: [
         'lesson_level_mastery_or_diagnostic_state',
         'new_or_changed_curriculum_identity',
@@ -1387,6 +1662,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'accelerated_bypass',
         'unreviewed_answer_keys_in_client_or_general_author_context',
         'efficacy_readiness_or_score_claims',
+        'learner_payload_review_control_plane_or_telemetry',
       ],
       required_input_contract: [
         'pinned_registry_artifact_sha_and_freeze_ids',
@@ -1397,6 +1673,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'per_kc_knowledge_in_use_authoring_inputs',
         'isolated_instructional_and_downstream_evidence_families',
         'provenance_rights_accessibility_and_review_contract',
+        'reconciled_flow_contract_v0_3_pin',
       ],
       required_output_contract: [
         'immutable_lesson_shell_manifest_and_checkpoint_map',
@@ -1409,9 +1686,13 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'explicit_transitions_fallbacks_and_termination',
         'authority_bounded_keys_rationales_family_and_exposure_metadata',
         'event_schemas_accessibility_behavior_and_exact_reviewed_hash',
+        'learner_only_progressive_disclosure_projection_separate_from_reviewer_evidence',
+        'teach_show_ask_per_construct_with_noncontaminating_optional_entry_check',
+        'reviewed_construct_preserving_visuals_and_mobile_regression_evidence',
       ],
-      source_contract_path: sourceManifest.metadata.canonical_contract.path,
-      source_contract_sha256: sourceManifest.metadata.canonical_contract.sha256,
+      source_contract_path: RECONCILED_FLOW_CONTRACT.path,
+      source_contract_sha256: RECONCILED_FLOW_CONTRACT.sha256,
+      source_contract_version: RECONCILED_FLOW_CONTRACT.version,
     },
     metadata: {
       authoring_job_counts: {
@@ -1427,7 +1708,13 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       deterministic: true,
       generated_by: GENERATOR_PATH,
       generation_timestamp: null,
+      historical_source_contract_provenance: {
+        path: sourceManifest.metadata.canonical_contract.path,
+        sha256: sourceManifest.metadata.canonical_contract.sha256,
+        version: sourceManifest.metadata.canonical_contract.version,
+      },
       prototype_lesson_ids: [...PROTOTYPE_LESSON_IDS],
+      reconciled_flow_contract: RECONCILED_FLOW_CONTRACT,
       registry: sourceManifest.metadata.registry,
       source_manifest_path: SOURCE_PATH,
       source_manifest_sha256: sourceManifestSha256,
@@ -1441,10 +1728,17 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'Never modify this generated plan. Generate a separate wave overlay, materialize all person/run identities and evidence there, and validate it against the SHA-256 of the exact checked plan bytes.',
       assignment_overlay: {
         generated_plan_mutation_forbidden: true,
-        schema_version: 'mcat-v3-cloud-authoring-wave-assignment-overlay-4',
+        schema_version: 'mcat-v3-cloud-authoring-wave-assignment-overlay-6',
         stale_source_plan_hash_behavior: 'FAIL_CLOSED',
         template_path: 'curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json',
         validator_path: 'scripts/validate-v3-cloud-authoring-wave-overlay.mjs',
+      },
+      showcase_overlay: {
+        lane_id: SHOWCASE_LANE_ID,
+        production_gate_effect: 'NONE',
+        schema_version: 'mcat-v3-non-production-internal-showcase-overlay-1',
+        template_path: 'curriculum/v3/v3-cloud-authoring-showcase-overlay.template.json',
+        validator_command: 'validate-showcase',
       },
       artifact_resource_limits: {
         enforcement:
@@ -1524,8 +1818,10 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
           'candidate_validator_build_id_version_immutable_subject_provenance_and_report_key',
           'candidate_validator_signed_execution_report_profile_including_cross_field_refinements',
           'lesson_step_view_and_lesson_action_input_schema_ids_and_sha256s',
-          'learner_view_camel_case_identity_media_and_nullable_activity_semantic_profile',
-          'foundation_action_event_state_and_path_transition_profile',
+          'separately_named_learner_experience_projection_schema_and_leakage_policy',
+          'canonical_snake_case_upper_snake_case_wire_profile_and_transition_contract',
+          'versioned_bijective_internal_dto_wire_serializer_parser_implementation',
+          'canonical_byte_hashing_rules_and_signed_round_trip_semantic_parity_execution_report',
           'safe_projection_compiler_immutable_subject_provenance_and_report_key',
           'review_harness_immutable_subject_provenance_and_report_key',
           'scoring_service_immutable_subject_provenance_and_artifact_sha256',
@@ -1540,6 +1836,8 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'A prior authoring wave is required only for a cross-lesson HARD_PREREQUISITE whose target is a nested KC point of use. Hard capstone requirements remain recorded but do not manufacture shell-first-delivery order.',
       pilot_policy:
         'The five exact approved prototypes form one structure-and-port pilot. They remain internal drafts and confer no production publication status.',
+      reconciled_contract_policy:
+        'Flow v0.3 at the exact required SHA-256 is the integrated successor to Spec 03 v1.1. The checked v0.2 bytes are historical provenance only and cannot satisfy wave entry.',
       production_author_batch_range: {
         maximum: PRODUCTION_MAX_AUTHORS,
         minimum: PRODUCTION_MIN_AUTHORS,
@@ -1548,12 +1846,13 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       },
       production_publication_default: false,
     },
+    showcase_lane: buildShowcaseLanePlan(),
     review_bundle_contract: {
-      allowed_bundle_kinds: ['BLIND_SOLVE', 'ACCESSIBILITY_ONLY'],
+      allowed_bundle_kinds: ['BLIND_SOLVE', 'ACCESSIBILITY_ONLY', 'NOVICE_WALKTHROUGH'],
       author_branch_access_prohibited: true,
       blind_solve_execution:
         'The solver submits real responses through the closed client to an ephemeral opaque integrator-controlled service that deploys the exact key-bearing candidate server-side and exposes no outcome overrides or protected authority.',
-      bundle_manifest_schema_version: 'mcat-v3-closed-sanitized-review-bundle-3',
+      bundle_manifest_schema_version: 'mcat-v3-closed-sanitized-review-bundle-4',
       bundle_sha256_required: true,
       closed_schema_unknown_field_behavior: 'REJECT',
       excluded_content_classes: [
@@ -1563,33 +1862,49 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'protected_scoring_material',
         'server_definitions',
         'author_branch_history',
+        'reviewer_controls',
+        'registry_or_policy_hashes',
+        'run_or_schema_identifiers',
+        'event_or_exposure_telemetry',
+        'gate_or_governance_state',
+        'assistance_ladder_labels',
+        'checkpoint_jump_controls',
       ],
       exact_allowed_file_sets: {
         ACCESSIBILITY_ONLY: [
           'accessibility-harness-config.json',
           'bundle-manifest.json',
-          'learner-safe-envelope.json',
+          'learner-experience.json',
         ],
         BLIND_SOLVE: [
           'blind-client-runtime.json',
           'bundle-manifest.json',
-          'learner-safe-envelope.json',
+          'learner-experience.json',
+        ],
+        NOVICE_WALKTHROUGH: [
+          'bundle-manifest.json',
+          'learner-experience.json',
+          'novice-walkthrough-config.json',
         ],
       },
+      learner_payload_rule:
+        'Only learner-experience.json is learner-facing. Bundle manifests, harness/client configuration, hashes, report controls, and reviewer evidence remain in a separate control plane and are never rendered as teaching screens.',
       key_bearing_artifact_access_prohibited: true,
       protected_field_scan_report_sha256_required: true,
       reviewed_candidate_sha256_required: true,
       derivation_requirement:
-        'Every learner-safe view envelope must match a detached-signature-verified report from the exact compiler implementation in the externally trusted integration pinset and validate as individual pinned LessonStepView-shaped records, not a custom lesson DTO catalog.',
+        'Every learner-experience projection must match a detached-signature-verified report from the exact compiler implementation, validate against the separately named learner-experience projection schema, and remain distinct from internal LessonStepView DTOs and canonical cross-process wire.',
       reviewer_outcome_simulation_policy:
         'Self-asserted path labels or reviewer-controlled outcomes are never accepted as blind-solve or accessibility evidence.',
-      scanner_id: 'V3_CLOSED_REVIEW_BUNDLE_SCAN_V3',
+      scanner_id: 'V3_CLOSED_REVIEW_BUNDLE_SCAN_V4',
       structured_json_only_v1: true,
     },
     internal_integration_evidence_contract: {
       candidate_artifact_hash_recomputed_from_exact_file_manifest: true,
       candidate_validation_contract:
         'The candidate uses signed JSON pointers for schemaVersion and lesson id, passes supplementary pinned JSON Schema validation, and has a detached-signature-verified execution report from the exact production validator implementation bound to candidate bytes, complete file manifest, foundation commit, runtime/schema pins, and required cross-field checks.',
+      canonical_wire_contract:
+        'Cross-process/event evidence uses snake_case fields and UPPER_SNAKE_CASE enum values. CamelCase internal foundation DTOs are accepted only behind a pinset-bound immutable bijective serializer/parser with canonical-byte SHA-256 rules and a codec-build-signed conformance report over closed action, view, and service-receipt vectors proving exact round-trip and semantic parity.',
       candidate_bound_gate_ids: REQUIRED_ACCEPTANCE_GATE_IDS.slice(0, 10),
       g11_g12_status_for_internal_drafts: 'EXPLICITLY_PENDING',
       opaque_blind_service_evidence: [
@@ -1611,7 +1926,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       rights_and_domain_report_contract:
         'Every G05 rights/source-similarity and G10 specialty/CARS-subject record has a repository-relative path, closed unknown-field-rejecting schema, recomputed byte hash, exact ledger/candidate/slot/person/run/specialty/subject pins, and detached signature.',
       safe_projection_and_accessibility_contract:
-        'Compiler-signed exact output manifests derive individual camelCase learner views under signed semantic pointers; the profile distinguishes schema artifact IDs from payload schemaVersion, preserves nullable activity and audio/video caption semantics, and requires harness-signed closed browser evidence plus assigned-auditor approval for G08.',
+        'Compiler-signed exact output manifests derive a learner-only progressive-disclosure projection with no review/control-plane leakage; harness-signed desktop, 320px, and 375px evidence plus separate novice and accessibility reviewer approvals are required.',
       stale_or_missing_evidence_behavior: 'FAIL_CLOSED',
       wave_similarity_scope:
         'current_wave_plus_integration_authority_signed_complete_previously_integrated_corpus',
@@ -1646,6 +1961,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'rights_and_originality_clearance',
         'independent_domain_and_scientific_review',
         'independent_content_and_pedagogy_audit',
+        'independent_novice_learner_ux_walkthrough_not_claimed_as_learner_validation',
         'blind_solve',
         'accessibility_and_technical_audit',
         'cross_lesson_similarity_audit',
@@ -1656,7 +1972,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       statement:
         'Generated content is an internal draft until rights, scientific review, reviewed hashes (integrity identifiers, not proof by themselves), signed/verifiable evidence, and efficacy gates pass.',
     },
-    schema_version: 'mcat-v3-cloud-authoring-orchestration-5',
+    schema_version: 'mcat-v3-cloud-authoring-orchestration-7',
     unresolved_constraints: [
       {
         constraint_id: 'UC01_PROTOTYPE_ARTIFACTS',
@@ -1671,7 +1987,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       {
         constraint_id: 'UC03_ASSIGNMENTS',
         effect:
-          'Actual controller, integrator, author, rights reviewer, domain fact-checker, auditor, blind-solver, and approver person/run IDs are intentionally absent from this immutable plan and must be materialized in a separately validated wave overlay.',
+          'Actual controller, integrator, author, rights reviewer, domain fact-checker, novice learner-UX reviewer, accessibility auditor, blind solver, and approver person/run IDs are intentionally absent from this immutable plan and must be materialized in a separately validated wave overlay.',
       },
       {
         constraint_id: 'UC04_EMPIRICAL_GATES',
@@ -1681,7 +1997,12 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       {
         constraint_id: 'UC05_HARDENED_FOUNDATION_INTEGRATION_PINS',
         effect:
-          'W00 and every later wave are blocked until the final hardened foundation commit supplies exact LessonDefinition, LessonStepView, LessonActionInput, action/event/transition semantic profiles, an executable production candidate validator with signed execution reports, and immutable implementation subjects plus signed provenance for the validator, safe-projection compiler, browser/accessibility harness, and scoring service. The external integration trust root and signed pinset must bind all of them; this authoring branch does not fabricate those production assets.',
+          'W00 and every later wave are blocked until the final hardened foundation commit supplies exact LessonDefinition, internal LessonStepView/LessonActionInput schemas, a separately named learner-experience projection schema, canonical snake_case/UPPER_SNAKE_CASE wire and transition profiles, an immutable bijective internal-DTO wire codec with signed closed-vector round-trip/semantic-parity conformance evidence, an executable production candidate validator with signed execution reports, and immutable implementation subjects plus signed provenance for the validator, compiler, browser/accessibility harness, and scoring service. The external integration trust root and signed pinset must bind all of them.',
+      },
+      {
+        constraint_id: 'UC06_RECONCILED_FLOW_CONTRACT_V0_3',
+        effect:
+          'The required integrated successor to Spec 03 v1.1 is docs/design/mcat-complete-learning-flow.md v0.3 at SHA-256 81f0de7ac2a57b0c794467ed0af94714309abb8602d1b0df29ff7602aa88d642. Those bytes are not present on this branch; the checked v0.2 file is historical provenance only, so W00 fails closed until exact v0.3 materialization.',
       },
     ],
     waves,
@@ -1694,7 +2015,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
 
 function validateAuthoringPlan(plan, sourceManifest) {
   const indexes = validateSourceManifest(sourceManifest);
-  assert.equal(plan.schema_version, 'mcat-v3-cloud-authoring-orchestration-5');
+  assert.equal(plan.schema_version, 'mcat-v3-cloud-authoring-orchestration-7');
   assert.equal(plan.jobs.length, EXPECTED.counts.lessons);
 
   const canonicalReferencePattern =
@@ -1752,6 +2073,14 @@ function validateAuthoringPlan(plan, sourceManifest) {
     ['INDEPENDENT_INPUT_OUTPUT_RIGHTS_REVIEWER'],
   );
   assert.deepEqual(
+    gateById.get('G06_INDEPENDENT_CONTENT_PEDAGOGY_AUDIT').required_assignment_roles,
+    ['INDEPENDENT_CONTENT_PEDAGOGY_AUDITOR'],
+  );
+  assert.deepEqual(gateById.get('G08_ACCESSIBILITY_TECHNICAL_AUDIT').required_assignment_roles, [
+    'ACCESSIBILITY_TECHNICAL_AUDITOR',
+    'NOVICE_LEARNER_UX_REVIEWER',
+  ]);
+  assert.deepEqual(
     gateById.get('G10_DOMAIN_FACT_CHECK_AND_SCIENTIFIC_REVIEW').required_assignment_roles,
     ['DOMAIN_SCIENTIFIC_FACT_CHECKER'],
   );
@@ -1768,6 +2097,7 @@ function validateAuthoringPlan(plan, sourceManifest) {
     'output_rights_and_originality_review',
     'candidate_artifact_freeze_and_g01_g06_evidence',
     'closed_clients_and_opaque_blind_service_deployment',
+    'independent_novice_learner_ux_walkthrough',
   ]) {
     assert(workflowStages.has(requiredStage), `Missing required workflow stage ${requiredStage}`);
   }
@@ -1778,6 +2108,15 @@ function validateAuthoringPlan(plan, sourceManifest) {
     assert.equal(kc.owning_lesson_id, job.lesson_id);
     assert.equal(canonicalKc.owning_lesson_id, job.lesson_id);
     assert.equal(kc.statement_of_competence, canonicalKc.statement_of_competence);
+    assert.deepEqual(kc.learner_experience.required_screen_sequence, [...TEACH_SHOW_ASK_STAGES]);
+    assert.equal(kc.learner_experience.entry_check_policy.counts_as_instructional_exit, false);
+    assert.deepEqual(kc.visual_requirement.trigger_archetypes, [...VISUAL_TRIGGER_ARCHETYPES]);
+    if (kc.kc_id === 'V3-KC-271440') {
+      assert.equal(
+        kc.visual_requirement.redox_acceptance_exemplar.accounting_equation,
+        'Q + 2 H+ + 2 e- -> QH2',
+      );
+    }
   }
 
   for (const job of plan.jobs) {
@@ -1789,6 +2128,30 @@ function validateAuthoringPlan(plan, sourceManifest) {
       job.knowledge_component_microcycles.map((kc) => kc.kc_id),
       indexes.internalOrderByLessonId.get(job.lesson_id).ordered_nested_kc_ids,
       `${job.lesson_id} job microcycle order`,
+    );
+    assert.deepEqual(
+      job.ordered_required_kc_ids,
+      job.knowledge_component_microcycles.map((kc) => kc.kc_id),
+    );
+    assert.equal(job.lesson_contract_id, 'V3_LESSON_DEFINITION_CONTRACT_0_3');
+    assert.equal(job.route_and_timing_contract.planner_owned_routes, true);
+    assert.equal(job.route_and_timing_contract.exact_failed_function_reentry_required, true);
+    assert.equal(
+      job.route_and_timing_contract.hypothesis_scope,
+      'RESUMABLE_SEGMENT_ONLY_NOT_WHOLE_LESSON_OR_KC',
+    );
+    assert.equal(
+      job.learner_experience_requirements.cognitive_load_validation.focus_now_max_characters,
+      120,
+    );
+    assert.equal(
+      job.learner_experience_requirements.cognitive_load_validation
+        .question_groups_per_screen_maximum,
+      1,
+    );
+    assert.deepEqual(
+      job.learner_experience_requirements.mobile_primary_visual_and_action.viewport_widths_px,
+      [320, 375],
     );
     assert.equal(job.accelerated_bypass_authorized, false);
     assert.equal(job.acceptance.production_publication_eligible, false);
@@ -1883,6 +2246,17 @@ function validateAuthoringPlan(plan, sourceManifest) {
       job.assignments.input_output_rights_reviewer.role,
       'INDEPENDENT_INPUT_OUTPUT_RIGHTS_REVIEWER',
     );
+    assert.equal(job.assignments.novice_learner_ux_reviewer.role, 'NOVICE_LEARNER_UX_REVIEWER');
+    for (const distinctSlot of [
+      job.assignments.blind_solver,
+      job.assignments.accessibility_technical_auditor,
+    ]) {
+      assert(
+        job.assignments.novice_learner_ux_reviewer.must_be_distinct_from_slot_ids.includes(
+          distinctSlot.slot_id,
+        ),
+      );
+    }
     const requiredSpecialties = job.required_domain_fact_check_specialties;
     assert.equal(new Set(requiredSpecialties).size, requiredSpecialties.length);
     assert.equal(
@@ -1923,6 +2297,17 @@ function validateAuthoringPlan(plan, sourceManifest) {
         job.assignments.blind_solver.slot_id,
       ),
     );
+    for (const specialtySlot of job.assignments.domain_scientific_fact_checkers) {
+      assert(
+        specialtySlot.must_be_distinct_from_slot_ids.includes(
+          job.assignments.novice_learner_ux_reviewer.slot_id,
+        ),
+      );
+    }
+    if (job.prototype_port !== null) {
+      assert.equal(job.prototype_port.showcase_lane.lane_id, SHOWCASE_LANE_ID);
+      assert.equal(job.prototype_port.showcase_lane.may_satisfy_w00_or_production_gate, false);
+    }
   }
 
   for (const heldEntityId of HELD_GOVERNANCE_ONLY_ENTITY_IDS) {
@@ -1957,6 +2342,16 @@ function validateAuthoringPlan(plan, sourceManifest) {
       wave.similarity_comparison_wave_ids,
       plan.waves.slice(0, index + 1).map((candidate) => candidate.wave_id),
       `${wave.wave_id} cumulative similarity waves`,
+    );
+    assert(
+      wave.checkpoint.entry_requires.includes(
+        'exact_reconciled_flow_contract_v0_3_bytes_match_required_sha256',
+      ),
+    );
+    assert(
+      wave.checkpoint.entry_requires.includes(
+        'signed_wire_codec_round_trip_semantic_parity_conformance_validates',
+      ),
     );
   }
 
@@ -1998,11 +2393,11 @@ function validateAuthoringPlan(plan, sourceManifest) {
   );
   assert.equal(
     plan.orchestration_policy.assignment_overlay.schema_version,
-    'mcat-v3-cloud-authoring-wave-assignment-overlay-4',
+    'mcat-v3-cloud-authoring-wave-assignment-overlay-6',
   );
   assert.equal(
     plan.review_bundle_contract.bundle_manifest_schema_version,
-    'mcat-v3-closed-sanitized-review-bundle-3',
+    'mcat-v3-closed-sanitized-review-bundle-4',
   );
   assert.equal(
     plan.orchestration_policy.assignment_overlay.generated_plan_mutation_forbidden,
@@ -2011,6 +2406,14 @@ function validateAuthoringPlan(plan, sourceManifest) {
   assert.equal(
     plan.orchestration_policy.assignment_overlay.stale_source_plan_hash_behavior,
     'FAIL_CLOSED',
+  );
+  assert.deepEqual(plan.metadata.reconciled_flow_contract, RECONCILED_FLOW_CONTRACT);
+  assert.equal(plan.lesson_contract.source_contract_sha256, RECONCILED_FLOW_CONTRACT.sha256);
+  assert.equal(plan.showcase_lane.lane_id, SHOWCASE_LANE_ID);
+  assert.equal(plan.showcase_lane.does_not_satisfy_w00_or_any_production_gate, true);
+  assert.equal(
+    new Set(plan.showcase_lane.ownership_slots.map((slot) => slot.slot_id)).size,
+    plan.showcase_lane.ownership_slots.length,
   );
   assert.deepEqual(
     plan.severity_taxonomy.map((entry) => entry.severity),
@@ -2053,7 +2456,7 @@ async function main() {
   assert.equal(
     hashText(contractText),
     sourceManifest.metadata.canonical_contract.sha256,
-    'Canonical authoring contract hash does not match the source-manifest pin',
+    'Historical source-contract bytes do not match their source-manifest provenance pin',
   );
 
   const plan = buildAuthoringPlan(sourceManifest, hashText(sourceText));
@@ -2092,8 +2495,15 @@ export {
   EXPECTED,
   HELD_GOVERNANCE_ONLY_ENTITY_IDS,
   PROTOTYPE_LESSON_IDS,
+  RECONCILED_FLOW_CONTRACT,
   REQUIRED_ACCEPTANCE_GATE_IDS,
   SEVERITY_TAXONOMY,
+  SHOWCASE_ALLOWED_CLAIMS,
+  SHOWCASE_DEFERRED_GATES,
+  SHOWCASE_LANE_ID,
+  SHOWCASE_PROHIBITED_CLAIMS,
+  TEACH_SHOW_ASK_STAGES,
+  VISUAL_TRIGGER_ARCHETYPES,
   buildAuthoringPlan,
   getAssignmentSlots,
   hashText,

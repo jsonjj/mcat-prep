@@ -1,0 +1,177 @@
+{
+  "allowed_claims": [
+    "INTERNAL_DEMONSTRATION_OF_REVIEWED_STATIC_LEARNER_FLOW",
+    "INTERNAL_QUALITATIVE_USABILITY_FINDINGS",
+    "LOCAL_SIMULATION_PATH_EXECUTION"
+  ],
+  "controls": {
+    "client_bundled_keys": false,
+    "enters_production_learner_apis": false,
+    "public_deployment": false,
+    "publishes_evidence": false,
+    "publishes_mastery": false,
+    "publishes_readiness": false,
+    "satisfies_any_production_gate": false,
+    "satisfies_w00": false,
+    "static_reviewed_definitions_and_local_simulation_only": true
+  },
+  "deferred_gates": [
+    "ALL_114_LESSON_COMPLETION",
+    "CALIBRATION_AND_EFFICACY",
+    "G01_THROUGH_G12_PRODUCTION_EVIDENCE",
+    "SIGNED_PRODUCTION_FOUNDATION_INTEGRATION",
+    "V7_ELIGIBILITY"
+  ],
+  "exit_criteria_to_w00": [
+    { "criterion_id": "EXACT_RECONCILED_FLOW_V0_3_BYTES_MATCH_PIN", "status": "DEFERRED" },
+    { "criterion_id": "PRODUCTION_SIGNED_FOUNDATION_PINSET_AND_WIRE_CODEC", "status": "DEFERRED" },
+    { "criterion_id": "PROTOTYPE_RIGHTS_AND_PROVENANCE_VERIFIED", "status": "DEFERRED" },
+    { "criterion_id": "ALL_STANDARD_W00_ASSIGNMENTS_MATERIALIZED", "status": "DEFERRED" },
+    { "criterion_id": "CANDIDATE_AND_G01_THROUGH_G10_EVIDENCE_COMPLETE", "status": "DEFERRED" },
+    {
+      "criterion_id": "NO_PUBLIC_OR_PRODUCTION_API_DEPLOYMENT_HISTORY_WITH_CLIENT_KEYS",
+      "status": "DEFERRED"
+    }
+  ],
+  "final_adversarial_qa": {
+    "approved": null,
+    "report_path": null,
+    "report_sha256": null,
+    "reviewer_slot_id": "V3-SHOWCASE::FINAL_ADVERSARIAL_QA"
+  },
+  "lane_id": "NON_PRODUCTION_INTERNAL_SHOWCASE",
+  "local_showcase_artifact": {
+    "artifact_path": null,
+    "artifact_sha256": null,
+    "file_manifest": []
+  },
+  "materialization_status": "TEMPLATE_UNMATERIALIZED",
+  "materialized_at": null,
+  "overlay_id": null,
+  "ownership_assignments": [
+    {
+      "artifact_path": "ux-shell.json",
+      "assignee_person_id": null,
+      "assignee_run_id": null,
+      "lesson_id": null,
+      "qualification_evidence_ids": [],
+      "role": "SHOWCASE_UX_SHELL_OWNER",
+      "slot_id": "V3-SHOWCASE::UX_SHELL_OWNER"
+    },
+    {
+      "artifact_path": "pilots/V3-LES-329622.json",
+      "assignee_person_id": null,
+      "assignee_run_id": null,
+      "lesson_id": "V3-LES-329622",
+      "qualification_evidence_ids": [],
+      "role": "SHOWCASE_PILOT_CONTENT_OWNER",
+      "slot_id": "V3-SHOWCASE::PILOT_CONTENT_OWNER::V3-LES-329622"
+    },
+    {
+      "artifact_path": "pilots/V3-LES-765609.json",
+      "assignee_person_id": null,
+      "assignee_run_id": null,
+      "lesson_id": "V3-LES-765609",
+      "qualification_evidence_ids": [],
+      "role": "SHOWCASE_PILOT_CONTENT_OWNER",
+      "slot_id": "V3-SHOWCASE::PILOT_CONTENT_OWNER::V3-LES-765609"
+    },
+    {
+      "artifact_path": "pilots/V3-LES-443492.json",
+      "assignee_person_id": null,
+      "assignee_run_id": null,
+      "lesson_id": "V3-LES-443492",
+      "qualification_evidence_ids": [],
+      "role": "SHOWCASE_PILOT_CONTENT_OWNER",
+      "slot_id": "V3-SHOWCASE::PILOT_CONTENT_OWNER::V3-LES-443492"
+    },
+    {
+      "artifact_path": "pilots/V3-LES-225658.json",
+      "assignee_person_id": null,
+      "assignee_run_id": null,
+      "lesson_id": "V3-LES-225658",
+      "qualification_evidence_ids": [],
+      "role": "SHOWCASE_PILOT_CONTENT_OWNER",
+      "slot_id": "V3-SHOWCASE::PILOT_CONTENT_OWNER::V3-LES-225658"
+    },
+    {
+      "artifact_path": "pilots/V3-LES-386478.json",
+      "assignee_person_id": null,
+      "assignee_run_id": null,
+      "lesson_id": "V3-LES-386478",
+      "qualification_evidence_ids": [],
+      "role": "SHOWCASE_PILOT_CONTENT_OWNER",
+      "slot_id": "V3-SHOWCASE::PILOT_CONTENT_OWNER::V3-LES-386478"
+    },
+    {
+      "artifact_path": null,
+      "assignee_person_id": null,
+      "assignee_run_id": null,
+      "lesson_id": null,
+      "qualification_evidence_ids": [],
+      "role": "SHOWCASE_VISUAL_ACCESSIBILITY_REVIEWER",
+      "slot_id": "V3-SHOWCASE::VISUAL_ACCESSIBILITY_REVIEWER"
+    },
+    {
+      "artifact_path": null,
+      "assignee_person_id": null,
+      "assignee_run_id": null,
+      "lesson_id": null,
+      "qualification_evidence_ids": [],
+      "role": "SHOWCASE_INTEGRATOR",
+      "slot_id": "V3-SHOWCASE::INTEGRATOR"
+    },
+    {
+      "artifact_path": null,
+      "assignee_person_id": null,
+      "assignee_run_id": null,
+      "lesson_id": null,
+      "qualification_evidence_ids": [],
+      "role": "SHOWCASE_FINAL_ADVERSARIAL_QA",
+      "slot_id": "V3-SHOWCASE::FINAL_ADVERSARIAL_QA"
+    }
+  ],
+  "plan_pins": {
+    "freeze_ids": {
+      "canonical": "MCAT-V3-CANONICAL-FRZ-2026-07-22-01",
+      "graph": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
+      "phase0": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
+      "sequence": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01"
+    },
+    "plan_schema_version": "mcat-v3-cloud-authoring-orchestration-7",
+    "reconciled_flow_contract_sha256": "81f0de7ac2a57b0c794467ed0af94714309abb8602d1b0df29ff7602aa88d642",
+    "reconciled_flow_contract_version": "0.3",
+    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+    "source_manifest_sha256": "98da0f9cc92b07798077476226f49bb3e23260a0e18efac0f813f73d3d5b0828"
+  },
+  "prohibited_claims": [
+    "EFFICACY",
+    "EXAM_READINESS",
+    "KC_OR_LESSON_MASTERY",
+    "PRODUCTION_ELIGIBILITY",
+    "VALIDATED_LEARNER_OUTCOME"
+  ],
+  "schema_version": "mcat-v3-non-production-internal-showcase-overlay-1",
+  "source_plan": {
+    "path": "curriculum/v3/v3-cloud-authoring-jobs.json",
+    "sha256": "81280e5d8c6932e7bcc0682a7dbac026ef286e88241e6bdd9208520b859b2b95"
+  },
+  "wave": {
+    "job_ids": [
+      "V3-AUTHORING-JOB::V3-LES-329622",
+      "V3-AUTHORING-JOB::V3-LES-765609",
+      "V3-AUTHORING-JOB::V3-LES-443492",
+      "V3-AUTHORING-JOB::V3-LES-225658",
+      "V3-AUTHORING-JOB::V3-LES-386478"
+    ],
+    "lesson_ids": [
+      "V3-LES-329622",
+      "V3-LES-765609",
+      "V3-LES-443492",
+      "V3-LES-225658",
+      "V3-LES-386478"
+    ],
+    "wave_id": "V3-AUTH-W00-PILOT-PORT"
+  }
+}
