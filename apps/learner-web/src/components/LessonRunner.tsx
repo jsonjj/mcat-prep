@@ -27,18 +27,12 @@ const PHASE_LABELS: Record<LearnerLessonActivity['phase'], string> = {
   handoff: 'Handoff',
 };
 
-export function LessonRunner({
-  step,
-  pending = false,
-  onAction,
-}: LessonRunnerProps) {
+export function LessonRunner({ step, pending = false, onAction }: LessonRunnerProps) {
   const presentedKey = useRef<string | null>(null);
   const activity = 'activity' in step ? step.activity : null;
   const activityId = activity?.id ?? null;
   const shouldPresent =
-    step.status === 'active' &&
-    activity !== null &&
-    step.availableActions.includes('present');
+    step.status === 'active' && activity !== null && step.availableActions.includes('present');
 
   useEffect(() => {
     if (!shouldPresent || activityId === null || pending) return;
@@ -83,11 +77,7 @@ export function LessonRunner({
       {step.status === 'route_pending' ||
       step.status === 'feedback_pending' ||
       step.status === 'repair_pending' ? (
-        <WaitingStep
-          step={step}
-          pending={pending}
-          onAction={onAction}
-        />
+        <WaitingStep step={step} pending={pending} onAction={onAction} />
       ) : null}
 
       {step.status === 'paused' ? (
@@ -156,19 +146,13 @@ function WaitingStep({
             variant="primary"
             size="lg"
             disabled={pending}
-            onClick={() =>
-              onAction({ type: 'continue', activityId: step.activity!.id })
-            }
+            onClick={() => onAction({ type: 'continue', activityId: step.activity!.id })}
           >
             Continue
           </Button>
         ) : null}
         {step.availableActions.includes('pause') ? (
-          <Button
-            variant="text"
-            disabled={pending}
-            onClick={() => onAction({ type: 'pause' })}
-          >
+          <Button variant="text" disabled={pending} onClick={() => onAction({ type: 'pause' })}>
             Pause lesson
           </Button>
         ) : null}
@@ -244,9 +228,7 @@ function ActiveActivity({
         </Callout>
       ) : null}
 
-      {activity.feedback && !activity.feedback.sealed ? (
-        <Feedback activity={activity} />
-      ) : null}
+      {activity.feedback && !activity.feedback.sealed ? <Feedback activity={activity} /> : null}
 
       {availableActions.includes('submit_response') && activity.response.kind === 'choice' ? (
         <fieldset className="mc-choices">
@@ -317,12 +299,7 @@ function ActiveActivity({
 
       <Stack gap={2}>
         {availableActions.includes('submit_response') ? (
-          <Button
-            variant="primary"
-            size="lg"
-            disabled={!canSubmit || pending}
-            onClick={submit}
-          >
+          <Button variant="primary" size="lg" disabled={!canSubmit || pending} onClick={submit}>
             Submit response
           </Button>
         ) : null}
@@ -340,19 +317,13 @@ function ActiveActivity({
           <Button
             variant="secondary"
             disabled={pending}
-            onClick={() =>
-              onAction({ type: 'request_assistance', activityId: activity.id })
-            }
+            onClick={() => onAction({ type: 'request_assistance', activityId: activity.id })}
           >
             Add support
           </Button>
         ) : null}
         {availableActions.includes('pause') ? (
-          <Button
-            variant="text"
-            disabled={pending}
-            onClick={() => onAction({ type: 'pause' })}
-          >
+          <Button variant="text" disabled={pending} onClick={() => onAction({ type: 'pause' })}>
             Pause lesson
           </Button>
         ) : null}
@@ -369,11 +340,7 @@ function Feedback({ activity }: { activity: LearnerLessonActivity }) {
         <Callout
           key={`${entry.activityId}-${entry.message}`}
           tone={
-            entry.tone === 'correct'
-              ? 'success'
-              : entry.tone === 'incorrect'
-                ? 'warning'
-                : 'info'
+            entry.tone === 'correct' ? 'success' : entry.tone === 'incorrect' ? 'warning' : 'info'
           }
         >
           {entry.message}
@@ -383,11 +350,7 @@ function Feedback({ activity }: { activity: LearnerLessonActivity }) {
   );
 }
 
-function Representation({
-  representation,
-}: {
-  representation: LearnerLessonRepresentation;
-}) {
+function Representation({ representation }: { representation: LearnerLessonRepresentation }) {
   if (representation.kind === 'table' && representation.table) {
     return (
       <div className="mc-lesson-runner__table-wrap">

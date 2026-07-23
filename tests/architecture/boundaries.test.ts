@@ -164,14 +164,8 @@ describe('architecture boundaries', () => {
   });
 
   it('keeps V3 run state free of aggregate mastery/readiness semantics', () => {
-    const runContract = readFileSync(
-      join(root, 'packages/contracts/src/lesson-run.ts'),
-      'utf8',
-    );
-    const learnerView = readFileSync(
-      join(root, 'packages/contracts/src/lesson-views.ts'),
-      'utf8',
-    );
+    const runContract = readFileSync(join(root, 'packages/contracts/src/lesson-run.ts'), 'utf8');
+    const learnerView = readFileSync(join(root, 'packages/contracts/src/lesson-views.ts'), 'utf8');
 
     for (const source of [runContract, learnerView]) {
       expect(source).not.toMatch(/\bmastery(?:State|Status|Score)?\b/i);

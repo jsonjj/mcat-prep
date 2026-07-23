@@ -1,9 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import {
-  LessonStepViewSchema,
-  type LessonStepView,
-} from '@mcat/contracts';
+import { LessonStepViewSchema, type LessonStepView } from '@mcat/contracts';
 import { LessonRunner } from './LessonRunner';
 
 const common = {
@@ -61,9 +58,7 @@ const activeStep = LessonStepViewSchema.parse({
 });
 
 const render = (step: LessonStepView) =>
-  renderToStaticMarkup(
-    <LessonRunner step={step} onAction={() => undefined} />,
-  );
+  renderToStaticMarkup(<LessonRunner step={step} onAction={() => undefined} />);
 
 describe('LessonRunner accessibility and safe rendering', () => {
   it('uses native choice semantics, a named progress control, and not-sure response', () => {
@@ -121,10 +116,7 @@ describe('LessonRunner accessibility and safe rendering', () => {
       message: 'Every required KC reached instructional exit.',
       completion: {
         kind: 'lesson_completion',
-        instructionalExitKcIds: [
-          'V3-KC-SYNTH-COMPONENT',
-          'V3-KC-SYNTH-COMPONENT-2',
-        ],
+        instructionalExitKcIds: ['V3-KC-SYNTH-COMPONENT', 'V3-KC-SYNTH-COMPONENT-2'],
       },
     });
     const html = render(step).toLocaleLowerCase();

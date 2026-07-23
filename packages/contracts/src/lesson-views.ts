@@ -43,9 +43,7 @@ export const LearnerLessonRepresentationSchema = z
       .nullable(),
   })
   .strict();
-export type LearnerLessonRepresentation = z.infer<
-  typeof LearnerLessonRepresentationSchema
->;
+export type LearnerLessonRepresentation = z.infer<typeof LearnerLessonRepresentationSchema>;
 
 export const LearnerLessonResponseSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('none') }).strict(),

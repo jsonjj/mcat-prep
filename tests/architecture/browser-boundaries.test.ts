@@ -80,9 +80,7 @@ describe('learner browser authority boundary', () => {
   it('lets the learner shell and atlas shrink to narrow mobile viewports', () => {
     const styles = read('apps/learner-web/src/styles/app.css');
 
-    expect(styles).toMatch(
-      /\.mc-shell\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
-    );
+    expect(styles).toMatch(/\.mc-shell\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s);
     expect(styles).toMatch(/\.mc-shell__main\s*\{[^}]*min-width:\s*0/s);
     expect(styles).toMatch(
       /@media \(min-width: 840px\)[\s\S]*?\.mc-shell\s*\{[^}]*grid-template-columns:\s*248px minmax\(0,\s*1fr\)/,

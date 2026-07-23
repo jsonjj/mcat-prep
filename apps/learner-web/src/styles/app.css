@@ -6,20 +6,50 @@
 
 /* Full-bleed pastel "clinical dawn" iridescence covering the whole viewport (light). */
 body {
-  background:
-    radial-gradient(75% 60% at 6% -8%, color-mix(in srgb, var(--mc-glow-lavender) 88%, white), transparent 72%),
-    radial-gradient(75% 65% at 100% -4%, color-mix(in srgb, var(--mc-glow-aqua) 85%, white), transparent 72%),
-    radial-gradient(80% 70% at 104% 104%, color-mix(in srgb, var(--mc-glow-rose) 82%, white), transparent 74%),
-    radial-gradient(80% 70% at -6% 106%, color-mix(in srgb, var(--mc-glow-mint) 84%, white), transparent 74%),
-    radial-gradient(70% 55% at 52% 46%, color-mix(in srgb, var(--mc-glow-cream) 60%, white), transparent 80%),
+  background: radial-gradient(
+      75% 60% at 6% -8%,
+      color-mix(in srgb, var(--mc-glow-lavender) 88%, white),
+      transparent 72%
+    ),
+    radial-gradient(
+      75% 65% at 100% -4%,
+      color-mix(in srgb, var(--mc-glow-aqua) 85%, white),
+      transparent 72%
+    ),
+    radial-gradient(
+      80% 70% at 104% 104%,
+      color-mix(in srgb, var(--mc-glow-rose) 82%, white),
+      transparent 74%
+    ),
+    radial-gradient(
+      80% 70% at -6% 106%,
+      color-mix(in srgb, var(--mc-glow-mint) 84%, white),
+      transparent 74%
+    ),
+    radial-gradient(
+      70% 55% at 52% 46%,
+      color-mix(in srgb, var(--mc-glow-cream) 60%, white),
+      transparent 80%
+    ),
     color-mix(in srgb, var(--mc-glow-lavender) 22%, var(--mc-canvas));
   background-attachment: fixed;
 }
 [data-theme='dark'] body {
-  background:
-    radial-gradient(85% 60% at 12% -8%, color-mix(in srgb, var(--mc-info) 20%, transparent), transparent 62%),
-    radial-gradient(80% 60% at 100% 0%, color-mix(in srgb, var(--mc-retained) 18%, transparent), transparent 62%),
-    radial-gradient(90% 70% at 60% 110%, color-mix(in srgb, var(--mc-primary) 16%, transparent), transparent 66%),
+  background: radial-gradient(
+      85% 60% at 12% -8%,
+      color-mix(in srgb, var(--mc-info) 20%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      80% 60% at 100% 0%,
+      color-mix(in srgb, var(--mc-retained) 18%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      90% 70% at 60% 110%,
+      color-mix(in srgb, var(--mc-primary) 16%, transparent),
+      transparent 66%
+    ),
     var(--mc-canvas);
   background-attachment: fixed;
 }
@@ -351,7 +381,9 @@ body {
   border: 1px solid color-mix(in srgb, #ffffff 45%, var(--mc-border));
   box-shadow: 0 10px 40px color-mix(in srgb, var(--mc-primary) 12%, transparent);
   backdrop-filter: blur(16px);
-  transition: transform var(--mc-motion-control) var(--mc-ease), box-shadow var(--mc-motion-control) var(--mc-ease);
+  transition:
+    transform var(--mc-motion-control) var(--mc-ease),
+    box-shadow var(--mc-motion-control) var(--mc-ease);
 }
 .mc-upnext:hover {
   transform: translateY(-2px);
@@ -387,8 +419,11 @@ body {
   height: 60px;
   border-radius: 50%;
   color: var(--mc-on-primary);
-  background:
-    radial-gradient(circle at 30% 25%, color-mix(in srgb, #ffffff 55%, transparent), transparent 60%),
+  background: radial-gradient(
+      circle at 30% 25%,
+      color-mix(in srgb, #ffffff 55%, transparent),
+      transparent 60%
+    ),
     linear-gradient(135deg, #5cd8cf 0%, #9dcef9 55%, #cdc8f9 100%);
   box-shadow: 0 8px 22px color-mix(in srgb, var(--mc-primary) 30%, transparent);
 }

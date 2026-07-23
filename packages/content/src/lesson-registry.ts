@@ -1,11 +1,5 @@
-import type {
-  LessonDefinitionVersion,
-  V3LessonId,
-} from '@mcat/contracts';
-import {
-  LessonDefinitionSchema,
-  type LessonDefinition,
-} from './lesson-definition';
+import type { LessonDefinitionVersion, V3LessonId } from '@mcat/contracts';
+import { LessonDefinitionSchema, type LessonDefinition } from './lesson-definition';
 
 export type LessonRegistryMode = 'production' | 'test_fixture';
 
@@ -17,10 +11,8 @@ export interface LessonRegistryMetadata {
   testOnly: boolean;
 }
 
-const registryKey = (
-  lessonId: V3LessonId,
-  version: LessonDefinitionVersion,
-): string => `${lessonId}@${version}`;
+const registryKey = (lessonId: V3LessonId, version: LessonDefinitionVersion): string =>
+  `${lessonId}@${version}`;
 
 /**
  * Server-only validated definition registry. Later curriculum batches add

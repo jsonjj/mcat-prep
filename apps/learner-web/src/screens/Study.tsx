@@ -52,7 +52,8 @@ export function Study() {
     setRecallText('');
   }, [stepKey]);
 
-  if (session.isLoading || !step) return <div className="mc-center mc-muted">Loading your task…</div>;
+  if (session.isLoading || !step)
+    return <div className="mc-center mc-muted">Loading your task…</div>;
 
   if (step.kind === 'locked') {
     return (
@@ -207,15 +208,15 @@ export function Study() {
       {step.sub === 'reveal' && step.reveal ? (
         <Reveal reveal={step.reveal} chosen={choice} onContinue={() => continueStep.mutate()} />
       ) : step.sub === 'cause' ? (
-        <CausePicker
-          onPick={(c) => selectCause.mutate(c)}
-          pending={selectCause.isPending}
-        />
+        <CausePicker onPick={(c) => selectCause.mutate(c)} pending={selectCause.isPending} />
       ) : (
         <fieldset className="mc-choices">
           <legend className="mc-visually-hidden">Answer choices</legend>
           {q.choices.map((c) => (
-            <label key={c.id} className={`mc-choice ${choice === c.id ? 'mc-choice--selected' : ''}`}>
+            <label
+              key={c.id}
+              className={`mc-choice ${choice === c.id ? 'mc-choice--selected' : ''}`}
+            >
               <input
                 type="radio"
                 name="answer"
@@ -250,7 +251,9 @@ export function Study() {
 
       {step.sub === 'retry' ? (
         <Stack gap={2}>
-          <Callout tone="info">One unassisted retry. This is diagnostic — it won&apos;t count as mastery.</Callout>
+          <Callout tone="info">
+            One unassisted retry. This is diagnostic — it won&apos;t count as mastery.
+          </Callout>
           <Button
             variant="primary"
             size="lg"
@@ -265,7 +268,13 @@ export function Study() {
   );
 }
 
-function CausePicker({ onPick, pending }: { onPick: (c: ProbableCause) => void; pending: boolean }) {
+function CausePicker({
+  onPick,
+  pending,
+}: {
+  onPick: (c: ProbableCause) => void;
+  pending: boolean;
+}) {
   return (
     <Card elevated>
       <Stack gap={3}>

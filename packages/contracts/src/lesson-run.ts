@@ -17,12 +17,7 @@ export const LessonDefinitionVersionSchema = z
   .regex(/^\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?$/, 'semantic lesson definition version');
 export type LessonDefinitionVersion = z.infer<typeof LessonDefinitionVersionSchema>;
 
-export const LessonRouteSchema = z.enum([
-  'concise',
-  'standard',
-  'prerequisite',
-  'misconception',
-]);
+export const LessonRouteSchema = z.enum(['concise', 'standard', 'prerequisite', 'misconception']);
 export type LessonRoute = z.infer<typeof LessonRouteSchema>;
 
 export const LessonActivityPhaseSchema = z.enum([
@@ -160,12 +155,7 @@ export const LessonRunStateSchema = z
       .strict()
       .nullable(),
     resumeStatus: z
-      .enum([
-        'active',
-        'awaiting_route',
-        'awaiting_exit_feedback',
-        'awaiting_repair',
-      ])
+      .enum(['active', 'awaiting_route', 'awaiting_exit_feedback', 'awaiting_repair'])
       .nullable(),
     pauseReason: z.enum(['learner', 'interruption', 'repair_exhausted']).nullable(),
     plannerReentryRequired: z.boolean(),

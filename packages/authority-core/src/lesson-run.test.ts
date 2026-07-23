@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  syntheticV3LessonDefinition,
-  type ActivityDefinition,
-} from '@mcat/content';
+import { syntheticV3LessonDefinition, type ActivityDefinition } from '@mcat/content';
 import {
   LessonRunPinsSchema,
   type LessonActionInput,
@@ -52,32 +49,17 @@ function event(
   };
 }
 
-const apply = (
-  state: LessonRunState,
-  type: string,
-  payload: Record<string, unknown> = {},
-) =>
-  reduceLessonRun(
-    state,
-    event(state, type, payload),
-    syntheticV3LessonDefinition,
-    'test_fixture',
-  );
+const apply = (state: LessonRunState, type: string, payload: Record<string, unknown> = {}) =>
+  reduceLessonRun(state, event(state, type, payload), syntheticV3LessonDefinition, 'test_fixture');
 
 function freshStarted(): LessonRunState {
-  const initial = initializeLessonRun(
-    syntheticV3LessonDefinition,
-    pins,
-    'test_fixture',
-  );
+  const initial = initializeLessonRun(syntheticV3LessonDefinition, pins, 'test_fixture');
   return apply(initial, 'lesson_run_started');
 }
 
 function activity(state: LessonRunState): ActivityDefinition {
   for (const kc of syntheticV3LessonDefinition.knowledgeComponents) {
-    const found = kc.activities.find(
-      (candidate) => candidate.id === state.currentActivityId,
-    );
+    const found = kc.activities.find((candidate) => candidate.id === state.currentActivityId);
     if (found) return found;
   }
   throw new Error('Expected a current synthetic activity.');
@@ -165,9 +147,8 @@ function reachFirstExit(route: 'concise' | 'standard' = 'standard'): LessonRunSt
   const firstKc = syntheticV3LessonDefinition.knowledgeComponents[0]!;
   const signal =
     route === 'concise'
-      ? firstKc.microcycle.entryRouting.routes.find(
-          (candidate) => candidate.route === 'concise',
-        )!.criteria.signalIds[0]!
+      ? firstKc.microcycle.entryRouting.routes.find((candidate) => candidate.route === 'concise')!
+          .criteria.signalIds[0]!
       : 'unused-standard-signal';
   let state = selectRoute(reachRoutePending(signal), route);
   while (state.phase !== 'exit_near') state = completeCurrent(state);
@@ -186,10 +167,7 @@ function releaseExitFeedback(state: LessonRunState): LessonRunState {
   });
 }
 
-function submitExitPair(
-  state: LessonRunState,
-  outcome: LessonResponseOutcome,
-): LessonRunState {
+function submitExitPair(state: LessonRunState, outcome: LessonResponseOutcome): LessonRunState {
   let next = present(state);
   next = respond(next, outcome);
   next = present(next);
@@ -198,16 +176,8 @@ function submitExitPair(
 
 describe('V3 lesson run initialization and routing', () => {
   it('requires an explicit test-fixture mode and fails production closed', () => {
-    const fixture = initializeLessonRun(
-      syntheticV3LessonDefinition,
-      pins,
-      'test_fixture',
-    );
-    const production = initializeLessonRun(
-      syntheticV3LessonDefinition,
-      pins,
-      'production',
-    );
+    const fixture = initializeLessonRun(syntheticV3LessonDefinition, pins, 'test_fixture');
+    const production = initializeLessonRun(syntheticV3LessonDefinition, pins, 'production');
 
     expect(fixture.status).toBe('ready');
     expect(production.status).toBe('invalid_content');
@@ -335,9 +305,7 @@ describe('V3 lesson fading, exits, and repair', () => {
     for (let cycle = 1; cycle <= 2; cycle += 1) {
       expect(state.status).toBe('awaiting_repair');
       const kc = syntheticV3LessonDefinition.knowledgeComponents[0]!;
-      const generic = kc.microcycle.repairs.mappings.find(
-        (mapping) => mapping.kind === 'generic',
-      )!;
+      const generic = kc.microcycle.repairs.mappings.find((mapping) => mapping.kind === 'generic')!;
       state = apply(state, 'lesson_repair_started', {
         kcId: state.currentKcId,
         repairRouteId: generic.id,
@@ -350,25 +318,17 @@ describe('V3 lesson fading, exits, and repair', () => {
     expect(state.status).toBe('paused');
     expect(state.repairCycles).toBe(2);
     expect(state.plannerReentryRequired).toBe(true);
-    expect(buildLessonStepView(syntheticV3LessonDefinition, state).availableActions)
-      .not.toContain('resume');
+    expect(buildLessonStepView(syntheticV3LessonDefinition, state).availableActions).not.toContain(
+      'resume',
+    );
   });
 });
 
 describe('V3 lesson replay, checkpoints, and safe views', () => {
   it('replays idempotently and ignores duplicate event identities', () => {
-    const initial = initializeLessonRun(
-      syntheticV3LessonDefinition,
-      pins,
-      'test_fixture',
-    );
+    const initial = initializeLessonRun(syntheticV3LessonDefinition, pins, 'test_fixture');
     const started = event(initial, 'lesson_run_started', {});
-    const once = replayLessonRun(
-      initial,
-      [started],
-      syntheticV3LessonDefinition,
-      'test_fixture',
-    );
+    const once = replayLessonRun(initial, [started], syntheticV3LessonDefinition, 'test_fixture');
     const duplicated = replayLessonRun(
       initial,
       [started, started],
@@ -410,12 +370,7 @@ describe('V3 lesson replay, checkpoints, and safe views', () => {
       },
       { contentRelease: 'other-release' },
     );
-    const next = reduceLessonRun(
-      state,
-      mismatched,
-      syntheticV3LessonDefinition,
-      'test_fixture',
-    );
+    const next = reduceLessonRun(state, mismatched, syntheticV3LessonDefinition, 'test_fixture');
 
     expect(next.status).toBe('blocked');
     expect(next.transitionErrors).toContain('event_pin_mismatch');

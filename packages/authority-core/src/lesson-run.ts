@@ -24,10 +24,7 @@ import {
   newIdempotencyKey,
   systemClock,
 } from '@mcat/contracts';
-import {
-  decideLessonAssistance,
-  distinctSignalFamilyCount,
-} from '@mcat/policies';
+import { decideLessonAssistance, distinctSignalFamilyCount } from '@mcat/policies';
 
 export type LessonRuntimeMode = 'production' | 'test_fixture';
 
@@ -124,10 +121,7 @@ export function initializeLessonRun(
   });
 }
 
-function activityById(
-  kc: KnowledgeComponentDefinition,
-  activityId: string,
-): ActivityDefinition {
+function activityById(kc: KnowledgeComponentDefinition, activityId: string): ActivityDefinition {
   const activity = kc.activities.find((candidate) => candidate.id === activityId);
   if (!activity) throw new Error(`Validated definition is missing activity ${activityId}.`);
   return activity;
@@ -138,8 +132,7 @@ function currentKc(
   state: LessonRunState,
 ): KnowledgeComponentDefinition | null {
   return (
-    definition.knowledgeComponents.find((candidate) => candidate.id === state.currentKcId) ??
-    null
+    definition.knowledgeComponents.find((candidate) => candidate.id === state.currentKcId) ?? null
   );
 }
 
@@ -160,16 +153,12 @@ function block(state: LessonRunState, code: string): LessonRunState {
   return LessonRunStateSchema.parse(state);
 }
 
-function policiesEqual(
-  left: LessonRunPins['policies'],
-  right: LessonRunPins['policies'],
-): boolean {
+function policiesEqual(left: LessonRunPins['policies'], right: LessonRunPins['policies']): boolean {
   return (
     left.length === right.length &&
     left.every(
       (policy, index) =>
-        policy.policyId === right[index]?.policyId &&
-        policy.version === right[index]?.version,
+        policy.policyId === right[index]?.policyId && policy.version === right[index]?.version,
     )
   );
 }
@@ -190,11 +179,7 @@ function recordEvent(state: LessonRunState, event: LessonRunEvent): void {
   state.lastSequence = event.sequence;
 }
 
-function addSignals(
-  state: LessonRunState,
-  familyId: string,
-  signalIds: readonly string[],
-): void {
+function addSignals(state: LessonRunState, familyId: string, signalIds: readonly string[]): void {
   for (const signalId of new Set(signalIds)) {
     const existing = state.signals.find((signal) => signal.signalId === signalId);
     if (!existing) {
@@ -237,10 +222,7 @@ function setCurrentFromSequence(
   clearActivityTransient(state);
 }
 
-function activeExitPair(
-  kc: KnowledgeComponentDefinition,
-  state: LessonRunState,
-) {
+function activeExitPair(kc: KnowledgeComponentDefinition, state: LessonRunState) {
   return kc.microcycle.pairedExit.attempts[state.repairCycles]!;
 }
 
@@ -327,9 +309,7 @@ export function reduceLessonRun(
     if (
       transitionError(
         state,
-        state.status === 'paused' &&
-          !state.plannerReentryRequired &&
-          state.resumeStatus !== null,
+        state.status === 'paused' && !state.plannerReentryRequired && state.resumeStatus !== null,
         'resume_not_allowed',
       )
     ) {
@@ -428,9 +408,7 @@ export function reduceLessonRun(
     if (
       transitionError(
         state,
-        state.status === 'awaiting_route' &&
-          event.payload.kcId === kc.id &&
-          route !== undefined,
+        state.status === 'awaiting_route' && event.payload.kcId === kc.id && route !== undefined,
         'route_selection_not_allowed',
       )
     ) {
@@ -492,25 +470,23 @@ export function reduceLessonRun(
       const pairedFamilyReuse = state.sealedExitResults.some(
         (result) => result.familyId === activity.familyId,
       );
-      const contamination =
-        !presentation.freshAtPresentation
-          ? 'prior_family_exposure'
-          : pairedFamilyReuse
-            ? 'paired_family_reuse'
-            : event.payload.revealed
-              ? 'revealed'
-              : event.payload.assisted
-                ? 'assisted'
-                : event.payload.assistanceLevel !== 'A0'
-                  ? 'support_not_a0'
-                  : null;
+      const contamination = !presentation.freshAtPresentation
+        ? 'prior_family_exposure'
+        : pairedFamilyReuse
+          ? 'paired_family_reuse'
+          : event.payload.revealed
+            ? 'revealed'
+            : event.payload.assisted
+              ? 'assisted'
+              : event.payload.assistanceLevel !== 'A0'
+                ? 'support_not_a0'
+                : null;
       state.sealedExitResults.push({
         activityId: activity.id,
         familyId: activity.familyId,
         role: activity.phase === 'exit_near' ? 'near' : 'changed',
         outcome: event.payload.outcome,
-        passedUnsupported:
-          event.payload.outcome === 'correct' && contamination === null,
+        passedUnsupported: event.payload.outcome === 'correct' && contamination === null,
         contamination,
       });
       state.feedback = { sealed: true, entries: [] };
@@ -528,10 +504,7 @@ export function reduceLessonRun(
         setCurrentFromSequence(state, kc, changedPosition);
       } else {
         const pair = activeExitPair(kc, state);
-        if (
-          pair.changedActivityId !== activity.id ||
-          state.sealedExitResults.length !== 2
-        ) {
+        if (pair.changedActivityId !== activity.id || state.sealedExitResults.length !== 2) {
           return block(state, 'exit_pair_incomplete');
         }
         state.status = 'awaiting_exit_feedback';
@@ -552,8 +525,7 @@ export function reduceLessonRun(
         successesToFade: kc.microcycle.fading.successesToFade,
       });
       state.assistanceLevel = decision.nextLevel;
-      state.consecutiveUnsupportedSuccesses =
-        decision.consecutiveUnsupportedSuccesses;
+      state.consecutiveUnsupportedSuccesses = decision.consecutiveUnsupportedSuccesses;
     }
     return LessonRunStateSchema.parse(state);
   }
@@ -592,9 +564,7 @@ export function reduceLessonRun(
           state.sealedExitResults.length === 2 &&
           new Set(event.payload.feedback.map((entry) => entry.activityId)).size === 2 &&
           event.payload.feedback.every((entry) =>
-            state.sealedExitResults.some(
-              (result) => result.activityId === entry.activityId,
-            ),
+            state.sealedExitResults.some((result) => result.activityId === entry.activityId),
           ),
         'exit_feedback_release_not_allowed',
       )
@@ -820,9 +790,8 @@ function safeActivity(
   const visibleHint =
     state.visibleAssistanceLevel === null
       ? null
-      : (activity.assistance.hints.find(
-          (hint) => hint.level === state.visibleAssistanceLevel,
-        )?.text ?? null);
+      : (activity.assistance.hints.find((hint) => hint.level === state.visibleAssistanceLevel)
+          ?.text ?? null);
   const canRequestMore =
     !['exit_near', 'exit_changed'].includes(activity.phase) &&
     activity.assistance.hints.some(
@@ -840,17 +809,19 @@ function safeActivity(
     representations: activity.representationIds.map((id) => {
       const representation = kc.representations.find((candidate) => candidate.id === id)!;
       const longDescription =
-        representation.alternatives.find(
-          (alternative) => alternative.format === 'long_description',
-        )?.content.join('\n') ?? null;
+        representation.alternatives
+          .find((alternative) => alternative.format === 'long_description')
+          ?.content.join('\n') ?? null;
       const altText =
         representation.kind === 'text'
           ? null
-          : (representation.alternatives.find((alternative) =>
-              ['plain_text', 'long_description', 'data_table', 'transcript'].includes(
-                alternative.format,
-              ),
-            )?.content.join('\n') ?? null);
+          : (representation.alternatives
+              .find((alternative) =>
+                ['plain_text', 'long_description', 'data_table', 'transcript'].includes(
+                  alternative.format,
+                ),
+              )
+              ?.content.join('\n') ?? null);
       return {
         id: representation.id,
         kind: representation.kind,
@@ -880,10 +851,7 @@ function safeActivity(
   };
 }
 
-function safeCommon(
-  definition: LessonDefinition | null,
-  state: LessonRunState,
-) {
+function safeCommon(definition: LessonDefinition | null, state: LessonRunState) {
   const kc = definition ? currentKc(definition, state) : null;
   const kcIndex =
     definition && kc
@@ -1009,8 +977,7 @@ export function buildLessonStepView(
           }
         : null,
       availableActions:
-        feedbackReleased &&
-        state.sealedExitResults.every((result) => result.passedUnsupported)
+        feedbackReleased && state.sealedExitResults.every((result) => result.passedUnsupported)
           ? ['continue', 'pause']
           : ['pause'],
       message: feedbackReleased
@@ -1056,10 +1023,7 @@ export interface LessonDispatchResult {
   events: LessonRunEvent[];
 }
 
-function eligibleEntryRoute(
-  kc: KnowledgeComponentDefinition,
-  state: LessonRunState,
-) {
+function eligibleEntryRoute(kc: KnowledgeComponentDefinition, state: LessonRunState) {
   const priority = ['prerequisite', 'misconception', 'concise'] as const;
   for (const routeName of priority) {
     const route = kc.microcycle.entryRouting.routes.find(
@@ -1073,20 +1037,14 @@ function eligibleEntryRoute(
       return route;
     }
   }
-  return kc.microcycle.entryRouting.routes.find(
-    (candidate) => candidate.route === 'standard',
-  )!;
+  return kc.microcycle.entryRouting.routes.find((candidate) => candidate.route === 'standard')!;
 }
 
-function eligibleRepairMapping(
-  kc: KnowledgeComponentDefinition,
-  state: LessonRunState,
-) {
+function eligibleRepairMapping(kc: KnowledgeComponentDefinition, state: LessonRunState) {
   for (const mapping of kc.microcycle.repairs.mappings) {
     if (
       mapping.kind === 'targeted' &&
-      distinctSignalFamilyCount(state.signals, mapping.signalIds) >=
-        mapping.minimumDistinctFamilies
+      distinctSignalFamilyCount(state.signals, mapping.signalIds) >= mapping.minimumDistinctFamilies
     ) {
       return mapping;
     }
@@ -1116,12 +1074,7 @@ function genericExitFeedback(
   }
   return {
     activityId: activity.id,
-    tone:
-      outcome === 'correct'
-        ? 'correct'
-        : outcome === 'incorrect'
-          ? 'incorrect'
-          : 'information',
+    tone: outcome === 'correct' ? 'correct' : outcome === 'incorrect' ? 'incorrect' : 'information',
     message,
   };
 }
@@ -1216,8 +1169,7 @@ export function dispatchLessonRunAction(
       throw new Error('The response does not match the current activity.');
     }
     const evaluated = evaluateLessonResponse(activity, action.response);
-    const isExit =
-      activity.phase === 'exit_near' || activity.phase === 'exit_changed';
+    const isExit = activity.phase === 'exit_near' || activity.phase === 'exit_changed';
     append('lesson_response_evaluated', {
       kcId: kc.id,
       activityId: activity.id,
@@ -1296,6 +1248,5 @@ export function startLessonRun(
   };
 }
 
-export const parseLessonActionResponse = (
-  input: unknown,
-): LessonActivityResponseInput => LessonActivityResponseInputSchema.parse(input);
+export const parseLessonActionResponse = (input: unknown): LessonActivityResponseInput =>
+  LessonActivityResponseInputSchema.parse(input);

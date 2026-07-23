@@ -219,51 +219,51 @@ function makeKc(
       [textRepId],
       'Show expert decisions',
     ),
-    choiceActivity(kcId, ids.completion1, 'completion', [textRepId], 'Completion at support step one'),
-    choiceActivity(kcId, ids.completion2, 'completion', [textRepId], 'Completion at support step two'),
-    choiceActivity(kcId, ids.completion3, 'completion', [textRepId], 'Completion at support step three'),
+    choiceActivity(
+      kcId,
+      ids.completion1,
+      'completion',
+      [textRepId],
+      'Completion at support step one',
+    ),
+    choiceActivity(
+      kcId,
+      ids.completion2,
+      'completion',
+      [textRepId],
+      'Completion at support step two',
+    ),
+    choiceActivity(
+      kcId,
+      ids.completion3,
+      'completion',
+      [textRepId],
+      'Completion at support step three',
+    ),
     choiceActivity(kcId, ids.completion4, 'completion', [textRepId], 'Completion without support'),
     contentActivity(kcId, ids.contrast, 'contrast_bound', [textRepId], 'Contrast and bound'),
     choiceActivity(kcId, ids.near0, 'exit_near', [textRepId], 'Fresh near-use exit zero', {
       exit: true,
     }),
-    choiceActivity(
-      kcId,
-      ids.changed0,
-      'exit_changed',
-      [diagramRepId],
-      'Fresh changed exit zero',
-      { exit: true, changed: true },
-    ),
+    choiceActivity(kcId, ids.changed0, 'exit_changed', [diagramRepId], 'Fresh changed exit zero', {
+      exit: true,
+      changed: true,
+    }),
     choiceActivity(kcId, ids.near1, 'exit_near', [textRepId], 'Fresh near-use exit one', {
       exit: true,
     }),
-    choiceActivity(
-      kcId,
-      ids.changed1,
-      'exit_changed',
-      [diagramRepId],
-      'Fresh changed exit one',
-      { exit: true, changed: true },
-    ),
+    choiceActivity(kcId, ids.changed1, 'exit_changed', [diagramRepId], 'Fresh changed exit one', {
+      exit: true,
+      changed: true,
+    }),
     choiceActivity(kcId, ids.near2, 'exit_near', [textRepId], 'Fresh near-use exit two', {
       exit: true,
     }),
-    choiceActivity(
-      kcId,
-      ids.changed2,
-      'exit_changed',
-      [diagramRepId],
-      'Fresh changed exit two',
-      { exit: true, changed: true },
-    ),
-    contentActivity(
-      kcId,
-      ids.repairGeneric,
-      'targeted_repair',
-      [textRepId],
-      'Generic repair',
-    ),
+    choiceActivity(kcId, ids.changed2, 'exit_changed', [diagramRepId], 'Fresh changed exit two', {
+      exit: true,
+      changed: true,
+    }),
+    contentActivity(kcId, ids.repairGeneric, 'targeted_repair', [textRepId], 'Generic repair'),
     contentActivity(
       kcId,
       ids.repairPrerequisite,
@@ -306,7 +306,9 @@ function makeKc(
         id: textRepId as KnowledgeComponentDefinition['representations'][number]['id'],
         kind: 'text',
         label: `${noun} text rule`,
-        body: [`In this fixture only, the ${noun.toLowerCase()} aligns when both invented markers match.`],
+        body: [
+          `In this fixture only, the ${noun.toLowerCase()} aligns when both invented markers match.`,
+        ],
         assetRef: null,
         table: null,
         alternatives: [],
@@ -321,7 +323,9 @@ function makeKc(
         alternatives: [
           {
             format: 'long_description',
-            content: [`A text description of two matching invented markers on the ${noun.toLowerCase()}.`],
+            content: [
+              `A text description of two matching invented markers on the ${noun.toLowerCase()}.`,
+            ],
           },
         ],
       },
@@ -329,7 +333,10 @@ function makeKc(
     activities,
     microcycle: {
       entryRouting: {
-        probeActivityIds: [ids.probe1, ids.probe2] as KnowledgeComponentDefinition['microcycle']['entryRouting']['probeActivityIds'],
+        probeActivityIds: [
+          ids.probe1,
+          ids.probe2,
+        ] as KnowledgeComponentDefinition['microcycle']['entryRouting']['probeActivityIds'],
         routes: [
           {
             route: 'concise',
@@ -374,7 +381,9 @@ function makeKc(
         successesToFade: 1,
         nonSuccessRule: 'hold_or_increase_support',
       },
-      workedDecisionActivityIds: [ids.expert] as KnowledgeComponentDefinition['microcycle']['workedDecisionActivityIds'],
+      workedDecisionActivityIds: [
+        ids.expert,
+      ] as KnowledgeComponentDefinition['microcycle']['workedDecisionActivityIds'],
       pairedExit: {
         feedbackSealedUntilBoth: true,
         attempts: [
@@ -453,10 +462,7 @@ const fixtureInput = {
   summary:
     'Test-only multi-KC shell for deterministic routing, fading, paired exits, repair, and handoff.',
   orderedKcIds: ['V3-KC-SYNTH-001', 'V3-KC-SYNTH-002'],
-  knowledgeComponents: [
-    makeKc('001', 'Glimmer dial'),
-    makeKc('002', 'Nacre relay'),
-  ],
+  knowledgeComponents: [makeKc('001', 'Glimmer dial'), makeKc('002', 'Nacre relay')],
   artifactReferences: [
     {
       kind: 'extension',
@@ -500,5 +506,4 @@ const fixtureInput = {
 export const syntheticV3LessonDefinition: LessonDefinition =
   LessonDefinitionSchema.parse(fixtureInput);
 
-export const freshSyntheticV3LessonInput = (): unknown =>
-  structuredClone(fixtureInput);
+export const freshSyntheticV3LessonInput = (): unknown => structuredClone(fixtureInput);

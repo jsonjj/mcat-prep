@@ -260,12 +260,7 @@ export const KcMicrocycleSchema = z
       .strict(),
     fading: z
       .object({
-        ladder: z.tuple([
-          z.literal('A3'),
-          z.literal('A2'),
-          z.literal('A1'),
-          z.literal('A0'),
-        ]),
+        ladder: z.tuple([z.literal('A3'), z.literal('A2'), z.literal('A1'), z.literal('A0')]),
         successesToFade: z.number().int().min(1).max(4),
         nonSuccessRule: z.literal('hold_or_increase_support'),
       })
@@ -282,10 +277,7 @@ export const KcMicrocycleSchema = z
         maximumCycles: z.literal(2),
         mappings: z
           .array(
-            z.discriminatedUnion('kind', [
-              GenericRepairMappingSchema,
-              TargetedRepairMappingSchema,
-            ]),
+            z.discriminatedUnion('kind', [GenericRepairMappingSchema, TargetedRepairMappingSchema]),
           )
           .min(1),
       })
@@ -338,9 +330,7 @@ export const KnowledgeComponentDefinitionSchema = z
     timing: TimedRangeSchema,
   })
   .strict();
-export type KnowledgeComponentDefinition = z.infer<
-  typeof KnowledgeComponentDefinitionSchema
->;
+export type KnowledgeComponentDefinition = z.infer<typeof KnowledgeComponentDefinitionSchema>;
 
 const LessonDefinitionBaseSchema = z
   .object({
@@ -381,328 +371,327 @@ const phaseOrder: Readonly<Record<string, number>> = {
   exit_changed: 6,
 };
 
-export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine(
-  (lesson, ctx) => {
-    const kcIds = lesson.knowledgeComponents.map((kc) => kc.id);
-    if (
-      new Set(kcIds).size !== kcIds.length ||
-      lesson.orderedKcIds.length !== kcIds.length ||
-      lesson.orderedKcIds.some((id, index) => id !== kcIds[index])
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['orderedKcIds'],
-        message:
-          'orderedKcIds must list every knowledge component exactly once and match authoring order.',
-      });
-    }
-    if (
-      lesson.accessibility.readingOrder.length !== lesson.orderedKcIds.length ||
-      lesson.accessibility.readingOrder.some(
-        (id, index) => id !== lesson.orderedKcIds[index],
-      )
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['accessibility', 'readingOrder'],
-        message: 'Accessibility reading order must match orderedKcIds.',
-      });
-    }
+export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((lesson, ctx) => {
+  const kcIds = lesson.knowledgeComponents.map((kc) => kc.id);
+  if (
+    new Set(kcIds).size !== kcIds.length ||
+    lesson.orderedKcIds.length !== kcIds.length ||
+    lesson.orderedKcIds.some((id, index) => id !== kcIds[index])
+  ) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['orderedKcIds'],
+      message:
+        'orderedKcIds must list every knowledge component exactly once and match authoring order.',
+    });
+  }
+  if (
+    lesson.accessibility.readingOrder.length !== lesson.orderedKcIds.length ||
+    lesson.accessibility.readingOrder.some((id, index) => id !== lesson.orderedKcIds[index])
+  ) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['accessibility', 'readingOrder'],
+      message: 'Accessibility reading order must match orderedKcIds.',
+    });
+  }
 
-    const globalActivityIds = new Set<string>();
-    const globalRepresentationIds = new Set<string>();
+  const globalActivityIds = new Set<string>();
+  const globalRepresentationIds = new Set<string>();
 
-    lesson.knowledgeComponents.forEach((kc, kcIndex) => {
-      const basePath = ['knowledgeComponents', kcIndex] as const;
-      const activityById = new Map(kc.activities.map((activity) => [activity.id, activity]));
-      const representationIds = new Set(kc.representations.map((representation) => representation.id));
+  lesson.knowledgeComponents.forEach((kc, kcIndex) => {
+    const basePath = ['knowledgeComponents', kcIndex] as const;
+    const activityById = new Map(kc.activities.map((activity) => [activity.id, activity]));
+    const representationIds = new Set(
+      kc.representations.map((representation) => representation.id),
+    );
 
-      for (const representation of kc.representations) {
-        if (globalRepresentationIds.has(representation.id)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [...basePath, 'representations'],
-            message: `Duplicate representation id ${representation.id}.`,
-          });
-        }
-        globalRepresentationIds.add(representation.id);
+    for (const representation of kc.representations) {
+      if (globalRepresentationIds.has(representation.id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...basePath, 'representations'],
+          message: `Duplicate representation id ${representation.id}.`,
+        });
       }
+      globalRepresentationIds.add(representation.id);
+    }
 
-      for (const activity of kc.activities) {
-        if (globalActivityIds.has(activity.id)) {
+    for (const activity of kc.activities) {
+      if (globalActivityIds.has(activity.id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...basePath, 'activities'],
+          message: `Duplicate activity id ${activity.id}.`,
+        });
+      }
+      globalActivityIds.add(activity.id);
+      if (activity.kcId !== kc.id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...basePath, 'activities'],
+          message: `Activity ${activity.id} must reference its containing KC.`,
+        });
+      }
+      for (const representationId of activity.representationIds) {
+        if (!representationIds.has(representationId)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             path: [...basePath, 'activities'],
-            message: `Duplicate activity id ${activity.id}.`,
+            message: `Activity ${activity.id} references unknown representation ${representationId}.`,
           });
         }
-        globalActivityIds.add(activity.id);
-        if (activity.kcId !== kc.id) {
+      }
+      if (!activity.assistance.allowedLevels.includes(activity.assistance.initialLevel)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...basePath, 'activities'],
+          message: `Activity ${activity.id} initial assistance must be allowed.`,
+        });
+      }
+      if (activity.response.kind === 'choice') {
+        const choiceIds = activity.response.choices.map((choice) => choice.id);
+        if (new Set(choiceIds).size !== choiceIds.length) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             path: [...basePath, 'activities'],
-            message: `Activity ${activity.id} must reference its containing KC.`,
+            message: `Activity ${activity.id} choice ids must be unique.`,
           });
         }
-        for (const representationId of activity.representationIds) {
-          if (!representationIds.has(representationId)) {
+        for (const correctId of activity.response.correctChoiceIds) {
+          if (!choiceIds.includes(correctId)) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               path: [...basePath, 'activities'],
-              message: `Activity ${activity.id} references unknown representation ${representationId}.`,
+              message: `Activity ${activity.id} has an unknown correct choice id.`,
             });
           }
         }
-        if (!activity.assistance.allowedLevels.includes(activity.assistance.initialLevel)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [...basePath, 'activities'],
-            message: `Activity ${activity.id} initial assistance must be allowed.`,
-          });
-        }
-        if (activity.response.kind === 'choice') {
-          const choiceIds = activity.response.choices.map((choice) => choice.id);
-          if (new Set(choiceIds).size !== choiceIds.length) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [...basePath, 'activities'],
-              message: `Activity ${activity.id} choice ids must be unique.`,
-            });
-          }
-          for (const correctId of activity.response.correctChoiceIds) {
-            if (!choiceIds.includes(correctId)) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: [...basePath, 'activities'],
-                message: `Activity ${activity.id} has an unknown correct choice id.`,
-              });
-            }
-          }
-        }
+      }
+    }
+
+    const referenced = new Set<string>();
+    const requireActivity = (
+      id: string,
+      expectedPhase?: z.infer<typeof LessonActivityPhaseSchema>,
+    ) => {
+      referenced.add(id);
+      const activity = activityById.get(id as z.infer<typeof V3ActivityIdSchema>);
+      if (!activity) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...basePath, 'microcycle'],
+          message: `Microcycle references unknown activity ${id}.`,
+        });
+        return undefined;
+      }
+      if (expectedPhase && activity.phase !== expectedPhase) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...basePath, 'microcycle'],
+          message: `Activity ${id} must have phase ${expectedPhase}.`,
+        });
+      }
+      return activity;
+    };
+
+    for (const probeId of kc.microcycle.entryRouting.probeActivityIds) {
+      requireActivity(probeId, 'enter_routing');
+    }
+
+    const routes = kc.microcycle.entryRouting.routes;
+    const routeNames = routes.map((route) => route.route);
+    if (
+      new Set(routeNames).size !== 4 ||
+      LessonRouteSchema.options.some((route) => !routeNames.includes(route))
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [...basePath, 'microcycle', 'entryRouting', 'routes'],
+        message: 'Entry routing must define concise, standard, prerequisite, and misconception.',
+      });
+    }
+    for (const route of routes) {
+      if ((route.route === 'standard') !== (route.criteria.kind === 'default')) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...basePath, 'microcycle', 'entryRouting', 'routes'],
+          message:
+            'Standard is the only default route; all targeted routes require convergent evidence.',
+        });
       }
 
-      const referenced = new Set<string>();
-      const requireActivity = (
-        id: string,
-        expectedPhase?: z.infer<typeof LessonActivityPhaseSchema>,
-      ) => {
-        referenced.add(id);
-        const activity = activityById.get(id as z.infer<typeof V3ActivityIdSchema>);
-        if (!activity) {
+      const phases = route.activityIds
+        .map((id) => requireActivity(id)?.phase)
+        .filter(
+          (phase): phase is keyof typeof phaseOrder => phase !== undefined && phase in phaseOrder,
+        );
+      for (const requiredPhase of Object.keys(phaseOrder)) {
+        if (!phases.includes(requiredPhase)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            path: [...basePath, 'microcycle'],
-            message: `Microcycle references unknown activity ${id}.`,
-          });
-          return undefined;
-        }
-        if (expectedPhase && activity.phase !== expectedPhase) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [...basePath, 'microcycle'],
-            message: `Activity ${id} must have phase ${expectedPhase}.`,
+            path: [...basePath, 'microcycle', 'entryRouting', 'routes'],
+            message: `Route ${route.route} is missing ${requiredPhase}.`,
           });
         }
-        return activity;
-      };
-
-      for (const probeId of kc.microcycle.entryRouting.probeActivityIds) {
-        requireActivity(probeId, 'enter_routing');
       }
-
-      const routes = kc.microcycle.entryRouting.routes;
-      const routeNames = routes.map((route) => route.route);
+      for (let index = 1; index < phases.length; index += 1) {
+        if (phaseOrder[phases[index]!]! < phaseOrder[phases[index - 1]!]!) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [...basePath, 'microcycle', 'entryRouting', 'routes'],
+            message: `Route ${route.route} violates microcycle phase order.`,
+          });
+        }
+      }
+      const initialExit = kc.microcycle.pairedExit.attempts[0]!;
       if (
-        new Set(routeNames).size !== 4 ||
-        LessonRouteSchema.options.some((route) => !routeNames.includes(route))
+        route.activityIds.at(-2) !== initialExit.nearActivityId ||
+        route.activityIds.at(-1) !== initialExit.changedActivityId
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: [...basePath, 'microcycle', 'entryRouting', 'routes'],
-          message: 'Entry routing must define concise, standard, prerequisite, and misconception.',
-        });
-      }
-      for (const route of routes) {
-        if (
-          (route.route === 'standard') !== (route.criteria.kind === 'default')
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [...basePath, 'microcycle', 'entryRouting', 'routes'],
-            message: 'Standard is the only default route; all targeted routes require convergent evidence.',
-          });
-        }
-
-        const phases = route.activityIds
-          .map((id) => requireActivity(id)?.phase)
-          .filter((phase): phase is keyof typeof phaseOrder => phase !== undefined && phase in phaseOrder);
-        for (const requiredPhase of Object.keys(phaseOrder)) {
-          if (!phases.includes(requiredPhase)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [...basePath, 'microcycle', 'entryRouting', 'routes'],
-              message: `Route ${route.route} is missing ${requiredPhase}.`,
-            });
-          }
-        }
-        for (let index = 1; index < phases.length; index += 1) {
-          if (phaseOrder[phases[index]!]! < phaseOrder[phases[index - 1]!]!) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [...basePath, 'microcycle', 'entryRouting', 'routes'],
-              message: `Route ${route.route} violates microcycle phase order.`,
-            });
-          }
-        }
-        const initialExit = kc.microcycle.pairedExit.attempts[0]!;
-        if (
-          route.activityIds.at(-2) !== initialExit.nearActivityId ||
-          route.activityIds.at(-1) !== initialExit.changedActivityId
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [...basePath, 'microcycle', 'entryRouting', 'routes'],
-            message: `Route ${route.route} must end with the initial paired exit checks.`,
-          });
-        }
-      }
-
-      for (const id of kc.microcycle.workedDecisionActivityIds) {
-        requireActivity(id, 'show_expert_decisions');
-      }
-
-      const exitFamilies = new Set<string>();
-      for (const pair of kc.microcycle.pairedExit.attempts) {
-        const near = requireActivity(pair.nearActivityId, 'exit_near');
-        const changed = requireActivity(pair.changedActivityId, 'exit_changed');
-        if (!near || !changed) continue;
-        if (
-          near.constructId !== changed.constructId ||
-          !near.constructPreserving ||
-          !changed.constructPreserving ||
-          changed.changeDimensions.length === 0
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [...basePath, 'microcycle', 'pairedExit'],
-            message:
-              'Each exit pair must preserve one construct and the changed task must declare a change dimension.',
-          });
-        }
-        for (const activity of [near, changed]) {
-          if (
-            activity.assistance.initialLevel !== 'A0' ||
-            activity.assistance.allowedLevels.length !== 1 ||
-            activity.assistance.allowedLevels[0] !== 'A0' ||
-            activity.assistance.revealAllowed
-          ) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [...basePath, 'microcycle', 'pairedExit'],
-              message: `Exit activity ${activity.id} must be unsupported A0 with reveal disabled.`,
-            });
-          }
-          if (activity.response.kind === 'none') {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [...basePath, 'microcycle', 'pairedExit'],
-              message: `Exit activity ${activity.id} must collect a response.`,
-            });
-          }
-          if (exitFamilies.has(activity.familyId)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [...basePath, 'microcycle', 'pairedExit'],
-              message: 'All bounded exit attempts require distinct item families.',
-            });
-          }
-          exitFamilies.add(activity.familyId);
-        }
-      }
-      for (const activity of kc.activities) {
-        if (
-          exitFamilies.has(activity.familyId) &&
-          !['exit_near', 'exit_changed'].includes(activity.phase)
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [...basePath, 'microcycle', 'pairedExit'],
-            message: `Exit family ${activity.familyId} is exposed by non-exit activity ${activity.id}.`,
-          });
-        }
-      }
-
-      const genericMappings = kc.microcycle.repairs.mappings.filter(
-        (mapping) => mapping.kind === 'generic',
-      );
-      if (genericMappings.length !== 1) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: [...basePath, 'microcycle', 'repairs', 'mappings'],
-          message: 'Exactly one generic repair fallback is required.',
-        });
-      }
-      for (const mapping of kc.microcycle.repairs.mappings) {
-        mapping.activityIds.forEach((id, index) => {
-          const mapped = requireActivity(id);
-          if (
-            mapped &&
-            ((index === 0 && mapped.phase !== 'targeted_repair') ||
-              (index > 0 && mapped.phase !== 'completion'))
-          ) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [...basePath, 'microcycle', 'repairs', 'mappings'],
-              message:
-                'Repair mappings must begin with targeted repair, followed only by completion/fading activities.',
-            });
-          }
-        });
-      }
-
-      for (const activity of kc.activities) {
-        if (!referenced.has(activity.id)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [...basePath, 'activities'],
-            message: `Activity ${activity.id} is unreachable from the microcycle.`,
-          });
-        }
-      }
-      if (kc.scope.prerequisiteKcIds.includes(kc.id)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: [...basePath, 'scope', 'prerequisiteKcIds'],
-          message: 'A KC cannot be its own prerequisite.',
-        });
-      }
-    });
-
-    if (lesson.status === 'published') {
-      if (lesson.testOnly) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['testOnly'],
-          message: 'Test-only lesson definitions cannot be published.',
-        });
-      }
-      if (
-        lesson.review.content_status !== 'approved' ||
-        lesson.review.copy_status !== 'approved' ||
-        lesson.review.accessibility_status !== 'approved' ||
-        lesson.provenance.rights_status !== 'cleared' ||
-        lesson.canonicalRegistryRef === null
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['status'],
-          message:
-            'Published definitions require registry linkage, cleared rights, and complete review approval.',
+          message: `Route ${route.route} must end with the initial paired exit checks.`,
         });
       }
     }
-  },
-);
+
+    for (const id of kc.microcycle.workedDecisionActivityIds) {
+      requireActivity(id, 'show_expert_decisions');
+    }
+
+    const exitFamilies = new Set<string>();
+    for (const pair of kc.microcycle.pairedExit.attempts) {
+      const near = requireActivity(pair.nearActivityId, 'exit_near');
+      const changed = requireActivity(pair.changedActivityId, 'exit_changed');
+      if (!near || !changed) continue;
+      if (
+        near.constructId !== changed.constructId ||
+        !near.constructPreserving ||
+        !changed.constructPreserving ||
+        changed.changeDimensions.length === 0
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...basePath, 'microcycle', 'pairedExit'],
+          message:
+            'Each exit pair must preserve one construct and the changed task must declare a change dimension.',
+        });
+      }
+      for (const activity of [near, changed]) {
+        if (
+          activity.assistance.initialLevel !== 'A0' ||
+          activity.assistance.allowedLevels.length !== 1 ||
+          activity.assistance.allowedLevels[0] !== 'A0' ||
+          activity.assistance.revealAllowed
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [...basePath, 'microcycle', 'pairedExit'],
+            message: `Exit activity ${activity.id} must be unsupported A0 with reveal disabled.`,
+          });
+        }
+        if (activity.response.kind === 'none') {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [...basePath, 'microcycle', 'pairedExit'],
+            message: `Exit activity ${activity.id} must collect a response.`,
+          });
+        }
+        if (exitFamilies.has(activity.familyId)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [...basePath, 'microcycle', 'pairedExit'],
+            message: 'All bounded exit attempts require distinct item families.',
+          });
+        }
+        exitFamilies.add(activity.familyId);
+      }
+    }
+    for (const activity of kc.activities) {
+      if (
+        exitFamilies.has(activity.familyId) &&
+        !['exit_near', 'exit_changed'].includes(activity.phase)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...basePath, 'microcycle', 'pairedExit'],
+          message: `Exit family ${activity.familyId} is exposed by non-exit activity ${activity.id}.`,
+        });
+      }
+    }
+
+    const genericMappings = kc.microcycle.repairs.mappings.filter(
+      (mapping) => mapping.kind === 'generic',
+    );
+    if (genericMappings.length !== 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [...basePath, 'microcycle', 'repairs', 'mappings'],
+        message: 'Exactly one generic repair fallback is required.',
+      });
+    }
+    for (const mapping of kc.microcycle.repairs.mappings) {
+      mapping.activityIds.forEach((id, index) => {
+        const mapped = requireActivity(id);
+        if (
+          mapped &&
+          ((index === 0 && mapped.phase !== 'targeted_repair') ||
+            (index > 0 && mapped.phase !== 'completion'))
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [...basePath, 'microcycle', 'repairs', 'mappings'],
+            message:
+              'Repair mappings must begin with targeted repair, followed only by completion/fading activities.',
+          });
+        }
+      });
+    }
+
+    for (const activity of kc.activities) {
+      if (!referenced.has(activity.id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...basePath, 'activities'],
+          message: `Activity ${activity.id} is unreachable from the microcycle.`,
+        });
+      }
+    }
+    if (kc.scope.prerequisiteKcIds.includes(kc.id)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [...basePath, 'scope', 'prerequisiteKcIds'],
+        message: 'A KC cannot be its own prerequisite.',
+      });
+    }
+  });
+
+  if (lesson.status === 'published') {
+    if (lesson.testOnly) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['testOnly'],
+        message: 'Test-only lesson definitions cannot be published.',
+      });
+    }
+    if (
+      lesson.review.content_status !== 'approved' ||
+      lesson.review.copy_status !== 'approved' ||
+      lesson.review.accessibility_status !== 'approved' ||
+      lesson.provenance.rights_status !== 'cleared' ||
+      lesson.canonicalRegistryRef === null
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['status'],
+        message:
+          'Published definitions require registry linkage, cleared rights, and complete review approval.',
+      });
+    }
+  }
+});
 export type LessonDefinition = z.infer<typeof LessonDefinitionSchema>;
 
 export const parseLessonDefinition = (input: unknown): LessonDefinition =>

@@ -1,7 +1,4 @@
-import type {
-  AssistanceLevel,
-  LessonResponseOutcome,
-} from '@mcat/contracts';
+import type { AssistanceLevel, LessonResponseOutcome } from '@mcat/contracts';
 import type { PolicyManifest } from './manifest';
 
 export const LESSON_RUNTIME_MANIFEST: PolicyManifest = {
@@ -37,9 +34,7 @@ export interface LessonAssistanceDecision {
  * Only a correct unsupported response can move toward A0. Wrong, not-sure, and
  * assisted responses either hold or increase support.
  */
-export function decideLessonAssistance(
-  input: LessonAssistanceInput,
-): LessonAssistanceDecision {
+export function decideLessonAssistance(input: LessonAssistanceInput): LessonAssistanceDecision {
   const index = SUPPORT_LADDER.indexOf(input.currentLevel);
   if (input.outcome !== 'correct') {
     return {

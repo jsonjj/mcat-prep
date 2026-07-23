@@ -1,10 +1,6 @@
 import { z } from 'zod';
 import { GuestBootstrapResponseSchema, SyncSubmitRequestSchema } from './api';
-import {
-  AttemptCommandSchema,
-  GoalCommandSchema,
-  LessonActionCommandSchema,
-} from './commands';
+import { AttemptCommandSchema, GoalCommandSchema, LessonActionCommandSchema } from './commands';
 import { ErrorCodeSchema } from './errors';
 import { EventIdSchema } from './ids';
 import {

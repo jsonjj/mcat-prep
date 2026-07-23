@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  LessonRunEventSchema,
-  LessonRunPinsSchema,
-  LessonRunStateSchema,
-} from './index';
+import { LessonRunEventSchema, LessonRunPinsSchema, LessonRunStateSchema } from './index';
 
 const pins = LessonRunPinsSchema.parse({
   runId: '11111111-1111-4111-8111-111111111111',

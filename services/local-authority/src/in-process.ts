@@ -95,10 +95,7 @@ export class InProcessAuthorityClient implements AuthorityPort {
     return this.mutate((state) => this.authority.submitRecall(state, answer));
   }
 
-  async dispatchLessonAction(
-    _runId: LessonRunId,
-    _action: LessonActionInput,
-  ): Promise<void> {
+  async dispatchLessonAction(_runId: LessonRunId, _action: LessonActionInput): Promise<void> {
     throw new Error('No V3 lesson definition is loaded in the legacy local fixture.');
   }
 

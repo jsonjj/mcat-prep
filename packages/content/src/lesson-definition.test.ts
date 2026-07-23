@@ -11,8 +11,9 @@ describe('V3 lesson definition schema', () => {
 
     expect(parsed.testOnly).toBe(true);
     expect(parsed.knowledgeComponents).toHaveLength(2);
-    expect(parsed.knowledgeComponents[0]!.microcycle.entryRouting.routes.map((route) => route.route))
-      .toEqual(['concise', 'standard', 'prerequisite', 'misconception']);
+    expect(
+      parsed.knowledgeComponents[0]!.microcycle.entryRouting.routes.map((route) => route.route),
+    ).toEqual(['concise', 'standard', 'prerequisite', 'misconception']);
     expect(parsed.knowledgeComponents[0]!.microcycle.pairedExit.attempts).toHaveLength(3);
     expect(parsed.knowledgeComponents[0]!.microcycle.repairs.maximumCycles).toBe(2);
   });
@@ -39,19 +40,20 @@ describe('V3 lesson definition schema', () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues.some((issue) => issue.message.includes('distinct item families')))
-        .toBe(true);
-      expect(result.error.issues.some((issue) => issue.message.includes('reveal disabled')))
-        .toBe(true);
+      expect(
+        result.error.issues.some((issue) => issue.message.includes('distinct item families')),
+      ).toBe(true);
+      expect(result.error.issues.some((issue) => issue.message.includes('reveal disabled'))).toBe(
+        true,
+      );
     }
   });
 
   it('requires convergent evidence for every non-standard entry route', () => {
     const invalid = structuredClone(syntheticV3LessonDefinition);
-    const route =
-      invalid.knowledgeComponents[0]!.microcycle.entryRouting.routes.find(
-        (candidate) => candidate.route === 'misconception',
-      )!;
+    const route = invalid.knowledgeComponents[0]!.microcycle.entryRouting.routes.find(
+      (candidate) => candidate.route === 'misconception',
+    )!;
     route.criteria = {
       kind: 'default',
       signalIds: [],
@@ -68,8 +70,9 @@ describe('V3 lesson definition schema', () => {
     );
 
     expect(lessonRefs.find((ref) => ref.kind === 'extension')?.evidenceUse).toBe('none');
-    expect(lessonRefs.find((ref) => ref.kind === 'capstone')?.evidenceUse)
-      .toBe('separate_capstone_only');
+    expect(lessonRefs.find((ref) => ref.kind === 'capstone')?.evidenceUse).toBe(
+      'separate_capstone_only',
+    );
     expect(kcRefs.every((ref) => ref.evidenceUse === 'none')).toBe(true);
   });
 
@@ -81,16 +84,14 @@ describe('V3 lesson definition schema', () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues.some((issue) => issue.message.includes('cannot be published')))
-        .toBe(true);
+      expect(
+        result.error.issues.some((issue) => issue.message.includes('cannot be published')),
+      ).toBe(true);
     }
   });
 
   it('loads only through an explicit registry mode and exact version pins', () => {
-    const registry = new LessonDefinitionRegistry(
-      [syntheticV3LessonDefinition],
-      'test_fixture',
-    );
+    const registry = new LessonDefinitionRegistry([syntheticV3LessonDefinition], 'test_fixture');
 
     expect(
       registry.get(
@@ -99,8 +100,8 @@ describe('V3 lesson definition schema', () => {
         syntheticV3LessonDefinition.contentRelease,
       ),
     ).toEqual(syntheticV3LessonDefinition);
-    expect(() =>
-      new LessonDefinitionRegistry([syntheticV3LessonDefinition], 'production'),
-    ).toThrow(/Test-only lesson/);
+    expect(() => new LessonDefinitionRegistry([syntheticV3LessonDefinition], 'production')).toThrow(
+      /Test-only lesson/,
+    );
   });
 });
