@@ -1,6 +1,8 @@
-import type { LessonActivityPhase } from '@mcat/contracts';
+import type { AssistanceLevel, LessonActivityPhase } from '@mcat/contracts';
 import {
   ActivityDefinitionSchema,
+  computeLessonContentDigest,
+  KnowledgeComponentDefinitionSchema,
   LessonDefinitionSchema,
   type ActivityDefinition,
   type KnowledgeComponentDefinition,
@@ -10,8 +12,9 @@ import {
 /**
  * SYNTHETIC, TEST-ONLY curriculum fixture.
  *
- * "Glimmer dials" and "Nacre relays" are invented mechanisms with no MCAT
- * claim. This fixture exists only to exercise V3 authoring and runtime rules.
+ * “Glimmer dials” and “Nacre relays” are invented mechanisms with no MCAT
+ * claim. The oversized fresh pools intentionally exercise bounded branching,
+ * repair, and one planner-reentry generation.
  */
 
 const timing = {
@@ -20,34 +23,31 @@ const timing = {
   maximumSeconds: 120,
 } as const;
 
-const allAssistance = {
-  allowedLevels: ['A3', 'A2', 'A1', 'A0'] as const,
-  initialLevel: 'A3' as const,
-  hints: [
-    {
-      level: 'A3' as const,
-      text: 'Use the complete fictional dial checklist.',
-      contentBearing: true,
-    },
-    {
-      level: 'A2' as const,
-      text: 'Compare the marker before and after the invented signal.',
-      contentBearing: true,
-    },
-    {
-      level: 'A1' as const,
-      text: 'Name the changed marker.',
-      contentBearing: false,
-    },
-  ],
-  revealAllowed: true,
-};
+const supportOrder: AssistanceLevel[] = ['A3', 'A2', 'A1', 'A0'];
 
-const unsupported = {
-  allowedLevels: ['A0'] as const,
-  initialLevel: 'A0' as const,
-  hints: [],
-  revealAllowed: false,
+const assistanceFor = (level: AssistanceLevel, exit = false) => {
+  if (exit) {
+    return {
+      allowedLevels: ['A0'] as AssistanceLevel[],
+      initialLevel: 'A0' as const,
+      hints: [],
+      revealAllowed: false,
+    };
+  }
+  const levelIndex = supportOrder.indexOf(level);
+  return {
+    allowedLevels: supportOrder.slice(0, levelIndex + 1),
+    initialLevel: level,
+    hints: supportOrder
+      .slice(0, Math.max(1, levelIndex + 1))
+      .filter((candidate) => candidate !== 'A0')
+      .map((candidate) => ({
+        level: candidate,
+        text: `Synthetic ${candidate} support for the invented rule.`,
+        contentBearing: candidate !== 'A1',
+      })),
+    revealAllowed: level !== 'A0',
+  };
 };
 
 function contentActivity(
@@ -70,7 +70,7 @@ function contentActivity(
     instructions: [`Synthetic instruction for ${title.toLowerCase()}.`],
     representationIds,
     response: { kind: 'none' },
-    assistance: allAssistance,
+    assistance: assistanceFor('A3'),
     timing,
   });
 }
@@ -82,6 +82,7 @@ function choiceActivity(
   representationIds: string[],
   title: string,
   options: {
+    assistance?: AssistanceLevel;
     exit?: boolean;
     changed?: boolean;
     entrySignals?: { ready: string; prerequisite: string; misconception: string };
@@ -92,37 +93,41 @@ function choiceActivity(
         {
           id: 'ready',
           label: 'The two fictional markers align.',
-          feedback: 'The markers align in this synthetic rule set.',
+          feedback: 'This response fits the invented rule.',
           diagnosticSignalIds: [options.entrySignals.ready],
+          objectiveFeatureIds: ['feature-ready'],
         },
         {
           id: 'prerequisite',
           label: 'I cannot yet identify either marker.',
-          feedback: 'Revisit how the invented markers are named.',
+          feedback: 'This response indicates a fictional naming gap.',
           diagnosticSignalIds: [options.entrySignals.prerequisite],
+          objectiveFeatureIds: ['feature-marker-identification'],
         },
         {
           id: 'swap',
           label: 'The marker names should be swapped.',
-          feedback: 'The invented marker names stay fixed.',
+          feedback: 'This response selects the fixture’s invented swap model.',
           diagnosticSignalIds: [options.entrySignals.misconception],
+          objectiveFeatureIds: ['feature-marker-direction'],
         },
       ]
     : [
         {
           id: 'aligned',
           label: 'The fictional markers align.',
-          feedback: 'The synthetic rule predicts aligned markers.',
+          feedback: 'The selected answer follows the synthetic rule.',
           diagnosticSignalIds: [],
+          objectiveFeatureIds: [],
         },
         {
           id: 'offset',
           label: 'The fictional markers remain offset.',
-          feedback: 'That does not follow the synthetic rule.',
+          feedback: 'The selected answer conflicts with the synthetic rule.',
           diagnosticSignalIds: [`signal-${kcId.toLowerCase()}-offset`],
+          objectiveFeatureIds: ['feature-alignment-operation'],
         },
       ];
-
   return ActivityDefinitionSchema.parse({
     id,
     kcId,
@@ -132,7 +137,7 @@ function choiceActivity(
     constructPreserving: true,
     changeDimensions: options.changed ? ['representation'] : [],
     title,
-    prompt: `Choose the result for the invented ${kcId.endsWith('001') ? 'Glimmer dial' : 'Nacre relay'}.`,
+    prompt: `Choose the result for this invented ${kcId.endsWith('001') ? 'Glimmer dial' : 'Nacre relay'}.`,
     instructions: [],
     representationIds,
     response: {
@@ -144,10 +149,36 @@ function choiceActivity(
       notSureFeedback: 'Not sure keeps or increases support.',
       allowNotSure: true,
     },
-    assistance: options.exit ? unsupported : allAssistance,
+    assistance: assistanceFor(options.exit ? 'A0' : (options.assistance ?? 'A3'), options.exit),
     timing,
   });
 }
+
+const makeDiagram = (label: string) => ({
+  width: 360,
+  height: 160,
+  nodes: [
+    {
+      id: 'input',
+      label: 'Marker one',
+      description: 'The first fictional marker.',
+      x: 80,
+      y: 80,
+      shape: 'circle' as const,
+      tone: 'accent' as const,
+    },
+    {
+      id: 'output',
+      label: 'Marker two',
+      description: 'The second fictional marker.',
+      x: 280,
+      y: 80,
+      shape: 'rectangle' as const,
+      tone: 'positive' as const,
+    },
+  ],
+  edges: [{ from: 'input', to: 'output', label, directed: true }],
+});
 
 function makeKc(
   suffix: '001' | '002',
@@ -155,188 +186,296 @@ function makeKc(
 ): KnowledgeComponentDefinition {
   const kcId = `V3-KC-SYNTH-${suffix}`;
   const prefix = `V3-ACT-SYNTH-${suffix}`;
-  const textRepId = `V3-REP-SYNTH-${suffix}-TEXT`;
-  const diagramRepId = `V3-REP-SYNTH-${suffix}-DIAGRAM`;
-  const signalPrefix = `signal-synth-${suffix}`;
-  const ids = {
-    probe1: `${prefix}-ENTRY-1`,
-    probe2: `${prefix}-ENTRY-2`,
-    concise: `${prefix}-ORIENT-CONCISE`,
-    standard: `${prefix}-ORIENT-STANDARD`,
-    prerequisite: `${prefix}-ORIENT-PREREQUISITE`,
-    misconception: `${prefix}-ORIENT-MISCONCEPTION`,
-    build: `${prefix}-BUILD`,
-    expert: `${prefix}-EXPERT`,
-    completion1: `${prefix}-COMPLETE-1`,
-    completion2: `${prefix}-COMPLETE-2`,
-    completion3: `${prefix}-COMPLETE-3`,
-    completion4: `${prefix}-COMPLETE-4`,
-    contrast: `${prefix}-CONTRAST`,
-    near0: `${prefix}-EXIT-NEAR-0`,
-    changed0: `${prefix}-EXIT-CHANGED-0`,
-    near1: `${prefix}-EXIT-NEAR-1`,
-    changed1: `${prefix}-EXIT-CHANGED-1`,
-    near2: `${prefix}-EXIT-NEAR-2`,
-    changed2: `${prefix}-EXIT-CHANGED-2`,
-    repairGeneric: `${prefix}-REPAIR-GENERIC`,
-    repairPrerequisite: `${prefix}-REPAIR-PREREQUISITE`,
-    repairMisconception: `${prefix}-REPAIR-MISCONCEPTION`,
+  const rep = {
+    text: `V3-REP-SYNTH-${suffix}-TEXT`,
+    equation: `V3-REP-SYNTH-${suffix}-EQUATION`,
+    diagram: `V3-REP-SYNTH-${suffix}-DIAGRAM`,
+    chart: `V3-REP-SYNTH-${suffix}-CHART`,
+    simulation: `V3-REP-SYNTH-${suffix}-SIMULATION`,
+    cycle1: `V3-REP-SYNTH-${suffix}-REPAIR-CYCLE-1`,
+    cycle2: `V3-REP-SYNTH-${suffix}-REPAIR-CYCLE-2`,
   };
+  const signalPrefix = `signal-synth-${suffix}`;
   const signals = {
     ready: `${signalPrefix}-ready`,
     prerequisite: `${signalPrefix}-prerequisite`,
     misconception: `${signalPrefix}-misconception`,
   };
+  const id = (name: string) => `${prefix}-${name}`;
+  const activities: ActivityDefinition[] = [];
+  const add = (activity: ActivityDefinition): ActivityDefinition['id'] => {
+    activities.push(activity);
+    return activity.id;
+  };
 
-  const activities: ActivityDefinition[] = [
-    choiceActivity(kcId, ids.probe1, 'enter_routing', [textRepId], 'First entry probe', {
-      entrySignals: signals,
-    }),
-    choiceActivity(kcId, ids.probe2, 'enter_routing', [diagramRepId], 'Second entry probe', {
-      entrySignals: signals,
-    }),
-    choiceActivity(kcId, ids.concise, 'orient_elicit', [textRepId], 'Concise orientation'),
-    choiceActivity(kcId, ids.standard, 'orient_elicit', [textRepId], 'Standard orientation'),
-    choiceActivity(
-      kcId,
-      ids.prerequisite,
-      'orient_elicit',
-      [textRepId],
-      'Prerequisite orientation',
+  const probeIds = [
+    ...Array.from({ length: 4 }, (_, index) =>
+      add(
+        choiceActivity(
+          kcId,
+          id(`ENTRY-${index + 1}`),
+          'enter_routing',
+          [index % 2 === 0 ? rep.text : rep.diagram],
+          `Entry probe ${index + 1}`,
+          { entrySignals: signals },
+        ),
+      ),
     ),
-    choiceActivity(
-      kcId,
-      ids.misconception,
-      'orient_elicit',
-      [textRepId],
-      'Misconception orientation',
-    ),
-    contentActivity(kcId, ids.build, 'build_model', [diagramRepId], 'Build the invented model'),
+  ];
+  const build = add(
+    contentActivity(kcId, id('BUILD'), 'build_model', [rep.diagram], 'Build the invented model'),
+  );
+  const expert = add(
     contentActivity(
       kcId,
-      ids.expert,
+      id('EXPERT'),
       'show_expert_decisions',
-      [textRepId],
+      [rep.equation],
       'Show expert decisions',
     ),
-    choiceActivity(
-      kcId,
-      ids.completion1,
-      'completion',
-      [textRepId],
-      'Completion at support step one',
-    ),
-    choiceActivity(
-      kcId,
-      ids.completion2,
-      'completion',
-      [textRepId],
-      'Completion at support step two',
-    ),
-    choiceActivity(
-      kcId,
-      ids.completion3,
-      'completion',
-      [textRepId],
-      'Completion at support step three',
-    ),
-    choiceActivity(kcId, ids.completion4, 'completion', [textRepId], 'Completion without support'),
-    contentActivity(kcId, ids.contrast, 'contrast_bound', [textRepId], 'Contrast and bound'),
-    choiceActivity(kcId, ids.near0, 'exit_near', [textRepId], 'Fresh near-use exit zero', {
-      exit: true,
-    }),
-    choiceActivity(kcId, ids.changed0, 'exit_changed', [diagramRepId], 'Fresh changed exit zero', {
-      exit: true,
-      changed: true,
-    }),
-    choiceActivity(kcId, ids.near1, 'exit_near', [textRepId], 'Fresh near-use exit one', {
-      exit: true,
-    }),
-    choiceActivity(kcId, ids.changed1, 'exit_changed', [diagramRepId], 'Fresh changed exit one', {
-      exit: true,
-      changed: true,
-    }),
-    choiceActivity(kcId, ids.near2, 'exit_near', [textRepId], 'Fresh near-use exit two', {
-      exit: true,
-    }),
-    choiceActivity(kcId, ids.changed2, 'exit_changed', [diagramRepId], 'Fresh changed exit two', {
-      exit: true,
-      changed: true,
-    }),
-    contentActivity(kcId, ids.repairGeneric, 'targeted_repair', [textRepId], 'Generic repair'),
-    contentActivity(
-      kcId,
-      ids.repairPrerequisite,
-      'targeted_repair',
-      [textRepId],
-      'Prerequisite repair',
-    ),
-    contentActivity(
-      kcId,
-      ids.repairMisconception,
-      'targeted_repair',
-      [diagramRepId],
-      'Convergent misconception repair',
-    ),
+  );
+  const orientByRoute = Object.fromEntries(
+    ['concise', 'standard', 'prerequisite', 'misconception'].map((route) => [
+      route,
+      add(
+        contentActivity(
+          kcId,
+          id(`ORIENT-${route.toUpperCase()}`),
+          'orient_elicit',
+          [rep.text],
+          `${route} orientation`,
+        ),
+      ),
+    ]),
+  );
+
+  const makePools = (
+    name: string,
+    representationId: string,
+  ): KnowledgeComponentDefinition['microcycle']['completionPools'] =>
+    Object.fromEntries(
+      supportOrder.map((level) => [
+        level,
+        Array.from({ length: 4 }, (_, index) =>
+          add(
+            choiceActivity(
+              kcId,
+              id(`${name}-${level}-${index + 1}`),
+              'completion',
+              [representationId],
+              `${name} ${level} fresh task ${index + 1}`,
+              { assistance: level },
+            ),
+          ),
+        ),
+      ]),
+    ) as KnowledgeComponentDefinition['microcycle']['completionPools'];
+
+  const completionPools = makePools('COMPLETE', rep.simulation);
+  const contrastIds = [
+    add(contentActivity(kcId, id('CONTRAST'), 'contrast_bound', [rep.chart], 'Contrast and bound')),
   ];
 
-  const shared = [
-    ids.build,
-    ids.expert,
-    ids.completion1,
-    ids.completion2,
-    ids.completion3,
-    ids.completion4,
-    ids.contrast,
-    ids.near0,
-    ids.changed0,
-  ];
+  const exitPairs = Array.from({ length: 6 }, (_, index) => ({
+    id: `${signalPrefix}-exit-pair-${index + 1}`,
+    nearActivityId: add(
+      choiceActivity(
+        kcId,
+        id(`EXIT-NEAR-${index + 1}`),
+        'exit_near',
+        [rep.text],
+        `Fresh near-use exit ${index + 1}`,
+        { exit: true },
+      ),
+    ),
+    changedActivityId: add(
+      choiceActivity(
+        kcId,
+        id(`EXIT-CHANGED-${index + 1}`),
+        'exit_changed',
+        [rep.chart],
+        `Fresh changed-task exit ${index + 1}`,
+        { exit: true, changed: true },
+      ),
+    ),
+  }));
 
-  return {
+  const repairCycles = ([1, 2] as const).map((cycle) => {
+    const representationId = cycle === 1 ? rep.cycle1 : rep.cycle2;
+    const candidateIds = (name: string) =>
+      Array.from({ length: 2 }, (_, index) =>
+        add(
+          contentActivity(
+            kcId,
+            id(`REPAIR-C${cycle}-${name}-${index + 1}`),
+            'targeted_repair',
+            [representationId],
+            `Cycle ${cycle} ${name.toLowerCase()} repair ${index + 1}`,
+          ),
+        ),
+      );
+    return {
+      cycle,
+      mappings: [
+        {
+          id: `${signalPrefix}-cycle-${cycle}-generic`,
+          kind: 'generic' as const,
+          signalIds: [],
+          objectiveFeatureIds: [],
+          minimumDistinctFamilies: 0 as const,
+          candidateActivityIds: candidateIds('GENERIC'),
+        },
+        {
+          id: `${signalPrefix}-cycle-${cycle}-prerequisite`,
+          kind: 'targeted' as const,
+          signalIds: [signals.prerequisite],
+          objectiveFeatureIds: ['feature-marker-identification'],
+          minimumDistinctFamilies: 2,
+          candidateActivityIds: candidateIds('PREREQUISITE'),
+        },
+        {
+          id: `${signalPrefix}-cycle-${cycle}-misconception`,
+          kind: 'targeted' as const,
+          signalIds: [signals.misconception],
+          objectiveFeatureIds: ['feature-marker-direction'],
+          minimumDistinctFamilies: 2,
+          candidateActivityIds: candidateIds('MISCONCEPTION'),
+        },
+      ],
+      recoveryPools: makePools(`RECOVERY-C${cycle}`, representationId),
+    };
+  });
+
+  const objective = `Apply an invented rule to one ${noun.toLowerCase()} construct.`;
+  const included = [`The invented ${noun.toLowerCase()} rule.`];
+  const excluded = ['Any real scientific, medical, or test-preparation claim.'];
+  return KnowledgeComponentDefinitionSchema.parse({
     id: kcId as KnowledgeComponentDefinition['id'],
     title: `Synthetic ${noun} calibration`,
-    objective: `Apply an invented rule to one ${noun.toLowerCase()} construct.`,
-    scope: {
-      included: [`The invented ${noun.toLowerCase()} rule.`],
-      excluded: ['Any real scientific, medical, or test-preparation claim.'],
-      prerequisiteKcIds: [],
-    },
+    objective,
+    scope: { included, excluded, prerequisiteKcIds: [] },
     representations: [
       {
-        id: textRepId as KnowledgeComponentDefinition['representations'][number]['id'],
+        id: rep.text,
         kind: 'text',
         label: `${noun} text rule`,
-        body: [
+        paragraphs: [
           `In this fixture only, the ${noun.toLowerCase()} aligns when both invented markers match.`,
         ],
-        assetRef: null,
-        table: null,
-        alternatives: [],
       },
       {
-        id: diagramRepId as KnowledgeComponentDefinition['representations'][number]['id'],
+        id: rep.equation,
+        kind: 'equation',
+        label: `${noun} invented equation`,
+        expression: 'alignment = marker₁ − marker₂',
+        spoken: 'Alignment equals marker one minus marker two.',
+        variables: [
+          { symbol: 'marker₁', meaning: 'First fictional marker', unit: null },
+          { symbol: 'marker₂', meaning: 'Second fictional marker', unit: null },
+        ],
+      },
+      {
+        id: rep.diagram,
         kind: 'diagram',
-        label: `${noun} diagram`,
-        body: [],
-        assetRef: `test-only://${suffix}/diagram`,
-        table: null,
-        alternatives: [
-          {
-            format: 'long_description',
-            content: [
-              `A text description of two matching invented markers on the ${noun.toLowerCase()}.`,
+        label: `${noun} semantic diagram`,
+        alternative: {
+          shortText: 'Two fictional markers connected in order.',
+          longDescription: 'Marker one points to marker two in the invented fixture model.',
+        },
+        diagram: makeDiagram('aligns with'),
+      },
+      {
+        id: rep.chart,
+        kind: 'chart',
+        label: `${noun} synthetic chart`,
+        alternative: {
+          shortText: 'A line rises as the fictional input increases.',
+          longDescription: 'The fixture chart contains three points: zero-zero, one-one, two-two.',
+        },
+        chart: {
+          chartType: 'line',
+          xAxis: { label: 'Fictional input', unit: 'glims', min: 0, max: 2 },
+          yAxis: { label: 'Fictional output', unit: 'nacres', min: 0, max: 2 },
+          series: [
+            {
+              id: 'alignment',
+              label: 'Alignment',
+              points: [
+                { x: 0, y: 0, label: 'zero' },
+                { x: 1, y: 1, label: 'one' },
+                { x: 2, y: 2, label: 'two' },
+              ],
+            },
+          ],
+          dataTable: {
+            caption: 'Synthetic chart values',
+            columns: ['Input (glims)', 'Output (nacres)'],
+            rows: [
+              ['0', '0'],
+              ['1', '1'],
+              ['2', '2'],
             ],
           },
-        ],
+        },
+      },
+      {
+        id: rep.simulation,
+        kind: 'simulation',
+        label: `${noun} controlled simulation`,
+        alternative: {
+          shortText: 'A slider controls a linear fictional output.',
+          longDescription: 'Output equals two times the selected fictional input plus one.',
+        },
+        simulation: {
+          adapter: 'linear_relationship',
+          input: {
+            id: 'marker',
+            label: 'Fictional marker',
+            min: 0,
+            max: 4,
+            step: 1,
+            initial: 1,
+            unit: 'glims',
+          },
+          outputs: [
+            {
+              id: 'result',
+              label: 'Fictional result',
+              slope: 2,
+              intercept: 1,
+              unit: 'nacres',
+              decimals: 0,
+            },
+          ],
+        },
+      },
+      {
+        id: rep.cycle1,
+        kind: 'diagram',
+        label: `${noun} repair cycle one diagram`,
+        alternative: {
+          shortText: 'Cycle-one marker comparison.',
+          longDescription: 'The first repair representation compares the two invented markers.',
+        },
+        diagram: makeDiagram('compare'),
+      },
+      {
+        id: rep.cycle2,
+        kind: 'diagram',
+        label: `${noun} repair cycle two diagram`,
+        alternative: {
+          shortText: 'Cycle-two boundary comparison.',
+          longDescription: 'The second repair representation contrasts an invented boundary case.',
+        },
+        diagram: makeDiagram('bounds'),
       },
     ],
     activities,
     microcycle: {
       entryRouting: {
-        probeActivityIds: [
-          ids.probe1,
-          ids.probe2,
-        ] as KnowledgeComponentDefinition['microcycle']['entryRouting']['probeActivityIds'],
+        feedbackSealedUntilRouteFinalized: true,
+        probeCount: 2,
+        probeActivityIds: probeIds,
         routes: [
           {
             route: 'concise',
@@ -346,13 +485,13 @@ function makeKc(
               minimumDistinctFamilies: 2,
             },
             initialAssistanceLevel: 'A1',
-            activityIds: [ids.concise, ...shared],
+            instructionActivityIds: [orientByRoute.concise!, build, expert],
           },
           {
             route: 'standard',
             criteria: { kind: 'default', signalIds: [], minimumDistinctFamilies: 0 },
             initialAssistanceLevel: 'A3',
-            activityIds: [ids.standard, ...shared],
+            instructionActivityIds: [orientByRoute.standard!, build, expert],
           },
           {
             route: 'prerequisite',
@@ -362,7 +501,7 @@ function makeKc(
               minimumDistinctFamilies: 2,
             },
             initialAssistanceLevel: 'A3',
-            activityIds: [ids.repairPrerequisite, ids.prerequisite, ...shared],
+            instructionActivityIds: [orientByRoute.prerequisite!, build, expert],
           },
           {
             route: 'misconception',
@@ -372,136 +511,170 @@ function makeKc(
               minimumDistinctFamilies: 2,
             },
             initialAssistanceLevel: 'A3',
-            activityIds: [ids.repairMisconception, ids.misconception, ...shared],
+            instructionActivityIds: [orientByRoute.misconception!, build, expert],
           },
-        ] as KnowledgeComponentDefinition['microcycle']['entryRouting']['routes'],
+        ],
       },
       fading: {
         ladder: ['A3', 'A2', 'A1', 'A0'],
         successesToFade: 1,
+        requiredA0Successes: 1,
+        maxAttemptsPerLevel: 2,
+        maxReentryGenerations: 1,
         nonSuccessRule: 'hold_or_increase_support',
+        exhaustionRule: 'planner_reentry_handoff',
       },
-      workedDecisionActivityIds: [
-        ids.expert,
-      ] as KnowledgeComponentDefinition['microcycle']['workedDecisionActivityIds'],
-      pairedExit: {
-        feedbackSealedUntilBoth: true,
-        attempts: [
-          { nearActivityId: ids.near0, changedActivityId: ids.changed0 },
-          { nearActivityId: ids.near1, changedActivityId: ids.changed1 },
-          { nearActivityId: ids.near2, changedActivityId: ids.changed2 },
-        ] as KnowledgeComponentDefinition['microcycle']['pairedExit']['attempts'],
-      },
+      workedDecisionActivityIds: [expert],
+      completionPools,
+      contrastActivityIds: contrastIds,
+      pairedExit: { feedbackSealedUntilBoth: true, pairs: exitPairs },
       repairs: {
         maximumCycles: 2,
-        mappings: [
-          {
-            id: `${signalPrefix}-generic`,
-            kind: 'generic',
-            signalIds: [],
-            minimumDistinctFamilies: 0,
-            activityIds: [
-              ids.repairGeneric,
-              ids.completion1,
-              ids.completion2,
-              ids.completion3,
-              ids.completion4,
-            ],
-          },
-          {
-            id: `${signalPrefix}-prerequisite-route`,
-            kind: 'targeted',
-            signalIds: [signals.prerequisite],
-            minimumDistinctFamilies: 2,
-            activityIds: [
-              ids.repairPrerequisite,
-              ids.completion1,
-              ids.completion2,
-              ids.completion3,
-              ids.completion4,
-            ],
-          },
-          {
-            id: `${signalPrefix}-misconception-route`,
-            kind: 'targeted',
-            signalIds: [signals.misconception],
-            minimumDistinctFamilies: 2,
-            activityIds: [
-              ids.repairMisconception,
-              ids.completion1,
-              ids.completion2,
-              ids.completion3,
-              ids.completion4,
-            ],
-          },
-        ] as KnowledgeComponentDefinition['microcycle']['repairs']['mappings'],
+        cycles: [repairCycles[0]!, repairCycles[1]!],
       },
     },
     artifactReferences: [
       {
         kind: 'support',
         id: `V3-SUP-SYNTH-${suffix}`,
+        deliveryState: 'host_only',
+        activation: 'host_only',
         evidenceUse: 'none',
       },
     ],
-    timing: {
-      minimumSeconds: 60,
-      targetSeconds: 480,
-      maximumSeconds: 1_800,
-    },
-  };
+    timing: { minimumSeconds: 60, targetSeconds: 480, maximumSeconds: 1_800 },
+  });
 }
 
-const fixtureInput = {
-  schemaVersion: '3.0.0',
+const kcOne = makeKc('001', 'Glimmer dial');
+const kcTwo = makeKc('002', 'Nacre relay');
+const orderedKcIds = [kcOne.id, kcTwo.id];
+const artifacts = [
+  {
+    kind: 'support' as const,
+    id: 'V3-SUP-SYNTH-001',
+    deliveryState: 'host_only' as const,
+    activation: 'host_only' as const,
+    evidenceUse: 'none' as const,
+  },
+  {
+    kind: 'support' as const,
+    id: 'V3-SUP-SYNTH-002',
+    deliveryState: 'host_only' as const,
+    activation: 'host_only' as const,
+    evidenceUse: 'none' as const,
+  },
+  {
+    kind: 'extension' as const,
+    id: 'V3-EXT-SYNTH-FOUNDATION',
+    deliveryState: 'host_only' as const,
+    activation: 'host_only' as const,
+    evidenceUse: 'none' as const,
+  },
+  {
+    kind: 'capstone' as const,
+    id: 'V3-CAP-SYNTH-FOUNDATION',
+    deliveryState: 'required' as const,
+    activation: 'required_separate' as const,
+    evidenceUse: 'separate_capstone_only' as const,
+  },
+];
+
+const fixtureInput: Record<string, unknown> = {
+  schemaVersion: '3.1.0',
   id: 'V3-LES-SYNTH-FOUNDATION',
-  definitionVersion: '3.0.0-test.1',
+  definitionVersion: '3.1.0-test.1',
   contentRelease: 'synthetic-v3-foundation-test-only',
-  canonicalRegistryRef: null,
+  registryBinding: {
+    mode: 'synthetic_test_fixture',
+    registry: {
+      manifestSchemaVersion: 'mcat-v3-lesson-authoring-manifest-2',
+      artifactId: 'TEST-ONLY-V3-REGISTRY',
+      sha256: 'f'.repeat(64),
+      phase0FreezeId: 'TEST-ONLY-PHASE0-FREEZE',
+      canonicalFreezeId: 'TEST-ONLY-CANONICAL-FREEZE',
+      graphFreezeId: 'TEST-ONLY-GRAPH-FREEZE',
+      sequenceFreezeId: 'TEST-ONLY-SEQUENCE-FREEZE',
+    },
+    phase1GateId: 'TEST-ONLY-PHASE1-GATE',
+    lesson: {
+      id: 'V3-LES-SYNTH-FOUNDATION',
+      groupingId: 'V3-CL-SYNTH-FOUNDATION',
+      canonicalDisplayLabel: 'Synthetic V3 foundation fixture',
+      conciseScope: 'Invented fixture behavior only.',
+      scopeExclusions: ['All real MCAT and scientific content.'],
+      orderedKcIds,
+    },
+    grouping: {
+      id: 'V3-CL-SYNTH-FOUNDATION',
+      lessonId: 'V3-LES-SYNTH-FOUNDATION',
+      memberKcIds: orderedKcIds,
+      memberCapstoneIds: ['V3-CAP-SYNTH-FOUNDATION'],
+      teachingOrderEntityIds: [...orderedKcIds, 'V3-CAP-SYNTH-FOUNDATION'],
+    },
+    kcs: [kcOne, kcTwo].map((kc) => ({
+      id: kc.id,
+      owningLessonId: 'V3-LES-SYNTH-FOUNDATION',
+      statementOfCompetence: kc.objective,
+      scopeIn: kc.scope.included,
+      scopeOut: kc.scope.excluded,
+      representationLabels: kc.representations.map((representation) => representation.label),
+    })),
+    attachments: artifacts.map((artifact) => ({
+      id: artifact.id,
+      kind: artifact.kind,
+      owningLessonId: 'V3-LES-SYNTH-FOUNDATION',
+      deliveryState: artifact.deliveryState,
+      activation: artifact.activation,
+      holdIds: [],
+    })),
+    graphEdgeIds: [],
+    sequenceRelationIds: ['TEST-ONLY-FIRST-DELIVERY'],
+    holdIds: [],
+  },
+  contentDigest: { algorithm: 'sha256', sha256: '0'.repeat(64) },
+  publicationIntent: 'internal_draft',
   title: 'Synthetic V3 microcycle foundation fixture',
   summary:
     'Test-only multi-KC shell for deterministic routing, fading, paired exits, repair, and handoff.',
-  orderedKcIds: ['V3-KC-SYNTH-001', 'V3-KC-SYNTH-002'],
-  knowledgeComponents: [makeKc('001', 'Glimmer dial'), makeKc('002', 'Nacre relay')],
-  artifactReferences: [
-    {
-      kind: 'extension',
-      id: 'V3-EXT-SYNTH-FOUNDATION',
-      evidenceUse: 'none',
-    },
-    {
-      kind: 'capstone',
-      id: 'V3-CAP-SYNTH-FOUNDATION',
-      evidenceUse: 'separate_capstone_only',
-    },
-  ],
-  timing: {
-    minimumSeconds: 120,
-    targetSeconds: 960,
-    maximumSeconds: 3_600,
-  },
+  orderedKcIds,
+  knowledgeComponents: [kcOne, kcTwo],
+  artifactReferences: artifacts,
+  timing: { minimumSeconds: 120, targetSeconds: 960, maximumSeconds: 3_600 },
   status: 'draft',
-  provenance: {
-    origin: 'original',
-    source_refs: [],
-    rights_status: 'cleared',
-    ai_assisted: false,
-  },
-  review: {
-    content_status: 'pending',
-    copy_status: 'pending',
-    accessibility_status: 'pending',
-    reviewer_ids: [],
+  provenance: { origin: 'original', sourceRefs: [], aiAssisted: false, cleanRoom: true },
+  reviewEnvelope: {
+    schemaVersion: '1.0',
+    reviewedContentHash: '0'.repeat(64),
+    publicationFreezeId: null,
+    authorIds: ['synthetic-fixture-author'],
+    independentContentReview: { status: 'pending', reviewerIds: [], reportId: null },
+    independentDomainReview: { status: 'pending', reviewerIds: [], reportId: null },
+    copyReview: { status: 'pending', reviewerIds: [], reportId: null },
+    accessibilityReview: { status: 'pending', reviewerIds: [], reportId: null },
+    blindSolve: { status: 'pending', solverIds: [], keysHidden: true, reportId: null },
+    rightsReview: {
+      status: 'pending',
+      reviewerIds: [],
+      sourceRightsCleared: false,
+      modelProcessingRightsCleared: false,
+      similarity: { status: 'pending', reviewerIds: [], reportId: null },
+    },
+    finalApproval: { status: 'pending', reviewerIds: [], reportId: null },
   },
   testOnly: true,
   accessibility: {
     language: 'en-US',
-    readingOrder: ['V3-KC-SYNTH-001', 'V3-KC-SYNTH-002'],
+    readingOrder: orderedKcIds,
     keyboardOnlySupported: true,
     reducedMotionSupported: true,
     authorNotes: ['Fixture terms are deliberately fictional and are not learner content.'],
   },
 };
+
+const digest = computeLessonContentDigest(fixtureInput);
+(fixtureInput.contentDigest as { sha256: string }).sha256 = digest;
+(fixtureInput.reviewEnvelope as { reviewedContentHash: string }).reviewedContentHash = digest;
 
 export const syntheticV3LessonDefinition: LessonDefinition =
   LessonDefinitionSchema.parse(fixtureInput);

@@ -1,5 +1,9 @@
 import type { LessonDefinitionVersion, V3LessonId } from '@mcat/contracts';
-import { LessonDefinitionSchema, type LessonDefinition } from './lesson-definition';
+import {
+  LessonDefinitionSchema,
+  type LessonDefinition,
+  validateLessonForProduction,
+} from './lesson-definition';
 
 export type LessonRegistryMode = 'production' | 'test_fixture';
 
@@ -7,6 +11,7 @@ export interface LessonRegistryMetadata {
   lessonId: V3LessonId;
   definitionVersion: LessonDefinitionVersion;
   contentRelease: string;
+  reviewedContentHash: string;
   status: LessonDefinition['status'];
   testOnly: boolean;
 }
@@ -21,11 +26,19 @@ const registryKey = (lessonId: V3LessonId, version: LessonDefinitionVersion): st
 export class LessonDefinitionRegistry {
   private readonly definitions = new Map<string, LessonDefinition>();
 
-  constructor(inputs: readonly unknown[], mode: LessonRegistryMode) {
+  constructor(inputs: readonly unknown[], mode: LessonRegistryMode, canonicalManifest?: unknown) {
+    if (mode === 'production' && canonicalManifest === undefined) {
+      throw new Error('Production lesson registries require the pinned canonical manifest.');
+    }
     for (const input of inputs) {
       const definition = LessonDefinitionSchema.parse(input);
-      if (mode === 'production' && definition.testOnly) {
-        throw new Error(`Test-only lesson ${definition.id} cannot enter a production registry.`);
+      if (mode === 'production') {
+        const issues = validateLessonForProduction(definition, canonicalManifest);
+        if (issues.length > 0) {
+          throw new Error(
+            `Lesson ${definition.id} failed production publication gates: ${issues.join('; ')}`,
+          );
+        }
       }
       const key = registryKey(definition.id, definition.definitionVersion);
       if (this.definitions.has(key)) {
@@ -51,6 +64,7 @@ export class LessonDefinitionRegistry {
         lessonId: definition.id,
         definitionVersion: definition.definitionVersion,
         contentRelease: definition.contentRelease,
+        reviewedContentHash: definition.contentDigest.sha256,
         status: definition.status,
         testOnly: definition.testOnly,
       }))

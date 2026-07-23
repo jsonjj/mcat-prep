@@ -7,6 +7,7 @@ import {
   V3RepresentationIdSchema,
 } from './ids';
 import {
+  GroupedLessonFeedbackSchema,
   LessonActivityPhaseSchema,
   LessonDefinitionVersionSchema,
   LessonFeedbackEntrySchema,
@@ -14,35 +15,272 @@ import {
 } from './lesson-run';
 import { AssistanceLevelSchema } from './vocab';
 
-/** Strict browser-safe representation. It cannot encode evaluation keys or diagnostic mappings. */
-export const LearnerLessonRepresentationSchema = z
+const RepresentationAlternativeSchema = z
   .object({
-    id: V3RepresentationIdSchema,
-    kind: z.enum([
-      'text',
-      'equation',
-      'table',
-      'diagram',
-      'graph',
-      'animation',
-      'audio',
-      'video',
-      'simulation',
-    ]),
-    label: z.string().min(1),
-    body: z.array(z.string().min(1)),
-    altText: z.string().min(1).nullable(),
-    longDescription: z.string().min(1).nullable(),
-    table: z
-      .object({
-        caption: z.string().min(1),
-        columns: z.array(z.string().min(1)).min(1),
-        rows: z.array(z.array(z.string())).min(1),
-      })
-      .strict()
-      .nullable(),
+    shortText: z.string().min(1),
+    longDescription: z.string().min(1),
   })
   .strict();
+
+export const LessonTableSpecSchema = z
+  .object({
+    caption: z.string().min(1),
+    columns: z.array(z.string().min(1)).min(1),
+    rows: z.array(z.array(z.string())).min(1),
+  })
+  .strict()
+  .superRefine((table, ctx) => {
+    table.rows.forEach((row, index) => {
+      if (row.length !== table.columns.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['rows', index],
+          message: 'table row width must match column count',
+        });
+      }
+    });
+  });
+
+export const LessonDiagramSpecSchema = z
+  .object({
+    width: z.number().positive().max(2_000),
+    height: z.number().positive().max(2_000),
+    nodes: z
+      .array(
+        z
+          .object({
+            id: z.string().regex(/^[a-z][a-z0-9_-]*$/),
+            label: z.string().min(1),
+            description: z.string().min(1),
+            x: z.number().finite(),
+            y: z.number().finite(),
+            shape: z.enum(['circle', 'rectangle']),
+            tone: z.enum(['neutral', 'accent', 'positive', 'warning']),
+          })
+          .strict(),
+      )
+      .min(1),
+    edges: z.array(
+      z
+        .object({
+          from: z.string().min(1),
+          to: z.string().min(1),
+          label: z.string().min(1).nullable(),
+          directed: z.boolean(),
+        })
+        .strict(),
+    ),
+  })
+  .strict()
+  .superRefine((diagram, ctx) => {
+    const nodeIds = new Set(diagram.nodes.map((node) => node.id));
+    diagram.edges.forEach((edge, index) => {
+      if (!nodeIds.has(edge.from) || !nodeIds.has(edge.to)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['edges', index],
+          message: 'diagram edge endpoints must reference declared nodes',
+        });
+      }
+    });
+  });
+
+const LessonChartAxisSchema = z
+  .object({
+    label: z.string().min(1),
+    unit: z.string().min(1).nullable(),
+    min: z.number().finite(),
+    max: z.number().finite(),
+  })
+  .strict()
+  .refine((axis) => axis.max > axis.min, 'chart axis max must exceed min');
+
+export const LessonChartSpecSchema = z
+  .object({
+    chartType: z.enum(['line', 'scatter', 'bar']),
+    xAxis: LessonChartAxisSchema,
+    yAxis: LessonChartAxisSchema,
+    series: z
+      .array(
+        z
+          .object({
+            id: z.string().regex(/^[a-z][a-z0-9_-]*$/),
+            label: z.string().min(1),
+            points: z
+              .array(
+                z
+                  .object({
+                    x: z.number().finite(),
+                    y: z.number().finite(),
+                    label: z.string().min(1).nullable(),
+                  })
+                  .strict(),
+              )
+              .min(1),
+          })
+          .strict(),
+      )
+      .min(1),
+    dataTable: LessonTableSpecSchema,
+  })
+  .strict();
+
+export const LessonSimulationSpecSchema = z
+  .object({
+    adapter: z.literal('linear_relationship'),
+    input: z
+      .object({
+        id: z.string().regex(/^[a-z][a-z0-9_-]*$/),
+        label: z.string().min(1),
+        min: z.number().finite(),
+        max: z.number().finite(),
+        step: z.number().positive(),
+        initial: z.number().finite(),
+        unit: z.string().min(1).nullable(),
+      })
+      .strict(),
+    outputs: z
+      .array(
+        z
+          .object({
+            id: z.string().regex(/^[a-z][a-z0-9_-]*$/),
+            label: z.string().min(1),
+            slope: z.number().finite(),
+            intercept: z.number().finite(),
+            unit: z.string().min(1).nullable(),
+            decimals: z.number().int().min(0).max(6),
+          })
+          .strict(),
+      )
+      .min(1),
+  })
+  .strict()
+  .superRefine((simulation, ctx) => {
+    const { input } = simulation;
+    if (input.max <= input.min || input.initial < input.min || input.initial > input.max) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['input'],
+        message: 'simulation input range and initial value must be valid',
+      });
+    }
+  });
+
+const SafeLessonAssetRefSchema = z
+  .string()
+  .regex(
+    /^\/lesson-assets\/[a-z0-9][a-z0-9/_-]*\.(?:mp3|m4a|ogg|wav|mp4|webm)$/,
+    'reviewed lesson assets must use a local /lesson-assets path',
+  );
+const SafeLessonCaptionsRefSchema = z
+  .string()
+  .regex(
+    /^\/lesson-assets\/[a-z0-9][a-z0-9/_-]*\.vtt$/,
+    'reviewed captions must use a local /lesson-assets .vtt path',
+  );
+
+const RepresentationCommonShape = {
+  id: V3RepresentationIdSchema,
+  label: z.string().min(1),
+};
+
+/** Strict browser-safe representations; none can encode HTML, script, or evaluation keys. */
+export const LearnerLessonRepresentationSchema = z.discriminatedUnion('kind', [
+  z
+    .object({
+      ...RepresentationCommonShape,
+      kind: z.literal('text'),
+      paragraphs: z.array(z.string().min(1)).min(1),
+    })
+    .strict(),
+  z
+    .object({
+      ...RepresentationCommonShape,
+      kind: z.literal('equation'),
+      expression: z.string().min(1),
+      spoken: z.string().min(1),
+      variables: z.array(
+        z
+          .object({
+            symbol: z.string().min(1),
+            meaning: z.string().min(1),
+            unit: z.string().min(1).nullable(),
+          })
+          .strict(),
+      ),
+    })
+    .strict(),
+  z
+    .object({
+      ...RepresentationCommonShape,
+      kind: z.literal('table'),
+      table: LessonTableSpecSchema,
+    })
+    .strict(),
+  z
+    .object({
+      ...RepresentationCommonShape,
+      kind: z.literal('diagram'),
+      alternative: RepresentationAlternativeSchema,
+      diagram: LessonDiagramSpecSchema,
+    })
+    .strict(),
+  z
+    .object({
+      ...RepresentationCommonShape,
+      kind: z.literal('chart'),
+      alternative: RepresentationAlternativeSchema,
+      chart: LessonChartSpecSchema,
+    })
+    .strict(),
+  z
+    .object({
+      ...RepresentationCommonShape,
+      kind: z.literal('simulation'),
+      alternative: RepresentationAlternativeSchema,
+      simulation: LessonSimulationSpecSchema,
+    })
+    .strict(),
+  z
+    .object({
+      ...RepresentationCommonShape,
+      kind: z.literal('animation'),
+      alternative: RepresentationAlternativeSchema,
+      frames: z
+        .array(
+          z
+            .object({
+              label: z.string().min(1),
+              description: z.string().min(1),
+              diagram: LessonDiagramSpecSchema,
+            })
+            .strict(),
+        )
+        .min(2)
+        .max(20),
+    })
+    .strict(),
+  z
+    .object({
+      ...RepresentationCommonShape,
+      kind: z.literal('audio'),
+      alternative: RepresentationAlternativeSchema,
+      assetRef: SafeLessonAssetRefSchema,
+      transcript: z.array(z.string().min(1)).min(1),
+      captionsRef: SafeLessonCaptionsRefSchema.nullable(),
+    })
+    .strict(),
+  z
+    .object({
+      ...RepresentationCommonShape,
+      kind: z.literal('video'),
+      alternative: RepresentationAlternativeSchema,
+      assetRef: SafeLessonAssetRefSchema,
+      transcript: z.array(z.string().min(1)).min(1),
+      captionsRef: SafeLessonCaptionsRefSchema,
+    })
+    .strict(),
+]);
 export type LearnerLessonRepresentation = z.infer<typeof LearnerLessonRepresentationSchema>;
 
 export const LearnerLessonResponseSchema = z.discriminatedUnion('kind', [
@@ -69,6 +307,23 @@ export const LearnerLessonResponseSchema = z.discriminatedUnion('kind', [
       kind: z.literal('text'),
       label: z.string().min(1),
       placeholder: z.string().min(1).nullable(),
+      allowNotSure: z.boolean(),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('numeric'),
+      label: z.string().min(1),
+      unitLabel: z.string().min(1).nullable(),
+      allowNotSure: z.boolean(),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('ordered_steps'),
+      legend: z.string().min(1),
+      minimumSteps: z.number().int().positive(),
+      maximumSteps: z.number().int().positive(),
       allowNotSure: z.boolean(),
     })
     .strict(),
@@ -115,7 +370,7 @@ export type LessonRunnerActionName = z.infer<typeof LessonRunnerActionSchema>;
 
 const LessonStepCommonShape = {
   kind: z.literal('v3_lesson'),
-  schemaVersion: z.literal('1.0'),
+  schemaVersion: z.literal('1.1'),
   runId: LessonRunIdSchema,
   lessonId: V3LessonIdSchema,
   definitionVersion: LessonDefinitionVersionSchema,
@@ -130,6 +385,7 @@ const LessonStepCommonShape = {
       exitedKcCount: z.number().int().nonnegative(),
     })
     .strict(),
+  groupedFeedback: GroupedLessonFeedbackSchema.nullable(),
 };
 
 export const ActiveLessonStepViewSchema = z

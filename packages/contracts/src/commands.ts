@@ -81,7 +81,7 @@ export const LessonActionInputSchema = z.discriminatedUnion('type', [
   z
     .object({
       type: z.literal('continue'),
-      activityId: V3ActivityIdSchema,
+      activityId: V3ActivityIdSchema.nullable(),
     })
     .strict(),
   z

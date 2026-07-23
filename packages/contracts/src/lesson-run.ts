@@ -37,12 +37,30 @@ export type LessonActivityPhase = z.infer<typeof LessonActivityPhaseSchema>;
 export const LessonResponseOutcomeSchema = z.enum(['correct', 'incorrect', 'not_sure']);
 export type LessonResponseOutcome = z.infer<typeof LessonResponseOutcomeSchema>;
 
+export const Sha256DigestSchema = z.string().regex(/^[a-f0-9]{64}$/, 'lowercase SHA-256 digest');
+export type Sha256Digest = z.infer<typeof Sha256DigestSchema>;
+
+export const V3RegistryPinSchema = z
+  .object({
+    manifestSchemaVersion: z.literal('mcat-v3-lesson-authoring-manifest-2'),
+    artifactId: z.string().min(1),
+    sha256: Sha256DigestSchema,
+    phase0FreezeId: z.string().min(1),
+    canonicalFreezeId: z.string().min(1),
+    graphFreezeId: z.string().min(1),
+    sequenceFreezeId: z.string().min(1),
+  })
+  .strict();
+export type V3RegistryPin = z.infer<typeof V3RegistryPinSchema>;
+
 export const LessonRunPinsSchema = z
   .object({
     runId: LessonRunIdSchema,
     lessonId: V3LessonIdSchema,
     definitionVersion: LessonDefinitionVersionSchema,
+    reviewedContentHash: Sha256DigestSchema,
     contentRelease: z.string().min(1),
+    registry: V3RegistryPinSchema,
     policies: z.array(PolicyVersionSchema).min(1),
   })
   .strict();
@@ -78,9 +96,30 @@ export const FamilyExposureSchema = z
     firstSeenSequence: z.number().int().nonnegative(),
     revealed: z.boolean(),
     feedbackSeen: z.boolean(),
+    answerKeySeen: z.boolean(),
   })
   .strict();
 export type FamilyExposure = z.infer<typeof FamilyExposureSchema>;
+
+export const ReviewedLessonContentPinSchema = z
+  .object({
+    lessonId: V3LessonIdSchema,
+    definitionVersion: LessonDefinitionVersionSchema,
+    reviewedContentHash: Sha256DigestSchema,
+  })
+  .strict();
+export type ReviewedLessonContentPin = z.infer<typeof ReviewedLessonContentPinSchema>;
+
+export const LessonRunLineageSchema = z
+  .object({
+    rootRunId: LessonRunIdSchema,
+    parentRunId: LessonRunIdSchema.nullable(),
+    generation: z.number().int().nonnegative(),
+    inheritedFromRunIds: z.array(LessonRunIdSchema),
+    reviewedContentPins: z.array(ReviewedLessonContentPinSchema).min(1),
+  })
+  .strict();
+export type LessonRunLineage = z.infer<typeof LessonRunLineageSchema>;
 
 export const SignalEvidenceSchema = z
   .object({
@@ -89,6 +128,14 @@ export const SignalEvidenceSchema = z
   })
   .strict();
 export type SignalEvidence = z.infer<typeof SignalEvidenceSchema>;
+
+export const ObjectiveFeatureEvidenceSchema = z
+  .object({
+    featureId: z.string().min(1),
+    familyIds: z.array(z.string().min(1)).min(1),
+  })
+  .strict();
+export type ObjectiveFeatureEvidence = z.infer<typeof ObjectiveFeatureEvidenceSchema>;
 
 export const ExitCheckResultSchema = z
   .object({
@@ -111,10 +158,49 @@ export const ExitCheckResultSchema = z
   .strict();
 export type ExitCheckResult = z.infer<typeof ExitCheckResultSchema>;
 
+export const LessonSequencePurposeSchema = z
+  .enum(['entry', 'route_instruction', 'repair_instruction', 'post_completion'])
+  .nullable();
+export type LessonSequencePurpose = z.infer<typeof LessonSequencePurposeSchema>;
+
+export const LessonCompletionContextSchema = z.enum(['initial', 'repair']).nullable();
+export type LessonCompletionContext = z.infer<typeof LessonCompletionContextSchema>;
+
+export const LessonCompletionAttemptCountsSchema = z
+  .object({
+    A3: z.number().int().nonnegative(),
+    A2: z.number().int().nonnegative(),
+    A1: z.number().int().nonnegative(),
+    A0: z.number().int().nonnegative(),
+  })
+  .strict();
+export type LessonCompletionAttemptCounts = z.infer<typeof LessonCompletionAttemptCountsSchema>;
+
+export const GroupedLessonFeedbackSchema = z
+  .object({
+    kind: z.enum(['entry', 'exit']),
+    entries: z.array(LessonFeedbackEntrySchema).min(1),
+  })
+  .strict();
+export type GroupedLessonFeedback = z.infer<typeof GroupedLessonFeedbackSchema>;
+
+/**
+ * Persisted only inside the authority event stream/state store. Learner DTO
+ * schemas deliberately have no field capable of representing this buffer.
+ */
+export const AuthorityPrivateLessonFeedbackSchema = z
+  .object({
+    sealedEntry: z.array(LessonFeedbackEntrySchema),
+    sealedExit: z.array(LessonFeedbackEntrySchema).max(2),
+  })
+  .strict();
+export type AuthorityPrivateLessonFeedback = z.infer<typeof AuthorityPrivateLessonFeedbackSchema>;
+
 export const LessonRunStateSchema = z
   .object({
-    schemaVersion: z.literal('1.0'),
+    schemaVersion: z.literal('1.1'),
     pins: LessonRunPinsSchema,
+    lineage: LessonRunLineageSchema,
     status: LessonRunStatusSchema,
     currentKcId: V3KcIdSchema.nullable(),
     currentActivityId: V3ActivityIdSchema.nullable(),
@@ -122,11 +208,18 @@ export const LessonRunStateSchema = z
     route: LessonRouteSchema.nullable(),
     sequenceActivityIds: z.array(V3ActivityIdSchema),
     sequencePosition: z.number().int().nonnegative(),
+    sequencePurpose: LessonSequencePurposeSchema,
     assistanceLevel: AssistanceLevelSchema,
     consecutiveUnsupportedSuccesses: z.number().int().nonnegative(),
+    completionContext: LessonCompletionContextSchema,
+    completionAttemptCounts: LessonCompletionAttemptCountsSchema,
+    completionUsedActivityIds: z.array(V3ActivityIdSchema),
+    completionA0Successes: z.number().int().nonnegative(),
+    completionReadyForExit: z.boolean(),
     repairCycles: z.number().int().min(0).max(2),
     exitedKcIds: z.array(V3KcIdSchema),
     signals: z.array(SignalEvidenceSchema),
+    objectiveFeatures: z.array(ObjectiveFeatureEvidenceSchema),
     exposures: z.array(FamilyExposureSchema),
     activePresentation: z
       .object({
@@ -146,6 +239,8 @@ export const LessonRunStateSchema = z
       .strict()
       .nullable(),
     sealedExitResults: z.array(ExitCheckResultSchema).max(2),
+    activeExitPairId: z.string().min(1).nullable(),
+    usedExitPairIds: z.array(z.string().min(1)),
     visibleAssistanceLevel: AssistanceLevelSchema.nullable(),
     feedback: z
       .object({
@@ -154,12 +249,25 @@ export const LessonRunStateSchema = z
       })
       .strict()
       .nullable(),
+    groupedFeedback: GroupedLessonFeedbackSchema.nullable(),
+    authorityPrivateFeedback: AuthorityPrivateLessonFeedbackSchema,
     resumeStatus: z
       .enum(['active', 'awaiting_route', 'awaiting_exit_feedback', 'awaiting_repair'])
       .nullable(),
-    pauseReason: z.enum(['learner', 'interruption', 'repair_exhausted']).nullable(),
+    pauseReason: z
+      .enum([
+        'learner',
+        'interruption',
+        'repair_exhausted',
+        'entry_pool_exhausted',
+        'completion_exhausted',
+        'exit_pool_exhausted',
+      ])
+      .nullable(),
     plannerReentryRequired: z.boolean(),
     handoffRunId: LessonRunIdSchema.nullable(),
+    handoffPins: LessonRunPinsSchema.nullable(),
+    handoffLineage: LessonRunLineageSchema.nullable(),
     appliedEventIds: z.array(EventIdSchema),
     appliedIdempotencyKeys: z.array(IdempotencyKeySchema),
     lastSequence: z.number().int().min(-1),
@@ -171,13 +279,15 @@ export type LessonRunState = z.infer<typeof LessonRunStateSchema>;
 
 const LessonRunEventBaseSchema = z
   .object({
-    schemaVersion: z.literal('1.0'),
+    schemaVersion: z.literal('1.1'),
     eventId: EventIdSchema,
     idempotencyKey: IdempotencyKeySchema,
     runId: LessonRunIdSchema,
     lessonId: V3LessonIdSchema,
     definitionVersion: LessonDefinitionVersionSchema,
+    reviewedContentHash: Sha256DigestSchema,
     contentRelease: z.string().min(1),
+    registry: V3RegistryPinSchema,
     policies: z.array(PolicyVersionSchema).min(1),
     sequence: z.number().int().nonnegative(),
     occurredAt: UtcTimestampSchema,
@@ -215,7 +325,8 @@ export const LessonResponseEvaluatedEventSchema = withEvent(
     assisted: z.boolean(),
     revealed: z.boolean(),
     diagnosticSignalIds: z.array(z.string().min(1)),
-    feedback: z.array(LessonFeedbackEntrySchema).optional(),
+    objectiveFeatureIds: z.array(z.string().min(1)),
+    authorityFeedback: z.array(LessonFeedbackEntrySchema).min(1),
   }),
 );
 
@@ -248,7 +359,6 @@ export const LessonExitFeedbackReleasedEventSchema = withEvent(
   'lesson_exit_feedback_released',
   z.object({
     kcId: V3KcIdSchema,
-    feedback: z.array(LessonFeedbackEntrySchema).length(2),
   }),
 );
 
@@ -279,7 +389,8 @@ export const LessonRunResumedEventSchema = withEvent('lesson_run_resumed', z.obj
 export const LessonPlannerReentryHandoffEventSchema = withEvent(
   'lesson_planner_reentry_handoff',
   z.object({
-    nextRunId: LessonRunIdSchema,
+    nextRunPins: LessonRunPinsSchema,
+    nextLineage: LessonRunLineageSchema,
   }),
 );
 
@@ -311,6 +422,19 @@ export type LessonRunEvent = z.infer<typeof LessonRunEventSchema>;
 export const LessonActivityResponseInputSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('choice'), choiceId: z.string().min(1) }).strict(),
   z.object({ kind: z.literal('text'), text: z.string().min(1).max(10_000) }).strict(),
+  z
+    .object({
+      kind: z.literal('numeric'),
+      value: z.number().finite(),
+      unit: z.string().min(1).max(40).nullable(),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('ordered_steps'),
+      steps: z.array(z.string().min(1).max(1_000)).min(1).max(20),
+    })
+    .strict(),
   z.object({ kind: z.literal('not_sure') }).strict(),
 ]);
 export type LessonActivityResponseInput = z.infer<typeof LessonActivityResponseInputSchema>;
