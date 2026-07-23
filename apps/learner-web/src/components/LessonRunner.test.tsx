@@ -182,6 +182,8 @@ describe('LessonRunner accessibility and safe rendering', () => {
   });
 
   it('announces grouped feedback once through one atomic live region', () => {
+    if (!activeStep.activity)
+      throw new Error('Expected the active fixture to include an activity.');
     const step = LessonStepViewSchema.parse({
       ...activeStep,
       groupedFeedback: {
