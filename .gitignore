@@ -54,6 +54,10 @@ content/**/protected-compiled/
 # drops out of git; only compiled learner-safe payloads may ever be committed/shipped.
 /question-bank/*.jsonl
 
+# Local, non-tracked content-pipeline output (e.g. `content-cli load-v7` bundles:
+# learner-safe.jsonl + server-only protected.jsonl + report.json). Never tracked.
+.local/
+
 # Optional 3D model assets: commit ONLY vetted CC0/licensed models (with ATTRIBUTION.md)
 # via an explicit `git add -f`, so an unlicensed model can't be committed by accident.
 apps/learner-web/public/models/*.glb

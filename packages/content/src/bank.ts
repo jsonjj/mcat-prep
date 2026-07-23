@@ -1,6 +1,12 @@
 import { SkillGraphSchema, type SkillGraph } from '@mcat/domain';
 import type { SkillCluster } from '@mcat/contracts';
-import { QuestionSchema, StimulusSchema, type BankManifest, type Question, type Stimulus } from './schema';
+import {
+  EngineQuestionSchema,
+  EngineStimulusSchema,
+  type BankManifest,
+  type EngineQuestion,
+  type EngineStimulus,
+} from './engine-schema';
 import {
   HintLadderSchema,
   LessonSchema,
@@ -27,8 +33,8 @@ export interface LoadedBank {
   contentRelease: string;
   isSynthetic: boolean;
   skillGraph: SkillGraph;
-  questions: Question[]; // full (server-side) records
-  stimuli: Stimulus[];
+  questions: EngineQuestion[]; // full (server-side) records
+  stimuli: EngineStimulus[];
   lessons: Lesson[];
   hintLadders: HintLadder[];
   recallPrompts: RecallPrompt[];
@@ -37,7 +43,7 @@ export interface LoadedBank {
   compiled: Map<string, CompiledQuestion>;
 }
 
-function buildManifest(release: string, questions: Question[], stimuli: Stimulus[]): BankManifest {
+function buildManifest(release: string, questions: EngineQuestion[], stimuli: EngineStimulus[]): BankManifest {
   const familiesByCluster: Partial<Record<SkillCluster, Set<string>>> = {};
   for (const q of questions) {
     const set = familiesByCluster[q.skill_cluster] ?? new Set<string>();
@@ -68,9 +74,9 @@ function buildManifest(release: string, questions: Question[], stimuli: Stimulus
 export function loadSyntheticBank(): LoadedBank {
   const release = 'synthetic-2026.07';
   const skillGraph = SkillGraphSchema.parse(syntheticSkillGraph);
-  const stimuli = syntheticStimuli.map((s) => StimulusSchema.parse(s));
+  const stimuli = syntheticStimuli.map((s) => EngineStimulusSchema.parse(s));
   const questions = syntheticQuestions.map((raw) => {
-    const parsed = QuestionSchema.parse(raw);
+    const parsed = EngineQuestionSchema.parse(raw);
     const issues = validateQuestion(parsed).filter((i) => i.severity === 'error');
     if (issues.length > 0) {
       throw new Error(`Invalid synthetic question ${parsed.id}: ${issues.map((i) => i.code).join(', ')}`);

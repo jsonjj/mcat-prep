@@ -1,44 +1,47 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "v7",
   "id": "<section>-<topic>-0001",
-  "version": 1,
-  "status": "draft",
-  "section": "bb",
-  "skill_cluster": "BB1",
-  "internal_skill_ids": ["<internal-skill-id>"],
-  "template_tags": ["K", "D"],
-  "learning_objective": "<one observable knowledge-in-use objective>",
-  "format": "discrete_mcq",
-  "difficulty": 3,
-  "stimulus_id": null,
-  "stem": "<original question stem — no answer-key leakage>",
-  "choices": [
-    { "id": "A", "text": "<choice A>", "distractor_families": [] },
-    { "id": "B", "text": "<choice B>", "distractor_families": ["wrong_relationship"] },
-    { "id": "C", "text": "<choice C>", "distractor_families": ["unit_or_sign"] },
-    { "id": "D", "text": "<choice D>", "distractor_families": ["scope_or_relevance"] }
-  ],
-  "correct_choice_id": "A",
-  "rationales": {
-    "correct": "<complete independently verified solution>",
-    "choices": {
-      "A": "<why A is correct>",
-      "B": "<why B is wrong>",
-      "C": "<why C is wrong>",
-      "D": "<why D is wrong>"
-    }
-  },
-  "prerequisite_ids": [],
-  "content_tags": [],
-  "estimated_seconds": 90,
-  "media_ids": [],
+  "section": "BB",
+  "subject": "biochemistry",
+  "primary_skill": "SIRS2",
+  "primary_kc_id": "<knowledge-concept-id>",
+  "primary_kc_label": "<knowledge-concept label>",
+  "secondary_skills": [],
+  "secondary_kc_ids": [],
+  "covered_kc_ids": [],
   "family_id": "<item-family-id>",
-  "provenance": { "origin": "original", "source_refs": [], "rights_status": "cleared", "ai_assisted": false },
-  "review": {
-    "content_status": "pending",
-    "copy_status": "pending",
-    "accessibility_status": "pending",
-    "reviewer_ids": []
+  "stem": "<original question stem — no answer-key leakage>",
+  "passage": "<passage or short vignette; use an empty string if none>",
+  "choices": {
+    "A": "<choice A>",
+    "B": "<choice B>",
+    "C": "<choice C>",
+    "D": "<choice D>"
   },
-  "delivery": { "diagnostic_eligible": false, "mastery_eligible": false, "protected": true, "test_only": false }
+  "correct_answer": "A",
+  "explanations": {
+    "A": "<why A is correct or incorrect>",
+    "B": "<why B is correct or incorrect>",
+    "C": "<why C is correct or incorrect>",
+    "D": "<why D is correct or incorrect>"
+  },
+  "dok_level": 2,
+  "dok_rationale": "<why this depth-of-knowledge level>",
+  "construct": { "reasoning_operation_id": "<reasoning operation>", "topic_id": "<topic id>" },
+  "surface": {
+    "context_domain": "<context domain>",
+    "distractor_structure": "<distractor structure>",
+    "representation": "short_vignette",
+    "value_set": "none"
+  },
+  "status": "draft",
+  "assets": [
+    {
+      "type": "plot",
+      "status": "needed",
+      "spec": "<data/description used to generate the asset; also the source for alt text>",
+      "alt": "",
+      "storage_key": null
+    }
+  ]
 }
