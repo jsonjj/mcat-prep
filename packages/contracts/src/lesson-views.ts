@@ -166,13 +166,13 @@ export const LessonSimulationSpecSchema = z
     }
   });
 
-const SafeLessonAssetRefSchema = z
+export const SafeLessonAssetRefSchema = z
   .string()
   .regex(
     /^\/lesson-assets\/[a-z0-9][a-z0-9/_-]*\.(?:mp3|m4a|ogg|wav|mp4|webm)$/,
     'reviewed lesson assets must use a local /lesson-assets path',
   );
-const SafeLessonCaptionsRefSchema = z
+export const SafeLessonCaptionsRefSchema = z
   .string()
   .regex(
     /^\/lesson-assets\/[a-z0-9][a-z0-9/_-]*\.vtt$/,
@@ -370,8 +370,10 @@ export type LessonRunnerActionName = z.infer<typeof LessonRunnerActionSchema>;
 
 const LessonStepCommonShape = {
   kind: z.literal('v3_lesson'),
-  schemaVersion: z.literal('1.1'),
+  schemaVersion: z.literal('1.2'),
   runId: LessonRunIdSchema,
+  /** Public concurrency version; authority-private feedback/state remains absent. */
+  runVersion: z.number().int().min(-1),
   lessonId: V3LessonIdSchema,
   definitionVersion: LessonDefinitionVersionSchema,
   lessonTitle: z.string().min(1),

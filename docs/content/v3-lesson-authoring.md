@@ -50,7 +50,7 @@ Do not add a screen, route, JSX branch, or runtime policy per lesson.
 
 Every definition pins:
 
-- `schemaVersion: "3.1.0"`, stable `V3-LES-*` ID, semantic
+- `schemaVersion: "3.2.0"`, stable `V3-LES-*` ID, semantic
   `definitionVersion`, and `contentRelease`;
 - ordered `V3-KC-*` IDs matching the KC records exactly;
 - the exact canonical registry artifact SHA and phase/canonical/graph/sequence
@@ -62,13 +62,21 @@ Every definition pins:
   extensions use `evidenceUse: "none"`; capstones use
   `"separate_capstone_only"`.
 
-Each KC declares included/excluded scope, prerequisites, representations,
-activities, timing, and one `KcMicrocycle`. Non-text representations require a
-semantic description, data table, transcript, or controlled reduced-motion
-alternative. Author only closed structured equation, table, diagram, chart,
-simulation, animation, audio, or video records. Media references must use
-reviewed local `/lesson-assets/` paths; arbitrary HTML, scripts, and remote
-assets are invalid.
+Each KC declares included/excluded scope, separate exact hard/helpful
+prerequisites, representations, activities, timing, and one `KcMicrocycle`.
+Every frozen representation label needs an explicit mapping to one or more
+authored `V3-REP-*` IDs; do not infer coverage from display strings. Artifacts
+exist only at lesson level, so a KC cannot invent or activate a second
+attachment projection.
+
+Non-text representations require a semantic description, data table,
+transcript, or controlled reduced-motion alternative. Author only closed
+structured equation, table, diagram, chart, simulation, animation, audio, or
+video records. Media references must use reviewed local `/lesson-assets/`
+paths. Add every media/caption path and reviewed SHA-256 to `reviewedAssets`;
+the production registry also requires a byte-verified asset manifest with the
+same hashes. Missing or drifted bytes fail closed. Arbitrary HTML, scripts, and
+remote assets are invalid.
 
 Each `ActivityDefinition` has a stable `V3-ACT-*` ID, item-family ID, construct
 ID, phase, representations, assistance rules, response contract, and timing.
@@ -92,7 +100,10 @@ Each of the four routes—`concise`, `standard`, `prerequisite`, and
 `standard` is the sole fallback route. Every other route needs convergent
 evidence from at least two distinct item families. A selected distractor can
 emit a hypothesis signal, but one family cannot activate a misconception or
-targeted repair.
+targeted repair. Entry probes are sealed, unassisted A0, non-reveal responses.
+Every criterion signal must be emit-able by enough distinct declared probe
+families, and enabled not-sure responses must emit deterministic diagnostic
+signals that converge on a targeted route.
 
 Completion uses finite, support-level-specific `completionPools`. Each attempted
 activity is fresh. Incorrect, not-sure, revealed, or assisted work schedules
@@ -119,6 +130,9 @@ authority:
   freezes, and policy pins are immutable;
 - family exposure survives pause/resume and repair;
 - event IDs and idempotency keys make replay deterministic;
+- aggregate learner-stream concurrency and lesson-run concurrency are separate:
+  HTTP envelopes carry the aggregate version, while `LessonStepView.runVersion`
+  is the public token checked only against the lesson run;
 - planner reentry uses a new run ID, explicit lineage, reviewed content pins,
   and an inherited family/key/feedback/reveal exposure envelope;
 - entry-probe feedback remains authority-private until all probes commit and

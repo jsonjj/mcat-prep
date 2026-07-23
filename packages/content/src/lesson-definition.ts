@@ -6,6 +6,8 @@ import {
   LessonActivityPhaseSchema,
   LessonDefinitionVersionSchema,
   LessonRouteSchema,
+  SafeLessonAssetRefSchema,
+  SafeLessonCaptionsRefSchema,
   Sha256DigestSchema,
   V3ActivityIdSchema,
   V3KcIdSchema,
@@ -18,9 +20,10 @@ import {
   type CanonicalLessonAuthoringManifest,
   validateCanonicalLessonBinding,
 } from './canonical-manifest';
+import { deterministicJson } from './deterministic-json';
 import { ContentStatusSchema } from './schema';
 
-export const LESSON_DEFINITION_SCHEMA_VERSION = '3.1.0' as const;
+export const LESSON_DEFINITION_SCHEMA_VERSION = '3.2.0' as const;
 
 const TimedRangeSchema = z
   .object({
@@ -146,6 +149,8 @@ const ConstructedRubricSchema = z
     correctFeedback: z.string().min(1),
     incorrectFeedback: z.string().min(1),
     notSureFeedback: z.string().min(1),
+    notSureDiagnosticSignalIds: z.array(z.string().min(1)).default([]),
+    notSureObjectiveFeatureIds: z.array(z.string().min(1)).default([]),
   })
   .strict()
   .superRefine((rubric, ctx) => {
@@ -168,6 +173,8 @@ const ChoiceResponseDefinitionSchema = z
     correctChoiceIds: z.array(z.string().min(1)).min(1),
     correctFeedback: z.string().min(1),
     notSureFeedback: z.string().min(1),
+    notSureDiagnosticSignalIds: z.array(z.string().min(1)).default([]),
+    notSureObjectiveFeatureIds: z.array(z.string().min(1)).default([]),
     allowNotSure: z.boolean().default(true),
   })
   .strict();
@@ -423,6 +430,13 @@ export const ArtifactReferenceSchema = z.discriminatedUnion('kind', [
 ]);
 export type LessonArtifactReference = z.infer<typeof ArtifactReferenceSchema>;
 
+const CanonicalRepresentationMappingSchema = z
+  .object({
+    canonicalLabel: z.string().min(1),
+    representationIds: z.array(V3RepresentationIdSchema).min(1),
+  })
+  .strict();
+
 export const KnowledgeComponentDefinitionSchema = z
   .object({
     id: V3KcIdSchema,
@@ -432,13 +446,14 @@ export const KnowledgeComponentDefinitionSchema = z
       .object({
         included: z.array(z.string().min(1)).min(1),
         excluded: z.array(z.string().min(1)).default([]),
-        prerequisiteKcIds: z.array(V3KcIdSchema).default([]),
+        hardPrerequisiteKcIds: z.array(V3KcIdSchema).default([]),
+        helpfulPrerequisiteKcIds: z.array(V3KcIdSchema).default([]),
       })
       .strict(),
     representations: z.array(RepresentationDefinitionSchema).min(1),
+    canonicalRepresentationMappings: z.array(CanonicalRepresentationMappingSchema).min(1),
     activities: z.array(ActivityDefinitionSchema).min(1),
     microcycle: KcMicrocycleSchema,
-    artifactReferences: z.array(ArtifactReferenceSchema).default([]),
     timing: TimedRangeSchema,
   })
   .strict();
@@ -490,6 +505,64 @@ export const LessonReviewEnvelopeSchema = z
   .strict();
 export type LessonReviewEnvelope = z.infer<typeof LessonReviewEnvelopeSchema>;
 
+export const LessonAssetKindSchema = z.enum(['audio', 'video', 'captions']);
+export type LessonAssetKind = z.infer<typeof LessonAssetKindSchema>;
+
+export const ReviewedLessonAssetSchema = z
+  .object({
+    path: z.union([SafeLessonAssetRefSchema, SafeLessonCaptionsRefSchema]),
+    kind: LessonAssetKindSchema,
+    sha256: Sha256DigestSchema,
+  })
+  .strict()
+  .superRefine((asset, ctx) => {
+    const valid =
+      asset.kind === 'audio'
+        ? /\.(?:mp3|m4a|ogg|wav)$/.test(asset.path)
+        : asset.kind === 'video'
+          ? /\.(?:mp4|webm)$/.test(asset.path)
+          : /\.vtt$/.test(asset.path);
+    if (!valid) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['path'],
+        message: `${asset.kind} asset path has an incompatible reviewed extension`,
+      });
+    }
+  });
+export type ReviewedLessonAsset = z.infer<typeof ReviewedLessonAssetSchema>;
+
+export const LessonAssetManifestSchema = z
+  .object({
+    schemaVersion: z.literal('1.0'),
+    assets: z.array(ReviewedLessonAssetSchema),
+  })
+  .strict()
+  .superRefine((manifest, ctx) => {
+    const paths = manifest.assets.map((asset) => asset.path);
+    if (new Set(paths).size !== paths.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['assets'],
+        message: 'verified lesson asset paths must be unique',
+      });
+    }
+  });
+export type LessonAssetManifest = z.infer<typeof LessonAssetManifestSchema>;
+
+export function buildLessonAssetManifest(
+  assets: readonly { path: string; kind: LessonAssetKind; bytes: Uint8Array }[],
+): LessonAssetManifest {
+  return LessonAssetManifestSchema.parse({
+    schemaVersion: '1.0',
+    assets: assets.map(({ path, kind, bytes }) => ({
+      path,
+      kind,
+      sha256: sha256(bytes),
+    })),
+  });
+}
+
 const LessonDefinitionBaseSchema = z
   .object({
     schemaVersion: z.literal(LESSON_DEFINITION_SCHEMA_VERSION),
@@ -509,6 +582,7 @@ const LessonDefinitionBaseSchema = z
     orderedKcIds: z.array(V3KcIdSchema).min(1),
     knowledgeComponents: z.array(KnowledgeComponentDefinitionSchema).min(1),
     artifactReferences: z.array(ArtifactReferenceSchema).default([]),
+    reviewedAssets: z.array(ReviewedLessonAssetSchema).default([]),
     timing: TimedRangeSchema,
     status: ContentStatusSchema,
     provenance: z
@@ -627,20 +701,60 @@ const definitionDigestPayload = (lesson: Record<string, unknown>): Record<string
   return payload;
 };
 
-const canonicalJson = (value: unknown): string => {
-  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;
-  if (value && typeof value === 'object') {
-    return `{${Object.entries(value)
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([key, entry]) => `${JSON.stringify(key)}:${canonicalJson(entry)}`)
-      .join(',')}}`;
+export function computeLessonContentDigest(input: Record<string, unknown>): string {
+  return sha256(deterministicJson(definitionDigestPayload(input)));
+}
+
+const potentialResponseEvidence = (activity: z.infer<typeof ActivityDefinitionSchema>) => {
+  const signalIds = new Set<string>();
+  const objectiveFeatureIds = new Set<string>();
+  if (activity.response.kind === 'choice') {
+    activity.response.choices.forEach((choice) => {
+      choice.diagnosticSignalIds.forEach((id) => signalIds.add(id));
+      choice.objectiveFeatureIds.forEach((id) => objectiveFeatureIds.add(id));
+    });
+    activity.response.notSureDiagnosticSignalIds.forEach((id) => signalIds.add(id));
+    activity.response.notSureObjectiveFeatureIds.forEach((id) => objectiveFeatureIds.add(id));
+  } else if (activity.response.kind !== 'none') {
+    activity.response.rubric.criteria.forEach((criterion) => {
+      criterion.diagnosticSignalIds.forEach((id) => signalIds.add(id));
+      criterion.objectiveFeatureIds.forEach((id) => objectiveFeatureIds.add(id));
+    });
+    activity.response.rubric.notSureDiagnosticSignalIds.forEach((id) => signalIds.add(id));
+    activity.response.rubric.notSureObjectiveFeatureIds.forEach((id) =>
+      objectiveFeatureIds.add(id),
+    );
   }
-  return JSON.stringify(value);
+  return { signalIds, objectiveFeatureIds };
 };
 
-export function computeLessonContentDigest(input: Record<string, unknown>): string {
-  return sha256(canonicalJson(definitionDigestPayload(input)));
-}
+const notSureSignals = (activity: z.infer<typeof ActivityDefinitionSchema>): readonly string[] => {
+  if (activity.response.kind === 'none' || !activity.response.allowNotSure) return [];
+  return activity.response.kind === 'choice'
+    ? activity.response.notSureDiagnosticSignalIds
+    : activity.response.rubric.notSureDiagnosticSignalIds;
+};
+
+const mediaReferences = (lesson: z.infer<typeof LessonDefinitionBaseSchema>) =>
+  lesson.knowledgeComponents.flatMap((kc) =>
+    kc.representations.flatMap((representation) => {
+      if (representation.kind === 'audio') {
+        return [
+          { path: representation.assetRef, kind: 'audio' as const },
+          ...(representation.captionsRef === null
+            ? []
+            : [{ path: representation.captionsRef, kind: 'captions' as const }]),
+        ];
+      }
+      if (representation.kind === 'video') {
+        return [
+          { path: representation.assetRef, kind: 'video' as const },
+          { path: representation.captionsRef, kind: 'captions' as const },
+        ];
+      }
+      return [];
+    }),
+  );
 
 export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((lesson, ctx) => {
   const kcIds = lesson.knowledgeComponents.map((kc) => kc.id);
@@ -683,12 +797,21 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
       canonicalKc.scopeIn.length !== kc.scope.included.length ||
       canonicalKc.scopeIn.some((entry, scopeIndex) => entry !== kc.scope.included[scopeIndex]) ||
       canonicalKc.scopeOut.length !== kc.scope.excluded.length ||
-      canonicalKc.scopeOut.some((entry, scopeIndex) => entry !== kc.scope.excluded[scopeIndex])
+      canonicalKc.scopeOut.some((entry, scopeIndex) => entry !== kc.scope.excluded[scopeIndex]) ||
+      canonicalKc.hardPrerequisiteKcIds.length !== kc.scope.hardPrerequisiteKcIds.length ||
+      canonicalKc.hardPrerequisiteKcIds.some(
+        (entry, prerequisiteIndex) => entry !== kc.scope.hardPrerequisiteKcIds[prerequisiteIndex],
+      ) ||
+      canonicalKc.helpfulPrerequisiteKcIds.length !== kc.scope.helpfulPrerequisiteKcIds.length ||
+      canonicalKc.helpfulPrerequisiteKcIds.some(
+        (entry, prerequisiteIndex) =>
+          entry !== kc.scope.helpfulPrerequisiteKcIds[prerequisiteIndex],
+      )
     ) {
       addIssue(
         ctx,
         ['knowledgeComponents', index],
-        'KC identity, canonical statement, and scope must exactly match the compiled registry binding',
+        'KC identity, canonical statement, scope, and hard/helpful prerequisites must exactly match the compiled registry binding',
       );
     }
   });
@@ -705,7 +828,7 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
     deliveryState: artifact.deliveryState,
     activation: artifact.activation,
   }));
-  if (canonicalJson(bindingArtifacts) !== canonicalJson(authoredArtifacts)) {
+  if (deterministicJson(bindingArtifacts) !== deterministicJson(authoredArtifacts)) {
     addIssue(
       ctx,
       ['artifactReferences'],
@@ -722,8 +845,36 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
     }
   });
 
+  const expectedMedia = new Map<string, LessonAssetKind>();
+  mediaReferences(lesson).forEach((asset) => {
+    const existing = expectedMedia.get(asset.path);
+    if (existing !== undefined && existing !== asset.kind) {
+      addIssue(
+        ctx,
+        ['knowledgeComponents'],
+        `reviewed media path ${asset.path} cannot represent multiple asset kinds`,
+      );
+    }
+    expectedMedia.set(asset.path, asset.kind);
+  });
+  const reviewedAssetPaths = lesson.reviewedAssets.map((asset) => asset.path);
+  if (new Set(reviewedAssetPaths).size !== reviewedAssetPaths.length) {
+    addIssue(ctx, ['reviewedAssets'], 'reviewed lesson asset paths must be unique');
+  }
+  if (
+    expectedMedia.size !== lesson.reviewedAssets.length ||
+    lesson.reviewedAssets.some((asset) => expectedMedia.get(asset.path) !== asset.kind)
+  ) {
+    addIssue(
+      ctx,
+      ['reviewedAssets'],
+      'reviewed asset digests must exactly cover every referenced media and caption path',
+    );
+  }
+
   const globalActivityIds = new Set<string>();
   const globalRepresentationIds = new Set<string>();
+  const globalExitPairIds = new Set<string>();
   lesson.knowledgeComponents.forEach((kc, kcIndex) => {
     const basePath: (string | number)[] = ['knowledgeComponents', kcIndex];
     const activityById = new Map(kc.activities.map((activity) => [activity.id, activity]));
@@ -739,6 +890,33 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
         );
       }
       globalRepresentationIds.add(representation.id);
+    });
+    const canonicalKc = binding.kcs[kcIndex];
+    if (
+      !canonicalKc ||
+      canonicalKc.representationLabels.length !== kc.canonicalRepresentationMappings.length ||
+      canonicalKc.representationLabels.some(
+        (label, mappingIndex) =>
+          kc.canonicalRepresentationMappings[mappingIndex]?.canonicalLabel !== label,
+      )
+    ) {
+      addIssue(
+        ctx,
+        [...basePath, 'canonicalRepresentationMappings'],
+        'every canonical representation label must be explicitly mapped exactly once in registry order',
+      );
+    }
+    kc.canonicalRepresentationMappings.forEach((mapping) => {
+      if (
+        new Set(mapping.representationIds).size !== mapping.representationIds.length ||
+        mapping.representationIds.some((id) => !representationIds.has(id))
+      ) {
+        addIssue(
+          ctx,
+          [...basePath, 'canonicalRepresentationMappings'],
+          `${mapping.canonicalLabel} must map to unique authored representation IDs`,
+        );
+      }
     });
 
     kc.activities.forEach((activity) => {
@@ -767,6 +945,15 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
           ctx,
           [...basePath, 'activities'],
           `${activity.id} initial assistance must be allowed`,
+        );
+      }
+      if (
+        new Set(activity.assistance.allowedLevels).size !== activity.assistance.allowedLevels.length
+      ) {
+        addIssue(
+          ctx,
+          [...basePath, 'activities'],
+          `${activity.id} assistance levels must be unique`,
         );
       }
       if (activity.response.kind === 'choice') {
@@ -834,6 +1021,35 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
         'entry probes require distinct sealed families',
       );
     }
+    probes.forEach((probe) => {
+      if (
+        probe &&
+        (probe.assistance.initialLevel !== 'A0' ||
+          probe.assistance.allowedLevels.length !== 1 ||
+          probe.assistance.allowedLevels[0] !== 'A0' ||
+          probe.assistance.hints.length !== 0 ||
+          probe.assistance.revealAllowed ||
+          probe.response.kind === 'none')
+      ) {
+        addIssue(
+          ctx,
+          [...basePath, 'microcycle', 'entryRouting'],
+          `${probe.id} must be a sealed, unsupported, non-reveal A0 routing response`,
+        );
+      }
+      if (
+        probe &&
+        probe.response.kind !== 'none' &&
+        probe.response.allowNotSure &&
+        notSureSignals(probe).length === 0
+      ) {
+        addIssue(
+          ctx,
+          [...basePath, 'microcycle', 'entryRouting'],
+          `${probe.id} must map not-sure to deterministic diagnostic evidence`,
+        );
+      }
+    });
 
     const routes = kc.microcycle.entryRouting.routes;
     const routeNames = routes.map((route) => route.route);
@@ -855,7 +1071,17 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
           'standard is the only default; targeted routes require convergent evidence',
         );
       }
-      const phases = route.instructionActivityIds.map((id) => requireActivity(id)?.phase);
+      const routeActivities = route.instructionActivityIds.map((id) => requireActivity(id));
+      const phases = routeActivities.map((activity) => activity?.phase);
+      routeActivities.forEach((activity) => {
+        if (activity && !activity.assistance.allowedLevels.includes(route.initialAssistanceLevel)) {
+          addIssue(
+            ctx,
+            [...basePath, 'microcycle', 'entryRouting', 'routes'],
+            `${activity.id} must accept ${route.route} route support ${route.initialAssistanceLevel}`,
+          );
+        }
+      });
       const ordered = phases.filter(isInstructionPhase);
       (Object.keys(phaseOrder) as InstructionPhase[]).forEach((phase) => {
         if (!ordered.includes(phase)) {
@@ -876,10 +1102,88 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
         }
       });
     });
+    const probeGenerations = Array.from(
+      { length: kc.microcycle.fading.maxReentryGenerations + 1 },
+      (_, generation) =>
+        probes
+          .slice(
+            generation * kc.microcycle.entryRouting.probeCount,
+            (generation + 1) * kc.microcycle.entryRouting.probeCount,
+          )
+          .filter((probe): probe is ActivityDefinition => probe !== undefined),
+    );
+    routes.forEach((route) => {
+      if (route.criteria.kind !== 'convergent_evidence') return;
+      probeGenerations.forEach((generationProbes, generation) => {
+        const emittingFamilies = new Set<string>();
+        const emittedSignals = new Set<string>();
+        generationProbes.forEach((probe) => {
+          const evidence = potentialResponseEvidence(probe);
+          if (route.criteria.signalIds.some((id) => evidence.signalIds.has(id))) {
+            emittingFamilies.add(probe.familyId);
+          }
+          route.criteria.signalIds.forEach((id) => {
+            if (evidence.signalIds.has(id)) emittedSignals.add(id);
+          });
+        });
+        if (
+          emittedSignals.size !== new Set(route.criteria.signalIds).size ||
+          emittingFamilies.size < route.criteria.minimumDistinctFamilies
+        ) {
+          addIssue(
+            ctx,
+            [...basePath, 'microcycle', 'entryRouting', 'routes'],
+            `${route.route} signals cannot reach ${route.criteria.minimumDistinctFamilies} distinct entry families in generation ${generation}`,
+          );
+        }
+      });
+    });
+    probeGenerations.forEach((generationProbes, generation) => {
+      if (
+        generationProbes.length !== kc.microcycle.entryRouting.probeCount ||
+        !generationProbes.every(
+          (probe) => probe.response.kind !== 'none' && probe.response.allowNotSure,
+        )
+      ) {
+        return;
+      }
+      const notSureEvidence = generationProbes.map((probe) => ({
+        familyId: probe.familyId,
+        signalIds: new Set(notSureSignals(probe)),
+      }));
+      const resolvesTargetedRoute = routes.some((route) => {
+        if (route.criteria.kind !== 'convergent_evidence') return false;
+        const criteriaSignals = new Set(route.criteria.signalIds);
+        return (
+          new Set(
+            notSureEvidence
+              .filter((entry) => [...entry.signalIds].some((id) => criteriaSignals.has(id)))
+              .map((entry) => entry.familyId),
+          ).size >= route.criteria.minimumDistinctFamilies
+        );
+      });
+      if (!resolvesTargetedRoute) {
+        addIssue(
+          ctx,
+          [...basePath, 'microcycle', 'entryRouting', 'routes'],
+          `repeated not-sure responses silently fall through to standard in generation ${generation}`,
+        );
+      }
+    });
 
     kc.microcycle.workedDecisionActivityIds.forEach((id) =>
       requireActivity(id, 'show_expert_decisions'),
     );
+    if (
+      kc.microcycle.fading.maxAttemptsPerLevel < kc.microcycle.fading.successesToFade ||
+      kc.microcycle.fading.maxAttemptsPerLevel < kc.microcycle.fading.requiredA0Successes
+    ) {
+      addIssue(
+        ctx,
+        [...basePath, 'microcycle', 'fading'],
+        'maxAttemptsPerLevel must cover successesToFade and requiredA0Successes',
+      );
+    }
     const requiredPoolSize =
       kc.microcycle.fading.maxAttemptsPerLevel * (kc.microcycle.fading.maxReentryGenerations + 1);
     const validatePools = (
@@ -914,7 +1218,16 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
     };
     validatePools(kc.microcycle.completionPools, [...basePath, 'microcycle', 'completionPools']);
 
-    kc.microcycle.contrastActivityIds.forEach((id) => requireActivity(id, 'contrast_bound'));
+    kc.microcycle.contrastActivityIds.forEach((id) => {
+      const activity = requireActivity(id, 'contrast_bound');
+      if (activity && !activity.assistance.allowedLevels.includes('A0')) {
+        addIssue(
+          ctx,
+          [...basePath, 'microcycle', 'contrastActivityIds'],
+          `${id} must accept post-completion A0 support`,
+        );
+      }
+    });
 
     const requiredExitPairs =
       (kc.microcycle.repairs.maximumCycles + 1) * (kc.microcycle.fading.maxReentryGenerations + 1);
@@ -931,6 +1244,14 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
         addIssue(ctx, [...basePath, 'microcycle', 'pairedExit'], `duplicate exit pair ${pair.id}`);
       }
       pairIds.add(pair.id);
+      if (globalExitPairIds.has(pair.id)) {
+        addIssue(
+          ctx,
+          [...basePath, 'microcycle', 'pairedExit'],
+          `exit pair ${pair.id} must be lesson-global unique`,
+        );
+      }
+      globalExitPairIds.add(pair.id);
       const near = requireActivity(pair.nearActivityId, 'exit_near', true);
       const changed = requireActivity(pair.changedActivityId, 'exit_changed', true);
       if (!near || !changed) return;
@@ -974,6 +1295,17 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
       );
     }
     const cycleRepresentations: Set<string>[] = [];
+    const repairEvidenceSourceIds = new Set<string>([
+      ...kc.microcycle.entryRouting.probeActivityIds,
+      ...routes.flatMap((route) => route.instructionActivityIds),
+      ...kc.microcycle.workedDecisionActivityIds,
+      ...collectPools(kc.microcycle.completionPools),
+      ...kc.microcycle.contrastActivityIds,
+      ...kc.microcycle.pairedExit.pairs.flatMap((pair) => [
+        pair.nearActivityId,
+        pair.changedActivityId,
+      ]),
+    ]);
     kc.microcycle.repairs.cycles.forEach((cycle, cycleIndex) => {
       const generic = cycle.mappings.filter((mapping) => mapping.kind === 'generic');
       if (generic.length !== 1) {
@@ -985,6 +1317,44 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
       }
       const representations = new Set<string>();
       cycle.mappings.forEach((mapping) => {
+        if (mapping.kind === 'targeted') {
+          const sourceActivities = [...repairEvidenceSourceIds]
+            .map((id) => activityById.get(id as z.infer<typeof V3ActivityIdSchema>))
+            .filter((activity): activity is ActivityDefinition => activity !== undefined);
+          const signalIds = new Set(mapping.signalIds);
+          const objectiveFeatureIds = new Set(mapping.objectiveFeatureIds);
+          const emittedSignals = new Set<string>();
+          const emittedFeatures = new Set<string>();
+          const emittingFamilies = new Set<string>();
+          sourceActivities.forEach((activity) => {
+            const evidence = potentialResponseEvidence(activity);
+            let emitsMappedEvidence = false;
+            signalIds.forEach((id) => {
+              if (evidence.signalIds.has(id)) {
+                emittedSignals.add(id);
+                emitsMappedEvidence = true;
+              }
+            });
+            objectiveFeatureIds.forEach((id) => {
+              if (evidence.objectiveFeatureIds.has(id)) {
+                emittedFeatures.add(id);
+                emitsMappedEvidence = true;
+              }
+            });
+            if (emitsMappedEvidence) emittingFamilies.add(activity.familyId);
+          });
+          if (
+            emittedSignals.size !== signalIds.size ||
+            emittedFeatures.size !== objectiveFeatureIds.size ||
+            emittingFamilies.size < mapping.minimumDistinctFamilies
+          ) {
+            addIssue(
+              ctx,
+              [...basePath, 'microcycle', 'repairs', 'cycles', cycleIndex],
+              `${mapping.id} targeted evidence cannot converge from ${mapping.minimumDistinctFamilies} distinct pre-repair families`,
+            );
+          }
+        }
         if (mapping.candidateActivityIds.length < kc.microcycle.fading.maxReentryGenerations + 1) {
           addIssue(
             ctx,
@@ -994,6 +1364,13 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
         }
         mapping.candidateActivityIds.forEach((id) => {
           const activity = requireActivity(id, 'targeted_repair', true);
+          if (activity && !activity.assistance.allowedLevels.includes('A3')) {
+            addIssue(
+              ctx,
+              [...basePath, 'microcycle', 'repairs', 'cycles', cycleIndex],
+              `${id} must accept repair-start A3 support`,
+            );
+          }
           activity?.representationIds.forEach((representationId) =>
             representations.add(representationId),
           );
@@ -1020,6 +1397,10 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
         );
       }
       cycleRepresentations.push(representations);
+      cycle.mappings.forEach((mapping) =>
+        mapping.candidateActivityIds.forEach((id) => repairEvidenceSourceIds.add(id)),
+      );
+      collectPools(cycle.recoveryPools).forEach((id) => repairEvidenceSourceIds.add(id));
     });
     if ([...cycleRepresentations[0]!].some((id) => cycleRepresentations[1]!.has(id))) {
       addIssue(
@@ -1046,7 +1427,10 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
         );
       }
     });
-    if (kc.scope.prerequisiteKcIds.includes(kc.id)) {
+    if (
+      kc.scope.hardPrerequisiteKcIds.includes(kc.id) ||
+      kc.scope.helpfulPrerequisiteKcIds.includes(kc.id)
+    ) {
       addIssue(ctx, [...basePath, 'scope'], 'a KC cannot be its own prerequisite');
     }
   });
@@ -1081,9 +1465,37 @@ export type LessonDefinition = z.infer<typeof LessonDefinitionSchema>;
 export const parseLessonDefinition = (input: unknown): LessonDefinition =>
   LessonDefinitionSchema.parse(input);
 
+export function validateLessonAssetManifest(
+  definitionInput: unknown,
+  assetManifestInput: unknown,
+): string[] {
+  const parsedDefinition = LessonDefinitionSchema.safeParse(definitionInput);
+  if (!parsedDefinition.success) {
+    return parsedDefinition.error.issues.map((issue) => issue.message);
+  }
+  const expected = parsedDefinition.data.reviewedAssets;
+  if (expected.length === 0) return [];
+  const parsedManifest = LessonAssetManifestSchema.safeParse(assetManifestInput);
+  if (!parsedManifest.success) {
+    return ['reviewed media bytes are unavailable or the verified asset manifest is invalid'];
+  }
+  const actualByPath = new Map(
+    parsedManifest.data.assets.map((asset) => [asset.path, asset] as const),
+  );
+  return expected.flatMap((reviewed) => {
+    const actual = actualByPath.get(reviewed.path);
+    if (!actual) return [`reviewed asset ${reviewed.path} is unavailable`];
+    if (actual.kind !== reviewed.kind || actual.sha256 !== reviewed.sha256) {
+      return [`reviewed asset ${reviewed.path} does not match its approved SHA-256`];
+    }
+    return [];
+  });
+}
+
 export function validateLessonForProduction(
   definitionInput: unknown,
   manifest: CanonicalLessonAuthoringManifest | unknown,
+  assetManifest?: unknown,
 ): string[] {
   const parsed = LessonDefinitionSchema.safeParse(definitionInput);
   if (!parsed.success) return parsed.error.issues.map((issue) => issue.message);
@@ -1092,5 +1504,6 @@ export function validateLessonForProduction(
   if (definition.status !== 'published' || definition.publicationIntent !== 'production') {
     issues.push('production registry accepts only published production definitions');
   }
+  issues.push(...validateLessonAssetManifest(definition, assetManifest));
   return issues;
 }

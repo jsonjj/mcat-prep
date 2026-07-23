@@ -50,6 +50,19 @@ const assistanceFor = (level: AssistanceLevel, exit = false) => {
   };
 };
 
+const instructionAssistance = () => ({
+  allowedLevels: [...supportOrder],
+  initialLevel: 'A3' as const,
+  hints: [
+    {
+      level: 'A3' as const,
+      text: 'Synthetic content-bearing instruction for the invented rule.',
+      contentBearing: true,
+    },
+  ],
+  revealAllowed: true,
+});
+
 function contentActivity(
   kcId: string,
   id: string,
@@ -70,7 +83,7 @@ function contentActivity(
     instructions: [`Synthetic instruction for ${title.toLowerCase()}.`],
     representationIds,
     response: { kind: 'none' },
-    assistance: assistanceFor('A3'),
+    assistance: instructionAssistance(),
     timing,
   });
 }
@@ -85,6 +98,7 @@ function choiceActivity(
     assistance?: AssistanceLevel;
     exit?: boolean;
     changed?: boolean;
+    unassisted?: boolean;
     entrySignals?: { ready: string; prerequisite: string; misconception: string };
   } = {},
 ): ActivityDefinition {
@@ -147,9 +161,20 @@ function choiceActivity(
       correctChoiceIds: [options.entrySignals ? 'ready' : 'aligned'],
       correctFeedback: 'Correct under the invented fixture rule.',
       notSureFeedback: 'Not sure keeps or increases support.',
+      notSureDiagnosticSignalIds: [
+        options.entrySignals
+          ? options.entrySignals.prerequisite
+          : `signal-${kcId.toLowerCase()}-offset`,
+      ],
+      notSureObjectiveFeatureIds: [
+        options.entrySignals ? 'feature-marker-identification' : 'feature-alignment-operation',
+      ],
       allowNotSure: true,
     },
-    assistance: assistanceFor(options.exit ? 'A0' : (options.assistance ?? 'A3'), options.exit),
+    assistance: assistanceFor(
+      options.exit || options.unassisted ? 'A0' : (options.assistance ?? 'A3'),
+      options.exit || options.unassisted,
+    ),
     timing,
   });
 }
@@ -217,7 +242,7 @@ function makeKc(
           'enter_routing',
           [index % 2 === 0 ? rep.text : rep.diagram],
           `Entry probe ${index + 1}`,
-          { entrySignals: signals },
+          { entrySignals: signals, unassisted: true },
         ),
       ),
     ),
@@ -353,7 +378,12 @@ function makeKc(
     id: kcId as KnowledgeComponentDefinition['id'],
     title: `Synthetic ${noun} calibration`,
     objective,
-    scope: { included, excluded, prerequisiteKcIds: [] },
+    scope: {
+      included,
+      excluded,
+      hardPrerequisiteKcIds: [],
+      helpfulPrerequisiteKcIds: [],
+    },
     representations: [
       {
         id: rep.text,
@@ -470,6 +500,24 @@ function makeKc(
         diagram: makeDiagram('bounds'),
       },
     ],
+    canonicalRepresentationMappings: [
+      { canonicalLabel: `${noun} text rule`, representationIds: [rep.text] },
+      { canonicalLabel: `${noun} invented equation`, representationIds: [rep.equation] },
+      { canonicalLabel: `${noun} semantic diagram`, representationIds: [rep.diagram] },
+      { canonicalLabel: `${noun} synthetic chart`, representationIds: [rep.chart] },
+      {
+        canonicalLabel: `${noun} controlled simulation`,
+        representationIds: [rep.simulation],
+      },
+      {
+        canonicalLabel: `${noun} repair cycle one diagram`,
+        representationIds: [rep.cycle1],
+      },
+      {
+        canonicalLabel: `${noun} repair cycle two diagram`,
+        representationIds: [rep.cycle2],
+      },
+    ],
     activities,
     microcycle: {
       entryRouting: {
@@ -533,15 +581,6 @@ function makeKc(
         cycles: [repairCycles[0]!, repairCycles[1]!],
       },
     },
-    artifactReferences: [
-      {
-        kind: 'support',
-        id: `V3-SUP-SYNTH-${suffix}`,
-        deliveryState: 'host_only',
-        activation: 'host_only',
-        evidenceUse: 'none',
-      },
-    ],
     timing: { minimumSeconds: 60, targetSeconds: 480, maximumSeconds: 1_800 },
   });
 }
@@ -581,9 +620,9 @@ const artifacts = [
 ];
 
 const fixtureInput: Record<string, unknown> = {
-  schemaVersion: '3.1.0',
+  schemaVersion: '3.2.0',
   id: 'V3-LES-SYNTH-FOUNDATION',
-  definitionVersion: '3.1.0-test.1',
+  definitionVersion: '3.2.0-test.1',
   contentRelease: 'synthetic-v3-foundation-test-only',
   registryBinding: {
     mode: 'synthetic_test_fixture',
@@ -604,6 +643,9 @@ const fixtureInput: Record<string, unknown> = {
       conciseScope: 'Invented fixture behavior only.',
       scopeExclusions: ['All real MCAT and scientific content.'],
       orderedKcIds,
+      hardPrerequisiteLessonIds: [],
+      helpfulPrerequisiteLessonIds: [],
+      directSuccessorLessonIds: [],
     },
     grouping: {
       id: 'V3-CL-SYNTH-FOUNDATION',
@@ -619,6 +661,8 @@ const fixtureInput: Record<string, unknown> = {
       scopeIn: kc.scope.included,
       scopeOut: kc.scope.excluded,
       representationLabels: kc.representations.map((representation) => representation.label),
+      hardPrerequisiteKcIds: kc.scope.hardPrerequisiteKcIds,
+      helpfulPrerequisiteKcIds: kc.scope.helpfulPrerequisiteKcIds,
     })),
     attachments: artifacts.map((artifact) => ({
       id: artifact.id,
@@ -627,6 +671,10 @@ const fixtureInput: Record<string, unknown> = {
       deliveryState: artifact.deliveryState,
       activation: artifact.activation,
       holdIds: [],
+      lessonRelation: artifact.kind === 'support' ? 'host' : 'owner',
+      componentKcIds: artifact.kind === 'capstone' ? orderedKcIds : [],
+      placementRelationId: artifact.kind === 'capstone' ? 'TEST-ONLY-CAPSTONE-PLACEMENT' : null,
+      placementFreezeId: artifact.kind === 'capstone' ? 'TEST-ONLY-SEQUENCE-FREEZE' : null,
     })),
     graphEdgeIds: [],
     sequenceRelationIds: ['TEST-ONLY-FIRST-DELIVERY'],
@@ -640,6 +688,7 @@ const fixtureInput: Record<string, unknown> = {
   orderedKcIds,
   knowledgeComponents: [kcOne, kcTwo],
   artifactReferences: artifacts,
+  reviewedAssets: [],
   timing: { minimumSeconds: 120, targetSeconds: 960, maximumSeconds: 3_600 },
   status: 'draft',
   provenance: { origin: 'original', sourceRefs: [], aiAssisted: false, cleanRoom: true },

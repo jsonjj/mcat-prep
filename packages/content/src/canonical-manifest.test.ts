@@ -36,7 +36,57 @@ describe('canonical V3 authoring manifest compiler', () => {
     expect(binding.kcs.map((kc) => kc.statementOfCompetence)).not.toContain('');
     expect(binding.graphEdgeIds.length).toBeGreaterThan(0);
     expect(binding.sequenceRelationIds).toContain('R14-INTERNAL-006619');
+    expect(binding.lesson.hardPrerequisiteLessonIds).toEqual(['V3-LES-474771']);
     expect(validateCanonicalLessonBinding(binding, manifestInput)).toEqual([]);
+  });
+
+  it('preserves owned and shared referenced capstone ownership, components, and placement', () => {
+    const owned = compileCanonicalLessonBinding(manifestInput, 'V3-LES-320512');
+    const ownedCapstone = owned.attachments.find((attachment) => attachment.id === 'V3-CAP-359390');
+    expect(ownedCapstone).toMatchObject({
+      owningLessonId: 'V3-LES-320512',
+      lessonRelation: 'owner',
+      activation: 'required_separate',
+      placementRelationId: 'R14-CAP-359390',
+    });
+    expect(ownedCapstone?.componentKcIds).toEqual(owned.lesson.orderedKcIds);
+
+    const referenced = compileCanonicalLessonBinding(manifestInput, 'V3-LES-329622');
+    const referencedCapstone = referenced.attachments.find(
+      (attachment) => attachment.id === 'V3-CAP-162024',
+    );
+    expect(referencedCapstone).toMatchObject({
+      owningLessonId: 'V3-LES-191915',
+      lessonRelation: 'referenced',
+      activation: 'required_separate',
+      placementRelationId: 'R14-CAP-162024',
+    });
+    expect(referencedCapstone?.componentKcIds).toContain('V3-KC-271440');
+    expect(referenced.sequenceRelationIds).toContain('R14-INTERNAL-329622');
+    const ownershipDrift = structuredClone(referenced);
+    ownershipDrift.attachments.find(
+      (attachment) => attachment.id === 'V3-CAP-162024',
+    )!.lessonRelation = 'owner';
+    expect(validateCanonicalLessonBinding(ownershipDrift, manifestInput)).not.toEqual([]);
+
+    for (const lessonId of ['V3-LES-067950', 'V3-LES-191915', 'V3-LES-315313', 'V3-LES-329622']) {
+      expect(() => compileCanonicalLessonBinding(manifestInput, lessonId)).not.toThrow();
+    }
+  });
+
+  it('keeps hard and helpful prerequisite projections distinct and exact', () => {
+    const binding = compileCanonicalLessonBinding(manifestInput, 'V3-LES-128144');
+    const boundedConclusion = binding.kcs.find((kc) => kc.id === 'V3-KC-062200');
+
+    expect(binding.lesson.hardPrerequisiteLessonIds).toEqual(['V3-LES-264240', 'V3-LES-765609']);
+    expect(boundedConclusion?.hardPrerequisiteKcIds).toEqual(['V3-KC-388302']);
+    expect(boundedConclusion?.helpfulPrerequisiteKcIds).toEqual(['V3-KC-136063']);
+
+    const conflated = structuredClone(binding);
+    const driftedKc = conflated.kcs.find((kc) => kc.id === 'V3-KC-062200')!;
+    driftedKc.hardPrerequisiteKcIds.push(...driftedKc.helpfulPrerequisiteKcIds);
+    driftedKc.helpfulPrerequisiteKcIds = [];
+    expect(validateCanonicalLessonBinding(conflated, manifestInput)).not.toEqual([]);
   });
 
   it('rejects hand-copied manifest drift in canonical statements and scope', () => {
@@ -58,6 +108,13 @@ describe('canonical V3 authoring manifest compiler', () => {
 
     expect(held).toHaveLength(2);
     expect(held.every((attachment) => attachment.activation === 'governance_only')).toBe(true);
+    expect(
+      held.every(
+        (attachment) =>
+          attachment.lessonRelation === 'governance_only' &&
+          attachment.placementRelationId === null,
+      ),
+    ).toBe(true);
 
     const drifted = structuredClone(binding);
     drifted.attachments.find((attachment) => attachment.id === 'V3-CAP-537139')!.activation =

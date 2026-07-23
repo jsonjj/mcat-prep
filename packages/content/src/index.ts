@@ -1,6 +1,7 @@
 export * from './schema';
 export * from './instruction';
 export * from './canonical-manifest';
+export * from './deterministic-json';
 export * from './lesson-definition';
 export * from './lesson-registry';
 export * from './synthetic/v3-lesson-foundation';

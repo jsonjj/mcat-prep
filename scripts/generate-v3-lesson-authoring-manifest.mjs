@@ -1099,6 +1099,8 @@ function assertRequiredFields(record, requiredFields, label) {
   }
 }
 
+const compareCodeUnits = (left, right) => (left < right ? -1 : left > right ? 1 : 0);
+
 function sortObjectKeys(value) {
   if (Array.isArray(value)) {
     return value.map(sortObjectKeys);
@@ -1590,7 +1592,7 @@ function validateRegistryProjectionParity(sources) {
   const registryEdges = Object.values(registry.graph.authoritative_edges.edges_by_type).flat();
   const registryEdgeIndex = uniqueIndex(registryEdges, 'edge_id', 'registry graph edge');
   assertIdOrder(
-    [...registryEdges].sort((left, right) => left.edge_id.localeCompare(right.edge_id)),
+    [...registryEdges].sort((left, right) => compareCodeUnits(left.edge_id, right.edge_id)),
     graph.edges,
     'edge_id',
     'graph edge projection',
@@ -2865,7 +2867,7 @@ function buildSourceAnchorReferences(sourceOccurrences) {
     }
   }
   const references = [...anchors.values()]
-    .sort((left, right) => left.sourceAnchorId.localeCompare(right.sourceAnchorId))
+    .sort((left, right) => compareCodeUnits(left.sourceAnchorId, right.sourceAnchorId))
     .map((anchor) => {
       const { label, labelSource } = chooseSourceAnchorLabel(anchor);
       assert(

@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildLessonAssetManifest,
   computeLessonContentDigest,
   LessonDefinitionRegistry,
   LessonDefinitionSchema,
+  RepresentationDefinitionSchema,
   syntheticV3LessonDefinition,
+  validateLessonAssetManifest,
 } from './index';
 
 const refreshDigest = (definition: Record<string, unknown>): void => {
@@ -72,6 +75,15 @@ describe('V3 lesson definition schema', () => {
     expect(computeLessonContentDigest({ second: 2, first: 1 })).toBe(
       computeLessonContentDigest({ first: 1, second: 2 }),
     );
+    expect(computeLessonContentDigest({ '\u00e9': 1, '\u{1f642}': 2, alpha: 3 })).toBe(
+      computeLessonContentDigest(
+        Object.fromEntries([
+          ['alpha', 3],
+          ['\u{1f642}', 2],
+          ['\u00e9', 1],
+        ]),
+      ),
+    );
   });
 
   it('validates finite fresh pools, all routes, six exit pairs, and two repair cycles', () => {
@@ -100,6 +112,34 @@ describe('V3 lesson definition schema', () => {
     const wrongClaim = structuredClone(syntheticV3LessonDefinition);
     wrongClaim.knowledgeComponents[0]!.objective = 'A hand-reinterpreted objective.';
     expect(LessonDefinitionSchema.safeParse(wrongClaim).success).toBe(false);
+
+    const prerequisiteDrift = structuredClone(syntheticV3LessonDefinition);
+    prerequisiteDrift.knowledgeComponents[0]!.scope.hardPrerequisiteKcIds.push(
+      syntheticV3LessonDefinition.knowledgeComponents[1]!.id,
+    );
+    expect(LessonDefinitionSchema.safeParse(prerequisiteDrift).success).toBe(false);
+
+    const representationDrift = structuredClone(syntheticV3LessonDefinition);
+    representationDrift.knowledgeComponents[0]!.canonicalRepresentationMappings[0]!.canonicalLabel =
+      'Hand-inferred representation label';
+    expect(LessonDefinitionSchema.safeParse(representationDrift).success).toBe(false);
+  });
+
+  it('rejects KC-level artifact bypass fields instead of allowing a second activation surface', () => {
+    const invalid = structuredClone(syntheticV3LessonDefinition) as unknown as {
+      knowledgeComponents: Array<Record<string, unknown>>;
+    };
+    invalid.knowledgeComponents[0]!.artifactReferences = [
+      {
+        kind: 'capstone',
+        id: 'V3-CAP-INVENTED-BYPASS',
+        deliveryState: 'required',
+        activation: 'required_separate',
+        evidenceUse: 'separate_capstone_only',
+      },
+    ];
+
+    expect(LessonDefinitionSchema.safeParse(invalid).success).toBe(false);
   });
 
   it('rejects reused exit families and reveal-capable A0 checks', () => {
@@ -138,6 +178,70 @@ describe('V3 lesson definition schema', () => {
     }
   });
 
+  it('rejects impossible fading, contaminated entry probes, and unreachable route evidence', () => {
+    const invalid = structuredClone(syntheticV3LessonDefinition);
+    const kc = invalid.knowledgeComponents[0]!;
+    kc.microcycle.fading.successesToFade = 3;
+    const firstProbe = kc.activities.find(
+      (activity) => activity.id === kc.microcycle.entryRouting.probeActivityIds[0],
+    )!;
+    firstProbe.assistance.allowedLevels = ['A3', 'A0'];
+    firstProbe.assistance.initialLevel = 'A3';
+    firstProbe.assistance.revealAllowed = true;
+    if (firstProbe.response.kind !== 'choice') throw new Error('Expected a choice entry probe.');
+    firstProbe.response.notSureDiagnosticSignalIds = [];
+    const prerequisite = kc.microcycle.entryRouting.routes.find(
+      (route) => route.route === 'prerequisite',
+    )!;
+    if (prerequisite.criteria.kind !== 'convergent_evidence') {
+      throw new Error('Expected convergent prerequisite criteria.');
+    }
+    prerequisite.criteria.signalIds = ['signal-that-no-probe-can-emit'];
+
+    const result = LessonDefinitionSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const messages = result.error.issues.map((issue) => issue.message).join(' ');
+      expect(messages).toContain('maxAttemptsPerLevel');
+      expect(messages).toContain('unsupported');
+      expect(messages).toContain('not-sure');
+      expect(messages).toContain('cannot reach');
+    }
+  });
+
+  it('validates route, repair-start, contrast, and targeted-evidence assistance assumptions', () => {
+    const invalid = structuredClone(syntheticV3LessonDefinition);
+    const kc = invalid.knowledgeComponents[0]!;
+    const concise = kc.microcycle.entryRouting.routes.find((route) => route.route === 'concise')!;
+    const routeActivity = kc.activities.find(
+      (activity) => activity.id === concise.instructionActivityIds[0],
+    )!;
+    routeActivity.assistance.allowedLevels = ['A3'];
+    const contrast = kc.activities.find(
+      (activity) => activity.id === kc.microcycle.contrastActivityIds[0],
+    )!;
+    contrast.assistance.allowedLevels = ['A3'];
+    const targeted = kc.microcycle.repairs.cycles[0].mappings.find(
+      (mapping) => mapping.kind === 'targeted',
+    )!;
+    targeted.signalIds = ['signal-with-no-declared-source'];
+    const repair = kc.activities.find(
+      (activity) => activity.id === targeted.candidateActivityIds[0],
+    )!;
+    repair.assistance.allowedLevels = ['A2'];
+    repair.assistance.initialLevel = 'A2';
+
+    const result = LessonDefinitionSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const messages = result.error.issues.map((issue) => issue.message).join(' ');
+      expect(messages).toContain('route support');
+      expect(messages).toContain('post-completion A0');
+      expect(messages).toContain('repair-start A3');
+      expect(messages).toContain('targeted evidence cannot converge');
+    }
+  });
+
   it('requires cycle-specific repair families and representations plus one fallback per cycle', () => {
     const invalid = structuredClone(syntheticV3LessonDefinition);
     const kc = invalid.knowledgeComponents[0]!;
@@ -163,6 +267,20 @@ describe('V3 lesson definition schema', () => {
     }
   });
 
+  it('requires exit pair IDs to be unique across the complete lesson shell', () => {
+    const invalid = structuredClone(syntheticV3LessonDefinition);
+    invalid.knowledgeComponents[1]!.microcycle.pairedExit.pairs[0]!.id =
+      invalid.knowledgeComponents[0]!.microcycle.pairedExit.pairs[0]!.id;
+
+    const result = LessonDefinitionSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(
+        result.error.issues.some((issue) => issue.message.includes('lesson-global unique')),
+      ).toBe(true);
+    }
+  });
+
   it('keeps structured diagram, chart, equation, and simulation data learner-safe', () => {
     const representations = syntheticV3LessonDefinition.knowledgeComponents[0]!.representations;
     const diagram = representations.find((representation) => representation.kind === 'diagram');
@@ -177,6 +295,63 @@ describe('V3 lesson definition schema', () => {
     expect(equation?.spoken).toContain('Alignment');
     expect(simulation?.simulation.adapter).toBe('linear_relationship');
     expect(JSON.stringify(representations)).not.toContain('<script');
+  });
+
+  it('binds reviewed media paths to verified byte digests and detects deployment drift', () => {
+    const approvedBytes = new TextEncoder().encode('reviewed synthetic video bytes');
+    const mutatedBytes = new TextEncoder().encode('mutated synthetic video bytes');
+    const path = '/lesson-assets/synthetic/reviewed.webm';
+    const approvedManifest = buildLessonAssetManifest([
+      { path, kind: 'video', bytes: approvedBytes },
+    ]);
+    const mutatedManifest = buildLessonAssetManifest([
+      { path, kind: 'video', bytes: mutatedBytes },
+    ]);
+    const definition = structuredClone(syntheticV3LessonDefinition);
+    definition.knowledgeComponents[0]!.representations.push(
+      RepresentationDefinitionSchema.parse({
+        id: 'V3-REP-SYNTH-001-REVIEWED-VIDEO',
+        kind: 'video',
+        label: 'Synthetic reviewed video',
+        alternative: {
+          shortText: 'A synthetic reviewed clip.',
+          longDescription: 'A test-only clip with no scientific content.',
+        },
+        assetRef: path,
+        transcript: ['Synthetic transcript.'],
+        captionsRef: '/lesson-assets/synthetic/reviewed.vtt',
+      }),
+    );
+    const captionsManifest = buildLessonAssetManifest([
+      {
+        path: '/lesson-assets/synthetic/reviewed.vtt',
+        kind: 'captions',
+        bytes: new TextEncoder().encode('WEBVTT\n\n00:00.000 --> 00:01.000\nSynthetic'),
+      },
+    ]);
+    definition.reviewedAssets = [...approvedManifest.assets, ...captionsManifest.assets];
+
+    expect(LessonDefinitionSchema.safeParse(definition).success).toBe(true);
+    expect(
+      validateLessonAssetManifest(definition, {
+        schemaVersion: '1.0',
+        assets: [...approvedManifest.assets, ...captionsManifest.assets],
+      }),
+    ).toEqual([]);
+    expect(
+      validateLessonAssetManifest(definition, {
+        schemaVersion: '1.0',
+        assets: [...mutatedManifest.assets, ...captionsManifest.assets],
+      }),
+    ).toEqual([
+      'reviewed asset /lesson-assets/synthetic/reviewed.webm does not match its approved SHA-256',
+    ]);
+    expect(validateLessonAssetManifest(definition, undefined)).toEqual([
+      'reviewed media bytes are unavailable or the verified asset manifest is invalid',
+    ]);
+    expect(JSON.stringify(definition.knowledgeComponents[0]!.representations)).not.toContain(
+      'reviewed synthetic video bytes',
+    );
   });
 
   it('fails publication closed without exact digest-bound independent gates', () => {

@@ -4,6 +4,7 @@ import {
   type LessonDefinition,
   validateLessonForProduction,
 } from './lesson-definition';
+import { compareCodeUnits } from './deterministic-json';
 
 export type LessonRegistryMode = 'production' | 'test_fixture';
 
@@ -26,14 +27,23 @@ const registryKey = (lessonId: V3LessonId, version: LessonDefinitionVersion): st
 export class LessonDefinitionRegistry {
   private readonly definitions = new Map<string, LessonDefinition>();
 
-  constructor(inputs: readonly unknown[], mode: LessonRegistryMode, canonicalManifest?: unknown) {
+  constructor(
+    inputs: readonly unknown[],
+    mode: LessonRegistryMode,
+    canonicalManifest?: unknown,
+    verifiedAssetManifest?: unknown,
+  ) {
     if (mode === 'production' && canonicalManifest === undefined) {
       throw new Error('Production lesson registries require the pinned canonical manifest.');
     }
     for (const input of inputs) {
       const definition = LessonDefinitionSchema.parse(input);
       if (mode === 'production') {
-        const issues = validateLessonForProduction(definition, canonicalManifest);
+        const issues = validateLessonForProduction(
+          definition,
+          canonicalManifest,
+          verifiedAssetManifest,
+        );
         if (issues.length > 0) {
           throw new Error(
             `Lesson ${definition.id} failed production publication gates: ${issues.join('; ')}`,
@@ -69,7 +79,8 @@ export class LessonDefinitionRegistry {
         testOnly: definition.testOnly,
       }))
       .sort((left, right) =>
-        registryKey(left.lessonId, left.definitionVersion).localeCompare(
+        compareCodeUnits(
+          registryKey(left.lessonId, left.definitionVersion),
           registryKey(right.lessonId, right.definitionVersion),
         ),
       );
