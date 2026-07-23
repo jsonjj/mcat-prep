@@ -38,7 +38,11 @@ export interface AuthorityPort {
   requestReveal(): Promise<void>;
   continueStep(): Promise<void>;
   submitRecall(answer: string): Promise<boolean>;
-  dispatchLessonAction(runId: LessonRunId, action: LessonActionInput): Promise<void>;
+  dispatchLessonAction(
+    runId: LessonRunId,
+    runVersion: number,
+    action: LessonActionInput,
+  ): Promise<void>;
   getMasteryMap(): Promise<MasteryMapEntry[]>;
   getErrorLog(): Promise<ErrorEntryView[]>;
   getSkills(): Promise<SkillSummary[]>;

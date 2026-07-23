@@ -99,6 +99,8 @@ export const LessonActionCommandSchema = z
   .object({
     envelope: CommandEnvelopeSchema,
     runId: LessonRunIdSchema,
+    /** Public optimistic-concurrency token for this lesson run, not aggregate state. */
+    expectedRunVersion: z.number().int().min(-1),
     action: LessonActionInputSchema,
   })
   .strict();

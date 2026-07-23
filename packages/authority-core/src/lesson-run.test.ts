@@ -208,6 +208,24 @@ describe('V3 lesson initialization, routing, and sealed entry evidence', () => {
     expect(state.status).toBe('active');
   });
 
+  it('routes repeated not-sure responses through deterministic convergent evidence', () => {
+    let state = freshStarted();
+    for (let probe = 0; probe < 2; probe += 1) {
+      const current = activity(state);
+      state = act(present(state), {
+        type: 'submit_response',
+        activityId: current.id,
+        response: { kind: 'not_sure' },
+      });
+      state = act(state, { type: 'continue', activityId: current.id });
+    }
+
+    expect(state.route).toBe('prerequisite');
+    expect(
+      state.signals.find((signal) => signal.signalId.endsWith('-prerequisite'))?.familyIds,
+    ).toHaveLength(2);
+  });
+
   it('rejects a targeted route when only one family supports its signal', () => {
     let state = freshStarted();
     state = completeCurrent(state, 'swap');
@@ -464,6 +482,43 @@ describe('planner reentry lineage and cross-run exposure', () => {
     ];
     expect(selectedExitFamilies.every((familyId) => !inheritedFamilies.has(familyId))).toBe(true);
   });
+
+  it('uses the exact paused target KC reentry limit, not an unrelated KC minimum', () => {
+    const mixedLimits = structuredClone(syntheticV3LessonDefinition);
+    mixedLimits.knowledgeComponents[0]!.microcycle.fading.maxReentryGenerations = 1;
+    mixedLimits.knowledgeComponents[1]!.microcycle.fading.maxReentryGenerations = 0;
+    let parent = repairExhausted();
+    const nextPins = LessonRunPinsSchema.parse({
+      ...parent.pins,
+      runId: '66666666-6666-4666-8666-666666666666',
+    });
+    const nextLineage = {
+      rootRunId: parent.lineage.rootRunId,
+      parentRunId: parent.pins.runId,
+      generation: 1,
+      inheritedFromRunIds: [parent.pins.runId],
+      inheritedExposure: {
+        sourceRunIds: [parent.pins.runId],
+        families: structuredClone(parent.exposures),
+      },
+      reviewedContentPins: parent.lineage.reviewedContentPins,
+    };
+    parent = reduceLessonRun(
+      parent,
+      event(parent, 'lesson_planner_reentry_handoff', {
+        nextRunPins: nextPins,
+        nextLineage,
+      }),
+      mixedLimits,
+      'test_fixture',
+    );
+
+    expect(parent.status).toBe('handoff');
+    const child = initializeLessonReentryRun(mixedLimits, nextPins, 'test_fixture', parent);
+    expect(child.status).toBe('ready');
+    expect(child.currentKcId).toBe(mixedLimits.knowledgeComponents[0]!.id);
+    expect(child.exposures).toEqual(parent.exposures);
+  });
 });
 
 describe('deterministic scoring, replay, and HTTP-command idempotency', () => {
@@ -560,11 +615,12 @@ describe('deterministic scoring, replay, and HTTP-command idempotency', () => {
         eventId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
         idempotencyKey: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
         occurredAt: '2026-07-23T16:41:00.000Z',
-        expectedStreamVersion: state.lastSequence + 1,
+        expectedStreamVersion: 77,
         contentRelease: state.pins.contentRelease,
         taskInstanceId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
       },
       runId: state.pins.runId,
+      expectedRunVersion: state.lastSequence,
       action: { type: 'present', activityId: activity(state).id },
     });
 
@@ -588,6 +644,27 @@ describe('deterministic scoring, replay, and HTTP-command idempotency', () => {
     expect(retry.state).toEqual(first.state);
   });
 
+  it('rejects stale lesson run concurrency without comparing aggregate stream versions', () => {
+    const state = freshStarted();
+    const command = LessonActionCommandSchema.parse({
+      envelope: {
+        eventId: 'abababab-abab-4bab-8bab-abababababab',
+        idempotencyKey: 'bcbcbcbc-bcbc-4cbc-8cbc-bcbcbcbcbcbc',
+        occurredAt: '2026-07-23T19:02:00.000Z',
+        expectedStreamVersion: 10_000,
+        contentRelease: state.pins.contentRelease,
+        taskInstanceId: 'cdcdcdcd-cdcd-4dcd-8dcd-cdcdcdcdcdcd',
+      },
+      runId: state.pins.runId,
+      expectedRunVersion: state.lastSequence - 1,
+      action: { type: 'present', activityId: activity(state).id },
+    });
+
+    expect(() =>
+      dispatchLessonRunCommand(state, syntheticV3LessonDefinition, command, 'test_fixture'),
+    ).toThrow('lesson command run version mismatch');
+  });
+
   it('derives identical child event identities for duplicate multi-event commands', () => {
     let state = freshStarted();
     state = completeCurrent(state, 'ready');
@@ -598,11 +675,12 @@ describe('deterministic scoring, replay, and HTTP-command idempotency', () => {
         eventId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
         idempotencyKey: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
         occurredAt: '2026-07-23T16:41:00.000Z',
-        expectedStreamVersion: state.lastSequence + 1,
+        expectedStreamVersion: 91,
         contentRelease: state.pins.contentRelease,
         taskInstanceId: 'ffffffff-ffff-4fff-8fff-ffffffffffff',
       },
       runId: state.pins.runId,
+      expectedRunVersion: state.lastSequence,
       action: { type: 'continue', activityId: current.id },
     });
 
@@ -641,6 +719,7 @@ describe('deterministic scoring, replay, and HTTP-command idempotency', () => {
 
     expect(view.progress.exitedKcCount).toBe(0);
     expect(view.progress.kcOrdinal).toBe(1);
+    expect(view.runVersion).toBe(state.lastSequence);
     expect(json).not.toContain('correctChoiceIds');
     expect(json).not.toContain('diagnosticSignalIds');
     expect(json).not.toContain('authorityPrivateFeedback');

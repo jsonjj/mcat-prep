@@ -156,13 +156,16 @@ describe('HttpAuthorityClient', () => {
     };
 
     await client.bootstrap();
-    await expect(client.dispatchLessonAction(runId, action)).rejects.toThrow(
+    await expect(client.dispatchLessonAction(runId, 41, action)).rejects.toThrow(
       'temporary network failure',
     );
-    await client.dispatchLessonAction(runId, action);
+    await client.dispatchLessonAction(runId, 41, action);
 
     expect(lessonBodies).toHaveLength(2);
     expect(lessonBodies[1]).toBe(lessonBodies[0]);
+    const retried = LessonActionCommandSchema.parse(JSON.parse(lessonBodies[1]!));
+    expect(retried.envelope.expectedStreamVersion).toBe(7);
+    expect(retried.expectedRunVersion).toBe(41);
   });
 
   it('coalesces concurrent identical lesson actions behind one HTTP command', async () => {
@@ -191,8 +194,8 @@ describe('HttpAuthorityClient', () => {
 
     await client.bootstrap();
     await Promise.all([
-      client.dispatchLessonAction(runId, action),
-      client.dispatchLessonAction(runId, action),
+      client.dispatchLessonAction(runId, 12, action),
+      client.dispatchLessonAction(runId, 12, action),
     ]);
 
     expect(lessonBodies).toHaveLength(1);

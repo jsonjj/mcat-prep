@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { LessonRunEventSchema, LessonRunPinsSchema, LessonRunStateSchema } from './index';
+import {
+  LessonActionCommandSchema,
+  LessonRunEventSchema,
+  LessonRunPinsSchema,
+  LessonRunStateSchema,
+} from './index';
 
 const pins = LessonRunPinsSchema.parse({
   runId: '11111111-1111-4111-8111-111111111111',
@@ -20,6 +25,25 @@ const pins = LessonRunPinsSchema.parse({
 });
 
 describe('lesson run contracts', () => {
+  it('keeps aggregate stream concurrency separate from the public lesson run version', () => {
+    const command = LessonActionCommandSchema.parse({
+      envelope: {
+        eventId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        idempotencyKey: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+        occurredAt: '2026-07-23T19:02:00.000Z',
+        expectedStreamVersion: 41,
+        contentRelease: pins.contentRelease,
+        taskInstanceId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      },
+      runId: pins.runId,
+      expectedRunVersion: 7,
+      action: { type: 'pause' },
+    });
+
+    expect(command.envelope.expectedStreamVersion).toBe(41);
+    expect(command.expectedRunVersion).toBe(7);
+  });
+
   it('validates an append-only, version-pinned typed event', () => {
     const parsed = LessonRunEventSchema.parse({
       schemaVersion: '1.1',

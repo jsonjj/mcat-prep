@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import {
+  deterministicJson,
   LessonDefinitionSchema,
   type ActivityDefinition,
   type CompletionPools,
@@ -110,17 +111,6 @@ function invalidState(
   });
 }
 
-const canonicalJson = (value: unknown): string => {
-  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;
-  if (value && typeof value === 'object') {
-    return `{${Object.entries(value)
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([key, entry]) => `${JSON.stringify(key)}:${canonicalJson(entry)}`)
-      .join(',')}}`;
-  }
-  return JSON.stringify(value);
-};
-
 function definitionIssues(
   input: unknown,
   pins: LessonRunPins,
@@ -145,7 +135,7 @@ function definitionIssues(
   if (definition.contentDigest.sha256 !== pins.reviewedContentHash) {
     issues.push('reviewed_content_hash_pin_mismatch');
   }
-  if (canonicalJson(definition.registryBinding.registry) !== canonicalJson(pins.registry)) {
+  if (deterministicJson(definition.registryBinding.registry) !== deterministicJson(pins.registry)) {
     issues.push('registry_freeze_pin_mismatch');
   }
   if (
@@ -175,6 +165,21 @@ function currentKc(
 ): KnowledgeComponentDefinition | null {
   return (
     definition.knowledgeComponents.find((candidate) => candidate.id === state.currentKcId) ?? null
+  );
+}
+
+function reentryTargetKc(
+  definition: LessonDefinition,
+  state: LessonRunState,
+): KnowledgeComponentDefinition | null {
+  const current =
+    definition.knowledgeComponents.find(
+      (kc) => kc.id === state.currentKcId && !state.exitedKcIds.includes(kc.id),
+    ) ?? null;
+  return (
+    current ??
+    definition.knowledgeComponents.find((kc) => !state.exitedKcIds.includes(kc.id)) ??
+    null
   );
 }
 
@@ -282,7 +287,7 @@ function startKc(
   state.objectiveFeatures = [];
   state.sealedExitResults = [];
   state.activeExitPairId = null;
-  state.assistanceLevel = 'A3';
+  state.assistanceLevel = probes[0]?.assistance.initialLevel ?? 'A0';
   state.consecutiveUnsupportedSuccesses = 0;
   state.groupedFeedback = null;
   state.authorityPrivateFeedback = { sealedEntry: [], sealedExit: [] };
@@ -353,7 +358,7 @@ const expectedReentryLineage = (
 const pinsMatchExceptRun = (left: LessonRunPins, right: LessonRunPins): boolean => {
   const { runId: _leftRun, ...leftRest } = left;
   const { runId: _rightRun, ...rightRest } = right;
-  return canonicalJson(leftRest) === canonicalJson(rightRest);
+  return deterministicJson(leftRest) === deterministicJson(rightRest);
 };
 
 /**
@@ -372,23 +377,18 @@ export function initializeLessonReentryRun(
   const issues = [...checked.issues];
   if (parent.status !== 'handoff') issues.push('parent_not_handed_off');
   if (pins.runId === parent.pins.runId) issues.push('same_run_reentry_forbidden');
-  if (!parent.handoffPins || canonicalJson(parent.handoffPins) !== canonicalJson(pins)) {
+  if (!parent.handoffPins || deterministicJson(parent.handoffPins) !== deterministicJson(pins)) {
     issues.push('handoff_pin_mismatch');
   }
   const expectedLineage = expectedReentryLineage(parent, pins);
   if (
     !parent.handoffLineage ||
-    canonicalJson(parent.handoffLineage) !== canonicalJson(expectedLineage)
+    deterministicJson(parent.handoffLineage) !== deterministicJson(expectedLineage)
   ) {
     issues.push('handoff_lineage_mismatch');
   }
-  const maxGeneration = checked.definition
-    ? Math.min(
-        ...checked.definition.knowledgeComponents.map(
-          (kc) => kc.microcycle.fading.maxReentryGenerations,
-        ),
-      )
-    : 0;
+  const target = checked.definition ? reentryTargetKc(checked.definition, parent) : null;
+  const maxGeneration = target?.microcycle.fading.maxReentryGenerations ?? 0;
   if (expectedLineage.generation > maxGeneration) issues.push('reentry_generation_exhausted');
   if (!checked.definition || issues.length > 0) {
     return invalidState(pins, issues, expectedLineage);
@@ -398,9 +398,6 @@ export function initializeLessonReentryRun(
   state.exposures = structuredClone(expectedLineage.inheritedExposure.families);
   state.exitedKcIds = [...parent.exitedKcIds];
   state.usedExitPairIds = [...parent.usedExitPairIds];
-  const target =
-    checked.definition.knowledgeComponents.find((kc) => kc.id === parent.currentKcId) ??
-    checked.definition.knowledgeComponents.find((kc) => !state.exitedKcIds.includes(kc.id));
   if (!target) {
     state.status = 'complete';
     state.currentKcId = null;
@@ -421,7 +418,7 @@ function block(state: LessonRunState, code: string): LessonRunState {
 }
 
 function policiesEqual(left: LessonRunPins['policies'], right: LessonRunPins['policies']): boolean {
-  return canonicalJson(left) === canonicalJson(right);
+  return deterministicJson(left) === deterministicJson(right);
 }
 
 function eventPinsMatch(state: LessonRunState, event: LessonRunEvent): boolean {
@@ -431,7 +428,7 @@ function eventPinsMatch(state: LessonRunState, event: LessonRunEvent): boolean {
     event.definitionVersion === state.pins.definitionVersion &&
     event.reviewedContentHash === state.pins.reviewedContentHash &&
     event.contentRelease === state.pins.contentRelease &&
-    canonicalJson(event.registry) === canonicalJson(state.pins.registry) &&
+    deterministicJson(event.registry) === deterministicJson(state.pins.registry) &&
     policiesEqual(event.policies, state.pins.policies)
   );
 }
@@ -674,9 +671,8 @@ export function reduceLessonRun(
   if (event.type === 'lesson_planner_reentry_handoff') {
     const nextPins = event.payload.nextRunPins;
     const expected = expectedReentryLineage(state, nextPins);
-    const maxGeneration = Math.min(
-      ...definition.knowledgeComponents.map((kc) => kc.microcycle.fading.maxReentryGenerations),
-    );
+    const target = reentryTargetKc(definition, state);
+    const maxGeneration = target?.microcycle.fading.maxReentryGenerations ?? 0;
     if (
       transitionError(
         state,
@@ -684,7 +680,8 @@ export function reduceLessonRun(
           state.plannerReentryRequired &&
           nextPins.runId !== state.pins.runId &&
           pinsMatchExceptRun(state.pins, nextPins) &&
-          canonicalJson(event.payload.nextLineage) === canonicalJson(expected) &&
+          deterministicJson(event.payload.nextLineage) === deterministicJson(expected) &&
+          target !== null &&
           expected.generation <= maxGeneration,
         'planner_handoff_not_allowed',
       )
@@ -1221,10 +1218,18 @@ export function evaluateLessonResponse(
       activity.response.kind === 'choice'
         ? activity.response.notSureFeedback
         : activity.response.rubric.notSureFeedback;
+    const diagnosticSignalIds =
+      activity.response.kind === 'choice'
+        ? activity.response.notSureDiagnosticSignalIds
+        : activity.response.rubric.notSureDiagnosticSignalIds;
+    const objectiveFeatureIds =
+      activity.response.kind === 'choice'
+        ? activity.response.notSureObjectiveFeatureIds
+        : activity.response.rubric.notSureObjectiveFeatureIds;
     return {
       outcome: 'not_sure',
-      diagnosticSignalIds: [],
-      objectiveFeatureIds: [],
+      diagnosticSignalIds: [...diagnosticSignalIds],
+      objectiveFeatureIds: [...objectiveFeatureIds],
       feedback: [{ activityId: activity.id, tone: 'information', message }],
     };
   }
@@ -1371,8 +1376,9 @@ function safeCommon(definition: LessonDefinition | null, state: LessonRunState) 
       : -1;
   return {
     kind: 'v3_lesson' as const,
-    schemaVersion: '1.1' as const,
+    schemaVersion: '1.2' as const,
     runId: state.pins.runId,
+    runVersion: state.lastSequence,
     lessonId: state.pins.lessonId,
     definitionVersion: state.pins.definitionVersion,
     lessonTitle: definition?.title ?? 'Lesson unavailable',
@@ -1721,8 +1727,8 @@ export function dispatchLessonRunCommand(
   ) {
     return { state, events: [], duplicate: true };
   }
-  if (command.envelope.expectedStreamVersion !== state.lastSequence + 1) {
-    throw new Error('lesson command stream version mismatch');
+  if (command.expectedRunVersion !== state.lastSequence) {
+    throw new Error('lesson command run version mismatch');
   }
   return dispatchWithIdentity(state, definitionInput, command.action, mode, (index) => ({
     eventId:
@@ -1758,11 +1764,12 @@ export function dispatchLessonRunAction(
       eventId: newEventId(),
       idempotencyKey: newIdempotencyKey(),
       occurredAt: clock.now(),
-      expectedStreamVersion: state.lastSequence + 1,
+      expectedStreamVersion: 0,
       contentRelease: state.pins.contentRelease,
       taskInstanceId: newTaskInstanceId(),
     },
     runId: state.pins.runId,
+    expectedRunVersion: state.lastSequence,
     action,
   });
   return dispatchLessonRunCommand(state, definitionInput, command, mode);

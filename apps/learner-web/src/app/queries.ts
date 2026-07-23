@@ -86,8 +86,8 @@ export function useSubmitRecall() {
 export function useLessonAction() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (input: { runId: LessonRunId; action: LessonActionInput }) =>
-      authority.dispatchLessonAction(input.runId, input.action),
+    mutationFn: (input: { runId: LessonRunId; runVersion: number; action: LessonActionInput }) =>
+      authority.dispatchLessonAction(input.runId, input.runVersion, input.action),
     onSuccess: () => invalidateLearner(qc),
   });
 }

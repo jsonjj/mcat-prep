@@ -75,8 +75,8 @@ export function LessonRunner({ step, pending = false, onAction }: LessonRunnerPr
   const shouldPresent =
     step.status === 'active' && activity !== null && step.availableActions.includes('present');
   const presentationKey =
-    shouldPresent && activityId !== null ? `${step.runId}:${activityId}` : null;
-  const transitionKey = `${step.runId}:${step.status}:${activityId ?? step.kcId ?? 'none'}`;
+    shouldPresent && activityId !== null ? `${step.runId}:${step.runVersion}:${activityId}` : null;
+  const transitionKey = `${step.runId}:${step.runVersion}:${step.status}:${activityId ?? step.kcId ?? 'none'}`;
 
   const attemptPresentation = async (forceRetry: boolean): Promise<void> => {
     if (presentationKey === null || activityId === null) return;

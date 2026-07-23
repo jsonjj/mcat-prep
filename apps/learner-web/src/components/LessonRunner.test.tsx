@@ -5,10 +5,11 @@ import { LessonRunner, PresentationAttemptRegistry } from './LessonRunner';
 
 const common = {
   kind: 'v3_lesson',
-  schemaVersion: '1.1',
+  schemaVersion: '1.2',
   runId: '11111111-1111-4111-8111-111111111111',
+  runVersion: 7,
   lessonId: 'V3-LES-SYNTH-COMPONENT',
-  definitionVersion: '3.1.0-test.1',
+  definitionVersion: '3.2.0-test.1',
   lessonTitle: 'Synthetic component fixture',
   kcId: 'V3-KC-SYNTH-COMPONENT',
   kcTitle: 'Fictional control',

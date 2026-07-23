@@ -322,9 +322,10 @@ export class HttpAuthorityClient implements AuthorityPort {
 
   async dispatchLessonAction(
     runId: Parameters<AuthorityPort['dispatchLessonAction']>[0],
-    action: Parameters<AuthorityPort['dispatchLessonAction']>[1],
+    runVersion: Parameters<AuthorityPort['dispatchLessonAction']>[1],
+    action: Parameters<AuthorityPort['dispatchLessonAction']>[2],
   ): Promise<void> {
-    const commandKey = JSON.stringify([runId, action]);
+    const commandKey = JSON.stringify([runId, runVersion, action]);
     const inFlight = this.inFlightLessonActions.get(commandKey);
     if (inFlight) return inFlight;
 
@@ -334,6 +335,7 @@ export class HttpAuthorityClient implements AuthorityPort {
         LessonActionCommandSchema.parse({
           envelope: await this.commandEnvelope(),
           runId,
+          expectedRunVersion: runVersion,
           action,
         });
       this.pendingLessonCommands.set(commandKey, command);
