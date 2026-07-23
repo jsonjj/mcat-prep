@@ -50,14 +50,17 @@ Do not add a screen, route, JSX branch, or runtime policy per lesson.
 
 Every definition pins:
 
-- `schemaVersion: "3.2.0"`, stable `V3-LES-*` ID, semantic
+- `schemaVersion: "4.0.0"`, stable `V3-LES-*` ID, semantic
   `definitionVersion`, and `contentRelease`;
-- ordered `V3-KC-*` IDs matching the KC records exactly;
+- ordered `V3-KC-*` IDs matching the KC records exactly, plus registry-derived
+  `orderedRequiredKcIds`. In the current release, `adaptiveBypassEnabled` is
+  always `false` and both ordered lists are identical;
 - the exact canonical registry artifact SHA and phase/canonical/graph/sequence
   freeze IDs through a compiler-produced `registryBinding`;
 - a SHA-256 `contentDigest` and versioned `reviewEnvelope`, plus provenance,
   lifecycle status, timing, and `testOnly`;
-- keyboard/reduced-motion support and an explicit reading order;
+- shell and per-KC checkpoint maps, segment/KC/shell duration models,
+  keyboard/reduced-motion support, and an explicit reading order;
 - separately typed support, extension, and capstone references. Support and
   extensions use `evidenceUse: "none"`; capstones use
   `"separate_capstone_only"`.
@@ -79,7 +82,8 @@ same hashes. Missing or drifted bytes fail closed. Arbitrary HTML, scripts, and
 remote assets are invalid.
 
 Each `ActivityDefinition` has a stable `V3-ACT-*` ID, item-family ID, construct
-ID, phase, representations, assistance rules, response contract, and timing.
+ID, phase, representations, assistance rules, response contract, timing range,
+and uninterrupted-segment duration model.
 Activity family IDs are lesson-global identities; they cannot be reused across
 KCs because exposure and convergent evidence are lesson-global. Required-token
 matchers use normalized Unicode letter/number boundaries, not substring
@@ -87,10 +91,10 @@ matching. Exit activities must be A0-only, reveal-disabled, and response-bearing
 
 ## Required KC microcycle
 
-Each of the four routes—`concise`, `standard`, `prerequisite`, and
-`misconception`—must preserve this order:
+Each of the four planner-selectable routes—`concise`, `standard`,
+`prerequisite`, and `misconception`—must preserve this order:
 
-1. Enter/routing with at least two probe families.
+1. Optional sealed instructional elicitation.
 2. Orient/elicit.
 3. Build model.
 4. Show expert decisions.
@@ -104,13 +108,23 @@ Each of the four routes—`concise`, `standard`, `prerequisite`, and
 activities reachable from route instruction sequences; it is not a separate
 unscheduled pool.
 
-`standard` is the sole fallback route. Every other route needs convergent
-evidence from at least two distinct item families. A selected distractor can
-emit a hypothesis signal, but one family cannot activate a misconception or
-targeted repair. Entry probes are sealed, unassisted A0, non-reveal responses.
-Every criterion signal must be emit-able by enough distinct declared probe
-families, and enabled not-sure responses must emit deterministic diagnostic
-signals that converge on a targeted route.
+`PlannerInstructionResolution` is the sole initial-route authority. It binds
+learner, lesson, KC, task kind, evidence cutoff, content/registry/policy pins,
+diagnostic decision provenance, prerequisite qualification, exact
+origin/reentry coordinates, expiry, and supersession lineage. The authority
+rejects missing, misidentified, expired, unpinned, diagnostic-probe, or
+unreplayable resolutions before rendering activity content. Stale or
+conflicting concise/misconception provenance can only downgrade to `standard`.
+Invalid prerequisite qualification also downgrades to `standard` and returns
+support responsibility to the planner. A qualified hard blocking predecessor
+pauses the KC at its exact checkpoint.
+
+Entry probes are optional instructional elicitation only. When present, they
+are sealed, unassisted A0, non-reveal responses with deterministic not-sure
+signals. Their responses can inform later instruction and repair but cannot
+change the already accepted planner route. The runner contains no posterior
+threshold or probe-based route selector. A selected distractor remains one
+hypothesis observation, not proof of a misconception.
 
 Completion uses finite, support-level-specific `completionPools`. Each attempted
 activity is fresh. Incorrect, not-sure, revealed, or assisted work schedules
@@ -133,8 +147,9 @@ from failed response signals/objective features with two-family convergence.
 `LessonRunState` is a version-bound instructional state, not an evidence
 authority:
 
-- run ID, lesson/version/release, reviewed content hash, canonical registry
-  freezes, and policy pins are immutable;
+- run, learner, aggregate-stream, task-instance, task-kind, target-KC, planner
+  resolution, evidence-cutoff, lesson/version/release, reviewed-content,
+  canonical-registry, and policy pins are immutable;
 - family exposure survives pause/resume and repair;
 - event IDs and idempotency keys make replay deterministic;
 - aggregate learner-stream concurrency and lesson-run concurrency are separate:
@@ -154,6 +169,44 @@ authority:
   reentry handoff can continue in a new run;
 - malformed definitions fail to `invalid_content`; inconsistent accepted event
   streams fail to `blocked`.
+
+Every accepted internal event commits a shell checkpoint and, when applicable,
+a KC checkpoint in the same reducer transaction. Checkpoints bind the reviewed
+definition hash, KC ordinal/state/node, actual assistance, accepted planner
+instruction, immutable attempts, all family exposure, open feedback, repair
+cycle, failed exit function, preserved successes, origin/reentry state and
+coordinates, and the local event-stream sequence. State validation rejects a
+missing, reordered, or forged checkpoint commit. Pause/resume uses the exact
+committed checkpoint and cannot reset attempts or exposure.
+
+When an exit pair fails, the run records whether `near_use` or `changed_task`
+failed. A valid prior success remains preserved. Recovery emits
+`kc_resumed_at_reentry` and schedules only the failed function; restarting from
+near-use requires an explicit authority invalidation reason. Two bounded repair
+cycles remain the maximum before planner handoff.
+
+First attempts are immutable. A retry is a separate, non-evidentiary
+`retry_observed` record with `retry_of`; it cannot overwrite the first attempt
+or close repair. Intentional skip, valid timeout, and abandonment are explicit
+not-sure administrations that cannot lower support. Technical, inaccessible,
+and missing-telemetry omissions invalidate that administration, retain family
+exposure, apply no learner penalty, and require an untouched substitute family.
+Hint requests, answer reveals, assistance changes, and retries are separate
+transitions. Hint or reveal requests after a committed response are rejected.
+
+The authority projects private transitions to the versioned canonical
+`LearnerEvent` wire boundary. External fields are snake_case, enum values are
+UPPER_SNAKE_CASE, and canonical code-unit-sorted wire bytes are the only
+hash/signature/replay material. Private event names, correctness keys,
+matchers, sealed rationales, and diagnostic provenance are not serialized.
+`lesson_delivery_completed` is authority-derived after every
+`orderedRequiredKcId` has an instructional exit; it is not a learner action.
+
+Duration is descriptive and observable, never a completion rule. Activities
+model uninterrupted segments, KCs model microcycles, and the shell has its own
+model. The current 18-minute value is only the provisional p90 policy input for
+one uninterrupted segment. Every runtime observation records
+`completionThresholdApplied: false`.
 
 ## Publication gates
 
@@ -182,3 +235,34 @@ authorized events and preserve the support/extension/capstone boundaries.
 dials and Nacre relays. It exists only to cover routing, fading, paired feedback,
 repair exhaustion, multi-KC ordering, accessibility alternatives, and artifact
 boundaries. It is not approved MCAT content and cannot load in production mode.
+
+## Implementation status and known limitations
+
+This is a pre-W00 foundation, not a production-readiness declaration. The
+repository currently implements and tests the immutable definition, planner
+resolution, private reducer/event, canonical lesson wire, checkpoint, learner
+view, and browser-renderer contracts against synthetic content. It also
+compile-validates all 114 frozen lesson bindings. It does not contain approved
+lesson prose or assessment banks.
+
+The following remain separate blockers:
+
+- signed external registry/content/policy pinsets and signature verification;
+- cloud diagnostic/evidence ingestion and a production planner that issues the
+  resolution contract;
+- the v7 question-bank eligibility adapter for lesson activity pools;
+- durable database/event-stream transaction adapters and the opaque lesson
+  authority service boundary;
+- production asset storage plus byte-level reviewed-digest verification in the
+  deployment environment;
+- a browser interaction/accessibility harness with keyboard, focus,
+  reduced-motion, responsive, and assistive-technology coverage beyond current
+  schema and server-rendered component tests;
+- canonical composition with the repository's pre-existing non-lesson learner
+  events; and
+- pilot-derived timing distributions, calibrated evidence policies, and
+  learner validation.
+
+Until those gates close, only explicit synthetic `test_fixture` execution is
+supported. Do not mark W00 complete and do not register this fixture as
+published curriculum.
