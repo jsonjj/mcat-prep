@@ -14,9 +14,12 @@ an independent curriculum authority.
 - Graph freeze: `MCAT-V3-GRAPH-FRZ-2026-07-22-01`
 - Sequence freeze: `MCAT-V3-SEQUENCE-FRZ-2026-07-22-01`
 - Phase 1 gate: `MCAT-V3-PHASE1-GATE-2026-07-22-01`
-- Canonical runtime and authoring contract:
-  `docs/design/mcat-complete-learning-flow.md` (version 0.2, SHA-256
-  `e56590830462987e2cc9ec8d523a702e75c903613020addb81da6edbcad3286b`)
+- Required canonical runtime and authoring contract:
+  `docs/design/mcat-complete-learning-flow.md` v0.3, SHA-256
+  `81f0de7ac2a57b0c794467ed0af94714309abb8602d1b0df29ff7602aa88d642`, the
+  integrated successor to Spec 03 v1.1. The checked file and source manifest still pin historical
+  v0.2 bytes (`e56590830462987e2cc9ec8d523a702e75c903613020addb81da6edbcad3286b`);
+  they are provenance only and cannot satisfy W00.
 
 The manifest's `metadata.source_files` records the exact schema version and recomputed SHA-256 for
 every registry/generated input. Author-machine paths from the source package are not carried into
@@ -49,6 +52,60 @@ Focused hardening checks use Node's built-in test runner:
 ```sh
 node --test scripts/generate-v3-lesson-authoring-manifest.test.mjs
 ```
+
+## Cloud authoring orchestration
+
+The deterministic one-lesson-per-agent plan is generated from this checked manifest:
+
+```sh
+node scripts/generate-v3-cloud-authoring-plan.mjs
+node scripts/generate-v3-cloud-authoring-plan.mjs --check
+node scripts/validate-v3-cloud-authoring-wave-overlay.mjs check-template \
+  V3-AUTH-W00-PILOT-PORT \
+  curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json
+node scripts/validate-v3-cloud-authoring-wave-overlay.mjs check-showcase-template \
+  curriculum/v3/v3-cloud-authoring-showcase-overlay.template.json
+node --test \
+  scripts/generate-v3-cloud-authoring-plan.test.mjs \
+  scripts/validate-v3-cloud-authoring-wave-overlay.test.mjs
+```
+
+- `v3-cloud-authoring-jobs.json` contains all 114 jobs, exact KC microcycles, relation-backed inputs,
+  acceptance gates, role-separation slots, and the fixed 11-wave schedule.
+- `v3-cloud-authoring-wave-assignment-overlay.template.json` is a deterministic unmaterialized
+  W00 example. The overlay CLI generates one separate plan-hash-pinned file per wave and validates
+  actual person/run assignments, externally signed foundation pins and reviewer credentials,
+  supplementary schema validation plus a production-validator-signed candidate execution report,
+  compiler-derived closed clients, signed opaque-service action/transition receipts and technical
+  checks, browser/a11y execution with separate learner-only 320/375/desktop regression captures,
+  novice walkthrough execution, codec-signed canonical
+  round-trip/semantic-parity evidence, cumulative-corpus similarity, and complete signed
+  candidate-bound G01–G10 records. Production `validate` additionally requires
+  `--integration-trust-root` pointing to a public key supplied outside the overlay.
+- `v3-cloud-authoring-showcase-overlay.template.json` is a separate
+  `NON_PRODUCTION_INTERNAL_SHOWCASE` contract for the five pilots. It validates disjoint parallel
+  ownership, static learner-safe definitions, local-only simulation, final adversarial QA, and
+  prohibited claims; it cannot satisfy W00 or any production gate.
+- `v3-cloud-authoring-runbook.md` defines clean-room inputs, the lesson contract, independent review
+  pipeline, integration checkpoints, publication boundary, and unresolved launch constraints.
+
+Do not hand-edit or materialize identities in the generated job manifest. Put operational
+assignments/evidence only in a separate overlay; stale plan hashes fail closed. The five prototype
+jobs are an internal port pilot, not production lesson definitions; all generated content remains
+internal draft until the runbook's rights, scientific review, reviewed-hash, and efficacy gates
+pass.
+
+W00 is intentionally blocked until the exact v0.3 flow-contract bytes are materialized and the
+corrected lesson-platform foundation provides an exact
+commit; `LessonDefinition`, `LessonStepView`, and `LessonActionInput` schemas; signed identity,
+media, action/event/state/transition profiles; a production candidate validator with signed
+cross-field execution reports; immutable learner-safe compiler, browser/a11y harness, and
+scoring-service implementation subjects with signed provenance; an immutable bijective wire codec
+and codec-signed closed-vector round-trip/semantic-parity report; build/report signing keys; an
+external integration trust root; and a signed pinset. Test fixtures are visibly fixture-only and
+cannot satisfy production validation. Artifact hashes identify exact bytes; they are not evidence
+of authorship or execution without the required signatures, trust roots, and execution/review
+records.
 
 ## Included
 
@@ -103,8 +160,9 @@ rights-cleared, and hashed separately.
 
 Cloud lesson authors must:
 
-1. Treat `docs/design/mcat-complete-learning-flow.md` as the canonical runtime and production
-   contract and this manifest as its pinned curriculum input.
+1. Treat `docs/design/mcat-complete-learning-flow.md` v0.3 at the required SHA-256 as the canonical
+   runtime and production contract and this manifest as its pinned curriculum input. Historical
+   v0.2 bytes cannot authorize wave entry.
 2. Bind every `LessonDefinition` to the registry artifact ID, registry SHA-256, all four freeze IDs,
    the exact `V3-LES-*` shell, its owning grouping, and its complete ordered `V3-KC-*` records.
 3. Resolve graph and sequence records by stable ID. Preserve point-of-use prerequisite semantics,
