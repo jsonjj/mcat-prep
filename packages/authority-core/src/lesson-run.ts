@@ -341,11 +341,11 @@ export function reduceLessonRun(
 
   if (event.type === 'lesson_activity_presented') {
     const activity = currentActivity(definition, state);
+    if (!activity) return block(state, 'presentation_activity_missing');
     if (
       transitionError(
         state,
         state.status === 'active' &&
-          activity !== null &&
           event.payload.kcId === kc.id &&
           event.payload.activityId === activity.id &&
           event.payload.familyId === activity.familyId &&
@@ -432,13 +432,12 @@ export function reduceLessonRun(
   if (event.type === 'lesson_response_evaluated') {
     const activity = currentActivity(definition, state);
     const presentation = state.activePresentation;
+    if (!activity || !presentation) return block(state, 'response_activity_missing');
     const visibleAssistanceUsed = state.visibleAssistanceLevel !== null;
     if (
       transitionError(
         state,
         state.status === 'active' &&
-          activity !== null &&
-          presentation !== null &&
           presentation.activityId === activity.id &&
           event.payload.kcId === kc.id &&
           event.payload.activityId === activity.id &&
@@ -532,13 +531,13 @@ export function reduceLessonRun(
 
   if (event.type === 'lesson_activity_completed') {
     const activity = currentActivity(definition, state);
+    if (!activity) return block(state, 'completion_activity_missing');
     const responseSatisfied =
-      activity?.response.kind === 'none' || state.lastResponse?.activityId === activity?.id;
+      activity.response.kind === 'none' || state.lastResponse?.activityId === activity.id;
     if (
       transitionError(
         state,
         state.status === 'active' &&
-          activity !== null &&
           state.activePresentation?.activityId === activity.id &&
           event.payload.kcId === kc.id &&
           event.payload.activityId === activity.id &&
@@ -679,7 +678,7 @@ export function replayLessonRun(
   definitionInput: unknown,
   mode: LessonRuntimeMode,
 ): LessonRunState {
-  return events.reduce(
+  return events.reduce<LessonRunState>(
     (state, event) => reduceLessonRun(state, event, definitionInput, mode),
     initialState,
   );
