@@ -1,5 +1,13 @@
 import { z } from 'zod';
-import { ContentIdSchema, EventIdSchema, IdempotencyKeySchema, TaskInstanceIdSchema } from './ids';
+import {
+  ContentIdSchema,
+  EventIdSchema,
+  IdempotencyKeySchema,
+  LessonRunIdSchema,
+  TaskInstanceIdSchema,
+  V3ActivityIdSchema,
+} from './ids';
+import { LessonActivityResponseInputSchema } from './lesson-run';
 import { DateOnlySchema, UtcTimestampSchema } from './time';
 import { AssistanceLevelSchema } from './vocab';
 
@@ -55,6 +63,46 @@ export const AttemptCommandSchema = z
   })
   .strict();
 export type AttemptCommand = z.infer<typeof AttemptCommandSchema>;
+
+export const LessonActionInputSchema = z.discriminatedUnion('type', [
+  z
+    .object({
+      type: z.literal('present'),
+      activityId: V3ActivityIdSchema,
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal('submit_response'),
+      activityId: V3ActivityIdSchema,
+      response: LessonActivityResponseInputSchema,
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal('continue'),
+      activityId: V3ActivityIdSchema,
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal('request_assistance'),
+      activityId: V3ActivityIdSchema,
+    })
+    .strict(),
+  z.object({ type: z.literal('pause') }).strict(),
+  z.object({ type: z.literal('resume') }).strict(),
+]);
+export type LessonActionInput = z.infer<typeof LessonActionInputSchema>;
+
+export const LessonActionCommandSchema = z
+  .object({
+    envelope: CommandEnvelopeSchema,
+    runId: LessonRunIdSchema,
+    action: LessonActionInputSchema,
+  })
+  .strict();
+export type LessonActionCommand = z.infer<typeof LessonActionCommandSchema>;
 
 export const LearnerCommandSchema = z.union([GoalCommandSchema, AttemptCommandSchema]);
 export type LearnerCommand = z.infer<typeof LearnerCommandSchema>;

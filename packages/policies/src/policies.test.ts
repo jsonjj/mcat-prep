@@ -13,6 +13,7 @@ import {
 import { evaluateMastery } from './mastery-policy';
 import { classifyCapacity, continueTarget, orderTasks } from './planner';
 import { scorePredictionGate } from './readiness';
+import { decideLessonAssistance, distinctSignalFamilyCount } from './lesson-runtime';
 
 const NOW = UtcTimestampSchema.parse('2026-07-20T12:00:00.000Z');
 
@@ -75,6 +76,39 @@ describe('assistance', () => {
     expect(
       decideAssistance({ currentLevel: 'A0', consecutiveSuccessesAtLevel: 5, lastOutcomeCorrect: true }).nextLevel,
     ).toBe('A0');
+  });
+});
+
+describe('V3 lesson assistance and convergent routing', () => {
+  it('never fades after wrong, not-sure, or assisted responses', () => {
+    for (const input of [
+      { outcome: 'incorrect' as const, assisted: false },
+      { outcome: 'not_sure' as const, assisted: false },
+      { outcome: 'correct' as const, assisted: true },
+    ]) {
+      const decision = decideLessonAssistance({
+        currentLevel: 'A2',
+        consecutiveUnsupportedSuccesses: 3,
+        successesToFade: 1,
+        ...input,
+      });
+      expect(['A3', 'A2']).toContain(decision.nextLevel);
+      expect(decision.nextLevel).not.toBe('A1');
+    }
+  });
+
+  it('counts distinct families rather than distractor occurrences', () => {
+    const oneFamily = [
+      { signalId: 'swapped-marker', familyIds: ['family-a'] },
+      { signalId: 'swapped-marker', familyIds: ['family-a'] },
+    ];
+    expect(distinctSignalFamilyCount(oneFamily, ['swapped-marker'])).toBe(1);
+    expect(
+      distinctSignalFamilyCount(
+        [...oneFamily, { signalId: 'swapped-marker', familyIds: ['family-b'] }],
+        ['swapped-marker'],
+      ),
+    ).toBe(2);
   });
 });
 

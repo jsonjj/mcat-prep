@@ -5,6 +5,8 @@ export * from './versioning';
 export * from './errors';
 export * from './vocab';
 export * from './events';
+export * from './lesson-run';
+export * from './lesson-views';
 export * from './commands';
 export * from './learner-views';
 export * from './api';

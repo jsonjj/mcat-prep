@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { ChoiceIdSchema } from './commands';
 import { ContentIdSchema } from './ids';
+import { LessonStepViewSchema } from './lesson-views';
 import { UtcTimestampSchema } from './time';
 import {
   AssistanceLevelSchema,
@@ -140,6 +141,7 @@ export const RevealedQuestionStepViewSchema = z
   .strict();
 
 export const StudyStepViewSchema = z.union([
+  LessonStepViewSchema,
   z
     .object({
       kind: z.literal('lesson'),

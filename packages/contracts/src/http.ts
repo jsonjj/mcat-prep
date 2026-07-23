@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import { GuestBootstrapResponseSchema, SyncSubmitRequestSchema } from './api';
-import { AttemptCommandSchema, GoalCommandSchema } from './commands';
+import {
+  AttemptCommandSchema,
+  GoalCommandSchema,
+  LessonActionCommandSchema,
+} from './commands';
 import { ErrorCodeSchema } from './errors';
 import { EventIdSchema } from './ids';
 import {
@@ -58,6 +62,11 @@ export const HTTP_API = {
   goal: { method: 'PUT', path: '/v1/profile/goal', body: GoalCommandSchema },
   today: { method: 'GET', path: '/v1/plan/today', response: TodayViewSchema },
   session: { method: 'GET', path: '/v1/learning/session', response: StudyStepViewSchema },
+  lessonAction: {
+    method: 'POST',
+    path: '/v1/learning/lesson/action',
+    body: LessonActionCommandSchema,
+  },
   attempt: { method: 'POST', path: '/v1/attempts', body: AttemptCommandSchema },
   sync: { method: 'POST', path: '/v1/sync', body: SyncSubmitRequestSchema },
 } as const;
