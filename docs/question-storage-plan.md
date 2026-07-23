@@ -21,6 +21,22 @@ psql "$DATABASE_URL" -f content/question-bank/.local/v7-load/seed.sql
 psql "$DATABASE_URL" -c 'select section, count(*) from questions group by section order by section;'  # bb 580 / cars 160 / cp 705 / cross_section 133 / ps 530
 ```
 The seed file carries answer keys and is **gitignored** — it is never committed. Question DATA lives in the DB, not in git.
+
+## Using the loaded DB from the apps / data layer (wired)
+The Postgres connection is **env-configurable** — nothing is hardcoded. Point any Postgres (local, Supabase, Aurora) at the data layer:
+```bash
+export DATABASE_URL=postgresql://…      # e.g. Supabase Session pooler (IPv4, port 5432)
+export DATABASE_SSL=no-verify           # Supabase managed CA; omit/`require` for RDS; `disable` for local
+```
+Read seam (`@mcat/persistence-postgres`), with answers server-only by construction:
+- `createDatabasePoolFromEnv()` — builds a pool from `DATABASE_URL` / `DATABASE_SSL`.
+- **Learner-safe** (cannot return the key/explanations — explicit column allowlist on `questions`): `getLearnerSafeQuestion`, `listLearnerSafeQuestions`, `countQuestions`, `countQuestionsBySection`.
+- **Server-only**: `getQuestionAnswer` — reads `question_protected`; only the scoring authority may call it.
+
+Verified live against Supabase: total **2,108**; sections cp 705 / bb 580 / ps 530 / cars 160 / cross_section 133; a learner-safe read returned a real item with **no** answer fields, and the server-only path returned its answer.
+
+## Boundary — NOT done (separate reviewed step)
+The learner apps + diagnostic/engine still run on the in-process **synthetic** bank via `AuthorityPort`; they are unchanged and still build/boot. Switching the engine to *serve* from the live v7 bank is a larger, gated change that was intentionally not forced here. It requires, as its own PR: (1) an authority content-delivery adapter that reads through this seam and applies the KC→cluster rollup (`@mcat/content` `resolveV7Placement`); (2) reconciling the engine's `EngineQuestion` / 15-cluster projection with the KC-centric v7 model; (3) protected scoring wired to `question_protected`; (4) diagnostic item-eligibility / calibration gates.
 **Decision:** Keep questions in the **v7 shape** (the generated JSONL format). We are **not** converting v7 into the repo's current `QuestionSchema`. Instead, **v7 becomes the official schema**, and the repo's content system will be updated to match it.
 
 ---
