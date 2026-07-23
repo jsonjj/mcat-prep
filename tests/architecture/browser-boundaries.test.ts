@@ -29,6 +29,19 @@ describe('learner browser authority boundary', () => {
     expect(source).not.toContain('InProcessAuthorityClient');
   });
 
+  it('keeps the V3 runner on learner-safe contracts and native controls', () => {
+    const runner = read('apps/learner-web/src/components/LessonRunner.tsx');
+
+    expect(runner).toContain("from '@mcat/contracts'");
+    expect(runner).not.toMatch(/@mcat\/(?:authority-core|content)/);
+    expect(runner).not.toContain('correctChoiceIds');
+    expect(runner).not.toContain('acceptedAnswers');
+    expect(runner).not.toContain('diagnosticSignalIds');
+    expect(runner).toContain('<fieldset');
+    expect(runner).toContain('<legend');
+    expect(runner).toContain('<progress');
+  });
+
   it('requires the configured HTTP authority and has no learner question preview', () => {
     const authority = read('apps/learner-web/src/app/authority.ts');
     const router = read('apps/learner-web/src/app/router.tsx');

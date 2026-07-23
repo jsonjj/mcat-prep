@@ -163,6 +163,42 @@ describe('architecture boundaries', () => {
     expect(Object.keys(deps('packages/policies'))).not.toContain('@mcat/authority-core');
   });
 
+  it('keeps V3 run state free of aggregate mastery/readiness semantics', () => {
+    const runContract = readFileSync(
+      join(root, 'packages/contracts/src/lesson-run.ts'),
+      'utf8',
+    );
+    const learnerView = readFileSync(
+      join(root, 'packages/contracts/src/lesson-views.ts'),
+      'utf8',
+    );
+
+    for (const source of [runContract, learnerView]) {
+      expect(source).not.toMatch(/\bmastery(?:State|Status|Score)?\b/i);
+      expect(source).not.toMatch(/\breadiness(?:State|Status|Score)?\b/i);
+    }
+    expect(learnerView).not.toContain('correctChoiceIds');
+    expect(learnerView).not.toContain('acceptedAnswers');
+    expect(learnerView).not.toContain('diagnosticSignalIds');
+  });
+
+  it('keeps V3 evaluation and fixture activation behind server-only packages', () => {
+    const authorityRuntime = readFileSync(
+      join(root, 'packages/authority-core/src/lesson-run.ts'),
+      'utf8',
+    );
+    const syntheticFixture = readFileSync(
+      join(root, 'packages/content/src/synthetic/v3-lesson-foundation.ts'),
+      'utf8',
+    );
+
+    expect(authorityRuntime).toContain('evaluateLessonResponse');
+    expect(authorityRuntime).toContain("mode === 'production'");
+    expect(authorityRuntime).toContain('test_only_content_forbidden');
+    expect(syntheticFixture).toContain('SYNTHETIC, TEST-ONLY');
+    expect(syntheticFixture).toContain('testOnly: true');
+  });
+
   it('every compiled learner-safe question is free of answer keys and rationales', () => {
     const bank = loadSyntheticBank();
     for (const q of bank.questions) {
