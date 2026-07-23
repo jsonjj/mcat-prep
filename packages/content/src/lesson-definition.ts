@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { sha256 } from 'js-sha256';
 import { z } from 'zod';
 import {
   AssistanceLevelSchema,
@@ -639,9 +639,7 @@ const canonicalJson = (value: unknown): string => {
 };
 
 export function computeLessonContentDigest(input: Record<string, unknown>): string {
-  return createHash('sha256')
-    .update(canonicalJson(definitionDigestPayload(input)))
-    .digest('hex');
+  return sha256(canonicalJson(definitionDigestPayload(input)));
 }
 
 export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((lesson, ctx) => {

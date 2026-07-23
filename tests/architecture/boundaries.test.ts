@@ -209,6 +209,17 @@ describe('architecture boundaries', () => {
     }
   });
 
+  it('keeps shared content schemas browser-compatible for authoring clients', () => {
+    for (const file of sourceFiles('packages/content/src').filter(
+      (source) => !source.includes('.test.'),
+    )) {
+      const source = readFileSync(join(root, file), 'utf8');
+      expect(source, `${file} must not import a Node-only builtin`).not.toMatch(
+        /from ['"]node:|require\(['"]node:/,
+      );
+    }
+  });
+
   it('every compiled learner-safe question is free of answer keys and rationales', () => {
     const bank = loadSyntheticBank();
     for (const q of bank.questions) {

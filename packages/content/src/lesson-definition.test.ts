@@ -13,6 +13,15 @@ const refreshDigest = (definition: Record<string, unknown>): void => {
 };
 
 describe('V3 lesson definition schema', () => {
+  it('computes standards-compatible, key-order-stable SHA-256 content digests', () => {
+    expect(computeLessonContentDigest({ foo: 'bar' })).toBe(
+      '7a38bf81f383f69433ad6e900d35b3e2385593f76a7b7ab5d4355b8ba41ee24b',
+    );
+    expect(computeLessonContentDigest({ second: 2, first: 1 })).toBe(
+      computeLessonContentDigest({ first: 1, second: 2 }),
+    );
+  });
+
   it('validates finite fresh pools, all routes, six exit pairs, and two repair cycles', () => {
     const parsed = LessonDefinitionSchema.parse(syntheticV3LessonDefinition);
     const microcycle = parsed.knowledgeComponents[0]!.microcycle;
