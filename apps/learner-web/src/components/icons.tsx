@@ -53,6 +53,14 @@ export const IconProgress = (p: SVGProps<SVGSVGElement>) => (
     <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
   </svg>
 );
+export const IconCurriculum = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}>
+    <path d="M7 4v5a3 3 0 0 0 3 3h4a3 3 0 0 1 3 3v5" />
+    <circle cx="7" cy="4" r="1.6" />
+    <circle cx="12" cy="12" r="1.6" />
+    <circle cx="17" cy="20" r="1.6" />
+  </svg>
+);
 export const IconBrain = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}>
     <path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5.8V15a3 3 0 0 0 4 2.8V4Z" />

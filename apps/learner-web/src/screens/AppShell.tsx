@@ -3,6 +3,7 @@ import { SkipLink, useTheme } from '@mcat/ui-web';
 import { useBootstrap } from '../app/queries';
 import {
   IconBrain,
+  IconCurriculum,
   IconHome,
   IconMistakesX,
   IconMoon,
@@ -13,6 +14,7 @@ import {
 
 const NAV = [
   { to: '/app', end: true, label: 'Home', Icon: IconHome },
+  { to: '/app/curriculum', end: false, label: 'Curriculum', Icon: IconCurriculum },
   { to: '/app/recall', end: false, label: 'Recall', Icon: IconBrain },
   { to: '/app/mistakes', end: false, label: 'Mistakes', Icon: IconMistakesX },
   { to: '/app/progress', end: false, label: 'Progress', Icon: IconProgress },

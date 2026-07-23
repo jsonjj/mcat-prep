@@ -4,6 +4,7 @@ import { Welcome } from '../screens/Welcome';
 import { Diagnostic } from '../screens/Diagnostic';
 import { PlanSetup } from '../screens/PlanSetup';
 import { Home } from '../screens/Home';
+import { Curriculum } from '../screens/Curriculum';
 import { Study } from '../screens/Study';
 import { Recall } from '../screens/Recall';
 import { Mistakes } from '../screens/Mistakes';
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
     element: <AppShell />,
     children: [
       { index: true, element: <Home /> },
+      { path: 'curriculum', element: <Curriculum /> },
       // Today merged into Home; keep the path working for bookmarks.
       { path: 'today', element: <Navigate to="/app" replace /> },
       { path: 'learn', element: <Study /> },
