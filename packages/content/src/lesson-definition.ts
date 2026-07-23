@@ -361,7 +361,7 @@ const LessonDefinitionBaseSchema = z
   })
   .strict();
 
-const phaseOrder: Readonly<Record<string, number>> = {
+const phaseOrder = {
   orient_elicit: 0,
   build_model: 1,
   show_expert_decisions: 2,
@@ -369,7 +369,13 @@ const phaseOrder: Readonly<Record<string, number>> = {
   contrast_bound: 4,
   exit_near: 5,
   exit_changed: 6,
-};
+} as const;
+type OrderedPhase = keyof typeof phaseOrder;
+
+const isOrderedPhase = (
+  phase: z.infer<typeof LessonActivityPhaseSchema> | undefined,
+): phase is OrderedPhase =>
+  phase !== undefined && Object.prototype.hasOwnProperty.call(phaseOrder, phase);
 
 export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((lesson, ctx) => {
   const kcIds = lesson.knowledgeComponents.map((kc) => kc.id);
@@ -523,10 +529,8 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
 
       const phases = route.activityIds
         .map((id) => requireActivity(id)?.phase)
-        .filter(
-          (phase): phase is keyof typeof phaseOrder => phase !== undefined && phase in phaseOrder,
-        );
-      for (const requiredPhase of Object.keys(phaseOrder)) {
+        .filter(isOrderedPhase);
+      for (const requiredPhase of Object.keys(phaseOrder) as OrderedPhase[]) {
         if (!phases.includes(requiredPhase)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
