@@ -20,11 +20,13 @@ import {
   validateMultiSignedWaveSimilarityReport,
   validateSafeProjectionEvidence,
   validateSignedAccessibilityExecutionReport,
+  validateSignedCandidateValidatorExecution,
   validateSignedCumulativeCorpusManifest,
   validateSignedDomainReport,
   validateSignedGateReport,
   validateSignedOpaqueServiceAttestation,
   validateSignedRightsEvidence,
+  validateSignedServiceIntegrationReport,
   validateSignedServiceReceiptArtifact,
   validateServiceDeploymentArtifact,
 } from './v3-cloud-authoring-evidence-contract.mjs';
@@ -32,6 +34,7 @@ import {
   ARTIFACT_LIMITS,
   assertExactKeys,
   credentialForAssignment,
+  hashBytes,
   loadAndVerifyIntegrationPinset,
   readLimitedFile,
   readLimitedJson,
@@ -43,7 +46,7 @@ const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SOURCE_PLAN_PATH = 'curriculum/v3/v3-cloud-authoring-jobs.json';
 const CHECKED_TEMPLATE_PATH =
   'curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json';
-const OVERLAY_SCHEMA_VERSION = 'mcat-v3-cloud-authoring-wave-assignment-overlay-3';
+const OVERLAY_SCHEMA_VERSION = 'mcat-v3-cloud-authoring-wave-assignment-overlay-4';
 const SOURCE_LEDGER_SCHEMA_VERSION = 'mcat-v3-authoring-source-ledger-1';
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const RFC3339_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?Z$/;
@@ -246,7 +249,9 @@ function createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId) {
           wave,
         }),
         approved: null,
+        blind_evidence_sha256: null,
         candidate_sha256: null,
+        candidate_validator_execution_report_sha256: null,
         deployment_attestation: {
           attestation_path: null,
           attestation_sha256: null,
@@ -258,6 +263,7 @@ function createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId) {
         receipt_artifact: createArtifactDescriptorTemplate(),
         required_path_coverage: [...REQUIRED_BLIND_PATH_IDS],
         safe_client_sha256: null,
+        service_integration_report: createSignedReportDescriptorTemplate(),
         service_deployment_artifact: createArtifactDescriptorTemplate(),
         solver_recipient_identity: {
           person_id: null,
@@ -276,6 +282,7 @@ function createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId) {
         source_plan_sha256: sourcePlanSha256,
         wave_id: wave.wave_id,
       },
+      candidate_validator_execution: createSignedReportDescriptorTemplate(),
       safe_projection_evidence: {
         compiler_signing_key_fingerprint: null,
         report_path: null,
@@ -398,7 +405,8 @@ function createWaveAssignmentOverlayTemplate(plan, sourcePlanSha256, waveId) {
     pinned_integration_artifacts: {
       candidate_schema: { path: null, sha256: null },
       candidate_validator_build: createArtifactDescriptorTemplate(),
-      learner_dto_schema: { path: null, sha256: null },
+      learner_action_schema: { path: null, sha256: null },
+      learner_view_schema: { path: null, sha256: null },
       review_harness_build: createArtifactDescriptorTemplate(),
       safe_projection_compiler_build: createArtifactDescriptorTemplate(),
       scoring_service_build: createArtifactDescriptorTemplate(),
@@ -780,8 +788,8 @@ async function validateReviewBundle(
     bundleKind,
     compilerBuild,
     job,
-    learnerContract,
-    learnerDtoValidator,
+    learnerViewContract,
+    learnerViewValidator,
     projectionReport,
     projectionReportSha256,
     repositoryRoot,
@@ -844,8 +852,8 @@ async function validateReviewBundle(
     bundlePath: bundle.bundle_path,
     compilerBuild,
     jobId: job.job_id,
-    learnerContract,
-    learnerDtoValidator,
+    learnerViewContract,
+    learnerViewValidator,
     lessonId: job.lesson_id,
     projectionReport,
     projectionReportSha256,
@@ -950,7 +958,17 @@ async function validateGateEvidence(
 
 async function validateCandidateArtifactEvidence(
   candidate,
-  { candidateValidator, job, repositoryRoot, runtimeContract, sourcePlanSha256, wave },
+  validatorExecution,
+  {
+    candidateValidator,
+    candidateValidatorBuild,
+    foundationCommitSha,
+    job,
+    repositoryRoot,
+    runtimeContract,
+    sourcePlanSha256,
+    wave,
+  },
 ) {
   assertExactKeys(
     candidate,
@@ -976,7 +994,7 @@ async function validateCandidateArtifactEvidence(
     HASH_PATTERN,
   );
   assert(Array.isArray(candidate.file_manifest) && candidate.file_manifest.length > 1);
-  return validateAndHashCandidateArtifact({
+  const scan = await validateAndHashCandidateArtifact({
     artifactDescriptor: {
       artifact_path: candidate.artifact_path,
       artifact_sha256: candidate.candidate_sha256,
@@ -990,6 +1008,23 @@ async function validateCandidateArtifactEvidence(
     sourcePlanSha256,
     waveId: wave.wave_id,
   });
+  const executionReport = await validateSignedCandidateValidatorExecution({
+    candidateScan: scan,
+    candidateValidatorBuild,
+    descriptor: validatorExecution,
+    foundationCommitSha,
+    jobId: job.job_id,
+    lessonId: job.lesson_id,
+    repositoryRoot,
+    runtimeContract,
+    sourcePlanSha256,
+    waveId: wave.wave_id,
+  });
+  return {
+    ...scan,
+    validator_execution_report: executionReport,
+    validator_execution_report_sha256: validatorExecution.report_sha256,
+  };
 }
 
 function assertArtifactIsolation(candidateRealPath, safeClientRealPath, label) {
@@ -1013,6 +1048,7 @@ async function validateBlindSolveReview(
     credentialsByIdentity,
     integrationTrustRootPem,
     job,
+    learnerViewContract,
     repositoryRoot,
     safeClientScan,
     scoringBuild,
@@ -1026,13 +1062,16 @@ async function validateBlindSolveReview(
     [
       'approval_evidence',
       'approved',
+      'blind_evidence_sha256',
       'candidate_sha256',
+      'candidate_validator_execution_report_sha256',
       'deployment_attestation',
       'job_id',
       'lesson_id',
       'receipt_artifact',
       'required_path_coverage',
       'safe_client_sha256',
+      'service_integration_report',
       'service_deployment_artifact',
       'solver_recipient_identity',
       'source_plan_sha256',
@@ -1046,6 +1085,10 @@ async function validateBlindSolveReview(
   assert.equal(review.job_id, job.job_id);
   assert.equal(review.lesson_id, job.lesson_id);
   assert.equal(review.candidate_sha256, candidateSha256);
+  assert.equal(
+    review.candidate_validator_execution_report_sha256,
+    candidateScan.validator_execution_report_sha256,
+  );
   assert.equal(review.safe_client_sha256, safeClientScan.bundle_sha256);
   assert.equal(review.approved, true);
   assert.deepEqual(review.required_path_coverage, [...REQUIRED_BLIND_PATH_IDS]);
@@ -1058,8 +1101,10 @@ async function validateBlindSolveReview(
   assert.deepEqual(review.solver_recipient_identity, solverIdentity);
   const deployment = await validateServiceDeploymentArtifact({
     candidateSha256,
+    candidateValidatorExecutionReportSha256: candidateScan.validator_execution_report_sha256,
     descriptor: review.service_deployment_artifact,
     jobId: job.job_id,
+    learnerViewContract,
     lessonId: job.lesson_id,
     repositoryRoot,
     safeClientSha256: safeClientScan.bundle_sha256,
@@ -1073,11 +1118,13 @@ async function validateBlindSolveReview(
   });
   await validateSignedOpaqueServiceAttestation({
     candidateSha256,
+    candidateValidatorExecutionReportSha256: candidateScan.validator_execution_report_sha256,
     deployment,
     descriptor: review.deployment_attestation,
     integrationTrustRootPem,
     integratorIdentity: waveIntegratorIdentity,
     jobId: job.job_id,
+    learnerViewContract,
     lessonId: job.lesson_id,
     repositoryRoot,
     safeClientSha256: safeClientScan.bundle_sha256,
@@ -1090,10 +1137,27 @@ async function validateBlindSolveReview(
     candidateSha256,
     deployment,
     descriptor: review.receipt_artifact,
+    learnerViewContract,
     repositoryRoot,
     safeClientSha256: safeClientScan.bundle_sha256,
   });
   assert.deepEqual(receiptResult.required_path_coverage, review.required_path_coverage);
+  await validateSignedServiceIntegrationReport({
+    candidateSha256,
+    deployment,
+    descriptor: review.service_integration_report,
+    jobId: job.job_id,
+    learnerViewContract,
+    lessonId: job.lesson_id,
+    repositoryRoot,
+    safeClientSha256: safeClientScan.bundle_sha256,
+    sourcePlanSha256,
+    waveId: wave.wave_id,
+  });
+  const blindEvidenceSha256 = hashBytes(
+    `${receiptResult.artifact_sha256}\u0000${review.service_integration_report.report_sha256}`,
+  );
+  assert.equal(review.blind_evidence_sha256, blindEvidenceSha256);
   await validateGateEvidence(review.approval_evidence, {
     assignmentBySlotId,
     candidateSha256,
@@ -1101,7 +1165,7 @@ async function validateBlindSolveReview(
     gateId: 'G07_INDEPENDENT_BLIND_SOLVE',
     job,
     repositoryRoot,
-    reviewedArtifactSha256: receiptResult.artifact_sha256,
+    reviewedArtifactSha256: blindEvidenceSha256,
     reviewerSlotId: job.assignments.blind_solver.slot_id,
     sourcePlanSha256,
     wave,
@@ -1576,6 +1640,7 @@ async function validateWaveAssignmentOverlay(
   );
   const pinnedArtifacts = await validatePinnedIntegrationArtifacts({
     descriptors: overlay.pinned_integration_artifacts,
+    integrationTrustRoot: trust.trust_root,
     pinset: trust.pinset,
     repositoryRoot,
   });
@@ -1630,6 +1695,7 @@ async function validateWaveAssignmentOverlay(
         'blind_solve_bundle',
         'blind_solve_review',
         'candidate_artifact',
+        'candidate_validator_execution',
         'canonical_runtime_content_gate_reports',
         'content_pedagogy_audit',
         'domain_scientific_review',
@@ -1655,14 +1721,20 @@ async function validateWaveAssignmentOverlay(
     assert(job && evidence);
     assert.equal(evidence.lesson_id, job.lesson_id);
     validateSourceLedger(evidence.source_ledger, job, assignmentBySlotId, materializedAt);
-    const candidateScan = await validateCandidateArtifactEvidence(evidence.candidate_artifact, {
-      candidateValidator: pinnedArtifacts.candidate_validator_function,
-      job,
-      repositoryRoot,
-      runtimeContract: trust.pinset.runtime_contract,
-      sourcePlanSha256,
-      wave,
-    });
+    const candidateScan = await validateCandidateArtifactEvidence(
+      evidence.candidate_artifact,
+      evidence.candidate_validator_execution,
+      {
+        candidateValidator: pinnedArtifacts.candidate_validator_function,
+        candidateValidatorBuild: pinnedArtifacts.candidate_validator,
+        foundationCommitSha: trust.pinset.foundation_commit_sha,
+        job,
+        repositoryRoot,
+        runtimeContract: trust.pinset.runtime_contract,
+        sourcePlanSha256,
+        wave,
+      },
+    );
     const candidateSha256 = candidateScan.artifact_sha256;
     candidateShaByJobId.set(job.job_id, candidateSha256);
     if (job.domain_bucket === 'CARS') {
@@ -1709,7 +1781,10 @@ async function validateWaveAssignmentOverlay(
         gateId,
         job,
         repositoryRoot,
-        reviewedArtifactSha256: candidateSha256,
+        reviewedArtifactSha256:
+          gateId === 'G03_LESSON_CONTRACT_COMPLETENESS'
+            ? candidateScan.validator_execution_report_sha256
+            : candidateSha256,
         reviewerSlotId: job.assignments.release_integrator.slot_id,
         sourcePlanSha256,
         wave,
@@ -1730,10 +1805,11 @@ async function validateWaveAssignmentOverlay(
     const projectionReport = await validateSafeProjectionEvidence({
       candidateFileManifest: candidateScan.files,
       candidateSha256,
+      candidateValidatorExecutionReportSha256: candidateScan.validator_execution_report_sha256,
       compilerBuild: pinnedArtifacts.compiler,
       evidence: evidence.safe_projection_evidence,
       jobId: job.job_id,
-      learnerContract: trust.pinset.learner_contract,
+      learnerViewContract: trust.pinset.learner_view_contract,
       lessonId: job.lesson_id,
       repositoryRoot,
       reviewHarnessBuild: pinnedArtifacts.harness,
@@ -1745,8 +1821,8 @@ async function validateWaveAssignmentOverlay(
       bundleKind: 'BLIND_SOLVE',
       compilerBuild: trust.pinset.builds.safe_projection_compiler,
       job,
-      learnerContract: trust.pinset.learner_contract,
-      learnerDtoValidator: pinnedArtifacts.learner_dto_validator_function,
+      learnerViewContract: trust.pinset.learner_view_contract,
+      learnerViewValidator: pinnedArtifacts.learner_view_validator_function,
       projectionReport,
       projectionReportSha256: evidence.safe_projection_evidence.report_sha256,
       repositoryRoot,
@@ -1762,8 +1838,8 @@ async function validateWaveAssignmentOverlay(
         bundleKind: 'ACCESSIBILITY_ONLY',
         compilerBuild: trust.pinset.builds.safe_projection_compiler,
         job,
-        learnerContract: trust.pinset.learner_contract,
-        learnerDtoValidator: pinnedArtifacts.learner_dto_validator_function,
+        learnerViewContract: trust.pinset.learner_view_contract,
+        learnerViewValidator: pinnedArtifacts.learner_view_validator_function,
         projectionReport,
         projectionReportSha256: evidence.safe_projection_evidence.report_sha256,
         repositoryRoot,
@@ -1780,6 +1856,7 @@ async function validateWaveAssignmentOverlay(
       credentialsByIdentity,
       integrationTrustRootPem: trust.trust_root.pem,
       job,
+      learnerViewContract: trust.pinset.learner_view_contract,
       repositoryRoot,
       safeClientScan: blindClientScan,
       scoringBuild: pinnedArtifacts.scoring,
@@ -1803,7 +1880,7 @@ async function validateWaveAssignmentOverlay(
       descriptor: evidence.accessibility_execution_evidence.execution_report,
       harnessBuild: pinnedArtifacts.harness,
       jobId: job.job_id,
-      learnerContract: trust.pinset.learner_contract,
+      learnerViewContract: trust.pinset.learner_view_contract,
       lessonId: job.lesson_id,
       mediaDigests: accessibilityClientScan.documents.get('learner-safe-envelope.json')
         .media_digests,

@@ -7,9 +7,15 @@ import Ajv from 'ajv';
 
 const HASH_PATTERN = /^[a-f0-9]{64}$/;
 const IDENTITY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:@/+~-]*$/;
-const INTEGRATION_PINSET_SCHEMA_VERSION = 'mcat-v3-integration-pinset-1';
+const INTEGRATION_PINSET_SCHEMA_VERSION = 'mcat-v3-integration-pinset-2';
 const REVIEWER_CREDENTIAL_SCHEMA_VERSION = 'mcat-v3-reviewer-signing-credential-1';
 const SIGNATURE_ALGORITHM = 'ED25519';
+const BUILD_MANIFEST_SCHEMA_VERSION = 'mcat-v3-pinned-build-manifest-2';
+const BUILD_PROVENANCE_SCHEMA_VERSION = 'mcat-v3-signed-build-provenance-1';
+const CANDIDATE_SEMANTIC_PROFILE_SCHEMA_VERSION = 'mcat-v3-candidate-semantic-profile-1';
+const LEARNER_VIEW_SEMANTIC_PROFILE_SCHEMA_VERSION = 'mcat-v3-learner-view-semantic-profile-1';
+const ACTION_TRANSITION_PROFILE_SCHEMA_VERSION = 'mcat-v3-action-transition-profile-1';
+const JSON_POINTER_PATTERN = /^(?:\/(?:[^~/]|~[01])*)+$/;
 
 const ARTIFACT_LIMITS = Object.freeze({
   browser_evidence: Object.freeze({
@@ -86,6 +92,20 @@ function hashBytes(value) {
   return createHash('sha256').update(value).digest('hex');
 }
 
+function sortJsonValue(value) {
+  if (Array.isArray(value)) return value.map(sortJsonValue);
+  if (value === null || typeof value !== 'object') return value;
+  return Object.fromEntries(
+    Object.entries(value)
+      .sort(([left], [right]) => compareText(left, right))
+      .map(([key, child]) => [key, sortJsonValue(child)]),
+  );
+}
+
+function hashCanonicalJson(value) {
+  return hashBytes(JSON.stringify(sortJsonValue(value)));
+}
+
 function assertPlainObject(value, label) {
   assert(
     value !== null && typeof value === 'object' && !Array.isArray(value),
@@ -126,6 +146,29 @@ function sameIdentity(left, right) {
 
 function identityKey(identity) {
   return `${identity.person_id}\u0000${identity.run_id}`;
+}
+
+function resolveJsonPointer(value, pointer, label) {
+  requireString(pointer, `${label} JSON pointer`, JSON_POINTER_PATTERN);
+  let current = value;
+  for (const encodedToken of pointer.slice(1).split('/')) {
+    const token = encodedToken.replaceAll('~1', '/').replaceAll('~0', '~');
+    assert(
+      token !== '__proto__' && token !== 'constructor' && token !== 'prototype',
+      `${label} JSON pointer contains a forbidden token`,
+    );
+    if (Array.isArray(current)) {
+      assert.match(token, /^(?:0|[1-9]\d*)$/, `${label} JSON pointer has an invalid array index`);
+      const index = Number(token);
+      assert(index < current.length, `${label} JSON pointer does not resolve`);
+      current = current[index];
+    } else {
+      assertPlainObject(current, `${label} JSON pointer parent`);
+      assert(Object.hasOwn(current, token), `${label} JSON pointer does not resolve`);
+      current = current[token];
+    }
+  }
+  return current;
 }
 
 function isWithin(realRoot, realTarget) {
@@ -373,6 +416,316 @@ async function readAndVerifySignedJson({
   };
 }
 
+function validateSortedUniqueStrings(values, label, pattern = IDENTITY_PATTERN) {
+  assert(Array.isArray(values) && values.length > 0, `${label} must not be empty`);
+  values.forEach((value, index) => requireString(value, `${label}[${index}]`, pattern));
+  assert.deepEqual(
+    values,
+    [...new Set(values)].sort(compareText),
+    `${label} must be unique/sorted`,
+  );
+}
+
+function validateCandidateSemanticProfile(profile) {
+  assertExactKeys(
+    profile,
+    [
+      'definition_schema_version_pointer',
+      'expected_definition_schema_version',
+      'lesson_id_pointer',
+      'schema_version',
+      'validator_required_check_ids',
+    ],
+    'candidate semantic profile',
+  );
+  assert.equal(profile.schema_version, CANDIDATE_SEMANTIC_PROFILE_SCHEMA_VERSION);
+  requireString(
+    profile.definition_schema_version_pointer,
+    'candidate definition schema-version pointer',
+    JSON_POINTER_PATTERN,
+  );
+  requireString(
+    profile.expected_definition_schema_version,
+    'candidate expected definition schema version',
+  );
+  requireString(profile.lesson_id_pointer, 'candidate lesson-ID pointer', JSON_POINTER_PATTERN);
+  validateSortedUniqueStrings(
+    profile.validator_required_check_ids,
+    'candidate validator required check IDs',
+  );
+}
+
+function validateStateConstraint(constraint, label) {
+  assertExactKeys(
+    constraint,
+    ['assistance_revealed', 'planner_reentry_required', 'repair_cycle', 'status'],
+    label,
+  );
+  for (const key of ['assistance_revealed', 'planner_reentry_required']) {
+    assert(
+      constraint[key] === null || typeof constraint[key] === 'boolean',
+      `${label}.${key} must be null or boolean`,
+    );
+  }
+  assert(
+    constraint.repair_cycle === null ||
+      (Number.isInteger(constraint.repair_cycle) && constraint.repair_cycle >= 0),
+    `${label}.repair_cycle must be null or a nonnegative integer`,
+  );
+  assert(
+    constraint.status === null || typeof constraint.status === 'string',
+    `${label}.status must be null or a string`,
+  );
+}
+
+function validateTransitionProfile(profile) {
+  assertExactKeys(
+    profile,
+    [
+      'action_contracts',
+      'action_kinds',
+      'event_kinds',
+      'path_contracts',
+      'profile_id',
+      'response_outcomes',
+      'schema_version',
+      'semantic_statuses',
+      'technical_service_check_ids',
+    ],
+    'action/transition profile',
+  );
+  assert.equal(profile.schema_version, ACTION_TRANSITION_PROFILE_SCHEMA_VERSION);
+  requireString(profile.profile_id, 'action/transition profile ID', IDENTITY_PATTERN);
+  validateSortedUniqueStrings(profile.action_kinds, 'learner action kinds');
+  validateSortedUniqueStrings(profile.event_kinds, 'runtime event kinds');
+  validateSortedUniqueStrings(profile.response_outcomes, 'runtime response outcomes');
+  validateSortedUniqueStrings(profile.semantic_statuses, 'learner semantic statuses');
+  validateSortedUniqueStrings(profile.technical_service_check_ids, 'technical service check IDs');
+  assert(Array.isArray(profile.action_contracts));
+  assert.equal(
+    profile.action_contracts.length,
+    profile.action_kinds.length,
+    'Action contracts must cover every signed action kind exactly once',
+  );
+  const actionContractByKind = new Map();
+  for (const [index, contract] of profile.action_contracts.entries()) {
+    const label = `action contract[${index}]`;
+    assertExactKeys(
+      contract,
+      [
+        'action_kind',
+        'activity_binding',
+        'allowed_response_outcomes',
+        'required_event_kinds',
+        'response_hash',
+      ],
+      label,
+    );
+    assert(profile.action_kinds.includes(contract.action_kind), `${label} has an unknown action`);
+    assert(
+      ['NONE', 'OPTIONAL', 'REQUIRED'].includes(contract.activity_binding),
+      `${label} has an invalid activity binding`,
+    );
+    assert(
+      contract.response_hash === 'NULL' || contract.response_hash === 'REQUIRED',
+      `${label} has an invalid response-hash rule`,
+    );
+    assert(Array.isArray(contract.allowed_response_outcomes));
+    assert.deepEqual(
+      contract.allowed_response_outcomes,
+      [...new Set(contract.allowed_response_outcomes)].sort(compareText),
+      `${label} response outcomes must be unique/sorted`,
+    );
+    contract.allowed_response_outcomes.forEach((outcome) =>
+      assert(profile.response_outcomes.includes(outcome), `${label} has an unknown outcome`),
+    );
+    assert(Array.isArray(contract.required_event_kinds));
+    assert.deepEqual(
+      contract.required_event_kinds,
+      [...new Set(contract.required_event_kinds)].sort(compareText),
+      `${label} event kinds must be unique/sorted`,
+    );
+    contract.required_event_kinds.forEach((eventKind) =>
+      assert(profile.event_kinds.includes(eventKind), `${label} has an unknown event kind`),
+    );
+    assert(!actionContractByKind.has(contract.action_kind), `Duplicate ${contract.action_kind}`);
+    actionContractByKind.set(contract.action_kind, contract);
+  }
+  assert.deepEqual(
+    profile.action_contracts.map((contract) => contract.action_kind),
+    profile.action_kinds,
+    'Action contracts must follow signed action-kind order',
+  );
+  assert(Array.isArray(profile.path_contracts) && profile.path_contracts.length > 0);
+  const pathIds = [];
+  for (const [pathIndex, path] of profile.path_contracts.entries()) {
+    const pathLabel = `semantic path contract[${pathIndex}]`;
+    assertExactKeys(path, ['path_id', 'steps'], pathLabel);
+    requireString(path.path_id, `${pathLabel}.path_id`, IDENTITY_PATTERN);
+    assert(Array.isArray(path.steps) && path.steps.length > 0, `${pathLabel} needs steps`);
+    pathIds.push(path.path_id);
+    for (const [stepIndex, step] of path.steps.entries()) {
+      const stepLabel = `${pathLabel}.steps[${stepIndex}]`;
+      assertExactKeys(
+        step,
+        [
+          'action_kind',
+          'after',
+          'before',
+          'relation_to_previous',
+          'required_event_kinds',
+          'response_outcome',
+          'state_transition',
+        ],
+        stepLabel,
+      );
+      const actionContract = actionContractByKind.get(step.action_kind);
+      assert(actionContract, `${stepLabel} uses an unsupported learner action`);
+      assert(
+        step.response_outcome === null ||
+          actionContract.allowed_response_outcomes.includes(step.response_outcome),
+        `${stepLabel} has an outcome not allowed for its learner action`,
+      );
+      assert(Array.isArray(step.required_event_kinds));
+      assert.deepEqual(
+        step.required_event_kinds,
+        [...new Set(step.required_event_kinds)].sort(compareText),
+        `${stepLabel} event kinds must be unique/sorted`,
+      );
+      step.required_event_kinds.forEach((eventKind) =>
+        assert(profile.event_kinds.includes(eventKind), `${stepLabel} has an unknown event kind`),
+      );
+      validateStateConstraint(step.before, `${stepLabel}.before`);
+      validateStateConstraint(step.after, `${stepLabel}.after`);
+      for (const relationKey of ['relation_to_previous', 'state_transition']) {
+        const relation = step[relationKey];
+        assertExactKeys(
+          relation,
+          ['activity', 'family', 'repair_cycle', 'representations', 'route'],
+          `${stepLabel}.${relationKey}`,
+        );
+        for (const key of ['activity', 'family', 'representations', 'route']) {
+          assert(
+            ['ANY', 'DIFFERENT', 'SAME'].includes(relation[key]),
+            `${stepLabel}.${relationKey}.${key} has an invalid relation`,
+          );
+        }
+        assert(
+          ['ANY', 'INCREASE', 'SAME'].includes(relation.repair_cycle),
+          `${stepLabel}.${relationKey}.repair_cycle has an invalid relation`,
+        );
+      }
+      if (stepIndex === 0) {
+        assert(
+          Object.values(step.relation_to_previous).every((relation) => relation === 'ANY'),
+          `${stepLabel} cannot constrain a nonexistent previous step`,
+        );
+      }
+    }
+  }
+  assert.deepEqual(
+    pathIds,
+    [...new Set(pathIds)].sort(compareText),
+    'Path IDs must be unique/sorted',
+  );
+}
+
+function validateLearnerViewSemanticProfile(profile) {
+  assertExactKeys(
+    profile,
+    [
+      'activity_id_pointer',
+      'activity_pointer',
+      'available_actions_pointer',
+      'expected_view_schema_version',
+      'lesson_id_pointer',
+      'media_profile',
+      'representation_kind_pointer',
+      'representations_pointer',
+      'schema_version',
+      'view_schema_version_pointer',
+    ],
+    'learner-view semantic profile',
+  );
+  assert.equal(profile.schema_version, LEARNER_VIEW_SEMANTIC_PROFILE_SCHEMA_VERSION);
+  for (const key of [
+    'activity_id_pointer',
+    'activity_pointer',
+    'available_actions_pointer',
+    'lesson_id_pointer',
+    'representation_kind_pointer',
+    'representations_pointer',
+    'view_schema_version_pointer',
+  ]) {
+    requireString(profile[key], `learner-view ${key}`, JSON_POINTER_PATTERN);
+  }
+  requireString(profile.expected_view_schema_version, 'expected learner-view schema version');
+  assertExactKeys(
+    profile.media_profile,
+    [
+      'asset_ref_pointer',
+      'audio_captions_required',
+      'audio_kind',
+      'captions_ref_pointer',
+      'transcript_pointer',
+      'video_captions_required',
+      'video_kind',
+    ],
+    'learner-view media profile',
+  );
+  for (const key of ['asset_ref_pointer', 'captions_ref_pointer', 'transcript_pointer']) {
+    requireString(profile.media_profile[key], `media ${key}`, JSON_POINTER_PATTERN);
+  }
+  requireString(profile.media_profile.audio_kind, 'audio representation kind', IDENTITY_PATTERN);
+  requireString(profile.media_profile.video_kind, 'video representation kind', IDENTITY_PATTERN);
+  assert.notEqual(profile.media_profile.audio_kind, profile.media_profile.video_kind);
+  assert.equal(typeof profile.media_profile.audio_captions_required, 'boolean');
+  assert.equal(typeof profile.media_profile.video_captions_required, 'boolean');
+}
+
+function validateLearnerViewContract(contract) {
+  assertExactKeys(
+    contract,
+    [
+      'action_schema_id',
+      'action_schema_sha256',
+      'representation_kinds',
+      'semantic_profile',
+      'transition_profile',
+      'view_schema_id',
+      'view_schema_sha256',
+    ],
+    'integration pinset learner-view contract',
+  );
+  requireString(contract.action_schema_id, 'learner action schema ID');
+  requireHash(contract.action_schema_sha256, 'learner action schema SHA-256');
+  requireString(contract.view_schema_id, 'learner view schema ID');
+  requireHash(contract.view_schema_sha256, 'learner view schema SHA-256');
+  validateSortedUniqueStrings(contract.representation_kinds, 'learner representation kinds');
+  validateLearnerViewSemanticProfile(contract.semantic_profile);
+  validateTransitionProfile(contract.transition_profile);
+  assert(
+    contract.representation_kinds.includes(contract.semantic_profile.media_profile.audio_kind),
+    'Learner representation kinds omit the signed audio kind',
+  );
+  assert(
+    contract.representation_kinds.includes(contract.semantic_profile.media_profile.video_kind),
+    'Learner representation kinds omit the signed video kind',
+  );
+}
+
+function validateBuildPin(build, label, signingKeyRequired) {
+  const fields = ['artifact_sha256', 'build_id', 'build_version'];
+  if (signingKeyRequired) fields.push('report_signing_key_fingerprint');
+  assertExactKeys(build, fields, label);
+  requireHash(build.artifact_sha256, `${label} artifact SHA-256`);
+  requireString(build.build_id, `${label} build ID`, IDENTITY_PATTERN);
+  requireString(build.build_version, `${label} build version`, IDENTITY_PATTERN);
+  if (signingKeyRequired) {
+    requireHash(build.report_signing_key_fingerprint, `${label} report signing key fingerprint`);
+  }
+}
+
 function validatePinsetDocument(pinset, expectedMode) {
   assertExactKeys(
     pinset,
@@ -380,7 +733,7 @@ function validatePinsetDocument(pinset, expectedMode) {
       'builds',
       'foundation_commit_sha',
       'issued_at',
-      'learner_contract',
+      'learner_view_contract',
       'pinset_id',
       'runtime_contract',
       'schema_version',
@@ -399,6 +752,11 @@ function validatePinsetDocument(pinset, expectedMode) {
       /^(?:[a-f0-9]{40}|[a-f0-9]{64})$/,
       'Production foundation commit must be an exact Git SHA',
     );
+    assert.equal(
+      JSON.stringify(pinset).includes('FIXTURE_ONLY'),
+      false,
+      'Production pinsets may not contain fixture-only subjects',
+    );
   } else {
     assert.match(
       pinset.foundation_commit_sha,
@@ -410,16 +768,20 @@ function validatePinsetDocument(pinset, expectedMode) {
     pinset.runtime_contract,
     [
       'candidate_definition_path',
+      'candidate_format',
       'candidate_schema_id',
       'candidate_schema_sha256',
+      'candidate_semantic_profile',
       'candidate_validator_build_id',
       'candidate_validator_build_sha256',
       'candidate_validator_build_version',
+      'candidate_validator_report_signing_key_fingerprint',
       'runtime_contract_version',
     ],
     'integration pinset runtime contract',
   );
   requireString(pinset.runtime_contract.candidate_definition_path, 'candidate definition path');
+  assert.equal(pinset.runtime_contract.candidate_format, 'JSON');
   requireString(pinset.runtime_contract.candidate_schema_id, 'candidate schema ID');
   requireHash(pinset.runtime_contract.candidate_schema_sha256, 'candidate schema SHA-256');
   requireHash(
@@ -436,40 +798,25 @@ function validatePinsetDocument(pinset, expectedMode) {
     'candidate validator build version',
     IDENTITY_PATTERN,
   );
-  requireString(pinset.runtime_contract.runtime_contract_version, 'runtime contract version');
-  assertExactKeys(
-    pinset.learner_contract,
-    ['action_kinds', 'dto_schema_id', 'dto_schema_sha256', 'representation_kinds'],
-    'integration pinset learner contract',
+  requireHash(
+    pinset.runtime_contract.candidate_validator_report_signing_key_fingerprint,
+    'candidate validator report signing key fingerprint',
   );
-  requireString(pinset.learner_contract.dto_schema_id, 'learner DTO schema ID');
-  requireHash(pinset.learner_contract.dto_schema_sha256, 'learner DTO schema SHA-256');
-  for (const key of ['action_kinds', 'representation_kinds']) {
-    const values = pinset.learner_contract[key];
-    assert(Array.isArray(values) && values.length > 0, `${key} must not be empty`);
-    values.forEach((value) => requireString(value, `${key} item`, IDENTITY_PATTERN));
-    assert.deepEqual(
-      values,
-      [...new Set(values)].sort(compareText),
-      `${key} must be unique/sorted`,
-    );
-  }
+  requireString(pinset.runtime_contract.runtime_contract_version, 'runtime contract version');
+  validateCandidateSemanticProfile(pinset.runtime_contract.candidate_semantic_profile);
+  validateLearnerViewContract(pinset.learner_view_contract);
   assertExactKeys(
     pinset.builds,
     ['review_harness', 'safe_projection_compiler', 'scoring_service'],
     'integration pinset builds',
   );
-  for (const [key, build] of Object.entries(pinset.builds)) {
-    const fields = ['artifact_sha256', 'build_id', 'build_version'];
-    if (key !== 'scoring_service') fields.push('report_signing_key_fingerprint');
-    assertExactKeys(build, fields, `${key} build pin`);
-    requireHash(build.artifact_sha256, `${key} artifact SHA-256`);
-    requireString(build.build_id, `${key} build ID`, IDENTITY_PATTERN);
-    requireString(build.build_version, `${key} build version`, IDENTITY_PATTERN);
-    if (key !== 'scoring_service') {
-      requireHash(build.report_signing_key_fingerprint, `${key} report signing key fingerprint`);
-    }
-  }
+  validateBuildPin(pinset.builds.review_harness, 'review harness build pin', true);
+  validateBuildPin(
+    pinset.builds.safe_projection_compiler,
+    'safe-projection compiler build pin',
+    true,
+  );
+  validateBuildPin(pinset.builds.scoring_service, 'scoring service build pin', false);
 }
 
 async function loadAndVerifyIntegrationPinset(
@@ -529,23 +876,203 @@ async function loadAndVerifyIntegrationPinset(
 function validateBuildManifest(value, expected) {
   assertExactKeys(
     value,
-    ['build_id', 'build_kind', 'build_version', 'foundation_commit_sha', 'schema_version'],
+    [
+      'build_id',
+      'build_kind',
+      'build_version',
+      'foundation_commit_sha',
+      'provenance',
+      'report_signing_public_key_path',
+      'schema_version',
+      'subject',
+    ],
     `${expected.buildKind} build manifest`,
   );
-  assert.equal(value.schema_version, 'mcat-v3-pinned-build-manifest-1');
+  assert.equal(value.schema_version, BUILD_MANIFEST_SCHEMA_VERSION);
   assert.equal(value.build_kind, expected.buildKind);
   assert.equal(value.build_id, expected.buildId);
   assert.equal(value.build_version, expected.buildVersion);
   assert.equal(value.foundation_commit_sha, expected.foundationCommitSha);
+  assertExactKeys(
+    value.subject,
+    ['entrypoint_path', 'file_manifest', 'format', 'sha256'],
+    `${expected.buildKind} implementation subject`,
+  );
+  assert.equal(value.subject.format, 'CLOSED_FILE_TREE');
+  requireString(value.subject.entrypoint_path, `${expected.buildKind} subject entrypoint`);
+  assert(
+    value.subject.entrypoint_path.startsWith('subject/'),
+    `${expected.buildKind} subject entrypoint must be under subject/`,
+  );
+  assertUniqueManifestPaths(
+    value.subject.file_manifest,
+    `${expected.buildKind} subject file manifest`,
+  );
+  assert(value.subject.file_manifest.length > 0, `${expected.buildKind} subject may not be empty`);
+  for (const file of value.subject.file_manifest) {
+    assert(
+      file.path.startsWith('subject/'),
+      `${expected.buildKind} implementation files must be under subject/`,
+    );
+  }
+  assert(
+    value.subject.file_manifest.some((file) => file.path === value.subject.entrypoint_path),
+    `${expected.buildKind} subject entrypoint is not in its file manifest`,
+  );
+  requireHash(value.subject.sha256, `${expected.buildKind} subject SHA-256`);
+  assert.equal(
+    value.subject.sha256,
+    directoryHash(value.subject.file_manifest),
+    `${expected.buildKind} implementation subject hash is stale`,
+  );
+  assertExactKeys(
+    value.provenance,
+    ['path', 'sha256', 'signature_path', 'signature_sha256', 'signer_key_fingerprint'],
+    `${expected.buildKind} provenance descriptor`,
+  );
+  requireString(value.provenance.path, `${expected.buildKind} provenance path`);
+  requireHash(value.provenance.sha256, `${expected.buildKind} provenance SHA-256`);
+  requireString(value.provenance.signature_path, `${expected.buildKind} provenance signature path`);
+  requireHash(
+    value.provenance.signature_sha256,
+    `${expected.buildKind} provenance signature SHA-256`,
+  );
+  assert.equal(
+    value.provenance.signer_key_fingerprint,
+    expected.provenanceSignerFingerprint,
+    `${expected.buildKind} provenance signer is not the external integration authority`,
+  );
+  if (expected.reportSigningKeyRequired) {
+    assert.equal(
+      value.report_signing_public_key_path,
+      'report-signing-public-key.pem',
+      `${expected.buildKind} must include its report-signing public key`,
+    );
+  } else {
+    assert.equal(value.report_signing_public_key_path, null);
+  }
 }
 
-async function validatePinnedIntegrationArtifacts({ descriptors, pinset, repositoryRoot }) {
+function validateBuildProvenanceDocument(value, expected) {
+  assertExactKeys(
+    value,
+    [
+      'build_id',
+      'build_kind',
+      'build_version',
+      'foundation_commit_sha',
+      'generated_at',
+      'schema_version',
+      'status',
+      'subject',
+    ],
+    `${expected.buildKind} signed build provenance`,
+  );
+  assert.equal(value.schema_version, BUILD_PROVENANCE_SCHEMA_VERSION);
+  assert.equal(value.build_kind, expected.buildKind);
+  assert.equal(value.build_id, expected.buildId);
+  assert.equal(value.build_version, expected.buildVersion);
+  assert.equal(value.foundation_commit_sha, expected.foundationCommitSha);
+  requireString(value.generated_at, `${expected.buildKind} provenance generated_at`);
+  assert.equal(value.status, 'VERIFIED_IMMUTABLE_IMPLEMENTATION_SUBJECT');
+  assert.deepEqual(
+    value.subject,
+    expected.subject,
+    `${expected.buildKind} provenance does not bind the implementation subject`,
+  );
+}
+
+async function validatePinnedBuildArtifact({
+  buildKind,
+  descriptor,
+  integrationTrustRoot,
+  pin,
+  repositoryRoot,
+  reportSigningKeyRequired,
+}) {
+  const scan = await validateArtifactDescriptor(descriptor, {
+    label: `${buildKind} build artifact`,
+    limits: ARTIFACT_LIMITS.build,
+    repositoryRoot,
+  });
+  assert.equal(scan.artifact_sha256, pin.artifact_sha256);
+  const manifestEntry = scan.file_manifest.find((file) => file.path === 'build-manifest.json');
+  assert(manifestEntry, `${buildKind} build lacks build-manifest.json`);
+  const { value: manifest } = await readLimitedJson(
+    join(scan.real_path, 'build-manifest.json'),
+    `${buildKind} build manifest`,
+    ARTIFACT_LIMITS.build,
+  );
+  validateBuildManifest(manifest, {
+    buildId: pin.build_id,
+    buildKind,
+    buildVersion: pin.build_version,
+    foundationCommitSha: pin.foundation_commit_sha,
+    provenanceSignerFingerprint: integrationTrustRoot.fingerprint,
+    reportSigningKeyRequired,
+  });
+  const subjectEntries = scan.file_manifest.filter((file) => file.path.startsWith('subject/'));
+  assert.deepEqual(
+    subjectEntries,
+    manifest.subject.file_manifest,
+    `${buildKind} implementation subject file manifest is stale`,
+  );
+  const expectedPaths = [
+    'build-manifest.json',
+    manifest.provenance.path,
+    manifest.provenance.signature_path,
+    ...manifest.subject.file_manifest.map((file) => file.path),
+  ];
+  if (manifest.report_signing_public_key_path !== null) {
+    expectedPaths.push(manifest.report_signing_public_key_path);
+  }
+  assert.deepEqual(
+    scan.file_manifest.map((file) => file.path),
+    expectedPaths.sort(compareText),
+    `${buildKind} build must contain exactly its closed implementation subject and provenance`,
+  );
+  const signedProvenance = await readAndVerifySignedJson({
+    documentPath: `${descriptor.artifact_path}/${manifest.provenance.path}`,
+    documentSha256: manifest.provenance.sha256,
+    label: `${buildKind} build provenance`,
+    limits: ARTIFACT_LIMITS.build,
+    publicKeyPem: integrationTrustRoot.pem,
+    repositoryRoot,
+    signaturePath: `${descriptor.artifact_path}/${manifest.provenance.signature_path}`,
+    signatureSha256: manifest.provenance.signature_sha256,
+  });
+  validateBuildProvenanceDocument(signedProvenance.value, {
+    buildId: pin.build_id,
+    buildKind,
+    buildVersion: pin.build_version,
+    foundationCommitSha: pin.foundation_commit_sha,
+    subject: manifest.subject,
+  });
+  let signingKey = null;
+  if (reportSigningKeyRequired) {
+    signingKey = await readPublicKey(
+      join(scan.real_path, manifest.report_signing_public_key_path),
+      `${buildKind} report signing public key`,
+      ARTIFACT_LIMITS.build,
+    );
+    assert.equal(signingKey.fingerprint, pin.report_signing_key_fingerprint);
+  }
+  return { ...scan, manifest, provenance: signedProvenance.value, signing_key: signingKey };
+}
+
+async function validatePinnedIntegrationArtifacts({
+  descriptors,
+  integrationTrustRoot,
+  pinset,
+  repositoryRoot,
+}) {
   assertExactKeys(
     descriptors,
     [
       'candidate_schema',
       'candidate_validator_build',
-      'learner_dto_schema',
+      'learner_action_schema',
+      'learner_view_schema',
       'review_harness_build',
       'safe_projection_compiler_build',
       'scoring_service_build',
@@ -557,10 +1084,15 @@ async function validatePinnedIntegrationArtifacts({ descriptors, pinset, reposit
     descriptors.candidate_schema.path,
     'candidate schema path',
   );
-  const learnerSchemaPath = await resolveRealPathInsideRoot(
+  const learnerActionSchemaPath = await resolveRealPathInsideRoot(
     repositoryRoot,
-    descriptors.learner_dto_schema.path,
-    'learner DTO schema path',
+    descriptors.learner_action_schema.path,
+    'learner action schema path',
+  );
+  const learnerViewSchemaPath = await resolveRealPathInsideRoot(
+    repositoryRoot,
+    descriptors.learner_view_schema.path,
+    'learner view schema path',
   );
   for (const [descriptor, expectedHash, label] of [
     [
@@ -569,112 +1101,95 @@ async function validatePinnedIntegrationArtifacts({ descriptors, pinset, reposit
       'candidate schema',
     ],
     [
-      descriptors.learner_dto_schema,
-      pinset.learner_contract.dto_schema_sha256,
-      'learner DTO schema',
+      descriptors.learner_action_schema,
+      pinset.learner_view_contract.action_schema_sha256,
+      'learner action schema',
+    ],
+    [
+      descriptors.learner_view_schema,
+      pinset.learner_view_contract.view_schema_sha256,
+      'learner view schema',
     ],
   ]) {
     assertExactKeys(descriptor, ['path', 'sha256'], `${label} descriptor`);
     requireHash(descriptor.sha256, `${label} descriptor SHA-256`);
     const resolved =
-      label === 'candidate schema' ? candidateSchemaPath.realTarget : learnerSchemaPath.realTarget;
+      label === 'candidate schema'
+        ? candidateSchemaPath.realTarget
+        : label === 'learner action schema'
+          ? learnerActionSchemaPath.realTarget
+          : learnerViewSchemaPath.realTarget;
     const bytes = await readLimitedFile(resolved, label, ARTIFACT_LIMITS.single_file);
     assert.equal(hashBytes(bytes), descriptor.sha256, `${label} hash is stale`);
     assert.equal(descriptor.sha256, expectedHash, `${label} does not match signed pinset`);
   }
-  const [candidateSchemaJson, learnerSchemaJson] = await Promise.all([
+  const [candidateSchemaJson, learnerActionSchemaJson, learnerViewSchemaJson] = await Promise.all([
     readLimitedJson(
       candidateSchemaPath.realTarget,
       'candidate schema',
       ARTIFACT_LIMITS.single_file,
     ),
     readLimitedJson(
-      learnerSchemaPath.realTarget,
-      'learner DTO schema',
+      learnerActionSchemaPath.realTarget,
+      'learner action schema',
+      ARTIFACT_LIMITS.single_file,
+    ),
+    readLimitedJson(
+      learnerViewSchemaPath.realTarget,
+      'learner view schema',
       ARTIFACT_LIMITS.single_file,
     ),
   ]);
-  const foundationCommitSha = pinset.foundation_commit_sha;
-  const candidateValidator = await validateArtifactDescriptor(
-    descriptors.candidate_validator_build,
-    {
-      label: 'candidate validator build artifact',
-      limits: ARTIFACT_LIMITS.build,
+  const commonPin = { foundation_commit_sha: pinset.foundation_commit_sha };
+  const [candidateValidator, compiler, harness, scoring] = await Promise.all([
+    validatePinnedBuildArtifact({
+      buildKind: 'CANDIDATE_VALIDATOR',
+      descriptor: descriptors.candidate_validator_build,
+      integrationTrustRoot,
+      pin: {
+        ...commonPin,
+        artifact_sha256: pinset.runtime_contract.candidate_validator_build_sha256,
+        build_id: pinset.runtime_contract.candidate_validator_build_id,
+        build_version: pinset.runtime_contract.candidate_validator_build_version,
+        report_signing_key_fingerprint:
+          pinset.runtime_contract.candidate_validator_report_signing_key_fingerprint,
+      },
       repositoryRoot,
-      requiredFiles: ['build-manifest.json'],
-    },
-  );
-  assert.equal(
-    candidateValidator.artifact_sha256,
-    pinset.runtime_contract.candidate_validator_build_sha256,
-  );
-  const { value: candidateValidatorManifest } = await readLimitedJson(
-    join(candidateValidator.real_path, 'build-manifest.json'),
-    'candidate validator build manifest',
-    ARTIFACT_LIMITS.build,
-  );
-  validateBuildManifest(candidateValidatorManifest, {
-    buildId: pinset.runtime_contract.candidate_validator_build_id,
-    buildKind: 'CANDIDATE_VALIDATOR',
-    buildVersion: pinset.runtime_contract.candidate_validator_build_version,
-    foundationCommitSha,
-  });
-  const validatePinnedBuild = async (descriptor, pin, buildKind) => {
-    const scan = await validateArtifactDescriptor(descriptor, {
-      label: `${buildKind} build artifact`,
-      limits: ARTIFACT_LIMITS.build,
+      reportSigningKeyRequired: true,
+    }),
+    validatePinnedBuildArtifact({
+      buildKind: 'SAFE_PROJECTION_COMPILER',
+      descriptor: descriptors.safe_projection_compiler_build,
+      integrationTrustRoot,
+      pin: { ...commonPin, ...pinset.builds.safe_projection_compiler },
       repositoryRoot,
-      requiredFiles:
-        buildKind === 'SCORING_SERVICE'
-          ? ['build-manifest.json']
-          : ['build-manifest.json', 'report-signing-public-key.pem'],
-    });
-    assert.equal(scan.artifact_sha256, pin.artifact_sha256);
-    const { value: manifest } = await readLimitedJson(
-      join(scan.real_path, 'build-manifest.json'),
-      `${buildKind} build manifest`,
-      ARTIFACT_LIMITS.build,
-    );
-    validateBuildManifest(manifest, {
-      buildId: pin.build_id,
-      buildKind,
-      buildVersion: pin.build_version,
-      foundationCommitSha,
-    });
-    let signingKey = null;
-    if (pin.report_signing_key_fingerprint) {
-      signingKey = await readPublicKey(
-        join(scan.real_path, 'report-signing-public-key.pem'),
-        `${buildKind} report signing public key`,
-        ARTIFACT_LIMITS.build,
-      );
-      assert.equal(signingKey.fingerprint, pin.report_signing_key_fingerprint);
-    }
-    return { ...scan, manifest, signing_key: signingKey };
-  };
-  const [compiler, harness, scoring] = await Promise.all([
-    validatePinnedBuild(
-      descriptors.safe_projection_compiler_build,
-      pinset.builds.safe_projection_compiler,
-      'SAFE_PROJECTION_COMPILER',
-    ),
-    validatePinnedBuild(
-      descriptors.review_harness_build,
-      pinset.builds.review_harness,
-      'REVIEW_HARNESS',
-    ),
-    validatePinnedBuild(
-      descriptors.scoring_service_build,
-      pinset.builds.scoring_service,
-      'SCORING_SERVICE',
-    ),
+      reportSigningKeyRequired: true,
+    }),
+    validatePinnedBuildArtifact({
+      buildKind: 'REVIEW_HARNESS',
+      descriptor: descriptors.review_harness_build,
+      integrationTrustRoot,
+      pin: { ...commonPin, ...pinset.builds.review_harness },
+      repositoryRoot,
+      reportSigningKeyRequired: true,
+    }),
+    validatePinnedBuildArtifact({
+      buildKind: 'SCORING_SERVICE',
+      descriptor: descriptors.scoring_service_build,
+      integrationTrustRoot,
+      pin: { ...commonPin, ...pinset.builds.scoring_service },
+      repositoryRoot,
+      reportSigningKeyRequired: false,
+    }),
   ]);
   const ajv = new Ajv({ allErrors: true, strict: true });
   let candidateValidatorFunction;
-  let learnerDtoValidatorFunction;
+  let learnerActionValidatorFunction;
+  let learnerViewValidatorFunction;
   try {
     candidateValidatorFunction = ajv.compile(candidateSchemaJson.value);
-    learnerDtoValidatorFunction = ajv.compile(learnerSchemaJson.value);
+    learnerActionValidatorFunction = ajv.compile(learnerActionSchemaJson.value);
+    learnerViewValidatorFunction = ajv.compile(learnerViewSchemaJson.value);
   } catch (error) {
     throw new Error(`Pinned foundation JSON schema is invalid: ${error.message}`);
   }
@@ -684,8 +1199,10 @@ async function validatePinnedIntegrationArtifacts({ descriptors, pinset, reposit
     candidate_validator_function: candidateValidatorFunction,
     compiler,
     harness,
-    learner_dto_schema: learnerSchemaJson.value,
-    learner_dto_validator_function: learnerDtoValidatorFunction,
+    learner_action_schema: learnerActionSchemaJson.value,
+    learner_action_validator_function: learnerActionValidatorFunction,
+    learner_view_schema: learnerViewSchemaJson.value,
+    learner_view_validator_function: learnerViewValidatorFunction,
     scoring,
   };
 }
@@ -809,9 +1326,14 @@ function credentialForAssignment(credentialsByIdentity, assignment, expectedRole
 }
 
 export {
+  ACTION_TRANSITION_PROFILE_SCHEMA_VERSION,
   ARTIFACT_LIMITS,
+  BUILD_MANIFEST_SCHEMA_VERSION,
+  BUILD_PROVENANCE_SCHEMA_VERSION,
+  CANDIDATE_SEMANTIC_PROFILE_SCHEMA_VERSION,
   HASH_PATTERN,
   INTEGRATION_PINSET_SCHEMA_VERSION,
+  LEARNER_VIEW_SEMANTIC_PROFILE_SCHEMA_VERSION,
   REVIEWER_CREDENTIAL_SCHEMA_VERSION,
   SIGNATURE_ALGORITHM,
   assertExactKeys,
@@ -821,6 +1343,7 @@ export {
   directoryHash,
   hashArtifactDirectory,
   hashBytes,
+  hashCanonicalJson,
   identityKey,
   loadAndVerifyIntegrationPinset,
   parseLimitedJson,
@@ -833,9 +1356,11 @@ export {
   requireIdentity,
   requireString,
   resolveRealPathInsideRoot,
+  resolveJsonPointer,
   sameIdentity,
   validateArtifactDescriptor,
   validateJsonComplexity,
+  validatePinnedBuildArtifact,
   validatePinnedIntegrationArtifacts,
   validateReviewerCredentials,
   verifyBytesSignature,

@@ -9,27 +9,32 @@ import {
   directoryHash,
   hashArtifactDirectory,
   hashBytes,
+  hashCanonicalJson,
   readAndVerifySignedJson,
   readLimitedJson,
   readPublicKey,
   requireHash,
   requireIdentity,
   requireString,
+  resolveJsonPointer,
   validateArtifactDescriptor,
 } from './v3-cloud-authoring-trust-contract.mjs';
 
-const CLOSED_BUNDLE_SCHEMA_VERSION = 'mcat-v3-closed-sanitized-review-bundle-2';
-const CLOSED_BUNDLE_SCANNER_ID = 'V3_CLOSED_REVIEW_BUNDLE_SCAN_V2';
-const CANDIDATE_MANIFEST_SCHEMA_VERSION = 'mcat-v3-candidate-artifact-manifest-2';
+const CLOSED_BUNDLE_SCHEMA_VERSION = 'mcat-v3-closed-sanitized-review-bundle-3';
+const CLOSED_BUNDLE_SCANNER_ID = 'V3_CLOSED_REVIEW_BUNDLE_SCAN_V3';
+const CANDIDATE_MANIFEST_SCHEMA_VERSION = 'mcat-v3-candidate-artifact-manifest-3';
+const CANDIDATE_VALIDATOR_EXECUTION_REPORT_SCHEMA_VERSION =
+  'mcat-v3-signed-candidate-validator-execution-report-1';
 const GATE_REPORT_SCHEMA_VERSION = 'mcat-v3-signed-gate-evidence-report-2';
-const SAFE_PROJECTION_REPORT_SCHEMA_VERSION = 'mcat-v3-safe-projection-report-1';
+const SAFE_PROJECTION_REPORT_SCHEMA_VERSION = 'mcat-v3-safe-projection-report-2';
 const OPAQUE_SERVICE_ATTESTATION_SCHEMA_VERSION =
-  'mcat-v3-signed-opaque-service-deployment-attestation-2';
-const SERVICE_DEPLOYMENT_MANIFEST_SCHEMA_VERSION = 'mcat-v3-opaque-service-deployment-manifest-1';
-const SERVICE_RECEIPT_SCHEMA_VERSION = 'mcat-v3-service-request-response-receipt-1';
-const SERVICE_RECEIPT_MANIFEST_SCHEMA_VERSION = 'mcat-v3-service-receipt-manifest-1';
+  'mcat-v3-signed-opaque-service-deployment-attestation-3';
+const SERVICE_DEPLOYMENT_MANIFEST_SCHEMA_VERSION = 'mcat-v3-opaque-service-deployment-manifest-2';
+const SERVICE_RECEIPT_SCHEMA_VERSION = 'mcat-v3-service-action-transition-receipt-2';
+const SERVICE_RECEIPT_MANIFEST_SCHEMA_VERSION = 'mcat-v3-service-receipt-manifest-2';
+const SERVICE_INTEGRATION_REPORT_SCHEMA_VERSION = 'mcat-v3-signed-service-integration-report-1';
 const ACCESSIBILITY_EXECUTION_REPORT_SCHEMA_VERSION =
-  'mcat-v3-signed-accessibility-execution-report-1';
+  'mcat-v3-signed-accessibility-execution-report-2';
 const RIGHTS_REPORT_SCHEMA_VERSION = 'mcat-v3-signed-rights-review-report-1';
 const SOURCE_OUTPUT_SIMILARITY_SCHEMA_VERSION = 'mcat-v3-signed-source-output-similarity-report-1';
 const DOMAIN_REPORT_SCHEMA_VERSION = 'mcat-v3-signed-domain-review-report-1';
@@ -59,16 +64,21 @@ const EXCLUDED_CONTENT_CLASSES = Object.freeze([
 ]);
 
 const REQUIRED_BLIND_PATH_IDS = Object.freeze([
+  'ALTERNATE_ROUTE_SELECTION',
+  'ASSISTANCE_REVEAL',
   'CORRECT_RESPONSE',
-  'HELP_REQUEST',
+  'FRESH_ACTIVITY_RETRY',
   'INCORRECT_RESPONSE',
-  'INTERRUPTION_AND_RESUME',
-  'INVALID_ACTIVITY',
-  'MIXED_ROUTE',
-  'OMISSION',
-  'REPAIR_LIMIT',
-  'RETRY',
-  'REVEAL',
+  'NOT_SURE_RESPONSE',
+  'PAUSE_AND_RESUME',
+  'REPAIR_LIMIT_PLANNER_REENTRY',
+  'TARGETED_REPAIR_CYCLE',
+]);
+
+const REQUIRED_SERVICE_INTEGRATION_CHECK_IDS = Object.freeze([
+  'ACTION_SCHEMA_REJECTS_UNSUPPORTED_KIND',
+  'INVALID_ACTIVITY_REJECTED_AT_AUTHORITY_BOUNDARY',
+  'RECEIPT_TRANSITION_PROFILE_CONFORMANCE',
 ]);
 
 const REQUIRED_ACCESSIBILITY_CHECK_IDS = Object.freeze([
@@ -130,27 +140,6 @@ const FORBIDDEN_FIELD_NAMES = new Set([
   'solutions',
 ]);
 
-const REQUEST_OUTCOME_CONTRACT = Object.freeze({
-  INTERRUPT: Object.freeze({ outcomes: ['INTERRUPTED'], response_hash: false }),
-  OMIT_RESPONSE: Object.freeze({ outcomes: ['OMITTED'], response_hash: false }),
-  REPAIR_STEP: Object.freeze({
-    outcomes: ['REPAIR_CONTINUE', 'REPAIR_LIMIT'],
-    response_hash: true,
-  }),
-  REQUEST_HELP: Object.freeze({ outcomes: ['HELP_SHOWN'], response_hash: false }),
-  RESUME: Object.freeze({ outcomes: ['RESUMED'], response_hash: false }),
-  RETRY: Object.freeze({ outcomes: ['RETRY_READY'], response_hash: false }),
-  REVEAL: Object.freeze({ outcomes: ['REVEALED'], response_hash: false }),
-  SUBMIT_INVALID_ACTIVITY: Object.freeze({
-    outcomes: ['INVALID_ACTIVITY_REJECTED'],
-    response_hash: true,
-  }),
-  SUBMIT_RESPONSE: Object.freeze({
-    outcomes: ['CORRECT', 'INCORRECT'],
-    response_hash: true,
-  }),
-});
-
 function compareText(left, right) {
   return left < right ? -1 : left > right ? 1 : 0;
 }
@@ -178,7 +167,7 @@ function assertIdentityEqual(actual, expected, label) {
 function createClosedReviewBundleManifest({
   bundleKind,
   compilerBuild,
-  learnerContract,
+  learnerViewContract,
   lessonId,
   jobId,
   projectionReportSha256,
@@ -190,6 +179,8 @@ function createClosedReviewBundleManifest({
 }) {
   assert(Object.hasOwn(BUNDLE_FILES, bundleKind), `Unknown bundle kind ${bundleKind}`);
   return {
+    action_schema_id: learnerViewContract.action_schema_id,
+    action_schema_sha256: learnerViewContract.action_schema_sha256,
     author_branch_included: false,
     bundle_kind: bundleKind,
     candidate_schema_id: runtimeContract.candidate_schema_id,
@@ -200,8 +191,8 @@ function createClosedReviewBundleManifest({
     excluded_content_classes: [...EXCLUDED_CONTENT_CLASSES],
     included_files: [...BUNDLE_FILES[bundleKind]],
     job_id: jobId,
-    learner_dto_schema_id: learnerContract.dto_schema_id,
-    learner_dto_schema_sha256: learnerContract.dto_schema_sha256,
+    learner_view_schema_id: learnerViewContract.view_schema_id,
+    learner_view_schema_sha256: learnerViewContract.view_schema_sha256,
     lesson_id: lessonId,
     projection_report_sha256: projectionReportSha256,
     protected_scoring_material_included: false,
@@ -214,8 +205,9 @@ function createClosedReviewBundleManifest({
     schema_version: CLOSED_BUNDLE_SCHEMA_VERSION,
     server_definition_included: false,
     source_plan_sha256: sourcePlanSha256,
-    supported_action_kinds: [...learnerContract.action_kinds],
-    supported_representation_kinds: [...learnerContract.representation_kinds],
+    supported_action_kinds: [...learnerViewContract.transition_profile.action_kinds],
+    supported_representation_kinds: [...learnerViewContract.representation_kinds],
+    transition_profile_id: learnerViewContract.transition_profile.profile_id,
     wave_id: waveId,
   };
 }
@@ -224,6 +216,8 @@ function validateBundleManifest(value, expected) {
   assertExactKeys(
     value,
     [
+      'action_schema_id',
+      'action_schema_sha256',
       'author_branch_included',
       'bundle_kind',
       'candidate_schema_id',
@@ -234,8 +228,8 @@ function validateBundleManifest(value, expected) {
       'excluded_content_classes',
       'included_files',
       'job_id',
-      'learner_dto_schema_id',
-      'learner_dto_schema_sha256',
+      'learner_view_schema_id',
+      'learner_view_schema_sha256',
       'lesson_id',
       'projection_report_sha256',
       'protected_scoring_material_included',
@@ -250,6 +244,7 @@ function validateBundleManifest(value, expected) {
       'source_plan_sha256',
       'supported_action_kinds',
       'supported_representation_kinds',
+      'transition_profile_id',
       'wave_id',
     ],
     'bundle manifest',
@@ -258,63 +253,148 @@ function validateBundleManifest(value, expected) {
   assert.deepEqual(value, canonical, 'Bundle manifest does not match signed integration pins');
 }
 
-function validateLearnerSafeEnvelope(envelope, expected, learnerDtoValidator) {
+function validateLearnerSafeEnvelope(envelope, expected, learnerViewValidator) {
   assertExactKeys(
     envelope,
-    ['dto_schema_id', 'lesson_dto', 'media_digests', 'schema_version'],
+    ['lesson_step_views', 'media_digests', 'schema_version', 'view_schema_id'],
     'learner-safe envelope',
   );
-  assert.equal(envelope.schema_version, 'mcat-v3-learner-safe-envelope-1');
-  assert.equal(envelope.dto_schema_id, expected.learnerContract.dto_schema_id);
+  assert.equal(envelope.schema_version, 'mcat-v3-learner-safe-view-envelope-2');
+  assert.equal(envelope.view_schema_id, expected.learnerViewContract.view_schema_id);
   assert(
-    learnerDtoValidator(envelope.lesson_dto),
-    `Learner DTO fails pinned schema: ${JSON.stringify(learnerDtoValidator.errors)}`,
+    Array.isArray(envelope.lesson_step_views) && envelope.lesson_step_views.length > 0,
+    'Learner-safe envelope must contain individual lesson step views',
   );
-  assert.equal(
-    envelope.lesson_dto.schema_version,
-    expected.learnerContract.dto_schema_id,
-    'Learner DTO schema ID mismatch',
-  );
-  assert.equal(envelope.lesson_dto.lesson_id, expected.lessonId);
-  assert(
-    Array.isArray(envelope.lesson_dto.activities) && envelope.lesson_dto.activities.length > 0,
-  );
+  const profile = expected.learnerViewContract.semantic_profile;
+  const transitionProfile = expected.learnerViewContract.transition_profile;
   const activityIds = new Set();
-  for (const [index, activity] of envelope.lesson_dto.activities.entries()) {
-    requireString(activity.activity_id, `learner DTO activity[${index}].activity_id`);
-    assert(!activityIds.has(activity.activity_id), `Duplicate activity ${activity.activity_id}`);
-    activityIds.add(activity.activity_id);
+  const referencedMedia = new Map();
+  for (const [viewIndex, view] of envelope.lesson_step_views.entries()) {
+    assert(
+      learnerViewValidator(view),
+      `Learner step view fails pinned schema: ${JSON.stringify(learnerViewValidator.errors)}`,
+    );
+    assert.equal(
+      resolveJsonPointer(view, profile.view_schema_version_pointer, `learner view[${viewIndex}]`),
+      profile.expected_view_schema_version,
+      'Learner view schemaVersion does not match the signed semantic profile',
+    );
+    assert.equal(
+      resolveJsonPointer(view, profile.lesson_id_pointer, `learner view[${viewIndex}]`),
+      expected.lessonId,
+      'Learner view lessonId does not match the job lesson',
+    );
+    const availableActions = resolveJsonPointer(
+      view,
+      profile.available_actions_pointer,
+      `learner view[${viewIndex}]`,
+    );
+    assert(Array.isArray(availableActions), 'Learner view available actions must be an array');
+    for (const actionKind of availableActions) {
+      assert(
+        transitionProfile.action_kinds.includes(actionKind),
+        `Learner view exposes unsupported action ${actionKind}`,
+      );
+    }
+    const activity = resolveJsonPointer(
+      view,
+      profile.activity_pointer,
+      `learner view[${viewIndex}]`,
+    );
+    if (activity === null) continue;
+    const activityId = resolveJsonPointer(
+      activity,
+      profile.activity_id_pointer,
+      `learner view[${viewIndex}] activity`,
+    );
+    requireString(activityId, `learner view[${viewIndex}] activity ID`);
+    assert(!activityIds.has(activityId), `Duplicate learner-safe activity ${activityId}`);
+    activityIds.add(activityId);
+    const representations = resolveJsonPointer(
+      activity,
+      profile.representations_pointer,
+      `learner view[${viewIndex}] activity`,
+    );
+    assert(Array.isArray(representations), 'Learner activity representations must be an array');
+    for (const [representationIndex, representation] of representations.entries()) {
+      const label = `learner view[${viewIndex}] representation[${representationIndex}]`;
+      const kind = resolveJsonPointer(representation, profile.representation_kind_pointer, label);
+      assert(
+        expected.learnerViewContract.representation_kinds.includes(kind),
+        `${label} uses unsupported representation kind ${kind}`,
+      );
+      const mediaProfile = profile.media_profile;
+      if (kind !== mediaProfile.audio_kind && kind !== mediaProfile.video_kind) continue;
+      const assetRef = resolveJsonPointer(representation, mediaProfile.asset_ref_pointer, label);
+      const transcript = resolveJsonPointer(representation, mediaProfile.transcript_pointer, label);
+      const captionsRef = resolveJsonPointer(
+        representation,
+        mediaProfile.captions_ref_pointer,
+        label,
+      );
+      requireString(assetRef, `${label} asset reference`);
+      assert(Array.isArray(transcript) && transcript.length > 0, `${label} needs a transcript`);
+      transcript.forEach((line, lineIndex) =>
+        requireString(line, `${label} transcript[${lineIndex}]`),
+      );
+      const captionsRequired =
+        kind === mediaProfile.audio_kind
+          ? mediaProfile.audio_captions_required
+          : mediaProfile.video_captions_required;
+      if (captionsRequired) requireString(captionsRef, `${label} captions reference`);
+      else assert(captionsRef === null || typeof captionsRef === 'string');
+      const mediaRecord = {
+        captions_present: captionsRef !== null,
+        kind,
+        transcript_sha256: hashCanonicalJson(transcript),
+      };
+      if (referencedMedia.has(assetRef)) {
+        assert.deepEqual(
+          referencedMedia.get(assetRef),
+          mediaRecord,
+          `${assetRef} has inconsistent learner-safe media semantics`,
+        );
+      } else {
+        referencedMedia.set(assetRef, mediaRecord);
+      }
+    }
   }
+  assert(activityIds.size > 0, 'Learner-safe envelope has no active activity view');
   assert(Array.isArray(envelope.media_digests), 'media_digests must be an array');
-  const mediaIds = new Set();
+  assert.equal(
+    envelope.media_digests.length,
+    referencedMedia.size,
+    'Media digests must exactly cover learner-view media references',
+  );
+  const mediaRefs = new Set();
   for (const [index, media] of envelope.media_digests.entries()) {
     const label = `media_digests[${index}]`;
     assertExactKeys(
       media,
-      ['asset_id', 'captions_sha256', 'media_kind', 'sha256', 'transcript_sha256'],
+      ['asset_ref', 'captions_sha256', 'media_kind', 'media_sha256', 'transcript_sha256'],
       label,
     );
-    requireString(media.asset_id, `${label}.asset_id`);
+    requireString(media.asset_ref, `${label}.asset_ref`);
     requireString(media.media_kind, `${label}.media_kind`);
-    assert(
-      ['ANIMATION', 'AUDIO', 'IMAGE', 'VIDEO'].includes(media.media_kind),
-      `${label}.media_kind is not supported`,
-    );
-    requireHash(media.sha256, `${label}.sha256`);
-    assert(!mediaIds.has(media.asset_id), `Duplicate media digest ${media.asset_id}`);
-    mediaIds.add(media.asset_id);
-    if (['AUDIO', 'VIDEO'].includes(media.media_kind)) {
-      requireHash(media.transcript_sha256, `${label}.transcript_sha256`);
-      if (media.media_kind === 'VIDEO') {
-        requireHash(media.captions_sha256, `${label}.captions_sha256`);
-      } else {
-        assert.equal(media.captions_sha256, null);
-      }
+    requireHash(media.media_sha256, `${label}.media_sha256`);
+    requireHash(media.transcript_sha256, `${label}.transcript_sha256`);
+    assert(!mediaRefs.has(media.asset_ref), `Duplicate media digest ${media.asset_ref}`);
+    mediaRefs.add(media.asset_ref);
+    const referenced = referencedMedia.get(media.asset_ref);
+    assert(referenced, `${label} does not correspond to learner-view media`);
+    assert.equal(media.media_kind, referenced.kind);
+    assert.equal(media.transcript_sha256, referenced.transcript_sha256);
+    if (referenced.captions_present) {
+      requireHash(media.captions_sha256, `${label}.captions_sha256`);
     } else {
-      assert.equal(media.transcript_sha256, null);
       assert.equal(media.captions_sha256, null);
     }
   }
+  assert.deepEqual(
+    envelope.media_digests.map((media) => media.asset_ref),
+    [...mediaRefs].sort(compareText),
+    'Media digests must be asset-reference sorted',
+  );
   return activityIds;
 }
 
@@ -322,25 +402,36 @@ function validateBlindClientRuntime(value, expected) {
   assertExactKeys(
     value,
     [
+      'action_schema_id',
+      'action_schema_sha256',
       'client_scoring_authority',
       'outcome_override_controls',
       'rationales_before_response',
-      'request_kinds',
+      'request_action_kinds',
       'response_fields',
       'schema_version',
-      'service_protocol',
+      'service_protocol_profile_id',
       'submit_endpoint_path',
+      'view_schema_id',
     ],
     'blind client runtime',
   );
-  assert.equal(value.schema_version, 'mcat-v3-opaque-blind-client-runtime-2');
-  assert.equal(value.service_protocol, 'SIGNED_OPAQUE_REAL_RESPONSE_SCORING_V1');
+  assert.equal(value.schema_version, 'mcat-v3-opaque-blind-client-runtime-3');
+  assert.equal(value.action_schema_id, expected.learnerViewContract.action_schema_id);
+  assert.equal(value.action_schema_sha256, expected.learnerViewContract.action_schema_sha256);
+  assert.equal(value.view_schema_id, expected.learnerViewContract.view_schema_id);
+  assert.equal(
+    value.service_protocol_profile_id,
+    expected.learnerViewContract.transition_profile.profile_id,
+  );
   assert.equal(value.submit_endpoint_path, '/submit');
-  assert.deepEqual(value.request_kinds, Object.keys(REQUEST_OUTCOME_CONTRACT).sort(compareText));
+  assert.deepEqual(
+    value.request_action_kinds,
+    expected.learnerViewContract.transition_profile.action_kinds,
+  );
   assert.deepEqual(value.response_fields, [
     'learner_feedback',
-    'learner_outcome',
-    'next_state',
+    'learner_step_view',
     'service_receipt',
   ]);
   assert.equal(value.client_scoring_authority, false);
@@ -354,28 +445,33 @@ function validateAccessibilityHarnessConfig(value, expected) {
     value,
     [
       'browser_execution_required',
-      'learner_dto_schema_id',
+      'learner_action_schema_id',
+      'learner_view_schema_id',
       'required_check_ids',
       'review_harness_build_id',
       'review_harness_build_sha256',
       'review_harness_build_version',
       'schema_version',
-      'supported_action_kinds',
+      'transition_profile_id',
       'supported_representation_kinds',
     ],
     'accessibility harness config',
   );
-  assert.equal(value.schema_version, 'mcat-v3-accessibility-harness-config-1');
+  assert.equal(value.schema_version, 'mcat-v3-accessibility-harness-config-2');
   assert.equal(value.browser_execution_required, true);
-  assert.equal(value.learner_dto_schema_id, expected.learnerContract.dto_schema_id);
+  assert.equal(value.learner_action_schema_id, expected.learnerViewContract.action_schema_id);
+  assert.equal(value.learner_view_schema_id, expected.learnerViewContract.view_schema_id);
   assert.equal(value.review_harness_build_id, expected.reviewHarnessBuild.build_id);
   assert.equal(value.review_harness_build_sha256, expected.reviewHarnessBuild.artifact_sha256);
   assert.equal(value.review_harness_build_version, expected.reviewHarnessBuild.build_version);
   assert.deepEqual(value.required_check_ids, [...REQUIRED_ACCESSIBILITY_CHECK_IDS]);
-  assert.deepEqual(value.supported_action_kinds, expected.learnerContract.action_kinds);
+  assert.equal(
+    value.transition_profile_id,
+    expected.learnerViewContract.transition_profile.profile_id,
+  );
   assert.deepEqual(
     value.supported_representation_kinds,
-    expected.learnerContract.representation_kinds,
+    expected.learnerViewContract.representation_kinds,
   );
 }
 
@@ -384,8 +480,8 @@ async function validateAndHashClosedReviewBundle({
   bundlePath,
   compilerBuild,
   jobId,
-  learnerContract,
-  learnerDtoValidator,
+  learnerViewContract,
+  learnerViewValidator,
   lessonId,
   projectionReport,
   projectionReportSha256,
@@ -428,7 +524,7 @@ async function validateAndHashClosedReviewBundle({
     bundleKind,
     compilerBuild,
     jobId,
-    learnerContract,
+    learnerViewContract,
     lessonId,
     projectionReportSha256,
     reviewedCandidateSha256,
@@ -440,8 +536,8 @@ async function validateAndHashClosedReviewBundle({
   validateBundleManifest(documents.get('bundle-manifest.json'), expected);
   const activityIds = validateLearnerSafeEnvelope(
     documents.get('learner-safe-envelope.json'),
-    { learnerContract, lessonId },
-    learnerDtoValidator,
+    { learnerViewContract, lessonId },
+    learnerViewValidator,
   );
   const output = projectionReport.outputs.find((item) => item.bundle_kind === bundleKind);
   assert(output, `Signed compiler report lacks ${bundleKind} output`);
@@ -488,8 +584,10 @@ function validateCandidateManifest(value, expected) {
     value,
     [
       'candidate_definition_path',
+      'candidate_format',
       'candidate_schema_id',
       'candidate_schema_sha256',
+      'candidate_semantic_profile_sha256',
       'candidate_validator_build_id',
       'candidate_validator_build_sha256',
       'candidate_validator_build_version',
@@ -509,9 +607,14 @@ function validateCandidateManifest(value, expected) {
   assert.equal(value.job_id, expected.jobId);
   assert.equal(value.lesson_id, expected.lessonId);
   assert.equal(value.contains_key_bearing_server_definition, true);
+  assert.equal(value.candidate_format, expected.runtimeContract.candidate_format);
   assert.equal(value.runtime_contract_version, expected.runtimeContract.runtime_contract_version);
   assert.equal(value.candidate_schema_id, expected.runtimeContract.candidate_schema_id);
   assert.equal(value.candidate_schema_sha256, expected.runtimeContract.candidate_schema_sha256);
+  assert.equal(
+    value.candidate_semantic_profile_sha256,
+    hashCanonicalJson(expected.runtimeContract.candidate_semantic_profile),
+  );
   assert.equal(
     value.candidate_validator_build_id,
     expected.runtimeContract.candidate_validator_build_id,
@@ -574,31 +677,167 @@ async function validateAndHashCandidateArtifact({
   });
   assert(
     candidateValidator(definition),
-    `${jobId} candidate is not a valid pinned LessonDefinition: ${JSON.stringify(candidateValidator.errors)}`,
+    `${jobId} candidate fails the supplementary pinned JSON Schema: ${JSON.stringify(candidateValidator.errors)}`,
   );
-  assert.equal(definition.schema_version, runtimeContract.candidate_schema_id);
-  assert.equal(definition.lesson_id, lessonId);
+  const semanticProfile = runtimeContract.candidate_semantic_profile;
+  assert.equal(
+    resolveJsonPointer(
+      definition,
+      semanticProfile.definition_schema_version_pointer,
+      `${jobId} candidate`,
+    ),
+    semanticProfile.expected_definition_schema_version,
+    `${jobId} candidate schemaVersion does not match the signed semantic profile`,
+  );
+  assert.equal(
+    resolveJsonPointer(definition, semanticProfile.lesson_id_pointer, `${jobId} candidate`),
+    lessonId,
+    `${jobId} candidate lesson identity does not match the signed semantic profile`,
+  );
   return {
     artifact_sha256: scan.artifact_sha256,
     definition,
+    definition_sha256: definitionEntry.sha256,
     files: scan.file_manifest,
     real_path: scan.real_path,
   };
+}
+
+function validateCandidateValidatorExecutionReportDocument(value, expected) {
+  assertExactKeys(
+    value,
+    [
+      'ajv_supplementary_status',
+      'candidate_definition_path',
+      'candidate_definition_sha256',
+      'candidate_file_manifest',
+      'candidate_format',
+      'candidate_schema_id',
+      'candidate_schema_sha256',
+      'candidate_sha256',
+      'checks',
+      'foundation_commit_sha',
+      'issue_count',
+      'job_id',
+      'lesson_id',
+      'report_id',
+      'runtime_contract_version',
+      'schema_version',
+      'signing_key_fingerprint',
+      'source_plan_sha256',
+      'status',
+      'validator_build_id',
+      'validator_build_sha256',
+      'validator_build_version',
+      'wave_id',
+    ],
+    'candidate production-validator execution report',
+  );
+  assert.equal(value.schema_version, CANDIDATE_VALIDATOR_EXECUTION_REPORT_SCHEMA_VERSION);
+  assert.equal(value.source_plan_sha256, expected.sourcePlanSha256);
+  assert.equal(value.wave_id, expected.waveId);
+  assert.equal(value.job_id, expected.jobId);
+  assert.equal(value.lesson_id, expected.lessonId);
+  assert.equal(
+    value.candidate_sha256,
+    expected.candidateScan.artifact_sha256,
+    'Candidate validator report is stale for the candidate artifact',
+  );
+  assert.deepEqual(
+    value.candidate_file_manifest,
+    expected.candidateScan.files,
+    'Candidate validator report file manifest is stale',
+  );
+  assert.equal(
+    value.candidate_definition_sha256,
+    expected.candidateScan.definition_sha256,
+    'Candidate validator report is stale for the definition bytes',
+  );
+  assert.equal(value.candidate_definition_path, expected.runtimeContract.candidate_definition_path);
+  assert.equal(value.candidate_format, expected.runtimeContract.candidate_format);
+  assert.equal(value.candidate_schema_id, expected.runtimeContract.candidate_schema_id);
+  assert.equal(value.candidate_schema_sha256, expected.runtimeContract.candidate_schema_sha256);
+  assert.equal(value.runtime_contract_version, expected.runtimeContract.runtime_contract_version);
+  assert.equal(value.foundation_commit_sha, expected.foundationCommitSha);
+  assert.equal(value.validator_build_id, expected.candidateValidatorBuild.manifest.build_id);
+  assert.equal(
+    value.validator_build_version,
+    expected.candidateValidatorBuild.manifest.build_version,
+  );
+  assert.equal(value.validator_build_sha256, expected.candidateValidatorBuild.artifact_sha256);
+  assert.equal(
+    value.signing_key_fingerprint,
+    expected.candidateValidatorBuild.signing_key.fingerprint,
+  );
+  assert.equal(value.ajv_supplementary_status, 'PASS');
+  assert.equal(value.status, 'VALIDATED_BY_PINNED_PRODUCTION_VALIDATOR');
+  assert.equal(value.issue_count, 0);
+  requireString(value.report_id, 'candidate validator execution report ID');
+  assert(Array.isArray(value.checks));
+  for (const [index, check] of value.checks.entries()) {
+    assertExactKeys(check, ['check_id', 'status'], `candidate validator check[${index}]`);
+    assert.equal(check.status, 'PASS');
+  }
+  assert.deepEqual(
+    value.checks.map((check) => check.check_id),
+    expected.runtimeContract.candidate_semantic_profile.validator_required_check_ids,
+    'Candidate validator report is missing signed-profile production checks',
+  );
+}
+
+async function validateSignedCandidateValidatorExecution({
+  candidateScan,
+  candidateValidatorBuild,
+  descriptor,
+  foundationCommitSha,
+  jobId,
+  lessonId,
+  repositoryRoot,
+  runtimeContract,
+  sourcePlanSha256,
+  waveId,
+}) {
+  validateSignedDescriptor(descriptor, `${jobId} candidate validator execution descriptor`);
+  assert.equal(descriptor.signer_key_fingerprint, candidateValidatorBuild.signing_key.fingerprint);
+  const signed = await readAndVerifySignedJson({
+    documentPath: descriptor.report_path,
+    documentSha256: descriptor.report_sha256,
+    label: `${jobId} pinned production-validator execution report`,
+    publicKeyPem: candidateValidatorBuild.signing_key.pem,
+    repositoryRoot,
+    signaturePath: descriptor.report_signature_path,
+    signatureSha256: descriptor.report_signature_sha256,
+  });
+  validateCandidateValidatorExecutionReportDocument(signed.value, {
+    candidateScan,
+    candidateValidatorBuild,
+    foundationCommitSha,
+    jobId,
+    lessonId,
+    runtimeContract,
+    sourcePlanSha256,
+    waveId,
+  });
+  return signed.value;
 }
 
 function validateSafeProjectionReportDocument(value, expected) {
   assertExactKeys(
     value,
     [
+      'action_schema_id',
+      'action_schema_sha256',
       'candidate_file_manifest',
       'candidate_sha256',
       'candidate_schema_id',
+      'candidate_validator_execution_report_sha256',
       'compiler_build_id',
       'compiler_build_sha256',
       'compiler_build_version',
       'compiler_signing_key_fingerprint',
       'job_id',
-      'learner_dto_schema_id',
+      'learner_view_schema_id',
+      'learner_view_schema_sha256',
       'lesson_id',
       'outputs',
       'report_id',
@@ -608,6 +847,7 @@ function validateSafeProjectionReportDocument(value, expected) {
       'schema_version',
       'source_plan_sha256',
       'status',
+      'transition_profile_id',
       'wave_id',
     ],
     'safe-projection compiler report',
@@ -620,8 +860,19 @@ function validateSafeProjectionReportDocument(value, expected) {
   assert.equal(value.candidate_sha256, expected.candidateSha256);
   assert.deepEqual(value.candidate_file_manifest, expected.candidateFileManifest);
   assert.equal(value.candidate_schema_id, expected.runtimeContract.candidate_schema_id);
+  assert.equal(
+    value.candidate_validator_execution_report_sha256,
+    expected.candidateValidatorExecutionReportSha256,
+  );
   assert.equal(value.runtime_contract_version, expected.runtimeContract.runtime_contract_version);
-  assert.equal(value.learner_dto_schema_id, expected.learnerContract.dto_schema_id);
+  assert.equal(value.action_schema_id, expected.learnerViewContract.action_schema_id);
+  assert.equal(value.action_schema_sha256, expected.learnerViewContract.action_schema_sha256);
+  assert.equal(value.learner_view_schema_id, expected.learnerViewContract.view_schema_id);
+  assert.equal(value.learner_view_schema_sha256, expected.learnerViewContract.view_schema_sha256);
+  assert.equal(
+    value.transition_profile_id,
+    expected.learnerViewContract.transition_profile.profile_id,
+  );
   assert.equal(value.compiler_build_id, expected.compilerBuild.build_id);
   assert.equal(value.compiler_build_sha256, expected.compilerBuild.artifact_sha256);
   assert.equal(value.compiler_build_version, expected.compilerBuild.build_version);
@@ -655,10 +906,11 @@ function validateSafeProjectionReportDocument(value, expected) {
 async function validateSafeProjectionEvidence({
   candidateFileManifest,
   candidateSha256,
+  candidateValidatorExecutionReportSha256,
   compilerBuild,
   evidence,
   jobId,
-  learnerContract,
+  learnerViewContract,
   lessonId,
   repositoryRoot,
   reviewHarnessBuild,
@@ -690,6 +942,7 @@ async function validateSafeProjectionEvidence({
   validateSafeProjectionReportDocument(signed.value, {
     candidateFileManifest,
     candidateSha256,
+    candidateValidatorExecutionReportSha256,
     compilerBuild: {
       artifact_sha256: compilerBuild.artifact_sha256,
       build_id: compilerBuild.manifest.build_id,
@@ -697,7 +950,7 @@ async function validateSafeProjectionEvidence({
     },
     compilerSigningKeyFingerprint: compilerBuild.signing_key.fingerprint,
     jobId,
-    learnerContract,
+    learnerViewContract,
     lessonId,
     reviewHarnessBuild: {
       artifact_sha256: reviewHarnessBuild.artifact_sha256,
@@ -851,7 +1104,10 @@ function validateServiceDeploymentManifest(value, expected) {
   assertExactKeys(
     value,
     [
+      'action_schema_id',
+      'action_schema_sha256',
       'candidate_sha256',
+      'candidate_validator_execution_report_sha256',
       'deployment_id',
       'ephemeral',
       'initial_state_sha256',
@@ -864,6 +1120,7 @@ function validateServiceDeploymentManifest(value, expected) {
       'scoring_service_build_sha256',
       'scoring_service_build_version',
       'source_plan_sha256',
+      'transition_profile_id',
       'wave_id',
     ],
     'service deployment manifest',
@@ -874,7 +1131,17 @@ function validateServiceDeploymentManifest(value, expected) {
   assert.equal(value.job_id, expected.jobId);
   assert.equal(value.lesson_id, expected.lessonId);
   assert.equal(value.candidate_sha256, expected.candidateSha256);
+  assert.equal(
+    value.candidate_validator_execution_report_sha256,
+    expected.candidateValidatorExecutionReportSha256,
+  );
   assert.equal(value.safe_client_sha256, expected.safeClientSha256);
+  assert.equal(value.action_schema_id, expected.learnerViewContract.action_schema_id);
+  assert.equal(value.action_schema_sha256, expected.learnerViewContract.action_schema_sha256);
+  assert.equal(
+    value.transition_profile_id,
+    expected.learnerViewContract.transition_profile.profile_id,
+  );
   assert.equal(value.scoring_service_build_id, expected.scoringBuild.build_id);
   assert.equal(value.scoring_service_build_sha256, expected.scoringBuild.artifact_sha256);
   assert.equal(value.scoring_service_build_version, expected.scoringBuild.build_version);
@@ -886,8 +1153,10 @@ function validateServiceDeploymentManifest(value, expected) {
 
 async function validateServiceDeploymentArtifact({
   candidateSha256,
+  candidateValidatorExecutionReportSha256,
   descriptor,
   jobId,
+  learnerViewContract,
   lessonId,
   repositoryRoot,
   safeClientSha256,
@@ -915,8 +1184,10 @@ async function validateServiceDeploymentArtifact({
   ]);
   validateServiceDeploymentManifest(manifestFile.value, {
     candidateSha256,
+    candidateValidatorExecutionReportSha256,
     jobId,
     lessonId,
+    learnerViewContract,
     receiptKeyFingerprint: receiptKey.fingerprint,
     safeClientSha256,
     scoringBuild,
@@ -931,7 +1202,10 @@ function validateOpaqueServiceAttestationDocument(value, expected) {
     value,
     [
       'accepts_real_submitted_responses',
+      'action_schema_id',
+      'action_schema_sha256',
       'candidate_sha256',
+      'candidate_validator_execution_report_sha256',
       'deployment_id',
       'ephemeral',
       'exact_key_bearing_candidate_deployed',
@@ -950,6 +1224,7 @@ function validateOpaqueServiceAttestationDocument(value, expected) {
       'solver_identity',
       'source_branch_exposed',
       'source_plan_sha256',
+      'transition_profile_id',
       'wave_id',
     ],
     'opaque service deployment/ACL attestation',
@@ -960,6 +1235,16 @@ function validateOpaqueServiceAttestationDocument(value, expected) {
   assert.equal(value.job_id, expected.jobId);
   assert.equal(value.lesson_id, expected.lessonId);
   assert.equal(value.candidate_sha256, expected.candidateSha256);
+  assert.equal(
+    value.candidate_validator_execution_report_sha256,
+    expected.candidateValidatorExecutionReportSha256,
+  );
+  assert.equal(value.action_schema_id, expected.learnerViewContract.action_schema_id);
+  assert.equal(value.action_schema_sha256, expected.learnerViewContract.action_schema_sha256);
+  assert.equal(
+    value.transition_profile_id,
+    expected.learnerViewContract.transition_profile.profile_id,
+  );
   assert.equal(value.safe_client_sha256, expected.safeClientSha256);
   assert.equal(value.deployment_id, expected.deployment.manifest.deployment_id);
   assert.equal(value.service_deployment_artifact_sha256, expected.deployment.artifact_sha256);
@@ -982,11 +1267,13 @@ function validateOpaqueServiceAttestationDocument(value, expected) {
 
 async function validateSignedOpaqueServiceAttestation({
   candidateSha256,
+  candidateValidatorExecutionReportSha256,
   deployment,
   descriptor,
   integrationTrustRootPem,
   integratorIdentity,
   jobId,
+  learnerViewContract,
   lessonId,
   repositoryRoot,
   safeClientSha256,
@@ -1015,9 +1302,11 @@ async function validateSignedOpaqueServiceAttestation({
   });
   validateOpaqueServiceAttestationDocument(signed.value, {
     candidateSha256,
+    candidateValidatorExecutionReportSha256,
     deployment,
     integratorIdentity,
     jobId,
+    learnerViewContract,
     lessonId,
     safeClientSha256,
     solverIdentity,
@@ -1026,21 +1315,93 @@ async function validateSignedOpaqueServiceAttestation({
   });
 }
 
+function validateSemanticState(value, expected, label) {
+  assertExactKeys(
+    value,
+    [
+      'activity_family_sha256',
+      'activity_id',
+      'activity_representation_sha256s',
+      'assistance_level',
+      'assistance_revealed',
+      'available_action_kinds',
+      'planner_reentry_required',
+      'repair_cycle',
+      'route_sha256',
+      'state_sha256',
+      'state_version',
+      'status',
+    ],
+    label,
+  );
+  if (value.activity_id === null) {
+    assert.equal(value.activity_family_sha256, null);
+    assert.deepEqual(value.activity_representation_sha256s, []);
+  } else {
+    requireString(value.activity_id, `${label}.activity_id`);
+    assert(expected.activityIds.has(value.activity_id), `${label} references unknown activity`);
+    requireHash(value.activity_family_sha256, `${label}.activity_family_sha256`);
+    assert(
+      Array.isArray(value.activity_representation_sha256s) &&
+        value.activity_representation_sha256s.length > 0,
+      `${label} needs representation fingerprints`,
+    );
+    value.activity_representation_sha256s.forEach((hash) =>
+      requireHash(hash, `${label} representation SHA-256`),
+    );
+    assert.deepEqual(
+      value.activity_representation_sha256s,
+      [...new Set(value.activity_representation_sha256s)].sort(compareText),
+      `${label} representation fingerprints must be unique/sorted`,
+    );
+  }
+  assert(
+    value.assistance_level === null || typeof value.assistance_level === 'string',
+    `${label}.assistance_level must be null or a string`,
+  );
+  assert.equal(typeof value.assistance_revealed, 'boolean');
+  assert(Array.isArray(value.available_action_kinds));
+  assert.deepEqual(
+    value.available_action_kinds,
+    [...new Set(value.available_action_kinds)].sort(compareText),
+    `${label} available actions must be unique/sorted`,
+  );
+  value.available_action_kinds.forEach((actionKind) =>
+    assert(
+      expected.transitionProfile.action_kinds.includes(actionKind),
+      `${label} contains unsupported action ${actionKind}`,
+    ),
+  );
+  assert.equal(typeof value.planner_reentry_required, 'boolean');
+  assert(Number.isInteger(value.repair_cycle) && value.repair_cycle >= 0);
+  if (value.route_sha256 !== null) requireHash(value.route_sha256, `${label}.route_sha256`);
+  assert(
+    expected.transitionProfile.semantic_statuses.includes(value.status),
+    `${label} has unsupported status ${value.status}`,
+  );
+  requireHash(value.state_sha256, `${label}.state_sha256`);
+  assert(Number.isInteger(value.state_version) && value.state_version >= 0);
+  const { state_sha256: stateSha256, ...payload } = value;
+  assert.equal(stateSha256, hashCanonicalJson(payload), `${label} semantic-state hash is stale`);
+}
+
 function validateReceiptDocument(value, expected) {
   assertExactKeys(
     value,
     [
+      'action_kind',
       'activity_id',
+      'after_state',
       'attempt_id',
+      'before_state',
       'candidate_sha256',
       'deployment_id',
+      'event_trace_sha256',
+      'event_types',
       'learner_feedback_sha256',
-      'learner_outcome',
-      'next_state_sha256',
-      'prior_state_sha256',
       'receipt_signing_key_fingerprint',
       'request_id',
-      'request_kind',
+      'response_outcome',
       'safe_client_sha256',
       'schema_version',
       'sequence',
@@ -1048,6 +1409,7 @@ function validateReceiptDocument(value, expected) {
       'service_timestamp',
       'session_id',
       'submitted_response_sha256',
+      'transition_profile_id',
     ],
     `service receipt ${expected.sequence}`,
   );
@@ -1058,14 +1420,13 @@ function validateReceiptDocument(value, expected) {
   assert.equal(value.safe_client_sha256, expected.safeClientSha256);
   assert.equal(value.deployment_id, expected.deployment.manifest.deployment_id);
   assert.equal(value.service_deployment_artifact_sha256, expected.deployment.artifact_sha256);
+  assert.equal(value.transition_profile_id, expected.transitionProfile.profile_id);
   assert.equal(
     value.receipt_signing_key_fingerprint,
     expected.deployment.receipt_signing_key.fingerprint,
   );
   requireString(value.attempt_id, 'service receipt attempt ID');
   requireString(value.request_id, 'service receipt request ID');
-  requireString(value.activity_id, 'service receipt activity ID');
-  assert(expected.activityIds.has(value.activity_id), `Receipt references unknown activity`);
   requireString(value.service_timestamp, 'service receipt timestamp');
   assert.match(
     value.service_timestamp,
@@ -1075,39 +1436,145 @@ function validateReceiptDocument(value, expected) {
   const timestamp = Date.parse(value.service_timestamp);
   assert.equal(Number.isNaN(timestamp), false, 'Service receipt timestamp is invalid');
   assert.equal(new Date(timestamp).toISOString(), value.service_timestamp);
-  const protocol = REQUEST_OUTCOME_CONTRACT[value.request_kind];
-  assert(protocol, `Unknown protocol request kind ${value.request_kind}`);
-  assert(
-    protocol.outcomes.includes(value.learner_outcome),
-    `${value.request_kind} cannot produce ${value.learner_outcome}`,
+  const actionContract = expected.transitionProfile.action_contracts.find(
+    (contract) => contract.action_kind === value.action_kind,
   );
-  if (protocol.response_hash) {
+  assert(actionContract, `Unsupported learner action kind ${value.action_kind}`);
+  validateSemanticState(
+    value.before_state,
+    expected,
+    `service receipt ${expected.sequence} before`,
+  );
+  validateSemanticState(value.after_state, expected, `service receipt ${expected.sequence} after`);
+  assert(
+    value.before_state.available_action_kinds.includes(value.action_kind),
+    `Learner action ${value.action_kind} was not available in the signed before-state`,
+  );
+  if (actionContract.activity_binding === 'REQUIRED') {
+    requireString(value.activity_id, 'service receipt activity ID');
+    assert.equal(value.activity_id, value.before_state.activity_id);
+  } else if (actionContract.activity_binding === 'OPTIONAL') {
+    if (value.activity_id !== null) {
+      requireString(value.activity_id, 'service receipt activity ID');
+      assert.equal(value.activity_id, value.before_state.activity_id);
+    }
+  } else {
+    assert.equal(value.activity_id, null);
+  }
+  if (actionContract.response_hash === 'REQUIRED') {
     requireHash(value.submitted_response_sha256, 'submitted response SHA-256');
+    assert(
+      actionContract.allowed_response_outcomes.includes(value.response_outcome),
+      `${value.action_kind} cannot produce ${value.response_outcome}`,
+    );
   } else {
     assert.equal(value.submitted_response_sha256, null);
+    assert.equal(value.response_outcome, null);
   }
+  assert(Array.isArray(value.event_types) && value.event_types.length > 0);
+  assert.equal(
+    new Set(value.event_types).size,
+    value.event_types.length,
+    'Service receipt event types may not repeat',
+  );
+  value.event_types.forEach((eventType) =>
+    assert(
+      expected.transitionProfile.event_kinds.includes(eventType),
+      `Service receipt has unsupported runtime event ${eventType}`,
+    ),
+  );
+  actionContract.required_event_kinds.forEach((eventType) =>
+    assert(value.event_types.includes(eventType), `${value.action_kind} lacks ${eventType}`),
+  );
+  requireHash(value.event_trace_sha256, 'service event-trace SHA-256');
+  assert.equal(
+    value.event_trace_sha256,
+    hashCanonicalJson(value.event_types),
+    'Service event-trace hash is stale',
+  );
   requireHash(value.learner_feedback_sha256, 'learner feedback SHA-256');
-  requireHash(value.prior_state_sha256, 'prior state SHA-256');
-  requireHash(value.next_state_sha256, 'next state SHA-256');
   assert.notEqual(
-    value.prior_state_sha256,
-    value.next_state_sha256,
+    value.before_state.state_sha256,
+    value.after_state.state_sha256,
     'Service receipt must attest a state transition',
+  );
+  assert(
+    value.after_state.state_version > value.before_state.state_version,
+    'Service receipt state version must increase',
   );
   return timestamp;
 }
 
-function findOrderedTrace(receipts, predicates) {
-  for (let start = 0; start <= receipts.length - predicates.length; start += 1) {
-    const trace = receipts.slice(start, start + predicates.length);
-    const first = trace[0];
+function stateMatchesConstraint(state, constraint) {
+  return (
+    (constraint.assistance_revealed === null ||
+      state.assistance_revealed === constraint.assistance_revealed) &&
+    (constraint.planner_reentry_required === null ||
+      state.planner_reentry_required === constraint.planner_reentry_required) &&
+    (constraint.repair_cycle === null || state.repair_cycle === constraint.repair_cycle) &&
+    (constraint.status === null || state.status === constraint.status)
+  );
+}
+
+function valuesMatchRelation(current, previous, relation) {
+  if (relation === 'ANY') return true;
+  const same = JSON.stringify(current) === JSON.stringify(previous);
+  return relation === 'SAME' ? same : !same;
+}
+
+function statesMatchRelations(current, previous, relation) {
+  return (
+    valuesMatchRelation(current.activity_id, previous.activity_id, relation.activity) &&
+    valuesMatchRelation(
+      current.activity_family_sha256,
+      previous.activity_family_sha256,
+      relation.family,
+    ) &&
+    valuesMatchRelation(
+      current.activity_representation_sha256s,
+      previous.activity_representation_sha256s,
+      relation.representations,
+    ) &&
+    valuesMatchRelation(current.route_sha256, previous.route_sha256, relation.route) &&
+    (relation.repair_cycle === 'ANY' ||
+      (relation.repair_cycle === 'SAME' && current.repair_cycle === previous.repair_cycle) ||
+      (relation.repair_cycle === 'INCREASE' && current.repair_cycle > previous.repair_cycle))
+  );
+}
+
+function receiptMatchesPathStep(receipt, step, previousReceipt) {
+  if (receipt.action_kind !== step.action_kind) return false;
+  if (receipt.response_outcome !== step.response_outcome) return false;
+  if (!step.required_event_kinds.every((eventType) => receipt.event_types.includes(eventType))) {
+    return false;
+  }
+  if (!stateMatchesConstraint(receipt.before_state, step.before)) return false;
+  if (!stateMatchesConstraint(receipt.after_state, step.after)) return false;
+  if (!statesMatchRelations(receipt.after_state, receipt.before_state, step.state_transition)) {
+    return false;
+  }
+  return (
+    previousReceipt === null ||
+    statesMatchRelations(
+      receipt.before_state,
+      previousReceipt.before_state,
+      step.relation_to_previous,
+    )
+  );
+}
+
+function findOrderedProfileTrace(
+  receipts,
+  steps,
+  stepIndex = 0,
+  receiptIndex = 0,
+  previous = null,
+) {
+  if (stepIndex === steps.length) return true;
+  for (let index = receiptIndex; index < receipts.length; index += 1) {
     if (
-      trace.every(
-        (receipt, index) =>
-          receipt.activity_id === first.activity_id &&
-          receipt.attempt_id === first.attempt_id &&
-          predicates[index](receipt),
-      )
+      receiptMatchesPathStep(receipts[index], steps[stepIndex], previous) &&
+      findOrderedProfileTrace(receipts, steps, stepIndex + 1, index + 1, receipts[index])
     ) {
       return true;
     }
@@ -1115,48 +1582,27 @@ function findOrderedTrace(receipts, predicates) {
   return false;
 }
 
-function validateSemanticPathCoverage(receipts) {
-  const is = (requestKind, learnerOutcome) => (receipt) =>
-    receipt.request_kind === requestKind && receipt.learner_outcome === learnerOutcome;
-  const predicatesByPath = {
-    CORRECT_RESPONSE: [is('SUBMIT_RESPONSE', 'CORRECT')],
-    HELP_REQUEST: [is('REQUEST_HELP', 'HELP_SHOWN')],
-    INCORRECT_RESPONSE: [is('SUBMIT_RESPONSE', 'INCORRECT')],
-    INTERRUPTION_AND_RESUME: [is('INTERRUPT', 'INTERRUPTED'), is('RESUME', 'RESUMED')],
-    INVALID_ACTIVITY: [is('SUBMIT_INVALID_ACTIVITY', 'INVALID_ACTIVITY_REJECTED')],
-    MIXED_ROUTE: [
-      is('SUBMIT_RESPONSE', 'INCORRECT'),
-      (receipt) =>
-        (receipt.request_kind === 'REQUEST_HELP' && receipt.learner_outcome === 'HELP_SHOWN') ||
-        (receipt.request_kind === 'RETRY' && receipt.learner_outcome === 'RETRY_READY'),
-      is('SUBMIT_RESPONSE', 'CORRECT'),
-    ],
-    OMISSION: [is('OMIT_RESPONSE', 'OMITTED')],
-    REPAIR_LIMIT: [
-      is('REPAIR_STEP', 'REPAIR_CONTINUE'),
-      is('REPAIR_STEP', 'REPAIR_CONTINUE'),
-      is('REPAIR_STEP', 'REPAIR_LIMIT'),
-    ],
-    RETRY: [
-      is('SUBMIT_RESPONSE', 'INCORRECT'),
-      is('RETRY', 'RETRY_READY'),
-      (receipt) => receipt.request_kind === 'SUBMIT_RESPONSE',
-    ],
-    REVEAL: [is('SUBMIT_RESPONSE', 'INCORRECT'), is('REVEAL', 'REVEALED')],
-  };
-  for (const pathId of REQUIRED_BLIND_PATH_IDS) {
+function validateSemanticPathCoverage(receipts, transitionProfile) {
+  const pathIds = transitionProfile.path_contracts.map((path) => path.path_id);
+  assert.deepEqual(
+    pathIds,
+    [...REQUIRED_BLIND_PATH_IDS],
+    'Signed action/transition profile does not cover every required blind semantic goal',
+  );
+  for (const path of transitionProfile.path_contracts) {
     assert(
-      findOrderedTrace(receipts, predicatesByPath[pathId]),
-      `${pathId} lacks a protocol-valid ordered receipt trace`,
+      findOrderedProfileTrace(receipts, path.steps),
+      `${path.path_id} lacks a signed-profile-valid ordered receipt trace`,
     );
   }
-  return [...REQUIRED_BLIND_PATH_IDS];
+  return pathIds;
 }
 
 function validateReceiptManifest(value, expected) {
   assertExactKeys(
     value,
     [
+      'action_schema_id',
       'candidate_sha256',
       'deployment_id',
       'entries',
@@ -1164,13 +1610,19 @@ function validateReceiptManifest(value, expected) {
       'receipt_signing_key_fingerprint',
       'safe_client_sha256',
       'schema_version',
-      'session_closed',
       'service_deployment_artifact_sha256',
+      'session_closed',
       'session_id',
+      'transition_profile_id',
     ],
     'service receipt manifest',
   );
   assert.equal(value.schema_version, SERVICE_RECEIPT_MANIFEST_SCHEMA_VERSION);
+  assert.equal(value.action_schema_id, expected.learnerViewContract.action_schema_id);
+  assert.equal(
+    value.transition_profile_id,
+    expected.learnerViewContract.transition_profile.profile_id,
+  );
   assert.equal(value.candidate_sha256, expected.candidateSha256);
   assert.equal(value.safe_client_sha256, expected.safeClientSha256);
   assert.equal(value.deployment_id, expected.deployment.manifest.deployment_id);
@@ -1208,6 +1660,7 @@ async function validateSignedServiceReceiptArtifact({
   candidateSha256,
   deployment,
   descriptor,
+  learnerViewContract,
   repositoryRoot,
   safeClientSha256,
 }) {
@@ -1235,6 +1688,7 @@ async function validateSignedServiceReceiptArtifact({
   validateReceiptManifest(manifest, {
     candidateSha256,
     deployment,
+    learnerViewContract,
     safeClientSha256,
   });
   const expectedPaths = new Set(['receipt-manifest.json', 'receipt-manifest.sig']);
@@ -1250,7 +1704,7 @@ async function validateSignedServiceReceiptArtifact({
   const receipts = [];
   const requestIds = new Set();
   let previousTimestamp = -Infinity;
-  let previousNextState = deployment.manifest.initial_state_sha256;
+  let previousState = null;
   for (const entry of manifest.entries) {
     const signed = await readAndVerifySignedJson({
       documentPath: `${descriptor.artifact_path}/${entry.receipt_path}`,
@@ -1269,25 +1723,144 @@ async function validateSignedServiceReceiptArtifact({
       safeClientSha256,
       sequence: entry.sequence,
       sessionId: manifest.session_id,
+      transitionProfile: learnerViewContract.transition_profile,
     });
     assert(timestamp > previousTimestamp, 'Service receipt timestamps must be strictly increasing');
-    assert.equal(
-      signed.value.prior_state_sha256,
-      previousNextState,
-      'Service receipt state chain is broken',
-    );
+    if (previousState === null) {
+      assert.equal(
+        signed.value.before_state.state_sha256,
+        deployment.manifest.initial_state_sha256,
+        'First service receipt does not begin at the deployed initial state',
+      );
+    } else {
+      assert.deepEqual(
+        signed.value.before_state,
+        previousState,
+        'Service receipt semantic-state chain is broken',
+      );
+    }
     assert(!requestIds.has(signed.value.request_id), 'Service receipt request IDs must be unique');
     requestIds.add(signed.value.request_id);
     previousTimestamp = timestamp;
-    previousNextState = signed.value.next_state_sha256;
+    previousState = signed.value.after_state;
     receipts.push(signed.value);
   }
   return {
     artifact_sha256: scan.artifact_sha256,
     receipts,
-    required_path_coverage: validateSemanticPathCoverage(receipts),
+    required_path_coverage: validateSemanticPathCoverage(
+      receipts,
+      learnerViewContract.transition_profile,
+    ),
     session_id: manifest.session_id,
   };
+}
+
+function validateServiceIntegrationReportDocument(value, expected) {
+  assertExactKeys(
+    value,
+    [
+      'action_schema_id',
+      'action_schema_sha256',
+      'candidate_sha256',
+      'checks',
+      'deployment_id',
+      'job_id',
+      'lesson_id',
+      'report_id',
+      'safe_client_sha256',
+      'schema_version',
+      'scoring_service_build_id',
+      'scoring_service_build_sha256',
+      'scoring_service_build_version',
+      'signing_key_fingerprint',
+      'source_plan_sha256',
+      'status',
+      'transition_profile_id',
+      'wave_id',
+    ],
+    'service integration execution report',
+  );
+  assert.equal(value.schema_version, SERVICE_INTEGRATION_REPORT_SCHEMA_VERSION);
+  assert.equal(value.source_plan_sha256, expected.sourcePlanSha256);
+  assert.equal(value.wave_id, expected.waveId);
+  assert.equal(value.job_id, expected.jobId);
+  assert.equal(value.lesson_id, expected.lessonId);
+  assert.equal(value.candidate_sha256, expected.candidateSha256);
+  assert.equal(value.safe_client_sha256, expected.safeClientSha256);
+  assert.equal(value.deployment_id, expected.deployment.manifest.deployment_id);
+  assert.equal(value.action_schema_id, expected.learnerViewContract.action_schema_id);
+  assert.equal(value.action_schema_sha256, expected.learnerViewContract.action_schema_sha256);
+  assert.equal(
+    value.transition_profile_id,
+    expected.learnerViewContract.transition_profile.profile_id,
+  );
+  assert.equal(
+    value.scoring_service_build_id,
+    expected.deployment.manifest.scoring_service_build_id,
+  );
+  assert.equal(
+    value.scoring_service_build_version,
+    expected.deployment.manifest.scoring_service_build_version,
+  );
+  assert.equal(
+    value.scoring_service_build_sha256,
+    expected.deployment.manifest.scoring_service_build_sha256,
+  );
+  assert.equal(value.signing_key_fingerprint, expected.deployment.receipt_signing_key.fingerprint);
+  assert.equal(value.status, 'EXECUTED_AND_PASSED');
+  requireString(value.report_id, 'service integration report ID');
+  assert(Array.isArray(value.checks));
+  for (const [index, check] of value.checks.entries()) {
+    assertExactKeys(check, ['check_id', 'status'], `service integration check[${index}]`);
+    assert.equal(check.status, 'PASS');
+  }
+  assert.deepEqual(
+    value.checks.map((check) => check.check_id),
+    expected.learnerViewContract.transition_profile.technical_service_check_ids,
+    'Service integration report is missing signed-profile technical checks',
+  );
+  assert.deepEqual(
+    value.checks.map((check) => check.check_id),
+    [...REQUIRED_SERVICE_INTEGRATION_CHECK_IDS],
+    'Invalid-activity and unsupported-action checks belong to the technical service gate',
+  );
+}
+
+async function validateSignedServiceIntegrationReport({
+  candidateSha256,
+  deployment,
+  descriptor,
+  jobId,
+  learnerViewContract,
+  lessonId,
+  repositoryRoot,
+  safeClientSha256,
+  sourcePlanSha256,
+  waveId,
+}) {
+  validateSignedDescriptor(descriptor, `${jobId} service integration report descriptor`);
+  assert.equal(descriptor.signer_key_fingerprint, deployment.receipt_signing_key.fingerprint);
+  const signed = await readAndVerifySignedJson({
+    documentPath: descriptor.report_path,
+    documentSha256: descriptor.report_sha256,
+    label: `${jobId} signed service integration execution report`,
+    publicKeyPem: deployment.receipt_signing_key.pem,
+    repositoryRoot,
+    signaturePath: descriptor.report_signature_path,
+    signatureSha256: descriptor.report_signature_sha256,
+  });
+  validateServiceIntegrationReportDocument(signed.value, {
+    candidateSha256,
+    deployment,
+    jobId,
+    learnerViewContract,
+    lessonId,
+    safeClientSha256,
+    sourcePlanSha256,
+    waveId,
+  });
+  return signed.value;
 }
 
 async function validateBrowserAccessibilityEvidenceArtifact({ descriptor, repositoryRoot }) {
@@ -1336,7 +1909,8 @@ function validateAccessibilityExecutionReportDocument(value, expected) {
       'harness_build_version',
       'harness_signing_key_fingerprint',
       'job_id',
-      'learner_dto_schema_id',
+      'learner_action_schema_id',
+      'learner_view_schema_id',
       'lesson_id',
       'media_digests',
       'reviewer_identity',
@@ -1347,6 +1921,7 @@ function validateAccessibilityExecutionReportDocument(value, expected) {
       'status',
       'supported_action_kinds',
       'supported_representation_kinds',
+      'transition_profile_id',
       'wave_id',
     ],
     'accessibility execution report',
@@ -1358,7 +1933,12 @@ function validateAccessibilityExecutionReportDocument(value, expected) {
   assert.equal(value.lesson_id, expected.lessonId);
   assert.equal(value.candidate_sha256, expected.candidateSha256);
   assert.equal(value.safe_client_sha256, expected.safeClientSha256);
-  assert.equal(value.learner_dto_schema_id, expected.learnerContract.dto_schema_id);
+  assert.equal(value.learner_action_schema_id, expected.learnerViewContract.action_schema_id);
+  assert.equal(value.learner_view_schema_id, expected.learnerViewContract.view_schema_id);
+  assert.equal(
+    value.transition_profile_id,
+    expected.learnerViewContract.transition_profile.profile_id,
+  );
   assert.equal(value.harness_build_id, expected.harnessBuild.manifest.build_id);
   assert.equal(value.harness_build_sha256, expected.harnessBuild.artifact_sha256);
   assert.equal(value.harness_build_version, expected.harnessBuild.manifest.build_version);
@@ -1368,10 +1948,13 @@ function validateAccessibilityExecutionReportDocument(value, expected) {
   );
   assert.deepEqual(value.reviewer_identity, expected.reviewerIdentity);
   assert.equal(value.reviewer_slot_id, expected.reviewerSlotId);
-  assert.deepEqual(value.supported_action_kinds, expected.learnerContract.action_kinds);
+  assert.deepEqual(
+    value.supported_action_kinds,
+    expected.learnerViewContract.transition_profile.action_kinds,
+  );
   assert.deepEqual(
     value.supported_representation_kinds,
-    expected.learnerContract.representation_kinds,
+    expected.learnerViewContract.representation_kinds,
   );
   assert.deepEqual(value.media_digests, expected.mediaDigests);
   requireHash(value.browser_build_sha256, 'accessibility browser build SHA-256');
@@ -1406,7 +1989,7 @@ async function validateSignedAccessibilityExecutionReport({
   descriptor,
   harnessBuild,
   jobId,
-  learnerContract,
+  learnerViewContract,
   lessonId,
   mediaDigests,
   repositoryRoot,
@@ -1436,7 +2019,7 @@ async function validateSignedAccessibilityExecutionReport({
     candidateSha256,
     harnessBuild,
     jobId,
-    learnerContract,
+    learnerViewContract,
     lessonId,
     mediaDigests,
     reviewerIdentity,
@@ -1899,6 +2482,7 @@ export {
   ACCESSIBILITY_EXECUTION_REPORT_SCHEMA_VERSION,
   BUNDLE_FILES,
   CANDIDATE_MANIFEST_SCHEMA_VERSION,
+  CANDIDATE_VALIDATOR_EXECUTION_REPORT_SCHEMA_VERSION,
   CLOSED_BUNDLE_SCANNER_ID,
   CLOSED_BUNDLE_SCHEMA_VERSION,
   CUMULATIVE_CORPUS_SCHEMA_VERSION,
@@ -1907,13 +2491,14 @@ export {
   GATE_REPORT_SCHEMA_VERSION,
   HASH_PATTERN,
   OPAQUE_SERVICE_ATTESTATION_SCHEMA_VERSION,
-  REQUEST_OUTCOME_CONTRACT,
   REQUIRED_ACCESSIBILITY_CHECK_IDS,
   REQUIRED_BLIND_PATH_IDS,
   REQUIRED_GATE_CHECK_IDS,
+  REQUIRED_SERVICE_INTEGRATION_CHECK_IDS,
   RIGHTS_REPORT_SCHEMA_VERSION,
   SAFE_PROJECTION_REPORT_SCHEMA_VERSION,
   SERVICE_DEPLOYMENT_MANIFEST_SCHEMA_VERSION,
+  SERVICE_INTEGRATION_REPORT_SCHEMA_VERSION,
   SERVICE_RECEIPT_MANIFEST_SCHEMA_VERSION,
   SERVICE_RECEIPT_SCHEMA_VERSION,
   SOURCE_OUTPUT_SIMILARITY_SCHEMA_VERSION,
@@ -1924,11 +2509,13 @@ export {
   validateMultiSignedWaveSimilarityReport,
   validateSafeProjectionEvidence,
   validateSignedAccessibilityExecutionReport,
+  validateSignedCandidateValidatorExecution,
   validateSignedCumulativeCorpusManifest,
   validateSignedDomainReport,
   validateSignedGateReport,
   validateSignedOpaqueServiceAttestation,
   validateSignedRightsEvidence,
+  validateSignedServiceIntegrationReport,
   validateSignedServiceReceiptArtifact,
   validateServiceDeploymentArtifact,
 };

@@ -1,15 +1,20 @@
 import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
 import { generateKeyPairSync, sign as createSignature } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import test from 'node:test';
+import { promisify } from 'node:util';
+
+import Ajv from 'ajv';
 
 import { hashText } from './generate-v3-cloud-authoring-plan.mjs';
 import {
   CLOSED_BUNDLE_SCANNER_ID,
   REQUIRED_ACCESSIBILITY_CHECK_IDS,
   REQUIRED_GATE_CHECK_IDS,
+  REQUIRED_SERVICE_INTEGRATION_CHECK_IDS,
   createClosedReviewBundleManifest,
   validateSignedCumulativeCorpusManifest,
 } from './v3-cloud-authoring-evidence-contract.mjs';
@@ -18,13 +23,17 @@ import {
   directoryHash,
   hashArtifactDirectory,
   hashBytes,
+  hashCanonicalJson,
   publicKeyFingerprint,
+  validatePinnedBuildArtifact,
 } from './v3-cloud-authoring-trust-contract.mjs';
 import {
   computeSourceLedgerSha256,
   createWaveAssignmentOverlayTemplate,
   validateWaveAssignmentOverlay,
 } from './validate-v3-cloud-authoring-wave-overlay.mjs';
+
+const execFileAsync = promisify(execFile);
 
 const planPath = 'curriculum/v3/v3-cloud-authoring-jobs.json';
 const checkedTemplatePath =
@@ -38,28 +47,27 @@ const jobById = new Map(plan.jobs.map((job) => [job.job_id, job]));
 
 const FOUNDATION_COMMIT = 'FIXTURE_ONLY_HARDENED_FOUNDATION_COMMIT';
 const CANDIDATE_SCHEMA_ID = 'FIXTURE_ONLY_LESSON_DEFINITION_SCHEMA_V1';
-const LEARNER_DTO_SCHEMA_ID = 'FIXTURE_ONLY_LEARNER_DTO_SCHEMA_V1';
+const LEARNER_ACTION_SCHEMA_ID = 'FIXTURE_ONLY_LESSON_ACTION_INPUT_SCHEMA_V1';
+const LEARNER_VIEW_SCHEMA_ID = 'FIXTURE_ONLY_LESSON_STEP_VIEW_SCHEMA_V1';
 const RUNTIME_CONTRACT_VERSION = 'FIXTURE_ONLY_RUNTIME_CONTRACT_V1';
 const REPRESENTATION_KINDS = [
-  'ANIMATION',
-  'AUDIO',
-  'CHART',
-  'DIAGRAM',
-  'EQUATION',
-  'IMAGE',
-  'SIMULATION',
-  'TABLE',
-  'TEXT',
-  'VIDEO',
+  'animation',
+  'audio',
+  'chart',
+  'diagram',
+  'equation',
+  'simulation',
+  'table',
+  'text',
+  'video',
 ];
 const ACTION_KINDS = [
-  'CONTINUE',
-  'INTERRUPT',
-  'REQUEST_HELP',
-  'RESUME',
-  'RETRY',
-  'REVEAL',
-  'SUBMIT_RESPONSE',
+  'continue',
+  'pause',
+  'present',
+  'request_assistance',
+  'resume',
+  'submit_response',
 ];
 const SIGNING_ROLES = new Set([
   'ACCESSIBILITY_TECHNICAL_AUDITOR',
@@ -142,180 +150,400 @@ async function artifactDescriptor(repositoryRoot, artifactPath, limits) {
   };
 }
 
-function learnerDtoSchema() {
+function learnerActionSchema() {
+  return {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    oneOf: ACTION_KINDS.map((kind) => {
+      const properties = { type: { const: kind } };
+      const required = ['type'];
+      if (['continue', 'present', 'request_assistance', 'submit_response'].includes(kind)) {
+        properties.activityId =
+          kind === 'continue' ? { type: ['string', 'null'] } : { minLength: 1, type: 'string' };
+        required.push('activityId');
+      }
+      if (kind === 'submit_response') {
+        properties.response = {
+          additionalProperties: false,
+          properties: { kind: { enum: ['choice', 'not_sure'] } },
+          required: ['kind'],
+          type: 'object',
+        };
+        required.push('response');
+      }
+      return { additionalProperties: false, properties, required, type: 'object' };
+    }),
+  };
+}
+
+function learnerViewSchema() {
+  const representation = {
+    additionalProperties: false,
+    properties: {
+      assetRef: { minLength: 1, type: 'string' },
+      captionsRef: { type: ['string', 'null'] },
+      id: { minLength: 1, type: 'string' },
+      kind: { enum: REPRESENTATION_KINDS },
+      label: { minLength: 1, type: 'string' },
+      transcript: { items: { minLength: 1, type: 'string' }, minItems: 1, type: 'array' },
+    },
+    required: ['id', 'kind', 'label'],
+    type: 'object',
+  };
   return {
     $schema: 'http://json-schema.org/draft-07/schema#',
     additionalProperties: false,
     properties: {
-      actions: {
-        items: {
-          additionalProperties: false,
-          properties: {
-            action_id: { minLength: 1, type: 'string' },
-            kind: { enum: ACTION_KINDS },
-          },
-          required: ['action_id', 'kind'],
-          type: 'object',
-        },
-        minItems: 1,
-        type: 'array',
-      },
-      activities: {
-        items: {
-          additionalProperties: false,
-          properties: {
-            activity_id: { minLength: 1, type: 'string' },
-            options: {
-              items: { type: 'string' },
-              minItems: 2,
-              type: 'array',
+      activity: {
+        anyOf: [
+          { type: 'null' },
+          {
+            additionalProperties: false,
+            properties: {
+              id: { minLength: 1, type: 'string' },
+              representations: { items: representation, minItems: 1, type: 'array' },
             },
-            prompt: { minLength: 1, type: 'string' },
-            response_mode: {
-              enum: ['FREE_TEXT', 'MULTI_SELECT', 'NUMERIC', 'SINGLE_SELECT'],
-            },
+            required: ['id', 'representations'],
+            type: 'object',
           },
-          required: ['activity_id', 'options', 'prompt', 'response_mode'],
-          type: 'object',
-        },
-        minItems: 1,
-        type: 'array',
+        ],
       },
-      activity_graph: {
-        additionalProperties: false,
-        properties: {
-          edges: {
-            items: {
-              additionalProperties: false,
-              properties: {
-                event: { type: 'string' },
-                from: { type: 'string' },
-                to: { type: 'string' },
-              },
-              required: ['event', 'from', 'to'],
-              type: 'object',
-            },
-            minItems: 1,
-            type: 'array',
-          },
-          initial_state: { type: 'string' },
-          states: {
-            items: { type: 'string' },
-            minItems: 2,
-            type: 'array',
-          },
-        },
-        required: ['edges', 'initial_state', 'states'],
-        type: 'object',
-      },
-      lesson_id: { minLength: 1, type: 'string' },
-      representations: {
-        items: {
-          additionalProperties: false,
-          properties: {
-            alternative_text: { type: 'string' },
-            asset_ids: {
-              items: { type: 'string' },
-              type: 'array',
-            },
-            data_text: { type: 'string' },
-            kind: { enum: REPRESENTATION_KINDS },
-            representation_id: { minLength: 1, type: 'string' },
-          },
-          required: ['alternative_text', 'asset_ids', 'data_text', 'kind', 'representation_id'],
-          type: 'object',
-        },
-        minItems: 1,
-        type: 'array',
-      },
-      schema_version: { const: LEARNER_DTO_SCHEMA_ID },
+      availableActions: { items: { enum: ACTION_KINDS }, type: 'array' },
+      lessonId: { minLength: 1, type: 'string' },
+      schemaVersion: { const: '1.2' },
+      status: { enum: ['active', 'paused', 'repair_pending', 'route_pending'] },
     },
-    required: [
-      'actions',
-      'activities',
-      'activity_graph',
-      'lesson_id',
-      'representations',
-      'schema_version',
-    ],
+    required: ['activity', 'availableActions', 'lessonId', 'schemaVersion', 'status'],
     type: 'object',
   };
 }
 
 function candidateSchema() {
-  const dto = clone(learnerDtoSchema());
-  delete dto.$schema;
   return {
     $schema: 'http://json-schema.org/draft-07/schema#',
     additionalProperties: false,
     properties: {
-      answer_keys: {
-        additionalProperties: { type: 'string' },
-        minProperties: 1,
+      id: { minLength: 1, type: 'string' },
+      knowledgeComponents: {
+        items: {
+          additionalProperties: false,
+          properties: { id: { minLength: 1, type: 'string' } },
+          required: ['id'],
+          type: 'object',
+        },
+        minItems: 2,
+        type: 'array',
+      },
+      orderedKcIds: { items: { minLength: 1, type: 'string' }, minItems: 2, type: 'array' },
+      schemaVersion: { const: '3.2.0' },
+      serverOnly: {
+        additionalProperties: false,
+        properties: {
+          answerKeys: {
+            additionalProperties: { minLength: 1, type: 'string' },
+            minProperties: 1,
+            type: 'object',
+          },
+          rationales: {
+            additionalProperties: { minLength: 1, type: 'string' },
+            minProperties: 1,
+            type: 'object',
+          },
+        },
+        required: ['answerKeys', 'rationales'],
         type: 'object',
       },
-      learner_safe_dto: dto,
-      lesson_id: { minLength: 1, type: 'string' },
-      rationales: {
-        additionalProperties: { type: 'string' },
-        minProperties: 1,
-        type: 'object',
-      },
-      schema_version: { const: CANDIDATE_SCHEMA_ID },
     },
-    required: ['answer_keys', 'learner_safe_dto', 'lesson_id', 'rationales', 'schema_version'],
+    required: ['id', 'knowledgeComponents', 'orderedKcIds', 'schemaVersion', 'serverOnly'],
     type: 'object',
   };
 }
 
-function learnerDto(job) {
+const ANY_STATE_CONSTRAINT = Object.freeze({
+  assistance_revealed: null,
+  planner_reentry_required: null,
+  repair_cycle: null,
+  status: null,
+});
+const ANY_RELATIONS = Object.freeze({
+  activity: 'ANY',
+  family: 'ANY',
+  repair_cycle: 'ANY',
+  representations: 'ANY',
+  route: 'ANY',
+});
+
+function semanticStep({
+  actionKind,
+  after = {},
+  before = {},
+  events = [],
+  outcome = null,
+  previous = {},
+  transition = {},
+}) {
   return {
-    actions: ACTION_KINDS.map((kind, index) => ({
-      action_id: `${job.lesson_id}-ACTION-${index}`,
-      kind,
-    })),
-    activities: [
-      {
-        activity_id: `${job.lesson_id}-ACTIVITY`,
-        options: ['Option A', 'Option B'],
-        prompt: 'Choose the learner response supported by the evidence.',
-        response_mode: 'SINGLE_SELECT',
-      },
-    ],
-    activity_graph: {
-      edges: [
-        { event: 'SUBMIT', from: 'PROMPT', to: 'FEEDBACK' },
-        { event: 'CONTINUE', from: 'FEEDBACK', to: 'COMPLETE' },
-      ],
-      initial_state: 'PROMPT',
-      states: ['PROMPT', 'FEEDBACK', 'COMPLETE'],
-    },
-    lesson_id: job.lesson_id,
-    representations: REPRESENTATION_KINDS.map((kind, index) => ({
-      alternative_text: `${kind} nonvisual alternative`,
-      asset_ids: kind === 'VIDEO' ? [`${job.lesson_id}-VIDEO`] : [],
-      data_text: `${kind} structured learner-safe data`,
-      kind,
-      representation_id: `${job.lesson_id}-REP-${index}`,
-    })),
-    schema_version: LEARNER_DTO_SCHEMA_ID,
+    action_kind: actionKind,
+    after: { ...ANY_STATE_CONSTRAINT, ...after },
+    before: { ...ANY_STATE_CONSTRAINT, ...before },
+    relation_to_previous: { ...ANY_RELATIONS, ...previous },
+    required_event_kinds: [...events].sort(),
+    response_outcome: outcome,
+    state_transition: { ...ANY_RELATIONS, ...transition },
   };
 }
 
+const TRANSITION_PROFILE = Object.freeze({
+  action_contracts: [
+    {
+      action_kind: 'continue',
+      activity_binding: 'OPTIONAL',
+      allowed_response_outcomes: [],
+      required_event_kinds: [],
+      response_hash: 'NULL',
+    },
+    {
+      action_kind: 'pause',
+      activity_binding: 'NONE',
+      allowed_response_outcomes: [],
+      required_event_kinds: ['lesson_run_paused'],
+      response_hash: 'NULL',
+    },
+    {
+      action_kind: 'present',
+      activity_binding: 'REQUIRED',
+      allowed_response_outcomes: [],
+      required_event_kinds: ['lesson_activity_presented'],
+      response_hash: 'NULL',
+    },
+    {
+      action_kind: 'request_assistance',
+      activity_binding: 'REQUIRED',
+      allowed_response_outcomes: [],
+      required_event_kinds: ['lesson_assistance_revealed'],
+      response_hash: 'NULL',
+    },
+    {
+      action_kind: 'resume',
+      activity_binding: 'NONE',
+      allowed_response_outcomes: [],
+      required_event_kinds: ['lesson_run_resumed'],
+      response_hash: 'NULL',
+    },
+    {
+      action_kind: 'submit_response',
+      activity_binding: 'REQUIRED',
+      allowed_response_outcomes: ['correct', 'incorrect', 'not_sure'],
+      required_event_kinds: ['lesson_response_evaluated'],
+      response_hash: 'REQUIRED',
+    },
+  ],
+  action_kinds: ACTION_KINDS,
+  event_kinds: [
+    'lesson_activity_presented',
+    'lesson_assistance_revealed',
+    'lesson_repair_started',
+    'lesson_response_evaluated',
+    'lesson_route_selected',
+    'lesson_run_paused',
+    'lesson_run_resumed',
+  ],
+  path_contracts: [
+    {
+      path_id: 'ALTERNATE_ROUTE_SELECTION',
+      steps: [
+        semanticStep({ actionKind: 'submit_response', outcome: 'incorrect' }),
+        semanticStep({
+          actionKind: 'present',
+          previous: { activity: 'DIFFERENT', family: 'DIFFERENT' },
+        }),
+        semanticStep({
+          actionKind: 'submit_response',
+          outcome: 'not_sure',
+          previous: { activity: 'SAME', family: 'SAME' },
+        }),
+        semanticStep({
+          actionKind: 'continue',
+          events: ['lesson_route_selected'],
+          previous: { activity: 'SAME', family: 'SAME' },
+          transition: { route: 'DIFFERENT' },
+        }),
+      ],
+    },
+    {
+      path_id: 'ASSISTANCE_REVEAL',
+      steps: [
+        semanticStep({
+          actionKind: 'request_assistance',
+          after: { assistance_revealed: true },
+          before: { assistance_revealed: false },
+        }),
+      ],
+    },
+    {
+      path_id: 'CORRECT_RESPONSE',
+      steps: [semanticStep({ actionKind: 'submit_response', outcome: 'correct' })],
+    },
+    {
+      path_id: 'FRESH_ACTIVITY_RETRY',
+      steps: [
+        semanticStep({
+          actionKind: 'submit_response',
+          outcome: 'incorrect',
+          transition: { activity: 'DIFFERENT', family: 'DIFFERENT' },
+        }),
+        semanticStep({
+          actionKind: 'present',
+          previous: { activity: 'DIFFERENT', family: 'DIFFERENT' },
+        }),
+        semanticStep({
+          actionKind: 'submit_response',
+          outcome: 'correct',
+          previous: { activity: 'SAME', family: 'SAME' },
+        }),
+      ],
+    },
+    {
+      path_id: 'INCORRECT_RESPONSE',
+      steps: [semanticStep({ actionKind: 'submit_response', outcome: 'incorrect' })],
+    },
+    {
+      path_id: 'NOT_SURE_RESPONSE',
+      steps: [semanticStep({ actionKind: 'submit_response', outcome: 'not_sure' })],
+    },
+    {
+      path_id: 'PAUSE_AND_RESUME',
+      steps: [
+        semanticStep({ actionKind: 'pause', after: { status: 'paused' } }),
+        semanticStep({
+          actionKind: 'resume',
+          after: { status: 'active' },
+          before: { status: 'paused' },
+          previous: { activity: 'SAME', family: 'SAME' },
+        }),
+      ],
+    },
+    {
+      path_id: 'REPAIR_LIMIT_PLANNER_REENTRY',
+      steps: [
+        semanticStep({
+          actionKind: 'continue',
+          after: { repair_cycle: 1 },
+          events: ['lesson_repair_started'],
+          transition: {
+            activity: 'DIFFERENT',
+            family: 'DIFFERENT',
+            repair_cycle: 'INCREASE',
+            representations: 'DIFFERENT',
+          },
+        }),
+        semanticStep({
+          actionKind: 'continue',
+          after: { repair_cycle: 2 },
+          events: ['lesson_repair_started'],
+          previous: { activity: 'DIFFERENT', family: 'DIFFERENT', repair_cycle: 'INCREASE' },
+          transition: {
+            activity: 'DIFFERENT',
+            family: 'DIFFERENT',
+            repair_cycle: 'INCREASE',
+            representations: 'DIFFERENT',
+          },
+        }),
+        semanticStep({
+          actionKind: 'submit_response',
+          after: { planner_reentry_required: true, repair_cycle: 2, status: 'paused' },
+          outcome: 'incorrect',
+          previous: { activity: 'DIFFERENT', family: 'DIFFERENT', repair_cycle: 'INCREASE' },
+        }),
+      ],
+    },
+    {
+      path_id: 'TARGETED_REPAIR_CYCLE',
+      steps: [
+        semanticStep({ actionKind: 'submit_response', outcome: 'incorrect' }),
+        semanticStep({
+          actionKind: 'continue',
+          events: ['lesson_repair_started'],
+          previous: { activity: 'SAME', family: 'SAME' },
+          transition: {
+            activity: 'DIFFERENT',
+            family: 'DIFFERENT',
+            repair_cycle: 'INCREASE',
+            representations: 'DIFFERENT',
+          },
+        }),
+      ],
+    },
+  ],
+  profile_id: 'FIXTURE-ONLY-FOUNDATION-ACTION-TRANSITION-PROFILE',
+  response_outcomes: ['correct', 'incorrect', 'not_sure'],
+  schema_version: 'mcat-v3-action-transition-profile-1',
+  semantic_statuses: ['active', 'paused', 'repair_pending', 'route_pending'],
+  technical_service_check_ids: REQUIRED_SERVICE_INTEGRATION_CHECK_IDS,
+});
+
+function activityId(job, index) {
+  return `${job.lesson_id}-ACTIVITY-${index}`;
+}
+
+function learnerStepViews(job) {
+  return Array.from({ length: 8 }, (_, index) => {
+    const representations =
+      index === 0
+        ? REPRESENTATION_KINDS.map((kind, representationIndex) => {
+            const value = {
+              id: `${job.lesson_id}-REP-${representationIndex}`,
+              kind,
+              label: `${kind} fixture representation`,
+            };
+            if (kind === 'audio' || kind === 'video') {
+              value.assetRef = `/lesson-assets/${job.lesson_id.toLowerCase()}-${kind}.${kind === 'audio' ? 'mp3' : 'mp4'}`;
+              value.transcript = [`${kind} fixture transcript`];
+              value.captionsRef =
+                kind === 'audio'
+                  ? null
+                  : `/lesson-assets/${job.lesson_id.toLowerCase()}-${kind}.vtt`;
+            }
+            return value;
+          })
+        : [
+            {
+              id: `${job.lesson_id}-REP-ACTIVITY-${index}`,
+              kind: 'text',
+              label: `Fresh fixture representation ${index}`,
+            },
+          ];
+    return {
+      activity: { id: activityId(job, index), representations },
+      availableActions: ACTION_KINDS,
+      lessonId: job.lesson_id,
+      schemaVersion: '1.2',
+      status: 'active',
+    };
+  });
+}
+
 function learnerEnvelope(job) {
+  const views = learnerStepViews(job);
   return {
-    dto_schema_id: LEARNER_DTO_SCHEMA_ID,
-    lesson_dto: learnerDto(job),
+    lesson_step_views: views,
     media_digests: [
       {
-        asset_id: `${job.lesson_id}-VIDEO`,
+        asset_ref: `/lesson-assets/${job.lesson_id.toLowerCase()}-audio.mp3`,
+        captions_sha256: null,
+        media_kind: 'audio',
+        media_sha256: hashText(`audio-${job.job_id}`),
+        transcript_sha256: hashCanonicalJson(['audio fixture transcript']),
+      },
+      {
+        asset_ref: `/lesson-assets/${job.lesson_id.toLowerCase()}-video.mp4`,
         captions_sha256: hashText(`captions-${job.job_id}`),
-        media_kind: 'VIDEO',
-        sha256: hashText(`video-${job.job_id}`),
-        transcript_sha256: hashText(`transcript-${job.job_id}`),
+        media_kind: 'video',
+        media_sha256: hashText(`video-${job.job_id}`),
+        transcript_sha256: hashCanonicalJson(['video fixture transcript']),
       },
     ],
-    schema_version: 'mcat-v3-learner-safe-envelope-1',
+    schema_version: 'mcat-v3-learner-safe-view-envelope-2',
+    view_schema_id: LEARNER_VIEW_SCHEMA_ID,
   };
 }
 
@@ -325,14 +553,35 @@ async function writeBuildArtifact({
   buildVersion = 'FIXTURE-1.0.0',
   key = null,
   path,
+  provenanceKey,
   repositoryRoot,
 }) {
-  await writeJson(join(repositoryRoot, path, 'build-manifest.json'), {
-    build_id: buildId,
-    build_kind: buildKind,
-    build_version: buildVersion,
-    foundation_commit_sha: FOUNDATION_COMMIT,
-    schema_version: 'mcat-v3-pinned-build-manifest-1',
+  const subjectPath = `subject/${buildKind.toLowerCase().replaceAll('_', '-')}.mjs`;
+  const subjectSha256 = await writeBytes(
+    join(repositoryRoot, path, subjectPath),
+    Buffer.from(`export const fixtureOnlyBuildKind = '${buildKind}';\n`),
+  );
+  const subject = {
+    entrypoint_path: subjectPath,
+    file_manifest: [{ path: subjectPath, sha256: subjectSha256 }],
+    format: 'CLOSED_FILE_TREE',
+    sha256: directoryHash([{ path: subjectPath, sha256: subjectSha256 }]),
+  };
+  const provenance = await writeSignedJson({
+    document: {
+      build_id: buildId,
+      build_kind: buildKind,
+      build_version: buildVersion,
+      foundation_commit_sha: FOUNDATION_COMMIT,
+      generated_at: '2026-07-23T18:00:00Z',
+      schema_version: 'mcat-v3-signed-build-provenance-1',
+      status: 'VERIFIED_IMMUTABLE_IMPLEMENTATION_SUBJECT',
+      subject,
+    },
+    documentPath: `${path}/build-provenance.json`,
+    key: provenanceKey,
+    repositoryRoot,
+    signaturePath: `${path}/build-provenance.sig`,
   });
   if (key) {
     await writeBytes(
@@ -340,27 +589,51 @@ async function writeBuildArtifact({
       Buffer.from(key.publicKeyPem),
     );
   }
+  await writeJson(join(repositoryRoot, path, 'build-manifest.json'), {
+    build_id: buildId,
+    build_kind: buildKind,
+    build_version: buildVersion,
+    foundation_commit_sha: FOUNDATION_COMMIT,
+    provenance: {
+      path: 'build-provenance.json',
+      sha256: provenance.report_sha256,
+      signature_path: 'build-provenance.sig',
+      signature_sha256: provenance.report_signature_sha256,
+      signer_key_fingerprint: provenanceKey.fingerprint,
+    },
+    report_signing_public_key_path: key ? 'report-signing-public-key.pem' : null,
+    schema_version: 'mcat-v3-pinned-build-manifest-2',
+    subject,
+  });
   return artifactDescriptor(repositoryRoot, path, ARTIFACT_LIMITS.build);
 }
 
 async function materializeIntegrationTrust(overlay, repositoryRoot) {
   const integrationRoot = createSigningKey();
+  const candidateValidatorKey = createSigningKey();
   const compilerKey = createSigningKey();
   const harnessKey = createSigningKey();
   const candidateSchemaPath = 'integration/candidate-schema.json';
-  const learnerSchemaPath = 'integration/learner-dto-schema.json';
+  const learnerActionSchemaPath = 'integration/learner-action-schema.json';
+  const learnerViewSchemaPath = 'integration/learner-view-schema.json';
   const candidateSchemaWritten = await writeJson(
     join(repositoryRoot, candidateSchemaPath),
     candidateSchema(),
   );
-  const learnerSchemaWritten = await writeJson(
-    join(repositoryRoot, learnerSchemaPath),
-    learnerDtoSchema(),
+  const learnerActionSchemaWritten = await writeJson(
+    join(repositoryRoot, learnerActionSchemaPath),
+    learnerActionSchema(),
+  );
+  const learnerViewSchemaWritten = await writeJson(
+    join(repositoryRoot, learnerViewSchemaPath),
+    learnerViewSchema(),
   );
   const candidateValidatorBuild = await writeBuildArtifact({
     buildId: 'FIXTURE-CANDIDATE-VALIDATOR-BUILD',
     buildKind: 'CANDIDATE_VALIDATOR',
+    key: candidateValidatorKey,
     path: 'integration/candidate-validator',
+    provenanceKey: integrationRoot,
     repositoryRoot,
   });
   const compilerBuild = await writeBuildArtifact({
@@ -368,6 +641,7 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
     buildKind: 'SAFE_PROJECTION_COMPILER',
     key: compilerKey,
     path: 'integration/safe-projection-compiler',
+    provenanceKey: integrationRoot,
     repositoryRoot,
   });
   const harnessBuild = await writeBuildArtifact({
@@ -375,12 +649,14 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
     buildKind: 'REVIEW_HARNESS',
     key: harnessKey,
     path: 'integration/review-harness',
+    provenanceKey: integrationRoot,
     repositoryRoot,
   });
   const scoringBuild = await writeBuildArtifact({
     buildId: 'FIXTURE-SCORING-SERVICE-BUILD',
     buildKind: 'SCORING_SERVICE',
     path: 'integration/scoring-service',
+    provenanceKey: integrationRoot,
     repositoryRoot,
   });
   const pinset = {
@@ -405,23 +681,57 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
     },
     foundation_commit_sha: FOUNDATION_COMMIT,
     issued_at: '2026-07-23T18:00:00Z',
-    learner_contract: {
-      action_kinds: ACTION_KINDS,
-      dto_schema_id: LEARNER_DTO_SCHEMA_ID,
-      dto_schema_sha256: learnerSchemaWritten.sha256,
+    learner_view_contract: {
+      action_schema_id: LEARNER_ACTION_SCHEMA_ID,
+      action_schema_sha256: learnerActionSchemaWritten.sha256,
       representation_kinds: REPRESENTATION_KINDS,
+      semantic_profile: {
+        activity_id_pointer: '/id',
+        activity_pointer: '/activity',
+        available_actions_pointer: '/availableActions',
+        expected_view_schema_version: '1.2',
+        lesson_id_pointer: '/lessonId',
+        media_profile: {
+          asset_ref_pointer: '/assetRef',
+          audio_captions_required: false,
+          audio_kind: 'audio',
+          captions_ref_pointer: '/captionsRef',
+          transcript_pointer: '/transcript',
+          video_captions_required: true,
+          video_kind: 'video',
+        },
+        representation_kind_pointer: '/kind',
+        representations_pointer: '/representations',
+        schema_version: 'mcat-v3-learner-view-semantic-profile-1',
+        view_schema_version_pointer: '/schemaVersion',
+      },
+      transition_profile: clone(TRANSITION_PROFILE),
+      view_schema_id: LEARNER_VIEW_SCHEMA_ID,
+      view_schema_sha256: learnerViewSchemaWritten.sha256,
     },
     pinset_id: 'FIXTURE-ONLY-INTEGRATION-PINSET',
     runtime_contract: {
       candidate_definition_path: 'lesson-definition.json',
+      candidate_format: 'JSON',
       candidate_schema_id: CANDIDATE_SCHEMA_ID,
       candidate_schema_sha256: candidateSchemaWritten.sha256,
+      candidate_semantic_profile: {
+        definition_schema_version_pointer: '/schemaVersion',
+        expected_definition_schema_version: '3.2.0',
+        lesson_id_pointer: '/id',
+        schema_version: 'mcat-v3-candidate-semantic-profile-1',
+        validator_required_check_ids: [
+          'CROSS_FIELD_REFINEMENTS_EXECUTED',
+          'PRODUCTION_LESSON_DEFINITION_VALIDATOR_EXECUTED',
+        ],
+      },
       candidate_validator_build_id: 'FIXTURE-CANDIDATE-VALIDATOR-BUILD',
       candidate_validator_build_sha256: candidateValidatorBuild.artifact_sha256,
       candidate_validator_build_version: 'FIXTURE-1.0.0',
+      candidate_validator_report_signing_key_fingerprint: candidateValidatorKey.fingerprint,
       runtime_contract_version: RUNTIME_CONTRACT_VERSION,
     },
-    schema_version: 'mcat-v3-integration-pinset-1',
+    schema_version: 'mcat-v3-integration-pinset-2',
     validation_mode: 'FIXTURE_ONLY_NON_PRODUCTION',
   };
   const signedPinset = await writeSignedJson({
@@ -447,15 +757,20 @@ async function materializeIntegrationTrust(overlay, repositoryRoot) {
       sha256: candidateSchemaWritten.sha256,
     },
     candidate_validator_build: candidateValidatorBuild,
-    learner_dto_schema: {
-      path: learnerSchemaPath,
-      sha256: learnerSchemaWritten.sha256,
+    learner_action_schema: {
+      path: learnerActionSchemaPath,
+      sha256: learnerActionSchemaWritten.sha256,
+    },
+    learner_view_schema: {
+      path: learnerViewSchemaPath,
+      sha256: learnerViewSchemaWritten.sha256,
     },
     review_harness_build: harnessBuild,
     safe_projection_compiler_build: compilerBuild,
     scoring_service_build: scoringBuild,
   };
   return {
+    candidateValidatorKey,
     compilerKey,
     harnessKey,
     integrationRoot,
@@ -578,13 +893,16 @@ async function materializeGateReport({
   descriptor.report = signed;
 }
 
-async function writeCandidate({ evidence, job, pinset, repositoryRoot }) {
+async function writeCandidate({ candidateValidatorKey, evidence, job, pinset, repositoryRoot }) {
   const artifactPath = `candidates/${job.lesson_id}`;
-  const dto = learnerDto(job);
   await writeJson(join(repositoryRoot, artifactPath, 'candidate-manifest.json'), {
     candidate_definition_path: pinset.runtime_contract.candidate_definition_path,
+    candidate_format: pinset.runtime_contract.candidate_format,
     candidate_schema_id: pinset.runtime_contract.candidate_schema_id,
     candidate_schema_sha256: pinset.runtime_contract.candidate_schema_sha256,
+    candidate_semantic_profile_sha256: hashCanonicalJson(
+      pinset.runtime_contract.candidate_semantic_profile,
+    ),
     candidate_validator_build_id: pinset.runtime_contract.candidate_validator_build_id,
     candidate_validator_build_sha256: pinset.runtime_contract.candidate_validator_build_sha256,
     candidate_validator_build_version: pinset.runtime_contract.candidate_validator_build_version,
@@ -592,17 +910,28 @@ async function writeCandidate({ evidence, job, pinset, repositoryRoot }) {
     job_id: job.job_id,
     lesson_id: job.lesson_id,
     runtime_contract_version: pinset.runtime_contract.runtime_contract_version,
-    schema_version: 'mcat-v3-candidate-artifact-manifest-2',
+    schema_version: 'mcat-v3-candidate-artifact-manifest-3',
     source_plan_sha256: sourcePlanSha256,
     wave_id: waveId,
   });
-  await writeJson(join(repositoryRoot, artifactPath, 'lesson-definition.json'), {
-    answer_keys: { [`${job.lesson_id}-ACTIVITY`]: 'Option A' },
-    learner_safe_dto: dto,
-    lesson_id: job.lesson_id,
-    rationales: { [`${job.lesson_id}-ACTIVITY`]: 'Server-only rationale.' },
-    schema_version: CANDIDATE_SCHEMA_ID,
-  });
+  const kcIds = [`${job.lesson_id}-FIXTURE-KC-1`, `${job.lesson_id}-FIXTURE-KC-2`];
+  const definitionWritten = await writeJson(
+    join(repositoryRoot, artifactPath, 'lesson-definition.json'),
+    {
+      id: job.lesson_id,
+      knowledgeComponents: kcIds.map((id) => ({ id })),
+      orderedKcIds: kcIds,
+      schemaVersion: '3.2.0',
+      serverOnly: {
+        answerKeys: Object.fromEntries(
+          learnerStepViews(job).map((view) => [view.activity.id, 'fixture-correct-response']),
+        ),
+        rationales: Object.fromEntries(
+          learnerStepViews(job).map((view) => [view.activity.id, 'Fixture-only server rationale.']),
+        ),
+      },
+    },
+  );
   const descriptor = await artifactDescriptor(
     repositoryRoot,
     artifactPath,
@@ -617,7 +946,40 @@ async function writeCandidate({ evidence, job, pinset, repositoryRoot }) {
     source_plan_sha256: sourcePlanSha256,
     wave_id: waveId,
   };
-  return descriptor;
+  const validatorExecution = await writeSignedJson({
+    document: {
+      ajv_supplementary_status: 'PASS',
+      candidate_definition_path: pinset.runtime_contract.candidate_definition_path,
+      candidate_definition_sha256: definitionWritten.sha256,
+      candidate_file_manifest: descriptor.file_manifest,
+      candidate_format: pinset.runtime_contract.candidate_format,
+      candidate_schema_id: pinset.runtime_contract.candidate_schema_id,
+      candidate_schema_sha256: pinset.runtime_contract.candidate_schema_sha256,
+      candidate_sha256: descriptor.artifact_sha256,
+      checks: pinset.runtime_contract.candidate_semantic_profile.validator_required_check_ids.map(
+        (checkId) => ({ check_id: checkId, status: 'PASS' }),
+      ),
+      foundation_commit_sha: pinset.foundation_commit_sha,
+      issue_count: 0,
+      job_id: job.job_id,
+      lesson_id: job.lesson_id,
+      report_id: `${job.lesson_id}-FIXTURE-PRODUCTION-VALIDATOR-EXECUTION`,
+      runtime_contract_version: pinset.runtime_contract.runtime_contract_version,
+      schema_version: 'mcat-v3-signed-candidate-validator-execution-report-1',
+      signing_key_fingerprint: candidateValidatorKey.fingerprint,
+      source_plan_sha256: sourcePlanSha256,
+      status: 'VALIDATED_BY_PINNED_PRODUCTION_VALIDATOR',
+      validator_build_id: pinset.runtime_contract.candidate_validator_build_id,
+      validator_build_sha256: pinset.runtime_contract.candidate_validator_build_sha256,
+      validator_build_version: pinset.runtime_contract.candidate_validator_build_version,
+      wave_id: waveId,
+    },
+    documentPath: `candidate-validation/${job.lesson_id}/report.json`,
+    key: candidateValidatorKey,
+    repositoryRoot,
+  });
+  evidence.candidate_validator_execution = validatorExecution;
+  return { ...descriptor, validator_execution_report_sha256: validatorExecution.report_sha256 };
 }
 
 async function writeCompilerOutputs(job, repositoryRoot, pinset) {
@@ -628,24 +990,17 @@ async function writeCompilerOutputs(job, repositoryRoot, pinset) {
   };
   await writeJson(join(repositoryRoot, paths.BLIND_SOLVE, 'learner-safe-envelope.json'), envelope);
   await writeJson(join(repositoryRoot, paths.BLIND_SOLVE, 'blind-client-runtime.json'), {
+    action_schema_id: pinset.learner_view_contract.action_schema_id,
+    action_schema_sha256: pinset.learner_view_contract.action_schema_sha256,
     client_scoring_authority: false,
     outcome_override_controls: false,
     rationales_before_response: false,
-    request_kinds: [
-      'INTERRUPT',
-      'OMIT_RESPONSE',
-      'REPAIR_STEP',
-      'REQUEST_HELP',
-      'RESUME',
-      'RETRY',
-      'REVEAL',
-      'SUBMIT_INVALID_ACTIVITY',
-      'SUBMIT_RESPONSE',
-    ],
-    response_fields: ['learner_feedback', 'learner_outcome', 'next_state', 'service_receipt'],
-    schema_version: 'mcat-v3-opaque-blind-client-runtime-2',
-    service_protocol: 'SIGNED_OPAQUE_REAL_RESPONSE_SCORING_V1',
+    request_action_kinds: pinset.learner_view_contract.transition_profile.action_kinds,
+    response_fields: ['learner_feedback', 'learner_step_view', 'service_receipt'],
+    schema_version: 'mcat-v3-opaque-blind-client-runtime-3',
+    service_protocol_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
     submit_endpoint_path: '/submit',
+    view_schema_id: pinset.learner_view_contract.view_schema_id,
   });
   await writeJson(
     join(repositoryRoot, paths.ACCESSIBILITY_ONLY, 'learner-safe-envelope.json'),
@@ -655,14 +1010,15 @@ async function writeCompilerOutputs(job, repositoryRoot, pinset) {
     join(repositoryRoot, paths.ACCESSIBILITY_ONLY, 'accessibility-harness-config.json'),
     {
       browser_execution_required: true,
-      learner_dto_schema_id: pinset.learner_contract.dto_schema_id,
+      learner_action_schema_id: pinset.learner_view_contract.action_schema_id,
+      learner_view_schema_id: pinset.learner_view_contract.view_schema_id,
       required_check_ids: REQUIRED_ACCESSIBILITY_CHECK_IDS,
       review_harness_build_id: pinset.builds.review_harness.build_id,
       review_harness_build_sha256: pinset.builds.review_harness.artifact_sha256,
       review_harness_build_version: pinset.builds.review_harness.build_version,
-      schema_version: 'mcat-v3-accessibility-harness-config-1',
-      supported_action_kinds: pinset.learner_contract.action_kinds,
-      supported_representation_kinds: pinset.learner_contract.representation_kinds,
+      schema_version: 'mcat-v3-accessibility-harness-config-2',
+      supported_representation_kinds: pinset.learner_view_contract.representation_kinds,
+      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
     },
   );
   const outputs = [];
@@ -696,21 +1052,26 @@ async function materializeProjectionAndBundles({
       candidate_file_manifest: candidate.file_manifest,
       candidate_sha256: candidate.artifact_sha256,
       candidate_schema_id: pinset.runtime_contract.candidate_schema_id,
+      candidate_validator_execution_report_sha256: candidate.validator_execution_report_sha256,
+      action_schema_id: pinset.learner_view_contract.action_schema_id,
+      action_schema_sha256: pinset.learner_view_contract.action_schema_sha256,
       compiler_build_id: pinset.builds.safe_projection_compiler.build_id,
       compiler_build_sha256: pinset.builds.safe_projection_compiler.artifact_sha256,
       compiler_build_version: pinset.builds.safe_projection_compiler.build_version,
       compiler_signing_key_fingerprint: compilerKey.fingerprint,
       job_id: job.job_id,
-      learner_dto_schema_id: pinset.learner_contract.dto_schema_id,
+      learner_view_schema_id: pinset.learner_view_contract.view_schema_id,
+      learner_view_schema_sha256: pinset.learner_view_contract.view_schema_sha256,
       lesson_id: job.lesson_id,
       outputs: outputs.outputs,
       report_id: `${job.lesson_id}-SAFE-PROJECTION`,
       review_harness_build_sha256: pinset.builds.review_harness.artifact_sha256,
       review_harness_build_version: pinset.builds.review_harness.build_version,
       runtime_contract_version: pinset.runtime_contract.runtime_contract_version,
-      schema_version: 'mcat-v3-safe-projection-report-1',
+      schema_version: 'mcat-v3-safe-projection-report-2',
       source_plan_sha256: sourcePlanSha256,
       status: 'DERIVED_BY_PINNED_COMPILER',
+      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
       wave_id: waveId,
     },
     documentPath: `projection/${job.lesson_id}/report.json`,
@@ -732,7 +1093,7 @@ async function materializeProjectionAndBundles({
         bundleKind,
         compilerBuild: pinset.builds.safe_projection_compiler,
         jobId: job.job_id,
-        learnerContract: pinset.learner_contract,
+        learnerViewContract: pinset.learner_view_contract,
         lessonId: job.lesson_id,
         projectionReportSha256: projectionSigned.report_sha256,
         reviewedCandidateSha256: candidate.artifact_sha256,
@@ -915,27 +1276,144 @@ async function materializeRightsAndDomain({
   }
 }
 
-function validReceiptSteps() {
-  return [
-    ['SUBMIT_RESPONSE', 'CORRECT', 'CORRECT'],
-    ['SUBMIT_RESPONSE', 'INCORRECT', 'INCORRECT'],
-    ['OMIT_RESPONSE', 'OMITTED', 'OMISSION'],
-    ['REQUEST_HELP', 'HELP_SHOWN', 'HELP'],
-    ['SUBMIT_RESPONSE', 'INCORRECT', 'RETRY'],
-    ['RETRY', 'RETRY_READY', 'RETRY'],
-    ['SUBMIT_RESPONSE', 'CORRECT', 'RETRY'],
-    ['SUBMIT_RESPONSE', 'INCORRECT', 'REVEAL'],
-    ['REVEAL', 'REVEALED', 'REVEAL'],
-    ['INTERRUPT', 'INTERRUPTED', 'INTERRUPTION'],
-    ['RESUME', 'RESUMED', 'INTERRUPTION'],
-    ['SUBMIT_INVALID_ACTIVITY', 'INVALID_ACTIVITY_REJECTED', 'INVALID'],
-    ['SUBMIT_RESPONSE', 'INCORRECT', 'MIXED'],
-    ['REQUEST_HELP', 'HELP_SHOWN', 'MIXED'],
-    ['SUBMIT_RESPONSE', 'CORRECT', 'MIXED'],
-    ['REPAIR_STEP', 'REPAIR_CONTINUE', 'REPAIR'],
-    ['REPAIR_STEP', 'REPAIR_CONTINUE', 'REPAIR'],
-    ['REPAIR_STEP', 'REPAIR_LIMIT', 'REPAIR'],
+function semanticState(job, activityIndex, stateVersion, overrides = {}) {
+  const activity = learnerStepViews(job)[activityIndex]?.activity ?? null;
+  const payload = {
+    activity_family_sha256:
+      activity === null ? null : hashText(`${job.job_id}-FAMILY-${activityIndex}`),
+    activity_id: activity?.id ?? null,
+    activity_representation_sha256s:
+      activity === null
+        ? []
+        : activity.representations.map((representation) => hashText(representation.id)).sort(),
+    assistance_level: activity === null ? null : 'A2',
+    assistance_revealed: false,
+    available_action_kinds: ACTION_KINDS,
+    planner_reentry_required: false,
+    repair_cycle: 0,
+    route_sha256: null,
+    state_version: stateVersion,
+    status: 'active',
+    ...overrides,
+  };
+  return { ...payload, state_sha256: hashCanonicalJson(payload) };
+}
+
+function receiptScenario(job) {
+  const specifications = [
+    { action: 'present', afterActivity: 0 },
+    { action: 'submit_response', afterActivity: 1, outcome: 'correct' },
+    { action: 'present', afterActivity: 1 },
+    { action: 'submit_response', afterActivity: 2, outcome: 'incorrect' },
+    { action: 'present', afterActivity: 2 },
+    { action: 'submit_response', afterActivity: 3, outcome: 'correct' },
+    { action: 'present', afterActivity: 3 },
+    { action: 'submit_response', afterActivity: 3, outcome: 'not_sure' },
+    {
+      action: 'request_assistance',
+      afterActivity: 3,
+      afterOverrides: { assistance_revealed: true },
+    },
+    {
+      action: 'pause',
+      afterActivity: 3,
+      afterOverrides: { assistance_revealed: true, status: 'paused' },
+    },
+    {
+      action: 'resume',
+      afterActivity: 3,
+      afterOverrides: { assistance_revealed: true, status: 'active' },
+    },
+    { action: 'submit_response', afterActivity: 4, outcome: 'incorrect' },
+    { action: 'present', afterActivity: 4 },
+    {
+      action: 'submit_response',
+      afterActivity: 4,
+      afterOverrides: { status: 'route_pending' },
+      outcome: 'not_sure',
+    },
+    {
+      action: 'continue',
+      afterActivity: 4,
+      afterOverrides: { route_sha256: hashText(`${job.job_id}-ALTERNATE-ROUTE`) },
+      events: ['lesson_route_selected'],
+    },
+    {
+      action: 'submit_response',
+      afterActivity: 4,
+      afterOverrides: {
+        route_sha256: hashText(`${job.job_id}-ALTERNATE-ROUTE`),
+        status: 'repair_pending',
+      },
+      outcome: 'incorrect',
+    },
+    {
+      action: 'continue',
+      afterActivity: 5,
+      afterOverrides: {
+        repair_cycle: 1,
+        route_sha256: hashText(`${job.job_id}-ALTERNATE-ROUTE`),
+      },
+      events: ['lesson_repair_started'],
+    },
+    {
+      action: 'submit_response',
+      afterActivity: 5,
+      afterOverrides: {
+        repair_cycle: 1,
+        route_sha256: hashText(`${job.job_id}-ALTERNATE-ROUTE`),
+        status: 'repair_pending',
+      },
+      outcome: 'incorrect',
+    },
+    {
+      action: 'continue',
+      afterActivity: 6,
+      afterOverrides: {
+        repair_cycle: 2,
+        route_sha256: hashText(`${job.job_id}-ALTERNATE-ROUTE`),
+      },
+      events: ['lesson_repair_started'],
+    },
+    {
+      action: 'submit_response',
+      afterActivity: 6,
+      afterOverrides: {
+        planner_reentry_required: true,
+        repair_cycle: 2,
+        route_sha256: hashText(`${job.job_id}-ALTERNATE-ROUTE`),
+        status: 'paused',
+      },
+      outcome: 'incorrect',
+    },
   ];
+  let before = semanticState(job, 0, 0);
+  return specifications.map((specification, index) => {
+    const actionContract = TRANSITION_PROFILE.action_contracts.find(
+      (contract) => contract.action_kind === specification.action,
+    );
+    const events =
+      specification.events ??
+      (actionContract.required_event_kinds.length > 0
+        ? actionContract.required_event_kinds
+        : ['lesson_activity_presented']);
+    const after = semanticState(
+      job,
+      specification.afterActivity,
+      index + 1,
+      specification.afterOverrides,
+    );
+    const step = {
+      action_kind: specification.action,
+      activity_id: actionContract.activity_binding === 'NONE' ? null : before.activity_id,
+      after_state: after,
+      before_state: before,
+      event_types: events,
+      response_outcome: specification.outcome ?? null,
+    };
+    before = after;
+    return step;
+  });
 }
 
 async function materializeBlindService({
@@ -951,9 +1429,14 @@ async function materializeBlindService({
   const receiptKey = createSigningKey();
   const servicePath = `service/${job.lesson_id}/deployment`;
   const deploymentId = `FIXTURE-DEPLOYMENT-${job.lesson_id}`;
-  const initialState = hashText(`${job.job_id}-STATE-INITIAL`);
+  const scenario = receiptScenario(job);
+  const initialState = scenario[0].before_state.state_sha256;
   await writeJson(join(repositoryRoot, servicePath, 'deployment-manifest.json'), {
+    action_schema_id: pinset.learner_view_contract.action_schema_id,
+    action_schema_sha256: pinset.learner_view_contract.action_schema_sha256,
     candidate_sha256: candidateSha256,
+    candidate_validator_execution_report_sha256:
+      evidence.candidate_validator_execution.report_sha256,
     deployment_id: deploymentId,
     ephemeral: true,
     initial_state_sha256: initialState,
@@ -961,11 +1444,12 @@ async function materializeBlindService({
     lesson_id: job.lesson_id,
     receipt_signing_key_fingerprint: receiptKey.fingerprint,
     safe_client_sha256: evidence.blind_solve_bundle.bundle_sha256,
-    schema_version: 'mcat-v3-opaque-service-deployment-manifest-1',
+    schema_version: 'mcat-v3-opaque-service-deployment-manifest-2',
     scoring_service_build_id: pinset.builds.scoring_service.build_id,
     scoring_service_build_sha256: pinset.builds.scoring_service.artifact_sha256,
     scoring_service_build_version: pinset.builds.scoring_service.build_version,
     source_plan_sha256: sourcePlanSha256,
+    transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
     wave_id: waveId,
   });
   await writeBytes(
@@ -985,7 +1469,11 @@ async function materializeBlindService({
   const attestationSigned = await writeSignedJson({
     document: {
       accepts_real_submitted_responses: true,
+      action_schema_id: pinset.learner_view_contract.action_schema_id,
+      action_schema_sha256: pinset.learner_view_contract.action_schema_sha256,
       candidate_sha256: candidateSha256,
+      candidate_validator_execution_report_sha256:
+        evidence.candidate_validator_execution.report_sha256,
       deployment_id: deploymentId,
       ephemeral: true,
       exact_key_bearing_candidate_deployed: true,
@@ -998,12 +1486,13 @@ async function materializeBlindService({
       rationales_before_response_exposed: false,
       receipt_signing_key_fingerprint: receiptKey.fingerprint,
       safe_client_sha256: evidence.blind_solve_bundle.bundle_sha256,
-      schema_version: 'mcat-v3-signed-opaque-service-deployment-attestation-2',
+      schema_version: 'mcat-v3-signed-opaque-service-deployment-attestation-3',
       server_definition_exposed: false,
       service_deployment_artifact_sha256: deployment.artifact_sha256,
       solver_identity: solverIdentity,
       source_branch_exposed: false,
       source_plan_sha256: sourcePlanSha256,
+      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
       wave_id: waveId,
     },
     documentPath: `service/${job.lesson_id}/deployment-attestation.json`,
@@ -1012,34 +1501,33 @@ async function materializeBlindService({
   });
   const receiptPath = `service/${job.lesson_id}/receipts`;
   const entries = [];
-  let priorState = initialState;
-  const activityId = `${job.lesson_id}-ACTIVITY`;
-  const steps = validReceiptSteps();
-  for (const [index, [requestKind, learnerOutcome, attemptGroup]] of steps.entries()) {
+  for (const [index, step] of scenario.entries()) {
     const sequence = index + 1;
-    const nextState = hashText(`${job.job_id}-STATE-${sequence}`);
-    const responseKinds = new Set(['REPAIR_STEP', 'SUBMIT_INVALID_ACTIVITY', 'SUBMIT_RESPONSE']);
     const receipt = {
-      activity_id: activityId,
-      attempt_id: `${job.lesson_id}-ATTEMPT-${attemptGroup}`,
+      action_kind: step.action_kind,
+      activity_id: step.activity_id,
+      after_state: step.after_state,
+      attempt_id: `${job.lesson_id}-ATTEMPT-${step.before_state.activity_id ?? 'RUN'}`,
+      before_state: step.before_state,
       candidate_sha256: candidateSha256,
       deployment_id: deploymentId,
+      event_trace_sha256: hashCanonicalJson(step.event_types),
+      event_types: step.event_types,
       learner_feedback_sha256: hashText(`${job.job_id}-FEEDBACK-${sequence}`),
-      learner_outcome: learnerOutcome,
-      next_state_sha256: nextState,
-      prior_state_sha256: priorState,
       receipt_signing_key_fingerprint: receiptKey.fingerprint,
       request_id: `${job.lesson_id}-REQUEST-${sequence}`,
-      request_kind: requestKind,
+      response_outcome: step.response_outcome,
       safe_client_sha256: evidence.blind_solve_bundle.bundle_sha256,
-      schema_version: 'mcat-v3-service-request-response-receipt-1',
+      schema_version: 'mcat-v3-service-action-transition-receipt-2',
       sequence,
       service_deployment_artifact_sha256: deployment.artifact_sha256,
       service_timestamp: new Date(Date.UTC(2026, 6, 23, 18, 0, sequence)).toISOString(),
       session_id: `${job.lesson_id}-SESSION`,
-      submitted_response_sha256: responseKinds.has(requestKind)
-        ? hashText(`${job.job_id}-RESPONSE-${sequence}`)
-        : null,
+      submitted_response_sha256:
+        step.action_kind === 'submit_response'
+          ? hashText(`${job.job_id}-RESPONSE-${sequence}`)
+          : null,
+      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
     };
     const documentPath = `receipts/${String(sequence).padStart(4, '0')}.json`;
     const signaturePath = `receipts/${String(sequence).padStart(4, '0')}.sig`;
@@ -1056,19 +1544,20 @@ async function materializeBlindService({
       signature_path: signaturePath,
       signature_sha256: signature.sha256,
     });
-    priorState = nextState;
   }
   const manifest = {
+    action_schema_id: pinset.learner_view_contract.action_schema_id,
     candidate_sha256: candidateSha256,
     deployment_id: deploymentId,
     entries,
     receipt_count: entries.length,
     receipt_signing_key_fingerprint: receiptKey.fingerprint,
     safe_client_sha256: evidence.blind_solve_bundle.bundle_sha256,
-    schema_version: 'mcat-v3-service-receipt-manifest-1',
+    schema_version: 'mcat-v3-service-receipt-manifest-2',
     service_deployment_artifact_sha256: deployment.artifact_sha256,
     session_closed: true,
     session_id: `${job.lesson_id}-SESSION`,
+    transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
   };
   const manifestWritten = await writeJson(
     join(repositoryRoot, receiptPath, 'receipt-manifest.json'),
@@ -1084,8 +1573,40 @@ async function materializeBlindService({
     receiptPath,
     ARTIFACT_LIMITS.receipt_log,
   );
+  const serviceIntegrationReport = await writeSignedJson({
+    document: {
+      action_schema_id: pinset.learner_view_contract.action_schema_id,
+      action_schema_sha256: pinset.learner_view_contract.action_schema_sha256,
+      candidate_sha256: candidateSha256,
+      checks: pinset.learner_view_contract.transition_profile.technical_service_check_ids.map(
+        (checkId) => ({ check_id: checkId, status: 'PASS' }),
+      ),
+      deployment_id: deploymentId,
+      job_id: job.job_id,
+      lesson_id: job.lesson_id,
+      report_id: `${job.lesson_id}-SERVICE-INTEGRATION`,
+      safe_client_sha256: evidence.blind_solve_bundle.bundle_sha256,
+      schema_version: 'mcat-v3-signed-service-integration-report-1',
+      scoring_service_build_id: pinset.builds.scoring_service.build_id,
+      scoring_service_build_sha256: pinset.builds.scoring_service.artifact_sha256,
+      scoring_service_build_version: pinset.builds.scoring_service.build_version,
+      signing_key_fingerprint: receiptKey.fingerprint,
+      source_plan_sha256: sourcePlanSha256,
+      status: 'EXECUTED_AND_PASSED',
+      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
+      wave_id: waveId,
+    },
+    documentPath: `service/${job.lesson_id}/integration-report.json`,
+    key: receiptKey,
+    repositoryRoot,
+  });
   evidence.blind_solve_review.approved = true;
+  evidence.blind_solve_review.blind_evidence_sha256 = hashBytes(
+    `${receiptArtifact.artifact_sha256}\u0000${serviceIntegrationReport.report_sha256}`,
+  );
   evidence.blind_solve_review.candidate_sha256 = candidateSha256;
+  evidence.blind_solve_review.candidate_validator_execution_report_sha256 =
+    evidence.candidate_validator_execution.report_sha256;
   evidence.blind_solve_review.safe_client_sha256 = evidence.blind_solve_bundle.bundle_sha256;
   evidence.blind_solve_review.service_deployment_artifact = deployment;
   evidence.blind_solve_review.deployment_attestation = {
@@ -1095,6 +1616,9 @@ async function materializeBlindService({
     attestation_signature_sha256: attestationSigned.report_signature_sha256,
   };
   evidence.blind_solve_review.receipt_artifact = receiptArtifact;
+  evidence.blind_solve_review.required_path_coverage =
+    pinset.learner_view_contract.transition_profile.path_contracts.map((path) => path.path_id);
+  evidence.blind_solve_review.service_integration_report = serviceIntegrationReport;
   evidence.blind_solve_review.solver_recipient_identity = solverIdentity;
   await materializeGateReport({
     candidateSha256,
@@ -1104,7 +1628,7 @@ async function materializeBlindService({
     keyByIdentity,
     overlay,
     repositoryRoot,
-    reviewedArtifactSha256: receiptArtifact.artifact_sha256,
+    reviewedArtifactSha256: evidence.blind_solve_review.blind_evidence_sha256,
     reviewerSlotId: job.assignments.blind_solver.slot_id,
   });
   return { receiptKey };
@@ -1161,7 +1685,8 @@ async function materializeAccessibility({
       harness_build_version: pinset.builds.review_harness.build_version,
       harness_signing_key_fingerprint: harnessKey.fingerprint,
       job_id: job.job_id,
-      learner_dto_schema_id: pinset.learner_contract.dto_schema_id,
+      learner_action_schema_id: pinset.learner_view_contract.action_schema_id,
+      learner_view_schema_id: pinset.learner_view_contract.view_schema_id,
       lesson_id: job.lesson_id,
       media_digests: learnerEnvelope(job).media_digests,
       reviewer_identity: {
@@ -1170,11 +1695,12 @@ async function materializeAccessibility({
       },
       reviewer_slot_id: assignment.slot_id,
       safe_client_sha256: evidence.accessibility_review_bundle.bundle_sha256,
-      schema_version: 'mcat-v3-signed-accessibility-execution-report-1',
+      schema_version: 'mcat-v3-signed-accessibility-execution-report-2',
       source_plan_sha256: sourcePlanSha256,
       status: 'EXECUTED_AND_PASSED',
-      supported_action_kinds: pinset.learner_contract.action_kinds,
-      supported_representation_kinds: pinset.learner_contract.representation_kinds,
+      supported_action_kinds: pinset.learner_view_contract.transition_profile.action_kinds,
+      supported_representation_kinds: pinset.learner_view_contract.representation_kinds,
+      transition_profile_id: pinset.learner_view_contract.transition_profile.profile_id,
       wave_id: waveId,
     },
     documentPath: `accessibility/${job.lesson_id}/execution-report.json`,
@@ -1343,6 +1869,7 @@ async function createValidFixture() {
       ).selected_passage_subject = evidence.selected_original_passage_subject;
     }
     const candidate = await writeCandidate({
+      candidateValidatorKey: integration.candidateValidatorKey,
       evidence,
       job,
       pinset: integration.pinset,
@@ -1369,7 +1896,10 @@ async function createValidFixture() {
         keyByIdentity,
         overlay,
         repositoryRoot,
-        reviewedArtifactSha256: candidate.artifact_sha256,
+        reviewedArtifactSha256:
+          descriptor.gate_id === 'G03_LESSON_CONTRACT_COMPLETENESS'
+            ? candidate.validator_execution_report_sha256
+            : candidate.artifact_sha256,
         reviewerSlotId: descriptor.reviewer_slot_id,
       });
     }
@@ -1487,6 +2017,7 @@ async function mutateSignedReceiptTrace(fixture, evidence, mutate) {
   }
   mutate(receipts);
   for (const [index, entry] of manifest.entries.entries()) {
+    receipts[index].event_trace_sha256 = hashCanonicalJson(receipts[index].event_types);
     const written = await writeJson(join(root, entry.receipt_path), receipts[index]);
     const signature = await writeSignature(
       join(root, entry.signature_path),
@@ -1547,6 +2078,90 @@ test('production validation rejects absent external trust and fixture evidence b
   });
 });
 
+test('production CLI rejects fixture-only trust even when its external key is supplied', async () => {
+  await withFixture(async (fixture) => {
+    const relativeOverlayPath = `curriculum/v3/.fixture-only-overlay-${process.pid}.json`;
+    const absoluteOverlayPath = join(process.cwd(), relativeOverlayPath);
+    try {
+      await writeJson(absoluteOverlayPath, fixture.overlay);
+      await assert.rejects(
+        execFileAsync(
+          process.execPath,
+          [
+            'scripts/validate-v3-cloud-authoring-wave-overlay.mjs',
+            'validate',
+            relativeOverlayPath,
+            '--integration-trust-root',
+            fixture.trustRootPath,
+          ],
+          { cwd: process.cwd() },
+        ),
+        (error) =>
+          /Fixture-only cryptographic evidence may not satisfy production validation/.test(
+            error.stderr,
+          ),
+      );
+    } finally {
+      await rm(absoluteOverlayPath, { force: true });
+    }
+  });
+});
+
+test('manifest-only build descriptors cannot satisfy an immutable implementation pin', async () => {
+  const repositoryRoot = await mkdtemp(join(tmpdir(), 'v3-manifest-only-build-'));
+  try {
+    const integrationRoot = createSigningKey();
+    const artifactPath = 'manifest-only-scoring-service';
+    await writeJson(join(repositoryRoot, artifactPath, 'build-manifest.json'), {
+      build_id: 'FIXTURE-MANIFEST-ONLY',
+      build_kind: 'SCORING_SERVICE',
+      build_version: 'FIXTURE-1.0.0',
+      foundation_commit_sha: FOUNDATION_COMMIT,
+      provenance: {
+        path: 'build-provenance.json',
+        sha256: '0'.repeat(64),
+        signature_path: 'build-provenance.sig',
+        signature_sha256: '0'.repeat(64),
+        signer_key_fingerprint: integrationRoot.fingerprint,
+      },
+      report_signing_public_key_path: null,
+      schema_version: 'mcat-v3-pinned-build-manifest-2',
+      subject: {
+        entrypoint_path: 'subject/missing.mjs',
+        file_manifest: [],
+        format: 'CLOSED_FILE_TREE',
+        sha256: directoryHash([]),
+      },
+    });
+    const descriptor = await artifactDescriptor(
+      repositoryRoot,
+      artifactPath,
+      ARTIFACT_LIMITS.build,
+    );
+    await assert.rejects(
+      validatePinnedBuildArtifact({
+        buildKind: 'SCORING_SERVICE',
+        descriptor,
+        integrationTrustRoot: {
+          fingerprint: integrationRoot.fingerprint,
+          pem: integrationRoot.publicKeyPem,
+        },
+        pin: {
+          artifact_sha256: descriptor.artifact_sha256,
+          build_id: 'FIXTURE-MANIFEST-ONLY',
+          build_version: 'FIXTURE-1.0.0',
+          foundation_commit_sha: FOUNDATION_COMMIT,
+        },
+        repositoryRoot,
+        reportSigningKeyRequired: false,
+      }),
+      /subject may not be empty|entrypoint is not in its file manifest/,
+    );
+  } finally {
+    await rm(repositoryRoot, { force: true, recursive: true });
+  }
+});
+
 test('fabricated service receipts and unsigned ACL changes fail signature verification', async () => {
   await rejectMutation(async (overlay, fixture) => {
     const review = firstEvidence(overlay).blind_solve_review;
@@ -1562,7 +2177,7 @@ test('fabricated service receipts and unsigned ACL changes fail signature verifi
       manifest.entries[0].receipt_path,
     );
     const receipt = JSON.parse(await readFile(receiptPath, 'utf8'));
-    receipt.learner_outcome = 'INCORRECT';
+    receipt.response_outcome = 'incorrect';
     await writeJson(receiptPath, receipt);
     review.receipt_artifact = await artifactDescriptor(
       fixture.repositoryRoot,
@@ -1591,8 +2206,8 @@ test('validly signed receipts still fail semantic request/outcome and path predi
     for (const entry of manifest.entries) {
       const receiptPath = join(root, entry.receipt_path);
       const receipt = JSON.parse(await readFile(receiptPath, 'utf8'));
-      if (receipt.learner_outcome === 'CORRECT') {
-        receipt.learner_outcome = 'INCORRECT';
+      if (receipt.response_outcome === 'correct') {
+        receipt.response_outcome = 'incorrect';
         const written = await writeJson(receiptPath, receipt);
         const signature = await writeSignature(
           join(root, entry.signature_path),
@@ -1610,59 +2225,62 @@ test('validly signed receipts still fail semantic request/outcome and path predi
       review.receipt_artifact.artifact_path,
       ARTIFACT_LIMITS.receipt_log,
     );
-  }, /CORRECT_RESPONSE lacks a protocol-valid ordered receipt trace/);
+  }, /CORRECT_RESPONSE lacks a signed-profile-valid ordered receipt trace/);
 });
 
 for (const { expected, mutate, name } of [
   {
-    expected: /INVALID_ACTIVITY lacks a protocol-valid ordered receipt trace/,
+    expected: /Unsupported learner action kind RETRY/,
     mutate(receipts) {
-      const receipt = receipts.find((item) => item.request_kind === 'SUBMIT_INVALID_ACTIVITY');
-      receipt.request_kind = 'SUBMIT_RESPONSE';
-      receipt.learner_outcome = 'CORRECT';
+      receipts[0].action_kind = 'RETRY';
     },
-    name: 'invalid-item path requires an invalid-activity rejection',
+    name: 'hardcoded unsupported request kinds cannot satisfy the signed action vocabulary',
   },
   {
-    expected: /RETRY lacks a protocol-valid ordered receipt trace/,
+    expected: /FRESH_ACTIVITY_RETRY lacks a signed-profile-valid ordered receipt trace/,
     mutate(receipts) {
-      const receipt = receipts.find((item) => item.request_kind === 'RETRY');
-      receipt.request_kind = 'REQUEST_HELP';
-      receipt.learner_outcome = 'HELP_SHOWN';
+      receipts[4].action_kind = 'request_assistance';
+      receipts[4].event_types = ['lesson_assistance_revealed'];
     },
-    name: 'retry path requires an actual retry request and later submission',
+    name: 'fresh retry requires a new activity and family through supported actions',
   },
   {
-    expected: /REVEAL lacks a protocol-valid ordered receipt trace/,
+    expected: /ASSISTANCE_REVEAL lacks a signed-profile-valid ordered receipt trace/,
     mutate(receipts) {
-      const receipt = receipts.find((item) => item.request_kind === 'REVEAL');
-      receipt.request_kind = 'REQUEST_HELP';
-      receipt.learner_outcome = 'HELP_SHOWN';
+      const receipt = receipts.find((item) => item.action_kind === 'request_assistance');
+      receipt.action_kind = 'present';
+      receipt.event_types = ['lesson_activity_presented'];
     },
-    name: 'reveal path requires a reveal request after an incorrect response',
+    name: 'reveal-capable help is an assistance transition rather than an invented reveal action',
   },
   {
-    expected: /INTERRUPTION_AND_RESUME lacks a protocol-valid ordered receipt trace/,
+    expected: /PAUSE_AND_RESUME lacks a signed-profile-valid ordered receipt trace/,
     mutate(receipts) {
-      const interrupt = receipts.find((item) => item.request_kind === 'INTERRUPT');
-      const resume = receipts.find((item) => item.request_kind === 'RESUME');
-      interrupt.request_kind = 'RESUME';
-      interrupt.learner_outcome = 'RESUMED';
-      resume.request_kind = 'INTERRUPT';
-      resume.learner_outcome = 'INTERRUPTED';
+      const pause = receipts.find((item) => item.action_kind === 'pause');
+      const resume = receipts.find((item) => item.action_kind === 'resume');
+      pause.action_kind = 'resume';
+      pause.event_types = ['lesson_run_resumed'];
+      resume.action_kind = 'pause';
+      resume.event_types = ['lesson_run_paused'];
     },
-    name: 'resume may not precede interruption',
+    name: 'resume may not precede the signed pause transition',
   },
   {
-    expected: /REPAIR_LIMIT lacks a protocol-valid ordered receipt trace/,
+    expected: /ALTERNATE_ROUTE_SELECTION lacks a signed-profile-valid ordered receipt trace/,
     mutate(receipts) {
-      const repairContinues = receipts.filter((item) => item.learner_outcome === 'REPAIR_CONTINUE');
-      for (const receipt of repairContinues) {
-        receipt.request_kind = 'SUBMIT_RESPONSE';
-        receipt.learner_outcome = 'INCORRECT';
-      }
+      const receipt = receipts.find((item) => item.event_types.includes('lesson_route_selected'));
+      receipt.event_types = ['lesson_activity_presented'];
     },
-    name: 'repair-limit path requires multiple ordered repair cycles',
+    name: 'alternate-route coverage requires the pinned route-selection event',
+  },
+  {
+    expected: /REPAIR_LIMIT_PLANNER_REENTRY lacks a signed-profile-valid ordered receipt trace/,
+    mutate(receipts) {
+      const receipt = receipts.find((item) => item.after_state.repair_cycle === 2);
+      receipt.action_kind = 'present';
+      receipt.event_types = ['lesson_activity_presented'];
+    },
+    name: 'repair-limit coverage requires distinct ordered repair cycles and planner reentry',
   },
 ]) {
   test(name, async () => {
@@ -1672,29 +2290,43 @@ for (const { expected, mutate, name } of [
   });
 }
 
+test('invalid activity rejection is technical service evidence, not a learner request path', async () => {
+  await rejectMutation(async (overlay, fixture) => {
+    const evidence = firstEvidence(overlay);
+    const descriptor = evidence.blind_solve_review.service_integration_report;
+    const key = fixture.receiptKeyByJobId.get(evidence.job_id);
+    await mutateSignedReport(descriptor, fixture, key, (report) => {
+      report.checks = report.checks.filter(
+        (check) => check.check_id !== 'INVALID_ACTIVITY_REJECTED_AT_AUTHORITY_BOUNDARY',
+      );
+    });
+  }, /missing signed-profile technical checks|technical service gate/);
+});
+
 test('unrelated learner-safe output cannot claim candidate derivation', async () => {
   await rejectMutation(async (overlay, fixture) => {
     const bundle = firstEvidence(overlay).blind_solve_bundle;
     const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-safe-envelope.json');
     const envelope = JSON.parse(await readFile(path, 'utf8'));
-    envelope.lesson_dto.activities[0].prompt = 'Unrelated hand-authored prompt.';
+    envelope.lesson_step_views[0].activity.representations[0].label =
+      'Unrelated hand-authored projection.';
     await writeJson(path, envelope);
   }, /is not the signed compiler output/);
 });
 
-test('closed bundles reject protected aliases, unknown DTO fields, and extra files', async () => {
+test('closed bundles reject protected aliases, unknown view fields, and extra files', async () => {
   await rejectMutation(async (overlay, fixture) => {
     const bundle = firstEvidence(overlay).blind_solve_bundle;
     const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-safe-envelope.json');
     const envelope = JSON.parse(await readFile(path, 'utf8'));
-    envelope.lesson_dto.activities[0].key = 'Option A';
+    envelope.lesson_step_views[0].activity.key = 'Option A';
     await writeJson(path, envelope);
   }, /forbidden protected field/);
   await rejectMutation(async (overlay, fixture) => {
     const bundle = firstEvidence(overlay).blind_solve_bundle;
     const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-safe-envelope.json');
     const envelope = JSON.parse(await readFile(path, 'utf8'));
-    envelope.lesson_dto.representations[0].script = 'alert(1)';
+    envelope.lesson_step_views[0].activity.representations[0].script = 'alert(1)';
     await writeJson(path, envelope);
   }, /fails pinned schema/);
   await rejectMutation(async (overlay, fixture) => {
@@ -1787,7 +2419,7 @@ test('candidate runtime pins and pinned LessonDefinition schema are exact', asyn
       'lesson-definition.json',
     );
     const definition = JSON.parse(await readFile(path, 'utf8'));
-    delete definition.answer_keys;
+    delete definition.serverOnly;
     await writeJson(path, definition);
     const refreshed = await artifactDescriptor(
       fixture.repositoryRoot,
@@ -1796,7 +2428,65 @@ test('candidate runtime pins and pinned LessonDefinition schema are exact', asyn
     );
     evidence.candidate_artifact.candidate_sha256 = refreshed.artifact_sha256;
     evidence.candidate_artifact.file_manifest = refreshed.file_manifest;
-  }, /not a valid pinned LessonDefinition/);
+  }, /fails the supplementary pinned JSON Schema/);
+});
+
+test('AJV shape validation cannot replace the signed production validator superRefine result', async () => {
+  const shapeOnlyCandidate = {
+    id: 'V3-LES-000001',
+    knowledgeComponents: [{ id: 'V3-KC-A' }, { id: 'V3-KC-B' }],
+    orderedKcIds: ['V3-KC-B', 'V3-KC-A'],
+    schemaVersion: '3.2.0',
+    serverOnly: {
+      answerKeys: { 'V3-ACT-1': 'A' },
+      rationales: { 'V3-ACT-1': 'Fixture-only rationale.' },
+    },
+  };
+  const shapeValidator = new Ajv({ allErrors: true, strict: true }).compile(candidateSchema());
+  assert.equal(
+    shapeValidator(shapeOnlyCandidate),
+    true,
+    'Fixture JSON Schema should expose the gap',
+  );
+  assert.notDeepEqual(
+    shapeOnlyCandidate.orderedKcIds,
+    shapeOnlyCandidate.knowledgeComponents.map((kc) => kc.id),
+    'Fixture must violate the foundation-style ordered-KC cross-field refinement',
+  );
+  await rejectMutation(async (overlay, fixture) => {
+    const evidence = firstEvidence(overlay);
+    const path = join(
+      fixture.repositoryRoot,
+      evidence.candidate_artifact.artifact_path,
+      'lesson-definition.json',
+    );
+    const definition = JSON.parse(await readFile(path, 'utf8'));
+    definition.orderedKcIds.reverse();
+    await writeJson(path, definition);
+    const refreshed = await artifactDescriptor(
+      fixture.repositoryRoot,
+      evidence.candidate_artifact.artifact_path,
+      ARTIFACT_LIMITS.candidate,
+    );
+    evidence.candidate_artifact.candidate_sha256 = refreshed.artifact_sha256;
+    evidence.candidate_artifact.file_manifest = refreshed.file_manifest;
+  }, /Candidate validator report is stale|Expected values to be strictly equal/);
+});
+
+test('snake_case catalog fixtures cannot masquerade as the pinned LessonStepView contract', async () => {
+  await rejectMutation(async (overlay, fixture) => {
+    const bundle = firstEvidence(overlay).blind_solve_bundle;
+    const path = join(fixture.repositoryRoot, bundle.bundle_path, 'learner-safe-envelope.json');
+    const envelope = JSON.parse(await readFile(path, 'utf8'));
+    const view = envelope.lesson_step_views[0];
+    view.schema_version = view.schemaVersion;
+    view.lesson_id = view.lessonId;
+    view.activity.activity_id = view.activity.id;
+    delete view.schemaVersion;
+    delete view.lessonId;
+    delete view.activity.id;
+    await writeJson(path, envelope);
+  }, /Learner step view fails pinned schema|JSON pointer does not resolve/);
 });
 
 test('stale service deployment artifacts fail closed', async () => {

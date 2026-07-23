@@ -89,6 +89,7 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     blocks_publication: true,
     required_evidence: [
       'The immutable LessonDefinition shell and every KC microcycle satisfy the contract in design specification sections 12 and 31.',
+      'AJV shape validation is supplementary: an exact pinset-bound production validator implementation signs a candidate-byte- and schema/runtime/build-bound successful execution report that includes all cross-field refinements.',
       'Activity graphs terminate, bounded repairs reenter exactly, checkpoints resume, and instructional and downstream families remain isolated.',
     ],
   },
@@ -133,7 +134,8 @@ const ACCEPTANCE_GATE_CATALOG = Object.freeze([
     required_evidence: [
       'A solver distinct from the author and final approver answers real learner-safe activities through a closed safe client connected to an ephemeral opaque integrator-controlled scoring service.',
       'The service deploys the exact candidate hash server-side, accepts submitted responses, returns ordinary learner-authorized feedback, and exposes no source branch, server definition, protected scoring material, pre-response rationales, or outcome overrides.',
-      'Every request/response has an ordered detached-signature-verified service receipt; path coverage is derived from valid request/outcome/state traces rather than trusted labels.',
+      'Every supported learner action has an ordered detached-signature-verified service receipt; path coverage is derived from the signed foundation action/transition profile and before/after semantic states rather than trusted labels or invented request kinds.',
+      'Invalid-activity and unsupported-action rejection are signed technical service-integration checks, not fabricated ordinary learner actions.',
       'The service deployment is recomputed from a closed manifest, its receipt key is bound by an externally signed deployment/ACL attestation, and unsigned/self-asserted logs cannot satisfy G07.',
     ],
   },
@@ -242,7 +244,8 @@ const WORKFLOW_STAGES = Object.freeze([
     order: 7,
     stage: 'candidate_artifact_freeze_and_g01_g06_evidence',
     assignment_key: 'release_integrator',
-    output: 'schema_valid_candidate_file_manifest_and_assigned_reviewer_signed_gate_reports',
+    output:
+      'candidate_file_manifest_signed_production_validator_execution_and_assigned_reviewer_gate_reports',
   },
   {
     order: 8,
@@ -255,7 +258,8 @@ const WORKFLOW_STAGES = Object.freeze([
     order: 9,
     stage: 'blind_solve',
     assignment_key: 'blind_solver',
-    output: 'service_signed_receipts_protocol_derived_path_coverage_and_signed_approval',
+    output:
+      'service_signed_foundation_profile_actions_semantic_transition_coverage_technical_checks_and_approval',
   },
   {
     order: 10,
@@ -1437,7 +1441,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'Never modify this generated plan. Generate a separate wave overlay, materialize all person/run identities and evidence there, and validate it against the SHA-256 of the exact checked plan bytes.',
       assignment_overlay: {
         generated_plan_mutation_forbidden: true,
-        schema_version: 'mcat-v3-cloud-authoring-wave-assignment-overlay-3',
+        schema_version: 'mcat-v3-cloud-authoring-wave-assignment-overlay-4',
         stale_source_plan_hash_behavior: 'FAIL_CLOSED',
         template_path: 'curriculum/v3/v3-cloud-authoring-wave-assignment-overlay.template.json',
         validator_path: 'scripts/validate-v3-cloud-authoring-wave-overlay.mjs',
@@ -1515,14 +1519,19 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         required_signed_pinset_fields: [
           'exact_hardened_foundation_commit_sha',
           'runtime_contract_version',
-          'lesson_definition_schema_id_and_sha256',
-          'exact_key_bearing_candidate_definition_path',
-          'candidate_validator_build_id_version_and_artifact_sha256',
-          'learner_dto_schema_id_sha256_and_all_representation_action_kinds',
-          'safe_projection_compiler_build_id_version_sha256_and_report_key_fingerprint',
-          'review_harness_build_id_version_sha256_and_report_key_fingerprint',
-          'scoring_service_build_id_version_and_artifact_sha256',
+          'lesson_definition_schema_id_sha256_json_format_and_signed_identity_pointers',
+          'exact_key_bearing_candidate_definition_path_and_expected_schema_version',
+          'candidate_validator_build_id_version_immutable_subject_provenance_and_report_key',
+          'candidate_validator_signed_execution_report_profile_including_cross_field_refinements',
+          'lesson_step_view_and_lesson_action_input_schema_ids_and_sha256s',
+          'learner_view_camel_case_identity_media_and_nullable_activity_semantic_profile',
+          'foundation_action_event_state_and_path_transition_profile',
+          'safe_projection_compiler_immutable_subject_provenance_and_report_key',
+          'review_harness_immutable_subject_provenance_and_report_key',
+          'scoring_service_immutable_subject_provenance_and_artifact_sha256',
         ],
+        pinned_build_requirement:
+          'Every build pin resolves to a bounded closed immutable implementation file tree with an entrypoint and integration-authority-signed provenance; manifest-only directories fail validation.',
         wave_entry_behavior: 'W00_AND_ALL_LATER_WAVES_FAIL_CLOSED',
       },
       first_delivery_policy:
@@ -1544,7 +1553,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       author_branch_access_prohibited: true,
       blind_solve_execution:
         'The solver submits real responses through the closed client to an ephemeral opaque integrator-controlled service that deploys the exact key-bearing candidate server-side and exposes no outcome overrides or protected authority.',
-      bundle_manifest_schema_version: 'mcat-v3-closed-sanitized-review-bundle-2',
+      bundle_manifest_schema_version: 'mcat-v3-closed-sanitized-review-bundle-3',
       bundle_sha256_required: true,
       closed_schema_unknown_field_behavior: 'REJECT',
       excluded_content_classes: [
@@ -1571,14 +1580,16 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       protected_field_scan_report_sha256_required: true,
       reviewed_candidate_sha256_required: true,
       derivation_requirement:
-        'Every learner-safe file must match a detached-signature-verified report from the exact compiler build in the externally trusted integration pinset.',
+        'Every learner-safe view envelope must match a detached-signature-verified report from the exact compiler implementation in the externally trusted integration pinset and validate as individual pinned LessonStepView-shaped records, not a custom lesson DTO catalog.',
       reviewer_outcome_simulation_policy:
         'Self-asserted path labels or reviewer-controlled outcomes are never accepted as blind-solve or accessibility evidence.',
-      scanner_id: 'V3_CLOSED_REVIEW_BUNDLE_SCAN_V2',
+      scanner_id: 'V3_CLOSED_REVIEW_BUNDLE_SCAN_V3',
       structured_json_only_v1: true,
     },
     internal_integration_evidence_contract: {
       candidate_artifact_hash_recomputed_from_exact_file_manifest: true,
+      candidate_validation_contract:
+        'The candidate uses signed JSON pointers for schemaVersion and lesson id, passes supplementary pinned JSON Schema validation, and has a detached-signature-verified execution report from the exact production validator implementation bound to candidate bytes, complete file manifest, foundation commit, runtime/schema pins, and required cross-field checks.',
       candidate_bound_gate_ids: REQUIRED_ACCEPTANCE_GATE_IDS.slice(0, 10),
       g11_g12_status_for_internal_drafts: 'EXPLICITLY_PENDING',
       opaque_blind_service_evidence: [
@@ -1588,8 +1599,9 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
         'externally_signed_acl_branch_isolation_attestation',
         'pinned_per_deployment_receipt_signing_key',
         'solver_person_and_run_ids',
-        'detached_signature_verified_request_response_receipts',
-        'protocol_derived_semantic_path_coverage',
+        'detached_signature_verified_supported_learner_action_transition_receipts',
+        'signed_foundation_profile_derived_before_after_semantic_path_coverage',
+        'signed_technical_invalid_activity_and_unsupported_action_rejection_report',
         'signed_blind_solve_approval',
       ],
       production_trust_requirement:
@@ -1599,7 +1611,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       rights_and_domain_report_contract:
         'Every G05 rights/source-similarity and G10 specialty/CARS-subject record has a repository-relative path, closed unknown-field-rejecting schema, recomputed byte hash, exact ledger/candidate/slot/person/run/specialty/subject pins, and detached signature.',
       safe_projection_and_accessibility_contract:
-        'Compiler-signed exact output manifests prove derivation from the pinned candidate; harness-signed closed browser evidence and assigned-auditor approval are required for G08.',
+        'Compiler-signed exact output manifests derive individual camelCase learner views under signed semantic pointers; the profile distinguishes schema artifact IDs from payload schemaVersion, preserves nullable activity and audio/video caption semantics, and requires harness-signed closed browser evidence plus assigned-auditor approval for G08.',
       stale_or_missing_evidence_behavior: 'FAIL_CLOSED',
       wave_similarity_scope:
         'current_wave_plus_integration_authority_signed_complete_previously_integrated_corpus',
@@ -1644,7 +1656,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       statement:
         'Generated content is an internal draft until rights, scientific review, reviewed hashes (integrity identifiers, not proof by themselves), signed/verifiable evidence, and efficacy gates pass.',
     },
-    schema_version: 'mcat-v3-cloud-authoring-orchestration-4',
+    schema_version: 'mcat-v3-cloud-authoring-orchestration-5',
     unresolved_constraints: [
       {
         constraint_id: 'UC01_PROTOTYPE_ARTIFACTS',
@@ -1669,7 +1681,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
       {
         constraint_id: 'UC05_HARDENED_FOUNDATION_INTEGRATION_PINS',
         effect:
-          'W00 and every later wave are blocked until the exact corrected foundation commit, LessonDefinition/runtime schema, learner DTO schema, candidate validator, safe-projection compiler, standard browser/accessibility harness, scoring-service builds, report-signing keys, and external integration trust root are materialized in a detached-signature-verified pinset. This authoring branch does not guess or implement those runtime assets.',
+          'W00 and every later wave are blocked until the final hardened foundation commit supplies exact LessonDefinition, LessonStepView, LessonActionInput, action/event/transition semantic profiles, an executable production candidate validator with signed execution reports, and immutable implementation subjects plus signed provenance for the validator, safe-projection compiler, browser/accessibility harness, and scoring service. The external integration trust root and signed pinset must bind all of them; this authoring branch does not fabricate those production assets.',
       },
     ],
     waves,
@@ -1682,7 +1694,7 @@ function buildAuthoringPlan(sourceManifest, sourceManifestSha256) {
 
 function validateAuthoringPlan(plan, sourceManifest) {
   const indexes = validateSourceManifest(sourceManifest);
-  assert.equal(plan.schema_version, 'mcat-v3-cloud-authoring-orchestration-4');
+  assert.equal(plan.schema_version, 'mcat-v3-cloud-authoring-orchestration-5');
   assert.equal(plan.jobs.length, EXPECTED.counts.lessons);
 
   const canonicalReferencePattern =
@@ -1986,11 +1998,11 @@ function validateAuthoringPlan(plan, sourceManifest) {
   );
   assert.equal(
     plan.orchestration_policy.assignment_overlay.schema_version,
-    'mcat-v3-cloud-authoring-wave-assignment-overlay-3',
+    'mcat-v3-cloud-authoring-wave-assignment-overlay-4',
   );
   assert.equal(
     plan.review_bundle_contract.bundle_manifest_schema_version,
-    'mcat-v3-closed-sanitized-review-bundle-2',
+    'mcat-v3-closed-sanitized-review-bundle-3',
   );
   assert.equal(
     plan.orchestration_policy.assignment_overlay.generated_plan_mutation_forbidden,

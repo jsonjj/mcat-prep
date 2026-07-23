@@ -77,11 +77,17 @@ plan hashes.
 
 Production validation never trusts a public key supplied only by the overlay. The CLI requires an
 external integration-authority public key. That key verifies a signed pinset and signed reviewer
-credentials; the pinset in turn binds the exact foundation commit, candidate/runtime and learner
-DTO schemas, candidate validator, learner-safe compiler, review harness, scoring-service builds,
-their exact IDs/versions/artifact hashes, and compiler/harness signing keys.
-`FIXTURE_ONLY_NON_PRODUCTION` pinsets are accepted only by the
-test API's explicit fixture option and cannot satisfy the CLI.
+credentials. The pinset independently names the exact foundation commit; `LessonDefinition`,
+`LessonStepView`, and `LessonActionInput` schema artifacts; runtime and payload schema versions;
+signed JSON pointers for candidate/view identity and media semantics; and the action/event/state
+transition profile. Schema artifact IDs are never treated as payload `schemaVersion` values.
+
+Every candidate-validator, learner-safe-compiler, review-harness, and scoring-service build pin
+must resolve to a bounded closed implementation file tree with an entrypoint and
+integration-authority-signed provenance. A manifest-only directory, or a manifest plus signing key,
+is not a build. Report-producing builds also bind their report-signing key. The
+`FIXTURE_ONLY_NON_PRODUCTION` pinsets and implementation stubs used by tests are accepted only by
+the test API's explicit fixture option and cannot satisfy the production CLI.
 
 Every materialized overlay records an actual person ID and actual execution/run ID for each slot,
 plus explicit controller and wave-integrator identities. The validator enforces:
@@ -124,18 +130,27 @@ The controller freezes one candidate directory. `candidate-manifest.json` must m
 runtime version, `LessonDefinition` schema ID/hash, candidate-validator build, and key-bearing
 definition path from the signed integration pinset. The validator inventories bounded regular
 files, rejects duplicate manifest paths and symlinks, recomputes the directory hash, parses the
-definition under bounded JSON limits, and validates it against the pinned schema. Any candidate
-mutation invalidates candidate-bound G01–G10 evidence.
+definition under bounded JSON limits, and performs supplementary validation against the pinned JSON
+Schema. Candidate identity and definition `schemaVersion` are extracted only through the signed
+semantic-profile JSON pointers; no snake_case field names are assumed.
+
+JSON Schema/AJV validation does not cover the production Zod `superRefine` rules. The exact pinned
+production validator must therefore issue a detached-signature-verified successful execution
+report. That closed report binds the candidate and definition bytes, complete file manifest,
+foundation commit, schema/runtime/profile pins, immutable validator implementation build, and every
+required cross-field check. G03 binds to this report. Shape validation plus a reviewer assertion
+cannot substitute for it. Any candidate mutation invalidates the report and all affected G01–G10
+evidence.
 
 A solver or accessibility reviewer never receives that directory, its branch/history, server
 definitions, scoring authority, diagnostic mappings, or pre-response rationales. The exact
 pinset-bound candidate→learner-safe compiler emits a detached-signature-verified derivation report
-that binds the candidate file manifest, compiler build/key, runtime/DTO schema pins, review-harness
-build, and every output file/hash. The validator requires byte-for-byte agreement between each
-closed client and that signed output; a hand-authored client naming an unrelated candidate hash
-fails.
+that binds the candidate file manifest and validator-execution report, compiler implementation and
+key, runtime/action/view schema pins, transition profile, review-harness implementation, and every
+output file/hash. The validator requires byte-for-byte agreement between each closed client and
+that signed output; a hand-authored client naming an unrelated candidate hash fails.
 
-`mcat-v3-closed-sanitized-review-bundle-2` permits exactly:
+`mcat-v3-closed-sanitized-review-bundle-3` permits exactly:
 
 ```text
 BLIND_SOLVE
@@ -149,13 +164,17 @@ ACCESSIBILITY_ONLY
   learner-safe-envelope.json
 ```
 
-The envelope wraps the exact shared learner DTO validated against the signed-pinset schema, plus
-immutable media digests (and transcript/caption digests for audio/video). Its manifest declares
-support for every representation and action kind in that DTO contract, including charts,
-simulations, animation, audio/video, deterministic activity graphs, and nonvisual alternatives.
-Unknown fields and extra files fail. Recursive protected-field scanning remains defense in depth;
-it is not semantic proof that no key leaked. Arbitrary Markdown, TXT, SVG, HTML, scripts, and
-reviewer-controlled outcomes are forbidden.
+The authoring envelope contains individual records validated as the exact pinned
+`LessonStepView`-shaped schema; it is not labeled as a custom lesson DTO or activity catalog.
+Signed semantic pointers locate camelCase `schemaVersion`, `lessonId`, nullable `activity`,
+activity `id`, available actions, representations, and media fields. The profile separately pins
+the expected payload version and schema artifact ID, and defines audio/video asset, transcript, and
+optional-or-required caption behavior. Immutable media digests must exactly cover referenced
+media. The manifest declares support for every representation and action kind in the signed
+contract, including charts, simulations, animation, audio/video, deterministic activity graphs,
+and nonvisual alternatives. Unknown fields and extra files fail. Recursive protected-field
+scanning remains defense in depth; it is not semantic proof that no key leaked. Arbitrary
+Markdown, TXT, SVG, HTML, scripts, and reviewer-controlled outcomes are forbidden.
 
 For G08, a pinset-bound standard review harness must execute the accessibility client in a browser.
 The harness signs a report that binds a closed browser-evidence artifact and exact checks for
@@ -170,14 +189,24 @@ client, solver/integrator identities, and a unique per-deployment Ed25519 receip
 while attesting that source, protected material, pre-response rationales, and override controls are
 not exposed.
 
-The service signs one detached receipt for every request/response. Every receipt binds session,
-contiguous sequence, canonical monotonically increasing timestamp, attempt/request/activity IDs,
-protocol request kind, submitted-response hash or required null, learner outcome/feedback hash,
-prior and next state hashes, candidate, safe client, deployment artifact, and receipt-key
-fingerprint. The service also signs the closed session manifest. The validator verifies every
-signature, request/outcome pairing, state transition, activity reference, and request ID. It derives
-rather than trusts coverage for correct, incorrect, omission, help, retry, reveal,
-interruption→resume, invalid item, mixed route, and multi-cycle repair-limit paths.
+The service signs one detached receipt for every learner action/response. Every receipt binds
+session, contiguous sequence, canonical monotonically increasing timestamp,
+attempt/request/activity IDs, action kind, submitted-response hash or required null, learner
+outcome/feedback hash, event-trace hash, signed before/after semantic state, candidate, safe client,
+deployment artifact, transition profile, and receipt-key fingerprint. The service also signs the
+closed session manifest. The validator verifies every signature, action/outcome/event rule,
+available-action check, state chain, activity reference, and request ID.
+
+The action vocabulary and path predicates come only from the signed foundation profile. The
+current compatibility target uses the actual learner actions `present`, `submit_response`,
+`continue`, `request_assistance`, `pause`, and `resume`; retry/fresh-family progression, repair,
+reveal-capable assistance, route changes, and planner reentry are signed outcomes/events/state
+changes, not invented learner actions. Ordered semantic traces must demonstrate correct,
+incorrect/not-sure, assistance reveal, fresh-activity retry, targeted repair with distinct
+activities/representations, route selection, pause→resume, and repair-limit planner reentry.
+Invalid-activity and unsupported-action rejection are verified by a separate service-signed
+technical integration report at the authority boundary, never by pretending that the sanitized
+client exposes those actions.
 
 The validator enforces profile-specific regular-file count, per-file, total-byte, JSON depth,
 collection, and string limits before or immediately after bounded reads. This is an authoring-side
@@ -233,15 +262,16 @@ an efficacy claim.
 merely assigned. The validator requires:
 
 - the externally verified signed integration pinset and exact pinned schema/build artifacts;
-- the recomputed candidate file manifest plus pinned-schema-valid key-bearing definition;
+- the recomputed candidate file manifest, supplementary pinned-schema validation, and
+  validator-build-signed successful production-validation report for the key-bearing definition;
 - signed assigned-reviewer G01–G04 reports for canonical/reference, identity/KC, runtime/content,
   attachment/repair, and no-bypass checks;
 - closed, reread, signed G05 source-output and rights/originality reports bound to the recomputed
   source ledger;
 - a signed assigned-auditor G06 content/pedagogy report;
 - the compiler-signed derived G07 client, recomputed service deployment, authority-signed ACL
-  attestation, signed request/response session, protocol-derived path coverage, and signed solver
-  approval;
+  attestation, service-signed action/transition session, profile-derived semantic path coverage,
+  service-signed technical boundary checks, and signed solver approval;
 - harness-signed browser/a11y execution plus signed assigned-auditor G08 approval;
 - one multi-reviewer-signed G09 report binding every current candidate and an
   integration-authority-signed cumulative corpus manifest containing every prior wave/job; and
@@ -275,15 +305,17 @@ Every lesson follows this order:
 6. **Output-rights/originality review.** The input-rights reviewer independently checks provenance,
    output rights, originality, and source-output similarity against the same candidate hash.
 7. **Candidate freeze and G01–G06 evidence.** The release integrator validates the key-bearing
-   definition against the exact signed-pinset schema, freezes the bounded file manifest, and
-   verifies signed assigned-reviewer reports. Any later byte change restarts affected gates.
+   definition with the exact pinned production validator, verifies its signed cross-field execution
+   report and supplementary schema result, freezes the bounded file manifest, and verifies signed
+   assigned-reviewer reports. Any later byte change restarts affected gates.
 8. **Derived clients and opaque service.** Verify compiler-signed derivation of the exact closed
    clients, deploy the candidate with the pinned scoring build, recompute the closed deployment
    artifact, and verify the integration-authority-signed deployment/ACL attestation.
 9. **Blind solve.** The assigned solver submits real answers through only the closed client and
-   opaque service. Verify the service-signed closed session, every ordered request/response and state
-   transition, derived path coverage, solver identity, and signed approval. Self-asserted path
-   labels and reviewer-controlled outcomes are forbidden.
+   opaque service. Verify the service-signed closed session, every ordered supported learner action
+   and before/after semantic transition, profile-derived path coverage, technical boundary report,
+   solver identity, and signed approval. Self-asserted path labels, unsupported request kinds, and
+   reviewer-controlled outcomes are forbidden.
 10. **Accessibility/technical audit.** Execute the accessibility client through the pinned standard
     browser harness; verify construct-equivalent alternatives, graph behavior, keyboard, focus,
     semantics, contrast, 320px reflow, 200% zoom, reduced motion, nonvisual alternatives,
@@ -355,9 +387,10 @@ Do not start the next wave until the integration controller:
 
 1. Rehashes the immutable plan and validates the materialized wave overlay, exact job/slot set,
    controller/integrator identities, separation edges, real source dates, the external trust root,
-   signed pinset/credentials, schema-valid candidate, compiler-derived clients, service
-   deployment/attestation/receipts, harness execution, and every signed candidate-bound G01–G10
-   record.
+   signed pinset/credentials, immutable implementation subjects and provenance, signed production
+   candidate-validator execution, compiler-derived clients, service
+   deployment/attestation/action receipts/technical checks, harness execution, and every signed
+   candidate-bound G01–G10 record.
 2. Confirms no extra lesson output, no open P0/P1, and complete containment/owner/due-date/publication
    blocks for every open P2; G01–G10 must pass for internal integration.
 3. Verifies the cumulative corpus manifest contains every prior wave/job, then completes the
@@ -374,21 +407,25 @@ changing curriculum order, or relaxing separation of duties.
 
 ## Known launch blockers
 
-- **W00 cannot launch.** The corrected lesson-platform foundation commit and exact
-  `LessonDefinition`/runtime schema, shared learner DTO schema, candidate validator, learner-safe
-  compiler, browser/a11y review harness, scoring-service builds, build signing keys, production
-  integration-authority trust root, and signed pinset have not been supplied. No temporary
-  production hashes are guessed. The positive cryptographic fixtures are explicitly
-  `FIXTURE_ONLY_NON_PRODUCTION` and cannot satisfy the CLI.
+- **W00 cannot launch.** The integration branch must materialize a production signed pinset for the
+  final hardened foundation commit. It must supply exact `LessonDefinition`, `LessonStepView`, and
+  `LessonActionInput` schema artifacts; payload-version and identity/media JSON pointers; the
+  action/event/state/path transition profile; an immutable production candidate-validator
+  implementation and signed execution-report contract covering cross-field refinements; immutable
+  learner-safe compiler, browser/a11y harness, and scoring-service implementation subjects; signed
+  build provenance and report keys; and the external production integration-authority trust root.
+  None has been supplied on this branch, and no temporary production hash or asset is guessed. The
+  positive cryptographic fixtures are explicitly `FIXTURE_ONLY_NON_PRODUCTION` and cannot satisfy
+  the CLI.
 - Locations, hashes, processing-rights records, and review provenance for all five prototype
   artifacts still need to be supplied.
 - Actual controller/integrator, author, rights-reviewer, specialty fact-checker, CARS subject
   reviewer, auditor, solver, and approver identities are intentionally unassigned.
 - Job source ledgers and present-day authority refreshes have not been materialized; the architecture
   remains bounded by the supplied 2020 AAMC ceiling.
-- Candidate artifacts, compiler derivation reports, closed review clients, opaque scoring
-  deployments, signed service/ACL receipts, browser execution artifacts, reviewer credentials, and
-  complete signed G01–G10 reports do not yet exist.
+- Candidate artifacts, production-validator execution reports, compiler derivation reports, closed
+  review clients, opaque scoring deployments, signed service/ACL/action/technical receipts, browser
+  execution artifacts, reviewer credentials, and complete signed G01–G10 reports do not yet exist.
 - Lesson content, specialty sign-off, rights/originality evidence, calibrated evidence recipes,
   learner validation, and efficacy/subgroup results do not yet exist.
 - Complexity and risk points are deterministic structural triage estimates, not person-hours,

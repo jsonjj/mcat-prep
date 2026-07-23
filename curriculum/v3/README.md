@@ -70,10 +70,11 @@ node --test \
 - `v3-cloud-authoring-wave-assignment-overlay.template.json` is a deterministic unmaterialized
   W00 example. The overlay CLI generates one separate plan-hash-pinned file per wave and validates
   actual person/run assignments, externally signed foundation pins and reviewer credentials,
-  pinned-schema-valid candidate artifacts, compiler-derived closed clients, signed opaque-service
-  receipts, browser/a11y execution, cumulative-corpus similarity, and complete signed
-  candidate-bound G01–G10 records. Production `validate` additionally requires
-  `--integration-trust-root` pointing to a public key supplied outside the overlay.
+  supplementary schema validation plus a production-validator-signed candidate execution report,
+  compiler-derived closed clients, signed opaque-service action/transition receipts and technical
+  checks, browser/a11y execution, cumulative-corpus similarity, and complete signed candidate-bound
+  G01–G10 records. Production `validate` additionally requires `--integration-trust-root` pointing
+  to a public key supplied outside the overlay.
 - `v3-cloud-authoring-runbook.md` defines clean-room inputs, the lesson contract, independent review
   pipeline, integration checkpoints, publication boundary, and unresolved launch constraints.
 
@@ -84,11 +85,14 @@ internal draft until the runbook's rights, scientific review, reviewed-hash, and
 pass.
 
 W00 is intentionally blocked until the corrected lesson-platform foundation provides an exact
-commit, runtime/candidate and learner DTO schemas, candidate validator, learner-safe compiler,
-standard browser/a11y harness, scoring-service builds, build signing keys, external integration
-trust root, and signed pinset. Test fixtures are visibly fixture-only and cannot satisfy production
-validation. Artifact hashes identify exact bytes; they are not evidence of authorship or execution
-without the required signatures, trust roots, and execution/review records.
+commit; `LessonDefinition`, `LessonStepView`, and `LessonActionInput` schemas; signed identity,
+media, action/event/state/transition profiles; a production candidate validator with signed
+cross-field execution reports; immutable learner-safe compiler, browser/a11y harness, and
+scoring-service implementation subjects with signed provenance; build/report signing keys; an
+external integration trust root; and a signed pinset. Test fixtures are visibly fixture-only and
+cannot satisfy production validation. Artifact hashes identify exact bytes; they are not evidence
+of authorship or execution without the required signatures, trust roots, and execution/review
+records.
 
 ## Included
 

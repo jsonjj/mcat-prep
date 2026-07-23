@@ -586,10 +586,10 @@
           "passed": null,
           "report_sha256": null,
           "scanned_file_count": null,
-          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V2"
+          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V3"
         },
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "accessibility_technical_review": {
@@ -607,7 +607,7 @@
         },
         "reviewed_artifact_sha256": null,
         "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-329622::ACCESSIBILITY_TECHNICAL_AUDITOR",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "blind_solve_bundle": {
@@ -626,10 +626,10 @@
           "passed": null,
           "report_sha256": null,
           "scanned_file_count": null,
-          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V2"
+          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V3"
         },
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "blind_solve_review": {
@@ -648,11 +648,13 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-329622::INDEPENDENT_BLIND_SOLVER",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         "approved": null,
+        "blind_evidence_sha256": null,
         "candidate_sha256": null,
+        "candidate_validator_execution_report_sha256": null,
         "deployment_attestation": {
           "attestation_path": null,
           "attestation_sha256": null,
@@ -663,16 +665,15 @@
         "lesson_id": "V3-LES-329622",
         "receipt_artifact": { "artifact_path": null, "artifact_sha256": null, "file_manifest": [] },
         "required_path_coverage": [
+          "ALTERNATE_ROUTE_SELECTION",
+          "ASSISTANCE_REVEAL",
           "CORRECT_RESPONSE",
-          "HELP_REQUEST",
+          "FRESH_ACTIVITY_RETRY",
           "INCORRECT_RESPONSE",
-          "INTERRUPTION_AND_RESUME",
-          "INVALID_ACTIVITY",
-          "MIXED_ROUTE",
-          "OMISSION",
-          "REPAIR_LIMIT",
-          "RETRY",
-          "REVEAL"
+          "NOT_SURE_RESPONSE",
+          "PAUSE_AND_RESUME",
+          "REPAIR_LIMIT_PLANNER_REENTRY",
+          "TARGETED_REPAIR_CYCLE"
         ],
         "safe_client_sha256": null,
         "service_deployment_artifact": {
@@ -680,8 +681,15 @@
           "artifact_sha256": null,
           "file_manifest": []
         },
+        "service_integration_report": {
+          "report_path": null,
+          "report_sha256": null,
+          "report_signature_path": null,
+          "report_signature_sha256": null,
+          "signer_key_fingerprint": null
+        },
         "solver_recipient_identity": { "person_id": null, "run_id": null },
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "candidate_artifact": {
@@ -690,8 +698,15 @@
         "file_manifest": [],
         "job_id": "V3-AUTHORING-JOB::V3-LES-329622",
         "lesson_id": "V3-LES-329622",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
+      },
+      "candidate_validator_execution": {
+        "report_path": null,
+        "report_sha256": null,
+        "report_signature_path": null,
+        "report_signature_sha256": null,
+        "signer_key_fingerprint": null
       },
       "canonical_runtime_content_gate_reports": [
         {
@@ -709,7 +724,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-329622::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -727,7 +742,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-329622::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -745,7 +760,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-329622::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -763,7 +778,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-329622::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         }
       ],
@@ -782,7 +797,7 @@
         },
         "reviewed_artifact_sha256": null,
         "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-329622::INDEPENDENT_CONTENT_PEDAGOGY_AUDITOR",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "domain_scientific_review": {
@@ -792,7 +807,7 @@
         "job_id": "V3-AUTHORING-JOB::V3-LES-329622",
         "lesson_id": "V3-LES-329622",
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "specialty_records": [
           {
             "report": {
@@ -836,7 +851,7 @@
             "signer_key_fingerprint": null
           }
         },
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "safe_projection_evidence": {
@@ -903,10 +918,10 @@
           "passed": null,
           "report_sha256": null,
           "scanned_file_count": null,
-          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V2"
+          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V3"
         },
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "accessibility_technical_review": {
@@ -924,7 +939,7 @@
         },
         "reviewed_artifact_sha256": null,
         "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-765609::ACCESSIBILITY_TECHNICAL_AUDITOR",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "blind_solve_bundle": {
@@ -943,10 +958,10 @@
           "passed": null,
           "report_sha256": null,
           "scanned_file_count": null,
-          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V2"
+          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V3"
         },
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "blind_solve_review": {
@@ -965,11 +980,13 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-765609::INDEPENDENT_BLIND_SOLVER",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         "approved": null,
+        "blind_evidence_sha256": null,
         "candidate_sha256": null,
+        "candidate_validator_execution_report_sha256": null,
         "deployment_attestation": {
           "attestation_path": null,
           "attestation_sha256": null,
@@ -980,16 +997,15 @@
         "lesson_id": "V3-LES-765609",
         "receipt_artifact": { "artifact_path": null, "artifact_sha256": null, "file_manifest": [] },
         "required_path_coverage": [
+          "ALTERNATE_ROUTE_SELECTION",
+          "ASSISTANCE_REVEAL",
           "CORRECT_RESPONSE",
-          "HELP_REQUEST",
+          "FRESH_ACTIVITY_RETRY",
           "INCORRECT_RESPONSE",
-          "INTERRUPTION_AND_RESUME",
-          "INVALID_ACTIVITY",
-          "MIXED_ROUTE",
-          "OMISSION",
-          "REPAIR_LIMIT",
-          "RETRY",
-          "REVEAL"
+          "NOT_SURE_RESPONSE",
+          "PAUSE_AND_RESUME",
+          "REPAIR_LIMIT_PLANNER_REENTRY",
+          "TARGETED_REPAIR_CYCLE"
         ],
         "safe_client_sha256": null,
         "service_deployment_artifact": {
@@ -997,8 +1013,15 @@
           "artifact_sha256": null,
           "file_manifest": []
         },
+        "service_integration_report": {
+          "report_path": null,
+          "report_sha256": null,
+          "report_signature_path": null,
+          "report_signature_sha256": null,
+          "signer_key_fingerprint": null
+        },
         "solver_recipient_identity": { "person_id": null, "run_id": null },
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "candidate_artifact": {
@@ -1007,8 +1030,15 @@
         "file_manifest": [],
         "job_id": "V3-AUTHORING-JOB::V3-LES-765609",
         "lesson_id": "V3-LES-765609",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
+      },
+      "candidate_validator_execution": {
+        "report_path": null,
+        "report_sha256": null,
+        "report_signature_path": null,
+        "report_signature_sha256": null,
+        "signer_key_fingerprint": null
       },
       "canonical_runtime_content_gate_reports": [
         {
@@ -1026,7 +1056,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-765609::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -1044,7 +1074,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-765609::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -1062,7 +1092,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-765609::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -1080,7 +1110,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-765609::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         }
       ],
@@ -1099,7 +1129,7 @@
         },
         "reviewed_artifact_sha256": null,
         "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-765609::INDEPENDENT_CONTENT_PEDAGOGY_AUDITOR",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "domain_scientific_review": {
@@ -1109,7 +1139,7 @@
         "job_id": "V3-AUTHORING-JOB::V3-LES-765609",
         "lesson_id": "V3-LES-765609",
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "specialty_records": [
           {
             "report": {
@@ -1186,7 +1216,7 @@
             "signer_key_fingerprint": null
           }
         },
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "safe_projection_evidence": {
@@ -1253,10 +1283,10 @@
           "passed": null,
           "report_sha256": null,
           "scanned_file_count": null,
-          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V2"
+          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V3"
         },
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "accessibility_technical_review": {
@@ -1274,7 +1304,7 @@
         },
         "reviewed_artifact_sha256": null,
         "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-443492::ACCESSIBILITY_TECHNICAL_AUDITOR",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "blind_solve_bundle": {
@@ -1293,10 +1323,10 @@
           "passed": null,
           "report_sha256": null,
           "scanned_file_count": null,
-          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V2"
+          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V3"
         },
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "blind_solve_review": {
@@ -1315,11 +1345,13 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-443492::INDEPENDENT_BLIND_SOLVER",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         "approved": null,
+        "blind_evidence_sha256": null,
         "candidate_sha256": null,
+        "candidate_validator_execution_report_sha256": null,
         "deployment_attestation": {
           "attestation_path": null,
           "attestation_sha256": null,
@@ -1330,16 +1362,15 @@
         "lesson_id": "V3-LES-443492",
         "receipt_artifact": { "artifact_path": null, "artifact_sha256": null, "file_manifest": [] },
         "required_path_coverage": [
+          "ALTERNATE_ROUTE_SELECTION",
+          "ASSISTANCE_REVEAL",
           "CORRECT_RESPONSE",
-          "HELP_REQUEST",
+          "FRESH_ACTIVITY_RETRY",
           "INCORRECT_RESPONSE",
-          "INTERRUPTION_AND_RESUME",
-          "INVALID_ACTIVITY",
-          "MIXED_ROUTE",
-          "OMISSION",
-          "REPAIR_LIMIT",
-          "RETRY",
-          "REVEAL"
+          "NOT_SURE_RESPONSE",
+          "PAUSE_AND_RESUME",
+          "REPAIR_LIMIT_PLANNER_REENTRY",
+          "TARGETED_REPAIR_CYCLE"
         ],
         "safe_client_sha256": null,
         "service_deployment_artifact": {
@@ -1347,8 +1378,15 @@
           "artifact_sha256": null,
           "file_manifest": []
         },
+        "service_integration_report": {
+          "report_path": null,
+          "report_sha256": null,
+          "report_signature_path": null,
+          "report_signature_sha256": null,
+          "signer_key_fingerprint": null
+        },
         "solver_recipient_identity": { "person_id": null, "run_id": null },
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "candidate_artifact": {
@@ -1357,8 +1395,15 @@
         "file_manifest": [],
         "job_id": "V3-AUTHORING-JOB::V3-LES-443492",
         "lesson_id": "V3-LES-443492",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
+      },
+      "candidate_validator_execution": {
+        "report_path": null,
+        "report_sha256": null,
+        "report_signature_path": null,
+        "report_signature_sha256": null,
+        "signer_key_fingerprint": null
       },
       "canonical_runtime_content_gate_reports": [
         {
@@ -1376,7 +1421,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-443492::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -1394,7 +1439,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-443492::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -1412,7 +1457,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-443492::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -1430,7 +1475,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-443492::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         }
       ],
@@ -1449,7 +1494,7 @@
         },
         "reviewed_artifact_sha256": null,
         "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-443492::INDEPENDENT_CONTENT_PEDAGOGY_AUDITOR",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "domain_scientific_review": {
@@ -1459,7 +1504,7 @@
         "job_id": "V3-AUTHORING-JOB::V3-LES-443492",
         "lesson_id": "V3-LES-443492",
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "specialty_records": [
           {
             "report": {
@@ -1503,7 +1548,7 @@
             "signer_key_fingerprint": null
           }
         },
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "safe_projection_evidence": {
@@ -1570,10 +1615,10 @@
           "passed": null,
           "report_sha256": null,
           "scanned_file_count": null,
-          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V2"
+          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V3"
         },
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "accessibility_technical_review": {
@@ -1591,7 +1636,7 @@
         },
         "reviewed_artifact_sha256": null,
         "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-225658::ACCESSIBILITY_TECHNICAL_AUDITOR",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "blind_solve_bundle": {
@@ -1610,10 +1655,10 @@
           "passed": null,
           "report_sha256": null,
           "scanned_file_count": null,
-          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V2"
+          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V3"
         },
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "blind_solve_review": {
@@ -1632,11 +1677,13 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-225658::INDEPENDENT_BLIND_SOLVER",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         "approved": null,
+        "blind_evidence_sha256": null,
         "candidate_sha256": null,
+        "candidate_validator_execution_report_sha256": null,
         "deployment_attestation": {
           "attestation_path": null,
           "attestation_sha256": null,
@@ -1647,16 +1694,15 @@
         "lesson_id": "V3-LES-225658",
         "receipt_artifact": { "artifact_path": null, "artifact_sha256": null, "file_manifest": [] },
         "required_path_coverage": [
+          "ALTERNATE_ROUTE_SELECTION",
+          "ASSISTANCE_REVEAL",
           "CORRECT_RESPONSE",
-          "HELP_REQUEST",
+          "FRESH_ACTIVITY_RETRY",
           "INCORRECT_RESPONSE",
-          "INTERRUPTION_AND_RESUME",
-          "INVALID_ACTIVITY",
-          "MIXED_ROUTE",
-          "OMISSION",
-          "REPAIR_LIMIT",
-          "RETRY",
-          "REVEAL"
+          "NOT_SURE_RESPONSE",
+          "PAUSE_AND_RESUME",
+          "REPAIR_LIMIT_PLANNER_REENTRY",
+          "TARGETED_REPAIR_CYCLE"
         ],
         "safe_client_sha256": null,
         "service_deployment_artifact": {
@@ -1664,8 +1710,15 @@
           "artifact_sha256": null,
           "file_manifest": []
         },
+        "service_integration_report": {
+          "report_path": null,
+          "report_sha256": null,
+          "report_signature_path": null,
+          "report_signature_sha256": null,
+          "signer_key_fingerprint": null
+        },
         "solver_recipient_identity": { "person_id": null, "run_id": null },
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "candidate_artifact": {
@@ -1674,8 +1727,15 @@
         "file_manifest": [],
         "job_id": "V3-AUTHORING-JOB::V3-LES-225658",
         "lesson_id": "V3-LES-225658",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
+      },
+      "candidate_validator_execution": {
+        "report_path": null,
+        "report_sha256": null,
+        "report_signature_path": null,
+        "report_signature_sha256": null,
+        "signer_key_fingerprint": null
       },
       "canonical_runtime_content_gate_reports": [
         {
@@ -1693,7 +1753,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-225658::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -1711,7 +1771,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-225658::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -1729,7 +1789,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-225658::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -1747,7 +1807,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-225658::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         }
       ],
@@ -1766,7 +1826,7 @@
         },
         "reviewed_artifact_sha256": null,
         "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-225658::INDEPENDENT_CONTENT_PEDAGOGY_AUDITOR",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "domain_scientific_review": {
@@ -1776,7 +1836,7 @@
         "job_id": "V3-AUTHORING-JOB::V3-LES-225658",
         "lesson_id": "V3-LES-225658",
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "specialty_records": [
           {
             "report": {
@@ -1820,7 +1880,7 @@
             "signer_key_fingerprint": null
           }
         },
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "safe_projection_evidence": {
@@ -1887,10 +1947,10 @@
           "passed": null,
           "report_sha256": null,
           "scanned_file_count": null,
-          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V2"
+          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V3"
         },
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "accessibility_technical_review": {
@@ -1908,7 +1968,7 @@
         },
         "reviewed_artifact_sha256": null,
         "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-386478::ACCESSIBILITY_TECHNICAL_AUDITOR",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "blind_solve_bundle": {
@@ -1927,10 +1987,10 @@
           "passed": null,
           "report_sha256": null,
           "scanned_file_count": null,
-          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V2"
+          "scanner_id": "V3_CLOSED_REVIEW_BUNDLE_SCAN_V3"
         },
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "blind_solve_review": {
@@ -1949,11 +2009,13 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-386478::INDEPENDENT_BLIND_SOLVER",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         "approved": null,
+        "blind_evidence_sha256": null,
         "candidate_sha256": null,
+        "candidate_validator_execution_report_sha256": null,
         "deployment_attestation": {
           "attestation_path": null,
           "attestation_sha256": null,
@@ -1964,16 +2026,15 @@
         "lesson_id": "V3-LES-386478",
         "receipt_artifact": { "artifact_path": null, "artifact_sha256": null, "file_manifest": [] },
         "required_path_coverage": [
+          "ALTERNATE_ROUTE_SELECTION",
+          "ASSISTANCE_REVEAL",
           "CORRECT_RESPONSE",
-          "HELP_REQUEST",
+          "FRESH_ACTIVITY_RETRY",
           "INCORRECT_RESPONSE",
-          "INTERRUPTION_AND_RESUME",
-          "INVALID_ACTIVITY",
-          "MIXED_ROUTE",
-          "OMISSION",
-          "REPAIR_LIMIT",
-          "RETRY",
-          "REVEAL"
+          "NOT_SURE_RESPONSE",
+          "PAUSE_AND_RESUME",
+          "REPAIR_LIMIT_PLANNER_REENTRY",
+          "TARGETED_REPAIR_CYCLE"
         ],
         "safe_client_sha256": null,
         "service_deployment_artifact": {
@@ -1981,8 +2042,15 @@
           "artifact_sha256": null,
           "file_manifest": []
         },
+        "service_integration_report": {
+          "report_path": null,
+          "report_sha256": null,
+          "report_signature_path": null,
+          "report_signature_sha256": null,
+          "signer_key_fingerprint": null
+        },
         "solver_recipient_identity": { "person_id": null, "run_id": null },
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "candidate_artifact": {
@@ -1991,8 +2059,15 @@
         "file_manifest": [],
         "job_id": "V3-AUTHORING-JOB::V3-LES-386478",
         "lesson_id": "V3-LES-386478",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
+      },
+      "candidate_validator_execution": {
+        "report_path": null,
+        "report_sha256": null,
+        "report_signature_path": null,
+        "report_signature_sha256": null,
+        "signer_key_fingerprint": null
       },
       "canonical_runtime_content_gate_reports": [
         {
@@ -2010,7 +2085,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-386478::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -2028,7 +2103,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-386478::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -2046,7 +2121,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-386478::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         },
         {
@@ -2064,7 +2139,7 @@
           },
           "reviewed_artifact_sha256": null,
           "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-386478::RELEASE_HASH_INTEGRATOR",
-          "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+          "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
           "wave_id": "V3-AUTH-W00-PILOT-PORT"
         }
       ],
@@ -2083,7 +2158,7 @@
         },
         "reviewed_artifact_sha256": null,
         "reviewer_slot_id": "V3-AUTHORING-JOB::V3-LES-386478::INDEPENDENT_CONTENT_PEDAGOGY_AUDITOR",
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "domain_scientific_review": {
@@ -2104,7 +2179,7 @@
         "job_id": "V3-AUTHORING-JOB::V3-LES-386478",
         "lesson_id": "V3-LES-386478",
         "reviewed_candidate_sha256": null,
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "specialty_records": [
           {
             "report": {
@@ -2148,7 +2223,7 @@
             "signer_key_fingerprint": null
           }
         },
-        "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+        "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
         "wave_id": "V3-AUTH-W00-PILOT-PORT"
       },
       "safe_projection_evidence": {
@@ -2195,7 +2270,8 @@
       "artifact_sha256": null,
       "file_manifest": []
     },
-    "learner_dto_schema": { "path": null, "sha256": null },
+    "learner_action_schema": { "path": null, "sha256": null },
+    "learner_view_schema": { "path": null, "sha256": null },
     "review_harness_build": { "artifact_path": null, "artifact_sha256": null, "file_manifest": [] },
     "safe_projection_compiler_build": {
       "artifact_path": null,
@@ -2211,17 +2287,17 @@
       "phase0": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
       "sequence": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01"
     },
-    "plan_schema_version": "mcat-v3-cloud-authoring-orchestration-4",
+    "plan_schema_version": "mcat-v3-cloud-authoring-orchestration-5",
     "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
     "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
     "source_manifest_sha256": "98da0f9cc92b07798077476226f49bb3e23260a0e18efac0f813f73d3d5b0828"
   },
   "reviewer_reuse_declarations": [],
   "reviewer_signing_credentials": [],
-  "schema_version": "mcat-v3-cloud-authoring-wave-assignment-overlay-3",
+  "schema_version": "mcat-v3-cloud-authoring-wave-assignment-overlay-4",
   "source_plan": {
     "path": "curriculum/v3/v3-cloud-authoring-jobs.json",
-    "sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5"
+    "sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c"
   },
   "validation_target": "INTERNAL_DRAFT_INTEGRATION",
   "wave": {
@@ -2268,7 +2344,7 @@
       "V3-AUTHORING-JOB::V3-LES-225658::CROSS_LESSON_SIMILARITY_AUDITOR",
       "V3-AUTHORING-JOB::V3-LES-386478::CROSS_LESSON_SIMILARITY_AUDITOR"
     ],
-    "source_plan_sha256": "5119b6c226905c624fbfc770b53198d309d429a0e197bb3f735ffc4c065cb7f5",
+    "source_plan_sha256": "5b96743714476ad1156818d8facf3ba008de0570d92fefd8155c0ef378ec713c",
     "wave_id": "V3-AUTH-W00-PILOT-PORT"
   }
 }
