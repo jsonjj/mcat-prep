@@ -10,6 +10,10 @@ import { compareCodeUnits, deterministicJson } from './deterministic-json';
 const CanonicalGroupingIdSchema = z.string().regex(/^V3-CL-\d{6}$/);
 const BindingGroupingIdSchema = z.string().regex(/^V3-CL-[A-Z0-9]+(?:-[A-Z0-9]+)*$/);
 const AttachmentIdSchema = z.string().regex(/^V3-(?:EXT|CAP|SUP)-[A-Z0-9]+(?:-[A-Z0-9]+)*$/);
+const PrerequisiteEntityIdSchema = z.union([
+  V3KcIdSchema,
+  z.string().regex(/^V3-CAP-[A-Z0-9]+(?:-[A-Z0-9]+)*$/),
+]);
 
 const ManifestLessonSchema = z
   .object({
@@ -38,8 +42,8 @@ const ManifestKcSchema = z
     scope_in: z.array(z.string()),
     scope_out: z.array(z.string()),
     representations: z.array(z.string()),
-    hard_prerequisite_ids: z.array(V3KcIdSchema),
-    helpful_prerequisite_ids: z.array(V3KcIdSchema),
+    hard_prerequisite_ids: z.array(PrerequisiteEntityIdSchema),
+    helpful_prerequisite_ids: z.array(PrerequisiteEntityIdSchema),
   })
   .passthrough();
 
@@ -228,8 +232,8 @@ export const CanonicalKcBindingSchema = z
     scopeIn: z.array(z.string()),
     scopeOut: z.array(z.string()),
     representationLabels: z.array(z.string()),
-    hardPrerequisiteKcIds: z.array(V3KcIdSchema),
-    helpfulPrerequisiteKcIds: z.array(V3KcIdSchema),
+    hardPrerequisiteEntityIds: z.array(PrerequisiteEntityIdSchema),
+    helpfulPrerequisiteEntityIds: z.array(PrerequisiteEntityIdSchema),
   })
   .strict();
 
@@ -434,7 +438,7 @@ export function compileCanonicalLessonBinding(
   ];
   if (
     !exactMembers([...activeCapstoneIds, ...heldInternalIds], lesson.capstone_ids) ||
-    !exactArray(
+    !exactMembers(
       internalRelation.ordered_entity_ids,
       grouping.teaching_order.entity_ids.filter((id) => !heldInternalIds.includes(id)),
     )
@@ -455,8 +459,8 @@ export function compileCanonicalLessonBinding(
       scopeIn: [...kc.scope_in],
       scopeOut: [...kc.scope_out],
       representationLabels: [...kc.representations],
-      hardPrerequisiteKcIds: [...kc.hard_prerequisite_ids],
-      helpfulPrerequisiteKcIds: [...kc.helpful_prerequisite_ids],
+      hardPrerequisiteEntityIds: [...kc.hard_prerequisite_ids],
+      helpfulPrerequisiteEntityIds: [...kc.helpful_prerequisite_ids],
     };
   });
 
@@ -516,7 +520,8 @@ export function compileCanonicalLessonBinding(
       association === null ||
       (association === 'owner' && capstone.owning_lesson_id !== lessonId) ||
       (association === 'referenced' && capstone.owning_lesson_id === lessonId) ||
-      !lesson.nested_kc_ids.every((kcId) => capstone.component_kc_ids.includes(kcId)) ||
+      (association === 'referenced' &&
+        !lesson.nested_kc_ids.some((kcId) => capstone.component_kc_ids.includes(kcId))) ||
       capstone.placement_freeze_id !== manifest.metadata.registry.freeze_ids.sequence
     ) {
       throw new Error(`canonical capstone association mismatch for ${id}`);

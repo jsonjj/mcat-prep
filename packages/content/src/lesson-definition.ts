@@ -437,6 +437,11 @@ const CanonicalRepresentationMappingSchema = z
   })
   .strict();
 
+const PrerequisiteEntityIdSchema = z.union([
+  V3KcIdSchema,
+  z.string().regex(/^V3-CAP-[A-Z0-9]+(?:-[A-Z0-9]+)*$/),
+]);
+
 export const KnowledgeComponentDefinitionSchema = z
   .object({
     id: V3KcIdSchema,
@@ -446,8 +451,8 @@ export const KnowledgeComponentDefinitionSchema = z
       .object({
         included: z.array(z.string().min(1)).min(1),
         excluded: z.array(z.string().min(1)).default([]),
-        hardPrerequisiteKcIds: z.array(V3KcIdSchema).default([]),
-        helpfulPrerequisiteKcIds: z.array(V3KcIdSchema).default([]),
+        hardPrerequisiteEntityIds: z.array(PrerequisiteEntityIdSchema).default([]),
+        helpfulPrerequisiteEntityIds: z.array(PrerequisiteEntityIdSchema).default([]),
       })
       .strict(),
     representations: z.array(RepresentationDefinitionSchema).min(1),
@@ -735,26 +740,26 @@ const notSureSignals = (activity: z.infer<typeof ActivityDefinitionSchema>): rea
     : activity.response.rubric.notSureDiagnosticSignalIds;
 };
 
-const mediaReferences = (lesson: z.infer<typeof LessonDefinitionBaseSchema>) =>
-  lesson.knowledgeComponents.flatMap((kc) =>
-    kc.representations.flatMap((representation) => {
+const mediaReferences = (
+  lesson: z.infer<typeof LessonDefinitionBaseSchema>,
+): { path: string; kind: LessonAssetKind }[] => {
+  const references: { path: string; kind: LessonAssetKind }[] = [];
+  lesson.knowledgeComponents.forEach((kc) => {
+    kc.representations.forEach((representation) => {
       if (representation.kind === 'audio') {
-        return [
-          { path: representation.assetRef, kind: 'audio' as const },
-          ...(representation.captionsRef === null
-            ? []
-            : [{ path: representation.captionsRef, kind: 'captions' as const }]),
-        ];
+        references.push({ path: representation.assetRef, kind: 'audio' });
+        if (representation.captionsRef !== null) {
+          references.push({ path: representation.captionsRef, kind: 'captions' });
+        }
       }
       if (representation.kind === 'video') {
-        return [
-          { path: representation.assetRef, kind: 'video' as const },
-          { path: representation.captionsRef, kind: 'captions' as const },
-        ];
+        references.push({ path: representation.assetRef, kind: 'video' });
+        references.push({ path: representation.captionsRef, kind: 'captions' });
       }
-      return [];
-    }),
-  );
+    });
+  });
+  return references;
+};
 
 export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((lesson, ctx) => {
   const kcIds = lesson.knowledgeComponents.map((kc) => kc.id);
@@ -798,14 +803,16 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
       canonicalKc.scopeIn.some((entry, scopeIndex) => entry !== kc.scope.included[scopeIndex]) ||
       canonicalKc.scopeOut.length !== kc.scope.excluded.length ||
       canonicalKc.scopeOut.some((entry, scopeIndex) => entry !== kc.scope.excluded[scopeIndex]) ||
-      canonicalKc.hardPrerequisiteKcIds.length !== kc.scope.hardPrerequisiteKcIds.length ||
-      canonicalKc.hardPrerequisiteKcIds.some(
-        (entry, prerequisiteIndex) => entry !== kc.scope.hardPrerequisiteKcIds[prerequisiteIndex],
-      ) ||
-      canonicalKc.helpfulPrerequisiteKcIds.length !== kc.scope.helpfulPrerequisiteKcIds.length ||
-      canonicalKc.helpfulPrerequisiteKcIds.some(
+      canonicalKc.hardPrerequisiteEntityIds.length !== kc.scope.hardPrerequisiteEntityIds.length ||
+      canonicalKc.hardPrerequisiteEntityIds.some(
         (entry, prerequisiteIndex) =>
-          entry !== kc.scope.helpfulPrerequisiteKcIds[prerequisiteIndex],
+          entry !== kc.scope.hardPrerequisiteEntityIds[prerequisiteIndex],
+      ) ||
+      canonicalKc.helpfulPrerequisiteEntityIds.length !==
+        kc.scope.helpfulPrerequisiteEntityIds.length ||
+      canonicalKc.helpfulPrerequisiteEntityIds.some(
+        (entry, prerequisiteIndex) =>
+          entry !== kc.scope.helpfulPrerequisiteEntityIds[prerequisiteIndex],
       )
     ) {
       addIssue(
@@ -1428,8 +1435,8 @@ export const LessonDefinitionSchema = LessonDefinitionBaseSchema.superRefine((le
       }
     });
     if (
-      kc.scope.hardPrerequisiteKcIds.includes(kc.id) ||
-      kc.scope.helpfulPrerequisiteKcIds.includes(kc.id)
+      kc.scope.hardPrerequisiteEntityIds.includes(kc.id) ||
+      kc.scope.helpfulPrerequisiteEntityIds.includes(kc.id)
     ) {
       addIssue(ctx, [...basePath, 'scope'], 'a KC cannot be its own prerequisite');
     }

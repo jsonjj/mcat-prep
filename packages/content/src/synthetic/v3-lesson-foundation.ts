@@ -381,8 +381,8 @@ function makeKc(
     scope: {
       included,
       excluded,
-      hardPrerequisiteKcIds: [],
-      helpfulPrerequisiteKcIds: [],
+      hardPrerequisiteEntityIds: [],
+      helpfulPrerequisiteEntityIds: [],
     },
     representations: [
       {
@@ -661,8 +661,8 @@ const fixtureInput: Record<string, unknown> = {
       scopeIn: kc.scope.included,
       scopeOut: kc.scope.excluded,
       representationLabels: kc.representations.map((representation) => representation.label),
-      hardPrerequisiteKcIds: kc.scope.hardPrerequisiteKcIds,
-      helpfulPrerequisiteKcIds: kc.scope.helpfulPrerequisiteKcIds,
+      hardPrerequisiteEntityIds: kc.scope.hardPrerequisiteEntityIds,
+      helpfulPrerequisiteEntityIds: kc.scope.helpfulPrerequisiteEntityIds,
     })),
     attachments: artifacts.map((artifact) => ({
       id: artifact.id,

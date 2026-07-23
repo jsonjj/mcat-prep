@@ -114,7 +114,7 @@ describe('V3 lesson definition schema', () => {
     expect(LessonDefinitionSchema.safeParse(wrongClaim).success).toBe(false);
 
     const prerequisiteDrift = structuredClone(syntheticV3LessonDefinition);
-    prerequisiteDrift.knowledgeComponents[0]!.scope.hardPrerequisiteKcIds.push(
+    prerequisiteDrift.knowledgeComponents[0]!.scope.hardPrerequisiteEntityIds.push(
       syntheticV3LessonDefinition.knowledgeComponents[1]!.id,
     );
     expect(LessonDefinitionSchema.safeParse(prerequisiteDrift).success).toBe(false);

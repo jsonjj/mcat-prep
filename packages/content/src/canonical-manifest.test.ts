@@ -79,13 +79,17 @@ describe('canonical V3 authoring manifest compiler', () => {
     const boundedConclusion = binding.kcs.find((kc) => kc.id === 'V3-KC-062200');
 
     expect(binding.lesson.hardPrerequisiteLessonIds).toEqual(['V3-LES-264240', 'V3-LES-765609']);
-    expect(boundedConclusion?.hardPrerequisiteKcIds).toEqual(['V3-KC-388302']);
-    expect(boundedConclusion?.helpfulPrerequisiteKcIds).toEqual(['V3-KC-136063']);
+    expect(boundedConclusion?.hardPrerequisiteEntityIds).toEqual(['V3-KC-388302']);
+    expect(boundedConclusion?.helpfulPrerequisiteEntityIds).toEqual(['V3-KC-136063']);
+    const carsBinding = compileCanonicalLessonBinding(manifestInput, 'V3-LES-191933');
+    expect(
+      carsBinding.kcs.find((kc) => kc.id === 'V3-KC-474889')?.helpfulPrerequisiteEntityIds,
+    ).toEqual(['V3-CAP-218541']);
 
     const conflated = structuredClone(binding);
     const driftedKc = conflated.kcs.find((kc) => kc.id === 'V3-KC-062200')!;
-    driftedKc.hardPrerequisiteKcIds.push(...driftedKc.helpfulPrerequisiteKcIds);
-    driftedKc.helpfulPrerequisiteKcIds = [];
+    driftedKc.hardPrerequisiteEntityIds.push(...driftedKc.helpfulPrerequisiteEntityIds);
+    driftedKc.helpfulPrerequisiteEntityIds = [];
     expect(validateCanonicalLessonBinding(conflated, manifestInput)).not.toEqual([]);
   });
 
