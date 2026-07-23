@@ -253,9 +253,9 @@ function WaitingStep({
         ? 'Predecessor support required'
         : step.status === 'reentry_pending'
           ? 'Resuming exact repair point'
-      : step.status === 'repair_pending'
-        ? 'Repair ready'
-        : 'Feedback ready';
+          : step.status === 'repair_pending'
+            ? 'Repair ready'
+            : 'Feedback ready';
   return (
     <Card elevated>
       <Stack gap={3}>

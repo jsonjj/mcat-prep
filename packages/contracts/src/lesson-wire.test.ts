@@ -83,8 +83,7 @@ describe('canonical lesson learner-event wire boundary', () => {
 
   it('rejects unknown payload fields instead of silently losing semantics', () => {
     const wire = serializeCanonicalLearnerEvent(event());
-    (wire.payload as Record<string, unknown>).private_event_type =
-      'lesson_route_selected';
+    (wire.payload as Record<string, unknown>).private_event_type = 'lesson_route_selected';
 
     expect(() => parseCanonicalLearnerEventWire(wire)).toThrow();
   });

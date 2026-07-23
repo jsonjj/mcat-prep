@@ -6,9 +6,7 @@ export const LessonDefinitionVersionSchema = z
   .regex(/^\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?$/, 'semantic lesson definition version');
 export type LessonDefinitionVersion = z.infer<typeof LessonDefinitionVersionSchema>;
 
-export const Sha256DigestSchema = z
-  .string()
-  .regex(/^[a-f0-9]{64}$/, 'lowercase SHA-256 digest');
+export const Sha256DigestSchema = z.string().regex(/^[a-f0-9]{64}$/, 'lowercase SHA-256 digest');
 export type Sha256Digest = z.infer<typeof Sha256DigestSchema>;
 
 export const V3RegistryPinSchema = z

@@ -297,10 +297,7 @@ describe('LessonRunner accessibility and safe rendering', () => {
       message: 'Every required KC reached instructional exit.',
       completion: {
         kind: 'lesson_completion',
-        orderedRequiredKcIds: [
-          'V3-KC-SYNTH-COMPONENT',
-          'V3-KC-SYNTH-COMPONENT-2',
-        ],
+        orderedRequiredKcIds: ['V3-KC-SYNTH-COMPONENT', 'V3-KC-SYNTH-COMPONENT-2'],
         instructionalExitKcIds: ['V3-KC-SYNTH-COMPONENT', 'V3-KC-SYNTH-COMPONENT-2'],
       },
     });
