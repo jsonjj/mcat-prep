@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack, useTheme, type ThemePreference } from '@mcat/ui-web';
 import { useBootstrap, useResetProgress } from '../app/queries';
 import { isGhostOptedOut, setGhostOptOut } from '../components/GhostCompanion';
@@ -138,21 +138,6 @@ export function Profile() {
           </p>
         </Stack>
       </Card>
-
-      {import.meta.env.DEV ? (
-        <Card elevated>
-          <Stack gap={3}>
-            <Eyebrow>Author tools · dev</Eyebrow>
-            <Link to="/app/preview" className="mc-textbtn">
-              Question preview (unverified candidates) →
-            </Link>
-            <p className="mc-muted mc-fineprint">
-              Renders imported candidate items in the learner UI for review. Drafts only — never
-              scored or counted toward mastery.
-            </p>
-          </Stack>
-        </Card>
-      ) : null}
 
       <Card elevated>
         <Stack gap={3}>

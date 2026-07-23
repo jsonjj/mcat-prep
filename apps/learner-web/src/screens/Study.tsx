@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { ProbableCause } from '@mcat/contracts';
+import type { ChoiceId, ProbableCause, StudyStepView } from '@mcat/contracts';
 import { Button, Callout, Card, Eyebrow, MasteryBadge, Stack } from '@mcat/ui-web';
-import type { StudyStepView } from '@mcat/authority-core';
 import {
   useContinueStep,
   useRequestReveal,
@@ -40,7 +39,7 @@ export function Study() {
   const continueStep = useContinueStep();
   const submitRecall = useSubmitRecall();
 
-  const [choice, setChoice] = useState<string | null>(null);
+  const [choice, setChoice] = useState<ChoiceId | null>(null);
   const [recallText, setRecallText] = useState('');
 
   const step = session.data;
@@ -285,7 +284,7 @@ function Reveal({
   onContinue,
 }: {
   reveal: NonNullable<Extract<StudyStepView, { kind: 'question' }>['reveal']>;
-  chosen: string | null;
+  chosen: ChoiceId | null;
   onContinue: () => void;
 }) {
   return (

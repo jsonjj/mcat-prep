@@ -66,7 +66,7 @@ body {
 .mc-shell {
   min-height: 100dvh;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr auto;
   grid-template-areas: 'header' 'main' 'bottomnav';
 }
@@ -122,6 +122,7 @@ body {
 
 .mc-shell__main {
   grid-area: main;
+  min-width: 0;
   width: 100%;
   max-width: 760px;
   margin: 0 auto;
@@ -170,7 +171,7 @@ body {
 /* ---- Desktop layout ---- */
 @media (min-width: 840px) {
   .mc-shell {
-    grid-template-columns: 248px 1fr;
+    grid-template-columns: 248px minmax(0, 1fr);
     grid-template-rows: auto 1fr;
     grid-template-areas: 'header header' 'sidebar main';
   }
@@ -919,21 +920,6 @@ body {
 }
 .mc-duel__reflection {
   white-space: pre-wrap;
-}
-
-/* ---- Question preview (dev author tool) ---- */
-.mc-preview__choices {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--mc-space-2);
-}
-.mc-preview__choices li {
-  display: flex;
-  gap: var(--mc-space-3);
-  align-items: baseline;
 }
 
 /* ---- Focus mode ---- */
