@@ -1340,7 +1340,7 @@ describe('planner reentry lineage and cross-run exposure', () => {
     });
     expect(forgedCounts.status).toBe('blocked');
 
-    let kcTwoParent = handoff(progressed, kcTwoArtifacts);
+    const kcTwoParent = handoff(progressed, kcTwoArtifacts);
     expect(kcTwoParent.status).toBe('handoff');
     const kcTwoChild = initializeLessonReentryRun(
       syntheticV3LessonDefinition,
