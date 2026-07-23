@@ -163,6 +163,63 @@ describe('architecture boundaries', () => {
     expect(Object.keys(deps('packages/policies'))).not.toContain('@mcat/authority-core');
   });
 
+  it('keeps V3 run state free of aggregate mastery/readiness semantics', () => {
+    const runContract = readFileSync(join(root, 'packages/contracts/src/lesson-run.ts'), 'utf8');
+    const learnerView = readFileSync(join(root, 'packages/contracts/src/lesson-views.ts'), 'utf8');
+
+    for (const source of [runContract, learnerView]) {
+      expect(source).not.toMatch(/\bmastery(?:State|Status|Score)?\b/i);
+      expect(source).not.toMatch(/\breadiness(?:State|Status|Score)?\b/i);
+    }
+    expect(learnerView).not.toContain('correctChoiceIds');
+    expect(learnerView).not.toContain('acceptedAnswers');
+    expect(learnerView).not.toContain('diagnosticSignalIds');
+    expect(learnerView).not.toContain('authorityPrivateFeedback');
+    expect(learnerView).not.toContain('sealedEntry');
+    expect(learnerView).not.toContain('sealedExit');
+  });
+
+  it('keeps V3 evaluation and fixture activation behind server-only packages', () => {
+    const authorityRuntime = readFileSync(
+      join(root, 'packages/authority-core/src/lesson-run.ts'),
+      'utf8',
+    );
+    const syntheticFixture = readFileSync(
+      join(root, 'packages/content/src/synthetic/v3-lesson-foundation.ts'),
+      'utf8',
+    );
+
+    expect(authorityRuntime).toContain('evaluateLessonResponse');
+    expect(authorityRuntime).toContain("mode === 'production'");
+    expect(authorityRuntime).toContain('unpublished_or_test_content_forbidden');
+    expect(syntheticFixture).toContain('SYNTHETIC, TEST-ONLY');
+    expect(syntheticFixture).toContain('testOnly: true');
+  });
+
+  it('keeps the canonical manifest compiler out of learner bundles', () => {
+    expect(Object.keys(deps('apps/learner-web'))).not.toContain('@mcat/content');
+
+    for (const file of sourceFiles('apps/learner-web/src')) {
+      const source = readFileSync(join(root, file), 'utf8');
+      expect(source, `${file} must not import server-side canonical content tooling`).not.toContain(
+        '@mcat/content',
+      );
+      expect(source).not.toContain('compileCanonicalLessonBinding');
+      expect(source).not.toContain('validateCanonicalLessonBinding');
+    }
+  });
+
+  it('keeps shared content schemas browser-compatible for authoring clients', () => {
+    for (const file of sourceFiles('packages/content/src').filter(
+      (source) => !source.includes('.test.'),
+    )) {
+      const source = readFileSync(join(root, file), 'utf8');
+      expect(source, `${file} must not import a Node-only builtin`).not.toMatch(
+        /from ['"]node:|require\(['"]node:/,
+      );
+    }
+  });
+
   it('every compiled learner-safe question is free of answer keys and rationales', () => {
     const bank = loadSyntheticBank();
     for (const q of bank.questions) {

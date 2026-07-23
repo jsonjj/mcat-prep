@@ -29,6 +29,19 @@ describe('learner browser authority boundary', () => {
     expect(source).not.toContain('InProcessAuthorityClient');
   });
 
+  it('keeps the V3 runner on learner-safe contracts and native controls', () => {
+    const runner = read('apps/learner-web/src/components/LessonRunner.tsx');
+
+    expect(runner).toContain("from '@mcat/contracts'");
+    expect(runner).not.toMatch(/@mcat\/(?:authority-core|content)/);
+    expect(runner).not.toContain('correctChoiceIds');
+    expect(runner).not.toContain('acceptedAnswers');
+    expect(runner).not.toContain('diagnosticSignalIds');
+    expect(runner).toContain('<fieldset');
+    expect(runner).toContain('<legend');
+    expect(runner).toContain('<progress');
+  });
+
   it('requires the configured HTTP authority and has no learner question preview', () => {
     const authority = read('apps/learner-web/src/app/authority.ts');
     const router = read('apps/learner-web/src/app/router.tsx');
@@ -67,9 +80,7 @@ describe('learner browser authority boundary', () => {
   it('lets the learner shell and atlas shrink to narrow mobile viewports', () => {
     const styles = read('apps/learner-web/src/styles/app.css');
 
-    expect(styles).toMatch(
-      /\.mc-shell\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
-    );
+    expect(styles).toMatch(/\.mc-shell\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s);
     expect(styles).toMatch(/\.mc-shell__main\s*\{[^}]*min-width:\s*0/s);
     expect(styles).toMatch(
       /@media \(min-width: 840px\)[\s\S]*?\.mc-shell\s*\{[^}]*grid-template-columns:\s*248px minmax\(0,\s*1fr\)/,

@@ -8,6 +8,7 @@ import {
   GuestBootstrapResponseSchema,
   HTTP_API,
   HttpApiErrorSchema,
+  LessonActionCommandSchema,
   MasteryMapEntrySchema,
   PracticeItemViewSchema,
   PracticeResultSchema,
@@ -21,6 +22,7 @@ import {
   type BootstrapResponse,
   type HttpApiError,
   type HttpErrorCode,
+  type LessonActionCommand,
 } from '@mcat/contracts';
 import type { AuthorityPort, GoalInput, SessionPort } from './port';
 
@@ -124,6 +126,8 @@ export class HttpAuthorityClient implements AuthorityPort {
   private streamVersion: number | undefined;
   private contentRelease: string | undefined;
   private currentQuestionId: string | undefined;
+  private readonly pendingLessonCommands = new Map<string, LessonActionCommand>();
+  private readonly inFlightLessonActions = new Map<string, Promise<void>>();
 
   constructor(options: HttpAuthorityClientOptions) {
     const url = new URL(options.baseUrl);
@@ -314,6 +318,45 @@ export class HttpAuthorityClient implements AuthorityPort {
     });
     await this.bootstrap();
     return response.correct;
+  }
+
+  async dispatchLessonAction(
+    runId: Parameters<AuthorityPort['dispatchLessonAction']>[0],
+    runVersion: Parameters<AuthorityPort['dispatchLessonAction']>[1],
+    action: Parameters<AuthorityPort['dispatchLessonAction']>[2],
+  ): Promise<void> {
+    const commandKey = JSON.stringify([runId, runVersion, action]);
+    const inFlight = this.inFlightLessonActions.get(commandKey);
+    if (inFlight) return inFlight;
+
+    const request = (async () => {
+      const command =
+        this.pendingLessonCommands.get(commandKey) ??
+        LessonActionCommandSchema.parse({
+          envelope: await this.commandEnvelope(),
+          runId,
+          expectedRunVersion: runVersion,
+          action,
+        });
+      this.pendingLessonCommands.set(commandKey, command);
+      try {
+        await this.acceptedCommand('/v1/learning/lesson/action', command);
+        this.pendingLessonCommands.delete(commandKey);
+      } catch (error) {
+        if (error instanceof ApiClientError && !error.retryable) {
+          this.pendingLessonCommands.delete(commandKey);
+        }
+        throw error;
+      }
+    })();
+    this.inFlightLessonActions.set(commandKey, request);
+    try {
+      await request;
+    } finally {
+      if (this.inFlightLessonActions.get(commandKey) === request) {
+        this.inFlightLessonActions.delete(commandKey);
+      }
+    }
   }
 
   async getMasteryMap() {

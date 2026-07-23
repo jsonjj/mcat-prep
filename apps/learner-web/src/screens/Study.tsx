@@ -4,12 +4,14 @@ import type { ChoiceId, ProbableCause, StudyStepView } from '@mcat/contracts';
 import { Button, Callout, Card, Eyebrow, MasteryBadge, Stack } from '@mcat/ui-web';
 import {
   useContinueStep,
+  useLessonAction,
   useRequestReveal,
   useSelectCause,
   useSession,
   useSubmitAttempt,
   useSubmitRecall,
 } from '../app/queries';
+import { LessonRunner } from '../components/LessonRunner';
 
 const CAUSES: { value: ProbableCause; label: string }[] = [
   { value: 'did_not_know_content', label: 'I did not know the content' },
@@ -38,6 +40,7 @@ export function Study() {
   const requestReveal = useRequestReveal();
   const continueStep = useContinueStep();
   const submitRecall = useSubmitRecall();
+  const lessonAction = useLessonAction();
 
   const [choice, setChoice] = useState<ChoiceId | null>(null);
   const [recallText, setRecallText] = useState('');
@@ -49,7 +52,8 @@ export function Study() {
     setRecallText('');
   }, [stepKey]);
 
-  if (session.isLoading || !step) return <div className="mc-center mc-muted">Loading your task…</div>;
+  if (session.isLoading || !step)
+    return <div className="mc-center mc-muted">Loading your task…</div>;
 
   if (step.kind === 'locked') {
     return (
@@ -61,6 +65,22 @@ export function Study() {
           Finish setup
         </Button>
       </div>
+    );
+  }
+
+  if (step.kind === 'v3_lesson') {
+    return (
+      <LessonRunner
+        step={step}
+        pending={lessonAction.isPending}
+        onAction={(action) =>
+          lessonAction.mutateAsync({
+            runId: step.runId,
+            runVersion: step.runVersion,
+            action,
+          })
+        }
+      />
     );
   }
 
@@ -194,15 +214,15 @@ export function Study() {
       {step.sub === 'reveal' && step.reveal ? (
         <Reveal reveal={step.reveal} chosen={choice} onContinue={() => continueStep.mutate()} />
       ) : step.sub === 'cause' ? (
-        <CausePicker
-          onPick={(c) => selectCause.mutate(c)}
-          pending={selectCause.isPending}
-        />
+        <CausePicker onPick={(c) => selectCause.mutate(c)} pending={selectCause.isPending} />
       ) : (
         <fieldset className="mc-choices">
           <legend className="mc-visually-hidden">Answer choices</legend>
           {q.choices.map((c) => (
-            <label key={c.id} className={`mc-choice ${choice === c.id ? 'mc-choice--selected' : ''}`}>
+            <label
+              key={c.id}
+              className={`mc-choice ${choice === c.id ? 'mc-choice--selected' : ''}`}
+            >
               <input
                 type="radio"
                 name="answer"
@@ -237,7 +257,9 @@ export function Study() {
 
       {step.sub === 'retry' ? (
         <Stack gap={2}>
-          <Callout tone="info">One unassisted retry. This is diagnostic — it won&apos;t count as mastery.</Callout>
+          <Callout tone="info">
+            One unassisted retry. This is diagnostic — it won&apos;t count as mastery.
+          </Callout>
           <Button
             variant="primary"
             size="lg"
@@ -252,7 +274,13 @@ export function Study() {
   );
 }
 
-function CausePicker({ onPick, pending }: { onPick: (c: ProbableCause) => void; pending: boolean }) {
+function CausePicker({
+  onPick,
+  pending,
+}: {
+  onPick: (c: ProbableCause) => void;
+  pending: boolean;
+}) {
   return (
     <Card elevated>
       <Stack gap={3}>

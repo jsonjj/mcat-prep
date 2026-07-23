@@ -19,6 +19,7 @@ export default defineWorkspace([
         'packages/analytics-events/**/*.test.ts',
         'packages/ai-speech-contracts/**/*.test.ts',
         'packages/test-fixtures/**/*.test.ts',
+        'apps/learner-web/src/**/*.test.tsx',
         'apps/landing-web/server/**/*.test.ts',
         'services/**/*.test.ts',
         'database/**/*.test.ts',

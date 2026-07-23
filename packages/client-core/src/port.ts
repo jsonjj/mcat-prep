@@ -6,6 +6,8 @@ import type {
   PracticeItemView,
   PracticeResult,
   ProbableCause,
+  LessonActionInput,
+  LessonRunId,
   SkillSummary,
   StudyStepView,
   TodayView,
@@ -36,6 +38,11 @@ export interface AuthorityPort {
   requestReveal(): Promise<void>;
   continueStep(): Promise<void>;
   submitRecall(answer: string): Promise<boolean>;
+  dispatchLessonAction(
+    runId: LessonRunId,
+    runVersion: number,
+    action: LessonActionInput,
+  ): Promise<void>;
   getMasteryMap(): Promise<MasteryMapEntry[]>;
   getErrorLog(): Promise<ErrorEntryView[]>;
   getSkills(): Promise<SkillSummary[]>;

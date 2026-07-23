@@ -27,6 +27,9 @@ export type SessionId = z.infer<typeof SessionIdSchema>;
 export const TaskInstanceIdSchema = uuidSchema.brand<'TaskInstanceId'>();
 export type TaskInstanceId = z.infer<typeof TaskInstanceIdSchema>;
 
+export const LessonRunIdSchema = uuidSchema.brand<'LessonRunId'>();
+export type LessonRunId = z.infer<typeof LessonRunIdSchema>;
+
 /** Content ids are stable, lowercase, hyphen/alphanumeric (not UUIDs). */
 export const ContentIdSchema = z
   .string()
@@ -34,8 +37,34 @@ export const ContentIdSchema = z
   .brand<'ContentId'>();
 export type ContentId = z.infer<typeof ContentIdSchema>;
 
+/** Canonical V3 curriculum ids are registry-owned and intentionally uppercase. */
+export const V3LessonIdSchema = z
+  .string()
+  .regex(/^V3-LES-[A-Z0-9]+(?:-[A-Z0-9]+)*$/, 'canonical V3 lesson id')
+  .brand<'V3LessonId'>();
+export type V3LessonId = z.infer<typeof V3LessonIdSchema>;
+
+export const V3KcIdSchema = z
+  .string()
+  .regex(/^V3-KC-[A-Z0-9]+(?:-[A-Z0-9]+)*$/, 'canonical V3 knowledge-component id')
+  .brand<'V3KcId'>();
+export type V3KcId = z.infer<typeof V3KcIdSchema>;
+
+export const V3ActivityIdSchema = z
+  .string()
+  .regex(/^V3-ACT-[A-Z0-9]+(?:-[A-Z0-9]+)*$/, 'canonical V3 activity id')
+  .brand<'V3ActivityId'>();
+export type V3ActivityId = z.infer<typeof V3ActivityIdSchema>;
+
+export const V3RepresentationIdSchema = z
+  .string()
+  .regex(/^V3-REP-[A-Z0-9]+(?:-[A-Z0-9]+)*$/, 'canonical V3 representation id')
+  .brand<'V3RepresentationId'>();
+export type V3RepresentationId = z.infer<typeof V3RepresentationIdSchema>;
+
 export const newLearnerId = (): LearnerId => LearnerIdSchema.parse(uuid());
 export const newEventId = (): EventId => EventIdSchema.parse(uuid());
 export const newIdempotencyKey = (): IdempotencyKey => IdempotencyKeySchema.parse(uuid());
 export const newSessionId = (): SessionId => SessionIdSchema.parse(uuid());
 export const newTaskInstanceId = (): TaskInstanceId => TaskInstanceIdSchema.parse(uuid());
+export const newLessonRunId = (): LessonRunId => LessonRunIdSchema.parse(uuid());
