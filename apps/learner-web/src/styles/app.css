@@ -332,6 +332,88 @@ body {
   font-size: var(--mc-text-17);
   margin-top: 2px;
 }
+.mc-atlas__panelclose {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  width: var(--mc-space-6);
+  height: var(--mc-space-6);
+  margin: calc(-1 * var(--mc-space-1)) calc(-1 * var(--mc-space-2)) 0 0;
+  border: 0;
+  border-radius: var(--mc-radius-pill);
+  background: transparent;
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-22);
+  line-height: 1;
+  cursor: pointer;
+}
+.mc-atlas__panelclose:hover {
+  background: var(--mc-surface-2);
+  color: var(--mc-ink);
+}
+.mc-atlas__lessons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+  max-height: min(58vh, 440px);
+  overflow-y: auto;
+  padding-right: var(--mc-space-1);
+}
+.mc-atlas__lgroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+}
+.mc-atlas__lgroup-head {
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mc-ink-muted);
+}
+.mc-atlas__llist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+}
+.mc-atlas__lesson {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+  padding: var(--mc-space-2) var(--mc-space-3);
+  border-radius: var(--mc-radius-control);
+  background: color-mix(in srgb, var(--mc-surface) 55%, transparent);
+}
+.mc-atlas__lstatus {
+  flex: 0 0 auto;
+  font-size: var(--mc-text-14);
+  color: var(--mc-ink-muted);
+}
+.mc-atlas__lstatus--done {
+  color: var(--mc-primary-text);
+}
+.mc-atlas__lstatus--progress {
+  color: var(--mc-warning);
+}
+.mc-atlas__ltitle {
+  flex: 1 1 auto;
+  font-size: var(--mc-text-15);
+  line-height: 1.3;
+}
+.mc-atlas__lstate {
+  flex: 0 0 auto;
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  color: var(--mc-ink-muted);
+}
+.mc-atlas__lstate--done {
+  color: var(--mc-primary-text);
+}
+.mc-atlas__lstate--progress {
+  color: var(--mc-warning);
+}
 
 /* ---- Home ---- */
 .mc-home {
