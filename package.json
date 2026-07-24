@@ -12,6 +12,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
+    "dev:lesson": "VITE_AUTHORITY_BASE_URL=http://127.0.0.1:8787 pnpm --parallel --filter @mcat/local-authority --filter @mcat/learner-web run dev",
     "typecheck": "turbo run typecheck",
     "lint": "eslint .",
     "test": "vitest run",
