@@ -73,9 +73,30 @@ function aiProxy(env: Record<string, string>): Plugin {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  // Dev-only: proxy the learner API prefix to the remote authority server-side so the
+  // browser makes SAME-ORIGIN requests (no browser CORS). The backend only trusts the
+  // deployed origin, so we present that as the outgoing Origin/Referer. This affects the
+  // Vite dev server only — the production build never uses `server`/`proxy`.
+  const authorityProxyTarget =
+    env.VITE_AUTHORITY_PROXY_TARGET || 'https://d2j72l2zhhn7o7.cloudfront.net';
   return {
     plugins: [react(), aiProxy(env)],
-    server: { port: 5173 },
+    server: {
+      port: 5173,
+      proxy: {
+        '/v1': {
+          target: authorityProxyTarget,
+          changeOrigin: true,
+          secure: true,
+          configure: (proxy) => {
+            proxy.on('proxyReq', (proxyReq) => {
+              proxyReq.setHeader('origin', authorityProxyTarget);
+              proxyReq.setHeader('referer', `${authorityProxyTarget}/`);
+            });
+          },
+        },
+      },
+    },
     preview: { port: 4173 },
     // three.js is loaded only in the lazy BrainScene chunk, so a larger chunk here is expected.
     build: { outDir: 'dist', sourcemap: false, target: 'es2022', chunkSizeWarningLimit: 900 },
