@@ -10,6 +10,13 @@ import {
   TodayViewSchema,
 } from './learner-views';
 import { UtcTimestampSchema } from './time';
+import {
+  VectorLessonCommandSchema,
+  VectorLessonRunViewSchema,
+  VectorLessonStartCommandSchema,
+  VectorLessonStartResponseSchema,
+  VectorLessonStatusViewSchema,
+} from './v3-vector-lesson';
 
 export const HttpErrorCodeSchema = z.enum([...ErrorCodeSchema.options, 'stream_conflict']);
 export type HttpErrorCode = z.infer<typeof HttpErrorCodeSchema>;
@@ -60,4 +67,26 @@ export const HTTP_API = {
   session: { method: 'GET', path: '/v1/learning/session', response: StudyStepViewSchema },
   attempt: { method: 'POST', path: '/v1/attempts', body: AttemptCommandSchema },
   sync: { method: 'POST', path: '/v1/sync', body: SyncSubmitRequestSchema },
+  vectorLessonStatus: {
+    method: 'GET',
+    path: '/v1/lessons/vectors-and-trigonometry/status',
+    response: VectorLessonStatusViewSchema,
+  },
+  vectorLessonStart: {
+    method: 'POST',
+    path: '/v1/lessons/vectors-and-trigonometry/start',
+    body: VectorLessonStartCommandSchema,
+    response: VectorLessonStartResponseSchema,
+  },
+  vectorLessonRun: {
+    method: 'GET',
+    path: '/v1/lessons/vectors-and-trigonometry/run',
+    response: VectorLessonRunViewSchema,
+  },
+  vectorLessonCommand: {
+    method: 'POST',
+    path: '/v1/lessons/vectors-and-trigonometry/commands',
+    body: VectorLessonCommandSchema,
+    response: AcceptedCommandResponseSchema,
+  },
 } as const;

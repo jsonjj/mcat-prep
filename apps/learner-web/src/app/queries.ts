@@ -1,10 +1,5 @@
-import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
-import type { ProbableCause } from '@mcat/contracts';
+import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { ProbableCause, VectorLessonAction } from '@mcat/contracts';
 import type { GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 
@@ -12,16 +7,30 @@ export const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 0, refetchOnWindowFocus: false, retry: false } },
 });
 
-const LEARNER_KEYS = ['bootstrap', 'today', 'session', 'mastery', 'errors'];
+const LEARNER_KEYS = [
+  'bootstrap',
+  'today',
+  'session',
+  'mastery',
+  'errors',
+  'vector-lesson-status',
+  'vector-lesson-run',
+];
 const invalidateLearner = (qc: QueryClient) =>
   Promise.all(LEARNER_KEYS.map((k) => qc.invalidateQueries({ queryKey: [k] })));
 
-export const useBootstrap = () => useQuery({ queryKey: ['bootstrap'], queryFn: () => authority.bootstrap() });
-export const useToday = () => useQuery({ queryKey: ['today'], queryFn: () => authority.getToday() });
-export const useSession = () => useQuery({ queryKey: ['session'], queryFn: () => authority.getSession() });
-export const useMasteryMap = () => useQuery({ queryKey: ['mastery'], queryFn: () => authority.getMasteryMap() });
-export const useErrorLog = () => useQuery({ queryKey: ['errors'], queryFn: () => authority.getErrorLog() });
-export const useSkills = () => useQuery({ queryKey: ['skills'], queryFn: () => authority.getSkills() });
+export const useBootstrap = () =>
+  useQuery({ queryKey: ['bootstrap'], queryFn: () => authority.bootstrap() });
+export const useToday = () =>
+  useQuery({ queryKey: ['today'], queryFn: () => authority.getToday() });
+export const useSession = () =>
+  useQuery({ queryKey: ['session'], queryFn: () => authority.getSession() });
+export const useMasteryMap = () =>
+  useQuery({ queryKey: ['mastery'], queryFn: () => authority.getMasteryMap() });
+export const useErrorLog = () =>
+  useQuery({ queryKey: ['errors'], queryFn: () => authority.getErrorLog() });
+export const useSkills = () =>
+  useQuery({ queryKey: ['skills'], queryFn: () => authority.getSkills() });
 export const useDiagnosticNext = () =>
   useQuery({ queryKey: ['diagnostic'], queryFn: () => authority.getDiagnosticNext() });
 
@@ -60,12 +69,51 @@ export function useSelectCause() {
 
 export function useRequestReveal() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: () => authority.requestReveal(), onSuccess: () => invalidateLearner(qc) });
+  return useMutation({
+    mutationFn: () => authority.requestReveal(),
+    onSuccess: () => invalidateLearner(qc),
+  });
 }
 
 export function useContinueStep() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: () => authority.continueStep(), onSuccess: () => invalidateLearner(qc) });
+  return useMutation({
+    mutationFn: () => authority.continueStep(),
+    onSuccess: () => invalidateLearner(qc),
+  });
+}
+
+export function useVectorLessonStatus() {
+  return useQuery({
+    queryKey: ['vector-lesson-status'],
+    queryFn: () => authority.getVectorLessonStatus(),
+  });
+}
+
+export function useStartVectorLesson() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => authority.startVectorLesson(),
+    onSuccess: () => {
+      void invalidateLearner(qc);
+    },
+  });
+}
+
+export function useVectorLessonRun() {
+  return useQuery({
+    queryKey: ['vector-lesson-run'],
+    queryFn: () => authority.getVectorLessonRun(),
+  });
+}
+
+export function useSubmitVectorLessonAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { runId: string; screenToken: string; action: VectorLessonAction }) =>
+      authority.submitVectorLessonAction(input.runId, input.screenToken, input.action),
+    onSuccess: () => invalidateLearner(qc),
+  });
 }
 
 export function useSubmitRecall() {
@@ -78,13 +126,20 @@ export function useSubmitRecall() {
 
 export function useResetProgress() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: () => authority.resetProgress(), onSuccess: () => invalidateLearner(qc) });
+  return useMutation({
+    mutationFn: () => authority.resetProgress(),
+    onSuccess: () => invalidateLearner(qc),
+  });
 }
 
-export const useWrapped = () => useQuery({ queryKey: ['wrapped'], queryFn: () => authority.getWrapped() });
+export const useWrapped = () =>
+  useQuery({ queryKey: ['wrapped'], queryFn: () => authority.getWrapped() });
 
 export const usePracticeItem = (questionId: string) =>
-  useQuery({ queryKey: ['practice', questionId], queryFn: () => authority.getPracticeItem(questionId) });
+  useQuery({
+    queryKey: ['practice', questionId],
+    queryFn: () => authority.getPracticeItem(questionId),
+  });
 
 export function useCheckPractice() {
   const qc = useQueryClient();
@@ -97,5 +152,8 @@ export function useCheckPractice() {
 
 export function useRecordCarsDuel() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: () => authority.recordCarsDuel(), onSuccess: () => invalidateLearner(qc) });
+  return useMutation({
+    mutationFn: () => authority.recordCarsDuel(),
+    onSuccess: () => invalidateLearner(qc),
+  });
 }

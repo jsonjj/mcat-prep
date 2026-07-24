@@ -11,6 +11,8 @@ import {
   HttpApiErrorSchema,
   type Clock,
   type HttpErrorCode,
+  type VectorLessonCommand,
+  type VectorLessonStartCommand,
 } from '@mcat/contracts';
 import type { AuthorityRepository } from '@mcat/database';
 
@@ -91,6 +93,18 @@ interface KernelPort {
     input: ContinueCommandBody,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handleReset']>;
+  vectorLessonStatus(
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['vectorLessonStatus']>;
+  vectorLessonRun(principal: Principal): ReturnType<RepositoryLearnerKernel['vectorLessonRun']>;
+  handleVectorLessonStart(
+    input: VectorLessonStartCommand,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleVectorLessonStart']>;
+  handleVectorLessonCommand(
+    input: VectorLessonCommand,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleVectorLessonCommand']>;
 }
 
 export interface LearnerApiDependencies {
@@ -634,6 +648,30 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             origin,
             requestIdValue,
           );
+        case 'vectorLessonStart':
+          return jsonResponse(
+            200,
+            route.responseSchema?.parse(
+              await dependencies.kernel.handleVectorLessonStart(
+                parsed.data as VectorLessonStartCommand,
+                principal,
+              ),
+            ),
+            origin,
+            requestIdValue,
+          );
+        case 'vectorLessonCommand':
+          return jsonResponse(
+            200,
+            AcceptedCommandResponseSchema.parse(
+              await dependencies.kernel.handleVectorLessonCommand(
+                parsed.data as VectorLessonCommand,
+                principal,
+              ),
+            ),
+            origin,
+            requestIdValue,
+          );
         default:
           return jsonResponse(
             200,
@@ -681,6 +719,24 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       return jsonResponse(
         200,
         route.responseSchema?.parse(await dependencies.kernel.wrapped(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'vectorLessonStatus') {
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.vectorLessonStatus(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'vectorLessonRun') {
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.vectorLessonRun(principal)),
         origin,
         requestIdValue,
       );

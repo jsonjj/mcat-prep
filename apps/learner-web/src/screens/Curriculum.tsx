@@ -1,4 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@mcat/ui-web';
 import {
   CURRICULUM_PHASES,
@@ -6,23 +7,24 @@ import {
   type CurriculumModule,
   type CurriculumPhase,
 } from '../data/curriculum-v3.generated';
+import { useStartVectorLesson, useVectorLessonStatus } from '../app/queries';
 
 /**
- * Curriculum — a calm, browse-only map of the whole V3 path.
+ * Curriculum — a calm map of the whole V3 path with one authorized launch.
  *
  * It renders straight from the checked-in learner-safe manifest
  * (`curriculum-v3.generated`): five ordered phases, their modules, the lessons
- * inside each module, and the knowledge components each lesson will teach. There
- * is deliberately no mastery, progress, locking, launch, search, or network
- * here — only honest structure. Numbering is shown because the order is real
- * (teaching sequence), not decorative. Every module is the same collapsible
- * section; zero-lesson modules simply carry a truthful note instead of lessons.
- * The one visual signature is the five-stage phase path/stepper.
+ * inside each module, and the knowledge components each lesson will teach.
+ * V3-LES-130923 alone adds a server-authoritative Start/Continue seam; every
+ * other unavailable lesson remains visibly disabled. Numbering is shown because
+ * teaching order is real, not decorative. Every module uses the same disclosure,
+ * including zero-lesson integration/revisit modules.
  */
 
 const CARS_LANE = 'CARS_PARALLEL';
 const CARS_MARKER = 'CARS · parallel practice';
 const PANEL_ID = 'mc-curriculum-panel';
+const TARGET_LESSON_ID = 'V3-LES-130923';
 
 const tabId = (phaseId: string): string => `mc-curriculum-tab-${phaseId}`;
 const firstModuleId = (phase: CurriculumPhase): string => phase.modules[0]?.id ?? '';
@@ -239,7 +241,7 @@ function LessonCard({ lesson }: { lesson: CurriculumLesson }) {
   const ordinal = String(lesson.position).padStart(3, '0');
   const kcCount = lesson.kcs.length;
   const titleId = `mc-curriculum-lesson-${lesson.id}`;
-  const soonId = `mc-curriculum-soon-${lesson.id}`;
+  const isTarget = lesson.id === TARGET_LESSON_ID;
   return (
     <article className="mc-curriculum__lesson" aria-labelledby={titleId}>
       <div className="mc-curriculum__lesson-main">
@@ -267,19 +269,105 @@ function LessonCard({ lesson }: { lesson: CurriculumLesson }) {
         </div>
       </div>
       <div className="mc-curriculum__lesson-foot">
-        <span className="mc-curriculum__soon" id={soonId}>
-          Coming soon
-        </span>
-        <Button
-          variant="secondary"
-          size="lg"
-          disabled
-          aria-label={`Start ${lesson.shortTitle}`}
-          aria-describedby={soonId}
-        >
-          Start
-        </Button>
+        {isTarget ? (
+          <TargetLessonAction lesson={lesson} />
+        ) : (
+          <UnavailableLessonAction lesson={lesson} />
+        )}
       </div>
     </article>
+  );
+}
+
+function UnavailableLessonAction({ lesson }: { lesson: CurriculumLesson }) {
+  const soonId = `mc-curriculum-soon-${lesson.id}`;
+  return (
+    <>
+      <span className="mc-curriculum__soon" id={soonId}>
+        Coming soon
+      </span>
+      <Button
+        variant="secondary"
+        size="lg"
+        disabled
+        aria-label={`Start ${lesson.shortTitle}`}
+        aria-describedby={soonId}
+      >
+        Start
+      </Button>
+    </>
+  );
+}
+
+function TargetLessonAction({ lesson }: { lesson: CurriculumLesson }) {
+  const navigate = useNavigate();
+  const status = useVectorLessonStatus();
+  const startLesson = useStartVectorLesson();
+  const statusId = `mc-curriculum-status-${lesson.id}`;
+
+  const label = status.data?.actionLabel ?? 'Unavailable';
+  const badge =
+    status.data?.availability === 'UNAVAILABLE'
+      ? 'Unavailable'
+      : status.data?.runState === 'BLOCKED'
+        ? 'Needs support'
+        : status.data?.runState === 'PAUSED'
+          ? 'Paused'
+          : status.data?.runState === 'IN_PROGRESS'
+            ? 'In progress'
+            : status.data?.runState === 'DELIVERY_COMPLETE'
+              ? 'Lesson finished'
+              : 'Available now';
+
+  const startOrResume = async (): Promise<void> => {
+    try {
+      const accepted = await startLesson.mutateAsync();
+      navigate(accepted.path);
+    } catch {
+      await status.refetch();
+    }
+  };
+
+  if (status.isError) {
+    return (
+      <>
+        <span className="mc-curriculum__launch-error" id={statusId} role="alert">
+          Couldn&apos;t check this lesson.
+        </span>
+        <Button variant="secondary" size="lg" onClick={() => void status.refetch()}>
+          Try again
+        </Button>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <span className="mc-curriculum__available" id={statusId}>
+        {status.isLoading ? 'Checking availability' : badge}
+      </span>
+      <div className="mc-curriculum__launch">
+        {startLesson.isError ? (
+          <span className="mc-curriculum__launch-error" role="alert">
+            Start wasn&apos;t accepted. Try again.
+          </span>
+        ) : null}
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={
+            status.isLoading ||
+            startLesson.isPending ||
+            status.data?.availability === 'UNAVAILABLE' ||
+            status.data?.actionLabel === null
+          }
+          aria-label={`${label} ${lesson.shortTitle}`}
+          aria-describedby={statusId}
+          onClick={() => void startOrResume()}
+        >
+          {startLesson.isPending ? 'Opening…' : label}
+        </Button>
+      </div>
+    </>
   );
 }

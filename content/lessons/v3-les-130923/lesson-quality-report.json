@@ -1,0 +1,342 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-130923",
+  "artifact_version": "0.1.0-internal-draft",
+  "artifact_status": "DRAFT",
+  "schema_binding": {
+    "schema_id": "mcat-spec04-quality-report-internal-draft",
+    "schema_version": "0.1-candidate-local-1",
+    "schema_sha256": "ea5ff6577152fff18d0cb4a0a398ef57e789828a42788768fb3ab3ca4f0be990",
+    "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
+  },
+  "content_sha256": "6261e29f104dd9dfcbfa9676c3a30f3e7f0326bc4e505d7f6fc989b2b188c3aa",
+  "registry_binding": {
+    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+    "phase_0_freeze_id": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
+    "canonical_freeze_id": "MCAT-V3-CANONICAL-FRZ-2026-07-22-01",
+    "graph_freeze_id": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
+    "sequence_freeze_id": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01",
+    "manifest_schema_id": "mcat-v3-lessons-public",
+    "manifest_schema_version": "1",
+    "manifest_sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+    "lesson_id": "V3-LES-130923",
+    "grouping_id": "V3-CL-130923",
+    "ordered_kc_ids": ["V3-KC-866848", "V3-KC-700208", "V3-KC-159529"],
+    "ordered_required_kc_ids": ["V3-KC-866848", "V3-KC-700208", "V3-KC-159529"]
+  },
+  "authors": [
+    {
+      "identity": "gpt-5.6-sol-max",
+      "role": "PRIMARY_AUTHOR_AND_IMPLEMENTER",
+      "run_id": "V3-LES-130923-INTERNAL-DRAFT-2026-07-23",
+      "contribution": "Original internal-draft lesson content, artifacts, and implementation."
+    }
+  ],
+  "reviewers": [],
+  "input_bindings": [
+    {
+      "input_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "version": "mcat-v3-authoritative-registry-1",
+      "sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+      "kind": "CURRICULUM_REGISTRY",
+      "use": "Identity, scope, order, source anchors, attachments, holds, and placement."
+    },
+    {
+      "input_id": "MCAT-V3-LEARNER-FACING-LESSONS",
+      "version": "mcat-v3-lessons-public-1",
+      "sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+      "kind": "GENERATED_MANIFEST",
+      "use": "Learner label and convenience placement cross-check only."
+    },
+    {
+      "input_id": "AAMC-2020-SUPPLIED-CEILING",
+      "version": "2020-supplied",
+      "sha256": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
+      "kind": "SOURCE_CEILING",
+      "use": "Scope obligation only; no expressive prose or source question reused."
+    }
+  ],
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-130923",
+    "lesson_script_sha256": "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a",
+    "kc_coverage_matrix_id": "V3-KCOV-130923",
+    "kc_coverage_matrix_sha256": "03edcf4f426df99996ac087ecddcc33e0f53315b29883af43e4cb725832f0876",
+    "lesson_presentation_plan_id": "V3-LPPL-130923",
+    "lesson_presentation_plan_sha256": "b7fe61b25397352434e1a69dfb2db7421e33751a3f7559183c28aeb270661c30"
+  },
+  "lineage": {
+    "supersedes": null,
+    "change_reason": "Initial internal-draft implementation for exactly V3-LES-130923.",
+    "authoring_run_id": "V3-LES-130923-INTERNAL-DRAFT-2026-07-23",
+    "derived_input_ids": [
+      "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "MCAT-V3-LEARNER-FACING-LESSONS",
+      "AAMC-2020-SUPPLIED-CEILING"
+    ]
+  },
+  "payload": {
+    "lesson_id": "V3-LES-130923",
+    "review_scope": "Internal automated and agent review for one interactive lesson; no independent human approval or production publication.",
+    "role_assignments": [
+      {
+        "role": "PRIMARY_AUTHOR_AND_IMPLEMENTER",
+        "identity": "gpt-5.6-sol-max",
+        "independent": false,
+        "status": "COMPLETE_INTERNAL_DRAFT"
+      },
+      {
+        "role": "CURRICULUM_BINDING_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "DOMAIN_FACTUAL_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "INSTRUCTIONAL_DESIGN_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "QUESTION_EVIDENCE_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "NOVICE_CLARITY_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "SOURCE_RIGHTS_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "INDEPENDENT_BLIND_SOLVER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "ACCESSIBILITY_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "FINAL_APPROVER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      }
+    ],
+    "independence_checks": [
+      {
+        "check": "PRIMARY_AUTHOR_NOT_FINAL_APPROVER",
+        "status": "BLOCKED",
+        "reason": "No independent final approver assigned."
+      },
+      {
+        "check": "QUESTION_AUTHOR_NOT_BLIND_SOLVER",
+        "status": "BLOCKED",
+        "reason": "No independent keyless blind solver assigned."
+      },
+      {
+        "check": "PROSE_AUTHOR_NOT_RIGHTS_APPROVER",
+        "status": "BLOCKED",
+        "reason": "No source-rights approver assigned."
+      }
+    ],
+    "script_gate": {
+      "gate_status": "BLOCKED",
+      "check_results": [
+        {
+          "check_id": "SCRIPT-AUTOMATED-STRUCTURE",
+          "status": "PASS"
+        },
+        {
+          "check_id": "SCRIPT-PREREQUISITE-ROUTE-APPLICABILITY",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "SCRIPT-INDEPENDENT-SME",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "SCRIPT-LEARNING-SCIENCE",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "SCRIPT-BLIND-SOLVE",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "SCRIPT-SOURCE-RIGHTS",
+          "status": "BLOCKED"
+        }
+      ],
+      "evidence_refs": ["V3-KCOV-130923"],
+      "reviewer_identities": [],
+      "reviewed_dependency_hashes": [
+        "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a"
+      ]
+    },
+    "presentation_gate": {
+      "gate_status": "BLOCKED",
+      "check_results": [
+        {
+          "check_id": "PRESENTATION-PLAN-STRUCTURE",
+          "status": "PASS"
+        },
+        {
+          "check_id": "PRESENTATION-TARGETED-BROWSER-SMOKE",
+          "status": "PASS"
+        },
+        {
+          "check_id": "PRESENTATION-SPEC04-EXHAUSTIVE-BROWSER-EVIDENCE",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "PRESENTATION-HUMAN-ACCESSIBILITY",
+          "status": "BLOCKED"
+        }
+      ],
+      "evidence_refs": [
+        "V3-LPPL-130923",
+        "tests/browser/evidence/v3-les-130923/browser-report.json#sha256=4f92420e66f2ba4bff5c87c4e4f45618e108c7d2779cbfde63d898d617d8ec7d"
+      ],
+      "reviewer_identities": [],
+      "reviewed_dependency_hashes": [
+        "b7fe61b25397352434e1a69dfb2db7421e33751a3f7559183c28aeb270661c30"
+      ]
+    },
+    "integrated_gate": {
+      "gate_status": "BLOCKED",
+      "check_results": [
+        {
+          "check_id": "INTEGRATED-TARGETED-RUNTIME",
+          "status": "PASS"
+        },
+        {
+          "check_id": "INTEGRATED-SPEC04-EXHAUSTIVE-RUNTIME-EVIDENCE",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "INTEGRATED-LEARNER-BUNDLE-SCAN",
+          "status": "PASS"
+        },
+        {
+          "check_id": "INTEGRATED-BUILD-TYPECHECK-LINT",
+          "status": "PASS"
+        },
+        {
+          "check_id": "INTEGRATED-TARGET-FORMAT",
+          "status": "PASS"
+        },
+        {
+          "check_id": "REPOSITORY-GLOBAL-FORMAT",
+          "status": "BLOCKED",
+          "reason": "Repository-wide Prettier check reports 57 unrelated pre-existing files; target lesson files pass focused formatting."
+        },
+        {
+          "check_id": "INTEGRATED-PRODUCTION-SCHEMA-PINS",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "INTEGRATED-PRODUCTION-COMPILER-PIN",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "INTEGRATED-CALIBRATED-EXIT-POLICY",
+          "status": "BLOCKED"
+        }
+      ],
+      "evidence_refs": [
+        "services/lambdas/learner-api/src/vector-lesson-runtime.test.ts",
+        "services/lambdas/learner-api/src/vector-lesson-api.test.ts",
+        "packages/contracts/src/v3-vector-lesson.test.ts",
+        "packages/client-core/src/v3-vector-lesson-http.test.ts",
+        "tests/architecture/vector-lesson-ui-contract.test.ts",
+        "tools/scanners/vector-lesson-bundle-scan.mjs"
+      ],
+      "reviewer_identities": [],
+      "reviewed_dependency_hashes": [
+        "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a",
+        "03edcf4f426df99996ac087ecddcc33e0f53315b29883af43e4cb725832f0876",
+        "b7fe61b25397352434e1a69dfb2db7421e33751a3f7559183c28aeb270661c30"
+      ]
+    },
+    "findings": [
+      {
+        "finding_id": "VTR-FINDING-EXTERNAL-REVIEWS",
+        "severity": "P1",
+        "affected_artifact_hash": "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a",
+        "affected_path": "payload.role_assignments",
+        "reproducible_evidence": "Required independent reviewer identities and receipts are absent.",
+        "required_correction": "Complete SME, learning-science, blind-solve, accessibility, rights, and final approval.",
+        "owner": "EXTERNAL_HUMAN_REVIEW_OWNERS",
+        "status": "OPEN_BLOCKED",
+        "retest_scope": "All four exact artifact hashes and learner build."
+      },
+      {
+        "finding_id": "VTR-FINDING-PRODUCTION-PINS",
+        "severity": "P1",
+        "affected_artifact_hash": "b7fe61b25397352434e1a69dfb2db7421e33751a3f7559183c28aeb270661c30",
+        "affected_path": "schema_binding",
+        "reproducible_evidence": "Spec 04 Appendix H leaves production schema/compiler pins open.",
+        "required_correction": "Pin production schemas, canonicalization, compiler, renderer, DTO, and harness through the named authorities.",
+        "owner": "CONTENT_AND_LESSON_PLATFORM_OWNERS",
+        "status": "OPEN_BLOCKED",
+        "retest_scope": "Artifact validation, compile parity, runtime, and browser evidence."
+      },
+      {
+        "finding_id": "VTR-FINDING-PREREQUISITE-ROUTE-APPLICABILITY",
+        "severity": "P2",
+        "affected_artifact_hash": "03edcf4f426df99996ac087ecddcc33e0f53315b29883af43e4cb725832f0876",
+        "affected_path": "payload.rows[*].route_coverage.prerequisite_support",
+        "reproducible_evidence": "All target KCs have no canonical hard predecessor, while the candidate matrix schema provides no NOT_APPLICABLE route status.",
+        "required_correction": "Schema and policy owners must define the nonapplicable coverage disposition; runtime continues to downgrade attempted support resolutions to STANDARD.",
+        "owner": "LESSON_PLATFORM_AND_POLICY_OWNERS",
+        "status": "OPEN_BLOCKED",
+        "retest_scope": "Coverage schema, route validator, matrix status, and branch simulation."
+      }
+    ],
+    "evidence_refs": [
+      "V3-KCOV-130923",
+      "tests/browser/evidence/v3-les-130923/browser-report.json#sha256=4f92420e66f2ba4bff5c87c4e4f45618e108c7d2779cbfde63d898d617d8ec7d",
+      "services/lambdas/learner-api/src/vector-lesson-runtime.test.ts",
+      "services/lambdas/learner-api/src/vector-lesson-api.test.ts",
+      "tools/scanners/vector-lesson-bundle-scan.mjs"
+    ],
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false
+    },
+    "open_decisions": [
+      "Production schema and canonicalization pins",
+      "Independent source-rights approval",
+      "Independent SME and learning-science review",
+      "Independent blind solve and final approval",
+      "Calibrated exit, fading, and repair policies",
+      "Learner validation and efficacy evaluation",
+      "Signed browser and assistive-technology support matrix",
+      "Prerequisite-support matrix disposition for KCs with no hard predecessor",
+      "Origin-specific canonical repair-template activation at first delivery"
+    ],
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY"
+  }
+}

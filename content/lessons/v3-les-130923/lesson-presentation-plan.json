@@ -1,0 +1,1342 @@
+{
+  "artifact_type": "LESSON_PRESENTATION_PLAN",
+  "artifact_id": "V3-LPPL-130923",
+  "artifact_version": "0.1.0-internal-draft",
+  "artifact_status": "DRAFT",
+  "schema_binding": {
+    "schema_id": "mcat-spec04-presentation-internal-draft",
+    "schema_version": "0.1-candidate-local-1",
+    "schema_sha256": "bb55c14a955b3280944d2835576e749ed66ada4970e1187515e2f0f824598566",
+    "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
+  },
+  "content_sha256": "b7fe61b25397352434e1a69dfb2db7421e33751a3f7559183c28aeb270661c30",
+  "registry_binding": {
+    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+    "phase_0_freeze_id": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
+    "canonical_freeze_id": "MCAT-V3-CANONICAL-FRZ-2026-07-22-01",
+    "graph_freeze_id": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
+    "sequence_freeze_id": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01",
+    "manifest_schema_id": "mcat-v3-lessons-public",
+    "manifest_schema_version": "1",
+    "manifest_sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+    "lesson_id": "V3-LES-130923",
+    "grouping_id": "V3-CL-130923",
+    "ordered_kc_ids": ["V3-KC-866848", "V3-KC-700208", "V3-KC-159529"],
+    "ordered_required_kc_ids": ["V3-KC-866848", "V3-KC-700208", "V3-KC-159529"]
+  },
+  "authors": [
+    {
+      "identity": "gpt-5.6-sol-max",
+      "role": "PRIMARY_AUTHOR_AND_IMPLEMENTER",
+      "run_id": "V3-LES-130923-INTERNAL-DRAFT-2026-07-23",
+      "contribution": "Original internal-draft lesson content, artifacts, and implementation."
+    }
+  ],
+  "reviewers": [],
+  "input_bindings": [
+    {
+      "input_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "version": "mcat-v3-authoritative-registry-1",
+      "sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+      "kind": "CURRICULUM_REGISTRY",
+      "use": "Identity, scope, order, source anchors, attachments, holds, and placement."
+    },
+    {
+      "input_id": "MCAT-V3-LEARNER-FACING-LESSONS",
+      "version": "mcat-v3-lessons-public-1",
+      "sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+      "kind": "GENERATED_MANIFEST",
+      "use": "Learner label and convenience placement cross-check only."
+    },
+    {
+      "input_id": "AAMC-2020-SUPPLIED-CEILING",
+      "version": "2020-supplied",
+      "sha256": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
+      "kind": "SOURCE_CEILING",
+      "use": "Scope obligation only; no expressive prose or source question reused."
+    }
+  ],
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-130923",
+    "lesson_script_sha256": "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a",
+    "kc_coverage_matrix_id": "V3-KCOV-130923",
+    "kc_coverage_matrix_sha256": "03edcf4f426df99996ac087ecddcc33e0f53315b29883af43e4cb725832f0876"
+  },
+  "lineage": {
+    "supersedes": null,
+    "change_reason": "Initial internal-draft implementation for exactly V3-LES-130923.",
+    "authoring_run_id": "V3-LES-130923-INTERNAL-DRAFT-2026-07-23",
+    "derived_input_ids": [
+      "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "MCAT-V3-LEARNER-FACING-LESSONS",
+      "AAMC-2020-SUPPLIED-CEILING"
+    ]
+  },
+  "payload": {
+    "lesson_id": "V3-LES-130923",
+    "lesson_script_id": "V3-LSCR-130923",
+    "lesson_script_sha256": "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a",
+    "kc_coverage_matrix_id": "V3-KCOV-130923",
+    "kc_coverage_matrix_sha256": "03edcf4f426df99996ac087ecddcc33e0f53315b29883af43e4cb725832f0876",
+    "learner_rhythm": [
+      "Starting check",
+      "Focus now",
+      "Explain",
+      "Worked example",
+      "Guided practice",
+      "Less help",
+      "On your own",
+      "Final check",
+      "Review and exact fresh re-entry when needed",
+      "Recap",
+      "Completion"
+    ],
+    "screens": [
+      {
+        "screen_id": "vtr-vectors-screen-entry",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": ["vtr-vectors-node-entry"],
+        "primary_job": "Commit a low-stakes baseline response.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Starting check: Resolve and combine vectors",
+        "progress_label": "Starting check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-orientation",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": ["vtr-vectors-node-orientation"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Focus now: Resolve and combine vectors",
+        "progress_label": "Focus now",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-explanation",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": ["vtr-vectors-node-explanation"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Resolve and combine vectors",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-model",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": ["vtr-vectors-node-model"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Resolve and combine vectors",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-think-aloud",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": ["vtr-vectors-node-think-aloud"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Resolve and combine vectors",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-worked",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": ["vtr-vectors-node-worked"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Worked example: Resolve and combine vectors",
+        "progress_label": "Worked example",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-guided",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": ["vtr-vectors-node-guided"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Guided practice: Resolve and combine vectors",
+        "progress_label": "Guided practice",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-light",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": ["vtr-vectors-node-light"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Less help: Resolve and combine vectors",
+        "progress_label": "Less help",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-solo",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": ["vtr-vectors-node-solo"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "On your own: Resolve and combine vectors",
+        "progress_label": "On your own",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-contrast",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": ["vtr-vectors-node-contrast"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Compare: Resolve and combine vectors",
+        "progress_label": "Compare",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-near-exit",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": ["vtr-vectors-node-near-exit"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Final check: Resolve and combine vectors",
+        "progress_label": "Final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-changed-exit",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": ["vtr-vectors-node-changed-exit"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Final check: Resolve and combine vectors",
+        "progress_label": "Final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-repair-near",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": ["vtr-vectors-node-repair-near"],
+        "primary_job": "Repair the failed operation, then commit a fresh confirmation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Review and retry: Resolve and combine vectors",
+        "progress_label": "Review and retry",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-repair-changed",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": ["vtr-vectors-node-repair-changed"],
+        "primary_job": "Repair the failed operation, then commit a fresh confirmation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Review and retry: Resolve and combine vectors",
+        "progress_label": "Review and retry",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-reentry-near",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": ["vtr-vectors-node-reentry-near"],
+        "primary_job": "Perform the exact failed function without support.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Fresh check: Resolve and combine vectors",
+        "progress_label": "Fresh check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-reentry-changed",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": ["vtr-vectors-node-reentry-changed"],
+        "primary_job": "Perform the exact failed function without support.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Fresh check: Resolve and combine vectors",
+        "progress_label": "Fresh check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-vectors-screen-recap",
+        "screen_kind": "RECAP",
+        "script_node_ids": ["vtr-vectors-node-recap"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Recap: Resolve and combine vectors",
+        "progress_label": "Recap",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-entry",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": ["vtr-trig-node-entry"],
+        "primary_job": "Commit a low-stakes baseline response.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Starting check: Use basic trigonometry",
+        "progress_label": "Starting check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-orientation",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": ["vtr-trig-node-orientation"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Focus now: Use basic trigonometry",
+        "progress_label": "Focus now",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-explanation",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": ["vtr-trig-node-explanation"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Use basic trigonometry",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-model",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": ["vtr-trig-node-model"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Use basic trigonometry",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-think-aloud",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": ["vtr-trig-node-think-aloud"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Use basic trigonometry",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-worked",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": ["vtr-trig-node-worked"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Worked example: Use basic trigonometry",
+        "progress_label": "Worked example",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-guided",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": ["vtr-trig-node-guided"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Guided practice: Use basic trigonometry",
+        "progress_label": "Guided practice",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-light",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": ["vtr-trig-node-light"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Less help: Use basic trigonometry",
+        "progress_label": "Less help",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-solo",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": ["vtr-trig-node-solo"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "On your own: Use basic trigonometry",
+        "progress_label": "On your own",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-contrast",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": ["vtr-trig-node-contrast"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Compare: Use basic trigonometry",
+        "progress_label": "Compare",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-near-exit",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": ["vtr-trig-node-near-exit"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Final check: Use basic trigonometry",
+        "progress_label": "Final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-changed-exit",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": ["vtr-trig-node-changed-exit"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Final check: Use basic trigonometry",
+        "progress_label": "Final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-repair-near",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": ["vtr-trig-node-repair-near"],
+        "primary_job": "Repair the failed operation, then commit a fresh confirmation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Review and retry: Use basic trigonometry",
+        "progress_label": "Review and retry",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-repair-changed",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": ["vtr-trig-node-repair-changed"],
+        "primary_job": "Repair the failed operation, then commit a fresh confirmation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Review and retry: Use basic trigonometry",
+        "progress_label": "Review and retry",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-reentry-near",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": ["vtr-trig-node-reentry-near"],
+        "primary_job": "Perform the exact failed function without support.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Fresh check: Use basic trigonometry",
+        "progress_label": "Fresh check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-reentry-changed",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": ["vtr-trig-node-reentry-changed"],
+        "primary_job": "Perform the exact failed function without support.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Fresh check: Use basic trigonometry",
+        "progress_label": "Fresh check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-trig-screen-recap",
+        "screen_kind": "RECAP",
+        "script_node_ids": ["vtr-trig-node-recap"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Recap: Use basic trigonometry",
+        "progress_label": "Recap",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-entry",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": ["vtr-direction-node-entry"],
+        "primary_job": "Commit a low-stakes baseline response.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Starting check: Apply right-hand rules",
+        "progress_label": "Starting check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-orientation",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": ["vtr-direction-node-orientation"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Focus now: Apply right-hand rules",
+        "progress_label": "Focus now",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-explanation",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": ["vtr-direction-node-explanation"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Apply right-hand rules",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-model",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": ["vtr-direction-node-model"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Apply right-hand rules",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-think-aloud",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": ["vtr-direction-node-think-aloud"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Apply right-hand rules",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-worked",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": ["vtr-direction-node-worked"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Worked example: Apply right-hand rules",
+        "progress_label": "Worked example",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-guided",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": ["vtr-direction-node-guided"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Guided practice: Apply right-hand rules",
+        "progress_label": "Guided practice",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-light",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": ["vtr-direction-node-light"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Less help: Apply right-hand rules",
+        "progress_label": "Less help",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-solo",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": ["vtr-direction-node-solo"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "On your own: Apply right-hand rules",
+        "progress_label": "On your own",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-contrast",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": ["vtr-direction-node-contrast"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Compare: Apply right-hand rules",
+        "progress_label": "Compare",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-near-exit",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": ["vtr-direction-node-near-exit"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Final check: Apply right-hand rules",
+        "progress_label": "Final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-changed-exit",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": ["vtr-direction-node-changed-exit"],
+        "primary_job": "Perform the current KC operation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Final check: Apply right-hand rules",
+        "progress_label": "Final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-repair-near",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": ["vtr-direction-node-repair-near"],
+        "primary_job": "Repair the failed operation, then commit a fresh confirmation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Review and retry: Apply right-hand rules",
+        "progress_label": "Review and retry",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-repair-changed",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": ["vtr-direction-node-repair-changed"],
+        "primary_job": "Repair the failed operation, then commit a fresh confirmation.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Review and retry: Apply right-hand rules",
+        "progress_label": "Review and retry",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-reentry-near",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": ["vtr-direction-node-reentry-near"],
+        "primary_job": "Perform the exact failed function without support.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Fresh check: Apply right-hand rules",
+        "progress_label": "Fresh check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-reentry-changed",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": ["vtr-direction-node-reentry-changed"],
+        "primary_job": "Perform the exact failed function without support.",
+        "primary_action": "COMMIT_RESPONSE",
+        "learner_heading": "Fresh check: Apply right-hand rules",
+        "progress_label": "Fresh check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "focus_target": "SCREEN_HEADING_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": ["HEADING", "PROMPT", "CHOICES", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "vtr-direction-screen-recap",
+        "screen_kind": "RECAP",
+        "script_node_ids": ["vtr-direction-node-recap"],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Recap: Apply right-hand rules",
+        "progress_label": "Recap",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": ["HEADING", "CONTENT", "PRIMARY_ACTION"],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      }
+    ],
+    "node_to_screen_map": [
+      {
+        "node_id": "vtr-vectors-node-entry",
+        "screen_id": "vtr-vectors-screen-entry"
+      },
+      {
+        "node_id": "vtr-vectors-node-orientation",
+        "screen_id": "vtr-vectors-screen-orientation"
+      },
+      {
+        "node_id": "vtr-vectors-node-explanation",
+        "screen_id": "vtr-vectors-screen-explanation"
+      },
+      {
+        "node_id": "vtr-vectors-node-model",
+        "screen_id": "vtr-vectors-screen-model"
+      },
+      {
+        "node_id": "vtr-vectors-node-think-aloud",
+        "screen_id": "vtr-vectors-screen-think-aloud"
+      },
+      {
+        "node_id": "vtr-vectors-node-worked",
+        "screen_id": "vtr-vectors-screen-worked"
+      },
+      {
+        "node_id": "vtr-vectors-node-guided",
+        "screen_id": "vtr-vectors-screen-guided"
+      },
+      {
+        "node_id": "vtr-vectors-node-light",
+        "screen_id": "vtr-vectors-screen-light"
+      },
+      {
+        "node_id": "vtr-vectors-node-solo",
+        "screen_id": "vtr-vectors-screen-solo"
+      },
+      {
+        "node_id": "vtr-vectors-node-contrast",
+        "screen_id": "vtr-vectors-screen-contrast"
+      },
+      {
+        "node_id": "vtr-vectors-node-near-exit",
+        "screen_id": "vtr-vectors-screen-near-exit"
+      },
+      {
+        "node_id": "vtr-vectors-node-changed-exit",
+        "screen_id": "vtr-vectors-screen-changed-exit"
+      },
+      {
+        "node_id": "vtr-vectors-node-repair-near",
+        "screen_id": "vtr-vectors-screen-repair-near"
+      },
+      {
+        "node_id": "vtr-vectors-node-repair-changed",
+        "screen_id": "vtr-vectors-screen-repair-changed"
+      },
+      {
+        "node_id": "vtr-vectors-node-reentry-near",
+        "screen_id": "vtr-vectors-screen-reentry-near"
+      },
+      {
+        "node_id": "vtr-vectors-node-reentry-changed",
+        "screen_id": "vtr-vectors-screen-reentry-changed"
+      },
+      {
+        "node_id": "vtr-vectors-node-recap",
+        "screen_id": "vtr-vectors-screen-recap"
+      },
+      {
+        "node_id": "vtr-trig-node-entry",
+        "screen_id": "vtr-trig-screen-entry"
+      },
+      {
+        "node_id": "vtr-trig-node-orientation",
+        "screen_id": "vtr-trig-screen-orientation"
+      },
+      {
+        "node_id": "vtr-trig-node-explanation",
+        "screen_id": "vtr-trig-screen-explanation"
+      },
+      {
+        "node_id": "vtr-trig-node-model",
+        "screen_id": "vtr-trig-screen-model"
+      },
+      {
+        "node_id": "vtr-trig-node-think-aloud",
+        "screen_id": "vtr-trig-screen-think-aloud"
+      },
+      {
+        "node_id": "vtr-trig-node-worked",
+        "screen_id": "vtr-trig-screen-worked"
+      },
+      {
+        "node_id": "vtr-trig-node-guided",
+        "screen_id": "vtr-trig-screen-guided"
+      },
+      {
+        "node_id": "vtr-trig-node-light",
+        "screen_id": "vtr-trig-screen-light"
+      },
+      {
+        "node_id": "vtr-trig-node-solo",
+        "screen_id": "vtr-trig-screen-solo"
+      },
+      {
+        "node_id": "vtr-trig-node-contrast",
+        "screen_id": "vtr-trig-screen-contrast"
+      },
+      {
+        "node_id": "vtr-trig-node-near-exit",
+        "screen_id": "vtr-trig-screen-near-exit"
+      },
+      {
+        "node_id": "vtr-trig-node-changed-exit",
+        "screen_id": "vtr-trig-screen-changed-exit"
+      },
+      {
+        "node_id": "vtr-trig-node-repair-near",
+        "screen_id": "vtr-trig-screen-repair-near"
+      },
+      {
+        "node_id": "vtr-trig-node-repair-changed",
+        "screen_id": "vtr-trig-screen-repair-changed"
+      },
+      {
+        "node_id": "vtr-trig-node-reentry-near",
+        "screen_id": "vtr-trig-screen-reentry-near"
+      },
+      {
+        "node_id": "vtr-trig-node-reentry-changed",
+        "screen_id": "vtr-trig-screen-reentry-changed"
+      },
+      {
+        "node_id": "vtr-trig-node-recap",
+        "screen_id": "vtr-trig-screen-recap"
+      },
+      {
+        "node_id": "vtr-direction-node-entry",
+        "screen_id": "vtr-direction-screen-entry"
+      },
+      {
+        "node_id": "vtr-direction-node-orientation",
+        "screen_id": "vtr-direction-screen-orientation"
+      },
+      {
+        "node_id": "vtr-direction-node-explanation",
+        "screen_id": "vtr-direction-screen-explanation"
+      },
+      {
+        "node_id": "vtr-direction-node-model",
+        "screen_id": "vtr-direction-screen-model"
+      },
+      {
+        "node_id": "vtr-direction-node-think-aloud",
+        "screen_id": "vtr-direction-screen-think-aloud"
+      },
+      {
+        "node_id": "vtr-direction-node-worked",
+        "screen_id": "vtr-direction-screen-worked"
+      },
+      {
+        "node_id": "vtr-direction-node-guided",
+        "screen_id": "vtr-direction-screen-guided"
+      },
+      {
+        "node_id": "vtr-direction-node-light",
+        "screen_id": "vtr-direction-screen-light"
+      },
+      {
+        "node_id": "vtr-direction-node-solo",
+        "screen_id": "vtr-direction-screen-solo"
+      },
+      {
+        "node_id": "vtr-direction-node-contrast",
+        "screen_id": "vtr-direction-screen-contrast"
+      },
+      {
+        "node_id": "vtr-direction-node-near-exit",
+        "screen_id": "vtr-direction-screen-near-exit"
+      },
+      {
+        "node_id": "vtr-direction-node-changed-exit",
+        "screen_id": "vtr-direction-screen-changed-exit"
+      },
+      {
+        "node_id": "vtr-direction-node-repair-near",
+        "screen_id": "vtr-direction-screen-repair-near"
+      },
+      {
+        "node_id": "vtr-direction-node-repair-changed",
+        "screen_id": "vtr-direction-screen-repair-changed"
+      },
+      {
+        "node_id": "vtr-direction-node-reentry-near",
+        "screen_id": "vtr-direction-screen-reentry-near"
+      },
+      {
+        "node_id": "vtr-direction-node-reentry-changed",
+        "screen_id": "vtr-direction-screen-reentry-changed"
+      },
+      {
+        "node_id": "vtr-direction-node-recap",
+        "screen_id": "vtr-direction-screen-recap"
+      }
+    ],
+    "representation_plans": [
+      {
+        "representation_id": "rep-vtr-vector-components",
+        "target_kc_id": "V3-KC-866848",
+        "script_node_ids": [
+          "vtr-vectors-node-orientation",
+          "vtr-vectors-node-explanation",
+          "vtr-vectors-node-model",
+          "vtr-vectors-node-think-aloud",
+          "vtr-vectors-node-worked",
+          "vtr-vectors-node-contrast",
+          "vtr-vectors-node-near-exit",
+          "vtr-vectors-node-changed-exit",
+          "vtr-vectors-node-repair-near",
+          "vtr-vectors-node-repair-changed",
+          "vtr-vectors-node-reentry-near",
+          "vtr-vectors-node-reentry-changed"
+        ],
+        "representation_type": "SIGNED_COMPONENT_LEDGER",
+        "encoded_information": "Horizontal and vertical magnitudes with explicit signs and axis labels.",
+        "decisive_feature": "Direction remains encoded by sign while like axes align.",
+        "learner_operation": "Translate, add, subtract, or isolate matching components.",
+        "prose_advantage": "The ledger makes sign preservation and axis alignment inspectable.",
+        "signaling_plan": "Axis labels and signs are always printed; no correct option is highlighted.",
+        "interaction_warrant": "A committed component choice diagnoses the first observable sign or operation divergence.",
+        "text_nonvisual_equivalent": "A semantic ordered-pair statement supplies the same signed inputs and requires the same component operation without stating the result.",
+        "construct_preservation_judgment": "INTERNAL_CANDIDATE_PENDING_INDEPENDENT_ACCESSIBILITY_REVIEW",
+        "reviewer": null,
+        "reduced_motion_fallback": "STATIC_ONLY_NO_MOTION_REQUIRED",
+        "small_screen_behavior": "Ordered pairs wrap as text; axes remain adjacent to values."
+      },
+      {
+        "representation_id": "rep-vtr-vector-diagram",
+        "target_kc_id": "V3-KC-866848",
+        "script_node_ids": [
+          "vtr-vectors-node-orientation",
+          "vtr-vectors-node-explanation",
+          "vtr-vectors-node-model",
+          "vtr-vectors-node-think-aloud",
+          "vtr-vectors-node-worked",
+          "vtr-vectors-node-contrast",
+          "vtr-vectors-node-near-exit",
+          "vtr-vectors-node-changed-exit",
+          "vtr-vectors-node-repair-near",
+          "vtr-vectors-node-repair-changed",
+          "vtr-vectors-node-reentry-near",
+          "vtr-vectors-node-reentry-changed"
+        ],
+        "representation_type": "TEXTUAL_VECTOR_DIRECTION_STATEMENT",
+        "encoded_information": "Compass direction, magnitude, and signed-axis relation in semantic text.",
+        "decisive_feature": "Opposing arrows create signed rather than unsigned component contributions.",
+        "learner_operation": "Translate arrows into signed components before combining.",
+        "prose_advantage": "The structured statement exposes direction-to-sign translation.",
+        "signaling_plan": "Every direction and magnitude is explicit; color and position carry no meaning.",
+        "interaction_warrant": "No drag interaction; answer selection carries the operation.",
+        "text_nonvisual_equivalent": "Each arrow is stated as a magnitude plus compass direction, requiring the same sign translation and resultant computation.",
+        "construct_preservation_judgment": "INTERNAL_CANDIDATE_PENDING_INDEPENDENT_ACCESSIBILITY_REVIEW",
+        "reviewer": null,
+        "reduced_motion_fallback": "STATIC_TEXT_ONLY",
+        "small_screen_behavior": "Direction statements wrap within the content column."
+      },
+      {
+        "representation_id": "rep-vtr-right-triangle",
+        "target_kc_id": "V3-KC-700208",
+        "script_node_ids": [
+          "vtr-trig-node-orientation",
+          "vtr-trig-node-explanation",
+          "vtr-trig-node-model",
+          "vtr-trig-node-think-aloud",
+          "vtr-trig-node-worked",
+          "vtr-trig-node-contrast",
+          "vtr-trig-node-near-exit",
+          "vtr-trig-node-changed-exit",
+          "vtr-trig-node-repair-near",
+          "vtr-trig-node-repair-changed",
+          "vtr-trig-node-reentry-near",
+          "vtr-trig-node-reentry-changed"
+        ],
+        "representation_type": "TEXTUAL_RIGHT_TRIANGLE_RELATION",
+        "encoded_information": "Reference angle and named side roles/lengths in semantic text.",
+        "decisive_feature": "Opposite and adjacent are relative to the selected angle; hypotenuse is stable.",
+        "learner_operation": "Choose and apply the ratio containing the known and target sides.",
+        "prose_advantage": "The structured relation keeps side roles explicit without a decorative figure.",
+        "signaling_plan": "Labels name givens only; no ratio or answer is highlighted.",
+        "interaction_warrant": "Semantic radio response preserves the relationship selection.",
+        "text_nonvisual_equivalent": "The prompt states the reference angle and names each side’s role and length without supplying the ratio or result.",
+        "construct_preservation_judgment": "INTERNAL_CANDIDATE_PENDING_INDEPENDENT_ACCESSIBILITY_REVIEW",
+        "reviewer": null,
+        "reduced_motion_fallback": "STATIC_ONLY_NO_MOTION_REQUIRED",
+        "small_screen_behavior": "Side-role statements wrap without horizontal scrolling."
+      },
+      {
+        "representation_id": "rep-vtr-trig-equation",
+        "target_kc_id": "V3-KC-700208",
+        "script_node_ids": [
+          "vtr-trig-node-orientation",
+          "vtr-trig-node-explanation",
+          "vtr-trig-node-model",
+          "vtr-trig-node-think-aloud",
+          "vtr-trig-node-worked",
+          "vtr-trig-node-contrast",
+          "vtr-trig-node-near-exit",
+          "vtr-trig-node-changed-exit",
+          "vtr-trig-node-repair-near",
+          "vtr-trig-node-repair-changed",
+          "vtr-trig-node-reentry-near",
+          "vtr-trig-node-reentry-changed"
+        ],
+        "representation_type": "SEMANTIC_EQUATION",
+        "encoded_information": "Named side ratio and unknown isolation.",
+        "decisive_feature": "The equation includes exactly the known and requested quantities.",
+        "learner_operation": "Select, substitute, and isolate.",
+        "prose_advantage": "The equation preserves intermediate algebraic state.",
+        "signaling_plan": "Math is rendered as text with spoken operators; no answer cue.",
+        "interaction_warrant": "Answer choice commits the equation or bounded value.",
+        "text_nonvisual_equivalent": "Plain-language ratio plus linearized equation text.",
+        "construct_preservation_judgment": "INTERNAL_CANDIDATE_PENDING_INDEPENDENT_ACCESSIBILITY_REVIEW",
+        "reviewer": null,
+        "reduced_motion_fallback": "STATIC_ONLY_NO_MOTION_REQUIRED",
+        "small_screen_behavior": "Equation wraps at operators without side scrolling."
+      },
+      {
+        "representation_id": "rep-vtr-directional-diagram",
+        "target_kc_id": "V3-KC-159529",
+        "script_node_ids": [
+          "vtr-direction-node-orientation",
+          "vtr-direction-node-explanation",
+          "vtr-direction-node-model",
+          "vtr-direction-node-think-aloud",
+          "vtr-direction-node-worked",
+          "vtr-direction-node-contrast",
+          "vtr-direction-node-near-exit",
+          "vtr-direction-node-changed-exit",
+          "vtr-direction-node-repair-near",
+          "vtr-direction-node-repair-changed",
+          "vtr-direction-node-reentry-near",
+          "vtr-direction-node-reentry-changed"
+        ],
+        "representation_type": "TEXTUAL_3D_DIRECTION_KEY",
+        "encoded_information": "Compass axes plus labeled into-page and out-of-page symbols.",
+        "decisive_feature": "Ordered perpendicular directions determine the requested output.",
+        "learner_operation": "Assign, align, curl, read, and apply charge sign when stated.",
+        "prose_advantage": "The semantic direction key keeps perpendicular axes and page depth explicit.",
+        "signaling_plan": "⊙ and ⊗ always include text labels; no color or position alone carries meaning.",
+        "interaction_warrant": "No inaccessible hand-drag simulation; the same spatial inference is required from labeled directions.",
+        "text_nonvisual_equivalent": "The prompt names all vectors using east/west/north/south/into/out directions and asks for the missing output; it does not narrate the hand result.",
+        "construct_preservation_judgment": "INTERNAL_CANDIDATE_PENDING_INDEPENDENT_ACCESSIBILITY_REVIEW",
+        "reviewer": null,
+        "reduced_motion_fallback": "STATIC_ONLY_NO_MOTION_REQUIRED",
+        "small_screen_behavior": "Direction-key entries stack in one semantic column."
+      },
+      {
+        "representation_id": "rep-vtr-vector-direction",
+        "target_kc_id": "V3-KC-159529",
+        "script_node_ids": [
+          "vtr-direction-node-orientation",
+          "vtr-direction-node-explanation",
+          "vtr-direction-node-model",
+          "vtr-direction-node-think-aloud",
+          "vtr-direction-node-worked",
+          "vtr-direction-node-contrast",
+          "vtr-direction-node-near-exit",
+          "vtr-direction-node-changed-exit",
+          "vtr-direction-node-repair-near",
+          "vtr-direction-node-repair-changed",
+          "vtr-direction-node-reentry-near",
+          "vtr-direction-node-reentry-changed"
+        ],
+        "representation_type": "ORDERED_DIRECTION_LIST",
+        "encoded_information": "First input, second input, requested output, and sign condition.",
+        "decisive_feature": "Input order and charge sign remain explicit.",
+        "learner_operation": "Map each stated direction to its hand-rule role and infer output.",
+        "prose_advantage": "The ordered list prevents role swapping while preserving spatial reasoning.",
+        "signaling_plan": "Ordinal labels identify inputs but do not state the output.",
+        "interaction_warrant": "Semantic choices require the same output inference.",
+        "text_nonvisual_equivalent": "The representation is already semantic text.",
+        "construct_preservation_judgment": "INTERNAL_CANDIDATE_PENDING_INDEPENDENT_ACCESSIBILITY_REVIEW",
+        "reviewer": null,
+        "reduced_motion_fallback": "STATIC_ONLY_NO_MOTION_REQUIRED",
+        "small_screen_behavior": "List reflows naturally within 320 px."
+      }
+    ],
+    "progressive_disclosure_rules": {
+      "one_primary_job": true,
+      "one_primary_action": true,
+      "optional_detail_collapsed": true,
+      "required_teaching_never_hidden": true,
+      "important_callout_maximum": 1
+    },
+    "learner_reviewer_separation": {
+      "learner_route_contains_reviewer_controls": false,
+      "internal_ids_displayed": false,
+      "hashes_displayed": false,
+      "route_or_assistance_codes_displayed": false,
+      "preview_notice_location": "LESSON_SHELL_ONCE"
+    },
+    "responsive_acceptance": {
+      "desktop": "INTERNAL_AUTOMATED_BROWSER_EVIDENCE_CAPTURED",
+      "width_375": "NO_PRIMARY_HORIZONTAL_SCROLL_REQUIRED",
+      "width_320": "CRITICAL_FIT_REQUIRED",
+      "zoom_200_percent": "REFLOW_REQUIRED"
+    },
+    "accessibility_acceptance": {
+      "semantic_html_first": true,
+      "keyboard_only": true,
+      "visible_focus": true,
+      "focus_moves_to_heading_or_feedback": true,
+      "wcag_aa_contrast": true,
+      "reduced_motion": true,
+      "minimum_pointer_target_css_px": 24,
+      "diagram_text_equivalents": true,
+      "independent_human_review_status": "BLOCKED"
+    },
+    "browser_evidence_plan": [
+      "desktop-light-happy-path",
+      "desktop-dark-repair-reentry",
+      "mobile-375-refresh-resume",
+      "mobile-320-critical-fit",
+      "keyboard-focus-reduced-motion",
+      "zoom-200-no-primary-overflow"
+    ],
+    "presentation_status": "BLOCKED"
+  }
+}

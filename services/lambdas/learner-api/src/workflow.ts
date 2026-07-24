@@ -20,6 +20,9 @@ import {
   PracticeItemViewSchema,
   PracticeResultSchema,
   SkillSummarySchema,
+  VectorLessonRunViewSchema,
+  VectorLessonStartResponseSchema,
+  VectorLessonStatusViewSchema,
   WrappedViewSchema,
   type Clock,
   type CommandEnvelope,
@@ -27,6 +30,8 @@ import {
   type DiagnosticNext,
   type PracticeItemView,
   type SkillSummary,
+  type VectorLessonCommand,
+  type VectorLessonStartCommand,
   type WrappedView,
 } from '@mcat/contracts';
 import type {
@@ -47,6 +52,15 @@ import {
   syntheticPracticeAuthorizationPolicy,
   type PracticeAuthorizationPolicy,
 } from './practice-authorization';
+import {
+  applyVectorLessonAction,
+  createVectorLessonRun,
+  invalidateCurrentVectorLessonItem,
+  renderVectorLessonRun,
+  restoreVectorLessonRun,
+  resumeVectorLessonRun,
+  type VectorLessonRun,
+} from './vector-lesson-runtime';
 
 interface MutationApplication {
   readonly eventType: string;
@@ -60,6 +74,14 @@ interface WorkflowDependencies {
   readonly clock: Clock;
   readonly bank: AuthorityKernelDependencies['bank'];
   readonly practiceAuthorization?: PracticeAuthorizationPolicy;
+}
+
+type VectorLessonLearnerState = LearnerState & {
+  vectorLessonRun?: VectorLessonRun;
+};
+
+function withVectorLesson(state: LearnerState): VectorLessonLearnerState {
+  return state as VectorLessonLearnerState;
 }
 
 function policyVersions(state: LearnerState): Readonly<Record<string, string>> {
@@ -172,6 +194,122 @@ export class RepositoryLearnerKernel {
     const state = await this.loadState(principal);
     const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
     return WrappedViewSchema.parse(authority.getWrapped(state));
+  }
+
+  async vectorLessonStatus(principal: Principal) {
+    const state = withVectorLesson(await this.loadState(principal));
+    const run =
+      state.vectorLessonRun === undefined
+        ? undefined
+        : restoreVectorLessonRun(state.vectorLessonRun);
+    return VectorLessonStatusViewSchema.parse({
+      availability: 'AVAILABLE',
+      runState: run?.paused ? 'PAUSED' : (run?.status ?? 'NOT_STARTED'),
+      actionLabel: run === undefined ? 'Start' : run.status === 'BLOCKED' ? null : 'Continue',
+    });
+  }
+
+  async vectorLessonRun(principal: Principal) {
+    const state = withVectorLesson(await this.loadState(principal));
+    if (state.vectorLessonRun === undefined) {
+      throw validationError('Start this lesson before requesting its current screen.');
+    }
+    return VectorLessonRunViewSchema.parse(
+      renderVectorLessonRun(restoreVectorLessonRun(state.vectorLessonRun)),
+    );
+  }
+
+  async handleVectorLessonStart(command: VectorLessonStartCommand, principal: Principal) {
+    return VectorLessonStartResponseSchema.parse(
+      await this.mutate(command.envelope, principal, (_authority, baseState) => {
+        const state = withVectorLesson(baseState);
+        const existing =
+          state.vectorLessonRun === undefined
+            ? undefined
+            : restoreVectorLessonRun(state.vectorLessonRun);
+        const disposition =
+          existing === undefined
+            ? 'STARTED'
+            : existing.status === 'DELIVERY_COMPLETE'
+              ? 'ALREADY_COMPLETE'
+              : 'RESUMED';
+        state.vectorLessonRun =
+          existing === undefined
+            ? createVectorLessonRun({ now: command.envelope.occurredAt })
+            : existing.status === 'DELIVERY_COMPLETE'
+              ? existing
+              : resumeVectorLessonRun(existing, command.envelope.occurredAt);
+        return {
+          eventType:
+            disposition === 'STARTED'
+              ? 'lesson_shell_started'
+              : disposition === 'RESUMED'
+                ? 'lesson_shell_resumed'
+                : 'lesson_delivery_already_complete',
+          payload: toJsonObject(command),
+          result: toJsonObject(
+            VectorLessonStartResponseSchema.parse({
+              runId: state.vectorLessonRun.runId,
+              disposition,
+              path: '/app/lessons/vectors-and-trigonometry',
+              streamVersion: baseState.nextSequence + 1,
+            }),
+          ),
+        };
+      }),
+    );
+  }
+
+  async handleVectorLessonCommand(command: VectorLessonCommand, principal: Principal) {
+    return AcceptedCommandResponseSchema.parse(
+      await this.mutate(command.envelope, principal, (_authority, baseState) => {
+        const state = withVectorLesson(baseState);
+        if (state.vectorLessonRun === undefined) {
+          throw validationError('Start this lesson before sending a lesson command.');
+        }
+        try {
+          state.vectorLessonRun = applyVectorLessonAction(
+            restoreVectorLessonRun(state.vectorLessonRun),
+            command,
+            command.envelope.occurredAt,
+          );
+        } catch (error) {
+          if (error instanceof AuthorityKernelError) throw error;
+          throw validationError(
+            error instanceof Error
+              ? error.message
+              : 'The lesson command does not match the authoritative checkpoint.',
+          );
+        }
+        return {
+          eventType: 'lesson_command_accepted',
+          payload: toJsonObject(command),
+        };
+      }),
+    );
+  }
+
+  async handleVectorLessonInvalidation(envelope: CommandEnvelope, principal: Principal) {
+    return AcceptedCommandResponseSchema.parse(
+      await this.mutate(envelope, principal, (_authority, baseState) => {
+        const state = withVectorLesson(baseState);
+        if (state.vectorLessonRun === undefined) {
+          throw validationError('Start this lesson before invalidating a lesson item.');
+        }
+        state.vectorLessonRun = invalidateCurrentVectorLessonItem(
+          restoreVectorLessonRun(state.vectorLessonRun),
+          envelope.occurredAt,
+        );
+        return {
+          eventType: 'lesson_item_invalidated',
+          payload: toJsonObject({
+            envelope,
+            lessonId: 'V3-LES-130923',
+            runId: state.vectorLessonRun.runId,
+          }),
+        };
+      }),
+    );
   }
 
   async handleAttempt(input: unknown, principal: Principal) {

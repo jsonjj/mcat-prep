@@ -14,6 +14,11 @@ import {
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
+  VectorLessonCommandSchema,
+  VectorLessonRunViewSchema,
+  VectorLessonStartCommandSchema,
+  VectorLessonStartResponseSchema,
+  VectorLessonStatusViewSchema,
   WrappedViewSchema,
   newEventId,
   newIdempotencyKey,
@@ -21,6 +26,7 @@ import {
   type BootstrapResponse,
   type HttpApiError,
   type HttpErrorCode,
+  type VectorLessonAction,
 } from '@mcat/contracts';
 import type { AuthorityPort, GoalInput, SessionPort } from './port';
 
@@ -361,6 +367,47 @@ export class HttpAuthorityClient implements AuthorityPort {
   async getWrapped() {
     await this.ensureBootstrap();
     return this.request('/v1/hooks/wrapped', WrappedViewSchema);
+  }
+
+  async getVectorLessonStatus() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.vectorLessonStatus.path, VectorLessonStatusViewSchema);
+  }
+
+  async startVectorLesson() {
+    const command = VectorLessonStartCommandSchema.parse({
+      envelope: await this.commandEnvelope(),
+      lessonId: 'V3-LES-130923',
+    });
+    const response = await this.request(
+      HTTP_API.vectorLessonStart.path,
+      VectorLessonStartResponseSchema,
+      {
+        method: HTTP_API.vectorLessonStart.method,
+        body: JSON.stringify(command),
+      },
+    );
+    this.accept(response);
+    return response;
+  }
+
+  async getVectorLessonRun() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.vectorLessonRun.path, VectorLessonRunViewSchema);
+  }
+
+  async submitVectorLessonAction(
+    runId: string,
+    screenToken: string,
+    action: VectorLessonAction,
+  ): Promise<void> {
+    const command = VectorLessonCommandSchema.parse({
+      envelope: await this.commandEnvelope(),
+      runId,
+      screenToken,
+      action,
+    });
+    await this.acceptedCommand(HTTP_API.vectorLessonCommand.path, command);
   }
 
   async resetProgress(): Promise<void> {

@@ -18,6 +18,11 @@ import {
   validateV7Question,
   type ValidationIssue,
 } from '@mcat/content';
+import {
+  buildVectorLessonArtifacts,
+  canonicalVectorLessonArtifactJson,
+  validateVectorLessonArtifacts,
+} from '@mcat/content/v3-vector-lesson';
 
 /**
  * Default v7 corpus location. This lives in the LOCAL-ONLY archive OUTSIDE the
@@ -78,7 +83,9 @@ function cmdDryRun(): void {
 function cmdValidate(dir: string): void {
   const files = listJsonFiles(dir);
   if (files.length === 0) {
-    console.log(`No content JSON found under ${dir}. Bank is empty — the app stays in "not loaded".`);
+    console.log(
+      `No content JSON found under ${dir}. Bank is empty — the app stays in "not loaded".`,
+    );
     return;
   }
   let errors = 0;
@@ -95,7 +102,9 @@ function cmdValidate(dir: string): void {
       continue;
     }
     if (!isStimulus) {
-      const semantic = validateV7Question(parsed.data as never).filter((i) => i.severity === 'error');
+      const semantic = validateV7Question(parsed.data as never).filter(
+        (i) => i.severity === 'error',
+      );
       if (semantic.length > 0) {
         errors += 1;
         console.error(`FAIL ${file}`);
@@ -132,7 +141,9 @@ function cmdLoadV7(path: string): void {
   try {
     text = readFileSync(path, 'utf8');
   } catch (err) {
-    console.error(`Could not read v7 corpus at:\n  ${path}\n${err instanceof Error ? err.message : String(err)}`);
+    console.error(
+      `Could not read v7 corpus at:\n  ${path}\n${err instanceof Error ? err.message : String(err)}`,
+    );
     process.exit(1);
     return;
   }
@@ -144,7 +155,9 @@ function cmdLoadV7(path: string): void {
   console.log(`  source: ${path} (read-only)`);
   console.log(`  valid records: ${summary.total}`);
   console.log(`  schema-rejected lines: ${summary.schemaErrors}`);
-  console.log(`  semantic errors: ${summary.semanticErrors}  warnings: ${summary.semanticWarnings}`);
+  console.log(
+    `  semantic errors: ${summary.semanticErrors}  warnings: ${summary.semanticWarnings}`,
+  );
   console.log(`  with passage: ${summary.withPassage}  with assets: ${summary.withAssets}`);
   console.log('  by section:');
   for (const [section, n] of Object.entries(summary.bySection).sort()) {
@@ -168,13 +181,16 @@ function cmdLoadV7(path: string): void {
   writeFileSync(join(outDir, 'protected.jsonl'), protectedJsonl);
   writeFileSync(
     join(outDir, 'report.json'),
-    JSON.stringify({ generatedAt: new Date().toISOString(), source: path, summary }, null, 2) + '\n',
+    JSON.stringify({ generatedAt: new Date().toISOString(), source: path, summary }, null, 2) +
+      '\n',
   );
   console.log(`\nWrote local (gitignored) bundle to ${outDir}`);
   console.log('  - learner-safe.jsonl (no keys/explanations)');
   console.log('  - protected.jsonl (server-only: correct_answer + explanations)');
   console.log('  - report.json');
-  console.log('\nNOTE: DB load is a separate step (Postgres provisioning is still an open decision).');
+  console.log(
+    '\nNOTE: DB load is a separate step (Postgres provisioning is still an open decision).',
+  );
 }
 
 // ---- SQL emit helpers (single-quote escaping; jsonb literals) --------------
@@ -195,14 +211,18 @@ function cmdDbSeed(path: string): void {
   try {
     text = readFileSync(path, 'utf8');
   } catch (err) {
-    console.error(`Could not read v7 corpus at:\n  ${path}\n${err instanceof Error ? err.message : String(err)}`);
+    console.error(
+      `Could not read v7 corpus at:\n  ${path}\n${err instanceof Error ? err.message : String(err)}`,
+    );
     process.exit(1);
     return;
   }
 
   const result = loadV7Jsonl([{ name: path, text }]);
   if (result.errors.length > 0) {
-    console.error(`Refusing to seed: ${result.errors.length} schema-invalid line(s). Fix the corpus first.`);
+    console.error(
+      `Refusing to seed: ${result.errors.length} schema-invalid line(s). Fix the corpus first.`,
+    );
     process.exit(1);
     return;
   }
@@ -223,7 +243,8 @@ function cmdDbSeed(path: string): void {
     const placement = resolveV7Placement(q);
     const dbSection = placement.crossSection ? 'cross_section' : placement.section;
     if (!placement.cluster) unresolved += 1;
-    byCluster[placement.cluster ?? 'UNRESOLVED'] = (byCluster[placement.cluster ?? 'UNRESOLVED'] ?? 0) + 1;
+    byCluster[placement.cluster ?? 'UNRESOLVED'] =
+      (byCluster[placement.cluster ?? 'UNRESOLVED'] ?? 0) + 1;
     bySection[dbSection ?? 'null'] = (bySection[dbSection ?? 'null'] ?? 0) + 1;
 
     lines.push(
@@ -270,10 +291,35 @@ function cmdDbSeed(path: string): void {
   console.log('  by cluster:');
   for (const [c, n] of Object.entries(byCluster).sort()) console.log(`    ${c}: ${n}`);
   console.log(`\nWrote gitignored seed to ${seedPath} (contains answer keys — do NOT commit).`);
-  console.log('\nTo load into a real Postgres (local docker / Neon / Supabase), set DATABASE_URL then run:');
+  console.log(
+    '\nTo load into a real Postgres (local docker / Neon / Supabase), set DATABASE_URL then run:',
+  );
   console.log('  psql "$DATABASE_URL" -f database/migrations/0006_question_bank.sql');
   console.log('  psql "$DATABASE_URL" -f content/question-bank/.local/v7-load/seed.sql');
-  console.log("  psql \"$DATABASE_URL\" -c 'select section, count(*) from questions group by section order by section;'");
+  console.log(
+    '  psql "$DATABASE_URL" -c \'select section, count(*) from questions group by section order by section;\'',
+  );
+}
+
+function cmdVectorLessonArtifacts(): void {
+  const artifacts = buildVectorLessonArtifacts();
+  const issues = validateVectorLessonArtifacts(artifacts);
+  if (issues.length > 0) {
+    for (const issue of issues) console.error(`FAIL ${issue}`);
+    process.exit(1);
+  }
+
+  const outDir = join(REPO_ROOT, 'content', 'lessons', 'v3-les-130923');
+  mkdirSync(outDir, { recursive: true });
+  for (const [filename, artifact] of [
+    ['lesson-script.json', artifacts.script],
+    ['kc-coverage-matrix.json', artifacts.coverage],
+    ['lesson-presentation-plan.json', artifacts.presentation],
+    ['lesson-quality-report.json', artifacts.quality],
+  ] as const) {
+    writeFileSync(join(outDir, filename), canonicalVectorLessonArtifactJson(artifact));
+  }
+  console.log(`Wrote four validated V3-LES-130923 internal-draft artifacts to ${outDir}`);
 }
 
 switch (command) {
@@ -295,6 +341,9 @@ switch (command) {
   case 'db-seed':
     cmdDbSeed(arg ?? DEFAULT_V7_PATH);
     break;
+  case 'vector-lesson-artifacts':
+    cmdVectorLessonArtifacts();
+    break;
   default:
     console.log(
       'MCAT content CLI\n\nCommands:\n' +
@@ -303,6 +352,7 @@ switch (command) {
         '  validate [dir]      Validate canonical v7 JSON content in a directory\n' +
         '  schemas             Generate JSON Schemas into content/question-bank/schema/\n' +
         '  load-v7 [path]      Validate + compile the v7 JSONL corpus (read-only) into a local bundle\n' +
-        '  db-seed [path]      Emit a gitignored seed.sql (questions + protected answers) with derived cluster/section\n',
+        '  db-seed [path]      Emit a gitignored seed.sql (questions + protected answers) with derived cluster/section\n' +
+        '  vector-lesson-artifacts  Generate exactly four V3-LES-130923 internal-draft artifacts\n',
     );
 }

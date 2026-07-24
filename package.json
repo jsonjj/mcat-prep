@@ -19,6 +19,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,css,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md,css,yaml,yml}\"",
     "scan:protected": "node tools/scanners/protected-field-scan.mjs",
+    "scan:vector-lesson-bundle": "node tools/scanners/vector-lesson-bundle-scan.mjs",
     "verify": "pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run scan:protected"
   },
   "devDependencies": {

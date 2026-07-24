@@ -8,10 +8,12 @@ import {
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
+  VectorLessonStatusViewSchema,
   WrappedViewSchema,
   type BootstrapResponse,
   type Clock,
   type ProbableCause,
+  type VectorLessonAction,
 } from '@mcat/contracts';
 import { Authority, type LearnerState } from '@mcat/authority-core';
 import { loadSyntheticBank } from '@mcat/content';
@@ -122,6 +124,30 @@ export class InProcessAuthorityClient implements AuthorityPort {
 
   async getWrapped() {
     return WrappedViewSchema.parse(this.mutate((state) => this.authority.getWrapped(state)));
+  }
+
+  async getVectorLessonStatus() {
+    return VectorLessonStatusViewSchema.parse({
+      availability: 'UNAVAILABLE',
+      runState: 'NOT_STARTED',
+      actionLabel: null,
+    });
+  }
+
+  async startVectorLesson(): Promise<never> {
+    throw new Error('The target lesson requires the persisted HTTP authority.');
+  }
+
+  async getVectorLessonRun(): Promise<never> {
+    throw new Error('The target lesson requires the persisted HTTP authority.');
+  }
+
+  async submitVectorLessonAction(
+    _runId: string,
+    _screenToken: string,
+    _action: VectorLessonAction,
+  ): Promise<never> {
+    throw new Error('The target lesson requires the persisted HTTP authority.');
   }
 
   async getSkills() {
