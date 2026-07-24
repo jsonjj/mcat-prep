@@ -2,8 +2,8 @@
 
 ## Canonical product, instruction, adaptive-planning, review, and readiness specification
 
-**Status:** Design specification, version 0.2  
-**Date:** July 22, 2026  
+**Status:** Design specification, version 0.3 (lesson-contract reconciliation)
+**Date:** July 23, 2026
 **Audience:** Product, curriculum, psychometrics, learning science, content, design, and engineering  
 **Scope:** The complete learner flow from intake and diagnostic through daily lessons, review, CARS, integrated practice, full-lengths, and exam preparation  
 **Implementation status:** This document describes the target system. It does not imply that the current application already implements or validates the complete flow.
@@ -45,6 +45,74 @@ Curriculum identity, ownership, graph semantics, placement, revisits, and remedi
 The registry is the single source of curriculum truth. Public JSON, CSV, Markdown, indexes, and Canvas explorers are generated views and MUST NOT be maintained as independent state. Runtime ingestion MUST pin the registry hash and accepted freeze identifiers, use package-relative locations, and ignore stale author-machine paths or historical workflow labels.
 
 V3 is complete only against the supplied 2020 AAMC source ceiling. Present-day AAMC authority has not been refreshed; the architecture remains learner-unvalidated; page-89 stem-cell/CNS-regeneration material remains held and nonrequired; and V3 supplies no finished lesson prose, assessment bank, rubric, calibrated mastery threshold, or efficacy claim. Product-authored instruction and assessment are separate, versioned, reviewed layers.
+
+### 0.2 July 23 lesson-specification reconciliation
+
+The teammate-authored **V3 Lesson Structure and Learner Flow, version
+1.1-draft** is adopted as a normative design input through the reconciled rules
+below. It is not copied wholesale into this document because it is a detailed
+lesson authoring/runtime companion, while this document also owns the complete
+diagnostic, evidence, planning, review, and readiness loop. Its referenced
+specifications 01 and 02 were not supplied and therefore gain no authority by
+reference; the corresponding sections of this unified specification remain
+governing until those documents are separately reviewed.
+
+Authority is resolved in this order:
+
+1. The pinned V3 registry owns curriculum identity, ownership, scope, graph,
+   sequence, required-delivery state, exclusions, and holds.
+2. This unified specification owns cross-system authority boundaries and the
+   complete product loop.
+3. The reconciled lesson contract in §§12–17, 29, 31, and 33 owns
+   `LessonDefinition`, `LessonRun`, KC-microcycle delivery, lesson-specific
+   response handling, and exact lesson reentry.
+4. The cloud-authoring runbook and evidence contracts MAY impose stricter
+   provenance, separation-of-duty, signature, artifact, and review controls;
+   they MUST NOT weaken or rewrite the instructional contract.
+5. Checked-in code and generated artifacts are implementations or projections,
+   not design authority. Passing structural tests does not establish full
+   conformance or efficacy.
+
+The reconciliation makes these decisions explicit:
+
+- The diagnostic authority emits a classification and recommended action, not
+  an executable lesson route.
+- The evidence-policy authority qualifies observations, freshness, recipe
+  state, and any prerequisite-support candidate.
+- The planner owns the per-KC `PlannerInstructionResolution` and selects one of
+  `CONCISE`, `STANDARD`, `MISCONCEPTION`, or `PREREQUISITE_SUPPORT`.
+- The lesson runner validates that resolution and may only accept it, apply an
+  explicitly permitted fail-closed downgrade to `STANDARD`, or return control
+  to the planner. It MUST NOT threshold a posterior or independently select the
+  initial route.
+- Diagnostic probes that can change the consequential route occur outside the
+  lesson runner. In-lesson elicitation is instructional; it may adjust
+  nonconsequential support within the supplied route or create an observation
+  for future planning, but it cannot silently replace the planner resolution.
+- `ordered_required_kc_ids` is a stable-order, registry-derived projection of
+  the canonical member KCs. Under the current no-bypass release it equals the
+  complete ordered member set.
+- Immediate repair preserves the immutable first attempt and returns to the
+  exact failed exit function when the active policy preserves an earlier exit
+  success. A generic restart at near-use requires an explicit, recorded
+  invalidation decision.
+- Eighteen minutes is only a provisional p90 hypothesis for one uninterrupted
+  resumable segment. It is not a budget per KC or per lesson.
+- Drafting all 114 lessons may proceed in controlled internal waves only after
+  the foundation and W00 infrastructure gates pass. Production publication and
+  broad learner rollout remain blocked on the independent review, accessibility,
+  rights, blind-solve, held-out efficacy, and publication gates.
+- The detailed response, item-family, exposure, invalid-item, omission,
+  help/reveal/retry, accessibility-equivalence, and capstone boundaries in this
+  reconciliation are additive requirements, not optional authoring advice.
+
+Canonical persisted and external wire artifacts use `snake_case` fields,
+`snake_case` event names, and uppercase `SNAKE_CASE` enum values. TypeScript MAY
+use camelCase in process only behind a versioned, bijective serialization
+adapter. Validation, signatures, hashes, idempotency, and replay operate on the
+canonical wire form. CamelCase pseudo-schemas later in this document describe
+logical fields unless explicitly marked as canonical wire syntax; they do not
+authorize a second wire contract.
 
 ---
 
@@ -103,11 +171,28 @@ The app MUST treat diagnoses, error causes, mastery states, and readiness estima
 
 ### 2.4 Personalize support; do not bypass required V3 scope
 
-Diagnostic evidence MAY select concise, standard, misconception, or prerequisite-support delivery for an individual KC. It MUST NOT omit a required KC microcycle while V3 adaptive bypass remains unauthorized.
+Diagnostic evidence MAY inform the planner's concise, standard, misconception,
+or qualified prerequisite-support resolution for an individual KC. It MUST NOT
+directly select the lesson route or omit a required KC microcycle while V3
+adaptive bypass remains unauthorized.
 
 Prepared learners MAY bypass a conditional below-ceiling support artifact when its routing condition is absent. This is support personalization, not omission of required KC scope.
 
-Every missing, stale, uncertain, or invalid bypass condition fails closed to instruction. Future bypass activation requires calibrated assessment packs, recency and uncertainty rules, false-skip controls, failure handling, exact repair/reentry, subgroup evidence, and independent governance approval that releases `V3-HOLD-110009`.
+Every missing, stale, uncertain, or invalid bypass condition fails closed to
+instruction. Future bypass activation requires calibrated assessment packs,
+recency and uncertainty rules, false-skip controls, failure handling, exact
+repair/reentry, subgroup evidence, and independent governance approval that
+releases `V3-HOLD-110009`.
+
+The schema MAY reserve the dormant future disposition
+`KC_WAIVED_NOT_DELIVERED` and shell outcome
+`PROGRESSED_WITH_UNDELIVERED_KCS`, but current builds MUST reject both and the
+event `lesson_progressed_with_undelivered_kcs`. Current governance pins are
+`governing_hold_id=V3-HOLD-110009` and `hold_release_decision_id=null`. Even
+after a future distinct release and authorization decision, a waiver would be
+KC-specific, would not emit instructional exit or mastery, would not satisfy the
+first-delivery denominator, and would reopen or expire on stale/conflicting
+evidence.
 
 ### 2.5 Simple by default, transparent on demand
 
@@ -284,38 +369,64 @@ Contains every required KC, lesson shell, capstone, and governed operation from 
 
 This ledger is static curriculum state. It supplies release-specific denominators but MUST NOT own current learner proficiency, evidence, freshness, or delivery status. “KCs touched,” lesson launches, and shell completion are not mastery.
 
-### 4.3 Diagnostic and learner evidence-state model
+### 4.3 Diagnostic decision authority
 
-Owns current learner state for each KC, capstone, and separately governed nonduplicative operation:
+Owns the calibrated diagnostic state for each KC, required capstone, and
+separately governed nonduplicative operation:
 
-- Posterior proficiency probability.
-- Uncertainty or credible interval.
-- Evidence families and exposure history.
-- Assistance and feedback conditions.
-- Contexts, representations, and performance modes seen.
-- Freshness and possible forgetting.
-- Timing, confidence, and answer changes as separate dimensions.
-- Derived lesson-shell delivery/checkpoint state, revisit history, and active repair overlays, none of which create aggregate mastery.
+- Posterior state and uncertainty.
+- Diagnostic classification: provisionally ready, likely weak, unresolved, or
+  unsampled.
+- Direct diagnostic provenance, timing, confidence, and answer-change
+  observations.
+- A recommended next action, including a possible
+  `PREREQUISITE_SUPPORT_CANDIDATE`.
+
+It emits an immutable, versioned per-construct decision envelope to the
+evidence-policy/planner boundary. It does not qualify downstream evidence,
+declare freshness, select an executable lesson route, or declare a required KC
+delivered.
+
+### 4.4 Learner evidence-policy authority
+
+Owns:
+
+- Evidence-recipe definitions and observation qualification.
+- Item-family exposure and freshness state.
+- Contexts, representations, assistance, feedback, and performance modes seen.
+- Recipe gaps and construct-specific evidence-status reduction.
+- Repair-overlay state and delayed closure.
+- Qualification or rejection of a diagnostic prerequisite-support candidate
+  using direct, current point-of-use evidence.
 
 Allowed evidence statuses are construct-specific:
 
-- **KC:** `unassessed`, `instructional_exit`, `independent`, `transfer`, `retained`, `strong`, or `refresh_needed`.
-- **Capstone or separately governed operation:** `unassessed`, `observed`, `independent`, `transfer`, `retained`, `strong`, or `refresh_needed`.
+- **KC:** `unassessed`, `instructional_exit`, `independent`, `transfer`,
+  `retained`, `strong`, or `refresh_needed`.
+- **Capstone or separately governed operation:** `unassessed`, `observed`,
+  `independent`, `transfer`, `retained`, `strong`, or `refresh_needed`.
 
 Posterior proficiency and recipe-derived evidence status are different:
 
 - The posterior represents probabilistic belief and uncertainty.
-- The evidence status records which predeclared evidence recipe has actually been satisfied.
+- The evidence status records which predeclared evidence recipe has actually
+  been satisfied.
 - Neither value may silently overwrite the other.
-- Any future bypass overlay would control delivery selection only; it would not create an evidence status and is inactive under the current V3 release.
+- Any future bypass overlay would control delivery selection only; it would not
+  create an evidence status and is inactive under the current V3 release.
 
-It answers:
+Together, the diagnostic and evidence-policy authorities answer:
 
-> What can the learner probably do, and what evidence is still missing?
+> What can the learner probably do, what evidence is still missing, and which
+> observations are valid for the next decision?
 
-Observational facets have telemetry only. They do not receive posterior or evidence-status state unless governance promotes them to a versioned operation with a declared state owner and evidence recipe. A V3 KC that represents a reasoning operation remains KC-owned and MUST NOT be duplicated as a governed operation.
+Observational facets have telemetry only. They do not receive posterior or
+evidence-status state unless governance promotes them to a versioned operation
+with a declared state owner and evidence recipe. A V3 KC that represents a
+reasoning operation remains KC-owned and MUST NOT be duplicated as a governed
+operation.
 
-### 4.4 Exact-memory scheduler
+### 4.5 Exact-memory scheduler
 
 Tracks FSRS-compatible state for exact memories:
 
@@ -334,7 +445,7 @@ It answers:
 
 It MUST NOT claim broad KC or capstone mastery, passage ability, research-design skill, pacing, or endurance.
 
-### 4.5 Daily and finite-horizon planner
+### 4.6 Daily and finite-horizon planner
 
 Tracks:
 
@@ -347,12 +458,21 @@ Tracks:
 - Full-length and section obligations.
 - CARS and performance-mode trajectories.
 - Fatigue and task-switching costs.
+- The latest non-superseded diagnostic decision and evidence-policy
+  qualification at the plan cutoff.
+- One executable per-KC `PlannerInstructionResolution` for every lesson task,
+  including route, provenance, expiry, and policy pins.
 
 It answers:
 
 > Which feasible activities have the highest expected value today, and is the remaining workload still feasible?
 
-### 4.6 Readiness model
+The planner, not the lesson runner, resolves diagnostic-probe-versus-lesson and
+selects the initial lesson route. It MUST NOT issue prerequisite support from a
+raw diagnostic candidate or graph edge without a distinct current
+evidence-policy qualification.
+
+### 4.7 Readiness model
 
 Tracks representative performance:
 
@@ -378,11 +498,11 @@ It MUST NOT substitute curriculum coverage or app-bank accuracy for official-equ
 ```mermaid
 flowchart TD
   A[Intake and availability] --> B[Resumable adaptive diagnostic]
-  B --> C[Provisional KC, capstone, and reasoning states]
-  C --> D[Rolling daily planner]
+  B --> C[Versioned diagnostic decisions and uncertainty]
+  C --> D[Evidence qualification and rolling daily planner]
   D --> E{Highest-value next action}
   E -->|Unresolved| F[High-information probe]
-  E -->|Likely weak| G[Prerequisite-safe KC microcycle in lesson shell]
+  E -->|Likely weak| G[Planner-resolved KC microcycle in lesson shell]
   E -->|Provisionally ready| H[Fresh confirmation]
   E -->|Due| I[Memory or complex-construct review]
   E -->|Repair| J[Targeted repair]
@@ -557,9 +677,9 @@ Avoid:
 
 The diagnostic estimates enough of the learner’s state to make better initial decisions than a fixed syllabus.
 
-It supports:
+It supports the evidence-policy and planner authorities with:
 
-- KC-specific route and support selection.
+- Inputs for KC-specific route and support resolution.
 - Prerequisite sequencing.
 - Targeted confirmation.
 - Uncertainty reduction.
@@ -623,8 +743,18 @@ Every required KC, required capstone, and separately governed cross-cutting oper
 - Relevant representations and contexts sampled.
 - Relevant content domains and performance modes sampled.
 - Timing and confidence observations when collected.
-- Recommended next action.
-- Policy and model version.
+- Recommended next action: concise instruction, standard instruction,
+  misconception instruction, prerequisite-support candidate, diagnostic probe,
+  capstone confirmation, or capstone coordination support.
+- Direct diagnostic provenance for any prerequisite-support candidate.
+- Decision ID, evidence cutoff, supersession lineage, policy version, and model
+  version.
+
+This output is a diagnostic decision envelope, not a `LessonRun` command.
+`DIAGNOSTIC_PROBE` is a planner task kind, not a lesson route.
+`PREREQUISITE_SUPPORT_CANDIDATE` requires a distinct evidence-policy
+qualification before the planner may resolve it to
+`PREREQUISITE_SUPPORT`.
 
 ## 7.4 Selection objective
 
@@ -694,10 +824,14 @@ The prompt is justified only when it can alter the next action.
 
 Behavior:
 
-- Select the concise or reduced-scaffolding route for the required KC microcycle.
+- Send `CONCISE_INSTRUCTION` as the diagnostic recommendation.
+- Let the planner issue a `CONCISE` lesson resolution only when the decision is
+  current, non-superseded, compatible with evidence-policy freshness, and
+  valid at the plan cutoff; otherwise issue `STANDARD` or a diagnostic probe.
 - Schedule a fresh confirmation from a distinct family after KC instructional exit.
 - If confirmed, enter maintenance and downstream evidence.
-- If failed, enter targeted KC repair or a more supportive route.
+- If failed, create a new evidence-policy/planner decision for targeted KC
+  repair or a more supportive route.
 
 Provisionally ready diagnostic evidence does not bypass required V3 delivery while adaptive bypass is disabled.
 
@@ -705,17 +839,24 @@ Provisionally ready diagnostic evidence does not bypass required V3 delivery whi
 
 Behavior:
 
-- Check hard-prerequisite evidence.
+- Treat a diagnostic prerequisite finding as a candidate, not a route.
+- Have the evidence-policy authority verify direct, current point-of-use
+  evidence and the exact authoritative hard edge.
 - Schedule the target KC microcycle in its owning lesson shell if prerequisites are adequate.
-- Schedule a narrow predecessor-KC bridge for one small gap.
-- Route substantial predecessor gaps through their owning lesson shells, then return to the exact target-KC reentry coordinate.
+- Let the planner issue a qualified narrow predecessor bridge for one small
+  gap.
+- Let the planner route substantial qualified predecessor gaps through their
+  owning lesson shells, then return to the exact target-KC reentry coordinate.
+- If qualification is absent, stale, conflicting, or unresolved, use
+  `STANDARD` for the target and return the support question to the planner.
 
 ### 8.3 Unresolved
 
 Behavior:
 
 - Select a high-information probe when its result will change the plan.
-- Otherwise begin the more supportive route without pretending the classification is certain.
+- Otherwise the planner issues `STANDARD`; the lesson runner does not convert
+  unresolved state into a route.
 
 ### 8.4 Unsampled
 
@@ -798,7 +939,12 @@ The planner may generate:
 
 Before optimization:
 
-1. Do not deliver an unscaffolded KC or capstone at a recorded hard-prerequisite point of use when its predecessor is unresolved. Preserve canonical KC order inside the affected shell; use bounded predecessor support or schedule another eligible task outside that blocked shell.
+1. Do not infer a predecessor gap from graph structure or unresolved state.
+   At a recorded hard-prerequisite point of use, unresolved state triggers a
+   diagnostic probe, target `STANDARD` scaffolding, or planner handoff. Pause
+   and route to predecessor support only after separate current direct
+   point-of-use evidence is qualified. Preserve canonical KC order inside a
+   blocked shell and schedule unrelated eligible work outside it.
 2. Keep whole passage and testlet activities intact.
 3. Do not reveal answer-bearing feedback before a shared-stimulus set is committed.
 4. Do not reuse exposed families as independent, transfer, timed, or protected evidence; reused items are rehearsal-only.
@@ -864,7 +1010,11 @@ The planner MAY choose the feasible date, session boundary, and activity mix. It
 
 - Use authoritative KC/capstone edges from the pinned registry. Lesson-level predecessor arrays, roots, gateway labels, and generic integration reversals are generated projections.
 - Only `HARD_PREREQUISITE` may block the recorded unscaffolded point of use. Helpful, co-development, confusable, applied, native integration, generated component-of-capstone, and capstone-component-ready relations are nonblocking.
-- Hard-edge necessity remains learner-unvalidated. An unresolved predecessor triggers a check or support route; it does not justify hiding unrelated work or claiming a calibrated learner threshold.
+- Hard-edge necessity remains learner-unvalidated. An unresolved predecessor
+  triggers a probe, target `STANDARD`, or planner handoff—not predecessor
+  support. A qualified direct point-of-use gap may trigger exact support; neither
+  case justifies hiding unrelated work or claiming a calibrated learner
+  threshold.
 - Preserve the seven canonical SIRS/math lessons and 52 authentic graph-backed points of use. Embed point-of-use work in the target lesson, capstone, passage, or revisit when appropriate rather than generating a full content-by-reasoning Cartesian product.
 - Keep mathematics within the supplied AAMC toolkit on pages 19, 52, and 77. Calculus and vector dot/cross products remain outside required scope.
 - Treat the 16 gateway records as planning analytics candidates, not operational mastery gates.
@@ -1139,44 +1289,81 @@ Every nested KC receives one primary microcycle identity. “One” governs iden
 The shell uses:
 
 ```text
-not_started
-→ in_progress(kc_id, ordinal)
-→ paused(kc_id, checkpoint, reason)?
-→ resumed(kc_id, checkpoint)
-→ in_progress(kc_id, ordinal)
-
-in_progress(all_required_kcs_exited)
-→ delivery_complete
+NOT_STARTED
+→ IN_PROGRESS(current_kc_id, canonical_ordinal, checkpoint)
+→ PAUSED(current_kc_id, checkpoint, reason)
+→ IN_PROGRESS(current_kc_id, canonical_ordinal, checkpoint)
+→ BLOCKED_FOR_PREDECESSOR(current_kc_id, exact_reentry_coordinate)
+→ IN_PROGRESS(current_kc_id, canonical_ordinal, checkpoint)
+→ DELIVERY_COMPLETE
 ```
 
-The KC run uses:
+The shell starts at the earliest required, not-yet-exited KC in canonical
+order. Later KCs remain closed while the current KC is blocked, although the
+planner may schedule unrelated eligible work outside the shell. A shell may
+span sessions. Abandonment ends a run instance, not the historical delivery
+obligation.
+
+The KC run uses the following governing states:
 
 ```text
-not_started
-→ in_progress
-→ exit_checks_pending
-→ exited
+NOT_STARTED
+→ ENTRY_ROUTE_VALIDATION
+→ ORIENTATION
+→ MODEL
+→ EXPERT_DECISION
+→ GUIDED_PRACTICE
+→ FADING
+→ CONTRAST_AND_BOUNDS
+→ NEAR_USE_EXIT_PENDING
+→ CHANGED_TASK_EXIT_PENDING
+→ EXITED
 
-exit_checks_pending
-→ repair_in_progress
-→ exit_checks_pending
-→ paused_for_repair
-→ resumed_at_reentry
-→ repair_in_progress | in_progress
-→ exit_checks_pending
+NEAR_USE_EXIT_PENDING | CHANGED_TASK_EXIT_PENDING
+→ IMMEDIATE_REPAIR(failed_exit_function)
+→ RESUMED_AT_REENTRY(exact_checkpoint, exact_microcycle_state)
+→ exact_microcycle_state
+
+IMMEDIATE_REPAIR
+→ PREDECESSOR_DISAMBIGUATION
+→ BLOCKED_FOR_PREDECESSOR
+→ RESUMED_AT_REENTRY(exact_checkpoint, exact_microcycle_state)
+→ exact_microcycle_state
+
+IMMEDIATE_REPAIR
+→ PLANNER_HANDOFF
 ```
 
-Authoring and publication occur under §31.5 and are not runtime states. The per-KC runtime steps begin at Step 1. Route selection, assistance, exit, and repair are independent for each nested KC.
+`RESUMED_AT_REENTRY` is an audited transition, not a generic restart. The
+active policy determines whether an earlier successful exit function remains
+valid. If it remains valid, the runner resumes the exact failed function; if it
+does not, the event records the policy decision and the earlier required
+destination. Authoring and publication occur under §31.5 and are not runtime
+states. Route validation, assistance, exit, and repair are independent for each
+nested KC.
 
 ### Step 1: Enter
 
-When consequential prerequisites are uncertain:
+Receive the planner's latest non-superseded per-KC instruction resolution. The
+runner validates:
 
-- Administer one to three high-information checks.
-- Offer “not sure.”
-- Select concise, standard, prerequisite-support, or misconception delivery for the current KC.
+- learner, lesson owner, KC, task kind, registry release, evidence cutoff, and
+  expiry;
+- planner and routing-policy versions;
+- route-required item-family availability;
+- misconception provenance for `MISCONCEPTION`; and
+- the separate current evidence-policy qualification, hard edge, exact point
+  of use, predecessor owner, origin, and reentry coordinates for
+  `PREREQUISITE_SUPPORT`.
 
-The output is a route, not a mastery label.
+The runner accepts `CONCISE`, `STANDARD`, `MISCONCEPTION`, or
+`PREREQUISITE_SUPPORT`. Missing identity or unreplayable lineage returns to the
+planner without rendering. Stale concise or misconception support downgrades to
+`STANDARD`. Invalid prerequisite-support qualification downgrades the target to
+`STANDARD` and returns the support question to the planner.
+
+Any high-information diagnostic probe that could change this initial route is a
+separate planner task and does not execute inside `LessonRun`.
 
 ### Step 2: Orient and elicit
 
@@ -1190,7 +1377,9 @@ When prior knowledge supports it, ask the learner to:
 - Estimate.
 - Interpret.
 
-Low-prior learners MAY proceed directly to model-first explanation.
+Low-prior learners MAY proceed directly to model-first explanation. Elicitation
+is instructional exposure, offers `not sure` when forced guessing would be
+uninformative, and cannot silently change the planner-resolved route.
 
 ### Step 3: Build the model
 
@@ -1258,10 +1447,21 @@ Under the initial versioned KC-exit policy:
 - Both checks must be valid, untouched, first-attempt A0 administrations and satisfy their reviewed rubrics.
 - When both checks pass, emit `kc_instructional_exit_recorded` and transition the KC to `exited`.
 - If an item is invalid, replace it with an untouched parallel item without penalizing the learner.
-- If either valid check fails, do not emit exit; enter Step 8.
-- After repair, use fresh untouched exit checks. If the KC still does not satisfy exit after two bounded repair cycles, emit `kc_paused_for_repair` and return control to the planner.
+- If either valid check fails, preserve the immutable first attempt, record the
+  failed exit function, do not emit exit, and enter Step 8.
+- After repair, use an untouched family for every exit function the active
+  policy requires again. A prior near-use success MAY remain valid after a
+  changed-task miss only through an explicit recorded policy decision;
+  otherwise the event records why it was invalidated.
+- When the versioned finite immediate-repair bound is reached, emit
+  `kc_planner_handoff_requested` with the open obligation and exact reentry
+  coordinate.
 
-The item count and repair limit are pilot policies, not V3 mastery thresholds; changes require a new policy version.
+The two-exit structure is the initial lesson-exit contract. Exit cut points,
+exit-success preservation, and the finite repair-cycle bound are pilot
+policies, not V3 mastery thresholds. The current two-cycle implementation is a
+W00 candidate only; production use requires a pinned policy version and may be
+changed prospectively without changing KC identity.
 
 ### Step 8: Repair or hand off
 
@@ -1270,32 +1470,47 @@ On a miss:
 - Diagnose tentatively.
 - Provide targeted feedback.
 - Use a fresh parallel task.
-- Terminate after two repair cycles.
-- Route persistent failure to an alternate explanation, exact predecessor KC, or planner.
+- Preserve learner-reported cause, observed response features, and provisional
+  system hypotheses as separate fields.
+- Terminate at the configured finite repair bound.
+- Route persistent failure to an alternate explanation, an exactly qualified
+  predecessor KC, or the planner.
+- Resume the exact failed exit function when the policy preserves earlier
+  success; never default every repair to generic near-use without a recorded
+  invalidation decision.
 
 After all required nested KCs reach instructional exit, emit `lesson_delivery_completed`. First-delivery and KC-exit history are monotonic: a later miss opens a concurrent freshness/repair overlay but does not erase that the original delivery occurred. Capstones remain separate sequence events and are never implied by shell completion.
 
-## 12.5 Provisional KC route predicates
+## 12.5 Planner-resolved route validation
 
-Adaptive bypass is inactive. Entry evidence changes support and dose, not the required KC denominator.
+Adaptive bypass is inactive. Diagnostic and evidence-policy state informs the
+planner; the planner issues the route; the runner validates it. Support and
+dose may change, but the required KC denominator does not.
 
 ### Prerequisite support
 
-Use when:
+The planner may issue this route only when:
 
-- An authoritative hard predecessor is incorrect or uncertain at the current point of use.
+- The diagnostic emitted a prerequisite-support candidate.
+- The evidence-policy authority separately qualified a direct, fresh
+  point-of-use observation against an authoritative hard predecessor.
+- The resolution identifies the exact hard edge, predecessor owner, gap scope,
+  origin coordinate, and target reentry coordinate.
 
 Action:
 
 - One narrow gap: bounded bridge.
 - A substantial gap: route to the predecessor KC’s owning shell and preserve the exact reentry coordinate.
 - Pause the current shell at the blocked KC and schedule another task from the eligible frontier. Later KCs remain closed because the canonical grouping order is preserved.
+- Missing, stale, indirect, unresolved, or conflicting qualification:
+  downgrade the target to `STANDARD` and return the support question to the
+  planner.
 
 ### Misconception route
 
-Use when:
+The planner may issue this route only when:
 
-- A wrong response plus a disambiguating probe supports the same documented misconception.
+- A wrong response plus separate disambiguating evidence supports the same documented misconception.
 - High confidence may strengthen the signal but is not sufficient alone.
 
 Action:
@@ -1306,7 +1521,7 @@ Action:
 
 ### Concise route
 
-Use when:
+The planner may issue this route only when:
 
 - Prior evidence is strong enough to justify reduced scaffolding and hard point-of-use requirements pass.
 
@@ -1317,18 +1532,22 @@ Action:
 
 ### Standard route
 
-Use when:
+The planner issues this route when:
 
 - Entry evidence is weak, unavailable, stale, or conflicting.
-- Hard prerequisites pass.
+- No current qualified prerequisite gap supports
+  `PREREQUISITE_SUPPORT`. An unresolved predecessor remains unresolved; it does
+  not become a support route.
 
 Action:
 
 - Model-first instruction.
+- Scaffold the target and return to the planner at any exact point of use that
+  cannot proceed validly without new prerequisite evidence.
 
 ### Fallback
 
-Use when:
+Fallback is not a fifth route. Apply deterministic validation behavior when:
 
 - Telemetry is missing.
 - An item is invalid.
@@ -1337,7 +1556,11 @@ Use when:
 
 Action:
 
-- Choose the more supportive non-misconception route.
+- Downgrade stale concise or misconception support to `STANDARD`.
+- Downgrade invalid prerequisite support to target `STANDARD` and return the
+  support question to the planner.
+- Reject wrong identity, registry, task kind, or unreplayable lineage and
+  render nothing.
 - Preserve the response.
 - Create a reviewable event.
 - Never let an LLM guess the route.
@@ -1353,6 +1576,18 @@ No route may mark a required KC as instructionally complete without delivery und
 An interaction is justified only when it changes the cognitive work or feedback.
 
 If “Continue” would be equivalent, remove or redesign it.
+
+Every nontext representation or interaction declares:
+
+- Target KC and learner operation enabled.
+- Information encoded and the decisive feature.
+- Feedback or intermediate-state diagnosis made possible.
+- Accessible alternative and a reviewed construct-preservation judgment.
+
+Color, spatial position, motion, audio, or hover alone cannot carry essential
+information. Motion is pausable and respects reduced-motion settings. A
+simulation remains instructional telemetry unless a separate untouched outcome
+task follows.
 
 ## 13.1 Quantitative KC
 
@@ -1553,6 +1788,33 @@ The UI MUST label hypotheses as provisional.
 
 “Careless” MUST NOT be accepted as a final diagnosis without a more actionable process description.
 
+## 15.6 First-attempt, omission, help, reveal, retry, and validity semantics
+
+Every meaningful response preserves the item, content, mapping, calibration,
+family, stimulus/testlet, activity-role, assistance, feedback, exposure,
+validity, timing, and policy versions needed to reconstruct its meaning.
+
+- The first committed response is immutable. A retry is a separate
+  repair-process record and never overwrites the first attempt.
+- A help or hint request changes the administration's actual assistance state
+  before scoring; that response is not A0.
+- A reveal or answer-bearing feedback event contaminates the family. Later use
+  of that family is rehearsal only.
+- Intentional skip, valid-time-limit omission, abandonment, technical failure,
+  inaccessible interaction, and missing telemetry remain distinct. Technical
+  and accessibility omissions are validity incidents, not learner failures.
+- An invalid item voids score and evidence consequences without restoring
+  freshness. The response remains auditable, the family remains exposed, the
+  learner is not penalized, and any required replacement uses an untouched
+  family.
+- Shared-stimulus responses are collected through the declared testlet
+  commitment boundary before answer-bearing feedback.
+
+The system records learner-reported cause, directly observed response features,
+and versioned system hypotheses separately. Every system hypothesis includes
+supporting and contradicting observations, uncertainty, a disambiguating next
+action, and revision/expiry behavior.
+
 ---
 
 ## 16. Remediation and repair
@@ -1575,11 +1837,28 @@ An error moves through:
 
 - `observed`
 - `explained`
-- `near_transfer_passed`
-- `delayed_mixed_passed`
+- `fresh_near_confirmation_passed`
+- `delayed_mixed_confirmation_passed`
+- `closed`
 - `reopened`
 
 An immediate retry, even if correct, MUST NOT close the repair.
+
+The lesson runner owns only immediate-repair execution. The evidence-policy
+authority owns qualification and reduction of the shared repair state. Every
+immediate repair records:
+
+- Failed exit function: near-use or changed-task.
+- Origin checkpoint and microcycle state.
+- Any preserved exit-function successes.
+- Reentry checkpoint and exact destination microcycle state.
+- The policy decision that preserves or invalidates prior success.
+- The finite repair-cycle count and policy version.
+
+After repair, `kc_resumed_at_reentry` transitions through the audited
+`RESUMED_AT_REENTRY` state to that exact destination. A changed-task-only miss
+does not silently restart near-use when the prior near-use success remains
+valid.
 
 ## 16.3 Pattern threshold
 
@@ -1626,7 +1905,12 @@ Contains every required KC, lesson shell, capstone, revisit, and governed operat
 
 Contains KCs and capstones currently eligible for review or downstream practice.
 
-Diagnostic evidence seeds learner-state estimates, unresolved probes, and route selection—not downstream task eligibility by itself. A KC enters post-instruction practice after KC instructional exit; a capstone enters when its normalized placement coordinate is eligible. Diagnostic item metadata MAY already exist in the bank, but it cannot activate a prescription whose contract explicitly requires prior instruction or capstone placement.
+Diagnostic evidence seeds learner-state estimates, unresolved probes, and the
+planner's route-resolution inputs—not downstream task eligibility by itself.
+A KC enters post-instruction practice after KC instructional exit; a capstone
+enters when its normalized placement coordinate is eligible. Diagnostic item
+metadata MAY already exist in the bank, but it cannot activate a prescription
+whose contract explicitly requires prior instruction or capstone placement.
 
 ## 17.2 What KC instructional exit adds
 
@@ -1825,25 +2109,25 @@ A single surprising miss on a strong KC or capstone SHOULD usually trigger a nov
 
 Eligibility is determined by administration conditions as well as task content.
 
-| Activity or response                                                       | Permitted evidence                                                                                                                                           | Prohibited use                                                                                                        |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| Clean diagnostic first attempt on a predeclared eligible item              | Placement; optionally one independent slot under §19.4                                                                                                       | Cannot by itself establish transfer, retention, strong mastery, or readiness                                          |
-| Entry-route probe or future governed test-out item                         | Routing evidence; optionally diagnostic evidence if feedback-isolated and predeclared                                                                        | Cannot be reused after exposure as independent, transfer, timed, or protected evidence                                |
-| Worked example, guided step, hinted response, or answer-bearing assistance | Instruction and assistance telemetry                                                                                                                         | No downstream mastery credit                                                                                          |
-| Immediate retry after a miss                                               | Diagnostic-retry or repair-process evidence                                                                                                                  | Cannot close repair or become independent evidence                                                                    |
-| Revealed item or item with exposed rationale                               | Rehearsal only on reuse                                                                                                                                      | No independent, transfer, timed, or protected evidence                                                                |
-| KC-exit near-use or changed-task check                                     | `instructional_exit` only                                                                                                                                    | No independent, transfer, retained, or protected credit                                                               |
-| Fresh A0 item from an untouched family                                     | Independent evidence                                                                                                                                         | Not transfer unless a reviewed construct-preserving change is declared                                                |
-| Fresh A0 item with a reviewed changed-task dimension                       | Transfer evidence                                                                                                                                            | Not retention unless administered after the required delay                                                            |
-| Fresh item administered after the required delay                           | Delayed evidence; may also retain its independent/transfer mode                                                                                              | Same-item delayed repetition remains contaminated and cannot substitute for a fresh family                            |
-| Purposefully mixed fresh set                                               | Mixed evidence                                                                                                                                               | Random shuffling alone does not qualify                                                                               |
-| Shared-stimulus passage/testlet                                            | Passage or integrated evidence with local dependence modeled                                                                                                 | Linked questions cannot be counted as fully independent families                                                      |
-| Fresh timed block                                                          | Timed evidence                                                                                                                                               | Timing does not make an exposed or assisted item independent                                                          |
-| Unseen server-scored protected family                                      | Protected evidence                                                                                                                                           | Must remain isolated from prior instruction, feedback, and client key exposure                                        |
-| Instructional simulation or manipulative                                   | Instructional or simulation telemetry                                                                                                                        | No mastery unless a separately validated outcome task follows                                                         |
-| In-app exam simulation or full-length                                      | Form-level timing/endurance and potential readiness evidence; unseen protected embedded items may separately produce timed/protected KC or capstone evidence | Form-level completion does not award KC or capstone mastery, and exposed/unvalidated embedded items remain ineligible |
-| CARS Duel or AI explanation                                                | Contextual explanation evidence                                                                                                                              | No independent CARS, mastery, timing, endurance, or readiness credit                                                  |
-| External official full-length summary                                      | Readiness/contextual evidence                                                                                                                                | No direct KC or capstone mastery unless a separately validated mapping policy exists                                  |
+| Activity or response                                                       | Permitted evidence                                                                                                                                           | Prohibited use                                                                                                                                              |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Clean diagnostic first attempt on a predeclared eligible item              | Placement; optionally one independent slot under §19.4                                                                                                       | Cannot by itself establish transfer, retention, strong mastery, or readiness                                                                                |
+| Pre-lesson diagnostic/route probe or future governed test-out item         | Routing evidence; optionally diagnostic evidence if feedback-isolated and predeclared                                                                        | Cannot execute inside `LessonRun` when it changes the initial route; cannot be reused after exposure as independent, transfer, timed, or protected evidence |
+| Worked example, guided step, hinted response, or answer-bearing assistance | Instruction and assistance telemetry                                                                                                                         | No downstream mastery credit                                                                                                                                |
+| Immediate retry after a miss                                               | Diagnostic-retry or repair-process evidence                                                                                                                  | Cannot close repair or become independent evidence                                                                                                          |
+| Revealed item or item with exposed rationale                               | Rehearsal only on reuse                                                                                                                                      | No independent, transfer, timed, or protected evidence                                                                                                      |
+| KC-exit near-use or changed-task check                                     | `instructional_exit` only                                                                                                                                    | No independent, transfer, retained, or protected credit                                                                                                     |
+| Fresh A0 item from an untouched family                                     | Independent evidence                                                                                                                                         | Not transfer unless a reviewed construct-preserving change is declared                                                                                      |
+| Fresh A0 item with a reviewed changed-task dimension                       | Transfer evidence                                                                                                                                            | Not retention unless administered after the required delay                                                                                                  |
+| Fresh item administered after the required delay                           | Delayed evidence; may also retain its independent/transfer mode                                                                                              | Same-item delayed repetition remains contaminated and cannot substitute for a fresh family                                                                  |
+| Purposefully mixed fresh set                                               | Mixed evidence                                                                                                                                               | Random shuffling alone does not qualify                                                                                                                     |
+| Shared-stimulus passage/testlet                                            | Passage or integrated evidence with local dependence modeled                                                                                                 | Linked questions cannot be counted as fully independent families                                                                                            |
+| Fresh timed block                                                          | Timed evidence                                                                                                                                               | Timing does not make an exposed or assisted item independent                                                                                                |
+| Unseen server-scored protected family                                      | Protected evidence                                                                                                                                           | Must remain isolated from prior instruction, feedback, and client key exposure                                                                              |
+| Instructional simulation or manipulative                                   | Instructional or simulation telemetry                                                                                                                        | No mastery unless a separately validated outcome task follows                                                                                               |
+| In-app exam simulation or full-length                                      | Form-level timing/endurance and potential readiness evidence; unseen protected embedded items may separately produce timed/protected KC or capstone evidence | Form-level completion does not award KC or capstone mastery, and exposed/unvalidated embedded items remain ineligible                                       |
+| CARS Duel or AI explanation                                                | Contextual explanation evidence                                                                                                                              | No independent CARS, mastery, timing, endurance, or readiness credit                                                                                        |
+| External official full-length summary                                      | Readiness/contextual evidence                                                                                                                                | No direct KC or capstone mastery unless a separately validated mapping policy exists                                                                        |
 
 General rules:
 
@@ -2015,7 +2299,10 @@ Across the relevant rolling window:
 - Target 30% Foundations of Comprehension, 30% Reasoning Within the Text, and 40% Reasoning Beyond the Text.
 - Target 50% humanities and 50% social-science passage domains.
 - Schedule contacts on distinct study days when feasible rather than compressing them into one day.
-- Keep at least two-thirds of unique CARS testlets as representative A0 passage MCQ work, and keep representative work as the majority of CARS study time.
+- Keep representative A0 passage MCQ work as the normative majority of both
+  unique CARS testlets and study time. The initial planner policy targets at
+  least two-thirds of unique testlets, a stricter provisional product target
+  that may be recalibrated without weakening the majority floor.
 - Count a Duel-led passage as instructional CARS contact only; it does not satisfy representative-passage, independent-evidence, mastery, timing, or endurance requirements.
 
 A contact may contain one passage, a multi-passage block, a timed section, or CARS work embedded in a full-length. The rolling planner adjusts passage count, timing, and block length through foundation, independence, exam-specific, and taper regimes without redefining V3 phase identity. Full sections and full-lengths may add dose when sustainable.
@@ -2091,19 +2378,40 @@ Every production passage set needs:
 
 Timing is a separate performance dimension.
 
-## 22.1 Early timing regime
+## 22.1 Lesson duration units and segmentation
+
+Track three noninterchangeable units:
+
+1. **Segment duration:** active and wall time for one uninterrupted resumable
+   segment, with help, feedback, branch, and pause time separable.
+2. **KC-microcycle duration:** cumulative active time across every segment,
+   session, route, and immediate repair for one KC run.
+3. **Lesson-shell duration:** cumulative active time across member KC
+   microcycles, transitions, support, and session overhead.
+
+Eighteen minutes is only a provisional p90 hypothesis for one uninterrupted
+segment. It is not an allowance per KC or per lesson, not a requirement to fill
+time, and not permission to split a canonical lesson or KC identity.
+
+Add a checkpoint at coherent model/practice boundaries, substantial
+representation changes, likely predecessor handoffs, or a natural session
+break when an uninterrupted segment risks exceeding the active guardrail. Do
+not split a testlet commitment boundary, lose assistance/exposure state, or
+reveal an answer early.
+
+## 22.2 Early timing regime
 
 - Hide or de-emphasize the timer during acquisition.
 - Collect timing in the background when privacy and consent permit.
 - Focus on correct comprehension and strategy.
 
-## 22.2 Transition timing regime
+## 22.3 Transition timing regime
 
 - Introduce soft timing after untimed accuracy stabilizes.
 - Use two- and three-passage blocks.
 - Compare timed and untimed performance.
 
-## 22.3 Exam-specific timing regime
+## 22.4 Exam-specific timing regime
 
 - Use official-like section timing.
 - Track omissions.
@@ -2577,28 +2885,49 @@ Every event uses a versioned envelope:
 
 ```text
 LearnerEvent {
-  eventId
-  streamId
-  streamSequence
-  eventType
-  schemaVersion
-  occurredAt
-  acceptedAt
+  event_id
+  stream_id
+  stream_sequence
+  event_type
+  schema_version
+  occurred_at
+  accepted_at
   actor
-  causationId?
-  correlationId?
-  decisionContext? {
-    evidenceCutoff
-    registrySha256
-    contentVersion
-    policyVersions
-    modelVersions
+  idempotency_key?
+  causation_id?
+  correlation_id?
+  decision_context {
+    evidence_cutoff
+    registry_artifact_id
+    registry_sha256
+    freeze_ids[]
+    content_versions[]?
+    content_hashes[]?
+    item_ids[]?
+    item_versions[]?
+    item_content_versions[]?
+    item_mapping_versions[]?
+    item_calibration_versions[]?
+    item_family_ids[]?
+    stimulus_ids[]?
+    testlet_ids[]?
+    recipe_versions[]?
+    diagnostic_decision_id?
+    planner_instruction_resolution_id?
+    prerequisite_support_candidate_id?
+    prerequisite_support_qualification_id?
+    policy_versions
+    model_versions
   }
   payload
 }
 ```
 
-`decisionContext` is required for every event that can change routing, evidence state, planning, completion, or readiness; it may be omitted only for nonconsequential telemetry.
+This is canonical external wire syntax. `decision_context` is required for every
+event that can change routing, evidence state, planning, completion, or
+readiness; nonapplicable optional fields are null and applicable multi-value
+fields use arrays. It may be omitted only for explicitly nonconsequential
+telemetry.
 
 Every consequential decision should be reconstructable from:
 
@@ -2620,24 +2949,32 @@ Every consequential decision should be reconstructable from:
 - Session started/completed/abandoned.
 - Missed study day recorded.
 - Diagnostic started/resumed/completed.
-- Item presented.
-- Attempt submitted.
-- Confidence recorded.
-- Cause selected.
-- Hint requested.
-- Reveal requested.
-- Retry submitted.
-- Lesson shell started/resumed/paused.
-- KC microcycle started.
-- Lesson checkpoint completed.
-- KC instructional exit recorded.
-- KC paused for repair/resumed at reentry.
-- Lesson delivery completed.
+- `item_presented`.
+- `attempt_observed`.
+- `confidence_recorded`.
+- `learner_cause_recorded`.
+- `hint_requested`.
+- `reveal_requested`.
+- `retry_observed`.
+- `feedback_delivered`.
+- `item_invalidated`.
+- `lesson_shell_started`, `lesson_shell_resumed`, and
+  `lesson_shell_paused`.
+- `kc_microcycle_started`.
+- `entry_route_selected`, `entry_route_downgraded`,
+  `planner_instruction_resolution_rejected`, and
+  `planner_instruction_resolution_superseded`.
+- `instruction_node_presented`, `assistance_changed`, and
+  `checkpoint_committed`.
+- `kc_repair_started`, `kc_paused_for_predecessor`,
+  `kc_resumed_at_reentry`, and `kc_planner_handoff_requested`.
+- `kc_instructional_exit_recorded`.
+- Derived `lesson_delivery_completed`.
 - Capstone coordination attempted/completed.
 - Upgraded revisit completed.
 - Exact KC/capstone repair activity started/completed.
 - Repair closure verified/reopened.
-- Sequence reentry recorded.
+- `sequence_reentry_recorded`.
 - Memory object activated.
 - Review rated.
 - Practice prescription created/completed.
@@ -2648,6 +2985,28 @@ Every consequential decision should be reconstructable from:
 - Full-length metadata/result recorded.
 - Full-length analysis completed.
 - Capacity changed.
+
+`entry_route_selected` is retained as the shared wire name for compatibility;
+it means the planner-selected route was validated and activated by the runner,
+not that the runner independently chose it. A future schema version MAY rename
+it to `entry_route_accepted`, but must provide an explicit migration.
+
+For scored lesson activity:
+
+- Presentation authorization, family exposure, and `item_presented` commit
+  atomically before render. A failed transaction renders nothing; a crash after
+  authorization leaves the family exposed.
+- `attempt_observed` records the immutable first response before feedback.
+- Help, reveal, or answer-bearing feedback prevents that administration from
+  becoming clean A0 evidence.
+- `retry_observed` never replaces the first attempt.
+- `item_invalidated` voids score/evidence consequences but not exposure.
+- Duplicate commands are idempotent, concurrent submissions serialize by
+  stream sequence, and state is rebuildable from the event log plus pinned
+  immutable definitions.
+- `lesson_delivery_completed` is derived only after every
+  `ordered_required_kc_id` has `kc_instructional_exit_recorded`; a client cannot
+  submit it directly.
 
 ## 29.3 Evidence record requirements
 
@@ -2714,6 +3073,10 @@ AI MUST NOT receive:
 ---
 
 ## 30. Machine-readable daily plan
+
+The following uses TypeScript-style logical names for readability. Its
+canonical persisted/API serialization follows the snake-case wire rule in
+§0.2.
 
 ```text
 DayPlan {
@@ -2786,7 +3149,33 @@ LessonDeliveryTask = CommonTaskFields & {
   lessonContentVersion
   reviewedContentHash
   checkpoint?
-  assistanceRoute
+  plannerInstructionResolution: {
+    resolutionId
+    taskKind: "kc_lesson"
+    resolvedInstructionRoute:
+      "concise" | "standard" | "misconception" | "prerequisite_support"
+    sourceDiagnosticDecisionId
+    sourceDiagnosticClass
+    sourceRecommendedAction
+    prerequisiteSupportCandidateId?
+    prerequisiteSupportQualificationId?
+    blockingPrerequisiteCandidateIds
+    qualifyingPointOfUseObservationIds
+    predecessorKcId?
+    predecessorOwningLessonId?
+    hardPrerequisiteEdgeId?
+    pointOfUseId?
+    gapScope?
+    originSequenceCoordinate?
+    targetReentryCoordinate?
+    misconceptionHypothesisId?
+    evidenceCutoff
+    expiresAt?
+    registrySha256
+    routingPolicyVersion
+    plannerPolicyVersion
+    supersedesId?
+  }
 }
 
 CapstoneTask = CommonTaskFields & {
@@ -2829,10 +3218,17 @@ OperationRepairTask = CommonTaskFields & {
 
 PrerequisiteSupportTask = CommonTaskFields & {
   type: "prerequisite_support"
+  prerequisiteSupportCandidateId
+  prerequisiteSupportQualificationId
+  qualifyingPointOfUseObservationIds
+  hardPrerequisiteEdgeId
+  pointOfUseId
+  gapScope: "narrow" | "substantial"
   predecessorKcId
   owningLessonId
   blockedPrimaryConstruct
   supportArtifactId?
+  originSequenceCoordinate
   reentryCoordinate
 }
 
@@ -2842,6 +3238,11 @@ SequenceReentryTask = CommonTaskFields & {
   sourceRepairTaskId
   repairRelationId?
   reentryCoordinate
+  reentryCheckpointId
+  reentryMicrocycleState
+  failedExitFunction?
+  preservedExitFunctionSuccessIds
+  preservationPolicyDecisionId
 }
 
 PracticeTask = CommonTaskFields & {
@@ -2937,8 +3338,18 @@ Every lesson definition requires:
 
 Every published lesson definition contains:
 
-- One immutable-ID lesson-shell manifest with grouping order, registry release, authored-content version, reviewed-content hash, estimated shell duration, branch-duration estimates, and shell checkpoint map.
-- One ordered microcycle manifest per nested KC with objective, scope, archetype, prerequisite point of use, route policy, duration estimate, checkpoint map, instruction model, representations, and assistance ladder.
+- One immutable-ID lesson-shell manifest with the exact ordered member KCs, the
+  computed stable-order `ordered_required_kc_ids`, grouping order, registry
+  release, authored-content version, reviewed-content hash, segment/KC/shell
+  duration models, transitions, and shell checkpoint map.
+- One ordered microcycle manifest per nested KC with objective, scope in/out,
+  archetype, expert task model, prerequisite points of use, route-compatible
+  graph, segment/KC duration models, checkpoint map, instruction model,
+  representations, assistance ladder, two exit-function bindings, and exact
+  reentry bindings.
+- A machine-checkable per-KC coverage matrix proving one owner, one ordinal, one
+  primary microcycle, complete model/decision/guided/fading/contrast/exit/repair
+  coverage, no scope expansion, and reviewed accessibility equivalence.
 - Per-KC deterministic interactive activity graph.
 - Per-KC feedback, bounded repair, and exact reentry metadata.
 - Per-KC instructional-exit items and separately isolated downstream evidence-family bindings.
@@ -2961,10 +3372,22 @@ A lesson run references one immutable lesson definition and contains:
 - `lesson_run_id`, learner/event-stream ID, plan/task ID, and evidence cutoff.
 - Registry release, lesson ID, definition version, and reviewed-content hash.
 - Current KC ID, grouping ordinal, exact checkpoint, and originating sequence relation.
-- Per-KC route, assistance, exposure, exit, and active-repair state.
-- Learner evidence/freshness snapshot used to select the route.
+- The immutable planner-instruction-resolution ID and validated per-KC route.
+- Per-KC assistance, exposure, exit, failed-exit-function, preserved-success,
+  and active-repair state.
+- Diagnostic decision and evidence-policy qualification references used by the
+  planner; the lesson runner receives no raw posterior or threshold table.
 - Pause, resume, abandonment, invalid-item, and terminal status.
 - Emitted immutable events.
+
+A valid checkpoint binds the run and immutable definition hash to the current
+KC/ordinal, microcycle state, node, actual assistance state, validated route and
+planner-resolution ID, committed response IDs, exposed family IDs, open
+feedback, repair cycle, failed exit function, preserved exit-function
+successes, origin/reentry coordinates, exact reentry microcycle state, and event
+stream sequence. It persists transactionally with the event that makes it
+valid. A committed response is never discarded or replayed as a clean first
+attempt.
 
 A run MUST NOT alter the lesson definition or reviewed hash. Capstone, revisit, passage, and repair runs use their own activity contracts and may reference the lesson for context.
 
@@ -2972,7 +3395,10 @@ A run MUST NOT alter the lesson definition or reviewed hash. Capstone, revisit, 
 
 Author separately:
 
-- Entry probes.
+- Diagnostic/entry probes that execute outside the lesson runner when they can
+  change the consequential initial route.
+- Optional in-lesson elicitation activities that are explicitly instructional
+  and cannot select a new initial route.
 - Worked examples.
 - Guided tasks.
 - Near-use KC-exit tasks.
@@ -2984,6 +3410,16 @@ Author separately:
 - Protected tasks.
 
 Rewording or changing numbers does not automatically create a new family.
+Family identity considers stimulus/scenario and data-generating lineage,
+governing solution path, decisive cue, distractor/rationale structure,
+answer-bearing explanation exposure, and protected-form boundaries. Mirroring a
+diagram or changing cosmetic context also does not create a new family.
+
+Presentation, preview, worked use, guidance, hint, reveal, discussion, or
+coaching exposes the family and contaminates every descendant for fresh
+evidence. No response, invalidity, crash, pause, retirement, retry, or delay
+restores freshness. A family may not fill more than one fresh-evidence role;
+intentional reuse is explicitly `REHEARSAL_ONLY`.
 
 ## 31.5 Required lesson-production workflow
 
@@ -3006,7 +3442,9 @@ Every lesson passes through the following workflow:
 6. **Bind attachments and canonical sequence events.**
    - Use extensions as bounded variation, capstones as separate coordination events, and supports as host-attached routes without cloning mastery identity.
 7. **Compile deterministic shell and KC activity graphs.**
-   - Select interaction operations, assistance levels, branches, repair limits, fallbacks, exit policy, shell transitions, and exact reentry.
+   - Define interaction operations, route-compatible nodes, assistance levels,
+     branches, versioned repair bounds, fail-closed validation behavior, exit
+     policy, shell transitions, and exact failed-function reentry.
    - An LLM may draft assets but MUST NOT improvise consequential runtime branch logic.
 8. **Author instructional and evidence families separately.**
    - Preserve family isolation, primary-KC mappings, reviewed secondary mappings, capstone semantics, and server-only keys.
@@ -3016,7 +3454,10 @@ Every lesson passes through the following workflow:
     - Include quantitative, causal, experimental/data, spatial or representational, behavioral/social, and CARS work.
     - Compare held-out performance, learning time, help use, calibration, accessibility, and attrition.
 
-The provisional core-path p90 guardrail is 18 minutes per KC microcycle, not per multi-KC shell. Outliers require an explicit waiver and resumable segmentation. This value is an operating hypothesis to recalibrate, not a cognitive law.
+The provisional p90 guardrail hypothesis is 18 minutes per uninterrupted
+resumable segment, not per KC microcycle or lesson shell. KCs and shells may
+span multiple coherent segments and sessions. The value is an operating
+hypothesis to recalibrate, not a cognitive law.
 
 ---
 
@@ -3054,7 +3495,60 @@ Every item needs:
 
 AI-generated candidates are drafts until they pass independent review, blind solving, and publication gates.
 
-## 32.1 Clean-room rights and approval safeguards
+## 32.1 v7 question bank and Postgres serving seam
+
+The merged repository contains a canonical v7 corpus loader, a V3
+KC-to-lesson/cluster adapter, a Postgres migration, and physically separated
+learner-safe and protected-answer tables. The current inventory reports 2,108
+schema-valid records with zero KC-to-cluster mapping gaps. This is useful source
+inventory, not proof that all 2,108 items are eligible for instruction,
+diagnosis, exit, transfer, timed, or protected evidence.
+
+Use the v7 bank under these boundaries:
+
+- v7 remains the source shape for those question records; a lesson
+  `ActivityDefinition` references or compiles a reviewed projection rather than
+  redefining v7.
+- `correct_answer` and `explanations` remain in the server-only
+  `question_protected` boundary. Blind solvers receive ordinary scoring through
+  the opaque authority service, not those rows.
+- The existing `listLearnerSafeQuestions` seam is an administrative/read
+  primitive, not a production item selector. Key-free is necessary but not
+  sufficient: learner delivery also omits unnecessary KC, lesson, family,
+  difficulty, and skill labels that could cue a response.
+- Corpus counts, schema validity, DOK labels, and a nonnull KC mapping do not
+  confer publication or evidence eligibility.
+- Existing questions SHOULD be reused when they pass the exact activity-role
+  and family-firewall gates; cloud authors SHOULD NOT generate duplicates merely
+  because the database item was not yet exposed through a lesson adapter.
+- Exposure follows the semantic family across both database and newly authored
+  items. A new ID or cosmetic rewrite does not create freshness.
+
+Before the lesson runner or diagnostic can select from this database, a
+server-authority adapter and supporting schema MUST add or preserve:
+
+1. immutable item, content, mapping, calibration, family, stimulus, testlet,
+   rights, accessibility, certification, and retirement versions;
+2. exactly one reviewed primary construct, required-secondary versus incidental
+   mappings, and joint-scoring semantics;
+3. explicit activity-role/evidence-mode eligibility and a fail-closed
+   publication-status filter;
+4. family reservation, presentation authorization, exposure, and
+   contamination transactions;
+5. KC-, role-, representation-, context-, and difficulty-aware candidate
+   queries with deterministic selection and reproducible selection receipts;
+6. a minimal cue-safe learner DTO and server-authoritative scoring path;
+7. source-ledger and source-output-similarity evidence for the corpus itself;
+   and
+8. audit evidence that database rows, protected rows, media digests, and the
+   pinned candidate artifact refer to the same immutable version.
+
+The current database table does not persist all of those fields, and the live
+application still serves the synthetic in-process bank. Therefore the 2,108
+items may inform coverage audits and reduce future question authoring only
+after the missing adapter/eligibility contract is implemented and reviewed.
+
+## 32.2 Clean-room rights and approval safeguards
 
 Content production MUST enforce:
 
@@ -3076,6 +3570,8 @@ Content production MUST enforce:
 
 - Exact preservation of the canonical lesson shell, grouping order, and nested KC identities.
 - One complete primary instructional microcycle per nested KC.
+- A machine-checkable coverage row for every canonical member KC and a
+  no-scope-expansion proof.
 - Immutable `LessonDefinition` kept separate from learner-specific `LessonRun`.
 - Held and nonrequired attachments remain governance-only.
 - No lesson-, grouping-, extension-, support-, module-, phase-, or pathway-level mastery state.
@@ -3085,9 +3581,15 @@ Content production MUST enforce:
 - Active representation use.
 - Feedback discipline.
 - Bounded repairs.
+- Planner-resolved initial route validation without posterior thresholding in
+  the runner.
+- Immutable first attempts plus explicit omission, help, reveal, retry, and
+  invalid-item behavior.
+- Exact failed-function repair/reentry with preserved-success policy.
 - Instructional-exit isolation.
 - Accessibility.
 - State-machine termination and resumability.
+- Replay from the canonical event envelope and pinned definition.
 
 ## 33.2 Item gate
 
@@ -3095,11 +3597,14 @@ Content production MUST enforce:
 - Choice-level rationale.
 - Construct alignment.
 - No unintended cueing.
-- Family separation.
+- Immutable item/content/mapping/calibration versions.
+- Semantic family identity, role separation, reservation, and exposure
+  propagation across v7 and newly authored items.
 - Passage integrity.
 - Originality and rights.
 - Independent blind solve.
 - Subgroup/accessibility review.
+- Fail-closed publication and evidence-mode eligibility.
 
 ## 33.3 Diagnostic gate
 
@@ -3125,6 +3630,11 @@ Before broad lesson rollout:
 - Keep outcome items isolated from instruction and outcome feedback.
 - Analyze by intention to treat.
 - Report differential attrition and accessibility-subgroup results.
+
+Internal clean-room drafting of later waves may continue after W00's structural
+and trust gates pass, but it creates no production-publication eligibility.
+Learner publication and broad rollout remain blocked until the applicable
+held-out gate is satisfied.
 
 Provisional decision policy:
 
@@ -3189,6 +3699,31 @@ Any score/readiness model requires:
 - Form-exposure controls.
 - Attrition included, not completers only.
 - Subgroup fairness.
+
+## 33.9 Cloud authoring and internal-integration gate
+
+No W00 candidate may integrate from self-asserted overlay claims. The
+controller must verify:
+
+- an externally trusted, signed foundation pinset naming the exact registry,
+  candidate schema, validator, compiler, runtime, browser/accessibility harness,
+  and opaque scoring-service artifacts;
+- signed assignment-bound reviewer credentials and reports;
+- deterministic candidate-to-review-bundle derivation with protected-field
+  scans and immutable media digests;
+- real blind-solve request/response receipts signed by the pinned opaque service
+  and satisfying required semantic path traces;
+- candidate-bound SME, learning-science, accessibility, rights/originality, and
+  domain-scientific evidence;
+- cross-lesson similarity against the complete integrated corpus;
+- resource/complexity limits, exact artifact manifests, and fail-closed path
+  containment; and
+- no open P0, P1, or P2 integration finding.
+
+W00 remains blocked while the signed production foundation, exact route/reentry
+contract, v7 eligibility adapter, browser/accessibility harness, or opaque
+service is missing. Test fixtures may validate the validator itself but cannot
+create production integration eligibility.
 
 ---
 
@@ -3260,17 +3795,36 @@ The existing repository provides useful seams but not the complete system.
 - The skill graph supports hard prerequisites.
 - The current enzyme path demonstrates lesson → independent → transfer → passage → protected → recall.
 - CARS Duel provides an initial interaction concept.
+- The v7 loader, V3 KC-to-cluster adapter, split Postgres
+  `questions`/`question_protected` storage, and environment-configurable
+  repository provide a useful server-side source seam for 2,108 question
+  records.
+- The hardened lesson foundation provides useful canonical-binding,
+  reviewed-asset, assistance-fading, exit-pair, repair-cycle, exposure, and
+  optimistic-concurrency primitives.
 
 ## 35.2 Current gaps
 
 - Placement is a single synthetic probe.
 - Today is hard-coded.
-- The production V3 curriculum, authored KC microcycles, capstone tasks, and item bank are not populated.
+- The production V3 curriculum and authored KC microcycles/capstone tasks are
+  not populated in the learner app.
+- The v7 bank is loaded and queryable only through a low-level server-side read
+  seam; the learner app still uses the synthetic bank, and production
+  item-selection, eligibility, reservation, exposure, cue-safe DTO, and scoring
+  adapters are absent.
 - Recall has no operating FSRS queue.
 - FSRS state is not persisted.
 - Review counts are static.
 - Assistance fading is not wired.
-- Lesson and study-session schemas cannot represent a multi-KC shell, exact KC checkpoint, capstone event, or sequence relation.
+- The merged app schemas cannot yet represent the complete multi-KC shell,
+  planner-instruction-resolution, exact failed-function checkpoint/reentry,
+  capstone event, or sequence relation.
+- The hardened lesson foundation is not yet conformant with this reconciliation:
+  it selects routes from in-run entry probes, uses a different event envelope
+  and event names, lacks the complete omission/retry/invalid-item contract,
+  does not preserve changed-task-only exit success/reentry semantics, and does
+  not model segment-level timing.
 - The app has one synthetic single-skill fixture rather than a V3 lesson shell.
 - CARS lacks a production passage bank.
 - CARS Duel instrumentation does not measure reasoning validly.
@@ -3290,6 +3844,11 @@ The target implementation MUST preserve the honesty boundary between this protot
 - Add case-preserving typed schemas for KC, lesson, grouping, extension, capstone, support, edge, phase, module, pathway, and release-qualified sequence-relation IDs.
 - Separate immutable curriculum IDs, authored-content versions/hashes, runtime task IDs, and learner event IDs.
 - Finalize KC, operation, lesson-shell, task, evidence, review, passage, and plan schemas.
+- Define the canonical snake-case wire contracts and tested bijective adapters
+  for in-process TypeScript shapes before signing or hashing artifacts.
+- Materialize the externally trusted foundation pinset, candidate compiler,
+  browser/accessibility harness, and opaque scoring-service protocol required by
+  W00.
 - Reject held/nonrequired records from active delivery and required denominators.
 - Remove unsupported trajectory implications.
 - Define public-claim policy in UI tests.
@@ -3300,14 +3859,23 @@ The target implementation MUST preserve the honesty boundary between this protot
 - Review hard point-of-use warrants while preserving nonblocking edge semantics.
 - Author and review one primary microcycle per KC, shell transitions, capstone tasks, upgraded revisit activities, and exact support/reentry routes.
 - Build item Q-matrix.
-- Create family and protected-pool rules.
+- Audit the v7 corpus for exact mapping, rights, accessibility, certification,
+  substantive family identity, calibration, and role/evidence eligibility.
+- Build the server-side v7 selection/projection/reservation/scoring adapter;
+  never use the administrative list read as a learner selector.
+- Create family and protected-pool rules spanning existing v7 and newly
+  authored items.
 - Build CARS passage sets.
+- Port and pass W00 before launching later internal drafting waves.
 
 ### Build stage 3: State and events
 
 - Add versioned lesson-delivery, KC, capstone, memory, plan, error, passage, revisit, repair, and exam state.
-- Add timing, confidence, answer-change, and assistance events.
-- Preserve replayability.
+- Add the canonical event envelope, planner-resolution lineage, immutable first
+  attempts, omission/help/reveal/retry/invalid-item events, segment/KC/shell
+  timing, confidence, answer-change, and assistance events.
+- Preserve idempotency, optimistic concurrency, exact replay, and transactional
+  exposure-before-render.
 
 ### Build stage 4: Adaptive diagnostic delivery
 
@@ -3327,6 +3895,10 @@ The daily planner MUST NOT depend on diagnostic classifications until this hando
 - Generate candidates from the eligible V3 sequence frontier.
 - Gate prerequisites and exposure.
 - Instantiate first delivery, capstone, upgraded revisit, exact repair, CARS, and SIRS/math relations without rewriting canonical placement.
+- Resolve diagnostic-probe-versus-lesson and issue one immutable, expiring,
+  non-superseded `PlannerInstructionResolution` per lesson task.
+- Require a separate current evidence-policy qualification before issuing
+  `PREREQUISITE_SUPPORT`.
 - Forecast future burden.
 - Optimize daily tasks.
 - Issue explanation and feasibility.
@@ -3343,7 +3915,10 @@ The daily planner MUST NOT depend on diagnostic classifications until this hando
 ### Build stage 7: Lesson and practice runner
 
 - Parameterize the current Study flow.
-- Add lesson-shell orchestration, per-KC routes, exact checkpoints, capstone events, and sequence reentry.
+- Add lesson-shell orchestration that validates planner-supplied per-KC routes
+  without thresholding diagnostic state.
+- Add exact failed-function checkpoints, preserved-exit-success decisions,
+  capstone events, predecessor blocking, and sequence reentry.
 - Add representations and simulations.
 - Add assistance fading.
 - Add separate KC-exit and lesson-delivery-completion semantics.
@@ -3377,13 +3952,13 @@ These must be versioned and resolved prospectively:
 2. Diagnostic safety cap.
 3. Calibration model and Q-matrix treatment.
 4. One-sitting recommendation length.
-5. Entry-route probe counts and any future governed test-out policy.
+5. Diagnostic probe counts/stopping rules before planner route resolution and any future governed test-out policy.
 6. Fading after one versus two critical successes.
 7. Ordinary review share.
 8. Review-debt thresholds.
 9. Desired retention by material importance.
 10. Production FSRS version and parameters.
-11. KC-microcycle p90 core-duration guardrail and shell-duration policy.
+11. Uninterrupted-segment p90 guardrail plus KC- and shell-duration forecast policies.
 12. Feedback depth.
 13. Simultaneous versus sequential representations.
 14. CARS passage dose.
@@ -3399,6 +3974,26 @@ These must be versioned and resolved prospectively:
 24. Representative passage dose per canonical CARS contact.
 25. Governance and evidence semantics for non-KC reasoning facets.
 26. Registry-release migration and present-day AAMC authority refresh.
+27. Expiry, conflict, and downgrade rules for planner-resolved routes.
+28. When post-repair confirmation repeats both exit functions versus only the
+    failed function.
+29. Minimum substantive distance for a new item family.
+30. Checkpoint density, exact reentry UX, and open-run definition migration.
+31. v7 corpus certification, immutable versioning, family audit, and
+    activity-role/evidence eligibility.
+32. Production v7 selection, reservation, exposure, and cue-safe delivery
+    policy.
+33. Invalid-item automatic quarantine thresholds.
+34. Cloud-authoring scale/revise/stop criteria after W00.
+
+Lesson-contract decision IDs are the stable references for overlapping rows:
+`OD-LSN-001` maps to item 27; `OD-LSN-002` to item 5; `OD-LSN-003` to item 6;
+`OD-LSN-005` to the immediate-repair bound in §§12 and 16; `OD-LSN-006` to
+item 28; `OD-LSN-007` to item 29; `OD-LSN-011` and `OD-LSN-012` to item 11;
+`OD-LSN-013` and `OD-LSN-023` to item 30; `OD-LSN-016` to items 14 and 24;
+`OD-LSN-017` to item 15; `OD-LSN-021` to item 33; and `OD-LSN-024` to item 34.
+The numbered list is a product-wide index, not a second owner for those
+decisions.
 
 Current numerical values are hypotheses, not promises.
 
@@ -3426,6 +4021,15 @@ Current numerical values are hypotheses, not promises.
 18. Never activate adaptive bypass while `V3-HOLD-110009` remains open.
 19. Never place held or nonrequired records into required delivery, evidence, or completion denominators.
 20. Never treat generated views, historical workflow labels, machine-specific paths, or learner events as curriculum authority.
+21. Never let the lesson runner select an initial route, threshold a posterior,
+    or promote a raw prerequisite candidate; it validates a planner resolution.
+22. Never restart every repair at generic near-use when an exact failed-function
+    reentry remains valid.
+23. Never treat 18 minutes as a per-KC or per-lesson allowance.
+24. Never treat a v7 row, schema-valid count, DOK label, or KC mapping as
+    publication/evidence eligibility without the reviewed adapter contract.
+25. Never integrate a cloud-authored candidate from self-asserted or unsigned
+    evidence.
 
 ---
 

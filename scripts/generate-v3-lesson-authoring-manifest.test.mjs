@@ -320,3 +320,32 @@ test('atomic writer replaces output without leaving temporary files', async () =
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+test('checked-in manifest pins the reconciled contract and required KC projection', async () => {
+  const manifest = JSON.parse(
+    await readFile(
+      new URL('../curriculum/v3/v3-lesson-authoring-manifest.json', import.meta.url),
+      'utf8',
+    ),
+  );
+
+  assert.deepEqual(manifest.metadata.canonical_contract, {
+    path: 'docs/design/mcat-complete-learning-flow.md',
+    sha256: '81f0de7ac2a57b0c794467ed0af94714309abb8602d1b0df29ff7602aa88d642',
+    version: '0.3',
+  });
+  assert.equal(
+    manifest.metadata.source_files.find(
+      (source) => source.path === 'docs/design/mcat-complete-learning-flow.md',
+    ).schema_version,
+    'design-specification-0.3',
+  );
+
+  for (const lesson of manifest.curriculum.lessons) {
+    assert.deepEqual(
+      lesson.ordered_required_kc_ids,
+      lesson.nested_kc_ids,
+      `${lesson.lesson_id} current required-KC projection`,
+    );
+  }
+});

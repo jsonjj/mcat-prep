@@ -6,3 +6,5 @@ export * from './validate';
 export * from './bank';
 export * from './load-v7';
 export * from './v7-cluster-map';
+export * from './diagnostic/bank';
+export * from './diagnostic/fixture-bank.data';

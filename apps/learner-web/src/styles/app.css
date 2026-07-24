@@ -681,6 +681,37 @@ body {
 .mc-choice__text {
   flex: 1;
 }
+.mc-choice--correct {
+  border-color: var(--mc-primary);
+  box-shadow: inset 0 0 0 1px var(--mc-primary);
+  background: color-mix(in srgb, var(--mc-primary) 12%, transparent);
+}
+.mc-choice--incorrect {
+  border-color: var(--mc-danger);
+  box-shadow: inset 0 0 0 1px var(--mc-danger);
+  background: color-mix(in srgb, var(--mc-danger) 12%, transparent);
+}
+/* ---- Recall: graded quiz ---- */
+.mc-recall__progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+}
+.mc-recall__passage {
+  padding: var(--mc-space-3) var(--mc-space-4);
+  border-left: 3px solid var(--mc-border);
+  background: var(--mc-surface-2);
+  border-radius: var(--mc-radius-control);
+  color: var(--mc-ink);
+}
+.mc-recall__stem {
+  font-weight: 600;
+  margin-bottom: var(--mc-space-2);
+}
+.mc-error {
+  color: var(--mc-danger);
+  font-size: var(--mc-text-14, inherit);
+}
 .mc-switch {
   display: flex;
   align-items: center;
@@ -722,6 +753,100 @@ body {
   background: color-mix(in srgb, var(--mc-primary) 12%, transparent);
   color: var(--mc-primary-text);
   font-weight: 700;
+}
+/* ---- Input with a trailing unit (e.g. "hours / week") ---- */
+.mc-input-suffix {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-input-suffix .mc-input {
+  width: auto;
+  max-width: 8rem;
+}
+.mc-input-suffix__unit {
+  color: var(--mc-muted, var(--mc-ink));
+  font-size: var(--mc-text-14, inherit);
+}
+
+/* ---- Diagnostic ---- */
+.mc-diag-section {
+  font-family: var(--mc-font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mc-muted, var(--mc-ink));
+  opacity: 0.75;
+  margin: 0;
+}
+.mc-diag-passage {
+  border-left: 3px solid var(--mc-border);
+  padding: var(--mc-space-2) var(--mc-space-4);
+  background: color-mix(in srgb, var(--mc-surface-2) 60%, transparent);
+  border-radius: var(--mc-radius-control);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-diag-passage p {
+  margin: 0;
+  line-height: 1.6;
+}
+.mc-diag-confidence {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-diag-badge {
+  align-self: flex-start;
+  padding: var(--mc-space-1, 4px) var(--mc-space-3);
+  border-radius: var(--mc-radius-pill);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 1px solid var(--mc-border);
+  background: var(--mc-surface-2);
+}
+.mc-diag-badge--high {
+  border-color: var(--mc-primary);
+  background: color-mix(in srgb, var(--mc-primary) 14%, transparent);
+  color: var(--mc-primary-text);
+}
+.mc-diag-badge--medium {
+  border-color: color-mix(in srgb, var(--mc-primary) 45%, var(--mc-border));
+}
+.mc-diag-priorities {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-diag-priority {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mc-space-3);
+  padding: var(--mc-space-3) var(--mc-space-4);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface);
+}
+.mc-diag-priority__rank {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--mc-font-mono);
+  font-weight: 700;
+  background: color-mix(in srgb, var(--mc-primary) 16%, transparent);
+  color: var(--mc-primary-text);
+}
+.mc-diag-priority__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 /* ---- Generic screens ---- */
@@ -1320,4 +1445,103 @@ body {
     animation: none;
     transform: scale(0.9);
   }
+}
+
+/* ---- Curriculum: playable pilot lesson ---- */
+.mc-curriculum__ready {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--mc-radius-pill);
+  background: color-mix(in srgb, var(--mc-primary) 14%, transparent);
+  color: var(--mc-primary-text);
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---- Diagnostic: skip affordance ---- */
+.mc-diag-skip {
+  align-self: center;
+}
+
+/* ---- Recall: topic-level spaced review ---- */
+.mc-recall__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-4);
+}
+.mc-recall__card-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+}
+.mc-recall__ratings {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--mc-space-2);
+}
+@media (max-width: 480px) {
+  .mc-recall__ratings {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.mc-recall__rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--mc-space-2) var(--mc-space-3);
+  min-height: var(--mc-touch);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface);
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+.mc-recall__rating:hover {
+  border-color: var(--mc-primary);
+}
+.mc-recall__rating:focus-visible {
+  outline: 2px solid var(--mc-focus);
+  outline-offset: 2px;
+}
+.mc-recall__rating-label {
+  font-weight: 700;
+}
+.mc-recall__rating-hint {
+  font-size: var(--mc-text-12);
+  color: var(--mc-ink-muted);
+}
+.mc-recall__rating--again {
+  border-color: color-mix(in srgb, var(--mc-danger) 45%, var(--mc-border));
+}
+.mc-recall__rating--hard {
+  border-color: color-mix(in srgb, var(--mc-warning) 45%, var(--mc-border));
+}
+.mc-recall__upcoming {
+  margin-top: var(--mc-space-5);
+}
+.mc-recall__schedule {
+  list-style: none;
+  margin: var(--mc-space-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+}
+.mc-recall__scheduled {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+  padding: var(--mc-space-2) 0;
+  border-bottom: 1px solid var(--mc-border);
+}
+.mc-recall__scheduled-title {
+  font-weight: 600;
 }

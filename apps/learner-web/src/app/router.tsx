@@ -5,6 +5,7 @@ import { Diagnostic } from '../screens/Diagnostic';
 import { PlanSetup } from '../screens/PlanSetup';
 import { Home } from '../screens/Home';
 import { Curriculum } from '../screens/Curriculum';
+import { Lesson } from '../screens/Lesson';
 import { Study } from '../screens/Study';
 import { Recall } from '../screens/Recall';
 import { Mistakes } from '../screens/Mistakes';
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
   { path: '/', element: <Welcome /> },
   { path: '/onboarding/diagnostic', element: <Diagnostic /> },
   { path: '/onboarding/plan', element: <PlanSetup /> },
+  // App-native lessons are a full-page, immersive experience: they render their
+  // own shell/header, so they live *outside* AppShell to avoid a duplicate
+  // top bar. Curriculum and Recall still link to `/app/lesson/:slug`.
+  { path: '/app/lesson/:slug', element: <Lesson /> },
   {
     path: '/app',
     element: <AppShell />,

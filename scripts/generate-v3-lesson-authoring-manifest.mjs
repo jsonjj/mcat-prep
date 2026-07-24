@@ -13,7 +13,7 @@ const CONTRACT_PATH = 'docs/design/mcat-complete-learning-flow.md';
 const EXPECTED = {
   registryArtifactId: 'MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01',
   registrySha256: '635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a',
-  contractSha256: 'e56590830462987e2cc9ec8d523a702e75c903613020addb81da6edbcad3286b',
+  contractSha256: '81f0de7ac2a57b0c794467ed0af94714309abb8602d1b0df29ff7602aa88d642',
   freezeIds: {
     phase0: 'MCAT-V3-PHASE0-FRZ-2026-07-22-01',
     canonical: 'MCAT-V3-CANONICAL-FRZ-2026-07-22-01',
@@ -236,7 +236,7 @@ const SOURCE_RECORD_POLICIES = {
       'v3_decision_rationale',
     ],
     omit: [],
-    derive: ['accelerated_handling', 'remediation_handling'],
+    derive: ['accelerated_handling', 'ordered_required_kc_ids', 'remediation_handling'],
   },
   grouping: {
     include: [
@@ -1459,7 +1459,9 @@ function validateSourcePackage(sources, contractText, contractHash) {
     'canonical contract does not pin the expected registry hash',
   );
   assert(
-    contractText.includes('**Status:** Design specification, version 0.2'),
+    contractText.includes(
+      '**Status:** Design specification, version 0.3 (lesson-contract reconciliation)',
+    ),
     'canonical contract version marker',
   );
   assert(
@@ -2942,6 +2944,7 @@ function buildManifest(sources, contractHash, validationState) {
     const remediation = validationState.remediationProjectionByLesson.get(lesson.lesson_id);
     const accelerated = validationState.acceleratedProjectionByLesson.get(lesson.lesson_id);
     projected.learner_validation_status = sources.lessons.data.metadata.learner_validation_status;
+    projected.ordered_required_kc_ids = [...lesson.nested_kc_ids];
     projected.remediation_handling = {
       domain_relation_ids: [...remediation.domain_relation_ids],
       cars_relation_ids: [...remediation.cars_relation_ids],
@@ -3166,7 +3169,7 @@ function buildManifest(sources, contractHash, validationState) {
     {
       path: CONTRACT_PATH,
       role: 'canonical_runtime_and_authoring_contract',
-      schema_version: 'design-specification-0.2',
+      schema_version: 'design-specification-0.3',
       sha256: contractHash,
     },
     ...SOURCE_FILE_DEFINITIONS.map((definition) => ({
@@ -3191,7 +3194,7 @@ function buildManifest(sources, contractHash, validationState) {
       deterministic: true,
       canonical_contract: {
         path: CONTRACT_PATH,
-        version: '0.2',
+        version: '0.3',
         sha256: contractHash,
       },
       registry: {

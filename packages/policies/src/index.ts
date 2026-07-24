@@ -2,6 +2,7 @@ export * from './manifest';
 export * from './fsrs';
 export * from './assistance';
 export * from './diagnostic';
+export * from './diagnostic-bayes';
 export * from './mastery-policy';
 export * from './planner';
 export * from './readiness';

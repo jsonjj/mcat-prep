@@ -1,5 +1,8 @@
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import { authorityApiPlugin } from './server/authority-api-plugin';
+import { diagnosticApiPlugin } from './server/diagnostic-api-plugin';
+import { recallApiPlugin } from './server/recall-api-plugin';
 
 /**
  * Dev-only AI proxy. The provider key stays server-side (read from an untracked
@@ -74,7 +77,7 @@ function aiProxy(env: Record<string, string>): Plugin {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
-    plugins: [react(), aiProxy(env)],
+    plugins: [react(), aiProxy(env), authorityApiPlugin(), diagnosticApiPlugin(), recallApiPlugin()],
     server: { port: 5173 },
     preview: { port: 4173 },
     // three.js is loaded only in the lazy BrainScene chunk, so a larger chunk here is expected.

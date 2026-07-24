@@ -1,4 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@mcat/ui-web';
 import {
   CURRICULUM_PHASES,
@@ -6,6 +7,12 @@ import {
   type CurriculumModule,
   type CurriculumPhase,
 } from '../data/curriculum-v3.generated';
+import { APP_NATIVE_LESSONS } from '../app-native';
+
+/** Lesson id → slug for the pilot lessons that are actually playable in-app. */
+const PLAYABLE_SLUG_BY_LESSON_ID: Readonly<Record<string, string>> = Object.fromEntries(
+  APP_NATIVE_LESSONS.map((entry) => [entry.script.id, entry.script.slug]),
+);
 
 /**
  * Curriculum — a calm, browse-only map of the whole V3 path.
@@ -240,6 +247,7 @@ function LessonCard({ lesson }: { lesson: CurriculumLesson }) {
   const kcCount = lesson.kcs.length;
   const titleId = `mc-curriculum-lesson-${lesson.id}`;
   const soonId = `mc-curriculum-soon-${lesson.id}`;
+  const playableSlug = PLAYABLE_SLUG_BY_LESSON_ID[lesson.id];
   return (
     <article className="mc-curriculum__lesson" aria-labelledby={titleId}>
       <div className="mc-curriculum__lesson-main">
@@ -267,18 +275,33 @@ function LessonCard({ lesson }: { lesson: CurriculumLesson }) {
         </div>
       </div>
       <div className="mc-curriculum__lesson-foot">
-        <span className="mc-curriculum__soon" id={soonId}>
-          Coming soon
-        </span>
-        <Button
-          variant="secondary"
-          size="lg"
-          disabled
-          aria-label={`Start ${lesson.shortTitle}`}
-          aria-describedby={soonId}
-        >
-          Start
-        </Button>
+        {playableSlug ? (
+          <>
+            <span className="mc-curriculum__ready">Ready to play</span>
+            <Link
+              to={`/app/lesson/${playableSlug}`}
+              className="mc-button mc-button--primary mc-button--lg"
+              aria-label={`Start ${lesson.shortTitle}`}
+            >
+              <span className="mc-button__label">Start</span>
+            </Link>
+          </>
+        ) : (
+          <>
+            <span className="mc-curriculum__soon" id={soonId}>
+              Coming soon
+            </span>
+            <Button
+              variant="secondary"
+              size="lg"
+              disabled
+              aria-label={`Start ${lesson.shortTitle}`}
+              aria-describedby={soonId}
+            >
+              Start
+            </Button>
+          </>
+        )}
       </div>
     </article>
   );

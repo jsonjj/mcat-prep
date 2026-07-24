@@ -7,6 +7,7 @@ import {
 import type { ProbableCause } from '@mcat/contracts';
 import type { GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
+import { diagnosticClient, type ChoiceId, type DiagnosticNextView } from './diagnostic-client';
 
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 0, refetchOnWindowFocus: false, retry: false } },
@@ -22,15 +23,23 @@ export const useSession = () => useQuery({ queryKey: ['session'], queryFn: () =>
 export const useMasteryMap = () => useQuery({ queryKey: ['mastery'], queryFn: () => authority.getMasteryMap() });
 export const useErrorLog = () => useQuery({ queryKey: ['errors'], queryFn: () => authority.getErrorLog() });
 export const useSkills = () => useQuery({ queryKey: ['skills'], queryFn: () => authority.getSkills() });
+/**
+ * The diagnostic is served by the real balanced-adaptive engine over the v7
+ * learner-safe bank (dev/preview Vite plugin; API Gateway in prod). It is wired
+ * through the dedicated {@link diagnosticClient} rather than the generic authority
+ * port because it carries one-use item tokens and never receives an answer key.
+ */
 export const useDiagnosticNext = () =>
-  useQuery({ queryKey: ['diagnostic'], queryFn: () => authority.getDiagnosticNext() });
+  useQuery({ queryKey: ['diagnostic'], queryFn: () => diagnosticClient.start() });
 
 export function useSubmitDiagnostic() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (v: { questionId: string; choiceId: string | null }) =>
-      authority.submitDiagnostic(v.questionId, v.choiceId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['diagnostic'] }),
+    mutationFn: (v: { questionId: string; choiceId: ChoiceId | null; elapsedMs: number }) =>
+      diagnosticClient.answer(v.questionId, v.choiceId, v.elapsedMs),
+    // The answer response already contains the next item/result — seed the cache
+    // directly to avoid re-serving (and re-tokenizing) the same item.
+    onSuccess: (next: DiagnosticNextView) => qc.setQueryData(['diagnostic'], next),
   });
 }
 

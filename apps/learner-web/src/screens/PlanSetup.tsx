@@ -3,23 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { useConfirmPlan } from '../app/queries';
 
-const MINUTE_OPTIONS = [210, 300, 420, 630, 840];
-
 export function PlanSetup() {
   const navigate = useNavigate();
   const confirm = useConfirmPlan();
   const [scheduled, setScheduled] = useState(false);
   const [testDate, setTestDate] = useState('');
   const [target, setTarget] = useState('511');
-  const [minutes, setMinutes] = useState(420);
+  const [hours, setHours] = useState('7');
+
+  const parsedHours = Number(hours);
+  const minutesPerWeek =
+    Number.isFinite(parsedHours) && parsedHours > 0 ? Math.round(parsedHours * 60) : 0;
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (minutesPerWeek <= 0) return;
     confirm.mutate(
       {
         testDate: scheduled && testDate ? new Date(testDate).toISOString() : null,
         targetScore: Number(target) || null,
-        minutesPerWeek: minutes,
+        minutesPerWeek,
       },
       { onSuccess: () => navigate('/app', { replace: true }) },
     );
@@ -74,21 +77,27 @@ export function PlanSetup() {
             </Stack>
 
             <Stack gap={2}>
-              <span className="mc-label">Weekly study time</span>
-              <div className="mc-segmented" role="radiogroup" aria-label="Weekly study time">
-                {MINUTE_OPTIONS.map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    role="radio"
-                    aria-checked={minutes === m}
-                    className={`mc-segmented__opt ${minutes === m ? 'is-active' : ''}`}
-                    onClick={() => setMinutes(m)}
-                  >
-                    {Math.round(m / 60)} h
-                  </button>
-                ))}
+              <label className="mc-label" htmlFor="weekly-hours">
+                Weekly study time
+              </label>
+              <div className="mc-input-suffix">
+                <input
+                  id="weekly-hours"
+                  className="mc-input"
+                  type="number"
+                  min={1}
+                  max={80}
+                  step={0.5}
+                  inputMode="decimal"
+                  value={hours}
+                  onChange={(e) => setHours(e.target.value)}
+                  aria-describedby="weekly-hours-hint"
+                />
+                <span className="mc-input-suffix__unit">hours / week</span>
               </div>
+              <p id="weekly-hours-hint" className="mc-fineprint mc-muted">
+                A rough weekly budget — we use it to pace your plan, not to cap what you can study.
+              </p>
             </Stack>
 
             <Callout tone="info" title="This is a planning estimate">
@@ -96,7 +105,13 @@ export function PlanSetup() {
               drop required coverage or promise a score.
             </Callout>
 
-            <Button variant="primary" size="lg" fullWidth type="submit" disabled={confirm.isPending}>
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              type="submit"
+              disabled={confirm.isPending || minutesPerWeek <= 0}
+            >
               {confirm.isPending ? 'Building your plan…' : 'Generate my plan'}
             </Button>
           </Stack>

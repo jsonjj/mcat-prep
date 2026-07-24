@@ -15,8 +15,8 @@ an independent curriculum authority.
 - Sequence freeze: `MCAT-V3-SEQUENCE-FRZ-2026-07-22-01`
 - Phase 1 gate: `MCAT-V3-PHASE1-GATE-2026-07-22-01`
 - Canonical runtime and authoring contract:
-  `docs/design/mcat-complete-learning-flow.md` (version 0.2, SHA-256
-  `e56590830462987e2cc9ec8d523a702e75c903613020addb81da6edbcad3286b`)
+  `docs/design/mcat-complete-learning-flow.md` (version 0.3, SHA-256
+  `81f0de7ac2a57b0c794467ed0af94714309abb8602d1b0df29ff7602aa88d642`)
 
 The manifest's `metadata.source_files` records the exact schema version and recomputed SHA-256 for
 every registry/generated input. Author-machine paths from the source package are not carried into
@@ -55,7 +55,9 @@ node --test scripts/generate-v3-lesson-authoring-manifest.test.mjs
 `v3-lesson-authoring-manifest.json` contains:
 
 - All 114 canonical CORE lesson shells, all 422 ordered canonical KCs, all 114 canonical groupings,
-  and the one explicitly noncanonical/non-mastery diagnostic grouping view.
+  and the one explicitly noncanonical/non-mastery diagnostic grouping view. Every lesson includes
+  a computed `ordered_required_kc_ids` projection; under the current no-bypass release it exactly
+  equals the canonical ordered member-KC list.
 - All 53 extensions, 43 capstones, and 11 host-attached support artifacts with an explicit
   `delivery_state`. The frozen sequence resolves these as 52 active `host_only` extensions, 42
   `required` capstones, 11 `host_only` supports, and the two held records as `governance_only`.
