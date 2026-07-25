@@ -276,8 +276,6 @@ function LessonCard({ lesson }: { lesson: CurriculumLesson }) {
         </div>
       </div>
       <div className="mc-curriculum__lesson-foot">
-        {/* The target lesson also ships an app-native script, but its
-            server-authoritative seam takes precedence so the launch stays gated. */}
         {isTarget ? (
           <TargetLessonAction lesson={lesson} />
         ) : playableSlug ? (

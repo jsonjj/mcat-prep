@@ -20,7 +20,6 @@ import { PERIODIC_TRENDS_PRESENTATION, PERIODIC_TRENDS_SCRIPT } from './periodic
 import { REASON_WITH_MODELS_PRESENTATION, REASON_WITH_MODELS_SCRIPT } from './reason-with-models.script';
 import { SCIENTIFIC_NOTATION_PRESENTATION, SCIENTIFIC_NOTATION_SCRIPT } from './scientific-notation.script';
 import { STOICHIOMETRY_PRESENTATION, STOICHIOMETRY_SCRIPT } from './stoichiometry.script';
-import { VECTORS_PRESENTATION, VECTORS_SCRIPT } from './vectors.script';
 import { WARRANTED_CONCLUSIONS_PRESENTATION, WARRANTED_CONCLUSIONS_SCRIPT } from './warranted-conclusions.script';
 
 export { LessonRenderer } from './LessonRenderer';
@@ -55,7 +54,8 @@ export const APP_NATIVE_LESSONS: readonly AppNativeLessonEntry[] = [
   },
   { script: ARGUMENT_STRUCTURE_SCRIPT, presentation: ARGUMENT_STRUCTURE_PRESENTATION },
   // Wave 2 — data-driven candidates authored from the V3 registry (real lesson ids + KCs).
-  { script: VECTORS_SCRIPT, presentation: VECTORS_PRESENTATION },
+  // V3-LES-130923 is intentionally absent: it is delivered by the
+  // server-authoritative lesson runtime instead.
   { script: SCIENTIFIC_NOTATION_SCRIPT, presentation: SCIENTIFIC_NOTATION_PRESENTATION },
   { script: GRAPHS_SLOPES_SCRIPT, presentation: GRAPHS_SLOPES_PRESENTATION },
   { script: REASON_WITH_MODELS_SCRIPT, presentation: REASON_WITH_MODELS_PRESENTATION },
