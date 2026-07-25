@@ -11,17 +11,6 @@ import {
 } from './presentations';
 import { REDOX_V2_SCRIPT } from './redox-v2.script';
 import { RESEARCH_DESIGN_SCRIPT } from './research-design.script';
-// App-native lesson wave 2 (curriculum-wired candidates).
-import { EQUILIBRIUM_SHIFTS_PRESENTATION, EQUILIBRIUM_SHIFTS_SCRIPT } from './equilibrium-shifts.script';
-import { ENERGY_CONSERVATION_PRESENTATION, ENERGY_CONSERVATION_SCRIPT } from './energy-conservation.script';
-import { GRAPHS_SLOPES_PRESENTATION, GRAPHS_SLOPES_SCRIPT } from './graphs-slopes.script';
-import { MOLECULAR_GEOMETRY_PRESENTATION, MOLECULAR_GEOMETRY_SCRIPT } from './molecular-geometry.script';
-import { PERIODIC_TRENDS_PRESENTATION, PERIODIC_TRENDS_SCRIPT } from './periodic-trends.script';
-import { REASON_WITH_MODELS_PRESENTATION, REASON_WITH_MODELS_SCRIPT } from './reason-with-models.script';
-import { SCIENTIFIC_NOTATION_PRESENTATION, SCIENTIFIC_NOTATION_SCRIPT } from './scientific-notation.script';
-import { STOICHIOMETRY_PRESENTATION, STOICHIOMETRY_SCRIPT } from './stoichiometry.script';
-import { VECTORS_PRESENTATION, VECTORS_SCRIPT } from './vectors.script';
-import { WARRANTED_CONCLUSIONS_PRESENTATION, WARRANTED_CONCLUSIONS_SCRIPT } from './warranted-conclusions.script';
 
 export { LessonRenderer } from './LessonRenderer';
 export type { LessonPresentationPreview, LessonScriptPreview } from './contract';
@@ -54,17 +43,6 @@ export const APP_NATIVE_LESSONS: readonly AppNativeLessonEntry[] = [
     presentation: ASSOCIATIVE_LEARNING_PRESENTATION,
   },
   { script: ARGUMENT_STRUCTURE_SCRIPT, presentation: ARGUMENT_STRUCTURE_PRESENTATION },
-  // Wave 2 — data-driven candidates authored from the V3 registry (real lesson ids + KCs).
-  { script: VECTORS_SCRIPT, presentation: VECTORS_PRESENTATION },
-  { script: SCIENTIFIC_NOTATION_SCRIPT, presentation: SCIENTIFIC_NOTATION_PRESENTATION },
-  { script: GRAPHS_SLOPES_SCRIPT, presentation: GRAPHS_SLOPES_PRESENTATION },
-  { script: REASON_WITH_MODELS_SCRIPT, presentation: REASON_WITH_MODELS_PRESENTATION },
-  { script: WARRANTED_CONCLUSIONS_SCRIPT, presentation: WARRANTED_CONCLUSIONS_PRESENTATION },
-  { script: PERIODIC_TRENDS_SCRIPT, presentation: PERIODIC_TRENDS_PRESENTATION },
-  { script: MOLECULAR_GEOMETRY_SCRIPT, presentation: MOLECULAR_GEOMETRY_PRESENTATION },
-  { script: STOICHIOMETRY_SCRIPT, presentation: STOICHIOMETRY_PRESENTATION },
-  { script: EQUILIBRIUM_SHIFTS_SCRIPT, presentation: EQUILIBRIUM_SHIFTS_PRESENTATION },
-  { script: ENERGY_CONSERVATION_SCRIPT, presentation: ENERGY_CONSERVATION_PRESENTATION },
 ];
 
 export function getAppNativeLesson(slug: string | null): AppNativeLessonEntry | null {
