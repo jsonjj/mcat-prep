@@ -133,9 +133,6 @@ importers:
       '@mcat/client-core':
         specifier: workspace:*
         version: link:../../packages/client-core
-      '@mcat/content':
-        specifier: workspace:*
-        version: link:../../packages/content
       '@mcat/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
@@ -145,9 +142,6 @@ importers:
       '@mcat/domain':
         specifier: workspace:*
         version: link:../../packages/domain
-      '@mcat/local-authority':
-        specifier: workspace:*
-        version: link:../../services/local-authority
       '@mcat/platform-web':
         specifier: workspace:*
         version: link:../../packages/platform-web
@@ -176,6 +170,12 @@ importers:
         specifier: 0.171.0
         version: 0.171.0
     devDependencies:
+      '@mcat/content':
+        specifier: workspace:*
+        version: link:../../packages/content
+      '@mcat/local-authority':
+        specifier: workspace:*
+        version: link:../../services/local-authority
       '@types/node':
         specifier: 22.10.5
         version: 22.10.5

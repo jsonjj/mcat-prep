@@ -11,6 +11,7 @@
  * FSRS only decides *when* a topic returns for review; it never awards mastery.
  */
 import {
+  ATLAS_LESSON_CLUSTER,
   CLUSTER_INFO,
   SKILL_CLUSTERS,
   toUtc,
@@ -18,7 +19,6 @@ import {
   type SkillCluster,
   type UtcTimestamp,
 } from '@mcat/contracts';
-import { clusterForLesson } from '@mcat/content';
 import { UNLOCK_WEIGHT, schedule, type ReviewState } from '@mcat/policies';
 import { APP_NATIVE_LESSONS } from '../app-native';
 import type { DiagnosticClassification, DiagnosticResultView } from './diagnostic-client';
@@ -26,6 +26,7 @@ import type { DiagnosticClassification, DiagnosticResultView } from './diagnosti
 // v2: topics now seed as due-now (v1 seeded them a day out, which left the
 // recall queue empty right after placement).
 const STORAGE_KEY = 'mc.recall.schedule.v2';
+const CONFIRMING_KEY = 'mc.recall.confirming.v1';
 const DAY_MS = 86_400_000;
 
 /**
@@ -66,7 +67,7 @@ const SEED_RATING: Record<DiagnosticClassification, ReviewRating> = {
 const LESSON_SLUG_BY_CLUSTER: Partial<Record<SkillCluster, string>> = (() => {
   const map: Partial<Record<SkillCluster, string>> = {};
   for (const entry of APP_NATIVE_LESSONS) {
-    const cluster = clusterForLesson(entry.script.id);
+    const cluster = ATLAS_LESSON_CLUSTER[entry.script.id] ?? null;
     if (cluster) map[cluster] = entry.script.slug;
   }
   return map;
@@ -119,6 +120,41 @@ export function ensureSeeded(result: DiagnosticResultView | null): void {
     }
   }
   save(sched);
+  // Cluster ids arrive over the wire as plain strings; keep only ones we know.
+  const known = new Set<string>(SKILL_CLUSTERS);
+  saveConfirming(
+    (result?.stillConfirming ?? [])
+      .map((s) => s.cluster)
+      .filter((c): c is SkillCluster => known.has(c)),
+  );
+}
+
+/**
+ * Clusters the diagnostic could not settle, which the results screen promises to
+ * "quietly check during your first week". Honouring that promise is what makes
+ * a short diagnostic defensible: the reads it could not finish get resolved by
+ * ordinary recall rather than by making the learner sit a longer test.
+ *
+ * A cluster stays flagged until it has actually been recalled once, at which
+ * point it has been confirmed and the flag is dropped.
+ */
+function loadConfirming(): Set<SkillCluster> {
+  try {
+    const raw = localStorage.getItem(CONFIRMING_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw) as unknown;
+    return Array.isArray(parsed) ? new Set(parsed as SkillCluster[]) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function saveConfirming(clusters: readonly SkillCluster[]): void {
+  try {
+    localStorage.setItem(CONFIRMING_KEY, JSON.stringify(clusters));
+  } catch {
+    // Storage unavailable (private mode); confirmation flags are non-essential.
+  }
 }
 
 export interface RecallTopic {
@@ -130,6 +166,8 @@ export interface RecallTopic {
   dueLabel: string;
   lessonSlug: string | null;
   reps: number;
+  /** Diagnostic left this read unsettled; this session quietly confirms it. */
+  confirming: boolean;
 }
 
 function dueLabel(dueAtMs: number, nowMs: number): string {
@@ -146,6 +184,7 @@ function dueLabel(dueAtMs: number, nowMs: number): string {
 /** All scheduled topics, soonest-due first, then by prerequisite leverage. */
 export function listTopics(nowMs: number = Date.now()): RecallTopic[] {
   const sched = load();
+  const confirming = loadConfirming();
   const topics: RecallTopic[] = [];
   for (const cluster of SKILL_CLUSTERS) {
     const state = sched[cluster];
@@ -160,15 +199,24 @@ export function listTopics(nowMs: number = Date.now()): RecallTopic[] {
       dueLabel: dueLabel(dueAtMs, nowMs),
       lessonSlug: lessonSlugForCluster(cluster),
       reps: state.reps,
+      confirming: confirming.has(cluster) && state.reps === 0,
     });
   }
   topics.sort((a, b) => {
     if (a.dueAtMs !== b.dueAtMs) return a.dueAtMs - b.dueAtMs;
+    // Unsettled reads come before equally-due settled ones: confirming them is
+    // what closes the gap the diagnostic left open.
+    if (a.confirming !== b.confirming) return a.confirming ? -1 : 1;
     const lev = (UNLOCK_WEIGHT[b.cluster] ?? 0) - (UNLOCK_WEIGHT[a.cluster] ?? 0);
     if (lev !== 0) return lev;
     return SKILL_CLUSTERS.indexOf(a.cluster) - SKILL_CLUSTERS.indexOf(b.cluster);
   });
   return topics;
+}
+
+/** Clusters still awaiting their week-1 confirmation check. */
+export function pendingConfirmations(): SkillCluster[] {
+  return listTopics().filter((t) => t.confirming).map((t) => t.cluster);
 }
 
 /** Record a self-rated recall for one topic and reschedule it. Returns the fresh list. */

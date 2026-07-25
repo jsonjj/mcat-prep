@@ -43,6 +43,18 @@ const GRID: readonly number[] = Array.from(
 const normalPdf = (x: number, mu: number, sd: number): number =>
   Math.exp(-((x - mu) ** 2) / (2 * sd * sd)) / (sd * Math.sqrt(2 * Math.PI));
 
+/** Standard normal CDF (Abramowitz–Stegun erf approximation). */
+const normalCdf = (x: number): number => {
+  const z = x / Math.SQRT2;
+  const t = 1 / (1 + 0.3275911 * Math.abs(z));
+  const y =
+    1 -
+    ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) *
+      t *
+      Math.exp(-z * z);
+  return 0.5 * (1 + (z >= 0 ? y : -y));
+};
+
 const normalize = (w: readonly number[]): number[] => {
   const sum = w.reduce((s, x) => s + x, 0);
   return sum > 0 ? w.map((x) => x / sum) : w.map(() => 1 / w.length);
@@ -79,6 +91,17 @@ interface Posterior {
   /** P(θ < τ): probability the learner is below the weakness threshold. */
   pWeak: number;
   /**
+   * Graded weakness in [0,1] — the posterior expectation of how far below the
+   * bar the learner sits, not merely whether they are.
+   *
+   * `pWeak` answers "is this cluster weak?" and saturates: once the evidence is
+   * clear, θ = -0.1 and θ = -3 both report ~1.0. Prioritisation needs magnitude,
+   * so ranking uses this instead.
+   */
+  severity: number;
+  /** Posterior sd of `severity` — how far the ranking read could still move. */
+  severitySd: number;
+  /**
    * Read confidence in [0,1]. Derived from *decisiveness* — how far the
    * posterior mass has committed to one side of the weakness threshold — rather
    * than raw spread, so a few consistent responses can resolve a cluster (and
@@ -91,8 +114,21 @@ interface Posterior {
 
 /** Weakness threshold on the ability scale. θ below this leans "needs work". */
 const WEAK_TAU = 0;
+/**
+ * How close a cluster's leverage must be to the third priority's before it
+ * counts as still contending for a Top 3 slot.
+ */
+const CONTENTION_MARGIN = 0.85;
 /** Decisiveness (max side mass) at/above which `certainty` saturates to 1. */
 const CERTAINTY_SATURATION = 0.9;
+
+/**
+ * Graded weakness at a single ability point: 1 when far below the bar, 0 when
+ * far above, crossing 0.5 at the threshold. The 1.702 scaling makes the
+ * logistic track the normal CDF, so severity reads on the same scale as the
+ * ability prior.
+ */
+const weaknessAt = (theta: number): number => 1 / (1 + Math.exp(1.702 * (theta - WEAK_TAU)));
 
 const entropy = (dist: readonly number[]): number => {
   let h = 0;
@@ -111,16 +147,37 @@ const summarize = (
   for (let i = 0; i < GRID_N; i += 1) variance += (GRID[i]! - mean) ** 2 * dist[i]!;
   const sd = Math.sqrt(Math.max(0, variance));
   let pWeak = 0;
-  for (let i = 0; i < GRID_N; i += 1) if (GRID[i]! < WEAK_TAU) pWeak += dist[i]!;
+  let severity = 0;
+  for (let i = 0; i < GRID_N; i += 1) {
+    if (GRID[i]! < WEAK_TAU) pWeak += dist[i]!;
+    severity += dist[i]! * weaknessAt(GRID[i]!);
+  }
+  let severityVar = 0;
+  for (let i = 0; i < GRID_N; i += 1) {
+    severityVar += dist[i]! * (weaknessAt(GRID[i]!) - severity) ** 2;
+  }
   // Decisiveness: mass on the committed side (0.5 = undecided, 1 = certain).
   const decisiveness = Math.max(pWeak, 1 - pWeak);
   const certainty = Math.max(0, Math.min(1, (decisiveness - 0.5) / (CERTAINTY_SATURATION - 0.5)));
-  return { dist, mean, sd, pWeak, certainty, itemsSeen, correct };
+  return {
+    dist,
+    mean,
+    sd,
+    pWeak,
+    severity,
+    severitySd: Math.sqrt(Math.max(0, severityVar)),
+    certainty,
+    itemsSeen,
+    correct,
+  };
 };
 
-/** Fold one cluster's responses into a posterior over θ. */
-const posteriorForResponses = (responses: readonly DiagnosticResponse[]): Posterior => {
-  const w = [...PRIOR];
+/** Fold one cluster's responses into a posterior over θ, starting from `prior`. */
+const posteriorForResponses = (
+  responses: readonly DiagnosticResponse[],
+  prior: readonly number[],
+): Posterior => {
+  const w = [...prior];
   let correct = 0;
   for (const r of responses) {
     for (let i = 0; i < GRID_N; i += 1) {
@@ -144,12 +201,59 @@ const groupByCluster = (
   return map;
 };
 
+/** Least between-cluster spread we will assume, so pooling can never erase real differences. */
+const MIN_POOLING_SPREAD = 0.55;
+
+/**
+ * Hierarchical (partially pooled) posteriors — the "hierarchical" half of the
+ * Stage-1 hierarchical Bayesian IRT the measurement spec asks for.
+ *
+ * A learner's clusters are not 15 unrelated abilities: someone strong in one
+ * area tends to be stronger across the board. Estimating each cluster in
+ * isolation against a fixed N(0,1) prior throws that away and leaves every
+ * cluster read at the mercy of its own four items. Instead we estimate the
+ * learner's overall level from all responses, then re-fit each cluster against
+ * a prior centred there. Thinly-sampled clusters shrink toward the learner's
+ * own level rather than toward the population's, which cuts noise without
+ * flattening genuine differences.
+ *
+ * Empirical Bayes: one independent pass to estimate the hyper-parameters, one
+ * pooled pass to produce the posteriors actually used.
+ */
 const posteriorsByCluster = (
   responses: readonly DiagnosticResponse[],
 ): Map<SkillCluster, Posterior> => {
+  const grouped = [...groupByCluster(responses)];
+  if (grouped.length === 0) return new Map();
+
+  const independent = grouped.map(([cluster, list]) => ({
+    cluster,
+    list,
+    post: posteriorForResponses(list, PRIOR),
+  }));
+
+  // Learner-level centre: precision-weighted mean of the per-cluster means.
+  let wSum = 0;
+  let wMean = 0;
+  for (const { post } of independent) {
+    const w = 1 / Math.max(post.sd ** 2, 1e-6);
+    wSum += w;
+    wMean += w * post.mean;
+  }
+  const centre = wSum > 0 ? wMean / wSum : 0;
+
+  // Between-cluster spread by method of moments: observed scatter of the
+  // cluster means minus the measurement noise that scatter already contains.
+  const meanVar =
+    independent.reduce((s, { post }) => s + (post.mean - centre) ** 2, 0) / independent.length;
+  const noiseVar =
+    independent.reduce((s, { post }) => s + post.sd ** 2, 0) / independent.length;
+  const spread = Math.max(MIN_POOLING_SPREAD, Math.sqrt(Math.max(0, meanVar - noiseVar)));
+
+  const pooledPrior = normalize(GRID.map((t) => normalPdf(t, centre, spread)));
   const out = new Map<SkillCluster, Posterior>();
-  for (const [cluster, list] of groupByCluster(responses)) {
-    out.set(cluster, posteriorForResponses(list));
+  for (const { cluster, list } of independent) {
+    out.set(cluster, posteriorForResponses(list, pooledPrior));
   }
   return out;
 };
@@ -175,24 +279,32 @@ export interface BayesDiagnosticConfig {
   minItemsPerCluster: number;
   /** Read is "resolved" once certainty reaches this. */
   minCertainty: number;
-  /** Stop early once this share of populated clusters is resolved. */
-  stopResolvedShare: number;
+  /**
+   * Stop early only after the reported Top 3 has survived this many additional
+   * items unchanged. This is the plan's "Top 3 stops changing" rule.
+   */
+  stabilityWindow: number;
+  /**
+   * Internal 0–100 plan confidence required to stop early. The plan specifies
+   * that this hidden number drives the stopping decision.
+   */
+  stopConfidence: number;
   /** Classification thresholds on P(weak). */
   readyMaxPWeak: number;
   weakMinPWeak: number;
 }
 
 /**
- * Demo-tuned config. Plan targets are floor 30 / ceiling 60; these are shorter
- * so the adaptive early-stop is visible in a live click-through. Length still
- * varies with response consistency.
+ * Plan-conformant config: floor 30 (~2 per cluster so every area is touched),
+ * ceiling 60. Length varies between the two as the Top 3 settles.
  */
 export const BAYES_DIAGNOSTIC_CONFIG: BayesDiagnosticConfig = {
-  minItems: 16,
-  maxItems: 40,
-  minItemsPerCluster: 1,
+  minItems: 30,
+  maxItems: 60,
+  minItemsPerCluster: 2,
   minCertainty: 0.5,
-  stopResolvedShare: 0.7,
+  stabilityWindow: 8,
+  stopConfidence: 70,
   readyMaxPWeak: 0.3,
   weakMinPWeak: 0.7,
 };
@@ -220,17 +332,86 @@ const countByCluster = (
   return c;
 };
 
-const planIsSettled = (
+/**
+ * Minimum share of an item's information value retained by a non-contender.
+ * Focusing entirely on the Top-3 boundary measurably hurts the rest of the map,
+ * so settled clusters keep a substantial share of their pull.
+ */
+const CONTENTION_FLOOR = 0.4;
+
+/**
+ * How much each cluster still matters to the Top-3 decision, in [0,1].
+ *
+ * A cluster is contested when the distance from its leverage to the cut line is
+ * small relative to how far that leverage could still move given the evidence
+ * so far. Settled clusters — whether comfortably in the Top 3 or comfortably
+ * out — score near zero and stop attracting items.
+ */
+const contentionByCluster = (
+  result: DiagnosticResult,
   posteriors: Map<SkillCluster, Posterior>,
-  populated: ReadonlySet<SkillCluster>,
+): Map<SkillCluster, number> => {
+  const out = new Map<SkillCluster, number>();
+  const ranked = [...result.perCluster]
+    .filter((s) => s.itemsSeen > 0)
+    .map((s) => {
+      const unlock = 1 + (UNLOCK_WEIGHT[s.cluster] ?? 0);
+      return {
+        cluster: s.cluster,
+        lev: s.gap * unlock,
+        // Same uncertainty measure the confidence score uses, so selection and
+        // stopping agree about which clusters are still in doubt.
+        sd: (posteriors.get(s.cluster)?.severitySd ?? 0.5) * unlock,
+      };
+    })
+    .sort((a, b) => b.lev - a.lev);
+  if (ranked.length === 0) return out;
+
+  const third = ranked[2]?.lev ?? ranked[ranked.length - 1]!.lev;
+  const fourth = ranked[3]?.lev ?? third;
+  const boundary = (third + fourth) / 2;
+
+  for (const r of ranked) {
+    const z = (r.lev - boundary) / Math.max(r.sd, 0.02);
+    out.set(r.cluster, Math.exp(-z * z));
+  }
+  return out;
+};
+
+const top3Key = (result: DiagnosticResult): string =>
+  result.topPriorities
+    .map((p) => p.cluster)
+    .sort()
+    .join('|');
+
+/**
+ * The plan's smart stop: end early once the Top 3 has stopped changing AND each
+ * of the three has solid evidence AND the hidden plan-confidence number clears
+ * its bar. All three must hold; any one alone stops too eagerly.
+ */
+const planIsSettled = (
+  responses: readonly DiagnosticResponse[],
+  current: DiagnosticResult,
   cfg: BayesDiagnosticConfig,
 ): boolean => {
-  if (populated.size === 0) return true;
-  let resolved = 0;
-  for (const cluster of populated) {
-    if ((posteriors.get(cluster)?.certainty ?? 0) >= cfg.minCertainty) resolved += 1;
+  if (current.topPriorities.length < 3) return false;
+  if (current.internalConfidence < cfg.stopConfidence) return false;
+
+  const byCluster = new Map(current.perCluster.map((s) => [s.cluster, s]));
+  for (const p of current.topPriorities) {
+    if ((byCluster.get(p.cluster)?.certainty ?? 0) < cfg.minCertainty) return false;
   }
-  return resolved / populated.size >= cfg.stopResolvedShare;
+
+  // Has the plan actually held still? Compare against the Top 3 we would have
+  // reported a window ago; if the last several items changed it, keep going.
+  const back = responses.length - cfg.stabilityWindow;
+  if (back < cfg.minItemsPerCluster) return false;
+  const earlier = envelopeFrom(
+    posteriorsByCluster(responses.slice(0, back)),
+    back,
+    cfg,
+  );
+  return top3Key(earlier) === top3Key(current);
 };
 
 /**
@@ -263,14 +444,21 @@ export function selectNextBayes(
   );
 
   let pool = feasible;
+  const envelope = envelopeFrom(posteriors, responses.length, cfg);
   if (needFloor.length > 0) {
     const need = new Set(needFloor);
     pool = feasible.filter((c) => need.has(c.cluster));
-  } else if (responses.length >= cfg.minItems && planIsSettled(posteriors, populated, cfg)) {
+  } else if (responses.length >= cfg.minItems && planIsSettled(responses, envelope, cfg)) {
     return { done: true };
   }
 
-  // Pick the maximum-EIG item; EIG depends only on (cluster, dok) so cache it.
+  // Information is only worth buying where it can still change the plan. Weight
+  // each cluster by how close it sits to the Top-3 cut line, measured against
+  // how far its own leverage could still move. Clusters that are safely in or
+  // safely out are cheap to leave alone; the contest is at the boundary.
+  const contention = contentionByCluster(envelope, posteriors);
+
+  // EIG depends only on (cluster, dok), so cache it.
   const eigCache = new Map<string, number>();
   const eigFor = (cluster: SkillCluster, dok: number | undefined): number => {
     const key = `${cluster}:${dok ?? 'x'}`;
@@ -285,8 +473,11 @@ export function selectNextBayes(
   let best: DiagnosticCandidate | null = null;
   let bestScore = -Infinity;
   for (const cand of pool) {
-    // Tiny deterministic jitter breaks ties among equal-EIG items reproducibly.
-    const score = eigFor(cand.cluster, cand.dokLevel) + (hash(seed + cand.questionId) / 2 ** 32) * 1e-6;
+    const weight = CONTENTION_FLOOR + (1 - CONTENTION_FLOOR) * (contention.get(cand.cluster) ?? 1);
+    // Tiny deterministic jitter breaks ties among equal-value items reproducibly.
+    const score =
+      eigFor(cand.cluster, cand.dokLevel) * weight +
+      (hash(seed + cand.questionId) / 2 ** 32) * 1e-6;
     if (score > bestScore) {
       bestScore = score;
       best = cand;
@@ -329,7 +520,8 @@ const clusterSignal = (cluster: SkillCluster, post: Posterior, cfg: BayesDiagnos
     section: CLUSTER_INFO[cluster].section,
     itemsSeen: post.itemsSeen,
     correct: post.correct,
-    gap: post.pWeak,
+    // Never invent weakness from absence: an untouched cluster reads zero gap.
+    gap: post.itemsSeen === 0 ? 0 : post.severity,
     certainty: post.certainty,
     classification,
     recommendation: recommend(cluster, classification),
@@ -337,37 +529,69 @@ const clusterSignal = (cluster: SkillCluster, post: Posterior, cfg: BayesDiagnos
   };
 };
 
-/** Internal 0–100 plan confidence (never shown as a number). */
+/**
+ * Internal 0–100 plan confidence (never shown as a number).
+ *
+ * This is confidence in the PLAN, not in any individual skill, so it measures
+ * the two things that decide whether the reported Top 3 is right: how cleanly
+ * the third priority separates from the fourth, and how much evidence sits
+ * behind the three we are about to recommend.
+ */
 const planConfidence = (
   perCluster: readonly ClusterSignal[],
   priorities: readonly LeveragePriority[],
-  cfg: BayesDiagnosticConfig,
+  posteriors: Map<SkillCluster, Posterior>,
 ): number => {
-  const sampled = perCluster.filter((s) => s.itemsSeen > 0).length;
-  const resolved = perCluster.filter((s) => s.certainty >= cfg.minCertainty).length;
-  const coverage = sampled / SKILL_CLUSTERS.length;
-  const resolvedShare = resolved / SKILL_CLUSTERS.length;
-  const top = priorities[0]?.leverage ?? 0;
-  const third = priorities[2]?.leverage ?? 0;
-  const fourth = priorities[3]?.leverage ?? 0;
-  const separation = top > 0 ? Math.min(1, (third - fourth) / top + 0.5) : 0.5;
-  const score = 100 * (0.45 * coverage + 0.35 * resolvedShare + 0.2 * separation);
+  const top3 = priorities.slice(0, 3);
+  if (top3.length < 3) return 0;
+
+  const byCluster = new Map(perCluster.map((s) => [s.cluster, s]));
+  const evidence =
+    top3.reduce((s, p) => s + (byCluster.get(p.cluster)?.certainty ?? 0), 0) / top3.length;
+
+  // Decision margin: how sure are we the third priority really outranks the
+  // fourth? Measured in units of the two clusters' own leverage uncertainty, so
+  // a small gap between two well-measured clusters can still be decisive while
+  // a large gap between two barely-sampled ones is not.
+  const third = priorities[2];
+  const fourth = priorities[3];
+  let separation = 1;
+  if (third !== undefined && fourth !== undefined) {
+    const sd = (p: LeveragePriority): number =>
+      (posteriors.get(p.cluster)?.severitySd ?? 0.5) * (1 + (UNLOCK_WEIGHT[p.cluster] ?? 0));
+    const noise = Math.sqrt(sd(third) ** 2 + sd(fourth) ** 2);
+    const z = noise > 1e-9 ? (third.leverage - fourth.leverage) / noise : 6;
+    separation = Math.max(0, Math.min(1, 2 * normalCdf(z) - 1));
+  }
+
+  const score = 100 * (0.5 * separation + 0.5 * evidence);
   return Math.round(Math.max(0, Math.min(100, score)));
 };
 
-/** Compute the diagnostic decision envelope from scored responses (Bayesian). */
-export function computeBayesResult(
-  responses: readonly DiagnosticResponse[],
-  cfg: BayesDiagnosticConfig = BAYES_DIAGNOSTIC_CONFIG,
+/**
+ * Build the decision envelope from already-computed posteriors.
+ *
+ * Shared by the public result and by the selector's stopping rule, so the test
+ * stops on exactly the plan the learner will be shown rather than on a
+ * separate internal proxy.
+ */
+function envelopeFrom(
+  posteriors: Map<SkillCluster, Posterior>,
+  itemsScored: number,
+  cfg: BayesDiagnosticConfig,
 ): DiagnosticResult {
-  const posteriors = posteriorsByCluster(responses);
   const empty = summarize([...PRIOR], 0, 0);
   const perCluster = SKILL_CLUSTERS.map((c) =>
     clusterSignal(c, posteriors.get(c) ?? empty, cfg),
   );
 
+  // Rank every sampled cluster by expected leverage. The plan asks for three
+  // starting priorities, so we always name three when there is evidence to rank
+  // them; uncertainty is expressed through `stillConfirming`, not by returning a
+  // short list. Unsampled clusters are excluded — we cannot recommend studying
+  // something we never looked at.
   const priorities: LeveragePriority[] = perCluster
-    .filter((s) => s.certainty >= 0.45 && s.gap >= 0.5)
+    .filter((s) => s.itemsSeen > 0)
     .map((s) => ({
       cluster: s.cluster,
       title: CLUSTER_INFO[s.cluster].title,
@@ -382,18 +606,20 @@ export function computeBayesResult(
     );
   const topPriorities = priorities.slice(0, 3);
 
-  const topSet = new Set(topPriorities.map((p) => p.cluster));
-  const stillConfirming = perCluster
-    .filter(
-      (s) =>
-        !topSet.has(s.cluster) &&
-        s.itemsSeen > 0 &&
-        s.gap >= 0.5 &&
-        (s.certainty < 0.5 || priorities.some((p) => p.cluster === s.cluster)),
-    )
-    .map((s) => s.cluster);
+  // A cluster is "still being confirmed" when it missed the cut but is close
+  // enough — and unresolved enough — that more evidence could promote it.
+  const thirdLeverage = topPriorities[topPriorities.length - 1]?.leverage ?? 0;
+  const byCluster = new Map(perCluster.map((s) => [s.cluster, s]));
+  const stillConfirming = priorities
+    .slice(3)
+    .filter((p) => {
+      const signal = byCluster.get(p.cluster);
+      if (signal === undefined) return false;
+      return signal.certainty < cfg.minCertainty && p.leverage >= CONTENTION_MARGIN * thirdLeverage;
+    })
+    .map((p) => p.cluster);
 
-  const internalConfidence = planConfidence(perCluster, priorities, cfg);
+  const internalConfidence = planConfidence(perCluster, priorities, posteriors);
   const confidenceLabel: ConfidenceLabel =
     internalConfidence >= 82 ? 'High' : internalConfidence >= 65 ? 'Medium' : 'Still building';
 
@@ -403,6 +629,14 @@ export function computeBayesResult(
     stillConfirming,
     confidenceLabel,
     internalConfidence,
-    itemsScored: responses.length,
+    itemsScored,
   };
+}
+
+/** Compute the diagnostic decision envelope from scored responses (Bayesian). */
+export function computeBayesResult(
+  responses: readonly DiagnosticResponse[],
+  cfg: BayesDiagnosticConfig = BAYES_DIAGNOSTIC_CONFIG,
+): DiagnosticResult {
+  return envelopeFrom(posteriorsByCluster(responses), responses.length, cfg);
 }

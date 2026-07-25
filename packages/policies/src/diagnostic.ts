@@ -222,9 +222,19 @@ export interface DiagnosticResult {
 /**
  * Prerequisite-unlock weight: how much fixing a cluster tends to unblock others.
  * Reasoning foundations (R1 quant, R2 data/representations, R3 experiments) and
- * chemistry (CP3) unlock the most; leaf/applied clusters unlock the least. This
- * encodes the plan's leverage idea and mirrors the planner's prerequisite-first
- * priority ordering without inventing a full edge solve here.
+ * chemistry (CP3) unlock the most; leaf/applied clusters unlock the least.
+ *
+ * These values are hand-tuned, which the plan flags as a stand-in for the real
+ * prerequisite graph. `scripts/generate-unlock-weights.mjs` performs that real
+ * derivation from the V3 registry, and its output is committed at
+ * `./data/unlock-weights.generated.ts` — but it is deliberately NOT wired in
+ * yet. The registry graph is still too sparse to rank leverage: only 149 of 422
+ * KCs have any outgoing edge and only 81 directed edges cross a cluster
+ * boundary, so the derived table zeroes out nine of fifteen clusters and
+ * inverts the plan's own worked example (it demotes quantitative reasoning and
+ * promotes chemistry). Adopting it today would be conformant on paper and worse
+ * in practice. `unlock-weights.test.ts` watches the graph and fails when it has
+ * grown enough to revisit.
  */
 export const UNLOCK_WEIGHT: Readonly<Record<SkillCluster, number>> = {
   R1: 1.0,

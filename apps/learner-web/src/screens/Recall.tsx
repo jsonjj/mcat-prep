@@ -121,7 +121,10 @@ export function Recall() {
           <div className="mc-recall__progress">
             <Eyebrow>{`Topic ${idx + 1} of ${queue.length}`}</Eyebrow>
             <h2 className="mc-h3">{current.title}</h2>
-            <p className="mc-muted mc-fineprint">{current.tested}</p>
+            <p className="mc-muted mc-fineprint">
+              {current.confirming ? 'Confirming your placement read. ' : ''}
+              {current.tested}
+            </p>
           </div>
 
           {phase === 'loading' ? (
