@@ -148,6 +148,18 @@ export async function handleAuthorityRequest(
           return sendJson(response, 200, await client.getWrapped());
         case '/v1/diagnostic/next':
           return sendJson(response, 200, await client.getDiagnosticNext());
+        // The vector lesson runs on the persisted HTTP authority
+        // (services/local-authority), not in-process. Serving its status here
+        // lets the curriculum render it as unavailable instead of erroring on a
+        // missing route; `run` deliberately reports the same limitation.
+        case '/v1/lessons/vectors-and-trigonometry/status':
+          return sendJson(response, 200, await client.getVectorLessonStatus());
+        case '/v1/lessons/vectors-and-trigonometry/run':
+          return sendJson(response, 503, {
+            code: 'lesson_requires_http_authority',
+            message: 'This lesson requires the persisted HTTP authority.',
+            retryable: false,
+          });
         default:
           break;
       }
@@ -190,6 +202,13 @@ export async function handleAuthorityRequest(
         (body.choiceId ?? null) as string | null,
       );
       return sendJson(response, 200, result);
+    }
+    if (path.startsWith('/v1/lessons/vectors-and-trigonometry/') && method === 'POST') {
+      return sendJson(response, 503, {
+        code: 'lesson_requires_http_authority',
+        message: 'This lesson requires the persisted HTTP authority.',
+        retryable: false,
+      });
     }
     if (path === '/v1/hooks/cars-duel' && method === 'POST') {
       await client.recordCarsDuel();
