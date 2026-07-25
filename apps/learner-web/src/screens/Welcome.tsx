@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { useBootstrap } from '../app/queries';
 import { isDiagnosticCompleted } from '../app/diagnostic-status';
+import { ensureSeeded } from '../app/recall-schedule';
 import { BrainAtlas } from '../components/BrainAtlas';
 
 export function Welcome() {
@@ -12,6 +13,15 @@ export function Welcome() {
   // still completes onboarding via plan setup) leaves this false, so we keep
   // offering the placement each time until the learner finishes it.
   const diagnosticDone = isDiagnosticCompleted();
+
+  // Skipping placement seeds a neutral recall schedule so Recall still has
+  // something to serve. Where we land depends on whether a plan exists yet:
+  // AppShell bounces back here until onboarding completes, so a first-time
+  // learner goes to plan setup rather than /app.
+  const onSkip = () => {
+    ensureSeeded(null);
+    navigate(onboardingComplete ? '/app' : '/onboarding/plan');
+  };
 
   return (
     <div className="mc-welcome">
@@ -40,11 +50,9 @@ export function Welcome() {
               >
                 {onboardingComplete ? 'Take the placement' : 'Begin placement'}
               </Button>
-              {onboardingComplete ? (
-                <Button variant="secondary" size="lg" fullWidth onClick={() => navigate('/app')}>
-                  Continue without it
-                </Button>
-              ) : null}
+              <Button variant="secondary" size="lg" fullWidth onClick={onSkip}>
+                {onboardingComplete ? 'Continue without it' : 'Skip for now'}
+              </Button>
             </>
           )}
           <p className="mc-fineprint">
