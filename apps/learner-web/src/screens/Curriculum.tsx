@@ -1,5 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@mcat/ui-web';
 import {
   CURRICULUM_PHASES,
@@ -8,6 +8,12 @@ import {
   type CurriculumPhase,
 } from '../data/curriculum-v3.generated';
 import { useStartVectorLesson, useVectorLessonStatus } from '../app/queries';
+import { APP_NATIVE_LESSONS } from '../app-native';
+
+/** Lesson id → slug for the pilot lessons that are actually playable in-app. */
+const PLAYABLE_SLUG_BY_LESSON_ID: Readonly<Record<string, string>> = Object.fromEntries(
+  APP_NATIVE_LESSONS.map((entry) => [entry.script.id, entry.script.slug]),
+);
 
 /**
  * Curriculum — a calm map of the whole V3 path with one authorized launch.
@@ -242,6 +248,7 @@ function LessonCard({ lesson }: { lesson: CurriculumLesson }) {
   const kcCount = lesson.kcs.length;
   const titleId = `mc-curriculum-lesson-${lesson.id}`;
   const isTarget = lesson.id === TARGET_LESSON_ID;
+  const playableSlug = PLAYABLE_SLUG_BY_LESSON_ID[lesson.id];
   return (
     <article className="mc-curriculum__lesson" aria-labelledby={titleId}>
       <div className="mc-curriculum__lesson-main">
@@ -269,8 +276,21 @@ function LessonCard({ lesson }: { lesson: CurriculumLesson }) {
         </div>
       </div>
       <div className="mc-curriculum__lesson-foot">
+        {/* The target lesson also ships an app-native script, but its
+            server-authoritative seam takes precedence so the launch stays gated. */}
         {isTarget ? (
           <TargetLessonAction lesson={lesson} />
+        ) : playableSlug ? (
+          <>
+            <span className="mc-curriculum__ready">Ready to play</span>
+            <Link
+              to={`/app/lesson/${playableSlug}`}
+              className="mc-button mc-button--primary mc-button--lg"
+              aria-label={`Start ${lesson.shortTitle}`}
+            >
+              <span className="mc-button__label">Start</span>
+            </Link>
+          </>
         ) : (
           <UnavailableLessonAction lesson={lesson} />
         )}

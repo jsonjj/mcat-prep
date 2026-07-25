@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f766e'/%3E%3Cpath d='M17 45V19h7l8 13 8-13h7v26h-7V30l-8 12-8-12v15z' fill='white'/%3E%3C/svg%3E"
+    />
+    <title>MCAT Mastery — Lesson Preview</title>
+    <script>
+      // Match @mcat/ui-web ThemeProvider storage so there is no theme flash.
+      (function () {
+        try {
+          var t = localStorage.getItem('mc.theme');
+          var d =
+            t === 'dark' ||
+            ((t === null || t === 'system') && matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = d ? 'dark' : 'light';
+        } catch (e) {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
