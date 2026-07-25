@@ -4,6 +4,7 @@ export * from './time';
 export * from './versioning';
 export * from './errors';
 export * from './vocab';
+export * from './atlas';
 export * from './events';
 export * from './commands';
 export * from './learner-views';

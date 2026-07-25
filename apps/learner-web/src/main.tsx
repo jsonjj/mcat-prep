@@ -29,10 +29,35 @@ createRoot(rootEl).render(
 );
 
 // Register a minimal service worker (shell caching only; never caches APIs/keys).
+// Production only — the SW must never run against the dev server.
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(() => {
       /* offline shell is a progressive enhancement */
     });
   });
+} else if ('serviceWorker' in navigator && import.meta.env.DEV) {
+  // DEV self-heal: a service worker left over from a production build/preview on
+  // this origin keeps serving a stale, cache-first shell + bundle — so local edits
+  // never appear, even after a hard refresh or clearing cookies (neither removes a
+  // service worker). In dev we proactively unregister any SW and drop its caches,
+  // then reload once if a stale SW was still controlling the page. This branch is
+  // dropped from the production bundle, so the PWA is unaffected.
+  void (async () => {
+    try {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      if (regs.length === 0) return;
+      await Promise.all(regs.map((r) => r.unregister()));
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((k) => caches.delete(k)));
+      }
+      if (navigator.serviceWorker.controller && !sessionStorage.getItem('mc.sw.healed')) {
+        sessionStorage.setItem('mc.sw.healed', '1');
+        location.reload();
+      }
+    } catch {
+      /* best-effort dev cleanup */
+    }
+  })();
 }
