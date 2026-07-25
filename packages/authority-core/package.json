@@ -11,13 +11,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@mcat/content": "workspace:*",
     "@mcat/contracts": "workspace:*",
     "@mcat/domain": "workspace:*",
-    "@mcat/policies": "workspace:*",
-    "@mcat/content": "workspace:*"
+    "@mcat/policies": "workspace:*"
   },
   "devDependencies": {
     "typescript": "5.7.3",
-    "vitest": "2.1.8"
+    "vitest": "3.2.6"
   }
 }
