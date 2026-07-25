@@ -9,6 +9,10 @@ import type {
   SkillSummary,
   StudyStepView,
   TodayView,
+  VectorLessonAction,
+  VectorLessonRunView,
+  VectorLessonStartResponse,
+  VectorLessonStatusView,
   WrappedView,
 } from '@mcat/contracts';
 
@@ -44,6 +48,14 @@ export interface AuthorityPort {
   recordCarsDuel(): Promise<void>;
   getWrapped(): Promise<WrappedView>;
   resetProgress(): Promise<void>;
+  getVectorLessonStatus(): Promise<VectorLessonStatusView>;
+  startVectorLesson(): Promise<VectorLessonStartResponse>;
+  getVectorLessonRun(): Promise<VectorLessonRunView>;
+  submitVectorLessonAction(
+    runId: string,
+    screenToken: string,
+    action: VectorLessonAction,
+  ): Promise<void>;
 }
 
 /** Persistence boundary provided by the platform (browser IndexedDB/localStorage, etc.). */

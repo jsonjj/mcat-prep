@@ -8,15 +8,20 @@
   },
   "types": "./src/index.ts",
   "scripts": {
+    "dev": "node --import tsx src/http-server.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@mcat/authority-core": "workspace:*",
+    "@mcat/authority-kernel": "workspace:*",
     "@mcat/client-core": "workspace:*",
     "@mcat/content": "workspace:*",
-    "@mcat/contracts": "workspace:*"
+    "@mcat/contracts": "workspace:*",
+    "@mcat/learner-api": "workspace:*"
   },
   "devDependencies": {
+    "@types/node": "22.10.5",
+    "tsx": "4.23.1",
     "typescript": "5.7.3",
     "vitest": "3.2.6"
   }

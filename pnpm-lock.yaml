@@ -423,6 +423,9 @@ importers:
       '@mcat/authority-kernel':
         specifier: workspace:*
         version: link:../../authority-kernel
+      '@mcat/content':
+        specifier: workspace:*
+        version: link:../../../packages/content
       '@mcat/contracts':
         specifier: workspace:*
         version: link:../../../packages/contracts
@@ -498,6 +501,9 @@ importers:
       '@mcat/authority-core':
         specifier: workspace:*
         version: link:../../packages/authority-core
+      '@mcat/authority-kernel':
+        specifier: workspace:*
+        version: link:../authority-kernel
       '@mcat/client-core':
         specifier: workspace:*
         version: link:../../packages/client-core
@@ -507,7 +513,16 @@ importers:
       '@mcat/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@mcat/learner-api':
+        specifier: workspace:*
+        version: link:../lambdas/learner-api
     devDependencies:
+      '@types/node':
+        specifier: 22.10.5
+        version: 22.10.5
+      tsx:
+        specifier: 4.23.1
+        version: 4.23.1
       typescript:
         specifier: 5.7.3
         version: 5.7.3

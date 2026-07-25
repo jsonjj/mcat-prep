@@ -5,6 +5,7 @@ import { Diagnostic } from '../screens/Diagnostic';
 import { PlanSetup } from '../screens/PlanSetup';
 import { Home } from '../screens/Home';
 import { Curriculum } from '../screens/Curriculum';
+import { VectorLesson } from '../screens/VectorLesson';
 import { Lesson } from '../screens/Lesson';
 import { Study } from '../screens/Study';
 import { Recall } from '../screens/Recall';
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'curriculum', element: <Curriculum /> },
+      { path: 'lessons/vectors-and-trigonometry', element: <VectorLesson /> },
       // Today merged into Home; keep the path working for bookmarks.
       { path: 'today', element: <Navigate to="/app" replace /> },
       { path: 'learn', element: <Study /> },

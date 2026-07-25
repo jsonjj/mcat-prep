@@ -1,0 +1,73 @@
+{
+  "lesson": "Vectors and Trigonometry",
+  "lesson_id": "V3-LES-130923",
+  "browser": "149.0.7827.55",
+  "learner_route": "/app/lessons/vectors-and-trigonometry",
+  "authority_mode": "STATEFUL_PLAYWRIGHT_ROUTE_MOCK_FOR_UI; REAL_KERNEL_AND_PERSISTENCE_CONTRACT_COVERED_BY_VECTOR_LESSON_API_TEST",
+  "artifact_hashes": {
+    "lesson_script": "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a",
+    "kc_coverage_matrix": "03edcf4f426df99996ac087ecddcc33e0f53315b29883af43e4cb725832f0876",
+    "lesson_presentation_plan": "b7fe61b25397352434e1a69dfb2db7421e33751a3f7559183c28aeb270661c30"
+  },
+  "happy": {
+    "disabled_unavailable_lessons": 113,
+    "enabled_lessons": 1,
+    "console_errors": [],
+    "failed_requests": []
+  },
+  "repair_resume_mobile": {
+    "resume_prompt": "A path goes 7 west, 1 north, then 2 east, 4 south. What is the resultant?",
+    "reduced_motion": true,
+    "viewports": ["1280", "375", "320", "320-text-200"],
+    "console_errors": [],
+    "failed_requests": []
+  },
+  "screen_evidence": [
+    {
+      "screen_id": "vtr-vectors-screen-entry",
+      "file": "happy-start-desktop.png",
+      "viewport": "1440x1000",
+      "theme": "light"
+    },
+    {
+      "screen_id": "vtr-vectors-screen-near-exit",
+      "file": "repair-feedback-desktop.png",
+      "viewport": "1280x900",
+      "theme": "light"
+    },
+    {
+      "screen_id": "vtr-vectors-screen-reentry-near",
+      "file": "repair-exact-reentry-desktop.png",
+      "viewport": "1280x900",
+      "theme": "light"
+    },
+    {
+      "screen_id": "lesson-delivery-complete",
+      "file": "happy-completion-dark.png",
+      "viewport": "1440x1000",
+      "theme": "dark"
+    }
+  ],
+  "screenshots": [
+    "happy-completion-dark.png",
+    "happy-completion-light.png",
+    "happy-start-desktop.png",
+    "repair-exact-reentry-desktop.png",
+    "repair-feedback-desktop.png",
+    "repair-mobile-320-text-200.png",
+    "repair-mobile-320.png",
+    "repair-mobile-375.png",
+    "repair-refresh-resume.png"
+  ],
+  "evidence_sha256": {
+    "happy-completion-dark.png": "79806ac7e22a757aefa42b74207b8977a5b6755c096d651a826e656ba804da84",
+    "happy-completion-light.png": "8f1cf27858e264864f2f10b54ad770bc66fe5a2875964bba4275d4c08d6a1e0f",
+    "happy-start-desktop.png": "1ab26e2e5c6baa8cc62c35439ffe91f87edb4a7a36ec912645df900b5290f10e",
+    "repair-exact-reentry-desktop.png": "1c7389bae08c67e450ca4f7ca4cd4cc3a771915be6d561396009d13ca1147963",
+    "repair-feedback-desktop.png": "2156ce0a79cd8e17bacbdc87ff769789094a2376e3607b4887051f4c31e82acc",
+    "repair-mobile-320-text-200.png": "6837f95e88a06fe98b7b7e4dbc550230ff76687ae5864850d09b86f7494c3a5e",
+    "repair-mobile-320.png": "cdbe8cc6db66361636d423b2a0e1230bfafc6f651d52153adbcf700d5b8645cc",
+    "repair-mobile-375.png": "06f6d7a7e7baa4bee84d78ea1c84994ff4959afffb07e3b6c637e645cffc593e",
+    "repair-refresh-resume.png": "1c7389bae08c67e450ca4f7ca4cd4cc3a771915be6d561396009d13ca1147963"
+  }
+}

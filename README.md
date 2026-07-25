@@ -59,13 +59,15 @@ pnpm run build
 pnpm --filter @mcat/landing-web dev   # landing page + Prep Pattern Snapshot
 pnpm --filter @mcat/learner-web dev   # learner website
 pnpm --filter @mcat/admin-web dev      # admin console
+pnpm run dev:lesson                    # learner website + loopback lesson authority
 ```
 
 The deployed AWS-backed learner website is
 <https://d2j72l2zhhn7o7.cloudfront.net>. The development authority intentionally accepts browser
-traffic only through that CloudFront origin. The Vite learner command requires a compatible
-`VITE_AUTHORITY_BASE_URL`; the repository does not currently ship a standalone local HTTP
-authority server.
+traffic only through that CloudFront origin. For local Lesson 1 work, `pnpm run dev:lesson` starts
+the learner app and a loopback-only, in-memory HTTP authority at `127.0.0.1:8787`; protected
+answers remain in the Node process. Local run state survives browser refreshes while the process is
+running, but intentionally resets when the local authority restarts.
 
 > **First-time local setup:** `cp apps/learner-web/.env.example apps/learner-web/.env.local`, then
 > `pnpm --filter @mcat/learner-web dev`. The template sets `VITE_AUTHORITY_BASE_URL=/`, which routes

@@ -1,0 +1,610 @@
+{
+  "artifact_type": "KC_COVERAGE_MATRIX",
+  "artifact_id": "V3-KCOV-130923",
+  "artifact_version": "0.1.0-internal-draft",
+  "artifact_status": "DRAFT",
+  "schema_binding": {
+    "schema_id": "mcat-spec04-kc-coverage-internal-draft",
+    "schema_version": "0.1-candidate-local-1",
+    "schema_sha256": "fe27d9b76c670d069a600f9ac5f50dc3272b69eb55acfe641b0e6b9d6d25c895",
+    "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
+  },
+  "content_sha256": "03edcf4f426df99996ac087ecddcc33e0f53315b29883af43e4cb725832f0876",
+  "registry_binding": {
+    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+    "phase_0_freeze_id": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
+    "canonical_freeze_id": "MCAT-V3-CANONICAL-FRZ-2026-07-22-01",
+    "graph_freeze_id": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
+    "sequence_freeze_id": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01",
+    "manifest_schema_id": "mcat-v3-lessons-public",
+    "manifest_schema_version": "1",
+    "manifest_sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+    "lesson_id": "V3-LES-130923",
+    "grouping_id": "V3-CL-130923",
+    "ordered_kc_ids": ["V3-KC-866848", "V3-KC-700208", "V3-KC-159529"],
+    "ordered_required_kc_ids": ["V3-KC-866848", "V3-KC-700208", "V3-KC-159529"]
+  },
+  "authors": [
+    {
+      "identity": "gpt-5.6-sol-max",
+      "role": "PRIMARY_AUTHOR_AND_IMPLEMENTER",
+      "run_id": "V3-LES-130923-INTERNAL-DRAFT-2026-07-23",
+      "contribution": "Original internal-draft lesson content, artifacts, and implementation."
+    }
+  ],
+  "reviewers": [],
+  "input_bindings": [
+    {
+      "input_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "version": "mcat-v3-authoritative-registry-1",
+      "sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+      "kind": "CURRICULUM_REGISTRY",
+      "use": "Identity, scope, order, source anchors, attachments, holds, and placement."
+    },
+    {
+      "input_id": "MCAT-V3-LEARNER-FACING-LESSONS",
+      "version": "mcat-v3-lessons-public-1",
+      "sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+      "kind": "GENERATED_MANIFEST",
+      "use": "Learner label and convenience placement cross-check only."
+    },
+    {
+      "input_id": "AAMC-2020-SUPPLIED-CEILING",
+      "version": "2020-supplied",
+      "sha256": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
+      "kind": "SOURCE_CEILING",
+      "use": "Scope obligation only; no expressive prose or source question reused."
+    }
+  ],
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-130923",
+    "lesson_script_sha256": "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a"
+  },
+  "lineage": {
+    "supersedes": null,
+    "change_reason": "Initial internal-draft implementation for exactly V3-LES-130923.",
+    "authoring_run_id": "V3-LES-130923-INTERNAL-DRAFT-2026-07-23",
+    "derived_input_ids": [
+      "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "MCAT-V3-LEARNER-FACING-LESSONS",
+      "AAMC-2020-SUPPLIED-CEILING"
+    ]
+  },
+  "payload": {
+    "lesson_id": "V3-LES-130923",
+    "ordered_required_kc_ids": ["V3-KC-866848", "V3-KC-700208", "V3-KC-159529"],
+    "lesson_script_id": "V3-LSCR-130923",
+    "lesson_script_sha256": "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a",
+    "rows": [
+      {
+        "kc_id": "V3-KC-866848",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-866848",
+        "scope_in_refs": [
+          "scope-in:V3-KC-866848:1",
+          "scope-in:V3-KC-866848:2",
+          "scope-in:V3-KC-866848:3"
+        ],
+        "scope_out_refs": [
+          "scope-out:V3-KC-866848:1",
+          "scope-out:V3-KC-866848:2",
+          "scope-out:V3-KC-866848:3"
+        ],
+        "source_claim_refs": ["BB-SA-0008", "CP-SA-008", "V3-SA-AAMC-MATH-P077"],
+        "prerequisite_point_refs": [],
+        "explanation_node_ids": ["vtr-vectors-node-explanation"],
+        "mental_model_node_ids": ["vtr-vectors-node-model"],
+        "worked_example_node_ids": ["vtr-vectors-node-worked"],
+        "guided_activity_ids": [
+          "vtr-vectors-activity-vtr-vec-guided-practice-1",
+          "vtr-vectors-activity-vtr-vec-guided-practice-fresh"
+        ],
+        "light_support_activity_ids": [
+          "vtr-vectors-activity-vtr-vec-light-support-practice-1",
+          "vtr-vectors-activity-vtr-vec-light-support-practice-fresh"
+        ],
+        "solo_activity_ids": ["vtr-vectors-activity-vtr-vec-solo-practice-1"],
+        "near_exit_item_ids": ["vtr-vec-near-exit-initial", "vtr-vec-near-exit-reentry"],
+        "near_exit_family_ids": ["fam-vtr-vec-near-exit-initial", "fam-vtr-vec-near-exit-reentry"],
+        "changed_exit_item_ids": ["vtr-vec-changed-exit-initial", "vtr-vec-changed-exit-reentry"],
+        "changed_exit_family_ids": [
+          "fam-vtr-vec-changed-exit-initial",
+          "fam-vtr-vec-changed-exit-reentry"
+        ],
+        "misconception_feature_ids": [
+          "observed:vtr-vec-entry-check-1:B",
+          "observed:vtr-vec-entry-check-1:C",
+          "observed:vtr-vec-guided-practice-1:A",
+          "observed:vtr-vec-guided-practice-1:C",
+          "observed:vtr-vec-guided-practice-fresh:A",
+          "observed:vtr-vec-guided-practice-fresh:B",
+          "observed:vtr-vec-light-support-practice-1:A",
+          "observed:vtr-vec-light-support-practice-1:B",
+          "observed:vtr-vec-light-support-practice-fresh:A",
+          "observed:vtr-vec-light-support-practice-fresh:C",
+          "observed:vtr-vec-solo-practice-1:A",
+          "observed:vtr-vec-solo-practice-1:B",
+          "observed:vtr-vec-near-exit-initial:A",
+          "observed:vtr-vec-near-exit-initial:C",
+          "observed:vtr-vec-changed-exit-initial:A",
+          "observed:vtr-vec-changed-exit-initial:B",
+          "observed:vtr-vec-repair-confirmation-near-1:A",
+          "observed:vtr-vec-repair-confirmation-near-1:B",
+          "observed:vtr-vec-repair-confirmation-near-1:C",
+          "observed:vtr-vec-near-exit-reentry:A"
+        ],
+        "repair_node_ids": ["vtr-vectors-node-repair-near", "vtr-vectors-node-repair-changed"],
+        "repair_family_ids": [
+          "fam-vtr-vec-repair-confirmation-near-1",
+          "fam-vtr-vec-repair-confirmation-near-2",
+          "fam-vtr-vec-repair-confirmation-changed-1",
+          "fam-vtr-vec-repair-confirmation-changed-2"
+        ],
+        "exact_reentry_refs": [
+          "reentry:V3-KC-866848:NEAR_USE:vtr-vectors-node-reentry-near",
+          "reentry:V3-KC-866848:CHANGED_TASK:vtr-vectors-node-reentry-changed"
+        ],
+        "representation_ids": ["rep-vtr-vector-components", "rep-vtr-vector-diagram"],
+        "accessibility_equivalent_ids": ["a11y-vtr-vector-components", "a11y-vtr-vector-diagram"],
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "vtr-vectors-node-orientation",
+              "vtr-vectors-node-explanation",
+              "vtr-vectors-node-think-aloud",
+              "vtr-vectors-node-worked"
+            ],
+            "model_ids": ["vtr-vectors-node-model"],
+            "practice_ids": [
+              "vtr-vectors-activity-vtr-vec-guided-practice-1",
+              "vtr-vectors-activity-vtr-vec-guided-practice-fresh",
+              "vtr-vectors-activity-vtr-vec-light-support-practice-1",
+              "vtr-vectors-activity-vtr-vec-light-support-practice-fresh",
+              "vtr-vectors-activity-vtr-vec-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-vectors-node-near-exit", "vtr-vectors-node-changed-exit"],
+            "repair_ids": ["vtr-vectors-node-repair-near", "vtr-vectors-node-repair-changed"],
+            "recap_ids": ["vtr-vectors-node-recap"],
+            "coverage_status": "PASS"
+          },
+          "standard": {
+            "teaching_ids": [
+              "vtr-vectors-node-orientation",
+              "vtr-vectors-node-explanation",
+              "vtr-vectors-node-think-aloud",
+              "vtr-vectors-node-worked"
+            ],
+            "model_ids": ["vtr-vectors-node-model"],
+            "practice_ids": [
+              "vtr-vectors-activity-vtr-vec-guided-practice-1",
+              "vtr-vectors-activity-vtr-vec-guided-practice-fresh",
+              "vtr-vectors-activity-vtr-vec-light-support-practice-1",
+              "vtr-vectors-activity-vtr-vec-light-support-practice-fresh",
+              "vtr-vectors-activity-vtr-vec-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-vectors-node-near-exit", "vtr-vectors-node-changed-exit"],
+            "repair_ids": ["vtr-vectors-node-repair-near", "vtr-vectors-node-repair-changed"],
+            "recap_ids": ["vtr-vectors-node-recap"],
+            "coverage_status": "PASS"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "vtr-vectors-node-orientation",
+              "vtr-vectors-node-explanation",
+              "vtr-vectors-node-think-aloud",
+              "vtr-vectors-node-worked"
+            ],
+            "model_ids": ["vtr-vectors-node-model"],
+            "practice_ids": [
+              "vtr-vectors-activity-vtr-vec-guided-practice-1",
+              "vtr-vectors-activity-vtr-vec-guided-practice-fresh",
+              "vtr-vectors-activity-vtr-vec-light-support-practice-1",
+              "vtr-vectors-activity-vtr-vec-light-support-practice-fresh",
+              "vtr-vectors-activity-vtr-vec-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-vectors-node-near-exit", "vtr-vectors-node-changed-exit"],
+            "repair_ids": ["vtr-vectors-node-repair-near", "vtr-vectors-node-repair-changed"],
+            "recap_ids": ["vtr-vectors-node-recap"],
+            "coverage_status": "PASS"
+          },
+          "prerequisite_support": {
+            "teaching_ids": [
+              "vtr-vectors-node-orientation",
+              "vtr-vectors-node-explanation",
+              "vtr-vectors-node-think-aloud",
+              "vtr-vectors-node-worked"
+            ],
+            "model_ids": ["vtr-vectors-node-model"],
+            "practice_ids": [
+              "vtr-vectors-activity-vtr-vec-guided-practice-1",
+              "vtr-vectors-activity-vtr-vec-guided-practice-fresh",
+              "vtr-vectors-activity-vtr-vec-light-support-practice-1",
+              "vtr-vectors-activity-vtr-vec-light-support-practice-fresh",
+              "vtr-vectors-activity-vtr-vec-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-vectors-node-near-exit", "vtr-vectors-node-changed-exit"],
+            "repair_ids": ["vtr-vectors-node-repair-near", "vtr-vectors-node-repair-changed"],
+            "recap_ids": ["vtr-vectors-node-recap"],
+            "coverage_status": "BLOCKED",
+            "reason": "NO_CANONICAL_HARD_PREDECESSOR_SCHEMA_NA_STATUS_UNAVAILABLE"
+          }
+        },
+        "compiled_node_evidence": {
+          "compiler_id": "V3-LES-130923-TARGET-SPECIFIC-COMPILER",
+          "reachable_node_ids": [
+            "vtr-vectors-node-entry",
+            "vtr-vectors-node-orientation",
+            "vtr-vectors-node-explanation",
+            "vtr-vectors-node-model",
+            "vtr-vectors-node-think-aloud",
+            "vtr-vectors-node-worked",
+            "vtr-vectors-node-guided",
+            "vtr-vectors-node-light",
+            "vtr-vectors-node-solo",
+            "vtr-vectors-node-contrast",
+            "vtr-vectors-node-near-exit",
+            "vtr-vectors-node-changed-exit",
+            "vtr-vectors-node-repair-near",
+            "vtr-vectors-node-repair-changed",
+            "vtr-vectors-node-reentry-near",
+            "vtr-vectors-node-reentry-changed",
+            "vtr-vectors-node-recap"
+          ],
+          "orphan_node_ids": []
+        },
+        "row_status": "BLOCKED"
+      },
+      {
+        "kc_id": "V3-KC-700208",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-700208",
+        "scope_in_refs": ["scope-in:V3-KC-700208:1", "scope-in:V3-KC-700208:2"],
+        "scope_out_refs": ["scope-out:V3-KC-700208:1", "scope-out:V3-KC-700208:2"],
+        "source_claim_refs": ["BB-SA-0008", "CP-SA-008", "V3-SA-AAMC-MATH-P077"],
+        "prerequisite_point_refs": [],
+        "explanation_node_ids": ["vtr-trig-node-explanation"],
+        "mental_model_node_ids": ["vtr-trig-node-model"],
+        "worked_example_node_ids": ["vtr-trig-node-worked"],
+        "guided_activity_ids": [
+          "vtr-trig-activity-vtr-trig-guided-practice-1",
+          "vtr-trig-activity-vtr-trig-guided-practice-fresh"
+        ],
+        "light_support_activity_ids": [
+          "vtr-trig-activity-vtr-trig-light-support-practice-1",
+          "vtr-trig-activity-vtr-trig-light-support-practice-fresh"
+        ],
+        "solo_activity_ids": ["vtr-trig-activity-vtr-trig-solo-practice-1"],
+        "near_exit_item_ids": ["vtr-trig-near-exit-initial", "vtr-trig-near-exit-reentry"],
+        "near_exit_family_ids": [
+          "fam-vtr-trig-near-exit-initial",
+          "fam-vtr-trig-near-exit-reentry"
+        ],
+        "changed_exit_item_ids": ["vtr-trig-changed-exit-initial", "vtr-trig-changed-exit-reentry"],
+        "changed_exit_family_ids": [
+          "fam-vtr-trig-changed-exit-initial",
+          "fam-vtr-trig-changed-exit-reentry"
+        ],
+        "misconception_feature_ids": [
+          "observed:vtr-trig-guided-practice-1:A",
+          "observed:vtr-trig-guided-practice-1:B",
+          "observed:vtr-trig-guided-practice-fresh:A",
+          "observed:vtr-trig-guided-practice-fresh:B",
+          "observed:vtr-trig-light-support-practice-1:A",
+          "observed:vtr-trig-light-support-practice-1:C",
+          "observed:vtr-trig-light-support-practice-fresh:A",
+          "observed:vtr-trig-light-support-practice-fresh:B",
+          "observed:vtr-trig-solo-practice-1:A",
+          "observed:vtr-trig-solo-practice-1:B",
+          "observed:vtr-trig-near-exit-initial:A",
+          "observed:vtr-trig-changed-exit-initial:A"
+        ],
+        "repair_node_ids": ["vtr-trig-node-repair-near", "vtr-trig-node-repair-changed"],
+        "repair_family_ids": [
+          "fam-vtr-trig-repair-confirmation-near-1",
+          "fam-vtr-trig-repair-confirmation-near-2",
+          "fam-vtr-trig-repair-confirmation-changed-1",
+          "fam-vtr-trig-repair-confirmation-changed-2"
+        ],
+        "exact_reentry_refs": [
+          "reentry:V3-KC-700208:NEAR_USE:vtr-trig-node-reentry-near",
+          "reentry:V3-KC-700208:CHANGED_TASK:vtr-trig-node-reentry-changed"
+        ],
+        "representation_ids": ["rep-vtr-right-triangle", "rep-vtr-trig-equation"],
+        "accessibility_equivalent_ids": ["a11y-vtr-right-triangle", "a11y-vtr-trig-equation"],
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "vtr-trig-node-orientation",
+              "vtr-trig-node-explanation",
+              "vtr-trig-node-think-aloud",
+              "vtr-trig-node-worked"
+            ],
+            "model_ids": ["vtr-trig-node-model"],
+            "practice_ids": [
+              "vtr-trig-activity-vtr-trig-guided-practice-1",
+              "vtr-trig-activity-vtr-trig-guided-practice-fresh",
+              "vtr-trig-activity-vtr-trig-light-support-practice-1",
+              "vtr-trig-activity-vtr-trig-light-support-practice-fresh",
+              "vtr-trig-activity-vtr-trig-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-trig-node-near-exit", "vtr-trig-node-changed-exit"],
+            "repair_ids": ["vtr-trig-node-repair-near", "vtr-trig-node-repair-changed"],
+            "recap_ids": ["vtr-trig-node-recap"],
+            "coverage_status": "PASS"
+          },
+          "standard": {
+            "teaching_ids": [
+              "vtr-trig-node-orientation",
+              "vtr-trig-node-explanation",
+              "vtr-trig-node-think-aloud",
+              "vtr-trig-node-worked"
+            ],
+            "model_ids": ["vtr-trig-node-model"],
+            "practice_ids": [
+              "vtr-trig-activity-vtr-trig-guided-practice-1",
+              "vtr-trig-activity-vtr-trig-guided-practice-fresh",
+              "vtr-trig-activity-vtr-trig-light-support-practice-1",
+              "vtr-trig-activity-vtr-trig-light-support-practice-fresh",
+              "vtr-trig-activity-vtr-trig-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-trig-node-near-exit", "vtr-trig-node-changed-exit"],
+            "repair_ids": ["vtr-trig-node-repair-near", "vtr-trig-node-repair-changed"],
+            "recap_ids": ["vtr-trig-node-recap"],
+            "coverage_status": "PASS"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "vtr-trig-node-orientation",
+              "vtr-trig-node-explanation",
+              "vtr-trig-node-think-aloud",
+              "vtr-trig-node-worked"
+            ],
+            "model_ids": ["vtr-trig-node-model"],
+            "practice_ids": [
+              "vtr-trig-activity-vtr-trig-guided-practice-1",
+              "vtr-trig-activity-vtr-trig-guided-practice-fresh",
+              "vtr-trig-activity-vtr-trig-light-support-practice-1",
+              "vtr-trig-activity-vtr-trig-light-support-practice-fresh",
+              "vtr-trig-activity-vtr-trig-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-trig-node-near-exit", "vtr-trig-node-changed-exit"],
+            "repair_ids": ["vtr-trig-node-repair-near", "vtr-trig-node-repair-changed"],
+            "recap_ids": ["vtr-trig-node-recap"],
+            "coverage_status": "PASS"
+          },
+          "prerequisite_support": {
+            "teaching_ids": [
+              "vtr-trig-node-orientation",
+              "vtr-trig-node-explanation",
+              "vtr-trig-node-think-aloud",
+              "vtr-trig-node-worked"
+            ],
+            "model_ids": ["vtr-trig-node-model"],
+            "practice_ids": [
+              "vtr-trig-activity-vtr-trig-guided-practice-1",
+              "vtr-trig-activity-vtr-trig-guided-practice-fresh",
+              "vtr-trig-activity-vtr-trig-light-support-practice-1",
+              "vtr-trig-activity-vtr-trig-light-support-practice-fresh",
+              "vtr-trig-activity-vtr-trig-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-trig-node-near-exit", "vtr-trig-node-changed-exit"],
+            "repair_ids": ["vtr-trig-node-repair-near", "vtr-trig-node-repair-changed"],
+            "recap_ids": ["vtr-trig-node-recap"],
+            "coverage_status": "BLOCKED",
+            "reason": "NO_CANONICAL_HARD_PREDECESSOR_SCHEMA_NA_STATUS_UNAVAILABLE"
+          }
+        },
+        "compiled_node_evidence": {
+          "compiler_id": "V3-LES-130923-TARGET-SPECIFIC-COMPILER",
+          "reachable_node_ids": [
+            "vtr-trig-node-entry",
+            "vtr-trig-node-orientation",
+            "vtr-trig-node-explanation",
+            "vtr-trig-node-model",
+            "vtr-trig-node-think-aloud",
+            "vtr-trig-node-worked",
+            "vtr-trig-node-guided",
+            "vtr-trig-node-light",
+            "vtr-trig-node-solo",
+            "vtr-trig-node-contrast",
+            "vtr-trig-node-near-exit",
+            "vtr-trig-node-changed-exit",
+            "vtr-trig-node-repair-near",
+            "vtr-trig-node-repair-changed",
+            "vtr-trig-node-reentry-near",
+            "vtr-trig-node-reentry-changed",
+            "vtr-trig-node-recap"
+          ],
+          "orphan_node_ids": []
+        },
+        "row_status": "BLOCKED"
+      },
+      {
+        "kc_id": "V3-KC-159529",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-159529",
+        "scope_in_refs": ["scope-in:V3-KC-159529:1"],
+        "scope_out_refs": [
+          "scope-out:V3-KC-159529:1",
+          "scope-out:V3-KC-159529:2",
+          "scope-out:V3-KC-159529:3"
+        ],
+        "source_claim_refs": ["BB-SA-0008", "CP-SA-008", "V3-SA-AAMC-MATH-P077", "CP-SA-015"],
+        "prerequisite_point_refs": [],
+        "explanation_node_ids": ["vtr-direction-node-explanation"],
+        "mental_model_node_ids": ["vtr-direction-node-model"],
+        "worked_example_node_ids": ["vtr-direction-node-worked"],
+        "guided_activity_ids": [
+          "vtr-direction-activity-vtr-dir-guided-practice-1",
+          "vtr-direction-activity-vtr-dir-guided-practice-fresh"
+        ],
+        "light_support_activity_ids": [
+          "vtr-direction-activity-vtr-dir-light-support-practice-1",
+          "vtr-direction-activity-vtr-dir-light-support-practice-fresh"
+        ],
+        "solo_activity_ids": ["vtr-direction-activity-vtr-dir-solo-practice-1"],
+        "near_exit_item_ids": ["vtr-dir-near-exit-initial", "vtr-dir-near-exit-reentry"],
+        "near_exit_family_ids": ["fam-vtr-dir-near-exit-initial", "fam-vtr-dir-near-exit-reentry"],
+        "changed_exit_item_ids": ["vtr-dir-changed-exit-initial", "vtr-dir-changed-exit-reentry"],
+        "changed_exit_family_ids": [
+          "fam-vtr-dir-changed-exit-initial",
+          "fam-vtr-dir-changed-exit-reentry"
+        ],
+        "misconception_feature_ids": [
+          "observed:vtr-dir-guided-practice-1:A",
+          "observed:vtr-dir-guided-practice-fresh:A",
+          "observed:vtr-dir-guided-practice-fresh:B",
+          "observed:vtr-dir-light-support-practice-1:A",
+          "observed:vtr-dir-light-support-practice-fresh:A",
+          "observed:vtr-dir-light-support-practice-fresh:B",
+          "observed:vtr-dir-solo-practice-1:B",
+          "observed:vtr-dir-near-exit-initial:A",
+          "observed:vtr-dir-changed-exit-initial:A"
+        ],
+        "repair_node_ids": ["vtr-direction-node-repair-near", "vtr-direction-node-repair-changed"],
+        "repair_family_ids": [
+          "fam-vtr-dir-repair-confirmation-near-1",
+          "fam-vtr-dir-repair-confirmation-near-2",
+          "fam-vtr-dir-repair-confirmation-changed-1",
+          "fam-vtr-dir-repair-confirmation-changed-2"
+        ],
+        "exact_reentry_refs": [
+          "reentry:V3-KC-159529:NEAR_USE:vtr-direction-node-reentry-near",
+          "reentry:V3-KC-159529:CHANGED_TASK:vtr-direction-node-reentry-changed"
+        ],
+        "representation_ids": ["rep-vtr-directional-diagram", "rep-vtr-vector-direction"],
+        "accessibility_equivalent_ids": [
+          "a11y-vtr-directional-diagram",
+          "a11y-vtr-vector-direction"
+        ],
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "vtr-direction-node-orientation",
+              "vtr-direction-node-explanation",
+              "vtr-direction-node-think-aloud",
+              "vtr-direction-node-worked"
+            ],
+            "model_ids": ["vtr-direction-node-model"],
+            "practice_ids": [
+              "vtr-direction-activity-vtr-dir-guided-practice-1",
+              "vtr-direction-activity-vtr-dir-guided-practice-fresh",
+              "vtr-direction-activity-vtr-dir-light-support-practice-1",
+              "vtr-direction-activity-vtr-dir-light-support-practice-fresh",
+              "vtr-direction-activity-vtr-dir-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-direction-node-near-exit", "vtr-direction-node-changed-exit"],
+            "repair_ids": ["vtr-direction-node-repair-near", "vtr-direction-node-repair-changed"],
+            "recap_ids": ["vtr-direction-node-recap"],
+            "coverage_status": "PASS"
+          },
+          "standard": {
+            "teaching_ids": [
+              "vtr-direction-node-orientation",
+              "vtr-direction-node-explanation",
+              "vtr-direction-node-think-aloud",
+              "vtr-direction-node-worked"
+            ],
+            "model_ids": ["vtr-direction-node-model"],
+            "practice_ids": [
+              "vtr-direction-activity-vtr-dir-guided-practice-1",
+              "vtr-direction-activity-vtr-dir-guided-practice-fresh",
+              "vtr-direction-activity-vtr-dir-light-support-practice-1",
+              "vtr-direction-activity-vtr-dir-light-support-practice-fresh",
+              "vtr-direction-activity-vtr-dir-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-direction-node-near-exit", "vtr-direction-node-changed-exit"],
+            "repair_ids": ["vtr-direction-node-repair-near", "vtr-direction-node-repair-changed"],
+            "recap_ids": ["vtr-direction-node-recap"],
+            "coverage_status": "PASS"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "vtr-direction-node-orientation",
+              "vtr-direction-node-explanation",
+              "vtr-direction-node-think-aloud",
+              "vtr-direction-node-worked"
+            ],
+            "model_ids": ["vtr-direction-node-model"],
+            "practice_ids": [
+              "vtr-direction-activity-vtr-dir-guided-practice-1",
+              "vtr-direction-activity-vtr-dir-guided-practice-fresh",
+              "vtr-direction-activity-vtr-dir-light-support-practice-1",
+              "vtr-direction-activity-vtr-dir-light-support-practice-fresh",
+              "vtr-direction-activity-vtr-dir-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-direction-node-near-exit", "vtr-direction-node-changed-exit"],
+            "repair_ids": ["vtr-direction-node-repair-near", "vtr-direction-node-repair-changed"],
+            "recap_ids": ["vtr-direction-node-recap"],
+            "coverage_status": "PASS"
+          },
+          "prerequisite_support": {
+            "teaching_ids": [
+              "vtr-direction-node-orientation",
+              "vtr-direction-node-explanation",
+              "vtr-direction-node-think-aloud",
+              "vtr-direction-node-worked"
+            ],
+            "model_ids": ["vtr-direction-node-model"],
+            "practice_ids": [
+              "vtr-direction-activity-vtr-dir-guided-practice-1",
+              "vtr-direction-activity-vtr-dir-guided-practice-fresh",
+              "vtr-direction-activity-vtr-dir-light-support-practice-1",
+              "vtr-direction-activity-vtr-dir-light-support-practice-fresh",
+              "vtr-direction-activity-vtr-dir-solo-practice-1"
+            ],
+            "exit_ids": ["vtr-direction-node-near-exit", "vtr-direction-node-changed-exit"],
+            "repair_ids": ["vtr-direction-node-repair-near", "vtr-direction-node-repair-changed"],
+            "recap_ids": ["vtr-direction-node-recap"],
+            "coverage_status": "BLOCKED",
+            "reason": "NO_CANONICAL_HARD_PREDECESSOR_SCHEMA_NA_STATUS_UNAVAILABLE"
+          }
+        },
+        "compiled_node_evidence": {
+          "compiler_id": "V3-LES-130923-TARGET-SPECIFIC-COMPILER",
+          "reachable_node_ids": [
+            "vtr-direction-node-entry",
+            "vtr-direction-node-orientation",
+            "vtr-direction-node-explanation",
+            "vtr-direction-node-model",
+            "vtr-direction-node-think-aloud",
+            "vtr-direction-node-worked",
+            "vtr-direction-node-guided",
+            "vtr-direction-node-light",
+            "vtr-direction-node-solo",
+            "vtr-direction-node-contrast",
+            "vtr-direction-node-near-exit",
+            "vtr-direction-node-changed-exit",
+            "vtr-direction-node-repair-near",
+            "vtr-direction-node-repair-changed",
+            "vtr-direction-node-reentry-near",
+            "vtr-direction-node-reentry-changed",
+            "vtr-direction-node-recap"
+          ],
+          "orphan_node_ids": []
+        },
+        "row_status": "BLOCKED"
+      }
+    ],
+    "automated_questions": [
+      {
+        "check_id": "VTR-COV-ORDER",
+        "question": "Do matrix rows equal ordered_required_kc_ids in exact order?",
+        "expected": true
+      },
+      {
+        "check_id": "VTR-COV-FAMILIES",
+        "question": "Are all authored semantic families unique and near/changed families separate?",
+        "expected": true
+      },
+      {
+        "check_id": "VTR-COV-ROUTES",
+        "question": "Can prerequisite-support coverage be marked applicable without a canonical hard predecessor?",
+        "expected": false,
+        "status": "BLOCKED_SCHEMA_CLARIFICATION_REQUIRED"
+      }
+    ],
+    "matrix_status": "BLOCKED"
+  }
+}

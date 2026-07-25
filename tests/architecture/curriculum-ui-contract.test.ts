@@ -97,8 +97,10 @@ describe('Curriculum tab source contract', () => {
     for (const field of ['label', 'title', 'shortTitle', 'position', 'kcs', 'revisitCount']) {
       expect(src).toContain(`.${field}`);
     }
-    // Browse-only: no network, query layer, navigation, search, or capstone UI.
-    expect(src).not.toMatch(/fetch\(|useQuery|useNavigate|VITE_AUTHORITY/);
+    // Navigation data remains local and learner-safe. The one enabled target may
+    // use the shared query/navigation seams, but this screen never performs raw
+    // fetches, reads authority configuration, or imports server content.
+    expect(src).not.toMatch(/\bfetch\(|VITE_AUTHORITY/);
     expect(src).not.toMatch(/@mcat\/(?:content|authority-core)/);
     expect(src).not.toMatch(/<input\b/);
     expect(src).not.toMatch(/capstone/i);
@@ -117,9 +119,10 @@ describe('Curriculum tab source contract', () => {
     expect(src).toMatch(/no new lesson/i);
     // Neutral, source-backed framing for cumulative review / integration.
     expect(src).toMatch(/cumulative review|integration/i);
-    // No efficacy, readiness, mastery, progress, or lock claims.
+    // No efficacy, readiness, or mastery claims. Honest target run status is
+    // allowed now that exactly one lesson is launchable.
     expect(src).not.toMatch(
-      /guarantee|boost your score|score prediction|readiness score|mastered|completed|locked/i,
+      /guarantee|boost your score|score prediction|readiness score|mastered|exam.ready/i,
     );
     // No unsupported "spaced review" claim and no live-authorship implication.
     expect(src).not.toMatch(/spaced review/i);

@@ -66,17 +66,18 @@ a {
 .mc-skip-link {
   position: absolute;
   left: var(--mc-space-3);
-  top: -60px;
+  top: var(--mc-space-3);
   z-index: 100;
   background: var(--mc-surface);
   color: var(--mc-ink);
   padding: var(--mc-space-2) var(--mc-space-4);
   border-radius: var(--mc-radius-control);
   box-shadow: var(--mc-shadow-card);
-  transition: top var(--mc-motion-control) var(--mc-ease);
+  transform: translateY(calc(-100% - var(--mc-space-5)));
+  transition: transform var(--mc-motion-control) var(--mc-ease);
 }
 .mc-skip-link:focus {
-  top: var(--mc-space-3);
+  transform: translateY(0);
 }
 
 /* Eyebrow */

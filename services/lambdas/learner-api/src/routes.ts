@@ -13,6 +13,11 @@ import {
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
+  VectorLessonCommandSchema,
+  VectorLessonRunViewSchema,
+  VectorLessonStartCommandSchema,
+  VectorLessonStartResponseSchema,
+  VectorLessonStatusViewSchema,
   WrappedViewSchema,
   type ChoiceId,
   type CommandEnvelope,
@@ -39,7 +44,11 @@ export type RouteId =
   | 'today'
   | 'session'
   | 'mastery'
-  | 'errors';
+  | 'errors'
+  | 'vectorLessonStatus'
+  | 'vectorLessonStart'
+  | 'vectorLessonRun'
+  | 'vectorLessonCommand';
 
 interface RuntimeSchema<T = unknown> {
   parse(value: unknown): T;
@@ -311,6 +320,39 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: false,
     responseSchema: ErrorEntryViewSchema.array(),
+  },
+  {
+    id: 'vectorLessonStatus',
+    method: 'GET',
+    path: '/v1/lessons/vectors-and-trigonometry/status',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: VectorLessonStatusViewSchema,
+  },
+  {
+    id: 'vectorLessonStart',
+    method: 'POST',
+    path: '/v1/lessons/vectors-and-trigonometry/start',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: VectorLessonStartCommandSchema,
+    responseSchema: VectorLessonStartResponseSchema,
+  },
+  {
+    id: 'vectorLessonRun',
+    method: 'GET',
+    path: '/v1/lessons/vectors-and-trigonometry/run',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: VectorLessonRunViewSchema,
+  },
+  {
+    id: 'vectorLessonCommand',
+    method: 'POST',
+    path: '/v1/lessons/vectors-and-trigonometry/commands',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: VectorLessonCommandSchema,
   },
 ] as const;
 
