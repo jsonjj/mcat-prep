@@ -1,13 +1,15 @@
 import type {
   AccountState,
+  CarsSkill,
   LearnerEvent,
   LearnerId,
   MasteryState,
+  ReasoningOperation,
   UtcTimestamp,
 } from '@mcat/contracts';
 import type { EvidenceRecord, MasterySkillState, Task } from '@mcat/domain';
 import type { LearnerSafeQuestion } from '@mcat/content';
-import type { GhostView } from '@mcat/policies';
+import type { GhostView, MemoryState } from '@mcat/policies';
 
 export type { GhostView, GhostState } from '@mcat/policies';
 
@@ -28,6 +30,24 @@ export interface LearnerState {
   evidence: EvidenceRecord[];
   diagnostic: DiagnosticSessionState | null;
   session: StudySessionState | null;
+  /**
+   * BKT/IRT mastery engine state (mastery-bkt / provisional-v1). Optional so older
+   * persisted projections deserialize; initialized lazily. In the deployed
+   * learner-api path mastery lives in dedicated Postgres tables instead.
+   */
+  mastery?: MasteryEngineState;
+}
+
+/** Per-learner mastery engine state. `P(L)` values are as-of `lastPracticedAt`. */
+export interface MasteryEngineState {
+  /** Per-KC P(L) (stored, never displayed; used for selection). */
+  kc: Record<string, MemoryState>;
+  /** Per-reasoning-operation P(L) (the 7 displayed skills). */
+  skill: Partial<Record<ReasoningOperation, MemoryState>>;
+  /** Per-lesson P(L) (drives the Progress brain). */
+  lesson: Record<string, MemoryState>;
+  /** Per-CARS-sub-skill IRT ability V. */
+  cars: Partial<Record<CarsSkill, number>>;
 }
 
 export interface DiagnosticSessionState {
