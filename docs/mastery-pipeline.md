@@ -133,9 +133,24 @@ At completion emit a `MasterySeed` (per-KC priors via cluster read, per-operatio
 `V_0`) — seeds only, capped ≤ 0.4, never mastery. **[SIGN-OFF]** requires adding an operation-grain
 aggregation to the diagnostic output.
 
-### 5.4 CARS — PotD + Duel
-PotD emits `{ carsSkill, correct, dok_level }` → `K=0.3`. Duel emits `{ rubric: {position?,
-argument?, application?} 0–3 }` → mapped to FOC/RWT/RBT, `K=0.08` (formative).
+### 5.4 CARS — Passage of the Day + Duel
+
+**CARS Duel (WIRED).** At reflection the sparring partner grades the student's arguments on the rubric
+(Position / Argument / Application, 0–3 each — omit criteria not exercised); `parseDuelRubric`
+(`@mcat/ai-gateway`) reads the scores and the client sends them on `POST /v1/hooks/cars-duel` as
+`{ rubric }`. The authority maps **Position→FOC, Argument→RWT, Application→RBT** and nudges each
+sub-skill's ability with `R = score/3` at the low formative weight `K = 0.08`
+(`authority.recordCarsDuel(state, rubric)`). With no rubric (AI off, or nothing scored) the duel
+still logs contextual evidence but does not move ability.
+
+**Passage of the Day (HOOK READY; content pending).** The mechanism exists —
+`authority.recordCarsPassage(state, carsSkill, correct)` updates the sub-skill ability at the full
+measurement weight `K = 0.3`. To finish wiring PotD you (or another agent) must: (1) serve a real
+CARS passage item — the bank is currently synthetic BB1, so there is no CARS content yet; (2) resolve
+its sub-skill from `primary_skill` (`CARS_FOC/RWT/RBT` → `resolveCarsSkill`); and (3) on answer, call
+`recordCarsPassage` (add a thin command/endpoint, or branch the practice-attempt path when the item
+is a CARS item). Because PotD is a real measurement (`R = 1/0`) it is what actually drives readiness;
+the Duel only nudges it.
 
 ### 5.5 Recall (mastery due-review) — contract for the future Recall system
 

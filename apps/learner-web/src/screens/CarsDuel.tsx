@@ -7,7 +7,9 @@ import {
   HttpAiChat,
   MAX_ROUNDS,
   buildCarsSystemPrompt,
+  buildDuelRubricPrompt,
   buildReflectionPrompt,
+  parseDuelRubric,
   type AiMessage,
   type DuelDifficulty,
   type DuelMode,
@@ -104,11 +106,21 @@ export function CarsDuel() {
 
   const reflect = async () => {
     const reply = await call([...sent.current, buildReflectionPrompt()]);
-    if (reply !== null) {
-      setReflection(reply);
-      setPhase('reflection');
-      recordDuel.mutate();
+    if (reply === null) return;
+    setReflection(reply);
+    setPhase('reflection');
+    // Best-effort formative rubric → a low-weight CARS ability nudge. Never blocks
+    // the reflection, and a missing/invalid grade simply records the duel with no
+    // rubric (contextual only).
+    let rubric: ReturnType<typeof parseDuelRubric> | undefined;
+    try {
+      const graded = await ai.chat({ messages: [...sent.current, buildDuelRubricPrompt()] });
+      const scores = parseDuelRubric(graded.text);
+      if (Object.keys(scores).length > 0) rubric = scores;
+    } catch {
+      /* rubric grading is optional */
     }
+    recordDuel.mutate(rubric);
   };
 
   if (unavailable) {

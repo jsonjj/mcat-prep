@@ -13,6 +13,22 @@ import { CarsSkillSchema, ReasoningOperationSchema, SkillClusterSchema } from '.
 const Probability = z.number().min(0).max(1);
 
 /**
+ * CARS Duel grading rubric — each micro-judgment scored 0–3 on what the response
+ * exercised (omit criteria the duel didn't touch). Maps Position→FOC,
+ * Argument→RWT, Application→RBT and updates the CARS ability at low (formative)
+ * weight. See docs/mastery-pipeline.md §5.4.
+ */
+const RubricScore = z.number().int().min(0).max(3);
+export const CarsDuelRubricSchema = z
+  .object({
+    position: RubricScore.optional(),
+    argument: RubricScore.optional(),
+    application: RubricScore.optional(),
+  })
+  .strict();
+export type CarsDuelRubric = z.infer<typeof CarsDuelRubricSchema>;
+
+/**
  * Seed values emitted once by the diagnostic and applied by the mastery engine.
  * Seeds only — never mastery. Priors are asymmetric & capped upstream (≤ 0.4).
  */

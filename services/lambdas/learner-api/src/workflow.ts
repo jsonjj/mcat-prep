@@ -48,6 +48,7 @@ import type {
 } from '@mcat/database';
 
 import type {
+  CarsDuelCommandBody,
   CauseCommandBody,
   ContinueCommandBody,
   RecallCommandBody,
@@ -464,11 +465,11 @@ export class RepositoryLearnerKernel {
     );
   }
 
-  async handleCarsDuel(command: ContinueCommandBody, principal: Principal) {
+  async handleCarsDuel(command: CarsDuelCommandBody, principal: Principal) {
     return AcceptedCommandResponseSchema.parse(
       await this.mutate(command.envelope, principal, (authority, state) => {
         const previousEvidenceCount = state.evidence.length;
-        authority.recordCarsDuel(state);
+        authority.recordCarsDuel(state, command.rubric);
         bindNewEvidence(state, previousEvidenceCount, command.envelope);
         return { eventType: 'cars_duel_recorded', payload: toJsonObject(command) };
       }),

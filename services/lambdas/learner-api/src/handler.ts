@@ -33,6 +33,7 @@ import {
   allowedMethodsFor,
   practiceQuestionId,
   routeFor,
+  type CarsDuelCommandBody,
   type CauseCommandBody,
   type ContinueCommandBody,
   type PracticeAttemptCommandBody,
@@ -89,7 +90,7 @@ interface KernelPort {
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handlePractice']>;
   handleCarsDuel(
-    input: ContinueCommandBody,
+    input: CarsDuelCommandBody,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handleCarsDuel']>;
   handleReset(
@@ -640,7 +641,7 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
         case 'carsDuel':
           return jsonResponse(
             200,
-            await dependencies.kernel.handleCarsDuel(parsed.data as ContinueCommandBody, principal),
+            await dependencies.kernel.handleCarsDuel(parsed.data as CarsDuelCommandBody, principal),
             origin,
             requestIdValue,
           );

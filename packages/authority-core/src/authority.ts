@@ -8,6 +8,7 @@ import {
   newLearnerId,
   systemClock,
   type BootstrapResponse,
+  type CarsDuelRubric,
   type CarsReadinessLabel,
   type CarsReadinessView,
   type CarsSkill,
@@ -25,6 +26,8 @@ import { EvidenceRecordSchema, scoreAttempt, type EvidenceKind, type Task } from
 import {
   activePolicyVersions,
   applyMasteryAttempt,
+  CARS_K_DUEL,
+  CARS_K_POTD,
   CARS_V0,
   carsUpdate,
   classifyCapacity,
@@ -704,7 +707,7 @@ export class Authority {
    * contextual (placement-kind) evidence to the two CARS clusters so the Atlas
    * reflects the reps without treating an AI as proof.
    */
-  recordCarsDuel(state: LearnerState): void {
+  recordCarsDuel(state: LearnerState, rubric?: CarsDuelRubric): void {
     for (const cluster of ['CA1', 'CA2'] as const) {
       this.appendEvidence(state, {
         skillId: `cars-${cluster.toLowerCase()}`,
@@ -719,6 +722,28 @@ export class Authority {
         familyId: 'fam-cars-duel',
       });
     }
+    // Formative CARS ability nudge (low weight): each rubric criterion updates its
+    // sub-skill. Position→FOC, Argument→RWT, Application→RBT; R = score/3.
+    if (rubric) {
+      const map: ReadonlyArray<readonly [keyof CarsDuelRubric, CarsSkill]> = [
+        ['position', 'FOC'],
+        ['argument', 'RWT'],
+        ['application', 'RBT'],
+      ];
+      for (const [criterion, skill] of map) {
+        const score = rubric[criterion];
+        if (score !== undefined) this.updateCarsAbility(state, skill, score / 3, CARS_K_DUEL);
+      }
+    }
+  }
+
+  /**
+   * Passage of the Day: a measured CARS answer updates the sub-skill ability at
+   * full weight (K=0.3). PotD wires this in once real CARS passages are served
+   * (see docs/mastery-pipeline.md §5.4).
+   */
+  recordCarsPassage(state: LearnerState, skill: CarsSkill, correct: boolean): void {
+    this.updateCarsAbility(state, skill, correct ? 1 : 0, CARS_K_POTD);
   }
 
   getWrapped(state: LearnerState): WrappedView {

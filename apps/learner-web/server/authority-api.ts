@@ -198,7 +198,7 @@ export async function handleAuthorityRequest(
       return sendJson(response, 200, result);
     }
     if (path === '/v1/hooks/cars-duel' && method === 'POST') {
-      await client.recordCarsDuel();
+      await client.recordCarsDuel(body.rubric as Parameters<typeof client.recordCarsDuel>[0]);
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/account/progress' && method === 'DELETE') {

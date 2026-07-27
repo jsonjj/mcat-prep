@@ -1,5 +1,5 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { ProbableCause, VectorLessonAction } from '@mcat/contracts';
+import type { CarsDuelRubric, ProbableCause, VectorLessonAction } from '@mcat/contracts';
 import type { GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type ChoiceId, type DiagnosticNextView } from './diagnostic-client';
@@ -174,7 +174,7 @@ export function useCheckPractice() {
 export function useRecordCarsDuel() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () => authority.recordCarsDuel(),
+    mutationFn: (rubric?: CarsDuelRubric) => authority.recordCarsDuel(rubric),
     onSuccess: () => invalidateLearner(qc),
   });
 }

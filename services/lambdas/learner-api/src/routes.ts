@@ -1,5 +1,6 @@
 import {
   AttemptCommandSchema,
+  CarsDuelRubricSchema,
   CarsReadinessViewSchema,
   ChoiceIdSchema,
   CommandEnvelopeSchema,
@@ -22,6 +23,7 @@ import {
   VectorLessonStartResponseSchema,
   VectorLessonStatusViewSchema,
   WrappedViewSchema,
+  type CarsDuelRubric,
   type ChoiceId,
   type CommandEnvelope,
   type ContentId,
@@ -86,6 +88,11 @@ export interface PracticeAttemptCommandBody {
   readonly choiceId: ChoiceId | null;
 }
 
+export interface CarsDuelCommandBody {
+  readonly envelope: CommandEnvelope;
+  readonly rubric?: CarsDuelRubric;
+}
+
 function record(value: unknown): Record<string, unknown> | null {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
     ? (value as Record<string, unknown>)
@@ -129,6 +136,16 @@ const ContinueCommandBodySchema = workflowSchema<ContinueCommandBody>((value) =>
   if (!exactKeys(value, ['envelope'])) return null;
   const envelope = CommandEnvelopeSchema.safeParse(value.envelope);
   return envelope.success ? { envelope: envelope.data } : null;
+});
+
+const CarsDuelCommandBodySchema = workflowSchema<CarsDuelCommandBody>((value) => {
+  // Accept an envelope alone, or an envelope plus an optional formative rubric.
+  if (!Object.keys(value).every((key) => key === 'envelope' || key === 'rubric')) return null;
+  const envelope = CommandEnvelopeSchema.safeParse(value.envelope);
+  if (!envelope.success) return null;
+  if (!('rubric' in value)) return { envelope: envelope.data };
+  const rubric = CarsDuelRubricSchema.safeParse(value.rubric);
+  return rubric.success ? { envelope: envelope.data, rubric: rubric.data } : null;
 });
 
 const RecallCommandBodySchema = workflowSchema<RecallCommandBody>((value) => {
@@ -277,7 +294,7 @@ export const ROUTES: readonly RouteDefinition[] = [
     path: '/v1/hooks/cars-duel',
     auth: 'session',
     stateChanging: true,
-    bodySchema: ContinueCommandBodySchema,
+    bodySchema: CarsDuelCommandBodySchema,
   },
   {
     id: 'wrapped',
