@@ -35,12 +35,7 @@ import {
   type RecallMediaStore,
 } from './adapters/media-store';
 import { sanitizeCardHtml } from './adapters/html-sanitize';
-import {
-  commitImport,
-  parseApkg,
-  type ImportSummary,
-  type PreparedImport,
-} from './adapters/apkg-importer';
+import type { ImportSummary, PreparedImport } from './adapters/apkg-importer';
 
 const nowIso = (): string => new Date().toISOString();
 
@@ -259,10 +254,10 @@ export class RecallService {
     for (const [key, value] of Object.entries(fields)) cleanFields[key] = sanitizeCardHtml(value);
     await this.repo.putNote({ ...note, fields: cleanFields, tags: normTags, updatedAt: now });
 
-    const faces = this.renderNoteFaces(note.type, cleanFields);
     const siblings = (await this.repo.listSiblingCards(noteId)).sort(
       (a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt),
     );
+    const faces = this.renderNoteFaces(note.type, cleanFields, siblings.length);
 
     const updates: Card[] = [];
     const max = Math.max(faces.length, siblings.length);
@@ -304,6 +299,7 @@ export class RecallService {
   private renderNoteFaces(
     type: Note['type'],
     fields: Record<string, string>,
+    siblingCount = 1,
   ): { front: string; back: string }[] {
     if (type === 'cloze') {
       const text = fields.Text ?? '';
@@ -314,10 +310,13 @@ export class RecallService {
         back: sanitizeCardHtml(renderCloze(text, n, true) + (extra ? `<hr>${extra}` : '')),
       }));
     }
-    const front = fields.Front ?? '';
-    const back = fields.Back ?? '';
-    // A single face; a reversed pair is inferred from the existing sibling count.
-    return [{ front, back }];
+    const front = sanitizeCardHtml(fields.Front ?? '');
+    const back = sanitizeCardHtml(fields.Back ?? '');
+    const faces = [{ front, back }];
+    // A reversed basic note keeps two sibling cards; regenerate the reverse face
+    // (inferred from the existing sibling count) so edits propagate to both.
+    if (siblingCount >= 2) faces.push({ front: back, back: front });
+    return faces;
   }
 
   async setSuspended(cardId: string, suspended: boolean, now: string = nowIso()): Promise<void> {
@@ -349,13 +348,18 @@ export class RecallService {
     return this.repo.purgeCard(cardId);
   }
 
-  /** Read-only parse for the import preview step. */
-  parseImport(file: File | Blob | ArrayBuffer): Promise<PreparedImport> {
+  /**
+   * Read-only parse for the import preview step. The `.apkg` parser (JSZip +
+   * sql.js WASM) is loaded on demand so it stays out of the initial app bundle.
+   */
+  async parseImport(file: File | Blob | ArrayBuffer): Promise<PreparedImport> {
+    const { parseApkg } = await import('./adapters/apkg-importer');
     return parseApkg(file);
   }
 
-  /** Persist a previously-parsed import. */
-  commitImport(prepared: PreparedImport): Promise<ImportSummary> {
+  /** Persist a previously-parsed import (loads the importer chunk on demand). */
+  async commitImport(prepared: PreparedImport): Promise<ImportSummary> {
+    const { commitImport } = await import('./adapters/apkg-importer');
     return commitImport(this.repo, this.media, prepared);
   }
 }

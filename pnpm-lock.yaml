@@ -133,9 +133,6 @@ importers:
       '@mcat/client-core':
         specifier: workspace:*
         version: link:../../packages/client-core
-      '@mcat/content':
-        specifier: workspace:*
-        version: link:../../packages/content
       '@mcat/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
@@ -191,6 +188,9 @@ importers:
         specifier: 0.171.0
         version: 0.171.0
     devDependencies:
+      '@mcat/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@types/emscripten':
         specifier: 1.41.5
         version: 1.41.5

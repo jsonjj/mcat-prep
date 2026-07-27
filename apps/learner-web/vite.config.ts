@@ -2,7 +2,6 @@ import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { authorityApiPlugin } from './server/authority-api-plugin';
 import { diagnosticApiPlugin } from './server/diagnostic-api-plugin';
-import { recallApiPlugin } from './server/recall-api-plugin';
 
 /**
  * Dev-only AI proxy. The provider key stays server-side (read from an untracked
@@ -96,7 +95,7 @@ export default defineConfig(({ mode }) => {
 
   if (authorityProxyTarget) {
     return {
-      plugins: [react(), aiProxy(env), diagnosticApiPlugin(), recallApiPlugin()],
+      plugins: [react(), aiProxy(env), diagnosticApiPlugin()],
       server: {
         port: 5173,
         proxy: {
@@ -118,7 +117,7 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    plugins: [react(), aiProxy(env), authorityApiPlugin(), diagnosticApiPlugin(), recallApiPlugin()],
+    plugins: [react(), aiProxy(env), authorityApiPlugin(), diagnosticApiPlugin()],
     server: { port: 5173 },
     ...shared,
   };

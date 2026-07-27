@@ -8,7 +8,11 @@ import { Curriculum } from '../screens/Curriculum';
 import { VectorLesson } from '../screens/VectorLesson';
 import { Lesson } from '../screens/Lesson';
 import { Study } from '../screens/Study';
-import { Recall } from '../screens/Recall';
+import { RecallHome } from '../screens/recall/RecallHome';
+import { RecallReview } from '../screens/recall/RecallReview';
+import { CardBrowser } from '../screens/recall/CardBrowser';
+import { CardEditor } from '../screens/recall/CardEditor';
+import { ImportApkg } from '../screens/recall/ImportApkg';
 import { Mistakes } from '../screens/Mistakes';
 import { Progress } from '../screens/Progress';
 import { Skills } from '../screens/Skills';
@@ -24,7 +28,7 @@ export const router = createBrowserRouter([
   { path: '/onboarding/plan', element: <PlanSetup /> },
   // App-native lessons are a full-page, immersive experience: they render their
   // own shell/header, so they live *outside* AppShell to avoid a duplicate
-  // top bar. Curriculum and Recall still link to `/app/lesson/:slug`.
+  // top bar. Curriculum still links to `/app/lesson/:slug`.
   { path: '/app/lesson/:slug', element: <Lesson /> },
   {
     path: '/app',
@@ -36,7 +40,13 @@ export const router = createBrowserRouter([
       // Today merged into Home; keep the path working for bookmarks.
       { path: 'today', element: <Navigate to="/app" replace /> },
       { path: 'learn', element: <Study /> },
-      { path: 'recall', element: <Recall /> },
+      // Recall (Anki-style flashcards): the tab landing plus its child surfaces.
+      { path: 'recall', element: <RecallHome /> },
+      { path: 'recall/review', element: <RecallReview /> },
+      { path: 'recall/browse', element: <CardBrowser /> },
+      { path: 'recall/new', element: <CardEditor /> },
+      { path: 'recall/edit/:cardId', element: <CardEditor /> },
+      { path: 'recall/import', element: <ImportApkg /> },
       { path: 'mistakes', element: <Mistakes /> },
       { path: 'progress', element: <Progress /> },
       { path: 'skills', element: <Skills /> },

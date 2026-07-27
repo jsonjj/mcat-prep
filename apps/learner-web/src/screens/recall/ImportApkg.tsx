@@ -3,11 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRecallService } from '../../app/recall-queries';
-import {
-  ApkgUnsupportedError,
-  type ImportSummary,
-  type PreparedImport,
-} from '../../recall/adapters/apkg-importer';
+import type { ImportSummary, PreparedImport } from '../../recall/adapters/apkg-importer';
 
 type Phase = 'idle' | 'parsing' | 'preview' | 'importing' | 'done' | 'error';
 
@@ -28,13 +24,9 @@ export function ImportApkg() {
       setPrepared(result);
       setPhase('preview');
     } catch (e) {
-      setError(
-        e instanceof ApkgUnsupportedError
-          ? e.message
-          : e instanceof Error
-            ? e.message
-            : 'That file could not be read as an Anki deck.',
-      );
+      // ApkgUnsupportedError carries its own friendly "re-export for older Anki
+      // versions" message, so the generic Error branch surfaces it too.
+      setError(e instanceof Error ? e.message : 'That file could not be read as an Anki deck.');
       setPhase('error');
     }
   };

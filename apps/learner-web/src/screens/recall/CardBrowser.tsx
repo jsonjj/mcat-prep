@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
+import { Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import type { Card as RecallCard, CardState } from '@mcat/recall-core';
 import {
   useRecallCards,

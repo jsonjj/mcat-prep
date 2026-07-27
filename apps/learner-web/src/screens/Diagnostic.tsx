@@ -4,7 +4,6 @@ import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { useDiagnosticNext, useSubmitDiagnostic } from '../app/queries';
 import type { ChoiceId, DiagnosticResultView } from '../app/diagnostic-client';
 import { markDiagnosticCompleted } from '../app/diagnostic-status';
-import { ensureSeeded } from '../app/recall-schedule';
 
 const CONFIDENCE_SENTENCE: Record<DiagnosticResultView['confidenceLabel'], string> = {
   High: 'We have a clear starting plan for you. We’ll keep sharpening it as you study.',
@@ -89,10 +88,9 @@ export function Diagnostic() {
     });
   };
 
-  // Skipping placement: seed a neutral recall schedule and go straight to plan
-  // setup. The learner can still take the diagnostic later.
+  // Skipping placement: go straight to plan setup. The learner can still take
+  // the diagnostic later.
   const onSkip = () => {
-    ensureSeeded(null);
     navigate('/onboarding/plan');
   };
 
@@ -199,11 +197,9 @@ function DiagnosticComplete({
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   useEffect(() => {
     headingRef.current?.focus();
-    // Seed the topic-recall schedule from this placement (idempotent).
-    ensureSeeded(result);
     // Mark the diagnostic as genuinely completed so Welcome stops re-offering it.
     markDiagnosticCompleted();
-  }, [result]);
+  }, []);
 
   return (
     <div className="mc-onboarding">
