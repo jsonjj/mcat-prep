@@ -80,6 +80,59 @@ export const BRAIN_REGION_BY_CLUSTER: Readonly<Record<SkillCluster, string>> = {
 export const OperationTagSchema = z.enum(['K', 'Q', 'E', 'D', 'P', 'A', 'I', 'T']);
 export type OperationTag = z.infer<typeof OperationTagSchema>;
 
+/**
+ * The 7 reasoning operations — the learner-facing "skill" axis tracked by the
+ * mastery engine (BKT `P(L)` per operation) and shown on the Skills page. AAMC's
+ * four SIRS skills are the reporting frame, but SIRS2 (~45% of the exam) is split
+ * into its four real operations (PREDICT/EXPLAIN/RELATE/QUANTIFY); SIRS1/3/4 map
+ * one-to-one. See docs/mastery-pipeline.md §6.
+ */
+export const ReasoningOperationSchema = z.enum([
+  'IDENTIFY',
+  'PREDICT',
+  'EXPLAIN',
+  'RELATE',
+  'QUANTIFY',
+  'DESIGN',
+  'EVIDENCE',
+]);
+export type ReasoningOperation = z.infer<typeof ReasoningOperationSchema>;
+
+export const REASONING_OPERATIONS: readonly ReasoningOperation[] = ReasoningOperationSchema.options;
+
+export interface ReasoningOperationInfo {
+  readonly operation: ReasoningOperation;
+  readonly title: string;
+  /** Closest AAMC skill anchor (reporting frame). */
+  readonly aamc: string;
+  readonly description: string;
+}
+
+export const REASONING_OPERATION_INFO: Readonly<Record<ReasoningOperation, ReasoningOperationInfo>> = {
+  IDENTIFY: { operation: 'IDENTIFY', title: 'Identify', aamc: 'Skill 1', description: 'Recognize, recall, or define the concept a scenario shows.' },
+  PREDICT: { operation: 'PREDICT', title: 'Predict', aamc: 'SIRS2', description: 'Given a perturbation, work forward to what happens (cause → effect).' },
+  EXPLAIN: { operation: 'EXPLAIN', title: 'Explain', aamc: 'SIRS2', description: 'Given an observation, work backward to the mechanism (why).' },
+  RELATE: { operation: 'RELATE', title: 'Relate', aamc: 'SIRS2', description: 'Map entity ↔ role or compare two cases (relational reasoning).' },
+  QUANTIFY: { operation: 'QUANTIFY', title: 'Quantify', aamc: 'Skill 1/2', description: 'Pick and run the right relationship (select + compute).' },
+  DESIGN: { operation: 'DESIGN', title: 'Design', aamc: 'Skill 3', description: 'Judge or choose a method or study (controls, confounds, validity).' },
+  EVIDENCE: { operation: 'EVIDENCE', title: 'Evidence', aamc: 'Skill 4', description: 'Decide what the data licenses (interpretation of results).' },
+};
+
+/**
+ * The three AAMC CARS skills, tracked separately as IRT abilities (not BKT). The
+ * question bank already tags these as `CARS_FOC / CARS_RWT / CARS_RBT`.
+ */
+export const CarsSkillSchema = z.enum(['FOC', 'RWT', 'RBT']);
+export type CarsSkill = z.infer<typeof CarsSkillSchema>;
+
+export const CARS_SKILLS: readonly CarsSkill[] = CarsSkillSchema.options;
+
+export const CARS_SKILL_INFO: Readonly<Record<CarsSkill, { readonly skill: CarsSkill; readonly title: string }>> = {
+  FOC: { skill: 'FOC', title: 'Foundations of Comprehension' },
+  RWT: { skill: 'RWT', title: 'Reasoning Within the Text' },
+  RBT: { skill: 'RBT', title: 'Reasoning Beyond the Text' },
+};
+
 /** Item formats. */
 export const QuestionFormatSchema = z.enum([
   'discrete_mcq',
