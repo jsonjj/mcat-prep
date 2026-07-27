@@ -2,14 +2,17 @@ import {
   AcceptedCommandResponseSchema,
   AttemptCommandSchema,
   BootstrapResponseSchema,
+  CarsReadinessViewSchema,
   DiagnosticNextSchema,
   ErrorEntryViewSchema,
   GoalCommandSchema,
   GuestBootstrapResponseSchema,
   HTTP_API,
   HttpApiErrorSchema,
+  LessonMasteryViewSchema,
   MasteryMapEntrySchema,
   PracticeItemViewSchema,
+  SkillMasteryViewSchema,
   PracticeResultSchema,
   SkillSummarySchema,
   StudyStepViewSchema,
@@ -325,6 +328,21 @@ export class HttpAuthorityClient implements AuthorityPort {
   async getMasteryMap() {
     await this.ensureBootstrap();
     return this.request('/v1/progress/mastery', arrayOf(MasteryMapEntrySchema));
+  }
+
+  async getMasterySkills() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.progressSkills.path, arrayOf(SkillMasteryViewSchema));
+  }
+
+  async getMasteryLessons() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.progressLessons.path, arrayOf(LessonMasteryViewSchema));
+  }
+
+  async getCarsReadiness() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.progressCars.path, CarsReadinessViewSchema);
   }
 
   async getErrorLog() {

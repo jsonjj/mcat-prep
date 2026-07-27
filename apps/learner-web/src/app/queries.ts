@@ -13,6 +13,9 @@ const LEARNER_KEYS = [
   'today',
   'session',
   'mastery',
+  'mastery-skills',
+  'mastery-lessons',
+  'cars-readiness',
   'errors',
   'vector-lesson-status',
   'vector-lesson-run',
@@ -28,6 +31,15 @@ export const useSession = () =>
   useQuery({ queryKey: ['session'], queryFn: () => authority.getSession() });
 export const useMasteryMap = () =>
   useQuery({ queryKey: ['mastery'], queryFn: () => authority.getMasteryMap() });
+/** BKT mastery: the 7 reasoning-skill readouts (Skills page). */
+export const useMasterySkills = () =>
+  useQuery({ queryKey: ['mastery-skills'], queryFn: () => authority.getMasterySkills() });
+/** BKT mastery: per-lesson P(L) (Progress brain). */
+export const useMasteryLessons = () =>
+  useQuery({ queryKey: ['mastery-lessons'], queryFn: () => authority.getMasteryLessons() });
+/** CARS IRT readiness (gauge + sub-skill bars). */
+export const useCarsReadiness = () =>
+  useQuery({ queryKey: ['cars-readiness'], queryFn: () => authority.getCarsReadiness() });
 export const useErrorLog = () =>
   useQuery({ queryKey: ['errors'], queryFn: () => authority.getErrorLog() });
 export const useSkills = () =>

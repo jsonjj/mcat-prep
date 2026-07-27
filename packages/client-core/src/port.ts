@@ -1,11 +1,14 @@
 import type {
   BootstrapResponse,
+  CarsReadinessView,
   DiagnosticNext,
   ErrorEntryView,
+  LessonMasteryView,
   MasteryMapEntry,
   PracticeItemView,
   PracticeResult,
   ProbableCause,
+  SkillMasteryView,
   SkillSummary,
   StudyStepView,
   TodayView,
@@ -41,6 +44,12 @@ export interface AuthorityPort {
   continueStep(): Promise<void>;
   submitRecall(answer: string): Promise<boolean>;
   getMasteryMap(): Promise<MasteryMapEntry[]>;
+  /** BKT mastery: the 7 reasoning-skill readouts (Skills page). */
+  getMasterySkills(): Promise<SkillMasteryView[]>;
+  /** BKT mastery: per-lesson P(L) (drives the Progress brain). */
+  getMasteryLessons(): Promise<LessonMasteryView[]>;
+  /** CARS IRT readiness (gauge + 3 sub-skill bars). */
+  getCarsReadiness(): Promise<CarsReadinessView>;
   getErrorLog(): Promise<ErrorEntryView[]>;
   getSkills(): Promise<SkillSummary[]>;
   getPracticeItem(questionId: string): Promise<PracticeItemView | null>;

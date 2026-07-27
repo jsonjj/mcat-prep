@@ -1,10 +1,13 @@
 import {
   BootstrapResponseSchema,
+  CarsReadinessViewSchema,
   DiagnosticNextSchema,
   ErrorEntryViewSchema,
+  LessonMasteryViewSchema,
   MasteryMapEntrySchema,
   PracticeItemViewSchema,
   PracticeResultSchema,
+  SkillMasteryViewSchema,
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
@@ -98,6 +101,24 @@ export class InProcessAuthorityClient implements AuthorityPort {
   async getMasteryMap() {
     return MasteryMapEntrySchema.array().parse(
       this.mutate((state) => this.authority.getMasteryMap(state)),
+    );
+  }
+
+  async getMasterySkills() {
+    return SkillMasteryViewSchema.array().parse(
+      this.mutate((state) => this.authority.getMasterySkills(state)),
+    );
+  }
+
+  async getMasteryLessons() {
+    return LessonMasteryViewSchema.array().parse(
+      this.mutate((state) => this.authority.getMasteryLessons(state)),
+    );
+  }
+
+  async getCarsReadiness() {
+    return CarsReadinessViewSchema.parse(
+      this.mutate((state) => this.authority.getCarsReadiness(state)),
     );
   }
 
