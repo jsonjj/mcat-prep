@@ -5,3 +5,5 @@ export * from './fixed-window-rate-limiter';
 export * from './guest-session-service';
 export * from './postgres-repository';
 export * from './question-bank-repository';
+export * from './mastery-repository';
+export * from './question-stats-repository';

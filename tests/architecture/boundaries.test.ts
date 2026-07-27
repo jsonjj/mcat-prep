@@ -26,6 +26,7 @@ const PURE_LAYERS = [
   'packages/policies',
   'packages/content',
   'packages/authority-core',
+  'packages/recall-core',
 ];
 
 const FORBIDDEN_IN_PURE = [

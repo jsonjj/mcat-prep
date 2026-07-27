@@ -227,6 +227,7 @@ $role$`,
       'grant select, insert, update on table guest_sessions, learner_streams, api_rate_limits to mcat_learner_api',
       'grant select, insert on table accepted_events to mcat_learner_api',
       'grant insert on table outbox to mcat_learner_api',
+      'grant select, insert, update on table mastery_kc, mastery_skill, mastery_lesson, cars_ability, question_stats to mcat_learner_api',
     ],
   },
   {
