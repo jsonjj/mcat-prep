@@ -81,6 +81,9 @@ interface KernelPort {
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['practiceItem']>;
   wrapped(principal: Principal): ReturnType<RepositoryLearnerKernel['wrapped']>;
+  masterySkills(principal: Principal): ReturnType<RepositoryLearnerKernel['masterySkills']>;
+  masteryLessons(principal: Principal): ReturnType<RepositoryLearnerKernel['masteryLessons']>;
+  carsReadiness(principal: Principal): ReturnType<RepositoryLearnerKernel['carsReadiness']>;
   handlePractice(
     input: PracticeAttemptCommandBody,
     principal: Principal,
@@ -719,6 +722,33 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       return jsonResponse(
         200,
         route.responseSchema?.parse(await dependencies.kernel.wrapped(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'progressSkills') {
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.masterySkills(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'progressLessons') {
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.masteryLessons(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'progressCars') {
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.carsReadiness(principal)),
         origin,
         requestIdValue,
       );

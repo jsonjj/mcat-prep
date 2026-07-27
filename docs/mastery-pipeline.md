@@ -101,9 +101,13 @@ Contracts (`@mcat/contracts/mastery.ts`): `MasterySeed`, `SkillMasteryView`, `Le
   the study loop's first independent answer calls `updateMasteryForAttempt`; reads
   (`getMasterySkills/getMasteryLessons/getCarsReadiness`) apply lazy decay. A dev-only adapter maps
   the synthetic bank (op tag → 7-op, `internal_skill_ids[0]` → KC, `difficulty` → DOK).
-- **Deployed** (`learner-api`, Postgres): the same `applyMasteryAttempt` runs inside the command
-  transaction; `question_stats` is incremented on each scored attempt; reads come from the mastery
-  tables. *(Wiring tracked separately; verified by typecheck + CI integration tests.)*
+- **Deployed** (`learner-api`, Postgres): the attempt path already flows through
+  `authority.submitAttempt`, so mastery updates run inside the command transaction and persist in the
+  `learner_streams.state_json` projection (which round-trips `LearnerState.mastery`). Reads
+  (`GET /v1/progress/{skills,lessons,cars}`) rebuild the Authority from the projection and apply lazy
+  decay. The dedicated `mastery_*` / `cars_ability` tables are a **queryable projection target** for a
+  future independent consumer (they are provisioned + granted but not yet on the read path);
+  `question_stats` is populated once a real bank + calibrated difficulty are wired.
 - **Client** (`@mcat/client-core` `AuthorityPort` + `HttpAuthorityClient`, in-process client, and the
   dev Vite authority server): 3 read methods + `useMasterySkills/useMasteryLessons/useCarsReadiness`
   hooks in learner-web.

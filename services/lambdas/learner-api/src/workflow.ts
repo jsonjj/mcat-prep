@@ -16,19 +16,25 @@ import {
 import {
   AcceptedCommandResponseSchema,
   AttemptCommandSchema,
+  CarsReadinessViewSchema,
   DiagnosticNextSchema,
+  LessonMasteryViewSchema,
   PracticeItemViewSchema,
   PracticeResultSchema,
+  SkillMasteryViewSchema,
   SkillSummarySchema,
   VectorLessonRunViewSchema,
   VectorLessonStartResponseSchema,
   VectorLessonStatusViewSchema,
   WrappedViewSchema,
+  type CarsReadinessView,
   type Clock,
   type CommandEnvelope,
   type ContentId,
   type DiagnosticNext,
+  type LessonMasteryView,
   type PracticeItemView,
+  type SkillMasteryView,
   type SkillSummary,
   type VectorLessonCommand,
   type VectorLessonStartCommand,
@@ -194,6 +200,24 @@ export class RepositoryLearnerKernel {
     const state = await this.loadState(principal);
     const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
     return WrappedViewSchema.parse(authority.getWrapped(state));
+  }
+
+  async masterySkills(principal: Principal): Promise<readonly SkillMasteryView[]> {
+    const state = await this.loadState(principal);
+    const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
+    return SkillMasteryViewSchema.array().parse(authority.getMasterySkills(state));
+  }
+
+  async masteryLessons(principal: Principal): Promise<readonly LessonMasteryView[]> {
+    const state = await this.loadState(principal);
+    const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
+    return LessonMasteryViewSchema.array().parse(authority.getMasteryLessons(state));
+  }
+
+  async carsReadiness(principal: Principal): Promise<CarsReadinessView> {
+    const state = await this.loadState(principal);
+    const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
+    return CarsReadinessViewSchema.parse(authority.getCarsReadiness(state));
   }
 
   async vectorLessonStatus(principal: Principal) {

@@ -1,15 +1,18 @@
 import {
   AttemptCommandSchema,
+  CarsReadinessViewSchema,
   ChoiceIdSchema,
   CommandEnvelopeSchema,
   ContentIdSchema,
   DiagnosticNextSchema,
   ErrorEntryViewSchema,
   GoalCommandSchema,
+  LessonMasteryViewSchema,
   MasteryMapEntrySchema,
   PracticeItemViewSchema,
   PracticeResultSchema,
   ProbableCauseSchema,
+  SkillMasteryViewSchema,
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
@@ -44,6 +47,9 @@ export type RouteId =
   | 'today'
   | 'session'
   | 'mastery'
+  | 'progressSkills'
+  | 'progressLessons'
+  | 'progressCars'
   | 'errors'
   | 'vectorLessonStatus'
   | 'vectorLessonStart'
@@ -312,6 +318,30 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: false,
     responseSchema: MasteryMapEntrySchema.array(),
+  },
+  {
+    id: 'progressSkills',
+    method: 'GET',
+    path: '/v1/progress/skills',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: SkillMasteryViewSchema.array(),
+  },
+  {
+    id: 'progressLessons',
+    method: 'GET',
+    path: '/v1/progress/lessons',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: LessonMasteryViewSchema.array(),
+  },
+  {
+    id: 'progressCars',
+    method: 'GET',
+    path: '/v1/progress/cars',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: CarsReadinessViewSchema,
   },
   {
     id: 'errors',
