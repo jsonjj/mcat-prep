@@ -1225,6 +1225,42 @@ body {
   margin-top: var(--mc-space-4);
 }
 
+/* ---- Segmented control (Progress: Lessons | CARS) ---- */
+.mc-seg {
+  display: flex;
+  width: 100%;
+  gap: var(--mc-space-1);
+  padding: 4px;
+  margin-bottom: var(--mc-space-4);
+  background: var(--mc-surface-2);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-pill);
+}
+.mc-seg__tab {
+  flex: 1;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--mc-ink-muted);
+  font-family: var(--mc-font-body);
+  font-size: var(--mc-text-15);
+  font-weight: 700;
+  min-height: 44px;
+  padding: var(--mc-space-2) var(--mc-space-4);
+  border-radius: var(--mc-radius-pill);
+  cursor: pointer;
+  transition: background var(--mc-motion-control) var(--mc-ease), color var(--mc-motion-control) var(--mc-ease);
+}
+.mc-seg__tab--active {
+  background: var(--mc-surface);
+  color: var(--mc-ink);
+  box-shadow: var(--mc-shadow-card);
+}
+.mc-seg__tab:focus-visible {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+}
+
 /* ---- Practice hub (Phase 7 hooks) ---- */
 .mc-hub {
   display: grid;

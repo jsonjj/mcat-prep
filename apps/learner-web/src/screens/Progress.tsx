@@ -1,42 +1,115 @@
+import { useRef, useState, type KeyboardEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
-import { useMasterySkills } from '../app/queries';
+import { Callout } from '@mcat/ui-web';
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
 import { CarsReadiness } from '../components/CarsReadiness';
 
-/** Starting BKT prior; a skill that has moved off it has some evidence. */
-const PRIOR = 0.2;
+const TABS = [
+  { id: 'lessons', label: 'Lessons' },
+  { id: 'cars', label: 'CARS' },
+] as const;
+type TabId = (typeof TABS)[number]['id'];
 
+const initialTab = (): TabId =>
+  typeof window !== 'undefined' && window.location.hash === '#cars' ? 'cars' : 'lessons';
+
+/**
+ * Progress — two views of the learner's evidence behind one segmented control so
+ * the page stays short: "Lessons" shows the Evidence Atlas brain (per-lesson
+ * P(L)); "CARS" shows the reading-ability dial + sub-skills. Selection follows
+ * focus (ARIA APG tablist), matching the Curriculum tabs.
+ */
 export function Progress() {
-  const skills = useMasterySkills();
-  const assessed = (skills.data ?? []).filter((s) => Math.abs(s.pL - PRIOR) > 1e-6);
+  const [active, setActive] = useState<TabId>(initialTab);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  const select = (index: number): void => {
+    const tab = TABS[index];
+    if (!tab) return;
+    tabRefs.current[index]?.focus();
+    setActive(tab.id);
+  };
+
+  const onTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>): void => {
+    const i = TABS.findIndex((t) => t.id === active);
+    switch (event.key) {
+      case 'ArrowRight':
+        event.preventDefault();
+        select((i + 1) % TABS.length);
+        break;
+      case 'ArrowLeft':
+        event.preventDefault();
+        select((i - 1 + TABS.length) % TABS.length);
+        break;
+      case 'Home':
+        event.preventDefault();
+        select(0);
+        break;
+      case 'End':
+        event.preventDefault();
+        select(TABS.length - 1);
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <div className="mc-screen">
       <header className="mc-screen__head">
         <h1 className="mc-h1">Progress</h1>
         <p className="mc-muted">
-          Your Evidence Atlas fills in as you master lessons on your own. Drag to rotate, tap a
-          region to open it — your seven reasoning skills are on the Skills tab.
+          Two views of your evidence — the lessons you have mastered, and your CARS reading ability.
         </p>
       </header>
 
-      <EvidenceAtlas />
+      <div className="mc-seg" role="tablist" aria-label="Progress view">
+        {TABS.map((tab, index) => {
+          const selected = tab.id === active;
+          return (
+            <button
+              key={tab.id}
+              ref={(element) => {
+                tabRefs.current[index] = element;
+              }}
+              type="button"
+              role="tab"
+              id={`mc-progress-tab-${tab.id}`}
+              aria-selected={selected}
+              aria-controls={`mc-progress-panel-${tab.id}`}
+              tabIndex={selected ? 0 : -1}
+              className={`mc-seg__tab${selected ? ' mc-seg__tab--active' : ''}`}
+              onClick={() => setActive(tab.id)}
+              onKeyDown={onTabKeyDown}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
 
-      <Card elevated>
-        <Stack gap={2}>
-          <Eyebrow>Readiness trend</Eyebrow>
-          <p className="mc-h3">
-            {assessed.length === 0 ? 'Insufficient evidence yet' : 'Strengthening'}
-          </p>
-          <Callout tone="info" title="Score prediction is off">
-            A numeric MCAT prediction stays hidden until the model is validated and you have enough
-            recent, broad evidence. Until then we show direction, not a scaled score.
-          </Callout>
-        </Stack>
-      </Card>
+      <section
+        id="mc-progress-panel-lessons"
+        role="tabpanel"
+        aria-labelledby="mc-progress-tab-lessons"
+        hidden={active !== 'lessons'}
+      >
+        <EvidenceAtlas />
+      </section>
 
-      <CarsReadiness />
+      <section
+        id="mc-progress-panel-cars"
+        role="tabpanel"
+        aria-labelledby="mc-progress-tab-cars"
+        hidden={active !== 'cars'}
+      >
+        <CarsReadiness />
+      </section>
+
+      <Callout tone="info" title="No numeric score">
+        Progress shows direction, not a scaled score — a numeric MCAT prediction stays hidden until it
+        is validated and you have enough recent, broad evidence.
+      </Callout>
 
       <Link to="/app/wrapped" className="mc-daily" aria-label="See your Wrapped recap">
         <div className="mc-daily__text">
