@@ -1164,6 +1164,67 @@ body {
   }
 }
 
+/* ---- CARS reading-ability gauge (Progress card) ---- */
+.mc-cars-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--mc-space-3);
+}
+.mc-cars-gauge svg {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+}
+.mc-cars-gauge__track {
+  fill: none;
+  stroke: var(--mc-surface-2);
+  stroke-width: 14;
+  stroke-linecap: round;
+}
+.mc-cars-gauge__fill {
+  fill: none;
+  stroke: url(#mcCarsFill);
+  stroke-width: 14;
+  stroke-linecap: round;
+}
+.mc-cars-gauge__tick {
+  stroke: var(--mc-primary-text);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.mc-cars-gauge__ticktext {
+  font-family: var(--mc-font-body);
+  font-size: 11px;
+  fill: var(--mc-primary-text);
+  text-anchor: middle;
+}
+.mc-cars-gauge__end {
+  font-family: var(--mc-font-body);
+  font-size: 10px;
+  fill: var(--mc-ink-muted);
+}
+.mc-cars-gauge__marker {
+  fill: var(--mc-retained);
+  stroke: var(--mc-surface);
+  stroke-width: 3;
+}
+.mc-cars-gauge__markerglow {
+  fill: var(--mc-retained);
+  opacity: 0.22;
+}
+.mc-cars-gauge__word {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-28);
+  color: var(--mc-ink);
+  margin: 0;
+  text-align: center;
+}
+.mc-cars-subskills {
+  width: 100%;
+  margin-top: var(--mc-space-4);
+}
+
 /* ---- Practice hub (Phase 7 hooks) ---- */
 .mc-hub {
   display: grid;

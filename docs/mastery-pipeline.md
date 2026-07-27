@@ -137,9 +137,42 @@ aggregation to the diagnostic output.
 PotD emits `{ carsSkill, correct, dok_level }` → `K=0.3`. Duel emits `{ rubric: {position?,
 argument?, application?} 0–3 }` → mapped to FOC/RWT/RBT, `K=0.08` (formative).
 
-### 5.5 Recall (boundary)
-The flashcards/FSRS feature owns facts and never writes mastery. The old cluster-FSRS shim is
-replaced by a mastery-driven due-review surface (units with decayed `P(L) < 0.90`).
+### 5.5 Recall (mastery due-review) — contract for the future Recall system
+
+The Recall screen is **not built in this pass** (the owner will build it). It plugs into the mastery
+pipeline as **both a consumer and a producer**. To fit the pipeline it must:
+
+**CONSUME — what "due" means.** A unit is due when its lazily-decayed `P(L)` has fallen below the
+review line (`REVIEW_LINE = 0.90`, exported from `@mcat/policies`). Read current values from the
+pipeline (the read views already apply lazy decay, so `pL` is current):
+
+- 7 skills: `GET /v1/progress/skills` (`AuthorityPort.getMasterySkills`) → filter `pL < 0.90`.
+- lessons: `GET /v1/progress/lessons` (`AuthorityPort.getMasteryLessons`) → filter `pL < 0.90`.
+- KC-grain due lists: KC `P(L)` is **stored but not yet exposed**. If Recall needs a per-KC due list,
+  add a `getMasteryKc` read (a `GET /v1/progress/kc` endpoint + `Authority` method) — the storage
+  (`mastery_kc`) already exists.
+
+Sort most-decayed first (lowest `pL`). A unit that has never been practiced (no entry / `pL` at the
+0.2 prior) is **not** "due" — only decayed, previously-built units are.
+
+**PRODUCE — how a review counts.** When the learner practices a due item, the answer MUST flow
+through the **same independent-attempt path** as the study loop (`authority.submitAttempt` →
+`POST /v1/attempts`), carrying the full §5.2 attempt contract with `assistanceLevel: 'A0'`, no
+content-bearing hint, not a diagnostic retry, not revealed. That single path is what (a) runs the BKT
+update and (b) **doubles the half-life** on a successful due review — the engine's `stepMemory`
+detects the due review automatically because the pre-practice decayed `P(L) < 0.90`. Recall MUST NOT
+compute or write mastery itself.
+
+**Session net.** If Recall practices several items for one concept in a session, pass the session's
+net correctness so one mid-session miss doesn't reset the half-life (the engine accepts a
+`dueReviewNetCorrect` override on `stepMemory` / `applyMasteryAttempt`; wire it through if Recall
+batches).
+
+**Boundary.** The separate Anki-style flashcards/FSRS feature owns user *facts* and never writes
+mastery; this concept/skill due-review lane is the one that feeds `P(L)`. The old client-side
+cluster-FSRS shim (`apps/learner-web/src/app/recall-schedule.ts`) is the thing the future Recall
+system replaces; until then it stays as a demo (and is the only remaining `@mcat/content` import in
+`learner-web`).
 
 ---
 

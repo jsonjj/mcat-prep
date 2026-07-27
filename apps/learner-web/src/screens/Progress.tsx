@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { useMasterySkills } from '../app/queries';
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
+import { CarsReadiness } from '../components/CarsReadiness';
 
 /** Starting BKT prior; a skill that has moved off it has some evidence. */
 const PRIOR = 0.2;
@@ -34,6 +35,8 @@ export function Progress() {
           </Callout>
         </Stack>
       </Card>
+
+      <CarsReadiness />
 
       <Link to="/app/wrapped" className="mc-daily" aria-label="See your Wrapped recap">
         <div className="mc-daily__text">
