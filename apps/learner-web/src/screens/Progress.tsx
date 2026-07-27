@@ -1,21 +1,22 @@
 import { Link } from 'react-router-dom';
-import { Callout, Card, Eyebrow, MasteryBadge, Stack } from '@mcat/ui-web';
-import type { MasteryState } from '@mcat/contracts';
-import { useMasteryMap } from '../app/queries';
+import { Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
+import { useMasterySkills } from '../app/queries';
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
 
+/** Starting BKT prior; a skill that has moved off it has some evidence. */
+const PRIOR = 0.2;
+
 export function Progress() {
-  const mastery = useMasteryMap();
-  const entries = mastery.data ?? [];
-  const assessed = entries.filter((e) => e.base !== 'not_assessed');
+  const skills = useMasterySkills();
+  const assessed = (skills.data ?? []).filter((s) => Math.abs(s.pL - PRIOR) > 1e-6);
 
   return (
     <div className="mc-screen">
       <header className="mc-screen__head">
         <h1 className="mc-h1">Progress</h1>
         <p className="mc-muted">
-          Your Evidence Atlas fills in as regions earn mastery. Drag to rotate, tap a region to open
-          it — everything is also in the Skills list.
+          Your Evidence Atlas fills in as you master lessons on your own. Drag to rotate, tap a
+          region to open it — your seven reasoning skills are on the Skills tab.
         </p>
       </header>
 
@@ -40,27 +41,10 @@ export function Progress() {
           <span className="mc-daily__title">See your recap</span>
           <span className="mc-upnext__meta">A keepable summary of the evidence you have built.</span>
         </div>
-        <span className="mc-daily__arrow" aria-hidden="true">→</span>
+        <span className="mc-daily__arrow" aria-hidden="true">
+          →
+        </span>
       </Link>
-
-      <h2 className="mc-h2">Skills with evidence</h2>
-      {assessed.length > 0 ? (
-        <Stack gap={2}>
-          {assessed.map((e) => (
-            <Card key={e.skillId} elevated>
-              <div className="mc-task">
-                <div>
-                  <p className="mc-task__title">{e.title}</p>
-                  <p className="mc-muted mc-fineprint">{e.cluster}</p>
-                </div>
-                <MasteryBadge state={e.base as MasteryState} refreshNeeded={e.refreshNeeded} />
-              </div>
-            </Card>
-          ))}
-        </Stack>
-      ) : (
-        <Callout tone="info">Complete a learning session to start building evidence.</Callout>
-      )}
     </div>
   );
 }
