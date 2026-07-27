@@ -1,5 +1,6 @@
 import type {
   BootstrapResponse,
+  CarsDuelRubric,
   CarsReadinessView,
   DiagnosticNext,
   ErrorEntryView,
@@ -54,7 +55,8 @@ export interface AuthorityPort {
   getSkills(): Promise<SkillSummary[]>;
   getPracticeItem(questionId: string): Promise<PracticeItemView | null>;
   checkPractice(questionId: string, choiceId: string | null): Promise<PracticeResult>;
-  recordCarsDuel(): Promise<void>;
+  /** Record a CARS Duel; an optional rubric feeds a low-weight CARS ability nudge. */
+  recordCarsDuel(rubric?: CarsDuelRubric): Promise<void>;
   getWrapped(): Promise<WrappedView>;
   resetProgress(): Promise<void>;
   getVectorLessonStatus(): Promise<VectorLessonStatusView>;

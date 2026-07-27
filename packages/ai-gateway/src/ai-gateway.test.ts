@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { buildCarsSystemPrompt, buildReflectionPrompt } from './cars';
+import {
+  buildCarsSystemPrompt,
+  buildDuelRubricPrompt,
+  buildReflectionPrompt,
+  parseDuelRubric,
+} from './cars';
 
 describe('CARS Duel prompts', () => {
   it('encodes the safety guardrails and tone', () => {
@@ -16,5 +21,22 @@ describe('CARS Duel prompts', () => {
     expect(r.role).toBe('user');
     expect(r.content.toLowerCase()).toContain('do not declare a winner');
     expect(r.content.toLowerCase()).toContain('strongest point');
+  });
+
+  it('rubric prompt asks for a single machine-readable SCORES line', () => {
+    const p = buildDuelRubricPrompt();
+    expect(p.content).toContain('SCORES position=');
+    expect(p.content.toLowerCase()).toContain('0-3');
+  });
+
+  it('parses the rubric scores and ignores omitted / out-of-range criteria', () => {
+    expect(parseDuelRubric('SCORES position=2 argument=3 application=1')).toEqual({
+      position: 2,
+      argument: 3,
+      application: 1,
+    });
+    // Omitted criteria are dropped; extra prose is tolerated.
+    expect(parseDuelRubric('Nice work. SCORES argument=3')).toEqual({ argument: 3 });
+    expect(parseDuelRubric('no scores here')).toEqual({});
   });
 });

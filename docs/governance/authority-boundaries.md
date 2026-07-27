@@ -31,3 +31,14 @@ The content compiler builds three artifact classes from an allowlist (not a deny
 - Unscheduled learners never enter near-test mode or receive an `Exam-Ready Now` label.
 - Numeric score prediction stays disabled unless every product- and learner-level gate is satisfied.
 - Replaying the same accepted events under the same policy versions reproduces identical state.
+
+## Mastery signal — `P(L)` (mastery-bkt / provisional-v1)
+
+The learner-facing mastery number is the Bayesian Knowledge Tracing probability `P(L)` per unit
+(KC / the 7 reasoning skills / lesson), with a separate IRT ability for CARS; `P(L) >= 0.95` is the
+"mastered" gate. This remains **evidence-based and fail-closed**: only **independent** attempts (A0,
+no content-bearing hint, not a diagnostic retry, not post-reveal) move `P(L)`, so every invariant
+above continues to hold (no mastery from assisted/revealed/repeated/simulation/Ghost/FSRS work). The
+diagnostic only **seeds** initial priors (asymmetric, capped <= 0.4) and never awards mastery. Item
+difficulty is uncalibrated (DOK cold-start) and all constants are provisional; the `mastery-bkt`
+policy version is stamped on every consequential decision. See `docs/mastery-pipeline.md`.

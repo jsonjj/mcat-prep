@@ -129,6 +129,13 @@ export const V7QuestionSchema = z
     // --- Classification / routing metadata (optional) ---
     subject: z.string().optional(),
     primary_skill: V7SkillSchema.optional(),
+    /**
+     * The 7-op reasoning-operation mastery axis (IDENTIFY/PREDICT/EXPLAIN/RELATE/
+     * QUANTIFY/DESIGN/EVIDENCE). Kept permissive; when absent it is derived from
+     * `primary_skill` + `construct.reasoning_operation_id` via
+     * `resolveReasoningOperation` (see docs/mastery-pipeline.md §6).
+     */
+    reasoning_operation: z.string().optional(),
     primary_kc_id: z.string().optional(),
     primary_kc_label: z.string().optional(),
     secondary_skills: z.array(z.string()).optional(),

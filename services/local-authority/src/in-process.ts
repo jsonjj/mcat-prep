@@ -139,8 +139,8 @@ export class InProcessAuthorityClient implements AuthorityPort {
     );
   }
 
-  async recordCarsDuel(): Promise<void> {
-    this.mutate((state) => this.authority.recordCarsDuel(state));
+  async recordCarsDuel(rubric?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {
+    this.mutate((state) => this.authority.recordCarsDuel(state, rubric));
   }
 
   async getWrapped() {

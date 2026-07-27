@@ -1081,6 +1081,170 @@ body {
   margin: var(--mc-space-1) 0 var(--mc-space-3);
 }
 
+/* ---- Skills page: 7 reasoning-skill mastery bars ---- */
+.mc-skillbars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-5);
+}
+.mc-skillbar__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+  margin-bottom: var(--mc-space-2);
+}
+.mc-skillbar__label {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-17);
+  font-weight: 600;
+}
+.mc-skillbar__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-skillbar__pct {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--mc-text-17);
+  color: var(--mc-primary-text);
+}
+.mc-skillbar__tag {
+  font-size: var(--mc-text-12);
+  white-space: nowrap;
+}
+.mc-skillbar__tag--mastered {
+  color: var(--mc-state-strong);
+}
+.mc-skillbar__track {
+  height: 12px;
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-surface-2);
+  overflow: hidden;
+}
+.mc-skillbar__fill {
+  height: 100%;
+  border-radius: var(--mc-radius-pill);
+  background: linear-gradient(90deg, var(--mc-primary), var(--mc-primary-hover));
+  transition: width 240ms ease;
+  min-width: 2px;
+}
+.mc-skillbar__fill--mastered {
+  background: linear-gradient(90deg, var(--mc-primary-hover), var(--mc-state-strong));
+}
+.mc-skillbar__fill--refresh {
+  opacity: 0.6;
+}
+.mc-skillbar__desc {
+  margin: var(--mc-space-2) 0 0;
+  font-size: var(--mc-text-14);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc-skillbar__fill {
+    transition: none;
+  }
+}
+
+/* ---- CARS reading-ability gauge (Progress card) ---- */
+.mc-cars-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--mc-space-3);
+}
+.mc-cars-gauge svg {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+}
+.mc-cars-gauge__track {
+  fill: none;
+  stroke: var(--mc-surface-2);
+  stroke-width: 14;
+  stroke-linecap: round;
+}
+.mc-cars-gauge__fill {
+  fill: none;
+  stroke: url(#mcCarsFill);
+  stroke-width: 14;
+  stroke-linecap: round;
+}
+.mc-cars-gauge__tick {
+  stroke: var(--mc-primary-text);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.mc-cars-gauge__ticktext {
+  font-family: var(--mc-font-body);
+  font-size: 11px;
+  fill: var(--mc-primary-text);
+  text-anchor: middle;
+}
+.mc-cars-gauge__end {
+  font-family: var(--mc-font-body);
+  font-size: 10px;
+  fill: var(--mc-ink-muted);
+}
+.mc-cars-gauge__marker {
+  fill: var(--mc-retained);
+  stroke: var(--mc-surface);
+  stroke-width: 3;
+}
+.mc-cars-gauge__markerglow {
+  fill: var(--mc-retained);
+  opacity: 0.22;
+}
+.mc-cars-gauge__word {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-28);
+  color: var(--mc-ink);
+  margin: 0;
+  text-align: center;
+}
+.mc-cars-subskills {
+  width: 100%;
+  margin-top: var(--mc-space-4);
+}
+
+/* ---- Segmented control (Progress: Lessons | CARS) ---- */
+.mc-seg {
+  display: flex;
+  width: 100%;
+  gap: var(--mc-space-1);
+  padding: 4px;
+  margin-bottom: var(--mc-space-4);
+  background: var(--mc-surface-2);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-pill);
+}
+.mc-seg__tab {
+  flex: 1;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--mc-ink-muted);
+  font-family: var(--mc-font-body);
+  font-size: var(--mc-text-15);
+  font-weight: 700;
+  min-height: 44px;
+  padding: var(--mc-space-2) var(--mc-space-4);
+  border-radius: var(--mc-radius-pill);
+  cursor: pointer;
+  transition: background var(--mc-motion-control) var(--mc-ease), color var(--mc-motion-control) var(--mc-ease);
+}
+.mc-seg__tab--active {
+  background: var(--mc-surface);
+  color: var(--mc-ink);
+  box-shadow: var(--mc-shadow-card);
+}
+.mc-seg__tab:focus-visible {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+}
+
 /* ---- Practice hub (Phase 7 hooks) ---- */
 .mc-hub {
   display: grid;

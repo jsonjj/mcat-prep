@@ -4,25 +4,32 @@ import {
   ATLAS_LESSON_CLUSTER,
   ATLAS_REGION_GROUPS,
   CLUSTER_INFO,
+  type LessonMasteryView,
   type SkillCluster,
 } from '@mcat/contracts';
 import { baseStateRank, type BaseMasteryState } from '@mcat/domain';
 import { detectCapabilities } from '@mcat/platform-web';
 import { Button } from '@mcat/ui-web';
 import { CURRICULUM_PHASES } from '../data/curriculum-v3.generated';
-import { useMasteryMap } from '../app/queries';
-import { BrainAtlas, countGlowing } from './BrainAtlas';
+import { useMasteryLessons } from '../app/queries';
+import { BrainAtlas } from './BrainAtlas';
 import type { AtlasRegion } from './BrainScene';
 
 const BrainScene = lazy(() => import('./BrainScene'));
 
 /**
  * A lesson counts as mastered — and so contributes to its region filling — once its
- * evidence reaches `independent` (the same bar `countGlowing` uses for a "glowing"
- * skill). Today's mastery signal is cluster-keyed (see below), so this is applied at
- * cluster granularity; a true per-lesson signal is proposed in the atlas roadmap.
+ * BKT `P(L)` crosses the mastery threshold. The mastery signal is now per-lesson
+ * (`useMasteryLessons`), so each region reflects the actual lessons the learner has
+ * mastered; unpracticed lessons stay dark.
  */
 const MASTERED_RANK = baseStateRank('independent');
+
+/** Map a lesson's BKT `P(L)` readout to the atlas's display state. */
+function lessonStateFromPL(entry: LessonMasteryView | undefined): BaseMasteryState {
+  if (!entry) return 'not_assessed';
+  return entry.mastered ? 'independent' : 'learning';
+}
 
 const brainPartLabel = (part: string) => part.replace(/_/g, ' ');
 
@@ -117,35 +124,30 @@ function lessonGroupsFor(region: AtlasRegion): RegionLessonGroup[] {
  */
 export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'progress' } = {}) {
   const navigate = useNavigate();
-  const mastery = useMasteryMap();
+  const lessonMastery = useMasteryLessons();
   const caps = useMemo(() => detectCapabilities(), []);
   const [selected, setSelected] = useState<string | null>(null);
   const isHome = variant === 'home';
 
-  // Best base mastery state observed per app cluster. The atlas partitions lessons
-  // (not clusters), but the only per-user progress signal (useMasteryMap) is keyed
-  // by skill/cluster — so each lesson inherits its cluster's state via the baked
-  // ATLAS_LESSON_CLUSTER map. This is a real (cluster-granularity) signal, never
-  // faked; a per-lesson completion source is the next step.
-  const clusterBest = useMemo(() => {
-    const best: Partial<Record<SkillCluster, BaseMasteryState>> = {};
-    for (const e of mastery.data ?? []) {
-      const cand = e.base as BaseMasteryState;
-      const cur = best[e.cluster];
-      if (!cur || baseStateRank(cand) > baseStateRank(cur)) best[e.cluster] = cand;
-    }
-    return best;
-  }, [mastery.data]);
+  // Per-lesson BKT P(L), keyed by lesson id — the real mastery signal that drives
+  // which brain nodes light up. Unpracticed lessons have no entry and stay dark.
+  const lessonById = useMemo(
+    () => new Map((lessonMastery.data ?? []).map((l) => [l.lessonId, l] as const)),
+    [lessonMastery.data],
+  );
+  const masteredLessonCount = useMemo(
+    () => (lessonMastery.data ?? []).filter((l) => l.mastered).length,
+    [lessonMastery.data],
+  );
 
   const regions: AtlasRegion[] = useMemo(
     () =>
       ATLAS_REGION_GROUPS.map((rg) => {
         let masteredCount = 0;
         const lessons = rg.lessons.map((l) => {
-          const cluster = ATLAS_LESSON_CLUSTER[l.lesson_id];
           const state: BaseMasteryState = isHome
             ? 'strong'
-            : ((cluster ? clusterBest[cluster] : undefined) ?? 'not_assessed');
+            : lessonStateFromPL(lessonById.get(l.lesson_id));
           const mastered = baseStateRank(state) >= MASTERED_RANK;
           if (mastered) masteredCount += 1;
           return { id: l.lesson_id, title: l.title, state, mastered };
@@ -164,7 +166,7 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
           tapCluster,
         };
       }),
-    [clusterBest, isHome],
+    [lessonById, isHome],
   );
 
   const sel = selected ? (regions.find((r) => r.id === selected) ?? null) : null;
@@ -174,7 +176,7 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
   if (!caps.webgl) {
     return (
       <div className="mc-atlas">
-        <BrainAtlas glowing={isHome ? 6 : countGlowing(mastery.data)} />
+        <BrainAtlas glowing={isHome ? 6 : masteredLessonCount} />
         {!isHome ? (
           <p className="mc-atlas__hint mc-muted mc-fineprint">
             Interactive 3D needs WebGL — showing the calm still view. Everything is also on the Skills
@@ -187,7 +189,7 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
 
   return (
     <div className="mc-atlas">
-      <Suspense fallback={<BrainAtlas glowing={isHome ? 6 : countGlowing(mastery.data)} />}>
+      <Suspense fallback={<BrainAtlas glowing={isHome ? 6 : masteredLessonCount} />}>
         <BrainScene
           regions={regions}
           reducedMotion={caps.reducedMotion}

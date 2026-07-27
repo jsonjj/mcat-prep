@@ -17,8 +17,8 @@ interface RawStatRow extends Record<string, unknown> {
 
 /**
  * Record one scored attempt on a question and return the running totals. Upsert
- * so the first attempt creates the row. `correctDelta` is 1 for a correct answer,
- * 0 otherwise.
+ * so the first attempt creates the row. Increments correct by 1 on a correct
+ * answer, 0 otherwise.
  */
 export async function recordQuestionAttempt(
   q: Queryable,

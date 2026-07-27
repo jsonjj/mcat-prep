@@ -376,9 +376,10 @@ export class HttpAuthorityClient implements AuthorityPort {
     return response;
   }
 
-  async recordCarsDuel(): Promise<void> {
+  async recordCarsDuel(rubric?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {
     await this.acceptedCommand('/v1/hooks/cars-duel', {
       envelope: await this.commandEnvelope(),
+      ...(rubric === undefined ? {} : { rubric }),
     });
   }
 
