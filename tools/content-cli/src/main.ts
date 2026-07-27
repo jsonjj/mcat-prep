@@ -13,6 +13,7 @@ import {
   compileV7Question,
   loadSyntheticBank,
   loadV7Jsonl,
+  resolveReasoningOperation,
   resolveV7Placement,
   summarizeV7,
   validateV7Question,
@@ -234,7 +235,7 @@ function cmdDbSeed(path: string): void {
   const lines: string[] = [
     '-- AUTO-GENERATED seed for the MCAT v7 question bank.',
     '-- Contains ANSWER KEYS + explanations (question_protected). NEVER commit this file.',
-    '-- Apply after database/migrations/0006_question_bank.sql. Idempotent (on conflict do nothing).',
+    '-- Apply after migrations 0006_question_bank.sql + 0008_reasoning_operation.sql. Idempotent.',
     'begin;',
   ];
 
@@ -249,7 +250,7 @@ function cmdDbSeed(path: string): void {
 
     lines.push(
       'insert into questions (question_id, content_release, section, cluster, kc_id, lesson_id, family_id, ' +
-        'subject, primary_skill, dok_level, stem, passage, choices, assets, status) values (' +
+        'subject, primary_skill, reasoning_operation, dok_level, stem, passage, choices, assets, status) values (' +
         [
           sqlStr(q.id),
           sqlStr('v7-local'),
@@ -260,6 +261,7 @@ function cmdDbSeed(path: string): void {
           sqlStr(q.family_id),
           sqlStr(q.subject),
           sqlStr(q.primary_skill),
+          sqlStr(resolveReasoningOperation(q)),
           sqlNum(q.dok_level),
           sqlStr(safe.stem),
           sqlStr(safe.passage),
@@ -295,6 +297,7 @@ function cmdDbSeed(path: string): void {
     '\nTo load into a real Postgres (local docker / Neon / Supabase), set DATABASE_URL then run:',
   );
   console.log('  psql "$DATABASE_URL" -f database/migrations/0006_question_bank.sql');
+  console.log('  psql "$DATABASE_URL" -f database/migrations/0008_reasoning_operation.sql');
   console.log('  psql "$DATABASE_URL" -f content/question-bank/.local/v7-load/seed.sql');
   console.log(
     '  psql "$DATABASE_URL" -c \'select section, count(*) from questions group by section order by section;\'',
