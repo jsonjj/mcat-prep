@@ -152,13 +152,26 @@ export function rewriteSoundTags(html: string): string {
 /** Original media filenames referenced by rendered HTML (img/audio/source + sound tags). */
 export function extractMediaFilenames(html: string): string[] {
   const names = new Set<string>();
-  for (const match of html.matchAll(/<(?:img|audio|source)\b[^>]*?\ssrc=["']([^"']+)["']/gi)) {
-    if (match[1]) names.add(decodeURIComponent(match[1]));
+  // Capture the value delimited by the SAME quote that opened it (backreference \1),
+  // so a real filename may itself contain the other quote — e.g. src="Avogadro's Number.png"
+  // must not be truncated at the apostrophe (common in MCAT/Anki decks: Newton's, Coulomb's…).
+  for (const match of html.matchAll(/<(?:img|audio|source)\b[^>]*?\ssrc=(["'])([\s\S]*?)\1/gi)) {
+    const raw = match[2];
+    if (raw) names.add(safeDecode(raw));
   }
   for (const match of html.matchAll(/\[sound:([^\]]+)\]/gi)) {
     if (match[1]) names.add(match[1].trim());
   }
   return [...names];
+}
+
+/** decodeURIComponent, but tolerant of filenames with a stray `%` (return them as-is). */
+function safeDecode(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }
 
 /** Render a single Anki card (one template face, or one cloze number) to HTML. */

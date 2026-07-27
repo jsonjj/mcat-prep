@@ -120,4 +120,20 @@ describe('apkg render — media & conditionals', () => {
       'b.mp3',
     ]);
   });
+
+  it('keeps filenames that contain the other quote char (e.g. apostrophes)', () => {
+    // Regression: real Anki/MCAT decks reference files like Avogadro's Number.png.
+    // A double-quoted src must not be truncated at an inner apostrophe.
+    expect(extractMediaFilenames('<img src="Avogadro\'s Number.png" />')).toEqual([
+      "Avogadro's Number.png",
+    ]);
+    expect(extractMediaFilenames("<img src='He said \"hi\".png'>")).toEqual(['He said "hi".png']);
+    // And it still resolves as a rendered card's media filename.
+    const card = renderAnkiCard(
+      clozeModel,
+      { id: 'n5', mid: '2', fields: ['<img src="Newton\'s 2nd Law.png"> {{c1::F=ma}}', ''], tags: [] },
+      { id: 'c5', nid: 'n5', ord: 0 },
+    );
+    expect(card.mediaFilenames).toEqual(["Newton's 2nd Law.png"]);
+  });
 });

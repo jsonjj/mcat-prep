@@ -91,6 +91,12 @@ export default defineConfig(({ mode }) => {
     preview: { port: 4173 },
     // three.js is loaded only in the lazy BrainScene chunk, so a larger chunk here is expected.
     build: { outDir: 'dist', sourcemap: false, target: 'es2022', chunkSizeWarningLimit: 900 },
+    // The .apkg importer is code-split (keeps sql.js/jszip out of the initial bundle) and is
+    // only reached via a dynamic import(). Vite's dev scanner therefore never sees these CJS
+    // deps up front, so the first import would trigger an on-demand re-optimize + page reload
+    // that makes the in-flight dynamic import reject ("Failed to fetch dynamically imported
+    // module"). Pre-bundling them here makes that first dynamic import resolve cleanly.
+    optimizeDeps: { include: ['sql.js', 'jszip', 'dompurify', 'idb'] },
   };
 
   if (authorityProxyTarget) {

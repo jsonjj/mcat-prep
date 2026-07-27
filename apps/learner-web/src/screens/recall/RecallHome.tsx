@@ -63,9 +63,6 @@ export function RecallHome() {
             <Link to="/app/recall/new" className="mc-textbtn">
               + Add cards
             </Link>
-            <Link to="/app/recall/browse" className="mc-textbtn">
-              Browse cards
-            </Link>
             <Link to="/app/recall/import" className="mc-textbtn">
               Import Anki deck
             </Link>
