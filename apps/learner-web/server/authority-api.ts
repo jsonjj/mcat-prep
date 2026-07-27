@@ -140,6 +140,12 @@ export async function handleAuthorityRequest(
           return sendJson(response, 200, await client.getSession());
         case '/v1/progress/mastery':
           return sendJson(response, 200, await client.getMasteryMap());
+        case '/v1/progress/skills':
+          return sendJson(response, 200, await client.getMasterySkills());
+        case '/v1/progress/lessons':
+          return sendJson(response, 200, await client.getMasteryLessons());
+        case '/v1/progress/cars':
+          return sendJson(response, 200, await client.getCarsReadiness());
         case '/v1/errors':
           return sendJson(response, 200, await client.getErrorLog());
         case '/v1/skills':
@@ -211,7 +217,7 @@ export async function handleAuthorityRequest(
       });
     }
     if (path === '/v1/hooks/cars-duel' && method === 'POST') {
-      await client.recordCarsDuel();
+      await client.recordCarsDuel(body.rubric as Parameters<typeof client.recordCarsDuel>[0]);
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/account/progress' && method === 'DELETE') {

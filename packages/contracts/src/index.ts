@@ -8,6 +8,7 @@ export * from './atlas';
 export * from './events';
 export * from './commands';
 export * from './learner-views';
+export * from './mastery';
 export * from './api';
 export * from './http';
 export * from './v3-vector-lesson';

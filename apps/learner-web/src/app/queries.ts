@@ -1,5 +1,5 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { ProbableCause, VectorLessonAction } from '@mcat/contracts';
+import type { CarsDuelRubric, ProbableCause, VectorLessonAction } from '@mcat/contracts';
 import type { GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type ChoiceId, type DiagnosticNextView } from './diagnostic-client';
@@ -13,6 +13,9 @@ const LEARNER_KEYS = [
   'today',
   'session',
   'mastery',
+  'mastery-skills',
+  'mastery-lessons',
+  'cars-readiness',
   'errors',
   'vector-lesson-status',
   'vector-lesson-run',
@@ -28,6 +31,15 @@ export const useSession = () =>
   useQuery({ queryKey: ['session'], queryFn: () => authority.getSession() });
 export const useMasteryMap = () =>
   useQuery({ queryKey: ['mastery'], queryFn: () => authority.getMasteryMap() });
+/** BKT mastery: the 7 reasoning-skill readouts (Skills page). */
+export const useMasterySkills = () =>
+  useQuery({ queryKey: ['mastery-skills'], queryFn: () => authority.getMasterySkills() });
+/** BKT mastery: per-lesson P(L) (Progress brain). */
+export const useMasteryLessons = () =>
+  useQuery({ queryKey: ['mastery-lessons'], queryFn: () => authority.getMasteryLessons() });
+/** CARS IRT readiness (gauge + sub-skill bars). */
+export const useCarsReadiness = () =>
+  useQuery({ queryKey: ['cars-readiness'], queryFn: () => authority.getCarsReadiness() });
 export const useErrorLog = () =>
   useQuery({ queryKey: ['errors'], queryFn: () => authority.getErrorLog() });
 export const useSkills = () =>
@@ -162,7 +174,7 @@ export function useCheckPractice() {
 export function useRecordCarsDuel() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () => authority.recordCarsDuel(),
+    mutationFn: (rubric?: CarsDuelRubric) => authority.recordCarsDuel(rubric),
     onSuccess: () => invalidateLearner(qc),
   });
 }

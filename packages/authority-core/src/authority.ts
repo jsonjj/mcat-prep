@@ -1,5 +1,6 @@
 import {
   ContentIdSchema,
+  REASONING_OPERATIONS,
   SKILL_CLUSTERS,
   daysBetween,
   newEventId,
@@ -7,23 +8,46 @@ import {
   newLearnerId,
   systemClock,
   type BootstrapResponse,
+  type CarsDuelRubric,
+  type CarsReadinessLabel,
+  type CarsReadinessView,
+  type CarsSkill,
   type Clock,
   type LearnerEvent,
+  type LessonMasteryView,
+  type MasterySeed,
   type MasteryState,
   type ProbableCause,
+  type ReasoningOperation,
+  type SkillMasteryView,
   type UtcTimestamp,
 } from '@mcat/contracts';
 import { EvidenceRecordSchema, scoreAttempt, type EvidenceKind, type Task } from '@mcat/domain';
 import {
   activePolicyVersions,
+  applyMasteryAttempt,
+  CARS_K_DUEL,
+  CARS_K_POTD,
+  CARS_V0,
+  carsUpdate,
   classifyCapacity,
   computeGhost,
+  currentPL,
   evaluateMastery,
+  initialMemoryState,
+  isCarsOnTrack,
+  MASTERY_THRESHOLD,
+  overallCarsReadiness,
+  predictedCorrect,
+  PRIOR_PL0,
+  REVIEW_LINE,
+  type MemoryState,
 } from '@mcat/policies';
-import { loadSyntheticBank, type LoadedBank } from '@mcat/content';
+import { clusterForLesson, loadSyntheticBank, type LoadedBank } from '@mcat/content';
 import type {
   ErrorEntryView,
   LearnerState,
+  MasteryEngineState,
   MasteryMapEntry,
   PracticeItemView,
   PracticeResult,
@@ -60,6 +84,24 @@ const ENZYME_PATH: PathActivity[] = [
 ];
 
 const ENZYME_SKILL = 'bb1-enzyme-inhibition';
+const ENZYME_LESSON_ID = 'lesson-enz-inhibition';
+
+/**
+ * DEV-ONLY adapter: the synthetic bank tags items with the 8 operation templates
+ * (K/Q/E/D/P/A/I/T), not the 7 reasoning operations the mastery engine tracks.
+ * This heuristic lets the synthetic vertical populate real mastery numbers in dev;
+ * the real v7 producers emit `reasoning_operation` directly (see docs/mastery-pipeline.md §6).
+ */
+const OPERATION_TAG_TO_REASONING: Readonly<Record<string, ReasoningOperation>> = {
+  K: 'IDENTIFY',
+  Q: 'QUANTIFY',
+  E: 'EVIDENCE',
+  D: 'RELATE',
+  P: 'EXPLAIN',
+  A: 'EXPLAIN',
+  I: 'PREDICT',
+  T: 'IDENTIFY',
+};
 // The synthetic bank is intentionally tiny; the placement is a short provisional
 // probe (prerequisite skill) and does not reuse items that appear in the study path.
 const DIAGNOSTIC_PROBE_IDS = ['q-enz-basics-1'];
@@ -345,6 +387,11 @@ export class Authority {
       s.currentFirstChoiceId = choiceId;
       this.recordEvent(state, this.attemptEvent(state, activity.questionId!, choiceId, { assistanceLevel: 'A0', isDiagnosticRetry: false }));
 
+      // The first answering attempt is INDEPENDENT (A0, no hint, not a retry, not
+      // revealed), so it moves P(L) — up on correct, down on wrong. Retries and
+      // reveals below are non-independent and never touch mastery (fail-closed).
+      this.updateMasteryForAttempt(state, activity.questionId!, choiceId === correctId);
+
       if (phase === 'protected') {
         // No feedback during a protected block; record protected evidence and advance.
         this.appendEvidence(state, {
@@ -487,6 +534,131 @@ export class Authority {
     });
   }
 
+  // ---- Mastery engine (BKT/IRT, mastery-bkt / provisional-v1) --------------
+  // P(L) replaces the evidence ladder for the learner-facing mastery number.
+  // Runs ONLY for independent attempts; the ladder above still logs evidence.
+
+  private ensureMastery(state: LearnerState): MasteryEngineState {
+    if (!state.mastery) state.mastery = { kc: {}, skill: {}, lesson: {}, cars: {} };
+    return state.mastery;
+  }
+
+  /** Derive the mastery grain (KC / 7-op / lesson / DOK) for a bank item. */
+  private masteryTarget(
+    questionId: string,
+    fallbackSkill: string,
+  ): { kcKey: string; op: ReasoningOperation; lessonId: string; dok: number | undefined } {
+    const q = this.bank.questions.find((x) => x.id === questionId);
+    const kcKey = q?.internal_skill_ids[0] ?? fallbackSkill;
+    const op = OPERATION_TAG_TO_REASONING[q?.template_tags[0] ?? 'K'] ?? 'IDENTIFY';
+    return { kcKey, op, lessonId: ENZYME_LESSON_ID, dok: q?.difficulty };
+  }
+
+  /** Apply one independent attempt to the KC / skill / lesson chains (+ prereqs). */
+  private updateMasteryForAttempt(state: LearnerState, questionId: string, correct: boolean): void {
+    const m = this.ensureMastery(state);
+    const target = this.masteryTarget(questionId, state.session?.skillId ?? ENZYME_SKILL);
+    const now = this.clock.now();
+
+    const prereqKeys = this.bank.skillGraph.edges
+      .filter((e) => e.kind === 'hard_prerequisite' && e.to === target.kcKey)
+      .map((e) => e.from);
+    const prerequisites = prereqKeys.map((k) => m.kc[k] ?? initialMemoryState());
+
+    const result = applyMasteryAttempt({
+      correct,
+      now,
+      // In-memory dev never crosses the calibration floor, so `b` is DOK-derived.
+      questionStats: { attempts: 0, correct: 0 },
+      ...(target.dok !== undefined ? { dokLevel: target.dok } : {}),
+      states: {
+        kc: m.kc[target.kcKey] ?? initialMemoryState(),
+        skill: m.skill[target.op] ?? initialMemoryState(),
+        lesson: m.lesson[target.lessonId] ?? initialMemoryState(),
+      },
+      prerequisites,
+    });
+
+    m.kc[target.kcKey] = result.states.kc;
+    m.skill[target.op] = result.states.skill;
+    m.lesson[target.lessonId] = result.states.lesson;
+    prereqKeys.forEach((k, i) => {
+      const next = result.prerequisites[i];
+      if (next) m.kc[k] = next;
+    });
+  }
+
+  private refreshNeeded(st: MemoryState, decayed: number): boolean {
+    return st.lastPracticedAt !== null && decayed < REVIEW_LINE && st.pL >= REVIEW_LINE;
+  }
+
+  /** The 7 reasoning-skill readouts for the Skills page (percentages). */
+  getMasterySkills(state: LearnerState): SkillMasteryView[] {
+    const m = this.ensureMastery(state);
+    const now = this.clock.now();
+    return REASONING_OPERATIONS.map((operation) => {
+      const st = m.skill[operation];
+      const pL = st ? currentPL(st, now) : PRIOR_PL0;
+      return {
+        operation,
+        pL,
+        refreshNeeded: st ? this.refreshNeeded(st, pL) : false,
+        mastered: pL >= MASTERY_THRESHOLD,
+      };
+    });
+  }
+
+  /** Per-lesson mastery for the Evidence Atlas brain nodes on Progress. */
+  getMasteryLessons(state: LearnerState): LessonMasteryView[] {
+    const m = this.ensureMastery(state);
+    const now = this.clock.now();
+    return Object.entries(m.lesson).map(([lessonId, st]) => {
+      const pL = currentPL(st, now);
+      return {
+        lessonId,
+        cluster: clusterForLesson(lessonId) ?? null,
+        pL,
+        refreshNeeded: this.refreshNeeded(st, pL),
+        mastered: pL >= MASTERY_THRESHOLD,
+      };
+    });
+  }
+
+  /** CARS readiness (gauge + 3 sub-skill bars). */
+  getCarsReadiness(state: LearnerState): CarsReadinessView {
+    const m = this.ensureMastery(state);
+    const skills = (['FOC', 'RWT', 'RBT'] as const).map((skill) => {
+      const v = m.cars[skill] ?? CARS_V0;
+      return { skill, v, pct: predictedCorrect(v, 0) };
+    });
+    const overallV = overallCarsReadiness(m.cars.FOC ?? 0, m.cars.RWT ?? 0, m.cars.RBT ?? 0);
+    const onTrack = isCarsOnTrack(overallV);
+    const label: CarsReadinessLabel = onTrack ? 'on_track' : overallV >= 0.85 ? 'approaching' : 'building';
+    return { skills, overallV, overallPct: predictedCorrect(overallV, 0), onTrack, label };
+  }
+
+  /** Update one CARS sub-skill ability (PotD uses K=0.3; the Duel uses K=0.08). */
+  updateCarsAbility(state: LearnerState, skill: CarsSkill, r: number, k: number, b = 0): void {
+    const m = this.ensureMastery(state);
+    m.cars[skill] = carsUpdate(m.cars[skill] ?? CARS_V0, { r, b, k });
+  }
+
+  /** Consume diagnostic seeds (never mastery): initialize unpracticed priors only. */
+  applyMasterySeed(state: LearnerState, seed: MasterySeed): void {
+    const m = this.ensureMastery(state);
+    for (const [kcId, prior] of Object.entries(seed.kcPriors)) {
+      if (!m.kc[kcId]) m.kc[kcId] = initialMemoryState(prior);
+    }
+    for (const [op, prior] of Object.entries(seed.skillPriors)) {
+      const operation = op as ReasoningOperation;
+      if (!m.skill[operation]) m.skill[operation] = initialMemoryState(prior);
+    }
+    for (const [skill, v] of Object.entries(seed.carsAbility)) {
+      const cars = skill as CarsSkill;
+      if (m.cars[cars] === undefined) m.cars[cars] = v;
+    }
+  }
+
   // ---- Practice hooks (Passage of the Day, etc.) ------------------------
 
   getPracticeItem(questionId: string): PracticeItemView | null {
@@ -535,7 +707,7 @@ export class Authority {
    * contextual (placement-kind) evidence to the two CARS clusters so the Atlas
    * reflects the reps without treating an AI as proof.
    */
-  recordCarsDuel(state: LearnerState): void {
+  recordCarsDuel(state: LearnerState, rubric?: CarsDuelRubric): void {
     for (const cluster of ['CA1', 'CA2'] as const) {
       this.appendEvidence(state, {
         skillId: `cars-${cluster.toLowerCase()}`,
@@ -550,6 +722,28 @@ export class Authority {
         familyId: 'fam-cars-duel',
       });
     }
+    // Formative CARS ability nudge (low weight): each rubric criterion updates its
+    // sub-skill. Position→FOC, Argument→RWT, Application→RBT; R = score/3.
+    if (rubric) {
+      const map: ReadonlyArray<readonly [keyof CarsDuelRubric, CarsSkill]> = [
+        ['position', 'FOC'],
+        ['argument', 'RWT'],
+        ['application', 'RBT'],
+      ];
+      for (const [criterion, skill] of map) {
+        const score = rubric[criterion];
+        if (score !== undefined) this.updateCarsAbility(state, skill, score / 3, CARS_K_DUEL);
+      }
+    }
+  }
+
+  /**
+   * Passage of the Day: a measured CARS answer updates the sub-skill ability at
+   * full weight (K=0.3). PotD wires this in once real CARS passages are served
+   * (see docs/mastery-pipeline.md §5.4).
+   */
+  recordCarsPassage(state: LearnerState, skill: CarsSkill, correct: boolean): void {
+    this.updateCarsAbility(state, skill, correct ? 1 : 0, CARS_K_POTD);
   }
 
   getWrapped(state: LearnerState): WrappedView {

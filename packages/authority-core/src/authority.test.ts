@@ -111,3 +111,57 @@ describe('Authority — synthetic enzyme vertical', () => {
     expect(step.kind === 'question' && step.sub === 'reveal').toBe(true);
   });
 });
+
+describe('Authority — BKT mastery engine (P(L))', () => {
+  const PRIOR = 0.2;
+
+  it('exposes 7 skills that start at the prior and rise with independent-correct work', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+
+    const before = auth.getMasterySkills(state);
+    expect(before).toHaveLength(7);
+    expect(before.every((s) => Math.abs(s.pL - PRIOR) < 1e-9)).toBe(true);
+
+    for (let guard = 0; guard < 40; guard += 1) {
+      const step = auth.getSession(state);
+      if (step.kind === 'complete') break;
+      if (step.kind === 'lesson' || step.kind === 'simulation') auth.continueStep(state);
+      else if (step.kind === 'recall') auth.submitRecall(state, 'increases; unchanged');
+      else if (step.kind === 'question') auth.submitAttempt(state, 'A');
+    }
+
+    const after = auth.getMasterySkills(state);
+    expect(after.some((s) => s.pL > PRIOR)).toBe(true);
+
+    // The lesson chain rose too (driven by every question in the lesson).
+    const lesson = auth.getMasteryLessons(state).find((l) => l.lessonId === 'lesson-enz-inhibition');
+    expect(lesson).toBeDefined();
+    expect(lesson!.pL).toBeGreaterThan(PRIOR);
+  });
+
+  it('is fail-closed: an assisted retry after a miss never raises P(L)', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.continueStep(state); // past lesson → first independent question
+
+    auth.submitAttempt(state, 'B'); // independent WRONG → lowers P(L)
+    auth.selectCause(state, 'knew_but_misapplied');
+    auth.submitAttempt(state, 'A'); // retry CORRECT but non-independent → no change
+
+    const skills = auth.getMasterySkills(state);
+    // Nothing was pushed above the prior by the assisted retry...
+    expect(skills.every((s) => s.pL <= PRIOR + 1e-9)).toBe(true);
+    // ...and the exercised skill was pulled below the prior by the independent miss.
+    expect(skills.some((s) => s.pL < PRIOR)).toBe(true);
+  });
+
+  it('returns a CARS readiness view that defaults to average and not-on-track', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    const cars = auth.getCarsReadiness(state);
+    expect(cars.skills).toHaveLength(3);
+    expect(cars.onTrack).toBe(false);
+    expect(cars.overallV).toBeCloseTo(0, 6);
+  });
+});

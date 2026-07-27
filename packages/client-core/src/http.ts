@@ -2,14 +2,17 @@ import {
   AcceptedCommandResponseSchema,
   AttemptCommandSchema,
   BootstrapResponseSchema,
+  CarsReadinessViewSchema,
   DiagnosticNextSchema,
   ErrorEntryViewSchema,
   GoalCommandSchema,
   GuestBootstrapResponseSchema,
   HTTP_API,
   HttpApiErrorSchema,
+  LessonMasteryViewSchema,
   MasteryMapEntrySchema,
   PracticeItemViewSchema,
+  SkillMasteryViewSchema,
   PracticeResultSchema,
   SkillSummarySchema,
   StudyStepViewSchema,
@@ -327,6 +330,21 @@ export class HttpAuthorityClient implements AuthorityPort {
     return this.request('/v1/progress/mastery', arrayOf(MasteryMapEntrySchema));
   }
 
+  async getMasterySkills() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.progressSkills.path, arrayOf(SkillMasteryViewSchema));
+  }
+
+  async getMasteryLessons() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.progressLessons.path, arrayOf(LessonMasteryViewSchema));
+  }
+
+  async getCarsReadiness() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.progressCars.path, CarsReadinessViewSchema);
+  }
+
   async getErrorLog() {
     await this.ensureBootstrap();
     return this.request('/v1/errors', arrayOf(ErrorEntryViewSchema));
@@ -358,9 +376,10 @@ export class HttpAuthorityClient implements AuthorityPort {
     return response;
   }
 
-  async recordCarsDuel(): Promise<void> {
+  async recordCarsDuel(rubric?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {
     await this.acceptedCommand('/v1/hooks/cars-duel', {
       envelope: await this.commandEnvelope(),
+      ...(rubric === undefined ? {} : { rubric }),
     });
   }
 

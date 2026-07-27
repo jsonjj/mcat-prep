@@ -23,6 +23,7 @@ export const LEARNER_SAFE_COLUMNS = [
   'family_id',
   'subject',
   'primary_skill',
+  'reasoning_operation',
   'dok_level',
   'stem',
   'passage',
@@ -44,6 +45,7 @@ export interface LearnerSafeQuestion {
   family_id: string | null;
   subject: string | null;
   primary_skill: string | null;
+  reasoning_operation: string | null;
   dok_level: number | null;
   stem: string;
   passage: string;

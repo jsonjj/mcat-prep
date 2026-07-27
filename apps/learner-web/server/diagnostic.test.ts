@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DIAGNOSTIC_CONFIG } from '@mcat/policies';
+import { BAYES_DIAGNOSTIC_CONFIG } from '@mcat/policies';
 import { DiagnosticBank } from './diagnostic-bank';
 import { DiagnosticSessionError, DiagnosticSessionStore } from './diagnostic-session-store';
 import { recordAnswer, resolveNext } from './diagnostic-engine';
@@ -75,8 +75,12 @@ describe('diagnostic engine end-to-end', () => {
     const { record, served, view } = runSession(bank, store);
     expect(view.done).toBe(true);
     expect(view.result).not.toBeNull();
-    expect(served).toBeGreaterThanOrEqual(DIAGNOSTIC_CONFIG.minItems);
-    expect(served).toBeLessThanOrEqual(DIAGNOSTIC_CONFIG.maxItems);
+    // The engine runs the active Bayesian adaptive path (BAYES_DIAGNOSTIC_CONFIG),
+    // which early-stops between its min/max once the read settles. The legacy
+    // balanced-coverage router config (DIAGNOSTIC_CONFIG, 30/60) is a fallback the
+    // engine does not use, so assert against the config the engine actually applies.
+    expect(served).toBeGreaterThanOrEqual(BAYES_DIAGNOSTIC_CONFIG.minItems);
+    expect(served).toBeLessThanOrEqual(BAYES_DIAGNOSTIC_CONFIG.maxItems);
     expect(record.responses.length).toBe(served);
     // A result with a word label and priorities — never a numeric confidence.
     expect(['High', 'Medium', 'Still building']).toContain(view.result!.confidenceLabel);

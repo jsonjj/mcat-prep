@@ -9,6 +9,11 @@ import {
   StudyStepViewSchema,
   TodayViewSchema,
 } from './learner-views';
+import {
+  CarsReadinessViewSchema,
+  LessonMasteryViewSchema,
+  SkillMasteryViewSchema,
+} from './mastery';
 import { UtcTimestampSchema } from './time';
 import {
   VectorLessonCommandSchema,
@@ -65,6 +70,21 @@ export const HTTP_API = {
   goal: { method: 'PUT', path: '/v1/profile/goal', body: GoalCommandSchema },
   today: { method: 'GET', path: '/v1/plan/today', response: TodayViewSchema },
   session: { method: 'GET', path: '/v1/learning/session', response: StudyStepViewSchema },
+  progressSkills: {
+    method: 'GET',
+    path: '/v1/progress/skills',
+    response: z.array(SkillMasteryViewSchema),
+  },
+  progressLessons: {
+    method: 'GET',
+    path: '/v1/progress/lessons',
+    response: z.array(LessonMasteryViewSchema),
+  },
+  progressCars: {
+    method: 'GET',
+    path: '/v1/progress/cars',
+    response: CarsReadinessViewSchema,
+  },
   attempt: { method: 'POST', path: '/v1/attempts', body: AttemptCommandSchema },
   sync: { method: 'POST', path: '/v1/sync', body: SyncSubmitRequestSchema },
   vectorLessonStatus: {

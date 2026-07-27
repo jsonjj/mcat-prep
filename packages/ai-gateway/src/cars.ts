@@ -63,3 +63,37 @@ export function buildReflectionPrompt(): AiMessage {
       'Be encouraging and specific. Do not declare a winner or loser, and do not mention scores.',
   };
 }
+
+/** Formative CARS rubric scores (0–3 each) for the micro-judgments a duel exercised. */
+export interface DuelRubricScores {
+  position?: number;
+  argument?: number;
+  application?: number;
+}
+
+/**
+ * Ask the sparring partner to grade the student's arguments on the CARS rubric.
+ * Used only for a low-weight, formative CARS-ability nudge (never a score claim);
+ * the reply is parsed by {@link parseDuelRubric} and never shown verbatim.
+ */
+export function buildDuelRubricPrompt(): AiMessage {
+  return {
+    role: 'user',
+    content:
+      "Grade ONLY the student's arguments in this debate on up to three criteria, each an integer 0-3 " +
+      '(0 inadequate, 1 developing, 2 proficient, 3 excellent): Position Identification, Argument ' +
+      'Evaluation, and Application beyond the text. Consider only criteria the debate actually ' +
+      'exercised; omit any that did not apply. Output EXACTLY one line and nothing else, in the form: ' +
+      'SCORES position=<0-3> argument=<0-3> application=<0-3> (drop any criterion that did not apply).',
+  };
+}
+
+/** Parse a `SCORES position=.. argument=.. application=..` line into 0–3 scores. */
+export function parseDuelRubric(text: string): DuelRubricScores {
+  const scores: DuelRubricScores = {};
+  for (const key of ['position', 'argument', 'application'] as const) {
+    const match = new RegExp(`${key}\\s*[=:]\\s*([0-3])`, 'i').exec(text);
+    if (match) scores[key] = Number(match[1]);
+  }
+  return scores;
+}

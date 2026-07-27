@@ -1,11 +1,15 @@
 import type {
   BootstrapResponse,
+  CarsDuelRubric,
+  CarsReadinessView,
   DiagnosticNext,
   ErrorEntryView,
+  LessonMasteryView,
   MasteryMapEntry,
   PracticeItemView,
   PracticeResult,
   ProbableCause,
+  SkillMasteryView,
   SkillSummary,
   StudyStepView,
   TodayView,
@@ -41,11 +45,18 @@ export interface AuthorityPort {
   continueStep(): Promise<void>;
   submitRecall(answer: string): Promise<boolean>;
   getMasteryMap(): Promise<MasteryMapEntry[]>;
+  /** BKT mastery: the 7 reasoning-skill readouts (Skills page). */
+  getMasterySkills(): Promise<SkillMasteryView[]>;
+  /** BKT mastery: per-lesson P(L) (drives the Progress brain). */
+  getMasteryLessons(): Promise<LessonMasteryView[]>;
+  /** CARS IRT readiness (gauge + 3 sub-skill bars). */
+  getCarsReadiness(): Promise<CarsReadinessView>;
   getErrorLog(): Promise<ErrorEntryView[]>;
   getSkills(): Promise<SkillSummary[]>;
   getPracticeItem(questionId: string): Promise<PracticeItemView | null>;
   checkPractice(questionId: string, choiceId: string | null): Promise<PracticeResult>;
-  recordCarsDuel(): Promise<void>;
+  /** Record a CARS Duel; an optional rubric feeds a low-weight CARS ability nudge. */
+  recordCarsDuel(rubric?: CarsDuelRubric): Promise<void>;
   getWrapped(): Promise<WrappedView>;
   resetProgress(): Promise<void>;
   getVectorLessonStatus(): Promise<VectorLessonStatusView>;

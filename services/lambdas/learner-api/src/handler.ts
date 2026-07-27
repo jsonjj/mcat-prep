@@ -33,6 +33,7 @@ import {
   allowedMethodsFor,
   practiceQuestionId,
   routeFor,
+  type CarsDuelCommandBody,
   type CauseCommandBody,
   type ContinueCommandBody,
   type PracticeAttemptCommandBody,
@@ -81,12 +82,15 @@ interface KernelPort {
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['practiceItem']>;
   wrapped(principal: Principal): ReturnType<RepositoryLearnerKernel['wrapped']>;
+  masterySkills(principal: Principal): ReturnType<RepositoryLearnerKernel['masterySkills']>;
+  masteryLessons(principal: Principal): ReturnType<RepositoryLearnerKernel['masteryLessons']>;
+  carsReadiness(principal: Principal): ReturnType<RepositoryLearnerKernel['carsReadiness']>;
   handlePractice(
     input: PracticeAttemptCommandBody,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handlePractice']>;
   handleCarsDuel(
-    input: ContinueCommandBody,
+    input: CarsDuelCommandBody,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handleCarsDuel']>;
   handleReset(
@@ -637,7 +641,7 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
         case 'carsDuel':
           return jsonResponse(
             200,
-            await dependencies.kernel.handleCarsDuel(parsed.data as ContinueCommandBody, principal),
+            await dependencies.kernel.handleCarsDuel(parsed.data as CarsDuelCommandBody, principal),
             origin,
             requestIdValue,
           );
@@ -719,6 +723,33 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       return jsonResponse(
         200,
         route.responseSchema?.parse(await dependencies.kernel.wrapped(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'progressSkills') {
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.masterySkills(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'progressLessons') {
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.masteryLessons(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'progressCars') {
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.carsReadiness(principal)),
         origin,
         requestIdValue,
       );

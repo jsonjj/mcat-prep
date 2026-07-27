@@ -13,6 +13,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "dev:lesson": "VITE_AUTHORITY_BASE_URL=http://127.0.0.1:8787 pnpm --parallel --filter @mcat/local-authority --filter @mcat/learner-web run dev",
+    "dev:local": "cp -n apps/learner-web/.env.example apps/learner-web/.env.local 2>/dev/null; pnpm install --prefer-offline && pnpm --filter @mcat/learner-web dev",
     "typecheck": "turbo run typecheck",
     "lint": "eslint .",
     "test": "vitest run",

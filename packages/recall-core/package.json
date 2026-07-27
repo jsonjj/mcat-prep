@@ -1,0 +1,23 @@
+{
+  "name": "@mcat/recall-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Platform-neutral Recall (flashcards) core: card model, FSRS-6 scheduling, selection service, storage port, and the Today's-Path / mastery boundary contracts.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mcat/contracts": "workspace:*",
+    "ts-fsrs": "5.2.1",
+    "zod": "3.24.1"
+  },
+  "devDependencies": {
+    "typescript": "5.7.3",
+    "vitest": "3.2.6"
+  }
+}
