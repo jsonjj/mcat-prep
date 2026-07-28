@@ -44,13 +44,15 @@ function SkillRail() {
               >
                 <MasteryRing pct={pct} mastered={skill.mastered} refreshNeeded={skill.refreshNeeded} />
                 <span className="mc-skillring__label" aria-hidden="true">
-                  <span className="mc-skillring__title">{info.title}</span>
+                  <span className="mc-skillring__head">
+                    <span className="mc-skillring__title">{info.title}</span>
+                    {skill.refreshNeeded ? (
+                      <span className="mc-skillring__tag">◐ Needs refresh</span>
+                    ) : skill.mastered ? (
+                      <span className="mc-skillring__tag mc-skillring__tag--mastered">★ Mastered</span>
+                    ) : null}
+                  </span>
                   <span className="mc-skillring__desc">{info.description}</span>
-                  {skill.refreshNeeded ? (
-                    <span className="mc-skillring__tag">◐ Needs refresh</span>
-                  ) : skill.mastered ? (
-                    <span className="mc-skillring__tag mc-skillring__tag--mastered">★ Mastered</span>
-                  ) : null}
                 </span>
               </li>
             );
