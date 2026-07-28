@@ -16,6 +16,9 @@ function greeting(): string {
   return 'Good evening';
 }
 
+// Label for the secondary button that opens the full ordered day plan (/app/today).
+const PLAN_LABEL = 'See the whole day';
+
 export function Home() {
   const today = useToday();
   const path = useEnsureTodaysPath();
@@ -42,28 +45,28 @@ export function Home() {
       <EvidenceAtlas variant="home" />
 
       {current ? (
-        <div className="mc-upnext-wrap">
-          <button
-            type="button"
-            className="mc-upnext mc-upnext--btn"
-            aria-label={`Start ${current.title}`}
-            onClick={() => launch(current)}
-          >
-            <div className="mc-upnext__text">
-              <span className="mc-upnext__eyebrow">Today’s Path · Up next</span>
-              <span className="mc-upnext__title">{current.title}</span>
-              <span className="mc-upnext__meta">
-                {current.estimatedMinutes} min · {remaining} activit
-                {remaining === 1 ? 'y' : 'ies'} left
-              </span>
-            </div>
-            <span className="mc-upnext__play" aria-hidden="true">
-              <IconPlay />
+        <div className="mc-upnext mc-upnext--running">
+          <div className="mc-upnext__text">
+            <span className="mc-upnext__eyebrow">Today’s Path · Up next</span>
+            <span className="mc-upnext__title">{current.title}</span>
+            <span className="mc-upnext__meta">
+              {current.estimatedMinutes} min · {remaining} activit
+              {remaining === 1 ? 'y' : 'ies'} left
             </span>
-          </button>
-          <Link to="/app/today" className="mc-upnext__link">
-            View full plan
-          </Link>
+          </div>
+          <div className="mc-upnext__actions">
+            <Link to="/app/today" className="mc-upnext__planbtn">
+              {PLAN_LABEL}
+            </Link>
+            <button
+              type="button"
+              className="mc-upnext__play mc-upnext__play--btn"
+              onClick={() => launch(current)}
+              aria-label={`Start ${current.title}`}
+            >
+              <IconPlay />
+            </button>
+          </div>
         </div>
       ) : (
         <Link to="/app/today" className="mc-upnext" aria-label="Today’s Path">

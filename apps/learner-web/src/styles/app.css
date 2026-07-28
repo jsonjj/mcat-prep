@@ -529,6 +529,43 @@ body {
     linear-gradient(135deg, #ffcf6b 0%, #ffb14e 55%, #f59e3c 100%);
   box-shadow: 0 8px 22px color-mix(in srgb, #f0b95a 34%, transparent);
 }
+
+/* "Up next" running card: text on the left, then a bigger "see the plan" button
+   in the gap before the round start button. The card itself isn't clickable. */
+.mc-upnext--running:hover {
+  transform: none;
+}
+.mc-upnext__actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-upnext__planbtn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--mc-space-2) var(--mc-space-4);
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 34%, var(--mc-border));
+  background: color-mix(in srgb, var(--mc-surface) 72%, transparent);
+  color: var(--mc-primary-text);
+  font-size: var(--mc-text-14);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--mc-motion-control) var(--mc-ease),
+    transform var(--mc-motion-control) var(--mc-ease);
+}
+.mc-upnext__planbtn:hover {
+  background: color-mix(in srgb, var(--mc-primary) 14%, var(--mc-surface));
+  transform: translateY(-1px);
+}
+.mc-upnext__play--btn {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
 .mc-upnext__text {
   display: flex;
   flex-direction: column;
