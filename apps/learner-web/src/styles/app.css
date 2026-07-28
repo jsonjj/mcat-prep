@@ -945,18 +945,6 @@ body {
   border-radius: var(--mc-radius-control);
   background: var(--mc-surface);
 }
-.mc-diag-priority__rank {
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-family: var(--mc-font-mono);
-  font-weight: 700;
-  background: color-mix(in srgb, var(--mc-primary) 16%, transparent);
-  color: var(--mc-primary-text);
-}
 .mc-diag-priority__body {
   display: flex;
   flex-direction: column;
@@ -2419,6 +2407,254 @@ body {
   background: color-mix(in srgb, var(--mc-primary) 16%, transparent);
   color: var(--mc-primary-text);
   font-weight: 700;
+}
+
+/* ---- Diagnostic block palette (multistage jump grid) ---- */
+.mc-diag-palette {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-diag-palette__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+}
+.mc-diag-palette__count {
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-12);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mc-ink-muted);
+}
+.mc-diag-palette__legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mc-space-3);
+  font-size: var(--mc-text-12);
+  color: var(--mc-ink-muted);
+}
+.mc-diag-palette__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-1);
+}
+.mc-diag-palette__swatch {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border: 1px dashed var(--mc-border);
+  border-radius: 4px;
+  background: var(--mc-surface);
+}
+.mc-diag-palette__swatch--answered {
+  border-style: solid;
+  background: color-mix(in srgb, var(--mc-primary) 20%, var(--mc-surface));
+}
+.mc-diag-palette__swatch--flagged::after,
+.mc-diag-palette__cell--flagged::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-top: 9px solid var(--mc-warning);
+  border-left: 9px solid transparent;
+}
+.mc-diag-palette__cell--flagged::after {
+  border-top-width: 12px;
+  border-left-width: 12px;
+}
+/* Scrolls only on the narrowest viewports, where a block wraps past a screen. */
+.mc-diag-palette__grid {
+  list-style: none;
+  margin: 0;
+  /* Room for the focus ring, which an overflow container would otherwise clip. */
+  padding: var(--mc-focus-width);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(2.75rem, 1fr));
+  gap: var(--mc-space-2);
+  max-height: 19rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.mc-diag-palette__cell {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--mc-border);
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface);
+  color: var(--mc-ink);
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-14);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.mc-diag-palette__cell:focus-visible {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+}
+.mc-diag-palette__cell--answered {
+  border-style: solid;
+  background: color-mix(in srgb, var(--mc-primary) 18%, var(--mc-surface));
+  color: var(--mc-primary-text);
+  font-weight: 700;
+}
+.mc-diag-palette__cell--current {
+  border-style: solid;
+  box-shadow: inset 0 0 0 2px var(--mc-ink);
+  font-weight: 700;
+}
+
+/* ---- Per-bucket gap chart (diagnostic result) ---- */
+.mc-gapchart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-4);
+}
+.mc-gapchart__rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-4);
+}
+.mc-gapchart__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+  /* Every row is indented equally so that colouring the rule on a starting
+     point shifts nothing else on the chart. */
+  border-left: 3px solid transparent;
+  padding-left: var(--mc-space-3);
+}
+.mc-gapchart__row--priority {
+  border-left-color: var(--mc-primary);
+}
+.mc-gapchart__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+}
+.mc-gapchart__label {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--mc-space-2);
+  min-width: 0;
+}
+.mc-gapchart__mark {
+  padding: 0 var(--mc-space-2);
+  border: 1px solid var(--mc-primary);
+  border-radius: var(--mc-radius-pill);
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  color: var(--mc-primary-text);
+  white-space: nowrap;
+}
+.mc-gapchart__title {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-15);
+  font-weight: 600;
+}
+.mc-gapchart__pct {
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-14);
+  font-variant-numeric: tabular-nums;
+  color: var(--mc-primary-text);
+}
+.mc-gapchart__track {
+  position: relative;
+  height: 22px;
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface-2);
+  overflow: hidden;
+}
+.mc-gapchart__fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 13px;
+  min-width: 2px;
+  border-radius: var(--mc-radius-pill);
+  background: linear-gradient(90deg, var(--mc-primary), var(--mc-primary-hover));
+}
+/* Plausible range. Hatch + caliper ends read in greyscale. The whisker sits in
+   the top 9px and the fill in the bottom 13px of the 22px track, so no span can
+   collide with the bar however wide it gets — the widest the served form has
+   produced is ~63% of the scale. `min-width` keeps the tightest span (under 1%)
+   from vanishing, and the track clips the 2px floor rather than letting it run
+   past the right edge. */
+.mc-gapchart__range {
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  height: 9px;
+  min-width: 2px;
+  border-left: 1px solid var(--mc-ink);
+  border-right: 1px solid var(--mc-ink);
+  background: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc-ink) 45%, transparent) 0 2px,
+    transparent 2px 5px
+  );
+}
+.mc-gapchart__track--provisional .mc-gapchart__range {
+  background: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc-ink) 45%, transparent) 0 2px,
+    transparent 2px 8px
+  );
+}
+/* A borderline bar is porous, so a shaky high gap never reads as solid. */
+.mc-gapchart__track--provisional .mc-gapchart__fill {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--mc-primary) 0 6px,
+    color-mix(in srgb, var(--mc-primary) 30%, transparent) 6px 11px
+  );
+}
+.mc-gapchart__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mc-space-2);
+  margin: var(--mc-space-1) 0 0;
+}
+.mc-gapchart__band {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--mc-space-2);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-pill);
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+}
+.mc-gapchart__band--confident {
+  border-color: var(--mc-primary);
+  color: var(--mc-primary-text);
+}
+.mc-gapchart__band--moderate {
+  border-style: dashed;
+}
+.mc-gapchart__band--provisional {
+  border-style: dotted;
+  color: var(--mc-ink-muted);
+}
+.mc-gapchart__axis {
+  margin: 0;
 }
 
 /* ---- Practice (adaptive test-out) ---- */

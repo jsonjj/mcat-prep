@@ -7,6 +7,7 @@ import type {
   ErrorEntryView,
   LessonMasteryView,
   MasteryMapEntry,
+  MasterySeed,
   PracticeAttemptCommand,
   PracticeAttemptResult,
   PracticeItemView,
@@ -79,6 +80,12 @@ export interface AuthorityPort {
   submitPracticeAttempt(command: PracticeAttemptCommand): Promise<PracticeAttemptResult>;
   /** Record a CARS Duel; an optional rubric feeds a low-weight CARS ability nudge. */
   recordCarsDuel(rubric?: CarsDuelRubric): Promise<void>;
+  /**
+   * Hand a finished diagnostic's opening priors to the mastery engine. Seeds
+   * only ever initialize units the learner has not practised, and are capped far
+   * below the mastery threshold — see `applyMasterySeed`.
+   */
+  applyMasterySeed(seed: MasterySeed): Promise<void>;
   getWrapped(): Promise<WrappedView>;
   resetProgress(): Promise<void>;
   getVectorLessonStatus(): Promise<VectorLessonStatusView>;

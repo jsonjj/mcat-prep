@@ -33,6 +33,11 @@ export interface DiagnosticItem {
   protected: ProtectedV7Payload;
   cluster: SkillCluster;
   section: Section;
+  /**
+   * Authored lesson, or null when the item carries none. The FC diagnostic
+   * buckets by lesson, so this is what places an item on that axis.
+   */
+  lessonId: string | null;
   familyId: string;
   dokLevel: number | undefined;
   /** reviewed + published + diagnostic-eligible + not protected/test-only for delivery. */
@@ -106,6 +111,7 @@ export function buildDiagnosticBank(
       // Section is the cluster's authoritative rollup (keeps section-floor
       // accounting coherent for cross-section reasoning clusters R1–R3).
       section: CLUSTER_INFO[cluster].section,
+      lessonId: q.lesson_id ?? null,
       familyId: q.family_id ?? `fam-${q.id}`,
       dokLevel: q.dok_level,
       eligible: isEligible(q),

@@ -22,6 +22,7 @@ export default defineWorkspace([
         'packages/test-fixtures/**/*.test.ts',
         'apps/landing-web/server/**/*.test.ts',
         'apps/learner-web/server/**/*.test.ts',
+        'apps/learner-web/src/**/*.test.ts',
         'services/**/*.test.ts',
         'database/**/*.test.ts',
         'infra/cdk/**/*.test.ts',

@@ -1,8 +1,13 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CarsDuelRubric, ProbableCause, VectorLessonAction } from '@mcat/contracts';
+import type {
+  CarsDuelRubric,
+  MasterySeed,
+  ProbableCause,
+  VectorLessonAction,
+} from '@mcat/contracts';
 import type { GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
-import { diagnosticClient, type ChoiceId, type DiagnosticNextView } from './diagnostic-client';
+import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
 
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 0, refetchOnWindowFocus: false, retry: false } },
@@ -45,22 +50,26 @@ export const useErrorLog = () =>
 export const useSkills = () =>
   useQuery({ queryKey: ['skills'], queryFn: () => authority.getSkills() });
 /**
- * The diagnostic is served by the real balanced-adaptive engine over the v7
- * learner-safe bank (dev/preview Vite plugin; API Gateway in prod). It is wired
- * through the dedicated {@link diagnosticClient} rather than the generic authority
- * port because it carries one-use item tokens and never receives an answer key.
+ * The diagnostic is served by the real multistage engine over the v7
+ * learner-safe bank (dev/preview Vite plugin; API Gateway in prod), a whole
+ * block at a time. It is wired through the dedicated {@link diagnosticClient}
+ * rather than the generic authority port because it carries one-use block
+ * tokens and never receives an answer key.
  */
 export const useDiagnosticNext = () =>
   useQuery({ queryKey: ['diagnostic'], queryFn: () => diagnosticClient.start() });
 
-export function useSubmitDiagnostic() {
+export function useSubmitDiagnosticBlock() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (v: { questionId: string; choiceId: ChoiceId | null; elapsedMs: number }) =>
-      diagnosticClient.answer(v.questionId, v.choiceId, v.elapsedMs),
-    // The answer response already contains the next item/result — seed the cache
-    // directly to avoid re-serving (and re-tokenizing) the same item.
-    onSuccess: (next: DiagnosticNextView) => qc.setQueryData(['diagnostic'], next),
+    mutationFn: (v: {
+      questionIds: readonly string[];
+      answers: Readonly<Record<string, string>>;
+      elapsedMs?: Readonly<Record<string, number>>;
+    }) => diagnosticClient.submitBlock(v.questionIds, v.answers, v.elapsedMs),
+    // The commit response already contains the next block/result — seed the cache
+    // directly to avoid re-serving (and re-tokenizing) it.
+    onSuccess: (next: DiagnosticBlockView) => qc.setQueryData(['diagnostic'], next),
   });
 }
 
@@ -167,6 +176,21 @@ export function useCheckPractice() {
   return useMutation({
     mutationFn: (v: { questionId: string; choiceId: string | null }) =>
       authority.checkPractice(v.questionId, v.choiceId),
+    onSuccess: () => invalidateLearner(qc),
+  });
+}
+
+/**
+ * Hand the finished diagnostic's opening priors to the authority.
+ *
+ * This is the only point at which the diagnostic touches mastery. It initializes
+ * unpractised lessons and nothing else, so it is safe to fire once on completion
+ * and safe to have no effect when it runs again.
+ */
+export function useApplyMasterySeed() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (seed: MasterySeed) => authority.applyMasterySeed(seed),
     onSuccess: () => invalidateLearner(qc),
   });
 }

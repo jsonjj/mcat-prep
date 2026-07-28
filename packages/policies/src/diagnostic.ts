@@ -137,7 +137,8 @@ export function selectNextDiagnostic(
 // ---------------------------------------------------------------------------
 // Turns scored responses into a *diagnostic decision envelope* per the learning
 // flow §7.3/§8: per-cluster classification + recommendation + uncertainty, and
-// the learner-facing Top-3 highest-*leverage* priorities.
+// the learner-facing highest-*leverage* priorities, `REPORTED_PRIORITY_COUNT` of
+// them.
 //
 // This is deliberately NOT calibrated ability estimation. It reads a gap signal
 // from right/wrong + speed + author difficulty (dok) and ranks by
@@ -185,7 +186,12 @@ export interface ClusterSignal {
   correct: number;
   /** Gap read in [0,1]; higher = more likely to need work. */
   gap: number;
-  /** Read confidence in [0,1]; grows with evidence within this cluster. */
+  /**
+   * How far to trust `gap`, in [0,1]. Higher means the estimate is better
+   * pinned down, which is the direction both consumers assume: the readout
+   * draws a plausible range of width `1 - certainty`, and the mastery seed
+   * scales how far a prior may move by it.
+   */
   certainty: number;
   classification: DiagnosticClassification;
   recommendation: DiagnosticRecommendation;
@@ -193,7 +199,7 @@ export interface ClusterSignal {
   slow: boolean;
 }
 
-/** A learner-facing highest-leverage priority (Top 3). */
+/** A learner-facing highest-leverage priority. */
 export interface LeveragePriority {
   cluster: SkillCluster;
   title: string;
@@ -222,9 +228,19 @@ export interface DiagnosticResult {
 /**
  * Prerequisite-unlock weight: how much fixing a cluster tends to unblock others.
  * Reasoning foundations (R1 quant, R2 data/representations, R3 experiments) and
- * chemistry (CP3) unlock the most; leaf/applied clusters unlock the least. This
- * encodes the plan's leverage idea and mirrors the planner's prerequisite-first
- * priority ordering without inventing a full edge solve here.
+ * chemistry (CP3) unlock the most; leaf/applied clusters unlock the least.
+ *
+ * These values are hand-tuned, which the plan flags as a stand-in for the real
+ * prerequisite graph. `scripts/generate-unlock-weights.mjs` performs that real
+ * derivation from the V3 registry, and its output is committed at
+ * `./data/unlock-weights.generated.ts` — but it is deliberately NOT wired in
+ * yet. The registry graph is still too sparse to rank leverage: only 149 of 422
+ * KCs have any outgoing edge and only 81 directed edges cross a cluster
+ * boundary, so the derived table zeroes out nine of fifteen clusters and
+ * inverts the plan's own worked example (it demotes quantitative reasoning and
+ * promotes chemistry). Adopting it today would be conformant on paper and worse
+ * in practice. `unlock-weights.test.ts` watches the graph and fails when it has
+ * grown enough to revisit.
  */
 export const UNLOCK_WEIGHT: Readonly<Record<SkillCluster, number>> = {
   R1: 1.0,
@@ -243,6 +259,78 @@ export const UNLOCK_WEIGHT: Readonly<Record<SkillCluster, number>> = {
   PS3: 0.2,
   CA2: 0.15,
 };
+
+/**
+ * How hard the prerequisite-unlock weight is allowed to move the ranking:
+ * leverage = gap × (1 + UNLOCK_STRENGTH × unlockWeight).
+ *
+ * The weight encodes something real — a weak prerequisite that unblocks
+ * downstream content deserves more study time than an isolated one — but it is a
+ * property of the bucket, not of the learner, so at full strength it can name a
+ * bucket ahead of one the learner is measurably weaker in.
+ *
+ * Held at full strength, and the reason is a trade rather than a preference.
+ * Measured on `fc-10` at 140 items over 24 worlds x 250 learners
+ * (`RETEST_STUDY=ranking`), against strengths 0.5, 0.25 and 0:
+ *
+ *   k     cross-learner   retest 1-of-2   true #1      weakest #1
+ *   1.00   56.0% (45.6)    94.6% / 88.0   91.5% / 86.8   78.0%
+ *   0.50   52.0% (42.6)    93.1% / 86.4   90.1% / 85.2   79.6%
+ *   0.25   44.9% (41.3)    88.4% / 80.0   87.5% / 79.2   81.3%
+ *   0.00   39.8% (38.2)    81.5% / 66.0   82.2% / 68.0   82.2%
+ *
+ * (pooled, then worst world; the bracket is the same cross-learner figure
+ * computed on ground truth, which is the floor genericity of the axis itself.)
+ *
+ * What the strength buys is reproducibility, and it buys it *because* the weight
+ * is learner-independent: a constant breaks a near-tie the same way on both
+ * sittings, where the measured gap does not. Two thirds of the disagreements it
+ * settles are between buckets whose true weakness differs by under 0.10. What it
+ * costs is genericity — 10 points of agreement between different learners' plans
+ * above what truth itself shows, concentrated in the two heaviest concepts, which
+ * take 52% and 43% of reported slots against 40% and 34% in truth — and 4 points
+ * of skill at naming whichever concept the learner is weakest in outright. No
+ * bucket becomes unreachable at any strength (the least-reported holds 5.5% of
+ * slots) or near-certain (the most holds 51.9%).
+ *
+ * The span is what keeps that trade small here: `fc-10`'s weights run 0.20–0.44
+ * with six of ten tied at 0.20, so the multiplier spans 1.20–1.44 and full
+ * strength can only reorder buckets whose gaps differ by under 20% — six of them
+ * it cannot reorder at all. It is a named constant because on an axis with a
+ * wider spread, the 15-cluster table's 0.15–1.0 among them, the same k reorders
+ * buckets differing by up to 74% and the trade lands somewhere else.
+ */
+export const UNLOCK_STRENGTH = 1;
+
+/** The reported ranking key. One definition, so no consumer can drift from it. */
+export const leverageOf = (
+  gap: number,
+  unlockWeight: number,
+  strength: number = UNLOCK_STRENGTH,
+): number => gap * (1 + strength * unlockWeight);
+
+/**
+ * How many priorities the report names.
+ *
+ * Owned in the policy layer because this is where the ranking is cut: a consumer
+ * that re-slices with its own number is free to disagree with the instrument
+ * about what was measured, and everything that depends on the cut — the early
+ * stop, the plan-confidence separation term, `stillConfirming` — would go on
+ * describing a different report.
+ *
+ * Two rather than three because the third slot does not survive a re-sit. At the
+ * served design a top-three report misses the reproducibility bar on the worst
+ * assumption world, where a top two holds 88.0% worst-world and 94.6% pooled on
+ * a 1-of-2 criterion; about 68% of the top-three disagreements are between
+ * concepts whose true weakness differs by under 0.10, so the third slot is
+ * mostly reporting a real tie as though it were an ordering. Note the criterion:
+ * 88.0% is one of the two recurring, not the pair — the identical set held 47.8%
+ * when measured, so nothing here licenses claiming both areas are separated.
+ *
+ * It lives beside `UNLOCK_WEIGHT` rather than in `diagnostic-bayes` so that
+ * `diagnostic-axis` can keep importing the weight table without a cycle.
+ */
+export const REPORTED_PRIORITY_COUNT = 2;
 
 /** A miss on an easier item is more diagnostic of weakness than a miss on a hard one. */
 const dokMissWeight = (dok: number | undefined): number => {
@@ -371,7 +459,7 @@ export function computeDiagnosticResult(
     .map((s) => ({
       cluster: s.cluster,
       title: CLUSTER_INFO[s.cluster].title,
-      leverage: s.gap * (1 + (UNLOCK_WEIGHT[s.cluster] ?? 0)),
+      leverage: leverageOf(s.gap, UNLOCK_WEIGHT[s.cluster] ?? 0),
       classification: s.classification,
       recommendation: s.recommendation,
     }))
@@ -379,18 +467,16 @@ export function computeDiagnosticResult(
       if (b.leverage !== a.leverage) return b.leverage - a.leverage;
       return SKILL_CLUSTERS.indexOf(a.cluster) - SKILL_CLUSTERS.indexOf(b.cluster);
     });
-  const topPriorities = priorities.slice(0, 3);
+  const topPriorities = priorities.slice(0, REPORTED_PRIORITY_COUNT);
 
-  // Still confirming: weak-leaning but under-evidenced (the plan's "shaky areas"
-  // handed to silent week-1 confirmation), plus any weak cluster past the Top 3.
+  // Still confirming: weak-leaning but under-evidenced — the plan's "shaky areas"
+  // handed to silent week-1 confirmation. Well-evidenced clusters that merely
+  // missed the cut are deliberately absent: this list means "too little evidence",
+  // and a cluster demoted by the reported count is the opposite of that.
   const topSet = new Set(topPriorities.map((p) => p.cluster));
   const stillConfirming = perCluster
     .filter(
-      (s) =>
-        !topSet.has(s.cluster) &&
-        s.itemsSeen > 0 &&
-        s.gap >= 0.35 &&
-        (s.certainty < 0.5 || priorities.some((p) => p.cluster === s.cluster)),
+      (s) => !topSet.has(s.cluster) && s.itemsSeen > 0 && s.gap >= 0.35 && s.certainty < 0.5,
     )
     .map((s) => s.cluster);
 
@@ -411,23 +497,44 @@ export function computeDiagnosticResult(
 /**
  * Internal 0–100 *plan* confidence (never shown as a number). Confidence is in
  * the PLAN, not per-skill: it rises with broad coverage and with how cleanly the
- * Top-3 separate from the rest (a settled ranking). Kept monotonic and bounded.
+ * reported priorities separate from the rest (a settled ranking). Kept monotonic
+ * and bounded.
+ *
+ * Coverage is a share of the buckets this result reports on, not of a constant.
+ * It read `sampled / SKILL_CLUSTERS.length` — a hard-wired 15 — which is right
+ * only for the partition this legacy path happens to use and silently wrong for
+ * any other: on the ten Foundational Concepts the diagnostic now measures, that
+ * denominator caps coverage at 0.67 and holds the score 17 points below the
+ * Bayesian path's for the same sitting.
+ *
+ * Bit-identical today, because `computeDiagnosticResult` still builds
+ * `perCluster` from `SKILL_CLUSTERS` and so cannot be handed another axis at
+ * all. What remains wrong is that, not the arithmetic here, and it is left
+ * alone deliberately: nothing outside this file's tests calls this path —
+ * production takes `computeBayesResult`, which is axis-injected — so making it
+ * axis-aware would be churn on dead code. Anyone comparing the two paths on an
+ * off-cluster axis should expect this one to report coverage 0 and a
+ * floor-level score, because the responses' bucket ids are not skill clusters
+ * and every one of them is dropped by `computeDiagnosticResult` before it
+ * arrives here.
  */
 function internalPlanConfidence(
   perCluster: readonly ClusterSignal[],
   priorities: readonly LeveragePriority[],
   _cfg: DiagnosticConfig,
 ): number {
+  const buckets = Math.max(1, perCluster.length);
   const sampled = perCluster.filter((s) => s.itemsSeen > 0).length;
   const resolved = perCluster.filter((s) => s.certainty >= 0.5).length;
-  const coverage = sampled / SKILL_CLUSTERS.length;
-  const resolvedShare = resolved / SKILL_CLUSTERS.length;
+  const coverage = sampled / buckets;
+  const resolvedShare = resolved / buckets;
 
-  // Separation: gap in leverage between the #3 and #4 priority (0 if <4).
-  const third = priorities[2]?.leverage ?? 0;
-  const fourth = priorities[3]?.leverage ?? 0;
+  // Separation at the boundary the report actually draws: the leverage gap
+  // between the last reported priority and the first one left out.
+  const last = priorities[REPORTED_PRIORITY_COUNT - 1]?.leverage ?? 0;
+  const next = priorities[REPORTED_PRIORITY_COUNT]?.leverage ?? 0;
   const topLeverage = priorities[0]?.leverage ?? 0;
-  const separation = topLeverage > 0 ? Math.min(1, (third - fourth) / topLeverage + 0.5) : 0.5;
+  const separation = topLeverage > 0 ? Math.min(1, (last - next) / topLeverage + 0.5) : 0.5;
 
   const score = 100 * (0.45 * coverage + 0.35 * resolvedShare + 0.2 * separation);
   return Math.round(Math.max(0, Math.min(100, score)));
@@ -435,15 +542,15 @@ function internalPlanConfidence(
 
 // ---------------------------------------------------------------------------
 // SHADOW-ONLY smart stop (provisional; NOT wired into the active `shouldStop`).
-// The plan's "smart stop" ends early once the Top-3 stops changing AND each has
-// solid evidence. It fully turns on only after item calibration; until then the
+// The plan's "smart stop" ends early once the reported priorities stop changing
+// AND each has solid evidence. It fully turns on only after item calibration; until then the
 // active path is the balanced-coverage `shouldStop` above. This is exported for
 // the shadow evaluation harness and gated by DIAGNOSTIC_MANIFEST status.
 // ---------------------------------------------------------------------------
 
 export interface SmartStopDecision {
   stop: boolean;
-  reason: 'top3_stable_and_confident' | 'not_stable' | 'insufficient_history';
+  reason: 'plan_stable_and_confident' | 'not_stable' | 'insufficient_history';
 }
 
 /**
@@ -473,6 +580,6 @@ export function shadowSmartStop(
     return (signal?.certainty ?? 0) >= minCertainty;
   });
   return confident
-    ? { stop: true, reason: 'top3_stable_and_confident' }
+    ? { stop: true, reason: 'plan_stable_and_confident' }
     : { stop: false, reason: 'not_stable' };
 }

@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Navigate, NavLink, Outlet } from 'react-router-dom';
 import { SkipLink, useTheme } from '@mcat/ui-web';
 import { useBootstrap } from '../app/queries';
 import {
@@ -33,7 +33,6 @@ const SIDEBAR = [NAV[0], TODAY_ITEM, NAV[1], PRACTICE_ITEM, NAV[2], NAV[3], NAV[
 
 export function AppShell() {
   const bootstrap = useBootstrap();
-  const navigate = useNavigate();
   const { resolved, setPreference } = useTheme();
 
   if (bootstrap.isLoading) {
@@ -41,8 +40,7 @@ export function AppShell() {
   }
   if (bootstrap.data && !bootstrap.data.onboardingComplete) {
     // Learning stays locked until placement + plan are complete.
-    navigate('/', { replace: true });
-    return null;
+    return <Navigate to="/" replace />;
   }
 
   return (

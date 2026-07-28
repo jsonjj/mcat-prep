@@ -11,6 +11,7 @@ import {
   HttpApiErrorSchema,
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
+  MasterySeedSchema,
   PracticeAttemptResultSchema,
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
@@ -33,6 +34,7 @@ import {
   type BuildTodaysPathInput,
   type HttpApiError,
   type HttpErrorCode,
+  type MasterySeed,
   type PracticeAttemptCommand,
   type VectorLessonAction,
 } from '@mcat/contracts';
@@ -449,6 +451,15 @@ export class HttpAuthorityClient implements AuthorityPort {
       envelope: await this.commandEnvelope(),
       ...(rubric === undefined ? {} : { rubric }),
     });
+  }
+
+  async applyMasterySeed(seed: MasterySeed): Promise<void> {
+    await this.acceptedCommand('/v1/hooks/mastery-seed', {
+      envelope: await this.commandEnvelope(),
+      seed: MasterySeedSchema.parse(seed),
+    });
+    // The seed moves per-lesson priors, which the Progress brain reads.
+    await this.bootstrap();
   }
 
   async getWrapped() {

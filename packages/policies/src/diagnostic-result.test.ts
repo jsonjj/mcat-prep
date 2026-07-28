@@ -248,6 +248,29 @@ describe('computeDiagnosticResult', () => {
     const broad = computeDiagnosticResult(broadResponses);
     expect(broad.internalConfidence).toBeGreaterThan(narrow.internalConfidence);
   });
+
+  /**
+   * Coverage is a share of the buckets the result reports on, so sampling every
+   * one of them is full coverage. It used to divide by a hard-wired 15, which is
+   * this partition's size and no other's; the same arithmetic on the ten
+   * Foundational Concepts production measures capped coverage at 0.67 and held
+   * the score 17 points under the Bayesian path's for the same sitting.
+   *
+   * Locked here because the two numbers agree only by coincidence today — this
+   * path cannot yet be handed another axis — and the coincidence is exactly what
+   * hid the defect.
+   */
+  it('counts coverage against the buckets it reports on, not a fixed cluster count', () => {
+    const responses: DiagnosticResponse[] = [];
+    for (const c of SKILL_CLUSTERS) responses.push(resp(c, true), resp(c, false));
+    const full = computeDiagnosticResult(responses);
+    expect(full.perCluster).toHaveLength(SKILL_CLUSTERS.length);
+    // Every bucket sampled and every one resolved: nothing left for coverage or
+    // resolution to withhold, so the score is at the ceiling the separation
+    // term allows rather than at 0.67 of it.
+    expect(full.perCluster.every((s) => s.itemsSeen > 0)).toBe(true);
+    expect(full.internalConfidence).toBeGreaterThanOrEqual(70);
+  });
 });
 
 describe('shadowSmartStop (shadow-only)', () => {
@@ -284,7 +307,7 @@ describe('shadowSmartStop (shadow-only)', () => {
     const stable = resultWith(['R1', 'R2', 'R3'], 0.7);
     const decision = shadowSmartStop([stable, stable, stable]);
     expect(decision.stop).toBe(true);
-    expect(decision.reason).toBe('top3_stable_and_confident');
+    expect(decision.reason).toBe('plan_stable_and_confident');
   });
 
   it('does not stop when the Top 3 keeps changing', () => {

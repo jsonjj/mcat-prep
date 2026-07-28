@@ -5,9 +5,10 @@ import type { DiagnosticResponse, DiagnosticResult } from '@mcat/policies';
  * Server-side diagnostic session store with integrity hardening modeled on the
  * landing snapshot attempt store:
  *  - Sessions are addressed by an opaque token; only its SHA-256 hash is stored.
- *  - Each *served* item carries a one-use item token. An answer is accepted only
- *    with the matching outstanding token, so the endpoint cannot be replayed as
- *    a repeatable answer oracle for a single served item.
+ *  - Each *served* block carries a one-use block token. A commit is accepted only
+ *    with the matching outstanding token, so a committed block cannot be replayed.
+ *    The unit is the block rather than the item because multistage delivery lets
+ *    the learner revise any answer until the whole block is committed.
  *  - Session creation is rate-limited per client.
  *  - State is event-sourced (append-only `responses`) so the diagnostic is
  *    replayable/deterministic: the selection + result are pure functions of the
@@ -18,15 +19,20 @@ export interface ScoredResponse extends DiagnosticResponse {
   seq: number;
 }
 
+/** The stage currently served and awaiting commit. */
+export interface PendingBlock {
+  stageId: string;
+  questionIds: readonly string[];
+  tokenHash: string;
+}
+
 export interface SessionRecord {
   clientId: string;
   seed: string;
   createdAt: number;
   expiresAt: number;
   responses: ScoredResponse[];
-  /** The currently served-but-unanswered item, if any. */
-  pendingItemId: string | null;
-  pendingItemTokenHash: string | null;
+  pendingBlock: PendingBlock | null;
   completed: boolean;
   result: DiagnosticResult | null;
 }
@@ -109,8 +115,7 @@ export class DiagnosticSessionStore {
       createdAt: now,
       expiresAt: now + this.ttlMs,
       responses: [],
-      pendingItemId: null,
-      pendingItemTokenHash: null,
+      pendingBlock: null,
       completed: false,
       result: null,
     };
@@ -132,30 +137,43 @@ export class DiagnosticSessionStore {
     return record;
   }
 
-  /** Issue a fresh one-use item token for a served question. */
-  issueItemToken(record: SessionRecord, questionId: string): string {
+  /**
+   * Issue a fresh one-use token for a served block.
+   *
+   * Re-serving a stage (a refresh mid-block) mints a new token and retires the
+   * previous one, so only the most recently served copy of the block can commit.
+   * The stage itself is unchanged — `stageId` and the item list are derived from
+   * the response log, not from the token.
+   */
+  issueBlockToken(record: SessionRecord, stageId: string, questionIds: readonly string[]): string {
     const token = this.randomToken();
-    record.pendingItemId = questionId;
-    record.pendingItemTokenHash = this.hash(token);
+    record.pendingBlock = { stageId, questionIds: [...questionIds], tokenHash: this.hash(token) };
     return token;
   }
 
   /**
-   * Validate that `itemToken` is the outstanding token for `questionId`, and
-   * consume it (one-use). Throws on mismatch/reuse.
+   * Validate that `blockToken` is the outstanding token for the open `stageId`,
+   * and consume it (one-use). Returns the question ids the block was served
+   * with, so scoring uses the server's copy of the block rather than the
+   * client's. Throws on mismatch/reuse.
    */
-  consumeItemToken(record: SessionRecord, questionId: string, itemToken: string): void {
-    if (!itemToken || itemToken.length > 128) {
-      throw new DiagnosticSessionError('This answer could not be verified.', 401);
+  consumeBlockToken(
+    record: SessionRecord,
+    stageId: string,
+    blockToken: string,
+  ): readonly string[] {
+    if (!blockToken || blockToken.length > 128) {
+      throw new DiagnosticSessionError('This submission could not be verified.', 401);
     }
+    const pending = record.pendingBlock;
     if (
-      record.pendingItemId !== questionId ||
-      record.pendingItemTokenHash === null ||
-      record.pendingItemTokenHash !== this.hash(itemToken)
+      pending === null ||
+      pending.stageId !== stageId ||
+      pending.tokenHash !== this.hash(blockToken)
     ) {
-      throw new DiagnosticSessionError('This item was already answered or is out of sync.', 409);
+      throw new DiagnosticSessionError('This block was already submitted or is out of sync.', 409);
     }
-    record.pendingItemId = null;
-    record.pendingItemTokenHash = null;
+    record.pendingBlock = null;
+    return pending.questionIds;
   }
 }
