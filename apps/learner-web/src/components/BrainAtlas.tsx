@@ -1,5 +1,3 @@
-import type { MasteryMapEntry } from '@mcat/contracts';
-
 /**
  * The Evidence Atlas hero — an iridescent glass brain (original generated asset).
  * Decorative and hidden from assistive tech; the Skills list route carries the
@@ -15,7 +13,3 @@ export function BrainAtlas({ glowing = 0 }: { glowing?: number }) {
     </div>
   );
 }
-
-export const countGlowing = (map: MasteryMapEntry[] | undefined): number =>
-  (map ?? []).filter((m) => m.base === 'independent' || m.base === 'retained' || m.base === 'strong')
-    .length;

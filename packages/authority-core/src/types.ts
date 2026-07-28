@@ -3,14 +3,12 @@ import type {
   CarsSkill,
   LearnerEvent,
   LearnerId,
-  MasteryState,
   ReasoningOperation,
   UtcTimestamp,
 } from '@mcat/contracts';
 import type {
   DecisionReason,
   EvidenceKind,
-  EvidenceQualityTier,
   EvidenceReason,
   EvidenceRecord,
   Task,
@@ -155,8 +153,9 @@ export interface RevealView {
 
 export interface SessionSummary {
   skillId: string;
-  masteryState: MasteryState;
   refreshNeeded: boolean;
+  /** The warrant as reason codes. Never an ordinal tier — see `MasteryMapEntry`. */
+  reasons: DecisionReason<EvidenceReason>[];
   evidenceCounts: Record<string, number>;
 }
 
@@ -188,13 +187,15 @@ export interface TodayView {
 /**
  * One skill's EVIDENCE WARRANT, plus its presentation labels. This is a view of
  * `SkillEvidenceState` — what the evidence covers and what is missing — not a
- * capability estimate. `base` is the evidence-quality tier; the learner-facing
- * capability number is `SkillMasteryView.pL` from the BKT engine.
+ * capability estimate; the learner-facing capability number is
+ * `SkillMasteryView.pL` from the BKT engine.
+ *
+ * It publishes NO ordinal tier. The evidence-quality rank stays inside the
+ * authority (see `Authority.skillWarrants`), where comparing tiers is a planner
+ * concern; `reasons` is what reaches the learner.
  */
 export interface MasteryMapEntry {
   skillId: string;
-  /** Evidence-quality tier reached. Still named `base` for `apps/learner-web`. */
-  base: EvidenceQualityTier;
   refreshNeeded: boolean;
   supportingEvidenceIds: string[];
   freshestByKind: Partial<Record<EvidenceKind, UtcTimestamp>>;

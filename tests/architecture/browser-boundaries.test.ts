@@ -46,7 +46,9 @@ describe('learner browser authority boundary', () => {
   it('renders the interactive Evidence Atlas on Home', () => {
     const home = read('apps/learner-web/src/screens/Home.tsx');
 
-    expect(home).toContain("import { countGlowing } from '../components/BrainAtlas'");
+    // The "skills glowing" count is a capability claim, so it reads BKT and never
+    // an evidence-ladder rank.
+    expect(home).toContain('useMasterySkills()');
     expect(home).toContain("import { EvidenceAtlas } from '../components/EvidenceAtlas'");
     expect(home).toContain('<EvidenceAtlas variant="home" />');
   });

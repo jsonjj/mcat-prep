@@ -14,7 +14,6 @@ import {
   type AtlasBrainPart,
   type AtlasHemisphere,
 } from '@mcat/contracts';
-import { baseStateRank, type BaseMasteryState } from '@mcat/domain';
 
 /**
  * Optional realistic brain model. Ships at apps/learner-web/public/models/brain.glb
@@ -32,11 +31,18 @@ const MODEL_URL = '/models/brain.glb';
  * every lesson in it is mastered (dots coalesce inward). The Skills list route is
  * the accessible, keyboard-friendly equivalent.
  */
+/**
+ * A lesson's display status on the atlas. `done` is BKT's `mastered` and nothing
+ * else; `todo` means the lesson has no BKT readout yet. The evidence warrant does
+ * not appear here — it answers what the evidence covers, not whether the learner
+ * is capable.
+ */
+export type AtlasLessonStatus = 'todo' | 'progress' | 'done';
+
 export interface AtlasRegionLessonState {
   id: string;
   title: string;
-  state: BaseMasteryState;
-  mastered: boolean;
+  status: AtlasLessonStatus;
 }
 
 export interface AtlasRegion {
@@ -566,20 +572,18 @@ function useGlowTexture(): THREE.Texture {
 
 /**
  * Per-lesson node styling — matte base dot + a SMALL colored rim-glow so nodes stand
- * out (never the old blown-out white halo). Locked (not_assessed) stays grey with NO
- * glow; unlocked/in-progress shifts grey → amber; mastered (>= independent) reads
- * green. `glow` is the halo opacity (0 = none).
+ * out (never the old blown-out white halo). Unpracticed lessons stay grey with NO
+ * glow; in-progress shifts grey → amber; mastered reads green. `glow` is the halo
+ * opacity (0 = none).
  */
-function dotStyle(
-  state: BaseMasteryState,
-): { color: string; opacity: number; scale: number; glow: number } {
-  const r = baseStateRank(state);
-  if (r >= 4) return { color: '#33b87e', opacity: 0.96, scale: 1.1, glow: 0.72 }; // retained / strong
-  if (r === 3) return { color: '#45c48d', opacity: 0.95, scale: 1.1, glow: 0.72 }; // independent → green
-  if (r === 2) return { color: '#e3ad46', opacity: 0.92, scale: 1.05, glow: 0.68 }; // learning → amber
-  if (r === 1) return { color: '#ccb488', opacity: 0.82, scale: 1.0, glow: 0.55 }; // foundation → dim amber
-  return { color: '#b6b2c4', opacity: 0.5, scale: 0.92, glow: 0 }; // not assessed → grey (no glow)
-}
+const DOT_STYLE: Record<
+  AtlasLessonStatus,
+  { color: string; opacity: number; scale: number; glow: number }
+> = {
+  done: { color: '#45c48d', opacity: 0.95, scale: 1.1, glow: 0.72 },
+  progress: { color: '#e3ad46', opacity: 0.92, scale: 1.05, glow: 0.68 },
+  todo: { color: '#b6b2c4', opacity: 0.5, scale: 0.92, glow: 0 },
+};
 
 /**
  * One region: matte per-lesson nodes (colored by mastery, each with a SMALL colored
@@ -669,7 +673,7 @@ function RegionVisual({
       <group ref={dotsRef} position={geom.center} visible={!initialComplete.current}>
         {geom.dots.map((d, k) => {
           const lesson = region.lessons[k];
-          const st = dotStyle(lesson ? lesson.state : 'not_assessed');
+          const st = DOT_STYLE[lesson ? lesson.status : 'todo'];
           return (
             <group
               key={k}

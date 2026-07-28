@@ -1,7 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
-import { useMasteryMap, useToday } from '../app/queries';
-import { countGlowing } from '../components/BrainAtlas';
+import { useMasterySkills, useToday } from '../app/queries';
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
 import { GhostCompanion } from '../components/GhostCompanion';
 import { WrappedCard } from '../components/WrappedCard';
@@ -38,8 +37,10 @@ function greeting(): string {
 export function Home() {
   const navigate = useNavigate();
   const today = useToday();
-  const mastery = useMasteryMap();
-  const glowing = countGlowing(mastery.data);
+  // "Glowing" is a capability claim, so it counts BKT-mastered reasoning skills —
+  // the same seven the Skills page shows, reached from "All skills" below.
+  const skills = useMasterySkills();
+  const glowing = (skills.data ?? []).filter((s) => s.mastered).length;
   const upNext = today.data?.tasks.find((t) => t.taskId === today.data?.continueTaskId) ?? today.data?.tasks[0];
 
   const dayLabel = today.data

@@ -19,14 +19,19 @@ import {
   type LearnerEvent,
   type LessonMasteryView,
   type MasterySeed,
-  type MasteryState,
   type ProbableCause,
   type QualifiedBktObservation,
   type ReasoningOperation,
   type SkillMasteryView,
   type UtcTimestamp,
 } from '@mcat/contracts';
-import { EvidenceRecordSchema, scoreAttempt, type EvidenceKind, type Task } from '@mcat/domain';
+import {
+  EvidenceRecordSchema,
+  scoreAttempt,
+  type EvidenceKind,
+  type SkillEvidenceState,
+  type Task,
+} from '@mcat/domain';
 import {
   activePolicyVersions,
   applyMasteryAttempt,
@@ -69,6 +74,9 @@ import type {
   TodayView,
   WrappedView,
 } from './types';
+
+/** One node of the loaded skill graph, as `skillWarrants` pairs it with its warrant. */
+type SkillNode = LoadedBank['skillGraph']['skills'][number];
 
 interface PathActivity {
   id: string;
@@ -332,11 +340,13 @@ export class Authority {
       : null;
     const repairsOpen = this.getErrorLog(state).filter((e) => !e.repaired).length;
 
-    // Ghost companion: derived only from the learner's own goal, timeline, and coverage.
+    // Ghost companion: derived only from the learner's own goal, timeline, and
+    // coverage. Reads the internal warrant, since "has any evidence at all" is a
+    // tier comparison and the published view no longer carries the tier.
     const clustersWithEvidence = new Set(
-      this.getMasteryMap(state)
-        .filter((m) => m.base !== 'not_assessed')
-        .map((m) => m.cluster),
+      this.skillWarrants(state)
+        .filter(({ evidence }) => evidence.evidenceQuality !== 'not_assessed')
+        .map(({ skill }) => skill.cluster),
     );
     const coveragePct = clustersWithEvidence.size / SKILL_CLUSTERS.length;
     let lastEvidenceAt: string | null = null;
@@ -591,33 +601,53 @@ export class Authority {
   // ---- Views --------------------------------------------------------------
 
   /**
-   * The evidence WARRANT per skill: which recipe slots the evidence fills, how
-   * fresh it is, and what is missing. Not a capability estimate — that is
-   * `getMasterySkills`.
+   * INTERNAL evidence warrant per skill, tier included.
+   *
+   * `evidenceQuality` is an ordinal, and ordinals are legitimate here: the
+   * planner and the coverage counters compare them. It stops at the package
+   * boundary. Anything learner-facing goes through {@link getMasteryMap}, which
+   * projects this without the tier — see the note there.
    */
-  getMasteryMap(state: LearnerState): MasteryMapEntry[] {
+  private skillWarrants(state: LearnerState): { skill: SkillNode; evidence: SkillEvidenceState }[] {
     const now = this.clock.now();
     return this.bank.skillGraph.skills.map((skill) => {
       const records = state.evidence.filter((e) => e.skillId === skill.skillId);
-      const evidence = evaluateEvidence({
-        skillId: skill.skillId,
-        records,
-        now,
-        prerequisiteBlocked: this.isPrerequisiteBlocked(state, skill.skillId),
-        hasInstruction: records.length > 0,
-      });
       return {
-        skillId: evidence.skillId,
-        base: evidence.evidenceQuality,
-        refreshNeeded: evidence.refreshNeeded,
-        supportingEvidenceIds: [...evidence.supportingEvidenceIds],
-        freshestByKind: evidence.freshestByKind,
-        reasons: [...evidence.reasons],
-        policyVersion: evidence.policyVersion,
-        cluster: skill.cluster,
-        title: skill.title,
+        skill,
+        evidence: evaluateEvidence({
+          skillId: skill.skillId,
+          records,
+          now,
+          prerequisiteBlocked: this.isPrerequisiteBlocked(state, skill.skillId),
+          hasInstruction: records.length > 0,
+        }),
       };
     });
+  }
+
+  /**
+   * The evidence WARRANT per skill as the learner sees it: which recipe slots the
+   * evidence fills, how fresh it is, and what is missing — as reason codes. Not a
+   * capability estimate; that is `getMasterySkills`.
+   *
+   * The ordinal `evidenceQuality` tier is deliberately NOT projected. It is the
+   * only thing a consumer could threshold, and every consumer that read it
+   * eventually did: the deleted `countGlowing` ranked it, `getWrapped` ranked it,
+   * and the session badge ordered its wording by it — three rival mastery scales
+   * grown from one published integer. Reason codes carry the same warrant without
+   * an axis to compare along.
+   */
+  getMasteryMap(state: LearnerState): MasteryMapEntry[] {
+    return this.skillWarrants(state).map(({ skill, evidence }) => ({
+      skillId: evidence.skillId,
+      refreshNeeded: evidence.refreshNeeded,
+      supportingEvidenceIds: [...evidence.supportingEvidenceIds],
+      freshestByKind: evidence.freshestByKind,
+      reasons: [...evidence.reasons],
+      policyVersion: evidence.policyVersion,
+      cluster: skill.cluster,
+      title: skill.title,
+    }));
   }
 
   // ---- Mastery engine (BKT/IRT, mastery-bkt / provisional-v1) --------------
@@ -1135,14 +1165,24 @@ export class Authority {
     this.updateCarsAbility(state, skill, correct ? 1 : 0, CARS_K_POTD);
   }
 
+  /**
+   * `skillsGlowing` is a CAPABILITY claim and comes from BKT, via the very same
+   * `getMasterySkills` call Home reads, so the two screens cannot disagree. It
+   * used to threshold the ordinal evidence tier at `>= independent`, which let a
+   * learner see "3 skills glowing" on Wrapped and "0" on Home in one session.
+   *
+   * `skillsTouched` still reads the warrant, and correctly: "have I met this at
+   * all" is coverage, not attainment, and it makes no claim about capability.
+   */
   getWrapped(state: LearnerState): WrappedView {
-    const map = this.getMasteryMap(state);
     const counts: Record<string, number> = {};
     for (const e of state.evidence) counts[e.kind] = (counts[e.kind] ?? 0) + 1;
     return {
       dayNumber: Math.max(1, Math.floor(daysBetween(state.createdAt, this.clock.now())) + 1),
-      skillsTouched: map.filter((m) => m.base !== 'not_assessed').length,
-      skillsGlowing: map.filter((m) => ['independent', 'retained', 'strong'].includes(m.base)).length,
+      skillsTouched: this.skillWarrants(state).filter(
+        ({ evidence }) => evidence.evidenceQuality !== 'not_assessed',
+      ).length,
+      skillsGlowing: this.getMasterySkills(state).filter((s) => s.mastered).length,
       evidenceCounts: counts,
       repairsCompleted: this.getErrorLog(state).filter((e) => e.repaired).length,
       protectedPassed: state.evidence.filter((e) => e.kind === 'protected' && e.outcome === 'correct').length,
@@ -1179,16 +1219,23 @@ export class Authority {
     return entries;
   }
 
+  /**
+   * End-of-session summary: the warrant for the skill just practiced, as reason
+   * codes. No tier — the screen used to pick its sentence out of an ordered list
+   * keyed by the evidence rank, which is the same rival scale under new wording.
+   * A skill with no warrant at all reports the explicit `NO_USEFUL_EVIDENCE`
+   * code rather than an empty list, so the absence is stated and not inferred.
+   */
   buildSummary(state: LearnerState, skillId: string): SessionSummary {
-    const map = this.getMasteryMap(state).find((m) => m.skillId === skillId);
+    const warrant = this.skillWarrants(state).find((w) => w.skill.skillId === skillId)?.evidence;
     const counts: Record<string, number> = {};
     for (const e of state.evidence.filter((x) => x.skillId === skillId)) {
       counts[e.kind] = (counts[e.kind] ?? 0) + 1;
     }
     return {
       skillId,
-      masteryState: (map?.base ?? 'not_assessed') as MasteryState,
-      refreshNeeded: map?.refreshNeeded ?? false,
+      refreshNeeded: warrant?.refreshNeeded ?? false,
+      reasons: warrant ? [...warrant.reasons] : [{ code: 'NO_USEFUL_EVIDENCE' }],
       evidenceCounts: counts,
     };
   }

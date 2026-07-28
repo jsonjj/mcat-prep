@@ -7,28 +7,24 @@ import {
   type LessonMasteryView,
   type SkillCluster,
 } from '@mcat/contracts';
-import { baseStateRank, type BaseMasteryState } from '@mcat/domain';
 import { detectCapabilities } from '@mcat/platform-web';
 import { Button } from '@mcat/ui-web';
 import { CURRICULUM_PHASES } from '../data/curriculum-v3.generated';
 import { useMasteryLessons } from '../app/queries';
 import { BrainAtlas } from './BrainAtlas';
-import type { AtlasRegion } from './BrainScene';
+import type { AtlasLessonStatus, AtlasRegion } from './BrainScene';
 
 const BrainScene = lazy(() => import('./BrainScene'));
 
 /**
- * A lesson counts as mastered — and so contributes to its region filling — once its
- * BKT `P(L)` crosses the mastery threshold. The mastery signal is now per-lesson
- * (`useMasteryLessons`), so each region reflects the actual lessons the learner has
- * mastered; unpracticed lessons stay dark.
+ * A lesson counts as mastered — and so contributes to its region filling — on BKT's
+ * `mastered` alone, which is true only when every required member KC is at or above
+ * the threshold. Lessons with no readout have not been practiced and stay dark. The
+ * evidence warrant is a separate signal and never decides this.
  */
-const MASTERED_RANK = baseStateRank('independent');
-
-/** Map a lesson's BKT `P(L)` readout to the atlas's display state. */
-function lessonStateFromPL(entry: LessonMasteryView | undefined): BaseMasteryState {
-  if (!entry) return 'not_assessed';
-  return entry.mastered ? 'independent' : 'learning';
+function lessonStatusFor(entry: LessonMasteryView | undefined): AtlasLessonStatus {
+  if (!entry) return 'todo';
+  return entry.mastered ? 'done' : 'progress';
 }
 
 const brainPartLabel = (part: string) => part.replace(/_/g, ' ');
@@ -65,18 +61,16 @@ const LESSON_META: Record<string, LessonMeta> = (() => {
   return map;
 })();
 
-type LessonStatusKey = 'done' | 'progress' | 'todo';
-function lessonStatus(state: BaseMasteryState): { key: LessonStatusKey; label: string; glyph: string } {
-  const rank = baseStateRank(state);
-  if (rank >= MASTERED_RANK) return { key: 'done', label: 'Done', glyph: '●' };
-  if (rank >= 1) return { key: 'progress', label: 'In progress', glyph: '◐' };
-  return { key: 'todo', label: 'Not started', glyph: '○' };
-}
+const STATUS_DISPLAY: Record<AtlasLessonStatus, { label: string; glyph: string }> = {
+  done: { label: 'Done', glyph: '●' },
+  progress: { label: 'In progress', glyph: '◐' },
+  todo: { label: 'Not started', glyph: '○' },
+};
 
 interface RegionLessonRow {
   id: string;
   title: string;
-  state: BaseMasteryState;
+  status: AtlasLessonStatus;
 }
 interface RegionLessonGroup {
   moduleId: string;
@@ -91,7 +85,7 @@ function lessonGroupsFor(region: AtlasRegion): RegionLessonGroup[] {
     return {
       id: l.id,
       title: meta?.shortTitle ?? l.title,
-      state: l.state,
+      status: l.status,
       position: meta?.position ?? Number.MAX_SAFE_INTEGER,
       moduleId: meta?.moduleId ?? '~',
       moduleTitle: meta?.moduleTitle ?? 'Other lessons',
@@ -109,7 +103,7 @@ function lessonGroupsFor(region: AtlasRegion): RegionLessonGroup[] {
       group = { moduleId: row.moduleId, moduleTitle: row.moduleTitle, lessons: [] };
       groups.push(group);
     }
-    group.lessons.push({ id: row.id, title: row.title, state: row.state });
+    group.lessons.push({ id: row.id, title: row.title, status: row.status });
   }
   return groups;
 }
@@ -145,14 +139,15 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
       ATLAS_REGION_GROUPS.map((rg) => {
         let masteredCount = 0;
         const lessons = rg.lessons.map((l) => {
-          const state: BaseMasteryState = isHome
-            ? 'strong'
-            : lessonStateFromPL(lessonById.get(l.lesson_id));
-          const mastered = baseStateRank(state) >= MASTERED_RANK;
-          if (mastered) masteredCount += 1;
-          return { id: l.lesson_id, title: l.title, state, mastered };
+          // The Home hero is decorative: it shows a fully built brain rather than
+          // the learner's own progress.
+          const status: AtlasLessonStatus = isHome
+            ? 'done'
+            : lessonStatusFor(lessonById.get(l.lesson_id));
+          if (status === 'done') masteredCount += 1;
+          return { id: l.lesson_id, title: l.title, status };
         });
-        const tapLessonId = (lessons.find((l) => !l.mastered) ?? lessons[0])?.id;
+        const tapLessonId = (lessons.find((l) => l.status !== 'done') ?? lessons[0])?.id;
         const tapCluster = (tapLessonId ? ATLAS_LESSON_CLUSTER[tapLessonId] : undefined) ?? 'BB1';
         return {
           id: rg.region_id,
@@ -231,18 +226,18 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
                 <p className="mc-atlas__lgroup-head">{group.moduleTitle}</p>
                 <ul className="mc-atlas__llist">
                   {group.lessons.map((lesson) => {
-                    const status = lessonStatus(lesson.state);
+                    const display = STATUS_DISPLAY[lesson.status];
                     return (
                       <li key={lesson.id} className="mc-atlas__lesson">
                         <span
-                          className={`mc-atlas__lstatus mc-atlas__lstatus--${status.key}`}
+                          className={`mc-atlas__lstatus mc-atlas__lstatus--${lesson.status}`}
                           aria-hidden="true"
                         >
-                          {status.glyph}
+                          {display.glyph}
                         </span>
                         <span className="mc-atlas__ltitle">{lesson.title}</span>
-                        <span className={`mc-atlas__lstate mc-atlas__lstate--${status.key}`}>
-                          {status.label}
+                        <span className={`mc-atlas__lstate mc-atlas__lstate--${lesson.status}`}>
+                          {display.label}
                         </span>
                       </li>
                     );

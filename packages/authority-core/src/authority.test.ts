@@ -11,7 +11,7 @@ import {
   type UtcTimestamp,
 } from '@mcat/contracts';
 import { loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
-import { EVIDENCE_REASONS, evidenceQualityRank } from '@mcat/domain';
+import { EVIDENCE_QUALITY_TIERS, EVIDENCE_REASONS } from '@mcat/domain';
 import { MASTERY_THRESHOLD, PRIOR_PL0 } from '@mcat/policies';
 import { Authority, BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS } from './authority';
 import type { LearnerState } from './types';
@@ -66,10 +66,16 @@ describe('Authority — synthetic enzyme vertical', () => {
     const finalStep = auth.getSession(state);
     expect(finalStep.kind).toBe('complete');
 
+    // The warrant reached at least the independent tier. Asserted through the
+    // reason codes rather than a rank, because the published view carries no
+    // ordinal tier to compare — that is the point of the seam.
     const mastery = auth.getMasteryMap(state).find((m) => m.skillId === 'bb1-enzyme-inhibition')!;
-    expect(evidenceQualityRank(mastery.base)).toBeGreaterThanOrEqual(
-      evidenceQualityRank('independent'),
-    );
+    const satisfiedTierCodes = [
+      'INDEPENDENT_EVIDENCE_SATISFIED',
+      'RETENTION_EVIDENCE_SATISFIED',
+      'STRONG_CONDITIONS_EVIDENCE_SATISFIED',
+    ];
+    expect(mastery.reasons.filter((r) => satisfiedTierCodes.includes(r.code))).not.toHaveLength(0);
 
     // Protected evidence was captured.
     expect(state.evidence.some((e) => e.kind === 'protected')).toBe(true);
@@ -438,6 +444,46 @@ describe('Authority — the evidence warrant stays a separate signal', () => {
         expect(reason.code.endsWith('_ACHIEVED')).toBe(false);
       }
     }
+  });
+
+  it('publishes no ordinal evidence tier on any learner-facing view', () => {
+    // The regression this pins: an ordinal tier can be compared and thresholded,
+    // so wherever one crossed to a consumer it grew back into a rival mastery
+    // scale. Asserting on *values* rather than on a field name, because the
+    // previous fix renamed the consumer and kept reading the same ordinal.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.continueStep(state);
+    auth.submitAttempt(state, 'A');
+
+    const tierValues: readonly string[] = EVIDENCE_QUALITY_TIERS;
+    const carriesATier = (view: unknown): boolean =>
+      Object.values(view as Record<string, unknown>).some(
+        (value) => typeof value === 'string' && tierValues.includes(value),
+      );
+
+    for (const entry of auth.getMasteryMap(state)) {
+      expect(carriesATier(entry)).toBe(false);
+    }
+    expect(carriesATier(auth.buildSummary(state, 'bb1-enzyme-inhibition'))).toBe(false);
+  });
+
+  it('agrees with Home about how many skills are glowing, because both are BKT', () => {
+    // B-2: `skillsGlowing` used to threshold the evidence tier at `>= independent`
+    // while Home counted BKT `mastered`, so a learner could read "3 glowing" on
+    // Wrapped and "0" on Home in one session. Identity, not approximation.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    for (let i = 0; i < 40; i += 1) {
+      const step = auth.getSession(state);
+      if (step.kind === 'complete') break;
+      if (step.kind === 'lesson' || step.kind === 'simulation') auth.continueStep(state);
+      else if (step.kind === 'recall') auth.submitRecall(state, 'increases; unchanged');
+      else if (step.kind === 'question') answerCorrectly(auth, state);
+    }
+
+    const homeGlowing = auth.getMasterySkills(state).filter((s) => s.mastered).length;
+    expect(auth.getWrapped(state).skillsGlowing).toBe(homeGlowing);
   });
 });
 
