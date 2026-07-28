@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, Stack } from '@mcat/ui-web';
+import { DEFAULT_MINUTES_PER_QUESTION } from '@mcat/contracts';
 
 const MIN_QUESTIONS = 1;
 const MAX_QUESTIONS = 30;
@@ -16,6 +17,8 @@ const clampCount = (n: number): number =>
 export function PracticeHome() {
   const navigate = useNavigate();
   const [countStr, setCountStr] = useState(String(DEFAULT_QUESTIONS));
+
+  const estMinutes = clampCount(Number(countStr) || DEFAULT_QUESTIONS) * DEFAULT_MINUTES_PER_QUESTION;
 
   const start = () => {
     const x = clampCount(Number(countStr) || DEFAULT_QUESTIONS);
@@ -49,6 +52,7 @@ export function PracticeHome() {
               }}
               aria-label="Number of questions"
             />
+            <span className="mc-practice__esttime">≈ {estMinutes} min · untimed</span>
           </div>
 
           <Button variant="primary" size="lg" fullWidth onClick={start}>
