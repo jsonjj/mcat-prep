@@ -966,12 +966,25 @@ export class Authority {
    * writes, tagged `activity_type = 'study'`, so a Study miss reaches the Mistakes
    * tab with the distractor the learner chose.
    *
+   * `kcId` is the item's `kc_ids[0]` — a v3 KC id, the SAME grain and the same id
+   * space adaptive Practice logs from `questions.kc_id`. It used to be
+   * `internal_skill_ids[0]`, a skill-graph node (`bb1-enzyme-inhibition`), which
+   * could never compare equal to a corpus KC id (`V3-KC-525816`); a study miss and
+   * a practice miss on one concept therefore formed two patterns instead of one.
+   * The lesson graph and the corpus share all 422 of their KCs, so this is a
+   * field-selection fix, not a translation between id spaces. `internal_skill_ids`
+   * is untouched and still resolves the display skill and the prerequisite edges.
+   *
+   * The other three grain columns already agreed with Practice and are unchanged:
+   * `skill` is the item's 7-op reasoning operation, `cluster` its 15-cluster
+   * rollup, `familyId` its item family.
+   *
    * Additive and read-only downstream: it changes no scoring, no mastery, no
-   * evidence and no exposure. It deliberately does NOT call `queueRepair` — Study
-   * KC ids come from the authored lesson graph, not the v7 corpus, so a repair
-   * spec keyed on one would match no item and would cost the practice queue a
-   * slot. The re-attempt path is the `focus` token on the Mistakes row, which the
-   * practice queue's own exposure seam then resolves to a fresh unseen item.
+   * evidence and no exposure. It deliberately does NOT call `queueRepair`. That is
+   * now a scope decision rather than an id-space limitation — a study KC WOULD
+   * match corpus items — and the re-attempt path is the `focus` token on the
+   * Mistakes row, which the practice queue's own exposure seam resolves to a fresh
+   * unseen item. Spending a queue slot from here is a separate change.
    *
    * Guided-phase questions are excluded: those are in-lesson comprehension checks
    * during acquisition, where errorful generation is the mechanism doing the work,
@@ -988,7 +1001,7 @@ export class Authority {
     const q = this.bank.questions.find((x) => x.id === questionId);
     await this.practiceBank.recordPracticeAttempt(state.learnerId, {
       questionId,
-      kcId: q?.internal_skill_ids[0] ?? null,
+      kcId: q?.kc_ids[0] ?? null,
       skill: this.masteryTarget(questionId, state.session?.skillId ?? ENZYME_SKILL).op,
       cluster: q?.skill_cluster ?? null,
       familyId: q?.family_id ?? null,

@@ -78,6 +78,20 @@ export const EngineQuestionSchema = z.object({
   section: SectionSchema,
   skill_cluster: SkillClusterSchema,
   internal_skill_ids: z.array(z.string().min(1)).min(1),
+  /**
+   * The v3 knowledge component(s) the item assesses, most specific first.
+   *
+   * This is the KC grain the mastery model and the Mistakes patterns are keyed
+   * on, and it is the SAME id space as the lesson graph
+   * (`curriculum/v3/v3-lesson-authoring-manifest.json`) and the v7 corpus
+   * `questions.kc_id` column: 422 KCs in each, all 422 shared. `internal_skill_ids`
+   * is a different thing — a node in the internal skill graph (`./bank.ts`), which
+   * is what resolves a display skill and the prerequisite edges.
+   *
+   * Optional because the engine projection predates the KC grain; an item without
+   * one groups at cluster grain rather than being dropped.
+   */
+  kc_ids: z.array(z.string().min(1)).default([]),
   template_tags: z.array(OperationTagSchema).min(1),
   learning_objective: z.string().min(1),
   format: QuestionFormatSchema,

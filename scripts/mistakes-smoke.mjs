@@ -128,6 +128,7 @@ async function main() {
   // /app/learn answers real questions and used to ask the learner to name the
   // cause of a miss before showing the key. Both halves are gone; what has to
   // survive is the miss reaching this tab with the option they picked.
+  let studyQuestionId = null;
   let studyStep = await get('/v1/learning/session');
   for (let guard = 0; guard < 12 && studyStep.kind !== 'question'; guard += 1) {
     if (studyStep.kind === 'complete') break;
@@ -138,7 +139,7 @@ async function main() {
   check('the study loop serves a question', studyStep.kind === 'question', `kind=${studyStep.kind}`);
 
   if (studyStep.kind === 'question') {
-    const studyQuestionId = studyStep.question.id;
+    studyQuestionId = studyStep.question.id;
     const studyPick = studyStep.question.choices[1]?.id ?? 'B';
     await post('/v1/attempts', { ...envelope(), choiceId: studyPick });
     const afterMiss = await get('/v1/learning/session');
@@ -194,6 +195,64 @@ async function main() {
   check('every pattern carries a denominator',
     patterns.every((p) => p.attemptedItems >= p.missedItems && p.attemptedItems > 0),
     patterns.map((p) => `${p.missedItems}/${p.attemptedItems} ${p.key}`).join(', ') || 'none yet');
+
+  // ---- one KC, one pattern, whichever surface served it ----------------------
+  // Grouping keys on the logged KC, and the two writers used to fill that column
+  // from different fields: practice from the corpus KC (`V3-KC-...`), study from an
+  // internal skill-graph node (`bb1-enzyme-inhibition`). Those never compare equal,
+  // so one concept produced two half-evidenced patterns. There is no crosswalk to
+  // build — the lesson graph and the corpus share all 422 of their KCs — so what is
+  // checked here is that both surfaces now log ONE vocabulary and group as one.
+  const allRows = await get('/v1/errors');
+  const studyRows = allRows.filter((e) => e.kcId !== null && e.kcId.startsWith('V3-KC-'));
+  check('study rows carry a corpus-shaped KC id, not a skill-graph id',
+    allRows.length === 0 || studyRows.length > 0,
+    `${studyRows.length} of ${allRows.length} rows KC-shaped: ${[...new Set(allRows.map((e) => e.kcId))].join(', ')}`);
+
+  // The invariant that fails if the two writers disagree: every KC that rows were
+  // logged under has AT MOST ONE pattern, so no concept is split in two.
+  const keyed = allRows.filter((e) => e.kcId !== null);
+  const kcsWithRows = new Set(keyed.map((e) => e.kcId));
+  const kcPatternKeys = patterns.filter((p) => p.grain === 'kc').map((p) => p.key);
+  check('no KC is split across two patterns',
+    kcPatternKeys.length === new Set(kcPatternKeys).size,
+    `${kcPatternKeys.length} kc patterns, ${new Set(kcPatternKeys).size} distinct`);
+  check('every KC pattern key is a KC the rows were actually logged under',
+    kcPatternKeys.every((k) => kcsWithRows.has(k)),
+    `patterns=[${kcPatternKeys.join(', ')}] rows=[${[...kcsWithRows].join(', ')}]`);
+
+  // The cross-source case itself. The study loop's item and at least one practice
+  // item share a KC, so that KC must appear ONCE, counting the misses from both.
+  const studyKc = keyed.find((e) => e.questionId === studyQuestionId)?.kcId ?? null;
+  const practiceMissedKcs = new Set(
+    keyed
+      .filter((e) => misses.some((m) => m.item.question.id === e.questionId))
+      .map((e) => e.kcId),
+  );
+  check('the study miss and a practice miss landed on the same KC',
+    studyKc !== null && practiceMissedKcs.has(studyKc),
+    `study=${studyKc} practice=[${[...practiceMissedKcs].join(', ')}]`);
+
+  if (studyKc !== null && practiceMissedKcs.has(studyKc)) {
+    const matching = patterns.filter((p) => p.grain === 'kc' && p.key === studyKc);
+    // Before the fix this was 2: one keyed `bb1-enzyme-inhibition`, one keyed the
+    // corpus KC, each holding half the evidence.
+    check('the shared KC forms exactly ONE pattern, not one per surface',
+      matching.length === 1, `${matching.length} patterns keyed ${studyKc}`);
+
+    if (matching.length === 1) {
+      const pattern = matching[0];
+      const missedHere = new Set(keyed.filter((e) => e.kcId === studyKc).map((e) => e.questionId));
+      check('its numerator counts the distinct missed items from both surfaces',
+        pattern.missedItems === missedHere.size,
+        `pattern says ${pattern.missedItems}, tab shows ${missedHere.size}`);
+      // Correct answers are logged too, so the denominator can only be larger, and
+      // it has to cover more items than the study surface alone could supply.
+      check('its denominator covers both surfaces',
+        pattern.attemptedItems >= pattern.missedItems && pattern.attemptedItems > 1,
+        `${pattern.missedItems} of ${pattern.attemptedItems}`);
+    }
+  }
 
   const path = await post('/v1/plan/today/build', {
     ...envelope(),

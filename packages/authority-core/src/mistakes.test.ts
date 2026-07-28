@@ -29,6 +29,13 @@ function steppingClock(startIso: string, stepMs = 60_000): Clock {
 const CORRECT = 'A';
 const WRONG = 'B';
 
+/**
+ * The real v3 KC the synthetic inhibition items carry ("Distinguish enzyme
+ * inhibition and regulation"). Both write paths log this id space, which is what
+ * lets a study miss and a practice miss on one concept form ONE pattern.
+ */
+const KC_INHIBITION = 'V3-KC-525816';
+
 const INHIBITION_ITEMS = [
   'q-enz-indep-competitive',
   'q-enz-indep-noncompetitive',
@@ -69,8 +76,9 @@ describe('Mistakes — the practice attempt log is the source', () => {
     expect(entry.correctChoiceText.length).toBeGreaterThan(0);
     expect(entry.choiceRationale).not.toBeNull();
     expect(entry.stem.length).toBeGreaterThan(0);
-    // Real grain, not the old `skillId: ENZYME_SKILL` hardcode.
-    expect(entry.kcId).toBe('bb1-enzyme-inhibition');
+    // Real grain, not the old `skillId: ENZYME_SKILL` hardcode. A v3 KC id: the
+    // fixture reports the id space the deployed port reads out of `questions.kc_id`.
+    expect(entry.kcId).toBe(KC_INHIBITION);
     expect(entry.cluster).toBe('BB1');
     expect(entry.familyId).toBe('fam-competitive');
     expect(entry.focus).toBe('bb1');
@@ -126,7 +134,7 @@ describe('Mistakes — pattern analysis at KC grain', () => {
     expect(patterns).toHaveLength(1);
     const pattern = patterns[0]!;
     expect(pattern.grain).toBe('kc');
-    expect(pattern.key).toBe('bb1-enzyme-inhibition');
+    expect(pattern.key).toBe(KC_INHIBITION);
     expect(pattern.missedItems).toBe(2);
     // The denominator counts every distinct item attempted in the group, which is
     // why correct attempts are logged at all.
@@ -243,6 +251,165 @@ describe('Mistakes — Today’s Path counts what the tab shows', () => {
   });
 });
 
+/**
+ * The regression this pins: pattern grouping keys on the logged `kcId`, and the two
+ * write paths filled it from different fields — Practice from the corpus KC
+ * (`V3-KC-525816`), Study from an internal skill-graph node
+ * (`bb1-enzyme-inhibition`). Those never compare equal, so one concept produced two
+ * patterns, each with half the evidence, on the surface whose whole job is to say
+ * "this keeps happening".
+ *
+ * There is no crosswalk to build: the lesson graph and the question corpus use the
+ * SAME 422 KCs — 422 distinct ids in each, all 422 present in both, none unique to
+ * either side. Study just had to log the id the item already carries.
+ */
+describe('Mistakes — one KC, one pattern, whichever surface served it', () => {
+  /** Drive the real Study loop to its first question, then answer it. */
+  const studyAnswer = async (authority: Authority, state: LearnerState, choice: string) => {
+    let next = authority.diagnosticNext(state);
+    while (!next.done) {
+      authority.submitDiagnosticAnswer(state, next.questionId!, 'A');
+      next = authority.diagnosticNext(state);
+    }
+    authority.confirmPlan(state, { testDate: null, targetScore: 515, minutesPerWeek: 420 });
+    authority.continueStep(state); // past the lesson, onto q-enz-indep-competitive
+    const step = authority.getSession(state);
+    expect(step.kind).toBe('question');
+    await authority.submitAttempt(state, choice);
+    return (step as { question: { id: string } }).question.id;
+  };
+
+  it('groups a study miss and a practice miss on the same KC into ONE pattern', async () => {
+    const { authority, state } = learner();
+
+    const studyItem = await studyAnswer(authority, state, WRONG);
+    // A DIFFERENT item, same KC, through the other surface entirely.
+    await answer(authority, state, 'q-enz-indep-noncompetitive', WRONG);
+
+    const attempts = await authority.practiceBank.listPracticeAttempts(state.learnerId, {
+      limit: 50,
+    });
+    // Both surfaces wrote, and both wrote the same KC — the thing that was broken.
+    expect(attempts.map((a) => a.activityType).sort()).toEqual(['practice', 'study']);
+    expect(new Set(attempts.map((a) => a.kcId))).toEqual(new Set([KC_INHIBITION]));
+
+    const patterns = await authority.getMistakePatterns(state);
+    expect(patterns).toHaveLength(1);
+    const pattern = patterns[0]!;
+    expect(pattern.grain).toBe('kc');
+    expect(pattern.key).toBe(KC_INHIBITION);
+    // Two distinct items missed across the two surfaces, not one item on each of
+    // two patterns.
+    expect(pattern.missedItems).toBe(2);
+    expect(pattern.attemptedItems).toBe(2);
+    expect(new Set([studyItem, 'q-enz-indep-noncompetitive']).size).toBe(2);
+  });
+
+  it('counts a correct answer from either surface in the same denominator', async () => {
+    const { authority, state } = learner();
+
+    await studyAnswer(authority, state, WRONG);
+    await answer(authority, state, 'q-enz-indep-noncompetitive', WRONG);
+    // A correct practice answer on a third item in the KC widens the denominator of
+    // the pattern the study miss belongs to.
+    await answer(authority, state, 'q-enz-transfer-lineweaver', CORRECT);
+
+    const pattern = (await authority.getMistakePatterns(state))[0]!;
+    expect(pattern.missedItems).toBe(2);
+    expect(pattern.attemptedItems).toBe(3);
+  });
+
+  it('lets a practice answer resolve a study miss, because the KC is shared', async () => {
+    const { authority, state } = learner();
+
+    const studyItem = await studyAnswer(authority, state, WRONG);
+    expect((await authority.getErrorLog(state))[0]!.resolved).toBe(false);
+
+    // A later correct first attempt on a DIFFERENT item in the same KC — served by
+    // the other surface. Resolution compares `kcId`, so this only lands now that
+    // both paths log the same one.
+    await answer(authority, state, 'q-enz-indep-noncompetitive', CORRECT);
+
+    const row = (await authority.getErrorLog(state)).find((e) => e.questionId === studyItem)!;
+    expect(row.resolved).toBe(true);
+  });
+});
+
+/**
+ * Not every logged row can carry a KC: the engine projection predates the grain, and
+ * CARS items have no KC at all. Such a row must degrade, never disappear or throw.
+ */
+describe('Mistakes — a row with no KC id', () => {
+  const log = (
+    authority: Authority,
+    state: LearnerState,
+    questionId: string,
+    over: Partial<Parameters<typeof authority.practiceBank.recordPracticeAttempt>[1]>,
+  ) =>
+    authority.practiceBank.recordPracticeAttempt(state.learnerId, {
+      questionId,
+      kcId: null,
+      skill: 'EXPLAIN',
+      cluster: 'BB1',
+      familyId: null,
+      chosenChoiceId: 'B',
+      correct: false,
+      firstAttempt: true,
+      activityType: 'practice',
+      occurredAt: UtcTimestampSchema.parse('2026-07-27T12:00:00.000Z'),
+      ...over,
+    });
+
+  it('still appears in the history list', async () => {
+    const { authority, state } = learner();
+    await log(authority, state, 'q-enz-indep-competitive', {});
+
+    const entries = await authority.getErrorLog(state);
+    expect(entries.map((e) => e.questionId)).toEqual(['q-enz-indep-competitive']);
+    expect(entries[0]!.kcId).toBeNull();
+    // The row is still actionable: the cluster carries the re-attempt token.
+    expect(entries[0]!.focus).toBe('bb1');
+  });
+
+  it('falls back to cluster grain rather than forming a null-keyed pattern', async () => {
+    const { authority, state } = learner();
+    await log(authority, state, 'q-enz-indep-competitive', {});
+    await log(authority, state, 'q-enz-indep-noncompetitive', {});
+
+    const patterns = await authority.getMistakePatterns(state);
+    expect(patterns).toHaveLength(1);
+    expect(patterns[0]!.grain).toBe('cluster');
+    expect(patterns[0]!.key).toBe('BB1');
+    expect(patterns[0]!.missedItems).toBe(2);
+  });
+
+  it('joins no pattern when it has neither KC nor cluster, but is still listed', async () => {
+    const { authority, state } = learner();
+    await log(authority, state, 'q-enz-indep-competitive', { cluster: null });
+    await log(authority, state, 'q-enz-indep-noncompetitive', { cluster: null });
+
+    // Ungroupable is not the same as unlistable: the learner can still read the
+    // miss back, it just cannot honestly be called a recurring pattern.
+    expect(await authority.getMistakePatterns(state)).toEqual([]);
+    expect((await authority.getErrorLog(state)).map((e) => e.questionId).sort()).toEqual([
+      'q-enz-indep-competitive',
+      'q-enz-indep-noncompetitive',
+    ]);
+  });
+
+  it('does not let an unkeyed row swallow a real KC pattern', async () => {
+    const { authority, state } = learner();
+    await answer(authority, state, 'q-enz-indep-competitive', WRONG);
+    await answer(authority, state, 'q-enz-transfer-lineweaver', WRONG);
+    await log(authority, state, 'q-enz-passage-1', { cluster: null });
+
+    const patterns = await authority.getMistakePatterns(state);
+    expect(patterns).toHaveLength(1);
+    expect(patterns[0]!.key).toBe(KC_INHIBITION);
+    expect(patterns[0]!.missedItems).toBe(2);
+  });
+});
+
 describe('Mistakes — display scope', () => {
   it('excludes CARS duels and lesson misses (practice only)', async () => {
     const { authority, state } = learner();
@@ -256,7 +423,7 @@ describe('Mistakes — display scope', () => {
     const { authority, state } = learner(clock);
     await authority.practiceBank.recordPracticeAttempt(state.learnerId, {
       questionId: 'q-retired-from-corpus',
-      kcId: 'bb1-enzyme-inhibition',
+      kcId: KC_INHIBITION,
       skill: 'EXPLAIN',
       cluster: 'BB1',
       familyId: null,

@@ -213,6 +213,19 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
     return OPERATION_TAG_TO_REASONING[q.template_tags[0] ?? 'K'] ?? null;
   }
 
+  /**
+   * The KC an item routes to, in the id space the deployed port reports.
+   *
+   * The Postgres port reads `questions.kc_id`, a v3 KC id, and this fixture stands
+   * in for that corpus — so it has to report the same kind of id or dev and tests
+   * silently exercise a KC vocabulary production never sees. That drift is what
+   * hid the mismatch between the two attempt-log write paths. `internal_skill_ids`
+   * remains the fallback for an engine question authored before `kc_ids` existed.
+   */
+  private kcOf(q: EngineQuestion): string | null {
+    return q.kc_ids[0] ?? q.internal_skill_ids[0] ?? null;
+  }
+
   private domainOf(section: string): PracticeDomain {
     return section === 'cars' ? 'cars' : 'science';
   }
@@ -220,8 +233,8 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
   async listUnits({ limit }: { limit: number }): Promise<PracticeCandidateUnit[]> {
     const byKey = new Map<string, PracticeCandidateUnit>();
     for (const q of this.bank.questions) {
-      const kcId = q.internal_skill_ids[0];
-      if (kcId === undefined) continue;
+      const kcId = this.kcOf(q);
+      if (kcId === null) continue;
       const skill = this.reasoningOp(q);
       const domain = this.domainOf(q.section);
       const key = `${domain}:${kcId}:${skill ?? ''}`;
@@ -248,7 +261,7 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
   private matches(q: EngineQuestion, query: PracticeItemQuery): boolean {
     if (this.domainOf(q.section) !== query.domain) return false;
     if (query.domain === 'cars') return true;
-    if (query.kcId !== undefined && q.internal_skill_ids[0] !== query.kcId) return false;
+    if (query.kcId !== undefined && this.kcOf(q) !== query.kcId) return false;
     if (query.skill !== undefined && this.reasoningOp(q) !== query.skill) return false;
     return true;
   }
@@ -271,7 +284,7 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
             attempts: 0,
             correct: 0,
             dok: q.difficulty ?? null,
-            kcId: q.internal_skill_ids[0] ?? null,
+            kcId: this.kcOf(q),
             skill: query.domain === 'science' ? this.reasoningOp(q) : null,
             carsSkill: null,
             cluster: q.skill_cluster,
@@ -290,7 +303,7 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
     if (q === undefined) return null;
     const domain = this.domainOf(q.section);
     return {
-      kcId: q.internal_skill_ids[0] ?? null,
+      kcId: this.kcOf(q),
       skill: domain === 'science' ? this.reasoningOp(q) : null,
       carsSkill: null,
       cluster: q.skill_cluster,

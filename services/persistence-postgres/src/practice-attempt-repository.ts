@@ -99,8 +99,12 @@ export async function hasPracticeAttemptLog(q: Queryable): Promise<boolean> {
 /**
  * Append one first-attempt row. Idempotent per learner × activity type × item via
  * the partial unique index, so a retried submit cannot double-count a miss. The
- * activity type is part of the key because practice and study draw from different
- * corpora and a shared id space is not guaranteed forever.
+ * activity type is part of the key because practice and study draw QUESTION ids from
+ * different corpora and a shared item-id space is not guaranteed forever.
+ *
+ * `kc_id` is not like that: both surfaces log from the one 422-KC set the lesson
+ * graph and the corpus share, which is what lets a study miss and a practice miss on
+ * a concept group into a single pattern.
  */
 export async function recordPracticeAttempt(
   q: Queryable,

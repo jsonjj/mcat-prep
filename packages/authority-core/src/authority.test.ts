@@ -141,7 +141,9 @@ describe('Authority — synthetic enzyme vertical', () => {
     expect(entry.correctChoiceId).toBe('A');
     expect(entry.choiceRationale).not.toBeNull();
     expect(entry.stem.length).toBeGreaterThan(0);
-    expect(entry.kcId).toBe('bb1-enzyme-inhibition');
+    // A v3 KC id, not the skill-graph node this used to log. Adaptive Practice logs
+    // `questions.kc_id` from the same 422-KC space, so the two now compare equal.
+    expect(entry.kcId).toBe('V3-KC-525816');
     // The re-attempt token routes into the adaptive queue, whose exposure seam
     // picks a fresh unseen item rather than re-serving this one.
     expect(entry.focus).toBe('bb1');

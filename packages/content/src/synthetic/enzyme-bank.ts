@@ -26,6 +26,29 @@ type SkillGraphInput = z.input<typeof SkillGraphSchema>;
 const SKILL_BASICS = 'bb1-enzyme-kinetics-basics';
 const SKILL_INHIB = 'bb1-enzyme-inhibition';
 
+/**
+ * REAL v3 KC ids, not invented ones.
+ *
+ * The stems below are fictional, but the KC grain they assess is not: these two
+ * ids are drawn from the actual 422-KC set shared by the lesson graph
+ * (`curriculum/v3/v3-lesson-authoring-manifest.json`) and the v7 question corpus
+ * (`questions.kc_id`) — 422 distinct ids in each source, all 422 present in both.
+ * Matching them lets the dev fixture group with corpus items on the Mistakes tab
+ * instead of forming a parallel id space that can never join a real pattern.
+ *
+ *   V3-KC-525816  "Distinguish enzyme inhibition and regulation" — predict enzyme
+ *                 output after competitive, noncompetitive, mixed or uncompetitive
+ *                 inhibition. Cluster BB1, section bb; 7 corpus items.
+ *   V3-KC-199229  "Explain enzymatic catalysis" — how an enzyme changes the
+ *                 activation-energy pathway. Cluster BB1, section bb; the
+ *                 prerequisite the kinetics-basics item sits on.
+ *
+ * `internal_skill_ids` deliberately keeps the skill-graph ids above: that is the
+ * vocabulary the display skill and the hard-prerequisite edges are keyed on.
+ */
+const KC_INHIBITION = 'V3-KC-525816';
+const KC_CATALYSIS = 'V3-KC-199229';
+
 export const syntheticSkillGraph: SkillGraphInput = {
   version: 'synthetic-v1',
   skills: [
@@ -49,7 +72,16 @@ export const syntheticSkillGraph: SkillGraphInput = {
       scope: 'required',
     },
   ],
-  edges: [{ from: SKILL_BASICS, to: SKILL_INHIB, kind: 'hard_prerequisite' }],
+  edges: [
+    { from: SKILL_BASICS, to: SKILL_INHIB, kind: 'hard_prerequisite' },
+    // The same relation stated in the KC id space. Adaptive practice routes an
+    // attempt by KC (`questions.kc_id` in the corpus, `kc_ids` here), so without
+    // this edge the dev fixture would stop exercising prerequisite propagation the
+    // moment its items started carrying real KC ids. Edge endpoints are loose
+    // strings and `findHardPrerequisiteCycle` walks only declared skills, so this
+    // adds a path to exercise, never a skill to display.
+    { from: KC_CATALYSIS, to: KC_INHIBITION, kind: 'hard_prerequisite' },
+  ],
 };
 
 const provenance = { origin: 'original' as const, rights_status: 'cleared' as const };
@@ -94,6 +126,7 @@ const q = (over: Partial<QuestionInput> & Pick<QuestionInput, 'id' | 'stem' | 'c
   section: 'bb',
   skill_cluster: 'BB1',
   internal_skill_ids: [SKILL_INHIB],
+  kc_ids: [KC_INHIBITION],
   template_tags: ['K', 'D'],
   learning_objective: 'Predict inhibition effects on Km and Vmax.',
   format: 'discrete_mcq',
@@ -113,6 +146,7 @@ export const syntheticQuestions: QuestionInput[] = [
   q({
     id: 'q-enz-basics-1',
     internal_skill_ids: [SKILL_BASICS],
+    kc_ids: [KC_CATALYSIS],
     prerequisite_ids: [],
     learning_objective: 'Interpret Vmax from a kinetic curve.',
     family_id: 'fam-basics',

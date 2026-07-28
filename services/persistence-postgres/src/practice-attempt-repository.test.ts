@@ -80,8 +80,9 @@ describe('recordPracticeAttempt', () => {
 
   /**
    * Widened from `(learner_id, question_id)`: study attempts now share this table,
-   * and the two corpora do not share an id space, so the activity type has to be
-   * part of the key or one surface's row would suppress the other's.
+   * and the two corpora do not share a QUESTION-id space, so the activity type has to
+   * be part of the key or one surface's row would suppress the other's. Their KC ids
+   * are shared (one 422-KC set) and deliberately group across surfaces.
    */
   it('is idempotent per learner, activity type and item so a resubmit cannot double-count', async () => {
     const { pool, calls } = fakePool([]);

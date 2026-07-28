@@ -259,8 +259,9 @@ describe('the attempt log is the error log’s source, for both flows', () => {
     const body = authority.slice(start, end);
     expect(body).toMatch(/activityType: 'study'/);
     expect(body).toMatch(/firstAttempt: true/);
-    // Only the log is written: no mastery, no evidence, no repair spec keyed on a
-    // KC the practice corpus cannot match.
+    // Only the log is written: no mastery, no evidence, no repair spec. Not calling
+    // `queueRepair` is a scope decision, not an id-space one — the KC logged here IS
+    // a corpus KC and would match items (see the 422-KC block below).
     expect(body).not.toMatch(/queueRepair|applyMasteryAttempt|appendEvidence|recordAttempt\(/);
     // In-lesson comprehension checks stay off the tab (§6.5).
     expect(body).toMatch(/phase === 'guided'/);
@@ -275,6 +276,109 @@ describe('the attempt log is the error log’s source, for both flows', () => {
     expect(read('services/persistence-postgres/src/practice-exposure-repository.ts')).not.toMatch(
       /activityType: 'practice',/,
     );
+  });
+});
+
+/**
+ * The KC grain both write paths log, and the reason no crosswalk belongs here.
+ *
+ * Pattern grouping keys on `attempt_results.kc_id`. Practice fills it from the v7
+ * corpus (`questions.kc_id`); Study used to fill it from `internal_skill_ids[0]`, a
+ * node in the internal skill graph. Those never compare equal, so one concept
+ * produced two half-evidenced patterns.
+ *
+ * The two sources are NOT disjoint id spaces and need no mapping table: the lesson
+ * graph and the question corpus carry the SAME 422 KCs — 422 distinct ids in each,
+ * all 422 present in both, none unique to either side. Only the manifest is asserted
+ * here; the corpus lives under a gitignored path and is absent in CI.
+ */
+describe('the study path logs a real KC from the shared 422-KC set', () => {
+  const KC_ID = /^V3-KC-\d{6}$/;
+
+  const manifestKcIds = (): Set<string> => {
+    const raw = read('curriculum/v3/v3-lesson-authoring-manifest.json');
+    expect(raw, 'the v3 lesson authoring manifest must be committed').not.toBe('');
+    const manifest = JSON.parse(raw) as { curriculum: { kcs: { kc_id: string }[] } };
+    return new Set(manifest.curriculum.kcs.map((kc) => kc.kc_id));
+  };
+
+  it('has 422 KCs in the lesson graph, the set the corpus also draws from', () => {
+    const ids = manifestKcIds();
+    expect(ids.size).toBe(422);
+    expect([...ids].every((id) => KC_ID.test(id))).toBe(true);
+  });
+
+  it('gives the synthetic dev fixture real KC ids rather than invented ones', () => {
+    const fixture = read('packages/content/src/synthetic/enzyme-bank.ts');
+    const declared = [...fixture.matchAll(/'(V3-KC-\d{6})'/g)].map((m) => m[1]!);
+    expect(declared.length).toBeGreaterThan(0);
+
+    // The dev fallback bank stands in for the corpus, so an invented id would let
+    // dev and CI exercise a KC vocabulary production never sees — the exact drift
+    // that hid this bug.
+    const real = manifestKcIds();
+    for (const id of new Set(declared)) {
+      expect(real.has(id), `${id} must be a real v3 KC`).toBe(true);
+    }
+  });
+
+  it('logs the KC field, not the skill-graph field, and keeps the other three columns', () => {
+    const authority = read('packages/authority-core/src/authority.ts');
+    const start = authority.indexOf('private async logStudyAttempt');
+    const end = authority.indexOf('requestReveal(state: LearnerState)');
+    expect(start).toBeGreaterThan(-1);
+    const body = authority.slice(start, end);
+    expect(body).toMatch(/kcId: q\?\.kc_ids\[0\] \?\? null/);
+    expect(body).not.toMatch(/kcId: q\?\.internal_skill_ids/);
+    // The other grain columns already agreed with practice; they stay item-derived.
+    expect(body).toMatch(/cluster: q\?\.skill_cluster \?\? null/);
+    expect(body).toMatch(/familyId: q\?\.family_id \?\? null/);
+  });
+
+  it('keeps `internal_skill_ids` doing its own job: the display skill', () => {
+    // Repurposing the field would have been the cheap fix and would have broken
+    // skill resolution and the hard-prerequisite edges keyed on the skill graph.
+    const authority = read('packages/authority-core/src/authority.ts');
+    expect(authority).toMatch(/internal_skill_ids\[0\] \?\? ENZYME_SKILL/);
+    expect(read('packages/content/src/synthetic/enzyme-bank.ts')).toMatch(
+      /internal_skill_ids: \[SKILL_INHIB\]/,
+    );
+  });
+
+  it('builds no crosswalk, mapping table or id translation layer', () => {
+    for (const path of [
+      'packages/authority-core/src/authority.ts',
+      'packages/authority-core/src/practice.ts',
+      'packages/content/src/synthetic/enzyme-bank.ts',
+      'database/migrations/0012_study_attempt_kc_grain.sql',
+    ]) {
+      expect(code(path), `${path} must not translate between KC id spaces`).not.toMatch(
+        /kcCrosswalk|KC_CROSSWALK|kcAliases|toCorpusKc|skillIdToKc/,
+      );
+    }
+    // The tempting one-liner: rewriting the old value to the new one in SQL. That is
+    // a crosswalk baked into a migration, and true only of one dev fixture.
+    expect(read('database/migrations/0012_study_attempt_kc_grain.sql')).not.toMatch(
+      /set kc_id = 'V3-KC-/,
+    );
+  });
+
+  it('corrects the record in a new migration rather than editing an applied one', () => {
+    // `runMigrations` hashes each file and throws on drift, so 0010/0011 are frozen
+    // the moment any database has applied them.
+    expect(read('database/src/migrate.ts')).toMatch(/Checksum drift detected for migration/);
+
+    const migration = read('database/migrations/0012_study_attempt_kc_grain.sql');
+    expect(migration).not.toBe('');
+    expect(migration).toMatch(/422/);
+    expect(migration).toMatch(/NOT DISJOINT|not disjoint/);
+    // Forward-only, and no schema change: the column's meaning changed, not its shape.
+    expect(migration).not.toMatch(/create table|alter table|drop column/);
+    expect(migration).not.toMatch(/\btimestamp\s+(?!with time zone)/);
+    // A shape predicate, not a mapping — and scoped to the one activity type whose
+    // writer changed.
+    expect(migration).toMatch(/kc_id !~ '\^V3-KC-\[0-9\]\+\$'/);
+    expect(migration).toMatch(/activity_type = 'study'/);
   });
 });
 
