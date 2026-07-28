@@ -253,18 +253,12 @@ function newLessonCapFor(
   budgetMinutes: number,
   cfg: TodaysPathConfig,
 ): number {
-  if (band === 'pause_new') return 0;
-  if (band === 'reduce_new') return 1;
-  return clampInt(Math.floor(budgetMinutes / 90), cfg.newLessonCap, cfg.newLessonCapMax);
+  if (band === 'pause_new') return 0; // debt recovery: no new lessons today
+  if (band === 'reduce_new') return cfg.newLessonCap; // throttle to the base cap
+  // Normal: FILL the whole budget with new lessons when they're available (bounded
+  // only by the candidate list). Practice then fills any remainder once unlocked.
+  return Math.ceil(budgetMinutes / cfg.costs.lesson);
 }
-
-/** Practice-question ceiling scaled to the budget so large presets fill via reinforcement. */
-function practiceMaxQFor(budgetMinutes: number, cfg: TodaysPathConfig): number {
-  return clampInt(Math.floor(budgetMinutes / 4), cfg.blocks.practiceMaxQ, cfg.practiceMaxQHard);
-}
-
-const clampInt = (x: number, lo: number, hi: number): number =>
-  Math.max(lo, Math.min(hi, Math.round(x)));
 
 // ---- Step: core sizing (by due-volume / debt) --------------------------------
 
@@ -435,15 +429,11 @@ export function buildTodaysPath(
   // lessons (little taught yet → little to review); as coverage grows and new lessons
   // deplete, practice naturally takes over.
   const lessonCap = newLessonCapFor(band, snap.dailyBudgetMinutes, cfg);
-  const practiceMaxQ = practiceMaxQFor(snap.dailyBudgetMinutes, cfg);
 
   const carriedLessonSlugs = new Set(
     carried.filter((c) => c.kind === 'lesson' && c.lessonSlug !== null).map((c) => c.lessonSlug as string),
   );
-  const practiceEnabled =
-    snap.practiceUnlocked &&
-    snap.practiceReviewNeed > 0 &&
-    !carried.some((c) => c.kind === 'practice');
+  const practiceEnabled = snap.practiceUnlocked && !carried.some((c) => c.kind === 'practice');
 
   const scoredBlock: PlannedActivity[] = [];
   let remaining = budgetForNew - spent;
@@ -479,16 +469,13 @@ export function buildTodaysPath(
     remaining -= cfg.costs.lesson;
   }
 
-  // 2) Bounded practice: sized to review need (~questionsPerReviewKc per weak/overdue
-  //    taught KC), never to fill the budget; only after the unlock gate.
+  // 2) Practice FILLS the remaining budget once unlocked (per-KC teach-before-test),
+  //    so the whole day is planned. Split into <=45-min blocks + spread by ordering.
+  //    (Priority already went to new lessons above; practice is the reinforcement fill,
+  //    which naturally grows as new lessons deplete.)
   let practiceQs = 0;
   if (practiceEnabled) {
-    const want = clampInt(snap.practiceReviewNeed * cfg.questionsPerReviewKc, 0, practiceMaxQ);
-    const fits = Math.floor(remaining / cfg.costs.practicePerQuestion);
-    practiceQs = Math.min(want, fits);
-    if (practiceQs > 0 && practiceQs < cfg.blocks.practiceMinQ) {
-      practiceQs = Math.min(cfg.blocks.practiceMinQ, fits);
-    }
+    practiceQs = Math.max(0, Math.floor(remaining / cfg.costs.practicePerQuestion));
     remaining -= practiceQs * cfg.costs.practicePerQuestion;
   }
 

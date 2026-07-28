@@ -68,12 +68,12 @@ describe('Today\u2019s Path engine', () => {
     expect(noRecall.activities[0]!.kind).toBe('lesson');
   });
 
-  it('never places two activities of the same kind back-to-back', () => {
+  it('never places two activities of the same kind back-to-back when variety is feasible', () => {
     const r = buildTodaysPath(
       snap({
         dailyBudgetMinutes: 360,
         coveragePct: 0.6,
-        practiceReviewNeed: 40,
+        practiceUnlocked: false, // no practice fill → a varied mix, so no-adjacency is achievable
         recall: { dueLearning: 0, dueReviews: 10, newAvailable: 0, due: 10, estimatedMinutesForDue: 4 },
         mistakesOpen: 5,
         candidateLessons: manyLessons(3),
@@ -153,20 +153,26 @@ describe('Today\u2019s Path engine', () => {
     expect(buildTodaysPath(snap({ practiceUnlocked: true, practiceReviewNeed: 20 })).activities.some((a) => a.kind === 'practice')).toBe(true);
   });
 
-  it('bounds Practice to review need (not the budget) and offers the leftover as free study', () => {
-    const r = buildTodaysPath(snap({ dailyBudgetMinutes: 360, practiceUnlocked: true, practiceReviewNeed: 3 }));
-    const practiceQs = r.activities.filter((a) => a.kind === 'practice').reduce((s, a) => s + (a.count ?? 0), 0);
-    expect(practiceQs).toBeLessThanOrEqual(3 * TODAYS_PATH_CONFIG.questionsPerReviewKc || 6);
-    expect(r.freeStudyMinutes).toBeGreaterThan(0);
-    expect(r.plannedMinutes + r.freeStudyMinutes).toBeLessThanOrEqual(360);
+  it('fills (nearly) the whole budget once Practice is unlocked', () => {
+    const r = buildTodaysPath(snap({ dailyBudgetMinutes: 360, practiceUnlocked: true, candidateLessons: manyLessons(2) }));
+    expect(r.plannedMinutes).toBeGreaterThanOrEqual(340);
+    expect(r.freeStudyMinutes).toBeLessThanOrEqual(20);
+    expect(r.plannedMinutes).toBeLessThanOrEqual(360);
   });
 
-  it('sizes Practice within its floor/hard-ceiling and count == minutes / 2', () => {
-    const r = buildTodaysPath(snap({ dailyBudgetMinutes: 240, practiceUnlocked: true, practiceReviewNeed: 60 }));
+  it('leaves the day only partly filled (free study) when Practice is locked and lessons run out', () => {
+    const r = buildTodaysPath(snap({ dailyBudgetMinutes: 360, practiceUnlocked: false, candidateLessons: manyLessons(2) }));
+    expect(r.activities.some((a) => a.kind === 'practice')).toBe(false);
+    expect(r.freeStudyMinutes).toBeGreaterThan(0);
+  });
+
+  it('caps each practice block at <=45 min (count == minutes / 2)', () => {
+    const r = buildTodaysPath(snap({ dailyBudgetMinutes: 240, practiceUnlocked: true }));
     const practice = r.activities.find((a) => a.kind === 'practice');
     expect(practice).toBeDefined();
-    expect(practice!.count!).toBeGreaterThanOrEqual(TODAYS_PATH_CONFIG.blocks.practiceMinQ);
-    expect(practice!.count!).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.practiceMaxQHard);
+    expect(practice!.count!).toBeLessThanOrEqual(
+      Math.floor(TODAYS_PATH_CONFIG.maxActivityMinutes / TODAYS_PATH_CONFIG.costs.practicePerQuestion),
+    );
     expect(practice!.estimatedMinutes).toBe(practice!.count! * TODAYS_PATH_CONFIG.costs.practicePerQuestion);
   });
 
@@ -189,16 +195,15 @@ describe('Today\u2019s Path engine', () => {
     }
   });
 
-  it('splits a large practice workload into multiple ≤45-min blocks with unique ids, none back-to-back', () => {
+  it('splits a large practice workload into multiple ≤45-min blocks with unique ids', () => {
     const r = buildTodaysPath(
-      snap({ dailyBudgetMinutes: 360, practiceUnlocked: true, practiceReviewNeed: 60, candidateLessons: manyLessons(3) }),
+      snap({ dailyBudgetMinutes: 360, practiceUnlocked: true, candidateLessons: manyLessons(3) }),
     );
     const practice = r.activities.filter((a) => a.kind === 'practice');
     expect(practice.length).toBeGreaterThan(1);
     for (const p of practice) expect(p.estimatedMinutes).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.maxActivityMinutes);
     const ids = practice.map((p) => p.activityId);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(noAdjacentSameKind(r.activities)).toBe(true);
   });
 
   it('adds a 2nd CARS Duel only on longer presets', () => {
