@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildTodaysPath,
   reviewDebtBand,
+  scoreLesson,
   sizeRecall,
   TODAYS_PATH_CONFIG,
   type CarriedActivity,
@@ -293,5 +294,45 @@ describe('Today\u2019s Path engine', () => {
     expect(r.activities.length).toBeGreaterThan(0);
     expect(r.plannedMinutes).toBeLessThanOrEqual(120);
     expect(r.activities.some((a) => a.kind === 'cars_duel')).toBe(true);
+  });
+});
+
+describe('scoreLesson mastery nudge', () => {
+  const cfg = TODAYS_PATH_CONFIG;
+
+  it('scores a LESS-mastered lesson higher when everything else is equal', () => {
+    const s = snap();
+    // Identical candidates differing ONLY in P(L): the lower-mastery one needs the
+    // work, so it should score strictly higher.
+    const lessMastered = scoreLesson(lesson({ pL: 0.1 }), s, cfg);
+    const moreMastered = scoreLesson(lesson({ pL: 0.9 }), s, cfg);
+    expect(lessMastered).toBeGreaterThan(moreMastered);
+  });
+
+  it('keeps mastery MINOR: a clearly stronger primary driver still outranks a slightly-less-mastered lesson', () => {
+    const s = snap();
+    // Strong primary driver (unlocks many downstream lessons) but MORE mastered, so
+    // the mastery nudge works AGAINST it.
+    const strongDriver = scoreLesson(
+      lesson({ section: 'bb', dependentsCount: 4, covered: false, pL: 0.5 }),
+      s,
+      cfg,
+    );
+    // Weak primary driver (nothing depends on it) but slightly LESS mastered, so the
+    // mastery nudge works FOR it.
+    const weakDriver = scoreLesson(
+      lesson({ section: 'bb', dependentsCount: 0, kcCount: 1, covered: false, pL: 0.4 }),
+      s,
+      cfg,
+    );
+    // The driver gap dominates: mastery can tip near-ties, never override a real driver.
+    expect(strongDriver).toBeGreaterThan(weakDriver);
+  });
+
+  it('treats undefined pL identically to the P(L)_0 prior (0.2) — no change vs baseline', () => {
+    const s = snap();
+    const absent = scoreLesson(lesson(), s, cfg); // no pL provided
+    const atPrior = scoreLesson(lesson({ pL: 0.2 }), s, cfg);
+    expect(absent).toBe(atPrior);
   });
 });

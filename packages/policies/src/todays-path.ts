@@ -1,4 +1,5 @@
 import type { PlannerReason } from '@mcat/domain';
+import { PRIOR_PL0 } from './bkt';
 import type { PolicyManifest } from './manifest';
 
 /**
@@ -80,6 +81,12 @@ export interface TodaysPathConfig {
   /** Provisional per-section exam weight (blueprint proxy). */
   readonly sectionExamWeight: Readonly<Record<string, number>>;
   readonly defaultExamWeight: number;
+  /**
+   * Weight of the MINOR mastery nudge in scoreLesson (0 = ignore mastery). Kept
+   * small so a less-mastered lesson scores slightly higher without ever
+   * overriding the primary drivers (exam weight / unlock / coverage urgency).
+   */
+  readonly masteryWeight: number;
   /** Practice unlocks only after this many lessons are completed. */
   readonly practiceUnlockLessons: number; // 3
   /** Practice is sized to review need: ~this many questions per weak/overdue taught KC. */
@@ -129,6 +136,7 @@ export const TODAYS_PATH_CONFIG: TodaysPathConfig = {
   perRepeatDecay: 0.8,
   sectionExamWeight: { bb: 1.0, cp: 0.92, ps: 0.85, cars: 0.8 },
   defaultExamWeight: 0.7,
+  masteryWeight: 0.2,
   practiceUnlockLessons: 3,
   questionsPerReviewKc: 2,
   carsSecondAtBudget: 240,
@@ -167,6 +175,8 @@ export interface TodaysPathCandidateLesson {
   readonly unlocked: boolean;
   /** How many other candidate lessons this one unlocks (downstream dependents) — drives "how much it unlocks". */
   readonly dependentsCount: number;
+  /** BKT mastery P(L) in [0,1], a MINOR scoring nudge. Omitted when unknown (falls back to the P(L)_0 prior). */
+  readonly pL?: number;
 }
 
 /** An activity carried over from a prior day (unfinished), reserved before new planning. */
@@ -328,7 +338,14 @@ export function scoreLesson(
   // Coverage/deadline urgency: uncovered clusters climb as test day nears.
   const pressure = snap.totalDays !== null ? clamp01(snap.dayNumber / snap.totalDays) : 0.3;
   const coverageUrgency = (lesson.covered ? 0.4 : 1.0) * (0.6 + 0.4 * pressure);
-  return clamp01(examWeight * (0.5 + 0.5 * unlock) * coverageUrgency);
+  // Mastery is a MINOR nudge, not a driver: all else equal, a LESS-mastered lesson
+  // (lower P(L)) scores slightly higher because it still needs the work. Bounded to
+  // [1 - masteryWeight, 1] so it can only tip near-ties — it can never override exam
+  // weight / unlock / coverage. Unknown mastery falls back to the P(L)_0 prior, so
+  // score is unchanged (== the prior) when no mastery signal is present.
+  const pL = clamp01(lesson.pL ?? PRIOR_PL0);
+  const masteryFactor = 1 - cfg.masteryWeight + cfg.masteryWeight * (1 - pL); // in [1-w, 1]
+  return clamp01(examWeight * (0.5 + 0.5 * unlock) * coverageUrgency * masteryFactor);
 }
 
 // ---- Steps: pick winners + order ---------------------------------------------

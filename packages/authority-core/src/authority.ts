@@ -649,11 +649,13 @@ export class Authority {
     ctx: ReturnType<Authority['dayContext']>,
     carryOver: CarriedActivity[],
   ): TodaysPathSnapshot {
+    // Single mastery read, reused for both the mastered-id gate and the per-lesson
+    // P(L) map that feeds scoreLesson's minor mastery nudge (avoid computing twice).
+    const masteryLessons = this.getMasteryLessons(state);
     const masteredLessonIds = new Set(
-      this.getMasteryLessons(state)
-        .filter((l) => l.mastered)
-        .map((l) => l.lessonId),
+      masteryLessons.filter((l) => l.mastered).map((l) => l.lessonId),
     );
+    const pLByLesson = new Map(masteryLessons.map((l) => [l.lessonId, l.pL]));
     const completed = new Set(state.completedLessons ?? []);
     const now = this.clock.now();
     const done = (id: string): boolean => completed.has(id) || masteredLessonIds.has(id);
@@ -695,6 +697,8 @@ export class Authority {
       covered: l.cluster !== null && ctx.clustersWithEvidence.has(l.cluster),
       unlocked: l.prerequisiteLessonIds.every((p) => done(p)),
       dependentsCount: dependents.get(l.lessonId) ?? 0,
+      // Untracked lessons have no memory state yet → fall back to the P(L)_0 prior.
+      pL: pLByLesson.get(l.lessonId) ?? PRIOR_PL0,
     }));
 
     return {
