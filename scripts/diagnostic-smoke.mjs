@@ -171,7 +171,10 @@ async function main() {
 
   // --- the result -----------------------------------------------------------
   const result = view.result;
-  check('the form completed with a result', view.done === true && result != null);
+  check(
+    'the form completed with a result',
+    view.done === true && result !== null && result !== undefined,
+  );
   check(
     `two priorities reported (${(result?.topPriorities ?? []).map((p) => p.cluster).join(', ')})`,
     (result?.topPriorities ?? []).length === 2,
