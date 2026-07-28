@@ -243,6 +243,27 @@ const productionDesign = (): MstDesign => {
   );
 };
 
+/**
+ * Whether a bank can actually deal the form production serves.
+ *
+ * `planMstForm` throws when any bucket cannot cover its share without repeating
+ * an item, which is the correct behaviour at serve time — a short form is worse
+ * than a loud failure. But it makes "the bank is missing" and "the planner is
+ * broken" look identical to a caller, and the real corpus is a gitignored local
+ * pull: on CI and on a fresh clone the loader falls back to the synthetic
+ * fixture, so the throw is the expected state rather than a defect. Callers that
+ * need to branch on capability (tests that skip, a diagnostic-availability
+ * check) ask here instead of catching a string.
+ */
+export function bankSupportsProductionForm(bank: DiagnosticBank): boolean {
+  try {
+    planMstForm(productionDesign(), bank.formItems, DIAGNOSTIC_AXIS);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 interface MstPosition {
   /** Module taken at each stage so far, stage 1 always 0. Identifies the open stage. */
   routePath: number[];
@@ -264,8 +285,24 @@ interface MstPosition {
  * an interrupted sitting resumes on exactly the block it left, with the same
  * items in the same order.
  */
+/**
+ * A stable uint32 from the session's random token (FNV-1a), so a sitting's form
+ * is seeded per-session: the same token replays to the same items on every
+ * request (event-sourced resume still holds), while different sittings break
+ * item ties differently instead of all drawing the identical lowest-id form.
+ */
+function seedFromToken(token: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < token.length; i += 1) {
+    h ^= token.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return h >>> 0;
+}
+
 function mstPosition(bank: DiagnosticBank, record: SessionRecord): MstPosition {
   const design = productionDesign();
+  const assemblySeed = seedFromToken(record.seed);
   // The bank's own array, by identity: `planMstForm` keys its item pools on it,
   // and the open block is resolved by replaying the whole form on every request,
   // so building a fresh array here would defeat that cache each time.
@@ -298,7 +335,14 @@ function mstPosition(bank: DiagnosticBank, record: SessionRecord): MstPosition {
         ),
       );
     }
-    const assembled = assembleMstStages(design, items, DIAGNOSTIC_AXIS, routePath, slotOverrides);
+    const assembled = assembleMstStages(
+      design,
+      items,
+      DIAGNOSTIC_AXIS,
+      routePath,
+      slotOverrides,
+      assemblySeed,
+    );
     const stage = assembled[index];
     if (stage === undefined) break;
     if (record.responses.length < itemsCommitted + stage.items.length) {

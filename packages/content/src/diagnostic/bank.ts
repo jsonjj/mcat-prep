@@ -48,7 +48,10 @@ export interface DiagnosticItem {
 
 /** Turn one draft into a canonical v7 record (server-side, answer-bearing). */
 function draftToV7(draft: DiagnosticDraft, index: number): V7Question {
-  const lessonId = CLUSTER_LESSON[draft.cluster];
+  // A draft may pin its own lesson (the FC-coverage generator does this so an
+  // item can be routed onto a specific Foundational Concept); otherwise the
+  // cluster's representative lesson is used.
+  const lessonId = draft.lessonId ?? CLUSTER_LESSON[draft.cluster];
   const raw = {
     schema_version: 'v7',
     id: `diag-${draft.cluster.toLowerCase()}-${draft.family}-${String(index).padStart(3, '0')}`,
