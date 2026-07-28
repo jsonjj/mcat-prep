@@ -124,6 +124,43 @@ Contracts (`@mcat/contracts/mastery.ts`): `MasterySeed`, `SkillMasteryView`, `Le
   dev Vite authority server): 3 read methods + `useMasterySkills/useMasteryLessons/useCarsReadiness`
   hooks in learner-web.
 
+### 4.1 The ordinal evidence tier no longer leaves the authority
+
+Capability is `P(L)` and nothing else. The evidence warrant is published as **reason codes**, never as
+a rank a consumer could threshold.
+
+The ordinal `base` tier has been removed from `MasteryMapEntry` and `SessionSummary`. It was the only
+field a consumer could compare along, and every consumer that read it eventually did — the deleted
+`countGlowing` ranked it, `getWrapped` ranked it, and the session badge ordered its wording by it. That
+is three rival mastery scales grown from one published integer, which is exactly the two-authorities
+contradiction the seam exists to prevent. Reason codes carry the same warrant with no axis to compare
+along.
+
+- The learner-facing badge now selects on warrant **reason codes**.
+- `WrappedView.skillsGlowing` is a capability claim and so comes from BKT: it counts skills where
+  `getMasterySkills(...).mastered` holds.
+- The ordinal tier survives only behind the private `Authority.skillWarrants`, for planner and coverage
+  use. Ordinals are legitimate there because the planner genuinely compares them; the tier stops at the
+  package boundary.
+
+### 4.2 Verifying the lesson → mastery connection by hand
+
+`GET /v1/debug/learner-state` in `services/local-authority` is the **supported** way to check by hand
+that a lesson response reached mastery. It returns each KC's `P(L)` (stored and lazily decayed), the
+seven reasoning operations' `P(L)`, the derived lesson rollup (with rejection codes when it is
+unavailable rather than a misleading `0`), the evidence records, the accepted event count, and the
+applied-observation count and sequence high-water mark.
+
+It is a pure projection with no I/O or clock read, and its evidence view is an explicit field
+**allowlist**, so nothing answer-bearing can leak and a field added to `EvidenceRecord` tomorrow cannot
+ride along. Assume its output ends up in a log.
+
+Three independent guards must all pass: the process opted in (`MCAT_LOCAL_DEBUG_STATE` set to `1` or
+`true`), the peer is loopback (an exact-address allowlist, not a range test), and the request carries no
+`Origin` header — which refuses to produce a response for a web page at all, rather than relying on
+CORS to hide one. Its absence from the deployed lambda is asserted three independent ways in
+`tests/architecture/lesson-mastery-integration.test.ts`.
+
 ---
 
 ## 5. Producer Input Contract (what each system MUST emit)
@@ -155,10 +192,13 @@ moves `P(L)`.
 1. The lesson runner emits **facts only** (`LessonRuntimeResponseFacts`): `questionId`,
    `itemBindingId`, `bindingVersion`, `attemptIndex`, `isRetry`, `isDiagnosticRetry`, `response`,
    `omitted`, `elapsedMs`, `answerChanges`, `assistanceLevel`, `contentBearingHintUsed`,
-   `revealUsed`, `occurredAt`. It never emits `correct`, `independent`, an evidence status, or a
-   `P(L)`. `response` is a discriminated union, not an MCQ choice: `MULTIPLE_CHOICE` carries
-   `chosenChoiceId: string | null`, and `CONSTRUCTED` carries a multi-field record keyed by the
-   author's `response_field_id` values.
+   `revealUsed`, `mixedAdministration`, `passageAdministration`, `timedAdministration`, `occurredAt`.
+   It never emits `correct`, `independent`, an evidence status, or a `P(L)`. `response` is a
+   discriminated union, not an MCQ choice: `MULTIPLE_CHOICE` carries `chosenChoiceId: string | null`,
+   and `CONSTRUCTED` carries a multi-field record keyed by the author's `response_field_id` values.
+   The three administration flags describe how the attempt was **actually run** and each defaults to
+   `false`; a declared evidence mode must never set one. `occurredAt` is the runner's claim, not a
+   clock — see §5.2.2.
 2. The server accepts the response into an `AcceptedLessonObservation` (server-decided `outcome` and
    `scoringValid`, plus the immutable measurable `LessonItemBinding` snapshot) and routes evidence.
    Non-measurable exposition — a worked example — produces no observation, no evidence, and no BKT
@@ -166,21 +206,47 @@ moves `P(L)`.
 3. BKT qualification runs two gates and, only if both pass, emits a `QualifiedBktObservation` — the
    only lesson-side input the engine accepts.
 
-**Explicit eligibility only.** A lesson observation reaches BKT only when the immutable binding
-declares **some `candidateEvidenceModes` member other than `INSTRUCTIONAL`** (`hasEligibleEvidenceMode`)
-**and** the runtime response qualifies (`attemptIndex === 1`, `assistanceLevel === 'A0'`, no
-content-bearing hint, no reveal, no retry, `scoringValid === true`). Eligibility is deliberately
-broader than `INDEPENDENT` membership — a `TRANSFER` or `TIMED` binding is eligible too, and must
-therefore carry a `reasoningOperation`. There is no default-allow and no inference: an unauthored
-mode set defaults to `['INSTRUCTIONAL']` and is rejected with
-`INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` (the code name is frozen and now reads as "no eligible mode
-declared"), and an eligible binding without a `reasoningOperation` is rejected with
+**Explicit eligibility only, via an allowlist.** A lesson observation reaches BKT only when the
+immutable binding declares a member of the seven-mode `BKT_ELIGIBLE_EVIDENCE_MODES` allowlist —
+`INDEPENDENT`, `TRANSFER`, `DELAYED`, `MIXED`, `PASSAGE`, `TIMED`, `PROTECTED` (`hasEligibleEvidenceMode`)
+— **and** the runtime response qualifies (`attemptIndex === 1`, `assistanceLevel === 'A0'`, no
+content-bearing hint, no reveal, no retry, `scoringValid === true`).
+
+Eligibility is deliberately **not** expressed as "any mode other than `INSTRUCTIONAL`". That negation
+was the shipped rule once, and with thirteen enum members it made twelve eligible — including
+`INSTRUCTIONAL_EXIT`, `DIAGNOSTIC`, `ENTRY`, `REPAIR_CONFIRMATION`, and `REHEARSAL_ONLY`, all of which
+route to contextual-only evidence that can never fill a mastery recipe slot. The allowlist gives two
+properties a denylist cannot: a mode added to the enum tomorrow is ineligible until someone
+deliberately allows it, and an unrecognized mode is ineligible by default. Do not reintroduce a
+negation. It is also broader than `INDEPENDENT` membership alone — a `TRANSFER` or `TIMED` binding is
+eligible and must therefore carry a `reasoningOperation`.
+
+There is no default-allow and no inference: an unauthored mode set defaults to `['INSTRUCTIONAL']` and
+is rejected with `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` (the code name is frozen and now reads as "no
+eligible mode declared"), and an eligible binding without a `reasoningOperation` is rejected with
 `ELIGIBLE_BINDING_MISSING_REASONING_OPERATION`. Every rejection code is recorded for audit; the
 observation still produces evidence, it just does not move `P(L)`.
 
-Only the assistance level the learner **took** bears on independence. The binding's
-`authoredAssistanceAffordances` records what help the item _offered_ — an open, author-defined list
-— and is never read by the independence check.
+**Only the assistance level the learner TOOK bears on independence.** The binding's
+`authoredAssistanceAffordances` records what help the item _offered_ — an open, author-defined list —
+and is never read by the independence check. This was a live defect: the authored `assistance_state`
+reached the seam as the runtime's `assistanceLevel`, so a string in a lesson script decided
+independence and moved a `P(L)` from `0.20` to `0.5717`. An authored `A0`–`A3` value is now rewritten
+on the way in so it cannot be read back as an assistance level.
+
+**Consequence today: no real lesson response is independent.** The runtime can observe whether support
+was requested and whether the answer was revealed, but not a **graded** assistance level, so
+`assistanceLevelTaken` fail-closes to `A3` on every response. Every `EvidenceRecord.independent` from a
+lesson is therefore `false` and every qualification carries `ASSISTANCE_NOT_A0`. The BKT path itself is
+proven: an end-to-end test moves `P(L)` on both grains for each of the seven eligible modes. Unlocking
+real lesson responses requires teaching the runtime to measure help actually displayed and taken, at or
+before commit — see the seam contract §3.3.
+
+**A declared mode never mints an administration condition.** `mixed`, `passage`, and `timed` in
+`EvidenceRecord.conditions` come from the runner's administration facts, and `protected` comes from the
+server scoring resolution. A binding that merely _declares_ `TIMED` on an untimed attempt is classified
+`instruction`, not `timed`; otherwise a declaration would fill the timed recipe slot without a timed
+administration ever happening.
 
 **Omission qualifies.** An omitted answer is a scored outcome, not a scoring failure: with
 `scoringValid === true` it still produces evidence and, if the gates pass, a `QualifiedBktObservation`
@@ -197,7 +263,41 @@ caller-resolved `cluster` (via `LESSON_TO_CLUSTER`) and **omit** `operation`, wh
 across the three real lessons take the `['INSTRUCTIONAL']` default — legacy `evidence_eligibility`
 labels, `INSTRUCTIONAL_EXIT_ONLY` included, normalize to the same value. No V3 lesson moves `P(L)` at
 all; they produce instructional evidence only. That is the intended end state, not a partial
-integration.
+integration, and it now fails closed for **two** independent reasons: no eligible mode is declared
+(Gate 1) and no response can be independent (Gate 2, the `A3` fail-close above). Fixing either alone
+still moves no `P(L)`.
+
+### 5.2.2 The clocks a policy reads are server-owned
+
+A runner-reported `occurredAt` is a runtime fact, not a clock. Two authorities were driven by it until
+July 2026, and both were exploitable: 120 observations stamped `2999-01-01` produced permanent mastery
+(decay never elapsed), and one backdated **correct** observation dropped a mastered KC from `1.0` to
+`9.7e-11` via lazy decay across the invented gap. Forward-dating buys mastery; back-dating destroys it.
+Both are the client writing a mastery claim.
+
+- **Decay clock (BKT).** `boundDecayClock` applies
+  `appliedAt = max(min(floor, serverNow), min(reportedAt, serverNow))`. The Authority's clock is the
+  ceiling; `floor` is the newest `lastPracticedAt` among the grains the observation actually writes, so
+  no grain rewinds (prerequisites count only on a correct answer, since only then are they written).
+  The floor is itself capped at `serverNow`, which also heals state poisoned before the clamp existed.
+  A claim more than `BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS` (`300_000`, five minutes) ahead is
+  **refused** with `OBSERVATION_TIMESTAMP_IN_FUTURE` rather than clamped, so the bad claim leaves a
+  signal.
+- **Freshness clock (evidence).** `EvidenceRecord.occurredAt` is a branded `ServerBoundedTimestamp`
+  whose only producer is `boundOccurredAtToServerTime`, bounded by the server's `acceptedAt`. The brand
+  makes this structural: a raw runner claim does not typecheck. A **negative** age means untrustworthy,
+  not new, so it yields `isFresh: false` — it still counts toward the achieved-ever tier, which is not
+  time-derived, and the mismatch surfaces as `EVIDENCE_STALE`.
+- **Audit.** A `bkt_observation_applied` event retains `reportedOccurredAt` (verbatim),
+  `appliedOccurredAt`, `clockAdjustment`, `outOfOrder`, and `observationSequence`, so the clamp never
+  destroys the evidence that a client misreported. `sequence` is a high-water mark used for
+  **detection, not enforcement**: an out-of-order arrival is recorded and still applied, because
+  discarding a legitimately delayed observation would lose real evidence.
+- **Ordering.** BKT application runs **before** evidence is written, so a refused observation leaves no
+  evidence record at all. That is different from merely failing to qualify, which still records
+  evidence.
+- **Accepted with no action.** `lastDueReviewAt` stays uncapped: it is audit-only and no policy reads
+  it. If one ever does, it must be bounded first.
 
 ### 5.2.1 Lesson summaries are KC-derived
 

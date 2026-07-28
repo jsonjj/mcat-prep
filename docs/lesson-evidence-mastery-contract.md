@@ -1,15 +1,23 @@
 # Lesson → Evidence → Mastery Contract
 
-**Status:** Normative seam contract, version 1.1.
-**Date:** July 27, 2026.
+**Status:** Normative seam contract, version 1.2.
+**Date:** July 28, 2026.
 **Vocabulary authority:** `.superpowers/sdd/field-lock.md` (Gate A), including its Task 2b
 three-lesson conformance amendment (decisions D1–D10). Every identifier in this document is taken
 verbatim from that registry. Where this document and Gate A disagree, Gate A wins and this document
 is defective.
-**Implementation:** `packages/contracts/src/lesson-observation.ts` (schemas) and
-`packages/domain/src/lesson-response-adapter.ts` (the single normalization + adaptation seam). This
-document describes what those modules do; where it describes something they do not do, that is a
-defect in one of the two and §15 says how to report it.
+**Implementation:**
+
+- `packages/contracts/src/lesson-observation.ts` — the schemas and the BKT eligibility allowlist.
+- `packages/domain/src/lesson-response-adapter.ts` — the single normalization + adaptation seam.
+- `packages/domain/src/evidence.ts` — `EvidenceRecord` and the branded server-bounded `occurredAt`.
+- `packages/authority-core/src/authority.ts` — `applyQualifiedBktObservation`, the bounded decay
+  clock, and the `bkt_observation_applied` audit ledger.
+- `packages/policies/src/lesson-rollup.ts` — the derived lesson-grain rollup.
+
+This document describes what those modules do; where it describes something they do not do, that is a
+defect in either the document or the module, and §15.3 says how to report it. Do not assume the code
+is the correct one of the two.
 **Audience:** Anyone integrating a V3 lesson with the evidence system or the BKT mastery engine —
 lesson authors, runtime engineers, evidence/policy engineers, and any future coding agent handed
 this file as its only brief.
@@ -18,6 +26,18 @@ This is the single file a future implementer needs in order to wire a **new** co
 into evidence and mastery. It is written to be enforceable: requirements use **MUST** / **MUST NOT**
 and name exact identifiers. If a rule here cannot be checked mechanically, it is a defect in this
 document.
+
+**Read §16 before trusting any rule here as a guarantee.** Some rules below are held by an
+architecture test; others are held only by review. §16 says which is which, by name. Do not assume a
+rule is enforced because it is written down — this project has already shipped a guard that was
+documented in a source comment and a README, believed by everyone, and did not exist.
+
+**Two authoring-facing consequences you will hit immediately** — read §3.3 and §5.2 before writing a
+binding. First, no lesson response produced by the current runtime can establish an independent
+administration, because the runtime cannot yet observe how much help the learner took and therefore
+fail-closes to `A3`. Second, no binding on disk declares a BKT-eligible mode. Either one alone is
+enough to stop `pL` moving, and both are the intended state rather than a bug — §11 explains why, and
+§16.3 is how to verify it by hand.
 
 ---
 
@@ -60,17 +80,23 @@ psychometric calibration.
 Every value in this seam belongs to exactly one of three layers. A value MUST NOT be produced by a
 layer that does not own it.
 
-| Layer                        | Produced by                             | When                    | Mutability                         | Examples                                                                                       |
-| ---------------------------- | --------------------------------------- | ----------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------- |
-| **Author-time metadata**     | Lesson author, under reviewer approval  | Authoring / compile     | Immutable once the artifact is cut | `primaryKcId`, `reasoningOperation`, `candidateEvidenceModes`, `authoredAssistanceAffordances` |
-| **Runtime facts**            | Lesson runner (client + session server) | During the attempt      | Append-only, never edited          | `attemptIndex`, `assistanceLevel`, `revealUsed`, `response`, `elapsedMs`                       |
-| **Server-derived decisions** | Server policy only                      | On accepting a response | Derived, reproducible, audited     | `outcome`, `scoringValid`, `independent`, `EvidenceRecord.kind`, `pL`, `serverItemVersion`     |
+| Layer                        | Produced by                             | When                    | Mutability                         | Examples                                                                                                               |
+| ---------------------------- | --------------------------------------- | ----------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Author-time metadata**     | Lesson author, under reviewer approval  | Authoring / compile     | Immutable once the artifact is cut | `primaryKcId`, `reasoningOperation`, `candidateEvidenceModes`, `authoredAssistanceAffordances`                         |
+| **Runtime facts**            | Lesson runner (client + session server) | During the attempt      | Append-only, never edited          | `attemptIndex`, `assistanceLevel`, `revealUsed`, `response`, `elapsedMs`, `timedAdministration`                        |
+| **Server-derived decisions** | Server policy only                      | On accepting a response | Derived, reproducible, audited     | `outcome`, `scoringValid`, `independent`, `EvidenceRecord.kind`, `pL`, `serverItemVersion`, every clock a policy reads |
 
 The rule that follows from this table, stated once and enforced everywhere below:
 
 > **The lesson runner emits FACTS. Server policy decides MEANING.** The runner never decides
 > correctness, never decides `independent`, never decides which evidence slots are satisfied, and
 > never decides whether BKT moves.
+
+A **time** is a fact when the runner reports it and a decision when a policy reads it, so the two
+uses are separate values. `LessonRuntimeResponseFacts.occurredAt` is the runner's claim; every clock
+a policy actually reads is bounded by the server first. §7.4 is normative on this and explains why:
+a client-supplied timestamp silently owned both the BKT decay clock and the evidence freshness clock
+until July 2026.
 
 ### 2.1 Producer / consumer ownership
 
@@ -121,30 +147,30 @@ the attempt policy wrong".
 
 ### 3.2 Fields common to both variants
 
-| Author key (`snake_case`)                   | Internal key (`camelCase`)      | Required            | Semantics and constraints                                                                                                                                                                                                        |
-| ------------------------------------------- | ------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| —                                           | `measurementKind`               | yes (adapter)       | `MEASURABLE` or `NON_MEASURABLE`. Adapter-supplied from `activity_role`; never authored, never schema-inferred.                                                                                                                  |
-| `lesson_id`                                 | `lessonId`                      | yes (envelope)      | Owning lesson, taken from the artifact envelope. Routing/audit only. **Never** a BKT target.                                                                                                                                     |
-| `item_binding_id`                           | `itemBindingId`                 | yes                 | `LessonItemId`. Stable identity of this binding.                                                                                                                                                                                 |
-| `binding_version`                           | `bindingVersion`                | **optional** (D5)   | Opaque non-empty string. Audit / version-match value only, never parsed, coerced, or hashed into a numeric item version. The adapter fills it from `binding_version`, then `item_version`, then the envelope `artifact_version`. |
-| `primary_kc_id`                             | `primaryKcId`                   | yes                 | **The only KC-grain BKT target.** Maps to `EvidenceRecord.skillId`.                                                                                                                                                              |
-| `secondary_kc_mappings`                     | `secondaryKcMappings`           | defaults to `[]`    | Readonly array. Coverage/reporting only. **Never** a BKT target. Falls back to `secondary_kc_refs`.                                                                                                                              |
-| `secondary_kc_refs`                         | `secondaryKcRefs`               | optional            | Additional coverage metadata. **Never** a BKT target.                                                                                                                                                                            |
-| `activity_role`                             | `activityRole`                  | yes                 | `LessonActivityRole` (§3.4). Also the input to `measurementKind`.                                                                                                                                                                |
-| `semantic_family_id`                        | `semanticFamilyId`              | yes                 | Item family. Maps to `EvidenceRecord.familyId`. A family fills a given recipe slot at most once.                                                                                                                                 |
-| `stimulus_lineage_id`                       | `stimulusLineageId`             | optional            | Maps to `EvidenceRecord.stimulusId`. Normalize legacy `stimulus_lineage` string or `stimulus_lineage.lineage_id`.                                                                                                                |
-| `assistance_available` / `assistance_state` | `authoredAssistanceAffordances` | yes, non-empty (D2) | Open readonly strings naming help the item **offers** (`A2`, `VISIBLE_EXPLANATION`, `NOT_SURE_ALLOWED`, …). See §3.3. It is **not** an `AssistanceLevel` and it never touches independence.                                      |
-| `candidate_evidence_modes`                  | `candidateEvidenceModes`        | **optional** (D3)   | Non-empty readonly `CandidateEvidenceMode[]`. **Absent defaults to `['INSTRUCTIONAL']`**; an explicitly empty array is rejected. A permission set, not an outcome (§3.5).                                                        |
-| `reasoning_operation`                       | `reasoningOperation`            | conditional (D4)    | `ReasoningOperation`. **Required if and only if any declared mode is not `INSTRUCTIONAL`** (§6). Never inferred from free text.                                                                                                  |
-| `dok_level`                                 | `dokLevel`                      | optional            | `DokLevel` — `1`, `2`, `3`, or `4`. Optional even on an eligible binding. No default (§6).                                                                                                                                       |
-| `representation_id`                         | `representationId`              | optional/nullable   | Open non-empty string or `null`. Item-level representation.                                                                                                                                                                      |
-| `representation_family_id`                  | `representationFamilyId`        | optional/nullable   | External REPFAM reference. Currently unpopulated and MUST NOT be adapter-derived.                                                                                                                                                |
-| `changed_dimensions`                        | `changedDimensions`             | yes (may be `[]`)   | Authored canonical `ChangeDimension[]`. Maps to `EvidenceRecord.changeDimensions`.                                                                                                                                               |
-| `changed_dimension_detail`                  | `changedDimensionDetail`        | optional            | Raw reviewed prose; an empty string is valid. **Never** a BKT target and never parsed into `changedDimensions`.                                                                                                                  |
-| `learner_operation`                         | `learnerOperation`              | optional            | Instructional free text. **Never** a capability label and never `reasoningOperation` (§6.2).                                                                                                                                     |
-| `semantic_structure`                        | `semanticStructure`             | optional            | Free-text authoring structure. `semanticStructure.operation` is free text and is **never** `reasoningOperation`.                                                                                                                 |
-| `learner_safe_item_ref`                     | `learnerSafeItemRef`            | yes                 | Either an **opaque ref string** or a **strict inline projection** (§3.6). Never both, never parsed.                                                                                                                              |
-| reviewed metadata (D10)                     | see §3.7                        | optional            | Sixteen explicitly typed optional fields. No generic passthrough.                                                                                                                                                                |
+| Author key (`snake_case`)                                                 | Internal key (`camelCase`)      | Required            | Semantics and constraints                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------------- | ------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| —                                                                         | `measurementKind`               | yes (adapter)       | `MEASURABLE` or `NON_MEASURABLE`. Adapter-supplied from `activity_role`; never authored, never schema-inferred.                                                                                                                                                              |
+| `lesson_id`                                                               | `lessonId`                      | yes (envelope)      | Owning lesson, taken from the artifact envelope. Routing/audit only. **Never** a BKT target.                                                                                                                                                                                 |
+| `item_binding_id`                                                         | `itemBindingId`                 | yes                 | `LessonItemId`. Stable identity of this binding.                                                                                                                                                                                                                             |
+| `binding_version`                                                         | `bindingVersion`                | **optional** (D5)   | Opaque non-empty string. Audit / version-match value only, never parsed, coerced, or hashed into a numeric item version. The adapter fills it from `binding_version`, then `item_version`, then the envelope `artifact_version`.                                             |
+| `primary_kc_id`                                                           | `primaryKcId`                   | yes                 | **The only KC-grain BKT target.** Maps to `EvidenceRecord.skillId`.                                                                                                                                                                                                          |
+| `secondary_kc_mappings`                                                   | `secondaryKcMappings`           | defaults to `[]`    | Readonly array. Coverage/reporting only. **Never** a BKT target. Falls back to `secondary_kc_refs`.                                                                                                                                                                          |
+| `secondary_kc_refs`                                                       | `secondaryKcRefs`               | optional            | Additional coverage metadata. **Never** a BKT target.                                                                                                                                                                                                                        |
+| `activity_role`                                                           | `activityRole`                  | yes                 | `LessonActivityRole` (§3.4). Also the input to `measurementKind`.                                                                                                                                                                                                            |
+| `semantic_family_id`                                                      | `semanticFamilyId`              | yes                 | Item family. Maps to `EvidenceRecord.familyId`. A family fills a given recipe slot at most once.                                                                                                                                                                             |
+| `stimulus_lineage_id`                                                     | `stimulusLineageId`             | optional            | Maps to `EvidenceRecord.stimulusId`. Normalize legacy `stimulus_lineage` string or `stimulus_lineage.lineage_id`.                                                                                                                                                            |
+| `assistance_available` / `assistance_state` / `authored_assistance_level` | `authoredAssistanceAffordances` | yes, non-empty (D2) | Open readonly strings naming help the item **offers** (`A2`, `VISIBLE_EXPLANATION`, `NOT_SURE_ALLOWED`, …). See §3.3. It is **not** an `AssistanceLevel`, it never touches independence, and an `A0`–`A3` value is rewritten on the way in so it cannot be read back as one. |
+| `candidate_evidence_modes`                                                | `candidateEvidenceModes`        | **optional** (D3)   | Non-empty readonly `CandidateEvidenceMode[]`. **Absent defaults to `['INSTRUCTIONAL']`**; an explicitly empty array is rejected. A permission set, not an outcome (§3.5).                                                                                                    |
+| `reasoning_operation`                                                     | `reasoningOperation`            | conditional (D4)    | `ReasoningOperation`. **Required if and only if any declared mode is not `INSTRUCTIONAL`** (§6). Never inferred from free text.                                                                                                                                              |
+| `dok_level`                                                               | `dokLevel`                      | optional            | `DokLevel` — `1`, `2`, `3`, or `4`. Optional even on an eligible binding. No default (§6).                                                                                                                                                                                   |
+| `representation_id`                                                       | `representationId`              | optional/nullable   | Open non-empty string or `null`. Item-level representation.                                                                                                                                                                                                                  |
+| `representation_family_id`                                                | `representationFamilyId`        | optional/nullable   | External REPFAM reference. Currently unpopulated and MUST NOT be adapter-derived.                                                                                                                                                                                            |
+| `changed_dimensions`                                                      | `changedDimensions`             | yes (may be `[]`)   | Authored canonical `ChangeDimension[]`. Maps to `EvidenceRecord.changeDimensions`.                                                                                                                                                                                           |
+| `changed_dimension_detail`                                                | `changedDimensionDetail`        | optional            | Raw reviewed prose; an empty string is valid. **Never** a BKT target and never parsed into `changedDimensions`.                                                                                                                                                              |
+| `learner_operation`                                                       | `learnerOperation`              | optional            | Instructional free text. **Never** a capability label and never `reasoningOperation` (§6.2).                                                                                                                                                                                 |
+| `semantic_structure`                                                      | `semanticStructure`             | optional            | Free-text authoring structure. `semanticStructure.operation` is free text and is **never** `reasoningOperation`.                                                                                                                                                             |
+| `learner_safe_item_ref`                                                   | `learnerSafeItemRef`            | yes                 | Either an **opaque ref string** or a **strict inline projection** (§3.6). Never both, never parsed.                                                                                                                                                                          |
+| reviewed metadata (D10)                                                   | see §3.7                        | optional            | Sixteen explicitly typed optional fields. No generic passthrough.                                                                                                                                                                                                            |
 
 Fields required **only** on a `MEASURABLE` binding:
 
@@ -175,10 +201,67 @@ becomes fake independent evidence. They are two fields on two different objects:
 `contentBearingHintUsed`, `revealUsed`, `isRetry`, and `isDiagnosticRetry`. It deliberately does not
 read the binding at all.
 
-A consequence to expect when reading real artifacts: a lesson that authored `assistance_state: "A0"`
-normalizes to `authoredAssistanceAffordances: ['A0']`. That string looks like an `AssistanceLevel`
-and is not one — it is an affordance label that happens to be spelled the same way. Nothing keys off
-it. An author MUST NOT treat writing `A0` there as a claim of independence.
+This is not a theoretical separation. The authored `assistance_state` used to reach the seam **as** the
+runtime's `assistanceLevel`, so a string in a lesson script decided independence and moved `pL` from
+`0.20` to `0.5717`. The author was writing a mastery claim in one hop. The rule now:
+
+- **Authored `assistance_state` describes what help the design makes AVAILABLE.** It normalizes into
+  `authoredAssistanceAffordances`, an open list, and nothing downstream reads it for independence.
+- **Independence depends only on what the learner actually TOOK**, observed at commit time. In the
+  vector-lesson runtime those observations are `observedSupportRequested` (the learner issued
+  `REQUEST_SUPPORT` and the runtime released the cue) and `observedAnswerRevealed` (the open-feedback
+  state at commit). A record persisted before those observations existed has no observation and fails
+  closed to `true` for both.
+
+An authored `A0`–`A3` value is also **rewritten on the way in**: `assistance_state: "A0"` normalizes to
+`authoredAssistanceAffordances: ['AUTHORED_ASSISTANCE_LEVEL_A0']`, not to the bare string `'A0'`. The
+authored value is preserved for audit, the array stays non-empty, and the result can no longer be
+parsed back into an `AssistanceLevel`. An affordance spelled exactly like the runtime fact is an
+invitation to conflate the two again, which is how an assisted attempt became fake independent evidence
+the first time. Read an affordance as "this item offers a level-2 scaffold", never as "this response was
+unassisted".
+
+#### The consequence you will hit immediately: every response is `A3`
+
+The runtime **cannot yet observe a graded assistance level**. It knows whether support was requested,
+but not which of `A0`–`A3` the learner effectively worked at, and it cannot see whether the learner
+consumed a scaffold that an assisted screen presents without being asked. Absence of a support request
+is therefore not evidence that no help was taken.
+
+So `assistanceLevelTaken` in `services/lambdas/learner-api/src/vector-lesson-response-source.ts`
+**fail-closes to `A3` for every response.** Concretely, today:
+
+- every `EvidenceRecord.independent` from this runtime is `false`;
+- every BKT qualification carries `ASSISTANCE_NOT_A0`;
+- **no real lesson response currently establishes an independent administration on assistance
+  grounds.**
+
+The tempting exception is the authored-`A0` item, where the runtime really does present no scaffold and
+really does refuse `REQUEST_SUPPORT`. It is still refused, because the author's byte is what produced
+that behaviour, and no runtime observation contradicts it. "The author decides independence" is the
+same defect whether the decision travels in one hop or three. §3.3's prohibition is currently blanket
+for that reason; whether it should be narrowed for items that offer no assistance by design is an open
+question for the owner, recorded in §15.
+
+**What a future runtime must measure to unlock this.** `assistanceLevelTaken` is the single function
+where the measurement lands. To return anything but `A3` it needs, per response:
+
+1. whether any scaffold, worked step, or hint was **displayed** — not merely available, and including
+   scaffolds shown without being requested;
+2. which graded level the displayed help corresponds to, so `A0`–`A3` is a measurement rather than a
+   mapping of the authored value; and
+3. that both are captured **at or before commit**, since help taken after commit does not contaminate
+   the attempt.
+
+Until all three exist, the fail-closed `A3` is the correct emission and MUST NOT be replaced by
+reading the authored value.
+
+**The BKT path itself is proven working, so this default is safe rather than inert.** An end-to-end
+test (`services/lambdas/learner-api/src/second-lesson-mastery-seam.test.ts`) drives `V3-LES-844372`
+through the real recording workflow and asserts, for **each** of the seven allowlisted modes in turn,
+that a clean first attempt raises `pL` above the `0.20` prior on both grains — the primary KC and the
+reasoning operation. It supplies the clean response facts directly, which is exactly the one thing the
+runtime cannot yet produce. So what is missing is the assistance observation alone, not the integration.
 
 ### 3.4 `LessonActivityRole` and the exit function are two different fields
 
@@ -235,11 +318,33 @@ Three rules govern the field:
    so absent is the normal case and MUST default to `['INSTRUCTIONAL']`, the least permissive
    declaration available. An explicitly empty array is rejected: `[]` would be an assertion with no
    content, and `min(1)` forces the author to say something.
-2. **Eligibility is any non-`INSTRUCTIONAL` mode (D4).** Not `INDEPENDENT` membership. The earlier
-   `INDEPENDENT`-only rule silently let a `TRANSFER`- or `TIMED`-declaring binding through without a
-   `reasoningOperation`, which is exactly the unlabeled-item hazard §6 exists to prevent.
+2. **Eligibility is an explicit seven-member allowlist, never a negation (D4).** The allowlist is
+   `BKT_ELIGIBLE_EVIDENCE_MODES` in `packages/contracts/src/lesson-observation.ts`:
+   `INDEPENDENT`, `TRANSFER`, `DELAYED`, `MIXED`, `PASSAGE`, `TIMED`, `PROTECTED`. The other six
+   members are ineligible, and so is any mode this list does not name. See the warning below: do not
+   restate this rule as "any mode other than `INSTRUCTIONAL`".
 3. **It is a permission set, not an outcome.** Declaring a mode does not make a response independent;
    it only makes the BKT path _reachable_ if runtime qualification also passes (§5).
+
+> **Never rewrite eligibility as a negation.** This document previously said "any
+> non-`INSTRUCTIONAL` mode", and that wording caused a real defect rather than merely describing one.
+> With thirteen members in the enum, negating one of them made twelve eligible — including
+> `INSTRUCTIONAL_EXIT`, `DIAGNOSTIC`, `ENTRY`, `REPAIR_CONFIRMATION`, and `REHEARSAL_ONLY`, all five
+> of which route to a kind in `CONTEXTUAL_ONLY_KINDS` and can therefore never fill a mastery recipe
+> slot (§7.2). A binding declaring one of them alongside a `reasoningOperation` would have moved
+> `pL` on evidence the evidence system refuses to count, contradicting the standing decision that a
+> lesson exit stays instructional-only and that the diagnostic seeds priors but never mints mastery.
+>
+> Two properties follow from the allowlist that a denylist cannot give, and both are the point:
+>
+> - **A future enum member is ineligible by default.** A fourteenth mode added tomorrow gets no BKT
+>   access until someone deliberately adds it to the allowlist. Under a denylist it would acquire
+>   access silently, at the moment of its own definition, with no diff touching this seam.
+> - **An unrecognized mode is ineligible.** There is no negation anywhere in the implementation, so
+>   membership is the only question ever asked.
+>
+> The eligible seven and the mastery-recipe-eligible kinds are now tied together by an assertion, so
+> the two lists cannot drift apart again — see §16.
 
 Legacy normalization is fixed and every alias is fail-closed:
 
@@ -331,22 +436,25 @@ their own opaque brand rather than global IDs being loosened to accommodate them
 `LessonRuntimeResponseFacts` / `LessonRuntimeResponseFactsSchema` (`@mcat/contracts`) is what the
 lesson runner emits per response. Every field is an observed fact. None is a judgement.
 
-| Field                    | Type / constraint          | Semantics                                                                                                                                                                                               |
-| ------------------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `questionId`             | required `LessonItemId`    | The scored item.                                                                                                                                                                                        |
-| `itemBindingId`          | required `LessonItemId`    | Links the response to its binding.                                                                                                                                                                      |
-| `bindingVersion`         | **required** opaque string | MUST equal the binding's resolved version; otherwise `BINDING_VERSION_MISMATCH`. Required here even though it is optional on the binding (D5) — the server resolves it before the response is accepted. |
-| `attemptIndex`           | positive integer           | `1` is the first attempt. Only `1` can qualify for BKT.                                                                                                                                                 |
-| `isRetry`                | boolean                    | Any retry of this item in this session.                                                                                                                                                                 |
-| `isDiagnosticRetry`      | boolean                    | Retry after a miss inside a diagnostic flow.                                                                                                                                                            |
-| `response`               | discriminated union (§4.1) | `MULTIPLE_CHOICE` or `CONSTRUCTED`. The response payload is never flattened onto this object.                                                                                                           |
-| `omitted`                | boolean                    | Omission is **explicit**, never inferred from a null choice or an empty field.                                                                                                                          |
-| `elapsedMs`              | nonnegative integer        | Time on item.                                                                                                                                                                                           |
-| `answerChanges`          | nonnegative integer        | Count of answer changes before commit.                                                                                                                                                                  |
-| `assistanceLevel`        | `AssistanceLevel`          | The assistance actually taken at commit. The **only** assistance input to independence (§3.3).                                                                                                          |
-| `contentBearingHintUsed` | boolean                    | A hint that carried content toward the answer.                                                                                                                                                          |
-| `revealUsed`             | boolean                    | The key or rationale was revealed before commit.                                                                                                                                                        |
-| `occurredAt`             | timestamp                  | Runtime occurrence time.                                                                                                                                                                                |
+| Field                    | Type / constraint            | Semantics                                                                                                                                                                                               |
+| ------------------------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `questionId`             | required `LessonItemId`      | The scored item.                                                                                                                                                                                        |
+| `itemBindingId`          | required `LessonItemId`      | Links the response to its binding.                                                                                                                                                                      |
+| `bindingVersion`         | **required** opaque string   | MUST equal the binding's resolved version; otherwise `BINDING_VERSION_MISMATCH`. Required here even though it is optional on the binding (D5) — the server resolves it before the response is accepted. |
+| `attemptIndex`           | positive integer             | `1` is the first attempt. Only `1` can qualify for BKT.                                                                                                                                                 |
+| `isRetry`                | boolean                      | Any retry of this item in this session.                                                                                                                                                                 |
+| `isDiagnosticRetry`      | boolean                      | Retry after a miss inside a diagnostic flow.                                                                                                                                                            |
+| `response`               | discriminated union (§4.1)   | `MULTIPLE_CHOICE` or `CONSTRUCTED`. The response payload is never flattened onto this object.                                                                                                           |
+| `omitted`                | boolean                      | Omission is **explicit**, never inferred from a null choice or an empty field.                                                                                                                          |
+| `elapsedMs`              | nonnegative integer          | Time on item.                                                                                                                                                                                           |
+| `answerChanges`          | nonnegative integer          | Count of answer changes before commit.                                                                                                                                                                  |
+| `assistanceLevel`        | `AssistanceLevel`            | The assistance actually taken at commit. The **only** assistance input to independence (§3.3).                                                                                                          |
+| `contentBearingHintUsed` | boolean                      | A hint that carried content toward the answer.                                                                                                                                                          |
+| `revealUsed`             | boolean                      | The key or rationale was revealed before commit.                                                                                                                                                        |
+| `mixedAdministration`    | boolean, **default `false`** | The attempt was administered interleaved with other constructs. See §4.2.                                                                                                                               |
+| `passageAdministration`  | boolean, **default `false`** | The attempt was administered against an integrated passage. See §4.2.                                                                                                                                   |
+| `timedAdministration`    | boolean, **default `false`** | The attempt was administered under a timer. See §4.2.                                                                                                                                                   |
+| `occurredAt`             | timestamp                    | The runner's **claim** about when the attempt occurred. It is a fact, not a clock: no policy reads it raw. See §7.4.                                                                                    |
 
 The runner MUST NOT emit `correct`, `independent`, an evidence kind, a `pL`, or any mastery
 statement. The schema is `.strict()`; there is no field for any of them.
@@ -364,6 +472,24 @@ A constructed response is not a single value and MUST NOT be collapsed into one.
 seam scores it — `serverScoringAuthorityRef` does — so no consumer here needs to interpret the field
 values; they travel as facts.
 
+### 4.2 The administration conditions are runner facts, not declarations
+
+`mixedAdministration`, `passageAdministration`, and `timedAdministration` describe how the attempt was
+**actually run**. They are warrant-bearing: the evidence system reads them into
+`EvidenceRecord.conditions`, and `deriveEvidenceKind` will not classify a response as `mixed`,
+`integrated_passage`, or `timed` unless the matching fact is `true` (§7.2).
+
+They are therefore the runner's to report and nobody else's. A `candidateEvidenceModes` declaration
+says what an item is _eligible to serve as_; it says nothing about how one attempt was administered,
+so it MUST NOT set one of these. The fourth condition, `protected`, is not a runner fact at all: it
+arrives on the `ServerScoringResolution` as `protectedScoring`, because every measurable binding
+carries a `serverScoringAuthorityRef` and the mere presence of one discriminates nothing. The opaque
+ref is never parsed to find out.
+
+Each defaults to `false`, which is the fail-closed direction: **a runner that does not report a
+condition has not established it.** A runner MUST NOT report one of these unless it actually
+administered the attempt that way.
+
 ---
 
 ## 5. Two gates: declared eligibility, then runtime qualification
@@ -377,7 +503,7 @@ LessonItemBinding + LessonRuntimeResponseFacts
         ├─ measurementKind === 'NON_MEASURABLE'  → nothing at all (§3.1)
         │
         ├─ Gate 1 — DECLARED ELIGIBILITY (immutable, author-time)
-        │     hasEligibleEvidenceMode(binding)      // ANY mode !== 'INSTRUCTIONAL'
+        │     hasEligibleEvidenceMode(binding)      // ANY mode IN the 7-member allowlist
         │     binding.firstAttemptImmutable === true
         │     binding.reasoningOperation present
         │
@@ -395,21 +521,25 @@ LessonItemBinding + LessonRuntimeResponseFacts
 Evaluated against the binding alone. Use the exported predicate `hasEligibleEvidenceMode(binding)`;
 do not re-implement the membership test.
 
-**Eligibility is ANY declared mode other than `INSTRUCTIONAL` (D4)**, not `INDEPENDENT` membership.
-A binding declaring `TRANSFER`, `TIMED`, `DELAYED`, `MIXED`, `PASSAGE`, or `PROTECTED` is eligible
-and therefore MUST carry a `reasoningOperation`.
+**Eligibility is membership in the seven-member `BKT_ELIGIBLE_EVIDENCE_MODES` allowlist (D4)** —
+`INDEPENDENT`, `TRANSFER`, `DELAYED`, `MIXED`, `PASSAGE`, `TIMED`, `PROTECTED` — and is neither
+`INDEPENDENT` membership alone nor "not `INSTRUCTIONAL`". A binding declaring any one of the seven is
+eligible and therefore MUST carry a `reasoningOperation`. A binding declaring only `INSTRUCTIONAL`,
+`INSTRUCTIONAL_EXIT`, `DIAGNOSTIC`, `ENTRY`, `REPAIR_CONFIRMATION`, or `REHEARSAL_ONLY` is not
+eligible, whether or not it carries a `reasoningOperation`, and neither is a binding declaring a mode
+the allowlist does not name. §3.5 states why this MUST NOT be re-expressed as a negation.
 
-| Requirement                                                                    | Rejection code on failure                      |
-| ------------------------------------------------------------------------------ | ---------------------------------------------- |
-| A binding resolves for the response                                            | `BINDING_NOT_FOUND`                            |
-| `response.bindingVersion` equals the resolved binding version                  | `BINDING_VERSION_MISMATCH`                     |
-| `binding.firstAttemptImmutable === true`                                       | `FIRST_ATTEMPT_NOT_IMMUTABLE`                  |
-| `hasEligibleEvidenceMode(binding)` — some declared mode is not `INSTRUCTIONAL` | `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED`       |
-| `binding.reasoningOperation` present when the binding is eligible              | `ELIGIBLE_BINDING_MISSING_REASONING_OPERATION` |
+| Requirement                                                                 | Rejection code on failure                      |
+| --------------------------------------------------------------------------- | ---------------------------------------------- |
+| A binding resolves for the response                                         | `BINDING_NOT_FOUND`                            |
+| `response.bindingVersion` equals the resolved binding version               | `BINDING_VERSION_MISMATCH`                     |
+| `binding.firstAttemptImmutable === true`                                    | `FIRST_ATTEMPT_NOT_IMMUTABLE`                  |
+| `hasEligibleEvidenceMode(binding)` — some declared mode is on the allowlist | `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED`       |
+| `binding.reasoningOperation` present when the binding is eligible           | `ELIGIBLE_BINDING_MISSING_REASONING_OPERATION` |
 
-The rejection code is still spelled `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` even though the rule is
-now broader than `INDEPENDENT`. The code list is frozen; the name is historical. Read it as "no
-eligible evidence mode was declared".
+The rejection code is still spelled `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` even though the rule
+covers six more modes than `INDEPENDENT`. The code list is frozen; the name is historical. Read it as
+"no eligible evidence mode was declared".
 
 `ELIGIBLE_BINDING_MISSING_REASONING_OPERATION` is enforced twice, deliberately: as a schema
 `superRefine` on `LessonItemBindingSchema` (so an eligible-but-unlabeled binding cannot even be
@@ -429,8 +559,13 @@ rejection, never a default-allow.
 | `response.revealUsed === false`                                         | `REVEAL_USED`               |
 | `response.isRetry === false` and `response.isDiagnosticRetry === false` | `RETRY_USED`                |
 
-Only `response.assistanceLevel` is consulted. `authoredAssistanceAffordances` is **never** read here
-(§3.3): an item may advertise `A0` and still be answered at `A2`, and it is the `A2` that counts.
+Only `response.assistanceLevel` is consulted, and it is the level the learner **took**, not the level
+the design offered. `authoredAssistanceAffordances` is **never** read here (§3.3): an item may advertise
+`A0` and still be answered at `A2`, and it is the `A2` that counts.
+
+**Today this gate rejects every real lesson response.** The runtime cannot observe a graded assistance
+level, so it fail-closes to `A3` and `ASSISTANCE_NOT_A0` fires on every response (§3.3). If you are
+wondering why a clean-looking attempt did not move `pL`, this is the reason, and it is intended.
 
 **Omission qualifies; it is not a rejection.** An omitted answer is a scored outcome, not a scoring
 failure. If `scoringValid` is `true` and the outcome is `omitted`, the response still produces an
@@ -463,14 +598,15 @@ hand. Every rejection MUST be recorded; silent drops are prohibited.
 
 ## 6. Conditional metadata: when an author must stop and label an item
 
-**The rule, in one paragraph.** If a binding declares **any** `candidateEvidenceModes` member other
-than `INSTRUCTIONAL`, the author MUST stop and label `reasoning_operation` with exactly one of the
-seven members of `ReasoningOperation` — `IDENTIFY`, `PREDICT`, `EXPLAIN`, `RELATE`, `QUANTIFY`,
-`DESIGN`, `EVIDENCE` — because that value is a direct BKT update target and there is no safe way for
-any adapter, heuristic, or model to guess which of seven operations an item actually exercises; a
-wrong guess silently corrupts a learner-facing skill estimate. If the binding declares nothing (the
-`['INSTRUCTIONAL']` default) or declares only `INSTRUCTIONAL`, `reasoning_operation` is optional and
-an unlabeled item is fine, because such an item can never reach BKT. `dok_level` is different: it is
+**The rule, in one paragraph.** If a binding declares **any** `candidateEvidenceModes` member from
+the seven-member BKT allowlist (§3.5), the author MUST stop and label `reasoning_operation` with
+exactly one of the seven members of `ReasoningOperation` — `IDENTIFY`, `PREDICT`, `EXPLAIN`, `RELATE`,
+`QUANTIFY`, `DESIGN`, `EVIDENCE` — because that value is a direct BKT update target and there is no
+safe way for any adapter, heuristic, or model to guess which of seven operations an item actually
+exercises; a wrong guess silently corrupts a learner-facing skill estimate. If the binding declares
+nothing (the `['INSTRUCTIONAL']` default) or declares only ineligible modes, `reasoning_operation` is
+optional and an unlabeled item is fine, because such an item can never reach BKT. `dok_level` is
+different: it is
 **optional even on an eligible binding**, because `coldStartB()` in `packages/policies/src/irt.ts`
 returns a neutral `0` for an undefined DOK, so an unlabeled item merely loses difficulty
 discrimination until it is calibrated from real attempts. So: labeling `reasoning_operation` on an
@@ -540,36 +676,51 @@ corrected).
 ### 7.2 Evidence-mode routing
 
 Evidence is produced for every lesson response with valid scoring, independent of BKT eligibility.
-Routing is a pure function of `candidateEvidenceModes` plus server-derived runtime conditions;
-`deriveEvidenceKind` in the adapter is the implementation.
+Routing is a pure function of `candidateEvidenceModes` plus the server-derived
+`AdministrationConditions`; `deriveEvidenceKind(modes, response, conditions)` in the adapter is the
+implementation. Note the third argument: a declaration alone cannot decide the kind.
 
-Classification runs in three steps, in this order:
+Classification runs in four steps, in this order:
 
 1. `response.isDiagnosticRetry` → `diagnostic_retry`, regardless of declared mode.
 2. Not an independent administration → `instruction`, regardless of declared mode. **Assisted
    administration outranks any declaration an author made.**
 3. Otherwise, **least-credit-first**: walk the conservative mode order and take the first declared
-   mode. A binding declaring several modes is classified by the one that earns the _least_ mastery
-   credit, so a broad permission set can never upgrade a record's evidence quality.
+   mode, **skipping any mode whose administration condition was not met**. A binding declaring
+   several modes is classified by the one that earns the _least_ mastery credit, so a broad
+   permission set can never upgrade a record's evidence quality.
+4. If every declared mode was skipped that way, **fail closed to `instruction`** rather than
+   crediting a condition that did not happen.
 
-| Declared `CandidateEvidenceMode` | `EvidenceRecord.kind` on a clean administration | Fills a mastery recipe slot? | Gate 1 eligible? |
-| -------------------------------- | ----------------------------------------------- | ---------------------------- | ---------------- |
-| `INSTRUCTIONAL`                  | `instruction`                                   | no (contextual only)         | **no**           |
-| `INSTRUCTIONAL_EXIT`             | `instruction`                                   | no (contextual only)         | yes              |
-| `REHEARSAL_ONLY`                 | `instruction`                                   | no (contextual only)         | yes              |
-| `REPAIR_CONFIRMATION`            | `instruction`                                   | no (contextual only)         | yes              |
-| `DIAGNOSTIC`                     | `placement`                                     | no (contextual only)         | yes              |
-| `ENTRY`                          | `placement`                                     | no (contextual only)         | yes              |
-| `INDEPENDENT`                    | `independent`                                   | yes                          | yes              |
-| `TRANSFER`                       | `transfer`                                      | yes                          | yes              |
-| `DELAYED`                        | `delayed`                                       | yes                          | yes              |
-| `MIXED`                          | `mixed`                                         | yes                          | yes              |
-| `PASSAGE`                        | `integrated_passage`                            | yes                          | yes              |
-| `TIMED`                          | `timed`                                         | yes                          | yes              |
-| `PROTECTED`                      | `protected`                                     | yes                          | yes              |
+| Declared `CandidateEvidenceMode` | `EvidenceRecord.kind` on a clean administration | Requires an administration fact | Fills a mastery recipe slot? | Gate 1 eligible? |
+| -------------------------------- | ----------------------------------------------- | ------------------------------- | ---------------------------- | ---------------- |
+| `INSTRUCTIONAL`                  | `instruction`                                   | —                               | no (contextual only)         | **no**           |
+| `INSTRUCTIONAL_EXIT`             | `instruction`                                   | —                               | no (contextual only)         | **no**           |
+| `REHEARSAL_ONLY`                 | `instruction`                                   | —                               | no (contextual only)         | **no**           |
+| `REPAIR_CONFIRMATION`            | `instruction`                                   | —                               | no (contextual only)         | **no**           |
+| `DIAGNOSTIC`                     | `placement`                                     | —                               | no (contextual only)         | **no**           |
+| `ENTRY`                          | `placement`                                     | —                               | no (contextual only)         | **no**           |
+| `INDEPENDENT`                    | `independent`                                   | —                               | yes                          | yes              |
+| `TRANSFER`                       | `transfer`                                      | —                               | yes                          | yes              |
+| `DELAYED`                        | `delayed`                                       | —                               | yes                          | yes              |
+| `MIXED`                          | `mixed`                                         | `mixedAdministration`           | yes                          | yes              |
+| `PASSAGE`                        | `integrated_passage`                            | `passageAdministration`         | yes                          | yes              |
+| `TIMED`                          | `timed`                                         | `timedAdministration`           | yes                          | yes              |
+| `PROTECTED`                      | `protected`                                     | `protectedScoring` (scoring)    | yes                          | yes              |
 
 The rows are listed in the conservative order the adapter walks. "Fills a mastery recipe slot"
-reflects `CONTEXTUAL_ONLY_KINDS` in `packages/domain/src/evidence.ts`.
+reflects `CONTEXTUAL_ONLY_KINDS` in `packages/domain/src/evidence.ts`. Note that the last two columns
+now agree on every row: a mode is Gate 1 eligible if and only if its kind can fill a recipe slot.
+That alignment is asserted, not merely intended (§16), and it is what closed the tension the previous
+version of this document recorded in §15.
+
+**Four modes are administration-gated.** `MIXED`, `PASSAGE`, `TIMED`, and `PROTECTED` classify the
+record only when the corresponding condition is actually true; otherwise the mode is skipped and a
+lesser one is used. Without this, declaring `TIMED` would mint a `timed` record — which fills the
+timed recipe slot — on an untimed attempt. That is author-manufactured warrant, and it is more
+load-bearing than a fabricated condition flag would be, because recipe slots key on `kind`. So a
+binding declaring all four modes, answered cleanly but with no condition reported, is
+`kind: 'instruction'` with all four `conditions` false.
 
 **`independent` is a fact about the administration, not about the declared mode.** It is
 `isIndependentAdministration(response)` and nothing else, so a binding declaring only `INSTRUCTIONAL`
@@ -586,28 +737,116 @@ gate additionally requires an uncontaminated first look.
 
 ### 7.3 Field mapping into `EvidenceRecord`
 
-| `EvidenceRecord` field                                 | Source                                                                                                |
-| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| `skillId`                                              | `binding.primaryKcId`                                                                                 |
-| `cluster`                                              | **Caller-resolved (D9)** — the caller passes it in, resolved via `LESSON_TO_CLUSTER`.                 |
-| `operation`                                            | **Omitted** for lesson-sourced evidence (§6.1).                                                       |
-| `kind`                                                 | `deriveEvidenceKind(binding.candidateEvidenceModes, response)`                                        |
-| `independent`                                          | `isIndependentAdministration(response)`                                                               |
-| `assistanceLevel`                                      | `response.assistanceLevel`                                                                            |
-| `contentBearingHint`                                   | `response.contentBearingHintUsed`                                                                     |
-| `questionId`                                           | `binding.questionId` (a `LessonItemId`)                                                               |
-| `itemVersion`                                          | the resolved `serverItemVersion`                                                                      |
-| `familyId`                                             | `binding.semanticFamilyId`                                                                            |
-| `stimulusId`                                           | `binding.stimulusLineageId`, omitted when absent                                                      |
-| `changeDimensions`                                     | `binding.changedDimensions`                                                                           |
-| `delayHours`                                           | caller-supplied, omitted when absent                                                                  |
-| `conditions`                                           | `mixed` / `passage` / `timed` / `protected` from the declared modes; `accommodations` caller-supplied |
-| `outcome`                                              | the accepted `outcome`                                                                                |
-| `occurredAt`, `sequence`, `contentRelease`, `policies` | runtime and provenance inputs                                                                         |
+| `EvidenceRecord` field                   | Source                                                                                                                                                                                                              |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `skillId`                                | `binding.primaryKcId`                                                                                                                                                                                               |
+| `cluster`                                | **Caller-resolved (D9)** — the caller passes it in, resolved via `LESSON_TO_CLUSTER`.                                                                                                                               |
+| `operation`                              | **Omitted** for lesson-sourced evidence (§6.1).                                                                                                                                                                     |
+| `kind`                                   | `deriveEvidenceKind(binding.candidateEvidenceModes, response, administrationConditions)`                                                                                                                            |
+| `independent`                            | `isIndependentAdministration(response)`                                                                                                                                                                             |
+| `assistanceLevel`                        | `response.assistanceLevel`                                                                                                                                                                                          |
+| `contentBearingHint`                     | `response.contentBearingHintUsed`                                                                                                                                                                                   |
+| `questionId`                             | `binding.questionId` (a `LessonItemId`)                                                                                                                                                                             |
+| `itemVersion`                            | the resolved `serverItemVersion`                                                                                                                                                                                    |
+| `familyId`                               | `binding.semanticFamilyId`                                                                                                                                                                                          |
+| `stimulusId`                             | `binding.stimulusLineageId`, omitted when absent                                                                                                                                                                    |
+| `changeDimensions`                       | `binding.changedDimensions`                                                                                                                                                                                         |
+| `delayHours`                             | caller-supplied, omitted when absent                                                                                                                                                                                |
+| `conditions`                             | `mixed` / `passage` / `timed` from the **runner's administration facts** (§4.2), `protected` from the scoring resolution's `protectedScoring`, `accommodations` caller-supplied. **Never from the declared modes.** |
+| `outcome`                                | the accepted `outcome`                                                                                                                                                                                              |
+| `occurredAt`                             | `boundOccurredAtToServerTime(response.occurredAt, acceptedAt)` — **never** the raw claim (§7.4)                                                                                                                     |
+| `sequence`, `contentRelease`, `policies` | provenance inputs                                                                                                                                                                                                   |
 
 `cluster` is caller-resolved because `@mcat/domain` MUST NOT import `@mcat/content`; the seam stays
-free of a content dependency and of any lesson-specific table. The author never writes `conditions`.
-`EvidenceRecord` MUST NOT gain a capability-estimate field.
+free of a content dependency and of any lesson-specific table. The author never writes `conditions`,
+and neither does a declaration: an earlier version of this table said the conditions came from the
+declared modes, which would have let an author mint the warrant that a mixed, passage, timed, or
+protected administration is supposed to prove. `EvidenceRecord` MUST NOT gain a capability-estimate
+field.
+
+### 7.4 The server-bounded clock (normative)
+
+`LessonRuntimeResponseFacts.occurredAt` is a runtime fact: the runner's **claim** about when the
+attempt happened (§2). Until July 2026 that claim was used directly as two different policy clocks,
+and both were exploitable. This section is normative because the failure is not hypothetical:
+
+- 120 observations stamped `2999-01-01` produced **permanent mastery** — decay never elapsed, so the
+  estimate never came down.
+- One **correct**, backdated observation dropped a mastered KC from `1.0` to `9.7e-11`, because lazy
+  decay was applied across the invented gap before the update landed.
+
+A forward-dated claim buys mastery and a backdated one destroys it. Either way the client is writing
+a mastery claim, which §10 prohibits. The rule that follows:
+
+> **A runner-reported time MAY be recorded verbatim for audit. It MUST NOT be read as a clock by any
+> policy.** Every clock a policy reads is server-bounded first.
+
+Four places implement that rule, and one place deliberately does not.
+
+**1. BKT — the decay clock is bounded and monotonic.** `boundDecayClock` in
+`packages/authority-core/src/authority.ts` computes:
+
+```text
+appliedAt = max( min(floor, serverNow), min(reportedAt, serverNow) )
+```
+
+- The Authority's own clock is the **ceiling**, so an observation can never be ahead of the server.
+- `floor` is the newest `lastPracticedAt` among **the grains this observation actually writes**, so no
+  grain's clock can rewind. Prerequisite grains are reinforced on a correct answer only, so on a miss
+  they are excluded from the floor — counting an untouched grain would drag the clock forward for no
+  reason.
+- The floor is itself capped at `serverNow`: a stored future timestamp is invalid on its face, so it
+  must not become a permanent floor. This is also what makes state poisoned before the clamp existed
+  heal on its next write.
+
+A claim more than `BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS` (`300_000`, five minutes — the Kerberos
+and JWT `nbf`/`exp` allowance) ahead of the server clock is **refused** with
+`OBSERVATION_TIMESTAMP_IN_FUTURE`, not silently clamped. Clamping alone would accept the bad claim and
+leave no signal. Five minutes is generous enough for an unsynchronised session server and far too
+small to buy any decay advantage: at the initial seven-day half-life it is a ~0.03% difference.
+
+**2. Audit — the raw claim survives the correction.** Each application appends a
+`bkt_observation_applied` ledger event carrying `reportedOccurredAt` (the verbatim claim),
+`appliedOccurredAt` (the clock actually written, `null` if nothing was applied), `clockAdjustment`
+(`none` / `bounded_to_server_clock` / `held_at_last_practiced`), `outOfOrder`, and
+`observationSequence`. The clamp therefore never destroys the only evidence that a client
+misreported.
+
+**3. Ordering — `sequence` is detection, not enforcement.** The Authority keeps a high-water mark of
+the highest applied `sequence`. An out-of-order arrival sets `outOfOrder: true` and **is still
+applied**. This is deliberate: delayed and reordered delivery is normal, and refusing a legitimately
+earlier observation would silently discard real evidence. The clamp is what keeps the resulting state
+sane, since a late arrival can no longer rewind a grain's clock.
+
+**4. Evidence — the bound is structural, via a branded type.** `EvidenceRecord.occurredAt` is a
+`ServerBoundedTimestamp`, a brand whose only producer is `boundOccurredAtToServerTime(reportedAt,
+serverCeiling)`. The seam's ceiling is the server's `acceptedAt`. Because the field's type is narrower
+than `UtcTimestamp`, the adapter **cannot** assign `response.occurredAt` to it — the mistake is a type
+error rather than a code-review question. Bounding here is a ceiling only, with no floor: an
+`EvidenceRecord` is an immutable append rather than a running estimate, so nothing can be rewound, and
+an earlier-than-expected time merely ages the record out sooner, which is the safe direction.
+
+The brand is compile-time only, so `EvidenceRecordSchema.parse` on a plain object still accepts a raw
+string. That path belongs to callers that stamp their own server clock directly
+(`Authority.appendEvidence`) and are bounded by construction.
+
+Freshness reads that field, and **a negative age means untrustworthy, not new.** `daysBetween` is
+signed, so a future-dated record would otherwise clear every freshness window forever — the freshest
+evidence on file would be the one with the most broken timestamp. Flooring the age at zero is the
+wrong repair, because age `0` reads as maximally fresh. So a negative age yields `isFresh: false`. It
+still counts toward the **achieved-ever** tier, which is not time-derived, and the resulting mismatch
+surfaces as `EVIDENCE_STALE`.
+
+**Ordering of the two authorities.** BKT application runs **before** evidence is written, so an
+observation refused with `OBSERVATION_TIMESTAMP_IN_FUTURE` leaves **no evidence record at all**. Do
+not confuse this with failing to qualify: a response that merely fails Gate 1 or Gate 2 — an
+instructional-only binding, say — still records evidence (§7.2). Refusal at the application step is a
+rejection of the whole claim, including its timestamp, so there is nothing trustworthy left to record.
+
+**Accepted with no action: `lastDueReviewAt` stays uncapped.** It is audit-only; no policy reads it,
+so an implausible value cannot move a learner-facing number. It is listed here so a future reader does
+not mistake the omission for an oversight. If a policy ever starts reading it, it MUST be bounded
+first.
 
 ---
 
@@ -622,6 +861,12 @@ optional `dokLevel`, `occurredAt`, `sequence`, `contentRelease`, `policies`.
 
 `correct` is server-derived from the accepted `outcome`: `correct` maps to `true`, and both
 `incorrect` and `omitted` map to `false`. An omission is a qualifying, scored outcome — see §5.2.
+
+`occurredAt` here is still the runner's **unbounded claim**, unlike `EvidenceRecord.occurredAt`. That
+is intentional and is not an inconsistency: this object is a request to the BKT engine, not a stored
+warrant, and the Authority is the thing that owns the decay clock. It bounds the claim at application
+time and records both values (§7.4). The asymmetry is worth knowing before you read the two
+`occurredAt` fields side by side and assume one of them is wrong.
 
 `QualifiedBktObservation` has **no** `lessonId`, `pL`, `mastered`, `masteryThreshold`,
 `evidenceStatus`, `kind`, or `independent` field, and MUST NOT gain one.
@@ -719,13 +964,27 @@ contextual-only `EvidenceRecord` and every BKT qualification is rejected with
 every binding parses, every measurable binding yields an evidence record, and the qualified-BKT count
 is `0`.
 
+**There are now two independent reasons, and they fail closed at different layers.** Fixing either one
+alone still moves no `pL`:
+
+1. **Gate 1, author-time.** No binding declares an allowlisted evidence mode, so
+   `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` fires. Resolved only by an author and reviewer
+   deliberately declaring an eligible mode and labeling `reasoningOperation`.
+2. **Gate 2, runtime.** The runtime cannot observe a graded assistance level, so every response is
+   `A3` and `ASSISTANCE_NOT_A0` fires (§3.3). Resolved only by teaching the runtime to measure help
+   actually taken.
+
+That defence in depth is the intended state. It is also why "the lesson integration does not work" is
+the wrong reading: the BKT path is exercised end to end for all seven eligible modes on
+`V3-LES-844372`, and the debug endpoint in §16 is how you confirm that by hand.
+
 This is the intended, correct end state, not an incomplete integration. These items were authored as
 instructional checks; nobody has reviewed and approved them as measurement, and none carries a
 `reasoningOperation`. Manufacturing eligibility after the fact — by defaulting to a non-instructional
 mode, inferring an operation from `learnerOperation`, or treating `NEAR_EXIT` as implying
 independence — would fabricate capability evidence. These lessons produce genuine instructional
 evidence today, and a binding becomes BKT-eligible only when an author and reviewer deliberately
-declare a non-`INSTRUCTIONAL` mode and label `reasoningOperation`.
+declare a mode from the seven-member allowlist (§3.5) and label `reasoningOperation`.
 
 ---
 
@@ -747,7 +1006,14 @@ second BKT update. Downstream systems key off `observationId`, never off a retry
 `contentRelease` and `policies`, MUST reproduce identical `EvidenceRecord`s, identical qualification
 results, and identical `pL`. Normalization, qualification, and evidence routing are pure functions of
 their inputs: no I/O, no clock reads, no randomness. Timestamps, identifiers, the resolved cluster,
-and the server scoring resolution all arrive as inputs.
+and the server scoring resolution all arrive as inputs — including the `acceptedAt` ceiling that bounds
+`EvidenceRecord.occurredAt`, which is why §7.4's bounding does not compromise purity here.
+
+The BKT **application** step is the one place that genuinely reads a clock: `boundDecayClock` consults
+the Authority's own clock to bound and floor the reported time (§7.4). Replay at that layer is
+therefore reproducible only against a fixed Authority clock, which is how the tests drive it. This is a
+property of the decay clock rather than a leak in the seam: a clamp against the server's notion of
+"now" cannot be expressed as a pure function of the observation alone.
 
 **Protected scoring.** Scoring happens only behind `serverScoringAuthorityRef`. `scoringValid` is
 that authority's verdict. There is no client-side, author-side, or fallback scoring path: no
@@ -783,13 +1049,16 @@ than worked around:
 2. `unrecognizedAuthoredBindingKeys` returns empty for every binding.
 3. Every `MEASURABLE` binding has `firstAttemptImmutable: true`, a `questionId`, an `activityId`, and
    a `serverScoringAuthorityRef`; every `NON_MEASURABLE` binding has none of them.
-4. Every binding declaring a non-`INSTRUCTIONAL` mode carries a `reasoningOperation`.
+4. Every binding declaring a mode from the seven-member BKT allowlist (§3.5) carries a
+   `reasoningOperation`.
 5. No binding contains `independent`, `pL`, a mastery threshold or status, decay, an evidence status,
    or any answer-bearing material.
 6. `activity_role` uses only the nine `LessonActivityRole` members; `NEAR_USE` / `CHANGED_TASK`
    appear only under the exit-function field (§3.4).
 7. The runner emits `LessonRuntimeResponseFacts` only, with the correct `response` union arm and no
-   derived judgement.
+   derived judgement. It reports `mixedAdministration`, `passageAdministration`, and
+   `timedAdministration` from how the attempt was actually administered, and reports the assistance
+   level the learner actually took — or fails closed if it cannot observe one (§3.3, §4.2).
 8. Every scored response resolves a `serverItemVersion` through `serverScoringAuthorityRef`, or is
    rejected with `SERVER_SCORING_INVALID`.
 9. The caller resolves a `cluster` for the lesson via `LESSON_TO_CLUSTER`.
@@ -806,8 +1075,18 @@ than worked around:
   amendment. Authoritative over this file.
 - `packages/contracts/src/lesson-observation.ts`, `packages/domain/src/lesson-response-adapter.ts` —
   the implementation this document describes.
+- `packages/domain/src/evidence.ts` — `EvidenceRecord`, `CONTEXTUAL_ONLY_KINDS`, and the branded
+  `ServerBoundedTimestamp` (§7.4).
+- `packages/authority-core/src/authority.ts` — `applyQualifiedBktObservation`, `boundDecayClock`, and
+  the `bkt_observation_applied` ledger event (§7.4).
+- `packages/policies/src/lesson-rollup.ts` — the derived lesson-grain rollup (§9).
+- `services/local-authority/src/debug-state.ts` — the loopback-only hand-verification view (§16).
 - `tests/architecture/v3-lesson-binding-conformance.test.ts` — runs every real artifact through the
   production entry points.
+- `tests/architecture/lesson-mastery-integration.test.ts` — the seam invariants; §16 maps each rule to
+  its assertion.
+- `services/lambdas/learner-api/src/second-lesson-mastery-seam.test.ts` — the end-to-end proof that an
+  eligible binding moves `pL` (§3.3, §11).
 - `docs/design/04-V3-LESSON-AUTHORING-QUALITY-AND-UI.md` — Spec 04: lesson structure, KC order,
   nodes/screens, activity roles, item bindings, assistance design, repair/reentry, presentation,
   checkpoints, and authoring/review gates. Spec 04 owns _how the metadata gets authored and
@@ -819,17 +1098,124 @@ than worked around:
 
 ---
 
-## 15. Open tension to resolve (not a licence to guess)
+## 15. Open questions, resolved tensions, and how to report a defect
 
-D4 makes **every** non-`INSTRUCTIONAL` mode eligible, and `hasEligibleEvidenceMode` implements that
-literally. Five of those modes — `DIAGNOSTIC`, `ENTRY`, `INSTRUCTIONAL_EXIT`, `REPAIR_CONFIRMATION`,
-`REHEARSAL_ONLY` — route to evidence kinds that `CONTEXTUAL_ONLY_KINDS` says can never fill a mastery
-recipe slot (§7.2). A future binding that declared one of them **and** supplied a `reasoningOperation`
-would therefore produce contextual-only evidence while still moving `pL`, which contradicts Gate A's
-"`INSTRUCTIONAL_EXIT` → evidence only; BKT qualification rejects" row and the standing rule that the
-diagnostic seeds priors but never mints mastery.
+### 15.1 Resolved — the eligible-but-contextual-only tension
 
-Nothing on disk hits this today: all 115 bindings normalize to `['INSTRUCTIONAL']` and no artifact
-carries a `reasoningOperation`. Until it is resolved by governed decision, authors MUST NOT declare
-`DIAGNOSTIC`, `ENTRY`, `INSTRUCTIONAL_EXIT`, `REPAIR_CONFIRMATION`, or `REHEARSAL_ONLY` together with
-a `reasoningOperation`, and no code may add a workaround branch for these modes.
+Earlier versions of this document recorded an open tension: D4 read as "every non-`INSTRUCTIONAL` mode
+is eligible" made twelve of thirteen modes eligible, five of which — `DIAGNOSTIC`, `ENTRY`,
+`INSTRUCTIONAL_EXIT`, `REPAIR_CONFIRMATION`, `REHEARSAL_ONLY` — route to kinds in
+`CONTEXTUAL_ONLY_KINDS`. A binding declaring one of them with a `reasoningOperation` would have moved
+`pL` on evidence that can never fill a recipe slot.
+
+**This is closed.** Eligibility is now the seven-member `BKT_ELIGIBLE_EVIDENCE_MODES` allowlist (§3.5),
+so all five of those modes are ineligible, and the alignment between "eligible" and "not contextual
+only" is asserted for every member of the enum (§16). The prohibition the old §15 imposed on authors is
+no longer needed: declaring `INSTRUCTIONAL_EXIT` with a `reasoningOperation` is now merely ineligible
+rather than dangerous.
+
+### 15.2 Open — should §3.3's blanket prohibition be narrowed? (for the owner)
+
+**Not a licence to guess. Do not implement either reading until the owner decides.**
+
+§3.3 prohibits reading the authored assistance value for **any** independence purpose, without
+exception. There is a real argument that the prohibition is one notch broader than the hazard:
+
+- **For narrowing.** An item that offers no assistance by design cannot have had assistance taken.
+  On an authored-`A0` item the runtime presents no scaffold and refuses `REQUEST_SUPPORT`, so the
+  learner provably was unassisted. The distinction would be between reading the authored value for
+  **availability** — arguably legitimate, since availability is exactly what the author owns — and
+  reading it for **what was taken**, which is never legitimate. Under this reading, a subset of items
+  could establish independent administration today, without waiting for the runtime work in §3.3.
+- **Against narrowing.** The author's byte is what produced the "no scaffold" behaviour, so the
+  author would still be deciding independence — in three hops rather than one. The current code takes
+  this position deliberately. It also depends on a runtime property (that an authored-`A0` screen
+  really does refuse support) that nothing asserts, so the argument would rest on an unenforced
+  invariant, which §16 exists to warn about.
+
+The owner decides. If narrowing is approved it needs a governed decision, an assertion that authored
+`A0` really does imply no scaffold is reachable, and an explicit statement of which items qualify.
+
+### 15.3 How to report a doc-vs-code divergence
+
+If this document describes something the implementation does not do, **one of the two is defective and
+neither may be assumed correct.** Do not edit the document to match the code by reflex: the prose
+sometimes encodes a decision the code has quietly broken, which is how the fail-open eligibility
+denylist and the client-owned decay clock were both found. Report the divergence with the module, the
+section, and which one you believe is wrong, and let the owner decide.
+
+---
+
+## 16. What is actually enforced, and what is not
+
+**Do not read a rule in this document as a guarantee.** This project has already shipped a guard that
+was documented in a source comment **and** a README, believed by everyone, and did not exist. This
+section is the register that keeps that from recurring. It records the state at the date in the header
+and MUST be updated when coverage changes.
+
+### 16.1 Enforced by an architecture assertion
+
+Held by `tests/architecture/lesson-mastery-integration.test.ts` unless noted. Each of these was listed
+as uncovered in an earlier revision of this document and is now covered; the names are given so a
+future reader can verify rather than trust.
+
+| Rule                                                                              | Section     | Assertion                                                                                |
+| --------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------- |
+| BKT eligibility is an allowlist; an unrecognized or future mode is ineligible     | §3.5, §5.1  | "keeps BKT eligibility an allowlist, so a future evidence mode is ineligible by default" |
+| A mode may move `pL` only if its kind can fill a mastery recipe slot              | §7.2, §15.1 | "lets a mode move P(L) only if its evidence kind could fill a mastery recipe slot"       |
+| A declared mode never mints an administration condition the runner did not report | §4.2, §7.2  | "never lets a declared mode mint an administration condition the runner did not report"  |
+| Authored assistance affordances never decide independence or qualification        | §3.3        | "never lets authored assistance affordances decide independence or qualification"        |
+| The runner-reported time is server-bounded before it becomes warrant              | §7.4        | "bounds the runner-reported time by the server clock before it becomes warrant"          |
+| Omission qualifies; it is a scored outcome, not a scoring failure                 | §5.2        | "treats an omission as a scored outcome rather than a scoring failure"                   |
+| Every rejection code is collected, not short-circuited                            | §5.3        | "collects every reason a response did not move P(L) instead of short-circuiting"         |
+| `@mcat/domain` never reaches into `@mcat/content` for lesson data                 | §7.3        | "the generic seam never reaches into content for lesson data"                            |
+| Only the Authority may move `pL`; the lesson runtime cannot                       | §10         | "only the authority may move P(L)" (four assertions)                                     |
+| No lesson-specific identifier in the generic adapter, router, or engine           | §13         | "the lesson seam is generic (no lesson is a special case)"                               |
+| Protected material stays out of evidence and BKT observations                     | §10         | "protected and server-owned material stays out of learner-facing records"                |
+| The runner has no field for a judgement it may not make                           | §4          | "gives the lesson runner no field for a judgement it is not allowed to make"             |
+| Evidence warrant and BKT capability outputs stay disjoint                         | §2.1, §10   | "evidence warrant and BKT capability outputs stay disjoint"                              |
+| Delivery completion cannot be read as a BKT observation                           | §9          | "lesson delivery and capability are separate axes"                                       |
+| Secondary KC mappings never become a BKT target                                   | §8.2        | "secondary KC mappings never become a BKT target"                                        |
+| Every real artifact conforms                                                      | §13         | `tests/architecture/v3-lesson-binding-conformance.test.ts`                               |
+| An eligible binding moves `pL` end to end, for all seven modes                    | §3.3, §11   | `services/lambdas/learner-api/src/second-lesson-mastery-seam.test.ts`                    |
+
+### 16.2 Held only by review — treat as unenforced
+
+- **Field-by-field `EvidenceRecord` mapping (§7.3).** Individual rows beyond the ones named above are
+  checked by review and by unit tests of the adapter, not by an invariant that would survive a
+  refactor.
+- **The rollup rules (§9).** `rollUpLessonMastery` is unit-tested, but nothing asserts that every
+  learner-facing lesson-grain surface routes through it rather than reading a stored value.
+- **Idempotency and replay (§12).** Asserted for the paths the tests drive; not a property held across
+  every future call site.
+- **§13's normative acceptance criterion** ("a second conforming lesson requires zero policy changes")
+  is demonstrated by the second-lesson test for one lesson. It is evidence, not a proof for all
+  lessons.
+- **Author and reviewer gates (Spec 04).** Procedural. They depend on people following
+  `docs/design/04-V3-LESSON-AUTHORING-QUALITY-AND-UI.md`.
+
+### 16.3 The supported hand-verification path
+
+`GET /v1/debug/learner-state` in `services/local-authority` is how the owner confirms the
+lesson-to-mastery connection by hand. It returns KC `P(L)` (stored and lazily decayed), each of the
+seven reasoning operations' `P(L)`, the derived lesson rollup with its rejection codes when
+unavailable, the evidence records, the accepted event count, and the applied-observation count and
+sequence high-water mark.
+
+It is a pure projection — no I/O, no clock read, no `process.env` access — and its evidence view is an
+explicit field **allowlist**, so a field added to `EvidenceRecord` tomorrow cannot leak through it.
+Assume anything it returns ends up in a log.
+
+Three independent guards gate it, and all three must pass: the operator opted in for this process
+(`MCAT_LOCAL_DEBUG_STATE` set to `1` or `true`, an allowlist rather than a truthiness check), the peer
+is loopback (an exact address allowlist, not a range test), and the request carries **no** `Origin`
+header at all. The last is deliberately not a CORS decision: CORS asks a browser not to expose a
+response it already received, whereas this refuses to produce one, so a future-widened origin allowlist
+cannot become an exfiltration path for internal mastery state. It is a command-line tool.
+
+Its absence from the deployed lambda **is** now asserted, three independent ways in
+`tests/architecture/lesson-mastery-integration.test.ts`: the lambda declares no dependency on
+`@mcat/local-authority`, imports neither that package nor its debug module, and registers no debug
+route in its real route table — plus a check that the debug projection stays out of the package's
+public surface. A source comment in `debug-state.ts` still says that assertion is owed; that comment is
+stale and the tests are the current state.
