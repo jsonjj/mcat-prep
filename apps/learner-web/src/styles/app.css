@@ -2151,6 +2151,20 @@ body {
 }
 
 /* Entry-point action rows (home, editor, import) */
+/* Tighten the Recall tab so the deck card + glance + forecast fit without scrolling. */
+.mc-recall.mc-screen {
+  gap: var(--mc-space-2);
+  margin-top: calc(-1 * var(--mc-space-3));
+}
+.mc-recall .mc-card {
+  padding: var(--mc-space-4);
+}
+/* The primary Recall action (Start review / Learn new cards) — a bit larger. */
+.mc-recall__cta.mc-button {
+  min-height: 60px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
 .mc-recall__empty {
   display: flex;
   flex-direction: column;

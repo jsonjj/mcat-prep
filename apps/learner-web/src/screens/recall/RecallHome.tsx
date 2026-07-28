@@ -32,7 +32,7 @@ export function RecallHome() {
   const forecast = useMemo(() => computeForecast(cards ?? []), [cards]);
 
   return (
-    <div className="mc-screen">
+    <div className="mc-screen mc-recall">
       <header className="mc-screen__head">
         <h1 className="mc-h1">Recall</h1>
         <p className="mc-muted">
@@ -53,14 +53,16 @@ export function RecallHome() {
               </p>
             </div>
           ) : due === 0 ? (
-            <Stack gap={2}>
+            <Stack gap={3}>
               <Eyebrow>All caught up</Eyebrow>
-              <p className="mc-muted">
-                Nothing is due right now.{' '}
-                {newAvailable > 0 ? `${newAvailable} new card${newAvailable === 1 ? '' : 's'} ready when you are.` : ''}
-              </p>
               {newAvailable > 0 ? (
-                <Button variant="secondary" size="lg" fullWidth onClick={() => navigate('/app/recall/review')}>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  fullWidth
+                  className="mc-recall__cta"
+                  onClick={() => navigate('/app/recall/review')}
+                >
                   Learn new cards
                 </Button>
               ) : null}
@@ -73,7 +75,13 @@ export function RecallHome() {
                 <Stat label="New" value={newAvailable} />
                 <Stat label="~min" value={data?.estimatedMinutesForDue ?? 0} />
               </div>
-              <Button variant="primary" size="lg" fullWidth onClick={() => navigate('/app/recall/review')}>
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
+                className="mc-recall__cta"
+                onClick={() => navigate('/app/recall/review')}
+              >
                 Start review
               </Button>
             </Stack>
