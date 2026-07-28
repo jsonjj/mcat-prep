@@ -8,6 +8,21 @@ import { useMasterySkills } from '../app/queries';
 const toPct = (p: number): number => Math.round(p * 100);
 
 /**
+ * Plain-language descriptions for the 7 reasoning skills, shown on Progress. Kept
+ * local (the canonical REASONING_OPERATION_INFO.description is unchanged) and short
+ * so each stays within two lines in the rail.
+ */
+const SKILL_BLURB: Record<string, string> = {
+  IDENTIFY: 'Recognize or recall a concept.',
+  PREDICT: 'Given a cause, figure out its effect.',
+  EXPLAIN: 'Work backward from a result to why it happened.',
+  RELATE: 'See how concepts relate, contrast, or map together.',
+  QUANTIFY: 'Apply the right formula to reach a result.',
+  DESIGN: 'Evaluate the soundness of a study or method.',
+  EVIDENCE: 'Decide what conclusions the data actually support.',
+};
+
+/**
  * Left rail — the seven app-wide reasoning skills as compact mastery rings. Same
  * data and semantics as the old Skills page (`useMasterySkills` → BKT P(L) pooled
  * across every lesson); mastered / needs-refresh are shown with a glyph + label,
@@ -52,7 +67,9 @@ function SkillRail() {
                       <span className="mc-skillring__tag mc-skillring__tag--mastered">★ Mastered</span>
                     ) : null}
                   </span>
-                  <span className="mc-skillring__desc">{info.description}</span>
+                  <span className="mc-skillring__desc">
+                    {SKILL_BLURB[skill.operation] ?? info.description}
+                  </span>
                 </span>
               </li>
             );
@@ -78,7 +95,7 @@ export function Progress() {
         <h1 className="mc-h1">Progress</h1>
         <p className="mc-muted">
           Everything at a glance — your reasoning skills, the lessons you have mastered, and your CARS
-          reading ability.
+          readiness.
         </p>
       </header>
 

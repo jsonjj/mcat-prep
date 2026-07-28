@@ -43,9 +43,9 @@ const LABEL_TEXT: Record<CarsReadinessLabel, string> = {
  * carries only the title, so the learner-facing explanations live here.
  */
 const CARS_SKILL_BLURB: Record<CarsSkill, string> = {
-  FOC: 'Grasping what the passage directly says — its key terms and main ideas.',
-  RWT: 'Connecting and interpreting ideas within the passage and its argument.',
-  RBT: "Applying the passage's ideas to new, unstated situations.",
+  FOC: 'Understanding what the passage directly states.',
+  RWT: "Analyzing how the passage's ideas fit together.",
+  RBT: "Applying the passage's ideas to new situations.",
 };
 
 export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
@@ -62,9 +62,9 @@ export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
 
   return (
     <Card elevated className={compact ? 'mc-cars mc-cars--compact' : 'mc-cars'}>
-      <Eyebrow>CARS reading ability</Eyebrow>
+      <Eyebrow>CARS Readiness</Eyebrow>
       <div className="mc-cars-gauge">
-        <svg viewBox="0 0 260 152" role="img" aria-label={`Reading ability: ${LABEL_TEXT[d.label]}`}>
+        <svg viewBox="0 0 260 152" role="img" aria-label={`CARS readiness: ${LABEL_TEXT[d.label]}`}>
           <defs>
             <linearGradient id="mcCarsFill" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0" stopColor="var(--mc-primary)" />
