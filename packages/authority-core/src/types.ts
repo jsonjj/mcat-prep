@@ -43,6 +43,8 @@ export interface LearnerState {
   plan?: TodaysPathState;
   /** Lessons marked complete when finished from a Today's Path run (lightweight completion). */
   completedLessons?: string[];
+  /** Learner timezone (Date.getTimezoneOffset(), UTC−local minutes) for the local day boundary. */
+  timezoneOffsetMinutes?: number;
 }
 
 /** One scheduled activity plus its per-learner run status (persisted). */

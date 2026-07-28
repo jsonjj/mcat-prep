@@ -42,8 +42,8 @@ export function CarsDuel() {
     | null;
   const returnTo = navState?.returnTo;
   const activityId = navState?.activityId;
-  const finish = () => {
-    if (returnTo) navigate(returnTo, { state: { completedActivityId: activityId } });
+  const finish = (complete = true) => {
+    if (returnTo) navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
     else navigate('/app');
   };
   const recordDuel = useRecordCarsDuel();
@@ -170,8 +170,8 @@ export function CarsDuel() {
           >
             Try again
           </Button>
-          <Button variant="secondary" onClick={() => navigate('/app')}>
-            Back to Home
+          <Button variant="secondary" onClick={() => finish(false)}>
+            {returnTo ? 'Back to plan' : 'Back to Home'}
           </Button>
         </Stack>
       </div>
@@ -280,7 +280,7 @@ export function CarsDuel() {
           >
             New duel
           </Button>
-          <Button variant="secondary" onClick={finish}>
+          <Button variant="secondary" onClick={() => finish(true)}>
             {returnTo ? 'Back to plan' : 'Back to Home'}
           </Button>
         </Stack>

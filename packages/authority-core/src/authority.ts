@@ -358,10 +358,17 @@ export class Authority {
   // and WRITES NO MASTERY. It reads mastery/coverage + a client-fed recall load +
   // candidate lessons, sizes the day to the preset, and persists an ordered plan.
 
-  /** Local plan date with a 4 AM rollover, matching the Recall day boundary. */
-  private planDateFor(nowIso: string): string {
-    const ms = Date.parse(nowIso) - 4 * 60 * 60 * 1000;
-    return new Date(ms).toISOString().slice(0, 10);
+  /**
+   * Learner-local plan date with a 4 AM rollover. `offsetMinutes` is the client's
+   * `Date.getTimezoneOffset()` (UTC − local, in minutes); 0 falls back to UTC.
+   */
+  private planDateFor(nowIso: string, offsetMinutes: number): string {
+    const localMs = Date.parse(nowIso) - offsetMinutes * 60_000 - 4 * 60 * 60 * 1000;
+    return new Date(localMs).toISOString().slice(0, 10);
+  }
+
+  private timezoneOffset(state: LearnerState): number {
+    return state.timezoneOffsetMinutes ?? 0;
   }
 
   private defaultDailyPreset(state: LearnerState): number {
@@ -399,7 +406,12 @@ export class Authority {
   /** Build (and persist) today's plan; idempotent per day unless `force`. */
   buildTodaysPath(state: LearnerState, input: BuildTodaysPathInput): TodaysPathView {
     const now = this.clock.now();
-    const planDate = this.planDateFor(now);
+    // Persist the learner's timezone so reads (which have no request body) use the
+    // same local day boundary as the build.
+    if (input.timezoneOffsetMinutes !== undefined) {
+      state.timezoneOffsetMinutes = input.timezoneOffsetMinutes;
+    }
+    const planDate = this.planDateFor(now, this.timezoneOffset(state));
     if (state.plan && state.plan.planDate === planDate && !input.force) {
       return this.todaysPathView(state);
     }
@@ -408,10 +420,15 @@ export class Authority {
     const carryOver = this.carryOverFrom(state.plan ?? null, planDate);
     const snapshot = this.todaysPathSnapshot(state, input, planDate, preset, ctx, carryOver);
     const result = buildTodaysPathEngine(snapshot, TODAYS_PATH_CONFIG);
-    const activities: TodaysPathActivityState[] = result.activities.map((a) => ({
-      ...a,
-      status: 'ready',
-    }));
+    // Dedupe by activityId as a safety net (the engine already avoids re-scheduling
+    // a carried kind/lesson, so collisions shouldn't occur).
+    const seen = new Set<string>();
+    const activities: TodaysPathActivityState[] = [];
+    for (const a of result.activities) {
+      if (seen.has(a.activityId)) continue;
+      seen.add(a.activityId);
+      activities.push({ ...a, status: 'ready' });
+    }
     state.plan = {
       planDate: result.planDate,
       dailyMinutesPreset: preset,
@@ -513,7 +530,7 @@ export class Authority {
 
   private todaysPathView(state: LearnerState): TodaysPathView {
     const ctx = this.dayContext(state);
-    const planDate = this.planDateFor(this.clock.now());
+    const planDate = this.planDateFor(this.clock.now(), this.timezoneOffset(state));
     const preset = this.dailyPreset(state);
     const plan = state.plan && state.plan.planDate === planDate ? state.plan : null;
     if (plan === null) {

@@ -95,8 +95,8 @@ export function PracticeSession() {
         <Callout tone="warning" title="Practice is unavailable">
           We couldn’t build a practice set right now. Please try again in a moment.
         </Callout>
-        <Button variant="secondary" onClick={() => navigate('/app/practice')}>
-          Back
+        <Button variant="secondary" onClick={() => finish(false)}>
+          {returnTo ? 'Back to plan' : 'Back'}
         </Button>
       </div>
     );
@@ -110,8 +110,8 @@ export function PracticeSession() {
         <p className="mc-muted">
           There aren’t enough eligible questions for this focus yet. Learn a bit more, then come back.
         </p>
-        <Button variant="primary" onClick={() => navigate('/app/practice')}>
-          Back to Practice
+        <Button variant="primary" onClick={() => finish(true)}>
+          {returnTo ? 'Back to plan' : 'Back to Practice'}
         </Button>
       </div>
     );
@@ -123,7 +123,12 @@ export function PracticeSession() {
 
   const advance = () => {
     if (index + 1 < sequence.length) setIndex(index + 1);
-    else if (returnTo) navigate(returnTo, { state: { completedActivityId: activityId } });
+    else finish(true);
+  };
+
+  // Return to the plan (or the Practice hub). `complete` marks the plan activity done.
+  const finish = (complete: boolean) => {
+    if (returnTo) navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
     else navigate('/app/practice');
   };
 

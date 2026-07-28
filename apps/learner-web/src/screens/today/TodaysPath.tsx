@@ -103,7 +103,8 @@ export function TodaysPath() {
 
   const activities = view?.activities ?? [];
   const current = activities.find((a) => a.activityId === view?.currentActivityId) ?? null;
-  const doneCount = activities.filter((a) => a.status === 'complete' || a.status === 'skipped').length;
+  const completedCount = activities.filter((a) => a.status === 'complete').length;
+  const skippedCount = activities.filter((a) => a.status === 'skipped').length;
   const allDone = activities.length > 0 && current === null;
 
   return (
@@ -187,7 +188,8 @@ export function TodaysPath() {
           <h2 className="mc-h2">The plan</h2>
           {activities.length > 0 ? (
             <p className="mc-muted mc-fineprint">
-              {doneCount} of {activities.length} done
+              {completedCount} of {activities.length} done
+              {skippedCount > 0 ? ` · ${skippedCount} skipped` : ''}
             </p>
           ) : null}
         </div>
@@ -196,6 +198,7 @@ export function TodaysPath() {
             const done = a.status === 'complete';
             const skipped = a.status === 'skipped';
             const isCurrent = a.activityId === view?.currentActivityId;
+            const startLabel = a.status === 'in_progress' ? 'Continue' : 'Start';
             return (
               <Card key={a.activityId} elevated className={isCurrent ? 'mc-plan__row--current' : ''}>
                 <div className="mc-task">
@@ -210,29 +213,30 @@ export function TodaysPath() {
                     </p>
                   </div>
                   <div className="mc-plan__rowactions">
-                    <span
-                      className={`mc-pill ${done ? 'mc-pill--ok' : ''}`}
-                      aria-label={`status: ${a.status}`}
-                    >
+                    <span className={`mc-pill ${done ? 'mc-pill--ok' : ''}`}>
                       {done ? 'Done' : skipped ? 'Skipped' : isCurrent ? 'Up next' : 'Ready'}
                     </span>
+                    {/* The current activity is launched from the hero above; the row
+                        only offers Skip so there's a single primary "Start" CTA. */}
+                    {!done && !skipped && !isCurrent ? (
+                      <Button
+                        variant="secondary"
+                        onClick={() => launch(a)}
+                        aria-label={`${startLabel} ${a.title}`}
+                      >
+                        {startLabel}
+                      </Button>
+                    ) : null}
                     {!done && !skipped ? (
-                      <>
-                        <Button
-                          variant={isCurrent ? 'primary' : 'secondary'}
-                          onClick={() => launch(a)}
-                        >
-                          {a.status === 'in_progress' ? 'Continue' : 'Start'}
-                        </Button>
-                        <button
-                          type="button"
-                          className="mc-textbtn"
-                          onClick={() => skip(a)}
-                          disabled={record.isPending}
-                        >
-                          Skip
-                        </button>
-                      </>
+                      <button
+                        type="button"
+                        className="mc-textbtn"
+                        onClick={() => skip(a)}
+                        disabled={record.isPending}
+                        aria-label={`Skip ${a.title}`}
+                      >
+                        Skip
+                      </button>
                     ) : null}
                   </div>
                 </div>

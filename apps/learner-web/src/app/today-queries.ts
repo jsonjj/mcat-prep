@@ -66,6 +66,7 @@ export function useBuildTodaysPath() {
         recallLoad,
         candidateLessons: buildCandidateLessons(),
         force: opts?.force ?? false,
+        timezoneOffsetMinutes: new Date().getTimezoneOffset(),
       });
     },
     onSuccess: (view) => {

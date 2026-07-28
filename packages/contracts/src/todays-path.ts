@@ -117,6 +117,8 @@ export const BuildTodaysPathInputSchema = z
     candidateLessons: z.array(CandidateLessonInputSchema).max(200),
     /** Force a fresh rebuild even if a plan already exists for today. */
     force: z.boolean(),
+    /** Client `Date.getTimezoneOffset()` (UTC−local minutes) for a learner-local day boundary. */
+    timezoneOffsetMinutes: z.number().int().optional(),
   })
   .strict();
 export type BuildTodaysPathInput = z.infer<typeof BuildTodaysPathInputSchema>;

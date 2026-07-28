@@ -54,12 +54,18 @@ export function Home() {
         <div className="mc-upnext__text">
           <span className="mc-upnext__eyebrow">Today’s Path</span>
           <span className="mc-upnext__title">
-            {plan?.built && current ? current.title : 'Start today’s plan'}
+            {!plan?.built
+              ? 'Start today’s plan'
+              : current
+                ? current.title
+                : 'Today’s path complete'}
           </span>
           <span className="mc-upnext__meta">
-            {plan?.built
-              ? `${remaining} activit${remaining === 1 ? 'y' : 'ies'} left · ~${plan.plannedMinutes} min`
-              : 'Build a plan sized to your day'}
+            {!plan?.built
+              ? 'Build a plan sized to your day'
+              : current
+                ? `${remaining} activit${remaining === 1 ? 'y' : 'ies'} left · ~${plan.plannedMinutes} min`
+                : 'Nice work — review it or rest'}
           </span>
         </div>
         <span className="mc-upnext__play" aria-hidden="true">

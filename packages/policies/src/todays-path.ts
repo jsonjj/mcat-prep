@@ -55,13 +55,22 @@ export interface TodaysPathConfig {
     readonly reduceNew: number; // ~0.40
     readonly pauseNew: number; // ~0.60 (50–60%)
   };
+  /** Recall card ceiling by band — "Recall 4–20 (flexes higher on debt)". */
+  readonly recallCeiling: {
+    readonly normal: number; // 20
+    readonly reduceNew: number; // 40
+    readonly pauseNew: number; // 60
+  };
   /** Review-debt band thresholds: debt = recall due-minutes / daily budget. */
   readonly reviewDebt: {
     readonly reduceNewAt: number; // 0.30
     readonly pauseNewAt: number; // 0.50
   };
-  /** Max NEW lessons admitted per day (further throttled by review-debt band). */
-  readonly newLessonCap: number; // 2
+  /** Base NEW-lesson cap and the max it scales to on larger budgets. */
+  readonly newLessonCap: number; // 2 (base, small budgets)
+  readonly newLessonCapMax: number; // 6 (large budgets)
+  /** Hard ceiling on practice questions in a day (large budgets fill via practice). */
+  readonly practiceMaxQHard: number; // 90
   /** Carry-over ceiling: today's total load <= this * preset. */
   readonly carryOverCapPct: number; // 1.25
   /** Diminishing-returns decay applied per additional pick of the same kind. */
@@ -89,8 +98,11 @@ export const TODAYS_PATH_CONFIG: TodaysPathConfig = {
   },
   eligibility: { recallMinDue: 5, mistakesMinOpen: 3 },
   recallShare: { normal: 0.25, reduceNew: 0.4, pauseNew: 0.6 },
+  recallCeiling: { normal: 20, reduceNew: 40, pauseNew: 60 },
   reviewDebt: { reduceNewAt: 0.3, pauseNewAt: 0.5 },
   newLessonCap: 2,
+  newLessonCapMax: 6,
+  practiceMaxQHard: 90,
   carryOverCapPct: 1.25,
   perRepeatDecay: 0.8,
   sectionExamWeight: { bb: 1.0, cp: 0.92, ps: 0.85, cars: 0.8 },
@@ -204,12 +216,35 @@ function recallShareFor(band: ReviewDebtBand, cfg: TodaysPathConfig): number {
   return cfg.recallShare.normal;
 }
 
-/** Max new lessons allowed under a given review-debt band. */
-function newLessonCapFor(band: ReviewDebtBand, cfg: TodaysPathConfig): number {
-  if (band === 'pause_new') return 0;
-  if (band === 'reduce_new') return Math.min(1, cfg.newLessonCap);
-  return cfg.newLessonCap;
+/** Recall card ceiling for a band — flexes higher on debt so the %-share is reachable. */
+function recallCeilingFor(band: ReviewDebtBand, cfg: TodaysPathConfig): number {
+  if (band === 'pause_new') return cfg.recallCeiling.pauseNew;
+  if (band === 'reduce_new') return cfg.recallCeiling.reduceNew;
+  return cfg.recallCeiling.normal;
 }
+
+/**
+ * Max new lessons for a band + budget. High debt throttles new work regardless of
+ * budget; on a normal day the cap scales up so larger presets can admit more new
+ * lessons (instead of the day capping out well under the chosen budget).
+ */
+function newLessonCapFor(
+  band: ReviewDebtBand,
+  budgetMinutes: number,
+  cfg: TodaysPathConfig,
+): number {
+  if (band === 'pause_new') return 0;
+  if (band === 'reduce_new') return 1;
+  return clampInt(Math.floor(budgetMinutes / 90), cfg.newLessonCap, cfg.newLessonCapMax);
+}
+
+/** Practice-question ceiling scaled to the budget so large presets fill via reinforcement. */
+function practiceMaxQFor(budgetMinutes: number, cfg: TodaysPathConfig): number {
+  return clampInt(Math.floor(budgetMinutes / 4), cfg.blocks.practiceMaxQ, cfg.practiceMaxQHard);
+}
+
+const clampInt = (x: number, lo: number, hi: number): number =>
+  Math.max(lo, Math.min(hi, Math.round(x)));
 
 // ---- Step: core sizing (by due-volume / debt) --------------------------------
 
@@ -230,9 +265,10 @@ function sizeCore(
   let recallMinutes = 0;
   if (snap.recall.due >= cfg.eligibility.recallMinDue) {
     const share = recallShareFor(band, cfg);
+    const ceiling = recallCeilingFor(band, cfg);
     const byBudget = Math.round((share * snap.dailyBudgetMinutes) / cfg.costs.recallPerCard);
     const available = snap.recall.due + snap.recall.newAvailable;
-    recallCards = clamp(byBudget, cfg.blocks.recallMinCards, cfg.blocks.recallMaxCards);
+    recallCards = clamp(byBudget, cfg.blocks.recallMinCards, ceiling);
     recallCards = Math.min(recallCards, available);
     recallMinutes = Math.round(recallCards * cfg.costs.recallPerCard);
   }
@@ -370,11 +406,20 @@ export function buildTodaysPath(
   const phase = clamp01(snap.coveragePct); // 0 early → 1 late
   const lessonTilt = 1 - 0.5 * phase; // new lessons weighted early
   const practiceTilt = 0.5 + 0.5 * phase; // reinforcement weighted late
-  const lessonCap = newLessonCapFor(band, cfg);
+  const lessonCap = newLessonCapFor(band, snap.dailyBudgetMinutes, cfg);
+  const practiceMaxQ = practiceMaxQFor(snap.dailyBudgetMinutes, cfg);
 
-  // Re-scoreable lesson candidates (exclude mastered). `covered` mutates as we pick.
+  // Don't re-schedule a kind/lesson that's already carried over (prevents duplicate
+  // activity ids like a second `practice` or the same `lesson:<slug>`).
+  const carriedLessonSlugs = new Set(
+    carried.filter((c) => c.kind === 'lesson' && c.lessonSlug !== null).map((c) => c.lessonSlug as string),
+  );
+  const practiceEnabled = snap.practiceAvailable && !carried.some((c) => c.kind === 'practice');
+
+  // Re-scoreable lesson candidates (exclude mastered + already-carried). `covered`
+  // mutates as we pick so same-cluster lessons diminish.
   const lessons = snap.candidateLessons
-    .filter((l) => !l.mastered)
+    .filter((l) => !l.mastered && !carriedLessonSlugs.has(l.slug))
     .map((l) => ({ ...l }));
   const coveredNow = new Set<string>(
     lessons.filter((l) => l.covered && l.cluster !== null).map((l) => l.cluster as string),
@@ -414,11 +459,11 @@ export function buildTodaysPath(
     let practiceVpm = 0;
     let practiceInc = 0;
     let practiceIncMinutes = 0;
-    if (snap.practiceAvailable && practiceQs < cfg.blocks.practiceMaxQ) {
+    if (practiceEnabled && practiceQs < practiceMaxQ) {
       practiceInc =
         practiceQs === 0
           ? cfg.blocks.practiceMinQ
-          : Math.min(2, cfg.blocks.practiceMaxQ - practiceQs);
+          : Math.min(2, practiceMaxQ - practiceQs);
       practiceIncMinutes = practiceInc * cfg.costs.practicePerQuestion;
       if (practiceIncMinutes <= remaining) {
         const chunk = Math.floor(practiceQs / cfg.blocks.practiceMinQ);

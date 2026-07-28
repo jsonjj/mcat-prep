@@ -62,9 +62,23 @@ Build Allowed List → Score Items → Pick Winners → Order List → Implement
 Phase tilt `phase = coveragePct`: `lessonTilt = 1 − 0.5·phase`,
 `practiceTilt = 0.5 + 0.5·phase`. Practice value `= weakness × max(0.1,
 coveragePct)` (so lessons win early, practice climbs as coverage completes).
-Per-repeat decay `0.8`. New-lesson cap `2` (→1 in `reduce_new`, →0 in
-`pause_new`). Section exam-weight `{ bb 1.0, cp 0.92, ps 0.85, cars 0.8 }`
-(default 0.7). Lesson unlock proxy `= KC count / 6`. All refit-from-data later.
+Per-repeat decay `0.8`. Section exam-weight `{ bb 1.0, cp 0.92, ps 0.85, cars
+0.8 }` (default 0.7). Lesson unlock proxy `= KC count / 6`. All refit-from-data
+later.
+
+### Budget flex (so bands are real and large presets fill)
+
+- **Recall ceiling flexes with the band** (`Recall 4–20, flexes higher on debt`):
+  normal 20 cards · `reduce_new` 40 · `pause_new` 60 — so the 20–60% review-debt
+  share is actually reachable (a flat 20-card cap made it dead code).
+- **New-lesson cap scales with the budget** on a normal day:
+  `clamp(floor(budget/90), 2, 6)`; high debt still throttles (`reduce_new` → 1,
+  `pause_new` → 0).
+- **Practice ceiling scales with the budget**: `clamp(floor(budget/4), 24, 90)`
+  questions, so 4–6 hr presets fill toward the budget via reinforcement instead
+  of capping out at ~147 min.
+- **Learner-local day boundary**: the 4 AM rollover uses the client's
+  `Date.getTimezoneOffset()` (sent on build, persisted), not UTC.
 
 ## The seam
 
@@ -92,3 +106,24 @@ Per-repeat decay `0.8`. New-lesson cap `2` (→1 in `reduce_new`, →0 in
 - Persisting into the dedicated `plan_projections` / `checkpoints` tables (v1 rides
   `LearnerState.plan` in the event-sourced projection).
 - A bandit/RL optimizer for the splits, and refit coefficients.
+- Wiring the new `/v1/plan/today/*` + `/v1/profile/daily-budget` routes into the
+  **deployed learner-api lambda** (dev + in-process authorities are wired; prod is
+  a follow-up).
+
+### Known follow-ups (deferred UX/robustness — from the eval swarm)
+
+- **Mobile discoverability:** Today's Path is a desktop sidebar tab + the Home
+  hero; it is not in the 5-item mobile bottom nav (kept 5 to protect the
+  "Curriculum fits" overflow guard). `/app/today` also leaves no bottom-nav tab
+  marked active on mobile. Revisit if Today should be promoted on mobile.
+- **Preset change mid-day** force-rebuilds and resets same-day activity statuses
+  (completed lessons stay excluded via `completedLessons`; other completed
+  activities reappear as `ready`). Consider preserving statuses across a same-day
+  rebuild.
+- **Skip is irreversible** in-session (no undo/confirm, unlike Recall's undo).
+- **Build-error state**: a failed auto-build currently falls through to the empty
+  state rather than an explicit retry.
+- **Segmented radiogroups** (preset, and pre-existing in Profile/CarsDuel) lack
+  arrow-key roving-tabindex — fix once as a shared control.
+- `ensureMastery()` lazily initializes an empty mastery container on read (no
+  values written — the writes-no-mastery invariant holds).

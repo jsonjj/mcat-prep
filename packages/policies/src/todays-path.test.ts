@@ -115,13 +115,56 @@ describe('Today\u2019s Path engine', () => {
     expect(r.activities.some((a) => a.kind === 'lesson')).toBe(false);
   });
 
-  it('sizes Practice within its floor/ceiling and count == minutes / 2', () => {
-    const r = buildTodaysPath(snap({ dailyBudgetMinutes: 360, practiceWeakness: 1, candidateLessons: [] }));
+  it('sizes Practice within its floor/hard-ceiling and count == minutes / 2', () => {
+    const r = buildTodaysPath(snap({ dailyBudgetMinutes: 240, practiceWeakness: 1, coveragePct: 0.5, candidateLessons: [] }));
     const practice = r.activities.find((a) => a.kind === 'practice');
     expect(practice).toBeDefined();
     expect(practice!.count!).toBeGreaterThanOrEqual(TODAYS_PATH_CONFIG.blocks.practiceMinQ);
-    expect(practice!.count!).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.blocks.practiceMaxQ);
+    expect(practice!.count!).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.practiceMaxQHard);
     expect(practice!.estimatedMinutes).toBe(practice!.count! * TODAYS_PATH_CONFIG.costs.practicePerQuestion);
+  });
+
+  it('flexes the recall ceiling above the normal 20 under a high review-debt band', () => {
+    const highDebt = { dueLearning: 0, dueReviews: 80, newAvailable: 0, due: 80, estimatedMinutesForDue: 200 };
+    const r = buildTodaysPath(snap({ dailyBudgetMinutes: 360, recall: highDebt }));
+    expect(r.reviewDebtBand).toBe('pause_new');
+    const recall = r.activities.find((a) => a.kind === 'recall')!;
+    expect(recall.count!).toBeGreaterThan(TODAYS_PATH_CONFIG.recallCeiling.normal);
+  });
+
+  it('fills much more of a large budget than the old ~147-min cap', () => {
+    const lessons = Array.from({ length: 8 }, (_, i) => ({ ...lessonHigh, lessonId: `L${i}`, slug: `s${i}` }));
+    const r = buildTodaysPath(
+      snap({ dailyBudgetMinutes: 360, coveragePct: 0.5, practiceWeakness: 1, candidateLessons: lessons }),
+    );
+    expect(r.plannedMinutes).toBeGreaterThan(200);
+    expect(r.plannedMinutes).toBeLessThanOrEqual(360);
+  });
+
+  it('admits more new lessons on a larger budget', () => {
+    const lessons = Array.from({ length: 8 }, (_, i) => ({ ...lessonHigh, lessonId: `L${i}`, slug: `s${i}` }));
+    const countLessons = (b: number) =>
+      buildTodaysPath(snap({ dailyBudgetMinutes: b, practiceAvailable: false, candidateLessons: lessons }))
+        .activities.filter((a) => a.kind === 'lesson').length;
+    expect(countLessons(360)).toBeGreaterThan(countLessons(120));
+  });
+
+  it('never emits duplicate activity ids when carrying over practice/lessons', () => {
+    const carryOver: CarriedActivity[] = [
+      { activityId: 'practice', kind: 'practice', title: 'Practice', detail: 'carried', estimatedMinutes: 20, count: 10, minutesBudget: 20, focus: null, lessonSlug: null, lessonId: null, priorityReason: 'NEW_LEARNING' },
+      { activityId: 'lesson:s0', kind: 'lesson', title: 'L0', detail: 'carried', estimatedMinutes: 20, count: null, minutesBudget: null, focus: null, lessonSlug: 's0', lessonId: 'L0', priorityReason: 'NEW_LEARNING' },
+    ];
+    const lessons = [
+      { ...lessonHigh, lessonId: 'L0', slug: 's0' },
+      { ...lessonHigh, lessonId: 'L1', slug: 's1' },
+    ];
+    const r = buildTodaysPath(
+      snap({ dailyBudgetMinutes: 240, practiceWeakness: 1, candidateLessons: lessons, carryOver }),
+    );
+    const ids = r.activities.map((a) => a.activityId);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(r.activities.filter((a) => a.activityId === 'practice').length).toBe(1);
+    expect(r.activities.filter((a) => a.activityId === 'lesson:s0').length).toBe(1);
   });
 
   it('orders Recall early, CARS mid, and Review Mistakes near the end but not last', () => {
