@@ -246,66 +246,92 @@ describe('lesson observation contracts', () => {
         (binding: { readonly candidateEvidenceModes: readonly string[] }) => boolean
       >('hasEligibleEvidenceMode');
 
-    // Eligibility is ANY non-INSTRUCTIONAL mode, not INDEPENDENT membership.
     expect(hasEligibleEvidenceMode({ candidateEvidenceModes: ['INDEPENDENT'] })).toBe(true);
-    expect(hasEligibleEvidenceMode({ candidateEvidenceModes: ['TRANSFER'] })).toBe(true);
     expect(hasEligibleEvidenceMode({ candidateEvidenceModes: ['INSTRUCTIONAL'] })).toBe(false);
     expect(bindingSchema.safeParse({ ...validBinding(), independent: true }).success).toBe(false);
   });
 
-  it('requires a reasoning operation for every non-instructional evidence mode', () => {
-    const bindingSchema = schemaFromIndex('LessonItemBindingSchema');
-    const nonInstructionalModes = [
-      'DIAGNOSTIC',
-      'ENTRY',
-      'INSTRUCTIONAL_EXIT',
-      'INDEPENDENT',
-      'TRANSFER',
-      'DELAYED',
-      'MIXED',
-      'PASSAGE',
-      'TIMED',
-      'PROTECTED',
-      'REPAIR_CONFIRMATION',
-      'REHEARSAL_ONLY',
-    ];
+  it('classifies every declared evidence mode against an explicit allowlist', () => {
+    // Exhaustive over the enum on purpose. Adding a 14th member must fail here
+    // until someone classifies it deliberately, rather than silently granting it
+    // BKT access the way a denylist would.
+    const hasEligibleEvidenceMode =
+      functionFromIndex<
+        (binding: { readonly candidateEvidenceModes: readonly string[] }) => boolean
+      >('hasEligibleEvidenceMode');
+    const allowlist = functionFromIndex<readonly string[]>('BKT_ELIGIBLE_EVIDENCE_MODES');
+    const declaredModes = schemaFromIndex('CandidateEvidenceModeSchema') as unknown as {
+      readonly options: readonly string[];
+    };
 
-    for (const mode of nonInstructionalModes) {
+    const EXPECTED_ELIGIBILITY: Readonly<Record<string, boolean>> = {
+      DIAGNOSTIC: false,
+      ENTRY: false,
+      INSTRUCTIONAL: false,
+      INSTRUCTIONAL_EXIT: false,
+      REPAIR_CONFIRMATION: false,
+      REHEARSAL_ONLY: false,
+      INDEPENDENT: true,
+      TRANSFER: true,
+      DELAYED: true,
+      MIXED: true,
+      PASSAGE: true,
+      TIMED: true,
+      PROTECTED: true,
+    };
+
+    // The two sets partition the enum with nothing left over on either side.
+    expect([...declaredModes.options].sort()).toEqual(Object.keys(EXPECTED_ELIGIBILITY).sort());
+    expect([...allowlist].sort()).toEqual(
+      Object.entries(EXPECTED_ELIGIBILITY)
+        .filter(([, eligible]) => eligible)
+        .map(([mode]) => mode)
+        .sort(),
+    );
+
+    for (const mode of declaredModes.options) {
+      expect(hasEligibleEvidenceMode({ candidateEvidenceModes: [mode] }), mode).toBe(
+        EXPECTED_ELIGIBILITY[mode],
+      );
+    }
+  });
+
+  it('requires a reasoning operation exactly for bindings declaring an eligible mode', () => {
+    const bindingSchema = schemaFromIndex('LessonItemBindingSchema');
+    const declaredModes = schemaFromIndex('CandidateEvidenceModeSchema') as unknown as {
+      readonly options: readonly string[];
+    };
+    const allowlist = new Set(functionFromIndex<readonly string[]>('BKT_ELIGIBLE_EVIDENCE_MODES'));
+
+    for (const mode of declaredModes.options) {
       const withoutOperation = bindingSchema.safeParse({
         ...without(validBinding(), 'reasoningOperation'),
         candidateEvidenceModes: [mode],
       });
-      expect(withoutOperation.success, mode).toBe(false);
-      if (!withoutOperation.success) {
-        const issue = withoutOperation.error.issues.find(
-          (candidate) => candidate.message === 'ELIGIBLE_BINDING_MISSING_REASONING_OPERATION',
-        );
-        expect(issue?.path, mode).toEqual(['reasoningOperation']);
-        expect(issue?.params?.rejectionCode, mode).toBe(
-          'ELIGIBLE_BINDING_MISSING_REASONING_OPERATION',
-        );
+
+      // Four combinations: {eligible, ineligible} x {operation present, absent}.
+      if (allowlist.has(mode)) {
+        expect(withoutOperation.success, mode).toBe(false);
+        if (!withoutOperation.success) {
+          const issue = withoutOperation.error.issues.find(
+            (candidate) => candidate.message === 'ELIGIBLE_BINDING_MISSING_REASONING_OPERATION',
+          );
+          expect(issue?.path, mode).toEqual(['reasoningOperation']);
+          expect(issue?.params?.rejectionCode, mode).toBe(
+            'ELIGIBLE_BINDING_MISSING_REASONING_OPERATION',
+          );
+        }
+      } else {
+        // An ineligible mode never needs the governed label, and may still carry
+        // one without becoming eligible.
+        expect(withoutOperation.success, mode).toBe(true);
       }
+
       expect(
-        bindingSchema.safeParse({
-          ...validBinding(),
-          candidateEvidenceModes: [mode],
-        }).success,
+        bindingSchema.safeParse({ ...validBinding(), candidateEvidenceModes: [mode] }).success,
         mode,
       ).toBe(true);
     }
-
-    const instructionalWithoutOperation = {
-      ...without(validBinding(), 'reasoningOperation'),
-      candidateEvidenceModes: ['INSTRUCTIONAL'],
-    };
-    expect(bindingSchema.safeParse(instructionalWithoutOperation).success).toBe(true);
-    expect(
-      bindingSchema.safeParse({
-        ...validBinding(),
-        candidateEvidenceModes: ['INSTRUCTIONAL'],
-        reasoningOperation: 'EXPLAIN',
-      }).success,
-    ).toBe(true);
   });
 
   it('defaults absent evidence modes to instructional and rejects an empty permission set', () => {

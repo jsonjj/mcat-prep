@@ -113,6 +113,35 @@ export const CandidateEvidenceModeSchema = z.enum([
 ]);
 export type CandidateEvidenceMode = z.infer<typeof CandidateEvidenceModeSchema>;
 
+/**
+ * BKT eligibility is an ALLOWLIST, deliberately, and must never be rewritten as a
+ * negation of the ineligible modes.
+ *
+ * These seven are the only declarations that can represent independent evidence
+ * of capability. Everything else — `DIAGNOSTIC` (seeds only), `ENTRY`
+ * (placement), `INSTRUCTIONAL`, `INSTRUCTIONAL_EXIT` (near-use and changed-task
+ * exits produce evidence but never move BKT), `REPAIR_CONFIRMATION` (follows a
+ * miss and a repair), and `REHEARSAL_ONLY` — routes to an evidence kind in
+ * `CONTEXTUAL_ONLY_KINDS` and could never fill a recipe slot, so letting it move
+ * `P(L)` would be incoherent.
+ *
+ * A mode absent from this list is ineligible, including any member added to
+ * `CandidateEvidenceModeSchema` later. That default is the point: a denylist
+ * would silently grant BKT access to every future enum member.
+ */
+export const BKT_ELIGIBLE_EVIDENCE_MODES = [
+  'INDEPENDENT',
+  'TRANSFER',
+  'DELAYED',
+  'MIXED',
+  'PASSAGE',
+  'TIMED',
+  'PROTECTED',
+] as const satisfies readonly CandidateEvidenceMode[];
+
+const BKT_ELIGIBLE_EVIDENCE_MODE_SET: ReadonlySet<CandidateEvidenceMode> =
+  new Set<CandidateEvidenceMode>(BKT_ELIGIBLE_EVIDENCE_MODES);
+
 const CandidateEvidenceModesSchema = z
   .array(CandidateEvidenceModeSchema)
   .min(1)
@@ -192,8 +221,8 @@ const NonMeasurableLessonItemBindingSchema = z
   })
   .strict();
 
-const hasNonInstructionalEvidenceMode = (modes: readonly CandidateEvidenceMode[]): boolean =>
-  modes.some((mode) => mode !== 'INSTRUCTIONAL');
+const declaresEligibleEvidenceMode = (modes: readonly CandidateEvidenceMode[]): boolean =>
+  modes.some((mode) => BKT_ELIGIBLE_EVIDENCE_MODE_SET.has(mode));
 
 const requireReasoningOperationForEligibleModes = (
   binding: {
@@ -203,7 +232,7 @@ const requireReasoningOperationForEligibleModes = (
   context: z.RefinementCtx,
 ): void => {
   if (
-    hasNonInstructionalEvidenceMode(binding.candidateEvidenceModes) &&
+    declaresEligibleEvidenceMode(binding.candidateEvidenceModes) &&
     binding.reasoningOperation === undefined
   ) {
     context.addIssue({
@@ -336,14 +365,14 @@ export const BktQualificationResultSchema = z.discriminatedUnion('status', [
 export type BktQualificationResult = z.infer<typeof BktQualificationResultSchema>;
 
 /**
- * Declared BKT eligibility. ANY mode other than `INSTRUCTIONAL` opens the BKT
- * path — not `INDEPENDENT` alone — and an unauthored mode set defaults to
- * `['INSTRUCTIONAL']`, which stays closed. The frozen rejection code is still
- * spelled `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED`.
+ * Declared BKT eligibility: does the binding declare at least one mode from the
+ * `BKT_ELIGIBLE_EVIDENCE_MODES` allowlist? An unauthored mode set defaults to
+ * `['INSTRUCTIONAL']` and stays closed. The frozen rejection code for a failure
+ * here is still spelled `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED`.
  */
 export const hasEligibleEvidenceMode = (
   binding: Pick<LessonItemBinding, 'candidateEvidenceModes'>,
-): boolean => hasNonInstructionalEvidenceMode(binding.candidateEvidenceModes);
+): boolean => declaresEligibleEvidenceMode(binding.candidateEvidenceModes);
 
 export const isBktQualificationAccepted = (
   result: BktQualificationResult,

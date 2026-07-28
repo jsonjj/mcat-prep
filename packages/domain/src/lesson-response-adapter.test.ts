@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   AcceptedLessonObservationSchema,
+  AssistanceLevelSchema,
+  BKT_ELIGIBLE_EVIDENCE_MODES,
   BKT_QUALIFICATION_REJECTION_CODES,
   CandidateEvidenceModeSchema,
   EventIdSchema,
@@ -16,7 +18,7 @@ import {
   type LessonItemBinding,
   type LessonRuntimeResponseFacts,
 } from '@mcat/contracts';
-import { EvidenceRecordSchema, isMasteryEligible } from './evidence';
+import { CONTEXTUAL_ONLY_KINDS, EvidenceRecordSchema, isMasteryEligible } from './evidence';
 import {
   adaptLessonResponse,
   deriveEvidenceKind,
@@ -415,27 +417,82 @@ describe('lesson response adapter — fail-closed paths', () => {
   });
 });
 
-describe('lesson response adapter — eligibility is not INDEPENDENT-only', () => {
-  const eligibleModes = CandidateEvidenceModeSchema.options.filter(
-    (mode) => mode !== 'INSTRUCTIONAL',
-  );
+describe('lesson response adapter — BKT eligibility is an allowlist', () => {
+  /**
+   * Written out by hand, exhaustively, and cross-checked against the enum below.
+   * A denylist (`mode !== 'INSTRUCTIONAL'`) would make a newly added 14th mode
+   * BKT-eligible the moment it landed; this map makes it fail instead.
+   */
+  const EXPECTED_ELIGIBILITY: Readonly<Record<CandidateEvidenceMode, boolean>> = {
+    DIAGNOSTIC: false,
+    ENTRY: false,
+    INSTRUCTIONAL: false,
+    INSTRUCTIONAL_EXIT: false,
+    REPAIR_CONFIRMATION: false,
+    REHEARSAL_ONLY: false,
+    INDEPENDENT: true,
+    TRANSFER: true,
+    DELAYED: true,
+    MIXED: true,
+    PASSAGE: true,
+    TIMED: true,
+    PROTECTED: true,
+  };
 
-  it('covers every declared mode other than INSTRUCTIONAL', () => {
-    expect(eligibleModes).toHaveLength(12);
+  it('partitions the declared enum with nothing left over', () => {
+    expect([...CandidateEvidenceModeSchema.options].sort()).toEqual(
+      Object.keys(EXPECTED_ELIGIBILITY).sort(),
+    );
+    expect([...BKT_ELIGIBLE_EVIDENCE_MODES].sort()).toEqual(
+      Object.entries(EXPECTED_ELIGIBILITY)
+        .filter(([, eligible]) => eligible)
+        .map(([mode]) => mode)
+        .sort(),
+    );
+    expect(BKT_ELIGIBLE_EVIDENCE_MODES).toHaveLength(7);
   });
 
-  for (const mode of eligibleModes) {
-    it(`qualifies a clean first attempt on a ${mode} binding`, () => {
+  for (const mode of CandidateEvidenceModeSchema.options) {
+    const eligible = EXPECTED_ELIGIBILITY[mode];
+    it(`${eligible ? 'qualifies' : 'refuses to qualify'} a clean first attempt on a ${mode} binding`, () => {
       const result = adapt({ binding: parseBinding({ candidateEvidenceModes: [mode] }) });
-      expect(isBktQualificationAccepted(result.qualification)).toBe(true);
+
+      expect(hasEligibleEvidenceMode({ candidateEvidenceModes: [mode] })).toBe(eligible);
+      expect(isBktQualificationAccepted(result.qualification)).toBe(eligible);
+      if (!eligible) {
+        expect(rejectionCodesOf(result)).toEqual(['INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED']);
+      }
+      // Evidence is recorded either way.
+      expect(result.evidence).not.toBeNull();
     });
   }
+
+  it('never lets a BKT-eligible mode route to contextual-only evidence', () => {
+    // The defect this allowlist fixes: a mode that moves P(L) while emitting
+    // evidence that can never fill a recipe slot.
+    for (const mode of BKT_ELIGIBLE_EVIDENCE_MODES) {
+      const kind = deriveEvidenceKind([mode], responseFacts());
+      expect(CONTEXTUAL_ONLY_KINDS.has(kind), mode).toBe(false);
+    }
+    for (const mode of CandidateEvidenceModeSchema.options.filter(
+      (candidate) => !EXPECTED_ELIGIBILITY[candidate],
+    )) {
+      expect(CONTEXTUAL_ONLY_KINDS.has(deriveEvidenceKind([mode], responseFacts())), mode).toBe(
+        true,
+      );
+    }
+  });
 
   it('closes BKT for the default INSTRUCTIONAL-only permission set', () => {
     expect(hasEligibleEvidenceMode({ candidateEvidenceModes: ['INSTRUCTIONAL'] })).toBe(false);
     expect(hasEligibleEvidenceMode({ candidateEvidenceModes: ['INSTRUCTIONAL', 'TRANSFER'] })).toBe(
       true,
     );
+    // An ineligible mode alongside an eligible one does not close the path, and
+    // an ineligible mode carrying a reasoning operation does not open it.
+    expect(
+      hasEligibleEvidenceMode({ candidateEvidenceModes: ['ENTRY', 'REPAIR_CONFIRMATION'] }),
+    ).toBe(false);
   });
 
   it('classifies a multi-mode binding by its least-credit mode', () => {
@@ -689,6 +746,38 @@ describe('authored artifact normalization', () => {
 
     expect(value.changedDimensions).toEqual([]);
     expect(value.changedDimensionDetail).toBe('unknown variable and direction');
+  });
+
+  it('tags an authored assistance level so it can never be read as a runtime level', () => {
+    for (const [authored, expected] of [
+      ['A0', 'AUTHORED_ASSISTANCE_LEVEL_A0'],
+      ['A1', 'AUTHORED_ASSISTANCE_LEVEL_A1'],
+      ['A2', 'AUTHORED_ASSISTANCE_LEVEL_A2'],
+      ['A3', 'AUTHORED_ASSISTANCE_LEVEL_A3'],
+    ]) {
+      expect(
+        normalizeAuthoredLessonBinding(envelope, { assistance_state: authored }).value
+          .authoredAssistanceAffordances,
+      ).toEqual([expected]);
+    }
+
+    // Genuine affordances survive untouched, including inside a mixed array.
+    expect(
+      normalizeAuthoredLessonBinding(envelope, {
+        assistance_available: ['A2', 'VISIBLE_EXPLANATION', 'NOT_SURE_ALLOWED'],
+      }).value.authoredAssistanceAffordances,
+    ).toEqual(['AUTHORED_ASSISTANCE_LEVEL_A2', 'VISIBLE_EXPLANATION', 'NOT_SURE_ALLOWED']);
+  });
+
+  it('leaves no normalized affordance parseable as an AssistanceLevel', () => {
+    for (const lessonKey of ['assistance_state', 'assistance_available']) {
+      const affordances = normalizeAuthoredLessonBinding(envelope, { [lessonKey]: 'A0' }).value
+        .authoredAssistanceAffordances;
+      expect(Array.isArray(affordances)).toBe(true);
+      for (const affordance of affordances as readonly unknown[]) {
+        expect(AssistanceLevelSchema.safeParse(affordance).success).toBe(false);
+      }
+    }
   });
 
   it('reports author keys it does not map', () => {

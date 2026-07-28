@@ -188,9 +188,30 @@ const renameKeys = (value: unknown, aliases: Readonly<Record<string, string>>): 
   return renamed;
 };
 
-const asOpenStringArray = (value: unknown): unknown => {
-  if (Array.isArray(value)) return value;
-  return typeof value === 'string' ? [value] : undefined;
+/**
+ * An `A0`–`A3` string in an authoring affordance field is an assistance *level*
+ * the author had in mind, not help the item *offers*. Copying it through
+ * verbatim would re-conflate the two facts the contract deliberately separated,
+ * and would leave a value sitting in `authoredAssistanceAffordances` that a
+ * later reader could parse straight back into an `AssistanceLevel` and mistake
+ * for the runtime fact.
+ *
+ * So it is tagged rather than laundered: the authored value is preserved for
+ * audit, the array stays non-empty, and the result can no longer be read as an
+ * `AssistanceLevel` by construction. Only `response.assistanceLevel` ever
+ * decides independence.
+ */
+const AUTHORED_ASSISTANCE_LEVEL_TAG = 'AUTHORED_ASSISTANCE_LEVEL_';
+const AUTHORED_ASSISTANCE_LEVELS: ReadonlySet<string> = new Set(['A0', 'A1', 'A2', 'A3']);
+
+const tagAuthoredAssistanceLevel = (value: unknown): unknown =>
+  typeof value === 'string' && AUTHORED_ASSISTANCE_LEVELS.has(value)
+    ? `${AUTHORED_ASSISTANCE_LEVEL_TAG}${value}`
+    : value;
+
+const normalizeAssistanceAffordances = (value: unknown): unknown => {
+  const entries = Array.isArray(value) ? value : typeof value === 'string' ? [value] : undefined;
+  return entries?.map(tagAuthoredAssistanceLevel);
 };
 
 const normalizeCandidateEvidenceModes = (value: unknown): unknown => {
@@ -286,7 +307,7 @@ export function normalizeAuthoredLessonBinding(
   setIfDefined(
     value,
     'authoredAssistanceAffordances',
-    asOpenStringArray(
+    normalizeAssistanceAffordances(
       pick(raw, 'assistance_available', 'assistance_state', 'authored_assistance_level'),
     ),
   );
