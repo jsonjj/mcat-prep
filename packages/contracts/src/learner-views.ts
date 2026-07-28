@@ -96,6 +96,14 @@ export type StudyPhase = z.infer<typeof StudyPhaseSchema>;
 export const QuestionSubStateSchema = z.enum(['answering', 'cause', 'retry', 'reveal']);
 export type QuestionSubState = z.infer<typeof QuestionSubStateSchema>;
 
+/**
+ * End-of-session summary. `masteryState` is misnamed: it carries the
+ * EVIDENCE-QUALITY tier, not a capability estimate, and the badge it drives is
+ * a statement about the evidence on file. The learner-facing capability number
+ * is `SkillMasteryView.pL`. Renaming the field to `evidenceQuality` — and with
+ * it `MasteryState` in ./vocab.ts — is owed by the `apps/learner-web` follow-up
+ * that renders it (`Study.tsx`, `SkillDetail.tsx`, `@mcat/ui-web` MasteryBadge).
+ */
 export const SessionSummarySchema = z
   .object({
     skillId: z.string().min(1),
@@ -276,26 +284,59 @@ export const EvidenceKindSchema = z.enum([
   'pacing',
 ]);
 
-export const MasteryReasonSchema = z.enum([
+/**
+ * Evidence-WARRANT reason codes: what the evidence behind a skill covers, how
+ * current it is, and what is still missing. None of them states a capability
+ * level or an attainment rank. The `*_ACHIEVED` codes this list replaced were
+ * evidence-ladder ranks worn as learner-facing attainment language, which is
+ * exactly the second mastery scale the seam exists to remove; the capability
+ * claim comes from the BKT estimate (`SkillMasteryView.pL`) and nowhere else.
+ *
+ * MIRROR of `EVIDENCE_REASONS` in `packages/domain/src/reason-codes.ts`, which
+ * is the producer. It cannot be imported: `@mcat/domain` depends on
+ * `@mcat/contracts`, so the reverse import would be a dependency cycle. The two
+ * lists MUST stay member-for-member identical — a divergence means the domain
+ * emits a code this view rejects at the wire boundary. The cross-package parity
+ * assertion belongs in `tests/architecture/`, which may import both.
+ */
+export const EVIDENCE_REASON_CODES = [
   'NO_USEFUL_EVIDENCE',
   'PREREQUISITE_BLOCKED',
-  'DEPENDS_ON_INSTRUCTION',
-  'INDEPENDENT_ACHIEVED',
-  'TRANSFER_ACHIEVED',
-  'RETAINED_ACHIEVED',
-  'STRONG_ACHIEVED',
+  'INSTRUCTIONAL_EVIDENCE_ONLY',
+  'INDEPENDENT_EVIDENCE_SATISFIED',
+  'RETENTION_EVIDENCE_SATISFIED',
+  'STRONG_CONDITIONS_EVIDENCE_SATISFIED',
   'EVIDENCE_STALE',
   'FRESH_FAILURE',
   'CORRECTION_INVALIDATED_EVIDENCE',
-]);
+  'INDEPENDENT_EVIDENCE_GAP',
+  'TRANSFER_EVIDENCE_GAP',
+  'DELAYED_EVIDENCE_GAP',
+  'MIXED_EVIDENCE_GAP',
+  'PASSAGE_EVIDENCE_GAP',
+  'TIMED_EVIDENCE_GAP',
+  'PROTECTED_EVIDENCE_GAP',
+  'EVIDENCE_GAP',
+] as const;
+
+export const EvidenceReasonCodeSchema = z.enum(EVIDENCE_REASON_CODES);
+export type EvidenceReasonCode = z.infer<typeof EvidenceReasonCodeSchema>;
 
 export const DecisionReasonViewSchema = z
   .object({
-    code: MasteryReasonSchema,
+    code: EvidenceReasonCodeSchema,
     detail: z.string().min(1).optional(),
   })
   .strict();
 
+/**
+ * One skill's evidence warrant. `base` is the EVIDENCE-QUALITY tier — which
+ * recipe slots the evidence fills — not a capability estimate and not a mastery
+ * claim; `SkillMasteryView.pL` is the only capability number. The field is still
+ * spelled `base` because `apps/learner-web` reads it; renaming it to
+ * `evidenceQuality` is owed by the UI follow-up that also retires
+ * `BaseMasteryState`.
+ */
 export const MasteryMapEntrySchema = z
   .object({
     skillId: z.string().min(1),

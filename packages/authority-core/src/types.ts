@@ -7,7 +7,14 @@ import type {
   ReasoningOperation,
   UtcTimestamp,
 } from '@mcat/contracts';
-import type { EvidenceRecord, MasterySkillState, Task } from '@mcat/domain';
+import type {
+  DecisionReason,
+  EvidenceKind,
+  EvidenceQualityTier,
+  EvidenceReason,
+  EvidenceRecord,
+  Task,
+} from '@mcat/domain';
 import type { LearnerSafeQuestion } from '@mcat/content';
 import type { GhostView, MemoryState } from '@mcat/policies';
 
@@ -38,16 +45,40 @@ export interface LearnerState {
   mastery?: MasteryEngineState;
 }
 
-/** Per-learner mastery engine state. `P(L)` values are as-of `lastPracticedAt`. */
+/**
+ * Per-learner mastery engine state. `P(L)` values are as-of `lastPracticedAt`.
+ *
+ * Exactly TWO grains hold a directly observed `P(L)`: the primary KC (`kc`) and
+ * the primary reasoning operation (`skill`). A lesson has none — its readout is
+ * rolled up from its required member KCs on read. See
+ * docs/lesson-evidence-mastery-contract.md §8.2 and §9.
+ */
 export interface MasteryEngineState {
-  /** Per-KC P(L) (stored, never displayed; used for selection). */
+  /** Per-KC P(L) (stored, never displayed; used for selection and lesson rollup). */
   kc: Record<string, MemoryState>;
   /** Per-reasoning-operation P(L) (the 7 displayed skills). */
   skill: Partial<Record<ReasoningOperation, MemoryState>>;
-  /** Per-lesson P(L) (drives the Progress brain). */
-  lesson: Record<string, MemoryState>;
   /** Per-CARS-sub-skill IRT ability V. */
   cars: Partial<Record<CarsSkill, number>>;
+  /**
+   * Lessons this learner has practiced, for ROUTING only: they are the default
+   * set of lessons `getMasteryLessons` rolls up. A lesson id never reaches BKT
+   * and never contributes to any `P(L)`.
+   */
+  practicedLessonIds: string[];
+  /**
+   * `QualifiedBktObservation.observationId`s already applied. Re-delivering the
+   * same accepted response MUST NOT move `P(L)` twice
+   * (lesson-evidence-mastery-contract §12).
+   */
+  appliedObservationIds: string[];
+  /**
+   * @deprecated Legacy per-lesson BKT chain. Lessons have no BKT state under the
+   * lesson → evidence → mastery seam, so this is NEVER written. It is declared
+   * only so projections persisted before the seam still deserialize; the kernel
+   * drops it on read (`learnerStateFromProjection`).
+   */
+  lesson?: Record<string, MemoryState>;
 }
 
 export interface DiagnosticSessionState {
@@ -143,7 +174,21 @@ export interface TodayView {
   ghost: GhostView;
 }
 
-export interface MasteryMapEntry extends MasterySkillState {
+/**
+ * One skill's EVIDENCE WARRANT, plus its presentation labels. This is a view of
+ * `SkillEvidenceState` — what the evidence covers and what is missing — not a
+ * capability estimate. `base` is the evidence-quality tier; the learner-facing
+ * capability number is `SkillMasteryView.pL` from the BKT engine.
+ */
+export interface MasteryMapEntry {
+  skillId: string;
+  /** Evidence-quality tier reached. Still named `base` for `apps/learner-web`. */
+  base: EvidenceQualityTier;
+  refreshNeeded: boolean;
+  supportingEvidenceIds: string[];
+  freshestByKind: Partial<Record<EvidenceKind, UtcTimestamp>>;
+  reasons: DecisionReason<EvidenceReason>[];
+  policyVersion: string;
   cluster: string;
   title: string;
 }

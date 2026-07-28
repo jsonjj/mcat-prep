@@ -1,5 +1,6 @@
 import {
   ContentIdSchema,
+  QualifiedBktObservationSchema,
   REASONING_OPERATIONS,
   SKILL_CLUSTERS,
   daysBetween,
@@ -18,6 +19,7 @@ import {
   type MasterySeed,
   type MasteryState,
   type ProbableCause,
+  type QualifiedBktObservation,
   type ReasoningOperation,
   type SkillMasteryView,
   type UtcTimestamp,
@@ -33,17 +35,25 @@ import {
   classifyCapacity,
   computeGhost,
   currentPL,
-  evaluateMastery,
+  evaluateEvidence,
   initialMemoryState,
   isCarsOnTrack,
+  isLessonRollupAvailable,
   MASTERY_THRESHOLD,
   overallCarsReadiness,
   predictedCorrect,
   PRIOR_PL0,
   REVIEW_LINE,
+  rollUpLessonMastery,
+  type LessonRollupResult,
   type MemoryState,
 } from '@mcat/policies';
-import { clusterForLesson, loadSyntheticBank, type LoadedBank } from '@mcat/content';
+import {
+  clusterForLesson,
+  loadSyntheticBank,
+  orderedKcsForLesson,
+  type LoadedBank,
+} from '@mcat/content';
 import type {
   ErrorEntryView,
   LearnerState,
@@ -85,6 +95,24 @@ const ENZYME_PATH: PathActivity[] = [
 
 const ENZYME_SKILL = 'bb1-enzyme-inhibition';
 const ENZYME_LESSON_ID = 'lesson-enz-inhibition';
+
+/**
+ * Evidence item IDs are opaque `LessonItemId`s while bank IDs are global
+ * `ContentId`s (lesson-evidence-mastery-contract §3.9). The two brands are
+ * deliberately not interchangeable, so cross-brand matching is done on the
+ * underlying value, explicitly and in one place.
+ */
+const sameItemId = (a: string, b: string): boolean => a === b;
+
+/** Outcome of applying one `QualifiedBktObservation`. */
+export interface QualifiedBktApplication {
+  /** `duplicate` means the observation was already applied; nothing moved. */
+  status: 'applied' | 'duplicate';
+  observationId: string;
+  /** The two grains this observation targets, echoed for audit. */
+  kcId: string;
+  reasoningOperation: ReasoningOperation;
+}
 
 /**
  * DEV-ONLY adapter: the synthetic bank tags items with the 8 operation templates
@@ -518,74 +546,186 @@ export class Authority {
 
   // ---- Views --------------------------------------------------------------
 
+  /**
+   * The evidence WARRANT per skill: which recipe slots the evidence fills, how
+   * fresh it is, and what is missing. Not a capability estimate — that is
+   * `getMasterySkills`.
+   */
   getMasteryMap(state: LearnerState): MasteryMapEntry[] {
     const now = this.clock.now();
     return this.bank.skillGraph.skills.map((skill) => {
       const records = state.evidence.filter((e) => e.skillId === skill.skillId);
-      const prereqBlocked = this.isPrerequisiteBlocked(state, skill.skillId);
-      const mastery = evaluateMastery({
+      const evidence = evaluateEvidence({
         skillId: skill.skillId,
         records,
         now,
-        prerequisiteBlocked: prereqBlocked,
+        prerequisiteBlocked: this.isPrerequisiteBlocked(state, skill.skillId),
         hasInstruction: records.length > 0,
       });
-      return { ...mastery, cluster: skill.cluster, title: skill.title };
+      return {
+        skillId: evidence.skillId,
+        base: evidence.evidenceQuality,
+        refreshNeeded: evidence.refreshNeeded,
+        supportingEvidenceIds: [...evidence.supportingEvidenceIds],
+        freshestByKind: evidence.freshestByKind,
+        reasons: [...evidence.reasons],
+        policyVersion: evidence.policyVersion,
+        cluster: skill.cluster,
+        title: skill.title,
+      };
     });
   }
 
   // ---- Mastery engine (BKT/IRT, mastery-bkt / provisional-v1) --------------
-  // P(L) replaces the evidence ladder for the learner-facing mastery number.
-  // Runs ONLY for independent attempts; the ladder above still logs evidence.
+  // P(L) is the only learner-facing capability number; the evidence warrant
+  // above is a separate signal. A qualified response moves exactly two grains.
+  // Runs ONLY for independent attempts (fail-closed).
 
   private ensureMastery(state: LearnerState): MasteryEngineState {
-    if (!state.mastery) state.mastery = { kc: {}, skill: {}, lesson: {}, cars: {} };
-    return state.mastery;
+    const existing = state.mastery;
+    if (existing === undefined) {
+      state.mastery = {
+        kc: {},
+        skill: {},
+        cars: {},
+        practicedLessonIds: [],
+        appliedObservationIds: [],
+      };
+      return state.mastery;
+    }
+    // A projection persisted before these fields existed deserializes without
+    // them; backfill rather than trusting the cast.
+    existing.practicedLessonIds ??= [];
+    existing.appliedObservationIds ??= [];
+    return existing;
   }
 
-  /** Derive the mastery grain (KC / 7-op / lesson / DOK) for a bank item. */
-  private masteryTarget(
-    questionId: string,
-    fallbackSkill: string,
-  ): { kcKey: string; op: ReasoningOperation; lessonId: string; dok: number | undefined } {
-    const q = this.bank.questions.find((x) => x.id === questionId);
-    const kcKey = q?.internal_skill_ids[0] ?? fallbackSkill;
-    const op = OPERATION_TAG_TO_REASONING[q?.template_tags[0] ?? 'K'] ?? 'IDENTIFY';
-    return { kcKey, op, lessonId: ENZYME_LESSON_ID, dok: q?.difficulty };
+  /** Record a lesson as practiced. Routing for the rollup only; never a BKT target. */
+  private recordPracticedLesson(m: MasteryEngineState, lessonId: string): void {
+    if (!m.practicedLessonIds.includes(lessonId)) m.practicedLessonIds.push(lessonId);
   }
 
-  /** Apply one independent attempt to the KC / skill / lesson chains (+ prereqs). */
-  private updateMasteryForAttempt(state: LearnerState, questionId: string, correct: boolean): void {
-    const m = this.ensureMastery(state);
-    const target = this.masteryTarget(questionId, state.session?.skillId ?? ENZYME_SKILL);
-    const now = this.clock.now();
-
+  /**
+   * Move the two direct BKT grains, plus the indirect one-hop prerequisite
+   * reinforcement. The single write path for `P(L)`: both the synthetic study
+   * vertical and `applyQualifiedBktObservation` go through it, so neither can
+   * acquire a grain the other does not have.
+   */
+  private stepDirectGrains(
+    m: MasteryEngineState,
+    input: {
+      kcId: string;
+      operation: ReasoningOperation;
+      correct: boolean;
+      now: UtcTimestamp;
+      dokLevel: number | undefined;
+    },
+  ): void {
     const prereqKeys = this.bank.skillGraph.edges
-      .filter((e) => e.kind === 'hard_prerequisite' && e.to === target.kcKey)
+      .filter((e) => e.kind === 'hard_prerequisite' && e.to === input.kcId)
       .map((e) => e.from);
-    const prerequisites = prereqKeys.map((k) => m.kc[k] ?? initialMemoryState());
 
     const result = applyMasteryAttempt({
-      correct,
-      now,
+      correct: input.correct,
+      now: input.now,
       // In-memory dev never crosses the calibration floor, so `b` is DOK-derived.
       questionStats: { attempts: 0, correct: 0 },
-      ...(target.dok !== undefined ? { dokLevel: target.dok } : {}),
+      ...(input.dokLevel !== undefined ? { dokLevel: input.dokLevel } : {}),
       states: {
-        kc: m.kc[target.kcKey] ?? initialMemoryState(),
-        skill: m.skill[target.op] ?? initialMemoryState(),
-        lesson: m.lesson[target.lessonId] ?? initialMemoryState(),
+        kc: m.kc[input.kcId] ?? initialMemoryState(),
+        reasoningOperation: m.skill[input.operation] ?? initialMemoryState(),
       },
-      prerequisites,
+      prerequisites: prereqKeys.map((k) => m.kc[k] ?? initialMemoryState()),
     });
 
-    m.kc[target.kcKey] = result.states.kc;
-    m.skill[target.op] = result.states.skill;
-    m.lesson[target.lessonId] = result.states.lesson;
+    m.kc[input.kcId] = result.states.kc;
+    m.skill[input.operation] = result.states.reasoningOperation;
     prereqKeys.forEach((k, i) => {
       const next = result.prerequisites[i];
       if (next) m.kc[k] = next;
     });
+  }
+
+  /** Derive the two BKT grains (+ DOK) for a synthetic bank item. */
+  private masteryTarget(
+    questionId: string,
+    fallbackSkill: string,
+  ): { kcKey: string; op: ReasoningOperation; dok: number | undefined } {
+    const q = this.bank.questions.find((x) => x.id === questionId);
+    const kcKey = q?.internal_skill_ids[0] ?? fallbackSkill;
+    const op = OPERATION_TAG_TO_REASONING[q?.template_tags[0] ?? 'K'] ?? 'IDENTIFY';
+    return { kcKey, op, dok: q?.difficulty };
+  }
+
+  /** Apply one independent synthetic-path attempt to the two grains (+ prereqs). */
+  private updateMasteryForAttempt(state: LearnerState, questionId: string, correct: boolean): void {
+    const m = this.ensureMastery(state);
+    const target = this.masteryTarget(questionId, state.session?.skillId ?? ENZYME_SKILL);
+    this.stepDirectGrains(m, {
+      kcId: target.kcKey,
+      operation: target.op,
+      correct,
+      now: this.clock.now(),
+      dokLevel: target.dok,
+    });
+    this.recordPracticedLesson(m, ENZYME_LESSON_ID);
+  }
+
+  /**
+   * SERVER-ONLY. Apply one already-qualified lesson response to BKT.
+   *
+   * `observation` is the sole input the BKT engine accepts from a lesson, and it
+   * is re-parsed here through the strict `QualifiedBktObservationSchema`: the
+   * shape has no `independent`, `pL`, `mastered`, `masteryThreshold`,
+   * `evidenceStatus` or `kind` field, so a caller cannot assert any of them and
+   * an unrecognized key is rejected rather than ignored. Qualification itself
+   * (both gates in lesson-evidence-mastery-contract §5) happens upstream in
+   * `adaptLessonResponse`; this method never re-decides it and never manufactures
+   * it.
+   *
+   * Exactly two grains move: `primaryKcId` and `reasoningOperation` (§8.2).
+   * `lessonId` is deliberately NOT part of the observation — it is passed
+   * separately as routing/audit only, recorded so the lesson rollup knows which
+   * lessons to report, and it never influences a `P(L)`.
+   *
+   * Idempotent on `observationId` (§12): a re-delivered accepted response
+   * resolves to `duplicate` and moves nothing.
+   */
+  applyQualifiedBktObservation(
+    state: LearnerState,
+    input: { observation: QualifiedBktObservation; lessonId?: string },
+  ): QualifiedBktApplication {
+    const observation = QualifiedBktObservationSchema.parse(input.observation);
+    const m = this.ensureMastery(state);
+
+    if (input.lessonId !== undefined && input.lessonId.trim().length > 0) {
+      this.recordPracticedLesson(m, input.lessonId.trim());
+    }
+
+    if (m.appliedObservationIds.includes(observation.observationId)) {
+      return {
+        status: 'duplicate',
+        observationId: observation.observationId,
+        kcId: observation.primaryKcId,
+        reasoningOperation: observation.reasoningOperation,
+      };
+    }
+
+    this.stepDirectGrains(m, {
+      kcId: observation.primaryKcId,
+      operation: observation.reasoningOperation,
+      correct: observation.correct,
+      now: observation.occurredAt,
+      dokLevel: observation.dokLevel,
+    });
+    m.appliedObservationIds.push(observation.observationId);
+
+    return {
+      status: 'applied',
+      observationId: observation.observationId,
+      kcId: observation.primaryKcId,
+      reasoningOperation: observation.reasoningOperation,
+    };
   }
 
   private refreshNeeded(st: MemoryState, decayed: number): boolean {
@@ -608,20 +748,54 @@ export class Authority {
     });
   }
 
-  /** Per-lesson mastery for the Evidence Atlas brain nodes on Progress. */
-  getMasteryLessons(state: LearnerState): LessonMasteryView[] {
+  /**
+   * Lesson rollups, with their rejections, for audit and inspection.
+   *
+   * A lesson has no BKT state; each view is derived from the lesson's required
+   * member KCs. The membership comes from `orderedKcsForLesson` — the pinned
+   * curriculum registry — and never from whichever KCs happen to have a state,
+   * because those two differ exactly when the caller is under-supplied.
+   *
+   * Every required KC is therefore supplied EXPLICITLY: a KC the learner has
+   * never practiced is passed as `initialMemoryState()`, not omitted. Omitting
+   * it would make every partly-started lesson fail closed with
+   * `LESSON_KC_STATE_MISSING`, which is the rollup correctly refusing to tell a
+   * complete membership apart from a partial one.
+   *
+   * `lessonIds` defaults to the lessons this learner has practiced. A lesson
+   * with no registry membership yields `status: 'unavailable'` and never a
+   * fabricated number.
+   */
+  getLessonRollups(state: LearnerState, lessonIds?: readonly string[]): LessonRollupResult[] {
     const m = this.ensureMastery(state);
     const now = this.clock.now();
-    return Object.entries(m.lesson).map(([lessonId, st]) => {
-      const pL = currentPL(st, now);
-      return {
-        lessonId,
-        cluster: clusterForLesson(lessonId) ?? null,
-        pL,
-        refreshNeeded: this.refreshNeeded(st, pL),
-        mastered: pL >= MASTERY_THRESHOLD,
-      };
+    const ids = lessonIds ?? m.practicedLessonIds;
+    return ids.map((lessonId) => {
+      const requiredKcIds = orderedKcsForLesson(lessonId);
+      const kcStates: Record<string, MemoryState> = {};
+      for (const kcId of requiredKcIds ?? []) {
+        kcStates[kcId] = m.kc[kcId] ?? initialMemoryState();
+      }
+      return rollUpLessonMastery({ lessonId, requiredKcIds, kcStates, now });
     });
+  }
+
+  /**
+   * Per-lesson readout for the Evidence Atlas brain nodes on Progress, rolled up
+   * from each lesson's required member KCs (see {@link getLessonRollups}). A
+   * lesson whose membership does not resolve is omitted rather than reported as
+   * `0` or as vacuously mastered; `getLessonRollups` carries the reason why.
+   */
+  getMasteryLessons(state: LearnerState, lessonIds?: readonly string[]): LessonMasteryView[] {
+    return this.getLessonRollups(state, lessonIds)
+      .filter(isLessonRollupAvailable)
+      .map(({ view }) => ({
+        lessonId: view.lessonId,
+        cluster: clusterForLesson(view.lessonId) ?? null,
+        pL: view.pL,
+        refreshNeeded: view.reviewDue,
+        mastered: view.mastered,
+      }));
   }
 
   /** CARS readiness (gauge + 3 sub-skill bars). */
@@ -782,7 +956,7 @@ export class Authority {
           chosenChoiceId: ev.payload.chosenChoiceId,
           cause: causeByQuestion.get(qid) ?? null,
           repaired: state.evidence.some(
-            (e) => e.questionId === qid && e.kind === 'diagnostic_retry',
+            (e) => sameItemId(e.questionId, qid) && e.kind === 'diagnostic_retry',
           ),
         });
       }
@@ -815,6 +989,15 @@ export class Authority {
     s.revealed = false;
   }
 
+  /**
+   * A WARRANT gate, not a capability one: a hard prerequisite blocks while the
+   * evidence behind it is absent or foundation-level. Deliberately kept on the
+   * evidence side after the split, because "we have not seen enough of the right
+   * evidence yet" is a different question from "how likely is success right
+   * now?", and a planner gating a high-consequence action should require both an
+   * acceptable `P(L)` (`getMasterySkills`) AND a sufficient warrant. Two signals
+   * consulted together are not a second mastery number.
+   */
   private isPrerequisiteBlocked(state: LearnerState, skillId: string): boolean {
     const hardPrereqs = this.bank.skillGraph.edges
       .filter((e) => e.kind === 'hard_prerequisite' && e.to === skillId)
@@ -822,8 +1005,13 @@ export class Authority {
     if (hardPrereqs.length === 0) return false;
     for (const prereq of hardPrereqs) {
       const records = state.evidence.filter((e) => e.skillId === prereq);
-      const m = evaluateMastery({ skillId: prereq, records, now: this.clock.now() });
-      if (m.base === 'not_assessed' || m.base === 'foundation_needed') return true;
+      const evidence = evaluateEvidence({ skillId: prereq, records, now: this.clock.now() });
+      if (
+        evidence.evidenceQuality === 'not_assessed' ||
+        evidence.evidenceQuality === 'foundation_needed'
+      ) {
+        return true;
+      }
     }
     return false;
   }

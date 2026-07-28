@@ -4,10 +4,13 @@ import { CarsSkillSchema, ReasoningOperationSchema, SkillClusterSchema } from '.
 /**
  * Mastery pipeline DTOs (mastery-bkt / provisional-v1).
  *
- * The engine tracks a probability `P(L)` per unit (KC / 7-skill / lesson) and an
- * IRT ability `V` per CARS sub-skill. These are the learner-safe view/seed shapes
- * that cross the wire. KC-grain `P(L)` is stored but never displayed, so it has no
- * view DTO here. See docs/mastery-pipeline.md.
+ * The engine tracks a probability `P(L)` on exactly two grains — the primary KC
+ * and the primary reasoning operation — plus an IRT ability `V` per CARS
+ * sub-skill. A lesson has no `P(L)` of its own; its view is rolled up from its
+ * required member KCs on read. These are the learner-safe view/seed shapes that
+ * cross the wire. KC-grain `P(L)` is stored but never displayed, so it has no
+ * view DTO here. See docs/mastery-pipeline.md and
+ * docs/lesson-evidence-mastery-contract.md §9.
  */
 
 const Probability = z.number().min(0).max(1);
@@ -57,7 +60,23 @@ export const SkillMasteryViewSchema = z
   .strict();
 export type SkillMasteryView = z.infer<typeof SkillMasteryViewSchema>;
 
-/** Per-lesson mastery used to drive the Evidence Atlas brain nodes on Progress. */
+/**
+ * Per-lesson readout for the Evidence Atlas brain nodes on Progress. Every field
+ * is DERIVED from the lesson's required member KCs by `rollUpLessonMastery`; a
+ * lesson has no BKT state of its own and no lesson observation exists.
+ *
+ * `pL` is the arithmetic MEAN of the members' current (lazily decayed) `P(L)`.
+ * It is a display value, not a probability of lesson mastery, and MUST NOT be
+ * compared against `MASTERY_THRESHOLD` — `mastered` is true only when EVERY
+ * required member KC is individually at or above the threshold, so a high mean
+ * with one weak KC is correctly not mastered. `refreshNeeded` is true when any
+ * previously practiced required KC is due for review. The field keeps the name
+ * `pL` because `apps/learner-web` reads it; renaming it to `meanMemberPL` is
+ * owed by the UI follow-up.
+ *
+ * A lesson whose required-KC membership cannot be resolved emits no entry at
+ * all (fail-closed); it is never reported as `0` or as vacuously mastered.
+ */
 export const LessonMasteryViewSchema = z
   .object({
     lessonId: z.string().min(1),

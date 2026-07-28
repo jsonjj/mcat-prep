@@ -1,5 +1,5 @@
 import type { UtcTimestamp } from '@mcat/contracts';
-import type { DecisionReason, EvidenceReason, MasteryReason } from './reason-codes';
+import type { DecisionReason, EvidenceReason } from './reason-codes';
 import type { EvidenceKind } from './evidence';
 
 /**
@@ -90,27 +90,23 @@ export interface SkillEvidenceState extends EvidenceFreshness {
  * @deprecated Compatibility alias for the pre-reframe ladder type; the name
  * wrongly implies a capability scale. Use `EvidenceQualityTier`.
  * Remaining consumers: `MasterySkillState.base` below, and
- * `apps/learner-web/src/components/{EvidenceAtlas,BrainScene}.tsx`.
+ * `apps/learner-web/src/components/{EvidenceAtlas,BrainScene}.tsx`. Deletable
+ * once the learner-web follow-up reads `EvidenceQualityTier` directly.
  */
 export type BaseMasteryState = EvidenceQualityTier;
 /**
  * @deprecated Compatibility alias. Use `evidenceQualityRank`.
- * Remaining consumers: `packages/authority-core/src/authority.test.ts`,
- * `packages/domain/src/domain.test.ts`, and
- * `apps/learner-web/src/components/{EvidenceAtlas,BrainScene}.tsx`.
+ * Remaining consumers: `packages/domain/src/domain.test.ts` and
+ * `apps/learner-web/src/components/{EvidenceAtlas,BrainScene}.tsx`. Deletable
+ * with the same learner-web follow-up.
  */
 export const baseStateRank = evidenceQualityRank;
-/**
- * @deprecated Compatibility alias. Use `evidenceQualityAdvances`.
- * Remaining consumer: `packages/domain/src/domain.test.ts`.
- */
-export const advances = evidenceQualityAdvances;
 
 /**
  * @deprecated Legacy projection of `SkillEvidenceState` for consumers that still
  * read `base`. It is a view, NOT the definition of mastery — see the BKT engine.
- * Remaining consumers: `packages/authority-core/src/types.ts` (`MasteryMapEntry`)
- * and the `evaluateMastery` wrapper in @mcat/policies.
+ * Sole remaining consumer: the `evaluateMastery` wrapper in @mcat/policies, which
+ * itself now has no production caller. Both go together.
  */
 export interface MasterySkillState {
   skillId: string;
@@ -118,7 +114,7 @@ export interface MasterySkillState {
   refreshNeeded: boolean;
   supportingEvidenceIds: string[];
   freshestByKind: Partial<Record<EvidenceKind, UtcTimestamp>>;
-  reasons: DecisionReason<MasteryReason>[];
+  reasons: DecisionReason<EvidenceReason>[];
   policyVersion: string;
 }
 

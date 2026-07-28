@@ -42,12 +42,30 @@ export function toProjectionRecord(
   };
 }
 
+/**
+ * Drop the legacy per-lesson BKT chain from a persisted projection.
+ *
+ * Lessons stopped having BKT state when the seam split capability from warrant
+ * (docs/lesson-evidence-mastery-contract.md §8.2): a lesson readout is rolled up
+ * from its required member KCs on read. Projections written before that still
+ * carry `mastery.lesson`, and they MUST keep loading — but the map is stale the
+ * moment it is read, so it is discarded here rather than left where a later
+ * reader could mistake it for authoritative. Everything else in `mastery`
+ * (`kc`, `skill`, `cars`, and the routing/idempotency lists) round-trips
+ * untouched.
+ */
+function dropLegacyLessonBkt(state: LearnerState): void {
+  if (state.mastery === undefined) return;
+  delete state.mastery.lesson;
+}
+
 export function learnerStateFromProjection(record: LearnerProjectionRecord): LearnerState {
   const state = structuredClone(record.state) as unknown as LearnerState;
   if (state.learnerId !== record.learnerId) {
     throw forbidden();
   }
   state.nextSequence = record.sequence;
+  dropLegacyLessonBkt(state);
   return state;
 }
 

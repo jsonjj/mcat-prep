@@ -3,6 +3,8 @@ import {
   AcceptedEventSchema,
   AttemptSubmittedSchema,
   ContentIdSchema,
+  DecisionReasonViewSchema,
+  EVIDENCE_REASON_CODES,
   LearnerEventSchema,
   newEventId,
   newIdempotencyKey,
@@ -175,5 +177,52 @@ describe('contracts', () => {
         isAcceptedLessonObservation(AcceptedEventSchema.parse(acceptedLessonObservation)),
       ).toBe(true);
     }
+  });
+});
+
+describe('learner-facing decision reasons', () => {
+  /**
+   * The codes `MasteryReasonSchema` used to enumerate. Every one of them names
+   * an ATTAINMENT RANK from the old evidence ladder, and an attainment rank is a
+   * capability claim. Only the BKT estimate may make a capability claim, so
+   * re-adding any of these — even alongside the evidence codes — restores the
+   * second learner-facing mastery scale the seam exists to remove.
+   */
+  const RETIRED_LADDER_RANK_CODES = [
+    'DEPENDS_ON_INSTRUCTION',
+    'INDEPENDENT_ACHIEVED',
+    'TRANSFER_ACHIEVED',
+    'RETAINED_ACHIEVED',
+    'STRONG_ACHIEVED',
+  ];
+
+  it('rejects every retired ladder-rank code, naming the offending value', () => {
+    for (const code of RETIRED_LADDER_RANK_CODES) {
+      expect(EVIDENCE_REASON_CODES as readonly string[]).not.toContain(code);
+
+      const rejected = DecisionReasonViewSchema.safeParse({ code });
+      expect(rejected.success).toBe(false);
+      const issue = rejected.error?.issues[0];
+      expect(issue?.code).toBe('invalid_enum_value');
+      expect(issue?.path).toEqual(['code']);
+      expect(issue).toMatchObject({ received: code });
+    }
+  });
+
+  it('publishes evidence-warrant vocabulary only — no attainment ranks', () => {
+    for (const code of EVIDENCE_REASON_CODES) {
+      expect(code.endsWith('_ACHIEVED')).toBe(false);
+      expect(DecisionReasonViewSchema.parse({ code })).toEqual({ code });
+    }
+    // Gaps are the point of the vocabulary: they say what is missing, which no
+    // rank can express.
+    expect(EVIDENCE_REASON_CODES.filter((code) => code.endsWith('_GAP')).length).toBeGreaterThan(0);
+  });
+
+  it('rejects an unrecognized code instead of passing it through', () => {
+    expect(DecisionReasonViewSchema.safeParse({ code: 'SOMETHING_NEW' }).success).toBe(false);
+    expect(DecisionReasonViewSchema.safeParse({ code: 'EVIDENCE_GAP', extra: 'x' }).success).toBe(
+      false,
+    );
   });
 });

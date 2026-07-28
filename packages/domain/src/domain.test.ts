@@ -9,7 +9,7 @@ import {
 } from '@mcat/contracts';
 import { scoreAttempt } from './scoring';
 import { findHardPrerequisiteCycle, SkillDefinitionSchema, type SkillGraph } from './skill-graph';
-import { advances, baseStateRank } from './mastery';
+import { baseStateRank, evidenceQualityAdvances } from './mastery';
 import { EvidenceRecordSchema, isMasteryEligible } from './evidence';
 import { adaptLessonResponse } from './lesson-response-adapter';
 
@@ -151,10 +151,10 @@ describe('mastery invariants', () => {
     ).toBe(false);
   });
 
-  it('orders base states', () => {
+  it('orders evidence-quality tiers', () => {
     expect(baseStateRank('strong')).toBeGreaterThan(baseStateRank('independent'));
-    expect(advances('learning', 'retained')).toBe(true);
-    expect(advances('strong', 'independent')).toBe(false);
+    expect(evidenceQualityAdvances('learning', 'retained')).toBe(true);
+    expect(evidenceQualityAdvances('strong', 'independent')).toBe(false);
   });
 
   it('never treats contextual-only or assisted evidence as mastery-eligible', () => {
@@ -207,7 +207,12 @@ describe('lesson-sourced evidence stays compatible with the existing evidence mo
         revealUsed: false,
         occurredAt: '2026-07-20T12:00:00.000Z',
       }),
-      scoring: { scoringValid: true, serverItemVersion: 3, outcome: 'correct' },
+      scoring: {
+        scoringValid: true,
+        serverItemVersion: 3,
+        outcome: 'correct',
+        protectedScoring: false,
+      },
       identity: {
         observationId: '22222222-2222-4222-8222-222222222221',
         eventId: EventIdSchema.parse('22222222-2222-4222-8222-222222222222'),

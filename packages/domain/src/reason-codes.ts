@@ -25,6 +25,13 @@ export type PlannerReason = (typeof PLANNER_REASONS)[number];
  * Evidence-warrant reasons. These audit the QUALITY, CURRENCY and GAPS of a
  * skill's evidence; none of them declares a capability level. The learner-facing
  * mastery claim comes from the BKT estimate in @mcat/policies, not from here.
+ *
+ * `EVIDENCE_REASON_CODES` in `packages/contracts/src/learner-views.ts` MIRRORS
+ * this list member-for-member so `DecisionReasonViewSchema` can validate it at
+ * the wire boundary. It cannot import this module — @mcat/domain depends on
+ * @mcat/contracts, so the reverse import would be a cycle. Adding a member here
+ * without adding it there makes the view reject a code this policy emits;
+ * `packages/authority-core/src/authority.test.ts` asserts the two are equal.
  */
 export const EVIDENCE_REASONS = [
   'NO_USEFUL_EVIDENCE',
@@ -46,12 +53,6 @@ export const EVIDENCE_REASONS = [
   'EVIDENCE_GAP',
 ] as const;
 export type EvidenceReason = (typeof EVIDENCE_REASONS)[number];
-
-/**
- * @deprecated Compatibility alias. Use `EvidenceReason`.
- * Remaining consumer: `MasterySkillState.reasons` in ./mastery.ts.
- */
-export type MasteryReason = EvidenceReason;
 
 export const ASSISTANCE_REASONS = [
   'FADE_AFTER_SUCCESS',
