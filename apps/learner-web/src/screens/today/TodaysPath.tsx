@@ -101,7 +101,7 @@ export function TodaysPath() {
   const current = activities.find((a) => a.activityId === view?.currentActivityId) ?? null;
   const completedCount = activities.filter((a) => a.status === 'complete').length;
   const remainingMinutes = activities
-    .filter((a) => a.status !== 'complete' && a.status !== 'skipped')
+    .filter((a) => a.status === 'ready' || a.status === 'in_progress')
     .reduce((sum, a) => sum + a.estimatedMinutes, 0);
   const allDone = activities.length > 0 && current === null;
 
@@ -211,7 +211,13 @@ export function TodaysPath() {
                   </div>
                   <div className="mc-plan__rowactions">
                     <span className={`mc-pill ${done ? 'mc-pill--ok' : ''}`}>
-                      {done ? 'Done' : isCurrent ? 'Up next' : 'Locked'}
+                      {done
+                        ? 'Done'
+                        : a.status === 'snoozed'
+                          ? 'Tomorrow'
+                          : isCurrent
+                            ? 'Up next'
+                            : 'Locked'}
                     </span>
                   </div>
                 </div>
@@ -220,6 +226,13 @@ export function TodaysPath() {
           })}
         </Stack>
       </section>
+
+      {view && view.freeStudyMinutes > 0 ? (
+        <Callout tone="info" title="Free study (optional)">
+          ~{view.freeStudyMinutes} min of your budget is unscheduled. Practice is sized to what you
+          actually need to review — spend the rest however you like, or bank the time.
+        </Callout>
+      ) : null}
 
       <Callout tone="info">
         Today’s Path orchestrates your other tools — it never scores mastery itself. Practice moves

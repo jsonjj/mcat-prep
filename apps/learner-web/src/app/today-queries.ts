@@ -38,6 +38,10 @@ export function buildCandidateLessons(): CandidateLessonInput[] {
     section: sectionForSubject(script.subject),
     cluster: null,
     kcCount: script.requiredKcs.length,
+    kcIds: script.requiredKcs.map((kc) => kc.id),
+    // Empty until the authored prerequisite map is provided; the engine is ready to
+    // honor it (unlock-gating, prereqs-first, score-by-downstream) as soon as it is.
+    prerequisiteLessonIds: [],
     estimatedMinutes: script.estimatedMinutes,
   }));
 }
@@ -90,6 +94,16 @@ export function useSetDailyBudget() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (minutesPerDay: number) => authority.setDailyBudget(minutesPerDay),
+    onSuccess: () =>
+      Promise.all(TODAYS_PATH_INVALIDATE.map((k) => qc.invalidateQueries({ queryKey: [k] }))),
+  });
+}
+
+/** Increment the count-only mistake tally (independent miss from a source). */
+export function useRecordMistake() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (source: 'practice' | 'cars' | 'lesson') => authority.recordMistake(source),
     onSuccess: () =>
       Promise.all(TODAYS_PATH_INVALIDATE.map((k) => qc.invalidateQueries({ queryKey: [k] }))),
   });

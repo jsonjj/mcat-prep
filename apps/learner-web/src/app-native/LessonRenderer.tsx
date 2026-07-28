@@ -56,6 +56,8 @@ interface LessonRendererProps {
    * and return to the plan with React Router state intact.
    */
   readonly onComplete?: () => void;
+  /** Fired on a first wrong answer to an independent-stage question (count-only mistake signal). */
+  readonly onIndependentMiss?: (questionId: string, chosenOptionId: string) => void;
 }
 
 const GROUP_LABELS: Record<LessonPresentationScreenPreview['progressGroup'], string> = {
@@ -1029,6 +1031,7 @@ export function LessonRenderer({
   presentation,
   lessonIndexHref,
   onComplete,
+  onIndependentMiss,
 }: LessonRendererProps) {
   useMemo(() => validateLessonPreviewPair(script, presentation), [presentation, script]);
   const [runtime, setRuntime] = useState<LessonPreviewRuntime>(() => readRuntime(script));
@@ -1095,11 +1098,17 @@ export function LessonRenderer({
     ) {
       return;
     }
-    updateResponse({
-      ...response,
-      submitted: true,
-      correct: response.selectedOptionId === currentNode.evaluation.correctOptionId,
-    });
+    const correct = response.selectedOptionId === currentNode.evaluation.correctOptionId;
+    updateResponse({ ...response, submitted: true, correct });
+    // A first wrong answer at an independent stage is an independent miss (count-only
+    // signal for Today's Path; no mistake content is stored here).
+    const independentStage =
+      currentNode.stage === 'independent' ||
+      currentNode.stage === 'exit-near' ||
+      currentNode.stage === 'exit-changed';
+    if (!correct && independentStage) {
+      onIndependentMiss?.(currentNode.id, response.selectedOptionId);
+    }
   };
 
   const continueLesson = () => {

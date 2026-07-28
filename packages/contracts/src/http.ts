@@ -23,6 +23,7 @@ import {
   BuildTodaysPathCommandSchema,
   DailyBudgetCommandSchema,
   PlanActivityProgressCommandSchema,
+  RecordMistakeCommandSchema,
   TodaysPathViewSchema,
 } from './todays-path';
 import { UtcTimestampSchema } from './time';
@@ -98,6 +99,12 @@ export const HTTP_API = {
     method: 'PUT',
     path: '/v1/profile/daily-budget',
     body: DailyBudgetCommandSchema,
+    response: AcceptedCommandResponseSchema,
+  },
+  recordMistake: {
+    method: 'POST',
+    path: '/v1/mistakes',
+    body: RecordMistakeCommandSchema,
     response: AcceptedCommandResponseSchema,
   },
   session: { method: 'GET', path: '/v1/learning/session', response: StudyStepViewSchema },

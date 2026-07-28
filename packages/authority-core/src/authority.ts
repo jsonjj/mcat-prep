@@ -398,6 +398,15 @@ export class Authority {
         : { ...state.goal, dailyMinutesPreset: minutesPerDay };
   }
 
+  /**
+   * Increment the COUNT-ONLY open-mistake tally (independent misses from Practice /
+   * CARS / Lessons). We deliberately store no mistake content — that's the mistakes
+   * section's job; the count only decides when to schedule/inject a Mistakes session.
+   */
+  recordMistake(state: LearnerState, _source?: string): void {
+    state.mistakeCount = (state.mistakeCount ?? 0) + 1;
+  }
+
   /** Read the current day's plan (built:false when none exists for today yet). */
   getTodaysPath(state: LearnerState): TodaysPathView {
     return this.todaysPathView(state);
@@ -434,12 +443,14 @@ export class Authority {
       dailyMinutesPreset: preset,
       dailyBudgetMinutes: result.dailyBudgetMinutes,
       plannedMinutes: result.plannedMinutes,
+      freeStudyMinutes: result.freeStudyMinutes,
       reviewSharePct: result.reviewSharePct,
       reviewDebtBand: result.reviewDebtBand,
       version: (state.plan?.version ?? 0) + 1,
       generatedAt: now,
       currentActivityId: activities[0]?.activityId ?? null,
       activities,
+      mistakesSessions: activities.filter((a) => a.kind === 'review_mistakes').length,
     };
     return this.todaysPathView(state);
   }
@@ -455,19 +466,76 @@ export class Authority {
     const activity = plan.activities.find((a) => a.activityId === activityId);
     if (!activity) return;
     activity.status = status;
-    if (status === 'complete' && activity.kind === 'lesson' && activity.lessonId !== null) {
-      const done = new Set(state.completedLessons ?? []);
-      done.add(activity.lessonId);
-      state.completedLessons = [...done];
+    if (status === 'complete') {
+      if (activity.kind === 'lesson' && activity.lessonId !== null) {
+        const done = new Set(state.completedLessons ?? []);
+        done.add(activity.lessonId);
+        state.completedLessons = [...done];
+      }
+      // Completing a Mistakes session clears the (count-only) open tally — the real
+      // repair runner will replace this placeholder resolution later.
+      if (activity.kind === 'review_mistakes') state.mistakeCount = 0;
     }
+    // Dynamic: if independent misses have piled up during the day, inject a Mistakes
+    // session as the next step and push the last still-ready activity to tomorrow.
+    this.maybeInjectMistakesSession(plan, state.mistakeCount ?? 0);
     const next = plan.activities.find((a) => a.status === 'ready' || a.status === 'in_progress');
     plan.currentActivityId = next?.activityId ?? null;
+  }
+
+  private static readonly MISTAKES_SESSION_THRESHOLD = 5;
+
+  /** Inject a Mistakes session mid-day when enough misses pile up (bumps the last item to tomorrow). */
+  private maybeInjectMistakesSession(plan: TodaysPathState, openMistakes: number): void {
+    if (openMistakes < Authority.MISTAKES_SESSION_THRESHOLD) return;
+    const cap = plan.dailyBudgetMinutes >= TODAYS_PATH_CONFIG.carsSecondAtBudget ? 3 : 2;
+    if (plan.mistakesSessions >= cap) return;
+    // Don't stack a second while one is still pending.
+    if (
+      plan.activities.some(
+        (a) => a.kind === 'review_mistakes' && (a.status === 'ready' || a.status === 'in_progress'),
+      )
+    ) {
+      return;
+    }
+    const count = Math.min(openMistakes, TODAYS_PATH_CONFIG.blocks.mistakesMax);
+    const minutes = Math.min(
+      count * TODAYS_PATH_CONFIG.costs.mistakePerItem,
+      TODAYS_PATH_CONFIG.maxActivityMinutes,
+    );
+    const session: TodaysPathActivityState = {
+      activityId: `review-mistakes:${plan.mistakesSessions + 1}`,
+      kind: 'review_mistakes',
+      title: 'Review Mistakes',
+      detail: `${count} mistake${count === 1 ? '' : 's'} piled up today — clear them before they stack.`,
+      estimatedMinutes: minutes,
+      count,
+      minutesBudget: null,
+      focus: null,
+      lessonSlug: null,
+      lessonId: null,
+      priorityReason: 'UNRESOLVED_ERROR',
+      status: 'ready',
+      carriedOver: false,
+    };
+    // Bump the LAST still-ready activity to tomorrow so the day stays within budget.
+    for (let i = plan.activities.length - 1; i >= 0; i -= 1) {
+      if (plan.activities[i]!.status === 'ready') {
+        plan.activities[i]!.status = 'snoozed';
+        break;
+      }
+    }
+    // Insert the session as the next up (before the first remaining ready item).
+    const firstReadyIdx = plan.activities.findIndex((a) => a.status === 'ready');
+    const insertAt = firstReadyIdx === -1 ? plan.activities.length : firstReadyIdx;
+    plan.activities.splice(insertAt, 0, session);
+    plan.mistakesSessions += 1;
   }
 
   private carryOverFrom(prev: TodaysPathState | null, planDate: string): CarriedActivity[] {
     if (!prev || prev.planDate === planDate) return [];
     return prev.activities
-      .filter((a) => a.status === 'ready' || a.status === 'in_progress')
+      .filter((a) => a.status === 'ready' || a.status === 'in_progress' || a.status === 'snoozed')
       .map((a) => ({
         activityId: a.activityId,
         kind: a.kind,
@@ -497,10 +565,34 @@ export class Authority {
         .map((l) => l.lessonId),
     );
     const completed = new Set(state.completedLessons ?? []);
-    const skills = this.getMasterySkills(state);
-    const meanPL = skills.length > 0 ? skills.reduce((s, x) => s + x.pL, 0) / skills.length : PRIOR_PL0;
-    const practiceWeakness = Math.max(0, Math.min(1, 1 - meanPL));
-    const mistakesOpen = this.getErrorLog(state).filter((e) => !e.repaired).length;
+    const now = this.clock.now();
+    const done = (id: string): boolean => completed.has(id) || masteredLessonIds.has(id);
+
+    // Prereq pipeline (ready for the authored map): unlocked = all prereqs done;
+    // dependentsCount = how many candidates list this lesson as a prerequisite.
+    const dependents = new Map<string, number>();
+    for (const l of input.candidateLessons) {
+      for (const p of l.prerequisiteLessonIds) dependents.set(p, (dependents.get(p) ?? 0) + 1);
+    }
+
+    // Per-KC teach-before-test: taught KCs = union of completed lessons' KCs.
+    const taughtKcIds = new Set<string>();
+    for (const l of input.candidateLessons) {
+      if (done(l.lessonId)) for (const kc of l.kcIds) taughtKcIds.add(kc);
+    }
+    state.taughtKcIds = [...taughtKcIds];
+
+    // Practice unlocks after N completed lessons; sized to review need (# taught KCs
+    // not yet mastered), bounded — not budget-fill.
+    const practiceUnlocked = completed.size >= TODAYS_PATH_CONFIG.practiceUnlockLessons;
+    let practiceReviewNeed = 0;
+    if (practiceUnlocked) {
+      for (const kc of taughtKcIds) {
+        const st = state.mastery?.kc[kc];
+        const pL = st ? currentPL(st, now) : PRIOR_PL0;
+        if (pL < MASTERY_THRESHOLD) practiceReviewNeed += 1;
+      }
+    }
 
     const candidateLessons: TodaysPathCandidateLesson[] = input.candidateLessons.map((l) => ({
       lessonId: l.lessonId,
@@ -511,6 +603,8 @@ export class Authority {
       kcCount: l.kcCount,
       mastered: masteredLessonIds.has(l.lessonId) || completed.has(l.lessonId),
       covered: l.cluster !== null && ctx.clustersWithEvidence.has(l.cluster),
+      unlocked: l.prerequisiteLessonIds.every((p) => done(p)),
+      dependentsCount: dependents.get(l.lessonId) ?? 0,
     }));
 
     return {
@@ -520,9 +614,9 @@ export class Authority {
       totalDays: ctx.totalDays,
       coveragePct: ctx.coveragePct,
       recall: input.recallLoad,
-      mistakesOpen,
-      practiceAvailable: state.onboarding.planConfirmed,
-      practiceWeakness,
+      mistakesOpen: state.mistakeCount ?? 0,
+      practiceUnlocked,
+      practiceReviewNeed,
       candidateLessons,
       carryOver,
     };
@@ -547,6 +641,7 @@ export class Authority {
         reviewDebtBand: 'normal',
         activities: [],
         currentActivityId: null,
+        freeStudyMinutes: 0,
         ghost: ctx.ghost,
       };
     }
@@ -577,6 +672,7 @@ export class Authority {
         carriedOver: a.carriedOver,
       })),
       currentActivityId: plan.currentActivityId,
+      freeStudyMinutes: plan.freeStudyMinutes,
       ghost: ctx.ghost,
     };
   }
@@ -1032,6 +1128,9 @@ export class Authority {
       }
       await this.practiceBank.recordAttempt(cmd.questionId, correct, now);
       await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
+      // A first, unassisted (independent) miss increments the mistake count for the
+      // Today's Path mistakes-session scheduler (count only — no item stored here).
+      if (!correct) this.recordMistake(state, 'practice');
       if (!correct && classification?.domain === 'science' && classification.kcId !== null) {
         await this.practiceBank.queueRepair(
           state.learnerId,
@@ -1099,8 +1198,17 @@ export class Authority {
       });
     }
 
+    // Per-KC teach-before-test: only serve KCs the learner has been taught (union of
+    // completed lessons' KCs, cached at plan-build). Falls back to unfiltered when the
+    // taught set doesn't intersect the loaded bank (e.g. dev synthetic bank) so local
+    // practice still works.
+    const taught =
+      state.taughtKcIds && state.taughtKcIds.length > 0 ? new Set(state.taughtKcIds) : null;
+    const taughtUnits = taught ? scienceUnits.filter((u) => taught.has(u.kcId)) : scienceUnits;
+    const scopedUnits = taughtUnits.length > 0 ? taughtUnits : scienceUnits;
+
     return {
-      units: scienceUnits,
+      units: scopedUnits,
       cars: carsUnits,
       repairs: repairs.map((r) => (r.skill ? { kcId: r.kcId, skill: r.skill } : { kcId: r.kcId })),
       coveredClusters: covered,
@@ -1249,9 +1357,17 @@ export class Authority {
         ['argument', 'RWT'],
         ['application', 'RBT'],
       ];
+      const scores: number[] = [];
       for (const [criterion, skill] of map) {
         const score = rubric[criterion];
-        if (score !== undefined) this.updateCarsAbility(state, skill, score / 3, CARS_K_DUEL);
+        if (score !== undefined) {
+          this.updateCarsAbility(state, skill, score / 3, CARS_K_DUEL);
+          scores.push(score);
+        }
+      }
+      // A "failed" duel (mean rubric < 2 of 3) counts toward the mistake tally.
+      if (scores.length > 0 && scores.reduce((a, b) => a + b, 0) / scores.length < 2) {
+        this.recordMistake(state, 'cars');
       }
     }
   }

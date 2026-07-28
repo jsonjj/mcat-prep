@@ -45,6 +45,14 @@ export interface LearnerState {
   completedLessons?: string[];
   /** Learner timezone (Date.getTimezoneOffset(), UTC−local minutes) for the local day boundary. */
   timezoneOffsetMinutes?: number;
+  /**
+   * COUNT-ONLY open mistakes (independent misses from Practice / CARS / Lessons).
+   * Used only to decide when to schedule/inject a Mistakes session; the actual
+   * mistake items are owned by the (future) mistakes section.
+   */
+  mistakeCount?: number;
+  /** KC ids the learner has been taught (union of completed lessons' KCs) — per-KC teach-before-test. */
+  taughtKcIds?: string[];
 }
 
 /** One scheduled activity plus its per-learner run status (persisted). */
@@ -58,12 +66,15 @@ export interface TodaysPathState {
   dailyMinutesPreset: number;
   dailyBudgetMinutes: number;
   plannedMinutes: number;
+  freeStudyMinutes: number;
   reviewSharePct: number;
   reviewDebtBand: ReviewDebtBand;
   version: number;
   generatedAt: UtcTimestamp;
   currentActivityId: string | null;
   activities: TodaysPathActivityState[];
+  /** How many mistakes sessions have been added to this day's plan (cap 2–3). */
+  mistakesSessions: number;
 }
 
 /** Per-learner mastery engine state. `P(L)` values are as-of `lastPracticedAt`. */

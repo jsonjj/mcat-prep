@@ -54,6 +54,8 @@ export interface AuthorityPort {
   ): Promise<void>;
   /** Today's Path: set the daily time-budget preset (a 2–6 hr preset, in minutes). */
   setDailyBudget(minutesPerDay: number): Promise<void>;
+  /** Today's Path: increment the count-only mistake tally (independent miss from a source). */
+  recordMistake(source: 'practice' | 'cars' | 'lesson'): Promise<void>;
   getSession(): Promise<StudyStepView>;
   submitAttempt(choiceId: string | null): Promise<void>;
   selectCause(cause: ProbableCause): Promise<void>;

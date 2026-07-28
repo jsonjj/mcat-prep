@@ -107,6 +107,10 @@ export class InProcessAuthorityClient implements AuthorityPort {
     this.mutate((state) => this.authority.setDailyBudget(state, minutesPerDay));
   }
 
+  async recordMistake(source: 'practice' | 'cars' | 'lesson'): Promise<void> {
+    this.mutate((state) => this.authority.recordMistake(state, source));
+  }
+
   async getSession() {
     return StudyStepViewSchema.parse(this.mutate((state) => this.authority.getSession(state)));
   }

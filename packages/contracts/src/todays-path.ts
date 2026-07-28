@@ -29,7 +29,14 @@ export const PlanActivityKindSchema = z.enum([
 ]);
 export type PlanActivityKind = z.infer<typeof PlanActivityKindSchema>;
 
-export const PlanActivityStatusSchema = z.enum(['ready', 'in_progress', 'complete', 'skipped']);
+export const PlanActivityStatusSchema = z.enum([
+  'ready',
+  'in_progress',
+  'complete',
+  'skipped',
+  // Bumped to tomorrow when a dynamic Mistakes session displaces the last item.
+  'snoozed',
+]);
 export type PlanActivityStatus = z.infer<typeof PlanActivityStatusSchema>;
 
 /** How full the recall review queue is relative to the day — drives new-work throttling. */
@@ -75,10 +82,24 @@ export const TodaysPathViewSchema = z
     reviewDebtBand: ReviewDebtBandSchema,
     activities: z.array(PlanActivityViewSchema),
     currentActivityId: z.string().min(1).nullable(),
+    /** Leftover budget after the (bounded) plan — offered as optional free study, not required. */
+    freeStudyMinutes: z.number().int().nonnegative(),
     ghost: GhostViewSchema,
   })
   .strict();
 export type TodaysPathView = z.infer<typeof TodaysPathViewSchema>;
+
+/** Source of an independent miss that increments the (count-only) mistake tally. */
+export const MistakeSourceSchema = z.enum(['practice', 'cars', 'lesson']);
+export type MistakeSource = z.infer<typeof MistakeSourceSchema>;
+
+export const RecordMistakeCommandSchema = z
+  .object({
+    envelope: CommandEnvelopeSchema,
+    source: MistakeSourceSchema,
+  })
+  .strict();
+export type RecordMistakeCommand = z.infer<typeof RecordMistakeCommandSchema>;
 
 /** Recall load the client reads from its (client-side) FSRS store and feeds up. */
 export const RecallLoadInputSchema = z
@@ -106,6 +127,14 @@ export const CandidateLessonInputSchema = z
     section: z.string().min(1).nullable(),
     cluster: z.string().min(1).nullable(),
     kcCount: z.number().int().nonnegative(),
+    /** KC ids this lesson teaches (drives per-KC teach-before-test for Practice). */
+    kcIds: z.array(z.string().min(1)),
+    /**
+     * Lesson ids that must be COMPLETED before this one unlocks. Empty today;
+     * populated once the authored prerequisite map is provided (the pipeline is
+     * ready to honor it: only-unlocked, prereqs-first, score-by-downstream).
+     */
+    prerequisiteLessonIds: z.array(z.string().min(1)),
     estimatedMinutes: z.number().int().positive(),
   })
   .strict();

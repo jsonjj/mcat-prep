@@ -80,6 +80,12 @@ export interface TodaysPathConfig {
   /** Provisional per-section exam weight (blueprint proxy). */
   readonly sectionExamWeight: Readonly<Record<string, number>>;
   readonly defaultExamWeight: number;
+  /** Practice unlocks only after this many lessons are completed. */
+  readonly practiceUnlockLessons: number; // 3
+  /** Practice is sized to review need: ~this many questions per weak/overdue taught KC. */
+  readonly questionsPerReviewKc: number; // 2
+  /** A 2nd CARS Duel is added on presets at/above this many minutes. */
+  readonly carsSecondAtBudget: number; // 240 (4 hr)
 }
 
 export const TODAYS_PATH_CONFIG: TodaysPathConfig = {
@@ -110,6 +116,9 @@ export const TODAYS_PATH_CONFIG: TodaysPathConfig = {
   perRepeatDecay: 0.8,
   sectionExamWeight: { bb: 1.0, cp: 0.92, ps: 0.85, cars: 0.8 },
   defaultExamWeight: 0.7,
+  practiceUnlockLessons: 3,
+  questionsPerReviewKc: 2,
+  carsSecondAtBudget: 240,
 };
 
 export type TodaysPathActivityKind =
@@ -136,10 +145,14 @@ export interface TodaysPathCandidateLesson {
   readonly section: string | null;
   readonly cluster: string | null;
   readonly kcCount: number;
-  /** True when this lesson's P(L) has already crossed the mastery threshold. */
+  /** True when this lesson's P(L) has already crossed the mastery threshold (or was completed). */
   readonly mastered: boolean;
   /** True when the lesson's cluster already has evidence (coverage). */
   readonly covered: boolean;
+  /** All prerequisite lessons are complete (authority-computed). Locked lessons are never offered. */
+  readonly unlocked: boolean;
+  /** How many other candidate lessons this one unlocks (downstream dependents) — drives "how much it unlocks". */
+  readonly dependentsCount: number;
 }
 
 /** An activity carried over from a prior day (unfinished), reserved before new planning. */
@@ -165,10 +178,12 @@ export interface TodaysPathSnapshot {
   /** 0..1 curriculum coverage (clusters with evidence / all clusters). Drives the phase tilt. */
   readonly coveragePct: number;
   readonly recall: TodaysPathRecallLoad;
+  /** Count-only open mistakes (past days); the mistakes section owns the actual items. */
   readonly mistakesOpen: number;
-  readonly practiceAvailable: boolean;
-  /** 0..1 aggregate weakness of taught material (higher = more worth practicing). */
-  readonly practiceWeakness: number;
+  /** Practice is unlocked once enough lessons are completed (teach-before-test gate). */
+  readonly practiceUnlocked: boolean;
+  /** Number of already-taught KCs that are weak/overdue — Practice is sized to this, not the budget. */
+  readonly practiceReviewNeed: number;
   readonly candidateLessons: readonly TodaysPathCandidateLesson[];
   readonly carryOver: readonly CarriedActivity[];
 }
@@ -192,6 +207,8 @@ export interface TodaysPathResult {
   readonly planDate: string;
   readonly dailyBudgetMinutes: number;
   readonly plannedMinutes: number;
+  /** Leftover budget offered as optional free study (practice is bounded to review need). */
+  readonly freeStudyMinutes: number;
   readonly reviewSharePct: number;
   readonly reviewDebtBand: ReviewDebtBand;
   readonly activities: readonly PlannedActivity[];
@@ -299,8 +316,10 @@ export function scoreLesson(
   const examWeight =
     (lesson.section !== null ? cfg.sectionExamWeight[lesson.section.toLowerCase()] : undefined) ??
     cfg.defaultExamWeight;
-  // How much it unlocks: KC count as a proxy (real DAG unlock-count is thin today).
-  const unlock = clamp01(lesson.kcCount / 6);
+  // How much it unlocks: real downstream-dependent count when the prereq map is
+  // present; falls back to KC count as a proxy until then.
+  const unlock =
+    lesson.dependentsCount > 0 ? clamp01(lesson.dependentsCount / 4) : clamp01(lesson.kcCount / 6);
   // Coverage/deadline urgency: uncovered clusters climb as test day nears.
   const pressure = snap.totalDays !== null ? clamp01(snap.dayNumber / snap.totalDays) : 0.3;
   const coverageUrgency = (lesson.covered ? 0.4 : 1.0) * (0.6 + 0.4 * pressure);
@@ -340,23 +359,28 @@ export function buildTodaysPath(
   const coreActivities: PlannedActivity[] = [];
   let spent = 0;
 
-  // CARS Duel — every day, fixed cost, placed mid later.
-  if (!carriedKinds.has('cars_duel') && spent + cfg.costs.carsDuel <= budgetForNew) {
-    coreActivities.push({
-      activityId: 'cars-duel',
-      kind: 'cars_duel',
-      title: 'CARS Duel',
-      detail: 'Sharpen reasoning against an AI sparring partner (formative — never mastery).',
-      estimatedMinutes: cfg.costs.carsDuel,
-      count: null,
-      minutesBudget: null,
-      focus: null,
-      lessonSlug: null,
-      lessonId: null,
-      priorityReason: 'CARS_CONTACT',
-      carriedOver: false,
-    });
-    spent += cfg.costs.carsDuel;
+  // CARS Duel — every day (1 near the middle; a 2nd on longer presets, ordered at
+  // ~1/3 and ~2/3). Fixed cost; placement handled in orderActivities.
+  if (!carriedKinds.has('cars_duel')) {
+    const carsWanted = snap.dailyBudgetMinutes >= cfg.carsSecondAtBudget ? 2 : 1;
+    for (let c = 0; c < carsWanted; c += 1) {
+      if (spent + cfg.costs.carsDuel > budgetForNew) break;
+      coreActivities.push({
+        activityId: carsWanted === 1 ? 'cars-duel' : `cars-duel:${c + 1}`,
+        kind: 'cars_duel',
+        title: 'CARS Duel',
+        detail: 'Sharpen reasoning against an AI sparring partner (formative — never mastery).',
+        estimatedMinutes: cfg.costs.carsDuel,
+        count: null,
+        minutesBudget: null,
+        focus: null,
+        lessonSlug: null,
+        lessonId: null,
+        priorityReason: 'CARS_CONTACT',
+        carriedOver: false,
+      });
+      spent += cfg.costs.carsDuel;
+    }
   }
 
   // Recall — near the beginning; sized by due-volume/debt.
@@ -405,106 +429,67 @@ export function buildTodaysPath(
     spent += core.mistakesMinutes;
   }
 
-  // --- Fill the scored block by value-per-minute (phase tilt + diminishing returns). ---
-  const phase = clamp01(snap.coveragePct); // 0 early → 1 late
-  const lessonTilt = 1 - 0.5 * phase; // new lessons weighted early
-  const practiceTilt = 0.5 + 0.5 * phase; // reinforcement weighted late
+  // --- Scored block: NEW lessons first (prioritized), then BOUNDED practice. ---
+  // Practice is sized to real review need (weak/overdue taught KCs), NOT to fill the
+  // budget; leftover time becomes optional "free study". Early days skew to new
+  // lessons (little taught yet → little to review); as coverage grows and new lessons
+  // deplete, practice naturally takes over.
   const lessonCap = newLessonCapFor(band, snap.dailyBudgetMinutes, cfg);
   const practiceMaxQ = practiceMaxQFor(snap.dailyBudgetMinutes, cfg);
 
-  // Don't re-schedule a kind/lesson that's already carried over (prevents duplicate
-  // activity ids like a second `practice` or the same `lesson:<slug>`).
   const carriedLessonSlugs = new Set(
     carried.filter((c) => c.kind === 'lesson' && c.lessonSlug !== null).map((c) => c.lessonSlug as string),
   );
-  const practiceEnabled = snap.practiceAvailable && !carried.some((c) => c.kind === 'practice');
-
-  // Re-scoreable lesson candidates (exclude mastered + already-carried). `covered`
-  // mutates as we pick so same-cluster lessons diminish.
-  const lessons = snap.candidateLessons
-    .filter((l) => !l.mastered && !carriedLessonSlugs.has(l.slug))
-    .map((l) => ({ ...l }));
-  const coveredNow = new Set<string>(
-    lessons.filter((l) => l.covered && l.cluster !== null).map((l) => l.cluster as string),
-  );
+  const practiceEnabled =
+    snap.practiceUnlocked &&
+    snap.practiceReviewNeed > 0 &&
+    !carried.some((c) => c.kind === 'practice');
 
   const scoredBlock: PlannedActivity[] = [];
-  let lessonsPicked = 0;
-  let practiceQs = 0;
   let remaining = budgetForNew - spent;
 
-  // Practice value scales with COVERAGE (how much taught material exists to reinforce),
-  // so early days favor new lessons and reinforcement climbs as coverage completes —
-  // this, with the tilt, is what makes new-vs-reteach emerge instead of practice (a
-  // cheap 2-min unit) always out-competing a 20-min lesson on raw value-per-minute.
-  const practiceValue = clamp01(snap.practiceWeakness * Math.max(0.1, snap.coveragePct));
+  // 1) New lessons: only UNLOCKED (prereqs met) + not mastered/carried, best score
+  //    first, up to the (band + budget) cap. Same-cluster picks diminish via coverage.
+  const coveredNow = new Set<string>();
+  const rankedLessons = snap.candidateLessons
+    .filter((l) => l.unlocked && !l.mastered && !carriedLessonSlugs.has(l.slug))
+    .map((l) => ({ l, base: scoreLesson(l, snap, cfg) }))
+    .sort((a, b) => b.base - a.base || a.l.slug.localeCompare(b.l.slug));
 
-  // Greedy: at each step pick the higher value-per-minute option that still fits.
-  for (let guard = 0; guard < 64; guard += 1) {
-    // Best remaining lesson (re-scored against current coverage + diminishing returns).
-    let bestLessonIdx = -1;
-    let bestLessonVpm = 0;
-    if (lessonsPicked < lessonCap && remaining >= cfg.costs.lesson) {
-      for (let i = 0; i < lessons.length; i += 1) {
-        const l = lessons[i]!;
-        const covered = l.cluster !== null ? coveredNow.has(l.cluster) : l.covered;
-        const value = scoreLesson({ ...l, covered }, snap, cfg);
-        const vpm =
-          ((value * lessonTilt) / cfg.costs.lesson) * Math.pow(cfg.perRepeatDecay, lessonsPicked);
-        if (vpm > bestLessonVpm) {
-          bestLessonVpm = vpm;
-          bestLessonIdx = i;
-        }
-      }
+  let lessonsPicked = 0;
+  for (const { l } of rankedLessons) {
+    if (lessonsPicked >= lessonCap || remaining < cfg.costs.lesson) break;
+    const covered = l.cluster !== null ? coveredNow.has(l.cluster) || l.covered : l.covered;
+    scoredBlock.push({
+      activityId: `lesson:${l.slug}`,
+      kind: 'lesson',
+      title: l.title,
+      detail: 'New lesson — teach before testing.',
+      estimatedMinutes: cfg.costs.lesson,
+      count: null,
+      minutesBudget: null,
+      focus: null,
+      lessonSlug: l.slug,
+      lessonId: l.lessonId,
+      priorityReason: covered ? 'COVERAGE_GAP' : 'NEW_LEARNING',
+      carriedOver: false,
+    });
+    if (l.cluster !== null) coveredNow.add(l.cluster);
+    lessonsPicked += 1;
+    remaining -= cfg.costs.lesson;
+  }
+
+  // 2) Bounded practice: sized to review need (~questionsPerReviewKc per weak/overdue
+  //    taught KC), never to fill the budget; only after the unlock gate.
+  let practiceQs = 0;
+  if (practiceEnabled) {
+    const want = clampInt(snap.practiceReviewNeed * cfg.questionsPerReviewKc, 0, practiceMaxQ);
+    const fits = Math.floor(remaining / cfg.costs.practicePerQuestion);
+    practiceQs = Math.min(want, fits);
+    if (practiceQs > 0 && practiceQs < cfg.blocks.practiceMinQ) {
+      practiceQs = Math.min(cfg.blocks.practiceMinQ, fits);
     }
-
-    // Practice increment: first chunk is the floor (6 q); then +2 q up to the ceiling (24 q).
-    let practiceVpm = 0;
-    let practiceInc = 0;
-    let practiceIncMinutes = 0;
-    if (practiceEnabled && practiceQs < practiceMaxQ) {
-      practiceInc =
-        practiceQs === 0
-          ? cfg.blocks.practiceMinQ
-          : Math.min(2, practiceMaxQ - practiceQs);
-      practiceIncMinutes = practiceInc * cfg.costs.practicePerQuestion;
-      if (practiceIncMinutes <= remaining) {
-        const chunk = Math.floor(practiceQs / cfg.blocks.practiceMinQ);
-        practiceVpm =
-          ((practiceValue * practiceTilt) / cfg.costs.practicePerQuestion) *
-          Math.pow(cfg.perRepeatDecay, chunk);
-      } else {
-        practiceInc = 0;
-      }
-    }
-
-    const canLesson = bestLessonIdx >= 0 && bestLessonVpm > 0;
-    const canPractice = practiceInc > 0 && practiceVpm > 0;
-    if (!canLesson && !canPractice) break;
-
-    if (canLesson && (!canPractice || bestLessonVpm >= practiceVpm)) {
-      const chosen = lessons.splice(bestLessonIdx, 1)[0]!;
-      scoredBlock.push({
-        activityId: `lesson:${chosen.slug}`,
-        kind: 'lesson',
-        title: chosen.title,
-        detail: 'New lesson — teach before testing.',
-        estimatedMinutes: cfg.costs.lesson,
-        count: null,
-        minutesBudget: null,
-        focus: null,
-        lessonSlug: chosen.slug,
-        lessonId: chosen.lessonId,
-        priorityReason: chosen.covered ? 'COVERAGE_GAP' : 'NEW_LEARNING',
-        carriedOver: false,
-      });
-      if (chosen.cluster !== null) coveredNow.add(chosen.cluster);
-      lessonsPicked += 1;
-      remaining -= cfg.costs.lesson;
-    } else {
-      practiceQs += practiceInc;
-      remaining -= practiceIncMinutes;
-    }
+    remaining -= practiceQs * cfg.costs.practicePerQuestion;
   }
 
   // Split the practice questions into blocks no longer than maxActivityMinutes,
@@ -542,6 +527,7 @@ export function buildTodaysPath(
 
   const ordered = orderActivities([...carried, ...coreActivities, ...scoredBlock]);
   const plannedMinutes = ordered.reduce((sum, a) => sum + a.estimatedMinutes, 0);
+  const freeStudyMinutes = Math.max(0, snap.dailyBudgetMinutes - plannedMinutes);
   const reviewSharePct =
     plannedMinutes > 0
       ? clamp01(
@@ -555,6 +541,7 @@ export function buildTodaysPath(
     planDate: snap.planDate,
     dailyBudgetMinutes: snap.dailyBudgetMinutes,
     plannedMinutes,
+    freeStudyMinutes,
     reviewSharePct,
     reviewDebtBand: band,
     activities: ordered,
@@ -568,22 +555,8 @@ function pickPracticeFocus(_snap: TodaysPathSnapshot): string | null {
   return null;
 }
 
-/**
- * Order for maximum VARIETY: never place two activities of the same kind
- * back-to-back when it's avoidable (the classic "reorganize so no two adjacent
- * are equal" — always take from the kind with the most remaining items that isn't
- * the one just placed). This keeps the learner switching modes and never grinding
- * one kind for a long stretch — the whole point of the per-activity time cap.
- * Soft preferences (recall/lesson/cars/mistakes before practice) only break ties.
- */
-export function orderActivities(activities: readonly PlannedActivity[]): PlannedActivity[] {
-  const kindOrder: TodaysPathActivityKind[] = [
-    'recall',
-    'lesson',
-    'cars_duel',
-    'review_mistakes',
-    'practice',
-  ];
+/** Max-spread a set so no two same-kind items are adjacent when avoidable. */
+function maxSpread(items: readonly PlannedActivity[]): PlannedActivity[] {
   const rank: Record<TodaysPathActivityKind, number> = {
     recall: 0,
     lesson: 1,
@@ -592,30 +565,66 @@ export function orderActivities(activities: readonly PlannedActivity[]): Planned
     practice: 4,
   };
   const buckets = new Map<TodaysPathActivityKind, PlannedActivity[]>();
-  for (const k of kindOrder) buckets.set(k, []);
-  for (const a of activities) buckets.get(a.kind)!.push(a);
-
+  for (const a of items) {
+    const arr = buckets.get(a.kind) ?? [];
+    arr.push(a);
+    buckets.set(a.kind, arr);
+  }
   const result: PlannedActivity[] = [];
   let last: TodaysPathActivityKind | null = null;
-  while (result.length < activities.length) {
+  while (result.length < items.length) {
     const remaining = [...buckets.entries()].filter(([, arr]) => arr.length > 0);
     let pool = remaining.filter(([k]) => k !== last);
-    if (pool.length === 0) pool = remaining; // forced repeat (adjacency unavoidable)
-    // Most-remaining first keeps it feasible; ties broken by soft preference.
+    if (pool.length === 0) pool = remaining;
     pool.sort((a, b) => b[1].length - a[1].length || rank[a[0]] - rank[b[0]]);
     const [kind, arr] = pool[0]!;
     result.push(arr.shift()!);
     last = kind;
   }
-
-  // Keep Review Mistakes off the very last slot when possible (there is only ever
-  // one, so a swap with the second-to-last can't create a same-kind adjacency).
-  const n = result.length;
-  if (n >= 2 && result[n - 1]!.kind === 'review_mistakes' && result[n - 2]!.kind !== 'review_mistakes') {
-    const tmp = result[n - 1]!;
-    result[n - 1] = result[n - 2]!;
-    result[n - 2] = tmp;
-  }
-
   return result;
+}
+
+/**
+ * Ordering rules:
+ *  - Recall is ALWAYS first (when present); otherwise the day opens on a lesson.
+ *  - Lessons / Practice / Review-Mistakes are max-spread so no two of the same kind
+ *    run back-to-back (variety — the reason for the per-activity time cap).
+ *  - CARS is placed ~middle (1) or ~1/3 and ~2/3 (2); inserting it between non-CARS
+ *    items never creates a same-kind adjacency.
+ */
+export function orderActivities(activities: readonly PlannedActivity[]): PlannedActivity[] {
+  const recall = activities.filter((a) => a.kind === 'recall');
+  // Recall pinned first; everything else (incl. CARS) is max-spread so no two of the
+  // same kind are adjacent when feasible (CARS participates so it can break up practice).
+  const seq: PlannedActivity[] = [...recall, ...maxSpread(activities.filter((a) => a.kind !== 'recall'))];
+
+  // Nudge CARS toward ~middle (1) or ~1/3 & ~2/3 (2) via adjacency-safe swaps.
+  placeCars(seq);
+  return seq;
+}
+
+/** Move CARS toward its target fraction(s) with swaps that never create a same-kind adjacency. */
+function placeCars(seq: PlannedActivity[]): void {
+  const n = seq.length;
+  if (n < 3) return;
+  const carsIndexes = (): number[] =>
+    seq.reduce<number[]>((acc, a, i) => (a.kind === 'cars_duel' ? [...acc, i] : acc), []);
+  const idxs = carsIndexes();
+  if (idxs.length === 0) return;
+  const targets =
+    idxs.length === 1 ? [Math.round(n / 2)] : [Math.round(n / 3), Math.round((2 * n) / 3)];
+  for (let k = 0; k < idxs.length && k < targets.length; k += 1) {
+    const from = carsIndexes()[k]!;
+    const to = Math.max(1, Math.min(n - 2, targets[k]!));
+    if (from === to) continue;
+    const displaced = seq[to]!.kind;
+    if (displaced === 'cars_duel') continue;
+    const okFrom = seq[from - 1]?.kind !== displaced && seq[from + 1]?.kind !== displaced;
+    const okTo = seq[to - 1]?.kind !== 'cars_duel' && seq[to + 1]?.kind !== 'cars_duel';
+    if (okFrom && okTo) {
+      const tmp = seq[from]!;
+      seq[from] = seq[to]!;
+      seq[to] = tmp;
+    }
+  }
 }

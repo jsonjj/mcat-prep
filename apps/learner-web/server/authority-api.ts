@@ -219,6 +219,10 @@ export async function handleAuthorityRequest(
       await client.setDailyBudget(Number(body.minutesPerDay));
       return sendJson(response, 200, accepted());
     }
+    if (path === '/v1/mistakes' && method === 'POST') {
+      await client.recordMistake(body.source as 'practice' | 'cars' | 'lesson');
+      return sendJson(response, 200, accepted());
+    }
     if (path === '/v1/attempts' && method === 'POST') {
       await client.submitAttempt((body.choiceId ?? null) as string | null);
       return sendJson(response, 200, accepted());

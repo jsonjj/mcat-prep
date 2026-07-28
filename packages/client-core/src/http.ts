@@ -306,6 +306,13 @@ export class HttpAuthorityClient implements AuthorityPort {
     );
   }
 
+  async recordMistake(source: 'practice' | 'cars' | 'lesson'): Promise<void> {
+    await this.acceptedCommand(HTTP_API.recordMistake.path, {
+      envelope: await this.commandEnvelope(),
+      source,
+    });
+  }
+
   async getSession() {
     await this.ensureBootstrap();
     const response = await this.request(HTTP_API.session.path, StudyStepViewSchema);

@@ -2,6 +2,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { getAppNativeLesson } from '../app-native';
 import { LessonRenderer } from '../app-native/LessonRenderer';
+import { useRecordMistake } from '../app/today-queries';
 
 /**
  * App-native lesson host. Resolves the `:slug` route param to one of the
@@ -17,6 +18,7 @@ export function Lesson() {
   const navState = location.state as { returnTo?: string; activityId?: string } | null;
   const returnTo = navState?.returnTo;
   const activityId = navState?.activityId;
+  const recordMistake = useRecordMistake();
 
   if (!lesson) {
     return (
@@ -44,6 +46,7 @@ export function Lesson() {
       script={lesson.script}
       presentation={lesson.presentation}
       lessonIndexHref={returnTo ?? '/app/curriculum'}
+      onIndependentMiss={() => recordMistake.mutate('lesson')}
       {...(returnTo
         ? { onComplete: () => navigate(returnTo, { state: { completedActivityId: activityId } }) }
         : {})}

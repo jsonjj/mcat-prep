@@ -25,8 +25,8 @@ const EMPTY_LOAD = {
   estimatedMinutesForDue: 0,
 };
 const candidateLessons = [
-  { lessonId: 'les-a', slug: 'a', title: 'Lesson A', section: 'bb', cluster: null, kcCount: 4, estimatedMinutes: 20 },
-  { lessonId: 'les-b', slug: 'b', title: 'Lesson B', section: 'cp', cluster: null, kcCount: 2, estimatedMinutes: 20 },
+  { lessonId: 'les-a', slug: 'a', title: 'Lesson A', section: 'bb', cluster: null, kcCount: 4, kcIds: ['kc-a1', 'kc-a2'], prerequisiteLessonIds: [], estimatedMinutes: 20 },
+  { lessonId: 'les-b', slug: 'b', title: 'Lesson B', section: 'cp', cluster: null, kcCount: 2, kcIds: ['kc-b1'], prerequisiteLessonIds: [], estimatedMinutes: 20 },
 ];
 
 describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', () => {
