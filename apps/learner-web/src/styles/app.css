@@ -336,6 +336,11 @@ body {
   touch-action: pan-y;
   cursor: grab;
 }
+/* On Home the brain is a compact hero so the Today + Passage cards stay in view
+   without scrolling (Progress keeps the large, interactive brain). */
+.mc-atlas--home .mc-atlas__canvas {
+  height: clamp(200px, 30vh, 300px);
+}
 .mc-atlas__canvas:active {
   cursor: grabbing;
 }
@@ -453,10 +458,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: var(--mc-space-3);
+  gap: var(--mc-space-2);
   padding-top: 0;
-  /* Pull the greeting up so there's less dead space above "Good morning". */
-  margin-top: calc(-1 * var(--mc-space-2));
+  /* Pull the greeting up so there's little dead space above "Good morning"
+     (cancels the main content top padding). */
+  margin-top: calc(-1 * var(--mc-space-4));
 }
 .mc-home__greeting {
   text-align: center;

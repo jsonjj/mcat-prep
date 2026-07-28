@@ -209,7 +209,7 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
 
   if (!caps.webgl) {
     return (
-      <div className="mc-atlas">
+      <div className={`mc-atlas mc-atlas--${variant}`}>
         <BrainAtlas glowing={isHome ? 6 : masteredLessonCount} />
         {!isHome ? (
           <p className="mc-atlas__hint mc-muted mc-fineprint">
@@ -222,7 +222,7 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
   }
 
   return (
-    <div className="mc-atlas">
+    <div className={`mc-atlas mc-atlas--${variant}`}>
       <Suspense fallback={<BrainAtlas glowing={isHome ? 6 : masteredLessonCount} />}>
         <BrainScene
           regions={regions}
