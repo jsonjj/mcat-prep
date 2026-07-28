@@ -708,13 +708,6 @@ function RegionVisual({
     });
   }, [geom.dots, geom.center, region.lessons, revealIndex, revealTotal]);
 
-  const interiorCore = useMemo(() => {
-    if (!geom.interior) return null;
-    const g = new THREE.SphereGeometry(modelRadius * (0.32 + 0.02 * geom.count), 20, 20);
-    g.scale(1.25, 0.85, 0.8);
-    return g;
-  }, [geom.interior, geom.count, modelRadius]);
-
   useFrame((state, dt) => {
     // Stamp the shared reveal origin on the first atlas frame; every region reads the
     // same origin so the cascade is coherent and it replays on each fresh mount.
@@ -799,8 +792,6 @@ function RegionVisual({
       }
     : {};
 
-  const emissive = selected ? 0.7 : geom.interior ? 0.45 : 0.38;
-
   return (
     <group>
       {/* Per-lesson nodes: matte dot + a small colored rim-glow (unlocked only). The
@@ -852,33 +843,17 @@ function RegionVisual({
         })}
       </group>
 
-      {/* Solid green completion fill: surface submesh (cortical/brainstem) or deep core. */}
-      {geom.interior ? (
-        <mesh
-          ref={fillRef}
-          geometry={interiorCore!}
-          position={geom.center}
-          visible={reducedMotion ? region.complete : false}
-          renderOrder={1.15}
-        >
-          <meshStandardMaterial
-            color={FILL_COLOR}
-            emissive={FILL_EMISSIVE}
-            emissiveIntensity={emissive}
-            roughness={0.5}
-            metalness={0}
-            transparent
-            opacity={reducedMotion && region.complete ? FILL_OPACITY : 0}
-            depthWrite={false}
-          />
-        </mesh>
-      ) : (
+      {/* Solid green completion fill — cortical/brainstem surface submesh ONLY, and matte
+          (high roughness, low emissive) so the brain's folds read as a clean even green
+          instead of glossy "balls". Interior white-matter regions render NO fill: their old
+          ellipsoid cores protruded through the shell as smooth green balls. */}
+      {geom.interior ? null : (
         <mesh ref={fillRef} geometry={geom.fillGeometry!} renderOrder={1.2} {...handlers}>
           <meshStandardMaterial
             color={FILL_COLOR}
             emissive={FILL_EMISSIVE}
-            emissiveIntensity={emissive}
-            roughness={0.45}
+            emissiveIntensity={selected ? 0.32 : 0.12}
+            roughness={0.98}
             metalness={0}
             transparent
             opacity={reducedMotion && region.complete ? FILL_OPACITY : 0}
