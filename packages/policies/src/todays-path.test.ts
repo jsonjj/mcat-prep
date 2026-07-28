@@ -48,6 +48,19 @@ const manyLessons = (n: number): TodaysPathCandidateLesson[] =>
 const noAdjacentSameKind = (acts: readonly { kind: string }[]): boolean =>
   acts.every((a, i) => i === 0 || a.kind !== acts[i - 1]!.kind);
 
+/** Longest run of consecutive same-kind activities (1 = perfectly interleaved). */
+const maxSameKindRun = (acts: readonly { kind: string }[]): number => {
+  let max = 0;
+  let run = 0;
+  let prev: string | null = null;
+  for (const a of acts) {
+    run = a.kind === prev ? run + 1 : 1;
+    prev = a.kind;
+    if (run > max) max = run;
+  }
+  return max;
+};
+
 describe('Today\u2019s Path engine', () => {
   it('always reserves CARS Duel and never exceeds the budget', () => {
     const r = buildTodaysPath(snap());
@@ -106,9 +119,33 @@ describe('Today\u2019s Path engine', () => {
     );
   });
 
-  it('schedules a Review Mistakes session only when the open count is high enough', () => {
-    expect(buildTodaysPath(snap({ mistakesOpen: 5 })).activities.some((a) => a.kind === 'review_mistakes')).toBe(true);
-    expect(buildTodaysPath(snap({ mistakesOpen: 2 })).activities.some((a) => a.kind === 'review_mistakes')).toBe(false);
+  it('reserves short Review-Mistakes spacer sessions every day (2/day, 3 on longer budgets), even with none open', () => {
+    const short = buildTodaysPath(snap({ mistakesOpen: 0, dailyBudgetMinutes: 180 }));
+    const shortSessions = short.activities.filter((a) => a.kind === 'review_mistakes');
+    expect(shortSessions.length).toBe(TODAYS_PATH_CONFIG.mistakesReserved.perDay);
+
+    const long = buildTodaysPath(snap({ mistakesOpen: 0, dailyBudgetMinutes: 360 }));
+    const longSessions = long.activities.filter((a) => a.kind === 'review_mistakes');
+    expect(longSessions.length).toBe(TODAYS_PATH_CONFIG.mistakesReserved.perDayLongBudget);
+
+    // Every reserved session stays short (bounded by the max-items ceiling) with a floor.
+    const shortCap =
+      TODAYS_PATH_CONFIG.mistakesReserved.maxItems * TODAYS_PATH_CONFIG.costs.mistakePerItem;
+    for (const s of [...shortSessions, ...longSessions]) {
+      expect(s.estimatedMinutes).toBeLessThanOrEqual(shortCap);
+      expect(s.count!).toBeGreaterThanOrEqual(TODAYS_PATH_CONFIG.mistakesReserved.minItems);
+    }
+  });
+
+  it('uses the reserved Mistakes sessions as spacers to break up long practice runs', () => {
+    const r = buildTodaysPath(
+      snap({ dailyBudgetMinutes: 360, practiceUnlocked: true, candidateLessons: manyLessons(2) }),
+    );
+    // Several practice blocks + reserved mistakes sessions, and no long same-kind run
+    // survives — the spacers separate what used to be back-to-back practice.
+    expect(r.activities.filter((a) => a.kind === 'practice').length).toBeGreaterThan(1);
+    expect(r.activities.filter((a) => a.kind === 'review_mistakes').length).toBeGreaterThanOrEqual(2);
+    expect(maxSameKindRun(r.activities)).toBeLessThanOrEqual(2);
   });
 
   it('pauses new lessons under a high review-debt band', () => {

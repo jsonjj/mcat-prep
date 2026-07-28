@@ -86,6 +86,19 @@ export interface TodaysPathConfig {
   readonly questionsPerReviewKc: number; // 2
   /** A 2nd CARS Duel is added on presets at/above this many minutes. */
   readonly carsSecondAtBudget: number; // 240 (4 hr)
+  /**
+   * Reserved short Review-Mistakes "spacer" sessions, planned every day so the
+   * ordering can break up long same-kind runs (back-to-back practice/lessons) and
+   * so a short error check-in always appears. 2/day normally, 3 on longer budgets;
+   * each session is kept short (min–max items) — real pile-ups still trigger the
+   * authority's mid-day injector on top of these.
+   */
+  readonly mistakesReserved: {
+    readonly perDay: number; // 2
+    readonly perDayLongBudget: number; // 3 (>= carsSecondAtBudget)
+    readonly minItems: number; // 3 (short floor — a short session still appears)
+    readonly maxItems: number; // 8 (short ceiling — keep each session short)
+  };
 }
 
 export const TODAYS_PATH_CONFIG: TodaysPathConfig = {
@@ -119,6 +132,7 @@ export const TODAYS_PATH_CONFIG: TodaysPathConfig = {
   practiceUnlockLessons: 3,
   questionsPerReviewKc: 2,
   carsSecondAtBudget: 240,
+  mistakesReserved: { perDay: 2, perDayLongBudget: 3, minItems: 3, maxItems: 8 },
 };
 
 export type TodaysPathActivityKind =
@@ -265,8 +279,6 @@ function newLessonCapFor(
 interface CoreSizes {
   readonly recallCards: number | null; // null = skip
   readonly recallMinutes: number;
-  readonly mistakesCount: number | null; // null = skip
-  readonly mistakesMinutes: number;
 }
 
 function sizeCore(
@@ -275,6 +287,7 @@ function sizeCore(
   cfg: TodaysPathConfig,
 ): CoreSizes {
   // Recall: only when enough due cards; sized as a %-of-budget share flexing with debt.
+  // (Review Mistakes are reserved as short spacer sessions in buildTodaysPath, not here.)
   let recallCards: number | null = null;
   let recallMinutes = 0;
   if (snap.recall.due >= cfg.eligibility.recallMinDue) {
@@ -287,16 +300,7 @@ function sizeCore(
     recallMinutes = Math.round(recallCards * cfg.costs.recallPerCard);
   }
 
-  // Review Mistakes: only when enough open; sized by open volume (capped). Placeholder
-  // execution today (links to the Mistakes page — no repair runner yet).
-  let mistakesCount: number | null = null;
-  let mistakesMinutes = 0;
-  if (snap.mistakesOpen >= cfg.eligibility.mistakesMinOpen) {
-    mistakesCount = Math.min(snap.mistakesOpen, cfg.blocks.mistakesMax);
-    mistakesMinutes = mistakesCount * cfg.costs.mistakePerItem;
-  }
-
-  return { recallCards, recallMinutes, mistakesCount, mistakesMinutes };
+  return { recallCards, recallMinutes };
 }
 
 // ---- Step: score the scored block (lessons + practice) -----------------------
@@ -400,19 +404,34 @@ export function buildTodaysPath(
     spent += Math.max(1, core.recallMinutes);
   }
 
-  // Review Mistakes — near the end; reserved now, ordered later.
-  if (
-    !carriedKinds.has('review_mistakes') &&
-    core.mistakesCount !== null &&
-    spent + core.mistakesMinutes <= budgetForNew
-  ) {
+  // Review Mistakes — RESERVED as short "spacer" sessions (2–3/day), planned even
+  // when nothing is open yet ("a short session still appears"). Ordering interleaves
+  // them so they break up long same-kind runs (back-to-back practice/lessons), and
+  // misses that pile up during the day are caught by the next reserved session (the
+  // authority also injects an extra one mid-day on a real pile-up). Execution is a
+  // placeholder for now (links to the Mistakes page — no repair runner yet).
+  const mistakesWanted =
+    snap.dailyBudgetMinutes >= cfg.carsSecondAtBudget
+      ? cfg.mistakesReserved.perDayLongBudget
+      : cfg.mistakesReserved.perDay;
+  const carriedMistakes = carried.filter((c) => c.kind === 'review_mistakes').length;
+  const mistakesToReserve = Math.max(0, mistakesWanted - carriedMistakes);
+  const mistakesPerSession = clamp(
+    Math.ceil(snap.mistakesOpen / Math.max(1, mistakesWanted)),
+    cfg.mistakesReserved.minItems,
+    cfg.mistakesReserved.maxItems,
+  );
+  const mistakesSessionMinutes = mistakesPerSession * cfg.costs.mistakePerItem;
+  for (let m = 0; m < mistakesToReserve; m += 1) {
+    if (spent + mistakesSessionMinutes > budgetForNew) break;
+    const ordinal = carriedMistakes + m;
     coreActivities.push({
-      activityId: 'review-mistakes',
+      activityId: ordinal === 0 ? 'review-mistakes' : `review-mistakes:${ordinal + 1}`,
       kind: 'review_mistakes',
       title: 'Review Mistakes',
-      detail: `${core.mistakesCount} open mistake${core.mistakesCount === 1 ? '' : 's'} to revisit.`,
-      estimatedMinutes: core.mistakesMinutes,
-      count: core.mistakesCount,
+      detail: 'Quick error check-in — clear anything that piled up (formative — never mastery).',
+      estimatedMinutes: mistakesSessionMinutes,
+      count: mistakesPerSession,
       minutesBudget: null,
       focus: null,
       lessonSlug: null,
@@ -420,7 +439,7 @@ export function buildTodaysPath(
       priorityReason: 'UNRESOLVED_ERROR',
       carriedOver: false,
     });
-    spent += core.mistakesMinutes;
+    spent += mistakesSessionMinutes;
   }
 
   // --- Scored block: NEW lessons first (prioritized), then BOUNDED practice. ---
