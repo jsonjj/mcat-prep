@@ -8,10 +8,7 @@ import {
   type HttpErrorCode,
 } from '@mcat/contracts';
 import { InProcessAuthorityClient } from '@mcat/local-authority';
-import {
-  createDatabasePoolFromEnv,
-  createPostgresPracticeBankPort,
-} from '@mcat/persistence-postgres';
+import { practiceBankSourceLine, selectPracticeBankSource } from './practice-bank-source';
 
 /**
  * Dev-only learner authority. This runs the real synthetic authority
@@ -44,26 +41,15 @@ const store = {
 } as unknown as StoreArg;
 
 /**
- * When DATABASE_URL is set, adaptive Practice pulls FRESH items from the real v7
- * Postgres bank (2,000+ items) and writes exposure/repair there; otherwise it
- * falls back to the synthetic bank so the app still runs fully offline.
+ * Which corpus backs adaptive Practice here: Postgres when DATABASE_URL is set,
+ * else the local corpus pull, else the synthetic fixture (see
+ * ./practice-bank-source). Announced once so a starved bank is never mistaken
+ * for a selection bug.
  */
-function buildPracticeBankPort(): ReturnType<typeof createPostgresPracticeBankPort> | undefined {
-  const url = process.env.DATABASE_URL;
-  if (url === undefined || url.trim() === '') return undefined;
-  try {
-    return createPostgresPracticeBankPort(createDatabasePoolFromEnv());
-  } catch (error) {
-    console.warn(
-      '[dev-authority] DATABASE_URL is set but the practice bank pool failed to initialize; ' +
-        'falling back to the synthetic practice bank.',
-      error,
-    );
-    return undefined;
-  }
-}
+const practiceBank = selectPracticeBankSource();
+console.warn(practiceBankSourceLine(practiceBank));
 
-const client = new InProcessAuthorityClient(store, undefined, buildPracticeBankPort());
+const client = new InProcessAuthorityClient(store, undefined, practiceBank.port);
 
 // One CSRF token per dev process; the client echoes it back but we don't verify.
 const csrfToken = `${randomUUID()}${randomUUID()}`.replace(/-/g, '');

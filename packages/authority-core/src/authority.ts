@@ -912,8 +912,9 @@ export class Authority {
    * A missed first attempt goes STRAIGHT to the reveal, which names the key and
    * refutes the option they actually picked. The learner is not asked what
    * happened first: experts naming the cause of an error agree at κ = 0.000–0.063
-   * and learner self-report is biased worst in the weakest learners (§2.3), while
-   * withholding the key on a multiple-choice item measured .71 vs .71 (§2.2).
+   * and learner self-report is biased worst in the weakest learners (§2.3). The
+   * 2026-07-28 amendment to §3.3, which defers the key to a second miss, is scoped
+   * to adaptive Practice and leaves this path as it is.
    * Study's one unassisted retry survives — `retryPending` spends it when the
    * learner leaves the reveal, so it now follows the correction instead of
    * standing in front of it.

@@ -66,11 +66,15 @@ describe('Authority — synthetic enzyme vertical', () => {
   /**
    * Rewritten from the Diagnose-Before-Reveal assertion this test used to carry.
    * That flow asked the learner to name the cause of the miss BEFORE showing the
-   * key, and both halves are now gone on tier-A evidence: experts naming which
-   * bias produced an error agree at κ = 0.000–0.063 (§2.3), and withholding the
-   * key on multiple choice measured .71 vs .71 (§2.2). The old test also asserted
-   * the error log was practice-scoped; the human's decision is that a Study
-   * question is a genuine question attempt and belongs on the tab (§6.5).
+   * key. The cause question is gone on tier-A evidence — experts naming which bias
+   * produced an error agree at κ = 0.000–0.063 (§2.3) — and it stays gone. The old
+   * test also asserted the error log was practice-scoped; the human's decision is
+   * that a Study question is a genuine question attempt and belongs on the tab
+   * (§6.5).
+   *
+   * The Study reveal still names the key on the first miss. Deferring the key to a
+   * second miss is a §3.3 amendment (2026-07-28) scoped to adaptive Practice, whose
+   * step machine is client-local; this assertion is about Study and stands.
    */
   it('reveals a Study miss immediately, refuting the option that was chosen', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);

@@ -3,24 +3,17 @@ import type { CarsDuelRubric, MasterySeed, VectorLessonAction } from '@mcat/cont
 import type { GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
+import { LEARNER_KEYS } from './invalidation-keys';
 
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 0, refetchOnWindowFocus: false, retry: false } },
 });
 
-const LEARNER_KEYS = [
-  'bootstrap',
-  'today',
-  'session',
-  'mastery',
-  'mastery-skills',
-  'mastery-lessons',
-  'cars-readiness',
-  'errors',
-  'error-patterns',
-  'vector-lesson-status',
-  'vector-lesson-run',
-];
+/**
+ * The Study loop's attempt / reveal / continue mutations go through here. A study
+ * miss writes an attempt-log row exactly like a practice miss, so the Mistakes
+ * keys have to be in this set too — they are, via ./invalidation-keys.ts.
+ */
 const invalidateLearner = (qc: QueryClient) =>
   Promise.all(LEARNER_KEYS.map((k) => qc.invalidateQueries({ queryKey: [k] })));
 

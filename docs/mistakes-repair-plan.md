@@ -27,10 +27,12 @@ itself writes no mastery formulas.
   KC/cluster-grain patterns section; every row's primary action is "try again",
   which routes into the adaptive practice queue with a focus token so the
   re-attempt lands on a fresh unseen item.
-- **Repair only happens inline** — in Practice and in the Study loop, which now
-  behave the same way: reveal first with the refutation of the chosen distractor,
-  then one more pass at the same item (spaced ~3 items in Practice, immediate in
-  Study). There is no standalone runner and no fresh-twin variant picker.
+- **Repair only happens inline** — in Practice and in the Study loop. Both lead
+  with the refutation of the chosen distractor and then take one more pass at the
+  same item (spaced ~3 items in Practice, immediate in Study). They differ on
+  *when* the key lands: Study names it on the first miss, Practice defers it to the
+  second (§3.3, amended 2026-07-28). There is no standalone runner and no
+  fresh-twin variant picker.
 
 ## What the repair runner should do
 
@@ -59,6 +61,14 @@ Input from Today's Path: a **count** `N` (how many mistakes to repair) — mirro
    > picker. Both question flows now work this way (`PracticeSession.tsx` and
    > `Study.tsx`), and there is no cause field left on `ErrorEntryView` for the
    > runner to read — nor a `ProbableCause` type anywhere to reintroduce one.
+
+   > **Amended 2026-07-28, adaptive Practice only:** the key is now withheld on a
+   > **first** miss — the learner gets the refutation of the option they chose and
+   > nothing that names the correct answer — and disclosed on the second pass,
+   > right or wrong. Product decision by the product owner; evidence and scope
+   > recorded in `docs/design/error-handling-design.md` §3.3. The refutation is
+   > still mandatory on every miss and the flow still never ends on the wrong
+   > answer; the Study loop above is unchanged.
 
    The refutation source is the item's per-choice rationale, not a misconception
    catalog: `error_models` is populated on **0 of 2,108** corpus items.

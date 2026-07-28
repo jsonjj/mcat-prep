@@ -1,22 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { PracticeAttemptCommand } from '@mcat/contracts';
 import { authority } from './authority';
+import { PRACTICE_INVALIDATE_KEYS } from './invalidation-keys';
 
 /**
  * React Query hooks for adaptive Practice. The queue is fetched fresh when a
  * session starts (the server picks unseen items each time), and each answer is
- * scored server-authoritatively; a first correct unassisted attempt moves P(L),
- * so mastery/progress views are invalidated after a scored attempt.
+ * scored server-authoritatively; a first correct unassisted attempt moves P(L)
+ * and writes (or clears) a mistake, so mastery/progress views AND the Mistakes
+ * tab's own keys are invalidated after a scored attempt — see
+ * ./invalidation-keys.ts.
  */
-
-const PRACTICE_INVALIDATE_KEYS = [
-  'bootstrap',
-  'mastery',
-  'mastery-skills',
-  'mastery-lessons',
-  'cars-readiness',
-  'today',
-];
 
 /** Fetch a queue of `x` fresh practice items. Disabled until `enabled` is true. */
 export function usePracticeQueue(x: number, focus: string | undefined, enabled: boolean) {

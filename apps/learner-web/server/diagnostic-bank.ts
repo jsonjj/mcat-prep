@@ -1,6 +1,3 @@
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { CLUSTER_INFO, SKILL_CLUSTERS, type Section, type SkillCluster } from '@mcat/contracts';
 import {
   assertNoProtectedFields,
@@ -9,6 +6,7 @@ import {
   type LearnerSafeV7Question,
 } from '@mcat/content';
 import { fcForLesson, type DiagnosticCandidate, type FormItem } from '@mcat/policies';
+import { loadPulledCorpus } from './db-pull';
 
 /**
  * Server-side diagnostic bank. Built once from the v7 fixture corpus. This module
@@ -43,9 +41,9 @@ const SECTION_TITLE: Readonly<Record<Section, string>> = {
 // ---------------------------------------------------------------------------
 // Real bank loader (production_candidate corpus pulled from Postgres).
 //
-// Reads the gitignored local pull produced by .tmp/db-pull.mjs. If it is
-// absent or malformed, the bank falls back to the synthetic fixture so the app
-// still runs. Answer material stays server-side (this module is Node-only).
+// Maps the gitignored local pull (read by ./db-pull) into diagnostic items. If
+// the pull is absent or malformed, the bank falls back to the synthetic fixture
+// so the app still runs. Answer material stays server-side (Node-only module).
 // ---------------------------------------------------------------------------
 
 const DB_SECTION_TO_V7: Readonly<Record<string, LearnerSafeV7Question['section']>> = {
@@ -56,47 +54,18 @@ const DB_SECTION_TO_V7: Readonly<Record<string, LearnerSafeV7Question['section']
   cross_section: 'CROSS_SECTION',
 };
 
-interface PulledQuestion {
-  question_id: string;
-  section: string;
-  cluster: string | null;
-  lesson_id: string | null;
-  family_id: string | null;
-  subject: string | null;
-  primary_skill: string | null;
-  dok_level: number | null;
-  stem: string;
-  passage: string | null;
-  choices: Record<string, string> | null;
-  status: string | null;
-}
-
-interface PulledProtected {
-  question_id: string;
-  correct_answer: 'A' | 'B' | 'C' | 'D';
-  explanations: Record<string, string>;
-}
-
 /** status values treated as diagnostic-eligible (the corpus ships as candidates). */
 const ELIGIBLE_STATUS = new Set(['production_candidate', 'published']);
 const VALID_CLUSTERS = new Set<string>(SKILL_CLUSTERS);
 
-const pullDir = (): string => {
-  const here = dirname(fileURLToPath(import.meta.url));
-  // apps/learner-web/server → repo root
-  return join(here, '..', '..', '..', 'content', 'question-bank', '.local', 'db-pull');
-};
-
 function loadPulledBank(): DiagnosticItem[] | null {
   try {
-    const dir = pullDir();
-    const questions = JSON.parse(readFileSync(join(dir, 'questions.json'), 'utf8')) as PulledQuestion[];
-    const keys = JSON.parse(readFileSync(join(dir, 'protected.json'), 'utf8')) as PulledProtected[];
-    const keyById = new Map(keys.map((k) => [k.question_id, k]));
+    const corpus = loadPulledCorpus();
+    if (corpus === null) return null;
 
     const items: DiagnosticItem[] = [];
-    for (const q of questions) {
-      const key = keyById.get(q.question_id);
+    for (const q of corpus.questions) {
+      const key = corpus.protectedById.get(q.question_id);
       const c = q.cluster;
       const choices = q.choices;
       if (
