@@ -6,7 +6,9 @@ import {
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
+  PracticeAttemptResultSchema,
   PracticeItemViewSchema,
+  PracticeQueueViewSchema,
   PracticeResultSchema,
   SkillMasteryViewSchema,
   SkillSummarySchema,
@@ -17,10 +19,11 @@ import {
   type BootstrapResponse,
   type Clock,
   type MasterySeed,
+  type PracticeAttemptCommand,
   type ProbableCause,
   type VectorLessonAction,
 } from '@mcat/contracts';
-import { Authority, type LearnerState } from '@mcat/authority-core';
+import { Authority, type LearnerState, type PracticeBankPort } from '@mcat/authority-core';
 import { loadSyntheticBank } from '@mcat/content';
 import type { AuthorityPort, GoalInput, StatePort } from '@mcat/client-core';
 
@@ -29,8 +32,8 @@ export class InProcessAuthorityClient implements AuthorityPort {
   private readonly authority: Authority;
   private readonly store: StatePort<LearnerState>;
 
-  constructor(store: StatePort<LearnerState>, clock?: Clock) {
-    this.authority = new Authority(loadSyntheticBank(), clock);
+  constructor(store: StatePort<LearnerState>, clock?: Clock, practiceBankPort?: PracticeBankPort) {
+    this.authority = new Authority(loadSyntheticBank(), clock, practiceBankPort);
     this.store = store;
   }
 
@@ -45,6 +48,13 @@ export class InProcessAuthorityClient implements AuthorityPort {
   private mutate<R>(fn: (state: LearnerState) => R): R {
     const state = this.state();
     const result = fn(state);
+    this.store.save(state);
+    return result;
+  }
+
+  private async mutateAsync<R>(fn: (state: LearnerState) => Promise<R>): Promise<R> {
+    const state = this.state();
+    const result = await fn(state);
     this.store.save(state);
     return result;
   }
@@ -138,6 +148,18 @@ export class InProcessAuthorityClient implements AuthorityPort {
   async checkPractice(questionId: string, choiceId: string | null) {
     return PracticeResultSchema.parse(
       this.mutate((state) => this.authority.checkPractice(state, questionId, choiceId)),
+    );
+  }
+
+  async getPracticeQueue(x: number, focus?: string) {
+    return PracticeQueueViewSchema.parse(
+      await this.mutateAsync((state) => this.authority.getPracticeQueue(state, x, focus)),
+    );
+  }
+
+  async submitPracticeAttempt(command: PracticeAttemptCommand) {
+    return PracticeAttemptResultSchema.parse(
+      await this.mutateAsync((state) => this.authority.submitPracticeAttempt(state, command)),
     );
   }
 

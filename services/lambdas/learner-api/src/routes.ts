@@ -11,7 +11,11 @@ import {
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
+  PracticeAttemptCommandSchema,
+  PracticeAttemptResultSchema,
+  PracticeFocusSchema,
   PracticeItemViewSchema,
+  PracticeQueueViewSchema,
   PracticeResultSchema,
   ProbableCauseSchema,
   SkillMasteryViewSchema,
@@ -29,6 +33,7 @@ import {
   type CommandEnvelope,
   type ContentId,
   type MasterySeed,
+  type PracticeAttemptCommand,
   type ProbableCause,
 } from '@mcat/contracts';
 
@@ -45,6 +50,8 @@ export type RouteId =
   | 'skills'
   | 'practiceItem'
   | 'practiceAttempt'
+  | 'practiceQueue'
+  | 'practiceAdaptiveAttempt'
   | 'carsDuel'
   | 'masterySeed'
   | 'wrapped'
@@ -99,6 +106,11 @@ export interface CarsDuelCommandBody {
 export interface MasterySeedCommandBody {
   readonly envelope: CommandEnvelope;
   readonly seed: MasterySeed;
+}
+
+export interface PracticeAdaptiveAttemptCommandBody {
+  readonly envelope: CommandEnvelope;
+  readonly command: PracticeAttemptCommand;
 }
 
 function record(value: unknown): Record<string, unknown> | null {
@@ -186,6 +198,20 @@ const PracticeAttemptCommandBodySchema = workflowSchema<PracticeAttemptCommandBo
     ? { envelope: envelope.data, questionId: questionId.data, choiceId: choiceId.data }
     : null;
 });
+
+const PracticeAdaptiveAttemptCommandBodySchema = workflowSchema<PracticeAdaptiveAttemptCommandBody>(
+  (value) => {
+    if (!exactKeys(value, ['envelope', 'questionId', 'specId', 'chosenChoiceId', 'firstAttempt'])) {
+      return null;
+    }
+    const envelope = CommandEnvelopeSchema.safeParse(value.envelope);
+    const { envelope: _envelope, ...rest } = value;
+    const command = PracticeAttemptCommandSchema.safeParse(rest);
+    return envelope.success && command.success
+      ? { envelope: envelope.data, command: command.data }
+      : null;
+  },
+);
 
 const NullablePracticeItemViewSchema: RuntimeSchema = {
   parse(value: unknown) {
@@ -303,6 +329,27 @@ export const ROUTES: readonly RouteDefinition[] = [
     stateChanging: true,
     bodySchema: PracticeAttemptCommandBodySchema,
     responseSchema: PracticeResultSchema,
+  },
+  {
+    id: 'practiceQueue',
+    method: 'GET',
+    // Path-parameterized (`/v1/practice/queue/{x}` [+ `/{focus}`]); the edge
+    // rejects query strings, so count + focus ride in the path.
+    path: '/v1/practice/queue',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: PracticeQueueViewSchema,
+  },
+  {
+    id: 'practiceAdaptiveAttempt',
+    method: 'POST',
+    // Deliberately namespaced so it never collides with the single-item
+    // Passage-of-the-Day `POST /v1/practice/attempts`.
+    path: '/v1/practice/attempts/adaptive',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: PracticeAdaptiveAttemptCommandBodySchema,
+    responseSchema: PracticeAttemptResultSchema,
   },
   {
     id: 'carsDuel',
@@ -436,13 +483,33 @@ export function allowedMethodsFor(path: string): readonly string[] {
 }
 
 const PRACTICE_ITEM_PATH = /^\/v1\/practice\/items\/([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+const PRACTICE_QUEUE_PATH = /^\/v1\/practice\/queue\/(\d{1,2})(?:\/([a-z0-9-]{1,32}))?$/;
 
 function routeMatches(route: RouteDefinition, path: string): boolean {
-  return route.id === 'practiceItem' ? PRACTICE_ITEM_PATH.test(path) : route.path === path;
+  if (route.id === 'practiceItem') return PRACTICE_ITEM_PATH.test(path);
+  if (route.id === 'practiceQueue') return PRACTICE_QUEUE_PATH.test(path);
+  return route.path === path;
 }
 
 export function practiceQuestionId(path: string): ContentId | null {
   const value = PRACTICE_ITEM_PATH.exec(path)?.[1];
   const parsed = ContentIdSchema.safeParse(value);
   return parsed.success ? parsed.data : null;
+}
+
+export interface PracticeQueueParams {
+  readonly x: number;
+  readonly focus: string | null;
+}
+
+/** Extract the requested count (+ optional focus token) from the queue path. */
+export function practiceQueueParams(path: string): PracticeQueueParams | null {
+  const match = PRACTICE_QUEUE_PATH.exec(path);
+  if (match === null) return null;
+  const x = Number.parseInt(match[1]!, 10);
+  if (!Number.isInteger(x) || x < 1) return null;
+  const rawFocus = match[2];
+  if (rawFocus === undefined) return { x, focus: null };
+  const focus = PracticeFocusSchema.safeParse(rawFocus);
+  return focus.success ? { x, focus: focus.data } : null;
 }

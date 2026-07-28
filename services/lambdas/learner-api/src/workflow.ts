@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { Authority, type LearnerState } from '@mcat/authority-core';
+import { Authority, type LearnerState, type PracticeBankPort } from '@mcat/authority-core';
 import {
   AuthorityKernel,
   AuthorityKernelError,
@@ -19,7 +19,9 @@ import {
   CarsReadinessViewSchema,
   DiagnosticNextSchema,
   LessonMasteryViewSchema,
+  PracticeAttemptResultSchema,
   PracticeItemViewSchema,
+  PracticeQueueViewSchema,
   PracticeResultSchema,
   SkillMasteryViewSchema,
   SkillSummarySchema,
@@ -33,7 +35,9 @@ import {
   type ContentId,
   type DiagnosticNext,
   type LessonMasteryView,
+  type PracticeAttemptResult,
   type PracticeItemView,
+  type PracticeQueueView,
   type SkillMasteryView,
   type SkillSummary,
   type VectorLessonCommand,
@@ -55,6 +59,7 @@ import type {
   RecallCommandBody,
   RevealCommandBody,
   PracticeAttemptCommandBody,
+  PracticeAdaptiveAttemptCommandBody,
 } from './routes';
 import {
   syntheticPracticeAuthorizationPolicy,
@@ -82,6 +87,8 @@ interface WorkflowDependencies {
   readonly clock: Clock;
   readonly bank: AuthorityKernelDependencies['bank'];
   readonly practiceAuthorization?: PracticeAuthorizationPolicy;
+  /** Adaptive-practice bank/exposure seam. Falls back to synthetic when absent. */
+  readonly practiceBank?: PracticeBankPort;
 }
 
 type VectorLessonLearnerState = LearnerState & {
@@ -516,10 +523,52 @@ export class RepositoryLearnerKernel {
     return learnerStateFromProjection(projection);
   }
 
+  private authority(): Authority {
+    return new Authority(this.dependencies.bank, this.dependencies.clock, this.dependencies.practiceBank);
+  }
+
+  /**
+   * Read-only adaptive practice queue (no event; not idempotency-gated).
+   */
+  async getPracticeQueueAdaptive(
+    x: number,
+    focus: string | null,
+    principal: Principal,
+  ): Promise<PracticeQueueView> {
+    const state = await this.loadState(principal);
+    const view = await this.authority().getPracticeQueue(
+      state,
+      x,
+      focus === null ? undefined : focus,
+    );
+    return PracticeQueueViewSchema.parse(view);
+  }
+
+  /**
+   * Score one adaptive-practice answer. A first, unassisted attempt moves the
+   * P(L) mastery signal (persisted in the projection) and records exposure +
+   * repair through the injected bank port; retries are learning-only.
+   */
+  async handlePracticeAdaptive(
+    body: PracticeAdaptiveAttemptCommandBody,
+    principal: Principal,
+  ): Promise<PracticeAttemptResult> {
+    return PracticeAttemptResultSchema.parse(
+      await this.mutate(body.envelope, principal, async (authority, state) => {
+        const result = await authority.submitPracticeAttempt(state, body.command);
+        return {
+          eventType: 'practice_adaptive_attempt_submitted',
+          payload: toJsonObject({ envelope: body.envelope, ...body.command }),
+          result: toJsonObject(PracticeAttemptResultSchema.parse(result)),
+        };
+      }),
+    );
+  }
+
   private async mutate(
     envelope: CommandEnvelope,
     principal: Principal,
-    apply: (authority: Authority, state: LearnerState) => MutationApplication,
+    apply: (authority: Authority, state: LearnerState) => MutationApplication | Promise<MutationApplication>,
   ): Promise<JsonObject> {
     return this.dependencies.repository.transaction(async (transaction) => {
       const projection = await transaction.lockLearner(principal.learnerId);
@@ -539,9 +588,9 @@ export class RepositoryLearnerKernel {
         });
       }
 
-      const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
+      const authority = this.authority();
       const state = learnerStateFromProjection(projection);
-      const application = apply(authority, state);
+      const application = await apply(authority, state);
       const persistedState = application.replacementState ?? state;
       const sequence = projection.sequence + 1;
       const acceptedAt = this.dependencies.clock.now();

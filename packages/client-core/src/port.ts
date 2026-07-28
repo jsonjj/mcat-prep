@@ -7,7 +7,10 @@ import type {
   LessonMasteryView,
   MasteryMapEntry,
   MasterySeed,
+  PracticeAttemptCommand,
+  PracticeAttemptResult,
   PracticeItemView,
+  PracticeQueueView,
   PracticeResult,
   ProbableCause,
   SkillMasteryView,
@@ -56,6 +59,10 @@ export interface AuthorityPort {
   getSkills(): Promise<SkillSummary[]>;
   getPracticeItem(questionId: string): Promise<PracticeItemView | null>;
   checkPractice(questionId: string, choiceId: string | null): Promise<PracticeResult>;
+  /** Adaptive Practice: an ordered queue of up to `x` fresh test-out items. */
+  getPracticeQueue(x: number, focus?: string): Promise<PracticeQueueView>;
+  /** Adaptive Practice: score one answer (a first, unassisted attempt moves mastery). */
+  submitPracticeAttempt(command: PracticeAttemptCommand): Promise<PracticeAttemptResult>;
   /** Record a CARS Duel; an optional rubric feeds a low-weight CARS ability nudge. */
   recordCarsDuel(rubric?: CarsDuelRubric): Promise<void>;
   /**

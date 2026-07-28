@@ -7,6 +7,7 @@ import {
   IconHome,
   IconMistakesX,
   IconMoon,
+  IconPractice,
   IconProgress,
   IconSun,
   IconUser,
@@ -19,6 +20,12 @@ const NAV = [
   { to: '/app/mistakes', end: false, label: 'Mistakes', Icon: IconMistakesX },
   { to: '/app/progress', end: false, label: 'Progress', Icon: IconProgress },
 ];
+
+const PRACTICE_ITEM = { to: '/app/practice', end: false, label: 'Practice', Icon: IconPractice };
+
+// Desktop sidebar order: Practice sits right above Recall. The mobile bottom nav
+// stays the shared five-item NAV (Practice is reached from Home on mobile).
+const SIDEBAR = [NAV[0], NAV[1], PRACTICE_ITEM, NAV[2], NAV[3], NAV[4]];
 
 export function AppShell() {
   const bootstrap = useBootstrap();
@@ -56,7 +63,10 @@ export function AppShell() {
       </header>
 
       <nav className="mc-sidebar" aria-label="Primary">
-        {NAV.map(({ to, end, label, Icon }) => (
+        {/* Desktop order puts Practice right above Recall; the mobile bottom nav
+            below stays the five-item shared NAV. Skills stays a desktop-only
+            secondary link. */}
+        {SIDEBAR.map(({ to, end, label, Icon }) => (
           <NavLink key={to} to={to} end={end} className="mc-navitem">
             <Icon className="mc-navitem__icon" />
             <span className="mc-navitem__label">{label}</span>

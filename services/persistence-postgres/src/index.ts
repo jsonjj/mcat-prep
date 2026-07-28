@@ -7,3 +7,4 @@ export * from './postgres-repository';
 export * from './question-bank-repository';
 export * from './mastery-repository';
 export * from './question-stats-repository';
+export * from './practice-exposure-repository';

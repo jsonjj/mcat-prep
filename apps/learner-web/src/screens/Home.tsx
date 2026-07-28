@@ -92,6 +92,17 @@ export function Home() {
         </span>
       </div>
 
+      <Link to="/app/practice" className="mc-daily" aria-label="Practice">
+        <div className="mc-daily__text">
+          <span className="mc-upnext__eyebrow">Test-out reps · adaptive</span>
+          <span className="mc-daily__title">Practice</span>
+          <span className="mc-upnext__meta">
+            Fresh questions from what you’ve learned — a correct first try moves your mastery.
+          </span>
+        </div>
+        <span className="mc-daily__arrow" aria-hidden="true">→</span>
+      </Link>
+
       <Link to="/app/passage" className="mc-daily" aria-label="Passage of the Day">
         <div className="mc-daily__text">
           <span className="mc-upnext__eyebrow">Daily rep · optional</span>

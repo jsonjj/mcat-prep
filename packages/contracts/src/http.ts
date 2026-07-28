@@ -14,6 +14,11 @@ import {
   LessonMasteryViewSchema,
   SkillMasteryViewSchema,
 } from './mastery';
+import {
+  PracticeAttemptCommandSchema,
+  PracticeAttemptResultSchema,
+  PracticeQueueViewSchema,
+} from './practice';
 import { UtcTimestampSchema } from './time';
 import {
   VectorLessonCommandSchema,
@@ -87,6 +92,18 @@ export const HTTP_API = {
   },
   attempt: { method: 'POST', path: '/v1/attempts', body: AttemptCommandSchema },
   sync: { method: 'POST', path: '/v1/sync', body: SyncSubmitRequestSchema },
+  // Adaptive Practice (count-based test-out). The queue is path-parameterized
+  // (`/v1/practice/queue/{x}` and `/v1/practice/queue/{x}/{focus}`) because the
+  // authority edge rejects query strings; the client appends the segments. The
+  // adaptive attempt is deliberately namespaced so it never collides with the
+  // single-item Passage-of-the-Day `POST /v1/practice/attempts`.
+  practiceQueue: { method: 'GET', path: '/v1/practice/queue', response: PracticeQueueViewSchema },
+  practiceAdaptiveAttempt: {
+    method: 'POST',
+    path: '/v1/practice/attempts/adaptive',
+    body: PracticeAttemptCommandSchema,
+    response: PracticeAttemptResultSchema,
+  },
   vectorLessonStatus: {
     method: 'GET',
     path: '/v1/lessons/vectors-and-trigonometry/status',

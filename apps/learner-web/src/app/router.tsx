@@ -19,6 +19,8 @@ import { Skills } from '../screens/Skills';
 import { SkillDetail } from '../screens/SkillDetail';
 import { Profile } from '../screens/Profile';
 import { PassageOfDay } from '../screens/PassageOfDay';
+import { PracticeHome } from '../screens/practice/PracticeHome';
+import { PracticeSession } from '../screens/practice/PracticeSession';
 import { CarsDuel } from '../screens/CarsDuel';
 import { Wrapped } from '../screens/Wrapped';
 
@@ -55,9 +57,9 @@ export const router = createBrowserRouter([
       { path: 'passage', element: <PassageOfDay /> },
       { path: 'cars', element: <CarsDuel /> },
       { path: 'wrapped', element: <Wrapped /> },
-      // Practice tab + Focus mode removed; redirect old paths for bookmarks.
-      { path: 'practice', element: <Navigate to="/app" replace /> },
-      { path: 'practice/*', element: <Navigate to="/app" replace /> },
+      // Adaptive Practice: the hub plus its in-place session.
+      { path: 'practice', element: <PracticeHome /> },
+      { path: 'practice/session', element: <PracticeSession /> },
       { path: 'profile', element: <Profile /> },
     ],
   },
