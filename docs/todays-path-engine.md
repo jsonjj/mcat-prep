@@ -23,25 +23,27 @@ Path reads mastery/forgetting/coverage/review-debt state and **writes none of it
 Build Allowed List → Score Items → Pick Winners → Order List → Implement.
 
 1. **Build Allowed List** — per-activity eligibility. CARS Duel: always. Recall:
-   only when `due >= 5`. Review Mistakes: **reserved every day** as short spacer
-   sessions (2–3/day — see Reserved Mistakes spacers below). Lesson: unlocked +
-   **not mastered** (`getMasteryLessons().mastered` or a lesson finished from a
-   prior plan) + not prerequisite-blocked. Practice: available post-onboarding.
+   only when `due >= 5`. Review Mistakes: only when **`open >= 3`** misses are
+   actually open — 2–3 short sessions (see Reserved Mistakes sessions below).
+   Lesson: unlocked + **not mastered** (`getMasteryLessons().mastered` or a lesson
+   finished from a prior plan) + not prerequisite-blocked. Practice: available
+   post-onboarding.
 2. **Score Items** — only the scored block (lessons + practice) is scored; the
    core is reserved. Lessons are scored by **every driver that has data** so the
    pick is never arbitrary: `exam-weight(section) × unlock(KC count) ×
    coverage/deadline-urgency`. Practice value scales with **weakness × coverage**.
 3. **Pick Winners** — runs on the minutes budget (1 slot = 1 minute). Reserve the
    mandatory core first (CARS always; Recall when eligible, sized by
-   due-volume/debt; **2–3 short Review-Mistakes spacer sessions**), then fill the
-   rest with the scored block **highest
+   due-volume/debt; **2–3 short Review-Mistakes sessions, only when ≥3 are open**),
+   then fill the rest with the scored block **highest
    value-per-minute first**, with a **phase tilt** (new lessons early →
    reinforcement later) and **diminishing returns** (re-score after each pick +
    a per-repeat decay). Guardrails: review-debt throttle, new-lesson cap,
    block floor–ceilings, total ≤ budget, carry-over cap.
 4. **Order List** — teaching rules, NOT score order: Recall first · new lessons
-   early · teach-before-test · CARS mid · **Review-Mistakes sessions interleaved as
-   spacers so no two same-kind activities run back-to-back** · rule-priority tie-break.
+   early · teach-before-test · CARS mid · **max-spread so no two same-kind activities
+   run back-to-back, and where one kind outnumbers all the others its unavoidable
+   repetition is cut into even chunks** (see Variety below) · rule-priority tie-break.
 5. **Implement** — the client runs the ordered list one-at-a-time ("do this
    next"), launching each activity with its computed input and advancing when the
    learner finishes it. **Unfinished work carries to tomorrow, capped at ~125%.**
@@ -52,12 +54,22 @@ Build Allowed List → Score Items → Pick Winners → Order List → Implement
 - **Time costs:** CARS Duel **12** (fixed) · Lesson **20** (flat) · Practice
   **2**/question · Recall **0.33**/card (20s) · Review Mistakes **2**/mistake.
 - **Block floor–ceiling:** Practice **6–24 q** · Recall **4–20 cards** · Review
-  Mistakes **5–20** (dynamic mid-day injection); reserved spacer sessions are short
-  (**3–8 items**).
-- **Reserved Mistakes spacers:** **2**/day (**3** on ≥4 hr budgets), planned even
-  when nothing is open ("a short session still appears"); they break up long
-  same-kind runs and catch misses that pile up during the day.
-- **Min-eligibility:** Recall **≥5 due**.
+  Mistakes **5–20** (dynamic mid-day injection); reserved sessions are short
+  (**3–8 items**) and **never sized above the open-mistake count**.
+- **Reserved Mistakes sessions:** **2**/day (**3** on ≥4 hr budgets), reserved
+  **only once ≥3 misses are actually open** — a slot reserved against nothing
+  promised "clear what piled up" and opened an empty Mistakes page, so the engine now
+  applies its own `eligibility.mistakesMinOpen` and sizes from
+  `Authority.openMistakes` (the list the tab renders). Misses that pile up later in
+  the day are caught by the mid-day injection, not by a pre-booked empty slot.
+- **Variety is the orderer's job, not a reserved session's:** max-spread reaches
+  **zero** same-kind adjacency whenever no kind holds more than half the day; when one
+  does (a practice- or lesson-heavy day) the forced repetition is cut into even chunks,
+  so the longest same-kind run is `ceil(dominant / (others + 1))` — the provable floor
+  for that set of activities. It holds with **no** Mistakes session present (measured
+  worst case across the budget/recall/lesson range: **4**, on a day whose budget admits
+  only one kind).
+- **Min-eligibility:** Recall **≥5 due** · Review Mistakes **≥3 open**.
 - **Review-debt bands** (debt = recall due-minutes ÷ budget): `<0.30` normal
   (recall ~20–30% of budget) · `0.30–0.40` reduce new-lesson admission · `≥0.50`
   pause new lessons (recall up to ~60%).

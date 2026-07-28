@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildTodaysPath,
+  orderActivities,
   reviewDebtBand,
   sizeRecall,
   TODAYS_PATH_CONFIG,
   type CarriedActivity,
+  type PlannedActivity,
+  type TodaysPathActivityKind,
   type TodaysPathCandidateLesson,
   type TodaysPathSnapshot,
 } from './todays-path';
@@ -62,6 +65,36 @@ const maxSameKindRun = (acts: readonly { kind: string }[]): number => {
   return max;
 };
 
+/**
+ * The unbeatable floor on the longest same-kind run for a set of activities: `o`
+ * items of other kinds open at most `o + 1` gaps for the `d` items of the dominant
+ * kind, so one gap must hold ceil(d / (o + 1)). Recall is pinned first by the
+ * orderer and there is only ever one of it, so it counts only toward the gaps.
+ */
+const sameKindRunFloor = (acts: readonly { kind: string }[]): number => {
+  const rest = acts.filter((a) => a.kind !== 'recall');
+  if (rest.length === 0) return acts.length > 0 ? 1 : 0;
+  const counts = new Map<string, number>();
+  for (const a of rest) counts.set(a.kind, (counts.get(a.kind) ?? 0) + 1);
+  const dominant = Math.max(...counts.values());
+  return Math.max(1, Math.ceil(dominant / (rest.length - dominant + 1)));
+};
+
+const planned = (kind: TodaysPathActivityKind, id: string): PlannedActivity => ({
+  activityId: id,
+  kind,
+  title: id,
+  detail: '',
+  estimatedMinutes: 10,
+  count: null,
+  minutesBudget: null,
+  focus: null,
+  lessonSlug: null,
+  lessonId: null,
+  priorityReason: 'NEW_LEARNING',
+  carriedOver: false,
+});
+
 describe('Today\u2019s Path engine', () => {
   it('always reserves CARS Duel and never exceeds the budget', () => {
     const r = buildTodaysPath(snap());
@@ -94,6 +127,58 @@ describe('Today\u2019s Path engine', () => {
       }),
     );
     expect(noAdjacentSameKind(r.activities)).toBe(true);
+  });
+
+  it('cuts an unavoidable same-kind run into even chunks instead of one long tail', () => {
+    // 12 lessons + 2 CARS: zero adjacency is impossible, but the two CARS open three
+    // gaps, so the longest lesson run must be 4 — not the 10-long tail a greedy
+    // "take the fullest kind" pass leaves behind once the minority kinds run dry.
+    const acts = [
+      ...Array.from({ length: 12 }, (_, i) => planned('lesson', `lesson:${i}`)),
+      planned('cars_duel', 'cars-duel:1'),
+      planned('cars_duel', 'cars-duel:2'),
+    ];
+    const ordered = orderActivities(acts);
+    expect(ordered.length).toBe(acts.length);
+    expect(maxSameKindRun(ordered)).toBe(4);
+    expect(maxSameKindRun(ordered)).toBe(sameKindRunFloor(ordered));
+  });
+
+  /**
+   * Variety is an ORDERING guarantee, NOT a side effect of reserving a Review-Mistakes
+   * session. Mistakes sessions are only reserved once misses are actually open, so on a
+   * clean day the ordering carries variety alone: every plan must land on the floor for
+   * its own activity set. Before the orderer owned this outright, the same sweep peaked
+   * at a 10-long same-kind run.
+   */
+  it('holds the longest same-kind run at its floor across the input range, nothing open', () => {
+    let worst = 0;
+    for (const dailyBudgetMinutes of [120, 180, 240, 300, 360, 480]) {
+      for (const recall of [
+        { dueLearning: 0, dueReviews: 0, newAvailable: 0, due: 0, estimatedMinutesForDue: 0 },
+        { dueLearning: 0, dueReviews: 10, newAvailable: 0, due: 10, estimatedMinutesForDue: 4 },
+        { dueLearning: 0, dueReviews: 80, newAvailable: 0, due: 80, estimatedMinutesForDue: 120 },
+      ]) {
+        for (const lessonCount of [0, 1, 2, 3, 6, 12]) {
+          for (const practiceUnlocked of [true, false]) {
+            const r = buildTodaysPath(
+              snap({
+                dailyBudgetMinutes,
+                recall,
+                practiceUnlocked,
+                mistakesOpen: 0,
+                candidateLessons: manyLessons(lessonCount),
+              }),
+            );
+            const run = maxSameKindRun(r.activities);
+            expect(run).toBe(sameKindRunFloor(r.activities));
+            worst = Math.max(worst, run);
+          }
+        }
+      }
+    }
+    // Worst case over the whole sweep: a day whose budget admits only one kind.
+    expect(worst).toBeLessThanOrEqual(4);
   });
 
   it('includes Recall only when enough cards are due, within the card floor/ceiling', () => {
@@ -176,7 +261,7 @@ describe('Today\u2019s Path engine', () => {
     }
   });
 
-  it('uses the reserved Mistakes sessions as spacers to break up long practice runs', () => {
+  it('spreads the reserved Mistakes sessions through long practice runs', () => {
     const r = buildTodaysPath(
       snap({
         dailyBudgetMinutes: 360,
@@ -185,8 +270,8 @@ describe('Today\u2019s Path engine', () => {
         mistakesOpen: 6,
       }),
     );
-    // Several practice blocks + reserved mistakes sessions, and no long same-kind run
-    // survives — the spacers separate what used to be back-to-back practice.
+    // Several practice blocks + reserved mistakes sessions: the extra kinds give the
+    // orderer more gaps to work with, so back-to-back practice shrinks further.
     expect(r.activities.filter((a) => a.kind === 'practice').length).toBeGreaterThan(1);
     expect(r.activities.filter((a) => a.kind === 'review_mistakes').length).toBeGreaterThanOrEqual(2);
     expect(maxSameKindRun(r.activities)).toBeLessThanOrEqual(2);
