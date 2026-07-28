@@ -1,7 +1,7 @@
 # MCAT Mastery Pipeline — Implementation Plan & Producer Input Contract
 
 > **Status:** Implementation in progress on branch `cursor/mastery-tracking-system-b8df`.
-> This document is the single source of truth for the mastery *engine* and, critically, the
+> This document is the single source of truth for the mastery _engine_ and, critically, the
 > **input contract** every other system (lessons, question bank, diagnostic, CARS, recall) must
 > satisfy so it can feed the mastery pipeline. Sections marked **[SIGN-OFF]** contain proposals for
 > the owner to confirm.
@@ -14,16 +14,18 @@
 ## 0. TL;DR
 
 - Mastery is a **probability `P(L)` per unit**, updated by **Bayesian Knowledge Tracing (BKT)**;
-  **IRT** turns item difficulty into the BKT *slip*; **Mastery Learning** sets the `P(L) ≥ 0.95`
+  **IRT** turns item difficulty into the BKT _slip_; **Mastery Learning** sets the `P(L) ≥ 0.95`
   cut. A **forgetting** layer decays `P(L)`; a **prerequisite** layer reinforces 1-hop
   prerequisites on correct answers. **CARS** is a separate **IRT ability `V`**.
 - **`P(L)` replaces the evidence-ladder rungs** as the definition of "mastered" (owner decision).
-  Evidence records are still logged, but the *number* shown to the learner comes from `P(L)`.
+  Evidence records are still logged, but the _number_ shown to the learner comes from `P(L)`.
 - **Fail-closed:** only **independent** attempts (A0, no content-bearing hint, not a diagnostic
   retry, not post-reveal) move `P(L)`. Assisted/revealed/guessed work never mints mastery.
 - Runs **server-side**; per-user values persist in **new Postgres tables**. The client displays.
-- Grain: **KC** (stored, hidden), **7 skills** (Skills page bars), **lesson** (Progress brain),
-  **CARS** (3 sub-skills + overall readiness).
+- Grain: **KC** (stored, hidden), **7 skills** (Skills page bars), **CARS** (3 sub-skills + overall
+  readiness). The **lesson** grain on the Progress brain is a **derived rollup of member-KC `P(L)`**,
+  not its own BKT state — see §5.2 and
+  [`docs/lesson-evidence-mastery-contract.md`](./lesson-evidence-mastery-contract.md) §9.
 - The diagnostic **seeds** initial values only (asymmetric, capped ≤ 0.4). It never awards mastery.
 - **FSRS stays with the separate Recall/flashcards feature.** Mastery decay is BKT-based.
 
@@ -31,24 +33,26 @@
 
 ## 1. Locked decisions (owner Q&A)
 
-| # | Decision |
-|---|---|
-| Mastery definition | `P(L) ≥ 0.95` **replaces** the evidence-ladder rungs |
-| What moves `P(L)` | **Only independent** attempts; up on correct, **down on wrong**; assisted/revealed = "instruction" (may set *Learning*, never moves the number) |
-| KC cardinality | **Single primary KC** per item |
-| Display | **7 skills** on Skills page (7 percentage bars; the 15 clusters are removed), **per-lesson** on Progress (brain nodes), KC stored but hidden. **Continuous percentages**, not discrete states |
-| Skill set | The **7 reasoning operations** (IDENTIFY / PREDICT / EXPLAIN / RELATE / QUANTIFY / DESIGN / EVIDENCE), all displayed, no merge |
-| Forgetting | BKT half-life governs concept/KC/skill/lesson decay; **FSRS** stays for the separate Recall feature |
-| Daily decay | **Lazy** (`P(L)·2^(−daysElapsed/H)` on read/update); no cron |
-| Review line | Due when `P(L)` decays **below 0.90** |
-| Diagnostic → mastery | **Seed only** (asymmetric, cap ≤ 0.4), never mints mastery |
-| Engine location | **Server-side**; new Postgres tables; both the deployed learner-api and the in-process authority-core run the same pure engine |
-| Item difficulty `b` | `question_stats` table; `b = 0` until > 20 attempts, **DOK cold-start** before that |
-| Prereq graph | Build now, `w = 0.5`; 1-hop V3 edges; inert until the graph is loaded |
-| BKT formulas | Implemented **exactly as written** (learning nudge on every independent answer) |
-| CARS Duel → skills | Position→FOC, Argument→RWT, Application→RBT |
-| CARS readiness source | **Both** PotD (K=0.3) and Duel (K=0.08) update the same `V`; overall readiness = mean; on-track `V ≥ 1.7` |
-| Recall shim | **Replace** the client-side cluster-FSRS demo with a mastery-driven due-review surface |
+| #                     | Decision                                                                                                                                                                                                                                                                                                              |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mastery definition    | `P(L) ≥ 0.95` **replaces** the evidence-ladder rungs                                                                                                                                                                                                                                                                  |
+| What moves `P(L)`     | **Only independent** attempts; up on correct, **down on wrong**; assisted/revealed = "instruction" (may set _Learning_, never moves the number)                                                                                                                                                                       |
+| KC cardinality        | **Single primary KC** per item                                                                                                                                                                                                                                                                                        |
+| Display               | **7 skills** on Skills page (7 percentage bars; the 15 clusters are removed), **per-lesson** on Progress (brain nodes), KC stored but hidden. **Continuous percentages**, not discrete states                                                                                                                         |
+| Direct update grains  | Exactly two: the **primary KC** (`primaryKcId`) and the **primary reasoning operation** (`reasoningOperation`). Lessons have no BKT state of their own                                                                                                                                                                |
+| Lesson grain          | **Derived rollup** of required member-KC `P(L)`: arithmetic mean displayed; `mastered` only when every required KC clears `0.95`; review-due when any previously practiced required KC is due; a missing KC state contributes the `0.20` prior and blocks mastery; a missing/empty lesson→KC mapping **fails closed** |
+| Skill set             | The **7 reasoning operations** (IDENTIFY / PREDICT / EXPLAIN / RELATE / QUANTIFY / DESIGN / EVIDENCE), all displayed, no merge                                                                                                                                                                                        |
+| Forgetting            | BKT half-life governs concept/KC/skill/lesson decay; **FSRS** stays for the separate Recall feature                                                                                                                                                                                                                   |
+| Daily decay           | **Lazy** (`P(L)·2^(−daysElapsed/H)` on read/update); no cron                                                                                                                                                                                                                                                          |
+| Review line           | Due when `P(L)` decays **below 0.90**                                                                                                                                                                                                                                                                                 |
+| Diagnostic → mastery  | **Seed only** (asymmetric, cap ≤ 0.4), never mints mastery                                                                                                                                                                                                                                                            |
+| Engine location       | **Server-side**; new Postgres tables; both the deployed learner-api and the in-process authority-core run the same pure engine                                                                                                                                                                                        |
+| Item difficulty `b`   | `question_stats` table; `b = 0` until > 20 attempts, **DOK cold-start** before that                                                                                                                                                                                                                                   |
+| Prereq graph          | Build now, `w = 0.5`; 1-hop V3 edges; inert until the graph is loaded                                                                                                                                                                                                                                                 |
+| BKT formulas          | Implemented **exactly as written** (learning nudge on every independent answer)                                                                                                                                                                                                                                       |
+| CARS Duel → skills    | Position→FOC, Argument→RWT, Application→RBT                                                                                                                                                                                                                                                                           |
+| CARS readiness source | **Both** PotD (K=0.3) and Duel (K=0.08) update the same `V`; overall readiness = mean; on-track `V ≥ 1.7`                                                                                                                                                                                                             |
+| Recall shim           | **Replace** the client-side cluster-FSRS demo with a mastery-driven due-review surface                                                                                                                                                                                                                                |
 
 ---
 
@@ -73,6 +77,12 @@ Pure modules: `irt.ts`, `bkt.ts`, `forgetting.ts`, `prerequisite.ts`, `cars.ts`,
 Constants: `P(L)_0=0.2, T=0.15, G=0.25, m=1.7, S_m=0.10, threshold=0.95, review line=0.90, H_0=7,
 w=0.5, V_0=0, K=0.3/0.08, CARS readiness=1.7, seed cap=0.4`.
 
+> **Lesson-chain boundary.** The `lesson` member of `MasteryUnitStates` in `mastery-attempt.ts` (and
+> the direct-BKT reading of `LessonMasteryView.pL`) is **legacy and excluded from the V3 lesson
+> seam**. No V3 lesson observation targets it: a qualified observation updates exactly two grains,
+> `primaryKcId` and `reasoningOperation`. V3 lesson-grain values are the derived rollup in §5.2. The
+> formulas, constants, and shipped code above are unchanged.
+
 ---
 
 ## 3. Data model (per-user storage)
@@ -82,7 +92,9 @@ w=0.5, V_0=0, K=0.3/0.08, CARS readiness=1.7, seed cap=0.4`.
 - `question_stats(question_id, attempts, correct, updated_at)` — population difficulty for `b` (no
   FK to `questions`: the current study loop scores against the in-memory synthetic bank).
 - `mastery_kc / mastery_skill / mastery_lesson (learner_id, key, p_l, half_life_days,
-  last_practiced_at, last_due_review_at, updated_at)` — `p_l` as-of `last_practiced_at`.
+last_practiced_at, last_due_review_at, updated_at)` — `p_l` as-of `last_practiced_at`. V3 lesson
+  observations write only `mastery_kc` and `mastery_skill`; `mastery_lesson` is legacy storage for
+  the pre-seam lesson chain and is not the source of a V3 lesson-grain value (§5.2.1).
 - `cars_ability (learner_id, cars_skill, v, updated_at)`.
 
 Persistence repos in `@mcat/persistence-postgres` (`mastery-repository.ts`,
@@ -116,19 +128,79 @@ Contracts (`@mcat/contracts/mastery.ts`): `MasterySeed`, `SkillMasteryView`, `Le
 
 ## 5. Producer Input Contract (what each system MUST emit)
 
+> **Lesson producers: read the seam contract first.** > [`docs/lesson-evidence-mastery-contract.md`](./lesson-evidence-mastery-contract.md) is the
+> normative producer contract for any V3 lesson feeding this pipeline. It defines
+> `LessonItemBinding` (author-time metadata), `LessonRuntimeResponseFacts` (runtime facts),
+> `AcceptedLessonObservation` (server acceptance), evidence-mode routing, the two-gate BKT
+> qualification, and `QualifiedBktObservation` — the only lesson-side input this engine accepts. Its
+> names are frozen by the Gate A registry (`.superpowers/sdd/field-lock.md`). §5.2 below is a summary;
+> where they differ, the contract governs.
+
 ### 5.1 Question-bank items (v7)
+
 `id`, single `primary_kc_id`, `lesson_id`, **`reasoning_operation`** (1 of 7 — NEW tag), `dok_level`,
 `family_id`, `section`, `primary_skill`; CARS items use `primary_skill ∈ {CARS_FOC/RWT/RBT}`;
 `correct_answer` + `explanations` stay server-only.
 
 ### 5.2 Lessons & study runtime (attempt event contract)
-Every answer emits: `questionId, primary_kc_id, lesson_id, reasoning_operation, dok_level,
-family_id, section, assistanceLevel, contentBearingHint, isDiagnosticRetry, revealed, correct
-(server-decided), elapsedMs, conditions {timed,passage,protected,mixed}, changeDimensions[]`. The
-engine derives `independent` and only then moves `P(L)`. Lessons declare their `lesson_id` + ordered
-KC set.
+
+The non-lesson study loop keeps emitting the flat attempt event: `questionId, primary_kc_id,
+lesson_id, reasoning_operation, dok_level, family_id, section, assistanceLevel, contentBearingHint,
+isDiagnosticRetry, revealed, correct (server-decided), elapsedMs, conditions
+{timed,passage,protected,mixed}, changeDimensions[]`. The engine derives `independent` and only then
+moves `P(L)`.
+
+**V3 lessons use the seam contract instead**, in three separated stages:
+
+1. The lesson runner emits **facts only** (`LessonRuntimeResponseFacts`): `questionId`,
+   `itemBindingId`, `bindingVersion`, `attemptIndex`, `isRetry`, `isDiagnosticRetry`,
+   `chosenChoiceId`, `omitted`, `elapsedMs`, `answerChanges`, `assistanceLevel`,
+   `contentBearingHintUsed`, `revealUsed`, `occurredAt`. It never emits `correct`, `independent`, an
+   evidence status, or a `P(L)`.
+2. The server accepts the response into an `AcceptedLessonObservation` (server-decided `outcome` and
+   `scoringValid`, plus the immutable `LessonItemBinding` snapshot) and routes evidence.
+3. BKT qualification runs two gates and, only if both pass, emits a `QualifiedBktObservation` — the
+   only lesson-side input the engine accepts.
+
+**Explicit eligibility only.** A lesson observation reaches BKT only when the immutable binding
+explicitly declares `INDEPENDENT` in `candidateEvidenceModes` **and** the runtime response qualifies
+(`attemptIndex === 1`, `assistanceLevel === 'A0'`, no content-bearing hint, no reveal, no retry,
+`scoringValid === true`). There is no default-allow and no inference: a binding that does not declare
+`INDEPENDENT` is rejected with `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED`, and a binding that declares
+it without a `reasoningOperation` is rejected with
+`ELIGIBLE_BINDING_MISSING_REASONING_OPERATION`. Every rejection code is recorded for audit; the
+observation still produces evidence, it just does not move `P(L)`.
+
+A `QualifiedBktObservation` carries `primaryKcId`, `reasoningOperation`, `correct`, and an optional
+`dokLevel`. It has no `lessonId`, `pL`, `mastered`, `masteryThreshold`, `evidenceStatus`, `kind`, or
+`independent` field. `secondaryKcMappings` is never a target.
+
+**Current state.** Every shipped V3 lesson binding normalizes to `['INSTRUCTIONAL']` or
+`['INSTRUCTIONAL_EXIT']`, so the current V3 vector lesson `V3-LES-130923` moves no `P(L)` at all. It
+produces instructional evidence only. That is the intended end state, not a partial integration.
+
+### 5.2.1 Lesson summaries are KC-derived
+
+Lessons declare their `lesson_id` + ordered required KC set; that mapping is the _only_ lesson input
+to mastery. A lesson-grain number is computed on read from its required member KCs, never stored as
+its own BKT state:
+
+- **displayed value** — arithmetic mean of the current (lazily decayed) `P(L)` of every required
+  member KC;
+- **`mastered`** — `true` only when **every** required KC satisfies `isMastered(pL)` (`P(L) >= 0.95`);
+- **review-due** — `true` when **any** previously practiced required KC has decayed below the review
+  line (`0.90`); a never-practiced KC is not due;
+- **missing KC state** — contributes the `0.20` prior to the mean and blocks `mastered`;
+- **missing or empty lesson→KC mapping** — **fails closed**: emit no lesson-grain value at all, never
+  `0` and never a vacuous "mastered".
+
+The mean is a display value. It MUST NOT be compared against the `0.95` threshold to decide
+`mastered`, so a lesson can legitimately show a high percentage and still be `mastered: false`.
+Lesson delivery, checkpoint, and repair state is a separate axis: completing a lesson never sets or
+implies mastery.
 
 ### 5.3 Diagnostic
+
 At completion emit a `MasterySeed` (per-KC priors via cluster read, per-operation priors, CARS
 `V_0`) — seeds only, capped ≤ 0.4, never mastery. **[SIGN-OFF]** requires adding an operation-grain
 aggregation to the diagnostic output.
@@ -162,7 +234,9 @@ review line (`REVIEW_LINE = 0.90`, exported from `@mcat/policies`). Read current
 pipeline (the read views already apply lazy decay, so `pL` is current):
 
 - 7 skills: `GET /v1/progress/skills` (`AuthorityPort.getMasterySkills`) → filter `pL < 0.90`.
-- lessons: `GET /v1/progress/lessons` (`AuthorityPort.getMasteryLessons`) → filter `pL < 0.90`.
+- lessons: `GET /v1/progress/lessons` (`AuthorityPort.getMasteryLessons`) → filter `pL < 0.90`. For
+  V3 lessons this view is the KC-derived rollup of §5.2.1, so "due" means at least one previously
+  practiced required KC is due; the actionable due unit is the KC, not the lesson.
 - KC-grain due lists: KC `P(L)` is **stored but not yet exposed**. If Recall needs a per-KC due list,
   add a `getMasteryKc` read (a `GET /v1/progress/kc` endpoint + `Authority` method) — the storage
   (`mastery_kc`) already exists.
@@ -183,7 +257,7 @@ net correctness so one mid-session miss doesn't reset the half-life (the engine 
 `dueReviewNetCorrect` override on `stepMemory` / `applyMasteryAttempt`; wire it through if Recall
 batches).
 
-**Boundary.** The separate Anki-style flashcards/FSRS feature owns user *facts* and never writes
+**Boundary.** The separate Anki-style flashcards/FSRS feature owns user _facts_ and never writes
 mastery; this concept/skill due-review lane is the one that feeds `P(L)`. The old client-side
 cluster-FSRS shim (`apps/learner-web/src/app/recall-schedule.ts`) is the thing the future Recall
 system replaces; until then it stays as a demo (and is the only remaining `@mcat/content` import in

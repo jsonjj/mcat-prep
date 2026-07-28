@@ -16,9 +16,35 @@ Automated read-only inspection of the current reference PDF found only page-leve
 - **Grouping:** a passage set links several items to one stimulus; items record their order and dependency.
 - **Rationales:** one full correct-solution rationale plus a rationale for every choice; each wrong choice carries a distractor-family hypothesis (an investigation prompt, not a certain diagnosis of the learner).
 
-## Cognitive operation tags (from the blueprint, not the PDF)
+## Two operation vocabularies — do not mix them
+
+The word "operation" names two different, non-interchangeable vocabularies in this repo. Both live in
+`packages/contracts/src/vocab.ts`. Pick by purpose, not by whichever name you saw first.
+
+|                    | Authoring-analysis tags                                       | Mastery axis                                                              |
+| ------------------ | ------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Schema             | `OperationTagSchema`                                          | `ReasoningOperationSchema`                                                |
+| Members            | 8: `K` `Q` `E` `D` `P` `A` `I` `T`                            | 7: `IDENTIFY` `PREDICT` `EXPLAIN` `RELATE` `QUANTIFY` `DESIGN` `EVIDENCE` |
+| Purpose            | Generic blueprint coverage/analysis of what an item exercises | The learner-facing skill axis the BKT engine estimates `P(L)` for         |
+| Where it is stored | `EvidenceRecord.operation`                                    | `reasoning_operation` on an item / lesson item binding                    |
+| Who may set it     | Author, during blueprint analysis                             | Author, deliberately and by name; never inferred                          |
+
+Neither is derived from the other. `EvidenceRecord.operation` must stay an `OperationTag` and must
+never be populated from `reasoning_operation`; equally, no `OperationTag` may be widened into a
+`ReasoningOperation`. Free-text fields such as `learner_operation` or `semantic_structure.operation`
+are instructional prose and are never either vocabulary.
+
+`reasoning_operation` is mandatory only where an item is declared eligible for independent evidence
+(see `docs/lesson-evidence-mastery-contract.md`), because a wrong guess there corrupts a
+learner-facing skill estimate. Elsewhere it is optional.
+
+### Authoring-analysis tags (from the blueprint, not the PDF)
 
 `K` knowledge use · `Q` quantitative · `E` experiment/evidence · `D` data/representation translation · `P` passage control · `A` CARS argument · `I` integrated coordination · `T` timed endurance.
+
+### The seven reasoning operations (mastery axis)
+
+`IDENTIFY` recognize/recall the concept · `PREDICT` work forward from a perturbation · `EXPLAIN` work backward to the mechanism · `RELATE` map entity ↔ role or compare cases · `QUANTIFY` select and run the right relationship · `DESIGN` judge or choose a method or study · `EVIDENCE` decide what the data licenses.
 
 ## Distractor-family vocabulary (independently defined)
 

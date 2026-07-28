@@ -4,8 +4,8 @@
 
 **Status:** Candidate normative authoring standard; pending independent re-audit and validation of
 the five designated golden candidates  
-**Version:** 0.2-candidate  
-**Date:** July 23, 2026  
+**Version:** 0.3-candidate  
+**Date:** July 27, 2026  
 **Audience:** Curriculum authors, subject-matter reviewers, instructional designers, question and
 evidence reviewers, source and rights reviewers, designers, accessibility reviewers, engineers,
 analytics reviewers, and release integrators  
@@ -20,6 +20,18 @@ Only the existing five quarantined pilot implementations and explicitly noncanon
 fixtures may continue pre-W00 visual investigation. No later canonical internal or production
 authoring wave may start until the signed foundation, trust, and W00 prerequisites in §10.3 are
 verified. The remaining 109 production jobs MUST NOT claim Spec 04 compliance before that point.
+
+### Changelog
+
+| Version         | Date          | Change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| --------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0.3-candidate` | July 27, 2026 | Added the Lesson → Evidence → Mastery Contract to the authority order (§1.2); added the mastery-seam author-time metadata closure and Spec 04 ↔ seam key correspondence (§5.1.7); added the conditional `reasoning_operation` / optional `dok_level` rule and the `learner_operation` distinction (§5.1.8); added a complete worked binding example (§5.1.9); clarified that `question_evidence_plan` is aggregate review evidence and not a mastery award (§5.1.5); added gate checks `QEV-006` and `QEV-007` (§7.1); added compile rejections and no-default rules (§9.2); added lesson-rollup and instructional-only-evidence boundaries (§9.4); added three author checklist rows (Appendix A). |
+| `0.2-candidate` | July 23, 2026 | Prior candidate normative authoring standard.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+
+Per §10.5, this normative change requires a new decision-register hash and invalidates dependent
+subjects and receipts. The Appendix E fixture predates the §5.1.7 closure and is therefore
+non-conforming under 0.3-candidate until it is regenerated; its embedded digests MUST be recomputed
+by the pinned canonicalizer, never hand-edited (§3.2).
 
 ---
 
@@ -51,9 +63,17 @@ Authority resolves in this order:
    `LessonDefinition`, `LessonRun`, shell and KC states, planner-owned route selection, assistance,
    checkpoints, events, item-family exposure, response semantics, bounded repair, exact
    failed-function reentry, instructional exit, and lesson completion.
-4. This document (“Spec 04”) owns the immutable authoring subjects, authoring-quality workflow,
+4. **[Lesson → Evidence → Mastery Contract](../lesson-evidence-mastery-contract.md)** owns the
+   downstream meaning of authored item metadata: `LessonItemBinding` and
+   `LessonRuntimeResponseFacts` semantics, declared evidence eligibility versus runtime BKT
+   qualification, evidence-mode routing, the two direct BKT grains (`primaryKcId` and
+   `reasoningOperation`), lesson KC-rollup semantics, and the prohibition on lesson- or
+   client-written mastery. Its names are frozen by the Gate A registry
+   (`.superpowers/sdd/field-lock.md`). Spec 04 owns _how_ this metadata is authored and reviewed;
+   the contract owns _what it means_ once emitted.
+5. This document (“Spec 04”) owns the immutable authoring subjects, authoring-quality workflow,
    presentation rules, detached review evidence, and compile/parity gates.
-5. Pinned runbooks, schemas, and implementations MAY be stricter. They MUST NOT weaken items 1–4.
+6. Pinned runbooks, schemas, and implementations MAY be stricter. They MUST NOT weaken items 1–5.
 
 If a subject appears in both Spec 03 and Spec 04, the named owner above governs. In particular,
 Spec 04 MUST NOT:
@@ -63,6 +83,8 @@ Spec 04 MUST NOT:
 - mutate or replay an immutable first attempt as clean;
 - replace exact failed-function reentry with a generic restart;
 - convert instructional exit or lesson completion into mastery or readiness;
+- let any authored field set `independent`, a `pL`, a mastery threshold or status, a decay rate, or
+  an evidence status;
 - expose protected content outside the server authority; or
 - treat 18 minutes as a per-KC or per-lesson budget.
 
@@ -897,6 +919,19 @@ feedback_release
 omission_rule_ref
 retry_rule_ref
 invalid_item_rule_ref
+
+--- mastery-seam closure (added in 0.3-candidate; see §5.1.7) ---
+lesson_id
+question_id
+binding_version
+candidate_evidence_modes[]
+reasoning_operation        (conditional; see §5.1.8)
+dok_level                  (optional; 1 | 2 | 3 | 4)
+representation_id          (nullable)
+representation_family_id   (optional)
+changed_dimensions[]
+changed_dimension_detail   (optional)
+stimulus_lineage_id        (optional)
 ```
 
 `stimulus_binding` and `testlet_binding` are each
@@ -947,6 +982,15 @@ finding_refs[]
 
 Its `review_check_ids` MUST include every applicable `QEV-*` check in §7. The plan is immutable
 inside the script subject but separately assigned and reviewed.
+
+`question_evidence_plan` is **aggregate review evidence about the item set**: it proves that families
+are separated, first attempts are immutable, feedback release is authorized, and protected
+authorities are bound. It is **not** an author-controlled mastery award and confers no capability
+claim. A `status: PASS` on the plan means the item set was reviewed and is well formed; it does not
+mean any learner is mastered, does not make any binding BKT-eligible, and does not substitute for the
+per-response runtime qualification in the
+[Lesson → Evidence → Mastery Contract](../lesson-evidence-mastery-contract.md) §5.2. Eligibility is
+declared per binding in `candidate_evidence_modes`, never by the plan.
 
 #### 5.1.6 Shell contract
 
@@ -1025,6 +1069,156 @@ CompilationMapEntry {
 `shell_contract`, each KC checkpoint/duration/handoff field, transitions, attachment bindings, and
 `compilation_map` use only these records or `ResolvedBinding | BlockedBinding`. An empty
 `blocker_refs` array is required for `RESOLVED`; a nonempty array is required for `BLOCKED`.
+
+#### 5.1.7 Author-time metadata closure for the mastery seam
+
+Every `ImmutableItemBinding` MUST carry a complete, reviewed answer to each row below. This is the
+full set of author-time metadata the downstream seam is allowed to rely on; the server derives
+everything else and infers nothing. Names in the “Seam key” column are frozen by the Gate A registry
+(`.superpowers/sdd/field-lock.md`) and are the exact keys the artifact adapter reads.
+
+| Author decision            | Seam key (`snake_case`)          | Requirement              | Meaning and constraint                                                                                                                                                                                                                                                                                                          |
+| -------------------------- | -------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Item and version identity  | `question_id`, `binding_version` | MUST                     | `question_id` is the canonical server-scored item ID (legacy fallback `item_binding_id`). `binding_version` is an **opaque non-empty string** used only for version matching and audit; it MUST NOT be parsed, coerced, or hashed into a numeric item version. Normalize legacy `item_version` or the envelope version into it. |
+| Owning lesson              | `lesson_id`                      | MUST                     | Routing and audit only. `lesson_id` is **never** a mastery target; lessons have no BKT state.                                                                                                                                                                                                                                   |
+| Primary KC                 | `primary_kc_id`                  | MUST                     | Exactly one. This is the only KC-grain mastery target. `secondary_kc_mappings` is coverage only.                                                                                                                                                                                                                                |
+| Reasoning operation        | `reasoning_operation`            | Conditional — see §5.1.8 | Exactly one of `IDENTIFY`, `PREDICT`, `EXPLAIN`, `RELATE`, `QUANTIFY`, `DESIGN`, `EVIDENCE`. Never inferred from free text.                                                                                                                                                                                                     |
+| Item family                | `semantic_family_id`             | MUST                     | The freshness/diversity unit. MUST equal the binding's hash-bound `family_id`.                                                                                                                                                                                                                                                  |
+| Depth of knowledge         | `dok_level`                      | OPTIONAL — see §5.1.8    | `1`, `2`, `3`, or `4`. No default and no inferred value.                                                                                                                                                                                                                                                                        |
+| Activity role              | `activity_role`                  | MUST                     | One of the nine roles in §5.1.5. A role never by itself grants an evidence mode.                                                                                                                                                                                                                                                |
+| Item-level representation  | `representation_id`              | MUST (nullable)          | Open non-empty string or `null`. `representation_family_id` is an optional external REPFAM reference that is currently unpopulated and MUST NOT be adapter-derived.                                                                                                                                                             |
+| Intended changed dimension | `changed_dimensions`             | MUST (may be `[]`)       | Authored canonical array over `domain_context`, `representation`, `passage_or_data`, `required_operation`, `section_application`. `changed_dimension_detail` retains the raw reviewed prose. An empty or partial array is **never** a validation error, and the adapter MUST NOT infer dimensions from prose.                   |
+| Protected scoring binding  | `server_scoring_authority_ref`   | MUST (server-only)       | The protected scorer. `server_rationale_authority_ref` is the optional protected rationale reference. Both stay server-side; neither may appear in a learner-safe artifact.                                                                                                                                                     |
+| Candidate evidence modes   | `candidate_evidence_modes`       | MUST (non-empty)         | Closed set: `DIAGNOSTIC`, `ENTRY`, `INSTRUCTIONAL`, `INSTRUCTIONAL_EXIT`, `INDEPENDENT`, `TRANSFER`, `DELAYED`, `MIXED`, `PASSAGE`, `TIMED`, `PROTECTED`, `REPAIR_CONFIRMATION`, `REHEARSAL_ONLY`. A **permission set, not an outcome**.                                                                                        |
+
+Where a pre-existing Spec 04 key and a seam key describe the same fact, the correspondence is fixed
+and the values MUST agree. The adapter performs the rename; the author writes both sides only where
+this table says so.
+
+| Spec 04 `ImmutableItemBinding` key                                  | Seam key                         | Invariant                                                          |
+| ------------------------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------ |
+| `item_id`                                                           | `question_id`                    | Same item. Legacy fallback is `item_binding_id`.                   |
+| `item_version`, `item_sha256`                                       | `binding_version`                | Normalized into one opaque string; the hashes stay for provenance. |
+| `family_id`                                                         | `semantic_family_id`             | MUST be equal.                                                     |
+| `secondary_mapping_refs[]`                                          | `secondary_kc_mappings`          | Coverage only; never a mastery target.                             |
+| `assistance_level`                                                  | `authored_assistance_level`      | MUST be equal. Design intent, not the runtime fact.                |
+| `first_attempt_policy: IMMUTABLE`                                   | `first_attempt_immutable: true`  | MUST both hold.                                                    |
+| `learner_projection_schema_ref`, `prompt_options_projection_sha256` | `learner_safe_item_ref`          | The learner-safe surface. No key, rationale, or scoring logic.     |
+| `scoring_binding`                                                   | `server_scoring_authority_ref`   | The protected scoring authority.                                   |
+| `explanation_authority_ref`                                         | `server_rationale_authority_ref` | The protected rationale authority.                                 |
+| `stimulus_binding`                                                  | `stimulus_lineage_id`            | Normalize a legacy `stimulus_lineage` string or `lineage_id`.      |
+
+Three closure rules that a validator MUST enforce:
+
+- **No mastery field is authorable.** An `ImmutableItemBinding` MUST NOT contain `independent`, a
+  `pL` or any mastery probability, a mastery threshold or status, a decay or half-life value, or an
+  evidence status. These have no key; a binding carrying one is rejected, not sanitized.
+- **A0 metadata is necessary but NEVER sufficient for independence.** `assistance_level: A0` and
+  `authored_assistance_level: 'A0'` state the design intent of the activity. Independence is decided
+  at runtime by the server from the observed response — first attempt, `A0` actually in force at
+  commit, no content-bearing hint, no reveal, no retry, and valid server scoring. An author can make
+  independence _reachable_; an author can never make a response independent.
+- **`candidate_evidence_modes` is a ceiling, not a grant.** Declaring `INDEPENDENT` permits BKT
+  qualification to be attempted; it does not assert that any response qualified. Omitting it
+  guarantees that no response from this binding will ever move `pL`.
+
+#### 5.1.8 When an author MUST stop and label an item
+
+If a binding declares `INDEPENDENT` in `candidate_evidence_modes`, the author MUST stop and label
+`reasoning_operation` with exactly one of the seven governed operations, because that value is a
+direct mastery-update target and there is no safe way for an adapter, heuristic, or model to guess
+which of seven operations an item exercises — a wrong guess silently corrupts a learner-facing skill
+estimate. On every other binding (`ENTRY`, `INSTRUCTIONAL`, `INSTRUCTIONAL_EXIT`,
+`REPAIR_CONFIRMATION`, `REHEARSAL_ONLY`, `DIAGNOSTIC`) `reasoning_operation` is optional, and leaving
+an item unlabeled is correct rather than lazy, because such an item can never reach the mastery
+engine. `dok_level` behaves differently: it is OPTIONAL even on a binding declaring `INDEPENDENT`,
+because `coldStartB()` in `packages/policies/src/irt.ts` returns a neutral `0` for an undefined DOK,
+so an unlabeled item only loses difficulty discrimination until it is calibrated from real attempts.
+In short — labeling `reasoning_operation` on an eligible binding is a hard stop that blocks release;
+labeling `dok_level` is a quality improvement to make when you can and to defer when you cannot. If
+you cannot confidently pick one operation, the correct action is to **not declare `INDEPENDENT`** on
+that binding; guessing an operation in order to unlock eligibility is a defect.
+
+**`learner_operation` is not `reasoning_operation`.** The existing `learner_operation` field on
+`RepresentationRecord`, `AccessibilityEquivalentRecord`, and `ActivityRecord` is instructional free
+text describing what the learner does on this screen (“Translate arrows into signed components before
+combining.”). It is an authoring and presentation aid. It is **not** a capability label, it is not
+governed by any closed vocabulary, and it MUST NOT be read, parsed, mapped, or inferred into
+`reasoning_operation`. The same holds for any `semantic_structure.operation` prose. The governed
+seven-operation mastery tag is only ever set deliberately, by name, in `reasoning_operation`.
+
+#### 5.1.9 Worked binding example
+
+One complete, conforming `ImmutableItemBinding` for a solo-practice item that the review team has
+approved as independent measurement. Hashes are illustrative fixture values.
+
+```json
+{
+  "item_binding_id": "V3-LES-329622-KC-271440-SOLO-01",
+  "activity_id": "V3-LES-329622-KC-271440-ACT-SOLO-01",
+  "activity_role": "SOLO_PRACTICE",
+  "primary_kc_id": "V3-KC-271440",
+  "secondary_mapping_refs": [],
+  "item_id": "V3-ITEM-271440-SOLO-01",
+  "item_version": "3",
+  "item_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "item_content_version": "3",
+  "item_content_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "item_mapping_version": "2",
+  "item_mapping_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "family_id": "fam-redox-ledger-solo-01",
+  "family_version": "1",
+  "family_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+  "stimulus_binding": { "state": "ABSENT" },
+  "testlet_binding": { "state": "ABSENT" },
+  "learner_projection_schema_ref": "SCHEMA:learner-item-projection-1",
+  "prompt_options_projection_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+  "scoring_binding": {
+    "scoring_kind": "OPAQUE_KEY",
+    "scoring_authority_id": "SCORING:V3-ITEM-271440-SOLO-01",
+    "scoring_authority_version": "3",
+    "scoring_authority_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "scoring_schema_sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+  },
+  "explanation_authority_ref": "RATIONALE:V3-ITEM-271440-SOLO-01:v3",
+  "asset_manifest_ref": "ASSETS:V3-ITEM-271440-SOLO-01:v3",
+  "eligibility_record_ref": "ELIGIBILITY:V3-ITEM-271440-SOLO-01:v3",
+  "exposure_policy_ref": "EXPOSURE:V3-LES-329622:v1",
+  "first_attempt_policy": "IMMUTABLE",
+  "assistance_level": "A0",
+  "feedback_release": "AFTER_COMMIT",
+  "omission_rule_ref": "POLICY:omission-1",
+  "retry_rule_ref": "POLICY:retry-1",
+  "invalid_item_rule_ref": "POLICY:invalid-item-1",
+
+  "lesson_id": "V3-LES-329622",
+  "question_id": "V3-ITEM-271440-SOLO-01",
+  "binding_version": "V3-ITEM-271440-SOLO-01@3",
+  "candidate_evidence_modes": ["INDEPENDENT"],
+  "reasoning_operation": "RELATE",
+  "dok_level": 3,
+  "representation_id": "REDOX-REP-STRUCTURE-LEDGER",
+  "representation_family_id": null,
+  "changed_dimensions": [],
+  "changed_dimension_detail": null,
+  "stimulus_lineage_id": "lineage:fam-redox-ledger-solo-01"
+}
+```
+
+Why this binding is well formed:
+
+- it declares `INDEPENDENT`, so `reasoning_operation` is present and is exactly one governed value;
+- `dok_level` is supplied, which is optional but improves cold-start difficulty;
+- `assistance_level` is `A0`, which makes independence _reachable_ and proves nothing on its own —
+  the server still requires a first attempt, `A0` in force at commit, no content-bearing hint, no
+  reveal, no retry, and valid server scoring;
+- `changed_dimensions` is `[]` because this is a near-use solo check, not a transfer item;
+- no field states `independent`, a `pL`, a threshold, decay, or an evidence status; and
+- the answer key, rationale, and scoring logic appear only behind server-only authority references.
+
+Changing this binding to an instructional check is a one-field edit: set
+`"candidate_evidence_modes": ["INSTRUCTIONAL_EXIT"]`, at which point `reasoning_operation` becomes
+optional and no response from the item can ever move `pL`.
 
 ### 5.2 `KcCoverageMatrix`
 
@@ -1501,46 +1695,48 @@ The evidence column below is interpreted as a nonempty combination of:
 
 The candidate complete check-ID catalog is:
 
-| Check ID   | Category            | Required evidence                                             | Reviewer/cardinality                      |
-| ---------- | ------------------- | ------------------------------------------------------------- | ----------------------------------------- |
-| `CUR-001`  | Curriculum          | Registry/manifest/freeze pins                                 | Curriculum binding reviewer, 1            |
-| `CUR-002`  | Curriculum          | Lesson/grouping/KC set and order proof                        | Curriculum binding reviewer, 1            |
-| `CUR-003`  | Curriculum          | Graph, sequence, attachment, hold, no-bypass proof            | Curriculum binding reviewer, 1            |
-| `CUR-004`  | Curriculum          | Scope and knowledge-dependency closure                        | Curriculum binding reviewer, 1            |
-| `SCR-001`  | Script              | All 13 stages for applicable routes                           | Instructional design reviewer, 1          |
-| `SCR-002`  | Script              | Explain-before-consequence trace                              | Instructional design reviewer, 1          |
-| `SCR-003`  | Script              | Throughline, expert model, fading, bounds                     | Instructional design reviewer, 1          |
-| `SCR-004`  | Script              | Route applicability and absence proofs                        | Curriculum + runtime reviewers, 1 each    |
-| `SCR-005`  | Script              | Duration, checkpoint, handoff bindings                        | Runtime reviewer, 1                       |
-| `QEV-001`  | Question/evidence   | Immutable item/version/hash bindings                          | Question/evidence reviewer, 1             |
-| `QEV-002`  | Question/evidence   | KC, operation, role, mapping alignment                        | Question/evidence reviewer, 1             |
-| `QEV-003`  | Question/evidence   | Family firewall and first-attempt proof                       | Question/evidence reviewer, 1             |
-| `QEV-004`  | Question/evidence   | Omission, help, reveal, retry, invalid behavior               | Question/evidence reviewer, 1             |
-| `QEV-005`  | Question/evidence   | Server-only scoring/explanation boundary                      | Security/scoring reviewer, 1              |
-| `DOM-001`  | Domain              | Facts, equations, terms, bounds                               | Qualified domain reviewers, 2             |
-| `DOM-002`  | Domain              | Keys/rubrics and alternative answers                          | Qualified domain reviewers, 2             |
-| `DOM-003`  | Domain              | Changed-task construct preservation                           | Domain + question reviewers, 1 each       |
-| `SRC-001`  | Source              | Claim-to-ledger factual authority trace                       | Source reviewer, 1                        |
-| `RGT-001`  | Rights              | Input rights, originality, similarity, assets                 | Rights reviewer, 1                        |
-| `DES-001`  | Presentation        | Rhythm, one job/action, disclosure                            | Presentation reviewer, 1                  |
-| `DES-002`  | Presentation        | Script/UI node parity                                         | Presentation + runtime reviewers, 1 each  |
-| `DES-003`  | Presentation        | Main-app title/navigation/token parity                        | Frontend reviewer, 1                      |
-| `DES-004`  | Presentation        | Learner/reviewer and protected separation                     | Presentation + security reviewers, 1 each |
-| `A11Y-001` | Accessibility       | Keyboard, focus, semantics                                    | Accessibility reviewer, 1                 |
-| `A11Y-002` | Accessibility       | Contrast, zoom, targets, reflow                               | Accessibility reviewer, 1                 |
-| `A11Y-003` | Accessibility       | Equivalent representations and reduced motion                 | Accessibility + domain reviewers, 1 each  |
-| `A11Y-004` | Accessibility       | Every-branch 375/320 and 2D exception proof                   | Accessibility reviewer, 1                 |
-| `NOV-001`  | Novice clarity      | Focus/changed/next walkthrough                                | Novice clarity reviewer, 1                |
-| `NOV-002`  | Novice clarity      | Jargon, reading, directions                                   | Novice clarity reviewer, 1                |
-| `RUN-001`  | Runtime/integration | Complete `LessonDefinition` mapping                           | Runtime reviewer, 1                       |
-| `RUN-002`  | Runtime/integration | Planner resolution and applicable route execution             | Runtime reviewer, 1                       |
-| `RUN-003`  | Runtime/integration | Consequential branch simulation                               | Runtime reviewer + blind solver, 1 each   |
-| `RUN-004`  | Runtime/integration | Reentry, replay, termination, completion                      | Runtime reviewer, 1                       |
-| `ANA-001`  | Analytics           | Event and analytics contract completeness                     | Analytics reviewer, 1                     |
-| `ANA-002`  | Analytics           | No false evidence/mastery/readiness emission                  | Analytics + evidence reviewers, 1 each    |
-| `TRU-001`  | Trust               | Foundation/W00 pinset and toolchain hashes                    | Integration controller, 1                 |
-| `TRU-002`  | Trust               | Identity, receipt, signature, and role graph                  | Trust reviewer, 1                         |
-| `REL-001`  | Release             | Quality-report receipt, four-subject graph, decisions, claims | Final approver, 1                         |
+| Check ID   | Category            | Required evidence                                                                          | Reviewer/cardinality                                  |
+| ---------- | ------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| `CUR-001`  | Curriculum          | Registry/manifest/freeze pins                                                              | Curriculum binding reviewer, 1                        |
+| `CUR-002`  | Curriculum          | Lesson/grouping/KC set and order proof                                                     | Curriculum binding reviewer, 1                        |
+| `CUR-003`  | Curriculum          | Graph, sequence, attachment, hold, no-bypass proof                                         | Curriculum binding reviewer, 1                        |
+| `CUR-004`  | Curriculum          | Scope and knowledge-dependency closure                                                     | Curriculum binding reviewer, 1                        |
+| `SCR-001`  | Script              | All 13 stages for applicable routes                                                        | Instructional design reviewer, 1                      |
+| `SCR-002`  | Script              | Explain-before-consequence trace                                                           | Instructional design reviewer, 1                      |
+| `SCR-003`  | Script              | Throughline, expert model, fading, bounds                                                  | Instructional design reviewer, 1                      |
+| `SCR-004`  | Script              | Route applicability and absence proofs                                                     | Curriculum + runtime reviewers, 1 each                |
+| `SCR-005`  | Script              | Duration, checkpoint, handoff bindings                                                     | Runtime reviewer, 1                                   |
+| `QEV-001`  | Question/evidence   | Immutable item/version/hash bindings                                                       | Question/evidence reviewer, 1                         |
+| `QEV-002`  | Question/evidence   | KC, operation, role, mapping alignment                                                     | Question/evidence reviewer, 1                         |
+| `QEV-003`  | Question/evidence   | Family firewall and first-attempt proof                                                    | Question/evidence reviewer, 1                         |
+| `QEV-004`  | Question/evidence   | Omission, help, reveal, retry, invalid behavior                                            | Question/evidence reviewer, 1                         |
+| `QEV-005`  | Question/evidence   | Server-only scoring/explanation boundary                                                   | Security/scoring reviewer, 1                          |
+| `QEV-006`  | Question/evidence   | Mastery-seam metadata closure (§5.1.7) complete on every binding                           | Question/evidence reviewer, 1                         |
+| `QEV-007`  | Question/evidence   | `INDEPENDENT` declarations carry `reasoning_operation`; no authored mastery field (§5.1.8) | Question/evidence + evidence-policy reviewers, 1 each |
+| `DOM-001`  | Domain              | Facts, equations, terms, bounds                                                            | Qualified domain reviewers, 2                         |
+| `DOM-002`  | Domain              | Keys/rubrics and alternative answers                                                       | Qualified domain reviewers, 2                         |
+| `DOM-003`  | Domain              | Changed-task construct preservation                                                        | Domain + question reviewers, 1 each                   |
+| `SRC-001`  | Source              | Claim-to-ledger factual authority trace                                                    | Source reviewer, 1                                    |
+| `RGT-001`  | Rights              | Input rights, originality, similarity, assets                                              | Rights reviewer, 1                                    |
+| `DES-001`  | Presentation        | Rhythm, one job/action, disclosure                                                         | Presentation reviewer, 1                              |
+| `DES-002`  | Presentation        | Script/UI node parity                                                                      | Presentation + runtime reviewers, 1 each              |
+| `DES-003`  | Presentation        | Main-app title/navigation/token parity                                                     | Frontend reviewer, 1                                  |
+| `DES-004`  | Presentation        | Learner/reviewer and protected separation                                                  | Presentation + security reviewers, 1 each             |
+| `A11Y-001` | Accessibility       | Keyboard, focus, semantics                                                                 | Accessibility reviewer, 1                             |
+| `A11Y-002` | Accessibility       | Contrast, zoom, targets, reflow                                                            | Accessibility reviewer, 1                             |
+| `A11Y-003` | Accessibility       | Equivalent representations and reduced motion                                              | Accessibility + domain reviewers, 1 each              |
+| `A11Y-004` | Accessibility       | Every-branch 375/320 and 2D exception proof                                                | Accessibility reviewer, 1                             |
+| `NOV-001`  | Novice clarity      | Focus/changed/next walkthrough                                                             | Novice clarity reviewer, 1                            |
+| `NOV-002`  | Novice clarity      | Jargon, reading, directions                                                                | Novice clarity reviewer, 1                            |
+| `RUN-001`  | Runtime/integration | Complete `LessonDefinition` mapping                                                        | Runtime reviewer, 1                                   |
+| `RUN-002`  | Runtime/integration | Planner resolution and applicable route execution                                          | Runtime reviewer, 1                                   |
+| `RUN-003`  | Runtime/integration | Consequential branch simulation                                                            | Runtime reviewer + blind solver, 1 each               |
+| `RUN-004`  | Runtime/integration | Reentry, replay, termination, completion                                                   | Runtime reviewer, 1                                   |
+| `ANA-001`  | Analytics           | Event and analytics contract completeness                                                  | Analytics reviewer, 1                                 |
+| `ANA-002`  | Analytics           | No false evidence/mastery/readiness emission                                               | Analytics + evidence reviewers, 1 each                |
+| `TRU-001`  | Trust               | Foundation/W00 pinset and toolchain hashes                                                 | Integration controller, 1                             |
+| `TRU-002`  | Trust               | Identity, receipt, signature, and role graph                                               | Trust reviewer, 1                                     |
+| `REL-001`  | Release             | Quality-report receipt, four-subject graph, decisions, claims                              | Final approver, 1                                     |
 
 The pinned catalog may add stricter checks only through a governed revision. A validator rejects an
 omitted required check. A conditional check uses `NOT_APPLICABLE` only with the catalog's exact
@@ -1830,10 +2026,20 @@ Spec 03 `LessonDefinition`, server authority bundle, and cue-safe learner DTO. I
 - reject UI-only teaching, orphan nodes, and unreachable content;
 - map every item to one primary KC and role;
 - keep keys, scoring, and pre-release explanations server-only;
-- reject unknown representation/action kinds; and
+- reject unknown representation/action kinds;
+- reject any binding that fails the §5.1.7 metadata closure, that declares `INDEPENDENT` in
+  `candidate_evidence_modes` without a `reasoning_operation`, that uses a value outside a closed
+  seam vocabulary, or that contains an authored `independent`, `pL`, mastery threshold or status,
+  decay, or evidence-status field; and
 - produce deterministic manifests and parity evidence.
 
 Protected-field scanning is defense in depth, not semantic proof.
+
+The compiler MUST NOT supply a default `candidate_evidence_modes`, a default `reasoning_operation`,
+or a default `dok_level`. A missing `candidate_evidence_modes` is a compile failure; a missing
+`reasoning_operation` on a binding declaring `INDEPENDENT` is a compile failure; a missing
+`dok_level` compiles unchanged and is preserved as absent, because `coldStartB(undefined)` is a
+neutral `0`.
 
 ### 9.3 Planner and route execution
 
@@ -1858,6 +2064,22 @@ Shell completion uses exact `ordered_required_kc_ids`. Under current policy ever
 emit instructional exit. Entry checks never satisfy exit. Lesson exposure never creates downstream
 mastery, readiness, or protected evidence. First attempts and exposure survive retries, invalidity,
 pause, crash, retirement, and replay.
+
+Lesson delivery state and mastery are separate axes. Completion, checkpoint, and repair state are
+Spec 03 runtime facts; a lesson-grain mastery value is a **derived rollup** of the `pL` of the
+lesson's required member KCs, computed on read by policy. Lessons have no mastery state of their own,
+and a lesson MUST NOT be a mastery-update target. The rollup rules — arithmetic mean for display,
+`mastered` only when every required KC clears the threshold, review-due when any previously practiced
+required KC is due, the `0.20` prior contributed by a missing KC state, and fail-closed behaviour on a
+missing or empty lesson-to-KC mapping — are normative in the
+[Lesson → Evidence → Mastery Contract](../lesson-evidence-mastery-contract.md) §9.
+
+Under the current authored state, every V3 lesson binding normalizes to
+`candidate_evidence_modes: ['INSTRUCTIONAL']` or `['INSTRUCTIONAL_EXIT']`. Both route to
+instructional evidence with server-derived `independent: false`, so current V3 lessons move no `pL`
+at all. That is the intended end state for instructional exits, not an incomplete integration: a
+binding becomes mastery-eligible only when an author and reviewer deliberately declare `INDEPENDENT`
+and label `reasoning_operation`.
 
 ---
 
@@ -2015,6 +2237,9 @@ not qualify for the construct-essential 2D pan/zoom exception.
 - [ ] Prerequisite support has an exact hard edge/point of use or is absent.
 - [ ] Explanation and worked reasoning precede consequential questions.
 - [ ] Every item has complete immutable versions/hashes, projection, scoring, assets, and eligibility.
+- [ ] Every binding satisfies the §5.1.7 mastery-seam metadata closure.
+- [ ] Every binding declaring `INDEPENDENT` carries exactly one `reasoning_operation`.
+- [ ] No binding authors `independent`, a `pL`, a mastery threshold or status, decay, or an evidence status.
 - [ ] Near and changed functions use separate untouched families.
 - [ ] Failed functions use `NEAR_USE` or `CHANGED_TASK`.
 - [ ] Representations and accessibility equivalence originate upstream in the script.
@@ -2077,6 +2302,17 @@ and review receipts are absent. No component claims `PASS` or `REVISE`. All unre
 map to the blockers in E.6.
 `FIXTURE-JCS-1` uses RFC 8785 JSON Canonicalization Scheme for these integer/string/boolean
 subjects.
+
+**0.3-candidate note.** This fixture was frozen under 0.2-candidate and does not yet carry the
+§5.1.7 mastery-seam closure on its item bindings, so it is non-conforming under 0.3-candidate and
+adds a further reason for its `BLOCKED` status. It is deliberately left byte-identical here: every
+`subject_sha256` in E.1–E.5 is SHA-256 over the RFC 8785 canonical UTF-8 bytes of its own `subject`
+value, and the register hash in H.2 is SHA-256 over the RFC 8785 canonical JSON array of the
+decision records in listed order. Adding the closure fields by hand would invalidate all of them.
+Regeneration is a separate governed task: add the closure fields, then recompute each
+`subject_sha256` with the pinned canonicalizer in dependency order (`LessonScript` →
+`KcCoverageMatrix` → `LessonPresentationPlan` → `LessonQualityReport` → release/status record),
+propagating each new digest into every downstream binding before recomputing the next.
 
 ### E.1 `LessonScript`
 
