@@ -1204,6 +1204,216 @@ describe('authored artifact normalization', () => {
     }
   });
 
+  /**
+   * Alternative spellings of ONE fact. Each entry: the two authored keys, two
+   * values that assert different facts, and one pair of values that assert the
+   * SAME fact in different spellings and must therefore still parse.
+   */
+  const COMPETING_SPELLINGS: readonly {
+    readonly code: string;
+    readonly path: string;
+    /** Every key in the group, so the base fixture can be stripped of all of them. */
+    readonly groupKeys: readonly string[];
+    /** Anything the group needs to be otherwise valid on its own. */
+    readonly alsoRequires?: Readonly<Record<string, unknown>>;
+    readonly disagree: Readonly<Record<string, unknown>>;
+    readonly agree: Readonly<Record<string, unknown>>;
+  }[] = [
+    {
+      code: 'CONTRADICTORY_EVIDENCE_MODE_RESTRICTION_AUTHORED',
+      path: 'candidateEvidenceModes',
+      groupKeys: ['evidence_eligibility', 'candidate_evidence_modes'],
+      // Declaring an allowlisted mode obliges the artifact to carry the governed
+      // label, so without this the binding is invalid for an unrelated reason.
+      alsoRequires: { reasoning_operation: 'QUANTIFY' },
+      disagree: {
+        candidate_evidence_modes: ['INDEPENDENT'],
+        evidence_eligibility: 'INSTRUCTION_TELEMETRY_ONLY',
+      },
+      // A legacy instructional-only label and the canonical spelling of the same
+      // restriction assert one fact, so they are not a contradiction.
+      agree: {
+        candidate_evidence_modes: ['INSTRUCTIONAL'],
+        evidence_eligibility: 'INSTRUCTIONAL_ONLY',
+      },
+    },
+    {
+      code: 'MULTIPLE_SCORING_AUTHORITY_REFS_AUTHORED',
+      path: 'serverScoringAuthorityRef',
+      groupKeys: [
+        'server_scoring_authority_ref',
+        'server_only_answer_authority_ref',
+        'server_answer_authority_ref',
+        'answer_authority_ref',
+      ],
+      disagree: {
+        server_scoring_authority_ref: 'server://scorer/A',
+        answer_authority_ref: 'server://scorer/B',
+      },
+      agree: {
+        server_scoring_authority_ref: 'server://scorer/A',
+        answer_authority_ref: 'server://scorer/A',
+      },
+    },
+    {
+      code: 'CONTRADICTORY_BINDING_VERSION_AUTHORED',
+      path: 'bindingVersion',
+      groupKeys: ['binding_version', 'item_version'],
+      disagree: { binding_version: 'bv-2', item_version: 'bv-9' },
+      agree: { binding_version: 'bv-2', item_version: 'bv-2' },
+    },
+    {
+      code: 'CONTRADICTORY_STIMULUS_LINEAGE_AUTHORED',
+      path: 'stimulusLineageId',
+      groupKeys: ['stimulus_lineage_id', 'stimulus_lineage'],
+      disagree: { stimulus_lineage_id: 'lineage-a', stimulus_lineage: 'lineage-b' },
+      // The object spelling carries the id in `lineage_id`; same fact, so it parses.
+      agree: {
+        stimulus_lineage_id: 'lineage-a',
+        stimulus_lineage: { lineage_id: 'lineage-a', scenario_signature: 'sig' },
+      },
+    },
+  ];
+
+  for (const { code, path, groupKeys, alsoRequires, disagree, agree } of COMPETING_SPELLINGS) {
+    /** The fixture with the whole group removed, so each case authors exactly what it means to. */
+    const base = (): Readonly<Record<string, unknown>> => ({
+      ...Object.fromEntries(
+        Object.entries(MEASURABLE_AUTHORED_BINDING).filter(([key]) => !groupKeys.includes(key)),
+      ),
+      ...alsoRequires,
+    });
+    const label = Object.keys(disagree).join(' + ');
+
+    // Both orderings, so the verdict cannot depend on which key the artifact
+    // happens to list first.
+    for (const [order, ordered] of [
+      ['as written', disagree],
+      ['reversed', Object.fromEntries([...Object.entries(disagree)].reverse())],
+    ] as const) {
+      it(`rejects ${label} when they disagree, ${order}`, () => {
+        const raw = { ...base(), ...ordered };
+
+        expect(authoredBindingRejectionCodes(raw)).toEqual([code]);
+        const parsed = parseAuthoredLessonBinding(envelope, raw);
+        expect(parsed.status).toBe('invalid');
+        expect(parsed.rejectionCodes).toEqual([code]);
+        for (const authoredCode of parsed.rejectionCodes) {
+          expect(AUTHORED_BINDING_REJECTION_CODES).toContain(authoredCode);
+        }
+        if (parsed.status !== 'invalid') return;
+        expect(parsed.issues.map((issue) => issue.path.join('.'))).toContain(path);
+      });
+    }
+
+    it(`accepts ${label} when both spellings assert the same fact`, () => {
+      // Judged on the RESOLVED fact, not the raw spelling. A guard that compared
+      // authored values would refuse this, and 82 of the 115 real bindings reach
+      // these fields through a legacy spelling.
+      const parsed = parseAuthoredLessonBinding(envelope, { ...base(), ...agree });
+
+      expect(parsed.rejectionCodes).toEqual([]);
+      expect(parsed.status).toBe('parsed');
+    });
+
+    for (const key of Object.keys(disagree)) {
+      it(`accepts ${key} authored alone`, () => {
+        const parsed = parseAuthoredLessonBinding(envelope, {
+          ...base(),
+          [key]: disagree[key],
+        });
+
+        expect(parsed.rejectionCodes, key).toEqual([]);
+        expect(parsed.status, key).toBe('parsed');
+      });
+    }
+  }
+
+  it('reads two mode sets authored in a different order as the same fact', () => {
+    // A permission set is a SET. Comparing the two as ordered lists would reject
+    // authoring that agrees, which is a fail-CLOSED bug but a bug all the same.
+    const parsed = parseAuthoredLessonBinding(envelope, {
+      ...Object.fromEntries(
+        Object.entries(MEASURABLE_AUTHORED_BINDING).filter(
+          ([key]) => key !== 'evidence_eligibility' && key !== 'candidate_evidence_modes',
+        ),
+      ),
+      reasoning_operation: 'QUANTIFY',
+      candidate_evidence_modes: ['TRANSFER', 'INSTRUCTIONAL'],
+      evidence_eligibility: ['INSTRUCTIONAL', 'TRANSFER'],
+    });
+
+    expect(parsed.rejectionCodes).toEqual([]);
+    expect(parsed.status).toBe('parsed');
+  });
+
+  it('stops an authored mode list overriding a legacy instructional-only restriction', () => {
+    // The eighth instance of this run's signature failure, and the one the
+    // eligibility allowlist and the resolved-kind gate exist to stop, arriving one
+    // layer earlier: an author writing a permission into a script made the item
+    // BKT-reachable, and the restriction disappeared with no code.
+    const attack = {
+      ...MEASURABLE_AUTHORED_BINDING,
+      reasoning_operation: 'QUANTIFY',
+      candidate_evidence_modes: ['INDEPENDENT'],
+      evidence_eligibility: 'INSTRUCTION_TELEMETRY_ONLY',
+    };
+
+    const parsed = parseAuthoredLessonBinding(envelope, attack);
+    expect(parsed.status).toBe('invalid');
+    expect(parsed.rejectionCodes).toEqual(['CONTRADICTORY_EVIDENCE_MODE_RESTRICTION_AUTHORED']);
+
+    // Measured where it matters: the binding is withheld, so no binding resolves
+    // for a response against it and BKT is unreachable.
+    expect(
+      isBktQualificationAccepted(adapt({ binding: null }).qualification),
+      'a withheld binding must not qualify',
+    ).toBe(false);
+    expect(rejectionCodesOf(adapt({ binding: null }))).toEqual(['BINDING_NOT_FOUND']);
+
+    // And the restriction alone still parses, still instructional-only, still
+    // refused by the resolved-kind gate rather than by an accident.
+    const restrictionOnly = parseAuthoredLessonBinding(envelope, {
+      ...MEASURABLE_AUTHORED_BINDING,
+      evidence_eligibility: 'INSTRUCTION_TELEMETRY_ONLY',
+    });
+    expect(restrictionOnly.status).toBe('parsed');
+    if (restrictionOnly.status !== 'parsed') return;
+    expect(restrictionOnly.binding.candidateEvidenceModes).toEqual(['INSTRUCTIONAL']);
+  });
+
+  it('keeps the precedence direction restrictive where the two still compete', () => {
+    // Defence in depth for the direction, not a second verdict: a disagreement
+    // rejects, so this order is only reachable if the guard is ever removed. It
+    // is the legacy RESTRICTION first, so that path degrades to
+    // instructional-only instead of escalating to a permission.
+    expect(
+      normalizeAuthoredLessonBinding(envelope, {
+        candidate_evidence_modes: ['INDEPENDENT'],
+        evidence_eligibility: 'INSTRUCTION_TELEMETRY_ONLY',
+      }).value.candidateEvidenceModes,
+    ).toEqual(['INSTRUCTIONAL']);
+  });
+
+  it('treats question_id and item_binding_id as a derivation, not competing spellings', () => {
+    // Deliberately NOT guarded. `item_binding_id` also lands in its own
+    // `itemBindingId` field, so when both are authored and differ, both facts
+    // reach the contract and nothing is dropped — a binding id and an item id are
+    // not required to match, and rejecting that would refuse correct authoring.
+    const parsed = parseAuthoredLessonBinding(envelope, {
+      ...MEASURABLE_AUTHORED_BINDING,
+      item_binding_id: 'IB-DISTINCT',
+      question_id: 'Q-DISTINCT',
+    });
+
+    expect(parsed.rejectionCodes).toEqual([]);
+    expect(parsed.status).toBe('parsed');
+    if (parsed.status !== 'parsed') return;
+    if (parsed.binding.measurementKind !== 'MEASURABLE') return;
+    expect(parsed.binding.questionId).toBe('Q-DISTINCT');
+    expect(parsed.binding.itemBindingId).toBe('IB-DISTINCT');
+  });
+
   it('reports no authored contradiction on a sound binding', () => {
     expect(authoredBindingRejectionCodes(MEASURABLE_AUTHORED_BINDING)).toEqual([]);
     expect(

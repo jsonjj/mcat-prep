@@ -156,6 +156,10 @@ export const RECOGNIZED_AUTHORED_BINDING_KEYS: ReadonlySet<string> = new Set([
 export const AUTHORED_BINDING_REJECTION_CODES = [
   'MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED',
   'CONTRADICTORY_FIRST_ATTEMPT_IMMUTABILITY_AUTHORED',
+  'CONTRADICTORY_EVIDENCE_MODE_RESTRICTION_AUTHORED',
+  'MULTIPLE_SCORING_AUTHORITY_REFS_AUTHORED',
+  'CONTRADICTORY_BINDING_VERSION_AUTHORED',
+  'CONTRADICTORY_STIMULUS_LINEAGE_AUTHORED',
 ] as const;
 export type AuthoredBindingRejectionCode = (typeof AUTHORED_BINDING_REJECTION_CODES)[number];
 
@@ -285,6 +289,109 @@ const normalizeCandidateEvidenceModes = (value: unknown): unknown => {
   return [...new Set(expanded)];
 };
 
+/** The lineage id behind either spelling: a bare string, or a lineage object. */
+const resolveStimulusLineageId = (value: unknown): unknown => {
+  const record = asRecord(value);
+  return record === undefined ? value : record.lineage_id;
+};
+
+/**
+ * Author keys that are alternative SPELLINGS of one normalized fact.
+ *
+ * Not a list of keys that happen to write the same field — `question_id` and
+ * `item_binding_id` do that and are deliberately absent, because
+ * `item_binding_id` is a fallback DERIVATION that also survives in its own
+ * `itemBindingId` field, so an explicit `question_id` differing from it loses
+ * nothing and is normal authoring. These four are different: each group's keys
+ * make the same claim, only one value can be true, and the loser used to vanish.
+ *
+ * `resolve` maps a raw authored value to the FACT it asserts, so agreement is
+ * judged on meaning rather than spelling — a legacy `INSTRUCTIONAL_ONLY` label
+ * agrees with a canonical `['INSTRUCTIONAL']` and parses.
+ *
+ * `keys` is in `pick` precedence order AND is what the contradiction guard
+ * counts, so the set that is collapsed and the set that is checked cannot drift
+ * apart. That drift is how `unrecognizedAuthoredBindingKeys` came to be dead.
+ */
+interface AuthoredAliasGroup {
+  readonly code: AuthoredBindingRejectionCode;
+  /** Contract-shaped, so a reader sees the field name Zod would have reported. */
+  readonly path: string;
+  readonly keys: readonly string[];
+  readonly resolve: (value: unknown) => unknown;
+  /** What the group asserts, for the rejection message. */
+  readonly fact: string;
+}
+
+const AUTHORED_ALIAS_GROUPS = {
+  /**
+   * A RESTRICTION and a PERMISSION competing for one field, which is why the
+   * legacy key is first: every value it carries in the corpus normalizes to
+   * instructional-only, so if precedence is ever reachable again it degrades
+   * rather than escalates. The guard makes the order moot for a disagreement,
+   * and that is the point of rejecting rather than clamping — deciding which
+   * side is "more restrictive" needs a total order over mode sets that does not
+   * exist, while refusing the pair needs no such order.
+   */
+  candidateEvidenceModes: {
+    code: 'CONTRADICTORY_EVIDENCE_MODE_RESTRICTION_AUTHORED',
+    path: 'candidateEvidenceModes',
+    keys: ['evidence_eligibility', 'candidate_evidence_modes'],
+    resolve: (value) => normalizeCandidateEvidenceModes(value),
+    fact: 'what this item may serve as',
+  },
+  /**
+   * Four spellings of where the protected answer key lives. A disagreement
+   * resolved by precedence points scoring at one of two authorities, and the
+   * scored outcome plus `serverItemVersion` both come from whichever won.
+   */
+  serverScoringAuthorityRef: {
+    code: 'MULTIPLE_SCORING_AUTHORITY_REFS_AUTHORED',
+    path: 'serverScoringAuthorityRef',
+    keys: [
+      'server_scoring_authority_ref',
+      'server_only_answer_authority_ref',
+      'server_answer_authority_ref',
+      'answer_authority_ref',
+    ],
+    resolve: (value) => value,
+    fact: 'which scoring authority owns this item',
+  },
+  /** Two version strings cannot both be the version `response.bindingVersion` must match. */
+  bindingVersion: {
+    code: 'CONTRADICTORY_BINDING_VERSION_AUTHORED',
+    path: 'bindingVersion',
+    keys: ['binding_version', 'item_version'],
+    resolve: (value) => value,
+    fact: "this binding's version",
+  },
+  /** Compared on the resolved id, so `{ lineage_id: 'X' }` agrees with `'X'`. */
+  stimulusLineageId: {
+    code: 'CONTRADICTORY_STIMULUS_LINEAGE_AUTHORED',
+    path: 'stimulusLineageId',
+    keys: ['stimulus_lineage_id', 'stimulus_lineage'],
+    resolve: resolveStimulusLineageId,
+    fact: 'which stimulus this item reuses',
+  },
+  // `satisfies` rather than an annotation, so each group is a known property and
+  // the normalizer's reads below are not `| undefined` under
+  // `noUncheckedIndexedAccess`.
+} as const satisfies Readonly<Record<string, AuthoredAliasGroup>>;
+
+/** First authored value in precedence order, from the group's own key list. */
+const pickAlias = (raw: AuthoredRecord, group: AuthoredAliasGroup): unknown =>
+  pick(raw, ...group.keys);
+
+/**
+ * A resolved fact as a comparable string. Arrays of strings compare as SETS —
+ * `['A','B']` and `['B','A']` are the same permission set, and rejecting that as
+ * a disagreement would refuse sound authoring.
+ */
+const comparableFact = (resolved: unknown): string =>
+  Array.isArray(resolved) && resolved.every((entry) => typeof entry === 'string')
+    ? JSON.stringify([...(resolved as readonly string[])].sort())
+    : JSON.stringify(resolved);
+
 const normalizeLearnerSafeItemRef = (value: unknown): unknown => {
   const raw = asRecord(value);
   // A ref is opaque: never parsed, never reformatted. Only an inline projection
@@ -378,6 +485,24 @@ const authoredBindingContradictions = (
     });
   }
 
+  // Alternative spellings of one fact that disagree. Judged on the RESOLVED
+  // value, so two spellings of the same fact agree and parse; judged as a set,
+  // so authoring order cannot change the verdict either way round.
+  for (const group of Object.values(AUTHORED_ALIAS_GROUPS)) {
+    const authored = group.keys.filter((key) => raw[key] !== undefined && raw[key] !== null);
+    const distinct = new Map<string, string>();
+    for (const key of authored) {
+      distinct.set(comparableFact(group.resolve(raw[key])), key);
+    }
+    if (distinct.size > 1) {
+      contradictions.push({
+        code: group.code,
+        path: [group.path],
+        message: `${group.code}: ${authored.join(', ')} disagree about ${group.fact}; one binding asserts it once, and precedence must not pick a winner (resolved to ${[...distinct.keys()].join(' vs ')})`,
+      });
+    }
+  }
+
   return contradictions;
 };
 
@@ -410,7 +535,7 @@ export function normalizeAuthoredLessonBinding(
   setIfDefined(
     value,
     'bindingVersion',
-    pick(raw, 'binding_version', 'item_version') ?? envelope.artifactVersion,
+    pickAlias(raw, AUTHORED_ALIAS_GROUPS.bindingVersion) ?? envelope.artifactVersion,
   );
   setIfDefined(value, 'primaryKcId', raw.primary_kc_id);
   setIfDefined(
@@ -422,12 +547,10 @@ export function normalizeAuthoredLessonBinding(
   setIfDefined(value, 'activityRole', raw.activity_role);
   setIfDefined(value, 'semanticFamilyId', raw.semantic_family_id);
 
-  const lineage = pick(raw, 'stimulus_lineage_id', 'stimulus_lineage');
-  const lineageRecord = asRecord(lineage);
   setIfDefined(
     value,
     'stimulusLineageId',
-    lineageRecord === undefined ? lineage : lineageRecord.lineage_id,
+    resolveStimulusLineageId(pickAlias(raw, AUTHORED_ALIAS_GROUPS.stimulusLineageId)),
   );
 
   setIfDefined(
@@ -440,7 +563,7 @@ export function normalizeAuthoredLessonBinding(
   setIfDefined(
     value,
     'candidateEvidenceModes',
-    normalizeCandidateEvidenceModes(pick(raw, 'candidate_evidence_modes', 'evidence_eligibility')),
+    normalizeCandidateEvidenceModes(pickAlias(raw, AUTHORED_ALIAS_GROUPS.candidateEvidenceModes)),
   );
   setIfDefined(value, 'reasoningOperation', raw.reasoning_operation);
   setIfDefined(value, 'dokLevel', raw.dok_level);
@@ -517,6 +640,15 @@ export function normalizeAuthoredLessonBinding(
   // `question_id → item_binding_id` fallback: inventing a question id for a
   // worked example and then rejecting on it would make every worked example
   // contradictory. Only an explicitly authored `question_id` carries through.
+  //
+  // This pair is DELIBERATELY not an `AUTHORED_ALIAS_GROUPS` member, and the
+  // difference matters. The other groups are alternative spellings of one fact,
+  // where the loser vanishes. Here `item_binding_id` is a fallback derivation
+  // that ALSO lands in its own `itemBindingId` field, so when an author supplies
+  // both and they differ, both facts survive to the contract and nothing is
+  // dropped — a binding id and an item id are simply not required to match.
+  // Rejecting that would refuse correct authoring. The precedence is kept, and
+  // `questionId` therefore stays on the architecture test's unguarded record.
   setIfDefined(
     value,
     'questionId',
@@ -540,13 +672,7 @@ export function normalizeAuthoredLessonBinding(
   setIfDefined(
     value,
     'serverScoringAuthorityRef',
-    pick(
-      raw,
-      'server_scoring_authority_ref',
-      'server_only_answer_authority_ref',
-      'server_answer_authority_ref',
-      'answer_authority_ref',
-    ) ?? undefined,
+    pickAlias(raw, AUTHORED_ALIAS_GROUPS.serverScoringAuthorityRef) ?? undefined,
   );
   setIfDefined(
     value,
