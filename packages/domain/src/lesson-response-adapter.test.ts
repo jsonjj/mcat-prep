@@ -20,7 +20,9 @@ import {
 } from '@mcat/contracts';
 import { CONTEXTUAL_ONLY_KINDS, EvidenceRecordSchema, isMasteryEligible } from './evidence';
 import {
+  AUTHORED_BINDING_REJECTION_CODES,
   adaptLessonResponse,
+  authoredBindingRejectionCodes,
   deriveEvidenceKind,
   isIndependentAdministration,
   normalizeAuthoredLessonBinding,
@@ -759,6 +761,16 @@ describe('authored artifact normalization', () => {
     rationale_authority_ref: 'PROTECTED_ITEMS:ALG-GRAPH-NEAR-01',
   };
 
+  /** The same binding with no learner-safe item authored, so tests supply their own. */
+  const WITHOUT_LEARNER_SAFE_ITEM: Readonly<Record<string, unknown>> = Object.fromEntries(
+    Object.entries(MEASURABLE_AUTHORED_BINDING).filter(
+      ([key]) => key !== 'learner_safe_projection_ref',
+    ),
+  );
+
+  const OPAQUE_ITEM_REF = 'REF:opaque?v=1';
+  const INLINE_ITEM_PROJECTION = { prompt: 'p', choices: [{ id: 'a', text: 't' }] };
+
   it('resolves the envelope version when the binding omits one', () => {
     const { value } = normalizeAuthoredLessonBinding(envelope, { item_binding_id: 'x' });
     expect(value.bindingVersion).toBe('9.9.9-envelope');
@@ -876,6 +888,100 @@ describe('authored artifact normalization', () => {
     });
 
     expect(parsed.status).toBe('invalid');
+  });
+
+  // Each spelling is individually valid, so nothing downstream objected: the
+  // parse used to succeed carrying whichever key won `pick` precedence, with the
+  // other fact gone and unreported. D6 makes the learner-safe item either an
+  // opaque ref or an inline projection, so authoring both asserts two
+  // incompatible things about one item.
+  //
+  // Authoring order is the ONLY difference between these two artifacts, and they
+  // are separate cases rather than one loop so that a guard which passed one
+  // order and failed the other cannot hide behind the first assertion.
+  for (const [order, learnerSafeItemKeys] of [
+    [
+      'the ref key first',
+      {
+        learner_safe_item_ref: OPAQUE_ITEM_REF,
+        learner_safe_projection: INLINE_ITEM_PROJECTION,
+      },
+    ],
+    [
+      'the projection key first',
+      {
+        learner_safe_projection: INLINE_ITEM_PROJECTION,
+        learner_safe_item_ref: OPAQUE_ITEM_REF,
+      },
+    ],
+  ] as const) {
+    it(`rejects two authored learner-safe item sources, with ${order}`, () => {
+      const raw = { ...WITHOUT_LEARNER_SAFE_ITEM, ...learnerSafeItemKeys };
+      expect(Object.keys(learnerSafeItemKeys)).toHaveLength(2);
+
+      expect(authoredBindingRejectionCodes(raw)).toEqual([
+        'MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED',
+      ]);
+
+      const parsed = parseAuthoredLessonBinding(envelope, raw);
+      expect(parsed.status).toBe('invalid');
+      expect(parsed.rejectionCodes).toEqual(['MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED']);
+      for (const code of parsed.rejectionCodes) {
+        expect(AUTHORED_BINDING_REJECTION_CODES).toContain(code);
+      }
+
+      if (parsed.status !== 'invalid') return;
+      expect(parsed.issues.map((issue) => issue.path.join('.'))).toContain('learnerSafeItemRef');
+      // Both offending keys are named, in the same order either way round.
+      expect(parsed.issues.map((issue) => issue.message).join('\n')).toContain(
+        'learner_safe_item_ref, learner_safe_projection',
+      );
+    });
+  }
+
+  it('accepts exactly one authored learner-safe item source, in every spelling', () => {
+    // The guard counts sources; it must not start rejecting the single-source
+    // artifacts that all 115 real bindings use.
+    for (const key of [
+      'learner_safe_item_ref',
+      'learner_safe_projection_ref',
+      'learner_safe_projection',
+      'learner_safe_prompt_ref',
+    ]) {
+      const parsed = parseAuthoredLessonBinding(envelope, {
+        ...WITHOUT_LEARNER_SAFE_ITEM,
+        [key]: key === 'learner_safe_projection' ? INLINE_ITEM_PROJECTION : OPAQUE_ITEM_REF,
+      });
+
+      expect(parsed.status, key).toBe('parsed');
+      expect(parsed.rejectionCodes, key).toEqual([]);
+    }
+  });
+
+  it('reads an explicitly null learner-safe key as absence, not a second source', () => {
+    // `null` is the authored spelling of "not applicable" everywhere else in this
+    // normalizer, so treating it as a source would reject sound artifacts.
+    const parsed = parseAuthoredLessonBinding(envelope, {
+      ...WITHOUT_LEARNER_SAFE_ITEM,
+      learner_safe_item_ref: OPAQUE_ITEM_REF,
+      learner_safe_projection: null,
+      learner_safe_prompt_ref: null,
+    });
+
+    expect(parsed.rejectionCodes).toEqual([]);
+    expect(parsed.status).toBe('parsed');
+    if (parsed.status !== 'parsed') return;
+    expect(parsed.binding.learnerSafeItemRef).toBe(OPAQUE_ITEM_REF);
+  });
+
+  it('reports no authored contradiction on a sound binding', () => {
+    expect(authoredBindingRejectionCodes(MEASURABLE_AUTHORED_BINDING)).toEqual([]);
+    expect(
+      normalizeAuthoredLessonBinding(envelope, MEASURABLE_AUTHORED_BINDING).rejectionCodes,
+    ).toEqual([]);
+    expect(
+      parseAuthoredLessonBinding(envelope, MEASURABLE_AUTHORED_BINDING).rejectionCodes,
+    ).toEqual([]);
   });
 
   it('retains raw changed-dimension prose without inferring canonical dimensions', () => {

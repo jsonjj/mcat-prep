@@ -45,6 +45,10 @@ import {
  *   lesson id, a KC id, an id format, an item count, or an item ordering.
  * - Ambiguity fails closed: no BKT observation plus a code from the frozen
  *   `BKT_QUALIFICATION_REJECTION_CODES` list.
+ * - An authored contradiction is rejected, never resolved by key precedence. Two
+ *   authored keys that assert incompatible things about the same item produce a
+ *   named `AUTHORED_BINDING_REJECTION_CODES` code, because the alternative is
+ *   that one of the two facts disappears without a word.
  * - A runner-reported time can never become a warrant timestamp. Evidence takes
  *   a server-bounded `occurredAt`, enforced by the brand on that field rather
  *   than by remembering to bound it.
@@ -133,6 +137,35 @@ export const RECOGNIZED_AUTHORED_BINDING_KEYS: ReadonlySet<string> = new Set([
   'stimulus_lineage',
   'stimulus_lineage_id',
 ]);
+
+/**
+ * Authored contradictions the normalizer refuses to resolve.
+ *
+ * Separate from `BKT_QUALIFICATION_REJECTION_CODES`, which judges one runtime
+ * response: these judge the authored artifact itself, before any response
+ * exists. Each member names a pair of authored facts that cannot both hold, and
+ * each one exists because the alternative — letting key precedence pick a winner
+ * — deletes the loser in silence. The frozen registry is
+ * `.superpowers/sdd/field-lock.md`.
+ */
+export const AUTHORED_BINDING_REJECTION_CODES = [
+  'MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED',
+] as const;
+export type AuthoredBindingRejectionCode = (typeof AUTHORED_BINDING_REJECTION_CODES)[number];
+
+/**
+ * Every authoring spelling of the ONE learner-safe item, in `pick` precedence
+ * order. D6: the learner-safe item is either an opaque ref or an inline
+ * projection, so exactly one of these may be authored. The contradiction guard
+ * below and the normalizer both read this list, so the set that is collapsed and
+ * the set that is counted cannot drift apart.
+ */
+const LEARNER_SAFE_ITEM_AUTHOR_KEYS: readonly string[] = [
+  'learner_safe_item_ref',
+  'learner_safe_projection_ref',
+  'learner_safe_projection',
+  'learner_safe_prompt_ref',
+];
 
 /**
  * Legacy evidence-eligibility labels. Every one of them normalizes to
@@ -275,11 +308,65 @@ export interface NormalizedAuthoredBinding {
   readonly measurementKind: MeasurementKind;
   /** Contract-shaped but unvalidated; feed it to `LessonItemBindingSchema`. */
   readonly value: MutableRecord;
+  /**
+   * Authored contradictions found in `raw`. Non-empty means `value` is NOT a
+   * faithful projection of the artifact — a contradictory key was collapsed away
+   * — so it must not be parsed and accepted. Travels with the normalized record
+   * so neither entry point into this module can be silent about it.
+   */
+  readonly rejectionCodes: readonly AuthoredBindingRejectionCode[];
 }
+
+interface AuthoredBindingContradiction {
+  readonly code: AuthoredBindingRejectionCode;
+  /** Contract-shaped, so a reader sees the field name Zod would have reported. */
+  readonly path: readonly string[];
+  readonly message: string;
+}
+
+/**
+ * Authored facts that contradict each other.
+ *
+ * This is adjudicated here rather than by the contract because the normalized
+ * record structurally cannot carry the contradiction: `learnerSafeItemRef` is one
+ * field, so by the time `LessonItemBindingSchema` sees it the second authored
+ * source is already gone and the shape looks perfectly valid.
+ */
+const authoredBindingContradictions = (
+  raw: AuthoredRecord,
+): readonly AuthoredBindingContradiction[] => {
+  // `null` is the authored spelling of "not applicable" here as everywhere else
+  // in this normalizer, so it is absence rather than a second source.
+  const learnerSafeSources = LEARNER_SAFE_ITEM_AUTHOR_KEYS.filter(
+    (key) => raw[key] !== undefined && raw[key] !== null,
+  );
+
+  return learnerSafeSources.length > 1
+    ? [
+        {
+          code: 'MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED',
+          path: ['learnerSafeItemRef'],
+          message: `MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED: one learner-safe item may be authored once, as an opaque ref OR an inline projection; found ${learnerSafeSources.join(', ')}`,
+        },
+      ]
+    : [];
+};
 
 /** Author keys this normalizer does not map. Empty means full coverage. */
 export const unrecognizedAuthoredBindingKeys = (raw: AuthoredRecord): readonly string[] =>
   Object.keys(raw).filter((key) => !RECOGNIZED_AUTHORED_BINDING_KEYS.has(key));
+
+/**
+ * Authored contradictions in a raw binding. Empty means none.
+ *
+ * Order-independent by construction: it counts the authored sources rather than
+ * resolving them, so which key appears first in the artifact cannot change the
+ * verdict.
+ */
+export const authoredBindingRejectionCodes = (
+  raw: AuthoredRecord,
+): readonly AuthoredBindingRejectionCode[] =>
+  authoredBindingContradictions(raw).map((contradiction) => contradiction.code);
 
 /** snake_case authored binding → camelCase `LessonItemBinding` input. */
 export function normalizeAuthoredLessonBinding(
@@ -287,6 +374,7 @@ export function normalizeAuthoredLessonBinding(
   raw: AuthoredRecord,
 ): NormalizedAuthoredBinding {
   const measurementKind = measurementKindFor(raw);
+  const contradictions = authoredBindingContradictions(raw);
   const value: MutableRecord = { measurementKind, lessonId: envelope.lessonId };
 
   setIfDefined(value, 'itemBindingId', raw.item_binding_id);
@@ -346,15 +434,7 @@ export function normalizeAuthoredLessonBinding(
   setIfDefined(
     value,
     'learnerSafeItemRef',
-    normalizeLearnerSafeItemRef(
-      pick(
-        raw,
-        'learner_safe_item_ref',
-        'learner_safe_projection_ref',
-        'learner_safe_projection',
-        'learner_safe_prompt_ref',
-      ),
-    ),
+    normalizeLearnerSafeItemRef(pick(raw, ...LEARNER_SAFE_ITEM_AUTHOR_KEYS)),
   );
 
   setIfDefined(
@@ -436,7 +516,11 @@ export function normalizeAuthoredLessonBinding(
     pick(raw, 'server_rationale_authority_ref', 'rationale_authority_ref') ?? undefined,
   );
 
-  return { measurementKind, value };
+  return {
+    measurementKind,
+    value,
+    rejectionCodes: contradictions.map((contradiction) => contradiction.code),
+  };
 }
 
 export type AuthoredLessonBindingParse = {
@@ -453,6 +537,17 @@ export type AuthoredLessonBindingParse = {
    * fails the build on any non-empty result.
    */
   readonly unrecognizedKeys: readonly string[];
+  /**
+   * Authored contradictions, on BOTH branches. Non-optional for the same reason
+   * as `unrecognizedKeys`: a caller cannot fail to see it.
+   *
+   * Unlike `unrecognizedKeys` this IS a rejection — a non-empty list forces
+   * `status: 'invalid'` — because a contradiction means one of two authored
+   * facts was collapsed away, so the normalized record no longer describes the
+   * artifact. It is reported here as well as in `issues` so callers can branch
+   * on the frozen code instead of matching issue text.
+   */
+  readonly rejectionCodes: readonly AuthoredBindingRejectionCode[];
 } & (
   | {
       readonly status: 'parsed';
@@ -467,27 +562,47 @@ export type AuthoredLessonBindingParse = {
     }
 );
 
+/**
+ * An authored contradiction, in the shape Zod would have reported it, so a
+ * caller reading `issues` sees every reason the binding was refused in one place
+ * and does not have to know which layer found which.
+ */
+const asZodIssue = (contradiction: AuthoredBindingContradiction): ZodIssue => ({
+  code: 'custom',
+  path: [...contradiction.path],
+  message: contradiction.message,
+});
+
 /** Normalize then validate an authored binding. Never throws. */
 export function parseAuthoredLessonBinding(
   envelope: AuthoredLessonEnvelope,
   raw: AuthoredRecord,
 ): AuthoredLessonBindingParse {
   const unrecognizedKeys = unrecognizedAuthoredBindingKeys(raw);
+  const contradictions = authoredBindingContradictions(raw);
   const normalized = normalizeAuthoredLessonBinding(envelope, raw);
   const parsed = LessonItemBindingSchema.safeParse(normalized.value);
-  return parsed.success
+
+  // A contradiction rejects EVEN IF the collapsed record validates cleanly, and
+  // that is the whole point: `normalized.value` carries only the key that won
+  // precedence, so a successful parse here means the losing fact disappeared,
+  // not that the artifact was sound. Deciding on `parsed.success` alone is how
+  // this defect was silent.
+  return parsed.success && contradictions.length === 0
     ? {
         status: 'parsed',
         measurementKind: normalized.measurementKind,
         binding: parsed.data,
         unrecognizedKeys,
+        rejectionCodes: normalized.rejectionCodes,
       }
     : {
         status: 'invalid',
         measurementKind: normalized.measurementKind,
-        issues: parsed.error.issues,
+        issues: [...contradictions.map(asZodIssue), ...(parsed.success ? [] : parsed.error.issues)],
         normalized: normalized.value,
         unrecognizedKeys,
+        rejectionCodes: normalized.rejectionCodes,
       };
 }
 
