@@ -10,13 +10,14 @@ import {
   type ReasoningOperation,
   type UtcTimestamp,
 } from '@mcat/contracts';
-import { loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
+import { clusterForKc, loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
 import { EVIDENCE_QUALITY_TIERS, EVIDENCE_REASONS, EvidenceRecordSchema } from '@mcat/domain';
 import { currentPL, MASTERY_THRESHOLD, PRIOR_PL0 } from '@mcat/policies';
 import {
   Authority,
   BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS,
   BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS,
+  ConflictingWarrantClusterError,
   UnresolvedWarrantGrainError,
 } from './authority';
 import type { LearnerState } from './types';
@@ -877,12 +878,17 @@ describe('Authority — the warrant covers every grain a lesson writes', () => {
   const SYNTHETIC_SKILLS = ['bb1-enzyme-kinetics-basics', 'bb1-enzyme-inhibition'];
 
   /** One clean independent record on the given KC and family. */
-  function lessonRecord(state: LearnerState, skillId: string, familyId: string): void {
+  function lessonRecord(
+    state: LearnerState,
+    skillId: string,
+    familyId: string,
+    cluster: string = 'R1',
+  ): void {
     state.evidence.push(
       EvidenceRecordSchema.parse({
         evidenceId: crypto.randomUUID(),
         skillId,
-        cluster: 'R1',
+        cluster,
         kind: 'independent',
         independent: true,
         assistanceLevel: 'A0',
@@ -989,6 +995,130 @@ describe('Authority — the warrant covers every grain a lesson writes', () => {
 
     expect(() => auth.getMasteryMap(state)).toThrow(UnresolvedWarrantGrainError);
     expect(() => auth.getMasteryMap(state)).toThrow(/not-a-known-grain/);
+  });
+
+  it('reports two records that disagree about their grain, rather than picking one', () => {
+    // Precedence would publish R1 and say nothing. That is worse than resolving
+    // nowhere: a routing bug reaches the planner as confident data, not a failure.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    lessonRecord(state, KC, 'fam-a');
+    lessonRecord(state, KC, 'fam-b');
+    (state.evidence[1] as unknown as { cluster: string }).cluster = 'CA1';
+
+    expect(() => auth.getMasteryMap(state)).toThrow(ConflictingWarrantClusterError);
+    // Actionable: the grain and BOTH clusters, not just that something is wrong.
+    expect(() => auth.getMasteryMap(state)).toThrow(new RegExp(`${KC} claims CA1 and R1`));
+  });
+
+  it('reports a record that disagrees with the pinned registry', () => {
+    // The next-registry-change hazard: a record's cluster is resolved from the
+    // LESSON being run, while `clusterForKc` goes KC → owning lesson. They agree
+    // only while no KC is required by two lessons.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    const registryCluster = clusterForKc(KC)!;
+    lessonRecord(state, KC, 'fam-a');
+    (state.evidence[0] as unknown as { cluster: string }).cluster =
+      registryCluster === 'CA1' ? 'R1' : 'CA1';
+
+    expect(() => auth.getMasteryMap(state)).toThrow(ConflictingWarrantClusterError);
+  });
+
+  it('reports a record that disagrees with the bank skill graph', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    lessonRecord(state, 'bb1-enzyme-inhibition', 'fam-a');
+    (state.evidence[0] as unknown as { cluster: string }).cluster = 'CA1';
+
+    expect(() => auth.getMasteryMap(state)).toThrow(/bb1-enzyme-inhibition claims BB1 and CA1/);
+  });
+
+  it('leaves agreeing sources alone, so the reachable path still resolves', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    lessonRecord(state, KC, 'fam-a');
+    lessonRecord(state, KC, 'fam-b');
+
+    expect(() => auth.getMasteryMap(state)).not.toThrow();
+  });
+
+  it('resolves every required KC of every real lesson without conflict', () => {
+    // The reachable path, end to end: a conflict check that fails here would take
+    // the whole warrant down. (The full 114-lesson / 422-KC sweep is in the
+    // report; `LESSON_TO_ORDERED_KCS` is not exported from @mcat/content.)
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    const lessons = ['V3-LES-130923', 'V3-LES-789208', 'V3-LES-844372'];
+    for (const lessonId of lessons) {
+      for (const kcId of orderedKcsForLesson(lessonId)!) {
+        lessonRecord(state, kcId, `fam-${kcId}`, clusterForKc(kcId)!);
+      }
+    }
+
+    const ids = auth.getMasteryMap(state).map((m) => m.skillId);
+    for (const lessonId of lessons) {
+      for (const kcId of orderedKcsForLesson(lessonId)!) expect(ids).toContain(kcId);
+    }
+  });
+});
+
+describe('Authority — a warrant title comes only from a governed source', () => {
+  it('never echoes an authored id that the registry does not know', () => {
+    // `skillId` reaches `MasteryMapEntry.title` from `binding.primary_kc_id`, a
+    // string a lesson author writes, and the record's cluster is resolved from the
+    // lesson — so the grain resolves and the authored string would otherwise be
+    // published as learner-facing copy.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    const authored = 'Buy my course at example.com';
+    state.evidence.push(
+      EvidenceRecordSchema.parse({
+        evidenceId: crypto.randomUUID(),
+        skillId: authored,
+        cluster: 'R1',
+        kind: 'independent',
+        independent: true,
+        assistanceLevel: 'A0',
+        contentBearingHint: false,
+        questionId: 'ALG-GRAPH-ENTRY-01',
+        itemVersion: 1,
+        familyId: 'fam-a',
+        changeDimensions: [],
+        conditions: {
+          mixed: false,
+          passage: false,
+          timed: false,
+          protected: false,
+          accommodations: [],
+        },
+        outcome: 'correct',
+        valid: true,
+        occurredAt: NOW,
+        sequence: 1,
+        contentRelease: 'synthetic-2026.07',
+        policies: [],
+      }),
+    );
+
+    const entry = auth.getMasteryMap(state).find((m) => m.skillId === authored)!;
+    expect(entry.title).toBe('Untitled');
+    expect(entry.title).not.toContain('example.com');
+  });
+
+  it('publishes the reviewed title for a bank skill and the id for a registry KC', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ primaryKcId: V3_LESSON_KCS[0]! }),
+      lessonId: V3_LESSON_ID,
+    });
+
+    const map = auth.getMasteryMap(state);
+    // Reviewed content, not an id.
+    expect(map.find((m) => m.skillId === 'bb1-enzyme-inhibition')!.title).toBe('Enzyme inhibition');
+    // A registry-pinned id is a governed structural identifier, so it may stand.
+    expect(map.find((m) => m.skillId === V3_LESSON_KCS[0])!.title).toBe(V3_LESSON_KCS[0]);
   });
 });
 

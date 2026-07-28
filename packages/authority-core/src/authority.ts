@@ -84,7 +84,7 @@ type SkillNode = LoadedBank['skillGraph']['skills'][number];
 interface WarrantGrain {
   readonly skillId: string;
   readonly cluster: SkillCluster;
-  /** Human label where one exists; otherwise the id, which is at least honest. */
+  /** Governed label only — never an authored string. See `warrantGrainTitle`. */
   readonly title: string;
 }
 
@@ -107,6 +107,67 @@ export class UnresolvedWarrantGrainError extends Error {
     this.name = 'UnresolvedWarrantGrainError';
   }
 }
+
+/** One grain whose cluster sources disagree, with every cluster they claim. */
+export interface ConflictingWarrantCluster {
+  readonly skillId: string;
+  readonly clusters: readonly SkillCluster[];
+}
+
+/**
+ * A grain's cluster resolves to two different values, so the warrant cannot say
+ * where it belongs.
+ *
+ * Thrown, not resolved by precedence. This is strictly worse than a grain that
+ * resolves nowhere: precedence picks one of the disagreeing answers and publishes
+ * it confidently, so the routing bug reaches the planner as data rather than as a
+ * failure. Unreachable while the registry keeps one owning lesson per KC — which
+ * is exactly why it is asserted rather than left to the registry's current shape.
+ */
+export class ConflictingWarrantClusterError extends Error {
+  constructor(readonly conflicts: readonly ConflictingWarrantCluster[]) {
+    super(
+      'Conflicting clusters for warrant-bearing grain(s): ' +
+        conflicts.map((c) => `${c.skillId} claims ${c.clusters.join(' and ')}`).join('; ') +
+        '. A grain belongs to exactly one cluster; picking one of the two would ' +
+        'publish a confident wrong answer.',
+    );
+    this.name = 'ConflictingWarrantClusterError';
+  }
+}
+
+/**
+ * The label published for a grain, from a GOVERNED source only.
+ *
+ * `MasteryMapEntry.title` is a learner-facing field, and `skillId` reaches it
+ * from `binding.primary_kc_id` — a string a lesson author writes. Echoing that
+ * string as display copy would let an author put words on a learner's screen
+ * through an id field, which is the shape of defect this seam spent the whole
+ * run removing. So a title comes from one of exactly two governed sources:
+ *
+ * - the bank's reviewed `SkillNode.title`; or
+ * - a KC id that is a member of the SHA-pinned V3 registry, evidenced by its
+ *   cluster resolving through `clusterForKc`. That id is a governed structural
+ *   identifier, not free author text, and a stable identifier beats a fabricated
+ *   sentence.
+ *
+ * Anything else gets a fixed marker. Membership in the registry is the test, not
+ * the shape of the id: no format matching, so a future id scheme needs no change
+ * here. No consumer renders this field today (`SkillDetail.tsx` joins on
+ * `skillId` and takes its heading from the skills endpoint), so this is
+ * prophylactic — which is the point, because the next consumer will trust the
+ * field's name.
+ */
+const UNTITLED_WARRANT_GRAIN = 'Untitled';
+
+const warrantGrainTitle = (
+  skillId: string,
+  node: SkillNode | undefined,
+  registryCluster: SkillCluster | null,
+): string => {
+  if (node !== undefined) return node.title;
+  return registryCluster === null ? UNTITLED_WARRANT_GRAIN : skillId;
+};
 
 interface PathActivity {
   id: string;
@@ -684,16 +745,20 @@ export class Authority {
    *    nothing behind it" is the most actionable warrant there is, and it cannot
    *    be expressed by omitting the KC.
    *
-   * `cluster` resolves from the graph node, then from the records themselves
-   * (`EvidenceRecord.cluster` is required and caller-resolved), then from
-   * `clusterForKc`. A grain that resolves nowhere is a data-integrity failure and
-   * throws — silent omission is precisely what hid this for six rounds.
+   * `cluster` is resolved from three sources — the graph node, the grain's own
+   * evidence records (`EvidenceRecord.cluster` is required and caller-resolved),
+   * and `clusterForKc` — and they MUST agree. Resolving nowhere throws
+   * {@link UnresolvedWarrantGrainError}; resolving to two different clusters
+   * throws {@link ConflictingWarrantClusterError}. Neither is silently absorbed:
+   * a grain whose routing disagrees with itself is in a worse state than one that
+   * resolves nowhere, because precedence would publish a confident wrong answer
+   * instead of an error.
    */
   private warrantGrains(state: LearnerState): WarrantGrain[] {
     const graphSkills = new Map<string, SkillNode>(
       this.bank.skillGraph.skills.map((skill) => [skill.skillId, skill]),
     );
-    const clusterFromRecords = new Map<string, SkillCluster>();
+    const clustersFromRecords = new Map<string, Set<SkillCluster>>();
     const ordered: string[] = [...graphSkills.keys()];
     const seen = new Set<string>(ordered);
 
@@ -704,10 +769,15 @@ export class Authority {
     };
 
     for (const record of state.evidence) {
-      // First writer wins, and a later disagreement is reported below rather
-      // than overwritten: two clusters for one grain is a routing bug.
-      if (!clusterFromRecords.has(record.skillId)) {
-        clusterFromRecords.set(record.skillId, record.cluster);
+      // EVERY cluster the evidence claims, not the first: precedence between two
+      // disagreeing records is the fail-quiet this collects in order to reject.
+      // A persisted projection is untrusted JSON, so an absent value is possible
+      // even though the type forbids it.
+      const claimed = record.cluster as SkillCluster | undefined;
+      if (claimed !== undefined) {
+        const claims = clustersFromRecords.get(record.skillId) ?? new Set<SkillCluster>();
+        claims.add(claimed);
+        clustersFromRecords.set(record.skillId, claims);
       }
       consider(record.skillId);
     }
@@ -717,18 +787,34 @@ export class Authority {
 
     const grains: WarrantGrain[] = [];
     const unresolved: string[] = [];
+    const conflicting: ConflictingWarrantCluster[] = [];
+
     for (const skillId of ordered) {
       const node = graphSkills.get(skillId);
-      const cluster = node?.cluster ?? clusterFromRecords.get(skillId) ?? clusterForKc(skillId);
-      if (cluster === null || cluster === undefined) {
+      const candidates = new Set<SkillCluster>(clustersFromRecords.get(skillId) ?? []);
+      if (node !== undefined) candidates.add(node.cluster);
+      const registryCluster = clusterForKc(skillId);
+      if (registryCluster !== null) candidates.add(registryCluster);
+
+      if (candidates.size === 0) {
         unresolved.push(skillId);
         continue;
       }
-      // No KC title dataset exists in `@mcat/content`, so the id is the honest
-      // label: a stable identifier is better than a fabricated sentence.
-      grains.push({ skillId, cluster, title: node?.title ?? skillId });
+      if (candidates.size > 1) {
+        conflicting.push({ skillId, clusters: [...candidates].sort() });
+        continue;
+      }
+
+      grains.push({
+        skillId,
+        cluster: [...candidates][0]!,
+        title: warrantGrainTitle(skillId, node, registryCluster),
+      });
     }
 
+    // Conflicts first: a contradictory grain is the more dangerous of the two,
+    // and reporting all of both is what makes one bad registry change legible.
+    if (conflicting.length > 0) throw new ConflictingWarrantClusterError(conflicting);
     if (unresolved.length > 0) throw new UnresolvedWarrantGrainError(unresolved);
     return grains;
   }
