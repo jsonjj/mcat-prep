@@ -158,7 +158,13 @@ export function PracticeHome() {
             <span className="mc-practice__esttime">≈ {estMinutes} min</span>
           </div>
 
-          <Button variant="primary" size="lg" fullWidth onClick={start}>
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
+            onClick={start}
+            className="mc-practice__start"
+          >
             Start practice
           </Button>
         </Stack>

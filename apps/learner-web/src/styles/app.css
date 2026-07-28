@@ -2775,6 +2775,19 @@ body {
   color: var(--mc-ink-muted);
   font-size: var(--mc-text-14);
 }
+/* Make the primary CTA bigger + a touch of lift so it draws the eye. */
+.mc-practice__start.mc-button {
+  min-height: 64px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  box-shadow: var(--mc-shadow-card);
+}
+.mc-practice__start.mc-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 2px 4px rgba(16, 34, 46, 0.1),
+    0 14px 34px rgba(16, 34, 46, 0.16);
+}
 /* Read-only "Where you stand" — 7 reasoning-skill mastery bars (weakest first). */
 .mc-practice__stand {
   display: flex;
