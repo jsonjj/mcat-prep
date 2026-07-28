@@ -11,9 +11,14 @@ import {
   type UtcTimestamp,
 } from '@mcat/contracts';
 import { loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
-import { EVIDENCE_QUALITY_TIERS, EVIDENCE_REASONS } from '@mcat/domain';
-import { MASTERY_THRESHOLD, PRIOR_PL0 } from '@mcat/policies';
-import { Authority, BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS } from './authority';
+import { EVIDENCE_QUALITY_TIERS, EVIDENCE_REASONS, EvidenceRecordSchema } from '@mcat/domain';
+import { currentPL, MASTERY_THRESHOLD, PRIOR_PL0 } from '@mcat/policies';
+import {
+  Authority,
+  BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS,
+  BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS,
+  UnresolvedWarrantGrainError,
+} from './authority';
 import type { LearnerState } from './types';
 
 const NOW = '2026-07-20T12:00:00.000Z';
@@ -497,7 +502,8 @@ describe('Authority — the runner does not control the BKT decay clock', () => 
   it('uses an honest reported time verbatim', () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = auth.createGuest();
-    const reportedAt = shiftedFromNow(-90 * 60 * 1000);
+    // Inside the past-skew window: ordinary transport delay, honoured as reported.
+    const reportedAt = shiftedFromNow(-2 * 60 * 1000);
 
     const result = auth.applyQualifiedBktObservation(state, {
       observation: qualifiedObservation({ occurredAt: reportedAt }),
@@ -792,7 +798,9 @@ describe('Authority — the decay-clock floor spans only the grains it writes', 
   // The synthetic graph's one hard prerequisite: basics → inhibition.
   const DEPENDENT_KC = 'bb1-enzyme-inhibition';
   const PREREQ_KC = 'bb1-enzyme-kinetics-basics';
-  const LATE_REPORT = '2026-07-17T12:00:00.000Z'; // three days before NOW
+  // Inside the past-skew window, so the server floor is not what decides here —
+  // otherwise the prerequisite's contribution to the floor would be invisible.
+  const LATE_REPORT = shiftedFromNow(-2 * 60 * 1000);
 
   /**
    * Give the prerequisite a `lastPracticedAt` of NOW and nothing else. It is
@@ -861,5 +869,215 @@ describe('Authority — the decay-clock floor spans only the grains it writes', 
       appliedOccurredAt: at(NOW),
     });
     expect(state.mastery!.kc[PREREQ_KC]!.lastPracticedAt).toBe(at(NOW));
+  });
+});
+
+describe('Authority — the warrant covers every grain a lesson writes', () => {
+  const KC = V3_LESSON_KCS[0]!;
+  const SYNTHETIC_SKILLS = ['bb1-enzyme-kinetics-basics', 'bb1-enzyme-inhibition'];
+
+  /** One clean independent record on the given KC and family. */
+  function lessonRecord(state: LearnerState, skillId: string, familyId: string): void {
+    state.evidence.push(
+      EvidenceRecordSchema.parse({
+        evidenceId: crypto.randomUUID(),
+        skillId,
+        cluster: 'R1',
+        kind: 'independent',
+        independent: true,
+        assistanceLevel: 'A0',
+        contentBearingHint: false,
+        questionId: 'ALG-GRAPH-ENTRY-01',
+        itemVersion: 1,
+        familyId,
+        changeDimensions: [],
+        conditions: {
+          mixed: false,
+          passage: false,
+          timed: false,
+          protected: false,
+          accommodations: [],
+        },
+        outcome: 'correct',
+        valid: true,
+        occurredAt: NOW,
+        sequence: state.evidence.length + 1,
+        contentRelease: 'synthetic-2026.07',
+        policies: [],
+      }),
+    );
+  }
+
+  it('publishes a populated warrant for a lesson KC, not just the synthetic graph', () => {
+    // The bank's skill graph holds two synthetic enzyme ids; lesson evidence is
+    // keyed on a V3 KC. Enumerating only the graph meant the evidence authority
+    // emitted no tier, no slot, no gap and no reason code for anything the lesson
+    // seam writes — an empty set, silently, for the planner's warrant input.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    lessonRecord(state, KC, 'fam-a');
+    lessonRecord(state, KC, 'fam-b');
+
+    const entry = auth.getMasteryMap(state).find((m) => m.skillId === KC);
+    expect(entry).toBeDefined();
+    expect(entry!.cluster).toBe('R1');
+    expect(entry!.supportingEvidenceIds).toHaveLength(2);
+    expect(entry!.freshestByKind.independent).toBe(NOW);
+    // A real warrant: what is satisfied AND what is still missing.
+    const codes = entry!.reasons.map((r) => r.code);
+    expect(codes).toContain('INDEPENDENT_EVIDENCE_SATISFIED');
+    expect(codes).toContain('TRANSFER_EVIDENCE_GAP');
+    expect(codes).toContain('PROTECTED_EVIDENCE_GAP');
+    expect(() => MasteryMapEntrySchema.parse(entry)).not.toThrow();
+  });
+
+  it('still publishes the skill-graph grains alongside the KC grains', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    lessonRecord(state, KC, 'fam-a');
+
+    const ids = auth.getMasteryMap(state).map((m) => m.skillId);
+    expect(ids.slice(0, 2)).toEqual(SYNTHETIC_SKILLS);
+    expect(ids).toContain(KC);
+  });
+
+  it('reports the gaps of a practiced lesson KC that has no evidence at all', () => {
+    // "You practiced this lesson and this KC has nothing behind it" is the most
+    // actionable warrant there is, and omitting the KC cannot express it.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ primaryKcId: KC }),
+      lessonId: V3_LESSON_ID,
+    });
+
+    const unstarted = auth.getMasteryMap(state).find((m) => m.skillId === V3_LESSON_KCS[1]);
+    expect(unstarted).toBeDefined();
+    expect(unstarted!.reasons.map((r) => r.code)).toEqual([
+      'NO_USEFUL_EVIDENCE',
+      'INDEPENDENT_EVIDENCE_GAP',
+      'TRANSFER_EVIDENCE_GAP',
+      'DELAYED_EVIDENCE_GAP',
+      'MIXED_EVIDENCE_GAP',
+      'PASSAGE_EVIDENCE_GAP',
+      'TIMED_EVIDENCE_GAP',
+      'PROTECTED_EVIDENCE_GAP',
+    ]);
+  });
+
+  it('resolves the cluster of a grain outside both the graph and the registry', () => {
+    // The CARS duel writes `cars-ca1`, which is neither a graph skill nor a V3 KC.
+    // Its records carry the cluster, so the warrant resolves from them.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    auth.recordCarsDuel(state);
+
+    const entry = auth.getMasteryMap(state).find((m) => m.skillId === 'cars-ca1');
+    expect(entry).toBeDefined();
+    expect(entry!.cluster).toBe('CA1');
+  });
+
+  it('throws naming the grain when no cluster resolves, rather than omitting it', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    lessonRecord(state, KC, 'fam-a');
+    // Corrupt the routing the way a bad caller would: an id that resolves nowhere
+    // and a record that cannot supply a cluster either.
+    const corrupt = state.evidence[0] as unknown as { skillId: string; cluster: unknown };
+    corrupt.skillId = 'not-a-known-grain';
+    corrupt.cluster = undefined;
+
+    expect(() => auth.getMasteryMap(state)).toThrow(UnresolvedWarrantGrainError);
+    expect(() => auth.getMasteryMap(state)).toThrow(/not-a-known-grain/);
+  });
+});
+
+describe('Authority — the decay clock is bounded below as well as above', () => {
+  const kcOf = (state: LearnerState) => state.mastery!.kc[V3_LESSON_KCS[0]!]!;
+
+  it('clamps an arbitrarily backdated claim on a virgin grain', () => {
+    // Measured before the bound: currentPL 5.365944153019992e-104, with
+    // clockAdjustment 'none' because no correction was made. The monotonic floor
+    // is null on a grain's first write, so it could not help here.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+
+    const result = auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ occurredAt: '2020-01-01T00:00:00.000Z' }),
+      lessonId: V3_LESSON_ID,
+    });
+
+    const floor = at(shiftedFromNow(-BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS));
+    expect(result).toMatchObject({
+      status: 'applied',
+      reportedOccurredAt: at('2020-01-01T00:00:00.000Z'),
+      appliedOccurredAt: floor,
+      // The server clock decided, and the ledger says so.
+      clockAdjustment: 'bounded_to_server_clock',
+    });
+    expect(kcOf(state).lastPracticedAt).toBe(floor);
+    // Not a collapse: the ordinary post-update estimate, barely decayed.
+    expect(currentPL(kcOf(state), at(NOW))).toBeGreaterThan(0.5);
+  });
+
+  it('draws the past line exactly at the tolerance', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const inside = shiftedFromNow(-BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS);
+    const outside = shiftedFromNow(-BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS - 1);
+
+    const honoured = auth.applyQualifiedBktObservation(auth.createGuest(), {
+      observation: qualifiedObservation({ occurredAt: inside }),
+    });
+    const clamped = auth.applyQualifiedBktObservation(auth.createGuest(), {
+      observation: qualifiedObservation({ occurredAt: outside }),
+    });
+
+    expect(honoured).toMatchObject({ clockAdjustment: 'none', appliedOccurredAt: at(inside) });
+    expect(clamped).toMatchObject({
+      clockAdjustment: 'bounded_to_server_clock',
+      appliedOccurredAt: at(inside),
+    });
+  });
+
+  it('yields the same P(L) whichever order two observations arrive in', () => {
+    // Measured before the bound: 0.1496908815698207 old-then-recent versus
+    // 0.8623627360054035 recent-then-old — a 5.8x spread in the learner-facing
+    // number from delivery order alone, because a backdated FIRST write became
+    // the baseline the later decay was measured from.
+    const OLD = '2020-01-01T00:00:00.000Z';
+    const RECENT = shiftedFromNow(-60 * 60 * 1000);
+
+    const run = (first: string, second: string): number => {
+      const auth = new Authority(loadSyntheticBank(), clock);
+      const state = auth.createGuest();
+      auth.applyQualifiedBktObservation(state, {
+        observation: qualifiedObservation({ occurredAt: first, sequence: 1 }),
+      });
+      auth.applyQualifiedBktObservation(state, {
+        observation: qualifiedObservation({ occurredAt: second, sequence: 2 }),
+      });
+      return currentPL(kcOf(state), at(NOW));
+    };
+
+    expect(run(OLD, RECENT)).toBe(run(RECENT, OLD));
+  });
+
+  it('lets a grain with history hold the clock above the server window', () => {
+    // The two floors compose: the grain floor is later than the server window
+    // here, so it wins and the label still names the grain.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ sequence: 1 }),
+    });
+
+    const late = auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ occurredAt: '2020-01-01T00:00:00.000Z', sequence: 2 }),
+    });
+
+    expect(late).toMatchObject({
+      clockAdjustment: 'held_at_last_practiced',
+      appliedOccurredAt: at(NOW),
+    });
   });
 });

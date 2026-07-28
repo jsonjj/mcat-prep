@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   boundOccurredAtToServerTime,
+  EVIDENCE_QUALITY_TIERS,
   EvidenceRecordSchema,
+  evidenceQualityRank,
   type EvidenceKind,
   type EvidenceRecord,
   type SkillEvidenceState,
@@ -17,7 +19,12 @@ import {
   shouldStop,
   type DiagnosticState,
 } from './diagnostic';
-import { evaluateEvidence, evaluateMastery, EVIDENCE_WARRANT_MANIFEST } from './mastery-policy';
+import {
+  evaluateEvidence,
+  evaluateMastery,
+  EVIDENCE_CONFIG,
+  EVIDENCE_WARRANT_MANIFEST,
+} from './mastery-policy';
 import { classifyCapacity, continueTarget, orderTasks } from './planner';
 import { scorePredictionGate } from './readiness';
 
@@ -491,5 +498,48 @@ describe('readiness', () => {
     });
     expect(dataMet.numericAllowed).toBe(false);
     expect(dataMet.reasons).toContain('product_model_not_validated');
+  });
+});
+
+describe('evidence warrant — every recipe target is a real tier', () => {
+  /**
+   * `TRANSFER_PRECURSOR = 'transfer' as EvidenceQualityTier` manufactured a value
+   * the enum does not contain, so `evidenceQualityRank('transfer')` was
+   * `undefined` and any rank comparison silently mis-ordered. A cast cannot be
+   * caught by the type system, so this asserts the property directly.
+   */
+  it('publishes only tiers the rank function knows', () => {
+    for (const recipe of EVIDENCE_CONFIG.recipes) {
+      expect(EVIDENCE_QUALITY_TIERS as readonly string[]).toContain(recipe.target);
+      expect(evidenceQualityRank(recipe.target)).toBeTypeOf('number');
+      expect(Number.isNaN(evidenceQualityRank(recipe.target))).toBe(false);
+    }
+  });
+
+  it('names each recipe, since two may publish the same tier', () => {
+    const names = EVIDENCE_CONFIG.recipes.map((r) => r.name);
+    expect(new Set(names).size).toBe(names.length);
+    // The transfer route is a stricter path to `independent`, not a tier of its own.
+    expect(
+      EVIDENCE_CONFIG.recipes.filter((r) => r.target === 'independent').map((r) => r.name),
+    ).toEqual(['independent', 'independent_corroborated_by_transfer']);
+  });
+
+  it('reaches `retained` only with delayed and mixed evidence, unchanged by the rename', () => {
+    // Guards the behaviour the deleted special case used to produce: transfer
+    // evidence corroborates independence, it does not promote past it.
+    const withTransfer = evaluateEvidence({
+      skillId: 's',
+      records: [
+        mkEv({ familyId: 'fam-a' }),
+        mkEv({ familyId: 'fam-b' }),
+        mkEv({ kind: 'transfer', familyId: 'fam-c', changeDimensions: ['representation'] }),
+        mkEv({ kind: 'transfer', familyId: 'fam-d', changeDimensions: ['domain_context'] }),
+      ],
+      now: NOW,
+    });
+
+    expect(withTransfer.evidenceQuality).toBe('independent');
+    expect(withTransfer.reasons.map((r) => r.code)).toContain('INDEPENDENT_EVIDENCE_SATISFIED');
   });
 });

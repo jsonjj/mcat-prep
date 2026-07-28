@@ -22,6 +22,7 @@ import {
   type ProbableCause,
   type QualifiedBktObservation,
   type ReasoningOperation,
+  type SkillCluster,
   type SkillMasteryView,
   type UtcTimestamp,
 } from '@mcat/contracts';
@@ -57,6 +58,7 @@ import {
 } from '@mcat/policies';
 import {
   clusterForLesson,
+  clusterForKc,
   loadSyntheticBank,
   orderedKcsForLesson,
   type LoadedBank,
@@ -75,8 +77,36 @@ import type {
   WrappedView,
 } from './types';
 
-/** One node of the loaded skill graph, as `skillWarrants` pairs it with its warrant. */
+/** One node of the loaded skill graph, one of the sources `warrantGrains` unions. */
 type SkillNode = LoadedBank['skillGraph']['skills'][number];
+
+/** A grain a warrant is produced for, with the labels a view needs. */
+interface WarrantGrain {
+  readonly skillId: string;
+  readonly cluster: SkillCluster;
+  /** Human label where one exists; otherwise the id, which is at least honest. */
+  readonly title: string;
+}
+
+/**
+ * A grain has evidence but no resolvable cluster, so no warrant can be published
+ * for it.
+ *
+ * Thrown rather than skipped. Omitting the grain is what let the evidence
+ * authority publish nothing for every lesson KC while every test passed: an
+ * absent warrant is indistinguishable from "no evidence yet", so the failure had
+ * no symptom. A loud throw names the ids and cannot be mistaken for an empty
+ * result.
+ */
+export class UnresolvedWarrantGrainError extends Error {
+  constructor(readonly skillIds: readonly string[]) {
+    super(
+      `No cluster resolves for warrant-bearing grain(s): ${skillIds.join(', ')}. ` +
+        'Evidence exists for them, so they cannot be omitted from the warrant.',
+    );
+    this.name = 'UnresolvedWarrantGrainError';
+  }
+}
 
 interface PathActivity {
   id: string;
@@ -128,7 +158,40 @@ const sameItemId = (a: string, b: string): boolean => a === b;
  */
 export const BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS = 5 * 60 * 1000;
 
+/**
+ * How far BEHIND the Authority clock a reported `occurredAt` may be and still be
+ * used as the decay baseline. Symmetric with the future tolerance, and five
+ * minutes for the same reasons.
+ *
+ * A monotonic grain floor already stops a late claim rewinding a grain that has
+ * history. It cannot help on a grain's FIRST write, where the floor is `null`,
+ * and there the reported time was accepted verbatim: a claim dated 2020 produced
+ * `currentPL = 5.4e-104`, and identical evidence delivered old-then-recent
+ * versus recent-then-old produced `0.1497` versus `0.8624` — a 5.8× spread in the
+ * learner-facing number from delivery order alone.
+ *
+ * The claim is CLAMPED, never refused. Refusing any backdating would undo the
+ * deliberate choice to detect rather than enforce ordering: delayed and offline
+ * submissions are normal and their evidence must not be discarded. Clamping keeps
+ * the answer and only declines to apply a decay penalty the server cannot verify.
+ *
+ * Why this width. Order-dependence cannot be eliminated while the reported time
+ * is honoured at all, only bounded — and it is bounded by the decay across the
+ * window, which at the initial 7-day half-life is ~0.03%. A wider window (a day:
+ * ~9%) would leave a spread a learner could see. The cost is the opposite
+ * direction: a genuinely long-delayed submission has its decay baseline treated
+ * as recent, which is generous. That is the right way to be wrong here — the
+ * elapsed time is unverifiable, the server prefers its own clock over an
+ * unverifiable claim, and the WARRANT timestamp is bounded separately against
+ * `acceptedAt` and keeps the honest time, so freshness, delay and retention are
+ * unaffected. Only the memory baseline moves, and `P(L)` still requires real
+ * correct answers to rise: the clamp cannot manufacture evidence.
+ */
+export const BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS = 5 * 60 * 1000;
+
 const instant = (t: UtcTimestamp): number => Date.parse(t);
+const shiftedBy = (t: UtcTimestamp, deltaMs: number): UtcTimestamp =>
+  new Date(instant(t) + deltaMs).toISOString() as UtcTimestamp;
 const earlierOf = (a: UtcTimestamp, b: UtcTimestamp): UtcTimestamp =>
   instant(a) <= instant(b) ? a : b;
 const laterOf = (a: UtcTimestamp, b: UtcTimestamp): UtcTimestamp =>
@@ -346,7 +409,7 @@ export class Authority {
     const clustersWithEvidence = new Set(
       this.skillWarrants(state)
         .filter(({ evidence }) => evidence.evidenceQuality !== 'not_assessed')
-        .map(({ skill }) => skill.cluster),
+        .map(({ grain }) => grain.cluster),
     );
     const coveragePct = clustersWithEvidence.size / SKILL_CLUSTERS.length;
     let lastEvidenceAt: string | null = null;
@@ -601,24 +664,96 @@ export class Authority {
   // ---- Views --------------------------------------------------------------
 
   /**
-   * INTERNAL evidence warrant per skill, tier included.
+   * Every grain a warrant must be produced for, with the labels a view needs.
+   *
+   * The bank's skill graph is NOT the answer. It holds two synthetic enzyme ids,
+   * while lesson evidence is keyed on `binding.primaryKcId`, a `V3-KC-*`. Driving
+   * the warrant off the graph alone meant the evidence authority published no
+   * tier, no satisfied or missing slot, no `freshestByKind` and no reason code
+   * for any grain a lesson writes — an empty set, silently, for exactly the
+   * signals the planner is specified to consume. Every seam test still passed,
+   * because `evaluateEvidence` is skillId-agnostic and nothing downstream read
+   * what the adapter wrote.
+   *
+   * So the enumeration is the union of three sources:
+   *
+   * 1. the loaded skill graph — the synthetic vertical's own grains;
+   * 2. every `skillId` that actually has an evidence record;
+   * 3. the required KCs of every practiced lesson, so a KC with NO evidence
+   *    still reports its gaps. "You have practiced this lesson and this KC has
+   *    nothing behind it" is the most actionable warrant there is, and it cannot
+   *    be expressed by omitting the KC.
+   *
+   * `cluster` resolves from the graph node, then from the records themselves
+   * (`EvidenceRecord.cluster` is required and caller-resolved), then from
+   * `clusterForKc`. A grain that resolves nowhere is a data-integrity failure and
+   * throws — silent omission is precisely what hid this for six rounds.
+   */
+  private warrantGrains(state: LearnerState): WarrantGrain[] {
+    const graphSkills = new Map<string, SkillNode>(
+      this.bank.skillGraph.skills.map((skill) => [skill.skillId, skill]),
+    );
+    const clusterFromRecords = new Map<string, SkillCluster>();
+    const ordered: string[] = [...graphSkills.keys()];
+    const seen = new Set<string>(ordered);
+
+    const consider = (skillId: string): void => {
+      if (seen.has(skillId)) return;
+      seen.add(skillId);
+      ordered.push(skillId);
+    };
+
+    for (const record of state.evidence) {
+      // First writer wins, and a later disagreement is reported below rather
+      // than overwritten: two clusters for one grain is a routing bug.
+      if (!clusterFromRecords.has(record.skillId)) {
+        clusterFromRecords.set(record.skillId, record.cluster);
+      }
+      consider(record.skillId);
+    }
+    for (const lessonId of state.mastery?.practicedLessonIds ?? []) {
+      for (const kcId of orderedKcsForLesson(lessonId) ?? []) consider(kcId);
+    }
+
+    const grains: WarrantGrain[] = [];
+    const unresolved: string[] = [];
+    for (const skillId of ordered) {
+      const node = graphSkills.get(skillId);
+      const cluster = node?.cluster ?? clusterFromRecords.get(skillId) ?? clusterForKc(skillId);
+      if (cluster === null || cluster === undefined) {
+        unresolved.push(skillId);
+        continue;
+      }
+      // No KC title dataset exists in `@mcat/content`, so the id is the honest
+      // label: a stable identifier is better than a fabricated sentence.
+      grains.push({ skillId, cluster, title: node?.title ?? skillId });
+    }
+
+    if (unresolved.length > 0) throw new UnresolvedWarrantGrainError(unresolved);
+    return grains;
+  }
+
+  /**
+   * INTERNAL evidence warrant per grain, tier included.
    *
    * `evidenceQuality` is an ordinal, and ordinals are legitimate here: the
    * planner and the coverage counters compare them. It stops at the package
    * boundary. Anything learner-facing goes through {@link getMasteryMap}, which
    * projects this without the tier — see the note there.
    */
-  private skillWarrants(state: LearnerState): { skill: SkillNode; evidence: SkillEvidenceState }[] {
+  private skillWarrants(
+    state: LearnerState,
+  ): { grain: WarrantGrain; evidence: SkillEvidenceState }[] {
     const now = this.clock.now();
-    return this.bank.skillGraph.skills.map((skill) => {
-      const records = state.evidence.filter((e) => e.skillId === skill.skillId);
+    return this.warrantGrains(state).map((grain) => {
+      const records = state.evidence.filter((e) => e.skillId === grain.skillId);
       return {
-        skill,
+        grain,
         evidence: evaluateEvidence({
-          skillId: skill.skillId,
+          skillId: grain.skillId,
           records,
           now,
-          prerequisiteBlocked: this.isPrerequisiteBlocked(state, skill.skillId),
+          prerequisiteBlocked: this.isPrerequisiteBlocked(state, grain.skillId),
           hasInstruction: records.length > 0,
         }),
       };
@@ -638,15 +773,15 @@ export class Authority {
    * an axis to compare along.
    */
   getMasteryMap(state: LearnerState): MasteryMapEntry[] {
-    return this.skillWarrants(state).map(({ skill, evidence }) => ({
+    return this.skillWarrants(state).map(({ grain, evidence }) => ({
       skillId: evidence.skillId,
       refreshNeeded: evidence.refreshNeeded,
       supportingEvidenceIds: [...evidence.supportingEvidenceIds],
       freshestByKind: evidence.freshestByKind,
       reasons: [...evidence.reasons],
       policyVersion: evidence.policyVersion,
-      cluster: skill.cluster,
-      title: skill.title,
+      cluster: grain.cluster,
+      title: grain.title,
     }));
   }
 
@@ -698,18 +833,24 @@ export class Authority {
    *
    * The clamp is two-sided:
    *
-   *   appliedAt = max( min(floor, serverNow), min(reportedAt, serverNow) )
+   *   appliedAt = max( serverNow - pastTolerance, min(grainFloor, serverNow), min(reportedAt, serverNow) )
    *
    * - **Never ahead of the server clock.** The Authority's own clock is the
    *   ceiling. (An implausibly future claim is refused before reaching here; see
    *   `BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS`.)
-   * - **Never rewinds a grain.** `floor` is the newest `lastPracticedAt` among
-   *   the grains this observation writes, so no grain's clock can move
+   * - **Never rewinds a grain.** `grainFloor` is the newest `lastPracticedAt`
+   *   among the grains this observation writes, so no grain's clock can move
    *   backwards. A legitimately delayed observation still applies its BKT
    *   evidence — only the decay clock is held — because discarding it would
    *   silently lose real evidence.
+   * - **Never further into the past than the server will vouch for.** The grain
+   *   floor is `null` on a grain's FIRST write, and without a third bound the
+   *   clamp degenerated there: an arbitrarily backdated claim became the decay
+   *   baseline, measured at `currentPL = 5.4e-104`, and `P(L)` came out
+   *   arrival-order dependent (0.1497 vs 0.8624 for identical evidence).
+   *   `serverNow - BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS` closes it.
    *
-   * The floor is itself capped at `serverNow`: a stored future timestamp is
+   * The grain floor is itself capped at `serverNow`: a stored future timestamp is
    * invalid on its face, so it must not become a permanent floor, and this makes
    * any state poisoned before the clamp existed heal on the next write.
    *
@@ -730,26 +871,36 @@ export class Authority {
     grainKeys: { kcIds: readonly string[]; operation: ReasoningOperation },
   ): BoundedDecayClock {
     const serverNow = this.clock.now();
-    const bounded = earlierOf(reportedAt, serverNow);
+    const ceiling = earlierOf(reportedAt, serverNow);
+    const serverFloor = shiftedBy(serverNow, -BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS);
 
     const touched: readonly (MemoryState | undefined)[] = [
       ...grainKeys.kcIds.map((kcId) => m.kc[kcId]),
       m.skill[grainKeys.operation],
     ];
-    let floor: UtcTimestamp | null = null;
+    let grainFloor: UtcTimestamp | null = null;
     for (const state of touched) {
       const practicedAt = state?.lastPracticedAt ?? null;
       if (practicedAt === null) continue;
-      floor = floor === null ? practicedAt : laterOf(floor, practicedAt);
+      grainFloor = grainFloor === null ? practicedAt : laterOf(grainFloor, practicedAt);
     }
 
-    const appliedAt = floor === null ? bounded : laterOf(earlierOf(floor, serverNow), bounded);
+    const cappedGrainFloor = grainFloor === null ? null : earlierOf(grainFloor, serverNow);
+    const floor = cappedGrainFloor === null ? serverFloor : laterOf(cappedGrainFloor, serverFloor);
+    const appliedAt = laterOf(floor, ceiling);
+
+    // Which bound decided, so the ledger says what actually happened. A grain's
+    // own history wins the `held_at_last_practiced` label; the server clock
+    // deciding either end — future ceiling or past window — is
+    // `bounded_to_server_clock`.
+    const heldByGrain =
+      cappedGrainFloor !== null && instant(appliedAt) === instant(cappedGrainFloor);
     const clockAdjustment: BktClockAdjustment =
       instant(appliedAt) === instant(reportedAt)
         ? 'none'
-        : instant(bounded) !== instant(reportedAt)
-          ? 'bounded_to_server_clock'
-          : 'held_at_last_practiced';
+        : heldByGrain
+          ? 'held_at_last_practiced'
+          : 'bounded_to_server_clock';
 
     return { appliedAt, clockAdjustment };
   }
@@ -1227,7 +1378,7 @@ export class Authority {
    * code rather than an empty list, so the absence is stated and not inferred.
    */
   buildSummary(state: LearnerState, skillId: string): SessionSummary {
-    const warrant = this.skillWarrants(state).find((w) => w.skill.skillId === skillId)?.evidence;
+    const warrant = this.skillWarrants(state).find((w) => w.grain.skillId === skillId)?.evidence;
     const counts: Record<string, number> = {};
     for (const e of state.evidence.filter((x) => x.skillId === skillId)) {
       counts[e.kind] = (counts[e.kind] ?? 0) + 1;

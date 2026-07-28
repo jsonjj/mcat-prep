@@ -41,10 +41,25 @@ export const EVIDENCE_WARRANT_MANIFEST: PolicyManifest = {
     'Evidence warrant: cumulative recipe slots (independence, family diversity, transfer, delayed, mixed/passage/timed/protected), freshness overlay, and explicit gaps. Does not define capability — BKT owns P(L) and the mastery threshold.',
 };
 
+/**
+ * A recipe, plus a policy-local NAME.
+ *
+ * The name exists because two recipes can legitimately publish the same tier —
+ * a stricter route to the same claim — and the tier alone can then no longer
+ * identify which recipe is meant. Naming them was the alternative to the bug
+ * this replaced: `'transfer' as EvidenceQualityTier`, a cast that manufactured a
+ * value the tier enum does not contain, so `evidenceQualityRank('transfer')` was
+ * `undefined` and anything comparing ranks silently mis-ordered. A recipe target
+ * must always be a real tier; if a route needs its own label, it gets a `name`.
+ */
+export interface WarrantRecipe extends EvidenceRecipe {
+  readonly name: string;
+}
+
 export interface EvidenceConfig {
   freshnessDaysGeneral: number;
   freshnessDaysStrong: number;
-  recipes: EvidenceRecipe[];
+  recipes: WarrantRecipe[];
 }
 
 const STRONG_KINDS: ReadonlySet<EvidenceKind> = new Set<EvidenceKind>([
@@ -53,22 +68,29 @@ const STRONG_KINDS: ReadonlySet<EvidenceKind> = new Set<EvidenceKind>([
   'protected',
 ]);
 
-/** The precursor recipe target that reads as `independent` on the published tier. */
-const TRANSFER_PRECURSOR = 'transfer' as EvidenceQualityTier;
-
 export const EVIDENCE_CONFIG: EvidenceConfig = {
   freshnessDaysGeneral: 45,
   freshnessDaysStrong: 21,
   recipes: [
-    { target: 'independent', slots: [{ kind: 'independent', minFamilies: 2 }] },
     {
-      target: TRANSFER_PRECURSOR, // 'transfer' maps onto the ladder position of retained-precursor
+      name: 'independent',
+      target: 'independent',
+      slots: [{ kind: 'independent', minFamilies: 2 }],
+    },
+    {
+      // Independence corroborated by transfer: a strictly stronger route to the
+      // SAME published tier, and the precursor to `retained`. It publishes
+      // `independent` because that is what it claims; there is no `transfer`
+      // tier, and inventing one by cast is what broke the rank comparison.
+      name: 'independent_corroborated_by_transfer',
+      target: 'independent',
       slots: [
         { kind: 'independent', minFamilies: 2 },
         { kind: 'transfer', minFamilies: 2, changeDimensions: 2 },
       ],
     },
     {
+      name: 'retained',
       target: 'retained',
       slots: [
         { kind: 'independent', minFamilies: 2 },
@@ -78,6 +100,7 @@ export const EVIDENCE_CONFIG: EvidenceConfig = {
       ],
     },
     {
+      name: 'strong',
       target: 'strong',
       slots: [
         { kind: 'independent', minFamilies: 2 },
@@ -140,20 +163,18 @@ function highestSatisfied(
   records: EvidenceRecord[],
   cfg: EvidenceConfig,
 ): EvidenceQualityTier | null {
-  // Evaluate from most to least demanding.
+  // Evaluate from most to least demanding. Every `target` is a real tier, so the
+  // result needs no remapping — the special case that used to live here existed
+  // only to undo the out-of-enum `'transfer'` cast.
   for (let i = cfg.recipes.length - 1; i >= 0; i -= 1) {
     const recipe = cfg.recipes[i]!;
-    if (recipe.slots.every((slot) => satisfiesSlot(records, slot))) {
-      // 'transfer' is a precursor label; on the published tier it reads as
-      // 'independent' achieved with transfer evidence — unless retained+.
-      return recipe.target === TRANSFER_PRECURSOR ? 'independent' : recipe.target;
-    }
+    if (recipe.slots.every((slot) => satisfiesSlot(records, slot))) return recipe.target;
   }
   return null;
 }
 
 /** The most demanding recipe: the full warrant whose slots are reported as gaps. */
-const fullWarrant = (cfg: EvidenceConfig): EvidenceRecipe => cfg.recipes[cfg.recipes.length - 1]!;
+const fullWarrant = (cfg: EvidenceConfig): WarrantRecipe => cfg.recipes[cfg.recipes.length - 1]!;
 
 /** Why this slot is still open, from most to least specific. */
 function gapReasons(records: EvidenceRecord[], slot: RecipeSlot): EvidenceGapReason[] {
