@@ -46,6 +46,9 @@ const lessonLow: TodaysPathCandidateLesson = {
   covered: true,
 };
 
+const noAdjacentSameKind = (acts: readonly { kind: string }[]): boolean =>
+  acts.every((a, i) => i === 0 || a.kind !== acts[i - 1]!.kind);
+
 const carried = (id: string, minutes = 20): CarriedActivity => ({
   activityId: id,
   kind: 'lesson',
@@ -167,15 +170,19 @@ describe('Today\u2019s Path engine', () => {
     expect(r.activities.filter((a) => a.activityId === 'lesson:s0').length).toBe(1);
   });
 
-  it('orders Recall early, CARS mid, and Review Mistakes near the end but not last', () => {
+  it('orders for variety: no two same-kind activities back-to-back; mistakes not last', () => {
+    const lessons = Array.from({ length: 2 }, (_, i) => ({ ...lessonHigh, lessonId: `L${i}`, slug: `s${i}` }));
     const r = buildTodaysPath(
       snap({
+        dailyBudgetMinutes: 360,
+        coveragePct: 0.6,
+        practiceWeakness: 1,
         recall: { dueLearning: 0, dueReviews: 10, newAvailable: 0, due: 10, estimatedMinutesForDue: 4 },
         mistakesOpen: 5,
-        candidateLessons: [lessonHigh],
+        candidateLessons: lessons,
       }),
     );
-    expect(r.activities[0]!.kind).toBe('recall');
+    expect(noAdjacentSameKind(r.activities)).toBe(true);
     expect(r.activities[r.activities.length - 1]!.kind).not.toBe('review_mistakes');
     expect(r.activities.some((a) => a.kind === 'cars_duel')).toBe(true);
   });
@@ -221,17 +228,13 @@ describe('Today\u2019s Path engine', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('spreads practice blocks between lessons (alternate kinds)', () => {
+  it('spreads practice blocks so none run back-to-back (variety)', () => {
     const lessons = Array.from({ length: 3 }, (_, i) => ({ ...lessonHigh, lessonId: `L${i}`, slug: `s${i}` }));
     const r = buildTodaysPath(
       snap({ dailyBudgetMinutes: 360, coveragePct: 0.7, practiceWeakness: 1, candidateLessons: lessons }),
     );
-    const kinds = r.activities.map((a) => a.kind);
-    // At least one lesson appears before a practice block, and practice isn't one lump.
-    const firstLesson = kinds.indexOf('lesson');
-    const firstPractice = kinds.indexOf('practice');
-    expect(firstLesson).toBeGreaterThanOrEqual(0);
-    expect(firstPractice).toBeGreaterThan(firstLesson);
+    expect(r.activities.filter((a) => a.kind === 'practice').length).toBeGreaterThan(1);
+    expect(noAdjacentSameKind(r.activities)).toBe(true);
   });
 
   it('produces a sane plan even at the 2-hour floor', () => {

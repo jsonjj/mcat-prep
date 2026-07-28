@@ -526,7 +526,7 @@ export function buildTodaysPath(
       scoredBlock.push({
         activityId: numBlocks === 1 ? 'practice' : `practice:${b + 1}`,
         kind: 'practice',
-        title: numBlocks === 1 ? 'Practice' : `Practice ${b + 1} of ${numBlocks}`,
+        title: 'Practice',
         detail: `${size} adaptive question${size === 1 ? '' : 's'} — a first correct try moves mastery.`,
         estimatedMinutes: minutes,
         count: size,
@@ -569,41 +569,53 @@ function pickPracticeFocus(_snap: TodaysPathSnapshot): string | null {
 }
 
 /**
- * Order by teaching rules (NOT score order):
- * Recall early · new lessons early · teach-before-test · CARS mid · alternate kinds ·
- * Review Mistakes near the end but not last · end on not-the-hardest · rule-priority tie-break.
+ * Order for maximum VARIETY: never place two activities of the same kind
+ * back-to-back when it's avoidable (the classic "reorganize so no two adjacent
+ * are equal" — always take from the kind with the most remaining items that isn't
+ * the one just placed). This keeps the learner switching modes and never grinding
+ * one kind for a long stretch — the whole point of the per-activity time cap.
+ * Soft preferences (recall/lesson/cars/mistakes before practice) only break ties.
  */
 export function orderActivities(activities: readonly PlannedActivity[]): PlannedActivity[] {
-  const recall = activities.filter((a) => a.kind === 'recall');
-  const lessons = activities.filter((a) => a.kind === 'lesson');
-  const practice = activities.filter((a) => a.kind === 'practice');
-  const cars = activities.filter((a) => a.kind === 'cars_duel');
-  const mistakes = activities.filter((a) => a.kind === 'review_mistakes');
+  const kindOrder: TodaysPathActivityKind[] = [
+    'recall',
+    'lesson',
+    'cars_duel',
+    'review_mistakes',
+    'practice',
+  ];
+  const rank: Record<TodaysPathActivityKind, number> = {
+    recall: 0,
+    lesson: 1,
+    cars_duel: 2,
+    review_mistakes: 3,
+    practice: 4,
+  };
+  const buckets = new Map<TodaysPathActivityKind, PlannedActivity[]>();
+  for (const k of kindOrder) buckets.set(k, []);
+  for (const a of activities) buckets.get(a.kind)!.push(a);
 
-  // Interleave lessons + practice blocks so multiple practice sets are SPREAD
-  // through the day (alternate kinds), a lesson leading each pair (teach-before-test).
-  const interleaved: PlannedActivity[] = [];
-  for (let i = 0, j = 0; i < lessons.length || j < practice.length; ) {
-    if (i < lessons.length) interleaved.push(lessons[i++]!);
-    if (j < practice.length) interleaved.push(practice[j++]!);
+  const result: PlannedActivity[] = [];
+  let last: TodaysPathActivityKind | null = null;
+  while (result.length < activities.length) {
+    const remaining = [...buckets.entries()].filter(([, arr]) => arr.length > 0);
+    let pool = remaining.filter(([k]) => k !== last);
+    if (pool.length === 0) pool = remaining; // forced repeat (adjacency unavoidable)
+    // Most-remaining first keeps it feasible; ties broken by soft preference.
+    pool.sort((a, b) => b[1].length - a[1].length || rank[a[0]] - rank[b[0]]);
+    const [kind, arr] = pool[0]!;
+    result.push(arr.shift()!);
+    last = kind;
   }
 
-  // Base teaching order: recall → interleaved(lessons+practice) → mistakes.
-  const base: PlannedActivity[] = [...recall, ...interleaved, ...mistakes];
-
-  // CARS mid: insert around the middle so it breaks up the block (interleaving break).
-  if (cars.length > 0) {
-    const mid = Math.max(1, Math.floor(base.length / 2));
-    base.splice(Math.min(mid, base.length), 0, ...cars);
+  // Keep Review Mistakes off the very last slot when possible (there is only ever
+  // one, so a swap with the second-to-last can't create a same-kind adjacency).
+  const n = result.length;
+  if (n >= 2 && result[n - 1]!.kind === 'review_mistakes' && result[n - 2]!.kind !== 'review_mistakes') {
+    const tmp = result[n - 1]!;
+    result[n - 1] = result[n - 2]!;
+    result[n - 2] = tmp;
   }
 
-  // Review Mistakes near the end but NOT last: if it landed last, swap it earlier.
-  const lastIdx = base.length - 1;
-  if (base.length >= 2 && base[lastIdx]!.kind === 'review_mistakes') {
-    const tmp = base[lastIdx]!;
-    base[lastIdx] = base[lastIdx - 1]!;
-    base[lastIdx - 1] = tmp;
-  }
-
-  return base;
+  return result;
 }
