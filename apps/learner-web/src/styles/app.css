@@ -2769,7 +2769,7 @@ body {
   justify-content: space-between;
   gap: var(--mc-space-2);
 }
-.mc-skillbars {
+.mc-readyout {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -2777,33 +2777,34 @@ body {
   flex-direction: column;
   gap: var(--mc-space-3);
 }
-.mc-skillbar {
+.mc-readyout__row {
   display: grid;
-  grid-template-columns: 84px 1fr 44px;
+  grid-template-columns: minmax(0, 1fr) 100px 44px;
   align-items: center;
   gap: var(--mc-space-3);
 }
-.mc-skillbar__label {
+.mc-readyout__title {
   font-size: var(--mc-text-15);
   font-weight: 600;
   color: var(--mc-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.mc-skillbar__track {
+.mc-readyout__track {
   height: 10px;
   border-radius: var(--mc-radius-pill);
   background: var(--mc-surface-2);
   overflow: hidden;
 }
-.mc-skillbar__fill {
+/* Yellow→green fill echoing the mastery brain — these are close to green. */
+.mc-readyout__fill {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--mc-glow-aqua), var(--mc-primary));
+  background: linear-gradient(90deg, #f2c14e, #33b87e);
 }
-.mc-skillbar__fill--ok {
-  background: linear-gradient(90deg, #45c48d, #33b87e);
-}
-.mc-skillbar__pct {
+.mc-readyout__pct {
   text-align: right;
   font-size: var(--mc-text-14);
   font-weight: 700;
