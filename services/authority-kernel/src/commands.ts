@@ -23,11 +23,11 @@ export function parseAuthorityCommand(input: unknown): LearnerCommand {
   return parsed.data;
 }
 
-function applyAttempt(
+async function applyAttempt(
   authority: Authority,
   state: LearnerState,
   command: AttemptCommand,
-): AppliedAuthorityCommand {
+): Promise<AppliedAuthorityCommand> {
   const current = authority.getSession(state);
   if (current.kind !== 'question' || current.question.id !== command.questionId) {
     throw validationError('The attempt does not match the authoritative current item.');
@@ -41,7 +41,7 @@ function applyAttempt(
 
   const eventCount = state.events.length;
   const evidenceCount = state.evidence.length;
-  authority.submitAttempt(state, command.choiceId);
+  await authority.submitAttempt(state, command.choiceId);
   if (state.events.length !== eventCount + 1) {
     throw validationError('The attempt is not valid in the current session state.');
   }
@@ -82,11 +82,11 @@ function applyAttempt(
   return { eventType: 'attempt_submitted', payload: toJsonObject(command) };
 }
 
-export function applyAuthorityCommand(
+export async function applyAuthorityCommand(
   authority: Authority,
   state: LearnerState,
   command: LearnerCommand,
-): AppliedAuthorityCommand {
+): Promise<AppliedAuthorityCommand> {
   if ('goal' in command) {
     authority.confirmPlan(state, command.goal);
     authority.startSession(state);

@@ -36,7 +36,6 @@ import {
   practiceQuestionId,
   routeFor,
   type CarsDuelCommandBody,
-  type CauseCommandBody,
   type ContinueCommandBody,
   type MasterySeedCommandBody,
   type PracticeAdaptiveAttemptCommandBody,
@@ -64,10 +63,6 @@ interface KernelPort {
     input: unknown,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handleAttempt']>;
-  handleCause(
-    input: CauseCommandBody,
-    principal: Principal,
-  ): ReturnType<RepositoryLearnerKernel['handleCause']>;
   handleReveal(
     input: RevealCommandBody,
     principal: Principal,
@@ -616,13 +611,6 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             AcceptedCommandResponseSchema.parse(
               await dependencies.kernel.handleAttempt(parsed.data, principal),
             ),
-            origin,
-            requestIdValue,
-          );
-        case 'cause':
-          return jsonResponse(
-            200,
-            await dependencies.kernel.handleCause(parsed.data as CauseCommandBody, principal),
             origin,
             requestIdValue,
           );

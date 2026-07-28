@@ -8,6 +8,7 @@ import {
   HttpApiErrorSchema,
   LearnerSafeQuestionSchema,
   LearnerSnapshotSchema,
+  PostRevealResponseSchema,
   PracticeResultSchema,
   StudyStepViewSchema,
 } from './index';
@@ -149,6 +150,11 @@ describe('AWS v1 learner HTTP contracts', () => {
         C: 'Authorized explanation C.',
         D: 'Authorized explanation D.',
       },
+      // Which option was picked, so the reveal refutes that one and not the key in
+      // general. Nullable (Reveal Now has no attempt) but never omitted, so a
+      // server that forgets it fails the contract instead of silently degrading to
+      // a generic explanation.
+      chosenChoiceId: 'B',
     };
     expect(
       StudyStepViewSchema.safeParse({
@@ -182,6 +188,11 @@ describe('AWS v1 learner HTTP contracts', () => {
         choiceRationale: 'Authorized explanation A.',
       }).success,
     ).toBe(true);
+    const { chosenChoiceId: _omitted, ...withoutChosen } = reveal;
+    expect(PostRevealResponseSchema.safeParse(withoutChosen).success).toBe(false);
+    expect(PostRevealResponseSchema.safeParse({ ...reveal, chosenChoiceId: null }).success).toBe(
+      true,
+    );
   });
 
   it('requires authoritative stream metadata in bootstrap and snapshot responses', () => {

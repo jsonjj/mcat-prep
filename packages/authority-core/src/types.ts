@@ -98,15 +98,22 @@ export interface DiagnosticSessionState {
 }
 
 export type StudyPhase = 'independent' | 'guided' | 'transfer' | 'passage' | 'protected';
-export type QuestionSubState = 'answering' | 'cause' | 'retry' | 'reveal';
+/** No `cause` step — see `QuestionSubStateSchema` in @mcat/contracts. */
+export type QuestionSubState = 'answering' | 'retry' | 'reveal';
 
 export interface StudySessionState {
   skillId: string;
   pathIndex: number;
   sub: QuestionSubState;
-  /** Tracks the current item's first-attempt data for Diagnose-Before-Reveal. */
+  /** The current item's first-attempt pick, so the reveal can refute that option. */
   currentFirstChoiceId: string | null;
   revealed: boolean;
+  /**
+   * A missed first attempt still owes the learner their one unassisted retry;
+   * leaving the reveal spends it. Optional so projections written before the
+   * reveal-then-retry reordering deserialize (absent reads as false).
+   */
+  retryPending?: boolean;
 }
 
 /** A learner-safe view of the current study step (no keys/rationales unless revealed). */
@@ -149,6 +156,8 @@ export interface RevealView {
   correctChoiceId: string;
   correctRationale: string;
   choiceRationales: Record<string, string>;
+  /** The first-attempt pick, so the reveal refutes the option actually chosen. */
+  chosenChoiceId: 'A' | 'B' | 'C' | 'D' | null;
 }
 
 export interface SessionSummary {

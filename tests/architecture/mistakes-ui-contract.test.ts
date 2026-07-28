@@ -7,14 +7,15 @@ import { describe, expect, it } from 'vitest';
  * Source contract for the error-handling decisions in
  * docs/design/error-handling-design.md that live in the UI layer:
  *
- *  - adaptive Practice asks for no self-reported cause and reveals immediately
- *    (§2.2–§2.3: expert κ = 0.000–0.063 on cause, .71 vs .71 on withhold),
- *  - the spaced same-item resurface survives that removal,
+ *  - BOTH question flows — adaptive Practice and the older Study loop — ask for no
+ *    self-reported cause and reveal immediately (§2.2–§2.3: expert
+ *    κ = 0.000–0.063 on cause, .71 vs .71 on withhold),
+ *  - each keeps its same-item retry, now placed after the correction,
  *  - the Mistakes tab leads with content and a "try again" action rather than a
  *    cause headline and a repair pill (§6.4, the highest-priority single change),
  *  - the patterns section always shows a denominator and never asserts a cohort
  *    comparison (§6.5–§6.6),
- *  - the older Study flow, which still owns `ProbableCause`, is left alone.
+ *  - nothing anywhere can still ask for, transport, or store a cause.
  */
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -62,11 +63,72 @@ describe('adaptive practice asks for no cause', () => {
   });
 });
 
-describe('the older Study flow keeps its own diagnose step', () => {
-  it('leaves the shared ProbableCause type and the Study picker in place', () => {
-    expect(read('apps/learner-web/src/screens/Study.tsx')).toMatch(/mc-cause/);
-    expect(read('packages/contracts/src/events.ts')).toMatch(/ProbableCauseSchema/);
-    expect(read('packages/contracts/src/events.ts')).toMatch(/cause_selected/);
+describe('the Study flow asks for no cause either', () => {
+  const study = read('apps/learner-web/src/screens/Study.tsx');
+
+  it('has no cause picker, no picker markup, and no picker styles', () => {
+    const source = code('apps/learner-web/src/screens/Study.tsx');
+    expect(source).not.toBe('');
+    expect(source).not.toMatch(/CausePicker|const CAUSES|mc-causegrid|mc-cause/);
+    expect(source).not.toMatch(/selectCause|useSelectCause|ProbableCause/);
+    // The picker's copy asserted the opposite of what the evidence supports.
+    expect(source).not.toMatch(/Naming the cause/);
+    // The CSS was retained by the previous commit only because Study used it.
+    expect(read('apps/learner-web/src/styles/app.css')).not.toMatch(/mc-cause/);
+  });
+
+  it('sends a miss straight to the reveal, refuting the option the server recorded', () => {
+    // 'cause' is no longer a representable substate. The one surviving mention of
+    // the string is the resume path for a session persisted on the old step, which
+    // rewrites it to 'reveal' — see the QuestionSubState assertion below.
+    expect(code('packages/authority-core/src/types.ts')).toMatch(
+      /QuestionSubState = 'answering' \| 'retry' \| 'reveal'/,
+    );
+    expect(code('packages/authority-core/src/authority.ts')).toMatch(
+      /\(s\.sub as string\) === 'cause'[\s\S]{0,80}s\.sub = 'reveal'/,
+    );
+    expect(code('packages/contracts/src/learner-views.ts')).not.toMatch(/'cause'/);
+    // The chosen option is server-carried: this screen's local selection state is
+    // cleared by the step change, so reading it there would drop the refutation.
+    expect(study).toMatch(/reveal\.chosenChoiceId/);
+    expect(study).toMatch(/Why \$\{chosen\} misses/);
+    expect(study).not.toMatch(/chosen=\{choice\}/);
+  });
+
+  it('keeps the one unassisted retry, after the reveal rather than before it', () => {
+    const authority = read('packages/authority-core/src/authority.ts');
+    expect(study).toMatch(/step\.sub === 'retry'/);
+    expect(study).toMatch(/Try once more/);
+    expect(authority).toMatch(/retryPending = true/);
+    expect(authority).toMatch(/s\.sub = 'retry';/);
+    expect(authority).toMatch(/kind: 'diagnostic_retry'/);
+  });
+});
+
+describe('no surface can still ask for, transport, or store a cause', () => {
+  it('drops the event type, the schema, the command, the route and the port method', () => {
+    expect(read('packages/contracts/src/events.ts')).not.toMatch(
+      /ProbableCauseSchema|CauseSelectedSchema|'cause_selected'/,
+    );
+    expect(read('packages/client-core/src/port.ts')).not.toMatch(/selectCause/);
+    expect(read('packages/client-core/src/http.ts')).not.toMatch(/attempts\/cause/);
+    expect(read('services/lambdas/learner-api/src/routes.ts')).not.toMatch(/CauseCommandBody/);
+    expect(read('services/lambdas/learner-api/src/workflow.ts')).not.toMatch(/handleCause/);
+    expect(read('services/local-authority/src/in-process.ts')).not.toMatch(/selectCause/);
+  });
+
+  it('leaves stored history readable: nothing parses accepted_events by type', () => {
+    // The union is what dropped `cause_selected`, so replay safety rests on
+    // historical rows never being validated against it.
+    expect(read('database/migrations/0001_authority.sql')).toMatch(/event_type text not null,/);
+    expect(read('database/migrations/0001_authority.sql')).not.toMatch(
+      /event_type[^\n]*check[^\n]*cause/,
+    );
+    // The projection is rehydrated by an unchecked cast, not a schema parse.
+    expect(read('services/authority-kernel/src/views.ts')).toMatch(
+      /structuredClone\(record\.state\) as unknown as LearnerState/,
+    );
+    expect(read('services/authority-kernel/src/views.ts')).not.toMatch(/LearnerEventSchema/);
   });
 });
 
@@ -147,7 +209,7 @@ describe('pattern analysis stays at KC / cluster grain', () => {
   });
 });
 
-describe('the practice attempt log is the error log’s source', () => {
+describe('the attempt log is the error log’s source, for both flows', () => {
   const authority = read('packages/authority-core/src/authority.ts');
 
   it('reads logged attempts rather than walking the event store', () => {
@@ -158,13 +220,29 @@ describe('the practice attempt log is the error log’s source', () => {
     expect(body).toMatch(/listPracticeAttempts/);
     // The two accidental scopings that made practice misses invisible.
     expect(body).not.toMatch(/state\.events/);
-    expect(body).not.toMatch(/bank\.compiled\.get/);
     expect(body).not.toMatch(/ENZYME_SKILL/);
   });
 
-  it('keeps the event store itself intact for the older Study flow', () => {
+  it('hydrates a practice row through the port and only a study row from the bank', () => {
+    const source = code('packages/authority-core/src/authority.ts');
+    const start = source.indexOf('private async hydrateAttempt');
+    const end = source.indexOf('async getErrorLog');
+    expect(start).toBeGreaterThan(-1);
+    expect(end).toBeGreaterThan(start);
+    const body = source.slice(start, end);
+    // A study item comes from the authored lesson bank, which is the only place it
+    // exists — the deployed practice corpus does not carry it.
+    expect(body).toMatch(/activityType === 'study'/);
+    expect(body).toMatch(/bank\.compiled\.get/);
+    // The practice branch must stay free of any dependency on that bank being
+    // loaded — the regression 0010 fixed was exactly such a hidden coupling.
+    const practiceBranch = body.slice(body.indexOf('practiceBank.getQuestion'));
+    expect(practiceBranch).not.toMatch(/bank\.compiled/);
+  });
+
+  it('keeps the event store itself intact', () => {
     expect(authority).toMatch(/attempt_submitted/);
-    expect(authority).toMatch(/cause_selected/);
+    expect(authority).toMatch(/reveal_requested/);
   });
 
   it('writes the chosen distractor next to the existing exposure/repair calls', () => {
@@ -172,6 +250,31 @@ describe('the practice attempt log is the error log’s source', () => {
       /recordExposure\([\s\S]{0,600}recordPracticeAttempt\([\s\S]{0,600}queueRepair\(/,
     );
     expect(authority).toMatch(/chosenChoiceId: cmd\.chosenChoiceId/);
+  });
+
+  it('logs a Study first attempt additively, without touching scoring or repair', () => {
+    const start = authority.indexOf('private async logStudyAttempt');
+    const end = authority.indexOf('requestReveal(state: LearnerState)');
+    expect(start).toBeGreaterThan(-1);
+    const body = authority.slice(start, end);
+    expect(body).toMatch(/activityType: 'study'/);
+    expect(body).toMatch(/firstAttempt: true/);
+    // Only the log is written: no mastery, no evidence, no repair spec keyed on a
+    // KC the practice corpus cannot match.
+    expect(body).not.toMatch(/queueRepair|applyMasteryAttempt|appendEvidence|recordAttempt\(/);
+    // In-lesson comprehension checks stay off the tab (§6.5).
+    expect(body).toMatch(/phase === 'guided'/);
+  });
+
+  it('reads both displayed activity types out of Postgres', () => {
+    const repository = read('services/persistence-postgres/src/practice-attempt-repository.ts');
+    expect(repository).toMatch(/DISPLAYED_ACTIVITY_TYPES = \['practice', 'study'\]/);
+    expect(repository).toMatch(/activity_type = any\(\$2\)/);
+    // The read used to hard-code the type on the way back out, which would send
+    // every study row hunting for its content in the wrong corpus.
+    expect(read('services/persistence-postgres/src/practice-exposure-repository.ts')).not.toMatch(
+      /activityType: 'practice',/,
+    );
   });
 });
 
@@ -198,15 +301,42 @@ describe('the practice attempt migration extends the unused table', () => {
     }
   });
 
-  it('keeps one first-attempt row per learner and item', () => {
-    expect(migration).toMatch(
-      /create unique index[\s\S]*?on attempt_results \(learner_id, question_id\)/,
-    );
-    expect(migration).toMatch(/where activity_type = 'practice' and first_attempt/);
-  });
-
   it('uses UTC instants and no legacy column types', () => {
     expect(migration).not.toMatch(/\btimestamp\s+(?!with time zone)/);
     expect(migration).not.toMatch(/\b(serial|varchar|char)\s*\(/);
+  });
+});
+
+describe('the study migration widens what 0010 scoped to one activity type', () => {
+  const migration = read('database/migrations/0011_study_attempt_log.sql');
+  const repository = read('services/persistence-postgres/src/practice-attempt-repository.ts');
+
+  it('keys the first-attempt uniqueness by activity type as well as item', () => {
+    expect(migration).not.toBe('');
+    expect(migration).toMatch(
+      /create unique index attempt_results_question_first_attempt_uidx\s*\n\s*on attempt_results \(learner_id, activity_type, question_id\)/,
+    );
+    expect(migration).toMatch(/where activity_type in \('practice', 'study'\) and first_attempt/);
+    // The old, practice-only arbiter must not survive alongside it.
+    expect(migration).toMatch(/drop index if exists attempt_results_practice_first_attempt_uidx/);
+  });
+
+  it('matches the arbiter the insert infers, predicate included', () => {
+    expect(repository).toMatch(/on conflict \(learner_id, activity_type, question_id\)/);
+    expect(repository).toMatch(
+      /where activity_type in \('practice', 'study'\) and first_attempt\s*\n\s*do nothing/,
+    );
+  });
+
+  it('degrades instead of erroring on a database that predates it', () => {
+    // Probing only for 0010's column would accept a database whose index the
+    // insert then fails to infer — a runtime error on every logged attempt.
+    expect(repository).toMatch(/attempt_results_question_first_attempt_uidx/);
+    expect(repository).toMatch(/has_column === true && row\.has_index === true/);
+  });
+
+  it('is forward-only and adds no new table', () => {
+    expect(migration).not.toMatch(/create table/);
+    expect(migration).not.toMatch(/\btimestamp\s+(?!with time zone)/);
   });
 });

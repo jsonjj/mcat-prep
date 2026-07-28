@@ -1,10 +1,5 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type {
-  CarsDuelRubric,
-  MasterySeed,
-  ProbableCause,
-  VectorLessonAction,
-} from '@mcat/contracts';
+import type { CarsDuelRubric, MasterySeed, VectorLessonAction } from '@mcat/contracts';
 import type { GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
@@ -89,14 +84,6 @@ export function useSubmitAttempt() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (choiceId: string | null) => authority.submitAttempt(choiceId),
-    onSuccess: () => invalidateLearner(qc),
-  });
-}
-
-export function useSelectCause() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (cause: ProbableCause) => authority.selectCause(cause),
     onSuccess: () => invalidateLearner(qc),
   });
 }

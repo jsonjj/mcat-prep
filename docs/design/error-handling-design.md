@@ -510,10 +510,20 @@ builds that surface should build it to correct this specific blind spot — not 
 for reflection.
 
 **Record everywhere, display narrowly.** The mastery model consumes attempts from every activity
-type (§5). This tab displays **practice questions only**. An FSRS "Again" is the scheduler hitting
-its target retention, not a mistake; lesson errors occur during acquisition, where errorful
+type (§5). This tab displays **question attempts only — adaptive practice and study alike**,
+excluding recall lapses and in-lesson comprehension checks. An FSRS "Again" is the scheduler hitting
+its target retention, not a mistake; in-lesson checks occur during acquisition, where errorful
 generation is the mechanism doing the work. Labelling either as a mistake is both wrong and
 discouraging. Rapid-guess-filtered responses (§3.2) never appear at all.
+
+> **Amended 2026-07-28** from "practice questions only." That wording predated the study loop
+> sharing this display and read as a surface restriction, but the line it was drawing is a *kind*
+> restriction: keep scheduler lapses and acquisition-time checks off the tab. A study question is a
+> genuine, scored, independent question attempt that the learner experiences as a question they got
+> wrong, so excluding it made a real miss unreachable — the same class of gap that made adaptive
+> practice misses invisible before §6.4 landed. The two exclusions above are unchanged and are
+> enforced at the write, not at the read: recall never writes to the attempt log, and guided-phase
+> items are dropped before it.
 
 ---
 

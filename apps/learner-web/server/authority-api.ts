@@ -238,10 +238,6 @@ export async function handleAuthorityRequest(
       await client.submitAttempt((body.choiceId ?? null) as string | null);
       return sendJson(response, 200, accepted());
     }
-    if (path === '/v1/attempts/cause' && method === 'POST') {
-      await client.selectCause(body.cause as Parameters<typeof client.selectCause>[0]);
-      return sendJson(response, 200, accepted());
-    }
     if (path === '/v1/attempts/reveal' && method === 'POST') {
       await client.requestReveal();
       return sendJson(response, 200, accepted());

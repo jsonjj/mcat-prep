@@ -22,6 +22,7 @@
 import type { Pool } from 'pg';
 import { randomUUID } from 'node:crypto';
 import type {
+  AttemptActivityType,
   PracticeAnswer,
   PracticeAttemptLogEntry,
   PracticeBankItem,
@@ -115,6 +116,10 @@ const skillOf = (
 
 const asCluster = (value: string | null): SkillCluster | null => value as SkillCluster | null;
 
+/** `listPracticeAttempts` already filters to the displayed types; this narrows. */
+const activityTypeOf = (value: string): AttemptActivityType =>
+  value === 'study' ? 'study' : 'practice';
+
 const toChoices = (raw: unknown): PracticeQuestion['choices'] => {
   const map = (raw ?? {}) as Record<string, string>;
   return (['A', 'B', 'C', 'D'] as const).map((id) => ({ id, text: map[id] ?? '' }));
@@ -165,7 +170,7 @@ interface Schema {
   hasQuestionStats: boolean;
   hasExposure: boolean;
   hasRepair: boolean;
-  /** Migration 0010 (the practice attempt log) has been applied. */
+  /** Migrations 0010 + 0011 (the question attempt log) have been applied. */
   hasAttemptLog: boolean;
 }
 
@@ -449,7 +454,13 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
     const schema = await this.schema();
     if (!schema.hasAttemptLog) {
       const list = this.memAttempts.get(learnerId) ?? [];
-      if (list.some((e) => e.questionId === entry.questionId)) return;
+      if (
+        list.some(
+          (e) => e.questionId === entry.questionId && e.activityType === entry.activityType,
+        )
+      ) {
+        return;
+      }
       list.push(entry);
       this.memAttempts.set(learnerId, list);
       return;
@@ -489,7 +500,10 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
       chosenChoiceId: (row.chosenChoiceId as 'A' | 'B' | 'C' | 'D' | null) ?? null,
       correct: row.isCorrect,
       firstAttempt: row.firstAttempt,
-      activityType: 'practice',
+      // Carried through, not defaulted: the reader hydrates a study row from the
+      // authored lesson bank and a practice row from the v7 corpus, so collapsing
+      // both to 'practice' would send every study miss looking in the wrong place.
+      activityType: activityTypeOf(row.activityType),
       occurredAt: row.occurredAt as PracticeAttemptLogEntry['occurredAt'],
     }));
   }

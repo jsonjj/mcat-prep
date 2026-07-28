@@ -1,5 +1,5 @@
 /**
- * Per-learner practice attempt log (see database/migrations/0010_practice_attempt_log.sql).
+ * Per-learner question attempt log (migrations 0010 and 0011).
  *
  * This is the read path for the chosen distractor. Before 0010 the practice
  * engine knew which wrong answer a learner picked and stored it only inside an
@@ -10,11 +10,19 @@
  * section needs the denominator ("4 of 6 items in this KC"), and a bare count of
  * misses cannot produce one (docs/design/error-handling-design.md §6.5).
  *
+ * Both displayed activity types live here. `practice` and `study` are genuine
+ * question attempts and both reach the Mistakes tab; recall lapses and in-lesson
+ * comprehension checks are never written at all, which is where §6.5's exclusion
+ * is actually enforced.
+ *
  * Sits alongside `practice-exposure-repository.ts` and takes the same structural
  * `Queryable`, so writes can join the authority transaction and reads can run
  * straight off the pool.
  */
 import type { Queryable } from './mastery-repository';
+
+/** Activity types the Mistakes surfaces display; see §6.5. */
+export const DISPLAYED_ACTIVITY_TYPES = ['practice', 'study'] as const;
 
 /** One first-attempt row. `activityType` is the recording scope, not the display scope. */
 export interface PracticeAttemptLogRow {
@@ -62,22 +70,37 @@ const toRow = (learnerId: string, raw: RawAttemptRow): PracticeAttemptLogRow => 
 });
 
 /**
- * Whether migration 0010 has been applied. Callers degrade to an in-memory log
- * when it has not (a content-only dev database has `questions` but no authority
- * tables), so the dev server and tests never require Postgres.
+ * Whether the attempt log is queryable — 0010's `chosen_choice_id` column AND
+ * 0011's widened arbiter index, which the insert below infers by name-equivalent
+ * predicate. Both are probed because a database sitting at 0010 would accept the
+ * column check and then reject the `on conflict` target; callers degrade to an
+ * in-memory log when either is missing (a content-only dev database has
+ * `questions` but no authority tables), so the dev server and tests never
+ * require Postgres.
  */
 export async function hasPracticeAttemptLog(q: Queryable): Promise<boolean> {
-  const { rows } = await q.query(
-    `select 1 from information_schema.columns
-      where table_schema = 'public' and table_name = 'attempt_results'
-        and column_name = 'chosen_choice_id' limit 1`,
+  const { rows } = await q.query<{ has_column: boolean; has_index: boolean }>(
+    `select
+       exists (
+         select 1 from information_schema.columns
+          where table_schema = 'public' and table_name = 'attempt_results'
+            and column_name = 'chosen_choice_id'
+       ) as has_column,
+       exists (
+         select 1 from pg_indexes
+          where schemaname = 'public'
+            and indexname = 'attempt_results_question_first_attempt_uidx'
+       ) as has_index`,
   );
-  return rows.length > 0;
+  const row = rows[0];
+  return row !== undefined && row.has_column === true && row.has_index === true;
 }
 
 /**
- * Append one first-attempt row. Idempotent per learner × item via the partial
- * unique index, so a retried submit cannot double-count a miss.
+ * Append one first-attempt row. Idempotent per learner × activity type × item via
+ * the partial unique index, so a retried submit cannot double-count a miss. The
+ * activity type is part of the key because practice and study draw from different
+ * corpora and a shared id space is not guaranteed forever.
  */
 export async function recordPracticeAttempt(
   q: Queryable,
@@ -90,8 +113,8 @@ export async function recordPracticeAttempt(
        cluster, chosen_choice_id, is_correct, first_attempt,
        activity_type, assistance_level, eligible_for_mastery, occurred_at, recorded_at
      ) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'A0', $10, $12, $12)
-     on conflict (learner_id, question_id)
-       where activity_type = 'practice' and first_attempt
+     on conflict (learner_id, activity_type, question_id)
+       where activity_type in ('practice', 'study') and first_attempt
        do nothing`,
     [
       attemptResultId,
@@ -110,7 +133,13 @@ export async function recordPracticeAttempt(
   );
 }
 
-/** A learner's practice attempts, newest first. */
+/**
+ * A learner's displayed question attempts, newest first.
+ *
+ * Practice AND study: both are genuine question attempts, so both belong on the
+ * Mistakes tab (§6.5). Any other `activity_type` — a recall lapse or an in-lesson
+ * check, were one ever recorded here — is filtered out rather than displayed.
+ */
 export async function listPracticeAttempts(
   q: Queryable,
   learnerId: string,
@@ -120,10 +149,10 @@ export async function listPracticeAttempts(
     `select question_id, kc_id, skill, item_family_id, cluster,
             chosen_choice_id, is_correct, first_attempt, activity_type, occurred_at
        from attempt_results
-      where learner_id = $1 and activity_type = 'practice' and occurred_at is not null
+      where learner_id = $1 and activity_type = any($2) and occurred_at is not null
       order by occurred_at desc
-      limit $2`,
-    [learnerId, Math.min(Math.max(limit, 1), 2000)],
+      limit $3`,
+    [learnerId, [...DISPLAYED_ACTIVITY_TYPES], Math.min(Math.max(limit, 1), 2000)],
   );
   return rows.map((raw) => toRow(learnerId, raw));
 }

@@ -14,7 +14,6 @@ import type {
   PracticeItemView,
   PracticeQueueView,
   PracticeResult,
-  ProbableCause,
   SkillMasteryView,
   SkillSummary,
   StudyStepView,
@@ -58,7 +57,6 @@ export interface AuthorityPort {
   setDailyBudget(minutesPerDay: number): Promise<void>;
   getSession(): Promise<StudyStepView>;
   submitAttempt(choiceId: string | null): Promise<void>;
-  selectCause(cause: ProbableCause): Promise<void>;
   requestReveal(): Promise<void>;
   continueStep(): Promise<void>;
   submitRecall(answer: string): Promise<boolean>;
@@ -69,7 +67,7 @@ export interface AuthorityPort {
   getMasteryLessons(): Promise<LessonMasteryView[]>;
   /** CARS IRT readiness (gauge + 3 sub-skill bars). */
   getCarsReadiness(): Promise<CarsReadinessView>;
-  /** Mistakes tab, Surface B: practice misses with their content. */
+  /** Mistakes tab, Surface B: question misses (practice and study) with their content. */
   getErrorLog(): Promise<ErrorEntryView[]>;
   /** Mistakes tab, Surface A: recurring misses grouped at KC / cluster grain. */
   getMistakePatterns(): Promise<MistakePatternView[]>;

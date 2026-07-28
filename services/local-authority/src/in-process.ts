@@ -23,7 +23,6 @@ import {
   type Clock,
   type MasterySeed,
   type PracticeAttemptCommand,
-  type ProbableCause,
   type VectorLessonAction,
 } from '@mcat/contracts';
 import { Authority, type LearnerState, type PracticeBankPort } from '@mcat/authority-core';
@@ -117,11 +116,7 @@ export class InProcessAuthorityClient implements AuthorityPort {
   }
 
   async submitAttempt(choiceId: string | null): Promise<void> {
-    this.mutate((state) => this.authority.submitAttempt(state, choiceId));
-  }
-
-  async selectCause(cause: ProbableCause): Promise<void> {
-    this.mutate((state) => this.authority.selectCause(state, cause));
+    await this.mutateAsync((state) => this.authority.submitAttempt(state, choiceId));
   }
 
   async requestReveal(): Promise<void> {

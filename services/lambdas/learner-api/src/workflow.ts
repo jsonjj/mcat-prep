@@ -53,7 +53,6 @@ import type {
 
 import type {
   CarsDuelCommandBody,
-  CauseCommandBody,
   ContinueCommandBody,
   MasterySeedCommandBody,
   RecallCommandBody,
@@ -379,21 +378,6 @@ export class RepositoryLearnerKernel {
           eventType: 'diagnostic_attempt_submitted',
           payload: toJsonObject(command),
         };
-      }),
-    );
-  }
-
-  async handleCause(command: CauseCommandBody, principal: Principal) {
-    return AcceptedCommandResponseSchema.parse(
-      await this.mutate(command.envelope, principal, (authority, state) => {
-        const current = authority.getSession(state);
-        if (current.kind !== 'question' || current.sub !== 'cause') {
-          throw validationError('A cause may be selected only after an incorrect first attempt.');
-        }
-        const previousEventCount = state.events.length;
-        authority.selectCause(state, command.cause);
-        rebindRecordedEvent(state, previousEventCount, command.envelope);
-        return { eventType: 'cause_selected', payload: toJsonObject(command) };
       }),
     );
   }

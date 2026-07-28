@@ -16,7 +16,8 @@ itself writes no mastery formulas.
 ## What exists today
 
 - **Data:** `Authority.getErrorLog(state)` → `ErrorEntryView[]`, read from the
-  practice attempt log (`database/migrations/0010_practice_attempt_log.sql`) and
+  question attempt log (`0010_practice_attempt_log.sql` +
+  `0011_study_attempt_log.sql`, which covers both question surfaces) and
   hydrated from the bank: `questionId, kcId, skillId, cluster, familyId,
   occurredAt, stem, chosenChoiceId/Text, correctChoiceId/Text, choiceRationale,
   resolved, focus`. `familyId` **is** exposed now, so step 1's fresh-twin pick has
@@ -26,9 +27,10 @@ itself writes no mastery formulas.
   KC/cluster-grain patterns section; every row's primary action is "try again",
   which routes into the adaptive practice queue with a focus token so the
   re-attempt lands on a fresh unseen item.
-- **Repair only happens inline** — in the Study loop (which still runs
-  diagnose-before-reveal) and in Practice (reveal-first, then the same item
-  resurfaces once). There is no standalone runner and no fresh-twin variant picker.
+- **Repair only happens inline** — in Practice and in the Study loop, which now
+  behave the same way: reveal first with the refutation of the chosen distractor,
+  then one more pass at the same item (spaced ~3 items in Practice, immediate in
+  Study). There is no standalone runner and no fresh-twin variant picker.
 
 ## What the repair runner should do
 
@@ -54,8 +56,9 @@ Input from Today's Path: a **count** `N` (how many mistakes to repair) — mirro
    > .71 vs .71 for withholding versus revealing on multiple choice, with feedback
    > *timing* pooling to g = 0.03 while feedback *content* spans 0.05 → 0.49. The
    > screen is therefore spent on the refutation rather than on a delay or a
-   > picker. Practice already works this way (`PracticeSession.tsx`), and there is
-   > no cause field left on `ErrorEntryView` for the runner to read.
+   > picker. Both question flows now work this way (`PracticeSession.tsx` and
+   > `Study.tsx`), and there is no cause field left on `ErrorEntryView` for the
+   > runner to read — nor a `ProbableCause` type anywhere to reintroduce one.
 
    The refutation source is the item's per-choice rationale, not a misconception
    catalog: `error_models` is populated on **0 of 2,108** corpus items.

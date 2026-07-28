@@ -339,13 +339,6 @@ export class HttpAuthorityClient implements AuthorityPort {
     await this.acceptedCommand(HTTP_API.attempt.path, command);
   }
 
-  async selectCause(cause: Parameters<AuthorityPort['selectCause']>[0]): Promise<void> {
-    await this.acceptedCommand('/v1/attempts/cause', {
-      envelope: await this.commandEnvelope(),
-      cause,
-    });
-  }
-
   async requestReveal(): Promise<void> {
     await this.acceptedCommand('/v1/attempts/reveal', {
       envelope: await this.commandEnvelope(),

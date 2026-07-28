@@ -81,6 +81,15 @@ export interface PracticeItemClassification {
 }
 
 /**
+ * Which surface a logged attempt came from. Both are genuine QUESTION attempts:
+ * adaptive Practice serves from the v7 corpus, the Study path serves the authored
+ * lesson sequence. Recall lapses and in-lesson comprehension checks are
+ * deliberately absent — those are acquisition events, not mistakes
+ * (docs/design/error-handling-design.md §6.5).
+ */
+export type AttemptActivityType = 'practice' | 'study';
+
+/**
  * One logged first attempt: which item, which grain, and WHICH WRONG ANSWER.
  *
  * Correct attempts are logged too — the pattern section has to show a
@@ -99,7 +108,7 @@ export interface PracticeAttemptLogEntry {
   readonly chosenChoiceId: 'A' | 'B' | 'C' | 'D' | null;
   readonly correct: boolean;
   readonly firstAttempt: boolean;
-  readonly activityType: 'practice';
+  readonly activityType: AttemptActivityType;
   readonly occurredAt: UtcTimestamp;
 }
 
@@ -138,9 +147,9 @@ export interface PracticeBankPort {
   recordExposure(learnerId: string, questionId: string, now: UtcTimestamp): Promise<void>;
   recentMisses(learnerId: string, input: { limit: number }): Promise<PracticeRepairTarget[]>;
   queueRepair(learnerId: string, target: PracticeRepairTarget, now: UtcTimestamp): Promise<void>;
-  /** Append one first-attempt row (idempotent per learner × item). */
+  /** Append one first-attempt row (idempotent per learner × activity type × item). */
   recordPracticeAttempt(learnerId: string, entry: PracticeAttemptLogEntry): Promise<void>;
-  /** A learner's logged practice attempts, newest first. */
+  /** A learner's logged question attempts (practice and study), newest first. */
   listPracticeAttempts(
     learnerId: string,
     input: { limit: number },
@@ -364,9 +373,15 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
 
   async recordPracticeAttempt(learnerId: string, entry: PracticeAttemptLogEntry): Promise<void> {
     const list = this.attempts.get(learnerId) ?? [];
-    // Mirrors the partial unique index on (learner_id, question_id): a resubmit
-    // must not double-count a miss.
-    if (list.some((e) => e.questionId === entry.questionId)) return;
+    // Mirrors the partial unique index on (learner_id, activity_type, question_id):
+    // a resubmit must not double-count a miss.
+    if (
+      list.some(
+        (e) => e.questionId === entry.questionId && e.activityType === entry.activityType,
+      )
+    ) {
+      return;
+    }
     list.push(entry);
     this.attempts.set(learnerId, list);
   }

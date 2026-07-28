@@ -24,9 +24,9 @@ import {
   type PracticeAttemptCommand,
   type PracticeAttemptResult,
   type PracticeFocus,
+  type PracticeQuestion,
   type PracticeQueueItem,
   type PracticeQueueView,
-  type ProbableCause,
   type ReasoningOperation,
   type SkillCluster,
   type SkillMasteryView,
@@ -79,7 +79,9 @@ import {
 } from '@mcat/policies';
 import { clusterForLesson, loadSyntheticBank, type LoadedBank } from '@mcat/content';
 import {
+  compiledToPracticeQuestion,
   SyntheticPracticeBankPort,
+  type PracticeAnswer,
   type PracticeAttemptLogEntry,
   type PracticeBankPort,
   type PracticeCandidateUnit,
@@ -144,6 +146,10 @@ const focusFor = (
 
 /** `kc-acid-base-buffers` → `kc acid base buffers`, for a display label. */
 const humanize = (id: string): string => id.replace(/[-_]+/g, ' ').trim();
+
+/** Narrow a loose choice id to the four deliverable options (null when skipped). */
+const asChoiceId = (value: string | null): 'A' | 'B' | 'C' | 'D' | null =>
+  value === 'A' || value === 'B' || value === 'C' || value === 'D' ? value : null;
 
 /**
  * DEV-ONLY adapter: the synthetic bank tags items with the 8 operation templates
@@ -421,17 +427,21 @@ export class Authority {
   }
 
   /**
-   * Mistakes the Review-Mistakes slot can actually show: unresolved practice
-   * misses the learner has not already been walked through today.
+   * Mistakes the Review-Mistakes slot can actually show: unresolved question
+   * misses (practice and study) the learner has not already been walked through
+   * today.
    *
    * This is the same list the Mistakes tab renders, deliberately. The slot used
    * to be sized from a bare `state.mistakeCount` that stored no content, so it
    * could promise "3 mistakes piled up" and open an empty page. Sizing it from
    * the tab's own source makes that divergence unrepresentable.
    *
-   * Lesson and CARS misses are excluded because they are never displayed here
-   * (docs/design/error-handling-design.md §6.4): lesson errors happen during
-   * acquisition, where errorful generation is the mechanism doing the work.
+   * Recall lapses, in-lesson comprehension checks and CARS duels are excluded
+   * because they are never displayed here (docs/design/error-handling-design.md
+   * §6.5): those happen during acquisition or scheduling, where errorful
+   * generation is the mechanism doing the work rather than a fault to repair.
+   * Including study misses moves this threshold earlier in the day, which is the
+   * intended effect — the slot is sized from real repairable content either way.
    */
   async openMistakes(state: LearnerState): Promise<ErrorEntryView[]> {
     const clearedThrough = state.mistakesReviewedThrough ?? null;
@@ -776,7 +786,19 @@ export class Authority {
         sub: 'answering',
         currentFirstChoiceId: null,
         revealed: false,
+        retryPending: false,
       };
+      return;
+    }
+    // A session persisted mid-flight on the removed cause step resumes at the
+    // reveal it should have been given, with its retry still owed. The cast is the
+    // point: 'cause' is no longer representable in the type, but it is still
+    // representable in a stored projection, and without this a resumed session
+    // would render no control at all.
+    const s = state.session;
+    if ((s.sub as string) === 'cause') {
+      s.sub = 'reveal';
+      s.retryPending = true;
     }
   }
 
@@ -829,6 +851,10 @@ export class Authority {
             correctChoiceId: compiled.protected.correct_choice_id,
             correctRationale: compiled.protected.rationales.correct,
             choiceRationales: compiled.protected.rationales.choices as Record<string, string>,
+            // Which option THEY picked, so the reveal can refute that specific
+            // reasoning rather than restate the key (§3.3). Read off session state
+            // rather than the browser's selection, which does not survive the step.
+            chosenChoiceId: asChoiceId(s.currentFirstChoiceId),
           }
         : null;
     return {
@@ -843,8 +869,19 @@ export class Authority {
     };
   }
 
-  /** Learner submits an answer for the current question step. */
-  submitAttempt(state: LearnerState, choiceId: string | null): void {
+  /**
+   * Learner submits an answer for the current question step.
+   *
+   * A missed first attempt goes STRAIGHT to the reveal, which names the key and
+   * refutes the option they actually picked. The learner is not asked what
+   * happened first: experts naming the cause of an error agree at κ = 0.000–0.063
+   * and learner self-report is biased worst in the weakest learners (§2.3), while
+   * withholding the key on a multiple-choice item measured .71 vs .71 (§2.2).
+   * Study's one unassisted retry survives — `retryPending` spends it when the
+   * learner leaves the reveal, so it now follows the correction instead of
+   * standing in front of it.
+   */
+  async submitAttempt(state: LearnerState, choiceId: string | null): Promise<void> {
     this.startSession(state);
     const s = state.session!;
     const activity = this.currentActivity(state);
@@ -861,6 +898,7 @@ export class Authority {
       // revealed), so it moves P(L) — up on correct, down on wrong. Retries and
       // reveals below are non-independent and never touch mastery (fail-closed).
       this.updateMasteryForAttempt(state, activity.questionId!, choiceId === correctId);
+      await this.logStudyAttempt(state, activity, choiceId, choiceId === correctId);
 
       if (phase === 'protected') {
         // No feedback during a protected block; record protected evidence and advance.
@@ -899,7 +937,8 @@ export class Authority {
         });
         this.advance(state);
       } else {
-        s.sub = 'cause';
+        s.sub = 'reveal';
+        s.retryPending = true;
       }
       return;
     }
@@ -916,26 +955,49 @@ export class Authority {
         independent: false,
         changeDimensions: [],
       });
-      s.sub = 'reveal';
+      // The correction was already shown before this retry, so there is nothing
+      // left to reveal — move on.
+      this.advance(state);
     }
   }
 
-  selectCause(state: LearnerState, cause: ProbableCause): void {
-    this.startSession(state);
-    const s = state.session;
-    const activity = this.currentActivity(state);
-    if (!s || !activity || activity.kind !== 'question' || s.sub !== 'cause') return;
-    this.recordEvent(state, {
-      type: 'cause_selected',
-      eventId: newEventId(),
-      learnerId: state.learnerId,
-      idempotencyKey: newIdempotencyKey(),
+  /**
+   * Log one Study first attempt into the SAME attempt log adaptive Practice
+   * writes, tagged `activity_type = 'study'`, so a Study miss reaches the Mistakes
+   * tab with the distractor the learner chose.
+   *
+   * Additive and read-only downstream: it changes no scoring, no mastery, no
+   * evidence and no exposure. It deliberately does NOT call `queueRepair` — Study
+   * KC ids come from the authored lesson graph, not the v7 corpus, so a repair
+   * spec keyed on one would match no item and would cost the practice queue a
+   * slot. The re-attempt path is the `focus` token on the Mistakes row, which the
+   * practice queue's own exposure seam then resolves to a fresh unseen item.
+   *
+   * Guided-phase questions are excluded: those are in-lesson comprehension checks
+   * during acquisition, where errorful generation is the mechanism doing the work,
+   * and §6.5 keeps them off this surface.
+   */
+  private async logStudyAttempt(
+    state: LearnerState,
+    activity: PathActivity,
+    choiceId: string | null,
+    correct: boolean,
+  ): Promise<void> {
+    const questionId = activity.questionId;
+    if (questionId === undefined || activity.phase === 'guided') return;
+    const q = this.bank.questions.find((x) => x.id === questionId);
+    await this.practiceBank.recordPracticeAttempt(state.learnerId, {
+      questionId,
+      kcId: q?.internal_skill_ids[0] ?? null,
+      skill: this.masteryTarget(questionId, state.session?.skillId ?? ENZYME_SKILL).op,
+      cluster: q?.skill_cluster ?? null,
+      familyId: q?.family_id ?? null,
+      chosenChoiceId: asChoiceId(choiceId),
+      correct,
+      firstAttempt: true,
+      activityType: 'study',
       occurredAt: this.clock.now(),
-      contentRelease: this.bank.contentRelease,
-      policies: activePolicyVersions(),
-      payload: { questionId: ContentIdSchema.parse(activity.questionId!), cause },
     });
-    s.sub = 'retry';
   }
 
   requestReveal(state: LearnerState): void {
@@ -958,9 +1020,21 @@ export class Authority {
     s.sub = 'reveal';
   }
 
-  /** Advance from a non-question step (lesson/simulation/recall) or after a reveal. */
+  /**
+   * Advance from a non-question step (lesson/simulation/recall) or after a reveal.
+   *
+   * Leaving the reveal on a missed item spends the one unassisted retry rather
+   * than advancing. This is the same reordering adaptive Practice made: the retry
+   * is kept, only the answer-withholding in front of it is gone.
+   */
   continueStep(state: LearnerState): void {
     this.startSession(state);
+    const s = state.session!;
+    if (s.sub === 'reveal' && s.retryPending === true) {
+      s.sub = 'retry';
+      s.retryPending = false;
+      return;
+    }
     this.advance(state);
   }
 
@@ -1507,10 +1581,12 @@ export class Authority {
 
   // ---- Mistakes ------------------------------------------------------------
   // Surface B (history) and Surface A (patterns) of docs/design/error-handling-design.md.
-  // Both read the practice attempt log, which is the only place the chosen
-  // distractor survives. Display scope is PRACTICE ONLY (§6.4): an FSRS "Again"
-  // is the scheduler hitting its target retention, not a mistake, and a lesson
-  // error happens during acquisition where errorful generation is the mechanism.
+  // Both read the attempt log, which is the only place the chosen distractor
+  // survives. Display scope is QUESTION ATTEMPTS — adaptive Practice and the Study
+  // path (§6.5). What stays out: an FSRS "Again" is the scheduler hitting its
+  // target retention, not a mistake, and an in-lesson comprehension check happens
+  // during acquisition where errorful generation is the mechanism doing the work.
+  // Neither is written to this log at all, so the scope is enforced at the write.
 
   /** How many logged attempts the Mistakes surfaces read back. */
   private static readonly ATTEMPT_LOG_LIMIT = 500;
@@ -1549,6 +1625,38 @@ export class Authority {
   }
 
   /**
+   * Re-read the content behind one logged attempt.
+   *
+   * The two surfaces serve items from different corpora, so a row is hydrated from
+   * the corpus it was served out of: adaptive Practice from the injected bank port
+   * (real v7 Postgres in prod), the Study path from the authored lesson bank this
+   * authority holds. Routing on `activityType` rather than trying both keeps the
+   * practice path — the one that could not see a single miss before migration 0010
+   * — free of any dependency on the synthetic bank being loaded.
+   */
+  private async hydrateAttempt(
+    entry: PracticeAttemptLogEntry,
+  ): Promise<{ question: PracticeQuestion; answer: PracticeAnswer } | null> {
+    if (entry.activityType === 'study') {
+      const compiled = this.bank.compiled.get(entry.questionId);
+      if (compiled === undefined) return null;
+      return {
+        question: compiledToPracticeQuestion(this.bank, compiled),
+        answer: {
+          correctChoiceId: compiled.protected.correct_choice_id,
+          rationale: compiled.protected.rationales.correct,
+          choiceRationales: compiled.protected.rationales.choices as Record<string, string>,
+        },
+      };
+    }
+    const [question, answer] = await Promise.all([
+      this.practiceBank.getQuestion(entry.questionId),
+      this.practiceBank.getAnswer(entry.questionId),
+    ]);
+    return question === null || answer === null ? null : { question, answer };
+  }
+
+  /**
    * Surface B — the question history. One row per missed item, carrying the stem,
    * what the learner picked, what was correct, and the refutation they were shown.
    *
@@ -1565,14 +1673,12 @@ export class Authority {
     const misses = attempts.filter((a) => !a.correct && a.firstAttempt);
     const hydrated = await Promise.all(
       misses.map(async (miss) => {
-        const [question, answer] = await Promise.all([
-          this.practiceBank.getQuestion(miss.questionId),
-          this.practiceBank.getAnswer(miss.questionId),
-        ]);
-        // An item retired from the corpus since the miss can no longer be shown
+        const content = await this.hydrateAttempt(miss);
+        // An item retired from its corpus since the miss can no longer be shown
         // back, and re-attempting it is impossible; drop it rather than render a
         // row with no content.
-        if (question === null || answer === null) return null;
+        if (content === null) return null;
+        const { question, answer } = content;
         const textOf = (id: string | null): string =>
           id === null ? '' : (question.choices.find((c) => c.id === id)?.text ?? '');
         const entry: ErrorEntryView = {
@@ -1602,7 +1708,8 @@ export class Authority {
 
   /**
    * Surface A — recurring misses, grouped at KC grain (falling back to cluster
-   * for items with no KC, e.g. CARS).
+   * for items with no KC, e.g. CARS). Practice and study attempts group together:
+   * the grain is a property of the content, not of the surface it was served on.
    *
    * NOT grouped at misconception grain: `error_models` is populated on 0 of the
    * 2,108 corpus items, so the best-validated grain has no data. Every row counts
@@ -1692,6 +1799,7 @@ export class Authority {
     s.sub = 'answering';
     s.currentFirstChoiceId = null;
     s.revealed = false;
+    s.retryPending = false;
   }
 
   private isPrerequisiteBlocked(state: LearnerState, skillId: string): boolean {

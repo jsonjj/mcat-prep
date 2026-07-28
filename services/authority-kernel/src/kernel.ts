@@ -72,9 +72,12 @@ export class AuthorityKernel {
         });
       }
 
-      const authority = new Authority(this.bank, this.clock);
+      // The practice bank is passed here too, not only to `snapshot`: a Study
+      // attempt now writes its miss into the same log the Mistakes tab reads, so a
+      // kernel built without the port would score the attempt and drop the miss.
+      const authority = new Authority(this.bank, this.clock, this.practiceBank);
       const state = learnerStateFromProjection(projection);
-      const application = applyAuthorityCommand(authority, state, command);
+      const application = await applyAuthorityCommand(authority, state, command);
       const sequence = projection.sequence + 1;
       const acceptedAt = this.clock.now();
       state.nextSequence = sequence;

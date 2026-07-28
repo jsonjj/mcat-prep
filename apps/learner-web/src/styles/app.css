@@ -1016,30 +1016,6 @@ body {
   font: inherit;
   padding: var(--mc-space-2);
 }
-.mc-causegrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--mc-space-2);
-}
-@media (min-width: 560px) {
-  .mc-causegrid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-.mc-cause {
-  text-align: left;
-  padding: var(--mc-space-3) var(--mc-space-4);
-  border: 1px solid var(--mc-border);
-  border-radius: var(--mc-radius-control);
-  background: var(--mc-surface);
-  color: var(--mc-ink);
-  cursor: pointer;
-  min-height: var(--mc-touch);
-  font: inherit;
-}
-.mc-cause:hover {
-  background: var(--mc-surface-2);
-}
 .mc-reveal__key {
   font-family: var(--mc-font-mono);
   font-weight: 600;

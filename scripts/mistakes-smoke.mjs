@@ -13,6 +13,11 @@
  * page that could not show a single practice miss. Everything below is read off
  * the wire: the queue the server serves, the attempt it scores, and the rows the
  * Mistakes tab would render.
+ *
+ * It now covers BOTH question surfaces. The study loop reached the tab through the
+ * same seam and could fail the same silent way, and it has a failure mode practice
+ * does not: its items live in the authored lesson bank, so a row hydrated against
+ * the practice corpus comes back empty rather than erroring.
  */
 
 const args = process.argv.slice(2);
@@ -62,6 +67,11 @@ async function main() {
 
   await request('DELETE', '/v1/account/progress');
   await post('/v1/bootstrap', envelope());
+  // The study loop is gated behind plan setup; adaptive practice is not. Without
+  // this the study half of the run only ever sees `kind: 'locked'`.
+  await request('PUT', '/v1/profile/goal', {
+    goal: { testDate: null, targetScore: 515, minutesPerWeek: 600 },
+  });
 
   const queue = await get('/v1/practice/queue/5');
   check('practice queue serves items', queue.items.length > 0, `${queue.items.length} items`);
@@ -114,6 +124,70 @@ async function main() {
     check('no self-reported cause field is present', !('cause' in first));
   }
 
+  // ---- the study loop, over the same seam -----------------------------------
+  // /app/learn answers real questions and used to ask the learner to name the
+  // cause of a miss before showing the key. Both halves are gone; what has to
+  // survive is the miss reaching this tab with the option they picked.
+  let studyStep = await get('/v1/learning/session');
+  for (let guard = 0; guard < 12 && studyStep.kind !== 'question'; guard += 1) {
+    if (studyStep.kind === 'complete') break;
+    if (studyStep.kind === 'recall') await post('/v1/recall', { ...envelope(), answer: 'x' });
+    else await post('/v1/learning/session/continue', envelope());
+    studyStep = await get('/v1/learning/session');
+  }
+  check('the study loop serves a question', studyStep.kind === 'question', `kind=${studyStep.kind}`);
+
+  if (studyStep.kind === 'question') {
+    const studyQuestionId = studyStep.question.id;
+    const studyPick = studyStep.question.choices[1]?.id ?? 'B';
+    await post('/v1/attempts', { ...envelope(), choiceId: studyPick });
+    const afterMiss = await get('/v1/learning/session');
+
+    check('a study miss reveals the key with no step in between',
+      afterMiss.sub === 'reveal' && afterMiss.reveal?.correctChoiceId !== undefined,
+      `sub=${afterMiss.sub}`);
+    check('the reveal carries the option the learner picked',
+      afterMiss.reveal?.chosenChoiceId === studyPick,
+      `picked ${studyPick}, reveal says ${afterMiss.reveal?.chosenChoiceId}`);
+    check('the reveal refutes THAT option, not just the key',
+      typeof afterMiss.reveal?.choiceRationales?.[studyPick] === 'string' &&
+        afterMiss.reveal.choiceRationales[studyPick].length > 0);
+    // Keys, not prose: the explanations legitimately contain words like "because".
+    const keysOf = (o) =>
+      o === null || typeof o !== 'object'
+        ? []
+        : Object.entries(o).flatMap(([k, v]) => [k, ...keysOf(v)]);
+    check('the step offers nowhere to put a self-reported cause',
+      !keysOf(afterMiss).some((k) => k.toLowerCase().includes('cause')) &&
+        afterMiss.sub !== 'cause');
+
+    // Leaving the reveal spends the one unassisted retry rather than advancing.
+    await post('/v1/learning/session/continue', envelope());
+    const afterContinue = await get('/v1/learning/session');
+    check('the one unassisted retry still happens, now after the correction',
+      afterContinue.kind === 'question' &&
+        afterContinue.sub === 'retry' &&
+        afterContinue.question.id === studyQuestionId,
+      `sub=${afterContinue.sub} item=${afterContinue.question?.id}`);
+
+    const withStudy = await get('/v1/errors');
+    const studyRow = withStudy.find((e) => e.questionId === studyQuestionId);
+    check('the study miss reaches the Mistakes tab', studyRow !== undefined,
+      `${withStudy.length} rows`);
+    if (studyRow !== undefined) {
+      // The study item resolves out of the authored lesson bank; hydrating it
+      // against the practice corpus would leave these fields empty.
+      check('the study row hydrated its content', studyRow.stem.length > 0 &&
+        studyRow.chosenChoiceText.length > 0 && studyRow.correctChoiceText.length > 0);
+      check('the study row kept the distractor', studyRow.chosenChoiceId === studyPick,
+        `sent ${studyPick}, stored ${studyRow.chosenChoiceId}`);
+      check('the study row carries the refutation', studyRow.choiceRationale !== null);
+      check('the study row offers a fresh re-attempt', studyRow.focus !== null);
+    }
+    check('practice rows are still there alongside it',
+      misses.every((m) => withStudy.some((e) => e.questionId === m.item.question.id)));
+  }
+
   const patterns = await get('/v1/errors/patterns');
   check('patterns group at KC or cluster grain',
     patterns.every((p) => p.grain === 'kc' || p.grain === 'cluster' || p.grain === 'skill'));
@@ -130,7 +204,10 @@ async function main() {
       timezoneOffsetMinutes: new Date().getTimezoneOffset(),
     },
   });
-  const open = errors.filter((e) => !e.resolved).length;
+  // Re-read: study misses joined the tab above, and the Review Mistakes slot has
+  // to agree with the tab as it stands now, not as it stood before the study run.
+  const finalErrors = await get('/v1/errors');
+  const open = finalErrors.filter((e) => !e.resolved).length;
   const sessions = path.activities.filter((a) => a.kind === 'review_mistakes');
   check("Today's Path promises no more mistakes than the tab shows",
     sessions.every((s) => s.count <= open),

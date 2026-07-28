@@ -81,6 +81,14 @@ export const PostRevealResponseSchema = z
         D: z.string().min(1),
       })
       .strict(),
+    /**
+     * The option this learner actually picked on the first attempt, so the reveal
+     * can refute THAT option rather than the key in general. Server-carried
+     * because the diagnostic signal is which wrong answer was chosen (§3.3) and
+     * browser-local selection state does not survive the step change or a reload.
+     * Null when there was no scored first attempt (Reveal Now).
+     */
+    chosenChoiceId: ChoiceIdSchema.nullable(),
   })
   .strict();
 export type PostRevealResponse = z.infer<typeof PostRevealResponseSchema>;
@@ -94,7 +102,15 @@ export const StudyPhaseSchema = z.enum([
 ]);
 export type StudyPhase = z.infer<typeof StudyPhaseSchema>;
 
-export const QuestionSubStateSchema = z.enum(['answering', 'cause', 'retry', 'reveal']);
+/**
+ * No `cause` step: a miss goes straight to the reveal. Withholding the key on a
+ * multiple-choice item measured .71 vs .71 (Butler/Karpicke/Roediger 2007) and
+ * feedback timing pools to g = 0.03 while feedback CONTENT spans 0.05 → 0.49, so
+ * the seconds after a miss are worth spending on the refutation, not on a
+ * question the learner cannot answer (docs/design/error-handling-design.md §2.2).
+ * `retry` survives — it now follows the reveal instead of preceding it.
+ */
+export const QuestionSubStateSchema = z.enum(['answering', 'retry', 'reveal']);
 export type QuestionSubState = z.infer<typeof QuestionSubStateSchema>;
 
 export const SessionSummarySchema = z
@@ -127,7 +143,7 @@ const QuestionStepBaseShape = {
 export const UnrevealedQuestionStepViewSchema = z
   .object({
     ...QuestionStepBaseShape,
-    sub: z.enum(['answering', 'cause', 'retry']),
+    sub: z.enum(['answering', 'retry']),
     reveal: z.null(),
   })
   .strict();
