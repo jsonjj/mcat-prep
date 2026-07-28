@@ -1,5 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
+import { useNavigate } from 'react-router-dom';
+import { Button, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { useRecallLoad } from '../../app/recall-queries';
 
 /** Recall tab landing: due summary + entry points. Flashcards are user-owned facts. */
@@ -26,12 +26,12 @@ export function RecallHome() {
           {load.isLoading ? (
             <p className="mc-muted">Checking your deck…</p>
           ) : nothing ? (
-            <Stack gap={2}>
+            <div className="mc-recall__empty">
               <Eyebrow>Your deck is empty</Eyebrow>
               <p className="mc-muted">
                 Add a few cards or import an Anki deck and Recall will schedule them for you.
               </p>
-            </Stack>
+            </div>
           ) : due === 0 ? (
             <Stack gap={2}>
               <Eyebrow>All caught up</Eyebrow>
@@ -60,21 +60,15 @@ export function RecallHome() {
           )}
 
           <div className="mc-recall__actions">
-            <Link to="/app/recall/new" className="mc-textbtn">
+            <Button variant="primary" size="lg" onClick={() => navigate('/app/recall/new')}>
               + Add cards
-            </Link>
-            <Link to="/app/recall/import" className="mc-textbtn">
+            </Button>
+            <Button variant="secondary" size="lg" onClick={() => navigate('/app/recall/import')}>
               Import Anki deck
-            </Link>
+            </Button>
           </div>
         </Stack>
       </Card>
-
-      <Callout tone="info" title="How Recall works">
-        Cards you create or import are scheduled with FSRS so each one returns right before you’d
-        forget it. Rate every card Again / Hard / Good / Easy — only “Again” counts as a miss. Recall
-        strengthens memory facts; it never claims mastery.
-      </Callout>
     </div>
   );
 }

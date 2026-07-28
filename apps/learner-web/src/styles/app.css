@@ -2151,11 +2151,22 @@ body {
 }
 
 /* Entry-point action rows (home, editor, import) */
+.mc-recall__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mc-space-2);
+  text-align: center;
+}
 .mc-recall__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--mc-space-3);
+}
+/* Distribute the Add / Import actions evenly across the card. */
+.mc-recall__actions > .mc-button {
+  flex: 1 1 160px;
 }
 
 /* Review screen */
