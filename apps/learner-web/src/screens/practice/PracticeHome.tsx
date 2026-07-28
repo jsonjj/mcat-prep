@@ -24,6 +24,14 @@ const LESSON_TITLE: Record<string, string> = (() => {
   return map;
 })();
 
+/** Title for a lesson id, falling back to a prettified id for ids outside the catalog. */
+const lessonTitle = (id: string): string =>
+  LESSON_TITLE[id] ??
+  id
+    .replace(/^(lesson-|v3-les-)/i, '')
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+
 /**
  * Practice hub: pick how many test-out reps to run (the only control that affects
  * the session), plus a read-only "Ready to test out" readout of the lessons the
@@ -102,7 +110,7 @@ export function PracticeHome() {
               const pct = Math.round(l.pL * 100);
               return (
                 <li key={l.lessonId} className="mc-readyout__row">
-                  <span className="mc-readyout__title">{LESSON_TITLE[l.lessonId] ?? l.lessonId}</span>
+                  <span className="mc-readyout__title">{lessonTitle(l.lessonId)}</span>
                   <span className="mc-readyout__track" aria-hidden="true">
                     <span className="mc-readyout__fill" style={{ width: `${Math.max(3, pct)}%` }} />
                   </span>
