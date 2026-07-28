@@ -2734,6 +2734,24 @@ body {
 .mc-practice {
   gap: var(--mc-space-4);
 }
+/* Practice intro: a touch bigger than fineprint, easy to read. */
+.mc-practice__intro {
+  font-size: var(--mc-text-15);
+  color: var(--mc-ink-muted);
+  line-height: 1.55;
+}
+/* "How many questions?" — centered label + number input. */
+.mc-practice__count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mc-space-3);
+  text-align: center;
+}
+.mc-practice__countinput {
+  width: 96px;
+  font-size: var(--mc-text-22);
+}
 .mc-practice__options {
   display: flex;
   flex-wrap: wrap;

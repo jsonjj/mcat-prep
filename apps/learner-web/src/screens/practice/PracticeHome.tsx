@@ -1,106 +1,61 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
-import { useMasterySkills } from '../../app/queries';
+import { Button, Card, Stack } from '@mcat/ui-web';
 
-const COUNTS = [5, 10, 15] as const;
+const MIN_QUESTIONS = 1;
+const MAX_QUESTIONS = 30;
+const DEFAULT_QUESTIONS = 10;
 
-const OPERATION_LABEL: Record<string, string> = {
-  IDENTIFY: 'Identify',
-  PREDICT: 'Predict',
-  EXPLAIN: 'Explain',
-  RELATE: 'Relate',
-  QUANTIFY: 'Quantify',
-  DESIGN: 'Design',
-  EVIDENCE: 'Evidence',
-};
-
-interface FocusOption {
-  readonly token: string | undefined;
-  readonly label: string;
-}
+const clampCount = (n: number): number =>
+  Math.max(MIN_QUESTIONS, Math.min(MAX_QUESTIONS, Math.round(n)));
 
 /**
- * Practice hub: pick how many test-out reps to run and, optionally, a weakness
- * to focus on. Starting hands off to the session (count + focus in route state).
+ * Practice hub: pick how many test-out reps to run, then hand off to the session
+ * (the question count rides in route state).
  */
 export function PracticeHome() {
   const navigate = useNavigate();
-  const skills = useMasterySkills();
-  const [count, setCount] = useState<number>(10);
-  const [focus, setFocus] = useState<string | undefined>(undefined);
+  const [countStr, setCountStr] = useState(String(DEFAULT_QUESTIONS));
 
-  const focusOptions = useMemo<FocusOption[]>(() => {
-    const weakest = [...(skills.data ?? [])]
-      .sort((a, b) => a.pL - b.pL)
-      .slice(0, 3)
-      .map((s) => ({ token: s.operation.toLowerCase(), label: OPERATION_LABEL[s.operation] ?? s.operation }));
-    return [{ token: undefined, label: 'Whole exam' }, ...weakest, { token: 'cars', label: 'CARS' }];
-  }, [skills.data]);
+  const start = () => {
+    const x = clampCount(Number(countStr) || DEFAULT_QUESTIONS);
+    setCountStr(String(x));
+    navigate('/app/practice/session', { state: { x } });
+  };
 
   return (
     <div className="mc-screen mc-practice">
-      <Eyebrow>Practice</Eyebrow>
       <h1 className="mc-h1">Practice</h1>
-      <p className="mc-muted mc-fineprint">
-        Independent test-out reps drawn from what you’ve already learned. A correct first try — no
-        hints — is what moves your mastery. Untimed. Stop whenever you like.
+      <p className="mc-practice__intro">
+        Practice pulls fresh questions from lessons you’ve already finished. Get it right on the first
+        try — no hints — and your mastery goes up. It’s untimed, so stop whenever you like.
       </p>
 
       <Card elevated>
         <Stack gap={4}>
-          <div>
+          <div className="mc-practice__count">
             <h2 className="mc-h3">How many questions?</h2>
-            <div className="mc-practice__options" role="group" aria-label="Number of questions">
-              {COUNTS.map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  className={`mc-practice__chip ${count === n ? 'mc-practice__chip--on' : ''}`}
-                  aria-pressed={count === n}
-                  onClick={() => setCount(n)}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
+            <input
+              className="mc-timeinput__field mc-practice__countinput"
+              type="number"
+              inputMode="numeric"
+              min={MIN_QUESTIONS}
+              max={MAX_QUESTIONS}
+              value={countStr}
+              onChange={(e) => setCountStr(e.target.value)}
+              onBlur={() => setCountStr(String(clampCount(Number(countStr) || DEFAULT_QUESTIONS)))}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+              }}
+              aria-label="Number of questions"
+            />
           </div>
 
-          <div>
-            <h2 className="mc-h3">Focus (optional)</h2>
-            <div className="mc-practice__options" role="group" aria-label="Practice focus">
-              {focusOptions.map((option) => (
-                <button
-                  key={option.label}
-                  type="button"
-                  className={`mc-practice__chip ${focus === option.token ? 'mc-practice__chip--on' : ''}`}
-                  aria-pressed={focus === option.token}
-                  onClick={() => setFocus(option.token)}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={() =>
-              navigate('/app/practice/session', {
-                state: { x: count, ...(focus === undefined ? {} : { focus }) },
-              })
-            }
-          >
+          <Button variant="primary" size="lg" fullWidth onClick={start}>
             Start practice
           </Button>
         </Stack>
       </Card>
-
-      <Callout tone="info">
-        Practice never punishes a miss — a wrong first answer just becomes a quick diagnose, one
-        retry, and a full explanation, and it queues that idea to come back fresh.
-      </Callout>
     </div>
   );
 }
