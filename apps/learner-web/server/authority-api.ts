@@ -3,6 +3,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import {
   AcceptedCommandResponseSchema,
   GuestBootstrapResponseSchema,
+  MasterySeedSchema,
   newEventId,
   type HttpErrorCode,
 } from '@mcat/contracts';
@@ -218,6 +219,10 @@ export async function handleAuthorityRequest(
     }
     if (path === '/v1/hooks/cars-duel' && method === 'POST') {
       await client.recordCarsDuel(body.rubric as Parameters<typeof client.recordCarsDuel>[0]);
+      return sendJson(response, 200, accepted());
+    }
+    if (path === '/v1/hooks/mastery-seed' && method === 'POST') {
+      await client.applyMasterySeed(MasterySeedSchema.parse(body.seed));
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/account/progress' && method === 'DELETE') {

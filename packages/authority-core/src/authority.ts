@@ -41,6 +41,10 @@ import {
   predictedCorrect,
   PRIOR_PL0,
   REVIEW_LINE,
+  SEED_CARS_MAX,
+  SEED_CARS_MIN,
+  SEED_PRIOR_CAP,
+  SEED_PRIOR_FLOOR,
   type MemoryState,
 } from '@mcat/policies';
 import { clusterForLesson, loadSyntheticBank, type LoadedBank } from '@mcat/content';
@@ -643,19 +647,32 @@ export class Authority {
     m.cars[skill] = carsUpdate(m.cars[skill] ?? CARS_V0, { r, b, k });
   }
 
-  /** Consume diagnostic seeds (never mastery): initialize unpracticed priors only. */
+  /**
+   * Consume diagnostic seeds (never mastery): initialize unpracticed priors only.
+   *
+   * The cap is re-applied here rather than trusted from the producer. Seeds are
+   * built where the diagnostic runs and reach the authority over the wire, so
+   * this is the last point at which "a read can move where you start, never
+   * whether you have mastered something" can be enforced; `SEED_PRIOR_CAP` sits
+   * far below BKT's 0.95 mastery threshold, which is what makes the guarantee
+   * hold whatever a caller sends.
+   */
   applyMasterySeed(state: LearnerState, seed: MasterySeed): void {
     const m = this.ensureMastery(state);
+    const capped = (prior: number): number => Math.min(SEED_PRIOR_CAP, Math.max(SEED_PRIOR_FLOOR, prior));
     for (const [kcId, prior] of Object.entries(seed.kcPriors)) {
-      if (!m.kc[kcId]) m.kc[kcId] = initialMemoryState(prior);
+      if (!m.kc[kcId]) m.kc[kcId] = initialMemoryState(capped(prior));
     }
     for (const [op, prior] of Object.entries(seed.skillPriors)) {
       const operation = op as ReasoningOperation;
-      if (!m.skill[operation]) m.skill[operation] = initialMemoryState(prior);
+      if (!m.skill[operation]) m.skill[operation] = initialMemoryState(capped(prior));
+    }
+    for (const [lessonId, prior] of Object.entries(seed.lessonPriors)) {
+      if (!m.lesson[lessonId]) m.lesson[lessonId] = initialMemoryState(capped(prior));
     }
     for (const [skill, v] of Object.entries(seed.carsAbility)) {
       const cars = skill as CarsSkill;
-      if (m.cars[cars] === undefined) m.cars[cars] = v;
+      if (m.cars[cars] === undefined) m.cars[cars] = Math.min(SEED_CARS_MAX, Math.max(SEED_CARS_MIN, v));
     }
   }
 

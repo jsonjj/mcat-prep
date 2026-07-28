@@ -128,10 +128,19 @@ family_id, section, assistanceLevel, contentBearingHint, isDiagnosticRetry, reve
 engine derives `independent` and only then moves `P(L)`. Lessons declare their `lesson_id` + ordered
 KC set.
 
-### 5.3 Diagnostic
-At completion emit a `MasterySeed` (per-KC priors via cluster read, per-operation priors, CARS
-`V_0`) — seeds only, capped ≤ 0.4, never mastery. **[SIGN-OFF]** requires adding an operation-grain
-aggregation to the diagnostic output.
+### 5.3 Diagnostic (WIRED)
+At completion the diagnostic emits a `MasterySeed` — seeds only, capped ≤ 0.4, never mastery. The
+grain is **lessons**: the form measures the 10 AAMC Foundational Concepts, so
+`lessonSeedsFromDiagnostic(result, lessonsByFc())` distributes each concept's read over the lessons
+beneath it, attenuating certainty by `sqrt(lessons)`. The client posts the seed on
+`POST /v1/hooks/mastery-seed` and `authority.applyMasterySeed(state, seed)` writes it, initializing
+only units with no existing state and re-clamping every value to `[SEED_PRIOR_FLOOR,
+SEED_PRIOR_CAP]`.
+
+`carsAbility` is **not** seeded from the diagnostic: CARS is off the FC axis, so the form serves no
+CARS item and has no read to give. `kcPriors` and `skillPriors` stay empty for the same reason —
+the diagnostic measures content concepts, not KCs or the 7 reasoning operations. **[SIGN-OFF]** for
+those two grains still requires a KC/operation-grain aggregation in the diagnostic output.
 
 ### 5.4 CARS — Passage of the Day + Duel
 
@@ -221,6 +230,22 @@ CARS_FOC / CARS_RWT / CARS_RBT → the separate CARS IRT track (not a science op
 ## 8. What we are intentionally NOT doing
 
 FSRS flashcards feature (separate), numeric score prediction (still gated), calibrated IRT (`b` is
-uncalibrated/DOK cold-start; manifest stays `provisional`), FC(10)+op(7) diagnostic re-grain (using
-the 15-cluster read + a new op aggregation), skill-merge logic (all 7 shown), multi-KC attribution,
-and evidence-log removal (evidence still powers independence + audit).
+uncalibrated/DOK cold-start; manifest stays `provisional`), skill-merge logic (all 7 shown),
+multi-KC attribution, and evidence-log removal (evidence still powers independence + audit).
+
+**Split out of this list: the FC(10)+op(7) diagnostic re-grain.** It was listed here as one item —
+"using the 15-cluster read + a new op aggregation" — and the two halves have since diverged.
+
+- **FC(10) has shipped, so it is no longer a not-doing.** The diagnostic no longer runs on the
+  15-cluster read: it measures the 10 AAMC Foundational Concepts, and the seed handoff described in
+  §5.3 distributes each concept's read over the lessons beneath it via
+  `lessonSeedsFromDiagnostic(result, lessonsByFc())`. `lessonPriors` is populated from that axis
+  today.
+- **The op(7) aggregation is still not being done, and the blocker is content rather than
+  engineering.** `skillPriors` stays empty because the diagnostic has no operation read to give,
+  and it has none because four of the seven operations do not exist as labels in the bank —
+  SIRS2 is a single undifferentiated tag covering roughly 59% of items. Adding the aggregation
+  requires an **item relabelling pass** first: split SIRS2 into PREDICT / EXPLAIN / RELATE /
+  QUANTIFY and decouple DOK from the operation label, which currently tracks it almost exactly.
+  Until that pass runs there is nothing for an aggregation to aggregate, so the §7 sign-off item
+  for an operation-grain seed stays open behind it.

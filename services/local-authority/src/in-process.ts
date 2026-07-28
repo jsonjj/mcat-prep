@@ -5,6 +5,7 @@ import {
   ErrorEntryViewSchema,
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
+  MasterySeedSchema,
   PracticeItemViewSchema,
   PracticeResultSchema,
   SkillMasteryViewSchema,
@@ -15,6 +16,7 @@ import {
   WrappedViewSchema,
   type BootstrapResponse,
   type Clock,
+  type MasterySeed,
   type ProbableCause,
   type VectorLessonAction,
 } from '@mcat/contracts';
@@ -141,6 +143,11 @@ export class InProcessAuthorityClient implements AuthorityPort {
 
   async recordCarsDuel(rubric?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {
     this.mutate((state) => this.authority.recordCarsDuel(state, rubric));
+  }
+
+  async applyMasterySeed(seed: MasterySeed): Promise<void> {
+    const parsed = MasterySeedSchema.parse(seed);
+    this.mutate((state) => this.authority.applyMasterySeed(state, parsed));
   }
 
   async getWrapped() {

@@ -17,7 +17,7 @@ type Handler = (request: IncomingMessage, response: ServerResponse) => void;
 
 interface DiagnosticApiModule {
   handleNextRequest: Handler;
-  handleAnswerRequest: Handler;
+  handleBlockRequest: Handler;
 }
 
 export function diagnosticApiPlugin(): Plugin {
@@ -30,8 +30,8 @@ export function diagnosticApiPlugin(): Plugin {
       server.middlewares.use('/api/diagnostic/next', (request, response) => {
         mod.handleNextRequest(request, response);
       });
-      server.middlewares.use('/api/diagnostic/answer', (request, response) => {
-        mod.handleAnswerRequest(request, response);
+      server.middlewares.use('/api/diagnostic/block', (request, response) => {
+        mod.handleBlockRequest(request, response);
       });
     },
   };

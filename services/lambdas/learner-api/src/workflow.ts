@@ -51,6 +51,7 @@ import type {
   CarsDuelCommandBody,
   CauseCommandBody,
   ContinueCommandBody,
+  MasterySeedCommandBody,
   RecallCommandBody,
   RevealCommandBody,
   PracticeAttemptCommandBody,
@@ -472,6 +473,19 @@ export class RepositoryLearnerKernel {
         authority.recordCarsDuel(state, command.rubric);
         bindNewEvidence(state, previousEvidenceCount, command.envelope);
         return { eventType: 'cars_duel_recorded', payload: toJsonObject(command) };
+      }),
+    );
+  }
+
+  /**
+   * Apply the diagnostic's opening priors. No evidence is bound: a seed is not
+   * an attempt, and nothing here can move a unit the learner has practised.
+   */
+  async handleMasterySeed(command: MasterySeedCommandBody, principal: Principal) {
+    return AcceptedCommandResponseSchema.parse(
+      await this.mutate(command.envelope, principal, (authority, state) => {
+        authority.applyMasterySeed(state, command.seed);
+        return { eventType: 'mastery_seed_applied', payload: toJsonObject(command) };
       }),
     );
   }

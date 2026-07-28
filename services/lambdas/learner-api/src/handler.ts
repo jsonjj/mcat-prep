@@ -36,6 +36,7 @@ import {
   type CarsDuelCommandBody,
   type CauseCommandBody,
   type ContinueCommandBody,
+  type MasterySeedCommandBody,
   type PracticeAttemptCommandBody,
   type RecallCommandBody,
   type RevealCommandBody,
@@ -93,6 +94,10 @@ interface KernelPort {
     input: CarsDuelCommandBody,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handleCarsDuel']>;
+  handleMasterySeed(
+    input: MasterySeedCommandBody,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleMasterySeed']>;
   handleReset(
     input: ContinueCommandBody,
     principal: Principal,
@@ -642,6 +647,16 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
           return jsonResponse(
             200,
             await dependencies.kernel.handleCarsDuel(parsed.data as CarsDuelCommandBody, principal),
+            origin,
+            requestIdValue,
+          );
+        case 'masterySeed':
+          return jsonResponse(
+            200,
+            await dependencies.kernel.handleMasterySeed(
+              parsed.data as MasterySeedCommandBody,
+              principal,
+            ),
             origin,
             requestIdValue,
           );

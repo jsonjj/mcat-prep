@@ -3,6 +3,31 @@ export * from './fsrs';
 export * from './assistance';
 export * from './diagnostic';
 export * from './diagnostic-bayes';
+export * from './diagnostic-axis';
+export * from './diagnostic-session';
+// The bank composition the sweep was run against, so the server that assembles
+// forms can assert it still buckets the bank the same way.
+export { BANK_PROFILES, type BankDokCounts, type BankProfileAxisId } from './data/bank-profiles.generated';
+// Multistage delivery. `diagnostic-simulation` stays off the public surface —
+// it is a harness, not a policy — but form assembly and routing ship.
+export {
+  assembleMstStages,
+  // What an `allocation: 'contention'` design needs at each block boundary,
+  // alongside `contentionFromResponses`: without both the server cannot
+  // assemble the next block.
+  contentionSlots,
+  cutScoresFor,
+  defaultRoutingQuantiles,
+  moduleDifficulties,
+  MST_140_RECOMMENDED,
+  MST_DESIGNS,
+  mstStageCount,
+  planMstForm,
+  routeFromScore,
+  type AssembledStage,
+  type MstDesign,
+  type MstFormPlan,
+} from './diagnostic-mst';
 export * from './mastery-policy';
 export * from './planner';
 export * from './readiness';

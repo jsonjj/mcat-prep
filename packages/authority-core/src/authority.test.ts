@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { fixedClock } from '@mcat/contracts';
+import { fixedClock, type MasterySeed } from '@mcat/contracts';
 import { loadSyntheticBank } from '@mcat/content';
 import { baseStateRank } from '@mcat/domain';
+import { MASTERY_THRESHOLD, SEED_PRIOR_CAP, SEED_PRIOR_FLOOR } from '@mcat/policies';
 import { Authority } from './authority';
 import type { LearnerState } from './types';
 
@@ -163,5 +164,74 @@ describe('Authority — BKT mastery engine (P(L))', () => {
     expect(cars.skills).toHaveLength(3);
     expect(cars.onTrack).toBe(false);
     expect(cars.overallV).toBeCloseTo(0, 6);
+  });
+});
+
+describe('Authority — diagnostic mastery seeding', () => {
+  const emptySeed = (): MasterySeed => ({
+    kcPriors: {},
+    skillPriors: {},
+    lessonPriors: {},
+    carsAbility: {},
+  });
+
+  it('initializes unpractised lessons from a diagnostic read', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+
+    auth.applyMasterySeed(state, {
+      ...emptySeed(),
+      lessonPriors: { 'lesson-enz-inhibition': 0.08, 'V3-LES-130923': 0.35 },
+    });
+
+    const lessons = auth.getMasteryLessons(state);
+    expect(lessons.find((l) => l.lessonId === 'V3-LES-130923')?.pL).toBeCloseTo(0.35, 9);
+    expect(lessons.every((l) => !l.mastered)).toBe(true);
+  });
+
+  it('never overwrites a unit the learner has already practised', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.continueStep(state);
+    auth.submitAttempt(state, 'A');
+
+    const before = auth.getMasteryLessons(state).find((l) => l.lessonId === 'lesson-enz-inhibition');
+    expect(before).toBeDefined();
+
+    auth.applyMasterySeed(state, {
+      ...emptySeed(),
+      lessonPriors: { 'lesson-enz-inhibition': SEED_PRIOR_FLOOR },
+    });
+
+    const after = auth.getMasteryLessons(state).find((l) => l.lessonId === 'lesson-enz-inhibition');
+    expect(after!.pL).toBeCloseTo(before!.pL, 9);
+  });
+
+  /**
+   * The producer already caps at `SEED_PRIOR_CAP`, but seeds cross a service
+   * boundary to get here, so the guarantee has to hold against whatever arrives
+   * rather than against what a well-behaved producer sends.
+   */
+  it('clamps an out-of-range prior instead of trusting the producer', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+
+    auth.applyMasterySeed(state, {
+      ...emptySeed(),
+      lessonPriors: { 'V3-LES-130923': 1, 'V3-LES-102938': 0 },
+      kcPriors: { 'bb1-enzyme-inhibition': 1 },
+      skillPriors: { IDENTIFY: 1 },
+    });
+
+    const seeded = auth.getMasteryLessons(state).find((l) => l.lessonId === 'V3-LES-130923')!;
+    expect(seeded.pL).toBe(SEED_PRIOR_CAP);
+    expect(seeded.pL).toBeLessThan(MASTERY_THRESHOLD);
+    expect(seeded.mastered).toBe(false);
+    expect(
+      auth.getMasteryLessons(state).find((l) => l.lessonId === 'V3-LES-102938')!.pL,
+    ).toBe(SEED_PRIOR_FLOOR);
+    expect(auth.getMasterySkills(state).find((s) => s.operation === 'IDENTIFY')!.pL).toBe(
+      SEED_PRIOR_CAP,
+    );
   });
 });

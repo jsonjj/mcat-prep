@@ -10,6 +10,7 @@ import {
   GoalCommandSchema,
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
+  MasterySeedSchema,
   PracticeItemViewSchema,
   PracticeResultSchema,
   ProbableCauseSchema,
@@ -27,6 +28,7 @@ import {
   type ChoiceId,
   type CommandEnvelope,
   type ContentId,
+  type MasterySeed,
   type ProbableCause,
 } from '@mcat/contracts';
 
@@ -44,6 +46,7 @@ export type RouteId =
   | 'practiceItem'
   | 'practiceAttempt'
   | 'carsDuel'
+  | 'masterySeed'
   | 'wrapped'
   | 'resetProgress'
   | 'today'
@@ -91,6 +94,11 @@ export interface PracticeAttemptCommandBody {
 export interface CarsDuelCommandBody {
   readonly envelope: CommandEnvelope;
   readonly rubric?: CarsDuelRubric;
+}
+
+export interface MasterySeedCommandBody {
+  readonly envelope: CommandEnvelope;
+  readonly seed: MasterySeed;
 }
 
 function record(value: unknown): Record<string, unknown> | null {
@@ -146,6 +154,14 @@ const CarsDuelCommandBodySchema = workflowSchema<CarsDuelCommandBody>((value) =>
   if (!('rubric' in value)) return { envelope: envelope.data };
   const rubric = CarsDuelRubricSchema.safeParse(value.rubric);
   return rubric.success ? { envelope: envelope.data, rubric: rubric.data } : null;
+});
+
+const MasterySeedCommandBodySchema = workflowSchema<MasterySeedCommandBody>((value) => {
+  if (!exactKeys(value, ['envelope', 'seed'])) return null;
+  const envelope = CommandEnvelopeSchema.safeParse(value.envelope);
+  if (!envelope.success) return null;
+  const seed = MasterySeedSchema.safeParse(value.seed);
+  return seed.success ? { envelope: envelope.data, seed: seed.data } : null;
 });
 
 const RecallCommandBodySchema = workflowSchema<RecallCommandBody>((value) => {
@@ -295,6 +311,14 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: true,
     bodySchema: CarsDuelCommandBodySchema,
+  },
+  {
+    id: 'masterySeed',
+    method: 'POST',
+    path: '/v1/hooks/mastery-seed',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: MasterySeedCommandBodySchema,
   },
   {
     id: 'wrapped',
