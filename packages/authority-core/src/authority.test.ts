@@ -5,16 +5,21 @@ import {
   fixedClock,
   MasteryMapEntrySchema,
   QualifiedBktObservationSchema,
+  UtcTimestampSchema,
   type QualifiedBktObservation,
   type ReasoningOperation,
+  type UtcTimestamp,
 } from '@mcat/contracts';
 import { loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
 import { EVIDENCE_REASONS, evidenceQualityRank } from '@mcat/domain';
 import { MASTERY_THRESHOLD, PRIOR_PL0 } from '@mcat/policies';
-import { Authority } from './authority';
+import { Authority, BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS } from './authority';
 import type { LearnerState } from './types';
 
-const clock = fixedClock('2026-07-20T12:00:00.000Z');
+const NOW = '2026-07-20T12:00:00.000Z';
+const clock = fixedClock(NOW);
+const at = (iso: string): UtcTimestamp => UtcTimestampSchema.parse(iso);
+const shiftedFromNow = (ms: number): string => new Date(Date.parse(NOW) + ms).toISOString();
 
 function onboard(auth: Authority): LearnerState {
   const state = auth.createGuest();
@@ -245,6 +250,10 @@ describe('Authority — qualified lesson observations', () => {
       observationId: expect.any(String),
       kcId: V3_LESSON_KCS[0],
       reasoningOperation: 'QUANTIFY',
+      reportedOccurredAt: NOW,
+      appliedOccurredAt: NOW,
+      clockAdjustment: 'none',
+      outOfOrder: false,
     });
     expect(Object.keys(state.mastery!.kc)).toEqual([V3_LESSON_KCS[0]]);
     expect(Object.keys(state.mastery!.skill)).toEqual(['QUANTIFY']);
@@ -429,5 +438,382 @@ describe('Authority — the evidence warrant stays a separate signal', () => {
         expect(reason.code.endsWith('_ACHIEVED')).toBe(false);
       }
     }
+  });
+});
+
+describe('Authority — the runner does not control the BKT decay clock', () => {
+  /** Every `bkt_observation_applied` record in ledger order. */
+  const ledger = (state: LearnerState) =>
+    state.events.filter((e) => e.type === 'bkt_observation_applied');
+
+  const kcState = (state: LearnerState, kcId: string) => state.mastery!.kc[kcId]!;
+
+  it('uses an honest reported time verbatim', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    const reportedAt = shiftedFromNow(-90 * 60 * 1000);
+
+    const result = auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ occurredAt: reportedAt }),
+      lessonId: V3_LESSON_ID,
+    });
+
+    expect(result).toMatchObject({
+      status: 'applied',
+      clockAdjustment: 'none',
+      reportedOccurredAt: reportedAt,
+      appliedOccurredAt: reportedAt,
+    });
+    expect(kcState(state, V3_LESSON_KCS[0]!).lastPracticedAt).toBe(reportedAt);
+  });
+
+  it('refuses an implausibly future timestamp outright, moving nothing', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    const reportedAt = shiftedFromNow(BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS + 1);
+
+    const result = auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ occurredAt: reportedAt }),
+      lessonId: V3_LESSON_ID,
+    });
+
+    expect(result).toEqual({
+      status: 'rejected',
+      observationId: expect.any(String),
+      kcId: V3_LESSON_KCS[0],
+      reasoningOperation: 'QUANTIFY',
+      rejectionCodes: ['OBSERVATION_TIMESTAMP_IN_FUTURE'],
+    });
+    expect(state.mastery!.kc).toEqual({});
+    expect(state.mastery!.skill).toEqual({});
+    expect(state.mastery!.appliedObservationIds).toEqual([]);
+    // The refusal is still auditable, with the runner's claim intact.
+    expect(ledger(state)).toHaveLength(1);
+    expect(ledger(state)[0]!.payload).toMatchObject({
+      reportedOccurredAt: reportedAt,
+      appliedOccurredAt: null,
+      rejectionCodes: ['OBSERVATION_TIMESTAMP_IN_FUTURE'],
+    });
+  });
+
+  it('draws the skew line exactly at the tolerance', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+
+    const accepted = auth.applyQualifiedBktObservation(auth.createGuest(), {
+      observation: qualifiedObservation({
+        occurredAt: shiftedFromNow(BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS),
+      }),
+    });
+    const refused = auth.applyQualifiedBktObservation(auth.createGuest(), {
+      observation: qualifiedObservation({
+        occurredAt: shiftedFromNow(BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS + 1),
+      }),
+    });
+
+    // At the tolerance the claim is honest skew: applied, but pulled back to the
+    // server clock rather than trusted.
+    expect(accepted).toMatchObject({
+      status: 'applied',
+      clockAdjustment: 'bounded_to_server_clock',
+      appliedOccurredAt: NOW,
+    });
+    expect(refused).toMatchObject({ status: 'rejected' });
+  });
+
+  it('never lets a clamped claim read as fresher than the server clock', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    const reportedAt = shiftedFromNow(60 * 1000);
+
+    const result = auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ occurredAt: reportedAt }),
+      lessonId: V3_LESSON_ID,
+    });
+
+    expect(result).toMatchObject({
+      status: 'applied',
+      clockAdjustment: 'bounded_to_server_clock',
+      reportedOccurredAt: reportedAt,
+      appliedOccurredAt: NOW,
+    });
+    expect(kcState(state, V3_LESSON_KCS[0]!).lastPracticedAt).toBe(NOW);
+    // The clamp corrected the claim; it did not erase it.
+    expect(ledger(state)[0]!.payload).toMatchObject({
+      reportedOccurredAt: reportedAt,
+      appliedOccurredAt: NOW,
+      clockAdjustment: 'bounded_to_server_clock',
+    });
+  });
+
+  it('cannot be talked into permanent mastery by 120 future-dated observations', () => {
+    // The reviewer's measured attack: 40 correct observations per KC, all stamped
+    // 2999-01-01, previously produced pL 1 / mastered true / reviewDue false that
+    // still read as 1 a decade later.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+
+    const results = V3_LESSON_KCS.flatMap((kcId) =>
+      Array.from({ length: 40 }, (_unused, i) =>
+        auth.applyQualifiedBktObservation(state, {
+          observation: qualifiedObservation({
+            primaryKcId: kcId,
+            sequence: i + 1,
+            occurredAt: '2999-01-01T00:00:00.000Z',
+          }),
+          lessonId: V3_LESSON_ID,
+        }),
+      ),
+    );
+
+    expect(results).toHaveLength(120);
+    expect(results.every((r) => r.status === 'rejected')).toBe(true);
+    expect(state.mastery!.kc).toEqual({});
+    expect(state.mastery!.skill).toEqual({});
+
+    const [rollup] = auth.getLessonRollups(state, [V3_LESSON_ID]);
+    if (rollup?.status !== 'available') throw new Error('expected an available rollup');
+    expect(rollup.view.mastered).toBe(false);
+    expect(rollup.view.pL).toBeCloseTo(PRIOR_PL0, 12);
+    expect(rollup.view.members.every((m) => m.pL === PRIOR_PL0)).toBe(true);
+
+    // And nothing has been parked in the future for a later read to discover.
+    const decadeLater = new Authority(loadSyntheticBank(), fixedClock('2036-07-20T12:00:00.000Z'));
+    const [later] = decadeLater.getLessonRollups(state, [V3_LESSON_ID]);
+    if (later?.status !== 'available') throw new Error('expected an available rollup');
+    expect(later.view.mastered).toBe(false);
+    expect(ledger(state)).toHaveLength(120);
+  });
+
+  it('cannot be talked into wiping a mastered KC with one backdated observation', () => {
+    // The reviewer's measured attack: one *correct*, fully qualified observation
+    // stamped 2024-01-01 previously dropped a mastered KC from 1.0 to 9.67e-11 by
+    // rewinding lastPracticedAt and letting lazy decay run over the invented gap.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    const kcId = V3_LESSON_KCS[0]!;
+    practiceToMastery(auth, state, kcId);
+
+    const before = { ...kcState(state, kcId) };
+    const pLBefore = auth.getLessonRollups(state, [V3_LESSON_ID])[0];
+    if (pLBefore?.status !== 'available') throw new Error('expected an available rollup');
+    const memberBefore = pLBefore.view.members.find((m) => m.kcId === kcId)!;
+    expect(memberBefore.mastered).toBe(true);
+
+    const result = auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({
+        primaryKcId: kcId,
+        correct: true,
+        sequence: 999,
+        occurredAt: '2024-01-01T00:00:00.000Z',
+      }),
+      lessonId: V3_LESSON_ID,
+    });
+
+    expect(result).toMatchObject({
+      status: 'applied',
+      clockAdjustment: 'held_at_last_practiced',
+      reportedOccurredAt: at('2024-01-01T00:00:00.000Z'),
+      appliedOccurredAt: before.lastPracticedAt,
+    });
+
+    const after = kcState(state, kcId);
+    expect(after.lastPracticedAt).toBe(before.lastPracticedAt);
+
+    const pLAfter = auth.getLessonRollups(state, [V3_LESSON_ID])[0];
+    if (pLAfter?.status !== 'available') throw new Error('expected an available rollup');
+    const memberAfter = pLAfter.view.members.find((m) => m.kcId === kcId)!;
+    // A correct answer must not lower the estimate at all, let alone by ~1.0.
+    expect(memberAfter.mastered).toBe(true);
+    expect(memberAfter.pL).toBeGreaterThanOrEqual(memberBefore.pL);
+    expect(memberBefore.pL - memberAfter.pL).toBe(0);
+  });
+
+  it('holds the decay clock but still applies the evidence of a late miss', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    const kcId = V3_LESSON_KCS[0]!;
+    // Three corrects, not forty: a `pL` saturated at exactly 1 is an absorbing
+    // state for a miss under the shipped BKT update, which would make this test
+    // pass without proving anything.
+    for (let i = 0; i < 3; i += 1) {
+      auth.applyQualifiedBktObservation(state, {
+        observation: qualifiedObservation({ primaryKcId: kcId, sequence: i + 1 }),
+        lessonId: V3_LESSON_ID,
+      });
+    }
+    const pLBefore = kcState(state, kcId).pL;
+    expect(pLBefore).toBeLessThan(1);
+
+    auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({
+        primaryKcId: kcId,
+        correct: false,
+        sequence: 999,
+        occurredAt: '2024-01-01T00:00:00.000Z',
+      }),
+      lessonId: V3_LESSON_ID,
+    });
+
+    // Only the clock was held. The incorrect answer is real evidence and still
+    // moves the estimate down — the clamp must not become a way to discard it.
+    expect(kcState(state, kcId).pL).toBeLessThan(pLBefore);
+    expect(kcState(state, kcId).lastPracticedAt).toBe(at(NOW));
+  });
+
+  it('detects an out-of-order arrival without discarding it', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+
+    const fifth = auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ sequence: 5 }),
+      lessonId: V3_LESSON_ID,
+    });
+    const pLAfterFifth = kcState(state, V3_LESSON_KCS[0]!).pL;
+
+    const second = auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ sequence: 2 }),
+      lessonId: V3_LESSON_ID,
+    });
+
+    expect(fifth).toMatchObject({ status: 'applied', outOfOrder: false });
+    expect(second).toMatchObject({ status: 'applied', outOfOrder: true });
+    // Applied, not dropped: delayed delivery is normal and the evidence is real.
+    expect(kcState(state, V3_LESSON_KCS[0]!).pL).toBeGreaterThan(pLAfterFifth);
+    // The high-water mark does not regress, so a third late arrival is still flagged.
+    expect(state.mastery!.highestAppliedObservationSequence).toBe(5);
+    expect(ledger(state)[1]!.payload).toMatchObject({
+      observationSequence: 2,
+      outOfOrder: true,
+    });
+  });
+
+  it('leaves a duplicate inert, including routing state and the ledger', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    const observation = qualifiedObservation({ sequence: 3 });
+
+    auth.applyQualifiedBktObservation(state, { observation, lessonId: V3_LESSON_ID });
+    const after = JSON.stringify(state.mastery);
+
+    const replay = auth.applyQualifiedBktObservation(state, {
+      observation,
+      lessonId: 'V3-LES-789208',
+    });
+
+    expect(replay).toEqual({
+      status: 'duplicate',
+      observationId: observation.observationId,
+      kcId: V3_LESSON_KCS[0],
+      reasoningOperation: 'QUANTIFY',
+    });
+    // "Moves nothing" now covers routing state too, not just P(L).
+    expect(JSON.stringify(state.mastery)).toBe(after);
+    expect(state.mastery!.practicedLessonIds).toEqual([V3_LESSON_ID]);
+    expect(ledger(state)).toHaveLength(1);
+  });
+});
+
+describe('Authority — legacy mastery state on read', () => {
+  it('rebuilds a persisted `mastery: null` instead of throwing', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    // A pre-seam projection can deserialize with an explicit null here; the
+    // declared type describes what we write, not what we may read.
+    (state as { mastery: unknown }).mastery = null;
+
+    expect(() => auth.getMasterySkills(state)).not.toThrow();
+    expect(state.mastery).toEqual({
+      kc: {},
+      skill: {},
+      cars: {},
+      practicedLessonIds: [],
+      appliedObservationIds: [],
+      highestAppliedObservationSequence: null,
+    });
+  });
+
+  it('reports a lesson named twice only once', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+
+    expect(auth.getMasteryLessons(state, [V3_LESSON_ID, V3_LESSON_ID, V3_LESSON_ID])).toHaveLength(
+      1,
+    );
+  });
+});
+
+describe('Authority — the decay-clock floor spans only the grains it writes', () => {
+  // The synthetic graph's one hard prerequisite: basics → inhibition.
+  const DEPENDENT_KC = 'bb1-enzyme-inhibition';
+  const PREREQ_KC = 'bb1-enzyme-kinetics-basics';
+  const LATE_REPORT = '2026-07-17T12:00:00.000Z'; // three days before NOW
+
+  /**
+   * Give the prerequisite a `lastPracticedAt` of NOW and nothing else. It is
+   * primed under a DIFFERENT reasoning operation on purpose: the operation grain
+   * is written by every observation, so reusing `QUANTIFY` here would raise the
+   * floor legitimately and the prerequisite's contribution would be invisible.
+   */
+  function primePrerequisiteOnly(auth: Authority, state: LearnerState): void {
+    auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({
+        primaryKcId: PREREQ_KC,
+        reasoningOperation: 'IDENTIFY',
+        sequence: 1,
+      }),
+    });
+    expect(state.mastery!.kc[PREREQ_KC]!.lastPracticedAt).toBe(at(NOW));
+    expect(state.mastery!.kc[DEPENDENT_KC]).toBeUndefined();
+    expect(state.mastery!.skill.QUANTIFY).toBeUndefined();
+  }
+
+  it('excludes a prerequisite from the floor when the answer is wrong', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    primePrerequisiteOnly(auth, state);
+
+    // An incorrect answer does not reinforce prerequisites, so the prerequisite
+    // is not written and must not drag this observation's clock forward.
+    const result = auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({
+        primaryKcId: DEPENDENT_KC,
+        correct: false,
+        sequence: 2,
+        occurredAt: LATE_REPORT,
+      }),
+    });
+
+    expect(result).toMatchObject({
+      status: 'applied',
+      clockAdjustment: 'none',
+      appliedOccurredAt: at(LATE_REPORT),
+    });
+    expect(state.mastery!.kc[DEPENDENT_KC]!.lastPracticedAt).toBe(at(LATE_REPORT));
+    // The untouched prerequisite is left exactly where it was.
+    expect(state.mastery!.kc[PREREQ_KC]!.lastPracticedAt).toBe(at(NOW));
+  });
+
+  it('includes a prerequisite in the floor when the answer is right, because it is written', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    primePrerequisiteOnly(auth, state);
+
+    // A correct answer DOES reinforce the prerequisite, stamping it with this
+    // observation's clock, so excluding it from the floor would rewind it.
+    const result = auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({
+        primaryKcId: DEPENDENT_KC,
+        correct: true,
+        sequence: 2,
+        occurredAt: LATE_REPORT,
+      }),
+    });
+
+    expect(result).toMatchObject({
+      status: 'applied',
+      clockAdjustment: 'held_at_last_practiced',
+      appliedOccurredAt: at(NOW),
+    });
+    expect(state.mastery!.kc[PREREQ_KC]!.lastPracticedAt).toBe(at(NOW));
   });
 });

@@ -1021,3 +1021,62 @@ describe('authored artifact normalization', () => {
     expect(parsed.issues.length).toBeGreaterThan(0);
   });
 });
+
+describe('lesson response adapter — the runner does not stamp the warrant clock', () => {
+  const RESPONSE_AT = '2026-07-27T12:00:00.000Z';
+  const ACCEPTED_AT = UtcTimestampSchema.parse('2026-07-27T12:00:01.000Z');
+
+  it('passes an honest reported time through unchanged', () => {
+    const result = adapt();
+
+    // Reported before acceptance, so acceptance is not the binding constraint.
+    expect(result.evidence?.occurredAt).toBe(RESPONSE_AT);
+  });
+
+  it('bounds a future-dated reported time by the server acceptance time', () => {
+    const result = adapt({
+      response: responseFacts({ occurredAt: UtcTimestampSchema.parse('2999-01-01T00:00:00.000Z') }),
+      acceptedAt: ACCEPTED_AT,
+    });
+
+    // Without this the record would sit inside every freshness window forever.
+    expect(result.evidence?.occurredAt).toBe(ACCEPTED_AT);
+    expect(result.evidence?.occurredAt).not.toBe('2999-01-01T00:00:00.000Z');
+  });
+
+  it('bounds even a claim only milliseconds ahead of acceptance', () => {
+    const result = adapt({
+      response: responseFacts({ occurredAt: UtcTimestampSchema.parse('2026-07-27T12:00:01.001Z') }),
+      acceptedAt: ACCEPTED_AT,
+    });
+
+    expect(result.evidence?.occurredAt).toBe(ACCEPTED_AT);
+  });
+
+  it('leaves the BKT observation time to the Authority, which owns that clamp', () => {
+    // Two independent layers: the adapter bounds the WARRANT timestamp, and the
+    // Authority bounds and monotonizes the DECAY clock. Neither trusts the other,
+    // so the reported claim still travels to the Authority to be refused there.
+    const result = adapt({
+      response: responseFacts({ occurredAt: UtcTimestampSchema.parse('2999-01-01T00:00:00.000Z') }),
+      acceptedAt: ACCEPTED_AT,
+    });
+
+    expect(isBktQualificationAccepted(result.qualification)).toBe(true);
+    if (!isBktQualificationAccepted(result.qualification)) return;
+    expect(result.qualification.observation.occurredAt).toBe('2999-01-01T00:00:00.000Z');
+  });
+
+  it('bounds by a ceiling, never by a floor', () => {
+    // An earlier-than-expected time only makes the record age out sooner, which
+    // is the safe direction; an EvidenceRecord is an immutable append with no
+    // running estimate to rewind, so there is nothing to ratchet.
+    const earlier = UtcTimestampSchema.parse('2020-01-01T00:00:00.000Z');
+    const result = adapt({
+      response: responseFacts({ occurredAt: earlier }),
+      acceptedAt: ACCEPTED_AT,
+    });
+
+    expect(result.evidence?.occurredAt).toBe(earlier);
+  });
+});

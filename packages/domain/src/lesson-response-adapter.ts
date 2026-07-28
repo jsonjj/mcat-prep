@@ -16,7 +16,13 @@ import {
   type SkillCluster,
   type UtcTimestamp,
 } from '@mcat/contracts';
-import type { EvidenceConditions, EvidenceKind, EvidenceOutcome, EvidenceRecord } from './evidence';
+import {
+  boundOccurredAtToServerTime,
+  type EvidenceConditions,
+  type EvidenceKind,
+  type EvidenceOutcome,
+  type EvidenceRecord,
+} from './evidence';
 
 /**
  * The single lesson → mastery seam.
@@ -39,6 +45,9 @@ import type { EvidenceConditions, EvidenceKind, EvidenceOutcome, EvidenceRecord 
  *   lesson id, a KC id, an id format, an item count, or an item ordering.
  * - Ambiguity fails closed: no BKT observation plus a code from the frozen
  *   `BKT_QUALIFICATION_REJECTION_CODES` list.
+ * - A runner-reported time can never become a warrant timestamp. Evidence takes
+ *   a server-bounded `occurredAt`, enforced by the brand on that field rather
+ *   than by remembering to bound it.
  * - No I/O, no clock reads, no randomness. Timestamps, ids, the resolved cluster
  *   and the server scoring resolution all arrive as inputs.
  */
@@ -639,6 +648,11 @@ export interface LessonResponseAdapterInput {
   readonly cluster: SkillCluster;
   /** Lesson envelope `artifact_version`, used when the binding omits `bindingVersion`. */
   readonly envelopeBindingVersion: string;
+  /**
+   * Server acceptance time. Doubles as the ceiling that bounds the runner's
+   * reported `occurredAt` into `EvidenceRecord.occurredAt`, so it MUST come from
+   * a server clock and never from the client.
+   */
   readonly acceptedAt: UtcTimestamp;
   readonly sequence: number;
   readonly contentRelease: string;
@@ -775,7 +789,12 @@ export function adaptLessonResponse(input: LessonResponseAdapterInput): LessonRe
         conditions,
         outcome,
         valid: true,
-        occurredAt: response.occurredAt,
+        // NOT `response.occurredAt`. That is a runner-reported runtime fact, and
+        // a future-dated one would make this record permanently fresh in every
+        // freshness window the planner reads. `acceptedAt` is the server's own
+        // acceptance time and is the authoritative ceiling. The field's brand is
+        // what makes this structural: the raw claim does not typecheck here.
+        occurredAt: boundOccurredAtToServerTime(response.occurredAt, input.acceptedAt),
         sequence: input.sequence,
         contentRelease: input.contentRelease,
         policies: [...input.policies],

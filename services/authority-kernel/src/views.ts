@@ -55,7 +55,9 @@ export function toProjectionRecord(
  * untouched.
  */
 function dropLegacyLessonBkt(state: LearnerState): void {
-  if (state.mastery === undefined) return;
+  // Truthiness, not `=== undefined`: a legacy projection may hold `mastery: null`,
+  // and a load path that throws on it is not tolerating legacy state.
+  if (!state.mastery) return;
   delete state.mastery.lesson;
 }
 

@@ -255,6 +255,7 @@ describe('learner projections', () => {
       cars: { FOC: 0.3 },
       practicedLessonIds: ['V3-LES-130923'],
       appliedObservationIds: ['0f9d5b16-1d0f-4e2a-9f6a-6a3b2f9a41c1'],
+      highestAppliedObservationSequence: 12,
     };
 
     const restored = learnerStateFromProjection(toProjectionRecord(state, 3, NOW));

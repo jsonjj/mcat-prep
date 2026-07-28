@@ -95,8 +95,27 @@ export const EVIDENCE_CONFIG: EvidenceConfig = {
 const windowForKind = (kind: EvidenceKind, cfg: EvidenceConfig): number =>
   STRONG_KINDS.has(kind) ? cfg.freshnessDaysStrong : cfg.freshnessDaysGeneral;
 
-const isFresh = (e: EvidenceRecord, now: UtcTimestamp, cfg: EvidenceConfig): boolean =>
-  daysBetween(e.occurredAt, now) <= windowForKind(e.kind, cfg);
+/**
+ * Freshness, with a future-dated record treated as UNTRUSTWORTHY rather than new.
+ *
+ * `daysBetween` is signed, so a record stamped in the future has a negative age
+ * and would otherwise clear every window forever — the freshest evidence on file
+ * would be the one with the most broken timestamp. Flooring the age at zero is
+ * the wrong repair: age `0` reads as maximally fresh, which is the same failure
+ * with a smaller number.
+ *
+ * A negative age cannot arise from an honest record: `occurredAt` is
+ * server-bounded at ingest (`boundOccurredAtToServerTime`), so it can never
+ * exceed the acceptance time that precedes any later read. If one is seen here,
+ * the timestamp is wrong, and evidence with a wrong timestamp earns no freshness
+ * credit. It still counts toward the achieved-ever tier, which is not
+ * time-derived, and the resulting mismatch surfaces as `EVIDENCE_STALE`.
+ */
+const isFresh = (e: EvidenceRecord, now: UtcTimestamp, cfg: EvidenceConfig): boolean => {
+  const ageDays = daysBetween(e.occurredAt, now);
+  if (ageDays < 0) return false;
+  return ageDays <= windowForKind(e.kind, cfg);
+};
 
 function satisfiesSlot(records: EvidenceRecord[], slot: RecipeSlot): boolean {
   const forKind = records.filter((r) => r.kind === slot.kind);

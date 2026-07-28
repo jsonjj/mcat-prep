@@ -220,9 +220,19 @@ describe('learner-facing decision reasons', () => {
   });
 
   it('rejects an unrecognized code instead of passing it through', () => {
-    expect(DecisionReasonViewSchema.safeParse({ code: 'SOMETHING_NEW' }).success).toBe(false);
-    expect(DecisionReasonViewSchema.safeParse({ code: 'EVIDENCE_GAP', extra: 'x' }).success).toBe(
-      false,
-    );
+    const unknownCode = DecisionReasonViewSchema.safeParse({ code: 'SOMETHING_NEW' });
+    expect(unknownCode.success).toBe(false);
+    expect(unknownCode.error?.issues[0]).toMatchObject({
+      code: 'invalid_enum_value',
+      path: ['code'],
+      received: 'SOMETHING_NEW',
+    });
+
+    const extraKey = DecisionReasonViewSchema.safeParse({ code: 'EVIDENCE_GAP', extra: 'x' });
+    expect(extraKey.success).toBe(false);
+    expect(extraKey.error?.issues[0]).toMatchObject({
+      code: 'unrecognized_keys',
+      keys: ['extra'],
+    });
   });
 });

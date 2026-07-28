@@ -8,6 +8,8 @@ import {
   newIdempotencyKey,
   newLearnerId,
   systemClock,
+  type BktApplicationRejectionCode,
+  type BktClockAdjustment,
   type BootstrapResponse,
   type CarsDuelRubric,
   type CarsReadinessLabel,
@@ -104,15 +106,57 @@ const ENZYME_LESSON_ID = 'lesson-enz-inhibition';
  */
 const sameItemId = (a: string, b: string): boolean => a === b;
 
+/**
+ * How far ahead of the Authority clock a runner-reported `occurredAt` may be and
+ * still be treated as honest clock skew rather than a broken or hostile client.
+ *
+ * Five minutes, the same allowance Kerberos and most JWT `nbf`/`exp` validators
+ * use. It is generous enough for an unsynchronised session server or a device
+ * whose clock drifted, and far too small to buy any decay advantage: at the
+ * initial 7-day half-life, five minutes of forward drift is a ~0.03% difference
+ * in the value read back. Anything beyond it is refused with
+ * `OBSERVATION_TIMESTAMP_IN_FUTURE` rather than silently clamped, because a
+ * clamp alone would accept the bad claim and leave no signal.
+ */
+export const BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS = 5 * 60 * 1000;
+
+const instant = (t: UtcTimestamp): number => Date.parse(t);
+const earlierOf = (a: UtcTimestamp, b: UtcTimestamp): UtcTimestamp =>
+  instant(a) <= instant(b) ? a : b;
+const laterOf = (a: UtcTimestamp, b: UtcTimestamp): UtcTimestamp =>
+  instant(a) >= instant(b) ? a : b;
+
+/** The server-bounded decay clock actually used, with what it took to get there. */
+interface BoundedDecayClock {
+  appliedAt: UtcTimestamp;
+  clockAdjustment: BktClockAdjustment;
+}
+
 /** Outcome of applying one `QualifiedBktObservation`. */
-export interface QualifiedBktApplication {
-  /** `duplicate` means the observation was already applied; nothing moved. */
-  status: 'applied' | 'duplicate';
+export type QualifiedBktApplication = {
   observationId: string;
   /** The two grains this observation targets, echoed for audit. */
   kcId: string;
   reasoningOperation: ReasoningOperation;
-}
+} & (
+  | {
+      status: 'applied';
+      /** The runner's verbatim claim, retained even when it was not used. */
+      reportedOccurredAt: UtcTimestamp;
+      /** The bounded, monotonic decay clock the grains were written with. */
+      appliedOccurredAt: UtcTimestamp;
+      clockAdjustment: BktClockAdjustment;
+      /**
+       * An observation with a higher `sequence` was already applied. The BKT
+       * update still happened — see `applyQualifiedBktObservation`.
+       */
+      outOfOrder: boolean;
+    }
+  /** Already applied under this `observationId`; nothing moved at all. */
+  | { status: 'duplicate' }
+  /** Refused before anything moved. Never partially applied. */
+  | { status: 'rejected'; rejectionCodes: readonly BktApplicationRejectionCode[] }
+);
 
 /**
  * DEV-ONLY adapter: the synthetic bank tags items with the 8 operation templates
@@ -583,13 +627,18 @@ export class Authority {
 
   private ensureMastery(state: LearnerState): MasteryEngineState {
     const existing = state.mastery;
-    if (existing === undefined) {
+    // Truthiness, not `=== undefined`: a pre-seam projection may deserialize
+    // with `mastery: null`, and this is the one function whose job is tolerating
+    // whatever a legacy projection holds. Narrowing it to `undefined` turned a
+    // tolerated legacy value into a crash.
+    if (!existing) {
       state.mastery = {
         kc: {},
         skill: {},
         cars: {},
         practicedLessonIds: [],
         appliedObservationIds: [],
+        highestAppliedObservationSequence: null,
       };
       return state.mastery;
     }
@@ -597,6 +646,7 @@ export class Authority {
     // them; backfill rather than trusting the cast.
     existing.practicedLessonIds ??= [];
     existing.appliedObservationIds ??= [];
+    existing.highestAppliedObservationSequence ??= null;
     return existing;
   }
 
@@ -606,10 +656,80 @@ export class Authority {
   }
 
   /**
+   * Bound a reported time into a decay clock the server is willing to write.
+   *
+   * `stepMemory` and `reinforcePrerequisite` both assign `lastPracticedAt = now`
+   * unconditionally, and `currentPL` decays from it, so whoever supplies `now`
+   * controls decay, review-due, and the mastery cut. A runner-reported
+   * `occurredAt` therefore cannot be used raw: forward-dating it buys permanent
+   * mastery, and back-dating it wipes a real estimate through lazy decay over
+   * the invented gap. Both are the client writing a mastery claim, which
+   * contract §10 prohibits.
+   *
+   * The clamp is two-sided:
+   *
+   *   appliedAt = max( min(floor, serverNow), min(reportedAt, serverNow) )
+   *
+   * - **Never ahead of the server clock.** The Authority's own clock is the
+   *   ceiling. (An implausibly future claim is refused before reaching here; see
+   *   `BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS`.)
+   * - **Never rewinds a grain.** `floor` is the newest `lastPracticedAt` among
+   *   the grains this observation writes, so no grain's clock can move
+   *   backwards. A legitimately delayed observation still applies its BKT
+   *   evidence — only the decay clock is held — because discarding it would
+   *   silently lose real evidence.
+   *
+   * The floor is itself capped at `serverNow`: a stored future timestamp is
+   * invalid on its face, so it must not become a permanent floor, and this makes
+   * any state poisoned before the clamp existed heal on the next write.
+   *
+   * `applyMasteryAttempt` takes one `now` for all the grains it steps, so the
+   * floor is the maximum across them. A grain lagging behind its siblings is
+   * therefore pulled forward to their shared floor rather than rewinding them —
+   * bounded above by `serverNow` and by activity the server itself accepted.
+   *
+   * The floor spans only the grains this observation actually WRITES. Counting a
+   * grain that is left untouched lets it drag the clock forward for no reason:
+   * prerequisites are reinforced on a correct answer only, so on a miss they are
+   * excluded, which is worth doing precisely because the shift is small enough
+   * (~3 days, ~0.005 of `pL`) to go unnoticed.
+   */
+  private boundDecayClock(
+    m: MasteryEngineState,
+    reportedAt: UtcTimestamp,
+    grainKeys: { kcIds: readonly string[]; operation: ReasoningOperation },
+  ): BoundedDecayClock {
+    const serverNow = this.clock.now();
+    const bounded = earlierOf(reportedAt, serverNow);
+
+    const touched: readonly (MemoryState | undefined)[] = [
+      ...grainKeys.kcIds.map((kcId) => m.kc[kcId]),
+      m.skill[grainKeys.operation],
+    ];
+    let floor: UtcTimestamp | null = null;
+    for (const state of touched) {
+      const practicedAt = state?.lastPracticedAt ?? null;
+      if (practicedAt === null) continue;
+      floor = floor === null ? practicedAt : laterOf(floor, practicedAt);
+    }
+
+    const appliedAt = floor === null ? bounded : laterOf(earlierOf(floor, serverNow), bounded);
+    const clockAdjustment: BktClockAdjustment =
+      instant(appliedAt) === instant(reportedAt)
+        ? 'none'
+        : instant(bounded) !== instant(reportedAt)
+          ? 'bounded_to_server_clock'
+          : 'held_at_last_practiced';
+
+    return { appliedAt, clockAdjustment };
+  }
+
+  /**
    * Move the two direct BKT grains, plus the indirect one-hop prerequisite
    * reinforcement. The single write path for `P(L)`: both the synthetic study
    * vertical and `applyQualifiedBktObservation` go through it, so neither can
-   * acquire a grain the other does not have.
+   * acquire a grain the other does not have, and neither can write an unbounded
+   * decay clock.
    */
   private stepDirectGrains(
     m: MasteryEngineState,
@@ -617,17 +737,26 @@ export class Authority {
       kcId: string;
       operation: ReasoningOperation;
       correct: boolean;
-      now: UtcTimestamp;
+      /** The time the caller reports. Bounded here; never written raw. */
+      reportedAt: UtcTimestamp;
       dokLevel: number | undefined;
     },
-  ): void {
+  ): BoundedDecayClock {
     const prereqKeys = this.bank.skillGraph.edges
       .filter((e) => e.kind === 'hard_prerequisite' && e.to === input.kcId)
       .map((e) => e.from);
 
+    // `reinforcePrerequisite` runs on a correct answer only, so on a miss the
+    // prerequisite grains are not written and must not raise the floor.
+    const writtenKcIds = input.correct ? [input.kcId, ...prereqKeys] : [input.kcId];
+    const clock = this.boundDecayClock(m, input.reportedAt, {
+      kcIds: writtenKcIds,
+      operation: input.operation,
+    });
+
     const result = applyMasteryAttempt({
       correct: input.correct,
-      now: input.now,
+      now: clock.appliedAt,
       // In-memory dev never crosses the calibration floor, so `b` is DOK-derived.
       questionStats: { attempts: 0, correct: 0 },
       ...(input.dokLevel !== undefined ? { dokLevel: input.dokLevel } : {}),
@@ -644,6 +773,8 @@ export class Authority {
       const next = result.prerequisites[i];
       if (next) m.kc[k] = next;
     });
+
+    return clock;
   }
 
   /** Derive the two BKT grains (+ DOK) for a synthetic bank item. */
@@ -665,7 +796,9 @@ export class Authority {
       kcId: target.kcKey,
       operation: target.op,
       correct,
-      now: this.clock.now(),
+      // The synthetic path never left the server, so its reported time is
+      // already the server clock and the bound below is a no-op for it.
+      reportedAt: this.clock.now(),
       dokLevel: target.dok,
     });
     this.recordPracticedLesson(m, ENZYME_LESSON_ID);
@@ -689,43 +822,122 @@ export class Authority {
    * lessons to report, and it never influences a `P(L)`.
    *
    * Idempotent on `observationId` (§12): a re-delivered accepted response
-   * resolves to `duplicate` and moves nothing.
+   * resolves to `duplicate` and moves nothing, not even routing state.
+   *
+   * THE REPORTED TIME IS NOT TRUSTED. `observation.occurredAt` comes from the
+   * lesson runner (§2), so it is refused outright when implausibly ahead of the
+   * Authority clock, and otherwise bounded and made monotonic before it can
+   * become a decay clock (see `boundDecayClock`). The verbatim claim is kept in
+   * the ledger either way, so the clamp cannot erase the evidence that a client
+   * misreported.
+   *
+   * `observation.sequence` is compared against the highest already applied. An
+   * out-of-order arrival is RECORDED, not refused: delayed and reordered
+   * delivery is normal, and dropping a legitimately earlier observation would
+   * silently lose real evidence. The clamp is what keeps the resulting state
+   * sane, since a late arrival can no longer rewind a grain's clock.
    */
   applyQualifiedBktObservation(
     state: LearnerState,
     input: { observation: QualifiedBktObservation; lessonId?: string },
   ): QualifiedBktApplication {
     const observation = QualifiedBktObservationSchema.parse(input.observation);
+    const identity = {
+      observationId: observation.observationId,
+      kcId: observation.primaryKcId,
+      reasoningOperation: observation.reasoningOperation,
+    } as const;
     const m = this.ensureMastery(state);
 
+    if (m.appliedObservationIds.includes(observation.observationId)) {
+      return { ...identity, status: 'duplicate' };
+    }
+
+    const skewMs = instant(observation.occurredAt) - instant(this.clock.now());
+    if (skewMs > BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS) {
+      const rejectionCodes: readonly BktApplicationRejectionCode[] = [
+        'OBSERVATION_TIMESTAMP_IN_FUTURE',
+      ];
+      this.recordBktObservationEvent(state, observation, {
+        appliedOccurredAt: null,
+        clockAdjustment: 'none',
+        outOfOrder: false,
+        rejectionCodes,
+      });
+      return { ...identity, status: 'rejected', rejectionCodes };
+    }
+
+    const highestApplied = m.highestAppliedObservationSequence;
+    const outOfOrder = highestApplied !== null && observation.sequence <= highestApplied;
+
+    const clock = this.stepDirectGrains(m, {
+      kcId: observation.primaryKcId,
+      operation: observation.reasoningOperation,
+      correct: observation.correct,
+      reportedAt: observation.occurredAt,
+      dokLevel: observation.dokLevel,
+    });
+
+    m.appliedObservationIds.push(observation.observationId);
+    if (!outOfOrder) m.highestAppliedObservationSequence = observation.sequence;
     if (input.lessonId !== undefined && input.lessonId.trim().length > 0) {
       this.recordPracticedLesson(m, input.lessonId.trim());
     }
 
-    if (m.appliedObservationIds.includes(observation.observationId)) {
-      return {
-        status: 'duplicate',
-        observationId: observation.observationId,
-        kcId: observation.primaryKcId,
-        reasoningOperation: observation.reasoningOperation,
-      };
-    }
-
-    this.stepDirectGrains(m, {
-      kcId: observation.primaryKcId,
-      operation: observation.reasoningOperation,
-      correct: observation.correct,
-      now: observation.occurredAt,
-      dokLevel: observation.dokLevel,
+    this.recordBktObservationEvent(state, observation, {
+      appliedOccurredAt: clock.appliedAt,
+      clockAdjustment: clock.clockAdjustment,
+      outOfOrder,
+      rejectionCodes: [],
     });
-    m.appliedObservationIds.push(observation.observationId);
 
     return {
+      ...identity,
       status: 'applied',
-      observationId: observation.observationId,
-      kcId: observation.primaryKcId,
-      reasoningOperation: observation.reasoningOperation,
+      reportedOccurredAt: observation.occurredAt,
+      appliedOccurredAt: clock.appliedAt,
+      clockAdjustment: clock.clockAdjustment,
+      outOfOrder,
     };
+  }
+
+  /**
+   * Append the audit record for one observation. Written for applications and
+   * refusals alike; a duplicate writes nothing, because the original record
+   * already stands. `occurredAt` on the envelope is when the SERVER acted, so
+   * the runner's claim only ever appears as `payload.reportedOccurredAt`.
+   */
+  private recordBktObservationEvent(
+    state: LearnerState,
+    observation: QualifiedBktObservation,
+    outcome: {
+      appliedOccurredAt: UtcTimestamp | null;
+      clockAdjustment: BktClockAdjustment;
+      outOfOrder: boolean;
+      rejectionCodes: readonly BktApplicationRejectionCode[];
+    },
+  ): void {
+    this.recordEvent(state, {
+      type: 'bkt_observation_applied',
+      eventId: newEventId(),
+      learnerId: state.learnerId,
+      idempotencyKey: newIdempotencyKey(),
+      occurredAt: this.clock.now(),
+      contentRelease: observation.contentRelease,
+      policies: observation.policies,
+      payload: {
+        observationId: observation.observationId,
+        observationSequence: observation.sequence,
+        primaryKcId: observation.primaryKcId,
+        reasoningOperation: observation.reasoningOperation,
+        correct: observation.correct,
+        reportedOccurredAt: observation.occurredAt,
+        appliedOccurredAt: outcome.appliedOccurredAt,
+        clockAdjustment: outcome.clockAdjustment,
+        outOfOrder: outcome.outOfOrder,
+        rejectionCodes: [...outcome.rejectionCodes],
+      },
+    });
   }
 
   private refreshNeeded(st: MemoryState, decayed: number): boolean {
@@ -769,7 +981,10 @@ export class Authority {
   getLessonRollups(state: LearnerState, lessonIds?: readonly string[]): LessonRollupResult[] {
     const m = this.ensureMastery(state);
     const now = this.clock.now();
-    const ids = lessonIds ?? m.practicedLessonIds;
+    // Deduplicated the way `rollUpLessonMastery` dedupes KC ids: a lesson named
+    // twice is one lesson, and two identical rows would double-count it in any
+    // caller that aggregates.
+    const ids = [...new Set(lessonIds ?? m.practicedLessonIds)];
     return ids.map((lessonId) => {
       const requiredKcIds = orderedKcsForLesson(lessonId);
       const kcStates: Record<string, MemoryState> = {};

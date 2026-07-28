@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  boundOccurredAtToServerTime,
   EvidenceRecordSchema,
   type EvidenceKind,
   type EvidenceRecord,
@@ -21,6 +22,16 @@ import { classifyCapacity, continueTarget, orderTasks } from './planner';
 import { scorePredictionGate } from './readiness';
 
 const NOW = UtcTimestampSchema.parse('2026-07-20T12:00:00.000Z');
+
+/**
+ * A server-bounded evidence stamp. `EvidenceRecord.occurredAt` is branded so a
+ * raw `UtcTimestamp` cannot be assigned to it, and this is the single producer of
+ * the brand — a fixture has to go through the same door production does.
+ */
+const boundedAt = (iso: string) => {
+  const reported = UtcTimestampSchema.parse(iso);
+  return boundOccurredAtToServerTime(reported, reported);
+};
 
 let seq = 0;
 const mkEv = (over: Partial<EvidenceRecord>): EvidenceRecord =>
@@ -254,7 +265,7 @@ describe('evidence warrant policy', () => {
   });
 
   it('distinguishes evidence quality (history) from freshness (currency)', () => {
-    const stale = UtcTimestampSchema.parse('2026-01-01T12:00:00.000Z'); // >45d before NOW
+    const stale = boundedAt('2026-01-01T12:00:00.000Z'); // >45d before NOW
     const state = evaluateEvidence({
       skillId: 's',
       records: [
@@ -279,10 +290,62 @@ describe('evidence warrant policy', () => {
     expect(fresh.reasons.map((r) => r.code)).not.toContain('EVIDENCE_STALE');
   });
 
+  it('treats a future-dated record as untrustworthy, not as maximally fresh', () => {
+    // `daysBetween` is signed, so a future stamp has a NEGATIVE age and would
+    // otherwise clear every freshness window forever. Flooring the age at zero
+    // would be the same defect with a smaller number: age 0 reads as brand new.
+    const poisoned = [
+      mkEv({ familyId: 'fam-a', occurredAt: boundedAt('2999-01-01T00:00:00.000Z') }),
+      mkEv({ familyId: 'fam-b', occurredAt: boundedAt('2999-01-01T00:00:00.000Z') }),
+    ];
+    const honestlyStale = [
+      mkEv({ familyId: 'fam-a', occurredAt: boundedAt('2025-06-16T12:00:00.000Z') }),
+      mkEv({ familyId: 'fam-b', occurredAt: boundedAt('2025-06-16T12:00:00.000Z') }),
+    ];
+
+    const poisonedState = evaluateEvidence({ skillId: 's', records: poisoned, now: NOW });
+    const staleState = evaluateEvidence({ skillId: 's', records: honestlyStale, now: NOW });
+
+    // The poisoned record reads exactly like genuinely stale evidence.
+    expect(poisonedState.freshEvidenceQuality).toBeNull();
+    expect(poisonedState.refreshNeeded).toBe(true);
+    expect(poisonedState.reasons.map((r) => r.code)).toContain('EVIDENCE_STALE');
+    expect(poisonedState.freshEvidenceQuality).toBe(staleState.freshEvidenceQuality);
+    expect(poisonedState.refreshNeeded).toBe(staleState.refreshNeeded);
+
+    // History is still never erased: the achieved-ever tier is not time-derived.
+    expect(poisonedState.evidenceQuality).toBe('independent');
+
+    // And it cannot outlast a decade of real time either.
+    const laterState = evaluateEvidence({
+      skillId: 's',
+      records: poisoned,
+      now: UtcTimestampSchema.parse('2036-07-20T12:00:00.000Z'),
+    });
+    expect(laterState.freshEvidenceQuality).toBeNull();
+    expect(laterState.refreshNeeded).toBe(true);
+  });
+
+  it('still credits a record stamped in the same instant as the read', () => {
+    // The boundary between "no elapsed time" and "negative elapsed time" must
+    // fall on the right side: zero age is fresh, below zero is not.
+    const state = evaluateEvidence({
+      skillId: 's',
+      records: [
+        mkEv({ familyId: 'fam-a', occurredAt: boundedAt(NOW) }),
+        mkEv({ familyId: 'fam-b', occurredAt: boundedAt(NOW) }),
+      ],
+      now: NOW,
+    });
+
+    expect(state.freshEvidenceQuality).toBe('independent');
+    expect(state.refreshNeeded).toBe(false);
+  });
+
   it('applies the tighter strong-condition freshness window to passage/timed/protected evidence', () => {
-    const thirtyDaysAgo = UtcTimestampSchema.parse('2026-06-20T12:00:00.000Z'); // <45d, >21d
+    const thirtyDaysAgo = boundedAt('2026-06-20T12:00:00.000Z'); // <45d, >21d
     const records = fullWarrant().map((r) =>
-      r.kind === 'timed' ? ({ ...r, occurredAt: thirtyDaysAgo } as EvidenceRecord) : r,
+      r.kind === 'timed' ? { ...r, occurredAt: thirtyDaysAgo } : r,
     );
     const state = evaluateEvidence({ skillId: 's', records, now: NOW });
     expect(state.evidenceQuality).toBe('strong');

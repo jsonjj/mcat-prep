@@ -73,6 +73,17 @@ export interface MasteryEngineState {
    */
   appliedObservationIds: string[];
   /**
+   * The highest `QualifiedBktObservation.sequence` applied so far, or `null`
+   * before the first one. An arrival at or below it is applied but flagged
+   * out-of-order, which is how replay ordering is made detectable (§12) without
+   * discarding a legitimately delayed observation.
+   *
+   * A projection written before this field existed deserializes without it;
+   * `ensureMastery` backfills it to `null`, the same way it backfills the two
+   * lists above, so it is always present once the engine has touched the state.
+   */
+  highestAppliedObservationSequence: number | null;
+  /**
    * @deprecated Legacy per-lesson BKT chain. Lessons have no BKT state under the
    * lesson → evidence → mastery seam, so this is NEVER written. It is declared
    * only so projections persisted before the seam still deserialize; the kernel
