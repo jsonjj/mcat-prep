@@ -9,6 +9,10 @@ import {
 import { UtcTimestampSchema } from './time';
 import { PolicyVersionSchema } from './versioning';
 import { AssistanceLevelSchema, ReviewRatingSchema } from './vocab';
+import {
+  AcceptedLessonObservationSchema,
+  type AcceptedLessonObservation,
+} from './lesson-observation';
 
 /**
  * Immutable, append-only learner events. The client generates `eventId` and
@@ -102,13 +106,23 @@ export const LearnerEventSchema = z.discriminatedUnion('type', [
 export type LearnerEvent = z.infer<typeof LearnerEventSchema>;
 export type LearnerEventType = LearnerEvent['type'];
 
-/** Server-accepted event: base event plus authoritative sequence + acceptance time. */
-export const AcceptedEventSchema = z.object({
+/** Preserves the original non-strict behavior: unknown producer metadata is stripped. */
+const AcceptedLearnerEventSchema = z.object({
   sequence: z.number().int().nonnegative(),
   acceptedAt: UtcTimestampSchema,
   event: LearnerEventSchema,
 });
+
+/** Authoritative accepted-event union, including server-only lesson observations. */
+export const AcceptedEventSchema = z.union([
+  AcceptedLearnerEventSchema,
+  AcceptedLessonObservationSchema,
+]);
 export type AcceptedEvent = z.infer<typeof AcceptedEventSchema>;
+
+export const isAcceptedLessonObservation = (
+  acceptedEvent: AcceptedEvent,
+): acceptedEvent is AcceptedLessonObservation => 'binding' in acceptedEvent;
 
 export const makeIdempotencyKey = IdempotencyKeySchema.parse;
 export const makeEventId = EventIdSchema.parse;
