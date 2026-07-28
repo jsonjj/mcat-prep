@@ -19,9 +19,11 @@ import {
  * error agree at κ = 0.000–0.063, and students call 81% of their execution errors
  * "simple" against an expert rate of 40%, worst among the weakest students — so a
  * self-reported cause is a field we cannot trust and have decided not to store
- * (docs/design/error-handling-design.md §2.3, §7). Withholding the key buys
- * nothing either: on multiple choice it measured .71 vs .71, and feedback timing
- * pools to g = 0.03 while feedback content spans 0.05 → 0.49 (§2.2, §3.3).
+ * (docs/design/error-handling-design.md §2.3, §7).
+ *
+ * This loop still names the key on the first miss. Adaptive Practice defers it to
+ * a second miss by product decision (§3.3, amended 2026-07-28); that amendment is
+ * scoped to Practice and this flow is deliberately unchanged.
  */
 
 const PHASE_LABEL: Record<string, string> = {

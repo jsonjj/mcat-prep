@@ -18,7 +18,29 @@
  * same seam and could fail the same silent way, and it has a failure mode practice
  * does not: its items live in the authored lesson bank, so a row hydrated against
  * the practice corpus comes back empty rather than erroring.
+ *
+ * It also covers the 2026-07-28 §3.3 amendment: the key is withheld on a FIRST
+ * practice miss. The wire response still carries `correctChoiceId` — the retry is
+ * scored client-side with no second round trip — so what has to be checked is the
+ * REDACTION at the render boundary. The real `feedbackFor` is compiled out of
+ * `session-flow.ts` and run on the real wire payload, so this asserts the actual
+ * shipped function against actual server output rather than a copy of either.
  */
+
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { transform } from 'esbuild';
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+/** Load the practice step machine (dependency-free TS) as a real ES module. */
+async function loadSessionFlow() {
+  const path = join(ROOT, 'apps/learner-web/src/screens/practice/session-flow.ts');
+  const { code } = await transform(readFileSync(path, 'utf8'), { loader: 'ts', format: 'esm' });
+  const url = `data:text/javascript;base64,${Buffer.from(code).toString('base64')}`;
+  return import(url);
+}
 
 const args = process.argv.slice(2);
 const baseIndex = args.indexOf('--base');
@@ -96,7 +118,7 @@ async function main() {
         firstAttempt: true,
       },
     });
-    submitted.push({ item, pick, correct: result.correct, key: result.correctChoiceId });
+    submitted.push({ item, pick, correct: result.correct, key: result.correctChoiceId, result });
   }
   const misses = submitted.filter((s) => !s.correct);
   check('at least one miss was scored', misses.length > 0, `${misses.length} misses`);
@@ -123,6 +145,82 @@ async function main() {
     check('the row carries a focus token for a fresh re-attempt', first.focus !== null);
     check('no self-reported cause field is present', !('cause' in first));
   }
+
+  // ---- the key is withheld on a FIRST miss (§3.3, amended 2026-07-28) -------
+  // The server response legitimately carries the key, so the discipline lives in
+  // what the UI is handed. `feedbackFor` IS that boundary: the card component
+  // takes its output and never the result, so anything absent here is absent from
+  // the DOM.
+  const { feedbackFor, subAfterFirstAttempt, subAfterSecondAttempt } = await loadSessionFlow();
+  const miss = misses[0];
+  const wire = miss.result;
+
+  check(
+    'the scored attempt still returns the key over the wire',
+    typeof wire.correctChoiceId === 'string' && wire.correctChoiceId.length > 0,
+    `key=${wire.correctChoiceId}`,
+  );
+  check(
+    'a missed first attempt routes to the withholding step',
+    subAfterFirstAttempt(wire.correct) === 'feedback',
+    `sub=${subAfterFirstAttempt(wire.correct)}`,
+  );
+
+  const firstMiss = feedbackFor(wire, miss.pick, subAfterFirstAttempt(wire.correct));
+  check('the UI layer is handed no correct choice on a first miss', firstMiss.correctChoiceId === null,
+    `got ${firstMiss.correctChoiceId}`);
+  check('nor the rationale that explains the correct choice', firstMiss.rationale === null);
+  check('it IS handed the refutation of the option the learner chose',
+    firstMiss.wrongChoiceId === miss.pick && typeof firstMiss.wrongChoiceRationale === 'string' &&
+      firstMiss.wrongChoiceRationale.length > 0,
+    `refuting ${firstMiss.wrongChoiceId}`);
+  // The strong form: no value reaching the card spells the key or repeats any text
+  // that only the correct answer's explanation contains.
+  const shown = Object.values(firstMiss).filter((v) => typeof v === 'string');
+  check('no value reaching the card names the key',
+    !shown.includes(wire.correctChoiceId) && !shown.includes(wire.rationale) &&
+      !shown.includes(wire.choiceRationales[wire.correctChoiceId]),
+    `${shown.length} strings rendered`);
+  check('the withheld fields are null rather than merely unused',
+    JSON.stringify(firstMiss).includes('"correctChoiceId":null') &&
+      JSON.stringify(firstMiss).includes('"rationale":null'));
+
+  // The deferral is one attempt, not a policy of silence.
+  const secondMiss = feedbackFor(wire, miss.pick, subAfterSecondAttempt());
+  check('a second miss discloses the key and its rationale',
+    secondMiss.correctChoiceId === wire.correctChoiceId && secondMiss.rationale === wire.rationale);
+  const secondRight = feedbackFor(wire, wire.correctChoiceId, subAfterSecondAttempt());
+  check('a correct second attempt reads as correct, with nothing to contradict it',
+    secondRight.correct === true && secondRight.wrongChoiceId === null,
+    `correct=${secondRight.correct} refuting=${secondRight.wrongChoiceId}`);
+
+  // The second go is learning-only. The client sends no command for it at all; this
+  // sends one anyway, as the strongest available form of "even if it did".
+  const beforeRetry = await get('/v1/errors');
+  const masteryBefore = JSON.stringify(await get('/v1/progress/lessons'));
+  await post('/v1/practice/attempts/adaptive', {
+    ...envelope(),
+    questionId: miss.item.question.id,
+    specId: miss.item.specId,
+    chosenChoiceId: wire.correctChoiceId,
+    firstAttempt: false,
+    command: {
+      questionId: miss.item.question.id,
+      specId: miss.item.specId,
+      chosenChoiceId: wire.correctChoiceId,
+      firstAttempt: false,
+    },
+  });
+  const afterRetry = await get('/v1/errors');
+  check('a second attempt writes no duplicate mistake entry',
+    afterRetry.length === beforeRetry.length &&
+      afterRetry.filter((e) => e.questionId === miss.item.question.id).length === 1,
+    `${beforeRetry.length} rows before, ${afterRetry.length} after`);
+  check('a second attempt does not resolve the miss it is re-answering',
+    afterRetry.find((e) => e.questionId === miss.item.question.id)?.resolved ===
+      beforeRetry.find((e) => e.questionId === miss.item.question.id)?.resolved);
+  check('a second attempt double-counts no mastery',
+    JSON.stringify(await get('/v1/progress/lessons')) === masteryBefore);
 
   // ---- the study loop, over the same seam -----------------------------------
   // /app/learn answers real questions and used to ask the learner to name the

@@ -103,12 +103,16 @@ export const StudyPhaseSchema = z.enum([
 export type StudyPhase = z.infer<typeof StudyPhaseSchema>;
 
 /**
- * No `cause` step: a miss goes straight to the reveal. Withholding the key on a
- * multiple-choice item measured .71 vs .71 (Butler/Karpicke/Roediger 2007) and
- * feedback timing pools to g = 0.03 while feedback CONTENT spans 0.05 → 0.49, so
- * the seconds after a miss are worth spending on the refutation, not on a
- * question the learner cannot answer (docs/design/error-handling-design.md §2.2).
- * `retry` survives — it now follows the reveal instead of preceding it.
+ * No `cause` step: a miss goes straight to feedback, because the seconds after a
+ * miss are worth spending on the refutation rather than on a question the learner
+ * cannot answer (docs/design/error-handling-design.md §2.3). `retry` survives — it
+ * now follows the reveal instead of preceding it.
+ *
+ * These are the STUDY loop's substates, and the study reveal names the key on the
+ * first miss. Adaptive Practice defers the key to a second miss (§3.3, amended
+ * 2026-07-28); its step machine is client-local
+ * (`apps/learner-web/src/screens/practice/session-flow.ts`) and does not cross this
+ * contract, so nothing here changes.
  */
 export const QuestionSubStateSchema = z.enum(['answering', 'retry', 'reveal']);
 export type QuestionSubState = z.infer<typeof QuestionSubStateSchema>;

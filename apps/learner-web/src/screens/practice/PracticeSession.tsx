@@ -3,7 +3,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import type { PracticeAttemptResult, PracticeQueueItem } from '@mcat/contracts';
 import { usePracticeQueue, useSubmitPracticeAttempt } from '../../app/practice-queries';
-import { resurfaceAt, subAfterFirstAttempt, type Sub } from './session-flow';
+import {
+  feedbackFor,
+  resurfaceAt,
+  subAfterFirstAttempt,
+  subAfterSecondAttempt,
+  type Feedback,
+  type Sub,
+} from './session-flow';
 
 type ChoiceId = 'A' | 'B' | 'C' | 'D';
 
@@ -42,8 +49,10 @@ export function PracticeSession() {
   const [firstChoice, setFirstChoice] = useState<ChoiceId | null>(null);
   const [sub, setSub] = useState<Sub>('answering');
   const [result, setResult] = useState<PracticeAttemptResult | null>(null);
-  // First-attempt results, kept so a deferred second go can reveal locally
-  // (the second go is learning-only — no extra server scoring).
+  // First-attempt results, kept so a deferred second go can score and disclose
+  // locally (the second go is learning-only — no extra server scoring). These
+  // hold the key, and are never handed to a component: everything rendered goes
+  // through `feedbackFor`, which nulls the key out on a first miss.
   const [resultsByQ, setResultsByQ] = useState<Record<string, PracticeAttemptResult>>({});
 
   // Seed the working sequence from the loaded queue (once).
@@ -134,12 +143,15 @@ export function PracticeSession() {
     );
   };
 
-  /** A missed first attempt still earns its spaced second go. */
-  const resurfacing = slot.kind === 'first' && result !== null && !result.correct;
+  /**
+   * A missed first attempt still earns its spaced second go — and `feedback` is
+   * reachable only from a missed first attempt, so the step itself is the test.
+   */
+  const resurfacing = slot.kind === 'first' && sub === 'feedback';
 
   /**
-   * Leaving the reveal. On a missed first attempt this re-inserts the item
-   * ~RETRY_GAP questions later for a second pass — the spaced resurface is
+   * Leaving the answer-side card. On a missed first attempt this re-inserts the
+   * item ~RETRY_GAP questions later for a second pass — the spaced resurface is
    * retained; only the cause-asking step in front of it is gone. On the last
    * remaining step the clamp lands it immediately after this one, which is the
    * behaviour the cause picker used to produce.
@@ -162,16 +174,20 @@ export function PracticeSession() {
 
   const submitRetry = () => {
     if (choice === null) return;
-    setSub('reveal'); // learning-only: reveal locally from the first-attempt result
+    // Learning-only: scored and disclosed locally from the first-attempt result,
+    // so no second command is sent and no duplicate mistake row can be written.
+    setSub(subAfterSecondAttempt());
   };
 
-  // Which wrong choice to refute in the reveal: the latest wrong pick.
-  const wrongChoice =
-    result !== null && choice !== null && choice !== result.correctChoiceId
-      ? choice
-      : result !== null && firstChoice !== null && firstChoice !== result.correctChoiceId
-        ? firstChoice
-        : null;
+  /**
+   * The one place a scored result becomes renderable. `sub` decides disclosure and
+   * the pick is the option chosen on THIS attempt, so a first miss yields a card
+   * with no key in it at all.
+   */
+  const feedback: Feedback | null =
+    result === null || (sub !== 'feedback' && sub !== 'reveal')
+      ? null
+      : feedbackFor(result, choice ?? firstChoice, sub);
 
   return (
     <div className="mc-screen mc-study mc-practice">
@@ -204,10 +220,9 @@ export function PracticeSession() {
 
       <h1 className="mc-h2">{q.stem}</h1>
 
-      {sub === 'reveal' && result !== null ? (
-        <RevealCard
-          result={result}
-          wrongChoice={wrongChoice}
+      {feedback !== null ? (
+        <FeedbackCard
+          feedback={feedback}
           onContinue={onRevealContinue}
           last={isLastStep}
           resurfacing={resurfacing}
@@ -215,8 +230,8 @@ export function PracticeSession() {
       ) : sub === 'retry' ? (
         <Stack gap={3}>
           <Callout tone="info" title="Back for a second pass">
-            You picked {firstChoice ?? '—'} earlier and saw why it misses. Answer it again from
-            memory.
+            You picked {firstChoice ?? '—'} earlier and saw why it misses. Take another run at it —
+            the answer comes after this one.
           </Callout>
           <ChoiceList
             q={q}
@@ -289,15 +304,18 @@ function ChoiceList({
   );
 }
 
-function RevealCard({
-  result,
-  wrongChoice,
+/**
+ * The answer-side card, for both disclosure levels. It takes a redacted
+ * {@link Feedback} and never a `PracticeAttemptResult`, so on a first miss the key
+ * is not present in this component to render, style, or label a choice with.
+ */
+function FeedbackCard({
+  feedback,
   onContinue,
   last,
   resurfacing,
 }: {
-  result: PracticeAttemptResult;
-  wrongChoice: ChoiceId | null;
+  feedback: Feedback;
   onContinue: () => void;
   last: boolean;
   resurfacing: boolean;
@@ -306,21 +324,23 @@ function RevealCard({
     <Card elevated>
       <Stack gap={3}>
         <div className="mc-inline">
-          <span className={`mc-reveal__key ${result.correct ? 'mc-reveal__key--ok' : ''}`}>
-            {result.correct ? 'Correct' : 'Answer'}: {result.correctChoiceId}
+          <span className={`mc-reveal__key ${feedback.correct ? 'mc-reveal__key--ok' : ''}`}>
+            {feedback.correctChoiceId === null
+              ? 'Not quite'
+              : `${feedback.correct ? 'Correct' : 'Answer'}: ${feedback.correctChoiceId}`}
           </span>
         </div>
-        <p>{result.rationale}</p>
-        {wrongChoice !== null && result.choiceRationales[wrongChoice] ? (
-          <Callout tone="info" title={`Why ${wrongChoice} misses`}>
-            {result.choiceRationales[wrongChoice]}
+        {feedback.rationale !== null ? <p>{feedback.rationale}</p> : null}
+        {feedback.wrongChoiceId !== null && feedback.wrongChoiceRationale !== null ? (
+          <Callout tone="info" title={`Why ${feedback.wrongChoiceId} misses`}>
+            {feedback.wrongChoiceRationale}
           </Callout>
         ) : null}
         {resurfacing ? (
           <p className="mc-muted mc-fineprint">
             {last
-              ? 'One more pass at this one before you finish.'
-              : 'This one comes back in a few questions — a short gap helps it stick.'}
+              ? 'One more pass at this one before you finish — we’re holding the answer until then.'
+              : 'This one comes back in a few questions — a short gap helps it stick. We’re holding the answer until then.'}
           </p>
         ) : null}
         <Button variant="primary" size="lg" onClick={onContinue}>

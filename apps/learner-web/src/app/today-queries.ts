@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { CandidateLessonInput, PlanActivityView, RecallLoadInput } from '@mcat/contracts';
 import { authority } from './authority';
 import { useRecallLoad, useRecallService } from './recall-queries';
+import { PLAN_ACTIVITY_COMPLETE_INVALIDATE, TODAYS_PATH_INVALIDATE } from './invalidation-keys';
 import { APP_NATIVE_LESSONS } from '../app-native';
 
 /**
@@ -48,8 +49,6 @@ export function buildCandidateLessons(): CandidateLessonInput[] {
   }));
 }
 
-const TODAYS_PATH_INVALIDATE = ['today', 'todays-path', 'bootstrap'];
-
 export const useTodaysPath = () =>
   useQuery({ queryKey: ['todays-path'], queryFn: () => authority.getTodaysPath() });
 
@@ -87,8 +86,14 @@ export function useRecordPlanActivity() {
   return useMutation({
     mutationFn: (v: { activityId: string; status: 'in_progress' | 'complete' | 'skipped' }) =>
       authority.recordPlanActivity(v.activityId, v.status),
-    onSuccess: () =>
-      Promise.all(TODAYS_PATH_INVALIDATE.map((k) => qc.invalidateQueries({ queryKey: [k] }))),
+    // Completing a Review Mistakes activity moves the server's
+    // `mistakesReviewedThrough` watermark, so a completion also has to drop the
+    // Mistakes tab's caches; in_progress / skipped move nothing there.
+    onSuccess: (_result, v) => {
+      const keys =
+        v.status === 'complete' ? PLAN_ACTIVITY_COMPLETE_INVALIDATE : TODAYS_PATH_INVALIDATE;
+      return Promise.all(keys.map((k) => qc.invalidateQueries({ queryKey: [k] })));
+    },
   });
 }
 

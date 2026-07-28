@@ -78,7 +78,7 @@ Two of seven stages survive unchanged, three are substantially revised, two are 
 | --- | --- | --- | --- |
 | Capture confidence | **Keep, and use bidirectionally** | A | Feedback ≈ doubled retention of low-confidence *correct* answers (Butler, Karpicke & Roediger 2008) |
 | Capture reasoning | **Keep; move after reveal, retarget, make selective** | A/C | Induced self-explanation g = 0.55 (Bisra 2018); prompt direction from Siegler 1995 `[secondary]` |
-| **Withhold the correct option** | **Drop** | A | Answer-until-correct vs reveal, on multiple-choice: **.71 vs .71** (Butler, Karpicke & Roediger 2007). Timing overall g = 0.03, ns (Kandemir 2026) |
+| **Withhold the correct option** | **Dropped here; reinstated for one attempt by the 2026-07-28 amendment in §3.3** | A | Answer-until-correct vs reveal, on multiple-choice: **.71 vs .71** (Butler, Karpicke & Roediger 2007). Timing overall g = 0.03, ns (Kandemir 2026) |
 | Second attempt / escalating hint | **Keep as optional; require production; gate off for hard items** | B | Elimination-driven retries retain **.42 vs .72** (Finn & Metcalfe); instruction-first d ≈ .56 on high-element-interactivity tasks (Ashman, Kalyuga & Sweller) |
 | Reveal the full correction | **Keep, and promote from fifth step to second** | A | Elaborated ≈ 0.49 / KCR ≈ 0.32 / bare right-wrong ≈ 0.05; 75% of final-test intrusions were previously chosen lures (Butler & Roediger) |
 | **Classify the error's cause** | **Drop** | A | Experts naming which bias caused an error agreed at **κ = 0.000–0.063** (Zwaan 2017) |
@@ -93,6 +93,10 @@ learner's *belief*, read off the specific distractor chosen. Cause is not recove
 and it predicts later responses.
 
 ### 2.2 Why withholding was dropped
+
+> **Superseded in part, 2026-07-28.** The key is now withheld until a second miss, by product
+> decision; see the amendment in §3.3 for what ships and what the evidence does and does not say
+> about it. This subsection is kept as the record of the original reasoning, which is unchanged.
 
 Butler, Karpicke & Roediger (2007) tested exactly this contrast — answer-until-correct versus
 revealing the answer — **on multiple-choice items**, and got **.71 versus .71** (tier A). Identical
@@ -147,8 +151,9 @@ most important gate and then did not apply it.
 > **POV 5:** attempt → confidence → error diagnosis → second attempt → corrective feedback → reattempt
 >
 > **Spec:** attempt + confidence → rapid-guess gate → **immediate elaborated feedback refuting the
-> chosen distractor** → optional production-gated retry → selective "why is the correct answer
-> correct" → content-keyed repair → handoff to scheduler
+> chosen distractor** (key deferred to the second miss per the 2026-07-28 amendment in §3.3) →
+> optional production-gated retry → selective "why is the correct answer correct" → content-keyed
+> repair → handoff to scheduler
 
 **Corrective feedback moves from fifth to second, and diagnosis moves from the learner's
 introspection to the item's distractor.**
@@ -203,6 +208,32 @@ invisible confound.
 
 **Spec.** Every attempt terminates in feedback that states the correct answer and explains why the
 *specific option the learner chose* is wrong. This is not optional and not deferred.
+
+> **Amended 2026-07-28 — the correct answer is withheld until a SECOND miss.** This is a product
+> decision by the product owner, recorded here because it partially reverses the paragraph above and
+> the §7 line "withholding the correct option — not building." The shipped adaptive-practice flow is
+> now: a correct first attempt is confirmed immediately, unchanged; a **first** miss terminates in the
+> refutation of the option the learner chose **without** the key and **without** the general rationale
+> that explains the key; the item resurfaces `RETRY_GAP` questions later; a **second** miss discloses
+> everything — key, general rationale, and the refutation of the second pick. A correct second attempt
+> is a plain correct confirmation.
+>
+> **The evidence, as it stands.** Butler, Karpicke & Roediger (2007) tested this contrast on
+> multiple-choice items and found **.71 versus .71** (tier A) — withholding is not expected to harm
+> learning, and its measured cost is time. Pashler et al. (2005) found feedback must **eventually**
+> contain the correct answer, since being told only right-or-wrong yields "virtually no benefit"
+> (tier A); the amendment defers the key by one attempt rather than omitting it, and the second
+> attempt discloses whichever way it goes. Two properties of what we actually ship bear on the
+> transfer from that literature and are stated without extrapolation: a **targeted refutation of the
+> chosen distractor is materially more informative than bare right/wrong**, which is the condition
+> Pashler measured (bare right/wrong ≈ 0.05 versus elaborated ≈ 0.49, tier A); and **withholding the
+> key on a four-option item narrows the retry to three options**, so the second attempt is a
+> constrained choice rather than free generation.
+>
+> Nothing else in this section changes. The refutation of the chosen distractor remains mandatory on
+> every miss, no attempt ends in bare right/wrong, and the two dropped stages stay dropped — the
+> withhold does **not** reintroduce a cause self-report (§2.3) or any other step between the answer
+> and its feedback.
 
 **Evidence:**
 
@@ -644,7 +675,7 @@ feedback reduced GPA in Azmat's field experiment, with a lasting decline after r
 | Not building | Why | Tier |
 | --- | --- | --- |
 | Cause self-report picker | κ = 0.000–0.063; learner bias worst in weakest students | A |
-| Withholding the correct option | .71 vs .71 on MC; timing g = 0.03 ns | A |
+| ~~Withholding the correct option~~ — **superseded 2026-07-28, see §3.3** | .71 vs .71 on MC; timing g = 0.03 ns. The evidence is unchanged; the decision was made by the product owner against it, on the reading that .71 vs .71 makes the withhold cost-neutral for learning | A |
 | Retry by re-showing options | .42 vs .72; telemetry cannot distinguish | B |
 | Free-text reflection box | Bisra's effect is for *induced, scripted* prompts only | A |
 | "Why did you pick that?" prompt | Siegler's losing condition; asks for an unreportable causal attribution | C + A |
@@ -749,7 +780,7 @@ None of these exist in the literature; all are computable from our own data.
 
 | # | Source | Carries | Tier |
 | --- | --- | --- | --- |
-| 1 | Butler, Karpicke & Roediger (2007) | .71 vs .71 — kills withholding on MC | A |
+| 1 | Butler, Karpicke & Roediger (2007) | .71 vs .71 on MC — no learning difference either way (see §3.3, amended 2026-07-28) | A |
 | 2 | Kandemir et al. (2026) | Feedback timing g = 0.03, ns | A `[abstract]` |
 | 3 | Butler, Karpicke & Roediger (2008) | Feedback ≈ doubles retention of low-confidence correct | A |
 | 4 | Zwaan et al. (2017) | κ = 0.000–0.063; hindsight 1.75→3.44 | A |

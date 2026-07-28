@@ -8,9 +8,13 @@ import { describe, expect, it } from 'vitest';
  * docs/design/error-handling-design.md that live in the UI layer:
  *
  *  - BOTH question flows — adaptive Practice and the older Study loop — ask for no
- *    self-reported cause and reveal immediately (§2.2–§2.3: expert
- *    κ = 0.000–0.063 on cause, .71 vs .71 on withhold),
+ *    self-reported cause (§2.2–§2.3: expert κ = 0.000–0.063 on cause),
+ *  - adaptive Practice withholds the correct answer until a SECOND miss (§3.3 as
+ *    amended 2026-07-28), and the withheld key is unreachable from the component
+ *    that renders the card,
  *  - each keeps its same-item retry, now placed after the correction,
+ *  - every mutation that can write or clear a miss invalidates the Mistakes tab's
+ *    own query keys,
  *  - the Mistakes tab leads with content and a "try again" action rather than a
  *    cause headline and a repair pill (§6.4, the highest-priority single change),
  *  - the patterns section always shows a denominator and never asserts a cohort
@@ -39,14 +43,57 @@ describe('adaptive practice asks for no cause', () => {
     expect(source).not.toMatch(/selectCause|cause_selected/);
   });
 
-  it('sends a scored first attempt straight to the reveal', () => {
-    const flow = read('apps/learner-web/src/screens/practice/session-flow.ts');
+  /**
+   * §3.3 was amended on 2026-07-28: the key is withheld on a FIRST miss and
+   * disclosed on the second. The previous revision of this test pinned the
+   * opposite — `subAfterFirstAttempt` constant at `'reveal'` — so the pin is
+   * inverted here rather than relaxed. A correct first attempt is untouched.
+   */
+  it('withholds the key on a first miss and confirms a correct answer at once', () => {
+    const flow = code('apps/learner-web/src/screens/practice/session-flow.ts');
     expect(session).toMatch(/setSub\(subAfterFirstAttempt\(r\.correct\)\)/);
-    expect(flow).toMatch(/export const subAfterFirstAttempt[\s\S]{0,120}=>\s*'reveal'/);
-    // No step remains between the answer and the answer key.
-    expect(code('apps/learner-web/src/screens/practice/session-flow.ts')).toMatch(
-      /'answering' \| 'retry' \| 'reveal'/,
+    expect(flow).toMatch(
+      /export const subAfterFirstAttempt = \(correct: boolean\): Sub =>\s*\(?correct \? 'reveal' : 'feedback'\)?/,
     );
+    // The deferral is one step, not a policy of silence: the second go discloses
+    // whichever way it goes (Pashler et al. — feedback must reach the key).
+    expect(flow).toMatch(/export const subAfterSecondAttempt = \(\): Sub => 'reveal'/);
+    expect(session).toMatch(/setSub\(subAfterSecondAttempt\(\)\)/);
+    // Still no step between the answer and its feedback — nothing asks what happened.
+    expect(flow).toMatch(/'answering' \| 'retry' \| 'feedback' \| 'reveal'/);
+  });
+
+  /**
+   * The correctness risk in the withhold: the server response legitimately carries
+   * `correctChoiceId`, so what stops it reaching the DOM is that the card is handed
+   * a redacted `Feedback` and never the result itself.
+   */
+  it('keeps the withheld key out of the component that renders the card', () => {
+    const flow = code('apps/learner-web/src/screens/practice/session-flow.ts');
+    // Disclosure is decided in one place, off the step, and nulls BOTH the key and
+    // the rationale that explains the key.
+    expect(flow).toMatch(/const disclose = sub === 'reveal'/);
+    expect(flow).toMatch(/correctChoiceId: disclose \? result\.correctChoiceId : null/);
+    expect(flow).toMatch(/rationale: disclose \? result\.rationale : null/);
+
+    // The card takes `Feedback` only. If it took the result it could render, style
+    // or label a choice with the key regardless of what the step machine decided.
+    const card = session.slice(session.indexOf('function FeedbackCard'));
+    expect(card).not.toBe('');
+    expect(card).not.toMatch(/PracticeAttemptResult|result\./);
+    expect(session).toMatch(/feedback: Feedback;/);
+    expect(session).toMatch(/feedbackFor\(result, choice \?\? firstChoice, sub\)/);
+
+    // Nothing outside the card may mark the right option either: the choice list
+    // knows no correctness, and the only choice the retry singles out is the
+    // learner's own pick.
+    const chooser = session.slice(
+      session.indexOf('function ChoiceList'),
+      session.indexOf('function FeedbackCard'),
+    );
+    expect(chooser).not.toBe('');
+    expect(chooser).not.toMatch(/correct/i);
+    expect(session).toMatch(/disabledChoice=\{firstChoice\}/);
   });
 
   it('keeps the spaced resurface of the missed item', () => {
@@ -55,11 +102,73 @@ describe('adaptive practice asks for no cause', () => {
     expect(flow).toMatch(/Math\.min\(index \+ 1 \+ gap, sequenceLength\)/);
     expect(session).toMatch(/resurfaceAt\(index, sequence\.length\)/);
     expect(session).toMatch(/kind: 'retry'/);
+    // The resurface is keyed on the withholding step, so it cannot drift from it.
+    expect(session).toMatch(/slot\.kind === 'first' && sub === 'feedback'/);
   });
 
-  it('still refutes the specific distractor that was chosen', () => {
-    expect(session).toMatch(/choiceRationales\[wrongChoice\]/);
-    expect(session).toMatch(/Why \$\{wrongChoice\} misses/);
+  it('still refutes the specific distractor that was chosen, on both attempts', () => {
+    expect(session).toMatch(/feedback\.wrongChoiceRationale/);
+    expect(session).toMatch(/Why \$\{feedback\.wrongChoiceId\} misses/);
+    expect(code('apps/learner-web/src/screens/practice/session-flow.ts')).toMatch(
+      /wrongChoiceRationale:\s*\n?\s*wrongChoiceId === null \? null : \(result\.choiceRationales\[wrongChoiceId\] \?\? null\)/,
+    );
+  });
+
+  it('sends no second command, so the retry cannot double-count anything', () => {
+    // One `submit.mutate` in the file, and it is the first attempt.
+    expect([...session.matchAll(/submit\.mutate\(/g)]).toHaveLength(1);
+    expect(session).toMatch(/firstAttempt: true/);
+    expect(session).not.toMatch(/firstAttempt: false/);
+  });
+});
+
+/**
+ * The cache-invalidation half of the same bug. `getErrorLog` was returning the new
+ * miss correctly; the tab read a stale React Query cache because adaptive practice
+ * invalidated six mastery keys and neither of the two the tab queries under.
+ */
+describe('every mutation that can write or clear a miss drops the tab’s caches', () => {
+  it('keeps the key sets in one dependency-free module rather than per-hook literals', () => {
+    const keys = read('apps/learner-web/src/app/invalidation-keys.ts');
+    expect(keys).not.toBe('');
+    expect(keys).toMatch(/MISTAKE_KEYS = \['errors', 'error-patterns'\]/);
+    // No imports: the sets stay unit-testable without a browser or the authority.
+    expect(code('apps/learner-web/src/app/invalidation-keys.ts')).not.toMatch(/^import /m);
+  });
+
+  it('has each query module import its set instead of restating it', () => {
+    for (const [path, symbol] of [
+      ['apps/learner-web/src/app/practice-queries.ts', 'PRACTICE_INVALIDATE_KEYS'],
+      ['apps/learner-web/src/app/queries.ts', 'LEARNER_KEYS'],
+      ['apps/learner-web/src/app/today-queries.ts', 'PLAN_ACTIVITY_COMPLETE_INVALIDATE'],
+    ] as const) {
+      const source = read(path);
+      expect(source, `${path} must import ${symbol}`).toMatch(
+        new RegExp(`${symbol}[\\s\\S]{0,120}from '\\./invalidation-keys'`),
+      );
+      expect(source, `${path} must not restate the key list`).not.toMatch(
+        new RegExp(`const ${symbol}\\s*(:|=)`),
+      );
+    }
+  });
+
+  it('scopes the plan-activity case to a completion', () => {
+    // in_progress / skipped move no mistake state; only completing a Review
+    // Mistakes slot advances `mistakesReviewedThrough`.
+    const today = read('apps/learner-web/src/app/today-queries.ts');
+    expect(today).toMatch(
+      /v\.status === 'complete' \? PLAN_ACTIVITY_COMPLETE_INVALIDATE : TODAYS_PATH_INVALIDATE/,
+    );
+    expect(read('packages/authority-core/src/authority.ts')).toMatch(
+      /activity\.kind === 'review_mistakes'\) state\.mistakesReviewedThrough/,
+    );
+  });
+
+  it('leaves recall out of it', () => {
+    // An FSRS lapse never writes the attempt log and never appears on the tab.
+    expect(read('apps/learner-web/src/app/recall-queries.ts')).not.toMatch(
+      /'errors'|'error-patterns'/,
+    );
   });
 });
 
