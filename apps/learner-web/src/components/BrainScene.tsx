@@ -14,7 +14,7 @@ import {
   type AtlasBrainPart,
   type AtlasHemisphere,
 } from '@mcat/contracts';
-import { baseStateRank, type BaseMasteryState } from '@mcat/domain';
+import { type BaseMasteryState } from '@mcat/domain';
 
 /**
  * Optional realistic brain model. Ships at apps/learner-web/public/models/brain.glb
@@ -37,6 +37,10 @@ export interface AtlasRegionLessonState {
   title: string;
   state: BaseMasteryState;
   mastered: boolean;
+  /** True when the lesson's prerequisites aren't met yet — the node reads grey. */
+  locked: boolean;
+  /** BKT P(L) 0..1 — drives the yellow→green node fade when unlocked. */
+  pL: number;
 }
 
 export interface AtlasRegion {
@@ -564,21 +568,29 @@ function useGlowTexture(): THREE.Texture {
   }, []);
 }
 
+// Node color scale: LOCKED lessons read grey (no glow); UNLOCKED lessons fade from
+// yellow (just unlocked, no mastery yet) to green (mastered) by their BKT P(L). The
+// prior and mastery cut mirror the engine (P(L)_0 = 0.2, threshold = 0.95).
+const NODE_PRIOR_PL = 0.2;
+const NODE_MASTERY_PL = 0.95;
+const NODE_GREY = '#b6b2c4';
+const NODE_YELLOW = new THREE.Color('#f2c14e');
+const NODE_GREEN = new THREE.Color('#33b87e');
+
 /**
  * Per-lesson node styling — matte base dot + a SMALL colored rim-glow so nodes stand
- * out (never the old blown-out white halo). Locked (not_assessed) stays grey with NO
- * glow; unlocked/in-progress shifts grey → amber; mastered (>= independent) reads
- * green. `glow` is the halo opacity (0 = none).
+ * out (never the old blown-out white halo). LOCKED lessons stay grey with NO glow;
+ * UNLOCKED lessons fade yellow→green by mastery (`pL`): more mastery, more green.
+ * `glow` is the halo opacity (0 = none).
  */
-function dotStyle(
-  state: BaseMasteryState,
-): { color: string; opacity: number; scale: number; glow: number } {
-  const r = baseStateRank(state);
-  if (r >= 4) return { color: '#33b87e', opacity: 0.96, scale: 1.1, glow: 0.72 }; // retained / strong
-  if (r === 3) return { color: '#45c48d', opacity: 0.95, scale: 1.1, glow: 0.72 }; // independent → green
-  if (r === 2) return { color: '#e3ad46', opacity: 0.92, scale: 1.05, glow: 0.68 }; // learning → amber
-  if (r === 1) return { color: '#ccb488', opacity: 0.82, scale: 1.0, glow: 0.55 }; // foundation → dim amber
-  return { color: '#b6b2c4', opacity: 0.5, scale: 0.92, glow: 0 }; // not assessed → grey (no glow)
+function dotStyle(node: {
+  locked: boolean;
+  pL: number;
+}): { color: string; opacity: number; scale: number; glow: number } {
+  if (node.locked) return { color: NODE_GREY, opacity: 0.45, scale: 0.9, glow: 0 };
+  const t = Math.max(0, Math.min(1, (node.pL - NODE_PRIOR_PL) / (NODE_MASTERY_PL - NODE_PRIOR_PL)));
+  const color = `#${NODE_YELLOW.clone().lerp(NODE_GREEN, t).getHexString()}`;
+  return { color, opacity: 0.9 + 0.06 * t, scale: 1.0 + 0.12 * t, glow: 0.55 + 0.2 * t };
 }
 
 /**
@@ -669,7 +681,9 @@ function RegionVisual({
       <group ref={dotsRef} position={geom.center} visible={!initialComplete.current}>
         {geom.dots.map((d, k) => {
           const lesson = region.lessons[k];
-          const st = dotStyle(lesson ? lesson.state : 'not_assessed');
+          const st = dotStyle(
+            lesson ? { locked: lesson.locked, pL: lesson.pL } : { locked: true, pL: 0 },
+          );
           return (
             <group
               key={k}

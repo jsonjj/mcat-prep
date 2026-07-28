@@ -25,6 +25,17 @@ const BrainScene = lazy(() => import('./BrainScene'));
  */
 const MASTERED_RANK = baseStateRank('independent');
 
+/**
+ * Provisional lesson unlock: a lesson is "unlocked" once its global teaching-order
+ * rank is within this many positions of the mastered frontier — so a starter set is
+ * unlocked on day one (nodes read yellow) and more open as lessons are mastered.
+ * This is the stand-in until the authored prerequisite map lands; then `locked` will
+ * come straight from it (unlocked = all prerequisites mastered).
+ */
+const UNLOCK_WINDOW = 12;
+/** BKT prior P(L) for an unpracticed but unlocked lesson — the yellow end of the fade. */
+const PRIOR_PL = 0.2;
+
 /** Map a lesson's BKT `P(L)` readout to the atlas's display state. */
 function lessonStateFromPL(entry: LessonMasteryView | undefined): BaseMasteryState {
   if (!entry) return 'not_assessed';
@@ -140,17 +151,40 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
     [lessonMastery.data],
   );
 
+  // Global teaching-order rank for every atlas lesson (phase → module → position),
+  // used by the provisional unlock frontier. Stable across renders.
+  const lessonRank = useMemo(() => {
+    const ranked = ATLAS_REGION_GROUPS.flatMap((rg) => rg.lessons.map((l) => l.lesson_id))
+      .map((id) => ({ id, meta: LESSON_META[id] }))
+      .sort(
+        (a, b) =>
+          (a.meta?.phaseOrder ?? 999) - (b.meta?.phaseOrder ?? 999) ||
+          (a.meta?.moduleOrder ?? 999) - (b.meta?.moduleOrder ?? 999) ||
+          (a.meta?.position ?? Number.MAX_SAFE_INTEGER) -
+            (b.meta?.position ?? Number.MAX_SAFE_INTEGER),
+      );
+    const map = new Map<string, number>();
+    ranked.forEach((r, i) => map.set(r.id, i));
+    return map;
+  }, []);
+
   const regions: AtlasRegion[] = useMemo(
     () =>
       ATLAS_REGION_GROUPS.map((rg) => {
         let masteredCount = 0;
         const lessons = rg.lessons.map((l) => {
-          const state: BaseMasteryState = isHome
-            ? 'strong'
-            : lessonStateFromPL(lessonById.get(l.lesson_id));
+          const entry = lessonById.get(l.lesson_id);
+          const state: BaseMasteryState = isHome ? 'strong' : lessonStateFromPL(entry);
           const mastered = baseStateRank(state) >= MASTERED_RANK;
           if (mastered) masteredCount += 1;
-          return { id: l.lesson_id, title: l.title, state, mastered };
+          const pL = isHome ? 1 : (entry?.pL ?? PRIOR_PL);
+          // Unlocked when mastered, already touched (has a mastery entry), or within the
+          // teaching-order frontier. Only genuinely locked lessons read grey.
+          const rank = lessonRank.get(l.lesson_id) ?? Number.MAX_SAFE_INTEGER;
+          const locked = isHome
+            ? false
+            : !(mastered || entry !== undefined || rank < masteredLessonCount + UNLOCK_WINDOW);
+          return { id: l.lesson_id, title: l.title, state, mastered, locked, pL };
         });
         const tapLessonId = (lessons.find((l) => !l.mastered) ?? lessons[0])?.id;
         const tapCluster = (tapLessonId ? ATLAS_LESSON_CLUSTER[tapLessonId] : undefined) ?? 'BB1';
@@ -166,7 +200,7 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
           tapCluster,
         };
       }),
-    [lessonById, isHome],
+    [lessonById, isHome, lessonRank, masteredLessonCount],
   );
 
   const sel = selected ? (regions.find((r) => r.id === selected) ?? null) : null;
