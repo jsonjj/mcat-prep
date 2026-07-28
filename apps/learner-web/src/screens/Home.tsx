@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useMasteryMap, useToday } from '../app/queries';
-import { useTodaysPath } from '../app/today-queries';
+import {
+  useConsumeCompletedActivity,
+  useEnsureTodaysPath,
+  useLaunchPlanActivity,
+} from '../app/today-queries';
 import { countGlowing } from '../components/BrainAtlas';
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
 import { GhostCompanion } from '../components/GhostCompanion';
@@ -23,8 +27,11 @@ function greeting(): string {
 
 export function Home() {
   const today = useToday();
-  const path = useTodaysPath();
+  const path = useEnsureTodaysPath();
   const mastery = useMasteryMap();
+  const launch = useLaunchPlanActivity();
+  // Activities launched from the plan return HOME; mark the finished one complete here.
+  useConsumeCompletedActivity();
   const glowing = countGlowing(mastery.data);
 
   const plan = path.data ?? null;
@@ -50,28 +57,46 @@ export function Home() {
 
       <EvidenceAtlas variant="home" />
 
-      <Link to="/app/today" className="mc-upnext" aria-label="Today's Path">
-        <div className="mc-upnext__text">
-          <span className="mc-upnext__eyebrow">Today’s Path</span>
-          <span className="mc-upnext__title">
-            {!plan?.built
-              ? 'Start today’s plan'
-              : current
-                ? current.title
-                : 'Today’s path complete'}
-          </span>
-          <span className="mc-upnext__meta">
-            {!plan?.built
-              ? 'Build a plan sized to your day'
-              : current
-                ? `${remaining} activit${remaining === 1 ? 'y' : 'ies'} left · ~${plan.plannedMinutes} min`
-                : 'Nice work — review it or rest'}
-          </span>
+      {current ? (
+        <div className="mc-upnext-wrap">
+          <button
+            type="button"
+            className="mc-upnext mc-upnext--btn"
+            aria-label={`Start ${current.title}`}
+            onClick={() => launch(current)}
+          >
+            <div className="mc-upnext__text">
+              <span className="mc-upnext__eyebrow">Today’s Path · Up next</span>
+              <span className="mc-upnext__title">{current.title}</span>
+              <span className="mc-upnext__meta">
+                {current.estimatedMinutes} min · {remaining} activit
+                {remaining === 1 ? 'y' : 'ies'} left
+              </span>
+            </div>
+            <span className="mc-upnext__play" aria-hidden="true">
+              <IconPlay />
+            </span>
+          </button>
+          <Link to="/app/today" className="mc-upnext__link">
+            View full plan
+          </Link>
         </div>
-        <span className="mc-upnext__play" aria-hidden="true">
-          <IconPlay />
-        </span>
-      </Link>
+      ) : (
+        <Link to="/app/today" className="mc-upnext" aria-label="Today’s Path">
+          <div className="mc-upnext__text">
+            <span className="mc-upnext__eyebrow">Today’s Path</span>
+            <span className="mc-upnext__title">
+              {plan?.built ? 'Today’s path complete' : 'Start today’s plan'}
+            </span>
+            <span className="mc-upnext__meta">
+              {plan?.built ? 'Nice work — review it or rest' : 'Build a plan sized to your day'}
+            </span>
+          </div>
+          <span className="mc-upnext__play" aria-hidden="true">
+            <IconPlay />
+          </span>
+        </Link>
+      )}
 
       <div className="mc-home__pills">
         <Link to="/app/recall" className="mc-hpill">

@@ -501,6 +501,20 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 14px 48px color-mix(in srgb, var(--mc-primary) 18%, transparent);
 }
+/* Same hero as a real button (one-tap "continue" from Home). */
+.mc-upnext--btn {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.mc-upnext__link {
+  display: inline-block;
+  margin-top: var(--mc-space-2);
+  padding-left: var(--mc-space-2);
+  font-size: var(--mc-text-14);
+  color: var(--mc-ink-muted);
+}
 .mc-upnext__text {
   display: flex;
   flex-direction: column;

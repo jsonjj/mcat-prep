@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildTodaysPath,
   reviewDebtBand,
+  sizeRecall,
   TODAYS_PATH_CONFIG,
   type CarriedActivity,
   type TodaysPathCandidateLesson,
@@ -108,6 +109,22 @@ describe('Today\u2019s Path engine', () => {
       snap({ recall: { dueLearning: 0, dueReviews: 3, newAvailable: 0, due: 3, estimatedMinutesForDue: 1 } }),
     );
     expect(belowFloor.activities.some((a) => a.kind === 'recall')).toBe(false);
+  });
+
+  it('sizeRecall returns a bounded card count when enough are due, else null', () => {
+    // Below the due floor → not scheduled.
+    expect(
+      sizeRecall({ dueLearning: 0, dueReviews: 2, newAvailable: 0, due: 2, estimatedMinutesForDue: 1 }, 180),
+    ).toBeNull();
+    // Enough due → a count within the floor/ceiling, minutes derived from the card cost.
+    const r = sizeRecall(
+      { dueLearning: 0, dueReviews: 40, newAvailable: 10, due: 40, estimatedMinutesForDue: 12 },
+      180,
+    );
+    expect(r).not.toBeNull();
+    expect(r!.cards).toBeGreaterThanOrEqual(TODAYS_PATH_CONFIG.blocks.recallMinCards);
+    expect(r!.cards).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.recallCeiling.normal);
+    expect(r!.minutes).toBe(Math.round(r!.cards * TODAYS_PATH_CONFIG.costs.recallPerCard));
   });
 
   it('flexes the recall ceiling above the normal 20 under a high review-debt band', () => {

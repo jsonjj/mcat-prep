@@ -66,6 +66,28 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     expect(view.plannedMinutes).toBeLessThanOrEqual(120);
   });
 
+  it('injects Recall as the next step when a deck is added after the plan was built', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    // Built with no cards due → no Recall block.
+    const first = auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: false });
+    expect(first.activities.some((a) => a.kind === 'recall')).toBe(false);
+
+    // Learner adds a deck → cards now due. A plain (non-force) rebuild injects Recall.
+    const dueLoad = { dueLearning: 4, dueReviews: 16, newAvailable: 6, due: 20, estimatedMinutesForDue: 7 };
+    const after = auth.buildTodaysPath(state, { recallLoad: dueLoad, candidateLessons, force: false });
+    const recall = after.activities.find((a) => a.kind === 'recall');
+    expect(recall).toBeDefined();
+    expect(recall!.count!).toBeGreaterThan(0); // Recall gets a card count to stop at
+    // Nothing started yet → Recall is the very first / current activity.
+    expect(after.activities[0]!.kind).toBe('recall');
+    expect(after.currentActivityId).toBe(recall!.activityId);
+
+    // Idempotent: rebuilding again does not duplicate the Recall block.
+    const again = auth.buildTodaysPath(state, { recallLoad: dueLoad, candidateLessons, force: false });
+    expect(again.activities.filter((a) => a.kind === 'recall').length).toBe(1);
+  });
+
   it('completes an activity and marks a finished lesson for eligibility', () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);

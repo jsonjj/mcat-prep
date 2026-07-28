@@ -1,7 +1,9 @@
+import { useCallback, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CandidateLessonInput, RecallLoadInput } from '@mcat/contracts';
+import type { CandidateLessonInput, PlanActivityView, RecallLoadInput } from '@mcat/contracts';
 import { authority } from './authority';
-import { useRecallService } from './recall-queries';
+import { useRecallLoad, useRecallService } from './recall-queries';
 import { APP_NATIVE_LESSONS } from '../app-native';
 
 /**
@@ -107,4 +109,98 @@ export function useRecordMistake() {
     onSuccess: () =>
       Promise.all(TODAYS_PATH_INVALIDATE.map((k) => qc.invalidateQueries({ queryKey: [k] }))),
   });
+}
+
+/** Card count below which Recall isn't scheduled (mirrors the engine's recallMinDue). */
+const RECALL_MIN_DUE = 5;
+
+/**
+ * Ensure today's plan exists and stays current on a hub screen (Home / Today's Path):
+ * builds it on first view, and — if the learner adds their first deck mid-day — re-runs
+ * the build so Recall is injected as the next step. Self-limiting: it only fires when a
+ * build/refresh is actually warranted, and at most once per (day, need).
+ */
+export function useEnsureTodaysPath() {
+  const path = useTodaysPath();
+  const load = useRecallLoad();
+  const build = useBuildTodaysPath();
+  const attempted = useRef<string | null>(null);
+  useEffect(() => {
+    if (!path.isSuccess || build.isPending) return;
+    const view = path.data;
+    const due = load.data?.due ?? 0;
+    const hasRecall = view?.activities.some((a) => a.kind === 'recall') ?? false;
+    const needsBuild = !view?.built;
+    const needsRecall = Boolean(view?.built) && !hasRecall && due >= RECALL_MIN_DUE;
+    if (!needsBuild && !needsRecall) return;
+    const sig = `${view?.planDate ?? 'none'}:${needsBuild ? 'build' : 'recall'}`;
+    if (attempted.current === sig) return; // a no-op server response must not loop
+    attempted.current = sig;
+    build.mutate(undefined);
+  }, [path.isSuccess, path.data, load.data, build]);
+  return path;
+}
+
+/**
+ * Launch a plan activity in the guided runner: mark it in-progress and open the
+ * matching engine, telling each one how much to do (Recall cards/minutes, Practice
+ * question count, CARS defaults). On finish the activity returns to HOME, which marks
+ * it complete and surfaces the next step.
+ */
+export function useLaunchPlanActivity() {
+  const navigate = useNavigate();
+  const record = useRecordPlanActivity();
+  return useCallback(
+    (a: PlanActivityView): void => {
+      record.mutate({ activityId: a.activityId, status: 'in_progress' });
+      const state = { returnTo: '/app', activityId: a.activityId } as const;
+      switch (a.kind) {
+        case 'cars_duel':
+          navigate('/app/cars', { state: { ...state, autostart: true } });
+          break;
+        case 'recall':
+          navigate('/app/recall/review', {
+            state: {
+              ...state,
+              minutesBudget: a.minutesBudget ?? undefined,
+              maxCards: a.count ?? undefined,
+            },
+          });
+          break;
+        case 'lesson':
+          if (a.lessonSlug) navigate(`/app/lesson/${a.lessonSlug}`, { state });
+          break;
+        case 'practice':
+          navigate('/app/practice/session', {
+            state: { ...state, x: a.count ?? 8, focus: a.focus ?? undefined },
+          });
+          break;
+        case 'review_mistakes':
+          navigate('/app/mistakes', { state });
+          break;
+      }
+    },
+    [navigate, record],
+  );
+}
+
+/**
+ * On a hub screen that activities return to (Home / Today's Path), mark the returned
+ * activity complete once, then clear the history state so a refresh can't re-mark it.
+ */
+export function useConsumeCompletedActivity() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const record = useRecordPlanActivity();
+  const consumed = useRef(false);
+  useEffect(() => {
+    const state = location.state as { completedActivityId?: string } | null;
+    const completedActivityId = state?.completedActivityId;
+    if (!completedActivityId || consumed.current) return;
+    consumed.current = true;
+    record.mutate(
+      { activityId: completedActivityId, status: 'complete' },
+      { onSettled: () => navigate(location.pathname, { replace: true, state: null }) },
+    );
+  }, [location, navigate, record]);
 }

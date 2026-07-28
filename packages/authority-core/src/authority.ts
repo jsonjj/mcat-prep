@@ -43,6 +43,7 @@ import {
   applyMasteryAttempt,
   bandCenter,
   buildTodaysPath as buildTodaysPathEngine,
+  sizeRecall,
   TODAYS_PATH_CONFIG,
   CARS_K_DUEL,
   CARS_K_POTD,
@@ -426,6 +427,10 @@ export class Authority {
     }
     const planDate = this.planDateFor(now, this.timezoneOffset(state));
     if (state.plan && state.plan.planDate === planDate && !input.force) {
+      // Plan already exists for today: don't rebuild, but if Recall just became
+      // available (e.g. the learner added their first deck), inject it as the next
+      // step so it surfaces immediately with a card count.
+      this.maybeInjectRecall(state, input.recallLoad);
       return this.todaysPathView(state);
     }
     const preset = this.dailyPreset(state);
@@ -534,6 +539,54 @@ export class Authority {
     const insertAt = firstReadyIdx === -1 ? plan.activities.length : firstReadyIdx;
     plan.activities.splice(insertAt, 0, session);
     plan.mistakesSessions += 1;
+  }
+
+  /**
+   * Inject a Recall block into today's existing plan when it wasn't scheduled at
+   * build time (no cards then) but cards are now due — e.g. the learner just added
+   * their first deck. Placed as the NEXT ready item (the very first when nothing is
+   * started yet), sized exactly like the build so Recall gets a card count to stop at.
+   */
+  private maybeInjectRecall(
+    state: LearnerState,
+    recallLoad: BuildTodaysPathInput['recallLoad'],
+  ): void {
+    const plan = state.plan;
+    if (!plan) return;
+    // Already have a Recall block today (pending or done) — never duplicate it.
+    if (plan.activities.some((a) => a.kind === 'recall')) return;
+    const sized = sizeRecall(recallLoad, plan.dailyBudgetMinutes, TODAYS_PATH_CONFIG);
+    if (!sized) return;
+    const recall: TodaysPathActivityState = {
+      activityId: 'recall',
+      kind: 'recall',
+      title: 'Recall',
+      detail: `${sized.cards} flashcard${sized.cards === 1 ? '' : 's'} due (spaced repetition).`,
+      estimatedMinutes: Math.max(1, sized.minutes),
+      count: sized.cards,
+      minutesBudget: sized.minutes,
+      focus: null,
+      lessonSlug: null,
+      lessonId: null,
+      priorityReason: 'OVERDUE_REVIEW',
+      status: 'ready',
+      carriedOver: false,
+    };
+    // Next ready item (index 0 when nothing is started yet). An in-progress activity
+    // is left alone; Recall slots in right after it.
+    const firstReadyIdx = plan.activities.findIndex((a) => a.status === 'ready');
+    const insertAt = firstReadyIdx === -1 ? plan.activities.length : firstReadyIdx;
+    plan.activities.splice(insertAt, 0, recall);
+    // Refresh derived fields the view reads straight off the plan.
+    plan.plannedMinutes = plan.activities.reduce((sum, a) => sum + a.estimatedMinutes, 0);
+    plan.freeStudyMinutes = Math.max(0, plan.dailyBudgetMinutes - plan.plannedMinutes);
+    const reviewMinutes = plan.activities
+      .filter((a) => a.kind === 'recall' || a.kind === 'review_mistakes')
+      .reduce((sum, a) => sum + a.estimatedMinutes, 0);
+    plan.reviewSharePct =
+      plan.plannedMinutes > 0 ? Math.min(1, reviewMinutes / plan.plannedMinutes) : 0;
+    const next = plan.activities.find((a) => a.status === 'ready' || a.status === 'in_progress');
+    plan.currentActivityId = next?.activityId ?? null;
   }
 
   private carryOverFrom(prev: TodaysPathState | null, planDate: string): CarriedActivity[] {

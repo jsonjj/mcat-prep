@@ -276,31 +276,38 @@ function newLessonCapFor(
 
 // ---- Step: core sizing (by due-volume / debt) --------------------------------
 
+/**
+ * Size the Recall block for a recall load + budget, or null when there aren't
+ * enough due cards. Sized as a %-of-budget share flexing with review debt, within
+ * the card floor/ceiling. Shared by the full build AND the authority's mid-day
+ * "a deck was just added" recall injection so both size it identically (and both
+ * hand Recall an explicit card count that it honors and stops at).
+ */
+export function sizeRecall(
+  recall: TodaysPathRecallLoad,
+  budgetMinutes: number,
+  cfg: TodaysPathConfig = TODAYS_PATH_CONFIG,
+): { cards: number; minutes: number } | null {
+  if (recall.due < cfg.eligibility.recallMinDue) return null;
+  const band = reviewDebtBand(recall, budgetMinutes, cfg);
+  const share = recallShareFor(band, cfg);
+  const ceiling = recallCeilingFor(band, cfg);
+  const byBudget = Math.round((share * budgetMinutes) / cfg.costs.recallPerCard);
+  const available = recall.due + recall.newAvailable;
+  const cards = Math.min(clamp(byBudget, cfg.blocks.recallMinCards, ceiling), available);
+  if (cards <= 0) return null;
+  return { cards, minutes: Math.round(cards * cfg.costs.recallPerCard) };
+}
+
 interface CoreSizes {
   readonly recallCards: number | null; // null = skip
   readonly recallMinutes: number;
 }
 
-function sizeCore(
-  snap: TodaysPathSnapshot,
-  band: ReviewDebtBand,
-  cfg: TodaysPathConfig,
-): CoreSizes {
-  // Recall: only when enough due cards; sized as a %-of-budget share flexing with debt.
-  // (Review Mistakes are reserved as short spacer sessions in buildTodaysPath, not here.)
-  let recallCards: number | null = null;
-  let recallMinutes = 0;
-  if (snap.recall.due >= cfg.eligibility.recallMinDue) {
-    const share = recallShareFor(band, cfg);
-    const ceiling = recallCeilingFor(band, cfg);
-    const byBudget = Math.round((share * snap.dailyBudgetMinutes) / cfg.costs.recallPerCard);
-    const available = snap.recall.due + snap.recall.newAvailable;
-    recallCards = clamp(byBudget, cfg.blocks.recallMinCards, ceiling);
-    recallCards = Math.min(recallCards, available);
-    recallMinutes = Math.round(recallCards * cfg.costs.recallPerCard);
-  }
-
-  return { recallCards, recallMinutes };
+function sizeCore(snap: TodaysPathSnapshot, cfg: TodaysPathConfig): CoreSizes {
+  // Recall only (Review Mistakes are reserved as short spacer sessions in buildTodaysPath).
+  const recall = sizeRecall(snap.recall, snap.dailyBudgetMinutes, cfg);
+  return { recallCards: recall?.cards ?? null, recallMinutes: recall?.minutes ?? 0 };
 }
 
 // ---- Step: score the scored block (lessons + practice) -----------------------
@@ -350,7 +357,7 @@ export function buildTodaysPath(
     Math.min(snap.dailyBudgetMinutes - carriedMinutes, carryCap - carriedMinutes),
   );
 
-  const core = sizeCore(snap, band, cfg);
+  const core = sizeCore(snap, cfg);
   const carriedKinds = new Set(carried.map((c) => c.kind));
 
   // --- Reserve the mandatory core (skip a kind already carried over). ---

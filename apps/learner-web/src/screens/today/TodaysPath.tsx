@@ -1,13 +1,12 @@
-import { useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import type { PlanActivityView, TodaysPathView } from '@mcat/contracts';
 import { DAILY_MINUTES_PRESETS } from '@mcat/contracts';
 import {
   useBuildTodaysPath,
-  useRecordPlanActivity,
+  useConsumeCompletedActivity,
+  useEnsureTodaysPath,
+  useLaunchPlanActivity,
   useSetDailyBudget,
-  useTodaysPath,
 } from '../../app/today-queries';
 
 const KIND_LABEL: Record<PlanActivityView['kind'], string> = {
@@ -26,74 +25,17 @@ const BAND_NOTE: Record<TodaysPathView['reviewDebtBand'], string | null> = {
 
 const presetLabel = (m: number): string => `${Math.round(m / 60)} hr`;
 
-/** Read the guided-runner return signal from history state (set by launched engines). */
-interface ReturnState {
-  completedActivityId?: string;
-}
-
 export function TodaysPath() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const path = useTodaysPath();
+  const path = useEnsureTodaysPath();
   const build = useBuildTodaysPath();
-  const record = useRecordPlanActivity();
   const setBudget = useSetDailyBudget();
+  const launch = useLaunchPlanActivity();
+  useConsumeCompletedActivity();
 
   const view = path.data ?? null;
   const built = view?.built ?? false;
 
-  // Auto-build once when there is no plan for today yet (feeds the client recall load).
-  const triggeredBuild = useRef(false);
-  useEffect(() => {
-    if (!path.isSuccess || built || build.isPending || triggeredBuild.current) return;
-    triggeredBuild.current = true;
-    build.mutate(undefined);
-  }, [path.isSuccess, built, build]);
-
-  // When a launched activity returns here, mark it complete (guided one-at-a-time).
-  const consumedReturn = useRef(false);
-  useEffect(() => {
-    const state = location.state as ReturnState | null;
-    const completedActivityId = state?.completedActivityId;
-    if (!completedActivityId || consumedReturn.current) return;
-    consumedReturn.current = true;
-    record.mutate(
-      { activityId: completedActivityId, status: 'complete' },
-      { onSettled: () => navigate(location.pathname, { replace: true, state: null }) },
-    );
-  }, [location, navigate, record]);
-
-  const launch = (a: PlanActivityView): void => {
-    record.mutate({ activityId: a.activityId, status: 'in_progress' });
-    const state = { returnTo: '/app/today', activityId: a.activityId } as const;
-    switch (a.kind) {
-      case 'cars_duel':
-        navigate('/app/cars', { state: { ...state, autostart: true } });
-        break;
-      case 'recall':
-        navigate('/app/recall/review', {
-          state: {
-            ...state,
-            minutesBudget: a.minutesBudget ?? undefined,
-            maxCards: a.count ?? undefined,
-          },
-        });
-        break;
-      case 'lesson':
-        if (a.lessonSlug) navigate(`/app/lesson/${a.lessonSlug}`, { state });
-        break;
-      case 'practice':
-        navigate('/app/practice/session', {
-          state: { ...state, x: a.count ?? 8, focus: a.focus ?? undefined },
-        });
-        break;
-      case 'review_mistakes':
-        navigate('/app/mistakes', { state });
-        break;
-    }
-  };
-
-  if (path.isLoading || (!built && build.isPending)) {
+  if (path.isLoading || (path.isSuccess && !built)) {
     return <div className="mc-center mc-muted">Building today’s path…</div>;
   }
 
