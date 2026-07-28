@@ -454,7 +454,9 @@ body {
   flex-direction: column;
   align-items: stretch;
   gap: var(--mc-space-3);
-  padding-top: var(--mc-space-2);
+  padding-top: 0;
+  /* Pull the greeting up so there's less dead space above "Good morning". */
+  margin-top: calc(-1 * var(--mc-space-2));
 }
 .mc-home__greeting {
   text-align: center;
@@ -514,6 +516,18 @@ body {
   padding-left: var(--mc-space-2);
   font-size: var(--mc-text-14);
   color: var(--mc-ink-muted);
+}
+/* Passage of the Day — a prominent hero-style card with a warm reading accent so it
+   reads as its own thing next to Today's Path (not a plain link row). */
+.mc-passage {
+  background: color-mix(in srgb, #ffd98a 20%, var(--mc-surface));
+  border-color: color-mix(in srgb, #f0b95a 32%, var(--mc-border));
+}
+.mc-passage__play {
+  background:
+    radial-gradient(circle at 30% 25%, color-mix(in srgb, #ffffff 55%, transparent), transparent 60%),
+    linear-gradient(135deg, #ffcf6b 0%, #ffb14e 55%, #f59e3c 100%);
+  box-shadow: 0 8px 22px color-mix(in srgb, #f0b95a 34%, transparent);
 }
 .mc-upnext__text {
   display: flex;

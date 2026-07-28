@@ -1,22 +1,13 @@
 import { Link } from 'react-router-dom';
-import { useMasteryMap, useToday } from '../app/queries';
+import { useToday } from '../app/queries';
 import {
   useConsumeCompletedActivity,
   useEnsureTodaysPath,
   useLaunchPlanActivity,
 } from '../app/today-queries';
-import { countGlowing } from '../components/BrainAtlas';
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
-import { GhostCompanion } from '../components/GhostCompanion';
 import { WrappedCard } from '../components/WrappedCard';
-import { IconPlay, IconRecall, IconMistakesX, IconProgress } from '../components/icons';
-
-const CAPACITY_LABEL: Record<string, string> = {
-  on_track: 'On Track',
-  tight: 'Tight',
-  goal_plan_mismatch: 'Goal–plan',
-  rolling: 'Rolling plan',
-};
+import { IconPlay } from '../components/icons';
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -28,15 +19,14 @@ function greeting(): string {
 export function Home() {
   const today = useToday();
   const path = useEnsureTodaysPath();
-  const mastery = useMasteryMap();
   const launch = useLaunchPlanActivity();
   // Activities launched from the plan return HOME; mark the finished one complete here.
   useConsumeCompletedActivity();
-  const glowing = countGlowing(mastery.data);
 
   const plan = path.data ?? null;
   const current = plan?.activities.find((a) => a.activityId === plan.currentActivityId) ?? null;
-  const remaining = plan?.activities.filter((a) => a.status === 'ready' || a.status === 'in_progress').length ?? 0;
+  const remaining =
+    plan?.activities.filter((a) => a.status === 'ready' || a.status === 'in_progress').length ?? 0;
 
   const dayLabel = today.data
     ? `Day ${today.data.dayNumber}${today.data.totalDays ? ` of ${today.data.totalDays}` : ''}`
@@ -47,13 +37,7 @@ export function Home() {
       <header className="mc-home__greeting">
         <p className="mc-home__hello">{greeting()}</p>
         <h1 className="mc-home__day">{dayLabel}</h1>
-        <p className="mc-home__sub">
-          {glowing > 0 ? `${glowing} skill${glowing === 1 ? '' : 's'} glowing` : 'A calm place to begin'}
-        </p>
       </header>
-
-      <GhostCompanion />
-      <WrappedCard />
 
       <EvidenceAtlas variant="home" />
 
@@ -98,49 +82,18 @@ export function Home() {
         </Link>
       )}
 
-      <div className="mc-home__pills">
-        <Link to="/app/recall" className="mc-hpill">
-          <IconRecall className="mc-hpill__icon" />
-          {today.data?.reviewsDue ?? 0} reviews
-        </Link>
-        <Link to="/app/mistakes" className="mc-hpill">
-          <IconMistakesX className="mc-hpill__icon" />
-          {today.data?.repairsOpen ?? 0} repairs
-        </Link>
-        <span className="mc-hpill">
-          <IconProgress className="mc-hpill__icon" />
-          {today.data ? (CAPACITY_LABEL[today.data.capacityLabel] ?? today.data.capacityLabel) : '—'}
-        </span>
-      </div>
-
-      <Link to="/app/practice" className="mc-daily" aria-label="Practice">
-        <div className="mc-daily__text">
-          <span className="mc-upnext__eyebrow">Test-out reps · adaptive</span>
-          <span className="mc-daily__title">Practice</span>
-          <span className="mc-upnext__meta">
-            Fresh questions from what you’ve learned — a correct first try moves your mastery.
-          </span>
-        </div>
-        <span className="mc-daily__arrow" aria-hidden="true">→</span>
-      </Link>
-
-      <Link to="/app/passage" className="mc-daily" aria-label="Passage of the Day">
-        <div className="mc-daily__text">
-          <span className="mc-upnext__eyebrow">Daily rep · optional</span>
-          <span className="mc-daily__title">Passage of the Day</span>
+      <Link to="/app/passage" className="mc-upnext mc-passage" aria-label="Passage of the Day">
+        <div className="mc-upnext__text">
+          <span className="mc-upnext__eyebrow">Daily reading rep · optional</span>
+          <span className="mc-upnext__title">Passage of the Day</span>
           <span className="mc-upnext__meta">A short reading rep to keep your stamina warm.</span>
         </div>
-        <span className="mc-daily__arrow" aria-hidden="true">→</span>
+        <span className="mc-upnext__play mc-passage__play" aria-hidden="true">
+          <IconPlay />
+        </span>
       </Link>
 
-      <Link to="/app/cars" className="mc-daily" aria-label="CARS Duel">
-        <div className="mc-daily__text">
-          <span className="mc-upnext__eyebrow">AI practice · optional</span>
-          <span className="mc-daily__title">CARS Duel</span>
-          <span className="mc-upnext__meta">Debate an AI opponent to sharpen your reasoning.</span>
-        </div>
-        <span className="mc-daily__arrow" aria-hidden="true">→</span>
-      </Link>
+      <WrappedCard />
     </div>
   );
 }
