@@ -1255,6 +1255,14 @@ body {
   width: 100%;
   margin-top: var(--mc-space-4);
 }
+/* One-line, plain-language explanation under each CARS sub-skill bar
+   (CARS_SKILL_BLURB). Small and tight so three blurbs add minimal height. */
+.mc-cars-subskill__desc {
+  margin: var(--mc-space-1) 0 0;
+  font-size: var(--mc-text-12);
+  line-height: 1.3;
+  color: var(--mc-ink-muted);
+}
 
 /* ---- Progress dashboard (Concept B): skills rail · brain · CARS ----
    One merged, single-screen view — all three evidence surfaces at once, no tabs.
@@ -1360,6 +1368,14 @@ body {
   font-size: var(--mc-text-15);
   font-weight: 600;
   line-height: 1.2;
+}
+/* One-line, plain-language explanation under each reasoning-skill title
+   (REASONING_OPERATION_INFO.description). Kept small and tight to add minimal height. */
+.mc-skillring__desc {
+  margin: 2px 0 0;
+  font-size: var(--mc-text-12);
+  line-height: 1.3;
+  color: var(--mc-ink-muted);
 }
 .mc-skillring__tag {
   font-size: var(--mc-text-12);

@@ -1,5 +1,5 @@
-import { CARS_SKILL_INFO, type CarsReadinessLabel } from '@mcat/contracts';
-import { Card, Eyebrow, VisuallyHidden } from '@mcat/ui-web';
+import { CARS_SKILL_INFO, type CarsReadinessLabel, type CarsSkill } from '@mcat/contracts';
+import { Card, Eyebrow } from '@mcat/ui-web';
 import { useCarsReadiness } from '../app/queries';
 
 /**
@@ -9,9 +9,10 @@ import { useCarsReadiness } from '../app/queries';
  * Ability is an IRT `V` (never a scaled score); it grows from Passage of the Day
  * and, more gently, the CARS Duel.
  *
- * `compact` is the Progress-dashboard variant: a tighter card that abbreviates the
- * sub-skills to FOC / RWT / RBT (full names kept for assistive tech) so it sits in
- * the right rail beside the brain without vertical scroll.
+ * `compact` is the Progress-dashboard variant: a tighter card that still spells out
+ * the full AAMC sub-skill names (Foundations of Comprehension / Reasoning Within the
+ * Text / Reasoning Beyond the Text), each with a one-line plain-language blurb, so it
+ * sits in the right rail beside the brain and stays legible.
  */
 
 const CX = 130;
@@ -35,6 +36,16 @@ const LABEL_TEXT: Record<CarsReadinessLabel, string> = {
   building: 'Building',
   approaching: 'Approaching',
   on_track: 'On-track',
+};
+
+/**
+ * Plain-language, AAMC-aligned one-liners for each CARS sub-skill. `CARS_SKILL_INFO`
+ * carries only the title, so the learner-facing explanations live here.
+ */
+const CARS_SKILL_BLURB: Record<CarsSkill, string> = {
+  FOC: "How well you grasp what the passage directly says — key terms, main ideas, and the author's basic meaning.",
+  RWT: "Interpreting and connecting ideas inside the passage — the argument, the author's tone, and how the parts fit together.",
+  RBT: "Extending the passage to new situations — applying, predicting, and testing its ideas beyond what's stated.",
 };
 
 export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
@@ -97,13 +108,11 @@ export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
         {d.skills.map((s) => {
           const pct = Math.round(s.pct * 100);
           const full = CARS_SKILL_INFO[s.skill].title;
+          const blurb = CARS_SKILL_BLURB[s.skill];
           return (
             <li key={s.skill} className="mc-skillbar">
               <div className="mc-skillbar__head">
-                <span className="mc-skillbar__label" title={compact ? full : undefined}>
-                  {compact ? s.skill : full}
-                  {compact ? <VisuallyHidden> — {full}</VisuallyHidden> : null}
-                </span>
+                <span className="mc-skillbar__label">{full}</span>
                 <span className="mc-skillbar__meta">
                   <span className="mc-skillbar__pct">{pct}%</span>
                 </span>
@@ -111,6 +120,7 @@ export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
               <div className="mc-skillbar__track">
                 <div className="mc-skillbar__fill" style={{ width: `${pct}%` }} />
               </div>
+              <p className="mc-cars-subskill__desc">{blurb}</p>
             </li>
           );
         })}
