@@ -627,10 +627,12 @@ function dotStyle(node: {
   locked: boolean;
   pL: number;
 }): { color: string; opacity: number; scale: number; glow: number } {
-  if (node.locked) return { color: NODE_GREY, opacity: 0.45, scale: 0.9, glow: 0 };
+  if (node.locked) return { color: NODE_GREY, opacity: 0.4, scale: 0.85, glow: 0 };
   const t = Math.max(0, Math.min(1, (node.pL - NODE_PRIOR_PL) / (NODE_MASTERY_PL - NODE_PRIOR_PL)));
   const color = `#${NODE_YELLOW.clone().lerp(NODE_GREEN, t).getHexString()}`;
-  return { color, opacity: 0.9 + 0.06 * t, scale: 1.0 + 0.12 * t, glow: 0.55 + 0.2 * t };
+  // No rim-glow: the additive halos read as "circles sticking out" of the brain, so
+  // nodes are clean matte dots colored purely by mastery (grey → yellow → green).
+  return { color, opacity: 0.92, scale: 0.9 + 0.1 * t, glow: 0 };
 }
 
 /**

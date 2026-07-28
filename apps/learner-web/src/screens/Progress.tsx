@@ -83,6 +83,23 @@ export function Progress() {
         <SkillRail />
 
         <section className="mc-progressboard__center" aria-label="Lessons mastered — Evidence Atlas">
+          <div className="mc-masterykey">
+            <span className="mc-masterykey__title">Lesson mastery</span>
+            <ul className="mc-masterykey__items">
+              <li className="mc-masterykey__item">
+                <span className="mc-masterykey__dot mc-masterykey__dot--mastered" aria-hidden="true" />
+                Mastered
+              </li>
+              <li className="mc-masterykey__item">
+                <span className="mc-masterykey__dot mc-masterykey__dot--progress" aria-hidden="true" />
+                In progress
+              </li>
+              <li className="mc-masterykey__item">
+                <span className="mc-masterykey__dot mc-masterykey__dot--locked" aria-hidden="true" />
+                Locked
+              </li>
+            </ul>
+          </div>
           <EvidenceAtlas />
         </section>
 

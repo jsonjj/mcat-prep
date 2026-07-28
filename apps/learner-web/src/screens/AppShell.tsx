@@ -68,18 +68,14 @@ export function AppShell() {
 
       <nav className="mc-sidebar" aria-label="Primary">
         {/* Desktop order puts Practice right above Recall; the mobile bottom nav
-            below stays the five-item shared NAV. Skills stays a desktop-only
-            secondary link. */}
+            below stays the five-item shared NAV. The Skills view is now merged into
+            Progress (its 7 reasoning-skill rings live there). */}
         {SIDEBAR.map(({ to, end, label, Icon }) => (
           <NavLink key={to} to={to} end={end} className="mc-navitem">
             <Icon className="mc-navitem__icon" />
             <span className="mc-navitem__label">{label}</span>
           </NavLink>
         ))}
-        <NavLink to="/app/skills" className="mc-navitem">
-          <IconProgress className="mc-navitem__icon" />
-          <span className="mc-navitem__label">Skills</span>
-        </NavLink>
       </nav>
 
       <main id="main" className="mc-shell__main" tabIndex={-1}>
