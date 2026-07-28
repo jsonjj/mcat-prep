@@ -7,7 +7,7 @@ import {
   IdempotencyKeySchema,
   LearnerIdSchema,
 } from '../../packages/contracts/src/ids';
-import { UtcTimestampSchema } from '../../packages/contracts/src/time';
+import { fixedClock, UtcTimestampSchema } from '../../packages/contracts/src/time';
 import {
   BKT_ELIGIBLE_EVIDENCE_MODES,
   BKT_QUALIFICATION_REJECTION_CODES,
@@ -19,16 +19,28 @@ import {
   type LessonItemBinding,
   type LessonRuntimeResponseFacts,
 } from '../../packages/contracts/src/lesson-observation';
-import { CONTEXTUAL_ONLY_KINDS, EvidenceRecordSchema } from '../../packages/domain/src/evidence';
+import * as masteryViews from '../../packages/contracts/src/mastery';
+import * as learnerViews from '../../packages/contracts/src/learner-views';
+import {
+  CONTEXTUAL_ONLY_KINDS,
+  EvidenceRecordSchema,
+  type EvidenceKind,
+} from '../../packages/domain/src/evidence';
 import {
   adaptLessonResponse,
-  deriveEvidenceKind,
   isIndependentAdministration,
   parseAuthoredLessonBinding,
   unrecognizedAuthoredBindingKeys,
   type LessonResponseAdaptation,
   type ServerScoringResolution,
 } from '../../packages/domain/src/lesson-response-adapter';
+import {
+  Authority,
+  BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS,
+  BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS,
+  UnresolvedWarrantGrainError,
+} from '../../packages/authority-core/src/authority';
+import { loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
 import { DEBUG_LEARNER_STATE_PATH } from '../../services/local-authority/src/debug-state';
 import { ROUTES } from '../../services/lambdas/learner-api/src/routes';
 
@@ -461,50 +473,121 @@ describe('only the authority may move P(L)', () => {
 // 3. The seam is generic: lessons are the test set, never the source
 // ---------------------------------------------------------------------------
 
-/** Lesson-script artifacts on disk, so a NEW lesson's id is banned the day it lands. */
-function discoveredLessonIds(): readonly string[] {
-  const roots = [join(root, 'content', 'lessons'), join(root, '..', 'research')];
-  const scripts: string[] = [];
-  const collect = (absolute: string): void => {
-    if (!existsSync(absolute)) return;
-    for (const entry of readdirSync(absolute, { withFileTypes: true })) {
-      const child = join(absolute, entry.name);
-      if (entry.isDirectory()) {
-        if (!SKIPPED_DIRECTORIES.has(entry.name)) collect(child);
-      } else if (entry.name === 'lesson-script.json') scripts.push(child);
-    }
-  };
-  for (const dir of roots) collect(dir);
+/**
+ * The lesson corpus the seam is measured against, and where each artifact lives.
+ *
+ * TWO OF THE THREE ARE OUTSIDE THE REPOSITORY. `V3-LES-789208` and
+ * `V3-LES-844372` are authoring drafts under the workspace's sibling `research/`
+ * tree, which is not part of `mcat-prep` and is absent from a clean checkout of
+ * it. `v3-lesson-binding-conformance.test.ts` reads the same two, so a checkout
+ * without them measures 42 bindings instead of 115 and every per-lesson
+ * conformance assertion simply stops existing.
+ *
+ * That is why absence is a LOUD, NAMED failure below rather than a skip: a
+ * silently smaller corpus is indistinguishable from a passing one, which is the
+ * exact defect shape this suite exists to catch. Point `MCAT_LESSON_DRAFTS_DIR`
+ * at a checkout of the drafts tree to satisfy it elsewhere.
+ */
+const LESSON_DRAFTS_ENV_VAR = 'MCAT_LESSON_DRAFTS_DIR';
 
-  const ids = new Set<string>();
-  for (const script of scripts) {
-    const parsed: unknown = JSON.parse(readFileSync(script, 'utf8'));
-    const payload =
-      typeof parsed === 'object' && parsed !== null
-        ? (parsed as Record<string, unknown>).payload
-        : undefined;
-    const id =
-      typeof payload === 'object' && payload !== null
-        ? (payload as Record<string, unknown>).lesson_id
-        : undefined;
-    if (typeof id === 'string' && id.length > 0) ids.add(id);
-  }
-  return [...ids].sort();
+const LESSON_SCRIPT_SEARCH_ROOTS: readonly { readonly label: string; readonly path: string }[] = [
+  { label: 'in-repo lesson content', path: join(root, 'content', 'lessons') },
+  {
+    label: `${LESSON_DRAFTS_ENV_VAR} override`,
+    path: process.env[LESSON_DRAFTS_ENV_VAR] ?? '',
+  },
+  {
+    // Repo-relative escape, stated once and named, rather than spread through
+    // the assertions as a bare `join(root, '..')`.
+    label: 'workspace sibling research/ drafts tree (OUTSIDE this repository)',
+    path: join(
+      root,
+      '..',
+      'research',
+      'mcat-curriculum-architecture-v3',
+      'lesson-authoring-drafts',
+    ),
+  },
+];
+
+/** Expected corpus: `id → binding count`. 42 + 40 + 33 = 115. */
+const EXPECTED_LESSON_BINDINGS: Readonly<Record<string, number>> = {
+  'V3-LES-130923': 42,
+  'V3-LES-789208': 40,
+  'V3-LES-844372': 33,
+};
+
+const EXPECTED_TOTAL_BINDINGS = 115;
+
+interface DiscoveredLesson {
+  readonly id: string;
+  readonly bindingCount: number;
+  /** Which search root it came from, for the failure message. */
+  readonly source: string;
+  readonly path: string;
 }
 
-const DISCOVERED_LESSON_IDS = discoveredLessonIds();
+function discoverLessons(): readonly DiscoveredLesson[] {
+  const found = new Map<string, DiscoveredLesson>();
+
+  for (const searchRoot of LESSON_SCRIPT_SEARCH_ROOTS) {
+    if (searchRoot.path.length === 0 || !existsSync(searchRoot.path)) continue;
+    const scripts: string[] = [];
+    const collect = (absolute: string): void => {
+      for (const entry of readdirSync(absolute, { withFileTypes: true })) {
+        const child = join(absolute, entry.name);
+        if (entry.isDirectory()) {
+          if (!SKIPPED_DIRECTORIES.has(entry.name)) collect(child);
+        } else if (entry.name === 'lesson-script.json') scripts.push(child);
+      }
+    };
+    collect(searchRoot.path);
+
+    for (const script of scripts) {
+      const parsed: unknown = JSON.parse(readFileSync(script, 'utf8'));
+      const payload =
+        typeof parsed === 'object' && parsed !== null
+          ? (parsed as Record<string, unknown>).payload
+          : undefined;
+      const record =
+        typeof payload === 'object' && payload !== null
+          ? (payload as Record<string, unknown>)
+          : undefined;
+      const id = record?.lesson_id;
+      if (typeof id !== 'string' || id.length === 0 || found.has(id)) continue;
+      found.set(id, {
+        id,
+        bindingCount: Array.isArray(record?.question_evidence_plan)
+          ? record.question_evidence_plan.length
+          : 0,
+        source: searchRoot.label,
+        path: script,
+      });
+    }
+  }
+
+  return [...found.values()].sort((left, right) => left.id.localeCompare(right.id));
+}
+
+const DISCOVERED_LESSONS = discoverLessons();
 
 /**
  * Identifiers that name one particular lesson. Real ids look like
  * `V3-LES-130923`; the friendly route slug and the synthetic dev lesson are the
  * other two spellings that have been branched on before.
+ *
+ * The hard-coded shapes carry the assertion on their own, so the discovered ids
+ * below only ever ADD coverage — the genericity check never weakens when the
+ * out-of-repo drafts are missing, and the corpus test says so out loud.
  */
 const LESSON_SPECIFIC_PATTERNS: readonly RegExp[] = [
   /V3-LES-\d+/,
   /V3-KC-\d+/,
   /vectors-and-trigonometry/,
   /lesson-enz-inhibition/,
-  ...DISCOVERED_LESSON_IDS.map((id) => new RegExp(id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))),
+  ...DISCOVERED_LESSONS.map(
+    (lesson) => new RegExp(lesson.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+  ),
 ];
 
 /**
@@ -532,9 +615,55 @@ describe('the lesson seam is generic (no lesson is a special case)', () => {
       ).toBe(true);
     }
     expect(LESSON_SPECIFIC_PATTERNS.some((pattern) => pattern.test('primaryKcId'))).toBe(false);
-    // Lessons discovered from disk are extra coverage, not the whole list, so an
-    // absent artifact tree weakens nothing above.
-    expect(DISCOVERED_LESSON_IDS.length).toBeGreaterThanOrEqual(0);
+  });
+
+  it('resolves the whole three-lesson corpus, or names exactly which lesson is missing', () => {
+    const expectedIds = Object.keys(EXPECTED_LESSON_BINDINGS).sort();
+    const byId = new Map(DISCOVERED_LESSONS.map((lesson) => [lesson.id, lesson]));
+    const missing = expectedIds.filter((id) => !byId.has(id));
+
+    expect(
+      missing,
+      [
+        `The lesson corpus is incomplete: ${missing.join(', ')} could not be found.`,
+        '',
+        'Two of the three lessons live OUTSIDE this repository, in the workspace sibling',
+        '`research/mcat-curriculum-architecture-v3/lesson-authoring-drafts/`, so a clean',
+        'checkout of mcat-prep alone does not contain them. Roots searched, in order:',
+        ...LESSON_SCRIPT_SEARCH_ROOTS.map(
+          (searchRoot) =>
+            `  ${searchRoot.path.length === 0 ? '(unset)' : searchRoot.path}  — ${searchRoot.label}`,
+        ),
+        '',
+        `Set ${LESSON_DRAFTS_ENV_VAR} to a checkout of the drafts tree, or vendor the two`,
+        'artifacts into `content/lessons/`.',
+        '',
+        'This fails loudly instead of skipping ON PURPOSE.',
+        '`v3-lesson-binding-conformance.test.ts` discovers the same artifacts, so without',
+        `them it silently measures ${EXPECTED_LESSON_BINDINGS['V3-LES-130923']} bindings`,
+        `instead of ${EXPECTED_TOTAL_BINDINGS} and its per-lesson assertions stop existing`,
+        'altogether — a suite that passes because it stopped looking, which is the exact',
+        'failure mode this file was written to prevent.',
+      ].join('\n'),
+    ).toEqual([]);
+
+    // The corpus size the seam is measured against. Pinned because the
+    // conformance suite's own floor (115) is only meaningful if these three
+    // artifacts are the ones supplying it.
+    for (const [id, bindings] of Object.entries(EXPECTED_LESSON_BINDINGS)) {
+      const lesson = byId.get(id);
+      expect(
+        lesson?.bindingCount,
+        `${id} yielded ${lesson?.bindingCount} bindings, expected ${bindings} ` +
+          `(resolved from ${lesson?.source ?? 'nowhere'}).`,
+      ).toBe(bindings);
+    }
+    expect(
+      DISCOVERED_LESSONS.reduce((sum, lesson) => sum + lesson.bindingCount, 0),
+    ).toBeGreaterThanOrEqual(EXPECTED_TOTAL_BINDINGS);
+    expect(DISCOVERED_LESSONS.map((lesson) => lesson.id)).toEqual(
+      expect.arrayContaining(expectedIds),
+    );
   });
 
   it('no lesson-specific identifier appears in the generic adapter, router, or engine', () => {
@@ -733,20 +862,27 @@ describe('protected and server-owned material stays out of learner-facing record
 // 5. Lesson completion is delivery state, not capability
 // ---------------------------------------------------------------------------
 
-/** Capability vocabulary: BKT's alone. */
+/**
+ * Capability vocabulary: BKT's alone.
+ *
+ * `reviewDue` is here and `refreshNeeded` is NOT. They are two different facts
+ * that were spelled with one word: "this memory has decayed below the review
+ * line" is BKT's, and "the warrant behind this grain has gone stale" is the
+ * evidence system's. One name for both would let the future planner take a
+ * single input where it must weigh two.
+ */
 const CAPABILITY_FIELDS = [
   'pL',
   'mastered',
   'masteryThreshold',
   'halfLifeDays',
   'reviewDue',
-  'refreshNeeded',
   'lastPracticedAt',
   'decayRate',
   'priorPL',
 ] as const;
 
-/** Warrant vocabulary: the evidence system's alone. */
+/** Warrant vocabulary: the evidence system's alone. `refreshNeeded` belongs here. */
 const WARRANT_FIELDS = [
   'kind',
   'independent',
@@ -760,7 +896,16 @@ const WARRANT_FIELDS = [
   'assistanceLevel',
   'contentBearingHint',
   'valid',
+  'refreshNeeded',
+  'supportingEvidenceIds',
+  'freshestByKind',
 ] as const;
+
+/**
+ * Both spellings of "needs attention again". The delivery surface carries
+ * neither, whichever authority a given name currently belongs to.
+ */
+const DUE_FLAG_NAMES = ['reviewDue', 'refreshNeeded'] as const;
 
 /** The lesson DELIVERY surface: run state, screens, progress, checkpoints. */
 const LESSON_DELIVERY_FILES = [
@@ -777,7 +922,7 @@ describe('lesson delivery and capability are separate axes', () => {
         `${path} is missing, so this assertion cannot see the delivery surface.`,
       ).toBe(true);
       const text = readFileSync(absolute, 'utf8');
-      for (const field of CAPABILITY_FIELDS) {
+      for (const field of [...CAPABILITY_FIELDS, ...DUE_FLAG_NAMES]) {
         expect(
           new RegExp(String.raw`\b${field}\b`).test(text),
           [
@@ -835,7 +980,152 @@ describe('lesson delivery and capability are separate axes', () => {
 // 6. Warrant and capability stay disjoint
 // ---------------------------------------------------------------------------
 
+/**
+ * The learner-facing VIEW types, discovered from the two contract modules rather
+ * than listed, so a new view is classified the day it lands.
+ */
+interface ViewShape {
+  readonly name: string;
+  readonly keys: readonly string[];
+}
+
+function contractViewShapes(): readonly ViewShape[] {
+  const shapes: ViewShape[] = [];
+  for (const [moduleName, module] of [
+    ['contracts/src/mastery.ts', masteryViews],
+    ['contracts/src/learner-views.ts', learnerViews],
+  ] as const) {
+    for (const [exportName, value] of Object.entries(module as Record<string, unknown>)) {
+      if (!exportName.endsWith('Schema') || typeof value !== 'object' || value === null) continue;
+      const shape = (value as { shape?: unknown }).shape;
+      if (typeof shape !== 'object' || shape === null) continue;
+      const keys = Object.keys(shape as Record<string, unknown>);
+      if (keys.length > 0) shapes.push({ name: `${moduleName} ${exportName}`, keys });
+    }
+  }
+  return shapes;
+}
+
+/** A view makes a CAPABILITY claim if it publishes a probability or the cut. */
+const CAPABILITY_VIEW_MARKERS = ['pL', 'mastered'] as const;
+
+/** A view reports the WARRANT if it publishes evidence provenance. */
+const WARRANT_VIEW_MARKERS = ['supportingEvidenceIds', 'freshestByKind', 'reasons'] as const;
+
+/**
+ * Field names that legitimately appear on both sides. Every one is identity or
+ * provenance — WHICH grain and under WHICH policy — never a finding about it.
+ */
+const SHARED_VIEW_IDENTITY_FIELDS: ReadonlySet<string> = new Set([
+  'skillId',
+  'lessonId',
+  'operation',
+  'cluster',
+  'title',
+  'policyVersion',
+]);
+
+/**
+ * Names permitted to straddle the boundary. EMPTY, and it should stay that way.
+ *
+ * `refreshNeeded` used to sit here: it meant BKT decay on `SkillMasteryView` /
+ * `LessonMasteryView` and evidence staleness on `MasteryMapEntry` /
+ * `SessionSummary`, so a planner reading "does this need attention again?" got
+ * one field where two different authorities were answering. The BKT side is now
+ * `reviewDue` and `refreshNeeded` belongs to the warrant alone.
+ *
+ * An entry here must be a LIVE straddle: the check below fails if one stops
+ * straddling, so a resolved exemption cannot linger as cover for the next one.
+ */
+const ALLOWED_STRADDLING_VIEW_FIELDS: readonly string[] = [];
+
 describe('evidence warrant and BKT capability outputs stay disjoint', () => {
+  it('no view type both claims capability and reports the warrant', () => {
+    const shapes = contractViewShapes();
+    expect(
+      shapes.length,
+      'No contract view schemas were discovered, so the classification below is vacuous.',
+    ).toBeGreaterThan(5);
+
+    const capability = shapes.filter((shape) =>
+      CAPABILITY_VIEW_MARKERS.some((marker) => shape.keys.includes(marker)),
+    );
+    const warrant = shapes.filter((shape) =>
+      WARRANT_VIEW_MARKERS.some((marker) => shape.keys.includes(marker)),
+    );
+    // Anti-vacuity: both sides must actually be populated, or "disjoint" is
+    // true because one of them is empty.
+    expect(capability.length, 'no capability-bearing view found').toBeGreaterThanOrEqual(2);
+    expect(warrant.length, 'no warrant-bearing view found').toBeGreaterThanOrEqual(2);
+
+    const both = capability.filter((shape) => warrant.includes(shape)).map((shape) => shape.name);
+    expect(
+      both,
+      [
+        'A single view type publishes BOTH a capability estimate and the evidence warrant.',
+        '',
+        'BKT owns capability (`pL`, decay, review-due, the 0.95 cut); the evidence system',
+        'owns the warrant (which recipe slots are filled, how fresh, what is missing). A',
+        'view that carries both invites a consumer to read the warrant as attainment — which',
+        'is what happened to the ordinal `base` tier, and to `masteryState` before it.',
+        '',
+        'Publish two views, or publish the capability claim alone.',
+      ].join('\n'),
+    ).toEqual([]);
+  });
+
+  it('no field name means capability on one view and warrant on another', () => {
+    const shapes = contractViewShapes();
+    const capabilityKeys = new Set(
+      shapes
+        .filter((shape) => CAPABILITY_VIEW_MARKERS.some((marker) => shape.keys.includes(marker)))
+        .flatMap((shape) => shape.keys),
+    );
+    const warrantKeys = new Set(
+      shapes
+        .filter((shape) => WARRANT_VIEW_MARKERS.some((marker) => shape.keys.includes(marker)))
+        .flatMap((shape) => shape.keys),
+    );
+    expect(capabilityKeys.size).toBeGreaterThan(2);
+    expect(warrantKeys.size).toBeGreaterThan(2);
+
+    const straddling = [...capabilityKeys]
+      .filter((key) => warrantKeys.has(key))
+      .filter((key) => !SHARED_VIEW_IDENTITY_FIELDS.has(key))
+      .sort();
+
+    // The invariant is asserted on the CONCEPT, not on a spelling: whatever the
+    // BKT decay flag ends up called, it must not be the same identifier the
+    // warrant staleness flag uses.
+    const unexpected = straddling.filter((key) => !ALLOWED_STRADDLING_VIEW_FIELDS.includes(key));
+    expect(
+      unexpected,
+      [
+        `Field name(s) ${unexpected.join(', ')} mean one thing on a capability view and`,
+        'another on a warrant view.',
+        '',
+        '"This memory has decayed below the review line" and "the warrant behind this grain',
+        'has gone stale" are two different facts with two different owners. Spelled with one',
+        'word, the future planner takes one input where it has to weigh two, and neither',
+        'authority can be held to its own answer. That is what `refreshNeeded` was before the',
+        'BKT side became `reviewDue`.',
+        '',
+        'Give the capability side and the warrant side different names. If the field is pure',
+        'identity or provenance, add it to SHARED_VIEW_IDENTITY_FIELDS with a reason.',
+      ].join('\n'),
+    ).toEqual([]);
+
+    // An exemption must still describe reality. A resolved straddle left in the
+    // allowlist is cover for the next one, so it has to be deleted, not kept.
+    for (const allowed of ALLOWED_STRADDLING_VIEW_FIELDS) {
+      expect(
+        straddling,
+        `ALLOWED_STRADDLING_VIEW_FIELDS exempts "${allowed}", which no longer straddles the ` +
+          'capability/warrant boundary. Delete the entry.',
+      ).toContain(allowed);
+    }
+  });
+
   it('an EvidenceRecord carries no capability estimate', () => {
     const { evidence } = adapt(eligibleAuthoredBinding());
     expect(evidence, 'the fixture produced no evidence record').not.toBeNull();
@@ -1008,6 +1298,481 @@ describe('the local debug route never reaches the deployed lambda', () => {
 // 8. Doc-asserted rules nothing else enforced
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// 8a. ONE notion of BKT eligibility: the two derivations cannot disagree
+// ---------------------------------------------------------------------------
+
+/**
+ * The invariant this section exists for, and the reason it is written as a
+ * biconditional over a full cross product rather than as two separate checks.
+ *
+ * One attempt produces two outputs that both answer "did this establish
+ * capability?": the `EvidenceRecord.kind` (which a mastery recipe accepts or
+ * refuses) and the BKT qualification verdict (which decides whether `P(L)`
+ * moves). They were derived independently — the verdict from whether the
+ * DECLARED mode set intersected an allowlist, the kind from what the attempt
+ * actually established, least-credit-first and gated on the administration facts.
+ * Only the second was honest, and only the first decided `P(L)`.
+ *
+ * The defect lived exactly in the gap between two assertions that each watched
+ * one output. Testing each output separately does not test that they agree, so
+ * the assertion here is their AGREEMENT:
+ *
+ *   qualified  ⟺  the resolved evidence kind is not contextual-only
+ *
+ * Two reachable forms, neither needing hostile input:
+ *
+ *  F1. An ineligible mode winning least-credit alongside an eligible one —
+ *      `[ENTRY, INDEPENDENT]`, `[DIAGNOSTIC, TIMED]` and 40 others — with every
+ *      administration condition satisfied.
+ *  F2. Any administration-gated mode (`MIXED`, `PASSAGE`, `TIMED`, `PROTECTED`)
+ *      when the runner HONESTLY reported its condition as false.
+ *
+ * Neither is reachable one mode at a time under all-conditions-met, which is why
+ * the old single-mode loop passed while `P(L)` ramped to 0.99999 on zero
+ * mastery-eligible records.
+ */
+
+const MODE_OPTIONS: readonly CandidateEvidenceMode[] = CandidateEvidenceModeSchema.options;
+
+/** Every declaration of length 1 and every ORDERED pair: 13 + 156 = 169. */
+function modeDeclarations(): readonly (readonly CandidateEvidenceMode[])[] {
+  const declarations: (readonly CandidateEvidenceMode[])[] = MODE_OPTIONS.map((mode) => [mode]);
+  for (const first of MODE_OPTIONS) {
+    for (const second of MODE_OPTIONS) {
+      // Ordered, not unordered: least-credit-first must not depend on the order
+      // an author happened to write the modes in, and asserting that requires
+      // seeing both orders.
+      if (first !== second) declarations.push([first, second]);
+    }
+  }
+  return declarations;
+}
+
+interface AdministrationSetting {
+  readonly mixed: boolean;
+  readonly passage: boolean;
+  readonly timed: boolean;
+  readonly protected: boolean;
+}
+
+/** All 16 combinations, so every gated mode is seen both met and honestly unmet. */
+function administrationSettings(): readonly AdministrationSetting[] {
+  const settings: AdministrationSetting[] = [];
+  for (const mixed of [false, true]) {
+    for (const passage of [false, true]) {
+      for (const timed of [false, true]) {
+        for (const protectedScoring of [false, true]) {
+          settings.push({ mixed, passage, timed, protected: protectedScoring });
+        }
+      }
+    }
+  }
+  return settings;
+}
+
+const MODE_DECLARATIONS = modeDeclarations();
+const ADMINISTRATION_SETTINGS = administrationSettings();
+
+/** Which of the 13 modes the declared allowlist accepts, and which it does not. */
+const ELIGIBLE_MODES = MODE_OPTIONS.filter((mode) =>
+  hasEligibleEvidenceMode({ candidateEvidenceModes: [mode] }),
+);
+const INELIGIBLE_MODES = MODE_OPTIONS.filter((mode) => !ELIGIBLE_MODES.includes(mode));
+
+/** Modes whose evidence kind is only earned if the runner reported the condition. */
+const ADMINISTRATION_GATED_MODES = ['MIXED', 'PASSAGE', 'TIMED', 'PROTECTED'] as const;
+
+interface SweepCase {
+  readonly declaration: readonly CandidateEvidenceMode[];
+  readonly setting: AdministrationSetting;
+  /** `null` when no evidence record was produced at all — a finding, not a skip. */
+  readonly kind: EvidenceKind | null;
+  readonly contextualOnly: boolean;
+  readonly qualified: boolean;
+  readonly rejectionCodes: readonly string[];
+  readonly conditions: AdministrationSetting | null;
+  readonly declaresEligibleMode: boolean;
+}
+
+/**
+ * One adaptation per (declaration × administration setting), on an otherwise
+ * clean independent first attempt with a `reasoningOperation` present — so the
+ * ONLY thing that can differ between cases is what the attempt established.
+ */
+function runEligibilitySweep(): readonly SweepCase[] {
+  const cases: SweepCase[] = [];
+  for (const declaration of MODE_DECLARATIONS) {
+    // Parsed once per declaration and reused across the 16 settings: the binding
+    // is author-time and cannot vary with how one attempt was administered.
+    const parsed = binding(
+      eligibleAuthoredBinding({
+        candidate_evidence_modes: [...declaration],
+        reasoning_operation: 'IDENTIFY',
+      }),
+    );
+    for (const setting of ADMINISTRATION_SETTINGS) {
+      const adaptation = adaptLessonResponse({
+        binding: parsed,
+        response: responseFacts({
+          mixedAdministration: setting.mixed,
+          passageAdministration: setting.passage,
+          timedAdministration: setting.timed,
+        }),
+        scoring: {
+          scoringValid: true,
+          serverItemVersion: 4,
+          outcome: 'correct',
+          // The only condition the runner does not own: the server's scoring
+          // authority reports whether it scored this as a protected, unseen item.
+          protectedScoring: setting.protected,
+        },
+        identity: {
+          observationId: '9c0ffee0-0000-4000-8000-00000000c001',
+          eventId: EventIdSchema.parse('9c0ffee0-0000-4000-8000-00000000c002'),
+          learnerId: LearnerIdSchema.parse('9c0ffee0-0000-4000-8000-00000000c003'),
+          idempotencyKey: IdempotencyKeySchema.parse('9c0ffee0-0000-4000-8000-00000000c004'),
+          evidenceId: '9c0ffee0-0000-4000-8000-00000000c005',
+        },
+        cluster: 'R1',
+        envelopeBindingVersion: ARTIFACT_VERSION,
+        acceptedAt: UtcTimestampSchema.parse(ACCEPTED_AT),
+        sequence: 1,
+        contentRelease: 'arch-fixture-release',
+        policies: [],
+      });
+
+      // A missing evidence record is RECORDED, not thrown: scoring is valid in
+      // every case here, so its absence is a finding a named assertion should
+      // report rather than a collection-time crash with no test attached.
+      const evidence = adaptation.evidence;
+      cases.push({
+        declaration,
+        setting,
+        kind: evidence?.kind ?? null,
+        contextualOnly: evidence === null ? true : CONTEXTUAL_ONLY_KINDS.has(evidence.kind),
+        qualified: adaptation.qualification.status === 'qualified',
+        rejectionCodes:
+          adaptation.qualification.status === 'rejected'
+            ? adaptation.qualification.rejectionCodes
+            : [],
+        conditions:
+          evidence === null
+            ? null
+            : {
+                mixed: evidence.conditions.mixed,
+                passage: evidence.conditions.passage,
+                timed: evidence.conditions.timed,
+                protected: evidence.conditions.protected,
+              },
+        declaresEligibleMode: hasEligibleEvidenceMode({ candidateEvidenceModes: declaration }),
+      });
+    }
+  }
+  return cases;
+}
+
+/**
+ * Computed on first use rather than at module load, so a defect that makes the
+ * sweep unrepresentable fails a named test instead of breaking collection for
+ * the whole file.
+ */
+let eligibilitySweep: readonly SweepCase[] | undefined;
+const sweep = (): readonly SweepCase[] => (eligibilitySweep ??= runEligibilitySweep());
+
+const describeCase = (sweepCase: SweepCase): string =>
+  `[${sweepCase.declaration.join(', ')}] under ` +
+  `{mixed:${sweepCase.setting.mixed}, passage:${sweepCase.setting.passage}, ` +
+  `timed:${sweepCase.setting.timed}, protected:${sweepCase.setting.protected}}`;
+
+/** The two frozen codes that may name a refusal the kind gate decided. */
+const CONTEXTUAL_ONLY_REFUSAL_CODES = [
+  'RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY',
+  'INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED',
+] as const;
+
+describe('BKT qualification and the evidence kind cannot disagree', () => {
+  it('covers every one- and two-mode declaration under every administration setting', () => {
+    // Coverage is asserted, not asserted-about: a sweep that silently stopped
+    // enumerating would make every assertion below pass on a handful of cases.
+    const modeCount = MODE_OPTIONS.length;
+    const orderedPairs = MODE_DECLARATIONS.filter((declaration) => declaration.length === 2);
+    const unordered = new Set(orderedPairs.map((pair) => [...pair].sort().join('+')));
+
+    expect(modeCount).toBeGreaterThanOrEqual(13);
+    expect(MODE_DECLARATIONS).toHaveLength(modeCount + modeCount * (modeCount - 1));
+    expect(orderedPairs).toHaveLength(modeCount * (modeCount - 1));
+    expect(unordered.size).toBe((modeCount * (modeCount - 1)) / 2);
+    expect(ADMINISTRATION_SETTINGS).toHaveLength(16);
+    expect(sweep()).toHaveLength(MODE_DECLARATIONS.length * 16);
+
+    // Both outcomes must occur, or the biconditional is satisfied by a constant.
+    expect(sweep().some((sweepCase) => sweepCase.qualified)).toBe(true);
+    expect(sweep().some((sweepCase) => !sweepCase.qualified)).toBe(true);
+  });
+
+  it('produces an evidence record for every case, so nothing is compared against nothing', () => {
+    const withoutEvidence = sweep()
+      .filter((sweepCase) => sweepCase.kind === null)
+      .map(describeCase);
+    expect(
+      withoutEvidence.slice(0, 12),
+      [
+        `${withoutEvidence.length} cases produced NO evidence record.`,
+        '',
+        'Server scoring resolves in every case here, and a valid resolution is the only',
+        'condition that may suppress the record (contract §5.2). Suppressing it for any other',
+        'reason — a rejection short-circuit, say — throws away the warrant for a response the',
+        'server accepted, and leaves the consistency assertions below with one output to',
+        'compare instead of two.',
+      ].join('\n'),
+    ).toEqual([]);
+  });
+
+  it('qualifies for BKT exactly when the resolved evidence kind is not contextual-only', () => {
+    const disagreements = sweep()
+      .filter((sweepCase) => sweepCase.qualified === sweepCase.contextualOnly)
+      .map(
+        (sweepCase) =>
+          `${describeCase(sweepCase)} resolved kind "${sweepCase.kind}" ` +
+          `(contextual-only: ${sweepCase.contextualOnly}) but qualification was ` +
+          `${sweepCase.qualified ? 'QUALIFIED' : `rejected [${sweepCase.rejectionCodes.join(', ')}]`}`,
+      );
+
+    expect(
+      disagreements.slice(0, 12),
+      [
+        `${disagreements.length} of ${sweep().length} cases have the evidence record`,
+        'and the BKT gate disagreeing about one attempt.',
+        '',
+        'These are the two derivations of a single fact. When they diverge, `P(L)` moves on a',
+        'warrant no mastery recipe would accept — the learner is shown mastered with every',
+        'recipe slot still open, and the rejection code list is empty so nothing looks wrong.',
+        '',
+        'The fix is not to make the second derivation agree with the first. It is to have ONE',
+        'derivation: resolve the evidence kind once, gate BKT on',
+        '`CONTEXTUAL_ONLY_KINDS.has(resolvedKind)`, and let the evidence record read the same',
+        'value. A declared mode set states what an item is ELIGIBLE TO SERVE AS and is never a',
+        'finding about an attempt, so it must not gate here.',
+      ].join('\n'),
+    ).toEqual([]);
+  });
+
+  it('names every contextual-only refusal with a frozen code and nothing else', () => {
+    const wrong = sweep()
+      .filter((sweepCase) => sweepCase.contextualOnly)
+      .filter(
+        (sweepCase) =>
+          sweepCase.rejectionCodes.length !== 1 ||
+          !CONTEXTUAL_ONLY_REFUSAL_CODES.includes(
+            sweepCase.rejectionCodes[0] as (typeof CONTEXTUAL_ONLY_REFUSAL_CODES)[number],
+          ),
+      )
+      .map(
+        (sweepCase) =>
+          `${describeCase(sweepCase)} → [${sweepCase.rejectionCodes.join(', ')}] for kind "${sweepCase.kind}"`,
+      );
+    expect(
+      wrong.slice(0, 12),
+      'A contextual-only resolution refused BKT without naming exactly one of ' +
+        `${CONTEXTUAL_ONLY_REFUSAL_CODES.join(' / ')}. Everything else about these attempts is ` +
+        'clean, so any other code — or an empty list — is an audit trail that does not explain ' +
+        'why P(L) did not move.',
+    ).toEqual([]);
+
+    for (const code of CONTEXTUAL_ONLY_REFUSAL_CODES) {
+      expect(BKT_QUALIFICATION_REJECTION_CODES, `${code} is not a frozen code.`).toContain(code);
+    }
+  });
+
+  it('reaches the F1 form: an eligible declaration resolving to contextual-only', () => {
+    // Every ineligible mode precedes every eligible one in the conservative
+    // least-credit order, so an {ineligible, eligible} pair always resolves to the
+    // ineligible one's kind while still declaring an allowlisted mode. That is
+    // the whole F1 space, and it is only visible with TWO modes.
+    const everyConditionMet = sweep().filter(
+      (sweepCase) =>
+        sweepCase.setting.mixed &&
+        sweepCase.setting.passage &&
+        sweepCase.setting.timed &&
+        sweepCase.setting.protected,
+    );
+    const f1 = everyConditionMet.filter(
+      (sweepCase) => sweepCase.declaresEligibleMode && sweepCase.contextualOnly,
+    );
+    const f1Unordered = new Set(f1.map((sweepCase) => [...sweepCase.declaration].sort().join('+')));
+
+    expect(ELIGIBLE_MODES.length).toBeGreaterThan(0);
+    expect(INELIGIBLE_MODES.length).toBeGreaterThan(0);
+    expect(
+      f1Unordered.size,
+      'The sweep no longer reaches the F1 input space, so its verdict below proves nothing. ' +
+        'Expected every {ineligible, eligible} pair to declare an allowlisted mode and still ' +
+        'resolve contextual-only.',
+    ).toBe(INELIGIBLE_MODES.length * ELIGIBLE_MODES.length);
+
+    expect(
+      f1
+        .filter((sweepCase) => sweepCase.qualified)
+        .map(describeCase)
+        .slice(0, 12),
+      'A declaration containing an allowlisted mode moved P(L) while resolving to a ' +
+        'contextual-only kind. This is the original defect: the declared set said yes and the ' +
+        'resolved kind said no, and the declared set won.',
+    ).toEqual([]);
+  });
+
+  it('reaches the F2 form: a gated mode whose condition the runner honestly reported false', () => {
+    const gateFor: Readonly<Record<string, keyof AdministrationSetting>> = {
+      MIXED: 'mixed',
+      PASSAGE: 'passage',
+      TIMED: 'timed',
+      PROTECTED: 'protected',
+    };
+    const failures: string[] = [];
+    for (const mode of ADMINISTRATION_GATED_MODES) {
+      const gate = gateFor[mode] as keyof AdministrationSetting;
+      const honestlyUnmet = sweep().filter(
+        (sweepCase) =>
+          sweepCase.declaration.length === 1 &&
+          sweepCase.declaration[0] === mode &&
+          !sweepCase.setting[gate],
+      );
+      if (honestlyUnmet.length === 0) {
+        failures.push(`${mode}: the sweep never ran it with ${gate} false`);
+        continue;
+      }
+      for (const sweepCase of honestlyUnmet) {
+        if (sweepCase.qualified) {
+          failures.push(`${describeCase(sweepCase)} qualified for BKT although ${gate} was false`);
+        }
+        if (!sweepCase.contextualOnly) {
+          failures.push(
+            `${describeCase(sweepCase)} resolved to non-contextual kind "${sweepCase.kind}" ` +
+              `although ${gate} was false`,
+          );
+        }
+      }
+      // Calibration: the same declaration DOES earn its kind once the condition
+      // is met, so the refusals above are about the missing fact.
+      const met = sweep().filter(
+        (sweepCase) =>
+          sweepCase.declaration.length === 1 &&
+          sweepCase.declaration[0] === mode &&
+          sweepCase.setting[gate],
+      );
+      if (!met.some((sweepCase) => sweepCase.qualified)) {
+        failures.push(
+          `${mode}: never qualified even with ${gate} true — the gate is dead, not strict`,
+        );
+      }
+    }
+    expect(
+      failures.slice(0, 12),
+      'An administration-gated mode was credited on an attempt the runner did not administer ' +
+        'that way. No hostile input is needed for this: a runner reporting `timed: false` ' +
+        'honestly was enough to move P(L) on a `TIMED` declaration.',
+    ).toEqual([]);
+  });
+
+  it('resolves the evidence kind independently of the order the author wrote the modes', () => {
+    const kindByCase = new Map<string, EvidenceKind | null>();
+    for (const sweepCase of sweep()) {
+      kindByCase.set(
+        `${JSON.stringify(sweepCase.setting)}|${sweepCase.declaration.join(',')}`,
+        sweepCase.kind,
+      );
+    }
+    const mismatches: string[] = [];
+    for (const setting of ADMINISTRATION_SETTINGS) {
+      for (const first of MODE_OPTIONS) {
+        for (const second of MODE_OPTIONS) {
+          if (first === second) continue;
+          const forward = kindByCase.get(`${JSON.stringify(setting)}|${first},${second}`);
+          const reverse = kindByCase.get(`${JSON.stringify(setting)}|${second},${first}`);
+          if (forward !== reverse) {
+            mismatches.push(
+              `[${first}, ${second}] → ${forward} but [${second}, ${first}] → ${reverse}`,
+            );
+          }
+        }
+      }
+    }
+    expect(
+      mismatches.slice(0, 12),
+      'The resolved evidence kind depends on the order the modes were authored in. ' +
+        'Least-credit-first must walk a fixed conservative order, or an author changes the ' +
+        'warrant — and with it whether P(L) moves — by reordering a list.',
+    ).toEqual([]);
+  });
+
+  it('derives the evidence kind exactly once, so there is nothing to keep in sync', () => {
+    // The behavioural biconditional above is the real guarantee. This adds the
+    // structural half: one derivation read by both consumers, rather than two
+    // derivations that happen to agree today.
+    const adapter = readFileSync(
+      join(root, 'packages/domain/src/lesson-response-adapter.ts'),
+      'utf8',
+    );
+    const callSites = adapter.match(/(?<![.\w$])deriveEvidenceKind\s*\(/g) ?? [];
+    expect(
+      callSites,
+      [
+        `deriveEvidenceKind is called ${callSites.length} times in the adapter.`,
+        '',
+        'It must be called ONCE, before qualification, with both the BKT gate and the',
+        'EvidenceRecord reading that single value. Deriving it twice is how the record and',
+        'the qualification came to disagree about one attempt, and a second call site is the',
+        'first step back to two rival notions of eligibility.',
+      ].join('\n'),
+    ).toHaveLength(1);
+
+    expect(
+      adapter.includes('CONTEXTUAL_ONLY_KINDS'),
+      'The adapter no longer references CONTEXTUAL_ONLY_KINDS, so the resolved-kind gate is ' +
+        'gone. Whatever replaced it is a second notion of eligibility.',
+    ).toBe(true);
+  });
+
+  it('keeps the declared allowlist strictly weaker than the resolved-kind gate', () => {
+    // Why removing the declared test from the gate is safe rather than merely
+    // different: it could only ever be MORE permissive. Every declaration it
+    // refuses also resolves contextual-only, so nothing that used to move P(L)
+    // stops moving; only the cases it wrongly admitted are now refused.
+    const overStrict = sweep()
+      .filter((sweepCase) => !sweepCase.declaresEligibleMode && !sweepCase.contextualOnly)
+      .map(describeCase);
+    expect(
+      overStrict.slice(0, 12),
+      'A declaration the allowlist calls ineligible resolved to a kind that CAN fill a recipe ' +
+        'slot. The declared test would then be stricter than the honest one, and dropping it ' +
+        'from the gate would newly admit these — which is not what the fix did.',
+    ).toEqual([]);
+  });
+
+  it('never credits a condition the administration facts did not establish', () => {
+    const invented = sweep()
+      .filter(
+        (sweepCase) =>
+          sweepCase.conditions !== null &&
+          (sweepCase.conditions.mixed !== sweepCase.setting.mixed ||
+            sweepCase.conditions.passage !== sweepCase.setting.passage ||
+            sweepCase.conditions.timed !== sweepCase.setting.timed ||
+            sweepCase.conditions.protected !== sweepCase.setting.protected),
+      )
+      .map(
+        (sweepCase) =>
+          `${describeCase(sweepCase)} recorded conditions ${JSON.stringify(sweepCase.conditions)}`,
+      );
+    expect(
+      invented.slice(0, 12),
+      'EvidenceRecord.conditions diverged from the administration facts across the sweep. ' +
+        'Conditions are warrant-bearing and come from the runner and the scoring authority; a ' +
+        'declared mode must never set one.',
+    ).toEqual([]);
+  });
+});
+
 describe('fail-closed rules the contract states and nothing else checked', () => {
   it('keeps BKT eligibility an allowlist, so a future evidence mode is ineligible by default', () => {
     const declared = new Set<string>(CandidateEvidenceModeSchema.options);
@@ -1027,30 +1792,6 @@ describe('fail-closed rules the contract states and nothing else checked', () =>
     ).toBe(false);
     expect(hasEligibleEvidenceMode({ candidateEvidenceModes: ['INSTRUCTIONAL'] })).toBe(false);
     expect(hasEligibleEvidenceMode({ candidateEvidenceModes: ['INDEPENDENT'] })).toBe(true);
-  });
-
-  it('lets a mode move P(L) only if its evidence kind could fill a mastery recipe slot', () => {
-    // Contract §15 named this as an open tension: five modes were eligible while
-    // routing to contextual-only evidence, which would move pL on evidence that
-    // can never satisfy a recipe. This ties the two lists together so they
-    // cannot drift apart again.
-    const clean = responseFacts();
-    const everyConditionMet = { mixed: true, passage: true, timed: true, protected: true };
-    for (const mode of CandidateEvidenceModeSchema.options) {
-      const kind = deriveEvidenceKind([mode], clean, everyConditionMet);
-      const eligible = hasEligibleEvidenceMode({ candidateEvidenceModes: [mode] });
-      expect(
-        eligible,
-        [
-          `${mode} declares BKT eligibility ${eligible} but routes to evidence kind "${kind}",`,
-          `which is ${CONTEXTUAL_ONLY_KINDS.has(kind) ? '' : 'not '}contextual-only.`,
-          '',
-          'A mode that moves P(L) while producing evidence that can never fill a mastery',
-          'recipe slot is incoherent: the capability estimate would rise on a warrant the',
-          'evidence system refuses to count.',
-        ].join('\n'),
-      ).toBe(!CONTEXTUAL_ONLY_KINDS.has(kind));
-    }
   });
 
   it('never lets a declared mode mint an administration condition the runner did not report', () => {
@@ -1219,5 +1960,195 @@ describe('fail-closed rules the contract states and nothing else checked', () =>
         expect(BKT_QUALIFICATION_REJECTION_CODES).toContain(code);
       }
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 9. The warrant covers what the lesson writes; the decay clock is symmetric
+// ---------------------------------------------------------------------------
+
+/** A learner whose only history is one qualified lesson response. */
+const WARRANT_LESSON_ID = 'V3-LES-130923';
+const AUTHORITY_NOW = '2026-07-20T12:00:00.000Z';
+
+function bktObservationFor(
+  primaryKcId: string,
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> {
+  return {
+    observationId: '9c0ffee0-0000-4000-8000-00000000d001',
+    questionId: 'arch-question-1',
+    itemBindingId: 'arch-binding-1',
+    bindingVersion: ARTIFACT_VERSION,
+    serverItemVersion: 4,
+    primaryKcId,
+    reasoningOperation: 'IDENTIFY',
+    correct: true,
+    occurredAt: AUTHORITY_NOW,
+    sequence: 1,
+    contentRelease: 'arch-fixture-release',
+    policies: [],
+    ...overrides,
+  };
+}
+
+describe('the evidence warrant covers every grain a lesson writes', () => {
+  it('produces a warrant for the KC grains a practiced lesson targets', () => {
+    const bank = loadSyntheticBank();
+    const authority = new Authority(bank, fixedClock(AUTHORITY_NOW));
+    const requiredKcIds = orderedKcsForLesson(WARRANT_LESSON_ID) ?? [];
+
+    // Calibration, and the whole point: these grains are NOT in the bank's skill
+    // graph. Enumerating warrants from the graph alone produced an empty warrant
+    // for every lesson KC while nothing looked broken — an absent warrant reads
+    // exactly like "no evidence yet".
+    const graphSkillIds = new Set(bank.skillGraph.skills.map((skill) => skill.skillId));
+    expect(requiredKcIds.length).toBeGreaterThan(0);
+    for (const kcId of requiredKcIds) {
+      expect(
+        graphSkillIds.has(kcId),
+        `${kcId} is in the synthetic skill graph, so this test cannot show that the warrant ` +
+          'enumeration unions the lesson grains in.',
+      ).toBe(false);
+    }
+
+    const state = authority.createGuest();
+    const applied = authority.applyQualifiedBktObservation(state, {
+      observation: QualifiedBktObservationSchema.parse(
+        bktObservationFor(requiredKcIds[0] as string),
+      ),
+      lessonId: WARRANT_LESSON_ID,
+    });
+    expect(applied.status, `the fixture observation was ${applied.status}`).toBe('applied');
+
+    const warrantedGrains = new Set(authority.getMasteryMap(state).map((entry) => entry.skillId));
+    const missing = requiredKcIds.filter((kcId) => !warrantedGrains.has(kcId));
+    expect(
+      missing,
+      [
+        `No warrant was produced for ${missing.join(', ')}.`,
+        '',
+        'Lesson evidence is keyed on `binding.primaryKcId`, a curriculum KC id. If the warrant',
+        "is enumerated only over the bank's skill graph, every recipe slot, gap, freshness",
+        'signal and reason code is computed for grains the lesson seam never touches, and the',
+        "planner's warrant input is an empty set with nothing looking wrong.",
+        '',
+        'A KC with no evidence yet must still report its OPEN slots — that is the gap analysis',
+        'the planner needs, and it is not the same thing as no grain at all.',
+      ].join('\n'),
+    ).toEqual([]);
+  });
+
+  it('throws a named error for an unresolvable grain rather than omitting it', () => {
+    // Silent omission is what hid the finding above for six review rounds, so the
+    // refusal has to name itself.
+    const error = new UnresolvedWarrantGrainError(['ARCH-KC-NOWHERE', 'ARCH-KC-ALSO-NOWHERE']);
+    expect(error).toBeInstanceOf(Error);
+    expect(error.message).toContain('ARCH-KC-NOWHERE');
+    expect(error.message).toContain('ARCH-KC-ALSO-NOWHERE');
+    expect(error.skillIds).toHaveLength(2);
+
+    const authoritySource = readFileSync(
+      join(root, 'packages/authority-core/src/authority.ts'),
+      'utf8',
+    );
+    expect(
+      /throw new UnresolvedWarrantGrainError/.test(authoritySource),
+      'The warrant enumeration no longer THROWS on an unresolvable grain. Whatever it does ' +
+        'instead — filter, default, or skip — makes a missing warrant indistinguishable from ' +
+        '"no evidence yet", which is a failure with no symptom.',
+    ).toBe(true);
+  });
+
+  it('keeps P(L) within the skew window of itself whichever order observations arrive in', () => {
+    // A backdated first write had no floor, so a claim dated years ago became the
+    // decay baseline and identical evidence produced a different learner-facing
+    // number depending on delivery order: 0.1497 against 0.8624, a 5.8x spread.
+    //
+    // BOUNDED, not eliminated — that distinction is the invariant. While a
+    // reported time is honoured at all, some order-dependence remains, and it is
+    // bounded by the decay across the skew window: ~0.03% at the initial 7-day
+    // half-life. Asserting equality would be asserting something the design
+    // deliberately does not promise; asserting a bound is the real contract.
+    const requiredKcIds = orderedKcsForLesson(WARRANT_LESSON_ID) ?? [];
+    const kcId = requiredKcIds[0] as string;
+    const longAgo = new Date(
+      Date.parse(AUTHORITY_NOW) - 6 * 365 * 24 * 60 * 60 * 1000,
+    ).toISOString();
+
+    const apply = (order: readonly string[]): number => {
+      const authority = new Authority(loadSyntheticBank(), fixedClock(AUTHORITY_NOW));
+      const state = authority.createGuest();
+      order.forEach((occurredAt, index) => {
+        authority.applyQualifiedBktObservation(state, {
+          observation: QualifiedBktObservationSchema.parse(
+            bktObservationFor(kcId, {
+              observationId: `9c0ffee0-0000-4000-8000-00000000e00${index + 1}`,
+              occurredAt,
+              sequence: index + 1,
+            }),
+          ),
+          lessonId: WARRANT_LESSON_ID,
+        });
+      });
+      const view = authority
+        .getMasterySkills(state)
+        .find((skill) => skill.operation === 'IDENTIFY');
+      return view?.pL ?? Number.NaN;
+    };
+
+    const oldestFirst = apply([longAgo, AUTHORITY_NOW]);
+    const newestFirst = apply([AUTHORITY_NOW, longAgo]);
+
+    expect(Number.isFinite(oldestFirst)).toBe(true);
+    expect(Number.isFinite(newestFirst)).toBe(true);
+
+    /**
+     * Two correct answers must leave `P(L)` well above the prior in BOTH orders.
+     * Unbounded, the backdated-first order decayed its own baseline to ~1e-104
+     * and read back 0.1497 — under the 0.2 prior, from two correct answers.
+     */
+    for (const [label, reading] of [
+      ['backdated observation first', oldestFirst],
+      ['backdated observation last', newestFirst],
+    ] as const) {
+      expect(
+        reading,
+        `With the ${label}, two correct answers left P(L) at ${reading} — at or below the 0.2 ` +
+          'prior. An unclamped decay baseline is eating the evidence.',
+      ).toBeGreaterThan(0.5);
+    }
+
+    const spread = Math.abs(newestFirst - oldestFirst) / Math.max(oldestFirst, newestFirst);
+    expect(
+      spread,
+      [
+        `P(L) read ${oldestFirst} when the backdated observation arrived first and`,
+        `${newestFirst} when it arrived last: a ${(spread * 100).toFixed(4)}% spread from`,
+        'transport order alone.',
+        '',
+        'The decay baseline needs a floor symmetric with the future-skew tolerance, which caps',
+        "this at the decay across that window (~0.03%). A grain's monotonic floor cannot help",
+        'on its FIRST write, where there is no history to be monotonic against.',
+      ].join('\n'),
+    ).toBeLessThan(0.001);
+  });
+
+  it('bounds the decay clock symmetrically, and narrowly', () => {
+    expect(BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS).toBeGreaterThan(0);
+    expect(
+      BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS,
+      'The past and future skew tolerances differ. An asymmetric window means the same ' +
+        'unverifiable claim is treated one way early and another way late, and the ' +
+        'order-dependence the past bound exists to close reopens on the wider side.',
+    ).toBe(BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS);
+
+    // The bound on order-dependence IS the decay across the window, so the width
+    // is load-bearing: a day would leave a spread a learner could see.
+    expect(
+      BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS,
+      'The skew window is wider than an hour. It is generosity toward an unverifiable claim, ' +
+        'and the wider it gets the more decay a backdated submission can avoid.',
+    ).toBeLessThanOrEqual(60 * 60 * 1000);
   });
 });
