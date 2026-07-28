@@ -2169,6 +2169,70 @@ body {
   flex: 1 1 160px;
 }
 
+/* Deck-at-a-glance: next-7-days due forecast (home) */
+.mc-recall__forecast {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--mc-space-2);
+}
+.mc-recall__forecast-col {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mc-space-2);
+  min-width: 0;
+}
+.mc-recall__forecast-count {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-15);
+  line-height: var(--mc-leading-tight);
+  color: var(--mc-ink);
+}
+.mc-recall__forecast-track {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 96px;
+}
+.mc-recall__forecast-bar {
+  width: 100%;
+  min-height: 4px;
+  border-radius: var(--mc-radius-control) var(--mc-radius-control) 0 0;
+  background: var(--mc-primary);
+}
+.mc-recall__forecast-bar--empty {
+  background: var(--mc-border);
+}
+.mc-recall__forecast-label {
+  font-size: var(--mc-text-12);
+  color: var(--mc-ink-muted);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.mc-recall__forecast-label--today {
+  color: var(--mc-primary-text);
+  font-weight: 700;
+}
+
+/* Build-a-strong-deck tips (empty deck) */
+.mc-recall__tips {
+  margin: 0;
+  padding-left: var(--mc-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+  color: var(--mc-ink-muted);
+}
+.mc-recall__tips li {
+  line-height: var(--mc-leading-body);
+}
+.mc-recall__tips strong {
+  color: var(--mc-ink);
+  font-weight: 700;
+}
+
 /* Review screen */
 .mc-recall__progresshead {
   display: flex;
