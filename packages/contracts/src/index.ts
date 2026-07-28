@@ -10,6 +10,7 @@ export * from './commands';
 export * from './learner-views';
 export * from './mastery';
 export * from './practice';
+export * from './todays-path';
 export * from './api';
 export * from './http';
 export * from './v3-vector-lesson';

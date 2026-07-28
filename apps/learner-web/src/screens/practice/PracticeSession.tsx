@@ -29,6 +29,9 @@ const PURPOSE_LABEL: Record<string, string> = {
 interface SessionState {
   x?: number;
   focus?: string;
+  /** When launched from Today's Path: where to return, and which activity to complete. */
+  returnTo?: string;
+  activityId?: string;
 }
 
 /** A step in the working sequence: a first attempt, or a spaced second go. */
@@ -41,7 +44,7 @@ interface Slot {
 export function PracticeSession() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { x = 8, focus } = (location.state as SessionState | null) ?? {};
+  const { x = 8, focus, returnTo, activityId } = (location.state as SessionState | null) ?? {};
 
   const queue = usePracticeQueue(x, focus, true);
   const submit = useSubmitPracticeAttempt();
@@ -120,6 +123,7 @@ export function PracticeSession() {
 
   const advance = () => {
     if (index + 1 < sequence.length) setIndex(index + 1);
+    else if (returnTo) navigate(returnTo, { state: { completedActivityId: activityId } });
     else navigate('/app/practice');
   };
 

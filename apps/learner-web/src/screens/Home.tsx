@@ -1,6 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
+import { Link } from 'react-router-dom';
 import { useMasteryMap, useToday } from '../app/queries';
+import { useTodaysPath } from '../app/today-queries';
 import { countGlowing } from '../components/BrainAtlas';
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
 import { GhostCompanion } from '../components/GhostCompanion';
@@ -14,20 +14,6 @@ const CAPACITY_LABEL: Record<string, string> = {
   rolling: 'Rolling plan',
 };
 
-const REASON_TEXT: Record<string, string> = {
-  UNFINISHED_CHECKPOINT: 'Resume where you left off',
-  NEW_LEARNING: 'New learning',
-  OVERDUE_REVIEW: 'Due review',
-  PREREQUISITE_BLOCKER: 'Prerequisite first',
-};
-
-const CLUSTER_NAMES: Record<string, string> = {
-  BB1: 'Biomolecules & Metabolism',
-  BB2: 'Cells & Genetics',
-  BB3: 'Signaling & Organ Systems',
-  BB4: 'Immunity & Development',
-};
-
 function greeting(): string {
   const h = new Date().getHours();
   if (h < 12) return 'Good morning';
@@ -36,11 +22,14 @@ function greeting(): string {
 }
 
 export function Home() {
-  const navigate = useNavigate();
   const today = useToday();
+  const path = useTodaysPath();
   const mastery = useMasteryMap();
   const glowing = countGlowing(mastery.data);
-  const upNext = today.data?.tasks.find((t) => t.taskId === today.data?.continueTaskId) ?? today.data?.tasks[0];
+
+  const plan = path.data ?? null;
+  const current = plan?.activities.find((a) => a.activityId === plan.currentActivityId) ?? null;
+  const remaining = plan?.activities.filter((a) => a.status === 'ready' || a.status === 'in_progress').length ?? 0;
 
   const dayLabel = today.data
     ? `Day ${today.data.dayNumber}${today.data.totalDays ? ` of ${today.data.totalDays}` : ''}`
@@ -61,21 +50,22 @@ export function Home() {
 
       <EvidenceAtlas variant="home" />
 
-      {upNext ? (
-        <Link to="/app/learn" className="mc-upnext" aria-label={`Continue: ${upNext.title}`}>
-          <div className="mc-upnext__text">
-            <span className="mc-upnext__eyebrow">Up next</span>
-            <span className="mc-upnext__title">{upNext.title}</span>
-            <span className="mc-upnext__meta">
-              {upNext.estimatedMinutes} min
-              {upNext.cluster ? ` · ${CLUSTER_NAMES[upNext.cluster] ?? upNext.cluster}` : ''}
-            </span>
-          </div>
-          <span className="mc-upnext__play" aria-hidden="true">
-            <IconPlay />
+      <Link to="/app/today" className="mc-upnext" aria-label="Today's Path">
+        <div className="mc-upnext__text">
+          <span className="mc-upnext__eyebrow">Today’s Path</span>
+          <span className="mc-upnext__title">
+            {plan?.built && current ? current.title : 'Start today’s plan'}
           </span>
-        </Link>
-      ) : null}
+          <span className="mc-upnext__meta">
+            {plan?.built
+              ? `${remaining} activit${remaining === 1 ? 'y' : 'ies'} left · ~${plan.plannedMinutes} min`
+              : 'Build a plan sized to your day'}
+          </span>
+        </div>
+        <span className="mc-upnext__play" aria-hidden="true">
+          <IconPlay />
+        </span>
+      </Link>
 
       <div className="mc-home__pills">
         <Link to="/app/recall" className="mc-hpill">
@@ -120,53 +110,6 @@ export function Home() {
         </div>
         <span className="mc-daily__arrow" aria-hidden="true">→</span>
       </Link>
-
-      {today.data && today.data.tasks.length > 0 ? (
-        <section className="mc-home__plan">
-          <div className="mc-screen__head">
-            <h2 className="mc-h2">Today’s plan</h2>
-            <p className="mc-muted mc-fineprint">
-              About {Math.round(today.data.reviewSharePct * 100)}% of study time is reserved for review.
-            </p>
-          </div>
-
-          <Stack gap={3}>
-            {today.data.tasks.map((task) => (
-              <Card key={task.taskId} elevated>
-                <div className="mc-task">
-                  <div>
-                    <Eyebrow>{REASON_TEXT[task.priorityReason] ?? 'Recommended'}</Eyebrow>
-                    <p className="mc-task__title">{task.title}</p>
-                    <p className="mc-muted mc-fineprint">
-                      {task.estimatedMinutes} min · {task.reasonDetail ?? ''}
-                    </p>
-                  </div>
-                  <Button
-                    variant={task.status === 'in_progress' ? 'primary' : 'secondary'}
-                    onClick={() => navigate(task.type === 'quick_practice' ? '/app/recall' : '/app/learn')}
-                  >
-                    {task.status === 'in_progress' ? 'Continue' : 'Start'}
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </Stack>
-
-          <Callout tone="info">
-            Miss a day? Nothing piles up as shame — the plan recalculates from what you actually
-            complete.
-          </Callout>
-
-          <div className="mc-home__pills">
-            <Link to="/app/learn" className="mc-hpill">
-              Keep going →
-            </Link>
-            <Link to="/app/skills" className="mc-hpill">
-              All skills
-            </Link>
-          </div>
-        </section>
-      ) : null}
     </div>
   );
 }

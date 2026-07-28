@@ -10,6 +10,7 @@ import {
   IconPractice,
   IconProgress,
   IconSun,
+  IconToday,
   IconUser,
 } from '../components/icons';
 
@@ -21,11 +22,14 @@ const NAV = [
   { to: '/app/progress', end: false, label: 'Progress', Icon: IconProgress },
 ];
 
+const TODAY_ITEM = { to: '/app/today', end: false, label: 'Today', Icon: IconToday };
 const PRACTICE_ITEM = { to: '/app/practice', end: false, label: 'Practice', Icon: IconPractice };
 
-// Desktop sidebar order: Practice sits right above Recall. The mobile bottom nav
-// stays the shared five-item NAV (Practice is reached from Home on mobile).
-const SIDEBAR = [NAV[0], NAV[1], PRACTICE_ITEM, NAV[2], NAV[3], NAV[4]];
+// Desktop sidebar order: Today's Path sits right under Home; Practice sits above
+// Recall. The mobile bottom nav stays the shared five-item NAV so the longest
+// label ("Curriculum") never overflows a narrow phone — Today's Path and Practice
+// are reached from Home on mobile (Home's hero links straight into Today's Path).
+const SIDEBAR = [NAV[0], TODAY_ITEM, NAV[1], PRACTICE_ITEM, NAV[2], NAV[3], NAV[4]];
 
 export function AppShell() {
   const bootstrap = useBootstrap();

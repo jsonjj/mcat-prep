@@ -1,5 +1,6 @@
 import type {
   BootstrapResponse,
+  BuildTodaysPathInput,
   CarsDuelRubric,
   CarsReadinessView,
   DiagnosticNext,
@@ -16,6 +17,7 @@ import type {
   SkillSummary,
   StudyStepView,
   TodayView,
+  TodaysPathView,
   VectorLessonAction,
   VectorLessonRunView,
   VectorLessonStartResponse,
@@ -41,6 +43,17 @@ export interface AuthorityPort {
   submitDiagnostic(questionId: string, choiceId: string | null): Promise<void>;
   confirmPlan(goal: GoalInput): Promise<void>;
   getToday(): Promise<TodayView>;
+  /** Today's Path: read the current day's plan (built:false when none exists yet). */
+  getTodaysPath(): Promise<TodaysPathView>;
+  /** Today's Path: build/persist today's plan from a client-fed recall load + candidate lessons. */
+  buildTodaysPath(input: BuildTodaysPathInput): Promise<TodaysPathView>;
+  /** Today's Path: advance the guided runner (mark an activity in_progress / complete / skipped). */
+  recordPlanActivity(
+    activityId: string,
+    status: 'in_progress' | 'complete' | 'skipped',
+  ): Promise<void>;
+  /** Today's Path: set the daily time-budget preset (a 2–6 hr preset, in minutes). */
+  setDailyBudget(minutesPerDay: number): Promise<void>;
   getSession(): Promise<StudyStepView>;
   submitAttempt(choiceId: string | null): Promise<void>;
   selectCause(cause: ProbableCause): Promise<void>;

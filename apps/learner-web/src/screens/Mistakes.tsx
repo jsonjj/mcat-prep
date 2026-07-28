@@ -1,4 +1,5 @@
-import { Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { useErrorLog } from '../app/queries';
 
 const CAUSE_LABEL: Record<string, string> = {
@@ -14,6 +15,13 @@ const CAUSE_LABEL: Record<string, string> = {
 
 export function Mistakes() {
   const errors = useErrorLog();
+  const location = useLocation();
+  const navigate = useNavigate();
+  // Today's Path routes its "Review Mistakes" slot here (placeholder — no guided
+  // repair runner yet; see docs/mistakes-repair-plan.md). Offer a "done" return.
+  const navState = location.state as { returnTo?: string; activityId?: string } | null;
+  const returnTo = navState?.returnTo;
+  const activityId = navState?.activityId;
 
   return (
     <div className="mc-screen">
@@ -23,6 +31,23 @@ export function Mistakes() {
           Your Second Brain: every miss keeps its reasoning and repair, not just a red mark.
         </p>
       </header>
+
+      {returnTo ? (
+        <Callout tone="info" title="From today’s path">
+          <Stack gap={3}>
+            <p className="mc-fineprint">
+              Review your open mistakes below. Guided repair (a fresh same-trap item with the
+              diagnosis and refutation) is coming soon — for now, revisit and mark this done.
+            </p>
+            <Button
+              variant="primary"
+              onClick={() => navigate(returnTo, { state: { completedActivityId: activityId } })}
+            >
+              Done — back to plan
+            </Button>
+          </Stack>
+        </Callout>
+      ) : null}
 
       {errors.data && errors.data.length > 0 ? (
         <Stack gap={3}>

@@ -7,6 +7,7 @@ export * from './mastery-policy';
 export * from './planner';
 export * from './readiness';
 export * from './ghost';
+export * from './todays-path';
 // Mastery engine (mastery-bkt / provisional-v1).
 export * from './irt';
 export * from './bkt';
@@ -27,6 +28,7 @@ import { PLANNER_MANIFEST } from './planner';
 import { READINESS_MANIFEST } from './readiness';
 import { GHOST_MANIFEST } from './ghost';
 import { PRACTICE_SELECTION_MANIFEST } from './practice-selection';
+import { TODAYS_PATH_MANIFEST } from './todays-path';
 
 /** The active policy set, for recording on every consequential decision/event. */
 export const ACTIVE_POLICY_MANIFESTS = [
@@ -39,6 +41,7 @@ export const ACTIVE_POLICY_MANIFESTS = [
   READINESS_MANIFEST,
   GHOST_MANIFEST,
   PRACTICE_SELECTION_MANIFEST,
+  TODAYS_PATH_MANIFEST,
 ] as const;
 
 export const activePolicyVersions = () => ACTIVE_POLICY_MANIFESTS.map(asPolicyVersion);

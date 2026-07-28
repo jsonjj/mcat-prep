@@ -13,9 +13,11 @@ import {
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
+  TodaysPathViewSchema,
   VectorLessonStatusViewSchema,
   WrappedViewSchema,
   type BootstrapResponse,
+  type BuildTodaysPathInput,
   type Clock,
   type PracticeAttemptCommand,
   type ProbableCause,
@@ -82,6 +84,27 @@ export class InProcessAuthorityClient implements AuthorityPort {
 
   async getToday() {
     return TodayViewSchema.parse(this.mutate((state) => this.authority.getToday(state)));
+  }
+
+  async getTodaysPath() {
+    return TodaysPathViewSchema.parse(this.mutate((state) => this.authority.getTodaysPath(state)));
+  }
+
+  async buildTodaysPath(input: BuildTodaysPathInput) {
+    return TodaysPathViewSchema.parse(
+      this.mutate((state) => this.authority.buildTodaysPath(state, input)),
+    );
+  }
+
+  async recordPlanActivity(
+    activityId: string,
+    status: 'in_progress' | 'complete' | 'skipped',
+  ): Promise<void> {
+    this.mutate((state) => this.authority.recordPlanActivity(state, activityId, status));
+  }
+
+  async setDailyBudget(minutesPerDay: number): Promise<void> {
+    this.mutate((state) => this.authority.setDailyBudget(state, minutesPerDay));
   }
 
   async getSession() {

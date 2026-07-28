@@ -1,9 +1,10 @@
-import { Navigate, createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import { AppShell } from '../screens/AppShell';
 import { Welcome } from '../screens/Welcome';
 import { Diagnostic } from '../screens/Diagnostic';
 import { PlanSetup } from '../screens/PlanSetup';
 import { Home } from '../screens/Home';
+import { TodaysPath } from '../screens/today/TodaysPath';
 import { Curriculum } from '../screens/Curriculum';
 import { VectorLesson } from '../screens/VectorLesson';
 import { Lesson } from '../screens/Lesson';
@@ -39,8 +40,8 @@ export const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'curriculum', element: <Curriculum /> },
       { path: 'lessons/vectors-and-trigonometry', element: <VectorLesson /> },
-      // Today merged into Home; keep the path working for bookmarks.
-      { path: 'today', element: <Navigate to="/app" replace /> },
+      // Today's Path — the daily learning-plan engine (guided one-at-a-time runner).
+      { path: 'today', element: <TodaysPath /> },
       { path: 'learn', element: <Study /> },
       // Recall (Anki-style flashcards): the tab landing plus its child surfaces.
       { path: 'recall', element: <RecallHome /> },

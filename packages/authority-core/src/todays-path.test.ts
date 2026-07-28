@@ -1,0 +1,84 @@
+import { describe, expect, it } from 'vitest';
+import { fixedClock } from '@mcat/contracts';
+import { loadSyntheticBank } from '@mcat/content';
+import { Authority } from './authority';
+import type { LearnerState } from './types';
+
+const clock = fixedClock('2026-07-20T12:00:00.000Z');
+
+function onboard(auth: Authority): LearnerState {
+  const state = auth.createGuest();
+  let next = auth.diagnosticNext(state);
+  while (!next.done) {
+    auth.submitDiagnosticAnswer(state, next.questionId!, 'A');
+    next = auth.diagnosticNext(state);
+  }
+  auth.confirmPlan(state, { testDate: null, targetScore: 515, minutesPerWeek: 1260 });
+  return state;
+}
+
+const EMPTY_LOAD = {
+  dueLearning: 0,
+  dueReviews: 0,
+  newAvailable: 0,
+  due: 0,
+  estimatedMinutesForDue: 0,
+};
+const candidateLessons = [
+  { lessonId: 'les-a', slug: 'a', title: 'Lesson A', section: 'bb', cluster: null, kcCount: 4, estimatedMinutes: 20 },
+  { lessonId: 'les-b', slug: 'b', title: 'Lesson B', section: 'cp', cluster: null, kcCount: 2, estimatedMinutes: 20 },
+];
+
+describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', () => {
+  it('builds and persists a plan and WRITES NO MASTERY', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    const before = auth.getMasterySkills(state).map((s) => s.pL);
+
+    const view = auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: false });
+    expect(view.built).toBe(true);
+    expect(view.activities.length).toBeGreaterThan(0);
+    expect(view.activities.some((a) => a.kind === 'cars_duel')).toBe(true);
+    expect(state.plan).toBeDefined();
+
+    // Planning reads mastery but must never move it.
+    expect(auth.getMasterySkills(state).map((s) => s.pL)).toEqual(before);
+  });
+
+  it('is idempotent per day unless forced', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: false });
+    const v1 = state.plan!.version;
+    auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: false });
+    expect(state.plan!.version).toBe(v1);
+    auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true });
+    expect(state.plan!.version).toBe(v1 + 1);
+  });
+
+  it('sizes the day to the chosen preset', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.setDailyBudget(state, 120);
+    const view = auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true });
+    expect(view.dailyMinutesPreset).toBe(120);
+    expect(view.dailyBudgetMinutes).toBe(120);
+    expect(view.plannedMinutes).toBeLessThanOrEqual(120);
+  });
+
+  it('completes an activity and marks a finished lesson for eligibility', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    const view = auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: false });
+    const lesson = view.activities.find((a) => a.kind === 'lesson');
+    expect(lesson).toBeDefined();
+
+    auth.recordPlanActivity(state, lesson!.activityId, 'complete');
+    const updated = auth.getTodaysPath(state);
+    expect(updated.activities.find((a) => a.activityId === lesson!.activityId)!.status).toBe('complete');
+    expect(state.completedLessons).toContain(lesson!.lessonId);
+
+    const rebuilt = auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true });
+    expect(rebuilt.activities.some((a) => a.lessonId === lesson!.lessonId)).toBe(false);
+  });
+});

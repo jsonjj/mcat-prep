@@ -4,12 +4,13 @@ import type {
   LearnerEvent,
   LearnerId,
   MasteryState,
+  PlanActivityStatus,
   ReasoningOperation,
   UtcTimestamp,
 } from '@mcat/contracts';
 import type { EvidenceRecord, MasterySkillState, Task } from '@mcat/domain';
 import type { LearnerSafeQuestion } from '@mcat/content';
-import type { GhostView, MemoryState } from '@mcat/policies';
+import type { GhostView, MemoryState, PlannedActivity, ReviewDebtBand } from '@mcat/policies';
 
 export type { GhostView, GhostState } from '@mcat/policies';
 
@@ -23,6 +24,8 @@ export interface LearnerState {
     testDate: string | null;
     targetScore: number | null;
     minutesPerWeek: number;
+    /** Today's Path daily time budget (a 2–6 hr preset, in minutes). */
+    dailyMinutesPreset?: number;
   } | null;
   nextSequence: number;
   seenIdempotencyKeys: string[];
@@ -36,6 +39,29 @@ export interface LearnerState {
    * learner-api path mastery lives in dedicated Postgres tables instead.
    */
   mastery?: MasteryEngineState;
+  /** Today's Path — the persisted daily plan + per-activity progress (optional; per-day). */
+  plan?: TodaysPathState;
+  /** Lessons marked complete when finished from a Today's Path run (lightweight completion). */
+  completedLessons?: string[];
+}
+
+/** One scheduled activity plus its per-learner run status (persisted). */
+export interface TodaysPathActivityState extends PlannedActivity {
+  status: PlanActivityStatus;
+}
+
+/** The persisted daily plan for one learner-day. Today's Path writes no mastery. */
+export interface TodaysPathState {
+  planDate: string; // YYYY-MM-DD (learner local, 4 AM rollover)
+  dailyMinutesPreset: number;
+  dailyBudgetMinutes: number;
+  plannedMinutes: number;
+  reviewSharePct: number;
+  reviewDebtBand: ReviewDebtBand;
+  version: number;
+  generatedAt: UtcTimestamp;
+  currentActivityId: string | null;
+  activities: TodaysPathActivityState[];
 }
 
 /** Per-learner mastery engine state. `P(L)` values are as-of `lastPracticedAt`. */

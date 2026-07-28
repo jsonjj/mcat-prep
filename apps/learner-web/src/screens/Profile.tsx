@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack, useTheme, type ThemePreference } from '@mcat/ui-web';
+import { DAILY_MINUTES_PRESETS } from '@mcat/contracts';
 import { useBootstrap, useResetProgress } from '../app/queries';
+import { useBuildTodaysPath, useSetDailyBudget, useTodaysPath } from '../app/today-queries';
 import { isGhostOptedOut, setGhostOptOut } from '../components/GhostCompanion';
 
 const THEMES: { value: ThemePreference; label: string }[] = [
@@ -15,6 +17,9 @@ export function Profile() {
   const bootstrap = useBootstrap();
   const reset = useResetProgress();
   const { preference, setPreference } = useTheme();
+  const todaysPath = useTodaysPath();
+  const setBudget = useSetDailyBudget();
+  const buildPath = useBuildTodaysPath();
   const [ghostOn, setGhostOn] = useState(() => !isGhostOptedOut());
   const [remindersOn, setRemindersOn] = useState(() => {
     try {
@@ -82,6 +87,32 @@ export function Profile() {
               </button>
             ))}
           </div>
+        </Stack>
+      </Card>
+
+      <Card elevated>
+        <Stack gap={3}>
+          <Eyebrow>Daily study time</Eyebrow>
+          <div className="mc-segmented" role="radiogroup" aria-label="Daily study time">
+            {DAILY_MINUTES_PRESETS.map((m) => (
+              <button
+                key={m}
+                type="button"
+                role="radio"
+                aria-checked={todaysPath.data?.dailyMinutesPreset === m}
+                className={`mc-segmented__opt ${todaysPath.data?.dailyMinutesPreset === m ? 'is-active' : ''}`}
+                onClick={() =>
+                  setBudget.mutate(m, { onSuccess: () => buildPath.mutate({ force: true }) })
+                }
+                disabled={setBudget.isPending || buildPath.isPending}
+              >
+                {Math.round(m / 60)} hr
+              </button>
+            ))}
+          </div>
+          <p className="mc-muted mc-fineprint">
+            Today&apos;s Path sizes your daily plan to this budget (2–6 hours).
+          </p>
         </Stack>
       </Card>
 

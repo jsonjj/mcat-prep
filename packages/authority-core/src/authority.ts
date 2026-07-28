@@ -1,5 +1,6 @@
 import {
   ContentIdSchema,
+  DAILY_MINUTES_PRESETS,
   REASONING_OPERATIONS,
   SKILL_CLUSTERS,
   daysBetween,
@@ -8,6 +9,8 @@ import {
   newLearnerId,
   systemClock,
   type BootstrapResponse,
+  type BuildTodaysPathInput,
+  type TodaysPathView,
   type CarsDuelRubric,
   type CarsReadinessLabel,
   type CarsReadinessView,
@@ -28,11 +31,19 @@ import {
   type SkillMasteryView,
   type UtcTimestamp,
 } from '@mcat/contracts';
-import { EvidenceRecordSchema, scoreAttempt, type EvidenceKind, type Task } from '@mcat/domain';
+import {
+  EvidenceRecordSchema,
+  scoreAttempt,
+  type CapacityLabel,
+  type EvidenceKind,
+  type Task,
+} from '@mcat/domain';
 import {
   activePolicyVersions,
   applyMasteryAttempt,
   bandCenter,
+  buildTodaysPath as buildTodaysPathEngine,
+  TODAYS_PATH_CONFIG,
   CARS_K_DUEL,
   CARS_K_POTD,
   CARS_V0,
@@ -51,10 +62,14 @@ import {
   PRIOR_PL0,
   REVIEW_LINE,
   selectPracticeQueue,
+  type CarriedActivity,
+  type GhostView,
   type MemoryState,
   type PracticeCarsUnit,
   type PracticeSnapshot,
   type PracticeUnit,
+  type TodaysPathCandidateLesson,
+  type TodaysPathSnapshot,
 } from '@mcat/policies';
 import { clusterForLesson, loadSyntheticBank, type LoadedBank } from '@mcat/content';
 import {
@@ -75,6 +90,8 @@ import type {
   StudyPhase,
   StudyStepView,
   TodayView,
+  TodaysPathActivityState,
+  TodaysPathState,
   WrappedView,
 } from './types';
 
@@ -248,13 +265,54 @@ export class Authority {
 
   // ---- Today / plan -------------------------------------------------------
 
-  getToday(state: LearnerState): TodayView {
+  /**
+   * Shared day framing (capacity label, day number/total, coverage, ghost) used by
+   * both the legacy Today view and the Today's Path engine so they never drift.
+   */
+  private dayContext(state: LearnerState): {
+    capacityLabel: CapacityLabel;
+    dayNumber: number;
+    totalDays: number | null;
+    coveragePct: number;
+    clustersWithEvidence: Set<string>;
+    ghost: GhostView;
+  } {
     const capacityLabel = classifyCapacity({
       availableMinutesPerWeek: state.goal?.minutesPerWeek ?? 300,
       weeksRemaining: state.goal?.testDate ? this.weeksUntil(state.goal.testDate) : null,
       requiredP50Minutes: 1800,
       requiredP80Minutes: 2600,
     });
+    const dayNumber = Math.max(1, Math.floor(daysBetween(state.createdAt, this.clock.now())) + 1);
+    const totalDays = state.goal?.testDate
+      ? Math.max(1, Math.round(daysBetween(state.createdAt, state.goal.testDate as unknown as UtcTimestamp)))
+      : null;
+    const clustersWithEvidence = new Set(
+      this.getMasteryMap(state)
+        .filter((m) => m.base !== 'not_assessed')
+        .map((m) => m.cluster),
+    );
+    const coveragePct = clustersWithEvidence.size / SKILL_CLUSTERS.length;
+    let lastEvidenceAt: string | null = null;
+    for (const e of state.evidence) {
+      if (lastEvidenceAt === null || e.occurredAt > lastEvidenceAt) lastEvidenceAt = e.occurredAt;
+    }
+    const lastActiveDaysAgo =
+      lastEvidenceAt !== null
+        ? Math.floor(daysBetween(lastEvidenceAt as unknown as UtcTimestamp, this.clock.now()))
+        : null;
+    const ghost = computeGhost({
+      scheduled: Boolean(state.goal?.testDate),
+      dayNumber,
+      totalDays,
+      coveragePct,
+      lastActiveDaysAgo,
+    });
+    return { capacityLabel, dayNumber, totalDays, coveragePct, clustersWithEvidence, ghost };
+  }
+
+  getToday(state: LearnerState): TodayView {
+    const ctx = this.dayContext(state);
     const sessionActive = state.session !== null && !this.sessionComplete(state);
     const tasks: Task[] = [
       {
@@ -281,45 +339,228 @@ export class Authority {
         requiresConnection: false,
       },
     ];
-    const dayNumber = Math.max(1, Math.floor(daysBetween(state.createdAt, this.clock.now())) + 1);
-    const totalDays = state.goal?.testDate
-      ? Math.max(1, Math.round(daysBetween(state.createdAt, state.goal.testDate as unknown as UtcTimestamp)))
-      : null;
     const repairsOpen = this.getErrorLog(state).filter((e) => !e.repaired).length;
-
-    // Ghost companion: derived only from the learner's own goal, timeline, and coverage.
-    const clustersWithEvidence = new Set(
-      this.getMasteryMap(state)
-        .filter((m) => m.base !== 'not_assessed')
-        .map((m) => m.cluster),
-    );
-    const coveragePct = clustersWithEvidence.size / SKILL_CLUSTERS.length;
-    let lastEvidenceAt: string | null = null;
-    for (const e of state.evidence) {
-      if (lastEvidenceAt === null || e.occurredAt > lastEvidenceAt) lastEvidenceAt = e.occurredAt;
-    }
-    const lastActiveDaysAgo =
-      lastEvidenceAt !== null
-        ? Math.floor(daysBetween(lastEvidenceAt as unknown as UtcTimestamp, this.clock.now()))
-        : null;
-    const ghost = computeGhost({
-      scheduled: Boolean(state.goal?.testDate),
-      dayNumber,
-      totalDays,
-      coveragePct,
-      lastActiveDaysAgo,
-    });
-
     return {
-      capacityLabel,
+      capacityLabel: ctx.capacityLabel,
       continueTaskId: 'task-enzyme',
       tasks,
       reviewSharePct: 0.25,
-      dayNumber,
-      totalDays,
+      dayNumber: ctx.dayNumber,
+      totalDays: ctx.totalDays,
       reviewsDue: 0,
       repairsOpen,
-      ghost,
+      ghost: ctx.ghost,
+    };
+  }
+
+  // ---- Today's Path — daily learning-plan engine --------------------------
+  // Orchestrates the other engines (CARS/Recall/Lessons/Practice/Review Mistakes)
+  // and WRITES NO MASTERY. It reads mastery/coverage + a client-fed recall load +
+  // candidate lessons, sizes the day to the preset, and persists an ordered plan.
+
+  /** Local plan date with a 4 AM rollover, matching the Recall day boundary. */
+  private planDateFor(nowIso: string): string {
+    const ms = Date.parse(nowIso) - 4 * 60 * 60 * 1000;
+    return new Date(ms).toISOString().slice(0, 10);
+  }
+
+  private defaultDailyPreset(state: LearnerState): number {
+    const perDay = (state.goal?.minutesPerWeek ?? 1260) / 7;
+    let best = DAILY_MINUTES_PRESETS[0] as number;
+    for (const p of DAILY_MINUTES_PRESETS) {
+      if (Math.abs(p - perDay) < Math.abs(best - perDay)) best = p;
+    }
+    return best;
+  }
+
+  private dailyPreset(state: LearnerState): number {
+    return state.goal?.dailyMinutesPreset ?? this.defaultDailyPreset(state);
+  }
+
+  /** Set the daily time-budget preset (one of the 2–6 hr presets). */
+  setDailyBudget(state: LearnerState, minutesPerDay: number): void {
+    if (!(DAILY_MINUTES_PRESETS as readonly number[]).includes(minutesPerDay)) return;
+    state.goal =
+      state.goal === null
+        ? {
+            testDate: null,
+            targetScore: null,
+            minutesPerWeek: minutesPerDay * 7,
+            dailyMinutesPreset: minutesPerDay,
+          }
+        : { ...state.goal, dailyMinutesPreset: minutesPerDay };
+  }
+
+  /** Read the current day's plan (built:false when none exists for today yet). */
+  getTodaysPath(state: LearnerState): TodaysPathView {
+    return this.todaysPathView(state);
+  }
+
+  /** Build (and persist) today's plan; idempotent per day unless `force`. */
+  buildTodaysPath(state: LearnerState, input: BuildTodaysPathInput): TodaysPathView {
+    const now = this.clock.now();
+    const planDate = this.planDateFor(now);
+    if (state.plan && state.plan.planDate === planDate && !input.force) {
+      return this.todaysPathView(state);
+    }
+    const preset = this.dailyPreset(state);
+    const ctx = this.dayContext(state);
+    const carryOver = this.carryOverFrom(state.plan ?? null, planDate);
+    const snapshot = this.todaysPathSnapshot(state, input, planDate, preset, ctx, carryOver);
+    const result = buildTodaysPathEngine(snapshot, TODAYS_PATH_CONFIG);
+    const activities: TodaysPathActivityState[] = result.activities.map((a) => ({
+      ...a,
+      status: 'ready',
+    }));
+    state.plan = {
+      planDate: result.planDate,
+      dailyMinutesPreset: preset,
+      dailyBudgetMinutes: result.dailyBudgetMinutes,
+      plannedMinutes: result.plannedMinutes,
+      reviewSharePct: result.reviewSharePct,
+      reviewDebtBand: result.reviewDebtBand,
+      version: (state.plan?.version ?? 0) + 1,
+      generatedAt: now,
+      currentActivityId: activities[0]?.activityId ?? null,
+      activities,
+    };
+    return this.todaysPathView(state);
+  }
+
+  /** Advance the guided runner: mark one activity in_progress / complete / skipped. */
+  recordPlanActivity(
+    state: LearnerState,
+    activityId: string,
+    status: 'in_progress' | 'complete' | 'skipped',
+  ): void {
+    const plan = state.plan;
+    if (!plan) return;
+    const activity = plan.activities.find((a) => a.activityId === activityId);
+    if (!activity) return;
+    activity.status = status;
+    if (status === 'complete' && activity.kind === 'lesson' && activity.lessonId !== null) {
+      const done = new Set(state.completedLessons ?? []);
+      done.add(activity.lessonId);
+      state.completedLessons = [...done];
+    }
+    const next = plan.activities.find((a) => a.status === 'ready' || a.status === 'in_progress');
+    plan.currentActivityId = next?.activityId ?? null;
+  }
+
+  private carryOverFrom(prev: TodaysPathState | null, planDate: string): CarriedActivity[] {
+    if (!prev || prev.planDate === planDate) return [];
+    return prev.activities
+      .filter((a) => a.status === 'ready' || a.status === 'in_progress')
+      .map((a) => ({
+        activityId: a.activityId,
+        kind: a.kind,
+        title: a.title,
+        detail: a.detail,
+        estimatedMinutes: a.estimatedMinutes,
+        count: a.count,
+        minutesBudget: a.minutesBudget,
+        focus: a.focus,
+        lessonSlug: a.lessonSlug,
+        lessonId: a.lessonId,
+        priorityReason: a.priorityReason,
+      }));
+  }
+
+  private todaysPathSnapshot(
+    state: LearnerState,
+    input: BuildTodaysPathInput,
+    planDate: string,
+    preset: number,
+    ctx: ReturnType<Authority['dayContext']>,
+    carryOver: CarriedActivity[],
+  ): TodaysPathSnapshot {
+    const masteredLessonIds = new Set(
+      this.getMasteryLessons(state)
+        .filter((l) => l.mastered)
+        .map((l) => l.lessonId),
+    );
+    const completed = new Set(state.completedLessons ?? []);
+    const skills = this.getMasterySkills(state);
+    const meanPL = skills.length > 0 ? skills.reduce((s, x) => s + x.pL, 0) / skills.length : PRIOR_PL0;
+    const practiceWeakness = Math.max(0, Math.min(1, 1 - meanPL));
+    const mistakesOpen = this.getErrorLog(state).filter((e) => !e.repaired).length;
+
+    const candidateLessons: TodaysPathCandidateLesson[] = input.candidateLessons.map((l) => ({
+      lessonId: l.lessonId,
+      slug: l.slug,
+      title: l.title,
+      section: l.section,
+      cluster: l.cluster,
+      kcCount: l.kcCount,
+      mastered: masteredLessonIds.has(l.lessonId) || completed.has(l.lessonId),
+      covered: l.cluster !== null && ctx.clustersWithEvidence.has(l.cluster),
+    }));
+
+    return {
+      planDate,
+      dailyBudgetMinutes: preset,
+      dayNumber: ctx.dayNumber,
+      totalDays: ctx.totalDays,
+      coveragePct: ctx.coveragePct,
+      recall: input.recallLoad,
+      mistakesOpen,
+      practiceAvailable: state.onboarding.planConfirmed,
+      practiceWeakness,
+      candidateLessons,
+      carryOver,
+    };
+  }
+
+  private todaysPathView(state: LearnerState): TodaysPathView {
+    const ctx = this.dayContext(state);
+    const planDate = this.planDateFor(this.clock.now());
+    const preset = this.dailyPreset(state);
+    const plan = state.plan && state.plan.planDate === planDate ? state.plan : null;
+    if (plan === null) {
+      return {
+        built: false,
+        planDate,
+        dailyMinutesPreset: preset,
+        dailyBudgetMinutes: 0,
+        plannedMinutes: 0,
+        capacityLabel: ctx.capacityLabel,
+        dayNumber: ctx.dayNumber,
+        totalDays: ctx.totalDays,
+        reviewSharePct: 0,
+        reviewDebtBand: 'normal',
+        activities: [],
+        currentActivityId: null,
+        ghost: ctx.ghost,
+      };
+    }
+    return {
+      built: true,
+      planDate: plan.planDate,
+      dailyMinutesPreset: plan.dailyMinutesPreset,
+      dailyBudgetMinutes: plan.dailyBudgetMinutes,
+      plannedMinutes: plan.plannedMinutes,
+      capacityLabel: ctx.capacityLabel,
+      dayNumber: ctx.dayNumber,
+      totalDays: ctx.totalDays,
+      reviewSharePct: plan.reviewSharePct,
+      reviewDebtBand: plan.reviewDebtBand,
+      activities: plan.activities.map((a) => ({
+        activityId: a.activityId,
+        kind: a.kind,
+        title: a.title,
+        detail: a.detail,
+        estimatedMinutes: a.estimatedMinutes,
+        count: a.count,
+        minutesBudget: a.minutesBudget,
+        focus: a.focus,
+        lessonSlug: a.lessonSlug,
+        lessonId: a.lessonId,
+        priorityReason: a.priorityReason,
+        status: a.status,
+        carriedOver: a.carriedOver,
+      })),
+      currentActivityId: plan.currentActivityId,
+      ghost: ctx.ghost,
     };
   }
 

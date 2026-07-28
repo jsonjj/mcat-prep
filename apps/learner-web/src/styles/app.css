@@ -2473,3 +2473,28 @@ body {
 .mc-reveal__key--ok {
   color: var(--mc-state-strong);
 }
+
+/* ---- Today's Path (daily plan + guided runner) ---- */
+.mc-plan__budgetrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+}
+.mc-plan__current {
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 40%, transparent);
+}
+.mc-plan__row--current {
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 32%, transparent);
+  background: color-mix(in srgb, var(--mc-primary) 5%, var(--mc-surface));
+}
+.mc-plan__rowtext {
+  min-width: 0;
+}
+.mc-plan__rowactions {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+  flex-shrink: 0;
+}

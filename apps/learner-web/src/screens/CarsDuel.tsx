@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import {
   DUEL_DIFFICULTY_LABELS,
@@ -35,6 +35,17 @@ type Shown = { role: 'user' | 'assistant'; content: string };
 
 export function CarsDuel() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Today's Path launches the duel with defaults + a return target.
+  const navState = location.state as
+    | { autostart?: boolean; returnTo?: string; activityId?: string }
+    | null;
+  const returnTo = navState?.returnTo;
+  const activityId = navState?.activityId;
+  const finish = () => {
+    if (returnTo) navigate(returnTo, { state: { completedActivityId: activityId } });
+    else navigate('/app');
+  };
   const recordDuel = useRecordCarsDuel();
   const ai = useMemo(() => new HttpAiChat({ endpoint: '/api/ai/chat' }), []);
 
@@ -122,6 +133,17 @@ export function CarsDuel() {
     }
     recordDuel.mutate(rubric);
   };
+
+  // Auto-start with defaults when launched from Today's Path (skip the setup screen).
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (navState?.autostart && !autoStarted.current && phase === 'setup') {
+      autoStarted.current = true;
+      void start();
+    }
+    // start closes over default mode/difficulty/topic; run once on autostart.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navState?.autostart, phase]);
 
   if (unavailable) {
     return (
@@ -258,8 +280,8 @@ export function CarsDuel() {
           >
             New duel
           </Button>
-          <Button variant="secondary" onClick={() => navigate('/app')}>
-            Back to Home
+          <Button variant="secondary" onClick={finish}>
+            {returnTo ? 'Back to plan' : 'Back to Home'}
           </Button>
         </Stack>
       </div>

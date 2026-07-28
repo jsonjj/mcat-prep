@@ -160,6 +160,8 @@ export async function handleAuthorityRequest(
       switch (path) {
         case '/v1/plan/today':
           return sendJson(response, 200, await client.getToday());
+        case '/v1/plan/today/path':
+          return sendJson(response, 200, await client.getTodaysPath());
         case '/v1/learning/session':
           return sendJson(response, 200, await client.getSession());
         case '/v1/progress/mastery':
@@ -198,6 +200,23 @@ export async function handleAuthorityRequest(
 
     if (path === '/v1/profile/goal' && method === 'PUT') {
       await client.confirmPlan(body.goal as Parameters<typeof client.confirmPlan>[0]);
+      return sendJson(response, 200, accepted());
+    }
+    if (path === '/v1/plan/today/build' && method === 'POST') {
+      const view = await client.buildTodaysPath(
+        body.input as Parameters<typeof client.buildTodaysPath>[0],
+      );
+      return sendJson(response, 200, view);
+    }
+    if (path === '/v1/plan/today/activity' && method === 'POST') {
+      await client.recordPlanActivity(
+        String(body.activityId ?? ''),
+        body.status as 'in_progress' | 'complete' | 'skipped',
+      );
+      return sendJson(response, 200, accepted());
+    }
+    if (path === '/v1/profile/daily-budget' && method === 'PUT') {
+      await client.setDailyBudget(Number(body.minutesPerDay));
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/attempts' && method === 'POST') {

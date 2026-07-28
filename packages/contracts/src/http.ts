@@ -19,6 +19,12 @@ import {
   PracticeAttemptResultSchema,
   PracticeQueueViewSchema,
 } from './practice';
+import {
+  BuildTodaysPathCommandSchema,
+  DailyBudgetCommandSchema,
+  PlanActivityProgressCommandSchema,
+  TodaysPathViewSchema,
+} from './todays-path';
 import { UtcTimestampSchema } from './time';
 import {
   VectorLessonCommandSchema,
@@ -74,6 +80,26 @@ export const HTTP_API = {
   },
   goal: { method: 'PUT', path: '/v1/profile/goal', body: GoalCommandSchema },
   today: { method: 'GET', path: '/v1/plan/today', response: TodayViewSchema },
+  // Today's Path — the daily learning-plan engine (orchestrates the other engines).
+  todaysPath: { method: 'GET', path: '/v1/plan/today/path', response: TodaysPathViewSchema },
+  todaysPathBuild: {
+    method: 'POST',
+    path: '/v1/plan/today/build',
+    body: BuildTodaysPathCommandSchema,
+    response: TodaysPathViewSchema,
+  },
+  todaysPathActivity: {
+    method: 'POST',
+    path: '/v1/plan/today/activity',
+    body: PlanActivityProgressCommandSchema,
+    response: AcceptedCommandResponseSchema,
+  },
+  dailyBudget: {
+    method: 'PUT',
+    path: '/v1/profile/daily-budget',
+    body: DailyBudgetCommandSchema,
+    response: AcceptedCommandResponseSchema,
+  },
   session: { method: 'GET', path: '/v1/learning/session', response: StudyStepViewSchema },
   progressSkills: {
     method: 'GET',

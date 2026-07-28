@@ -19,6 +19,7 @@ import {
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
+  TodaysPathViewSchema,
   VectorLessonCommandSchema,
   VectorLessonRunViewSchema,
   VectorLessonStartCommandSchema,
@@ -29,6 +30,7 @@ import {
   newIdempotencyKey,
   newTaskInstanceId,
   type BootstrapResponse,
+  type BuildTodaysPathInput,
   type HttpApiError,
   type HttpErrorCode,
   type PracticeAttemptCommand,
@@ -267,6 +269,41 @@ export class HttpAuthorityClient implements AuthorityPort {
   async getToday() {
     await this.ensureBootstrap();
     return this.request(HTTP_API.today.path, TodayViewSchema);
+  }
+
+  async getTodaysPath() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.todaysPath.path, TodaysPathViewSchema);
+  }
+
+  async buildTodaysPath(input: BuildTodaysPathInput) {
+    const view = await this.request(HTTP_API.todaysPathBuild.path, TodaysPathViewSchema, {
+      method: HTTP_API.todaysPathBuild.method,
+      body: JSON.stringify({ envelope: await this.commandEnvelope(), input }),
+    });
+    // Build persists the plan (advances the stream) but returns a view, not an
+    // AcceptedCommandResponse — resync the stream version like the practice attempt does.
+    await this.bootstrap();
+    return view;
+  }
+
+  async recordPlanActivity(
+    activityId: string,
+    status: 'in_progress' | 'complete' | 'skipped',
+  ): Promise<void> {
+    await this.acceptedCommand(HTTP_API.todaysPathActivity.path, {
+      envelope: await this.commandEnvelope(),
+      activityId,
+      status,
+    });
+  }
+
+  async setDailyBudget(minutesPerDay: number): Promise<void> {
+    await this.acceptedCommand(
+      HTTP_API.dailyBudget.path,
+      { envelope: await this.commandEnvelope(), minutesPerDay },
+      HTTP_API.dailyBudget.method,
+    );
   }
 
   async getSession() {
