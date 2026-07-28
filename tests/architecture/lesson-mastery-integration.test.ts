@@ -2029,28 +2029,56 @@ function differentiablePairs(): {
 }
 
 /**
- * Alternative sets whose disagreement is still resolved by precedence, with the
- * EXACT key set each one had when it was recorded.
+ * Alternative sets where precedence is CORRECT, and the reason is asserted
+ * rather than asserted-about.
+ *
+ * "Not yet guarded" and "guarding would be wrong here" are different states, and
+ * collapsing them into one list is how someone eventually "fixes" the second
+ * kind. So this list is separate and its justification is mechanical: a set
+ * belongs here only if, when its keys disagree, EVERY authored value still
+ * appears somewhere in the normalized output. Nothing is dropped, so there is no
+ * lost fact to reject over — and rejecting would refuse correct authoring.
+ *
+ * `questionId`: `item_binding_id` is the precedence loser for `questionId` but
+ * also lands in `itemBindingId` on its own account, so a binding authoring both
+ * a question id and a differing binding id keeps both. The assertion below
+ * re-derives that; if the normalizer ever stops carrying `item_binding_id`
+ * through, this stops being intentional precedence and fails here.
+ */
+const INTENTIONAL_PRECEDENCE_ALTERNATIVE_SETS: Readonly<Record<string, readonly string[]>> = {
+  questionId: ['item_binding_id', 'question_id'],
+};
+
+/**
+ * Alternative sets whose disagreement is still resolved by precedence AND where
+ * a fact is genuinely lost, with the EXACT key set each one had when recorded.
  *
  * Recorded, not tolerated. A set that gains a key, a new set that appears, or a
  * set that becomes guarded all fail the assertions below — the last one because
- * a fixed entry left here is cover for the next one.
+ * a fixed entry left here is cover for the next one. That is not hypothetical:
+ * four sets left this list within minutes of it landing, and the rot check is
+ * what said so.
  *
- * Blast radius, because these are not equally bad:
+ * Twenty-one differentiable pairs remain, one of them intentional (above), so
+ * twenty across eleven fields sit here. Blast radius, because they are not
+ * equally bad — the capability- and warrant-bearing ones have all been closed:
  *
- *  - CAPABILITY / WARRANT BEARING. `candidateEvidenceModes` is the worst: a
- *    binding authoring `candidate_evidence_modes: ['INDEPENDENT']` alongside a
- *    legacy `evidence_eligibility: 'INSTRUCTION_TELEMETRY_ONLY'` silently drops
- *    the instructional-only label and becomes BKT-reachable, which is the exact
- *    fail-open shape of this whole run. `serverScoringAuthorityRef` picks one of
- *    two disagreeing scoring authorities. `questionId`, `bindingVersion` and
- *    `stimulusLineageId` decide identity, version match and family diversity.
+ *  - PROTECTED MATERIAL, and next to be scheduled per the adapter owner.
+ *    `serverRationaleAuthorityRef` is the same shape as the scoring-ref group
+ *    that `MULTIPLE_SCORING_AUTHORITY_REFS_AUTHORED` now covers, and it points at
+ *    pre-release rationale text. Then `authoredAssistanceAffordances`.
  *  - REVIEWED PROSE ONLY. `hintPolicy`, `feedbackRelease`, `omissionPolicy`,
  *    `retryPolicy`, `invalidItemPolicy`, `exitFunction`, `freshnessPolicy`,
- *    `changedDimensionDetail`, `secondaryKcMappings` and
- *    `authoredAssistanceAffordances` are never BKT targets and never influence
- *    qualification, so a disagreement loses reviewed text rather than corrupting
- *    an estimate.
+ *    `changedDimensionDetail` and `secondaryKcMappings` are never BKT targets and
+ *    never influence qualification, so a disagreement loses reviewed text rather
+ *    than corrupting an estimate.
+ *
+ * Closed since this list was first written, and deliberately named so the record
+ * shows movement rather than just a shorter list: `candidateEvidenceModes`
+ * (the eighth fail-open — an authored `['INDEPENDENT']` beat a legacy
+ * `INSTRUCTION_TELEMETRY_ONLY` restriction and made the binding BKT-reachable in
+ * 2 of 2 authoring orders, now 0 of 2), `serverScoringAuthorityRef`,
+ * `bindingVersion` and `stimulusLineageId`.
  */
 const KNOWN_UNGUARDED_ALTERNATIVE_SETS: Readonly<Record<string, readonly string[]>> = {
   authoredAssistanceAffordances: [
@@ -2058,8 +2086,6 @@ const KNOWN_UNGUARDED_ALTERNATIVE_SETS: Readonly<Record<string, readonly string[
     'assistance_state',
     'authored_assistance_level',
   ],
-  bindingVersion: ['binding_version', 'item_version'],
-  candidateEvidenceModes: ['candidate_evidence_modes', 'evidence_eligibility'],
   changedDimensionDetail: [
     'changed_dimension',
     'changed_dimension_detail',
@@ -2076,17 +2102,15 @@ const KNOWN_UNGUARDED_ALTERNATIVE_SETS: Readonly<Record<string, readonly string[
   ],
   invalidItemPolicy: ['invalid_item_behavior', 'invalid_item_policy'],
   omissionPolicy: ['omission_behavior', 'omission_policy'],
-  questionId: ['item_binding_id', 'question_id'],
   retryPolicy: ['retry_behavior', 'retry_policy'],
   secondaryKcMappings: ['secondary_kc_mappings', 'secondary_kc_refs'],
   serverRationaleAuthorityRef: ['rationale_authority_ref', 'server_rationale_authority_ref'],
-  serverScoringAuthorityRef: [
-    'answer_authority_ref',
-    'server_answer_authority_ref',
-    'server_only_answer_authority_ref',
-    'server_scoring_authority_ref',
-  ],
-  stimulusLineageId: ['stimulus_lineage', 'stimulus_lineage_id'],
+};
+
+/** Every recorded set, whichever reason it is recorded for. */
+const RECORDED_PRECEDENCE_SETS: Readonly<Record<string, readonly string[]>> = {
+  ...KNOWN_UNGUARDED_ALTERNATIVE_SETS,
+  ...INTENTIONAL_PRECEDENCE_ALTERNATIVE_SETS,
 };
 
 /**
@@ -2141,7 +2165,7 @@ describe('two authored keys describing one fact never resolve by precedence', ()
     const offenders = pairs
       .filter((pair) => pair.rejectionCodes.length === 0)
       .filter((pair) => {
-        const recorded = KNOWN_UNGUARDED_ALTERNATIVE_SETS[pair.field];
+        const recorded = RECORDED_PRECEDENCE_SETS[pair.field];
         return recorded === undefined || !recorded.includes(pair.a) || !recorded.includes(pair.b);
       })
       .map(
@@ -2167,28 +2191,70 @@ describe('two authored keys describing one fact never resolve by precedence', ()
     ).toEqual([]);
   });
 
-  it('keeps every recorded unguarded set live, exact, and still unguarded', () => {
+  it('keeps every recorded set live, exact, and still resolving by precedence', () => {
     const { pairs } = differentiablePairs();
     const discovered = new Map(discoverAlternativeSets().map((set) => [set.field, set.keys]));
 
-    for (const [field, keys] of Object.entries(KNOWN_UNGUARDED_ALTERNATIVE_SETS)) {
+    for (const [field, keys] of Object.entries(RECORDED_PRECEDENCE_SETS)) {
       // Still a real alternative set, with exactly the keys recorded: a key added
       // to an existing set is new precedence and has to be looked at.
       expect(
         discovered.get(field),
-        `KNOWN_UNGUARDED_ALTERNATIVE_SETS records ${field}, whose authoring keys have changed ` +
-          'or which is no longer an alternative set. Update or delete the entry.',
+        `${field} is recorded as resolving by precedence, but its authoring keys have changed ` +
+          'or it is no longer an alternative set. Update or delete the entry.',
       ).toEqual([...keys]);
 
       // And still unguarded. An entry whose pairs now reject is a FIXED item left
-      // behind as cover for the next one, so it has to be deleted.
+      // behind as cover for the next one, so it has to be deleted. Four entries
+      // left this list that way, and this is the assertion that said so.
       const fieldPairs = pairs.filter((pair) => pair.field === field);
       expect(
         fieldPairs.some((pair) => pair.rejectionCodes.length === 0),
         `${field} now rejects every disagreement it can be made to have — it is guarded. ` +
-          'Delete its KNOWN_UNGUARDED_ALTERNATIVE_SETS entry so the next unguarded set cannot ' +
-          'hide behind a stale exemption.',
+          'Delete its entry so the next unguarded set cannot hide behind a stale exemption.',
       ).toBe(true);
+    }
+  });
+
+  it('proves precedence loses nothing where precedence is intentional', () => {
+    // The whole justification for INTENTIONAL_PRECEDENCE_ALTERNATIVE_SETS, checked
+    // rather than asserted in prose: when the keys disagree, every authored value
+    // must still be somewhere in the normalized output. A set that starts dropping
+    // a value stops being intentional precedence and becomes plain debt, and this
+    // is where that shows up.
+    expect(Object.keys(INTENTIONAL_PRECEDENCE_ALTERNATIVE_SETS).length).toBeGreaterThan(0);
+
+    for (const [field, keys] of Object.entries(INTENTIONAL_PRECEDENCE_ALTERNATIVE_SETS)) {
+      for (let i = 0; i < keys.length; i += 1) {
+        for (let j = i + 1; j < keys.length; j += 1) {
+          const a = keys[i] as string;
+          const b = keys[j] as string;
+          const both = { [a]: PROBE_ALPHA, [b]: PROBE_BETA };
+          const normalized = JSON.stringify(normalizeProbe(both));
+
+          // Calibration: the two really do disagree about `field`, so this is the
+          // same input shape the general rule would have rejected.
+          expect(fieldAt({ [a]: PROBE_ALPHA }, field)).not.toBe(
+            fieldAt({ [b]: PROBE_BETA }, field),
+          );
+          expect(authoredBindingRejectionCodes(both)).toEqual([]);
+
+          for (const [key, value] of Object.entries(both)) {
+            expect(
+              normalized,
+              [
+                `${field}: ${a} + ${b} resolves by precedence, and the value authored in`,
+                `"${key}" is now DROPPED — so precedence here is losing a fact after all.`,
+                '',
+                'That is what separates this list from KNOWN_UNGUARDED_ALTERNATIVE_SETS: this one',
+                'is only justified while every authored value still lands somewhere. It no longer',
+                'does. Either restore the field that carried it, or move this set to the debt',
+                'list and guard it with a named code.',
+              ].join('\n'),
+            ).toContain(value);
+          }
+        }
+      }
     }
   });
 
@@ -2284,6 +2350,14 @@ describe('two authored keys describing one fact never resolve by precedence', ()
     for (const raw of [
       { learner_safe_item_ref: PROBE_ALPHA, learner_safe_projection: { prompt: PROBE_BETA } },
       { first_attempt_immutable: false, first_attempt_policy: 'IMMUTABLE' },
+      // A permission authored beside a legacy restriction — the eighth fail-open.
+      {
+        candidate_evidence_modes: ['INDEPENDENT'],
+        evidence_eligibility: 'INSTRUCTION_TELEMETRY_ONLY',
+      },
+      { server_scoring_authority_ref: PROBE_ALPHA, answer_authority_ref: PROBE_BETA },
+      { binding_version: PROBE_ALPHA, item_version: PROBE_BETA },
+      { stimulus_lineage_id: PROBE_ALPHA, stimulus_lineage: { lineage_id: PROBE_BETA } },
     ]) {
       for (const code of authoredBindingRejectionCodes(raw)) reachable.add(code);
     }
@@ -2294,6 +2368,87 @@ describe('two authored keys describing one fact never resolve by precedence', ()
           'Either it is unreachable — a guard that cannot fire — or a new contradiction was ' +
           'added without a case here. Both need looking at.',
       ).toBe(true);
+    }
+  });
+
+  it('refuses a permission authored beside a legacy restriction (instance 8)', () => {
+    // The eighth fail-open, and the worst by consequence: an authored
+    // `candidate_evidence_modes: ['INDEPENDENT']` beat a legacy
+    // `evidence_eligibility: 'INSTRUCTION_TELEMETRY_ONLY'`, so a restriction lost
+    // to a permission and the binding became BKT-reachable — an author making an
+    // item eligible by writing a declaration in a script, one layer earlier than
+    // the allowlist and the resolved-kind gate can see.
+    const restriction = 'INSTRUCTION_TELEMETRY_ONLY';
+    for (const raw of [
+      authoredBinding({
+        candidate_evidence_modes: ['INDEPENDENT'],
+        evidence_eligibility: restriction,
+        reasoning_operation: 'IDENTIFY',
+      }),
+      // Both authoring orders. The guard compares a SET, so neither order may win.
+      authoredBinding({
+        evidence_eligibility: restriction,
+        candidate_evidence_modes: ['INDEPENDENT'],
+        reasoning_operation: 'IDENTIFY',
+      }),
+    ]) {
+      const parsed = parseBinding(raw);
+      expect(parsed.status).toBe('invalid');
+      expect(
+        parsed.rejectionCodes,
+        'A permission authored beside a legacy restriction was resolved by precedence. The ' +
+          'REJECTION is the assertion here, not merely the absence of escalation: the legacy ' +
+          'restriction is now first in precedence, so removing the guard degrades to ' +
+          'instructional-only instead of escalating — which means "P(L) did not move" would ' +
+          'still hold with no guard at all. Only a recorded rejection distinguishes the two.',
+      ).toContain('CONTRADICTORY_EVIDENCE_MODE_RESTRICTION_AUTHORED');
+    }
+
+    // A legacy spelling that AGREES with its canonical form still parses: the
+    // guard compares the resolved fact, not the raw authored strings.
+    expect(
+      parseBinding(
+        authoredBinding({
+          candidate_evidence_modes: ['INSTRUCTIONAL'],
+          evidence_eligibility: restriction,
+        }),
+      ).status,
+      'A legacy label that normalizes to the same mode set as its canonical spelling was ' +
+        'rejected. Comparing raw authored values instead of the resolved fact would refuse ' +
+        'every artifact on disk that carries both.',
+    ).toBe('parsed');
+  });
+
+  it('records the residual: a restriction key can still launder a permission', () => {
+    // NOT a regression and not urgent — recorded so it is visible.
+    //
+    // `evidence_eligibility` is the RESTRICTION key, and a legacy label expands
+    // through it: `['INSTRUCTIONAL_EXIT_ONLY','TRANSFER']` normalizes to
+    // `['INSTRUCTIONAL','TRANSFER']`, so a permission arrives through the field
+    // that exists to withhold one. The instructional-only label is lost.
+    //
+    // BLAST RADIUS: the label, not the estimate. It is not BKT-reachable, because
+    // the resolved-kind gate classifies least-credit-first and `INSTRUCTIONAL`
+    // wins, giving a contextual-only kind. That containment is the part that must
+    // not regress, so it is asserted here rather than described.
+    const laundered = authoredBinding({
+      evidence_eligibility: ['INSTRUCTIONAL_EXIT_ONLY', 'TRANSFER'],
+      reasoning_operation: 'IDENTIFY',
+    });
+    const parsed = parseBinding(laundered);
+    expect(parsed.status, 'the residual fixture no longer parses; re-derive it').toBe('parsed');
+
+    const adaptation = adapt(laundered);
+    expect(adaptation.evidence?.kind).toBe('instruction');
+    expect(
+      adaptation.qualification.status,
+      'The laundered permission became BKT-reachable. The resolved-kind gate was the only thing ' +
+        'containing this residual, so its failure turns a lost label into a moved P(L).',
+    ).toBe('rejected');
+    if (adaptation.qualification.status === 'rejected') {
+      expect(adaptation.qualification.rejectionCodes).toContain(
+        'RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY',
+      );
     }
   });
 
