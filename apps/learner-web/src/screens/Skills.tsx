@@ -7,7 +7,13 @@ const toPct = (p: number): number => Math.round(p * 100);
 /**
  * The Skills page shows the seven reasoning skills as mastery percentages driven
  * by the BKT engine (`P(L)` per operation, pooled across every lesson). Mastered
- * and "needs refresh" are conveyed by a glyph + label, never color alone.
+ * and review-due are conveyed by a glyph + label, never color alone.
+ *
+ * `reviewDue` here is BKT decay. The same "Needs refresh" wording appears on the
+ * warrant surfaces (`Study.tsx`, `SkillDetail.tsx`) from
+ * `MasteryMapEntry.refreshNeeded`, which is a different question from a different
+ * authority; the shared wording is learner-facing copy the owner has not yet
+ * re-adjudicated, and the two fields are deliberately no longer named alike.
  */
 export function Skills() {
   const skills = useMasterySkills();
@@ -32,20 +38,20 @@ export function Skills() {
           {data.map((skill) => {
             const info = REASONING_OPERATION_INFO[skill.operation];
             const value = toPct(skill.pL);
-            const fillClass = skill.refreshNeeded
+            const fillClass = skill.reviewDue
               ? 'mc-skillbar__fill mc-skillbar__fill--refresh'
               : skill.mastered
                 ? 'mc-skillbar__fill mc-skillbar__fill--mastered'
                 : 'mc-skillbar__fill';
             const valueText = `${info.title}: ${value}% mastery${
-              skill.refreshNeeded ? ', needs refresh' : skill.mastered ? ', mastered' : ''
+              skill.reviewDue ? ', needs refresh' : skill.mastered ? ', mastered' : ''
             }`;
             return (
               <li key={skill.operation} className="mc-skillbar">
                 <div className="mc-skillbar__head">
                   <span className="mc-skillbar__label">{info.title}</span>
                   <span className="mc-skillbar__meta">
-                    {skill.refreshNeeded ? (
+                    {skill.reviewDue ? (
                       <span className="mc-skillbar__tag">◐ Needs refresh</span>
                     ) : skill.mastered ? (
                       <span className="mc-skillbar__tag mc-skillbar__tag--mastered">★ Mastered</span>

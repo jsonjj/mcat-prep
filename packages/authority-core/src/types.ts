@@ -153,6 +153,7 @@ export interface RevealView {
 
 export interface SessionSummary {
   skillId: string;
+  /** WARRANT staleness, not BKT decay. The capability question is `reviewDue`. */
   refreshNeeded: boolean;
   /** The warrant as reason codes. Never an ordinal tier — see `MasteryMapEntry`. */
   reasons: DecisionReason<EvidenceReason>[];
@@ -196,6 +197,11 @@ export interface TodayView {
  */
 export interface MasteryMapEntry {
   skillId: string;
+  /**
+   * The WARRANT is stale or contradicted by a fresh failure. Not BKT decay: that
+   * is `SkillMasteryView.reviewDue`, which the two shared this name with until the
+   * split made them distinguishable to a planner reading both.
+   */
   refreshNeeded: boolean;
   supportingEvidenceIds: string[];
   freshestByKind: Partial<Record<EvidenceKind, UtcTimestamp>>;

@@ -9,21 +9,22 @@
  *
  * It is reachable ONLY from `services/local-authority`, which binds loopback and
  * is never deployed. The deployed Lambda (`services/lambdas/learner-api`) must
- * never register this route. What actually enforces that today, in order of
- * strength:
+ * never register this route, and that is ASSERTED, in
+ * `tests/architecture/lesson-mastery-integration.test.ts` under "the local debug
+ * route never reaches the deployed lambda". Four independent bans, so no single
+ * edit re-opens the route: the lambda manifest declares no dependency on
+ * `@mcat/local-authority`; no lambda source imports that package by bare or
+ * relative specifier, nor any `debug-state` module; the lambda's route table
+ * registers no path matching `/debug/`; and no lambda source so much as names
+ * `DEBUG_LEARNER_STATE_PATH`. This package's `index.ts` re-exporting neither
+ * `./debug-state` nor `./http-server` is asserted there too.
  *
- *   1. The route is registered in exactly one place, `./http-server.ts`, and no
- *      file outside this package references it.
- *   2. `services/lambdas/learner-api/package.json` does not depend on
- *      `@mcat/local-authority`, so the import would not resolve there — and
- *      this package's `index.ts` deliberately does not re-export the HTTP
- *      server, so adding that dependency still would not surface the route.
- *
- * NEITHER IS A TEST. Point 2 is a property of a manifest that anyone can
- * change, so the invariant is currently held by convention. An assertion in
- * `tests/architecture` — that the lambda's route table registers no path
- * containing `/debug/` — is owed and is being written separately; until it
- * lands, do not read this comment as a guarantee.
+ * Do not restate here whether a test exists — that sentence has now been wrong
+ * in both directions (it claimed a guard that did not exist, then denied one
+ * that did). Read the assertions; they import `ROUTES` and
+ * `DEBUG_LEARNER_STATE_PATH` from production code, so they fail if the route
+ * table or this path changes, and the describe block is the one place that has
+ * to stay in step with this comment.
  *
  * PROTECTED MATERIAL. The evidence projection is an explicit field ALLOWLIST,
  * not a spread of the stored record. Answer keys, rationales, scoring authority

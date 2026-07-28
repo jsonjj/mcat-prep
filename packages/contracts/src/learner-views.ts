@@ -178,6 +178,7 @@ export const DecisionReasonViewSchema = z
 export const SessionSummarySchema = z
   .object({
     skillId: z.string().min(1),
+    /** WARRANT staleness. BKT's decay question is `SkillMasteryView.reviewDue`. */
     refreshNeeded: z.boolean(),
     reasons: z.array(DecisionReasonViewSchema),
     evidenceCounts: z.record(z.string(), z.number().int().nonnegative()),
@@ -361,6 +362,11 @@ export const EvidenceKindSchema = z.enum([
 export const MasteryMapEntrySchema = z
   .object({
     skillId: z.string().min(1),
+    /**
+     * The warrant is stale or contradicted by a fresh failure. This is the
+     * EVIDENCE system's question and it is not BKT decay — that is
+     * `SkillMasteryView.reviewDue`. A planner consumes both, separately.
+     */
     refreshNeeded: z.boolean(),
     supportingEvidenceIds: z.array(z.string().uuid()),
     freshestByKind: z.record(EvidenceKindSchema, UtcTimestampSchema),

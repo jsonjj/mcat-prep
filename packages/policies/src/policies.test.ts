@@ -19,12 +19,7 @@ import {
   shouldStop,
   type DiagnosticState,
 } from './diagnostic';
-import {
-  evaluateEvidence,
-  evaluateMastery,
-  EVIDENCE_CONFIG,
-  EVIDENCE_WARRANT_MANIFEST,
-} from './mastery-policy';
+import { evaluateEvidence, EVIDENCE_CONFIG } from './mastery-policy';
 import { classifyCapacity, continueTarget, orderTasks } from './planner';
 import { scorePredictionGate } from './readiness';
 
@@ -414,14 +409,6 @@ describe('evidence warrant policy', () => {
     expect(state.evidenceQuality).toBe('foundation_needed');
     expect(state.supportingEvidenceIds).toEqual([]);
     expect(state.reasons.map((r) => r.code)).toEqual(['PREREQUISITE_BLOCKED']);
-  });
-
-  it('keeps the deprecated evaluateMastery wrapper projecting the legacy ladder shape', () => {
-    const records = [mkEv({ familyId: 'fam-a' }), mkEv({ familyId: 'fam-b' })];
-    const legacy = evaluateMastery({ skillId: 's', records, now: NOW });
-    expect(legacy.base).toBe('independent');
-    expect(legacy.refreshNeeded).toBe(false);
-    expect(legacy.policyVersion).toBe(EVIDENCE_WARRANT_MANIFEST.version);
   });
 });
 

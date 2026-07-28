@@ -86,38 +86,6 @@ export interface SkillEvidenceState extends EvidenceFreshness {
   policyVersion: string;
 }
 
-/**
- * @deprecated Compatibility alias for the pre-reframe ladder type; the name
- * wrongly implies a capability scale. Use `EvidenceQualityTier`.
- * Remaining consumers: `MasterySkillState.base` below, and
- * `apps/learner-web/src/components/{EvidenceAtlas,BrainScene}.tsx`. Deletable
- * once the learner-web follow-up reads `EvidenceQualityTier` directly.
- */
-export type BaseMasteryState = EvidenceQualityTier;
-/**
- * @deprecated Compatibility alias. Use `evidenceQualityRank`.
- * Remaining consumers: `packages/domain/src/domain.test.ts` and
- * `apps/learner-web/src/components/{EvidenceAtlas,BrainScene}.tsx`. Deletable
- * with the same learner-web follow-up.
- */
-export const baseStateRank = evidenceQualityRank;
-
-/**
- * @deprecated Legacy projection of `SkillEvidenceState` for consumers that still
- * read `base`. It is a view, NOT the definition of mastery — see the BKT engine.
- * Sole remaining consumer: the `evaluateMastery` wrapper in @mcat/policies, which
- * itself now has no production caller. Both go together.
- */
-export interface MasterySkillState {
-  skillId: string;
-  base: BaseMasteryState;
-  refreshNeeded: boolean;
-  supportingEvidenceIds: string[];
-  freshestByKind: Partial<Record<EvidenceKind, UtcTimestamp>>;
-  reasons: DecisionReason<EvidenceReason>[];
-  policyVersion: string;
-}
-
 /** An evidence "recipe" slot that must be independently satisfied for a tier. */
 export interface RecipeSlot {
   kind: EvidenceKind;

@@ -20,19 +20,27 @@ A read-only projection of everything the lesson → evidence → mastery seam wr
 "did the lesson actually move mastery" is answerable by hand and not only from the
 test suite.
 
-**This route exists only in this package**, and it is worth being precise about what
-keeps it that way, because two of the three are conventions rather than tests:
+**This route exists only in this package**, and each thing that keeps it that way is
+asserted in `tests/architecture/lesson-mastery-integration.test.ts`, under the describe
+block "the local debug route never reaches the deployed lambda":
 
-| Enforcement                                                                                               | Kind                            |
-| --------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| Registered in exactly one file, `src/http-server.ts`; nothing outside this package references the path.   | Fact, checkable with `rg`.      |
-| `src/index.ts` exports only the in-process client, so importing the package cannot reach the HTTP server. | Convention, held by one line.   |
-| `services/lambdas/learner-api` does not depend on `@mcat/local-authority`.                                | Convention, held by a manifest. |
+| What is asserted                                                                                                                            | Assertion                                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `services/lambdas/learner-api` declares no dependency on `@mcat/local-authority`, in any of the four dependency fields.                     | "does not declare the local-authority package as a dependency"          |
+| No deployed lambda source imports that package — by bare specifier or by relative path — nor any `debug-state` module.                      | "does not import the local-authority package or its debug module"       |
+| The lambda's real `ROUTES` table registers no path matching `/debug/`.                                                                      | "registers no debug route in the deployed route table"                  |
+| No deployed lambda source even names `DEBUG_LEARNER_STATE_PATH`, so an unrouted handler branch cannot sit ready.                            | "does not mention the debug route path anywhere in the deployed source" |
+| `src/index.ts` re-exports neither `./debug-state` nor `./http-server`, so importing this package cannot reach the route-registering module. | "keeps the debug projection out of the local-authority package surface" |
 
-**No architecture test asserts any of this yet.** An assertion that the lambda's route
-table registers no path containing `/debug/` is owed and is being written separately.
-Until it lands, treat the table above as the whole story — an earlier version of this
-file claimed a test existed, and it did not.
+The bans are independent, so no single edit re-opens the route, and they read `ROUTES`
+and `DEBUG_LEARNER_STATE_PATH` from production code rather than matching source text, so
+renaming either fails the assertion instead of silently voiding it. A calibration case
+first checks that the route table is non-empty and that `routes.ts` was actually scanned,
+so a ban cannot pass by finding nothing.
+
+Do not add a sentence here about whether a test exists. That sentence has been wrong in
+both directions already — it claimed a guard that did not exist, and then denied one that
+did. Name the assertions, or say nothing.
 
 ### Three independent guards, all required
 

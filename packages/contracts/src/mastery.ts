@@ -53,8 +53,14 @@ export const SkillMasteryViewSchema = z
     operation: ReasoningOperationSchema,
     /** Current mastery probability (post-decay), 0–1. */
     pL: Probability,
-    /** Evidence decayed below the review line or contradicted by a fresh miss. */
-    refreshNeeded: z.boolean(),
+    /**
+     * BKT decay: `P(L)` has fallen below the review line since it was last
+     * practiced, so the memory is due. NOT `MasteryMapEntry.refreshNeeded`, which
+     * says the evidence WARRANT is stale or contradicted. Two questions, two
+     * authorities: a planner reads both and must not merge them, which is what
+     * one shared field name previously invited.
+     */
+    reviewDue: z.boolean(),
     mastered: z.boolean(),
   })
   .strict();
@@ -69,10 +75,11 @@ export type SkillMasteryView = z.infer<typeof SkillMasteryViewSchema>;
  * It is a display value, not a probability of lesson mastery, and MUST NOT be
  * compared against `MASTERY_THRESHOLD` — `mastered` is true only when EVERY
  * required member KC is individually at or above the threshold, so a high mean
- * with one weak KC is correctly not mastered. `refreshNeeded` is true when any
- * previously practiced required KC is due for review. The field keeps the name
- * `pL` because `apps/learner-web` reads it; renaming it to `meanMemberPL` is
- * owed by the UI follow-up.
+ * with one weak KC is correctly not mastered. `reviewDue` is true when any
+ * previously practiced required KC is due for review; it is BKT decay, not the
+ * evidence warrant's `refreshNeeded`. The field keeps the name `pL` because
+ * `apps/learner-web` reads it; renaming it to `meanMemberPL` is owed by the UI
+ * follow-up.
  *
  * A lesson whose required-KC membership cannot be resolved emits no entry at
  * all (fail-closed); it is never reported as `0` or as vacuously mastered.
@@ -82,7 +89,7 @@ export const LessonMasteryViewSchema = z
     lessonId: z.string().min(1),
     cluster: SkillClusterSchema.nullable(),
     pL: Probability,
-    refreshNeeded: z.boolean(),
+    reviewDue: z.boolean(),
     mastered: z.boolean(),
   })
   .strict();

@@ -27,7 +27,6 @@ import {
   type EvidenceRecord,
   type EvidenceReason,
   type EvidenceSlotStatus,
-  type MasterySkillState,
   type RecipeSlot,
   type SkillEvidenceState,
 } from '@mcat/domain';
@@ -333,29 +332,5 @@ export function evaluateEvidence(
     freshestByKind,
     reasons,
     policyVersion: EVIDENCE_WARRANT_MANIFEST.version,
-  };
-}
-
-/**
- * @deprecated TEMPORARY COMPATIBILITY WRAPPER. Projects `evaluateEvidence` onto the
- * legacy `base`/`refreshNeeded` ladder shape. It is a view of the warrant, NOT the
- * public definition of capability — read `P(L)` from the BKT engine for that.
- * Remaining consumers: `packages/authority-core/src/authority.ts` (`getMasteryMap`
- * at :526, `isPrerequisiteBlocked` at :825). Delete with the authority task, once
- * both read `SkillEvidenceState`.
- */
-export function evaluateMastery(
-  input: EvidenceEvaluationInput,
-  cfg: EvidenceConfig = EVIDENCE_CONFIG,
-): MasterySkillState {
-  const state = evaluateEvidence(input, cfg);
-  return {
-    skillId: state.skillId,
-    base: state.evidenceQuality,
-    refreshNeeded: state.refreshNeeded,
-    supportingEvidenceIds: [...state.supportingEvidenceIds],
-    freshestByKind: state.freshestByKind,
-    reasons: [...state.reasons],
-    policyVersion: state.policyVersion,
   };
 }

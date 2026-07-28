@@ -67,9 +67,16 @@ export interface LessonKcMemberView {
 
 export interface LessonRollupView {
   lessonId: string;
-  /** Arithmetic mean of the members' current `P(L)`. */
+  /**
+   * Arithmetic mean of the members' current `P(L)`. A DISPLAY value: it is not a
+   * probability of lesson mastery and must never be compared with the mastery
+   * threshold. `mastered` below is the only lesson-grain verdict, and it requires
+   * every member individually — thresholding the mean would be a third mastery
+   * definition beside BKT's per-grain one.
+   */
   pL: number;
   mastered: boolean;
+  /** BKT decay, not the evidence warrant's `refreshNeeded`. */
   reviewDue: boolean;
   requiredKcCount: number;
   weakestKcId: string;

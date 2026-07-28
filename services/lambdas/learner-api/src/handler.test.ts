@@ -619,7 +619,11 @@ describe('learner Lambda API security boundary', () => {
 
     expect(first.statusCode).toBe(200);
     expect(responseBody(duplicate)).toEqual(responseBody(first));
-    expect(responseBody(wrapped)).toMatchObject({ skillsTouched: 1, protectedPassed: 0 });
+    // Three touched grains: the prerequisite-blocked enzyme skill, plus `cars-ca1`
+    // and `cars-ca2`, which the duel writes evidence to. The two CARS grains only
+    // started counting once the warrant was enumerated over grains that hold
+    // evidence rather than over the bank's two synthetic skill-graph ids.
+    expect(responseBody(wrapped)).toMatchObject({ skillsTouched: 3, protectedPassed: 0 });
     const state = repository.projectionFor(principal.learnerId)?.state as
       | { evidence?: Array<{ evidenceId?: string; kind?: string }> }
       | undefined;

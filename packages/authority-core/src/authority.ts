@@ -1121,7 +1121,15 @@ export class Authority {
     });
   }
 
-  private refreshNeeded(st: MemoryState, decayed: number): boolean {
+  /**
+   * BKT review-due for one grain: it was at or above the review line when last
+   * practiced and has decayed below it since.
+   *
+   * This is capability, and it is NOT the evidence warrant's `refreshNeeded`
+   * ("the warrant is stale or contradicted"). The two used to publish under one
+   * field name, which is how a planner reading both would have collapsed them.
+   */
+  private decayedBelowReviewLine(st: MemoryState, decayed: number): boolean {
     return st.lastPracticedAt !== null && decayed < REVIEW_LINE && st.pL >= REVIEW_LINE;
   }
 
@@ -1135,7 +1143,7 @@ export class Authority {
       return {
         operation,
         pL,
-        refreshNeeded: st ? this.refreshNeeded(st, pL) : false,
+        reviewDue: st ? this.decayedBelowReviewLine(st, pL) : false,
         mastered: pL >= MASTERY_THRESHOLD,
       };
     });
@@ -1189,7 +1197,7 @@ export class Authority {
         lessonId: view.lessonId,
         cluster: clusterForLesson(view.lessonId) ?? null,
         pL: view.pL,
-        refreshNeeded: view.reviewDue,
+        reviewDue: view.reviewDue,
         mastered: view.mastered,
       }));
   }

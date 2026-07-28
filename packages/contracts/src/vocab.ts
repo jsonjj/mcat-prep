@@ -159,7 +159,18 @@ export const DistractorFamilySchema = z.enum([
 ]);
 export type DistractorFamily = z.infer<typeof DistractorFamilySchema>;
 
-/** Learner-visible mastery states (see policies for the underlying evidence track). */
+/**
+ * The historical evidence ladder, as a wire enum. NOT learner-visible and no
+ * longer read by anything: capability is BKT's `SkillMasteryView.pL` / `mastered`
+ * and the warrant crosses the wire only as `EVIDENCE_REASON_CODES`. The badge
+ * that rendered these seven members was deleted precisely because a dormant
+ * ordinal is one import away from becoming a second mastery scale.
+ *
+ * It is kept, rather than deleted with the badge, only because
+ * `tests/architecture/cross-package-enum-parity.test.ts` names it while
+ * explaining why `EVIDENCE_QUALITY_TIERS` has no contracts-side mirror. Deleting
+ * it is an owner call, and it means updating that explanation in the same change.
+ */
 export const MasteryStateSchema = z.enum([
   'not_assessed',
   'foundation_needed',
@@ -170,9 +181,6 @@ export const MasteryStateSchema = z.enum([
   'exam_ready_now',
 ]);
 export type MasteryState = z.infer<typeof MasteryStateSchema>;
-
-/** `refresh_needed` is an overlay on the achieved state, not a base state. */
-export const RefreshOverlaySchema = z.boolean();
 
 /** Assistance ladder: A3 worked model → A0 fully independent. */
 export const AssistanceLevelSchema = z.enum(['A3', 'A2', 'A1', 'A0']);

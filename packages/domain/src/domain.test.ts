@@ -9,7 +9,7 @@ import {
 } from '@mcat/contracts';
 import { scoreAttempt } from './scoring';
 import { findHardPrerequisiteCycle, SkillDefinitionSchema, type SkillGraph } from './skill-graph';
-import { baseStateRank, evidenceQualityAdvances } from './mastery';
+import { evidenceQualityAdvances, evidenceQualityRank } from './mastery';
 import { EvidenceRecordSchema, isMasteryEligible } from './evidence';
 import { adaptLessonResponse } from './lesson-response-adapter';
 
@@ -152,7 +152,7 @@ describe('mastery invariants', () => {
   });
 
   it('orders evidence-quality tiers', () => {
-    expect(baseStateRank('strong')).toBeGreaterThan(baseStateRank('independent'));
+    expect(evidenceQualityRank('strong')).toBeGreaterThan(evidenceQualityRank('independent'));
     expect(evidenceQualityAdvances('learning', 'retained')).toBe(true);
     expect(evidenceQualityAdvances('strong', 'independent')).toBe(false);
   });
