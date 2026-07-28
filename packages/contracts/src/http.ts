@@ -6,6 +6,7 @@ import { EventIdSchema } from './ids';
 import {
   ErrorEntryViewSchema,
   MasteryMapEntrySchema,
+  MistakePatternViewSchema,
   StudyStepViewSchema,
   TodayViewSchema,
 } from './learner-views';
@@ -23,7 +24,6 @@ import {
   BuildTodaysPathCommandSchema,
   DailyBudgetCommandSchema,
   PlanActivityProgressCommandSchema,
-  RecordMistakeCommandSchema,
   TodaysPathViewSchema,
 } from './todays-path';
 import { UtcTimestampSchema } from './time';
@@ -59,6 +59,7 @@ export const LearnerSnapshotSchema = z
     session: StudyStepViewSchema,
     masteryMap: z.array(MasteryMapEntrySchema),
     errorLog: z.array(ErrorEntryViewSchema),
+    errorPatterns: z.array(MistakePatternViewSchema),
   })
   .strict();
 export type LearnerSnapshot = z.infer<typeof LearnerSnapshotSchema>;
@@ -101,13 +102,14 @@ export const HTTP_API = {
     body: DailyBudgetCommandSchema,
     response: AcceptedCommandResponseSchema,
   },
-  recordMistake: {
-    method: 'POST',
-    path: '/v1/mistakes',
-    body: RecordMistakeCommandSchema,
-    response: AcceptedCommandResponseSchema,
-  },
   session: { method: 'GET', path: '/v1/learning/session', response: StudyStepViewSchema },
+  errors: { method: 'GET', path: '/v1/errors', response: z.array(ErrorEntryViewSchema) },
+  /** Recurring-miss patterns at KC / cluster grain (never misconception grain). */
+  errorPatterns: {
+    method: 'GET',
+    path: '/v1/errors/patterns',
+    response: z.array(MistakePatternViewSchema),
+  },
   progressSkills: {
     method: 'GET',
     path: '/v1/progress/skills',

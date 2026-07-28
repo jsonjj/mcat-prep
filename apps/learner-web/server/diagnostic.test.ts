@@ -7,9 +7,15 @@ import {
   planMstForm,
   SEED_PRIOR_CAP,
 } from '@mcat/policies';
+import { buildDiagnosticBank } from '@mcat/content';
 import { DiagnosticBank } from './diagnostic-bank';
 import { DiagnosticSessionError, DiagnosticSessionStore } from './diagnostic-session-store';
-import { recordBlock, REPORTED_PRIORITY_COUNT, resolveBlock } from './diagnostic-engine';
+import {
+  bankSupportsProductionForm,
+  recordBlock,
+  REPORTED_PRIORITY_COUNT,
+  resolveBlock,
+} from './diagnostic-engine';
 
 const PROTECTED_FIELDS = ['correct_answer', 'explanations', 'correct_choice_id', 'rationales'];
 
@@ -69,6 +75,19 @@ const perBucketCounts = (record: { responses: readonly { cluster: string }[] }) 
   return seen;
 };
 
+/**
+ * Whether the bank this environment loaded can deal the served form at all.
+ *
+ * The suites below drive the real production design, which throws outright if any
+ * bucket cannot cover its share. That is the right behaviour when serving, but as
+ * a test precondition it turns "this machine has no question bank" into a wall of
+ * assertion failures pointing at the engine. The synthetic fallback is sized to
+ * satisfy the form (the CI guard at the bottom of this file is what proves it), so
+ * this should always be true — it is a diagnosis aid for a partial or drifted bank,
+ * not an escape hatch. If these suites ever skip, the fixture is the bug.
+ */
+const PRODUCTION_FORM_SERVABLE = bankSupportsProductionForm(new DiagnosticBank());
+
 describe('diagnostic session store integrity', () => {
   it('rate-limits session creation per client', () => {
     const store = new DiagnosticSessionStore({ maxSessionsPerWindow: 2 });
@@ -126,7 +145,7 @@ describe('diagnostic session store integrity', () => {
   });
 });
 
-describe('diagnostic block delivery', () => {
+describe.skipIf(!PRODUCTION_FORM_SERVABLE)('diagnostic block delivery', () => {
   const bank = new DiagnosticBank();
 
   it('serves a whole stage at once, sized by the design', () => {
@@ -240,15 +259,18 @@ describe('diagnostic block delivery', () => {
   it('routes on the number correct in the committed block', () => {
     const store = new DiagnosticSessionStore();
 
-    // Two learners, same stage 1 items, opposite performance: one blank
-    // throughout, one answered from the key.
+    // Two learners, opposite performance: one blank throughout, one answered
+    // from the key. Their stage-1 blocks are seeded per session, so the items
+    // are not identical across sittings — but the routing module is the same
+    // SIZE and difficulty composition (tie-breaks only permute equidifficult
+    // items), which is what keeps number-correct routing comparable.
     const weak = store.create('c').record;
     const weakBlock = resolveBlock(bank, weak).block!;
     recordBlock(bank, weak, weakBlock.questionIds, uniformAnswers(weakBlock.questionIds, null));
 
     const strong = store.create('c').record;
     const strongBlock = resolveBlock(bank, strong).block!;
-    expect(strongBlock.questionIds).toEqual(weakBlock.questionIds);
+    expect(strongBlock.questionIds.length).toBe(weakBlock.questionIds.length);
     const keyed = Object.fromEntries(
       strongBlock.questionIds.map((id) => [
         id,
@@ -265,9 +287,27 @@ describe('diagnostic block delivery', () => {
     expect(strongNext.view.stageId).not.toBe(weakNext.view.stageId);
     expect(strongNext.block!.questionIds).not.toEqual(weakNext.block!.questionIds);
   });
+
+  it('seeds the form per session: two sittings diverge, one sitting replays stably', () => {
+    const store = new DiagnosticSessionStore();
+
+    // Same stage-1 route for both (nobody has answered yet), but distinct
+    // session tokens: the tie-break must draw different items so the reachable
+    // bank is not pinned to one lowest-id form across the whole population.
+    const a = store.create('same-device').record;
+    const b = store.create('same-device').record;
+    const blockA = resolveBlock(bank, a).block!;
+    const blockB = resolveBlock(bank, b).block!;
+    expect(blockA.questionIds.length).toBe(blockB.questionIds.length);
+    expect(blockA.questionIds).not.toEqual(blockB.questionIds);
+
+    // Replaying the same session (the open-block resolution the server does on
+    // every request) must be stable — the seed is a function of the token.
+    expect(resolveBlock(bank, a).block!.questionIds).toEqual(blockA.questionIds);
+  });
 });
 
-describe('the design production serves', () => {
+describe.skipIf(!PRODUCTION_FORM_SERVABLE)('the design production serves', () => {
   const bank = new DiagnosticBank();
 
   const firstBlock = (design: string | undefined) => {
@@ -312,7 +352,7 @@ describe('the design production serves', () => {
   });
 });
 
-describe('diagnostic engine end-to-end', () => {
+describe.skipIf(!PRODUCTION_FORM_SERVABLE)('diagnostic engine end-to-end', () => {
   const bank = new DiagnosticBank();
 
   it('runs from start to a completed, coverage-honoring result', () => {
@@ -410,8 +450,15 @@ describe('diagnostic engine end-to-end', () => {
     const { eligible, inScope, outOfScope, outOfScopeByCluster } = bank.scope;
     expect(inScope + outOfScope).toBe(eligible);
     expect(outOfScope).toBeGreaterThan(0);
-    // Everything excluded is reasoning or CARS; nothing else loses items.
-    expect(Object.keys(outOfScopeByCluster).sort()).toEqual(['CA1', 'CA2', 'R1', 'R2', 'R3']);
+    // Everything excluded is reasoning or CARS — the FC-untagged part of the bank
+    // — plus the empty-by-design PS1. The real corpus has no PS1 items, so it
+    // shows only R/CA; the synthetic fixture keeps a couple of PS1 items for
+    // cluster coverage, and those are legitimately off the FC axis too.
+    const OFF_FC = ['CA1', 'CA2', 'PS1', 'R1', 'R2', 'R3'];
+    expect(Object.keys(outOfScopeByCluster).every((c) => OFF_FC.includes(c))).toBe(true);
+    for (const reasoning of ['CA1', 'CA2', 'R1', 'R2', 'R3']) {
+      expect(outOfScopeByCluster[reasoning] ?? 0, reasoning).toBeGreaterThan(0);
+    }
     expect(Object.values(outOfScopeByCluster).reduce((s, n) => s + n, 0)).toBe(outOfScope);
   });
 
@@ -539,5 +586,69 @@ describe('diagnostic engine end-to-end', () => {
     expect(a.record.responses.map((r) => r.questionId)).toEqual(
       b.record.responses.map((r) => r.questionId),
     );
+  });
+});
+
+/**
+ * The CI guard. Every `bank` above is `new DiagnosticBank()`, which prefers the
+ * gitignored real pull when it is on disk — so on a developer machine those
+ * suites exercise the real corpus. CI has no pull and the loader falls back to
+ * the synthetic fixture, but that fallback must be proven to assemble the form
+ * whether or not the pull happens to be present. This block therefore builds the
+ * bank from the synthetic builder EXPLICITLY, so the guarantee is checked in
+ * every environment, not only the one where the real bank is absent.
+ */
+describe('the synthetic fallback bank assembles the production form (CI guard)', () => {
+  const syntheticBank = new DiagnosticBank(buildDiagnosticBank());
+
+  it('mirrors the real bank FC profile bucket-for-bucket', () => {
+    const counts: Record<string, [number, number, number]> = {};
+    for (const item of syntheticBank.formItems) {
+      const row = (counts[item.bucketId] ??= [0, 0, 0]);
+      row[item.dokLevel - 1] += 1;
+    }
+    const partition = Object.fromEntries(
+      axisIds(FC_AXIS).map((id) => [id, BANK_PROFILES['fc-15'][id]]),
+    );
+    expect(counts).toEqual(partition);
+  });
+
+  it('plans the 140-item production form without running any bucket dry', () => {
+    const plan = planMstForm(MST_140_RECOMMENDED, syntheticBank.formItems, FC_AXIS);
+    expect(plan.totalItems).toBe(140);
+    expect(plan.uncoverableBuckets).toEqual([]);
+    expect([...plan.itemsPerBucket.keys()]).toEqual(axisIds(FC_AXIS));
+  });
+
+  it('resolves every stage of a full sitting to a completed result', () => {
+    const store = new DiagnosticSessionStore();
+    const { record, view, blocks } = runSession(syntheticBank, store);
+    const plan = productionPlan(syntheticBank);
+
+    // Drove all 7 stages to completion for this route.
+    expect(view.done).toBe(true);
+    expect(view.result).not.toBeNull();
+    expect(blocks.length).toBe(plan.stageSizes.length);
+    expect(record.responses.length).toBe(plan.totalItems);
+
+    // Coverage honoured on this route: every concept meets the design floor.
+    const seen = perBucketCounts(record);
+    for (const bucket of plan.itemsPerBucket.keys()) {
+      expect(seen.get(bucket) ?? 0, bucket).toBeGreaterThanOrEqual(
+        MST_140_RECOMMENDED.minItemsPerBucket,
+      );
+    }
+    assertNoLeak(view.result, 'synthetic result view');
+  });
+
+  it('also assembles the top-scoring route, where no bucket may repeat an item', () => {
+    const store = new DiagnosticSessionStore();
+    const { record } = runSession(
+      syntheticBank,
+      store,
+      (questionId) =>
+        (['A', 'B', 'C', 'D'] as const).find((c) => syntheticBank.score(questionId, c)) ?? null,
+    );
+    expect(new Set(record.responses.map((r) => r.questionId)).size).toBe(140);
   });
 });

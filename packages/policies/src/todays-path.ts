@@ -94,16 +94,19 @@ export interface TodaysPathConfig {
   /** A 2nd CARS Duel is added on presets at/above this many minutes. */
   readonly carsSecondAtBudget: number; // 240 (4 hr)
   /**
-   * Reserved short Review-Mistakes "spacer" sessions, planned every day so the
-   * ordering can break up long same-kind runs (back-to-back practice/lessons) and
-   * so a short error check-in always appears. 2/day normally, 3 on longer budgets;
-   * each session is kept short (min–max items) — real pile-ups still trigger the
-   * authority's mid-day injector on top of these.
+   * Reserved short Review-Mistakes sessions, planned only once
+   * `eligibility.mistakesMinOpen` misses are actually open (a session reserved
+   * against nothing promised "clear what piled up" and opened an empty Mistakes
+   * page). 2/day normally, 3 on longer budgets; each session is kept short
+   * (min–max items, never above the open count) — real pile-ups later in the day
+   * still trigger the authority's mid-day injector on top of these. Variety in the
+   * day's ordering does NOT depend on these sessions: `orderActivities` spreads
+   * same-kind runs on its own.
    */
   readonly mistakesReserved: {
     readonly perDay: number; // 2
     readonly perDayLongBudget: number; // 3 (>= carsSecondAtBudget)
-    readonly minItems: number; // 3 (short floor — a short session still appears)
+    readonly minItems: number; // 3 (short floor)
     readonly maxItems: number; // 8 (short ceiling — keep each session short)
   };
 }
@@ -428,22 +431,27 @@ export function buildTodaysPath(
     spent += Math.max(1, core.recallMinutes);
   }
 
-  // Review Mistakes — RESERVED as short "spacer" sessions (2–3/day), planned even
-  // when nothing is open yet ("a short session still appears"). Ordering interleaves
-  // them so they break up long same-kind runs (back-to-back practice/lessons), and
-  // misses that pile up during the day are caught by the next reserved session (the
-  // authority also injects an extra one mid-day on a real pile-up). Execution is a
-  // placeholder for now (links to the Mistakes page — no repair runner yet).
+  // Review Mistakes — RESERVED as short sessions (2–3/day), only once
+  // `eligibility.mistakesMinOpen` misses are actually open: reserving one against
+  // nothing is how a shipped slot came to promise "clear what piled up" and open an
+  // empty Mistakes page. Pile-ups later in the day are caught by the authority's
+  // mid-day injector. Their old second job — breaking up same-kind runs — belongs to
+  // orderActivities, which enforces it whether or not any of these exist.
   const mistakesWanted =
     snap.dailyBudgetMinutes >= cfg.carsSecondAtBudget
       ? cfg.mistakesReserved.perDayLongBudget
       : cfg.mistakesReserved.perDay;
   const carriedMistakes = carried.filter((c) => c.kind === 'review_mistakes').length;
-  const mistakesToReserve = Math.max(0, mistakesWanted - carriedMistakes);
-  const mistakesPerSession = clamp(
-    Math.ceil(snap.mistakesOpen / Math.max(1, mistakesWanted)),
-    cfg.mistakesReserved.minItems,
-    cfg.mistakesReserved.maxItems,
+  const mistakesEligible = snap.mistakesOpen >= cfg.eligibility.mistakesMinOpen;
+  const mistakesToReserve = mistakesEligible ? Math.max(0, mistakesWanted - carriedMistakes) : 0;
+  // Never promise more items than the Mistakes tab can show.
+  const mistakesPerSession = Math.min(
+    clamp(
+      Math.ceil(snap.mistakesOpen / Math.max(1, mistakesWanted)),
+      cfg.mistakesReserved.minItems,
+      cfg.mistakesReserved.maxItems,
+    ),
+    Math.max(1, snap.mistakesOpen),
   );
   const mistakesSessionMinutes = mistakesPerSession * cfg.costs.mistakePerItem;
   for (let m = 0; m < mistakesToReserve; m += 1) {
@@ -585,28 +593,43 @@ function pickPracticeFocus(_snap: TodaysPathSnapshot): string | null {
   return null;
 }
 
-/** Max-spread a set so no two same-kind items are adjacent when avoidable. */
-function maxSpread(items: readonly PlannedActivity[]): PlannedActivity[] {
-  const rank: Record<TodaysPathActivityKind, number> = {
-    recall: 0,
-    lesson: 1,
-    cars_duel: 2,
-    review_mistakes: 3,
-    practice: 4,
-  };
+/** Tie-break order when two kinds have the same number of remaining items. */
+const KIND_SPREAD_RANK: Record<TodaysPathActivityKind, number> = {
+  recall: 0,
+  lesson: 1,
+  cars_duel: 2,
+  review_mistakes: 3,
+  practice: 4,
+};
+
+function bucketsByKind(
+  items: readonly PlannedActivity[],
+): Map<TodaysPathActivityKind, PlannedActivity[]> {
   const buckets = new Map<TodaysPathActivityKind, PlannedActivity[]>();
   for (const a of items) {
     const arr = buckets.get(a.kind) ?? [];
     arr.push(a);
     buckets.set(a.kind, arr);
   }
+  return buckets;
+}
+
+/**
+ * Greedy "always take the fullest kind that isn't the one just placed" interleave.
+ * Reaches ZERO same-kind adjacency whenever no kind holds more than half the set
+ * (+1) — which is exactly when zero adjacency is achievable at all.
+ */
+function interleaveNoAdjacent(
+  buckets: Map<TodaysPathActivityKind, PlannedActivity[]>,
+  total: number,
+): PlannedActivity[] {
   const result: PlannedActivity[] = [];
   let last: TodaysPathActivityKind | null = null;
-  while (result.length < items.length) {
+  while (result.length < total) {
     const remaining = [...buckets.entries()].filter(([, arr]) => arr.length > 0);
     let pool = remaining.filter(([k]) => k !== last);
     if (pool.length === 0) pool = remaining;
-    pool.sort((a, b) => b[1].length - a[1].length || rank[a[0]] - rank[b[0]]);
+    pool.sort((a, b) => b[1].length - a[1].length || KIND_SPREAD_RANK[a[0]] - KIND_SPREAD_RANK[b[0]]);
     const [kind, arr] = pool[0]!;
     result.push(arr.shift()!);
     last = kind;
@@ -615,12 +638,58 @@ function maxSpread(items: readonly PlannedActivity[]): PlannedActivity[] {
 }
 
 /**
+ * Max-spread a set for variety: no two same-kind items adjacent when that is
+ * achievable, and when it is NOT (one kind outnumbers everything else — a
+ * practice-heavy or lesson-heavy day), the forced repetition is CUT INTO EVEN
+ * CHUNKS instead of piling into one long tail.
+ *
+ * With `d` items of the dominant kind and `o` items of every other kind, the `o`
+ * others open at most `o + 1` gaps, so some gap must hold ceil(d / (o + 1)) of the
+ * dominant kind: that is the floor on the longest same-kind run, and even chunking
+ * hits it. This is why variety no longer depends on a Review-Mistakes session being
+ * reserved — spreading is an ORDERING concern, and the orderer now owns it outright.
+ */
+function maxSpread(items: readonly PlannedActivity[]): PlannedActivity[] {
+  if (items.length <= 1) return [...items];
+  const buckets = bucketsByKind(items);
+
+  let dominant: TodaysPathActivityKind | null = null;
+  for (const [kind, arr] of buckets) {
+    const best = dominant !== null ? buckets.get(dominant)!.length : -1;
+    if (arr.length > best) dominant = kind;
+  }
+  const dominantItems = buckets.get(dominant!)!;
+  const others = items.length - dominantItems.length;
+
+  // Zero adjacency is reachable → the greedy interleave already delivers it.
+  if (dominantItems.length <= others + 1) return interleaveNoAdjacent(buckets, items.length);
+
+  // Some repetition is unavoidable: spread the other kinds through the dominant run
+  // so every stretch is within one of the even chunks (the provable minimum).
+  const rest = maxSpread(items.filter((a) => a.kind !== dominant));
+  const gaps = rest.length + 1;
+  const chunk = Math.floor(dominantItems.length / gaps);
+  const extra = dominantItems.length % gaps;
+  const result: PlannedActivity[] = [];
+  let next = 0;
+  for (let g = 0; g < gaps; g += 1) {
+    const size = chunk + (g < extra ? 1 : 0);
+    for (let i = 0; i < size; i += 1) result.push(dominantItems[next++]!);
+    if (g < rest.length) result.push(rest[g]!);
+  }
+  return result;
+}
+
+/**
  * Ordering rules:
  *  - Recall is ALWAYS first (when present); otherwise the day opens on a lesson.
  *  - Lessons / Practice / Review-Mistakes are max-spread so no two of the same kind
- *    run back-to-back (variety — the reason for the per-activity time cap).
+ *    run back-to-back (variety — the reason for the per-activity time cap), and when
+ *    one kind outnumbers the rest, its forced repetition is cut into even chunks
+ *    rather than left as one long tail. Variety therefore holds on its own, with no
+ *    reserved Review-Mistakes session needed to break a run up.
  *  - CARS is placed ~middle (1) or ~1/3 and ~2/3 (2); inserting it between non-CARS
- *    items never creates a same-kind adjacency.
+ *    items never creates a same-kind adjacency (so it never lengthens a run).
  */
 export function orderActivities(activities: readonly PlannedActivity[]): PlannedActivity[] {
   const recall = activities.filter((a) => a.kind === 'recall');

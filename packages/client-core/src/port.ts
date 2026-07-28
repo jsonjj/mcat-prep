@@ -8,12 +8,12 @@ import type {
   LessonMasteryView,
   MasteryMapEntry,
   MasterySeed,
+  MistakePatternView,
   PracticeAttemptCommand,
   PracticeAttemptResult,
   PracticeItemView,
   PracticeQueueView,
   PracticeResult,
-  ProbableCause,
   SkillMasteryView,
   SkillSummary,
   StudyStepView,
@@ -55,11 +55,8 @@ export interface AuthorityPort {
   ): Promise<void>;
   /** Today's Path: set the daily time-budget preset (a 2–6 hr preset, in minutes). */
   setDailyBudget(minutesPerDay: number): Promise<void>;
-  /** Today's Path: increment the count-only mistake tally (independent miss from a source). */
-  recordMistake(source: 'practice' | 'cars' | 'lesson'): Promise<void>;
   getSession(): Promise<StudyStepView>;
   submitAttempt(choiceId: string | null): Promise<void>;
-  selectCause(cause: ProbableCause): Promise<void>;
   requestReveal(): Promise<void>;
   continueStep(): Promise<void>;
   submitRecall(answer: string): Promise<boolean>;
@@ -70,7 +67,10 @@ export interface AuthorityPort {
   getMasteryLessons(): Promise<LessonMasteryView[]>;
   /** CARS IRT readiness (gauge + 3 sub-skill bars). */
   getCarsReadiness(): Promise<CarsReadinessView>;
+  /** Mistakes tab, Surface B: question misses (practice and study) with their content. */
   getErrorLog(): Promise<ErrorEntryView[]>;
+  /** Mistakes tab, Surface A: recurring misses grouped at KC / cluster grain. */
+  getMistakePatterns(): Promise<MistakePatternView[]>;
   getSkills(): Promise<SkillSummary[]>;
   getPracticeItem(questionId: string): Promise<PracticeItemView | null>;
   checkPractice(questionId: string, choiceId: string | null): Promise<PracticeResult>;

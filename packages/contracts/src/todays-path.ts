@@ -94,18 +94,6 @@ export const TodaysPathViewSchema = z
   .strict();
 export type TodaysPathView = z.infer<typeof TodaysPathViewSchema>;
 
-/** Source of an independent miss that increments the (count-only) mistake tally. */
-export const MistakeSourceSchema = z.enum(['practice', 'cars', 'lesson']);
-export type MistakeSource = z.infer<typeof MistakeSourceSchema>;
-
-export const RecordMistakeCommandSchema = z
-  .object({
-    envelope: CommandEnvelopeSchema,
-    source: MistakeSourceSchema,
-  })
-  .strict();
-export type RecordMistakeCommand = z.infer<typeof RecordMistakeCommandSchema>;
-
 /** Recall load the client reads from its (client-side) FSRS store and feeds up. */
 export const RecallLoadInputSchema = z
   .object({

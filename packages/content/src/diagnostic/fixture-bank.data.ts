@@ -65,13 +65,24 @@ export interface DiagnosticDraft {
   explanations: { A: string; B: string; C: string; D: string };
   passage?: string;
   dok?: number;
+  /**
+   * Pins the lesson an item routes through, overriding `CLUSTER_LESSON[cluster]`.
+   * Used only by the FC-coverage generator below, so a synthetic item can be
+   * placed on a specific Foundational Concept regardless of which cluster its
+   * lesson happens to roll up to.
+   */
+  lessonId?: string;
 }
 
 /**
- * The drafts. >= 2 families per cluster and enough per section to clear the
- * DiagnosticConfig floors (cp>=8, cars>=6, bb>=8, ps>=8).
+ * The hand-authored drafts. >= 2 families per cluster and enough per section to
+ * clear the DiagnosticConfig floors (cp>=8, cars>=6, bb>=8, ps>=8). These carry
+ * MCAT-authentic content and drive the cluster-15 coverage the bank tests pin.
+ *
+ * They are combined with the FC-coverage generator (below) to form
+ * `DIAGNOSTIC_DRAFTS`, the corpus the bank actually builds from.
  */
-export const DIAGNOSTIC_DRAFTS: readonly DiagnosticDraft[] = [
+const HAND_AUTHORED_DRAFTS: readonly DiagnosticDraft[] = [
   // ---- R1 Quantitative Reasoning (cp) ----
   {
     cluster: 'R1',
@@ -695,4 +706,222 @@ export const DIAGNOSTIC_DRAFTS: readonly DiagnosticDraft[] = [
     },
     dok: 3,
   },
+];
+
+// ---------------------------------------------------------------------------
+// FC-coverage generator (synthetic, test_only, uncalibrated).
+//
+// The production diagnostic reports on the 10 AAMC Foundational Concepts, and
+// the 140-item MST form needs a sizeable pool PER concept — its contention
+// allocation can ask a single bucket for up to 26 items across one sitting, and
+// each bucket must span DOK 1/2/3. The hand-authored drafts above touch only six
+// FCs and a couple of items each, so in CI (where the real bank is absent and
+// the loader falls back to this fixture) the form cannot be assembled.
+//
+// This generator fills every FC bucket so the synthetic bank mirrors the REAL
+// bank's Foundational-Concept profile bucket-for-bucket — the fc-15 FC rows in
+// packages/policies/src/data/bank-profiles.generated.ts. Matching that profile
+// lets the exact same diagnostic suite pass whether or not the real pull is on
+// disk, rather than needing a separate, weaker set of CI assertions.
+//
+// Routing: every generated item pins a real V3 lesson whose FIRST listed
+// foundational concept is the target FC (each pairing is verified against
+// packages/policies/src/data/fc-lessons.generated.ts). That lesson also resolves
+// to a cluster through the production adapter (see ./data/v3-cluster-map.data),
+// so these items route via the real seam and never touch the cluster_hint
+// fallback — leaving PS1 as the sole documented fallback the bank tests expect.
+//
+// The text is synthetic filler with one designated-correct option and three
+// distractors: enough to satisfy QuestionSchema and the learner-safe compiler,
+// and explicitly NOT real MCAT content or answer keys.
+// ---------------------------------------------------------------------------
+
+type FcId =
+  | 'FC1'
+  | 'FC2'
+  | 'FC3'
+  | 'FC4'
+  | 'FC5'
+  | 'FC6'
+  | 'FC7'
+  | 'FC8'
+  | 'FC9'
+  | 'FC10';
+
+const FC_IDS: readonly FcId[] = [
+  'FC1',
+  'FC2',
+  'FC3',
+  'FC4',
+  'FC5',
+  'FC6',
+  'FC7',
+  'FC8',
+  'FC9',
+  'FC10',
+];
+
+/**
+ * Target in-scope (eligible + FC-tagged) item count per concept per DOK
+ * [dok1, dok2, dok3], copied from the fc-15 FC rows of the real bank profile.
+ * The generator tops the hand-authored contribution up to exactly these totals.
+ */
+const FC_TARGET: Readonly<Record<FcId, readonly [number, number, number]>> = {
+  FC1: [61, 184, 35],
+  FC2: [26, 69, 16],
+  FC3: [47, 130, 26],
+  FC4: [72, 295, 47],
+  FC5: [59, 180, 40],
+  FC6: [21, 75, 24],
+  FC7: [31, 99, 25],
+  FC8: [24, 62, 17],
+  FC9: [20, 66, 20],
+  FC10: [4, 32, 4],
+};
+
+/** One real lesson whose first listed FC is the keyed concept (drives bucketing). */
+const FC_LESSON: Readonly<Record<FcId, string>> = {
+  FC1: 'V3-LES-137490',
+  FC2: 'V3-LES-018986',
+  FC3: 'V3-LES-006619',
+  FC4: 'V3-LES-020428',
+  FC5: 'V3-LES-041222',
+  FC6: 'V3-LES-153695',
+  FC7: 'V3-LES-053947',
+  FC8: 'V3-LES-228369',
+  FC9: 'V3-LES-134007',
+  FC10: 'V3-LES-404423',
+};
+
+/**
+ * The cluster each lesson resolves to through the adapter. Used to stamp a
+ * generated item's cluster (and thus its section) so it stays coherent with the
+ * routing the bank builder derives — the two must agree.
+ */
+const LESSON_CLUSTER: Readonly<Record<string, SkillCluster>> = {
+  'V3-LES-137490': 'BB2',
+  'V3-LES-018986': 'BB4',
+  'V3-LES-006619': 'BB3',
+  'V3-LES-020428': 'CP2',
+  'V3-LES-041222': 'CP3',
+  'V3-LES-153695': 'PS2',
+  'V3-LES-053947': 'PS2',
+  'V3-LES-228369': 'PS3',
+  'V3-LES-134007': 'PS3',
+  'V3-LES-404423': 'PS3',
+};
+
+/**
+ * Lesson -> FC for the FC-tagged lessons the hand-authored drafts already route
+ * through (via `CLUSTER_LESSON`). Lets the generator subtract their existing
+ * contribution so the combined corpus lands on `FC_TARGET` exactly. Lessons not
+ * listed here (reasoning/CARS, and PS1's null) carry no FC and are ignored.
+ */
+const LESSON_FC: Readonly<Record<string, FcId>> = {
+  'V3-LES-137490': 'FC1',
+  'V3-LES-018986': 'FC2',
+  'V3-LES-044045': 'FC2',
+  'V3-LES-207028': 'FC2',
+  'V3-LES-006619': 'FC3',
+  'V3-LES-020428': 'FC4',
+  'V3-LES-094421': 'FC4',
+  'V3-LES-041222': 'FC5',
+  'V3-LES-153695': 'FC6',
+  'V3-LES-053947': 'FC7',
+  'V3-LES-228369': 'FC8',
+  'V3-LES-134007': 'FC9',
+  'V3-LES-404423': 'FC10',
+};
+
+const zeros = (): [number, number, number] => [0, 0, 0];
+
+/** Per-FC-per-DOK counts the hand-authored drafts already place in scope. */
+function handAuthoredFcContribution(): Record<FcId, [number, number, number]> {
+  const acc = Object.fromEntries(FC_IDS.map((fc) => [fc, zeros()])) as Record<
+    FcId,
+    [number, number, number]
+  >;
+  for (const draft of HAND_AUTHORED_DRAFTS) {
+    const lessonId = draft.lessonId ?? CLUSTER_LESSON[draft.cluster];
+    const fc = lessonId === null ? undefined : LESSON_FC[lessonId];
+    if (fc === undefined) continue;
+    const row = acc[fc];
+    const idx = (draft.dok ?? 2) - 1;
+    row[idx] = (row[idx] ?? 0) + 1;
+  }
+  return acc;
+}
+
+const CHOICE_LETTERS: readonly ChoiceLetter[] = ['A', 'B', 'C', 'D'];
+
+/** One valid, clearly-answerable synthetic item routed onto `fc`. */
+function makeSyntheticDraft(
+  fc: FcId,
+  cluster: SkillCluster,
+  lessonId: string,
+  dok: number,
+  index: number,
+): DiagnosticDraft {
+  const tag = `${fc}-d${dok}-${String(index).padStart(3, '0')}`;
+  const correct = CHOICE_LETTERS[(dok + index) % CHOICE_LETTERS.length]!;
+  const choices = {
+    A: `Synthetic ${fc} response A (${tag})`,
+    B: `Synthetic ${fc} response B (${tag})`,
+    C: `Synthetic ${fc} response C (${tag})`,
+    D: `Synthetic ${fc} response D (${tag})`,
+  };
+  const explain = (letter: ChoiceLetter): string =>
+    letter === correct
+      ? `Correct: response ${letter} is the designated answer for synthetic item ${tag}.`
+      : `Response ${letter} is a synthetic distractor for item ${tag}.`;
+  return {
+    cluster,
+    family: `gen-${tag}`,
+    stem:
+      `Synthetic uncalibrated diagnostic item ${tag} for ${fc} (test_only fixture, ` +
+      `not real MCAT content). Which response is designated correct?`,
+    choices,
+    correct,
+    explanations: {
+      A: explain('A'),
+      B: explain('B'),
+      C: explain('C'),
+      D: explain('D'),
+    },
+    dok,
+    lessonId,
+  };
+}
+
+/** Enough synthetic items to bring every FC bucket up to `FC_TARGET`. */
+function generateFcCoverageDrafts(): DiagnosticDraft[] {
+  const existing = handAuthoredFcContribution();
+  const out: DiagnosticDraft[] = [];
+  for (const fc of FC_IDS) {
+    const lessonId = FC_LESSON[fc];
+    const cluster = LESSON_CLUSTER[lessonId]!;
+    for (let dokIdx = 0; dokIdx < 3; dokIdx += 1) {
+      const need = FC_TARGET[fc][dokIdx]! - existing[fc][dokIdx]!;
+      if (need < 0) {
+        throw new Error(
+          `FC-coverage generator: ${fc} DOK ${dokIdx + 1} is over-supplied by hand-authored drafts ` +
+            `(${existing[fc][dokIdx]} > target ${FC_TARGET[fc][dokIdx]}); adjust FC_TARGET.`,
+        );
+      }
+      for (let i = 0; i < need; i += 1) {
+        out.push(makeSyntheticDraft(fc, cluster, lessonId, dokIdx + 1, i));
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * The corpus the bank builds from: the hand-authored drafts (cluster coverage)
+ * plus generated items that fill each Foundational Concept to the real bank's
+ * profile so the 140-item production form can be assembled without the pull.
+ */
+export const DIAGNOSTIC_DRAFTS: readonly DiagnosticDraft[] = [
+  ...HAND_AUTHORED_DRAFTS,
+  ...generateFcCoverageDrafts(),
 ];

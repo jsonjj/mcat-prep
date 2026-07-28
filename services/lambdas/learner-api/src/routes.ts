@@ -11,13 +11,13 @@ import {
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
+  MistakePatternViewSchema,
   PracticeAttemptCommandSchema,
   PracticeAttemptResultSchema,
   PracticeFocusSchema,
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
   PracticeResultSchema,
-  ProbableCauseSchema,
   SkillMasteryViewSchema,
   SkillSummarySchema,
   StudyStepViewSchema,
@@ -34,7 +34,6 @@ import {
   type ContentId,
   type MasterySeed,
   type PracticeAttemptCommand,
-  type ProbableCause,
 } from '@mcat/contracts';
 
 export type RouteId =
@@ -43,7 +42,6 @@ export type RouteId =
   | 'diagnosticNext'
   | 'goal'
   | 'attempt'
-  | 'cause'
   | 'reveal'
   | 'continue'
   | 'recall'
@@ -63,6 +61,7 @@ export type RouteId =
   | 'progressLessons'
   | 'progressCars'
   | 'errors'
+  | 'errorPatterns'
   | 'vectorLessonStatus'
   | 'vectorLessonStart'
   | 'vectorLessonRun'
@@ -71,11 +70,6 @@ export type RouteId =
 interface RuntimeSchema<T = unknown> {
   parse(value: unknown): T;
   safeParse(value: unknown): { success: true; data: T } | { success: false };
-}
-
-export interface CauseCommandBody {
-  readonly envelope: CommandEnvelope;
-  readonly cause: ProbableCause;
 }
 
 export interface RevealCommandBody {
@@ -138,13 +132,6 @@ function workflowSchema<T>(parse: (value: Record<string, unknown>) => T | null):
     },
   };
 }
-
-const CauseCommandBodySchema = workflowSchema<CauseCommandBody>((value) => {
-  if (!exactKeys(value, ['envelope', 'cause'])) return null;
-  const envelope = CommandEnvelopeSchema.safeParse(value.envelope);
-  const cause = ProbableCauseSchema.safeParse(value.cause);
-  return envelope.success && cause.success ? { envelope: envelope.data, cause: cause.data } : null;
-});
 
 const RevealCommandBodySchema = workflowSchema<RevealCommandBody>((value) => {
   if (!exactKeys(value, ['envelope', 'revealNow']) || value.revealNow !== true) return null;
@@ -272,14 +259,6 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: true,
     bodySchema: AttemptCommandSchema,
-  },
-  {
-    id: 'cause',
-    method: 'POST',
-    path: '/v1/attempts/cause',
-    auth: 'session',
-    stateChanging: true,
-    bodySchema: CauseCommandBodySchema,
   },
   {
     id: 'reveal',
@@ -438,6 +417,14 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: false,
     responseSchema: ErrorEntryViewSchema.array(),
+  },
+  {
+    id: 'errorPatterns',
+    method: 'GET',
+    path: '/v1/errors/patterns',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: MistakePatternViewSchema.array(),
   },
   {
     id: 'vectorLessonStatus',

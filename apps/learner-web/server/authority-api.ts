@@ -175,6 +175,8 @@ export async function handleAuthorityRequest(
           return sendJson(response, 200, await client.getCarsReadiness());
         case '/v1/errors':
           return sendJson(response, 200, await client.getErrorLog());
+        case '/v1/errors/patterns':
+          return sendJson(response, 200, await client.getMistakePatterns());
         case '/v1/skills':
           return sendJson(response, 200, await client.getSkills());
         case '/v1/hooks/wrapped':
@@ -232,16 +234,8 @@ export async function handleAuthorityRequest(
       await client.setDailyBudget(Number(body.minutesPerDay));
       return sendJson(response, 200, accepted());
     }
-    if (path === '/v1/mistakes' && method === 'POST') {
-      await client.recordMistake(body.source as 'practice' | 'cars' | 'lesson');
-      return sendJson(response, 200, accepted());
-    }
     if (path === '/v1/attempts' && method === 'POST') {
       await client.submitAttempt((body.choiceId ?? null) as string | null);
-      return sendJson(response, 200, accepted());
-    }
-    if (path === '/v1/attempts/cause' && method === 'POST') {
-      await client.selectCause(body.cause as Parameters<typeof client.selectCause>[0]);
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/attempts/reveal' && method === 'POST') {

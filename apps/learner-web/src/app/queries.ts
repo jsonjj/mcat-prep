@@ -1,10 +1,5 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type {
-  CarsDuelRubric,
-  MasterySeed,
-  ProbableCause,
-  VectorLessonAction,
-} from '@mcat/contracts';
+import type { CarsDuelRubric, MasterySeed, VectorLessonAction } from '@mcat/contracts';
 import type { GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
@@ -22,6 +17,7 @@ const LEARNER_KEYS = [
   'mastery-lessons',
   'cars-readiness',
   'errors',
+  'error-patterns',
   'vector-lesson-status',
   'vector-lesson-run',
 ];
@@ -47,6 +43,9 @@ export const useCarsReadiness = () =>
   useQuery({ queryKey: ['cars-readiness'], queryFn: () => authority.getCarsReadiness() });
 export const useErrorLog = () =>
   useQuery({ queryKey: ['errors'], queryFn: () => authority.getErrorLog() });
+/** Recurring misses grouped at KC / cluster grain (Mistakes tab, patterns section). */
+export const useMistakePatterns = () =>
+  useQuery({ queryKey: ['error-patterns'], queryFn: () => authority.getMistakePatterns() });
 export const useSkills = () =>
   useQuery({ queryKey: ['skills'], queryFn: () => authority.getSkills() });
 /**
@@ -85,14 +84,6 @@ export function useSubmitAttempt() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (choiceId: string | null) => authority.submitAttempt(choiceId),
-    onSuccess: () => invalidateLearner(qc),
-  });
-}
-
-export function useSelectCause() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (cause: ProbableCause) => authority.selectCause(cause),
     onSuccess: () => invalidateLearner(qc),
   });
 }

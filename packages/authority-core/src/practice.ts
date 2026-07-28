@@ -76,6 +76,40 @@ export interface PracticeItemClassification {
   readonly domain: PracticeDomain;
   readonly dok: number | null;
   readonly lessonId: string | null;
+  /** Item family, so a re-attempt can prefer a sibling rather than a re-serve. */
+  readonly familyId: string | null;
+}
+
+/**
+ * Which surface a logged attempt came from. Both are genuine QUESTION attempts:
+ * adaptive Practice serves from the v7 corpus, the Study path serves the authored
+ * lesson sequence. Recall lapses and in-lesson comprehension checks are
+ * deliberately absent — those are acquisition events, not mistakes
+ * (docs/design/error-handling-design.md §6.5).
+ */
+export type AttemptActivityType = 'practice' | 'study';
+
+/**
+ * One logged first attempt: which item, which grain, and WHICH WRONG ANSWER.
+ *
+ * Correct attempts are logged too — the pattern section has to show a
+ * denominator ("4 of 6 items in this KC"), and a misses-only log cannot produce
+ * one (docs/design/error-handling-design.md §6.5).
+ *
+ * Deliberately carries no cause, no confidence and no response time: cause is
+ * unrecoverable (§2.3) and the other two are separate, undecided workstreams.
+ */
+export interface PracticeAttemptLogEntry {
+  readonly questionId: string;
+  readonly kcId: string | null;
+  readonly skill: ReasoningOperation | null;
+  readonly cluster: SkillCluster | null;
+  readonly familyId: string | null;
+  readonly chosenChoiceId: 'A' | 'B' | 'C' | 'D' | null;
+  readonly correct: boolean;
+  readonly firstAttempt: boolean;
+  readonly activityType: AttemptActivityType;
+  readonly occurredAt: UtcTimestamp;
 }
 
 /** Server-only answer material (never in a queue payload). */
@@ -104,6 +138,8 @@ export interface PracticeBankPort {
     input: { excludeIds: readonly string[]; limit: number },
   ): Promise<PracticeBankItem[]>;
   classify(questionId: string): Promise<PracticeItemClassification | null>;
+  /** The learner-safe item, re-read when a past miss is displayed back. */
+  getQuestion(questionId: string): Promise<PracticeQuestion | null>;
   getAnswer(questionId: string): Promise<PracticeAnswer | null>;
   questionStats(questionId: string): Promise<{ attempts: number; correct: number }>;
   recordAttempt(questionId: string, correct: boolean, now: UtcTimestamp): Promise<void>;
@@ -111,6 +147,13 @@ export interface PracticeBankPort {
   recordExposure(learnerId: string, questionId: string, now: UtcTimestamp): Promise<void>;
   recentMisses(learnerId: string, input: { limit: number }): Promise<PracticeRepairTarget[]>;
   queueRepair(learnerId: string, target: PracticeRepairTarget, now: UtcTimestamp): Promise<void>;
+  /** Append one first-attempt row (idempotent per learner × activity type × item). */
+  recordPracticeAttempt(learnerId: string, entry: PracticeAttemptLogEntry): Promise<void>;
+  /** A learner's logged question attempts (practice and study), newest first. */
+  listPracticeAttempts(
+    learnerId: string,
+    input: { limit: number },
+  ): Promise<PracticeAttemptLogEntry[]>;
 }
 
 /**
@@ -161,11 +204,26 @@ interface ExposureEntry {
 export class SyntheticPracticeBankPort implements PracticeBankPort {
   private readonly exposure = new Map<string, Map<string, ExposureEntry>>();
   private readonly misses = new Map<string, { kcId: string; skill?: ReasoningOperation; at: string }[]>();
+  /** Practice attempt log. Newest last; keyed per learner, one row per item. */
+  private readonly attempts = new Map<string, PracticeAttemptLogEntry[]>();
 
   constructor(private readonly bank: LoadedBank) {}
 
   private reasoningOp(q: EngineQuestion): ReasoningOperation | null {
     return OPERATION_TAG_TO_REASONING[q.template_tags[0] ?? 'K'] ?? null;
+  }
+
+  /**
+   * The KC an item routes to, in the id space the deployed port reports.
+   *
+   * The Postgres port reads `questions.kc_id`, a v3 KC id, and this fixture stands
+   * in for that corpus — so it has to report the same kind of id or dev and tests
+   * silently exercise a KC vocabulary production never sees. That drift is what
+   * hid the mismatch between the two attempt-log write paths. `internal_skill_ids`
+   * remains the fallback for an engine question authored before `kc_ids` existed.
+   */
+  private kcOf(q: EngineQuestion): string | null {
+    return q.kc_ids[0] ?? q.internal_skill_ids[0] ?? null;
   }
 
   private domainOf(section: string): PracticeDomain {
@@ -175,8 +233,8 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
   async listUnits({ limit }: { limit: number }): Promise<PracticeCandidateUnit[]> {
     const byKey = new Map<string, PracticeCandidateUnit>();
     for (const q of this.bank.questions) {
-      const kcId = q.internal_skill_ids[0];
-      if (kcId === undefined) continue;
+      const kcId = this.kcOf(q);
+      if (kcId === null) continue;
       const skill = this.reasoningOp(q);
       const domain = this.domainOf(q.section);
       const key = `${domain}:${kcId}:${skill ?? ''}`;
@@ -203,7 +261,7 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
   private matches(q: EngineQuestion, query: PracticeItemQuery): boolean {
     if (this.domainOf(q.section) !== query.domain) return false;
     if (query.domain === 'cars') return true;
-    if (query.kcId !== undefined && q.internal_skill_ids[0] !== query.kcId) return false;
+    if (query.kcId !== undefined && this.kcOf(q) !== query.kcId) return false;
     if (query.skill !== undefined && this.reasoningOp(q) !== query.skill) return false;
     return true;
   }
@@ -226,7 +284,7 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
             attempts: 0,
             correct: 0,
             dok: q.difficulty ?? null,
-            kcId: q.internal_skill_ids[0] ?? null,
+            kcId: this.kcOf(q),
             skill: query.domain === 'science' ? this.reasoningOp(q) : null,
             carsSkill: null,
             cluster: q.skill_cluster,
@@ -245,14 +303,20 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
     if (q === undefined) return null;
     const domain = this.domainOf(q.section);
     return {
-      kcId: q.internal_skill_ids[0] ?? null,
+      kcId: this.kcOf(q),
       skill: domain === 'science' ? this.reasoningOp(q) : null,
       carsSkill: null,
       cluster: q.skill_cluster,
       domain,
       dok: q.difficulty ?? null,
       lessonId: null,
+      familyId: q.family_id ?? null,
     };
+  }
+
+  async getQuestion(questionId: string): Promise<PracticeQuestion | null> {
+    const compiled = this.bank.compiled.get(questionId);
+    return compiled === undefined ? null : compiledToPracticeQuestion(this.bank, compiled);
   }
 
   async getAnswer(questionId: string): Promise<PracticeAnswer | null> {
@@ -318,5 +382,29 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
     const list = this.misses.get(learnerId) ?? [];
     list.push(target.skill ? { kcId: target.kcId, skill: target.skill, at: now } : { kcId: target.kcId, at: now });
     this.misses.set(learnerId, list);
+  }
+
+  async recordPracticeAttempt(learnerId: string, entry: PracticeAttemptLogEntry): Promise<void> {
+    const list = this.attempts.get(learnerId) ?? [];
+    // Mirrors the partial unique index on (learner_id, activity_type, question_id):
+    // a resubmit must not double-count a miss.
+    if (
+      list.some(
+        (e) => e.questionId === entry.questionId && e.activityType === entry.activityType,
+      )
+    ) {
+      return;
+    }
+    list.push(entry);
+    this.attempts.set(learnerId, list);
+  }
+
+  async listPracticeAttempts(
+    learnerId: string,
+    { limit }: { limit: number },
+  ): Promise<PracticeAttemptLogEntry[]> {
+    return [...(this.attempts.get(learnerId) ?? [])]
+      .sort((a, b) => Date.parse(b.occurredAt) - Date.parse(a.occurredAt))
+      .slice(0, Math.max(0, limit));
   }
 }

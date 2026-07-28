@@ -36,7 +36,6 @@ import {
   practiceQuestionId,
   routeFor,
   type CarsDuelCommandBody,
-  type CauseCommandBody,
   type ContinueCommandBody,
   type MasterySeedCommandBody,
   type PracticeAdaptiveAttemptCommandBody,
@@ -64,10 +63,6 @@ interface KernelPort {
     input: unknown,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handleAttempt']>;
-  handleCause(
-    input: CauseCommandBody,
-    principal: Principal,
-  ): ReturnType<RepositoryLearnerKernel['handleCause']>;
   handleReveal(
     input: RevealCommandBody,
     principal: Principal,
@@ -619,13 +614,6 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             origin,
             requestIdValue,
           );
-        case 'cause':
-          return jsonResponse(
-            200,
-            await dependencies.kernel.handleCause(parsed.data as CauseCommandBody, principal),
-            origin,
-            requestIdValue,
-          );
         case 'reveal':
           return jsonResponse(
             200,
@@ -851,6 +839,9 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
         break;
       case 'errors':
         selected = snapshot.errorLog;
+        break;
+      case 'errorPatterns':
+        selected = snapshot.errorPatterns;
         break;
       default:
         return errorResponse('not_found', 'Route not found.', origin, requestIdValue);

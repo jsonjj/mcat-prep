@@ -3,22 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import type { PracticeAttemptResult, PracticeQueueItem } from '@mcat/contracts';
 import { usePracticeQueue, useSubmitPracticeAttempt } from '../../app/practice-queries';
+import { resurfaceAt, subAfterFirstAttempt, type Sub } from './session-flow';
 
 type ChoiceId = 'A' | 'B' | 'C' | 'D';
-type Sub = 'answering' | 'diagnose' | 'deferNote' | 'retry' | 'reveal';
-
-/** How many questions later a missed item comes back for its (spaced) second go. */
-const RETRY_GAP = 3;
-
-const CAUSES = [
-  'I did not know the content',
-  'I knew it but applied it incorrectly',
-  'I misread the question or passage',
-  'I missed a condition, unit, or sign',
-  'I made a calculation error',
-  'I was rushing',
-  'I am not sure',
-] as const;
 
 const PURPOSE_LABEL: Record<string, string> = {
   train: 'Practice',
@@ -141,31 +128,36 @@ export function PracticeSession() {
         onSuccess: (r) => {
           setResult(r);
           setResultsByQ((m) => ({ ...m, [q.id]: r }));
-          setSub(r.correct ? 'reveal' : 'diagnose');
+          setSub(subAfterFirstAttempt(r.correct));
         },
       },
     );
   };
 
-  // After naming the cause: on the last remaining step, do the second go now;
-  // otherwise defer it a few questions (shown via the "coming back" note).
-  const onCausePicked = () => {
-    setChoice(null);
-    setSub(isLastStep ? 'retry' : 'deferNote');
-  };
+  /** A missed first attempt still earns its spaced second go. */
+  const resurfacing = slot.kind === 'first' && result !== null && !result.correct;
 
-  // Re-insert this item as a spaced second go ~RETRY_GAP questions later, then
-  // move on to the next question.
-  const onDeferContinue = () => {
-    if (firstChoice === null) return;
-    const insertAt = Math.min(index + 1 + RETRY_GAP, sequence.length);
-    const retrySlot: Slot = { item, kind: 'retry', firstChoice };
-    setSequence((seq) => {
-      const next = [...seq];
-      next.splice(insertAt, 0, retrySlot);
-      return next;
-    });
-    setIndex(index + 1);
+  /**
+   * Leaving the reveal. On a missed first attempt this re-inserts the item
+   * ~RETRY_GAP questions later for a second pass — the spaced resurface is
+   * retained; only the cause-asking step in front of it is gone. On the last
+   * remaining step the clamp lands it immediately after this one, which is the
+   * behaviour the cause picker used to produce.
+   */
+  const onRevealContinue = () => {
+    if (resurfacing && firstChoice !== null) {
+      const insertAt = resurfaceAt(index, sequence.length);
+      const retrySlot: Slot = { item, kind: 'retry', firstChoice };
+      setSequence((seq) => {
+        const next = [...seq];
+        next.splice(insertAt, 0, retrySlot);
+        return next;
+      });
+      // insertAt is never below index + 1, so the next step always exists.
+      setIndex(index + 1);
+      return;
+    }
+    advance();
   };
 
   const submitRetry = () => {
@@ -213,15 +205,18 @@ export function PracticeSession() {
       <h1 className="mc-h2">{q.stem}</h1>
 
       {sub === 'reveal' && result !== null ? (
-        <RevealCard result={result} wrongChoice={wrongChoice} onContinue={advance} last={isLastStep} />
-      ) : sub === 'diagnose' ? (
-        <DiagnosePicker onPick={onCausePicked} />
-      ) : sub === 'deferNote' ? (
-        <DeferNote onContinue={onDeferContinue} />
+        <RevealCard
+          result={result}
+          wrongChoice={wrongChoice}
+          onContinue={onRevealContinue}
+          last={isLastStep}
+          resurfacing={resurfacing}
+        />
       ) : sub === 'retry' ? (
         <Stack gap={3}>
-          <Callout tone="info" title="Give it another look">
-            Your first answer was {firstChoice ?? '—'}. That wasn’t right — pick a different one.
+          <Callout tone="info" title="Back for a second pass">
+            You picked {firstChoice ?? '—'} earlier and saw why it misses. Answer it again from
+            memory.
           </Callout>
           <ChoiceList
             q={q}
@@ -294,53 +289,18 @@ function ChoiceList({
   );
 }
 
-function DiagnosePicker({ onPick }: { onPick: () => void }) {
-  return (
-    <Card elevated>
-      <Stack gap={3}>
-        <h2 className="mc-h3">Before the answer — what happened?</h2>
-        <p className="mc-muted mc-fineprint">
-          Naming the cause is more useful than the key. You’ll get one unassisted retry.
-        </p>
-        <div className="mc-causegrid">
-          {CAUSES.map((label) => (
-            <button key={label} type="button" className="mc-cause" onClick={onPick}>
-              {label}
-            </button>
-          ))}
-        </div>
-      </Stack>
-    </Card>
-  );
-}
-
-function DeferNote({ onContinue }: { onContinue: () => void }) {
-  return (
-    <Card elevated>
-      <Stack gap={3}>
-        <Eyebrow>Not quite</Eyebrow>
-        <p>
-          We’ll bring this question back in a few questions so you can try it fresh — a short gap
-          helps it stick.
-        </p>
-        <Button variant="primary" size="lg" onClick={onContinue}>
-          Keep going
-        </Button>
-      </Stack>
-    </Card>
-  );
-}
-
 function RevealCard({
   result,
   wrongChoice,
   onContinue,
   last,
+  resurfacing,
 }: {
   result: PracticeAttemptResult;
   wrongChoice: ChoiceId | null;
   onContinue: () => void;
   last: boolean;
+  resurfacing: boolean;
 }) {
   return (
     <Card elevated>
@@ -356,8 +316,15 @@ function RevealCard({
             {result.choiceRationales[wrongChoice]}
           </Callout>
         ) : null}
+        {resurfacing ? (
+          <p className="mc-muted mc-fineprint">
+            {last
+              ? 'One more pass at this one before you finish.'
+              : 'This one comes back in a few questions — a short gap helps it stick.'}
+          </p>
+        ) : null}
         <Button variant="primary" size="lg" onClick={onContinue}>
-          {last ? 'Finish' : 'Next question'}
+          {resurfacing && last ? 'Try it again' : last ? 'Finish' : 'Next question'}
         </Button>
       </Stack>
     </Card>

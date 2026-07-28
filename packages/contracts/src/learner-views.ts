@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { ChoiceIdSchema } from './commands';
 import { ContentIdSchema } from './ids';
+import { PracticeFocusSchema } from './practice';
 import { UtcTimestampSchema } from './time';
 import {
   AssistanceLevelSchema,
@@ -80,6 +81,14 @@ export const PostRevealResponseSchema = z
         D: z.string().min(1),
       })
       .strict(),
+    /**
+     * The option this learner actually picked on the first attempt, so the reveal
+     * can refute THAT option rather than the key in general. Server-carried
+     * because the diagnostic signal is which wrong answer was chosen (§3.3) and
+     * browser-local selection state does not survive the step change or a reload.
+     * Null when there was no scored first attempt (Reveal Now).
+     */
+    chosenChoiceId: ChoiceIdSchema.nullable(),
   })
   .strict();
 export type PostRevealResponse = z.infer<typeof PostRevealResponseSchema>;
@@ -93,7 +102,15 @@ export const StudyPhaseSchema = z.enum([
 ]);
 export type StudyPhase = z.infer<typeof StudyPhaseSchema>;
 
-export const QuestionSubStateSchema = z.enum(['answering', 'cause', 'retry', 'reveal']);
+/**
+ * No `cause` step: a miss goes straight to the reveal. Withholding the key on a
+ * multiple-choice item measured .71 vs .71 (Butler/Karpicke/Roediger 2007) and
+ * feedback timing pools to g = 0.03 while feedback CONTENT spans 0.05 → 0.49, so
+ * the seconds after a miss are worth spending on the refutation, not on a
+ * question the learner cannot answer (docs/design/error-handling-design.md §2.2).
+ * `retry` survives — it now follows the reveal instead of preceding it.
+ */
+export const QuestionSubStateSchema = z.enum(['answering', 'retry', 'reveal']);
 export type QuestionSubState = z.infer<typeof QuestionSubStateSchema>;
 
 export const SessionSummarySchema = z
@@ -126,7 +143,7 @@ const QuestionStepBaseShape = {
 export const UnrevealedQuestionStepViewSchema = z
   .object({
     ...QuestionStepBaseShape,
-    sub: z.enum(['answering', 'cause', 'retry']),
+    sub: z.enum(['answering', 'retry']),
     reveal: z.null(),
   })
   .strict();
@@ -318,17 +335,67 @@ export const MasteryMapEntrySchema = z
   .strict();
 export type MasteryMapEntry = z.infer<typeof MasteryMapEntrySchema>;
 
+/**
+ * One practice miss, carrying the content the learner needs to act on it.
+ *
+ * Answer material is authorized here because the learner already answered and
+ * already saw the reveal: the row re-shows what they were told at the time.
+ * There is deliberately NO self-reported cause field — experts naming the cause
+ * of an error agree at κ = 0.000–0.063 and learner self-report is biased worst
+ * in the weakest learners (docs/design/error-handling-design.md §2.3).
+ */
 export const ErrorEntryViewSchema = z
   .object({
-    questionId: ContentIdSchema,
-    skillId: z.string().min(1),
+    /** Practice ids come from the v7 corpus, which is looser than `ContentId`. */
+    questionId: z.string().min(1),
+    kcId: z.string().min(1).nullable(),
+    /** The 7-op reasoning operation the item exercises. */
+    skillId: z.string().min(1).nullable(),
+    cluster: z.string().min(1).nullable(),
+    familyId: z.string().min(1).nullable(),
     occurredAt: UtcTimestampSchema,
+    stem: z.string().min(1),
     chosenChoiceId: ChoiceIdSchema.nullable(),
-    cause: z.string().min(1).nullable(),
-    repaired: z.boolean(),
+    chosenChoiceText: z.string(),
+    correctChoiceId: ChoiceIdSchema,
+    correctChoiceText: z.string(),
+    /** The per-choice refutation that was shown when the miss happened. */
+    choiceRationale: z.string().min(1).nullable(),
+    /** A later correct first attempt on a FRESH item in the same KC landed. */
+    resolved: z.boolean(),
+    /** Focus token for a fresh re-attempt in this area (never a re-serve). */
+    focus: PracticeFocusSchema.nullable(),
   })
   .strict();
 export type ErrorEntryView = z.infer<typeof ErrorEntryViewSchema>;
+
+/**
+ * A recurring-miss pattern, grouped at CONTENT grain (KC / cluster / reasoning
+ * operation) and stated as a claim about the learner's answers.
+ *
+ * Misconception grain is not offered: `error_models` is populated on 0 of the
+ * 2,108 corpus items, so the best-validated grain has no data behind it. KC
+ * grain is the defensible thin version the spec permits (§6.5).
+ *
+ * `attemptedItems` is the denominator and must always be displayed with
+ * `missedItems`; `assertable` is false when the sample is below the floor, and
+ * the copy must hedge rather than assert (§6.5 rule 5).
+ */
+export const MistakePatternViewSchema = z
+  .object({
+    grain: z.enum(['kc', 'cluster', 'skill']),
+    key: z.string().min(1),
+    label: z.string().min(1),
+    /** Distinct items missed — never attempts, which are not independent. */
+    missedItems: z.number().int().nonnegative(),
+    /** Distinct items attempted in this group. The denominator. */
+    attemptedItems: z.number().int().positive(),
+    lastMissedAt: UtcTimestampSchema,
+    assertable: z.boolean(),
+    focus: PracticeFocusSchema.nullable(),
+  })
+  .strict();
+export type MistakePatternView = z.infer<typeof MistakePatternViewSchema>;
 
 export const SkillSummarySchema = z
   .object({

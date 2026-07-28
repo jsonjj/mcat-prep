@@ -9,6 +9,7 @@ import {
   type BayesDiagnosticConfig,
 } from './diagnostic-bayes';
 import {
+  makeRng,
   normalCdf,
   type SimItem,
   type SimLearner,
@@ -511,34 +512,46 @@ const pickModuleItems = <T extends FormItem>(
   pools: ReadonlyMap<string, readonly T[]>,
   used: Set<string>,
   label: string,
+  rng?: () => number,
 ): T[] => {
   const picked: T[] = [];
   for (let i = 0; i < slots.length; i += 1) {
     const bucket = slots[i]!;
     const target = targets[i]!;
     const pool = pools.get(bucket) ?? [];
-    // Tracked by index rather than by value: narrowing `T | undefined` fails for
-    // an unconstrained-nullability generic.
-    let bestIndex = -1;
+    // Every unused item whose difficulty is equally close to the target. The
+    // difficulty ladder is discrete (a handful of DOK-derived values), so a
+    // slot typically has many exact-tie candidates rather than one best fit.
+    // Tracked by index: narrowing `T | undefined` fails for an
+    // unconstrained-nullability generic.
     let bestGap = Infinity;
-    // Ties fall to the lowest question id. Item order within a (bucket, DOK)
-    // group carries no signal in any calibration mode, so this is an arbitrary
-    // but stable choice rather than a biased one.
+    const tied: number[] = [];
     for (let j = 0; j < pool.length; j += 1) {
       const item = pool[j]!;
       if (used.has(item.questionId)) continue;
       const gap = Math.abs(difficultyOf(item) - target);
       if (gap < bestGap) {
         bestGap = gap;
-        bestIndex = j;
+        tied.length = 0;
+        tied.push(j);
+      } else if (gap === bestGap) {
+        tied.push(j);
       }
     }
-    if (bestIndex < 0) {
+    if (tied.length === 0) {
       throw new Error(
         `MST design "${label}": bucket "${bucket}" ran out of unused items mid-form. ` +
           'planMstForm should have caught this.',
       );
     }
+    // Pools are pre-sorted by question id, so `tied[0]` is the lowest-id
+    // candidate — the deterministic choice used when no rng is supplied (keeps
+    // reconstruction reproducible for callers that do not seed). Given a seeded
+    // rng, spread the pick across the tie so that two sittings do not draw the
+    // identical form: with a fixed lowest-id rule the reachable bank saturates
+    // near ~500 of 1,811 items regardless of how many learners sit it.
+    const bestIndex =
+      rng === undefined ? tied[0]! : tied[Math.min(tied.length - 1, Math.floor(rng() * tied.length))]!;
     const best = pool[bestIndex]!;
     used.add(best.questionId);
     picked.push(best);
@@ -582,8 +595,15 @@ export function assembleMstStages<T extends FormItem>(
   axis: DiagnosticAxis,
   routePath: readonly number[],
   slotOverrides: readonly (readonly string[] | undefined)[] = [],
+  seed?: number,
 ): AssembledStage<T>[] {
   const plan = planMstForm(design, bank, axis);
+  // A per-sitting seed spreads tie-breaking across equally-suitable items so
+  // different learners see different forms. Re-created from the same seed on
+  // every call and consumed in slot order, so replaying a route (the open-block
+  // resolution in the server, or a resumed sitting) rebuilds the same items.
+  // Omitted -> deterministic lowest-id assembly, unchanged.
+  const rng = seed === undefined ? undefined : makeRng(seed);
   const pools = bucketPools(bank);
   const ladder = moduleDifficulties(design.modulesPerStage);
   const quantiles = design.routingQuantiles ?? defaultRoutingQuantiles(design.modulesPerStage);
@@ -611,7 +631,7 @@ export function assembleMstStages<T extends FormItem>(
       stage === 0
         ? routingTargets(slots, plan.itemsPerBucket.size)
         : slots.map(() => ladder[module] ?? ladder[ladder.length - 1]!);
-    const items = pickModuleItems(slots, targets, pools, used, design.label);
+    const items = pickModuleItems(slots, targets, pools, used, design.label, rng);
     const isLast = stage + 1 >= plan.slotsByStage.length;
     const served = items.reduce((s, item) => s + difficultyOf(item), 0) / Math.max(1, items.length);
     out.push({

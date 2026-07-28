@@ -510,10 +510,20 @@ builds that surface should build it to correct this specific blind spot — not 
 for reflection.
 
 **Record everywhere, display narrowly.** The mastery model consumes attempts from every activity
-type (§5). This tab displays **practice questions only**. An FSRS "Again" is the scheduler hitting
-its target retention, not a mistake; lesson errors occur during acquisition, where errorful
+type (§5). This tab displays **question attempts only — adaptive practice and study alike**,
+excluding recall lapses and in-lesson comprehension checks. An FSRS "Again" is the scheduler hitting
+its target retention, not a mistake; in-lesson checks occur during acquisition, where errorful
 generation is the mechanism doing the work. Labelling either as a mistake is both wrong and
 discouraging. Rapid-guess-filtered responses (§3.2) never appear at all.
+
+> **Amended 2026-07-28** from "practice questions only." That wording predated the study loop
+> sharing this display and read as a surface restriction, but the line it was drawing is a *kind*
+> restriction: keep scheduler lapses and acquisition-time checks off the tab. A study question is a
+> genuine, scored, independent question attempt that the learner experiences as a question they got
+> wrong, so excluding it made a real miss unreachable — the same class of gap that made adaptive
+> practice misses invisible before §6.4 landed. The two exclusions above are unchanged and are
+> enforced at the write, not at the read: recall never writes to the attempt log, and guided-phase
+> items are dropped before it.
 
 ---
 
@@ -531,9 +541,22 @@ claim about the learner's answers rather than about the learner.
 | Grain | Admissible | Note |
 | --- | --- | --- |
 | Misconception tag | **Yes — primary** | Best-validated signal; a claim about belief |
-| KC / content area | **Yes** | Same basis as the mastery model |
+| KC / content area | **Yes** | Same basis as the mastery model. **One KC vocabulary across both surfaces** — see the note below |
 | Reasoning operation (7-op tag) | **Yes, with care** | The operation is a property of the *item*, so it is a content claim, not a cognitive attribution. But it *reads* to users as a trait claim, so wording matters more here than anywhere else on the tab |
 | Cause | **Never** | §2.3 |
+
+> **Note, 2026-07-28 — the KC id space is shared; there is no crosswalk.** A pattern groups on the
+> logged KC, so the two write paths have to agree on what a KC id *is*. They now do, and no mapping
+> layer is involved: the lesson graph (`curriculum/v3/v3-lesson-authoring-manifest.json`) and the
+> question corpus (`questions.kc_id`) carry **the same 422 knowledge components — 422 distinct ids in
+> each source, all 422 present in both, none unique to either side.** Study previously logged
+> `internal_skill_ids[0]` instead, a node in the *internal skill graph* (`bb1-enzyme-inhibition`), which
+> could never compare equal to a corpus KC (`V3-KC-525816`) — so one concept produced two
+> half-evidenced patterns on the surface whose only job is to say "this keeps happening". The fix was
+> to log the field the item already carries. **Do not build a KC crosswalk, mapping table or
+> id-translation layer**; the id spaces are not disjoint. What *is* per-surface is `question_id`:
+> practice items come from the corpus and study items from the authored lesson bank, which is why the
+> attempt log's uniqueness key includes `activity_type`.
 
 **Evidence threshold.** No study sets this number; it is ours to choose and then validate. The rule:
 

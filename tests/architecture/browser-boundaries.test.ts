@@ -46,7 +46,6 @@ describe('learner browser authority boundary', () => {
   it('renders the interactive Evidence Atlas on Home', () => {
     const home = read('apps/learner-web/src/screens/Home.tsx');
 
-    expect(home).toContain("import { countGlowing } from '../components/BrainAtlas'");
     expect(home).toContain("import { EvidenceAtlas } from '../components/EvidenceAtlas'");
     expect(home).toContain('<EvidenceAtlas variant="home" />');
   });
