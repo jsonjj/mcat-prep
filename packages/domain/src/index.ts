@@ -1,5 +1,6 @@
 export * from './reason-codes';
 export * from './evidence';
+export * from './lesson-response-adapter';
 export * from './skill-graph';
 export * from './scoring';
 export * from './mastery';

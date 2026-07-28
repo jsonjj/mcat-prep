@@ -1,8 +1,17 @@
 import { describe, expect, it } from 'vitest';
+import {
+  EventIdSchema,
+  IdempotencyKeySchema,
+  LearnerIdSchema,
+  LessonItemBindingSchema,
+  LessonRuntimeResponseFactsSchema,
+  UtcTimestampSchema,
+} from '@mcat/contracts';
 import { scoreAttempt } from './scoring';
 import { findHardPrerequisiteCycle, SkillDefinitionSchema, type SkillGraph } from './skill-graph';
 import { advances, baseStateRank } from './mastery';
 import { EvidenceRecordSchema, isMasteryEligible } from './evidence';
+import { adaptLessonResponse } from './lesson-response-adapter';
 
 const baseEvidence = EvidenceRecordSchema.parse({
   evidenceId: '11111111-1111-4111-8111-111111111111',
@@ -156,5 +165,82 @@ describe('mastery invariants', () => {
     expect(isMasteryEligible({ ...baseEvidence, contentBearingHint: true })).toBe(false);
     expect(isMasteryEligible({ ...baseEvidence, valid: false })).toBe(false);
     expect(isMasteryEligible({ ...baseEvidence, outcome: 'incorrect' })).toBe(false);
+  });
+});
+
+describe('lesson-sourced evidence stays compatible with the existing evidence model', () => {
+  const lessonEvidence = (): ReturnType<typeof adaptLessonResponse>['evidence'] =>
+    adaptLessonResponse({
+      binding: LessonItemBindingSchema.parse({
+        measurementKind: 'MEASURABLE',
+        lessonId: 'lesson-compat',
+        itemBindingId: 'ib-compat',
+        questionId: 'q-compat',
+        activityId: 'act-compat',
+        bindingVersion: 'v-compat',
+        primaryKcId: 'bb1-enzyme-inhibition',
+        secondaryKcMappings: [],
+        activityRole: 'CHANGED_EXIT',
+        semanticFamilyId: 'fam-enzyme-a',
+        stimulusLineageId: 'lineage-compat',
+        firstAttemptImmutable: true,
+        authoredAssistanceAffordances: ['A0'],
+        candidateEvidenceModes: ['TRANSFER'],
+        reasoningOperation: 'EXPLAIN',
+        changedDimensions: ['representation', 'domain_context'],
+        learnerSafeItemRef: 'REF:compat',
+        serverScoringAuthorityRef: 'server://compat',
+      }),
+      response: LessonRuntimeResponseFactsSchema.parse({
+        questionId: 'q-compat',
+        itemBindingId: 'ib-compat',
+        bindingVersion: 'v-compat',
+        attemptIndex: 1,
+        isRetry: false,
+        isDiagnosticRetry: false,
+        response: { kind: 'MULTIPLE_CHOICE', chosenChoiceId: 'B' },
+        omitted: false,
+        elapsedMs: 20_000,
+        answerChanges: 0,
+        assistanceLevel: 'A0',
+        contentBearingHintUsed: false,
+        revealUsed: false,
+        occurredAt: '2026-07-20T12:00:00.000Z',
+      }),
+      scoring: { scoringValid: true, serverItemVersion: 3, outcome: 'correct' },
+      identity: {
+        observationId: '22222222-2222-4222-8222-222222222221',
+        eventId: EventIdSchema.parse('22222222-2222-4222-8222-222222222222'),
+        learnerId: LearnerIdSchema.parse('22222222-2222-4222-8222-222222222223'),
+        idempotencyKey: IdempotencyKeySchema.parse('22222222-2222-4222-8222-222222222224'),
+        evidenceId: '22222222-2222-4222-8222-222222222225',
+      },
+      cluster: 'BB1',
+      envelopeBindingVersion: 'envelope-compat',
+      acceptedAt: UtcTimestampSchema.parse('2026-07-20T12:00:01.000Z'),
+      sequence: 2,
+      contentRelease: 'synthetic-2026.07',
+      policies: [{ policyId: 'mastery', version: 'provisional-v1' }],
+    }).evidence;
+
+  it('parses under the shipped EvidenceRecord schema with no operation tag', () => {
+    const evidence = lessonEvidence();
+    expect(evidence).not.toBeNull();
+    expect(EvidenceRecordSchema.parse(evidence)).toEqual(evidence);
+    expect(evidence && 'operation' in evidence).toBe(false);
+  });
+
+  it('keeps the existing family, freshness and mastery-eligibility semantics', () => {
+    const evidence = lessonEvidence();
+    expect(evidence?.familyId).toBe('fam-enzyme-a');
+    expect(evidence?.changeDimensions).toEqual(['representation', 'domain_context']);
+    expect(evidence?.kind).toBe('transfer');
+    expect(evidence && isMasteryEligible(evidence)).toBe(true);
+    expect(evidence && isMasteryEligible({ ...evidence, kind: 'instruction' })).toBe(false);
+  });
+
+  it('still accepts a v7 record that carries an OperationTag', () => {
+    expect(baseEvidence.operation).toBe('K');
+    expect(isMasteryEligible(baseEvidence)).toBe(true);
   });
 });

@@ -335,9 +335,15 @@ export const BktQualificationResultSchema = z.discriminatedUnion('status', [
 ]);
 export type BktQualificationResult = z.infer<typeof BktQualificationResultSchema>;
 
-export const hasIndependentEvidenceMode = (
+/**
+ * Declared BKT eligibility. ANY mode other than `INSTRUCTIONAL` opens the BKT
+ * path — not `INDEPENDENT` alone — and an unauthored mode set defaults to
+ * `['INSTRUCTIONAL']`, which stays closed. The frozen rejection code is still
+ * spelled `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED`.
+ */
+export const hasEligibleEvidenceMode = (
   binding: Pick<LessonItemBinding, 'candidateEvidenceModes'>,
-): boolean => binding.candidateEvidenceModes.includes('INDEPENDENT');
+): boolean => hasNonInstructionalEvidenceMode(binding.candidateEvidenceModes);
 
 export const isBktQualificationAccepted = (
   result: BktQualificationResult,

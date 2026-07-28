@@ -241,11 +241,15 @@ describe('lesson observation contracts', () => {
 
   it('uses candidate modes rather than a client-supplied independent flag', () => {
     const bindingSchema = schemaFromIndex('LessonItemBindingSchema');
-    const hasIndependentEvidenceMode = functionFromIndex<
-      (binding: { readonly candidateEvidenceModes: readonly string[] }) => boolean
-    >('hasIndependentEvidenceMode');
+    const hasEligibleEvidenceMode =
+      functionFromIndex<
+        (binding: { readonly candidateEvidenceModes: readonly string[] }) => boolean
+      >('hasEligibleEvidenceMode');
 
-    expect(hasIndependentEvidenceMode({ candidateEvidenceModes: ['INDEPENDENT'] })).toBe(true);
+    // Eligibility is ANY non-INSTRUCTIONAL mode, not INDEPENDENT membership.
+    expect(hasEligibleEvidenceMode({ candidateEvidenceModes: ['INDEPENDENT'] })).toBe(true);
+    expect(hasEligibleEvidenceMode({ candidateEvidenceModes: ['TRANSFER'] })).toBe(true);
+    expect(hasEligibleEvidenceMode({ candidateEvidenceModes: ['INSTRUCTIONAL'] })).toBe(false);
     expect(bindingSchema.safeParse({ ...validBinding(), independent: true }).success).toBe(false);
   });
 
