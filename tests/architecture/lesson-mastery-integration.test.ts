@@ -43,6 +43,15 @@ import {
 import { loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
 import { DEBUG_LEARNER_STATE_PATH } from '../../services/local-authority/src/debug-state';
 import { ROUTES } from '../../services/lambdas/learner-api/src/routes';
+import {
+  EXPECTED_LESSON_BINDINGS,
+  EXPECTED_LESSON_IDS,
+  EXPECTED_TOTAL_BINDINGS,
+  lessonById,
+  lessonCorpus,
+  lessonCorpusDiagnostic,
+  missingLessonIds,
+} from './lesson-corpus';
 
 /**
  * Architecture contract for the lesson → evidence → mastery seam.
@@ -474,120 +483,20 @@ describe('only the authority may move P(L)', () => {
 // ---------------------------------------------------------------------------
 
 /**
- * The lesson corpus the seam is measured against, and where each artifact lives.
- *
- * TWO OF THE THREE ARE OUTSIDE THE REPOSITORY. `V3-LES-789208` and
- * `V3-LES-844372` are authoring drafts under the workspace's sibling `research/`
- * tree, which is not part of `mcat-prep` and is absent from a clean checkout of
- * it. `v3-lesson-binding-conformance.test.ts` reads the same two, so a checkout
- * without them measures 42 bindings instead of 115 and every per-lesson
- * conformance assertion simply stops existing.
- *
- * That is why absence is a LOUD, NAMED failure below rather than a skip: a
- * silently smaller corpus is indistinguishable from a passing one, which is the
- * exact defect shape this suite exists to catch. Point `MCAT_LESSON_DRAFTS_DIR`
- * at a checkout of the drafts tree to satisfy it elsewhere.
- */
-const LESSON_DRAFTS_ENV_VAR = 'MCAT_LESSON_DRAFTS_DIR';
-
-const LESSON_SCRIPT_SEARCH_ROOTS: readonly { readonly label: string; readonly path: string }[] = [
-  { label: 'in-repo lesson content', path: join(root, 'content', 'lessons') },
-  {
-    label: `${LESSON_DRAFTS_ENV_VAR} override`,
-    path: process.env[LESSON_DRAFTS_ENV_VAR] ?? '',
-  },
-  {
-    // Repo-relative escape, stated once and named, rather than spread through
-    // the assertions as a bare `join(root, '..')`.
-    label: 'workspace sibling research/ drafts tree (OUTSIDE this repository)',
-    path: join(
-      root,
-      '..',
-      'research',
-      'mcat-curriculum-architecture-v3',
-      'lesson-authoring-drafts',
-    ),
-  },
-];
-
-/** Expected corpus: `id → binding count`. 42 + 40 + 33 = 115. */
-const EXPECTED_LESSON_BINDINGS: Readonly<Record<string, number>> = {
-  'V3-LES-130923': 42,
-  'V3-LES-789208': 40,
-  'V3-LES-844372': 33,
-};
-
-const EXPECTED_TOTAL_BINDINGS = 115;
-
-interface DiscoveredLesson {
-  readonly id: string;
-  readonly bindingCount: number;
-  /** Which search root it came from, for the failure message. */
-  readonly source: string;
-  readonly path: string;
-}
-
-function discoverLessons(): readonly DiscoveredLesson[] {
-  const found = new Map<string, DiscoveredLesson>();
-
-  for (const searchRoot of LESSON_SCRIPT_SEARCH_ROOTS) {
-    if (searchRoot.path.length === 0 || !existsSync(searchRoot.path)) continue;
-    const scripts: string[] = [];
-    const collect = (absolute: string): void => {
-      for (const entry of readdirSync(absolute, { withFileTypes: true })) {
-        const child = join(absolute, entry.name);
-        if (entry.isDirectory()) {
-          if (!SKIPPED_DIRECTORIES.has(entry.name)) collect(child);
-        } else if (entry.name === 'lesson-script.json') scripts.push(child);
-      }
-    };
-    collect(searchRoot.path);
-
-    for (const script of scripts) {
-      const parsed: unknown = JSON.parse(readFileSync(script, 'utf8'));
-      const payload =
-        typeof parsed === 'object' && parsed !== null
-          ? (parsed as Record<string, unknown>).payload
-          : undefined;
-      const record =
-        typeof payload === 'object' && payload !== null
-          ? (payload as Record<string, unknown>)
-          : undefined;
-      const id = record?.lesson_id;
-      if (typeof id !== 'string' || id.length === 0 || found.has(id)) continue;
-      found.set(id, {
-        id,
-        bindingCount: Array.isArray(record?.question_evidence_plan)
-          ? record.question_evidence_plan.length
-          : 0,
-        source: searchRoot.label,
-        path: script,
-      });
-    }
-  }
-
-  return [...found.values()].sort((left, right) => left.id.localeCompare(right.id));
-}
-
-const DISCOVERED_LESSONS = discoverLessons();
-
-/**
  * Identifiers that name one particular lesson. Real ids look like
  * `V3-LES-130923`; the friendly route slug and the synthetic dev lesson are the
  * other two spellings that have been branched on before.
  *
  * The hard-coded shapes carry the assertion on their own, so the discovered ids
- * below only ever ADD coverage — the genericity check never weakens when the
- * out-of-repo drafts are missing, and the corpus test says so out loud.
+ * only ever ADD coverage — the genericity check never weakens when the
+ * out-of-repo drafts are missing, and the corpus test below says so out loud.
  */
 const LESSON_SPECIFIC_PATTERNS: readonly RegExp[] = [
   /V3-LES-\d+/,
   /V3-KC-\d+/,
   /vectors-and-trigonometry/,
   /lesson-enz-inhibition/,
-  ...DISCOVERED_LESSONS.map(
-    (lesson) => new RegExp(lesson.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
-  ),
+  ...lessonCorpus().map((lesson) => new RegExp(lesson.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))),
 ];
 
 /**
@@ -618,52 +527,25 @@ describe('the lesson seam is generic (no lesson is a special case)', () => {
   });
 
   it('resolves the whole three-lesson corpus, or names exactly which lesson is missing', () => {
-    const expectedIds = Object.keys(EXPECTED_LESSON_BINDINGS).sort();
-    const byId = new Map(DISCOVERED_LESSONS.map((lesson) => [lesson.id, lesson]));
-    const missing = expectedIds.filter((id) => !byId.has(id));
+    // Discovery, the search roots and this diagnostic all live in
+    // `./lesson-corpus`, shared with `v3-lesson-binding-conformance.test.ts`.
+    // Two copies of "find the lessons" is how the two suites drifted: one grew a
+    // guarded search and a named failure while the other kept an unguarded
+    // `readdirSync` on a hardcoded out-of-repo path and crashed with ENOENT.
+    expect(missingLessonIds(), lessonCorpusDiagnostic('lesson mastery integration')).toEqual([]);
 
-    expect(
-      missing,
-      [
-        `The lesson corpus is incomplete: ${missing.join(', ')} could not be found.`,
-        '',
-        'Two of the three lessons live OUTSIDE this repository, in the workspace sibling',
-        '`research/mcat-curriculum-architecture-v3/lesson-authoring-drafts/`, so a clean',
-        'checkout of mcat-prep alone does not contain them. Roots searched, in order:',
-        ...LESSON_SCRIPT_SEARCH_ROOTS.map(
-          (searchRoot) =>
-            `  ${searchRoot.path.length === 0 ? '(unset)' : searchRoot.path}  — ${searchRoot.label}`,
-        ),
-        '',
-        `Set ${LESSON_DRAFTS_ENV_VAR} to a checkout of the drafts tree, or vendor the two`,
-        'artifacts into `content/lessons/`.',
-        '',
-        'This fails loudly instead of skipping ON PURPOSE.',
-        '`v3-lesson-binding-conformance.test.ts` discovers the same artifacts, so without',
-        `them it silently measures ${EXPECTED_LESSON_BINDINGS['V3-LES-130923']} bindings`,
-        `instead of ${EXPECTED_TOTAL_BINDINGS} and its per-lesson assertions stop existing`,
-        'altogether — a suite that passes because it stopped looking, which is the exact',
-        'failure mode this file was written to prevent.',
-      ].join('\n'),
-    ).toEqual([]);
-
-    // The corpus size the seam is measured against. Pinned because the
-    // conformance suite's own floor (115) is only meaningful if these three
-    // artifacts are the ones supplying it.
-    for (const [id, bindings] of Object.entries(EXPECTED_LESSON_BINDINGS)) {
-      const lesson = byId.get(id);
+    let total = 0;
+    for (const lessonId of EXPECTED_LESSON_IDS) {
+      const lesson = lessonById(lessonId);
+      const expected = EXPECTED_LESSON_BINDINGS[lessonId] as number;
       expect(
-        lesson?.bindingCount,
-        `${id} yielded ${lesson?.bindingCount} bindings, expected ${bindings} ` +
+        lesson?.bindings.length,
+        `${lessonId} yielded ${lesson?.bindings.length} bindings, expected exactly ${expected} ` +
           `(resolved from ${lesson?.source ?? 'nowhere'}).`,
-      ).toBe(bindings);
+      ).toBe(expected);
+      total += lesson?.bindings.length ?? 0;
     }
-    expect(
-      DISCOVERED_LESSONS.reduce((sum, lesson) => sum + lesson.bindingCount, 0),
-    ).toBeGreaterThanOrEqual(EXPECTED_TOTAL_BINDINGS);
-    expect(DISCOVERED_LESSONS.map((lesson) => lesson.id)).toEqual(
-      expect.arrayContaining(expectedIds),
-    );
+    expect(total).toBe(EXPECTED_TOTAL_BINDINGS);
   });
 
   it('no lesson-specific identifier appears in the generic adapter, router, or engine', () => {

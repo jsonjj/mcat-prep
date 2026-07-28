@@ -1,6 +1,3 @@
-import { readFileSync, readdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
   EventIdSchema,
@@ -16,6 +13,16 @@ import {
   unrecognizedAuthoredBindingKeys,
 } from '../../packages/domain/src/lesson-response-adapter';
 import { LESSON_TO_CLUSTER } from '../../packages/content/src/data/v3-cluster-map.data';
+import {
+  EXPECTED_LESSON_BINDINGS,
+  EXPECTED_LESSON_IDS,
+  EXPECTED_TOTAL_BINDINGS,
+  lessonById,
+  lessonCorpus,
+  lessonCorpusDiagnostic,
+  missingLessonIds,
+  type LessonArtifact,
+} from './lesson-corpus';
 
 /**
  * Real-artifact conformance for the lesson → mastery seam.
@@ -24,22 +31,18 @@ import { LESSON_TO_CLUSTER } from '../../packages/content/src/data/v3-cluster-ma
  * production entry points — `parseAuthoredLessonBinding` and
  * `adaptLessonResponse` in `@mcat/domain` — so passing here means the shipping
  * code path handles these lessons, not that some test-local normalizer could.
+ *
+ * Discovery is NOT owned here either: `./lesson-corpus` is the single mechanism
+ * both this suite and `lesson-mastery-integration.test.ts` use. This file used to
+ * walk a hardcoded out-of-repo path with an unguarded `readdirSync`, so a clean
+ * checkout — where two of the three lessons genuinely do not exist — got a raw
+ * `ENOENT` during collection instead of an explanation.
+ *
+ * The per-lesson blocks below are generated from the EXPECTED ids, not from
+ * whatever discovery happened to find. That is deliberate: generating them from
+ * the discovered set meant a missing artifact silently produced no test at all,
+ * so the suite went green having checked two thirds of the corpus, or none of it.
  */
-
-type JsonRecord = Record<string, unknown>;
-
-interface LessonArtifact {
-  readonly artifactVersion: string;
-  readonly bindings: readonly JsonRecord[];
-  readonly id: string;
-  readonly path: string;
-}
-
-const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const workspaceRoot = join(repoRoot, '..');
-
-/** Every discovered lesson must contribute at least this many bindings in total. */
-const MINIMUM_TOTAL_BINDINGS = 115;
 
 const OBSERVATION_ID = '9c0ffee0-0000-4000-8000-000000000001';
 const EVIDENCE_ID = '9c0ffee0-0000-4000-8000-000000000002';
@@ -48,35 +51,6 @@ const LEARNER_ID = LearnerIdSchema.parse('9c0ffee0-0000-4000-8000-000000000004')
 const IDEMPOTENCY_KEY = IdempotencyKeySchema.parse('9c0ffee0-0000-4000-8000-000000000005');
 const OCCURRED_AT = '2026-07-27T12:00:00.000Z';
 
-const asRecord = (value: unknown): JsonRecord | undefined =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
-    ? (value as JsonRecord)
-    : undefined;
-
-function findLessonScripts(directory: string): string[] {
-  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const path = join(directory, entry.name);
-    if (entry.isDirectory()) return findLessonScripts(path);
-    return entry.name === 'lesson-script.json' ? [path] : [];
-  });
-}
-
-function loadLesson(path: string): LessonArtifact {
-  const envelope = asRecord(JSON.parse(readFileSync(path, 'utf8'))) ?? {};
-  const payload = asRecord(envelope.payload) ?? {};
-  const bindings = Array.isArray(payload.question_evidence_plan)
-    ? payload.question_evidence_plan.flatMap((binding) => {
-        const record = asRecord(binding);
-        return record ? [record] : [];
-      })
-    : [];
-  const id = typeof payload.lesson_id === 'string' ? payload.lesson_id : path;
-  const artifactVersion =
-    typeof envelope.artifact_version === 'string' ? envelope.artifact_version : 'unknown-artifact';
-
-  return { artifactVersion, bindings, id, path };
-}
-
 function summarizeBreakdown(breakdown: ReadonlyMap<string, number>): string {
   return [...breakdown.entries()]
     .sort(([left], [right]) => left.localeCompare(right))
@@ -84,32 +58,62 @@ function summarizeBreakdown(breakdown: ReadonlyMap<string, number>): string {
     .join('\n');
 }
 
-const lessonRoots = [
-  join(repoRoot, 'content', 'lessons'),
-  join(workspaceRoot, 'research', 'mcat-curriculum-architecture-v3', 'lesson-authoring-drafts'),
+/**
+ * The artifact for `lessonId`, or a loud named failure.
+ *
+ * Reached from inside a named `it`, so an absent artifact fails THAT test rather
+ * than deleting it. Nothing here is skippable.
+ */
+function requireLesson(lessonId: string): LessonArtifact {
+  const lesson = lessonById(lessonId);
+  expect(lesson, lessonCorpusDiagnostic(`conformance for ${lessonId}`)).toBeDefined();
+  return lesson as LessonArtifact;
+}
+
+/**
+ * Every lesson that gets a conformance block: the three expected ones always,
+ * plus anything else discovery found so a newly added artifact is covered on the
+ * day it lands rather than whenever someone remembers to list it.
+ */
+const CONFORMANCE_LESSON_IDS: readonly string[] = [
+  ...EXPECTED_LESSON_IDS,
+  ...lessonCorpus()
+    .map((lesson) => lesson.id)
+    .filter((id) => !EXPECTED_LESSON_IDS.includes(id)),
 ];
-const lessons = lessonRoots.flatMap(findLessonScripts).sort().map(loadLesson);
 
 describe('V3 lesson binding conformance', () => {
-  it('discovers every lesson artifact on disk', () => {
-    expect(lessons.length).toBeGreaterThanOrEqual(3);
-    expect([...new Set(lessons.map((lesson) => lesson.id))]).toEqual(
-      expect.arrayContaining(['V3-LES-130923', 'V3-LES-789208', 'V3-LES-844372']),
+  it('discovers every expected lesson artifact, or names the ones it could not', () => {
+    expect(missingLessonIds(), lessonCorpusDiagnostic('corpus discovery')).toEqual([]);
+    expect(lessonCorpus().map((lesson) => lesson.id)).toEqual(
+      expect.arrayContaining([...EXPECTED_LESSON_IDS]),
     );
+    // A block per expected lesson exists no matter what discovery returned, so a
+    // missing artifact cannot quietly reduce the number of tests that run.
+    expect(CONFORMANCE_LESSON_IDS.length).toBeGreaterThanOrEqual(EXPECTED_LESSON_IDS.length);
   });
 
-  it('loads a non-vacuous corpus of bindings', () => {
-    // Guards the per-lesson assertions below, which would otherwise pass
-    // trivially if an artifact stopped yielding bindings.
-    for (const lesson of lessons) {
-      expect(lesson.bindings.length, `${lesson.id} loaded no bindings`).toBeGreaterThan(0);
+  it('loads exactly the pinned corpus of bindings', () => {
+    // Exact, not a floor: this is the assertion that makes every per-lesson check
+    // below non-vacuous, so a count that drifts has to be looked at rather than
+    // absorbed. 42 + 40 + 33 = 115.
+    let total = 0;
+    for (const lessonId of EXPECTED_LESSON_IDS) {
+      const lesson = requireLesson(lessonId);
+      const expected = EXPECTED_LESSON_BINDINGS[lessonId] as number;
+      expect(
+        lesson.bindings.length,
+        `${lessonId} yielded ${lesson.bindings.length} bindings, expected exactly ${expected} ` +
+          `(resolved from ${lesson.source})`,
+      ).toBe(expected);
+      total += lesson.bindings.length;
     }
-    const total = lessons.reduce((sum, lesson) => sum + lesson.bindings.length, 0);
-    expect(total).toBeGreaterThanOrEqual(MINIMUM_TOTAL_BINDINGS);
+    expect(total).toBe(EXPECTED_TOTAL_BINDINGS);
   });
 
-  for (const lesson of lessons) {
-    it(`parses every binding and builds evidence where measurable: ${lesson.id}`, () => {
+  for (const lessonId of CONFORMANCE_LESSON_IDS) {
+    it(`parses every binding and builds evidence where measurable: ${lessonId}`, () => {
+      const lesson = requireLesson(lessonId);
       const breakdown = new Map<string, number>();
       const samples = new Map<string, string>();
       let parsedBindings = 0;
