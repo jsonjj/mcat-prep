@@ -47,9 +47,10 @@ export const EVIDENCE_REASONS = [
 ] as const;
 export type EvidenceReason = (typeof EVIDENCE_REASONS)[number];
 
-/** @deprecated Compatibility alias. Use `EVIDENCE_REASONS`. */
-export const MASTERY_REASONS = EVIDENCE_REASONS;
-/** @deprecated Compatibility alias. Use `EvidenceReason`. */
+/**
+ * @deprecated Compatibility alias. Use `EvidenceReason`.
+ * Remaining consumer: `MasterySkillState.reasons` in ./mastery.ts.
+ */
 export type MasteryReason = EvidenceReason;
 
 export const ASSISTANCE_REASONS = [

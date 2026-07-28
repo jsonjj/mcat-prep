@@ -28,8 +28,9 @@ const practiced = (
 
 const rollup = (input: LessonRollupInput): LessonRollupView => {
   const result = rollUpLessonMastery(input);
-  if (!isLessonRollupAvailable(result))
+  if (!isLessonRollupAvailable(result)) {
     throw new Error(`expected an available rollup: ${result.rejectionCodes.join()}`);
+  }
   return result.view;
 };
 
@@ -46,16 +47,14 @@ describe('lesson rollup (derived, never a BKT grain)', () => {
     expect(view.pL).toBeCloseTo((0.9 + 0.6 + 0.3) / 3, 12);
   });
 
-  it('falls back to the BKT prior for a required KC with no state', () => {
+  it('keeps the authored curriculum order of the required KC list', () => {
     const view = rollup({
       lessonId: 'l1',
-      requiredKcIds: ['kc-a', 'kc-unstarted'],
-      kcStates: { 'kc-a': practiced(0.8) },
+      requiredKcIds: ['kc-c', 'kc-a', 'kc-b'],
+      kcStates: { 'kc-a': practiced(0.9), 'kc-b': practiced(0.6), 'kc-c': practiced(0.3) },
       now: T0,
     });
-    expect(view.members[1]!.pL).toBe(PRIOR_PL0);
-    expect(view.members[1]!.hasState).toBe(false);
-    expect(view.pL).toBeCloseTo((0.8 + PRIOR_PL0) / 2, 12);
+    expect(view.members.map((m) => m.kcId)).toEqual(['kc-c', 'kc-a', 'kc-b']);
   });
 
   it('reads current lazily-decayed KC values rather than stored ones', () => {
@@ -113,9 +112,10 @@ describe('lesson rollup (derived, never a BKT grain)', () => {
     const view = rollup({
       lessonId: 'l1',
       requiredKcIds: ['kc-a', 'kc-unstarted'],
-      kcStates: { 'kc-a': practiced(0.99) },
+      kcStates: { 'kc-a': practiced(0.99), 'kc-unstarted': initialMemoryState() },
       now: T0,
     });
+    expect(view.members[1]!.pL).toBe(PRIOR_PL0);
     expect(view.mastered).toBe(false);
   });
 
@@ -138,7 +138,7 @@ describe('lesson rollup (derived, never a BKT grain)', () => {
     const view = rollup({
       lessonId: 'l1',
       requiredKcIds: ['kc-unstarted'],
-      kcStates: {},
+      kcStates: { 'kc-unstarted': initialMemoryState() },
       now: daysAfter(365),
     });
     expect(view.members[0]!.pL).toBe(PRIOR_PL0); // below the review line, but never practiced
@@ -157,10 +157,21 @@ describe('lesson rollup (derived, never a BKT grain)', () => {
     expect(view.pL).toBeCloseTo(0.6, 12);
   });
 
+  it('ignores states for KCs outside the required list', () => {
+    const view = rollup({
+      lessonId: 'l1',
+      requiredKcIds: ['kc-a'],
+      kcStates: { 'kc-a': practiced(0.9), 'kc-other-lesson': practiced(0.1) },
+      now: T0,
+    });
+    expect(view.requiredKcCount).toBe(1);
+    expect(view.pL).toBeCloseTo(0.9, 12);
+  });
+
   it('fails closed on a missing lesson-to-KC mapping', () => {
     const result = rollUpLessonMastery({
       lessonId: 'l-unmapped',
-      requiredKcIds: undefined,
+      requiredKcIds: undefined, // e.g. orderedKcsForLesson() returned null
       kcStates: { 'kc-a': practiced(0.99) },
       now: T0,
     });
@@ -169,6 +180,7 @@ describe('lesson rollup (derived, never a BKT grain)', () => {
       status: 'unavailable',
       lessonId: 'l-unmapped',
       rejectionCodes: ['LESSON_KC_MAP_MISSING'],
+      missingKcIds: [],
     });
     expect(result).not.toHaveProperty('view');
   });
@@ -185,6 +197,7 @@ describe('lesson rollup (derived, never a BKT grain)', () => {
       status: 'unavailable',
       lessonId: 'l-empty',
       rejectionCodes: ['LESSON_KC_MAP_EMPTY'],
+      missingKcIds: [],
     });
   });
 
@@ -196,6 +209,59 @@ describe('lesson rollup (derived, never a BKT grain)', () => {
       now: T0,
     });
     expect(isLessonRollupAvailable(result)).toBe(false);
+  });
+
+  it('fails closed when a 5-KC lesson is supplied only 3 states, however strong they are', () => {
+    const result = rollUpLessonMastery({
+      lessonId: 'l-five',
+      requiredKcIds: ['kc-1', 'kc-2', 'kc-3', 'kc-4', 'kc-5'],
+      kcStates: { 'kc-1': practiced(0.99), 'kc-2': practiced(0.99), 'kc-3': practiced(0.99) },
+      now: T0,
+    });
+    expect(isLessonRollupAvailable(result)).toBe(false);
+    expect(result).toEqual({
+      status: 'unavailable',
+      lessonId: 'l-five',
+      rejectionCodes: ['LESSON_KC_STATE_MISSING'],
+      missingKcIds: ['kc-4', 'kc-5'],
+    });
+    expect(result).not.toHaveProperty('view');
+  });
+
+  it('fails closed on the WRONG 3 of 5, which a cardinality check would wave through', () => {
+    // Five states supplied for a five-KC lesson, but two of them belong to other KCs:
+    // the counts match, only the identities disagree.
+    const result = rollUpLessonMastery({
+      lessonId: 'l-five',
+      requiredKcIds: ['kc-1', 'kc-2', 'kc-3', 'kc-4', 'kc-5'],
+      kcStates: {
+        'kc-1': practiced(0.99),
+        'kc-2': practiced(0.99),
+        'kc-3': practiced(0.99),
+        'kc-98': practiced(0.99),
+        'kc-99': practiced(0.99),
+      },
+      now: T0,
+    });
+    expect(isLessonRollupAvailable(result)).toBe(false);
+    expect(result).toEqual({
+      status: 'unavailable',
+      lessonId: 'l-five',
+      rejectionCodes: ['LESSON_KC_STATE_MISSING'],
+      missingKcIds: ['kc-4', 'kc-5'],
+    });
+  });
+
+  it('reports every uncovered required KC, not just the first', () => {
+    const result = rollUpLessonMastery({
+      lessonId: 'l-five',
+      requiredKcIds: ['kc-1', 'kc-2', 'kc-3'],
+      kcStates: {},
+      now: T0,
+    });
+    expect(isLessonRollupAvailable(result)).toBe(false);
+    if (isLessonRollupAvailable(result)) throw new Error('unreachable');
+    expect(result.missingKcIds).toEqual(['kc-1', 'kc-2', 'kc-3']);
   });
 
   it('never mutates the supplied KC states', () => {

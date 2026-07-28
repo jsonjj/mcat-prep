@@ -87,20 +87,30 @@ export interface SkillEvidenceState extends EvidenceFreshness {
 }
 
 /**
- * @deprecated Compatibility alias for the pre-reframe ladder type. Use
- * `EvidenceQualityTier`; this name wrongly implies a capability scale.
+ * @deprecated Compatibility alias for the pre-reframe ladder type; the name
+ * wrongly implies a capability scale. Use `EvidenceQualityTier`.
+ * Remaining consumers: `MasterySkillState.base` below, and
+ * `apps/learner-web/src/components/{EvidenceAtlas,BrainScene}.tsx`.
  */
 export type BaseMasteryState = EvidenceQualityTier;
-/** @deprecated Compatibility alias. Use `EVIDENCE_QUALITY_TIERS`. */
-export const BASE_MASTERY_STATES = EVIDENCE_QUALITY_TIERS;
-/** @deprecated Compatibility alias. Use `evidenceQualityRank`. */
+/**
+ * @deprecated Compatibility alias. Use `evidenceQualityRank`.
+ * Remaining consumers: `packages/authority-core/src/authority.test.ts`,
+ * `packages/domain/src/domain.test.ts`, and
+ * `apps/learner-web/src/components/{EvidenceAtlas,BrainScene}.tsx`.
+ */
 export const baseStateRank = evidenceQualityRank;
-/** @deprecated Compatibility alias. Use `evidenceQualityAdvances`. */
+/**
+ * @deprecated Compatibility alias. Use `evidenceQualityAdvances`.
+ * Remaining consumer: `packages/domain/src/domain.test.ts`.
+ */
 export const advances = evidenceQualityAdvances;
 
 /**
  * @deprecated Legacy projection of `SkillEvidenceState` for consumers that still
  * read `base`. It is a view, NOT the definition of mastery — see the BKT engine.
+ * Remaining consumers: `packages/authority-core/src/types.ts` (`MasteryMapEntry`)
+ * and the `evaluateMastery` wrapper in @mcat/policies.
  */
 export interface MasterySkillState {
   skillId: string;

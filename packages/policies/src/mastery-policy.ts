@@ -41,12 +41,6 @@ export const EVIDENCE_WARRANT_MANIFEST: PolicyManifest = {
     'Evidence warrant: cumulative recipe slots (independence, family diversity, transfer, delayed, mixed/passage/timed/protected), freshness overlay, and explicit gaps. Does not define capability — BKT owns P(L) and the mastery threshold.',
 };
 
-/**
- * @deprecated Compatibility alias for the pre-reframe manifest name. The evidence
- * policy no longer defines mastery; use `EVIDENCE_WARRANT_MANIFEST`.
- */
-export const MASTERY_MANIFEST = EVIDENCE_WARRANT_MANIFEST;
-
 export interface EvidenceConfig {
   freshnessDaysGeneral: number;
   freshnessDaysStrong: number;
@@ -97,11 +91,6 @@ export const EVIDENCE_CONFIG: EvidenceConfig = {
     },
   ],
 };
-
-/** @deprecated Compatibility alias. Use `EvidenceConfig`. */
-export type MasteryConfig = EvidenceConfig;
-/** @deprecated Compatibility alias. Use `EVIDENCE_CONFIG`. */
-export const MASTERY_CONFIG = EVIDENCE_CONFIG;
 
 const windowForKind = (kind: EvidenceKind, cfg: EvidenceConfig): number =>
   STRONG_KINDS.has(kind) ? cfg.freshnessDaysStrong : cfg.freshnessDaysGeneral;
@@ -219,9 +208,6 @@ export interface EvidenceEvaluationInput {
   hasInstruction?: boolean;
 }
 
-/** @deprecated Compatibility alias. Use `EvidenceEvaluationInput`. */
-export type MasteryInput = EvidenceEvaluationInput;
-
 /**
  * Evaluate the evidence warrant for one skill: quality tier reached, freshness,
  * satisfied and missing recipe slots, supporting evidence, and audit reasons.
@@ -312,10 +298,11 @@ export function evaluateEvidence(
 
 /**
  * @deprecated TEMPORARY COMPATIBILITY WRAPPER. Projects `evaluateEvidence` onto the
- * legacy `base`/`refreshNeeded` ladder shape for consumers not yet migrated
- * (@mcat/authority-core, services). It is a view of the warrant, NOT the public
- * definition of capability — read `P(L)` from the BKT engine for that. Remove once
- * every consumer reads `SkillEvidenceState`.
+ * legacy `base`/`refreshNeeded` ladder shape. It is a view of the warrant, NOT the
+ * public definition of capability — read `P(L)` from the BKT engine for that.
+ * Remaining consumers: `packages/authority-core/src/authority.ts` (`getMasteryMap`
+ * at :526, `isPrerequisiteBlocked` at :825). Delete with the authority task, once
+ * both read `SkillEvidenceState`.
  */
 export function evaluateMastery(
   input: EvidenceEvaluationInput,

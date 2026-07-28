@@ -31,9 +31,6 @@ export interface DirectBktTargetStates {
   reasoningOperation: MemoryState;
 }
 
-/** @deprecated Compatibility alias. Use `DirectBktTargetStates`. */
-export type MasteryUnitStates = DirectBktTargetStates;
-
 export interface ApplyMasteryAttemptInput {
   correct: boolean;
   now: UtcTimestamp;
