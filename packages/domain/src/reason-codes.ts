@@ -21,19 +21,36 @@ export const PLANNER_REASONS = [
 ] as const;
 export type PlannerReason = (typeof PLANNER_REASONS)[number];
 
-export const MASTERY_REASONS = [
+/**
+ * Evidence-warrant reasons. These audit the QUALITY, CURRENCY and GAPS of a
+ * skill's evidence; none of them declares a capability level. The learner-facing
+ * mastery claim comes from the BKT estimate in @mcat/policies, not from here.
+ */
+export const EVIDENCE_REASONS = [
   'NO_USEFUL_EVIDENCE',
   'PREREQUISITE_BLOCKED',
-  'DEPENDS_ON_INSTRUCTION',
-  'INDEPENDENT_ACHIEVED',
-  'TRANSFER_ACHIEVED',
-  'RETAINED_ACHIEVED',
-  'STRONG_ACHIEVED',
+  'INSTRUCTIONAL_EVIDENCE_ONLY',
+  'INDEPENDENT_EVIDENCE_SATISFIED',
+  'RETENTION_EVIDENCE_SATISFIED',
+  'STRONG_CONDITIONS_EVIDENCE_SATISFIED',
   'EVIDENCE_STALE',
   'FRESH_FAILURE',
   'CORRECTION_INVALIDATED_EVIDENCE',
+  'INDEPENDENT_EVIDENCE_GAP',
+  'TRANSFER_EVIDENCE_GAP',
+  'DELAYED_EVIDENCE_GAP',
+  'MIXED_EVIDENCE_GAP',
+  'PASSAGE_EVIDENCE_GAP',
+  'TIMED_EVIDENCE_GAP',
+  'PROTECTED_EVIDENCE_GAP',
+  'EVIDENCE_GAP',
 ] as const;
-export type MasteryReason = (typeof MASTERY_REASONS)[number];
+export type EvidenceReason = (typeof EVIDENCE_REASONS)[number];
+
+/** @deprecated Compatibility alias. Use `EVIDENCE_REASONS`. */
+export const MASTERY_REASONS = EVIDENCE_REASONS;
+/** @deprecated Compatibility alias. Use `EvidenceReason`. */
+export type MasteryReason = EvidenceReason;
 
 export const ASSISTANCE_REASONS = [
   'FADE_AFTER_SUCCESS',

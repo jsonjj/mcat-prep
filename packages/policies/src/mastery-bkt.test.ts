@@ -21,7 +21,12 @@ import {
   CARS_K_DUEL,
   CARS_READINESS_TARGET,
 } from './cars';
-import { seedCarsAbilityFromRead, seedPriorFromRead, SEED_PRIOR_CAP, SEED_PRIOR_FLOOR } from './mastery-seed';
+import {
+  seedCarsAbilityFromRead,
+  seedPriorFromRead,
+  SEED_PRIOR_CAP,
+  SEED_PRIOR_FLOOR,
+} from './mastery-seed';
 import { PREREQ_DEFAULT_WEIGHT, reinforcePrerequisite } from './prerequisite';
 import { applyMasteryAttempt } from './mastery-attempt';
 
@@ -106,8 +111,16 @@ describe('forgetting', () => {
 
   it('doubles the half-life on a successful due review and resets on failure', () => {
     // Seed a unit that has decayed well below the review line.
-    const stale = { pL: 0.95, halfLifeDays: INITIAL_HALF_LIFE, lastPracticedAt: T0, lastDueReviewAt: null };
-    const passed = stepMemory(stale, { observation: { correct: true, slip: slip(-1) }, now: daysAfter(30) });
+    const stale = {
+      pL: 0.95,
+      halfLifeDays: INITIAL_HALF_LIFE,
+      lastPracticedAt: T0,
+      lastDueReviewAt: null,
+    };
+    const passed = stepMemory(stale, {
+      observation: { correct: true, slip: slip(-1) },
+      now: daysAfter(30),
+    });
     expect(passed.wasDueReview).toBe(true);
     expect(passed.state.halfLifeDays).toBe(INITIAL_HALF_LIFE * 2);
 
@@ -198,14 +211,28 @@ describe('prerequisite reinforcement', () => {
   });
 });
 
-describe('applyMasteryAttempt (composition across grains)', () => {
+describe('applyMasteryAttempt (exactly two direct BKT targets)', () => {
   const fresh = () => ({
     kc: initialMemoryState(),
-    skill: initialMemoryState(),
-    lesson: initialMemoryState(),
+    reasoningOperation: initialMemoryState(),
   });
 
-  it('raises all three grains on an independent-correct answer and reinforces prerequisites', () => {
+  it('updates exactly two direct grain states: the KC and the reasoning operation', () => {
+    const res = applyMasteryAttempt({
+      correct: true,
+      now: T0,
+      questionStats: { attempts: 0, correct: 0 },
+      dokLevel: 2,
+      states: fresh(),
+    });
+    expect(Object.keys(res.states).sort()).toEqual(['kc', 'reasoningOperation']);
+    expect(Object.keys(res.dueReview).sort()).toEqual(['kc', 'reasoningOperation']);
+    // A lesson is a derived rollup (see ./lesson-rollup.ts) and never a direct target.
+    expect(res.states).not.toHaveProperty('lesson');
+    expect(res.dueReview).not.toHaveProperty('lesson');
+  });
+
+  it('raises both direct grains on an independent-correct answer and reinforces prerequisites', () => {
     const res = applyMasteryAttempt({
       correct: true,
       now: T0,
@@ -215,8 +242,7 @@ describe('applyMasteryAttempt (composition across grains)', () => {
       prerequisites: [initialMemoryState(0.5)],
     });
     expect(res.states.kc.pL).toBeGreaterThan(PRIOR_PL0);
-    expect(res.states.skill.pL).toBeGreaterThan(PRIOR_PL0);
-    expect(res.states.lesson.pL).toBeGreaterThan(PRIOR_PL0);
+    expect(res.states.reasoningOperation.pL).toBeGreaterThan(PRIOR_PL0);
     expect(res.prerequisites[0]!.pL).toBeGreaterThan(0.5); // reinforced
   });
 
@@ -227,10 +253,72 @@ describe('applyMasteryAttempt (composition across grains)', () => {
       now: T0,
       questionStats: { attempts: 0, correct: 0 },
       dokLevel: 2,
-      states: { kc: initialMemoryState(0.6), skill: initialMemoryState(0.6), lesson: initialMemoryState(0.6) },
+      states: { kc: initialMemoryState(0.6), reasoningOperation: initialMemoryState(0.6) },
       prerequisites: [prereq],
     });
     expect(res.states.kc.pL).toBeLessThan(0.6);
+    expect(res.states.reasoningOperation.pL).toBeLessThan(0.6);
     expect(res.prerequisites[0]!.pL).toBe(prereq.pL); // unchanged on a wrong answer
+  });
+
+  it('preserves one-hop prerequisite reinforcement in order, including untouched entries', () => {
+    const res = applyMasteryAttempt({
+      correct: true,
+      now: T0,
+      questionStats: { attempts: 0, correct: 0 },
+      dokLevel: 2,
+      states: fresh(),
+      prerequisites: [initialMemoryState(0.5), { ...initialMemoryState(0.5), halfLifeDays: 10 }],
+    });
+    expect(res.prerequisites).toHaveLength(2);
+    // Same formula as reinforcePrerequisite: pL + (1-pL)*(w*T), H*(1+w).
+    expect(res.prerequisites[0]!.pL).toBeCloseTo(0.5375, 12);
+    expect(res.prerequisites[0]!.halfLifeDays).toBeCloseTo(INITIAL_HALF_LIFE * 1.5, 12);
+    expect(res.prerequisites[1]!.halfLifeDays).toBeCloseTo(15, 12);
+    expect(res.prerequisites[0]!).toEqual(reinforcePrerequisite(initialMemoryState(0.5), T0));
+  });
+
+  it('keeps the BKT/IRT/forgetting math bit-for-bit stable (golden numbers)', () => {
+    // dokLevel 2 with no calibrated attempts → b = coldStartB(2) = -0.3.
+    expect(difficultyB({ attempts: 0, correct: 0, dokLevel: 2 })).toBe(-0.3);
+    expect(slip(-0.3)).toBe(0.011920292202211757);
+
+    const up = applyMasteryAttempt({
+      correct: true,
+      now: T0,
+      questionStats: { attempts: 0, correct: 0 },
+      dokLevel: 2,
+      states: fresh(),
+    });
+    expect(up.b).toBe(-0.3);
+    expect(up.slip).toBe(0.011920292202211757);
+    expect(up.states.kc.pL).toBe(0.5724517499645163);
+    expect(up.states.reasoningOperation.pL).toBe(0.5724517499645163);
+    expect(up.states.kc.halfLifeDays).toBe(INITIAL_HALF_LIFE);
+    expect(up.states.kc.lastPracticedAt).toBe(T0);
+    expect(up.dueReview).toEqual({ kc: false, reasoningOperation: false });
+
+    const down = applyMasteryAttempt({
+      correct: false,
+      now: T0,
+      questionStats: { attempts: 0, correct: 0 },
+      dokLevel: 2,
+      states: { kc: initialMemoryState(0.6), reasoningOperation: initialMemoryState(0.6) },
+    });
+    expect(down.states.kc.pL).toBe(0.16979262890379365);
+
+    // Lazy decay still runs before the update on a stale grain (one half-life → 0.48).
+    const stale = { pL: 0.96, halfLifeDays: 7, lastPracticedAt: T0, lastDueReviewAt: null };
+    const review = applyMasteryAttempt({
+      correct: true,
+      now: daysAfter(7),
+      questionStats: { attempts: 0, correct: 0 },
+      dokLevel: 2,
+      states: { kc: stale, reasoningOperation: stale },
+    });
+    expect(review.dueReview).toEqual({ kc: true, reasoningOperation: true });
+    expect(review.states.kc.halfLifeDays).toBe(INITIAL_HALF_LIFE * 2);
+    expect(review.states.kc.pL).toBe(bktUpdate(0.48, { correct: true, slip: slip(-0.3) }));
+    expect(review.states.kc.pL).toBe(0.8171372240877787);
   });
 });

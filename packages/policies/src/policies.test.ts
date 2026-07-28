@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { EvidenceRecordSchema, type EvidenceRecord, type Task } from '@mcat/domain';
+import {
+  EvidenceRecordSchema,
+  type EvidenceKind,
+  type EvidenceRecord,
+  type SkillEvidenceState,
+  type Task,
+} from '@mcat/domain';
 import { UtcTimestampSchema } from '@mcat/contracts';
 import { clampDueToExam, intervalDays, schedule } from './fsrs';
 import { decideAssistance } from './assistance';
@@ -10,7 +16,7 @@ import {
   shouldStop,
   type DiagnosticState,
 } from './diagnostic';
-import { evaluateMastery } from './mastery-policy';
+import { evaluateEvidence, evaluateMastery, EVIDENCE_WARRANT_MANIFEST } from './mastery-policy';
 import { classifyCapacity, continueTarget, orderTasks } from './planner';
 import { scorePredictionGate } from './readiness';
 
@@ -31,7 +37,13 @@ const mkEv = (over: Partial<EvidenceRecord>): EvidenceRecord =>
     itemVersion: 1,
     familyId: 'fam-a',
     changeDimensions: [],
-    conditions: { mixed: false, passage: false, timed: false, protected: false, accommodations: [] },
+    conditions: {
+      mixed: false,
+      passage: false,
+      timed: false,
+      protected: false,
+      accommodations: [],
+    },
     outcome: 'correct',
     valid: true,
     occurredAt: NOW,
@@ -67,13 +79,25 @@ describe('fsrs', () => {
 describe('assistance', () => {
   it('escalates after a failure and fades after successes', () => {
     expect(
-      decideAssistance({ currentLevel: 'A0', consecutiveSuccessesAtLevel: 0, lastOutcomeCorrect: false }).nextLevel,
+      decideAssistance({
+        currentLevel: 'A0',
+        consecutiveSuccessesAtLevel: 0,
+        lastOutcomeCorrect: false,
+      }).nextLevel,
     ).toBe('A1');
     expect(
-      decideAssistance({ currentLevel: 'A3', consecutiveSuccessesAtLevel: 2, lastOutcomeCorrect: true }).nextLevel,
+      decideAssistance({
+        currentLevel: 'A3',
+        consecutiveSuccessesAtLevel: 2,
+        lastOutcomeCorrect: true,
+      }).nextLevel,
     ).toBe('A2');
     expect(
-      decideAssistance({ currentLevel: 'A0', consecutiveSuccessesAtLevel: 5, lastOutcomeCorrect: true }).nextLevel,
+      decideAssistance({
+        currentLevel: 'A0',
+        consecutiveSuccessesAtLevel: 5,
+        lastOutcomeCorrect: true,
+      }).nextLevel,
     ).toBe('A0');
   });
 });
@@ -96,8 +120,22 @@ describe('diagnostic', () => {
   it('selects a feasible unseen candidate and stops when none remain', () => {
     const state = emptyState();
     const candidates = [
-      { questionId: 'q1', cluster: 'BB1' as const, section: 'bb' as const, familyId: 'f1', format: 'discrete_mcq' as const, eligible: true },
-      { questionId: 'q2', cluster: 'R1' as const, section: 'cp' as const, familyId: 'f2', format: 'discrete_mcq' as const, eligible: false },
+      {
+        questionId: 'q1',
+        cluster: 'BB1' as const,
+        section: 'bb' as const,
+        familyId: 'f1',
+        format: 'discrete_mcq' as const,
+        eligible: true,
+      },
+      {
+        questionId: 'q2',
+        cluster: 'R1' as const,
+        section: 'cp' as const,
+        familyId: 'f2',
+        format: 'discrete_mcq' as const,
+        eligible: false,
+      },
     ];
     const sel = selectNextDiagnostic(state, candidates, DIAGNOSTIC_CONFIG);
     expect(sel.done).toBe(false);
@@ -108,65 +146,271 @@ describe('diagnostic', () => {
   });
 });
 
-describe('mastery policy', () => {
-  it('is not_assessed with no evidence', () => {
-    expect(evaluateMastery({ skillId: 's', records: [], now: NOW }).base).toBe('not_assessed');
+describe('evidence warrant policy', () => {
+  const fullWarrant = (): EvidenceRecord[] => [
+    mkEv({ kind: 'independent', familyId: 'fam-a' }),
+    mkEv({ kind: 'independent', familyId: 'fam-b' }),
+    mkEv({ kind: 'transfer', familyId: 'fam-a', changeDimensions: ['representation'] }),
+    mkEv({ kind: 'transfer', familyId: 'fam-b', changeDimensions: ['domain_context'] }),
+    mkEv({ kind: 'delayed', familyId: 'fam-a', delayHours: 50 }),
+    mkEv({ kind: 'mixed', familyId: 'fam-b' }),
+    mkEv({
+      kind: 'integrated_passage',
+      familyId: 'fam-a',
+      conditions: {
+        mixed: false,
+        passage: true,
+        timed: false,
+        protected: false,
+        accommodations: [],
+      },
+    }),
+    mkEv({
+      kind: 'timed',
+      familyId: 'fam-b',
+      conditions: {
+        mixed: false,
+        passage: false,
+        timed: true,
+        protected: false,
+        accommodations: [],
+      },
+    }),
+    mkEv({
+      kind: 'protected',
+      familyId: 'fam-a',
+      conditions: {
+        mixed: false,
+        passage: false,
+        timed: false,
+        protected: true,
+        accommodations: [],
+      },
+    }),
+  ];
+
+  const gapFor = (state: SkillEvidenceState, kind: EvidenceKind) =>
+    state.missingSlots.find((g) => g.kind === kind);
+
+  it('reports no useful evidence and the whole warrant as missing with no records', () => {
+    const state = evaluateEvidence({ skillId: 's', records: [], now: NOW });
+    expect(state.evidenceQuality).toBe('not_assessed');
+    expect(state.satisfiedSlots).toEqual([]);
+    expect(state.missingSlots.map((g) => g.kind)).toEqual([
+      'independent',
+      'transfer',
+      'delayed',
+      'mixed',
+      'integrated_passage',
+      'timed',
+      'protected',
+    ]);
+    expect(state.reasons.map((r) => r.code)).toContain('NO_USEFUL_EVIDENCE');
   });
 
-  it('reaches independent with two independent successes from two families', () => {
+  it('records independent-quality evidence from two families and names the remaining gaps', () => {
     const records = [mkEv({ familyId: 'fam-a' }), mkEv({ familyId: 'fam-b' })];
-    expect(evaluateMastery({ skillId: 's', records, now: NOW }).base).toBe('independent');
+    const state = evaluateEvidence({ skillId: 's', records, now: NOW });
+    expect(state.evidenceQuality).toBe('independent');
+    expect(state.satisfiedSlots.map((s) => s.kind)).toEqual(['independent']);
+    expect(state.missingSlots.map((g) => g.kind)).toEqual([
+      'transfer',
+      'delayed',
+      'mixed',
+      'integrated_passage',
+      'timed',
+      'protected',
+    ]);
+    expect(state.reasons.map((r) => r.code)).toContain('INDEPENDENT_EVIDENCE_SATISFIED');
+    expect(state.reasons.map((r) => r.code)).toContain('TRANSFER_EVIDENCE_GAP');
+    expect(state.reasons.map((r) => r.code)).toContain('DELAYED_EVIDENCE_GAP');
+    expect(state.supportingEvidenceIds).toHaveLength(2);
   });
 
-  it('never advances from simulation/assisted evidence alone', () => {
-    const sim = [mkEv({ kind: 'simulation', familyId: 'fam-a' }), mkEv({ kind: 'simulation', familyId: 'fam-b' })];
-    expect(evaluateMastery({ skillId: 's', records: sim, now: NOW }).base).toBe('learning');
+  it('never counts simulation/assisted evidence toward the warrant', () => {
+    const sim = [
+      mkEv({ kind: 'simulation', familyId: 'fam-a' }),
+      mkEv({ kind: 'simulation', familyId: 'fam-b' }),
+    ];
+    const simState = evaluateEvidence({ skillId: 's', records: sim, now: NOW });
+    expect(simState.evidenceQuality).toBe('learning');
+    expect(simState.supportingEvidenceIds).toEqual([]);
+    expect(gapFor(simState, 'independent')?.reasons).toContain('KIND_ABSENT');
+
     const assisted = [
       mkEv({ independent: false, assistanceLevel: 'A2', familyId: 'fam-a' }),
       mkEv({ independent: false, assistanceLevel: 'A2', familyId: 'fam-b' }),
     ];
-    expect(evaluateMastery({ skillId: 's', records: assisted, now: NOW }).base).toBe('learning');
+    expect(evaluateEvidence({ skillId: 's', records: assisted, now: NOW }).evidenceQuality).toBe(
+      'learning',
+    );
   });
 
-  it('reaches strong with the full evidence recipe', () => {
-    const records = [
-      mkEv({ kind: 'independent', familyId: 'fam-a' }),
-      mkEv({ kind: 'independent', familyId: 'fam-b' }),
-      mkEv({ kind: 'transfer', familyId: 'fam-a', changeDimensions: ['representation'] }),
-      mkEv({ kind: 'transfer', familyId: 'fam-b', changeDimensions: ['domain_context'] }),
-      mkEv({ kind: 'delayed', familyId: 'fam-a', delayHours: 50 }),
-      mkEv({ kind: 'mixed', familyId: 'fam-b' }),
-      mkEv({ kind: 'integrated_passage', familyId: 'fam-a', conditions: { mixed: false, passage: true, timed: false, protected: false, accommodations: [] } }),
-      mkEv({ kind: 'timed', familyId: 'fam-b', conditions: { mixed: false, passage: false, timed: true, protected: false, accommodations: [] } }),
-      mkEv({ kind: 'protected', familyId: 'fam-a', conditions: { mixed: false, passage: false, timed: false, protected: true, accommodations: [] } }),
-    ];
-    expect(evaluateMastery({ skillId: 's', records, now: NOW }).base).toBe('strong');
+  it('satisfies the whole warrant with the full recipe and reports zero gaps', () => {
+    const state = evaluateEvidence({ skillId: 's', records: fullWarrant(), now: NOW });
+    expect(state.evidenceQuality).toBe('strong');
+    expect(state.missingSlots).toEqual([]);
+    expect(state.satisfiedSlots).toHaveLength(7);
   });
 
-  it('overlays refresh_needed on stale evidence without erasing the base state', () => {
+  it('distinguishes evidence quality (history) from freshness (currency)', () => {
     const stale = UtcTimestampSchema.parse('2026-01-01T12:00:00.000Z'); // >45d before NOW
-    const records = [
-      mkEv({ familyId: 'fam-a', occurredAt: stale }),
-      mkEv({ familyId: 'fam-b', occurredAt: stale }),
-    ];
-    const state = evaluateMastery({ skillId: 's', records, now: NOW });
-    expect(state.base).toBe('independent');
+    const state = evaluateEvidence({
+      skillId: 's',
+      records: [
+        mkEv({ familyId: 'fam-a', occurredAt: stale }),
+        mkEv({ familyId: 'fam-b', occurredAt: stale }),
+      ],
+      now: NOW,
+    });
+    expect(state.evidenceQuality).toBe('independent'); // history is never erased
+    expect(state.freshEvidenceQuality).toBeNull();
     expect(state.refreshNeeded).toBe(true);
+    expect(state.reasons.map((r) => r.code)).toContain('EVIDENCE_STALE');
+
+    const fresh = evaluateEvidence({
+      skillId: 's',
+      records: [mkEv({ familyId: 'fam-a' }), mkEv({ familyId: 'fam-b' })],
+      now: NOW,
+    });
+    expect(fresh.evidenceQuality).toBe('independent');
+    expect(fresh.freshEvidenceQuality).toBe('independent');
+    expect(fresh.refreshNeeded).toBe(false);
+    expect(fresh.reasons.map((r) => r.code)).not.toContain('EVIDENCE_STALE');
+  });
+
+  it('applies the tighter strong-condition freshness window to passage/timed/protected evidence', () => {
+    const thirtyDaysAgo = UtcTimestampSchema.parse('2026-06-20T12:00:00.000Z'); // <45d, >21d
+    const records = fullWarrant().map((r) =>
+      r.kind === 'timed' ? ({ ...r, occurredAt: thirtyDaysAgo } as EvidenceRecord) : r,
+    );
+    const state = evaluateEvidence({ skillId: 's', records, now: NOW });
+    expect(state.evidenceQuality).toBe('strong');
+    expect(state.freshEvidenceQuality).toBe('retained'); // timed evidence aged out of its 21d window
+    expect(state.refreshNeeded).toBe(true);
+    expect(state.freshestByKind.timed).toBe(thirtyDaysAgo);
+  });
+
+  it('flags a fresh independent failure as a refresh even when evidence is current', () => {
+    const records = [
+      mkEv({ familyId: 'fam-a' }),
+      mkEv({ familyId: 'fam-b' }),
+      mkEv({ familyId: 'fam-c', outcome: 'incorrect' }),
+    ];
+    const state = evaluateEvidence({ skillId: 's', records, now: NOW });
+    expect(state.evidenceQuality).toBe('independent');
+    expect(state.refreshNeeded).toBe(true);
+    expect(state.reasons.map((r) => r.code)).toContain('FRESH_FAILURE');
+  });
+
+  it('reports an explicit family-diversity gap', () => {
+    const records = [mkEv({ familyId: 'fam-a' }), mkEv({ familyId: 'fam-a' })];
+    const state = evaluateEvidence({ skillId: 's', records, now: NOW });
+    expect(state.evidenceQuality).toBe('learning');
+    expect(gapFor(state, 'independent')).toEqual({
+      target: 'strong',
+      kind: 'independent',
+      requiredFamilies: 2,
+      observedFamilies: 1,
+      reasons: ['FAMILY_DIVERSITY_GAP'],
+    });
+    expect(state.reasons.map((r) => r.code)).toContain('INDEPENDENT_EVIDENCE_GAP');
+  });
+
+  it('reports an explicit change-dimension gap on transfer evidence', () => {
+    const records = [
+      mkEv({ kind: 'transfer', familyId: 'fam-a', changeDimensions: ['representation'] }),
+      mkEv({ kind: 'transfer', familyId: 'fam-b', changeDimensions: ['representation'] }),
+    ];
+    const gap = gapFor(evaluateEvidence({ skillId: 's', records, now: NOW }), 'transfer');
+    expect(gap?.observedFamilies).toBe(2);
+    expect(gap?.reasons).toEqual(['CHANGE_DIMENSION_GAP']);
+  });
+
+  it('reports an explicit delay-window gap on too-early delayed evidence', () => {
+    const records = [mkEv({ kind: 'delayed', familyId: 'fam-a', delayHours: 12 })];
+    const gap = gapFor(evaluateEvidence({ skillId: 's', records, now: NOW }), 'delayed');
+    expect(gap?.reasons).toEqual(['DELAY_WINDOW_GAP']);
+    expect(gap?.observedFamilies).toBe(1);
+  });
+
+  it('fails closed to foundation_needed when a prerequisite is blocked', () => {
+    const state = evaluateEvidence({
+      skillId: 's',
+      records: fullWarrant(),
+      now: NOW,
+      prerequisiteBlocked: true,
+    });
+    expect(state.evidenceQuality).toBe('foundation_needed');
+    expect(state.supportingEvidenceIds).toEqual([]);
+    expect(state.reasons.map((r) => r.code)).toEqual(['PREREQUISITE_BLOCKED']);
+  });
+
+  it('keeps the deprecated evaluateMastery wrapper projecting the legacy ladder shape', () => {
+    const records = [mkEv({ familyId: 'fam-a' }), mkEv({ familyId: 'fam-b' })];
+    const legacy = evaluateMastery({ skillId: 's', records, now: NOW });
+    expect(legacy.base).toBe('independent');
+    expect(legacy.refreshNeeded).toBe(false);
+    expect(legacy.policyVersion).toBe(EVIDENCE_WARRANT_MANIFEST.version);
   });
 });
 
 describe('planner', () => {
   it('classifies capacity', () => {
-    expect(classifyCapacity({ availableMinutesPerWeek: 600, weeksRemaining: null, requiredP50Minutes: 1, requiredP80Minutes: 1 })).toBe('rolling');
-    expect(classifyCapacity({ availableMinutesPerWeek: 600, weeksRemaining: 10, requiredP50Minutes: 3000, requiredP80Minutes: 4000 })).toBe('on_track');
-    expect(classifyCapacity({ availableMinutesPerWeek: 300, weeksRemaining: 10, requiredP50Minutes: 2500, requiredP80Minutes: 4000 })).toBe('tight');
-    expect(classifyCapacity({ availableMinutesPerWeek: 100, weeksRemaining: 10, requiredP50Minutes: 2500, requiredP80Minutes: 4000 })).toBe('goal_plan_mismatch');
+    expect(
+      classifyCapacity({
+        availableMinutesPerWeek: 600,
+        weeksRemaining: null,
+        requiredP50Minutes: 1,
+        requiredP80Minutes: 1,
+      }),
+    ).toBe('rolling');
+    expect(
+      classifyCapacity({
+        availableMinutesPerWeek: 600,
+        weeksRemaining: 10,
+        requiredP50Minutes: 3000,
+        requiredP80Minutes: 4000,
+      }),
+    ).toBe('on_track');
+    expect(
+      classifyCapacity({
+        availableMinutesPerWeek: 300,
+        weeksRemaining: 10,
+        requiredP50Minutes: 2500,
+        requiredP80Minutes: 4000,
+      }),
+    ).toBe('tight');
+    expect(
+      classifyCapacity({
+        availableMinutesPerWeek: 100,
+        weeksRemaining: 10,
+        requiredP50Minutes: 2500,
+        requiredP80Minutes: 4000,
+      }),
+    ).toBe('goal_plan_mismatch');
   });
 
   it('orders prerequisite repair before new learning and finds the Continue target', () => {
     const tasks: Task[] = [
-      { taskId: 't-new', type: 'lesson', title: 'New', estimatedMinutes: 20, priorityReason: 'NEW_LEARNING', status: 'ready', requiresConnection: false },
-      { taskId: 't-prereq', type: 'diagnose_repair', title: 'Repair', estimatedMinutes: 15, priorityReason: 'PREREQUISITE_BLOCKER', status: 'ready', requiresConnection: false },
+      {
+        taskId: 't-new',
+        type: 'lesson',
+        title: 'New',
+        estimatedMinutes: 20,
+        priorityReason: 'NEW_LEARNING',
+        status: 'ready',
+        requiresConnection: false,
+      },
+      {
+        taskId: 't-prereq',
+        type: 'diagnose_repair',
+        title: 'Repair',
+        estimatedMinutes: 15,
+        priorityReason: 'PREREQUISITE_BLOCKER',
+        status: 'ready',
+        requiresConnection: false,
+      },
     ];
     expect(orderTasks(tasks)[0]!.taskId).toBe('t-prereq');
     expect(continueTarget(tasks)?.taskId).toBe('t-prereq');

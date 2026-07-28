@@ -1,9 +1,13 @@
 /**
  * Shared composition for applying ONE independent attempt to a learner's mastery
- * state across all three grains (KC / skill / lesson) plus prerequisite
- * reinforcement (mastery-bkt / provisional-v1). Kept pure so the in-process
- * authority (@mcat/authority-core) and the Postgres authority (learner-api) run
- * identical logic; each call site loads/saves the states.
+ * state (mastery-bkt / provisional-v1). Kept pure so the in-process authority
+ * (@mcat/authority-core) and the Postgres authority (learner-api) run identical
+ * logic; each call site loads/saves the states.
+ *
+ * Exactly TWO grains take a direct BKT observation: the primary KC and the primary
+ * reasoning operation. A lesson has no state of its own — its view is derived from
+ * its member KCs on read (see ./lesson-rollup.ts). One-hop prerequisite
+ * reinforcement is a separate, indirect effect and is unchanged.
  *
  * IMPORTANT (fail-closed): callers MUST only invoke this for INDEPENDENT attempts
  * (A0, no content-bearing hint, not a diagnostic retry, not post-reveal). Assisted
@@ -13,15 +17,22 @@
 import type { UtcTimestamp } from '@mcat/contracts';
 import { BKT_CONFIG, type BktConfig } from './bkt';
 import { difficultyB, slip, type IrtConfig, IRT_CONFIG } from './irt';
-import { stepMemory, type ForgettingConfig, FORGETTING_CONFIG, type MemoryState } from './forgetting';
+import {
+  stepMemory,
+  type ForgettingConfig,
+  FORGETTING_CONFIG,
+  type MemoryState,
+} from './forgetting';
 import { reinforcePrerequisite, type PrereqConfig, PREREQ_CONFIG } from './prerequisite';
 
-/** The three grain states updated by one attempt. */
-export interface MasteryUnitStates {
+/** The only two grain states a direct observation may update. */
+export interface DirectBktTargetStates {
   kc: MemoryState;
-  skill: MemoryState;
-  lesson: MemoryState;
+  reasoningOperation: MemoryState;
 }
+
+/** @deprecated Compatibility alias. Use `DirectBktTargetStates`. */
+export type MasteryUnitStates = DirectBktTargetStates;
 
 export interface ApplyMasteryAttemptInput {
   correct: boolean;
@@ -29,7 +40,7 @@ export interface ApplyMasteryAttemptInput {
   /** Population stats for this exact question (drives IRT `b`; DOK cold-start until >20). */
   questionStats: { attempts: number; correct: number };
   dokLevel?: number;
-  states: MasteryUnitStates;
+  states: DirectBktTargetStates;
   /** Current states of the KC's DIRECT (1-hop) prerequisites; empty until the graph is loaded. */
   prerequisites?: readonly MemoryState[];
   /** Net session performance to judge a due-review half-life change (defaults to `correct`). */
@@ -37,11 +48,11 @@ export interface ApplyMasteryAttemptInput {
 }
 
 export interface ApplyMasteryAttemptResult {
-  states: MasteryUnitStates;
+  states: DirectBktTargetStates;
   /** Updated prerequisite states, in the same order supplied (reinforced only on a correct answer). */
   prerequisites: MemoryState[];
-  /** True for whichever grains this attempt was a due (spaced) review. */
-  dueReview: { kc: boolean; skill: boolean; lesson: boolean };
+  /** True for whichever direct grains this attempt was a due (spaced) review. */
+  dueReview: { kc: boolean; reasoningOperation: boolean };
   b: number;
   slip: number;
 }
@@ -83,8 +94,7 @@ export function applyMasteryAttempt(
   const step = (state: MemoryState) => stepMemory(state, stepInput, cfg.bkt, cfg.forgetting);
 
   const kc = step(input.states.kc);
-  const skill = step(input.states.skill);
-  const lesson = step(input.states.lesson);
+  const reasoningOperation = step(input.states.reasoningOperation);
 
   // Prerequisites are reinforced only on a correct answer (§4.5).
   const prerequisites = (input.prerequisites ?? []).map((p) =>
@@ -92,9 +102,9 @@ export function applyMasteryAttempt(
   );
 
   return {
-    states: { kc: kc.state, skill: skill.state, lesson: lesson.state },
+    states: { kc: kc.state, reasoningOperation: reasoningOperation.state },
     prerequisites,
-    dueReview: { kc: kc.wasDueReview, skill: skill.wasDueReview, lesson: lesson.wasDueReview },
+    dueReview: { kc: kc.wasDueReview, reasoningOperation: reasoningOperation.wasDueReview },
     b,
     slip: s,
   };

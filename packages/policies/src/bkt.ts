@@ -22,7 +22,7 @@ export const MASTERY_BKT_MANIFEST: PolicyManifest = {
   version: 'provisional-v1',
   status: 'provisional_active',
   summary:
-    'BKT P(L) per unit with IRT difficulty-aware slip; forgetting half-life decay; 1-hop prerequisite reinforcement; separate CARS IRT ability. Mastered at P(L) >= 0.95. Constants provisional; difficulty uncalibrated.',
+    'Sole owner of the learner-facing capability estimate: BKT P(L) per unit with IRT difficulty-aware slip; forgetting half-life decay and review-due; 1-hop prerequisite reinforcement; separate CARS IRT ability. Direct observations update exactly two grains (primary KC, primary reasoning operation); lesson views are derived rollups. Mastered at P(L) >= 0.95. Evidence quality/freshness/gaps belong to the separate evidence-warrant policy. Constants provisional; difficulty uncalibrated.',
 };
 
 /** Prior mastery before any data (low = conservative, fail-closed). */
