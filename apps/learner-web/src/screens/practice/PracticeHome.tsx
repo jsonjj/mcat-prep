@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Card, Stack } from '@mcat/ui-web';
 import { ATLAS_REGION_GROUPS, DEFAULT_MINUTES_PER_QUESTION } from '@mcat/contracts';
 import { CURRICULUM_PHASES } from '../../data/curriculum-v3.generated';
@@ -30,10 +30,35 @@ const lessonTitle = (id: string): string =>
     .replace(/[-_]/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
+/** A circular mastery gauge (amber = low mastery / needs work). */
+function MasteryRing({ pct }: { pct: number }) {
+  const r = 42;
+  const circumference = 2 * Math.PI * r;
+  const clamped = Math.max(0, Math.min(100, pct));
+  const offset = circumference * (1 - clamped / 100);
+  return (
+    <svg className="mc-ring" viewBox="0 0 100 100" role="img" aria-hidden="true">
+      <circle className="mc-ring__track" cx="50" cy="50" r={r} />
+      <circle
+        className="mc-ring__arc"
+        cx="50"
+        cy="50"
+        r={r}
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        transform="rotate(-90 50 50)"
+      />
+      <text className="mc-ring__pct" x="50" y="50" dominantBaseline="central" textAnchor="middle">
+        {pct}%
+      </text>
+    </svg>
+  );
+}
+
 /**
  * Practice hub: pick how many test-out reps to run (the only control that affects
- * the session), plus a read-only "Needs the most review" readout of the lessons the
- * learner's mastery is lowest on — where practice will help the most.
+ * the session), plus a read-only trio of the lessons the learner's mastery is lowest
+ * on — each links into the curriculum so they can find and revisit it.
  */
 export function PracticeHome() {
   const navigate = useNavigate();
@@ -42,7 +67,6 @@ export function PracticeHome() {
 
   const estMinutes = clampCount(Number(countStr) || DEFAULT_QUESTIONS) * DEFAULT_MINUTES_PER_QUESTION;
 
-  // The lessons the learner is weakest on (lowest mastery, not yet mastered) — read-only.
   const weakest = useMemo(
     () =>
       (lessons.data ?? [])
@@ -98,25 +122,24 @@ export function PracticeHome() {
           <h2 className="mc-h3">Needs the most review</h2>
           {weakest.length > 0 ? (
             <p className="mc-muted mc-fineprint">
-              The lessons your mastery is lowest on — reinforce these first.
+              The lessons your mastery is lowest on — tap one to find it in the curriculum.
             </p>
           ) : null}
         </div>
         {weakest.length > 0 ? (
-          <div className="mc-weakest__grid">
-            {weakest.map((l, i) => {
+          <div className="mc-weakest__rings">
+            {weakest.map((l) => {
               const pct = Math.round(l.pL * 100);
               return (
-                <div key={l.lessonId} className="mc-weakest__card">
-                  <div className="mc-weakest__top">
-                    <span className="mc-weakest__rank">{i + 1}</span>
-                    <span className="mc-weakest__title">{lessonTitle(l.lessonId)}</span>
-                    <span className="mc-weakest__pct">{pct}%</span>
-                  </div>
-                  <span className="mc-weakest__track" aria-hidden="true">
-                    <span className="mc-weakest__fill" style={{ width: `${Math.max(4, pct)}%` }} />
-                  </span>
-                </div>
+                <Link
+                  key={l.lessonId}
+                  to={`/app/curriculum?lesson=${encodeURIComponent(l.lessonId)}`}
+                  className="mc-weakest__ring"
+                  aria-label={`${lessonTitle(l.lessonId)} — ${pct}% mastery. Open in curriculum.`}
+                >
+                  <MasteryRing pct={pct} />
+                  <span className="mc-weakest__ringtitle">{lessonTitle(l.lessonId)}</span>
+                </Link>
               );
             })}
           </div>

@@ -1655,6 +1655,25 @@ body {
   border-radius: var(--mc-radius-control);
   background: var(--mc-surface);
 }
+/* A lesson arrived at via ?lesson= deep-link — briefly draw the eye to it. */
+.mc-curriculum__lesson--highlight {
+  border-color: var(--mc-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mc-primary) 28%, transparent);
+  animation: mc-curriculum-pulse 1.6s var(--mc-ease) 1;
+}
+@keyframes mc-curriculum-pulse {
+  0% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--mc-primary) 42%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mc-primary) 28%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc-curriculum__lesson--highlight {
+    animation: none;
+  }
+}
 .mc-curriculum__lesson-main {
   display: flex;
   align-items: flex-start;
@@ -2769,71 +2788,66 @@ body {
   justify-content: space-between;
   gap: var(--mc-space-2);
 }
-/* "Needs the most review" — the 3 weakest lessons as cards with amber bars. */
+/* "Needs the most review" — the 3 weakest lessons as mastery rings, side by side.
+   Each ring links into the curriculum. Amber arc = low mastery / needs work. */
 .mc-weakest {
   display: flex;
   flex-direction: column;
   gap: var(--mc-space-3);
 }
-.mc-weakest__grid {
+.mc-weakest__rings {
   display: flex;
-  flex-direction: column;
   gap: var(--mc-space-3);
+  flex-wrap: wrap;
+  justify-content: center;
 }
-.mc-weakest__card {
+.mc-weakest__ring {
+  flex: 1 1 0;
+  min-width: 120px;
+  max-width: 200px;
   display: flex;
   flex-direction: column;
-  gap: var(--mc-space-2);
-  padding: var(--mc-space-3) var(--mc-space-4);
-  border-radius: var(--mc-radius-card);
-  background: color-mix(in srgb, var(--mc-surface) 70%, transparent);
-  border: 1px solid var(--mc-border);
-}
-.mc-weakest__top {
-  display: flex;
   align-items: center;
-  gap: var(--mc-space-3);
-}
-.mc-weakest__rank {
-  flex: none;
-  width: 26px;
-  height: 26px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: color-mix(in srgb, #e88a4e 22%, transparent);
+  gap: var(--mc-space-2);
+  padding: var(--mc-space-3) var(--mc-space-2);
+  border-radius: var(--mc-radius-card);
+  text-decoration: none;
   color: var(--mc-ink);
-  font-size: var(--mc-text-14);
-  font-weight: 700;
+  transition:
+    transform var(--mc-motion-control) var(--mc-ease),
+    background var(--mc-motion-control) var(--mc-ease);
 }
-.mc-weakest__title {
-  flex: 1;
-  min-width: 0;
-  font-size: var(--mc-text-17);
-  font-weight: 600;
-  color: var(--mc-ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.mc-weakest__ring:hover {
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--mc-surface) 60%, transparent);
 }
-.mc-weakest__pct {
-  flex: none;
-  font-size: var(--mc-text-17);
-  font-weight: 700;
-  color: var(--mc-ink);
-}
-.mc-weakest__track {
-  height: 12px;
-  border-radius: var(--mc-radius-pill);
-  background: var(--mc-surface-2);
-  overflow: hidden;
-}
-/* Amber fill signals "low mastery — needs work". */
-.mc-weakest__fill {
+.mc-ring {
+  width: 104px;
+  height: 104px;
   display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #e8794e, #e3ad46);
+}
+.mc-ring__track {
+  fill: none;
+  stroke: var(--mc-surface-2);
+  stroke-width: 9;
+}
+.mc-ring__arc {
+  fill: none;
+  stroke: #e88a4e;
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+.mc-ring__pct {
+  font-family: var(--mc-font-display);
+  font-size: 24px;
+  font-weight: 700;
+  fill: var(--mc-ink);
+}
+.mc-weakest__ringtitle {
+  font-size: var(--mc-text-14);
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.25;
 }
 .mc-practice__options {
   display: flex;
