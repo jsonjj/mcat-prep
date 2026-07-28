@@ -2756,6 +2756,59 @@ body {
   color: var(--mc-ink-muted);
   font-size: var(--mc-text-14);
 }
+/* Read-only "Where you stand" — 7 reasoning-skill mastery bars (weakest first). */
+.mc-practice__stand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-practice__standhead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mc-space-2);
+}
+.mc-skillbars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-skillbar {
+  display: grid;
+  grid-template-columns: 84px 1fr 44px;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-skillbar__label {
+  font-size: var(--mc-text-15);
+  font-weight: 600;
+  color: var(--mc-ink);
+}
+.mc-skillbar__track {
+  height: 10px;
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-surface-2);
+  overflow: hidden;
+}
+.mc-skillbar__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--mc-glow-aqua), var(--mc-primary));
+}
+.mc-skillbar__fill--ok {
+  background: linear-gradient(90deg, #45c48d, #33b87e);
+}
+.mc-skillbar__pct {
+  text-align: right;
+  font-size: var(--mc-text-14);
+  font-weight: 700;
+  color: var(--mc-ink-muted);
+}
 .mc-practice__options {
   display: flex;
   flex-wrap: wrap;
