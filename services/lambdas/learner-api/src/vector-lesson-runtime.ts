@@ -114,7 +114,27 @@ export interface VectorLessonResponseRecord {
   readonly itemFamilyId: string;
   readonly kcId: VectorLessonKcId;
   readonly activityRole: VectorLessonActivityRole;
+  /**
+   * The assistance level the DESIGN makes available on this item, copied from
+   * the authored `assistance_state`. It is authoring metadata, not a record of
+   * anything the learner did, and it MUST NOT be emitted as the seam's
+   * `assistanceLevel` — see `observedSupportRequested` below and
+   * lesson-evidence-mastery-contract §3.3.
+   */
   readonly assistanceState: 'A0' | 'A1' | 'A2' | 'A3';
+  /**
+   * Help the learner ACTUALLY took, observed at commit. This is the only
+   * assistance fact on this record that describes the administration rather
+   * than the design.
+   *
+   * `observedSupportRequested` is true when the learner issued `REQUEST_SUPPORT`
+   * for this item and the runtime released the cue.
+   * `observedAnswerRevealed` reads the open-feedback state at commit; this state
+   * machine only enters feedback after a commit, so nothing answer-bearing can
+   * be shown beforehand, but it is read rather than assumed.
+   */
+  readonly observedSupportRequested: boolean;
+  readonly observedAnswerRevealed: boolean;
   readonly firstAttempt: true;
   readonly choiceId: VectorLessonChoiceId | null;
   readonly correct: boolean;
@@ -693,6 +713,10 @@ function commitResponse(
     kcId: item.primary_kc_id,
     activityRole: item.activity_role,
     assistanceState: run.assistanceState,
+    // Captured before `enterFeedback` clears the flag, so this is the state of
+    // the administration at the moment of commitment.
+    observedSupportRequested: run.supportRequested,
+    observedAnswerRevealed: run.feedback !== null,
     firstAttempt: true,
     choiceId,
     correct,

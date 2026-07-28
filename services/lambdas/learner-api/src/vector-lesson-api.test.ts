@@ -4,13 +4,20 @@ import {
   toProjectionRecord,
   type Principal,
 } from '@mcat/authority-kernel';
-import { CommandEnvelopeSchema, fixedClock } from '@mcat/contracts';
+import {
+  CommandEnvelopeSchema,
+  fixedClock,
+  LessonItemBindingSchema,
+  LessonRuntimeResponseFactsSchema,
+  VectorLessonCommandSchema,
+  VectorLessonStartCommandSchema,
+} from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 import { createRepositoryLearnerApi } from './handler';
 import type { ApiGatewayV2Event } from './http';
 import { hashOpaqueToken, type GuestSessionService } from './session';
 import { VECTOR_LESSON_PROTECTED_ANSWERS } from './vector-lesson-protected';
-import { RepositoryLearnerKernel } from './workflow';
+import { RepositoryLearnerKernel, type LessonResponseSubmission } from './workflow';
 
 const APP_ORIGIN = 'https://learner.example.test';
 const NOW = '2026-07-23T18:00:00.000Z';
@@ -61,6 +68,21 @@ function envelope(expectedStreamVersion: number, idempotencyKey = crypto.randomU
 
 function body(response: { body?: string }) {
   return JSON.parse(response.body ?? 'null') as Record<string, unknown>;
+}
+
+interface PersistedLessonState {
+  readonly evidence: readonly Record<string, unknown>[];
+  readonly mastery?: { readonly kc: Record<string, unknown> };
+  readonly vectorLessonRun?: { readonly committedResponses: Record<string, unknown> };
+}
+
+function learnerState(
+  repository: InMemoryAuthorityRepository,
+  principal: Principal,
+): PersistedLessonState {
+  const projection = repository.projectionFor(principal.learnerId);
+  if (projection === null) throw new Error('the learner projection is missing');
+  return projection.state as unknown as PersistedLessonState;
 }
 
 function harness() {
@@ -209,6 +231,135 @@ describe('V3-LES-130923 server-authoritative HTTP integration', () => {
       screen: { kind: 'FEEDBACK' },
     });
     expect(JSON.stringify(body(restored))).not.toMatch(/correctChoiceId|correct_choice_id/);
+  });
+
+  it('turns one committed response into one evidence record and no P(L) movement', async () => {
+    const { makeApi, principal, repository } = harness();
+    const api = makeApi();
+
+    await api.handle(
+      request(
+        'POST',
+        '/v1/lessons/vectors-and-trigonometry/start',
+        { envelope: envelope(0), lessonId: 'V3-LES-130923' },
+        { authenticated: true, csrf: true },
+      ),
+    );
+    const view = body(
+      await api.handle(
+        request('GET', '/v1/lessons/vectors-and-trigonometry/run', undefined, {
+          authenticated: true,
+        }),
+      ),
+    ) as { runId: string; screen: { screenToken: string } };
+
+    const submit = {
+      envelope: envelope(1),
+      runId: view.runId,
+      screenToken: view.screen.screenToken,
+      action: { type: 'SUBMIT_RESPONSE', choiceId: 'A' },
+    };
+    const accepted = await api.handle(
+      request('POST', '/v1/lessons/vectors-and-trigonometry/commands', submit, {
+        authenticated: true,
+        csrf: true,
+      }),
+    );
+    expect(accepted.statusCode).toBe(200);
+
+    const state = learnerState(repository, principal);
+    expect(state.evidence).toHaveLength(1);
+    expect(state.evidence[0]).toMatchObject({
+      skillId: 'V3-KC-866848',
+      cluster: 'R1',
+      kind: 'instruction',
+      // This runtime does not observe help taken, so it cannot establish an
+      // independent administration. The authored `assistance_state: 'A0'` on
+      // this item used to become the runtime level and fabricate the warrant.
+      independent: false,
+      assistanceLevel: 'A3',
+      questionId: 'vtr-vec-entry-check-1',
+      itemVersion: 1,
+      valid: true,
+    });
+    // Zero qualified observations means the engine was never touched at all.
+    expect(state.mastery).toBeUndefined();
+
+    const events = repository.eventsFor(principal.learnerId);
+    expect(events).toHaveLength(2);
+    expect(events[1]?.payload.lessonResponse).toMatchObject({
+      status: 'adapted',
+      evidenceId: events[1]?.eventId,
+      evidenceKind: 'instruction',
+      bkt: 'not_qualified',
+      rejectionCodes: ['INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED', 'ASSISTANCE_NOT_A0'],
+      // The binding-load diagnostics ride on every accepted response, so an
+      // unmapped author key or a withheld binding can never be silent.
+      binding: { resolution: 'parsed', unrecognizedKeys: [] },
+    });
+    expect(JSON.stringify(events)).not.toMatch(
+      /correctChoiceId|correct_choice_id|server-only:|answerKey|rationale/i,
+    );
+
+    // A replay of the same command resolves to the stored result and must not
+    // append a second event or a second evidence record.
+    const replay = await api.handle(
+      request('POST', '/v1/lessons/vectors-and-trigonometry/commands', submit, {
+        authenticated: true,
+        csrf: true,
+      }),
+    );
+    expect(body(replay)).toEqual(body(accepted));
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(2);
+    expect(learnerState(repository, principal).evidence).toHaveLength(1);
+  });
+
+  it('leaves no partial state when persistence fails after the response is adapted', async () => {
+    const { makeApi, principal, repository } = harness();
+    const api = makeApi();
+
+    await api.handle(
+      request(
+        'POST',
+        '/v1/lessons/vectors-and-trigonometry/start',
+        { envelope: envelope(0), lessonId: 'V3-LES-130923' },
+        { authenticated: true, csrf: true },
+      ),
+    );
+    const view = body(
+      await api.handle(
+        request('GET', '/v1/lessons/vectors-and-trigonometry/run', undefined, {
+          authenticated: true,
+        }),
+      ),
+    ) as { runId: string; screen: { screenToken: string } };
+    const before = repository.projectionFor(principal.learnerId);
+
+    repository.failNextAfterAppendAccepted();
+    let failed = false;
+    try {
+      const response = await api.handle(
+        request(
+          'POST',
+          '/v1/lessons/vectors-and-trigonometry/commands',
+          {
+            envelope: envelope(1),
+            runId: view.runId,
+            screenToken: view.screen.screenToken,
+            action: { type: 'SUBMIT_RESPONSE', choiceId: 'A' },
+          },
+          { authenticated: true, csrf: true },
+        ),
+      );
+      failed = response.statusCode >= 500;
+    } catch {
+      failed = true;
+    }
+
+    expect(failed).toBe(true);
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(1);
+    expect(repository.projectionFor(principal.learnerId)).toEqual(before);
+    expect(learnerState(repository, principal).evidence).toEqual([]);
   });
 
   it('rejects another lesson identity and leaves it unavailable', async () => {
@@ -375,6 +526,20 @@ describe('V3-LES-130923 server-authoritative HTTP integration', () => {
     });
     expect(JSON.stringify(projection?.state.vectorLessonRun)).not.toMatch(/"mastery"|"readiness"/i);
 
+    // One committed response, one evidence record, across the whole delivery —
+    // and all 42 bindings are instructional-only, so nothing reaches BKT.
+    const persisted = learnerState(repository, principal);
+    const committed = Object.keys(persisted.vectorLessonRun?.committedResponses ?? {});
+    expect(committed.length).toBeGreaterThan(0);
+    expect(persisted.evidence).toHaveLength(committed.length);
+    expect(new Set(persisted.evidence.map((record) => record.evidenceId)).size).toBe(
+      committed.length,
+    );
+    expect(new Set(persisted.evidence.map((record) => record.kind))).toEqual(
+      new Set(['instruction']),
+    );
+    expect(persisted.mastery).toBeUndefined();
+
     const reopened = await api.handle(
       request(
         'POST',
@@ -396,6 +561,116 @@ describe('V3-LES-130923 server-authoritative HTTP integration', () => {
       availability: 'AVAILABLE',
       runState: 'DELIVERY_COMPLETE',
       actionLabel: 'Continue',
+    });
+  });
+});
+
+describe('a refused BKT application leaves no evidence behind', () => {
+  /**
+   * A BKT-eligible, future-dated response. No on-disk artifact can express this
+   * yet — all 115 real bindings are instructional-only (§11) — so the submission
+   * source is injected rather than driven through the vector lesson runtime.
+   */
+  function poisonedSubmission(): LessonResponseSubmission {
+    return {
+      lessonId: 'V3-LES-130923',
+      envelopeBindingVersion: 'internal-draft-1',
+      binding: LessonItemBindingSchema.parse({
+        measurementKind: 'MEASURABLE',
+        lessonId: 'V3-LES-130923',
+        itemBindingId: 'refusal-probe-binding',
+        bindingVersion: 'internal-draft-1',
+        primaryKcId: 'V3-KC-866848',
+        secondaryKcMappings: [],
+        activityRole: 'SOLO_PRACTICE',
+        semanticFamilyId: 'fam-refusal-probe',
+        authoredAssistanceAffordances: ['NONE'],
+        candidateEvidenceModes: ['INDEPENDENT'],
+        reasoningOperation: 'QUANTIFY',
+        representationId: null,
+        changedDimensions: [],
+        learnerSafeItemRef: 'refusal-probe-ref',
+        questionId: 'refusal-probe-question',
+        activityId: 'refusal-probe-activity',
+        firstAttemptImmutable: true,
+        serverScoringAuthorityRef: 'server-only://refusal-probe',
+      }),
+      bindingResolution: { status: 'parsed', unrecognizedKeys: [] },
+      response: LessonRuntimeResponseFactsSchema.parse({
+        questionId: 'refusal-probe-question',
+        itemBindingId: 'refusal-probe-binding',
+        bindingVersion: 'internal-draft-1',
+        attemptIndex: 1,
+        isRetry: false,
+        isDiagnosticRetry: false,
+        response: { kind: 'MULTIPLE_CHOICE', chosenChoiceId: 'A' },
+        omitted: false,
+        elapsedMs: 30_000,
+        answerChanges: 0,
+        assistanceLevel: 'A0',
+        contentBearingHintUsed: false,
+        revealUsed: false,
+        mixedAdministration: false,
+        passageAdministration: false,
+        timedAdministration: false,
+        occurredAt: '2999-01-01T00:00:00.000Z',
+      }),
+      scoring: {
+        scoringValid: true,
+        serverItemVersion: 1,
+        outcome: 'correct',
+        protectedScoring: false,
+      },
+    };
+  }
+
+  it('refuses the evidence record and the P(L) update together', async () => {
+    const { authority, principal, repository } = harness();
+    const kernel = new RepositoryLearnerKernel({
+      repository,
+      clock,
+      bank: authority.bank,
+      lessonResponseSubmissions: () => [poisonedSubmission()],
+    });
+
+    await kernel.handleVectorLessonStart(
+      VectorLessonStartCommandSchema.parse({ envelope: envelope(0), lessonId: 'V3-LES-130923' }),
+      principal,
+    );
+    const run = (await kernel.vectorLessonRun(principal)) as {
+      runId: string;
+      screen: { screenToken: string };
+    };
+
+    const accepted = await kernel.handleVectorLessonCommand(
+      VectorLessonCommandSchema.parse({
+        envelope: envelope(1),
+        runId: run.runId,
+        screenToken: run.screen.screenToken,
+        action: { type: 'SUBMIT_RESPONSE', choiceId: 'A' },
+      }),
+      principal,
+    );
+
+    expect(accepted).toBeDefined();
+
+    const persisted = learnerState(repository, principal) as PersistedLessonState & {
+      readonly events: readonly { type: string; payload: Record<string, unknown> }[];
+    };
+
+    // Before the fix the evidence record landed first and survived the refusal,
+    // leaving a permanently-fresh warrant for a response the server declined.
+    expect(persisted.evidence).toEqual([]);
+    // And no P(L) moved either — both authorities refused, not one.
+    expect(persisted.mastery?.kc ?? {}).toEqual({});
+
+    // The refusal itself is still on the ledger, with the runner's raw claim.
+    const refusals = persisted.events.filter((e) => e.type === 'bkt_observation_applied');
+    expect(refusals).toHaveLength(1);
+    expect(refusals[0]!.payload).toMatchObject({
+      reportedOccurredAt: '2999-01-01T00:00:00.000Z',
+      appliedOccurredAt: null,
+      rejectionCodes: ['OBSERVATION_TIMESTAMP_IN_FUTURE'],
     });
   });
 });

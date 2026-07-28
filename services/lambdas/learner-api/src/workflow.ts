@@ -13,6 +13,7 @@ import {
   type AuthorityKernelDependencies,
   type Principal,
 } from '@mcat/authority-kernel';
+import { clusterForLesson } from '@mcat/content';
 import {
   AcceptedCommandResponseSchema,
   AttemptCommandSchema,
@@ -46,6 +47,7 @@ import type {
   JsonObject,
   OutboxRecord,
 } from '@mcat/database';
+import { adaptLessonResponse } from '@mcat/domain';
 
 import type {
   CarsDuelCommandBody,
@@ -68,6 +70,15 @@ import {
   resumeVectorLessonRun,
   type VectorLessonRun,
 } from './vector-lesson-runtime';
+import { vectorLessonResponseSubmissions } from './vector-lesson-response-source';
+import type { LessonResponseSubmission } from './lesson-response-seam';
+
+/**
+ * Re-exported so existing consumers keep one import site. The declaration lives
+ * in `./lesson-response-seam` because a second lesson's runtime must be able to
+ * produce the shape without importing this lambda's workflow.
+ */
+export type { LessonBindingResolution, LessonResponseSubmission } from './lesson-response-seam';
 
 interface MutationApplication {
   readonly eventType: string;
@@ -76,11 +87,24 @@ interface MutationApplication {
   readonly replacementState?: LearnerState;
 }
 
+/** Produces the responses a lesson runtime committed between two run states. */
+export type LessonResponseSubmissionSource = (
+  before: VectorLessonRun,
+  after: VectorLessonRun,
+) => readonly LessonResponseSubmission[];
+
 interface WorkflowDependencies {
   readonly repository: AuthorityRepository;
   readonly clock: Clock;
   readonly bank: AuthorityKernelDependencies['bank'];
   readonly practiceAuthorization?: PracticeAuthorizationPolicy;
+  /**
+   * Override the lesson-runtime submission source. Production uses the vector
+   * lesson's. A test injects one to reach states no on-disk artifact can express
+   * yet — notably a BKT-eligible response, since all 115 real bindings are
+   * instructional-only (lesson-evidence-mastery-contract §11).
+   */
+  readonly lessonResponseSubmissions?: LessonResponseSubmissionSource;
 }
 
 type VectorLessonLearnerState = LearnerState & {
@@ -112,13 +136,28 @@ function rebindRecordedEvent(
   state.seenIdempotencyKeys = [...state.seenIdempotencyKeys.slice(0, -1), envelope.idempotencyKey];
 }
 
-function deterministicEvidenceId(eventId: string, index: number): string {
-  if (index === 0) return eventId;
-  const bytes = createHash('sha256').update(`${eventId}:${index}`, 'utf8').digest().subarray(0, 16);
+function deterministicUuid(seed: string): string {
+  const bytes = createHash('sha256').update(seed, 'utf8').digest().subarray(0, 16);
   bytes[6] = (bytes[6]! & 0x0f) | 0x50;
   bytes[8] = (bytes[8]! & 0x3f) | 0x80;
   const hex = bytes.toString('hex');
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+function deterministicEvidenceId(eventId: string, index: number): string {
+  return index === 0 ? eventId : deterministicUuid(`${eventId}:${index}`);
+}
+
+/**
+ * The observation id for one accepted lesson response.
+ *
+ * Derived from the accepted event rather than generated, because it is the key
+ * BKT deduplicates on (lesson-evidence-mastery-contract §12): a response
+ * re-derived from the same event must resolve to the same observation and move
+ * nothing the second time.
+ */
+function lessonObservationId(eventId: string): string {
+  return deterministicUuid(`${eventId}:lesson-observation`);
 }
 
 function bindNewEvidence(
@@ -287,14 +326,15 @@ export class RepositoryLearnerKernel {
 
   async handleVectorLessonCommand(command: VectorLessonCommand, principal: Principal) {
     return AcceptedCommandResponseSchema.parse(
-      await this.mutate(command.envelope, principal, (_authority, baseState) => {
+      await this.mutate(command.envelope, principal, (authority, baseState) => {
         const state = withVectorLesson(baseState);
         if (state.vectorLessonRun === undefined) {
           throw validationError('Start this lesson before sending a lesson command.');
         }
+        const previousRun = restoreVectorLessonRun(state.vectorLessonRun);
         try {
           state.vectorLessonRun = applyVectorLessonAction(
-            restoreVectorLessonRun(state.vectorLessonRun),
+            previousRun,
             command,
             command.envelope.occurredAt,
           );
@@ -306,12 +346,143 @@ export class RepositoryLearnerKernel {
               : 'The lesson command does not match the authoritative checkpoint.',
           );
         }
+        const lessonResponse = this.recordLessonResponse(
+          authority,
+          baseState,
+          command.envelope,
+          (this.dependencies.lessonResponseSubmissions ?? vectorLessonResponseSubmissions)(
+            previousRun,
+            state.vectorLessonRun,
+          ),
+        );
         return {
           eventType: 'lesson_command_accepted',
-          payload: toJsonObject(command),
+          payload: toJsonObject({
+            ...command,
+            ...(lessonResponse === null ? {} : { lessonResponse }),
+          }),
         };
       }),
     );
+  }
+
+  /**
+   * Record one lesson response: normalize, route to evidence, qualify for BKT.
+   *
+   * Deliberately generic. It reads `submission.lessonId` and nothing else about
+   * which lesson ran, so a second lesson reuses it by supplying the same shape.
+   * Every judgement is made downstream of here by `adaptLessonResponse` and the
+   * authority; this method decides nothing about correctness, independence,
+   * evidence kind, or whether `pL` moves.
+   *
+   * Atomicity: the caller runs inside one repository transaction, and both
+   * writes land on the same in-memory `state` that transaction persists. A
+   * throw anywhere below aborts the transaction with nothing written — no
+   * event, no evidence, no BKT movement.
+   */
+  private recordLessonResponse(
+    authority: Authority,
+    state: LearnerState,
+    envelope: CommandEnvelope,
+    submissions: readonly LessonResponseSubmission[],
+  ): JsonObject | null {
+    const submission = submissions[0];
+    if (submission === undefined) return null;
+    if (submissions.length > 1) {
+      // One accepted command is one event, so it may carry at most one
+      // response. More than one would make the event/evidence grain ambiguous.
+      throw validationError('A lesson command may commit at most one response.');
+    }
+
+    const cluster = clusterForLesson(submission.lessonId);
+    if (cluster === null) {
+      // `EvidenceRecord.cluster` is caller-resolved and required. Refusing the
+      // command is the fail-closed answer: recording the response without its
+      // cluster would silently drop the evidence instead.
+      throw new AuthorityKernelError({
+        code: 'unavailable',
+        message: 'This lesson has no resolved cluster, so its response cannot be recorded.',
+      });
+    }
+
+    const evidenceId = deterministicEvidenceId(envelope.eventId, 0);
+    const adaptation = adaptLessonResponse({
+      binding: submission.binding,
+      response: submission.response,
+      scoring: submission.scoring,
+      identity: {
+        observationId: lessonObservationId(envelope.eventId),
+        eventId: envelope.eventId,
+        learnerId: state.learnerId,
+        idempotencyKey: envelope.idempotencyKey,
+        evidenceId,
+      },
+      cluster,
+      envelopeBindingVersion: submission.envelopeBindingVersion,
+      acceptedAt: this.dependencies.clock.now(),
+      sequence: state.nextSequence + 1,
+      contentRelease: this.dependencies.bank.contentRelease,
+      policies: state.events.at(-1)?.policies ?? [],
+    });
+
+    // BKT FIRST, then evidence. The authority re-parses the observation through
+    // its strict schema and deduplicates on `observationId`, so this is the
+    // second idempotency guard and the only path by which a lesson can reach
+    // `pL`.
+    const applied =
+      adaptation.qualification.status === 'qualified'
+        ? authority.applyQualifiedBktObservation(state, {
+            observation: adaptation.qualification.observation,
+            lessonId: submission.lessonId,
+          })
+        : null;
+
+    // A REFUSED application means the server rejected the observation's own
+    // premises — today, a timestamp it will not accept. Evidence and BKT then
+    // refuse together: keeping the record would leave a warrant behind for a
+    // response the server just declined, and warrant signals are exactly the
+    // time-derived ones. This is NOT the same as `qualification` merely not
+    // qualifying: an instructional-only binding produces no BKT observation and
+    // its evidence is still recorded, which is the whole point of §7.2.
+    const refusedByAuthority = applied?.status === 'rejected';
+
+    // Two guards already stand ahead of the append: `mutate` returns the stored
+    // result for a seen idempotency key without re-applying, and the repository
+    // rejects a reused event id. This last one makes the append itself
+    // idempotent on the id derived from the event, so "one event, one evidence
+    // record" holds by construction rather than by those two staying correct.
+    if (
+      adaptation.evidence !== null &&
+      !refusedByAuthority &&
+      !state.evidence.some((record) => record.evidenceId === evidenceId)
+    ) {
+      state.evidence.push(adaptation.evidence);
+    }
+
+    // Ids and codes only. The accepted observation itself is server-only and
+    // snapshots the binding, including its protected scoring reference, so it
+    // is never written into an event payload.
+    //
+    // `binding` carries the load diagnostics on EVERY accepted response, empty
+    // list included. §3.7 requires an unmapped author key to be reported rather
+    // than dropped, and a binding that stopped validating must be tellable
+    // apart from an id that never existed — otherwise "this item silently
+    // produces no evidence" has no signal anywhere in production.
+    return toJsonObject({
+      status: adaptation.status,
+      binding: {
+        resolution: submission.bindingResolution.status,
+        unrecognizedKeys: [...submission.bindingResolution.unrecognizedKeys],
+      },
+      observationId: adaptation.observation?.observationId ?? null,
+      evidenceId: adaptation.evidence === null || refusedByAuthority ? null : evidenceId,
+      evidenceKind: refusedByAuthority ? null : (adaptation.evidence?.kind ?? null),
+      bkt: applied?.status ?? 'not_qualified',
+      rejectionCodes:
+        adaptation.qualification.status === 'rejected'
+          ? [...adaptation.qualification.rejectionCodes]
+          : [],
+    });
   }
 
   async handleVectorLessonInvalidation(envelope: CommandEnvelope, principal: Principal) {
@@ -329,7 +500,7 @@ export class RepositoryLearnerKernel {
           eventType: 'lesson_item_invalidated',
           payload: toJsonObject({
             envelope,
-            lessonId: 'V3-LES-130923',
+            lessonId: state.vectorLessonRun.lessonId,
             runId: state.vectorLessonRun.runId,
           }),
         };
