@@ -17,6 +17,7 @@ import {
   type UtcTimestamp,
 } from '@mcat/contracts';
 import {
+  CONTEXTUAL_ONLY_KINDS,
   boundOccurredAtToServerTime,
   type EvidenceConditions,
   type EvidenceKind,
@@ -45,6 +46,10 @@ import {
  *   lesson id, a KC id, an id format, an item count, or an item ordering.
  * - Ambiguity fails closed: no BKT observation plus a code from the frozen
  *   `BKT_QUALIFICATION_REJECTION_CODES` list.
+ * - ONE notion of BKT eligibility, and it is the RESOLVED evidence kind. The
+ *   evidence record and the qualification gate read the same derived value, so
+ *   `P(L)` cannot move on a warrant the evidence system classifies as
+ *   contextual-only. A declared mode set is a permission, never a finding.
  * - An authored contradiction is rejected, never resolved by key precedence. Two
  *   authored keys that assert incompatible things about the same item produce a
  *   named `AUTHORED_BINDING_REJECTION_CODES` code, because the alternative is
@@ -150,6 +155,7 @@ export const RECOGNIZED_AUTHORED_BINDING_KEYS: ReadonlySet<string> = new Set([
  */
 export const AUTHORED_BINDING_REJECTION_CODES = [
   'MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED',
+  'CONTRADICTORY_FIRST_ATTEMPT_IMMUTABILITY_AUTHORED',
 ] as const;
 export type AuthoredBindingRejectionCode = (typeof AUTHORED_BINDING_REJECTION_CODES)[number];
 
@@ -166,6 +172,17 @@ const LEARNER_SAFE_ITEM_AUTHOR_KEYS: readonly string[] = [
   'learner_safe_projection',
   'learner_safe_prompt_ref',
 ];
+
+/**
+ * The one `first_attempt_policy` spelling that stands in for a missing boolean.
+ *
+ * §3.1 says the prose MUST NOT be a load-bearing discriminator, and it is right,
+ * but most authored bindings on disk carry this string and no boolean at all — so
+ * deleting the alias would silently demote every one of them to a mutable first
+ * attempt. It is demoted instead of removed: a FALLBACK read only when no
+ * boolean was authored, never an override, and the pair that disagrees rejects.
+ */
+const PROSE_IMMUTABLE = 'IMMUTABLE';
 
 /**
  * Legacy evidence-eligibility labels. Every one of them normalizes to
@@ -335,21 +352,33 @@ interface AuthoredBindingContradiction {
 const authoredBindingContradictions = (
   raw: AuthoredRecord,
 ): readonly AuthoredBindingContradiction[] => {
+  const contradictions: AuthoredBindingContradiction[] = [];
+
   // `null` is the authored spelling of "not applicable" here as everywhere else
   // in this normalizer, so it is absence rather than a second source.
   const learnerSafeSources = LEARNER_SAFE_ITEM_AUTHOR_KEYS.filter(
     (key) => raw[key] !== undefined && raw[key] !== null,
   );
+  if (learnerSafeSources.length > 1) {
+    contradictions.push({
+      code: 'MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED',
+      path: ['learnerSafeItemRef'],
+      message: `MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED: one learner-safe item may be authored once, as an opaque ref OR an inline projection; found ${learnerSafeSources.join(', ')}`,
+    });
+  }
 
-  return learnerSafeSources.length > 1
-    ? [
-        {
-          code: 'MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED',
-          path: ['learnerSafeItemRef'],
-          message: `MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED: one learner-safe item may be authored once, as an opaque ref OR an inline projection; found ${learnerSafeSources.join(', ')}`,
-        },
-      ]
-    : [];
+  // The boolean is the fact and the prose is reviewed text, so the prose must
+  // never overrule it — least of all toward the permissive answer, which is what
+  // `boolean false || prose 'IMMUTABLE'` used to do without a word.
+  if (raw.first_attempt_immutable === false && raw.first_attempt_policy === PROSE_IMMUTABLE) {
+    contradictions.push({
+      code: 'CONTRADICTORY_FIRST_ATTEMPT_IMMUTABILITY_AUTHORED',
+      path: ['firstAttemptImmutable'],
+      message: `CONTRADICTORY_FIRST_ATTEMPT_IMMUTABILITY_AUTHORED: first_attempt_immutable is false while first_attempt_policy says ${PROSE_IMMUTABLE}; the boolean is the fact and the prose cannot overrule it`,
+    });
+  }
+
+  return contradictions;
 };
 
 /** Author keys this normalizer does not map. Empty means full coverage. */
@@ -496,7 +525,16 @@ export function normalizeAuthoredLessonBinding(
       : raw.question_id,
   );
   setIfDefined(value, 'activityId', raw.activity_id ?? undefined);
-  if (raw.first_attempt_immutable === true || raw.first_attempt_policy === 'IMMUTABLE') {
+  // The explicit boolean decides whenever it is authored; the prose is consulted
+  // only in its absence. Anything else authored in the boolean's place — `false`,
+  // or a non-boolean — leaves the field unset, and the contract's
+  // `z.literal(true)` then refuses the measurable binding. Fails closed.
+  const authoredFirstAttemptImmutable = raw.first_attempt_immutable ?? undefined;
+  if (
+    authoredFirstAttemptImmutable === undefined
+      ? raw.first_attempt_policy === PROSE_IMMUTABLE
+      : authoredFirstAttemptImmutable === true
+  ) {
     value.firstAttemptImmutable = true;
   }
   setIfDefined(
@@ -791,6 +829,24 @@ const rejected = (
   rejectionCodes: readonly BktQualificationRejectionCode[],
 ): BktQualificationResult => ({ status: 'rejected', rejectionCodes });
 
+/**
+ * Which frozen code NAMES a refusal the kind gate has already decided.
+ *
+ * Purely diagnostic. It is only ever reached from inside the gate, both branches
+ * refuse, and nothing here can change the verdict — so this is not a second
+ * eligibility test. It exists because the two causes send an operator to
+ * different places: an artifact that declares no allowlisted mode is an
+ * authoring fact, while a binding that declared `PROTECTED` and was simply not
+ * administered under protected scoring is a runtime one, and calling the second
+ * `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` would be a lie in the audit trail.
+ */
+const contextualOnlyRejectionCode = (
+  binding: Pick<LessonItemBinding, 'candidateEvidenceModes'>,
+): BktQualificationRejectionCode =>
+  hasEligibleEvidenceMode(binding)
+    ? 'RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY'
+    : 'INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED';
+
 export function adaptLessonResponse(input: LessonResponseAdapterInput): LessonResponseAdaptation {
   const { binding, response, scoring } = input;
 
@@ -846,13 +902,43 @@ export function adaptLessonResponse(input: LessonResponseAdapterInput): LessonRe
     policies: [...input.policies],
   };
 
+  const administration = administrationConditions(
+    response,
+    scoring.scoringValid && scoring.protectedScoring,
+  );
+  const conditions: EvidenceConditions = {
+    ...administration,
+    accommodations: [...(input.accommodations ?? [])],
+  };
+
+  /**
+   * The ONE thing that decides whether BKT may move.
+   *
+   * `deriveEvidenceKind` already resolves least-credit-first and drops any mode
+   * whose administration condition was not met, so it is the only honest answer
+   * to "what did THIS attempt establish?". The evidence record and the BKT gate
+   * now read the same value, so they cannot disagree about one attempt.
+   *
+   * It replaces a `hasEligibleEvidenceMode(binding)` gate here, which asked a
+   * different question — "does the DECLARED set intersect the allowlist?" — and
+   * so answered yes on attempts the evidence system classified as
+   * contextual-only: an ineligible mode winning least-credit alongside an
+   * eligible one, and an administration-gated mode whose condition was honestly
+   * reported false. P(L) moved on a warrant no recipe slot would accept.
+   *
+   * Do not reintroduce the declared-set test here, and do not intersect the two.
+   * A declaration states what an item is ELIGIBLE TO SERVE AS; it is never a
+   * finding about an attempt. One question, one authority.
+   */
+  const evidenceKind = deriveEvidenceKind(binding.candidateEvidenceModes, response, administration);
+
   const rejectionCodes: BktQualificationRejectionCode[] = [];
 
   if (response.bindingVersion !== bindingVersion) rejectionCodes.push('BINDING_VERSION_MISMATCH');
   if (binding.firstAttemptImmutable !== true) rejectionCodes.push('FIRST_ATTEMPT_NOT_IMMUTABLE');
 
-  if (!hasEligibleEvidenceMode(binding)) {
-    rejectionCodes.push('INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED');
+  if (CONTEXTUAL_ONLY_KINDS.has(evidenceKind)) {
+    rejectionCodes.push(contextualOnlyRejectionCode(binding));
   } else if (binding.reasoningOperation === undefined) {
     rejectionCodes.push('ELIGIBLE_BINDING_MISSING_REASONING_OPERATION');
   }
@@ -873,15 +959,6 @@ export function adaptLessonResponse(input: LessonResponseAdapterInput): LessonRe
   if (response.revealUsed) rejectionCodes.push('REVEAL_USED');
   if (response.isRetry || response.isDiagnosticRetry) rejectionCodes.push('RETRY_USED');
 
-  const administration = administrationConditions(
-    response,
-    scoring.scoringValid && scoring.protectedScoring,
-  );
-  const conditions: EvidenceConditions = {
-    ...administration,
-    accommodations: [...(input.accommodations ?? [])],
-  };
-
   const evidence: EvidenceRecord | null = scoring.scoringValid
     ? {
         evidenceId: input.identity.evidenceId,
@@ -889,7 +966,10 @@ export function adaptLessonResponse(input: LessonResponseAdapterInput): LessonRe
         cluster: input.cluster,
         // `operation` is the `OperationTag` authoring-analysis axis, a different
         // axis from the mastery `ReasoningOperation`. Lesson evidence omits it.
-        kind: deriveEvidenceKind(binding.candidateEvidenceModes, response, administration),
+        //
+        // The SAME value the BKT gate above read. Deriving it twice is how the
+        // record and the qualification came to disagree.
+        kind: evidenceKind,
         independent: isIndependentAdministration(response),
         assistanceLevel: response.assistanceLevel,
         contentBearingHint: response.contentBearingHintUsed,

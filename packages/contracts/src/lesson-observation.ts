@@ -346,6 +346,21 @@ export const BKT_QUALIFICATION_REJECTION_CODES = [
   'BINDING_VERSION_MISMATCH',
   'FIRST_ATTEMPT_NOT_IMMUTABLE',
   'INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED',
+  /**
+   * The evidence kind this attempt RESOLVED to is in `CONTEXTUAL_ONLY_KINDS`, so
+   * no recipe slot would ever accept it and `P(L)` must not move.
+   *
+   * Added because the declared-set test alone left `P(L)` moving on evidence the
+   * evidence system refuses to count, in two ways: an ineligible mode winning
+   * least-credit alongside an eligible one, and an administration-gated mode
+   * (`MIXED`, `PASSAGE`, `TIMED`, `PROTECTED`) whose condition the runner
+   * honestly reported as false. The adapter now gates on the resolved kind and
+   * nothing else, so this is the code for a permission that was real and an
+   * attempt that did not exercise it — distinct from
+   * `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED`, where no allowlisted mode was
+   * declared at all.
+   */
+  'RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY',
   'ELIGIBLE_BINDING_MISSING_REASONING_OPERATION',
   'SERVER_SCORING_INVALID',
   'NOT_FIRST_ATTEMPT',
@@ -375,10 +390,21 @@ export const BktQualificationResultSchema = z.discriminatedUnion('status', [
 export type BktQualificationResult = z.infer<typeof BktQualificationResultSchema>;
 
 /**
- * Declared BKT eligibility: does the binding declare at least one mode from the
+ * DECLARED BKT eligibility: does the binding declare at least one mode from the
  * `BKT_ELIGIBLE_EVIDENCE_MODES` allowlist? An unauthored mode set defaults to
- * `['INSTRUCTIONAL']` and stays closed. The frozen rejection code for a failure
- * here is still spelled `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED`.
+ * `['INSTRUCTIONAL']` and stays closed.
+ *
+ * NOT the BKT gate, and it must never become one again. It answers what an item
+ * is ELIGIBLE TO SERVE AS, which says nothing about how one attempt was run, so
+ * it said yes on attempts the evidence system classified as contextual-only.
+ * `adaptLessonResponse` gates on the RESOLVED evidence kind instead — one
+ * question, one authority — and the frozen codes are
+ * `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` and
+ * `RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY`.
+ *
+ * What remains legitimately its own is the authoring-completeness rule below: a
+ * binding that declares an allowlisted mode must supply a `reasoningOperation`,
+ * because the declaration is a claim the artifact has to be able to back.
  */
 export const hasEligibleEvidenceMode = (
   binding: Pick<LessonItemBinding, 'candidateEvidenceModes'>,

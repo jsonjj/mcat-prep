@@ -489,20 +489,174 @@ describe('lesson response adapter — BKT eligibility is an allowlist', () => {
     expect(BKT_ELIGIBLE_EVIDENCE_MODES).toHaveLength(7);
   });
 
+  /**
+   * The administration condition each allowlisted mode needs before its kind may
+   * be credited. A mode with no entry needs nothing beyond a clean attempt.
+   *
+   * This is why declared eligibility cannot be the BKT gate: four of the seven
+   * allowlisted modes resolve to `instruction` when the runner honestly reports
+   * their condition as false, and §4.2 makes false the DEFAULT.
+   */
+  const CONDITION_REQUIRED_BY_MODE: Partial<
+    Record<CandidateEvidenceMode, Partial<LessonResponseAdapterInput>>
+  > = {
+    MIXED: { response: responseFacts({ mixedAdministration: true }) },
+    PASSAGE: { response: responseFacts({ passageAdministration: true }) },
+    TIMED: { response: responseFacts({ timedAdministration: true }) },
+    PROTECTED: { scoring: { ...VALID_SCORING, protectedScoring: true } },
+  };
+
   for (const mode of CandidateEvidenceModeSchema.options) {
-    const eligible = EXPECTED_ELIGIBILITY[mode];
-    it(`${eligible ? 'qualifies' : 'refuses to qualify'} a clean first attempt on a ${mode} binding`, () => {
+    const declared = EXPECTED_ELIGIBILITY[mode];
+    const administration = CONDITION_REQUIRED_BY_MODE[mode];
+    const qualifies = declared && administration === undefined;
+
+    it(`${qualifies ? 'qualifies' : 'refuses to qualify'} a clean first attempt on a ${mode} binding administered as reported`, () => {
       const result = adapt({ binding: parseBinding({ candidateEvidenceModes: [mode] }) });
 
-      expect(hasEligibleEvidenceMode({ candidateEvidenceModes: [mode] })).toBe(eligible);
-      expect(isBktQualificationAccepted(result.qualification)).toBe(eligible);
-      if (!eligible) {
-        expect(rejectionCodesOf(result)).toEqual(['INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED']);
+      expect(hasEligibleEvidenceMode({ candidateEvidenceModes: [mode] })).toBe(declared);
+      expect(isBktQualificationAccepted(result.qualification)).toBe(qualifies);
+      if (!qualifies) {
+        // A declared permission that was not exercised is named differently from
+        // one that was never granted, so an operator is not sent to the authoring
+        // for what is a runtime fact.
+        expect(rejectionCodesOf(result)).toEqual([
+          declared
+            ? 'RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY'
+            : 'INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED',
+        ]);
       }
       // Evidence is recorded either way.
       expect(result.evidence).not.toBeNull();
     });
+
+    if (administration !== undefined) {
+      it(`qualifies a ${mode} binding once the ${mode} condition is actually administered`, () => {
+        const result = adapt({
+          binding: parseBinding({ candidateEvidenceModes: [mode] }),
+          ...administration,
+        });
+
+        expect(rejectionCodesOf(result)).toEqual([]);
+        expect(isBktQualificationAccepted(result.qualification)).toBe(true);
+        expect(result.evidence).not.toBeNull();
+        if (result.evidence === null) return;
+        expect(CONTEXTUAL_ONLY_KINDS.has(result.evidence.kind)).toBe(false);
+      });
+    }
   }
+
+  it('refuses every administration-gated mode whose condition is honestly false', () => {
+    // F1b. Nothing hostile here: these are the fail-closed defaults §4.2 makes
+    // the normal case, and the runner reporting the truth was sufficient.
+    const gated = CandidateEvidenceModeSchema.options.filter(
+      (mode) => EXPECTED_ELIGIBILITY[mode] && CONDITION_REQUIRED_BY_MODE[mode] !== undefined,
+    );
+    expect(gated).toEqual(['MIXED', 'PASSAGE', 'TIMED', 'PROTECTED']);
+
+    for (const mode of gated) {
+      const result = adapt({ binding: parseBinding({ candidateEvidenceModes: [mode] }) });
+
+      expect(result.evidence?.kind, mode).toBe('instruction');
+      expect(isBktQualificationAccepted(result.qualification), mode).toBe(false);
+      expect(rejectionCodesOf(result), mode).toEqual(['RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY']);
+    }
+
+    // And declaring all four at once does not add up to any of them.
+    const declaresEverything = adapt({
+      binding: parseBinding({ candidateEvidenceModes: ['MIXED', 'PASSAGE', 'TIMED', 'PROTECTED'] }),
+    });
+    expect(declaresEverything.evidence?.kind).toBe('instruction');
+    expect(rejectionCodesOf(declaresEverything)).toEqual([
+      'RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY',
+    ]);
+  });
+
+  it('refuses every multi-mode declaration whose least-credit mode is contextual-only', () => {
+    // F1a, enumerated over ALL ordered two-mode declarations with EVERY
+    // administration condition satisfied, so the gate cannot be the cause. The
+    // arch assertion this replaces evaluated one mode at a time, so no mixed
+    // declaration was ever built.
+    const administered = {
+      response: responseFacts({
+        mixedAdministration: true,
+        passageAdministration: true,
+        timedAdministration: true,
+      }),
+      scoring: { ...VALID_SCORING, protectedScoring: true },
+    };
+
+    let orderedPairs = 0;
+    let unorderedPairs = 0;
+    /** Declared-eligible AND contextual-only: the split verdict F1a exploited. */
+    let splitVerdictPairsUnordered = 0;
+    let stillQualifyingOnContextualEvidence = 0;
+
+    const modeOptions = CandidateEvidenceModeSchema.options;
+    for (const [i, first] of modeOptions.entries()) {
+      for (const [j, second] of modeOptions.entries()) {
+        if (i === j) continue;
+        const modes: readonly CandidateEvidenceMode[] = [first, second];
+        const result = adapt({
+          binding: parseBinding({ candidateEvidenceModes: modes }),
+          ...administered,
+        });
+
+        expect(result.evidence, `[${first}, ${second}] recorded no evidence`).not.toBeNull();
+        const kind = result.evidence?.kind;
+        const contextual = kind !== undefined && CONTEXTUAL_ONLY_KINDS.has(kind);
+        const declared = hasEligibleEvidenceMode({ candidateEvidenceModes: modes });
+        const label = `[${first}, ${second}] → ${String(kind)}`;
+
+        // The single property, asserted on every pair: BKT moves if and only if
+        // the RESOLVED kind can carry mastery. No pair may split the verdict.
+        expect(isBktQualificationAccepted(result.qualification), label).toBe(!contextual);
+        expect(rejectionCodesOf(result), label).toEqual(
+          contextual
+            ? [
+                declared
+                  ? 'RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY'
+                  : 'INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED',
+              ]
+            : [],
+        );
+
+        orderedPairs += 1;
+        if (i < j) {
+          unorderedPairs += 1;
+          if (declared && contextual) splitVerdictPairsUnordered += 1;
+        }
+        if (contextual && isBktQualificationAccepted(result.qualification)) {
+          stillQualifyingOnContextualEvidence += 1;
+        }
+      }
+    }
+
+    // 13 modes → 156 ordered pairs → 78 unordered, which is the reviewer's
+    // enumeration. 42 of those 78 declare an allowlisted mode and still resolve
+    // to a contextual-only kind; every one of them used to move P(L).
+    expect(orderedPairs).toBe(156);
+    expect(unorderedPairs).toBe(78);
+    expect(splitVerdictPairsUnordered).toBe(42);
+    expect(stillQualifyingOnContextualEvidence).toBe(0);
+  });
+
+  it('keeps the contracts allowlist and the domain kind map from drifting apart', () => {
+    // The two tables live in different packages — the allowlist in
+    // `@mcat/contracts`, the mode → kind map here in `@mcat/domain`, which cannot
+    // be imported back — so nothing in the build stops one from gaining a member
+    // the other does not. This is the guard: a mode belongs on the allowlist
+    // exactly when its BEST-CASE kind (every condition administered) can carry
+    // mastery. Adding a mode to one table without the other fails here.
+    const masteryCarryingModes = CandidateEvidenceModeSchema.options.filter(
+      (mode) =>
+        !CONTEXTUAL_ONLY_KINDS.has(
+          deriveEvidenceKind([mode], responseFacts(), ALL_ADMINISTRATION_CONDITIONS),
+        ),
+    );
+
+    expect([...masteryCarryingModes].sort()).toEqual([...BKT_ELIGIBLE_EVIDENCE_MODES].sort());
+  });
 
   it('never lets a BKT-eligible mode route to contextual-only evidence', () => {
     // The defect this allowlist fixes: a mode that moves P(L) while emitting
@@ -972,6 +1126,82 @@ describe('authored artifact normalization', () => {
     expect(parsed.status).toBe('parsed');
     if (parsed.status !== 'parsed') return;
     expect(parsed.binding.learnerSafeItemRef).toBe(OPAQUE_ITEM_REF);
+  });
+
+  it('lets the explicit first-attempt boolean win over the prose, in both directions', () => {
+    // §3.1: the prose is reviewed text and MUST NOT be a load-bearing
+    // discriminator. It used to be, via `boolean || prose`, so a `false` boolean
+    // was overridden toward the permissive answer with no code.
+    const explicitTrue = normalizeAuthoredLessonBinding(envelope, {
+      first_attempt_immutable: true,
+      first_attempt_policy: 'FIRST_ATTEMPT_REVISABLE',
+    });
+    expect(explicitTrue.value.firstAttemptImmutable).toBe(true);
+
+    // The prose no longer manufactures immutability over an explicit denial.
+    const explicitFalse = normalizeAuthoredLessonBinding(envelope, {
+      first_attempt_immutable: false,
+      first_attempt_policy: 'IMMUTABLE',
+    });
+    expect(explicitFalse.value.firstAttemptImmutable).toBeUndefined();
+  });
+
+  it('rejects an explicit first-attempt denial contradicted by IMMUTABLE prose', () => {
+    const raw = {
+      ...MEASURABLE_AUTHORED_BINDING,
+      first_attempt_immutable: false,
+      first_attempt_policy: 'IMMUTABLE',
+    };
+
+    expect(authoredBindingRejectionCodes(raw)).toEqual([
+      'CONTRADICTORY_FIRST_ATTEMPT_IMMUTABILITY_AUTHORED',
+    ]);
+
+    const parsed = parseAuthoredLessonBinding(envelope, raw);
+    expect(parsed.status).toBe('invalid');
+    expect(parsed.rejectionCodes).toEqual(['CONTRADICTORY_FIRST_ATTEMPT_IMMUTABILITY_AUTHORED']);
+    for (const code of parsed.rejectionCodes) {
+      expect(AUTHORED_BINDING_REJECTION_CODES).toContain(code);
+    }
+    if (parsed.status !== 'invalid') return;
+    expect(parsed.issues.map((issue) => issue.path.join('.'))).toContain('firstAttemptImmutable');
+  });
+
+  it('still reads the prose as a fallback when no boolean is authored', () => {
+    // 30 of 33 real V3-LES-844372 bindings carry only the prose. Demoting the
+    // alias must not silently make every one of them a mutable first attempt.
+    const proseOnly = parseAuthoredLessonBinding(envelope, {
+      ...MEASURABLE_AUTHORED_BINDING,
+      first_attempt_policy: 'IMMUTABLE',
+    });
+
+    expect(proseOnly.rejectionCodes).toEqual([]);
+    expect(proseOnly.status).toBe('parsed');
+    if (proseOnly.status !== 'parsed') return;
+    expect(proseOnly.measurementKind).toBe('MEASURABLE');
+    if (proseOnly.binding.measurementKind !== 'MEASURABLE') return;
+    expect(proseOnly.binding.firstAttemptImmutable).toBe(true);
+  });
+
+  it('treats an absent, null, or non-boolean first-attempt field as no explicit fact', () => {
+    // `null` is "not applicable" everywhere else here, so it falls through to the
+    // prose. Anything that is neither `true` nor absent leaves the field unset and
+    // the contract's `z.literal(true)` refuses the measurable binding.
+    expect(
+      normalizeAuthoredLessonBinding(envelope, {
+        first_attempt_immutable: null,
+        first_attempt_policy: 'IMMUTABLE',
+      }).value.firstAttemptImmutable,
+    ).toBe(true);
+
+    for (const authored of ['true', 1, {}]) {
+      const normalized = normalizeAuthoredLessonBinding(envelope, {
+        first_attempt_immutable: authored,
+        first_attempt_policy: 'IMMUTABLE',
+      });
+      expect(normalized.value.firstAttemptImmutable, JSON.stringify(authored)).toBeUndefined();
+      expect(normalized.rejectionCodes, JSON.stringify(authored)).toEqual([]);
+    }
   });
 
   it('reports no authored contradiction on a sound binding', () => {

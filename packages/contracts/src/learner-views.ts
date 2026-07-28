@@ -104,10 +104,29 @@ export type QuestionSubState = z.infer<typeof QuestionSubStateSchema>;
  * exactly the second mastery scale the seam exists to remove; the capability
  * claim comes from the BKT estimate (`SkillMasteryView.pL`) and nowhere else.
  *
- * These codes are the ONLY warrant vocabulary that crosses to the learner. An
- * ordinal tier never does: a rank can be compared and thresholded, so wherever
- * one reached a screen it grew back into a rival mastery scale. A set of codes
- * cannot be, which is why both warrant surfaces now select on it.
+ * These codes are the ONLY warrant vocabulary that crosses to the learner, and
+ * the numeric `base` tier no longer does. What that bought is narrower than an
+ * earlier version of this comment claimed, and the claim is corrected here
+ * rather than left standing: it asserted that a set of codes "cannot be compared
+ * and thresholded". It can. `evaluateEvidence` in
+ * `packages/policies/src/mastery-policy.ts` emits exactly one of
+ * `NO_USEFUL_EVIDENCE`, `INSTRUCTIONAL_EVIDENCE_ONLY`,
+ * `INDEPENDENT_EVIDENCE_SATISFIED`, `RETENTION_EVIDENCE_SATISFIED`,
+ * `STRONG_CONDITIONS_EVIDENCE_SATISFIED` per entry, mutually exclusive and in
+ * ladder order, so a consumer can recover the internal rank losslessly by
+ * indexing that list. Removing `base` removed a rank the wire INVITED a client
+ * to threshold; it did not make the rank unrecoverable.
+ *
+ * The real guarantee is narrower and still worth having: no field on this
+ * boundary is typed as an ordinal, nothing in the repo compares these codes, and
+ * a rival scale now takes deliberate work to rebuild rather than being handed
+ * over ready-made. Capability remains `SkillMasteryView.pL` alone.
+ *
+ * Coarsening the three `*_SATISFIED` codes into one — which is what would make
+ * the rank genuinely unrecoverable — is an OWNER decision, not a cleanup: these
+ * strings are learner-facing vocabulary, `apps/learner-web` words them as
+ * distinct sentences, and collapsing them would lose the "what is still missing"
+ * detail this list exists to carry. Not done unilaterally.
  *
  * MIRROR of `EVIDENCE_REASONS` in `packages/domain/src/reason-codes.ts`, which
  * is the producer. It cannot be imported: `@mcat/domain` depends on
