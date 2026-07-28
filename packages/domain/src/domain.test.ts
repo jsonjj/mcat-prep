@@ -125,6 +125,23 @@ describe('skill graph', () => {
 });
 
 describe('mastery invariants', () => {
+  it('accepts opaque lesson item identifiers without requiring an authoring operation tag', () => {
+    expect(
+      EvidenceRecordSchema.safeParse({
+        ...baseEvidence,
+        questionId: 'ALG-GRAPH-ENTRY-01',
+        stimulusId: 'PROMPT:ALG-GRAPH-ENTRY-01',
+        operation: undefined,
+      }).success,
+    ).toBe(true);
+    expect(
+      EvidenceRecordSchema.safeParse({
+        ...baseEvidence,
+        operation: 'EXPLAIN',
+      }).success,
+    ).toBe(false);
+  });
+
   it('orders base states', () => {
     expect(baseStateRank('strong')).toBeGreaterThan(baseStateRank('independent'));
     expect(advances('learning', 'retained')).toBe(true);

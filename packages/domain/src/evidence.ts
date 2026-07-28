@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import {
   AssistanceLevelSchema,
-  ContentIdSchema,
+  LessonItemIdSchema,
   OperationTagSchema,
   PolicyVersionSchema,
   SkillClusterSchema,
@@ -68,18 +68,24 @@ export type EvidenceConditions = z.infer<typeof EvidenceConditionsSchema>;
 export const EvidenceRecordSchema = z.object({
   evidenceId: z.string().uuid(),
   skillId: z.string().min(1),
+  /** Resolved by the caller from lesson → cluster routing, never inferred here. */
   cluster: SkillClusterSchema,
-  operation: OperationTagSchema,
+  /**
+   * Optional authoring-analysis axis (`K|Q|E|D|P|A|I|T`), intentionally
+   * distinct from the lesson mastery `ReasoningOperation`. Lesson evidence
+   * omits it until an honest authoring-analysis source is available.
+   */
+  operation: OperationTagSchema.optional(),
   kind: EvidenceKindSchema,
   /** True only when A0, no content-bearing hint, not a retry, and not revealed. */
   independent: z.boolean(),
   assistanceLevel: AssistanceLevelSchema,
   contentBearingHint: z.boolean(),
-  questionId: ContentIdSchema,
+  questionId: LessonItemIdSchema,
   itemVersion: z.number().int().positive(),
   /** Item family the question belongs to; a family satisfies a recipe slot at most once. */
   familyId: z.string().min(1),
-  stimulusId: ContentIdSchema.optional(),
+  stimulusId: LessonItemIdSchema.optional(),
   changeDimensions: z.array(ChangeDimensionSchema).default([]),
   /** Hours since the prior related evidence, if this is a delayed callback. */
   delayHours: z.number().nonnegative().optional(),

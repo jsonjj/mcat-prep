@@ -39,6 +39,7 @@ const without = (input: Record<string, unknown>, field: string): Record<string, 
   Object.fromEntries(Object.entries(input).filter(([key]) => key !== field));
 
 const validBinding = (): Record<string, unknown> => ({
+  measurementKind: 'MEASURABLE',
   lessonId: 'lesson-created-after-contract',
   itemBindingId: 'binding-created-after-contract',
   questionId: 'question-created-after-contract',
@@ -50,7 +51,7 @@ const validBinding = (): Record<string, unknown> => ({
   semanticFamilyId: 'family-created-after-contract',
   stimulusLineageId: 'lineage-created-after-contract',
   firstAttemptImmutable: true,
-  authoredAssistanceLevel: 'A0',
+  authoredAssistanceAffordances: ['A0'],
   candidateEvidenceModes: ['INDEPENDENT'],
   reasoningOperation: 'EXPLAIN',
   representationId: 'custom-representation-created-after-contract',
@@ -68,7 +69,10 @@ const validResponse = (): Record<string, unknown> => ({
   attemptIndex: 1,
   isRetry: false,
   isDiagnosticRetry: false,
-  chosenChoiceId: 'choice-a',
+  response: {
+    kind: 'MULTIPLE_CHOICE',
+    chosenChoiceId: 'choice-a',
+  },
   omitted: false,
   elapsedMs: 42_000,
   answerChanges: 0,
@@ -125,13 +129,11 @@ describe('lesson observation contracts', () => {
       'lessonId',
       'itemBindingId',
       'questionId',
-      'bindingVersion',
       'primaryKcId',
       'activityId',
       'semanticFamilyId',
       'firstAttemptImmutable',
-      'authoredAssistanceLevel',
-      'candidateEvidenceModes',
+      'authoredAssistanceAffordances',
       'changedDimensions',
       'learnerSafeItemRef',
       'serverScoringAuthorityRef',
@@ -159,6 +161,61 @@ describe('lesson observation contracts', () => {
         'firstAttemptImmutable',
       ]);
     }
+  });
+
+  it('separates measurable attempts from non-measurable exposition', () => {
+    const bindingSchema = schemaFromIndex('LessonItemBindingSchema');
+    const acceptedObservationSchema = schemaFromIndex('AcceptedLessonObservationSchema');
+    const nonMeasurableBinding = {
+      measurementKind: 'NON_MEASURABLE',
+      lessonId: 'lesson-created-after-contract',
+      itemBindingId: 'worked-example-created-after-contract',
+      primaryKcId: 'kc-created-after-contract',
+      secondaryKcMappings: [],
+      activityRole: 'WORKED_EXAMPLE',
+      semanticFamilyId: 'family-created-after-contract',
+      authoredAssistanceAffordances: ['VISIBLE_EXPLANATION'],
+      changedDimensions: [],
+      learnerSafeItemRef: 'node-created-after-contract',
+    };
+
+    expect(bindingSchema.safeParse(nonMeasurableBinding).success).toBe(true);
+    expect(bindingSchema.safeParse(without(nonMeasurableBinding, 'measurementKind')).success).toBe(
+      false,
+    );
+    expect(
+      bindingSchema.safeParse({
+        ...nonMeasurableBinding,
+        serverScoringAuthorityRef: 'forbidden-on-exposition',
+      }).success,
+    ).toBe(false);
+    expect(
+      acceptedObservationSchema.safeParse({
+        ...validAcceptedObservation(),
+        binding: nonMeasurableBinding,
+      }).success,
+    ).toBe(false);
+  });
+
+  it('keeps authored assistance affordances separate from runtime assistance used', () => {
+    const bindingSchema = schemaFromIndex('LessonItemBindingSchema');
+    const responseSchema = schemaFromIndex('LessonRuntimeResponseFactsSchema');
+
+    expect(
+      bindingSchema.safeParse({
+        ...validBinding(),
+        authoredAssistanceAffordances: ['VISIBLE_EXPLANATION', 'NOT_SURE_ALLOWED'],
+      }).success,
+    ).toBe(true);
+    expect(
+      responseSchema.safeParse({
+        ...validResponse(),
+        assistanceLevel: 'A3',
+      }).success,
+    ).toBe(true);
+    expect(
+      bindingSchema.safeParse({ ...validBinding(), authoredAssistanceLevel: 'A0' }).success,
+    ).toBe(false);
   });
 
   it('rejects unknown and protected material from an immutable binding', () => {
@@ -192,27 +249,52 @@ describe('lesson observation contracts', () => {
     expect(bindingSchema.safeParse({ ...validBinding(), independent: true }).success).toBe(false);
   });
 
-  it('requires a reasoning operation exactly when an eligible mode is declared', () => {
+  it('requires a reasoning operation for every non-instructional evidence mode', () => {
     const bindingSchema = schemaFromIndex('LessonItemBindingSchema');
-    const eligibleWithoutOperation = without(validBinding(), 'reasoningOperation');
-    const eligibleWithoutOperationResult = bindingSchema.safeParse(eligibleWithoutOperation);
+    const nonInstructionalModes = [
+      'DIAGNOSTIC',
+      'ENTRY',
+      'INSTRUCTIONAL_EXIT',
+      'INDEPENDENT',
+      'TRANSFER',
+      'DELAYED',
+      'MIXED',
+      'PASSAGE',
+      'TIMED',
+      'PROTECTED',
+      'REPAIR_CONFIRMATION',
+      'REHEARSAL_ONLY',
+    ];
 
-    expect(eligibleWithoutOperationResult.success).toBe(false);
-    if (!eligibleWithoutOperationResult.success) {
-      const issue = eligibleWithoutOperationResult.error.issues.find(
-        (candidate) => candidate.message === 'ELIGIBLE_BINDING_MISSING_REASONING_OPERATION',
-      );
-      expect(issue?.path).toEqual(['reasoningOperation']);
-      expect(issue?.params?.rejectionCode).toBe('ELIGIBLE_BINDING_MISSING_REASONING_OPERATION');
+    for (const mode of nonInstructionalModes) {
+      const withoutOperation = bindingSchema.safeParse({
+        ...without(validBinding(), 'reasoningOperation'),
+        candidateEvidenceModes: [mode],
+      });
+      expect(withoutOperation.success, mode).toBe(false);
+      if (!withoutOperation.success) {
+        const issue = withoutOperation.error.issues.find(
+          (candidate) => candidate.message === 'ELIGIBLE_BINDING_MISSING_REASONING_OPERATION',
+        );
+        expect(issue?.path, mode).toEqual(['reasoningOperation']);
+        expect(issue?.params?.rejectionCode, mode).toBe(
+          'ELIGIBLE_BINDING_MISSING_REASONING_OPERATION',
+        );
+      }
+      expect(
+        bindingSchema.safeParse({
+          ...validBinding(),
+          candidateEvidenceModes: [mode],
+        }).success,
+        mode,
+      ).toBe(true);
     }
 
-    expect(bindingSchema.safeParse(validBinding()).success).toBe(true);
-
-    const nonEligibleWithoutOperation = {
+    const instructionalWithoutOperation = {
       ...without(validBinding(), 'reasoningOperation'),
       candidateEvidenceModes: ['INSTRUCTIONAL'],
     };
-    expect(bindingSchema.safeParse(nonEligibleWithoutOperation).success).toBe(true);
+    expect(bindingSchema.safeParse(instructionalWithoutOperation).success).toBe(true);
     expect(
       bindingSchema.safeParse({
         ...validBinding(),
@@ -220,6 +302,31 @@ describe('lesson observation contracts', () => {
         reasoningOperation: 'EXPLAIN',
       }).success,
     ).toBe(true);
+  });
+
+  it('defaults absent evidence modes to instructional and rejects an empty permission set', () => {
+    const bindingSchema = schemaFromIndex('LessonItemBindingSchema');
+    const defaulted = bindingSchema.safeParse(without(validBinding(), 'candidateEvidenceModes'));
+
+    expect(defaulted.success).toBe(true);
+    if (defaulted.success) {
+      expect(
+        (defaulted.data as { readonly candidateEvidenceModes: readonly string[] })
+          .candidateEvidenceModes,
+      ).toEqual(['INSTRUCTIONAL']);
+    }
+    expect(
+      bindingSchema.safeParse({
+        ...validBinding(),
+        candidateEvidenceModes: [],
+      }).success,
+    ).toBe(false);
+  });
+
+  it('allows bindings to defer an opaque version to the artifact adapter', () => {
+    const bindingSchema = schemaFromIndex('LessonItemBindingSchema');
+
+    expect(bindingSchema.safeParse(without(validBinding(), 'bindingVersion')).success).toBe(true);
   });
 
   it('keeps DOK optional while limiting it to the closed V3 range', () => {
@@ -259,6 +366,34 @@ describe('lesson observation contracts', () => {
       bindingSchema.safeParse({
         ...validBinding(),
         changedDimensions: ['unknown-variable'],
+      }).success,
+    ).toBe(false);
+  });
+
+  it('accepts opaque learner-safe references and strict inline learner-safe projections', () => {
+    const bindingSchema = schemaFromIndex('LessonItemBindingSchema');
+    const projection = {
+      prompt: 'Which relation holds?',
+      choices: [
+        { id: 'A', text: 'First safe option' },
+        { id: 'B', text: 'Second safe option' },
+      ],
+      representationId: null,
+    };
+
+    expect(
+      bindingSchema.safeParse({
+        ...validBinding(),
+        learnerSafeItemRef: projection,
+      }).success,
+    ).toBe(true);
+    expect(
+      bindingSchema.safeParse({
+        ...validBinding(),
+        learnerSafeItemRef: {
+          ...projection,
+          answerKey: 'forbidden',
+        },
       }).success,
     ).toBe(false);
   });
@@ -306,6 +441,66 @@ describe('lesson observation contracts', () => {
     ).toBe(false);
   });
 
+  it('represents multiple-choice and multi-field constructed responses', () => {
+    const responseSchema = schemaFromIndex('LessonRuntimeResponseFactsSchema');
+
+    expect(responseSchema.safeParse(validResponse()).success).toBe(true);
+    expect(
+      responseSchema.safeParse({
+        ...validResponse(),
+        response: {
+          kind: 'CONSTRUCTED',
+          fields: {
+            equation_1: 'x + y = 4',
+            equation_2: 'x - y = 2',
+            submission: 'submitted',
+          },
+        },
+      }).success,
+    ).toBe(true);
+  });
+
+  it('retains explicitly typed optional authoring metadata', () => {
+    const bindingSchema = schemaFromIndex('LessonItemBindingSchema');
+
+    expect(
+      bindingSchema.safeParse({
+        ...validBinding(),
+        changedDimensionDetail: '',
+        hintPolicy: 'NONE_BEFORE_COMMIT',
+        feedbackRelease: 'AFTER_COMMIT',
+        omissionPolicy: 'RECORD_AND_ROUTE',
+        retryPolicy: 'FRESH_FAMILY_ONLY',
+        invalidItemPolicy: 'VOID_AND_REPLACE_FRESH',
+        exitFunction: 'NEAR_USE',
+        freshnessPolicy: 'UNTOUCHED_FAMILY_REQUIRED',
+        publicationEligibility: 'INTERNAL_DRAFT_ONLY',
+        solutionPathLineageId: 'path-lineage',
+        decisiveCueId: 'cue-id',
+        distractorLineageId: 'distractor-id',
+        responseFeatureRoutes: [
+          {
+            responseFieldId: 'equation_1',
+            responsePatternId: 'missing-condition-pattern',
+            responseFeatureId: 'missing-condition',
+            routeKind: 'TARGETED_REPAIR',
+            repairFeatureId: 'repair-feature',
+          },
+        ],
+        exactReentryFor: 'CHANGED_EXIT',
+        scopeOperationTags: ['CONSTRUCT_SYSTEM'],
+        freshnessDivergence: {
+          changedFromItemBindingId: 'prior-binding',
+          stimulusDifference: 'different context',
+          solutionPathDifference: 'different operation sequence',
+          distractorDifference: 'different distractors',
+        },
+        responseMode: 'CONSTRUCTED_SYSTEM_AND_SOLUTION',
+        secondaryKcRefs: ['secondary-kc-created-after-contract'],
+      }).success,
+    ).toBe(true);
+  });
+
   it('couples resolved item versions to scoring validity', () => {
     const acceptedObservationSchema = schemaFromIndex('AcceptedLessonObservationSchema');
     const invalidScoring = without(
@@ -315,7 +510,10 @@ describe('lesson observation contracts', () => {
         outcome: 'omitted',
         response: {
           ...validResponse(),
-          chosenChoiceId: null,
+          response: {
+            kind: 'MULTIPLE_CHOICE',
+            chosenChoiceId: null,
+          },
           omitted: true,
         },
       },

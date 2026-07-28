@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   AcceptedEventSchema,
   AttemptSubmittedSchema,
+  ContentIdSchema,
   LearnerEventSchema,
   newEventId,
   newIdempotencyKey,
@@ -25,6 +26,19 @@ describe('contracts', () => {
     for (const cluster of SKILL_CLUSTERS) {
       expect(CLUSTER_INFO[cluster].title.length).toBeGreaterThan(0);
       expect(BRAIN_REGION_BY_CLUSTER[cluster].length).toBeGreaterThan(0);
+    }
+  });
+
+  it('keeps content ids strict while accepting opaque lesson item ids', () => {
+    const lessonItemIdSchema = (contractExports as Record<string, unknown>).LessonItemIdSchema;
+
+    expect(ContentIdSchema.safeParse('ALG-GRAPH-ENTRY-01').success).toBe(false);
+    expect(lessonItemIdSchema).toBeDefined();
+    if (typeof lessonItemIdSchema === 'object' && lessonItemIdSchema !== null) {
+      const safeParse = (
+        lessonItemIdSchema as { safeParse: (value: unknown) => { success: boolean } }
+      ).safeParse;
+      expect(safeParse('ALG-GRAPH-ENTRY-01').success).toBe(true);
     }
   });
 
@@ -88,6 +102,7 @@ describe('contracts', () => {
       learnerId: '22222222-2222-4222-8222-222222222222',
       idempotencyKey: '66666666-6666-4666-8666-666666666666',
       binding: {
+        measurementKind: 'MEASURABLE',
         lessonId: 'lesson-created-after-contract',
         itemBindingId: 'binding-created-after-contract',
         questionId: 'question-created-after-contract',
@@ -98,7 +113,7 @@ describe('contracts', () => {
         activityRole: 'SOLO_PRACTICE',
         semanticFamilyId: 'family-created-after-contract',
         firstAttemptImmutable: true,
-        authoredAssistanceLevel: 'A0',
+        authoredAssistanceAffordances: ['A0'],
         candidateEvidenceModes: ['INDEPENDENT'],
         reasoningOperation: 'EXPLAIN',
         representationId: null,
@@ -113,7 +128,10 @@ describe('contracts', () => {
         attemptIndex: 1,
         isRetry: false,
         isDiagnosticRetry: false,
-        chosenChoiceId: 'A',
+        response: {
+          kind: 'MULTIPLE_CHOICE',
+          chosenChoiceId: 'A',
+        },
         omitted: false,
         elapsedMs: 42_000,
         answerChanges: 0,
