@@ -27,8 +27,12 @@ import {
   type EvidenceKind,
 } from '../../packages/domain/src/evidence';
 import {
+  AUTHORED_BINDING_REJECTION_CODES,
+  RECOGNIZED_AUTHORED_BINDING_KEYS,
   adaptLessonResponse,
+  authoredBindingRejectionCodes,
   isIndependentAdministration,
+  normalizeAuthoredLessonBinding,
   parseAuthoredLessonBinding,
   unrecognizedAuthoredBindingKeys,
   type LessonResponseAdaptation,
@@ -38,6 +42,7 @@ import {
   Authority,
   BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS,
   BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS,
+  ConflictingWarrantClusterError,
   UnresolvedWarrantGrainError,
 } from '../../packages/authority-core/src/authority';
 import { loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
@@ -1842,6 +1847,500 @@ describe('fail-closed rules the contract states and nothing else checked', () =>
         expect(BKT_QUALIFICATION_REJECTION_CODES).toContain(code);
       }
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 8b. Two authored keys describing one fact are never resolved by precedence
+// ---------------------------------------------------------------------------
+
+/**
+ * The defect class this run produced four times, each found and fixed alone.
+ *
+ * Shape: two or more authored fields describe the same underlying fact; when
+ * they disagree, something picks one — by key precedence, by `??`, by ordered
+ * lookup, by truthiness — and the losing fact vanishes without a word. The
+ * normalized record then no longer describes the artifact, and every downstream
+ * check validates the survivor happily.
+ *
+ * Known instances:
+ *  1. `learner_safe_item_ref` + `learner_safe_projection` → the projection was
+ *     dropped. Now `MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED`.
+ *  2. prose `first_attempt_policy: 'IMMUTABLE'` overrode an explicit
+ *     `first_attempt_immutable: false`, permissively. Now
+ *     `CONTRADICTORY_FIRST_ATTEMPT_IMMUTABILITY_AUTHORED`.
+ *  3. `activity_role: WORKED_EXAMPLE` on a binding carrying scoring material
+ *     parsed clean as exposition, dropping the scoring ref and question id.
+ *  4. (warrant layer) cluster resolution took `node ?? records ?? registry` when
+ *     the three disagreed. Now `ConflictingWarrantClusterError`.
+ *
+ * WHAT THIS SECTION COVERS, precisely — it is a ratchet, not a clean bill of
+ * health, and the codebase has been bitten four times by comments claiming more
+ * than the code did:
+ *
+ *  - It DISCOVERS the alternative sets rather than listing them, by differential
+ *    normalization: every recognized author key is probed with a fixed candidate
+ *    value list, and keys whose presence changes the SAME normalized output field
+ *    are alternatives for one fact. A new alias added to the normalizer tomorrow
+ *    joins its group with no edit here.
+ *  - It asserts that a NEW alternative set, or a new key in an existing set, is
+ *    either fully guarded or fails this test. That is the fifth-instance guard.
+ *  - It does NOT assert that every alternative set is guarded today. Thirty
+ *    differentiable pairs across seventeen output fields are still resolved by
+ *    precedence; they are listed in {@link KNOWN_UNGUARDED_ALTERNATIVE_SETS} with
+ *    their blast radius, and fixing one requires deleting its entry because a
+ *    now-guarded entry fails too. Nothing here silently tolerates the debt.
+ *  - Its differentiability rule is "the two keys, authored separately, normalize
+ *    that output field to two different non-baseline values". A pair whose
+ *    disagreement is only visible in the AUTHORED values — instance 2, where
+ *    `first_attempt_immutable: false` normalizes to absence yet contradicts a
+ *    prose `IMMUTABLE` — is invisible to that rule. Such pairs are reported by
+ *    name as undifferentiable and carry their own explicit assertion below.
+ *  - Instance 3 is not an alternative-set at all: the two keys write DIFFERENT
+ *    output fields whose combination is contradictory. It has its own assertion.
+ *  - Instance 4 lives in `@mcat/authority-core` and is unreachable from a public
+ *    entry point while the registry keeps one owning lesson per KC, so it is
+ *    asserted structurally, not behaviourally. Stated plainly rather than dressed
+ *    up as coverage.
+ */
+
+const PROBE_ENVELOPE = { lessonId: 'arch-probe-lesson', artifactVersion: 'arch-probe-artifact-v1' };
+
+const PROBE_ALPHA = 'ARCH-PROBE-ALPHA';
+const PROBE_BETA = 'ARCH-PROBE-BETA';
+
+/**
+ * Values to author a key with while probing. Deliberately type-varied: an alias
+ * only reveals which output field it writes when it is given a value that field
+ * accepts, and the normalizer reads strings, booleans, arrays and objects.
+ */
+const probeValues = (sentinel: string): readonly unknown[] => [
+  sentinel,
+  'IMMUTABLE',
+  true,
+  false,
+  1,
+  [sentinel],
+  {
+    lineage_id: sentinel,
+    changed_dimension: sentinel,
+    prompt: sentinel,
+    stimulus_difference: sentinel,
+  },
+];
+
+const normalizeProbe = (raw: Record<string, unknown>): Record<string, unknown> =>
+  normalizeAuthoredLessonBinding(PROBE_ENVELOPE, raw).value as Record<string, unknown>;
+
+const PROBE_BASELINE = normalizeProbe({});
+
+const fieldAt = (raw: Record<string, unknown>, field: string): string =>
+  JSON.stringify(normalizeProbe(raw)[field]);
+
+const BASELINE_AT = (field: string): string => JSON.stringify(PROBE_BASELINE[field]);
+
+/** Output fields whose normalized value `key: value` changes. */
+function fieldsWrittenBy(key: string, value: unknown): readonly string[] {
+  const out = normalizeProbe({ [key]: value });
+  return [...new Set([...Object.keys(PROBE_BASELINE), ...Object.keys(out)])].filter(
+    (field) => JSON.stringify(out[field]) !== BASELINE_AT(field),
+  );
+}
+
+interface AlternativeSet {
+  /** The normalized field two or more author keys compete to write. */
+  readonly field: string;
+  readonly keys: readonly string[];
+}
+
+/** Author keys grouped by the normalized output field they write. */
+function discoverAlternativeSets(): readonly AlternativeSet[] {
+  const byField = new Map<string, Set<string>>();
+  for (const key of [...RECOGNIZED_AUTHORED_BINDING_KEYS].sort()) {
+    for (const value of probeValues(PROBE_ALPHA)) {
+      for (const field of fieldsWrittenBy(key, value)) {
+        if (!byField.has(field)) byField.set(field, new Set());
+        byField.get(field)?.add(key);
+      }
+    }
+  }
+  return [...byField.entries()]
+    .filter(([, keys]) => keys.size > 1)
+    .map(([field, keys]) => ({ field, keys: [...keys].sort() }))
+    .sort((left, right) => left.field.localeCompare(right.field));
+}
+
+interface AlternativePair {
+  readonly field: string;
+  readonly a: string;
+  readonly b: string;
+  readonly rejectionCodes: readonly string[];
+  readonly resolvedTo: string;
+}
+
+/**
+ * Every pair within every alternative set that can be made to DISAGREE, with
+ * what the normalizer did about it. `undifferentiable` names the pairs this
+ * probe could not make disagree, so they cannot be quietly assumed covered.
+ */
+function differentiablePairs(): {
+  readonly pairs: readonly AlternativePair[];
+  readonly undifferentiable: readonly string[];
+} {
+  const pairs: AlternativePair[] = [];
+  const undifferentiable: string[] = [];
+  for (const { field, keys } of discoverAlternativeSets()) {
+    for (let i = 0; i < keys.length; i += 1) {
+      for (let j = i + 1; j < keys.length; j += 1) {
+        const a = keys[i] as string;
+        const b = keys[j] as string;
+        let disagreement: { readonly va: unknown; readonly vb: unknown } | undefined;
+        for (const va of probeValues(PROBE_ALPHA)) {
+          for (const vb of probeValues(PROBE_BETA)) {
+            const resolvedA = fieldAt({ [a]: va }, field);
+            const resolvedB = fieldAt({ [b]: vb }, field);
+            if (
+              resolvedA !== resolvedB &&
+              resolvedA !== BASELINE_AT(field) &&
+              resolvedB !== BASELINE_AT(field)
+            ) {
+              disagreement = { va, vb };
+              break;
+            }
+          }
+          if (disagreement !== undefined) break;
+        }
+        if (disagreement === undefined) {
+          undifferentiable.push(`${field}: ${a} + ${b}`);
+          continue;
+        }
+        const both = { [a]: disagreement.va, [b]: disagreement.vb };
+        pairs.push({
+          field,
+          a,
+          b,
+          rejectionCodes: authoredBindingRejectionCodes(both),
+          resolvedTo: fieldAt(both, field),
+        });
+      }
+    }
+  }
+  return { pairs, undifferentiable };
+}
+
+/**
+ * Alternative sets whose disagreement is still resolved by precedence, with the
+ * EXACT key set each one had when it was recorded.
+ *
+ * Recorded, not tolerated. A set that gains a key, a new set that appears, or a
+ * set that becomes guarded all fail the assertions below — the last one because
+ * a fixed entry left here is cover for the next one.
+ *
+ * Blast radius, because these are not equally bad:
+ *
+ *  - CAPABILITY / WARRANT BEARING. `candidateEvidenceModes` is the worst: a
+ *    binding authoring `candidate_evidence_modes: ['INDEPENDENT']` alongside a
+ *    legacy `evidence_eligibility: 'INSTRUCTION_TELEMETRY_ONLY'` silently drops
+ *    the instructional-only label and becomes BKT-reachable, which is the exact
+ *    fail-open shape of this whole run. `serverScoringAuthorityRef` picks one of
+ *    two disagreeing scoring authorities. `questionId`, `bindingVersion` and
+ *    `stimulusLineageId` decide identity, version match and family diversity.
+ *  - REVIEWED PROSE ONLY. `hintPolicy`, `feedbackRelease`, `omissionPolicy`,
+ *    `retryPolicy`, `invalidItemPolicy`, `exitFunction`, `freshnessPolicy`,
+ *    `changedDimensionDetail`, `secondaryKcMappings` and
+ *    `authoredAssistanceAffordances` are never BKT targets and never influence
+ *    qualification, so a disagreement loses reviewed text rather than corrupting
+ *    an estimate.
+ */
+const KNOWN_UNGUARDED_ALTERNATIVE_SETS: Readonly<Record<string, readonly string[]>> = {
+  authoredAssistanceAffordances: [
+    'assistance_available',
+    'assistance_state',
+    'authored_assistance_level',
+  ],
+  bindingVersion: ['binding_version', 'item_version'],
+  candidateEvidenceModes: ['candidate_evidence_modes', 'evidence_eligibility'],
+  changedDimensionDetail: [
+    'changed_dimension',
+    'changed_dimension_detail',
+    'construct_preserving_change',
+  ],
+  exitFunction: ['exit_function', 'near_or_changed_function'],
+  feedbackRelease: ['feedback_release', 'feedback_release_point'],
+  freshnessPolicy: ['freshness_policy', 'freshness_rule'],
+  hintPolicy: [
+    'hint_availability',
+    'hint_policy',
+    'hint_reveal_availability',
+    'reveal_availability',
+  ],
+  invalidItemPolicy: ['invalid_item_behavior', 'invalid_item_policy'],
+  omissionPolicy: ['omission_behavior', 'omission_policy'],
+  questionId: ['item_binding_id', 'question_id'],
+  retryPolicy: ['retry_behavior', 'retry_policy'],
+  secondaryKcMappings: ['secondary_kc_mappings', 'secondary_kc_refs'],
+  serverRationaleAuthorityRef: ['rationale_authority_ref', 'server_rationale_authority_ref'],
+  serverScoringAuthorityRef: [
+    'answer_authority_ref',
+    'server_answer_authority_ref',
+    'server_only_answer_authority_ref',
+    'server_scoring_authority_ref',
+  ],
+  stimulusLineageId: ['stimulus_lineage', 'stimulus_lineage_id'],
+};
+
+/**
+ * Pairs the probe cannot make disagree, each of which therefore needs its own
+ * named assertion. Recorded so a NEW undifferentiable pair shows up rather than
+ * being silently outside the general rule.
+ */
+const KNOWN_UNDIFFERENTIABLE_PAIRS: readonly string[] = [
+  // Instance 2. `first_attempt_immutable: false` normalizes to ABSENCE, which is
+  // the baseline, so no output-value comparison can see it disagreeing with a
+  // prose `IMMUTABLE`. Asserted by name below instead.
+  'firstAttemptImmutable: first_attempt_immutable + first_attempt_policy',
+];
+
+/** A minimally valid exposition binding: no attempt-bearing material at all. */
+const expositionBinding = (overrides: Authored = {}): Authored => ({
+  item_binding_id: 'arch-exposition-1',
+  primary_kc_id: 'ARCH-KC-PRIMARY',
+  activity_role: 'WORKED_EXAMPLE',
+  semantic_family_id: 'arch-family-1',
+  assistance_available: ['VISIBLE_EXPLANATION'],
+  changed_dimensions: [],
+  learner_safe_item_ref: 'arch-learner-safe-ref',
+  ...overrides,
+});
+
+describe('two authored keys describing one fact never resolve by precedence', () => {
+  it('discovers the alternative sets by probing the normalizer, not by listing them', () => {
+    const sets = discoverAlternativeSets();
+    const { pairs, undifferentiable } = differentiablePairs();
+
+    // Anti-vacuity. A probe that stopped writing anything would make every
+    // assertion below pass by finding no pairs to check.
+    expect(sets.length, 'the probe found no alternative sets at all').toBeGreaterThanOrEqual(10);
+    expect(pairs.length, 'the probe found no differentiable pairs').toBeGreaterThanOrEqual(20);
+    expect(RECOGNIZED_AUTHORED_BINDING_KEYS.size).toBeGreaterThan(50);
+    // And it must find both outcomes, or "guarded" and "unguarded" are not
+    // actually being told apart.
+    expect(pairs.some((pair) => pair.rejectionCodes.length > 0)).toBe(true);
+    expect(pairs.some((pair) => pair.rejectionCodes.length === 0)).toBe(true);
+
+    expect(
+      [...undifferentiable].sort(),
+      'A pair the probe cannot make disagree is outside the general rule below and needs its ' +
+        'own named assertion. Add it to KNOWN_UNDIFFERENTIABLE_PAIRS *and* write that ' +
+        'assertion — recording it alone would be the comment-claims-more-than-the-code defect.',
+    ).toEqual([...KNOWN_UNDIFFERENTIABLE_PAIRS].sort());
+  });
+
+  it('rejects a disagreement, or the set is recorded as still resolving by precedence', () => {
+    const { pairs } = differentiablePairs();
+    const offenders = pairs
+      .filter((pair) => pair.rejectionCodes.length === 0)
+      .filter((pair) => {
+        const recorded = KNOWN_UNGUARDED_ALTERNATIVE_SETS[pair.field];
+        return recorded === undefined || !recorded.includes(pair.a) || !recorded.includes(pair.b);
+      })
+      .map(
+        (pair) => `${pair.field}: ${pair.a} + ${pair.b} silently resolved to ${pair.resolvedTo}`,
+      );
+
+    expect(
+      offenders,
+      [
+        'Two authored keys describing one fact disagreed, and one was silently dropped.',
+        '',
+        'This is the defect class this seam produced four separate times. Where two authored',
+        'fields describe the same underlying fact, a contradiction between them MUST reject',
+        'with a named AUTHORED_BINDING_REJECTION_CODES code. It must never be resolved by',
+        'precedence, key order, `??`, or truthiness, because the losing fact then disappears',
+        'and the normalized record stops describing the artifact — while everything',
+        'downstream validates the survivor happily and nothing looks wrong.',
+        '',
+        'Add a contradiction check next to `authoredBindingContradictions`, with a new frozen',
+        'code. Recording the pair in KNOWN_UNGUARDED_ALTERNATIVE_SETS is for the debt that',
+        'predates this test, not for new precedence.',
+      ].join('\n'),
+    ).toEqual([]);
+  });
+
+  it('keeps every recorded unguarded set live, exact, and still unguarded', () => {
+    const { pairs } = differentiablePairs();
+    const discovered = new Map(discoverAlternativeSets().map((set) => [set.field, set.keys]));
+
+    for (const [field, keys] of Object.entries(KNOWN_UNGUARDED_ALTERNATIVE_SETS)) {
+      // Still a real alternative set, with exactly the keys recorded: a key added
+      // to an existing set is new precedence and has to be looked at.
+      expect(
+        discovered.get(field),
+        `KNOWN_UNGUARDED_ALTERNATIVE_SETS records ${field}, whose authoring keys have changed ` +
+          'or which is no longer an alternative set. Update or delete the entry.',
+      ).toEqual([...keys]);
+
+      // And still unguarded. An entry whose pairs now reject is a FIXED item left
+      // behind as cover for the next one, so it has to be deleted.
+      const fieldPairs = pairs.filter((pair) => pair.field === field);
+      expect(
+        fieldPairs.some((pair) => pair.rejectionCodes.length === 0),
+        `${field} now rejects every disagreement it can be made to have — it is guarded. ` +
+          'Delete its KNOWN_UNGUARDED_ALTERNATIVE_SETS entry so the next unguarded set cannot ' +
+          'hide behind a stale exemption.',
+      ).toBe(true);
+    }
+  });
+
+  it('rejects two authored learner-safe item sources with a named code (instance 1)', () => {
+    const { learner_safe_item_ref: _ref, ...withoutRef } = authoredBinding();
+    const both = {
+      ...withoutRef,
+      learner_safe_item_ref: 'arch-opaque-ref',
+      learner_safe_projection: { prompt: 'Resolve the vector.' },
+    };
+    const parsed = parseBinding(both);
+    expect(parsed.status).toBe('invalid');
+    expect(parsed.rejectionCodes).toContain('MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED');
+    // The projection must not have been dropped in favour of the ref: the point
+    // is that the authored artifact is refused, not repaired.
+    expect(JSON.stringify(parsed)).toContain('MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED');
+
+    // Calibration: exactly one source parses, so the rejection is about the pair.
+    expect(parseBinding({ ...withoutRef, learner_safe_item_ref: 'arch-opaque-ref' }).status).toBe(
+      'parsed',
+    );
+    expect(
+      parseBinding({ ...withoutRef, learner_safe_projection: { prompt: 'Resolve.' } }).status,
+    ).toBe('parsed');
+  });
+
+  it('rejects prose that contradicts the first-attempt boolean (instance 2)', () => {
+    // The probe cannot see this pair, because `false` normalizes to absence. It
+    // is the reason KNOWN_UNDIFFERENTIABLE_PAIRS exists and is asserted here.
+    const contradictory = authoredBinding({
+      first_attempt_immutable: false,
+      first_attempt_policy: 'IMMUTABLE',
+    });
+    const parsed = parseBinding(contradictory);
+    expect(parsed.status).toBe('invalid');
+    expect(
+      parsed.rejectionCodes,
+      'A prose first-attempt policy overrode an explicit boolean. Reviewed text must never ' +
+        'overrule an authored fact, least of all toward the permissive answer: `false || ' +
+        "'IMMUTABLE'` used to make a mutable first attempt immutable in silence, and a " +
+        'first attempt that can be edited is not first-look evidence.',
+    ).toContain('CONTRADICTORY_FIRST_ATTEMPT_IMMUTABILITY_AUTHORED');
+
+    // Calibration: the prose alone still stands in for a missing boolean, and the
+    // boolean alone still decides. Neither is a contradiction.
+    const { first_attempt_immutable: _boolean, ...proseOnly } = authoredBinding();
+    expect(parseBinding({ ...proseOnly, first_attempt_policy: 'IMMUTABLE' }).status).toBe('parsed');
+    expect(parseBinding(authoredBinding({ first_attempt_immutable: true })).status).toBe('parsed');
+  });
+
+  it('rejects exposition that carries measurement material (instance 3)', () => {
+    // A different shape: the two authored facts write DIFFERENT output fields, and
+    // it is their combination that contradicts. Discovered rather than listed —
+    // any author key that flips a valid exposition binding to invalid is
+    // measurement-bearing, whatever it is called.
+    expect(parseBinding(expositionBinding()).status).toBe('parsed');
+
+    const measurementBearing = [...RECOGNIZED_AUTHORED_BINDING_KEYS].sort().filter((key) => {
+      const withKey = expositionBinding({ [key]: PROBE_ALPHA });
+      return parseBinding(withKey).status === 'invalid';
+    });
+
+    expect(
+      measurementBearing,
+      'No author key makes a WORKED_EXAMPLE binding invalid, so exposition can carry anything. ' +
+        'A binding that calls itself a worked example while carrying a scoring authority ref, ' +
+        'an activity, or a question id is contradictory and must be refused — not quietly ' +
+        'reinterpreted as exposition with its scoring material dropped, which is what let a ' +
+        'scored item become an unscored one.',
+    ).toEqual(
+      expect.arrayContaining([
+        'activity_id',
+        'answer_authority_ref',
+        'question_id',
+        'server_scoring_authority_ref',
+      ]),
+    );
+
+    // And the material really is dropped rather than carried, if it were allowed
+    // through: the exposition variant has no field for it at all.
+    const smuggled = parseBinding(
+      expositionBinding({ server_scoring_authority_ref: PROBE_ALPHA, question_id: PROBE_BETA }),
+    );
+    expect(smuggled.status).toBe('invalid');
+  });
+
+  it('keeps every authored-contradiction code reachable and frozen', () => {
+    // A code in the registry that no input can produce is a dead guard that reads
+    // like a live one — the `unrecognizedAuthoredBindingKeys` failure again.
+    expect(AUTHORED_BINDING_REJECTION_CODES.length).toBeGreaterThan(0);
+
+    const reachable = new Set<string>();
+    for (const raw of [
+      { learner_safe_item_ref: PROBE_ALPHA, learner_safe_projection: { prompt: PROBE_BETA } },
+      { first_attempt_immutable: false, first_attempt_policy: 'IMMUTABLE' },
+    ]) {
+      for (const code of authoredBindingRejectionCodes(raw)) reachable.add(code);
+    }
+    for (const code of AUTHORED_BINDING_REJECTION_CODES) {
+      expect(
+        reachable.has(code),
+        `${code} is in AUTHORED_BINDING_REJECTION_CODES but no input in this test produces it. ` +
+          'Either it is unreachable — a guard that cannot fire — or a new contradiction was ' +
+          'added without a case here. Both need looking at.',
+      ).toBe(true);
+    }
+  });
+
+  it('reports a warrant cluster disagreement instead of picking one (instance 4)', () => {
+    /**
+     * HONEST SCOPE, because this file exists partly to stop comments claiming
+     * more than the code does.
+     *
+     * This is the same defect class one layer up, in `@mcat/authority-core`. A
+     * cluster disagreement is UNREACHABLE from any public entry point while the
+     * registry keeps one owning lesson per KC and `appendEvidence` stays private,
+     * so there is no behavioural case to run and no amount of wording makes this
+     * behavioural coverage.
+     *
+     * What IS asserted: the error type exists and names both disagreeing
+     * clusters, and the resolution still has a branch that RECORDS a conflict and
+     * a site that THROWS it. That pair is a source-shape proxy — it caught a
+     * mutation that deleted the recording branch while leaving the throw in place
+     * (an unreachable throw reads exactly like a live guard) — but it cannot prove
+     * the branch is reachable for the right inputs. The behavioural coverage for
+     * that lives in `packages/authority-core/src/authority.test.ts`, which owns
+     * the internals this cannot see.
+     */
+    const error = new ConflictingWarrantClusterError([
+      { skillId: 'ARCH-KC-PRIMARY', clusters: ['R1', 'CP1'] },
+    ]);
+    expect(error).toBeInstanceOf(Error);
+    expect(error.message).toContain('ARCH-KC-PRIMARY');
+    expect(error.message).toContain('R1');
+    expect(error.message).toContain('CP1');
+
+    const authoritySource = readFileSync(
+      join(root, 'packages/authority-core/src/authority.ts'),
+      'utf8',
+    );
+    expect(
+      /throw new ConflictingWarrantClusterError/.test(authoritySource),
+      'The cluster resolution no longer THROWS on a disagreement. Precedence would publish one ' +
+        'of two disagreeing answers confidently, so the routing bug reaches the planner as ' +
+        'data rather than as a failure — strictly worse than resolving nowhere.',
+    ).toBe(true);
+    expect(
+      /\bconflict(?:ing|s)\b[\w.]*\.push\(/.test(authoritySource),
+      'Nothing records a cluster conflict any more, so the throw above is unreachable. An ' +
+        'unreachable throw reads exactly like a live guard — that is how the absent debug-route ' +
+        'assertion and the dead unrecognized-key detector both survived review.',
+    ).toBe(true);
   });
 });
 
