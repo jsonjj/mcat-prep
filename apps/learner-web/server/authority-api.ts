@@ -7,6 +7,10 @@ import {
   type HttpErrorCode,
 } from '@mcat/contracts';
 import { InProcessAuthorityClient } from '@mcat/local-authority';
+import {
+  createDatabasePoolFromEnv,
+  createPostgresPracticeBankPort,
+} from '@mcat/persistence-postgres';
 
 /**
  * Dev-only learner authority. This runs the real synthetic authority
@@ -38,7 +42,27 @@ const store = {
   },
 } as unknown as StoreArg;
 
-const client = new InProcessAuthorityClient(store);
+/**
+ * When DATABASE_URL is set, adaptive Practice pulls FRESH items from the real v7
+ * Postgres bank (2,000+ items) and writes exposure/repair there; otherwise it
+ * falls back to the synthetic bank so the app still runs fully offline.
+ */
+function buildPracticeBankPort(): ReturnType<typeof createPostgresPracticeBankPort> | undefined {
+  const url = process.env.DATABASE_URL;
+  if (url === undefined || url.trim() === '') return undefined;
+  try {
+    return createPostgresPracticeBankPort(createDatabasePoolFromEnv());
+  } catch (error) {
+    console.warn(
+      '[dev-authority] DATABASE_URL is set but the practice bank pool failed to initialize; ' +
+        'falling back to the synthetic practice bank.',
+      error,
+    );
+    return undefined;
+  }
+}
+
+const client = new InProcessAuthorityClient(store, undefined, buildPracticeBankPort());
 
 // One CSRF token per dev process; the client echoes it back but we don't verify.
 const csrfToken = `${randomUUID()}${randomUUID()}`.replace(/-/g, '');
@@ -161,6 +185,12 @@ export async function handleAuthorityRequest(
         const questionId = decodeURIComponent(path.slice('/v1/practice/items/'.length));
         return sendJson(response, 200, await client.getPracticeItem(questionId));
       }
+      const queueMatch = /^\/v1\/practice\/queue\/(\d{1,2})(?:\/([a-z0-9-]{1,32}))?$/.exec(path);
+      if (queueMatch) {
+        const x = Number.parseInt(queueMatch[1]!, 10);
+        const focus = queueMatch[2];
+        return sendJson(response, 200, await client.getPracticeQueue(x, focus));
+      }
     }
 
     // ---- commands -----------------------------------------------------------
@@ -195,6 +225,15 @@ export async function handleAuthorityRequest(
         String(body.questionId ?? ''),
         (body.choiceId ?? null) as string | null,
       );
+      return sendJson(response, 200, result);
+    }
+    if (path === '/v1/practice/attempts/adaptive' && method === 'POST') {
+      const result = await client.submitPracticeAttempt({
+        questionId: String(body.questionId ?? ''),
+        specId: String(body.specId ?? ''),
+        chosenChoiceId: (body.chosenChoiceId ?? null) as 'A' | 'B' | 'C' | 'D' | null,
+        firstAttempt: Boolean(body.firstAttempt),
+      });
       return sendJson(response, 200, result);
     }
     if (path === '/v1/hooks/cars-duel' && method === 'POST') {

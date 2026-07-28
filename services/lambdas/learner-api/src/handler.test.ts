@@ -603,6 +603,66 @@ describe('learner Lambda API security boundary', () => {
     expect(repository.eventsFor(principal.learnerId)).toHaveLength(0);
   });
 
+  it('serves an adaptive practice queue and scores an adaptive attempt (synthetic fallback)', async () => {
+    const { api, principal, repository } = harness();
+    const read = { origin: APP_ORIGIN, authenticated: true } as const;
+    const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
+
+    const queued = await api.handle(request('GET', '/v1/practice/queue/3', undefined, read));
+    expect(queued.statusCode).toBe(200);
+    const queue = responseBody(queued) as {
+      requested: number;
+      items: Array<{ specId: string; question: { id: string; choices: unknown[] } }>;
+    };
+    expect(queue.requested).toBe(3);
+    expect(queue.items.length).toBeGreaterThan(0);
+    expect(queue.items[0]!.question.choices).toHaveLength(4);
+    expect(JSON.stringify(queue)).not.toMatch(/correct_choice_id|correctChoiceId|rationale/i);
+
+    const first = queue.items[0]!;
+    const body = {
+      envelope: commandEnvelope(0),
+      questionId: first.question.id,
+      specId: first.specId,
+      chosenChoiceId: 'A',
+      firstAttempt: true,
+    };
+    const scored = await api.handle(request('POST', '/v1/practice/attempts/adaptive', body, write));
+    const duplicate = await api.handle(
+      request('POST', '/v1/practice/attempts/adaptive', body, write),
+    );
+
+    expect(scored.statusCode).toBe(200);
+    expect(responseBody(scored)).toMatchObject({
+      correct: expect.any(Boolean),
+      correctChoiceId: expect.stringMatching(/^[A-D]$/),
+      rationale: expect.any(String),
+    });
+    // Idempotent: a replay returns the same result and appends no new event.
+    expect(responseBody(duplicate)).toEqual(responseBody(scored));
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(1);
+    const projection = repository.projectionFor(principal.learnerId)?.state as { mastery?: unknown };
+    expect(projection.mastery).toBeDefined();
+  });
+
+  it('rejects an adaptive practice attempt without CSRF', async () => {
+    const { api } = harness();
+    const body = {
+      envelope: commandEnvelope(0),
+      questionId: 'q-enz-indep-competitive',
+      specId: 'sci:bb1-enzyme-inhibition:EXPLAIN:train',
+      chosenChoiceId: 'A',
+      firstAttempt: true,
+    };
+    const denied = await api.handle(
+      request('POST', '/v1/practice/attempts/adaptive', body, {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(denied.statusCode).toBe(403);
+  });
+
   it('persists deterministic non-mastery CARS evidence and serves Wrapped', async () => {
     const { api, principal, repository } = harness();
     const command = { envelope: commandEnvelope() };

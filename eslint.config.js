@@ -14,6 +14,8 @@ export default tseslint.config(
       '**/cdk.out/**',
       '**/.turbo/**',
       '**/node_modules/**',
+      // Local, gitignored content-pipeline scratch (never tracked; see .gitignore).
+      '**/.local/**',
       '.tooling/**',
       '.pnpm-store/**',
       '.pnpm-cache/**',

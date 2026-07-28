@@ -17,8 +17,14 @@ import {
   type LessonMasteryView,
   type MasterySeed,
   type MasteryState,
+  type PracticeAttemptCommand,
+  type PracticeAttemptResult,
+  type PracticeFocus,
+  type PracticeQueueItem,
+  type PracticeQueueView,
   type ProbableCause,
   type ReasoningOperation,
+  type SkillCluster,
   type SkillMasteryView,
   type UtcTimestamp,
 } from '@mcat/contracts';
@@ -26,6 +32,7 @@ import { EvidenceRecordSchema, scoreAttempt, type EvidenceKind, type Task } from
 import {
   activePolicyVersions,
   applyMasteryAttempt,
+  bandCenter,
   CARS_K_DUEL,
   CARS_K_POTD,
   CARS_V0,
@@ -38,12 +45,25 @@ import {
   isCarsOnTrack,
   MASTERY_THRESHOLD,
   overallCarsReadiness,
+  PRACTICE_SELECTION_CONFIG,
+  practiceSpecId,
   predictedCorrect,
   PRIOR_PL0,
   REVIEW_LINE,
+  selectPracticeQueue,
   type MemoryState,
+  type PracticeCarsUnit,
+  type PracticeSnapshot,
+  type PracticeUnit,
 } from '@mcat/policies';
 import { clusterForLesson, loadSyntheticBank, type LoadedBank } from '@mcat/content';
+import {
+  SyntheticPracticeBankPort,
+  type PracticeBankPort,
+  type PracticeCandidateUnit,
+  type PracticeItemClassification,
+  type PracticeRepairTarget,
+} from './practice';
 import type {
   ErrorEntryView,
   LearnerState,
@@ -129,10 +149,17 @@ const evidenceKindForPhase = (phase: StudyPhase): EvidenceKind => {
 export class Authority {
   readonly bank: LoadedBank;
   private readonly clock: Clock;
+  /** Item corpus + per-learner exposure/repair seam for adaptive Practice. */
+  readonly practiceBank: PracticeBankPort;
 
-  constructor(bank: LoadedBank = loadSyntheticBank(), clock: Clock = systemClock) {
+  constructor(
+    bank: LoadedBank = loadSyntheticBank(),
+    clock: Clock = systemClock,
+    practiceBank?: PracticeBankPort,
+  ) {
     this.bank = bank;
     this.clock = clock;
+    this.practiceBank = practiceBank ?? new SyntheticPracticeBankPort(bank);
   }
 
   createGuest(): LearnerState {
@@ -657,6 +684,240 @@ export class Authority {
       const cars = skill as CarsSkill;
       if (m.cars[cars] === undefined) m.cars[cars] = v;
     }
+  }
+
+  // ---- Adaptive Practice (test-out; practice-selection / provisional-v1) --
+  // Server-authoritative WRITE path: a first, unassisted answer moves P(L)
+  // through the existing mastery-bkt engine. Items come from the injected bank
+  // port (real Postgres corpus in prod, synthetic fallback in dev/tests).
+
+  /**
+   * Build the ordered queue of up to `x` fresh practice items. Reads the mastery
+   * signal + bank catalog into a snapshot, asks the pure selection engine for
+   * specs, then pulls one fresh matching item per spec (excluding recently-seen
+   * and anything already queued). Missing specs are skipped (graceful).
+   */
+  async getPracticeQueue(
+    state: LearnerState,
+    x: number,
+    focus?: PracticeFocus,
+  ): Promise<PracticeQueueView> {
+    const requested = Math.max(0, Math.min(Math.floor(x), 50));
+    const focusToken = focus ?? null;
+    if (requested === 0) return { requested: 0, focus: focusToken, items: [] };
+
+    const now = this.clock.now();
+    const [units, repairs, recentlySeen] = await Promise.all([
+      this.practiceBank.listUnits({ limit: 400 }),
+      this.practiceBank.recentMisses(state.learnerId, { limit: 20 }),
+      this.practiceBank.recentlySeenIds(state.learnerId, { withinDays: 14, limit: 500 }),
+    ]);
+
+    const snapshot = this.buildPracticeSnapshot(state, units, repairs, now, focusToken);
+    const specs = selectPracticeQueue(snapshot, requested, PRACTICE_SELECTION_CONFIG);
+
+    const served = new Set<string>(recentlySeen);
+    const items: PracticeQueueItem[] = [];
+    for (const spec of specs) {
+      const candidates = await this.practiceBank.findItems(
+        {
+          domain: spec.domain,
+          ...(spec.kcId !== undefined ? { kcId: spec.kcId } : {}),
+          ...(spec.skill !== undefined ? { skill: spec.skill } : {}),
+          ...(spec.carsSkill !== undefined ? { carsSkill: spec.carsSkill } : {}),
+          targetB: bandCenter(spec.difficultyBand),
+        },
+        { excludeIds: [...served], limit: 8 },
+      );
+      const chosen = candidates.find((c) => !served.has(c.question.id));
+      if (chosen === undefined) continue;
+      served.add(chosen.question.id);
+      items.push({
+        specId: practiceSpecId(spec),
+        domain: spec.domain,
+        purpose: spec.purpose,
+        kcId: chosen.kcId ?? spec.kcId ?? null,
+        skill: chosen.skill ?? spec.skill ?? null,
+        carsSkill: chosen.carsSkill ?? spec.carsSkill ?? null,
+        dok: chosen.dok ?? spec.dok ?? null,
+        question: chosen.question,
+      });
+      if (items.length >= requested) break;
+    }
+
+    return { requested, focus: focusToken, items };
+  }
+
+  /**
+   * Score one practice answer. On a FIRST, unassisted attempt this moves the
+   * P(L) mastery signal (BKT for science KC/skill/lesson, IRT `carsUpdate` at
+   * measurement weight for CARS), records exposure + population stats, and
+   * queues a KC×skill repair on a miss. Retries are learning-only (no P(L)).
+   * Answer material is returned only here (post-submit), never in the queue.
+   */
+  async submitPracticeAttempt(
+    state: LearnerState,
+    cmd: PracticeAttemptCommand,
+  ): Promise<PracticeAttemptResult> {
+    const answer = await this.practiceBank.getAnswer(cmd.questionId);
+    if (answer === null) {
+      throw new Error(`Practice item ${cmd.questionId} is unavailable.`);
+    }
+    const correct = cmd.chosenChoiceId !== null && cmd.chosenChoiceId === answer.correctChoiceId;
+    const now = this.clock.now();
+
+    if (cmd.firstAttempt) {
+      const classification = await this.practiceBank.classify(cmd.questionId);
+      const stats = await this.practiceBank.questionStats(cmd.questionId);
+      if (classification !== null) {
+        this.applyPracticeMastery(state, classification, correct, stats, now);
+      }
+      await this.practiceBank.recordAttempt(cmd.questionId, correct, now);
+      await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
+      if (!correct && classification?.domain === 'science' && classification.kcId !== null) {
+        await this.practiceBank.queueRepair(
+          state.learnerId,
+          classification.skill
+            ? { kcId: classification.kcId, skill: classification.skill }
+            : { kcId: classification.kcId },
+          now,
+        );
+      }
+    }
+
+    return {
+      correct,
+      correctChoiceId: answer.correctChoiceId,
+      rationale: answer.rationale,
+      choiceRationales: answer.choiceRationales,
+    };
+  }
+
+  private buildPracticeSnapshot(
+    state: LearnerState,
+    units: readonly PracticeCandidateUnit[],
+    repairs: readonly PracticeRepairTarget[],
+    now: UtcTimestamp,
+    focus: PracticeFocus | null,
+  ): PracticeSnapshot {
+    const m = state.mastery;
+    const focused = this.filterByFocus(units, focus);
+
+    const covered = new Set<SkillCluster>();
+    const scienceUnits: PracticeUnit[] = [];
+    const carsUnits: PracticeCarsUnit[] = [];
+
+    for (const u of focused) {
+      if (u.domain === 'cars') {
+        if (u.carsSkill === null) continue;
+        const v = m?.cars[u.carsSkill];
+        carsUnits.push({
+          carsSkill: u.carsSkill,
+          v: v ?? CARS_V0,
+          neverPractised: v === undefined,
+          recency: 0,
+        });
+        continue;
+      }
+      if (u.skill === null || u.cluster === null) continue;
+      const kcState = m?.kc[u.kcId];
+      const skillState = m?.skill[u.skill];
+      const neverPractised = kcState === undefined;
+      if (!neverPractised) covered.add(u.cluster);
+      scienceUnits.push({
+        kcId: u.kcId,
+        skill: u.skill,
+        cluster: u.cluster,
+        plKc: kcState ? currentPL(kcState, now) : PRIOR_PL0,
+        plSkill: skillState ? currentPL(skillState, now) : PRIOR_PL0,
+        // Provisional: real-bank items imply available instruction and no
+        // per-learner prerequisite gate yet (see docs/practice-engine.md).
+        taught: true,
+        prereqMet: true,
+        ...(u.dok !== null ? { dok: u.dok } : {}),
+        overdueDays: kcState ? this.overduePracticeDays(kcState, now) : 0,
+        neverPractised,
+        recency: 0,
+      });
+    }
+
+    return {
+      units: scienceUnits,
+      cars: carsUnits,
+      repairs: repairs.map((r) => (r.skill ? { kcId: r.kcId, skill: r.skill } : { kcId: r.kcId })),
+      coveredClusters: covered,
+    };
+  }
+
+  private filterByFocus(
+    units: readonly PracticeCandidateUnit[],
+    focus: PracticeFocus | null,
+  ): readonly PracticeCandidateUnit[] {
+    if (focus === null) return units;
+    const upper = focus.toUpperCase();
+    if (upper === 'CARS') return units.filter((u) => u.domain === 'cars');
+    if ((SKILL_CLUSTERS as readonly string[]).includes(upper)) {
+      return units.filter((u) => u.cluster === (upper as SkillCluster));
+    }
+    if ((REASONING_OPERATIONS as readonly string[]).includes(upper)) {
+      return units.filter((u) => u.skill === (upper as ReasoningOperation));
+    }
+    return units;
+  }
+
+  private overduePracticeDays(st: MemoryState, now: UtcTimestamp): number {
+    if (st.lastPracticedAt === null) return 0;
+    if (currentPL(st, now) >= REVIEW_LINE) return 0;
+    return Math.max(0, daysBetween(st.lastPracticedAt, now));
+  }
+
+  private applyPracticeMastery(
+    state: LearnerState,
+    classification: PracticeItemClassification,
+    correct: boolean,
+    stats: { attempts: number; correct: number },
+    now: UtcTimestamp,
+  ): void {
+    const m = this.ensureMastery(state);
+    if (classification.domain === 'cars') {
+      if (classification.carsSkill === null) return;
+      m.cars[classification.carsSkill] = carsUpdate(m.cars[classification.carsSkill] ?? CARS_V0, {
+        r: correct ? 1 : 0,
+        b: 0,
+        k: CARS_K_POTD,
+      });
+      return;
+    }
+    if (classification.kcId === null || classification.skill === null) return;
+
+    const prereqKeys = this.bank.skillGraph.edges
+      .filter((e) => e.kind === 'hard_prerequisite' && e.to === classification.kcId)
+      .map((e) => e.from);
+    const prerequisites = prereqKeys.map((k) => m.kc[k] ?? initialMemoryState());
+
+    const result = applyMasteryAttempt({
+      correct,
+      now,
+      questionStats: stats,
+      ...(classification.dok !== null ? { dokLevel: classification.dok } : {}),
+      states: {
+        kc: m.kc[classification.kcId] ?? initialMemoryState(),
+        skill: m.skill[classification.skill] ?? initialMemoryState(),
+        lesson:
+          classification.lessonId !== null
+            ? (m.lesson[classification.lessonId] ?? initialMemoryState())
+            : initialMemoryState(),
+      },
+      prerequisites,
+    });
+
+    m.kc[classification.kcId] = result.states.kc;
+    m.skill[classification.skill] = result.states.skill;
+    if (classification.lessonId !== null) m.lesson[classification.lessonId] = result.states.lesson;
+    prereqKeys.forEach((k, i) => {
+      const next = result.prerequisites[i];
+      if (next) m.kc[k] = next;
+    });
   }
 
   // ---- Practice hooks (Passage of the Day, etc.) ------------------------

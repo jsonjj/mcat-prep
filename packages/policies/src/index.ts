@@ -15,6 +15,7 @@ export * from './prerequisite';
 export * from './mastery-attempt';
 export * from './cars';
 export * from './mastery-seed';
+export * from './practice-selection';
 
 import { asPolicyVersion } from './manifest';
 import { FSRS_MANIFEST } from './fsrs';
@@ -25,6 +26,7 @@ import { MASTERY_BKT_MANIFEST } from './bkt';
 import { PLANNER_MANIFEST } from './planner';
 import { READINESS_MANIFEST } from './readiness';
 import { GHOST_MANIFEST } from './ghost';
+import { PRACTICE_SELECTION_MANIFEST } from './practice-selection';
 
 /** The active policy set, for recording on every consequential decision/event. */
 export const ACTIVE_POLICY_MANIFESTS = [
@@ -36,6 +38,7 @@ export const ACTIVE_POLICY_MANIFESTS = [
   MASTERY_BKT_MANIFEST,
   READINESS_MANIFEST,
   GHOST_MANIFEST,
+  PRACTICE_SELECTION_MANIFEST,
 ] as const;
 
 export const activePolicyVersions = () => ACTIVE_POLICY_MANIFESTS.map(asPolicyVersion);

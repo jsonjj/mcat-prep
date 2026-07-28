@@ -1,4 +1,5 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
+import type { PracticeBankPort } from '@mcat/authority-core';
 import {
   AuthorityKernelError,
   type AuthorityKernel,
@@ -31,11 +32,13 @@ import {
 import {
   ROUTES,
   allowedMethodsFor,
+  practiceQueueParams,
   practiceQuestionId,
   routeFor,
   type CarsDuelCommandBody,
   type CauseCommandBody,
   type ContinueCommandBody,
+  type PracticeAdaptiveAttemptCommandBody,
   type PracticeAttemptCommandBody,
   type RecallCommandBody,
   type RevealCommandBody,
@@ -89,6 +92,15 @@ interface KernelPort {
     input: PracticeAttemptCommandBody,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handlePractice']>;
+  getPracticeQueueAdaptive(
+    x: number,
+    focus: string | null,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['getPracticeQueueAdaptive']>;
+  handlePracticeAdaptive(
+    input: PracticeAdaptiveAttemptCommandBody,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handlePracticeAdaptive']>;
   handleCarsDuel(
     input: CarsDuelCommandBody,
     principal: Principal,
@@ -127,6 +139,8 @@ export interface RepositoryLearnerApiDependencies extends Omit<LearnerApiDepende
   readonly repository: AuthorityRepository;
   readonly clock: Clock;
   readonly bank: AuthorityKernelDependencies['bank'];
+  /** Adaptive-practice bank/exposure seam (Postgres in prod; synthetic fallback). */
+  readonly practiceBank?: PracticeBankPort;
 }
 
 export interface LearnerApi {
@@ -638,6 +652,18 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             origin,
             requestIdValue,
           );
+        case 'practiceAdaptiveAttempt':
+          return jsonResponse(
+            200,
+            route.responseSchema?.parse(
+              await dependencies.kernel.handlePracticeAdaptive(
+                parsed.data as PracticeAdaptiveAttemptCommandBody,
+                principal,
+              ),
+            ),
+            origin,
+            requestIdValue,
+          );
         case 'carsDuel':
           return jsonResponse(
             200,
@@ -714,6 +740,21 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       return jsonResponse(
         200,
         route.responseSchema?.parse(await dependencies.kernel.practiceItem(questionId, principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'practiceQueue') {
+      const params = practiceQueueParams(event.rawPath);
+      if (params === null) {
+        return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
+      }
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(
+          await dependencies.kernel.getPracticeQueueAdaptive(params.x, params.focus, principal),
+        ),
         origin,
         requestIdValue,
       );
@@ -817,10 +858,15 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
 export function createRepositoryLearnerApi(
   dependencies: RepositoryLearnerApiDependencies,
 ): LearnerApi {
-  const { repository, clock, bank, ...apiDependencies } = dependencies;
+  const { repository, clock, bank, practiceBank, ...apiDependencies } = dependencies;
   return createLearnerApi({
     ...apiDependencies,
-    kernel: new RepositoryLearnerKernel({ repository, clock, bank }),
+    kernel: new RepositoryLearnerKernel({
+      repository,
+      clock,
+      bank,
+      ...(practiceBank !== undefined ? { practiceBank } : {}),
+    }),
   });
 }
 

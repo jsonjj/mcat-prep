@@ -801,6 +801,16 @@ body {
 .mc-choice__text {
   flex: 1;
 }
+/* A choice already tried on the first attempt (disabled on the second go). */
+.mc-choice--tried {
+  opacity: 0.55;
+}
+.mc-choice__note {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-style: italic;
+  opacity: 0.75;
+}
 .mc-choice--correct {
   border-color: var(--mc-primary);
   box-shadow: inset 0 0 0 1px var(--mc-primary);
@@ -2409,4 +2419,57 @@ body {
   background: color-mix(in srgb, var(--mc-primary) 16%, transparent);
   color: var(--mc-primary-text);
   font-weight: 700;
+}
+
+/* ---- Practice (adaptive test-out) ---- */
+.mc-practice {
+  gap: var(--mc-space-4);
+}
+.mc-practice__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mc-space-2);
+  margin-top: var(--mc-space-2);
+}
+.mc-practice__chip {
+  min-height: var(--mc-touch);
+  min-width: var(--mc-touch);
+  padding: var(--mc-space-2) var(--mc-space-4);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-surface);
+  color: var(--mc-ink);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+.mc-practice__chip:hover {
+  background: var(--mc-surface-2);
+}
+.mc-practice__chip--on {
+  border-color: var(--mc-primary);
+  background: color-mix(in srgb, var(--mc-primary) 12%, transparent);
+  color: var(--mc-primary-text);
+  font-weight: 700;
+}
+.mc-practice__progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-practice__bar {
+  height: 8px;
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-surface-2);
+  overflow: hidden;
+}
+.mc-practice__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--mc-glow-aqua), var(--mc-primary));
+  transition: width var(--mc-motion-route) var(--mc-ease);
+}
+.mc-reveal__key--ok {
+  color: var(--mc-state-strong);
 }

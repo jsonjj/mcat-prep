@@ -191,6 +191,9 @@ importers:
       '@mcat/content':
         specifier: workspace:*
         version: link:../../packages/content
+      '@mcat/persistence-postgres':
+        specifier: workspace:*
+        version: link:../../services/persistence-postgres
       '@types/emscripten':
         specifier: 1.41.5
         version: 1.41.5
@@ -572,6 +575,12 @@ importers:
 
   services/persistence-postgres:
     dependencies:
+      '@mcat/authority-core':
+        specifier: workspace:*
+        version: link:../../packages/authority-core
+      '@mcat/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@mcat/database':
         specifier: workspace:*
         version: link:../../database

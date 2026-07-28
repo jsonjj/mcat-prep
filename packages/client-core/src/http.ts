@@ -11,7 +11,9 @@ import {
   HttpApiErrorSchema,
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
+  PracticeAttemptResultSchema,
   PracticeItemViewSchema,
+  PracticeQueueViewSchema,
   SkillMasteryViewSchema,
   PracticeResultSchema,
   SkillSummarySchema,
@@ -29,6 +31,7 @@ import {
   type BootstrapResponse,
   type HttpApiError,
   type HttpErrorCode,
+  type PracticeAttemptCommand,
   type VectorLessonAction,
 } from '@mcat/contracts';
 import type { AuthorityPort, GoalInput, SessionPort } from './port';
@@ -372,6 +375,27 @@ export class HttpAuthorityClient implements AuthorityPort {
         choiceId,
       }),
     });
+    await this.bootstrap();
+    return response;
+  }
+
+  async getPracticeQueue(x: number, focus?: string) {
+    await this.ensureBootstrap();
+    const count = encodeURIComponent(String(Math.max(1, Math.floor(x))));
+    const path =
+      focus === undefined
+        ? `/v1/practice/queue/${count}`
+        : `/v1/practice/queue/${count}/${encodeURIComponent(focus)}`;
+    return this.request(path, PracticeQueueViewSchema);
+  }
+
+  async submitPracticeAttempt(command: PracticeAttemptCommand) {
+    const response = await this.request('/v1/practice/attempts/adaptive', PracticeAttemptResultSchema, {
+      method: 'POST',
+      body: JSON.stringify({ envelope: await this.commandEnvelope(), ...command }),
+    });
+    // The adaptive attempt advances the stream but returns feedback (not an
+    // AcceptedCommandResponse), so resync the stream version like PotD does.
     await this.bootstrap();
     return response;
   }

@@ -93,6 +93,118 @@ export async function listLearnerSafeQuestions(
   return rows as LearnerSafeQuestion[];
 }
 
+/** Status values that mark an item held out from delivery (never served). */
+const HELD_OUT_STATUSES = ['held_out', 'holdout', 'retired', 'archived', 'draft', 'rejected'];
+
+/** DOK → cold-start difficulty `b`, mirroring @mcat/policies `coldStartB` in SQL. */
+const DOK_COLD_START_SQL = `case q.dok_level
+    when 1 then -1.0 when 2 then -0.3 when 3 then 0.4 when 4 then 1.0
+    when 5 then 1.4 when 6 then 1.4 else 0 end`;
+
+export interface PracticeItemFilter {
+  /** Science KC id (matched against `kc_id`). */
+  kcId?: string | null;
+  /** Science 7-op reasoning axis (matched against `reasoning_operation`). */
+  reasoningOp?: string | null;
+  /** CARS sub-skill (matched against `primary_skill` = CARS_FOC / CARS_RWT / CARS_RBT). */
+  primarySkill?: string | null;
+  section?: string | null;
+  /** Target difficulty band [lo, hi] in IRT `b`; items are ranked by |b − centre|. */
+  bBand: readonly [number, number];
+  excludeIds?: readonly string[];
+  limit: number;
+  /**
+   * Whether the `questions.reasoning_operation` column exists. When false (e.g. a
+   * content-only DB where migration 0008 hasn't been applied) the column is neither
+   * selected nor filtered, and the caller derives the operation from `primary_skill`.
+   * Defaults to true (the deployed/full schema).
+   */
+  hasReasoningOp?: boolean;
+  /**
+   * Whether the `question_stats` table exists. When false, difficulty is the DOK
+   * cold-start only (no calibration join). Defaults to true.
+   */
+  hasQuestionStats?: boolean;
+}
+
+export interface PracticePoolItem extends LearnerSafeQuestion {
+  attempts: number;
+  correct: number;
+  /** Calibrated IRT `b` once the item clears the attempts floor, else DOK cold-start. */
+  b: number;
+}
+
+/**
+ * Learner-safe candidate items for one practice spec. Difficulty `b` is joined
+ * from `question_stats` (calibrated once an item clears 20 attempts) and falls
+ * back to the DOK cold-start otherwise; held-out items (by `status`) are never
+ * returned. Ranked by proximity to the band centre, then least battle-tested,
+ * then id for determinism. Answer columns are never selected (learner-safe).
+ */
+export async function findPracticeItems(
+  pool: Pool,
+  filter: PracticeItemFilter,
+): Promise<PracticePoolItem[]> {
+  const hasOp = filter.hasReasoningOp !== false;
+  const hasStats = filter.hasQuestionStats !== false;
+  const target = (filter.bBand[0] + filter.bBand[1]) / 2;
+  const columns = (hasOp
+    ? LEARNER_SAFE_COLUMNS
+    : LEARNER_SAFE_COLUMNS.filter((c) => c !== 'reasoning_operation')
+  )
+    .map((c) => `q.${c}`)
+    .join(', ');
+  const conditions: string[] = [
+    `(q.status is null or q.status not in (${HELD_OUT_STATUSES.map((_, i) => `$${i + 1}`).join(', ')}))`,
+  ];
+  const values: unknown[] = [...HELD_OUT_STATUSES];
+  const add = (clause: (placeholder: string) => string, value: unknown): void => {
+    values.push(value);
+    conditions.push(clause(`$${values.length}`));
+  };
+  const present = (value: string | null | undefined): value is string =>
+    value !== null && value !== undefined;
+  if (present(filter.kcId)) add((p) => `q.kc_id = ${p}`, filter.kcId);
+  // Only filter on the reasoning-operation column when it exists; otherwise the
+  // caller derives (and, if needed, post-filters) the operation from primary_skill.
+  if (hasOp && present(filter.reasoningOp)) {
+    add((p) => `q.reasoning_operation = ${p}`, filter.reasoningOp);
+  }
+  if (present(filter.primarySkill)) add((p) => `q.primary_skill = ${p}`, filter.primarySkill);
+  if (present(filter.section)) add((p) => `q.section = ${p}`, filter.section);
+  add((p) => `not (q.question_id = any(${p}::text[]))`, [...(filter.excludeIds ?? [])]);
+
+  const targetIndex = values.push(target);
+  const limitIndex = values.push(Math.min(Math.max(filter.limit, 1), 50));
+
+  const statsSelect = hasStats
+    ? `coalesce(qs.attempts, 0)::int as attempts, coalesce(qs.correct, 0)::int as correct,`
+    : `0::int as attempts, 0::int as correct,`;
+  const bExpr = hasStats
+    ? `case
+         when coalesce(qs.attempts, 0) > 20 and qs.correct > 0 and qs.correct < qs.attempts
+           then ln((qs.attempts - qs.correct)::float8 / qs.correct::float8)
+         else ${DOK_COLD_START_SQL}
+       end`
+    : DOK_COLD_START_SQL;
+  const join = hasStats ? `left join question_stats qs on qs.question_id = q.question_id` : '';
+
+  const { rows } = await pool.query(
+    `select * from (
+       select ${columns},
+         ${statsSelect}
+         ${bExpr} as b
+       from questions q
+       ${join}
+       where ${conditions.join(' and ')}
+     ) t
+     order by abs(t.b - $${targetIndex}) asc, t.attempts asc, t.question_id asc
+     limit $${limitIndex}`,
+    values,
+  );
+  return rows as PracticePoolItem[];
+}
+
 export async function countQuestions(pool: Pool): Promise<number> {
   const { rows } = await pool.query('select count(*)::int as n from questions');
   return Number((rows[0] as { n: number } | undefined)?.n ?? 0);
