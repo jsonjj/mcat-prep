@@ -16,7 +16,7 @@ is defective.
 - `packages/policies/src/lesson-rollup.ts` — the derived lesson-grain rollup.
 
 This document describes what those modules do; where it describes something they do not do, that is a
-defect in either the document or the module, and §15.3 says how to report it. Do not assume the code
+defect in either the document or the module, and §15.6 says how to report it. Do not assume the code
 is the correct one of the two.
 **Audience:** Anyone integrating a V3 lesson with the evidence system or the BKT mastery engine —
 lesson authors, runtime engineers, evidence/policy engineers, and any future coding agent handed
@@ -113,6 +113,28 @@ Note the two disjoint terminal consumers: an `EvidenceRecord` never carries a ca
 and a `QualifiedBktObservation` never carries an evidence rank or status. That disjointness is the
 whole point of the seam and is restated as an invariant in §11.
 
+### 2.2 The warrant must be enumerated over every grain a lesson writes
+
+Disjointness is necessary but not sufficient: an authority can be perfectly separated and still be
+**wired to nothing**. That is what happened here, and it is the failure mode to watch for whenever a new
+grain type appears.
+
+The evidence warrant enumerated only the synthetic skill-graph ids, while lesson evidence is keyed on
+`V3-KC-*` skill ids. So **no lesson KC had any warrant at all**: recipe slots, gaps, freshness, and
+reason codes were computed for a set of ids the seam never writes. Every test passed, because an absent
+warrant is indistinguishable from "no evidence yet" — the failure had no symptom.
+
+The grains a warrant is produced for are now the **union** of three sources: the skill graph, every
+`skillId` that has an evidence record, and the required KCs of every practiced lesson. The third source
+is what makes an **unstarted** KC still report its gaps, which is the whole point of a warrant — a
+planner needs to know what is missing before any evidence exists, not after.
+
+A grain whose cluster resolves nowhere **throws** `UnresolvedWarrantGrainError`, naming the ids, rather
+than being filtered or defaulted. Silent omission is precisely what hid this, so the loud failure is the
+fix: a thrown error cannot be mistaken for an empty result. That the enumeration still throws is itself
+asserted (§16.1), because "filter the bad grain out" is the tempting repair that would restore the
+silence.
+
 ---
 
 ## 3. `LessonItemBinding` — author-time metadata
@@ -136,7 +158,8 @@ forgot its scoring authority would look exactly like exposition that legitimatel
 `measurementKind` is **explicitly supplied by the adapter**, never inferred by the schema from a
 missing or null field. `measurementKindFor` derives it from `activity_role` alone: `WORKED_EXAMPLE`
 is `NON_MEASURABLE`, everything else is `MEASURABLE`. An authored `first_attempt_policy` string is
-reviewed prose and MUST NOT be a load-bearing discriminator.
+reviewed prose and MUST NOT be a load-bearing discriminator — see §3.10, which is where that rule
+turned out to be violated.
 
 A worked example is exposition, not a failed attempt. `adaptLessonResponse` returns
 `status: 'not_measurable'` with `observation: null` and `evidence: null`. The frozen
@@ -343,8 +366,11 @@ Three rules govern the field:
 > - **An unrecognized mode is ineligible.** There is no negation anywhere in the implementation, so
 >   membership is the only question ever asked.
 >
-> The eligible seven and the mastery-recipe-eligible kinds are now tied together by an assertion, so
-> the two lists cannot drift apart again — see §16.
+> **The allowlist is necessary but was not sufficient.** Narrowing the declared set fixed every
+> single-mode case and nothing else: qualification still tested the declared set while the evidence kind
+> was resolved separately, so the two could disagree on multi-mode declarations and on gated modes. The
+> durable fix was to stop testing the declared set at all and gate on the resolved kind (§5.1). §15.1 is
+> the full account, and it is worth reading before you touch either list.
 
 Legacy normalization is fixed and every alias is fail-closed:
 
@@ -429,6 +455,49 @@ entire bank. Measured against the real artifacts, that regex rejects **33 of 33*
 (`prompt-qms-units-repairNear` — camelCase segments). Lesson-authored IDs therefore stay isolated in
 their own opaque brand rather than global IDs being loosened to accommodate them.
 
+### 3.10 Authored contradictions are rejected, never resolved by precedence
+
+`AUTHORED_BINDING_REJECTION_CODES` (`packages/domain/src/lesson-response-adapter.ts`) is a **separate**
+frozen list from `BKT_QUALIFICATION_REJECTION_CODES`. The latter judges one runtime response; these
+judge **the authored artifact itself**, before any response exists.
+
+Each member names a pair of authored facts that cannot both hold. Each exists because the alternative —
+letting key precedence pick a winner — **deletes the loser in silence**, leaving a normalized record
+that is no longer a faithful projection of the artifact.
+
+| Code                                                | The contradiction                                                                                                                                                                                                                            |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED`       | More than one of `learner_safe_item_ref`, `learner_safe_projection_ref`, `learner_safe_projection`, `learner_safe_prompt_ref` is authored. D6 says the learner-safe item is an opaque ref **or** an inline projection, authored once (§3.6). |
+| `CONTRADICTORY_FIRST_ATTEMPT_IMMUTABILITY_AUTHORED` | `first_attempt_immutable: false` alongside `first_attempt_policy: 'IMMUTABLE'`.                                                                                                                                                              |
+
+Two properties of the machinery matter:
+
+- **A contradiction rejects even when the collapsed record validates cleanly.** That is the point:
+  a successful parse means the losing fact disappeared, not that the artifact was sound. Deciding on
+  schema success alone is how this class of defect stays silent.
+- **`rejectionCodes` is non-optional on both branches** of `AuthoredLessonBindingParse`, alongside
+  `unrecognizedKeys`, so a caller cannot fail to see it. Callers branch on the frozen code rather than
+  matching issue text.
+
+**The first-attempt case is a `.strict()` bypass worth understanding.** §3.1 says the prose MUST NOT be
+load-bearing, and it was: `first_attempt_immutable: false || first_attempt_policy: 'IMMUTABLE'` resolved
+to `true`, so the prose silently overrode an explicit boolean **toward the permissive answer**. The
+authored `false` vanished and the binding became BKT-qualifiable.
+
+The rule now:
+
+1. **The boolean decides whenever it is authored.** `true` sets the field; `false` or a non-boolean
+   leaves it unset, and the contract's `z.literal(true)` then refuses the measurable binding. Fails
+   closed.
+2. **The prose is a fallback consulted only when no boolean is authored** — never an override. `null`
+   counts as absent, which is why the 30 of 33 real `V3-LES-844372` bindings that carry only the prose
+   still parse. Deleting the alias outright would have silently demoted every one of them to a mutable
+   first attempt, which is why it was demoted rather than removed.
+3. **The pair that disagrees rejects** with `CONTRADICTORY_FIRST_ATTEMPT_IMMUTABILITY_AUTHORED`.
+
+The contradiction check is **order-independent by construction**: it counts the authored sources rather
+than resolving them, so which key appears first in the artifact cannot change the verdict.
+
 ---
 
 ## 4. `LessonRuntimeResponseFacts` — runtime facts
@@ -492,18 +561,22 @@ administered the attempt that way.
 
 ---
 
-## 5. Two gates: declared eligibility, then runtime qualification
+## 5. Two gates: the resolved evidence kind, then runtime qualification
 
 A response moves BKT only when **both** gates pass. They are separate and neither can substitute for
-the other.
+the other. Gate 1 asks whether the evidence this attempt produced could ever fill a mastery recipe
+slot; Gate 2 asks whether the attempt was an uncontaminated first look.
 
 ```text
 LessonItemBinding + LessonRuntimeResponseFacts
         │
         ├─ measurementKind === 'NON_MEASURABLE'  → nothing at all (§3.1)
         │
-        ├─ Gate 1 — DECLARED ELIGIBILITY (immutable, author-time)
-        │     hasEligibleEvidenceMode(binding)      // ANY mode IN the 7-member allowlist
+        ├─ resolve the evidence kind ONCE
+        │     evidenceKind = deriveEvidenceKind(modes, response, administrationConditions)
+        │
+        ├─ Gate 1 — THE RESOLVED KIND COULD FILL A RECIPE SLOT
+        │     !CONTEXTUAL_ONLY_KINDS.has(evidenceKind)
         │     binding.firstAttemptImmutable === true
         │     binding.reasoningOperation present
         │
@@ -516,37 +589,46 @@ LessonItemBinding + LessonRuntimeResponseFacts
                       └─ QualifiedBktObservation → BKT engine                 ← only if BOTH pass
 ```
 
-### 5.1 Gate 1 — declared eligibility (immutable)
+### 5.1 Gate 1 — the resolved evidence kind (not the declared modes)
 
-Evaluated against the binding alone. Use the exported predicate `hasEligibleEvidenceMode(binding)`;
-do not re-implement the membership test.
+> **There is exactly ONE notion of BKT eligibility, and it is the resolved evidence kind.** The
+> evidence kind is derived once, before qualification; BKT gates on
+> `CONTEXTUAL_ONLY_KINDS.has(resolvedKind)`; and the `EvidenceRecord` reads that same value. Do not
+> reintroduce a declared-set test here, and do not intersect the two. **A declaration states what an
+> item is ELIGIBLE TO SERVE AS. It is never a finding about an attempt.**
 
-**Eligibility is membership in the seven-member `BKT_ELIGIBLE_EVIDENCE_MODES` allowlist (D4)** —
-`INDEPENDENT`, `TRANSFER`, `DELAYED`, `MIXED`, `PASSAGE`, `TIMED`, `PROTECTED` — and is neither
-`INDEPENDENT` membership alone nor "not `INSTRUCTIONAL`". A binding declaring any one of the seven is
-eligible and therefore MUST carry a `reasoningOperation`. A binding declaring only `INSTRUCTIONAL`,
-`INSTRUCTIONAL_EXIT`, `DIAGNOSTIC`, `ENTRY`, `REPAIR_CONFIRMATION`, or `REHEARSAL_ONLY` is not
-eligible, whether or not it carries a `reasoningOperation`, and neither is a binding declaring a mode
-the allowlist does not name. §3.5 states why this MUST NOT be re-expressed as a negation.
+`hasEligibleEvidenceMode(binding)` no longer gates BKT. It survives for exactly two narrower jobs:
+the authoring-completeness rule (a binding that declares an allowlisted mode MUST supply a
+`reasoningOperation`, because a declaration is a claim the artifact has to be able to back), and
+choosing which frozen code _names_ a refusal the kind gate has already decided. It is not a second
+eligibility test, and §15.1 records what happened when it was one.
 
-| Requirement                                                                 | Rejection code on failure                      |
-| --------------------------------------------------------------------------- | ---------------------------------------------- |
-| A binding resolves for the response                                         | `BINDING_NOT_FOUND`                            |
-| `response.bindingVersion` equals the resolved binding version               | `BINDING_VERSION_MISMATCH`                     |
-| `binding.firstAttemptImmutable === true`                                    | `FIRST_ATTEMPT_NOT_IMMUTABLE`                  |
-| `hasEligibleEvidenceMode(binding)` — some declared mode is on the allowlist | `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED`       |
-| `binding.reasoningOperation` present when the binding is eligible           | `ELIGIBLE_BINDING_MISSING_REASONING_OPERATION` |
+| Requirement                                                    | Rejection code on failure                                                            |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| A binding resolves for the response                            | `BINDING_NOT_FOUND`                                                                  |
+| `response.bindingVersion` equals the resolved binding version  | `BINDING_VERSION_MISMATCH`                                                           |
+| `binding.firstAttemptImmutable === true`                       | `FIRST_ATTEMPT_NOT_IMMUTABLE`                                                        |
+| `!CONTEXTUAL_ONLY_KINDS.has(resolvedKind)`                     | `RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY` or `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` |
+| `binding.reasoningOperation` present once the kind gate passes | `ELIGIBLE_BINDING_MISSING_REASONING_OPERATION`                                       |
 
-The rejection code is still spelled `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` even though the rule
-covers six more modes than `INDEPENDENT`. The code list is frozen; the name is historical. Read it as
-"no eligible evidence mode was declared".
+**Which of the two contextual-only codes fires is purely diagnostic.** Both refuse; nothing about the
+choice can change the verdict. It exists because the two causes send an operator to different places:
+
+- `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` — no allowlisted mode was declared at all. An **authoring**
+  fact. The name is historical and frozen; read it as "no eligible evidence mode was declared".
+- `RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY` — the permission was real, but this attempt did not exercise
+  it. A **runtime** fact. Typically an administration-gated mode (`MIXED`, `PASSAGE`, `TIMED`,
+  `PROTECTED`) whose condition the runner honestly reported as false, or an ineligible mode winning
+  least-credit alongside an eligible one. Calling this case
+  `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` would be a lie in the audit trail.
 
 `ELIGIBLE_BINDING_MISSING_REASONING_OPERATION` is enforced twice, deliberately: as a schema
 `superRefine` on `LessonItemBindingSchema` (so an eligible-but-unlabeled binding cannot even be
 constructed) and again at adaptation time.
 
-Gate 1 is deliberately conservative: an absent declaration defaults to `['INSTRUCTIONAL']` and is a
-rejection, never a default-allow.
+Gate 1 is deliberately conservative: an absent declaration defaults to `['INSTRUCTIONAL']`, resolves to
+`instruction`, and is a rejection — never a default-allow. Because the gate reads the resolved kind, a
+declaration the administration did not support fails closed the same way.
 
 ### 5.2 Gate 2 — runtime qualification (per response)
 
@@ -709,10 +791,15 @@ Classification runs in four steps, in this order:
 | `PROTECTED`                      | `protected`                                     | `protectedScoring` (scoring)    | yes                          | yes              |
 
 The rows are listed in the conservative order the adapter walks. "Fills a mastery recipe slot"
-reflects `CONTEXTUAL_ONLY_KINDS` in `packages/domain/src/evidence.ts`. Note that the last two columns
-now agree on every row: a mode is Gate 1 eligible if and only if its kind can fill a recipe slot.
-That alignment is asserted, not merely intended (§16), and it is what closed the tension the previous
-version of this document recorded in §15.
+reflects `CONTEXTUAL_ONLY_KINDS` in `packages/domain/src/evidence.ts`.
+
+**Read the last two columns as one column.** They agree on every row because they are now the same
+test: Gate 1 gates on the resolved kind, so "can fill a recipe slot" and "moves `pL`" cannot come
+apart. The "Gate 1 eligible?" column is retained only because the phrase appears throughout this
+document; it is not an independent property, and the table above states it per **mode** only for the
+single-mode, condition-met case. For a multi-mode declaration or an unmet condition, resolve the kind
+first and read eligibility off that — never off the declaration. The biconditional is asserted
+exhaustively (§16.1).
 
 **Four modes are administration-gated.** `MIXED`, `PASSAGE`, `TIMED`, and `PROTECTED` classify the
 record only when the corresponding condition is actually true; otherwise the mode is skipped and a
@@ -787,17 +874,49 @@ Four places implement that rule, and one place deliberately does not.
 `packages/authority-core/src/authority.ts` computes:
 
 ```text
-appliedAt = max( min(floor, serverNow), min(reportedAt, serverNow) )
+ceiling     = min(reportedAt, serverNow)
+serverFloor = serverNow - BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS
+floor       = grainFloor === null ? serverFloor
+                                  : max(min(grainFloor, serverNow), serverFloor)
+appliedAt   = max(floor, ceiling)
 ```
 
-- The Authority's own clock is the **ceiling**, so an observation can never be ahead of the server.
-- `floor` is the newest `lastPracticedAt` among **the grains this observation actually writes**, so no
-  grain's clock can rewind. Prerequisite grains are reinforced on a correct answer only, so on a miss
-  they are excluded from the floor — counting an untouched grain would drag the clock forward for no
-  reason.
-- The floor is itself capped at `serverNow`: a stored future timestamp is invalid on its face, so it
-  must not become a permanent floor. This is also what makes state poisoned before the clamp existed
-  heal on its next write.
+The clamp is **three-sided**:
+
+- **Ceiling.** The Authority's own clock, so an observation can never be ahead of the server.
+- **Grain floor.** The newest `lastPracticedAt` among **the grains this observation actually writes**,
+  so no grain's clock can rewind. Prerequisite grains are reinforced on a correct answer only, so on a
+  miss they are excluded from the floor — counting an untouched grain would drag the clock forward for
+  no reason. The grain floor is itself capped at `serverNow`: a stored future timestamp is invalid on
+  its face, so it must not become a permanent floor. That cap is also what makes state poisoned before
+  the clamp existed heal on its next write.
+- **Server floor.** `serverNow - BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS`.
+
+The server floor exists because the grain floor is `null` on a grain's **first** write, and without a
+third bound the clamp degenerated exactly there: an arbitrarily backdated claim became the decay
+baseline, measured at `currentPL = 5.4e-104`, and `pL` came out **arrival-order dependent** — 0.1497
+against 0.8624 for identical evidence, a 5.8x spread from transport order alone. A monotonic floor
+cannot help on a first write, because there is no history to be monotonic against.
+
+The past tolerance **equals** the future tolerance (both `300_000`). Symmetry is asserted: an asymmetric
+window would treat the same unverifiable claim one way early and another way late, reopening the
+order-dependence on the wider side.
+
+A too-old claim is **clamped, not refused** — the opposite of the future direction, and deliberately so.
+A delayed submission is ordinary, and refusing it would discard real evidence; whereas a future-dated
+claim has no honest explanation past the skew window. The clamp errs generously (a long-delayed
+submission gets a recent decay baseline), which is the right way to be wrong here: elapsed time is
+unverifiable, the server prefers its own clock, and the **warrant** timestamp is bounded separately
+against `acceptedAt` and keeps the honest time, so freshness, delay, and retention are unaffected. Only
+the memory baseline moves, and `pL` still requires real correct answers to rise — the clamp cannot
+manufacture evidence.
+
+**Order-dependence is bounded, not eliminated, and that distinction is the invariant.** While a reported
+time is honoured at all, some order-dependence remains, bounded by the decay across the skew window
+(~0.03% at the initial seven-day half-life). Measured residual after the fix: **9.163e-5**, asserted
+under `1e-3`. Asserting equality would promise something the design deliberately does not; asserting a
+bound is the real contract. The window's width is therefore load-bearing — a day-wide window would leave
+a spread a learner could see — and it is asserted to be at most an hour.
 
 A claim more than `BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS` (`300_000`, five minutes — the Kerberos
 and JWT `nbf`/`exp` allowance) ahead of the server clock is **refused** with
@@ -807,10 +926,13 @@ small to buy any decay advantage: at the initial seven-day half-life it is a ~0.
 
 **2. Audit — the raw claim survives the correction.** Each application appends a
 `bkt_observation_applied` ledger event carrying `reportedOccurredAt` (the verbatim claim),
-`appliedOccurredAt` (the clock actually written, `null` if nothing was applied), `clockAdjustment`
-(`none` / `bounded_to_server_clock` / `held_at_last_practiced`), `outOfOrder`, and
-`observationSequence`. The clamp therefore never destroys the only evidence that a client
-misreported.
+`appliedOccurredAt` (the clock actually written, `null` if nothing was applied), `clockAdjustment`,
+`outOfOrder`, and `observationSequence`. The clamp therefore never destroys the only evidence that a
+client misreported.
+
+`clockAdjustment` says **which bound decided**: `none` if the claim was used verbatim,
+`held_at_last_practiced` if a grain's own history won, and `bounded_to_server_clock` if the server clock
+decided either end — the future ceiling or the past window.
 
 **3. Ordering — `sequence` is detection, not enforcement.** The Authority keeps a high-water mark of
 the highest applied `sequence`. An out-of-order arrival sets `outOfOrder: true` and **is still
@@ -910,6 +1032,31 @@ Three consequences worth stating explicitly, because they are the ones implement
 The legacy `MasteryUnitStates.lesson` chain in `packages/policies/src/mastery-attempt.ts` and the
 legacy direct-BKT reading of `LessonMasteryView.pL` are **excluded from this seam** and MUST NOT be
 the source of a V3 lesson-grain value.
+
+### 9.1 `reviewDue` and `refreshNeeded` are different questions from different authorities
+
+These two used to publish under **one field name**, `refreshNeeded`, across four view types. That is the
+seam's founding error in miniature: one name for two authorities' answers, so a planner reading both
+would have collapsed them without noticing.
+
+| Field           | Question                                | Authority        | Published on                                                         |
+| --------------- | --------------------------------------- | ---------------- | -------------------------------------------------------------------- |
+| `reviewDue`     | _Is the memory due?_ — BKT decay        | BKT capability   | `SkillMasteryView`, `LessonMasteryView`, the lesson rollup, KC views |
+| `refreshNeeded` | _Is the warrant stale or contradicted?_ | Evidence warrant | `MasteryMapEntry`, `SessionSummary`                                  |
+
+`reviewDue` is true when a grain was at or above `REVIEW_LINE` when last practiced and has decayed below
+it since — so a never-practiced grain is **not** due, only a previously-built one. `refreshNeeded` is a
+property of the evidence on file: it is true when the warrant has aged out of its freshness window or a
+fresh failure contradicts it, and it can be true while `pL` is high, or false while `pL` is low.
+
+**There is deliberately no alias.** A consumer must name the question it is asking. **The planner MUST
+consume them separately**: they are inputs to different decisions — `reviewDue` schedules a review of a
+memory, `refreshNeeded` schedules the acquisition of missing or stale _warrant_ — and a single "needs
+attention" boolean built from either one silently answers the other question wrongly.
+
+One learner-facing item remains open and is owner-facing, not a code defect: `Skills.tsx` renders "Needs
+refresh" from `reviewDue`, while `Study.tsx` and `SkillDetail.tsx` render the same words from
+`refreshNeeded`. The fields are correctly distinct; the **copy** has not been re-adjudicated (§15.5).
 
 ---
 
@@ -1046,7 +1193,8 @@ than worked around:
 **Conformance checklist for a new lesson integration.** All of the following MUST hold:
 
 1. Every binding parses through `parseAuthoredLessonBinding` against `LessonItemBindingSchema`.
-2. `unrecognizedAuthoredBindingKeys` returns empty for every binding.
+2. `unrecognizedAuthoredBindingKeys` returns empty for every binding, and `rejectionCodes` is empty —
+   no binding authors a contradiction from `AUTHORED_BINDING_REJECTION_CODES` (§3.10).
 3. Every `MEASURABLE` binding has `firstAttemptImmutable: true`, a `questionId`, an `activityId`, and
    a `serverScoringAuthorityRef`; every `NON_MEASURABLE` binding has none of them.
 4. Every binding declaring a mode from the seven-member BKT allowlist (§3.5) carries a
@@ -1100,19 +1248,52 @@ than worked around:
 
 ## 15. Open questions, resolved tensions, and how to report a defect
 
-### 15.1 Resolved — the eligible-but-contextual-only tension
+### 15.1 Resolved — `pL` moving on evidence no recipe would accept
 
-Earlier versions of this document recorded an open tension: D4 read as "every non-`INSTRUCTIONAL` mode
-is eligible" made twelve of thirteen modes eligible, five of which — `DIAGNOSTIC`, `ENTRY`,
-`INSTRUCTIONAL_EXIT`, `REPAIR_CONFIRMATION`, `REHEARSAL_ONLY` — route to kinds in
-`CONTEXTUAL_ONLY_KINDS`. A binding declaring one of them with a `reasoningOperation` would have moved
-`pL` on evidence that can never fill a recipe slot.
+**Read this even though it is closed.** It is the longest-lived defect in this seam, it re-opened once
+after being declared closed, and the shape of the fix is the rule that keeps it shut.
 
-**This is closed.** Eligibility is now the seven-member `BKT_ELIGIBLE_EVIDENCE_MODES` allowlist (§3.5),
-so all five of those modes are ineligible, and the alignment between "eligible" and "not contextual
-only" is asserted for every member of the enum (§16). The prohibition the old §15 imposed on authors is
-no longer needed: declaring `INSTRUCTIONAL_EXIT` with a `reasoningOperation` is now merely ineligible
-rather than dangerous.
+**The tension, as first recorded.** D4 read as "every non-`INSTRUCTIONAL` mode is eligible" made twelve
+of thirteen modes eligible, five of which — `DIAGNOSTIC`, `ENTRY`, `INSTRUCTIONAL_EXIT`,
+`REPAIR_CONFIRMATION`, `REHEARSAL_ONLY` — route to kinds in `CONTEXTUAL_ONLY_KINDS`. A binding
+declaring one of them with a `reasoningOperation` would move `pL` on evidence that can never fill a
+recipe slot.
+
+**Why the allowlist alone did not close it.** Narrowing the declared set to seven modes (§3.5) fixed
+every single-mode case, and an earlier revision of this document declared the tension closed on that
+basis. It was not. BKT qualification still consulted the **declared** mode set, while the evidence kind
+was resolved **separately** with administration gating — and the qualification call site never consulted
+the resolved kind. Two derivations of one fact, free to disagree:
+
+- **42 of 78** unordered two-mode declarations qualified for BKT while resolving to a contextual-only
+  kind, **with every administration condition true** — so the gate was not the cause. An ineligible mode
+  won least-credit, and the declared-set test never noticed.
+- **All four** administration-gated modes (`MIXED`, `PASSAGE`, `TIMED`, `PROTECTED`) qualified when the
+  runner **honestly reported the condition false**. Declaring `TIMED` was enough; being timed was not
+  required.
+
+It ramped a grain to `pL = 0.99999`, `mastered: true`, with the lesson rollup mastered, on **0 of 40
+mastery-eligible records and all 7 recipe slots open**. That is verbatim the state this section had
+declared impossible.
+
+**How it is closed now — one derivation, not two agreeing ones.** The kind is resolved once before
+qualification; BKT gates on `CONTEXTUAL_ONLY_KINDS.has(resolvedKind)`; the evidence record reads the
+same value; and `hasEligibleEvidenceMode` no longer gates (§5.1). The frozen code
+`RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY` names the runtime cause. Re-measured against the real kernel:
+42 → **0**, 4 → **0**, and the accounting closes exactly — of the 78 unordered two-mode declarations, 21
+qualify, 42 are refused as contextual-only, and 15 as mode-not-declared.
+
+**What holds it shut.** `tests/architecture/lesson-mastery-integration.test.ts`, describe block _"BKT
+qualification and the evidence kind cannot disagree"_, asserts the biconditional
+`qualified ⟺ !CONTEXTUAL_ONLY_KINDS.has(evidence.kind)` across **2,704** cases — every one- and
+two-mode declaration (169) under every administration setting (16) — plus that both outcomes actually
+occur, that every case produced an evidence record so nothing is compared against nothing, that the
+resolution is order-independent, and that `deriveEvidenceKind` appears **exactly once** in the adapter,
+so there is no second copy to keep in sync.
+
+**The transferable lesson.** The first fix made the two derivations agree on the cases anyone had
+enumerated. The durable fix deleted one of them. If you find yourself reconciling two computations of
+the same fact, the reconciliation is the defect.
 
 ### 15.2 Open — should §3.3's blanket prohibition be narrowed? (for the owner)
 
@@ -1136,7 +1317,39 @@ exception. There is a real argument that the prohibition is one notch broader th
 The owner decides. If narrowing is approved it needs a governed decision, an assertion that authored
 `A0` really does imply no scaffold is reachable, and an explicit statement of which items qualify.
 
-### 15.3 How to report a doc-vs-code divergence
+### 15.3 Open — the ordinal tier is still recoverable from the published reason codes (for the owner)
+
+Removing `base` from the published views (§4.1 of `docs/mastery-pipeline.md`) removed the **rank** from
+the wire. It did not remove the **information**.
+
+The three `*_SATISFIED` reason codes map one-to-one onto the top tiers, so a consumer can reconstruct the
+ordinal **losslessly** from `reasons` and then threshold it — which is exactly the behaviour the removal
+was meant to prevent. The candidate fix is to coarsen the codes so the reconstruction is lossy: publish
+that a warrant is satisfied without publishing which tier satisfied it.
+
+This is not obviously right, which is why it is a question. Coarsening costs the learner-facing surfaces
+some of their specificity ("your independent evidence is satisfied" is more useful than "your warrant is
+satisfied"), and it costs the planner nothing only because the planner reads the private
+`Authority.skillWarrants` and keeps the tier legitimately. The owner decides whether the published
+specificity is worth the recoverable ordinal.
+
+### 15.4 Owed — a governed rename: `LessonMasteryView.pL` → `meanMemberPL`
+
+`LessonMasteryView.pL` is an **arithmetic mean of member KC `pL` values**, not a probability of anything
+(§9). The name invites the one operation §9 forbids: comparing it against `MASTERY_THRESHOLD` to decide
+`mastered`. `meanMemberPL` says what it is.
+
+This is a Gate A exported-symbol change, so it needs a governed revision rather than a rename in passing.
+Until it lands, §9's prohibition is the only thing standing between the field's name and the defect.
+
+### 15.5 Open — learner-facing copy says "Needs refresh" for both authorities
+
+`Skills.tsx` renders "Needs refresh" from `reviewDue` (BKT decay) while `Study.tsx` and `SkillDetail.tsx`
+render the same words from `refreshNeeded` (warrant staleness). The **fields** are correctly distinct
+(§9.1); the shared **wording** predates the split and has not been re-adjudicated. It is a copy decision
+for the owner, not a code defect — and the two are genuinely different things to tell a learner.
+
+### 15.6 How to report a doc-vs-code divergence
 
 If this document describes something the implementation does not do, **one of the two is defective and
 neither may be assumed correct.** Do not edit the document to match the code by reflex: the prose
@@ -1159,31 +1372,48 @@ Held by `tests/architecture/lesson-mastery-integration.test.ts` unless noted. Ea
 as uncovered in an earlier revision of this document and is now covered; the names are given so a
 future reader can verify rather than trust.
 
-| Rule                                                                              | Section     | Assertion                                                                                |
-| --------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------- |
-| BKT eligibility is an allowlist; an unrecognized or future mode is ineligible     | §3.5, §5.1  | "keeps BKT eligibility an allowlist, so a future evidence mode is ineligible by default" |
-| A mode may move `pL` only if its kind can fill a mastery recipe slot              | §7.2, §15.1 | "lets a mode move P(L) only if its evidence kind could fill a mastery recipe slot"       |
-| A declared mode never mints an administration condition the runner did not report | §4.2, §7.2  | "never lets a declared mode mint an administration condition the runner did not report"  |
-| Authored assistance affordances never decide independence or qualification        | §3.3        | "never lets authored assistance affordances decide independence or qualification"        |
-| The runner-reported time is server-bounded before it becomes warrant              | §7.4        | "bounds the runner-reported time by the server clock before it becomes warrant"          |
-| Omission qualifies; it is a scored outcome, not a scoring failure                 | §5.2        | "treats an omission as a scored outcome rather than a scoring failure"                   |
-| Every rejection code is collected, not short-circuited                            | §5.3        | "collects every reason a response did not move P(L) instead of short-circuiting"         |
-| `@mcat/domain` never reaches into `@mcat/content` for lesson data                 | §7.3        | "the generic seam never reaches into content for lesson data"                            |
-| Only the Authority may move `pL`; the lesson runtime cannot                       | §10         | "only the authority may move P(L)" (four assertions)                                     |
-| No lesson-specific identifier in the generic adapter, router, or engine           | §13         | "the lesson seam is generic (no lesson is a special case)"                               |
-| Protected material stays out of evidence and BKT observations                     | §10         | "protected and server-owned material stays out of learner-facing records"                |
-| The runner has no field for a judgement it may not make                           | §4          | "gives the lesson runner no field for a judgement it is not allowed to make"             |
-| Evidence warrant and BKT capability outputs stay disjoint                         | §2.1, §10   | "evidence warrant and BKT capability outputs stay disjoint"                              |
-| Delivery completion cannot be read as a BKT observation                           | §9          | "lesson delivery and capability are separate axes"                                       |
-| Secondary KC mappings never become a BKT target                                   | §8.2        | "secondary KC mappings never become a BKT target"                                        |
-| Every real artifact conforms                                                      | §13         | `tests/architecture/v3-lesson-binding-conformance.test.ts`                               |
-| An eligible binding moves `pL` end to end, for all seven modes                    | §3.3, §11   | `services/lambdas/learner-api/src/second-lesson-mastery-seam.test.ts`                    |
+| Rule                                                                              | Section     | Assertion                                                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`qualified ⟺ !CONTEXTUAL_ONLY_KINDS.has(kind)`, over 2,704 exhaustive cases**   | §5.1, §15.1 | describe _"BKT qualification and the evidence kind cannot disagree"_ — every one- and two-mode declaration (169) × every administration setting (16), plus coverage, both-outcomes-occur, and evidence-exists-for-every-case calibrations |
+| **`deriveEvidenceKind` appears exactly once in the adapter**                      | §5.1, §15.1 | "derives the evidence kind exactly once, so there is nothing to keep in sync"                                                                                                                                                             |
+| **The declared allowlist stays strictly weaker than the resolved-kind gate**      | §5.1        | "keeps the declared allowlist strictly weaker than the resolved-kind gate"                                                                                                                                                                |
+| **Only the two frozen codes may name a contextual-only refusal**                  | §5.1        | "names every contextual-only refusal with a frozen code and nothing else"                                                                                                                                                                 |
+| **The kind resolves independently of the order the author wrote the modes**       | §7.2        | "resolves the evidence kind independently of the order the author wrote the modes"                                                                                                                                                        |
+| **The warrant covers every grain a lesson writes, unstarted KCs included**        | §2.2        | describe _"the evidence warrant covers every grain a lesson writes"_                                                                                                                                                                      |
+| **An unresolvable warrant grain throws rather than being omitted**                | §2.2        | "throws a named error for an unresolvable grain rather than omitting it"                                                                                                                                                                  |
+| **`pL` is order-independent within the skew window**                              | §7.4        | "keeps P(L) within the skew window of itself whichever order observations arrive in"                                                                                                                                                      |
+| **The decay clock is bounded symmetrically, and narrowly**                        | §7.4        | "bounds the decay clock symmetrically, and narrowly"                                                                                                                                                                                      |
+| **No view type both claims capability and reports the warrant**                   | §9.1, §10   | "no view type both claims capability and reports the warrant"                                                                                                                                                                             |
+| **No field name means capability on one view and warrant on another**             | §9.1        | "no field name means capability on one view and warrant on another"                                                                                                                                                                       |
+| BKT eligibility is an allowlist; an unrecognized or future mode is ineligible     | §3.5, §5.1  | "keeps BKT eligibility an allowlist, so a future evidence mode is ineligible by default"                                                                                                                                                  |
+| A declared mode never mints an administration condition the runner did not report | §4.2, §7.2  | "never lets a declared mode mint an administration condition the runner did not report"; also "never credits a condition the administration facts did not establish"                                                                      |
+| Authored assistance affordances never decide independence or qualification        | §3.3        | "never lets authored assistance affordances decide independence or qualification"                                                                                                                                                         |
+| The runner-reported time is server-bounded before it becomes warrant              | §7.4        | "bounds the runner-reported time by the server clock before it becomes warrant"                                                                                                                                                           |
+| Omission qualifies; it is a scored outcome, not a scoring failure                 | §5.2        | "treats an omission as a scored outcome rather than a scoring failure"                                                                                                                                                                    |
+| Every rejection code is collected, not short-circuited                            | §5.3        | "collects every reason a response did not move P(L) instead of short-circuiting"                                                                                                                                                          |
+| `@mcat/domain` never reaches into `@mcat/content` for lesson data                 | §7.3        | "the generic seam never reaches into content for lesson data"                                                                                                                                                                             |
+| Only the Authority may move `pL`; the lesson runtime cannot                       | §10         | "only the authority may move P(L)" (four assertions)                                                                                                                                                                                      |
+| No lesson-specific identifier in the generic adapter, router, or engine           | §13         | "the lesson seam is generic (no lesson is a special case)"                                                                                                                                                                                |
+| Protected material stays out of evidence and BKT observations                     | §10         | "protected and server-owned material stays out of learner-facing records"                                                                                                                                                                 |
+| The runner has no field for a judgement it may not make                           | §4          | "gives the lesson runner no field for a judgement it is not allowed to make"                                                                                                                                                              |
+| Evidence warrant and BKT capability outputs stay disjoint                         | §2.1, §10   | describe _"evidence warrant and BKT capability outputs stay disjoint"_ — now at the level of published **view types**, not only evidence records                                                                                          |
+| Delivery completion cannot be read as a BKT observation                           | §9          | "lesson delivery and capability are separate axes"                                                                                                                                                                                        |
+| Secondary KC mappings never become a BKT target                                   | §8.2        | "secondary KC mappings never become a BKT target"                                                                                                                                                                                         |
+| Every real artifact conforms                                                      | §13         | `tests/architecture/v3-lesson-binding-conformance.test.ts`                                                                                                                                                                                |
+| An eligible binding moves `pL` end to end, for all seven modes                    | §3.3, §11   | `services/lambdas/learner-api/src/second-lesson-mastery-seam.test.ts`                                                                                                                                                                     |
 
 ### 16.2 Held only by review — treat as unenforced
 
 - **Field-by-field `EvidenceRecord` mapping (§7.3).** Individual rows beyond the ones named above are
   checked by review and by unit tests of the adapter, not by an invariant that would survive a
   refactor.
+- **The authored-contradiction codes (§3.10).** `MULTIPLE_LEARNER_SAFE_ITEM_SOURCES_AUTHORED` and
+  `CONTRADICTORY_FIRST_ATTEMPT_IMMUTABILITY_AUTHORED` are covered by unit tests in
+  `packages/domain/src/lesson-response-adapter.test.ts` — including that the prose-only bindings on
+  `V3-LES-844372` still parse — but **no architecture assertion** holds them. In particular nothing
+  asserts the general property that an authored key set is never resolved by precedence, so a **third**
+  contradiction pair added later would not be caught by an existing guard. That is the same gap shape
+  the resolved-kind defect (§15.1) exploited, and it is the one I would close next.
 - **The rollup rules (§9).** `rollUpLessonMastery` is unit-tested, but nothing asserts that every
   learner-facing lesson-grain surface routes through it rather than reading a stored value.
 - **Idempotency and replay (§12).** Asserted for the paths the tests drive; not a property held across
@@ -1213,9 +1443,25 @@ header at all. The last is deliberately not a CORS decision: CORS asks a browser
 response it already received, whereas this refuses to produce one, so a future-widened origin allowlist
 cannot become an exfiltration path for internal mastery state. It is a command-line tool.
 
-Its absence from the deployed lambda **is** now asserted, three independent ways in
-`tests/architecture/lesson-mastery-integration.test.ts`: the lambda declares no dependency on
-`@mcat/local-authority`, imports neither that package nor its debug module, and registers no debug
-route in its real route table — plus a check that the debug projection stays out of the package's
-public surface. A source comment in `debug-state.ts` still says that assertion is owed; that comment is
-stale and the tests are the current state.
+**The invariant: the deployed lambda never serves this route.** It is asserted in
+`tests/architecture/lesson-mastery-integration.test.ts`, under the describe block _"the local debug
+route never reaches the deployed lambda"_, by four independent bans — so no single edit re-opens the
+route:
+
+1. the lambda manifest declares no dependency on `@mcat/local-authority`, under any dependency field;
+2. no lambda source imports that package or any `debug-state` module, by bare or relative specifier;
+3. the lambda's real route table registers no path matching `/debug/`; and
+4. no lambda source so much as names `DEBUG_LEARNER_STATE_PATH` — even unrouted, a handler branch on
+   that path is one wiring change away from serving it.
+
+A fifth assertion in the same block keeps `services/local-authority/src/index.ts` from re-exporting
+`./debug-state` or `./http-server`, since apps depend on that index. The bans import `ROUTES` and
+`DEBUG_LEARNER_STATE_PATH` from production code and a companion assertion checks that both are
+non-trivial, so a ban cannot pass by comparing nothing against nothing.
+
+> **Read the assertions, do not restate their existence.** This paragraph describes _the invariant and
+> where it is enforced_, deliberately, and not the state of any comment or README. The same sentence
+> about this guard has now been wrong in three different ways: it claimed a test that did not exist, was
+> corrected to say one was owed, and then went stale when the test landed. A doc that tracks another
+> file's wording will always drift one edit behind it. If you need to know the current coverage, the
+> describe block above is the answer and this document is not.

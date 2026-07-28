@@ -60,17 +60,33 @@ evidence/mastery systems. Two rules make the actor table above enforceable rathe
   audit reasons). The evidence system must **not** independently answer "is the learner mastered?".
 - **Structural, not procedural, enforcement.** A lesson binding has no field for `independent`,
   `P(L)`, a mastery threshold, decay, or an evidence status, and the compiled shape is closed with no
-  generic passthrough, so an author cannot write one. Mastery moves only when the immutable binding
-  declares a mode from the seven-member BKT eligibility **allowlist** (`INDEPENDENT`, `TRANSFER`,
-  `DELAYED`, `MIXED`, `PASSAGE`, `TIMED`, `PROTECTED`) **and** the runtime response independently
+  generic passthrough, so an author cannot write one. Mastery moves only when the evidence kind the
+  attempt **resolved to** could fill a mastery recipe slot **and** the runtime response independently
   qualifies (first attempt, A0 actually taken, no content-bearing hint, no reveal, no retry, valid
-  server scoring). Eligibility must never be written as "any mode other than `INSTRUCTIONAL`": that
-  negation made twelve of thirteen modes eligible, including lesson exits and the diagnostic, and it
-  is why an allowlist is now the governed form — an unrecognized or newly added mode is ineligible by
-  default. What help an item _offered_ is a separate, open authoring field that never bears on
+  server scoring). What help an item _offered_ is a separate, open authoring field that never bears on
   independence, and a declared mode never mints an administration condition (mixed / passage / timed /
   protected) that the runner or the scorer did not actually establish. Lessons have no mastery state
   of their own; a lesson-grain value is a derived rollup of its required member KCs.
+- **One fact, one derivation.** Eligibility to move `P(L)` is computed **once**, from the resolved
+  evidence kind, and the evidence record reads that same value. A declared evidence mode states what an
+  item is _eligible to serve as_ and is never a finding about an attempt, so it must not gate mastery.
+  Two derivations of one fact will diverge: when the declared set and the resolved kind were checked
+  separately, `P(L)` reached `0.99999` and `mastered: true` on zero mastery-eligible evidence records
+  with every recipe slot still open. The related authoring rule — a binding declaring a mode from the
+  seven-member allowlist (`INDEPENDENT`, `TRANSFER`, `DELAYED`, `MIXED`, `PASSAGE`, `TIMED`,
+  `PROTECTED`) must carry a `reasoning_operation` — is a completeness requirement on the artifact, not
+  a mastery gate. That allowlist must never be written as "any mode other than `INSTRUCTIONAL`": the
+  negation made twelve of thirteen modes eligible, including lesson exits and the diagnostic, which is
+  why an allowlist is the governed form — an unrecognized or newly added mode is ineligible by default.
+- **Authored contradictions are rejected, not resolved by precedence.** Where two authored keys state
+  facts that cannot both hold, the artifact is refused with a frozen code. Letting key precedence pick a
+  winner deletes the loser in silence, leaving a record that no longer describes the artifact — and
+  reviewed prose must never overrule an explicit boolean, least of all toward the permissive answer.
+- **Two authorities, two field names.** "Is the memory due?" (`reviewDue`, BKT) and "is the warrant
+  stale?" (`refreshNeeded`, evidence) are different questions owned by different authorities. They must
+  not share a field name or be aliased, and a consumer — the planner especially — must consume them
+  separately. They published under one name until the split, which is how a single "needs attention"
+  boolean would have answered one question while appearing to answer the other.
 - **Server-owned clocks.** A runner-reported occurrence time is a fact, not a clock. It is bounded by
   the server before it can act as a BKT decay clock or an evidence freshness clock, and a claim
   implausibly ahead of the server clock is refused outright rather than silently clamped. The verbatim

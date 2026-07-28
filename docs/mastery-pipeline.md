@@ -143,6 +143,46 @@ along.
   use. Ordinals are legitimate there because the planner genuinely compares them; the tier stops at the
   package boundary.
 
+One caveat the owner should decide on: the three `*_SATISFIED` reason codes map one-to-one onto the top
+tiers, so the ordinal is **losslessly recoverable** from the published `reasons`. Removing the rank from
+the wire did not remove the information — see the seam contract §15.3.
+
+### 4.1.1 `reviewDue` is BKT decay; `refreshNeeded` is warrant staleness
+
+These published under **one** field name, `refreshNeeded`, across four view types until they were split.
+One name for two authorities' answers is this pipeline's founding error in miniature.
+
+| Field           | Question                                | Authority        | Published on                                                         |
+| --------------- | --------------------------------------- | ---------------- | -------------------------------------------------------------------- |
+| `reviewDue`     | _Is the memory due?_                    | BKT capability   | `SkillMasteryView`, `LessonMasteryView`, the lesson rollup, KC views |
+| `refreshNeeded` | _Is the warrant stale or contradicted?_ | Evidence warrant | `MasteryMapEntry`, `SessionSummary`                                  |
+
+There is **no alias**, deliberately: a consumer must name the question it is asking. `refreshNeeded` can
+be true while `P(L)` is high, and false while `P(L)` is low — they are not two views of one signal.
+
+**The planner MUST consume them separately.** `reviewDue` schedules a review of a memory;
+`refreshNeeded` schedules the acquisition of missing or stale warrant. A single "needs attention"
+boolean built from either one silently answers the other question wrongly. §5.5's due-review contract is
+about `reviewDue` only.
+
+### 4.1.2 The warrant now covers lesson grains at all
+
+Worth stating plainly because it invalidates any earlier reading of this document's planner sections: the
+warrant enumeration used to cover only the synthetic skill-graph ids, while lesson evidence is keyed on
+`V3-KC-*`. **No lesson KC had a warrant.** Recipe slots, gaps, freshness, and reason codes were being
+computed for a set of ids the lesson seam never writes, and every test passed, because an absent warrant
+is indistinguishable from "no evidence yet".
+
+The grains are now the **union** of the skill graph, every `skillId` holding an evidence record, and the
+required KCs of every practiced lesson. The third source is what lets an **unstarted** KC report its
+gaps, which is what a planner needs — it must know what is missing before any evidence exists. A grain
+whose cluster resolves nowhere **throws** `UnresolvedWarrantGrainError` rather than being filtered out,
+because silent omission is what hid the original failure.
+
+Concretely: `V3-KC-452593` now reports `INDEPENDENT_EVIDENCE_SATISFIED` plus six named gaps where it
+previously returned `undefined`. **Any planner work that assumed lesson warrant signals existed was
+building on nothing**; they exist now.
+
 ### 4.2 Verifying the lesson → mastery connection by hand
 
 `GET /v1/debug/learner-state` in `services/local-authority` is the **supported** way to check by hand
@@ -206,26 +246,38 @@ moves `P(L)`.
 3. BKT qualification runs two gates and, only if both pass, emits a `QualifiedBktObservation` — the
    only lesson-side input the engine accepts.
 
-**Explicit eligibility only, via an allowlist.** A lesson observation reaches BKT only when the
-immutable binding declares a member of the seven-mode `BKT_ELIGIBLE_EVIDENCE_MODES` allowlist —
-`INDEPENDENT`, `TRANSFER`, `DELAYED`, `MIXED`, `PASSAGE`, `TIMED`, `PROTECTED` (`hasEligibleEvidenceMode`)
-— **and** the runtime response qualifies (`attemptIndex === 1`, `assistanceLevel === 'A0'`, no
-content-bearing hint, no reveal, no retry, `scoringValid === true`).
+**One notion of eligibility: the RESOLVED evidence kind.** A lesson observation reaches BKT only when
+the evidence kind this attempt actually resolved to is **not** in `CONTEXTUAL_ONLY_KINDS` — **and** the
+runtime response qualifies (`attemptIndex === 1`, `assistanceLevel === 'A0'`, no content-bearing hint,
+no reveal, no retry, `scoringValid === true`).
 
-Eligibility is deliberately **not** expressed as "any mode other than `INSTRUCTIONAL`". That negation
-was the shipped rule once, and with thirteen enum members it made twelve eligible — including
-`INSTRUCTIONAL_EXIT`, `DIAGNOSTIC`, `ENTRY`, `REPAIR_CONFIRMATION`, and `REHEARSAL_ONLY`, all of which
-route to contextual-only evidence that can never fill a mastery recipe slot. The allowlist gives two
-properties a denylist cannot: a mode added to the enum tomorrow is ineligible until someone
-deliberately allows it, and an unrecognized mode is ineligible by default. Do not reintroduce a
-negation. It is also broader than `INDEPENDENT` membership alone — a `TRANSFER` or `TIMED` binding is
-eligible and must therefore carry a `reasoningOperation`.
+The kind is derived **once**, before qualification; BKT gates on it; the `EvidenceRecord` reads the same
+value. `hasEligibleEvidenceMode` does **not** gate BKT — it only requires that a binding declaring an
+allowlisted mode supply a `reasoningOperation`, and it selects which frozen code names a refusal.
 
-There is no default-allow and no inference: an unauthored mode set defaults to `['INSTRUCTIONAL']` and
-is rejected with `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` (the code name is frozen and now reads as "no
-eligible mode declared"), and an eligible binding without a `reasoningOperation` is rejected with
-`ELIGIBLE_BINDING_MISSING_REASONING_OPERATION`. Every rejection code is recorded for audit; the
-observation still produces evidence, it just does not move `P(L)`.
+This replaced a defect worth remembering, because the shape recurs: qualification consulted the
+**declared** mode set while the kind was resolved **separately** with administration gating, and the
+call site never compared them. Two derivations of one fact, free to disagree — 42 of 78 unordered
+two-mode declarations qualified while resolving to contextual-only evidence with every condition true,
+and all four administration-gated modes qualified when the runner honestly reported the condition false.
+It reached `P(L) = 0.99999`, `mastered: true`, on zero mastery-eligible records. **If you are reconciling
+two computations of the same fact, the reconciliation is the defect** — delete one.
+
+The declared allowlist (`INDEPENDENT`, `TRANSFER`, `DELAYED`, `MIXED`, `PASSAGE`, `TIMED`, `PROTECTED`)
+still governs the authoring rule, and it is deliberately **not** expressed as "any mode other than
+`INSTRUCTIONAL`". That negation was the shipped rule once, and with thirteen enum members it made twelve
+eligible — including `INSTRUCTIONAL_EXIT`, `DIAGNOSTIC`, `ENTRY`, `REPAIR_CONFIRMATION`, and
+`REHEARSAL_ONLY`, all of which route to contextual-only evidence. The allowlist gives two properties a
+denylist cannot: a mode added to the enum tomorrow is ineligible until someone deliberately allows it,
+and an unrecognized mode is ineligible by default. Do not reintroduce a negation.
+
+There is no default-allow and no inference. An unauthored mode set defaults to `['INSTRUCTIONAL']`,
+resolves to `instruction`, and is rejected with `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` (frozen name;
+read it as "no eligible mode declared"). A real permission that this attempt did not exercise — a
+`TIMED` binding on an untimed attempt — is rejected with `RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY`, a
+runtime cause rather than an authoring one. An eligible binding without a `reasoningOperation` is
+rejected with `ELIGIBLE_BINDING_MISSING_REASONING_OPERATION`. Every rejection code is recorded for
+audit; the observation still produces evidence, it just does not move `P(L)`.
 
 **Only the assistance level the learner TOOK bears on independence.** The binding's
 `authoredAssistanceAffordances` records what help the item _offered_ — an open, author-defined list —
@@ -275,14 +327,22 @@ July 2026, and both were exploitable: 120 observations stamped `2999-01-01` prod
 `9.7e-11` via lazy decay across the invented gap. Forward-dating buys mastery; back-dating destroys it.
 Both are the client writing a mastery claim.
 
-- **Decay clock (BKT).** `boundDecayClock` applies
-  `appliedAt = max(min(floor, serverNow), min(reportedAt, serverNow))`. The Authority's clock is the
-  ceiling; `floor` is the newest `lastPracticedAt` among the grains the observation actually writes, so
-  no grain rewinds (prerequisites count only on a correct answer, since only then are they written).
-  The floor is itself capped at `serverNow`, which also heals state poisoned before the clamp existed.
-  A claim more than `BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS` (`300_000`, five minutes) ahead is
-  **refused** with `OBSERVATION_TIMESTAMP_IN_FUTURE` rather than clamped, so the bad claim leaves a
-  signal.
+- **Decay clock (BKT).** `boundDecayClock` clamps on three sides: a **ceiling** at the Authority's own
+  clock; a **grain floor** at the newest `lastPracticedAt` among the grains the observation actually
+  writes, so no grain rewinds (prerequisites count only on a correct answer, since only then are they
+  written), itself capped at `serverNow` so a stored future timestamp cannot become a permanent floor;
+  and a **server floor** at `serverNow - BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS`. A claim more than
+  `BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS` (`300_000`, five minutes) ahead is **refused** with
+  `OBSERVATION_TIMESTAMP_IN_FUTURE` rather than clamped, so the bad claim leaves a signal.
+- **Why the past needs its own floor.** The grain floor is `null` on a grain's **first** write, and the
+  clamp degenerated exactly there: an arbitrarily backdated claim became the decay baseline
+  (`currentPL = 5.4e-104`), making `P(L)` arrival-order dependent — 0.1497 against 0.8624 for identical
+  evidence. The past tolerance equals the future one (symmetry is asserted), but a too-old claim is
+  **clamped, not refused**: a delayed submission is ordinary and refusing it would discard real
+  evidence. Order-dependence is therefore **bounded, not eliminated** — residual measured at 9.163e-5,
+  asserted under 1e-3, capped by the decay across the window. The warrant timestamp is bounded
+  separately and keeps the honest time, so freshness, delay, and retention are unaffected; only the
+  memory baseline moves.
 - **Freshness clock (evidence).** `EvidenceRecord.occurredAt` is a branded `ServerBoundedTimestamp`
   whose only producer is `boundOccurredAtToServerTime`, bounded by the server's `acceptedAt`. The brand
   makes this structural: a raw runner claim does not typecheck. A **negative** age means untrustworthy,
@@ -308,8 +368,9 @@ its own BKT state:
 - **displayed value** — arithmetic mean of the current (lazily decayed) `P(L)` of every required
   member KC;
 - **`mastered`** — `true` only when **every** required KC satisfies `isMastered(pL)` (`P(L) >= 0.95`);
-- **review-due** — `true` when **any** previously practiced required KC has decayed below the review
-  line (`0.90`); a never-practiced KC is not due;
+- **`reviewDue`** — `true` when **any** previously practiced required KC has decayed below the review
+  line (`0.90`); a never-practiced KC is not due. This is BKT decay, not the warrant's `refreshNeeded`
+  (§4.1.1);
 - **missing KC state** — contributes the `0.20` prior to the mean and blocks `mastered`;
 - **missing or empty lesson→KC mapping** — **fails closed**: emit no lesson-grain value at all, never
   `0` and never a vacuous "mastered".
@@ -409,6 +470,15 @@ CARS_FOC / CARS_RWT / CARS_RBT → the separate CARS IRT track (not a science op
 4. **Due-review "session"** definition (per continue-session vs 4 AM day boundary).
 5. **Governed change**: update `docs/governance/authority-boundaries.md` + architecture tests so
    `P(L)` (independent-only) is the mastery definition in place of the evidence rungs.
+6. **Governed rename owed**: `LessonMasteryView.pL` → `meanMemberPL`. The field is an arithmetic mean of
+   member-KC `P(L)`, not a probability of anything, and the current name invites the one operation
+   §5.2.1 forbids — comparing it against `0.95` to decide `mastered`. It is a Gate A exported symbol, so
+   it needs a governed revision rather than a rename in passing.
+7. **Coarsening the `*_SATISFIED` reason codes** (§4.1: the ordinal tier is losslessly recoverable from
+   the published codes). Trades learner-facing specificity for making the rank unreconstructable.
+8. **Learner-facing copy**: "Needs refresh" is currently rendered from `reviewDue` on the Skills page and
+   from `refreshNeeded` on the warrant surfaces. The fields are correctly distinct (§4.1.1); the shared
+   wording has not been re-adjudicated.
 
 ---
 
