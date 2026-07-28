@@ -1,108 +1,93 @@
-import { useRef, useState, type KeyboardEvent } from 'react';
+import { REASONING_OPERATION_INFO } from '@mcat/contracts';
+import { Card, Eyebrow } from '@mcat/ui-web';
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
 import { CarsReadiness } from '../components/CarsReadiness';
+import { MasteryRing } from '../components/MasteryRing';
+import { useMasterySkills } from '../app/queries';
 
-const TABS = [
-  { id: 'lessons', label: 'Lessons' },
-  { id: 'cars', label: 'CARS' },
-] as const;
-type TabId = (typeof TABS)[number]['id'];
-
-const initialTab = (): TabId =>
-  typeof window !== 'undefined' && window.location.hash === '#cars' ? 'cars' : 'lessons';
+const toPct = (p: number): number => Math.round(p * 100);
 
 /**
- * Progress — two views of the learner's evidence behind one segmented control so
- * the page stays short: "Lessons" shows the Evidence Atlas brain (per-lesson
- * P(L)); "CARS" shows the reading-ability dial + sub-skills. Selection follows
- * focus (ARIA APG tablist), matching the Curriculum tabs.
+ * Left rail — the seven app-wide reasoning skills as compact mastery rings. Same
+ * data and semantics as the old Skills page (`useMasterySkills` → BKT P(L) pooled
+ * across every lesson); mastered / needs-refresh are shown with a glyph + label,
+ * never color alone.
  */
-export function Progress() {
-  const [active, setActive] = useState<TabId>(initialTab);
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-
-  const select = (index: number): void => {
-    const tab = TABS[index];
-    if (!tab) return;
-    tabRefs.current[index]?.focus();
-    setActive(tab.id);
-  };
-
-  const onTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>): void => {
-    const i = TABS.findIndex((t) => t.id === active);
-    switch (event.key) {
-      case 'ArrowRight':
-        event.preventDefault();
-        select((i + 1) % TABS.length);
-        break;
-      case 'ArrowLeft':
-        event.preventDefault();
-        select((i - 1 + TABS.length) % TABS.length);
-        break;
-      case 'Home':
-        event.preventDefault();
-        select(0);
-        break;
-      case 'End':
-        event.preventDefault();
-        select(TABS.length - 1);
-        break;
-      default:
-        break;
-    }
-  };
+function SkillRail() {
+  const skills = useMasterySkills();
+  const data = skills.data ?? [];
 
   return (
-    <div className="mc-screen">
-      <header className="mc-screen__head">
+    <Card elevated className="mc-progress__rail mc-progress__rail--skills">
+      <Eyebrow>Reasoning skills</Eyebrow>
+      {skills.isLoading ? (
+        <p className="mc-muted mc-fineprint">Loading your skills…</p>
+      ) : data.length === 0 ? (
+        <p className="mc-muted mc-fineprint">
+          Answer questions on your own to start building skill mastery.
+        </p>
+      ) : (
+        <ul className="mc-skillrings" aria-label="Reasoning skill mastery">
+          {data.map((skill) => {
+            const info = REASONING_OPERATION_INFO[skill.operation];
+            const pct = toPct(skill.pL);
+            const status = skill.refreshNeeded
+              ? ', needs refresh'
+              : skill.mastered
+                ? ', mastered'
+                : '';
+            return (
+              <li
+                key={skill.operation}
+                className="mc-skillring"
+                aria-label={`${info.title}: ${pct}% mastery${status}`}
+              >
+                <MasteryRing pct={pct} mastered={skill.mastered} refreshNeeded={skill.refreshNeeded} />
+                <span className="mc-skillring__label" aria-hidden="true">
+                  <span className="mc-skillring__title">{info.title}</span>
+                  {skill.refreshNeeded ? (
+                    <span className="mc-skillring__tag">◐ Needs refresh</span>
+                  ) : skill.mastered ? (
+                    <span className="mc-skillring__tag mc-skillring__tag--mastered">★ Mastered</span>
+                  ) : null}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </Card>
+  );
+}
+
+/**
+ * Progress — one merged dashboard (Concept B). All three evidence views show at
+ * once, no tab switching: the reasoning-skill rings (left), the Evidence Atlas
+ * brain as the hero (center), and CARS reading ability (right). On a laptop the
+ * page widens past the usual 760px shell cap (via `.mc-progress--wide`, scoped so
+ * no other screen changes) so the three zones sit side by side without scrolling;
+ * it stacks vertically on narrower viewports.
+ */
+export function Progress() {
+  return (
+    <div className="mc-screen mc-progress mc-progress--wide">
+      <header className="mc-screen__head mc-progress__head">
         <h1 className="mc-h1">Progress</h1>
         <p className="mc-muted">
-          Two views of your evidence — the lessons you have mastered, and your CARS reading ability.
+          Everything at a glance — your reasoning skills, the lessons you have mastered, and your CARS
+          reading ability.
         </p>
       </header>
 
-      <div className="mc-seg" role="tablist" aria-label="Progress view">
-        {TABS.map((tab, index) => {
-          const selected = tab.id === active;
-          return (
-            <button
-              key={tab.id}
-              ref={(element) => {
-                tabRefs.current[index] = element;
-              }}
-              type="button"
-              role="tab"
-              id={`mc-progress-tab-${tab.id}`}
-              aria-selected={selected}
-              aria-controls={`mc-progress-panel-${tab.id}`}
-              tabIndex={selected ? 0 : -1}
-              className={`mc-seg__tab${selected ? ' mc-seg__tab--active' : ''}`}
-              onClick={() => setActive(tab.id)}
-              onKeyDown={onTabKeyDown}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
+      <div className="mc-progress__grid">
+        <SkillRail />
+
+        <section className="mc-progress__center" aria-label="Lessons mastered — Evidence Atlas">
+          <EvidenceAtlas />
+        </section>
+
+        <CarsReadiness compact />
       </div>
-
-      <section
-        id="mc-progress-panel-lessons"
-        role="tabpanel"
-        aria-labelledby="mc-progress-tab-lessons"
-        hidden={active !== 'lessons'}
-      >
-        <EvidenceAtlas />
-      </section>
-
-      <section
-        id="mc-progress-panel-cars"
-        role="tabpanel"
-        aria-labelledby="mc-progress-tab-cars"
-        hidden={active !== 'cars'}
-      >
-        <CarsReadiness />
-      </section>
     </div>
   );
 }

@@ -1280,6 +1280,118 @@ body {
   margin-top: var(--mc-space-4);
 }
 
+/* ---- Progress dashboard (Concept B): skills rail · brain · CARS ----
+   One merged, single-screen view — all three evidence surfaces at once, no tabs.
+   Mobile-first it stacks in normal flow; on a laptop (>=1180px) it becomes a
+   three-zone grid and the shell main column is allowed to grow past the 760px cap.
+   Both the widen and the grid are gated behind `.mc-progress--wide`, so every
+   other screen keeps the shared 760px cap and nothing else changes. */
+.mc-progress__head {
+  gap: var(--mc-space-1);
+}
+.mc-progress__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-5);
+}
+.mc-progress__center {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.mc-progress__rail {
+  min-width: 0;
+  padding: var(--mc-space-4);
+}
+
+/* Left rail — the seven reasoning skills as compact mastery rings + labels. */
+.mc-skillrings {
+  list-style: none;
+  margin: var(--mc-space-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-skillring {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-skillring .mc-ring {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+}
+.mc-skillring .mc-ring__pct {
+  font-size: 30px;
+}
+.mc-skillring__label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.mc-skillring__title {
+  font-size: var(--mc-text-15);
+  font-weight: 600;
+  line-height: 1.2;
+}
+.mc-skillring__tag {
+  font-size: var(--mc-text-12);
+  font-weight: 600;
+  color: var(--mc-ink-muted);
+}
+.mc-skillring__tag--mastered {
+  color: var(--mc-state-strong);
+}
+
+/* Right rail — a tighter CARS card that abbreviates the sub-skills to FOC/RWT/RBT. */
+.mc-cars--compact {
+  padding: var(--mc-space-4);
+}
+.mc-cars--compact .mc-cars-gauge {
+  margin-top: var(--mc-space-2);
+}
+.mc-cars--compact .mc-cars-gauge svg {
+  max-width: 230px;
+}
+.mc-cars--compact .mc-cars-gauge__word {
+  font-size: var(--mc-text-22);
+}
+.mc-cars--compact .mc-cars-subskills {
+  margin-top: var(--mc-space-3);
+}
+.mc-cars--compact .mc-skillbars {
+  gap: var(--mc-space-3);
+}
+.mc-cars--compact .mc-skillbar__head {
+  margin-bottom: var(--mc-space-1);
+}
+.mc-cars--compact .mc-skillbar__label {
+  font-family: var(--mc-font-body);
+  font-size: var(--mc-text-15);
+  font-weight: 700;
+}
+
+/* Laptop: widen just this page and lay the three zones side by side. The brain
+   keeps its usual size and stays the hero; the rails are compact but readable.
+   Below 1180px the page keeps the 760px cap, stacks, and scrolls like any screen. */
+@media (min-width: 1180px) {
+  .mc-shell__main:has(.mc-progress--wide) {
+    max-width: 1180px;
+  }
+  .mc-progress--wide .mc-progress__grid {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr) 270px;
+    gap: var(--mc-space-5);
+    align-items: start;
+  }
+  .mc-progress--wide .mc-atlas {
+    margin-top: 0;
+  }
+}
+
 /* ---- Segmented control (Progress: Lessons | CARS) ---- */
 .mc-seg {
   display: flex;
@@ -2949,6 +3061,28 @@ body {
   stroke: #e88a4e;
   stroke-width: 9;
   stroke-linecap: round;
+  transition: stroke-dashoffset var(--mc-motion-route) var(--mc-ease);
+}
+/* Tone by mastery, consistent with the app palette: teal when high, amber when
+   low, deep teal-green once mastered, muted violet when a mastered skill decays
+   and needs a refresh. `--review` (Practice's weakest lessons) is always amber. */
+.mc-ring__arc--review,
+.mc-ring__arc--low {
+  stroke: #e88a4e;
+}
+.mc-ring__arc--high {
+  stroke: var(--mc-primary);
+}
+.mc-ring__arc--mastered {
+  stroke: var(--mc-state-strong);
+}
+.mc-ring__arc--refresh {
+  stroke: var(--mc-retained);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc-ring__arc {
+    transition: none;
+  }
 }
 .mc-ring__pct {
   font-family: var(--mc-font-display);

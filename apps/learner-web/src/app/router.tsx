@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AppShell } from '../screens/AppShell';
 import { Welcome } from '../screens/Welcome';
 import { Diagnostic } from '../screens/Diagnostic';
@@ -16,7 +16,6 @@ import { CardEditor } from '../screens/recall/CardEditor';
 import { ImportApkg } from '../screens/recall/ImportApkg';
 import { Mistakes } from '../screens/Mistakes';
 import { Progress } from '../screens/Progress';
-import { Skills } from '../screens/Skills';
 import { SkillDetail } from '../screens/SkillDetail';
 import { Profile } from '../screens/Profile';
 import { PassageOfDay } from '../screens/PassageOfDay';
@@ -52,7 +51,12 @@ export const router = createBrowserRouter([
       { path: 'recall/import', element: <ImportApkg /> },
       { path: 'mistakes', element: <Mistakes /> },
       { path: 'progress', element: <Progress /> },
-      { path: 'skills', element: <Skills /> },
+      // The standalone Skills page is merged into Progress (Concept B): its seven
+      // reasoning-skill readouts now render as the Progress dashboard's left rail.
+      // The nav item still points at /app/skills (kept for the app-shell contract),
+      // so this redirect lands it on the merged dashboard. The per-cluster detail
+      // (linked from the brain) keeps its own route below.
+      { path: 'skills', element: <Navigate to="/app/progress" replace /> },
       { path: 'skills/:skillId', element: <SkillDetail /> },
       // Hooks now surface contextually rather than living under a Practice tab.
       { path: 'passage', element: <PassageOfDay /> },

@@ -4,6 +4,7 @@ import { Button, Card, Stack } from '@mcat/ui-web';
 import { ATLAS_REGION_GROUPS, DEFAULT_MINUTES_PER_QUESTION } from '@mcat/contracts';
 import { CURRICULUM_PHASES } from '../../data/curriculum-v3.generated';
 import { useMasteryLessons } from '../../app/queries';
+import { MasteryRing } from '../../components/MasteryRing';
 
 const MIN_QUESTIONS = 1;
 const MAX_QUESTIONS = 30;
@@ -66,31 +67,6 @@ const LESSON_ORDER: Map<string, number> = (() => {
 const LESSON_CATALOG: Array<{ id: string; title: string }> = ATLAS_REGION_GROUPS.flatMap((rg) =>
   rg.lessons.map((l) => ({ id: l.lesson_id, title: l.title })),
 );
-
-/** A circular mastery gauge (amber = low mastery / needs work). */
-function MasteryRing({ pct }: { pct: number }) {
-  const r = 42;
-  const circumference = 2 * Math.PI * r;
-  const clamped = Math.max(0, Math.min(100, pct));
-  const offset = circumference * (1 - clamped / 100);
-  return (
-    <svg className="mc-ring" viewBox="0 0 100 100" role="img" aria-hidden="true">
-      <circle className="mc-ring__track" cx="50" cy="50" r={r} />
-      <circle
-        className="mc-ring__arc"
-        cx="50"
-        cy="50"
-        r={r}
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        transform="rotate(-90 50 50)"
-      />
-      <text className="mc-ring__pct" x="50" y="50" dominantBaseline="central" textAnchor="middle">
-        {pct}%
-      </text>
-    </svg>
-  );
-}
 
 /**
  * Practice hub: pick how many test-out reps to run (the only control that affects
@@ -190,7 +166,7 @@ export function PracticeHome() {
                   className="mc-weakest__ring"
                   aria-label={`${lessonTitle(l.lessonId)} — ${pct}% mastery. Open in curriculum.`}
                 >
-                  <MasteryRing pct={pct} />
+                  <MasteryRing pct={pct} tone="review" />
                   <span className="mc-weakest__ringtitle">{lessonTitle(l.lessonId)}</span>
                 </Link>
               );

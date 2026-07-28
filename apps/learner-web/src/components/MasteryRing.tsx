@@ -1,0 +1,62 @@
+/**
+ * A circular mastery gauge (SVG donut with the percent in the middle).
+ *
+ * Two color languages, both consistent with the app's mastery palette:
+ *   - `tone="mastery"` (default): teal when high, amber when low, deep teal-green
+ *     once mastered, muted violet when a mastered skill needs a refresh. Used by
+ *     the Progress dashboard's reasoning-skill rail.
+ *   - `tone="review"`: always amber (needs-work). Used by the Practice hub's
+ *     "needs the most review" rings, where every ring is a weak lesson.
+ *
+ * The ring is decorative (`aria-hidden`); the surrounding control/list item
+ * carries the accessible name and value.
+ */
+const HIGH_MASTERY_PCT = 50;
+
+type RingTone = 'mastery' | 'review';
+
+function arcClass(
+  pct: number,
+  mastered: boolean,
+  refreshNeeded: boolean,
+  tone: RingTone,
+): string {
+  if (tone === 'review') return 'mc-ring__arc mc-ring__arc--review';
+  if (refreshNeeded) return 'mc-ring__arc mc-ring__arc--refresh';
+  if (mastered) return 'mc-ring__arc mc-ring__arc--mastered';
+  return pct >= HIGH_MASTERY_PCT ? 'mc-ring__arc mc-ring__arc--high' : 'mc-ring__arc mc-ring__arc--low';
+}
+
+export function MasteryRing({
+  pct,
+  mastered = false,
+  refreshNeeded = false,
+  tone = 'mastery',
+}: {
+  pct: number;
+  mastered?: boolean;
+  refreshNeeded?: boolean;
+  tone?: RingTone;
+}) {
+  const r = 42;
+  const circumference = 2 * Math.PI * r;
+  const clamped = Math.max(0, Math.min(100, pct));
+  const offset = circumference * (1 - clamped / 100);
+  return (
+    <svg className="mc-ring" viewBox="0 0 100 100" role="img" aria-hidden="true">
+      <circle className="mc-ring__track" cx="50" cy="50" r={r} />
+      <circle
+        className={arcClass(clamped, mastered, refreshNeeded, tone)}
+        cx="50"
+        cy="50"
+        r={r}
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        transform="rotate(-90 50 50)"
+      />
+      <text className="mc-ring__pct" x="50" y="50" dominantBaseline="central" textAnchor="middle">
+        {Math.round(clamped)}%
+      </text>
+    </svg>
+  );
+}

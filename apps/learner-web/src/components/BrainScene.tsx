@@ -590,6 +590,14 @@ const REVEAL_FILL_GATE = 0.9; // a region's nodes must be ~this revealed before 
 const REVEAL_START_OPACITY = 0.45; // grey start dot opacity (matches the locked base dot)
 const REVEAL_START_SCALE = 0.9; // grey start dot scale (matches the locked base dot)
 
+// As a completed region's green fill rises, its per-lesson nodes must fade OUT in
+// lockstep — not merely shrink — so neither the matte dot cores nor their additive,
+// depth-write-disabled glow sprites can bleed through / poke over the solid fill.
+// Nodes are provably gone (opacity 0 AND the whole dots group hidden) by the time
+// the fill is FILL_HIDE_NODES of the way in, for BOTH cortical and interior regions.
+const FILL_FADE_NODES_START = 0.15; // fill fraction where nodes begin fading out
+const FILL_HIDE_NODES = 0.82; // fill fraction by which nodes are fully invisible
+
 const clamp01 = (x: number): number => (x < 0 ? 0 : x > 1 ? 1 : x);
 const lerpN = (a: number, b: number, t: number): number => a + (b - a) * t;
 const smoothstep = (t: number): number => t * t * (3 - 2 * t);
@@ -749,11 +757,28 @@ function RegionVisual({
       if (geom.interior) fm.visible = nv > 0.01;
       (fm.material as THREE.MeshStandardMaterial).opacity = nv * FILL_OPACITY;
     }
+
+    // Fade the nodes OUT as this region's own fill rises — overriding the reveal
+    // opacities set above — so a completed region's dot cores and additive glow
+    // sprites can't bleed through its solid green fill. Incomplete regions keep
+    // nv === 0, so nodeFade stays 1 and their nodes render exactly as before.
+    const nodeFade =
+      1 -
+      smoothstep(clamp01((nv - FILL_FADE_NODES_START) / (FILL_HIDE_NODES - FILL_FADE_NODES_START)));
+    if (nodeFade < 1) {
+      for (let k = 0; k < nodes.length; k++) {
+        const cm = coreMats.current[k];
+        if (cm) cm.opacity *= nodeFade;
+        const gm = glowMats.current[k];
+        if (gm) gm.opacity *= nodeFade;
+      }
+    }
     const dg = dotsRef.current;
     if (dg) {
-      // Nodes coalesce toward the region centre + shrink away as the fill takes over.
+      // Nodes coalesce toward the region centre + shrink away as the fill takes
+      // over, then hard-hide once fully faded so nothing can z-fight through it.
       dg.scale.setScalar(Math.max(0.0001, 1 - nv));
-      dg.visible = nv < 0.985;
+      dg.visible = nv < FILL_HIDE_NODES;
     }
   });
 
