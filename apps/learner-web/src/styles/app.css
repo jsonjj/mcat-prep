@@ -1424,8 +1424,25 @@ body {
 }
 .mc-cars--compact .mc-skillbar__label {
   font-family: var(--mc-font-body);
-  font-size: var(--mc-text-15);
+  font-size: 13px;
   font-weight: 700;
+  display: block;
+  line-height: 1.25;
+  white-space: nowrap;
+  margin-bottom: var(--mc-space-1);
+}
+/* CARS sub-skill: full-width name on its own line, then bar + percent share a row. */
+.mc-cars-subskill__barrow {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+}
+.mc-cars-subskill__barrow .mc-skillbar__track {
+  flex: 1;
+}
+.mc-cars-subskill__barrow .mc-skillbar__pct {
+  flex: none;
+  font-size: var(--mc-text-12);
 }
 
 /* Laptop: widen just this page and lay the three zones side by side. The brain

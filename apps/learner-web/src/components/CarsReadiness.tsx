@@ -43,9 +43,9 @@ const LABEL_TEXT: Record<CarsReadinessLabel, string> = {
  * carries only the title, so the learner-facing explanations live here.
  */
 const CARS_SKILL_BLURB: Record<CarsSkill, string> = {
-  FOC: "How well you grasp what the passage directly says — key terms, main ideas, and the author's basic meaning.",
-  RWT: "Interpreting and connecting ideas inside the passage — the argument, the author's tone, and how the parts fit together.",
-  RBT: "Extending the passage to new situations — applying, predicting, and testing its ideas beyond what's stated.",
+  FOC: 'Grasping what the passage directly says — its key terms and main ideas.',
+  RWT: 'Connecting and interpreting ideas within the passage and its argument.',
+  RBT: "Applying the passage's ideas to new, unstated situations.",
 };
 
 export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
@@ -110,15 +110,13 @@ export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
           const full = CARS_SKILL_INFO[s.skill].title;
           const blurb = CARS_SKILL_BLURB[s.skill];
           return (
-            <li key={s.skill} className="mc-skillbar">
-              <div className="mc-skillbar__head">
-                <span className="mc-skillbar__label">{full}</span>
-                <span className="mc-skillbar__meta">
-                  <span className="mc-skillbar__pct">{pct}%</span>
-                </span>
-              </div>
-              <div className="mc-skillbar__track">
-                <div className="mc-skillbar__fill" style={{ width: `${pct}%` }} />
+            <li key={s.skill} className="mc-skillbar mc-cars-subskill">
+              <span className="mc-skillbar__label">{full}</span>
+              <div className="mc-cars-subskill__barrow">
+                <div className="mc-skillbar__track">
+                  <div className="mc-skillbar__fill" style={{ width: `${pct}%` }} />
+                </div>
+                <span className="mc-skillbar__pct">{pct}%</span>
               </div>
               <p className="mc-cars-subskill__desc">{blurb}</p>
             </li>
