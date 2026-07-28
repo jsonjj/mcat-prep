@@ -17,7 +17,7 @@ function greeting(): string {
 }
 
 // Label for the secondary button that opens the full ordered day plan (/app/today).
-const PLAN_LABEL = 'See the whole day';
+const PLAN_LABEL = 'View plan';
 
 export function Home() {
   const today = useToday();
