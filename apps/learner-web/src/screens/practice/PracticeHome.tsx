@@ -8,9 +8,7 @@ import { useMasteryLessons } from '../../app/queries';
 const MIN_QUESTIONS = 1;
 const MAX_QUESTIONS = 30;
 const DEFAULT_QUESTIONS = 10;
-/** A not-yet-mastered lesson at/above this P(L) is "ready to test out". */
-const READY_TO_TEST_OUT = 0.7;
-const MAX_READY_ROWS = 6;
+const WEAKEST_ROWS = 3;
 
 const clampCount = (n: number): number =>
   Math.max(MIN_QUESTIONS, Math.min(MAX_QUESTIONS, Math.round(n)));
@@ -34,8 +32,8 @@ const lessonTitle = (id: string): string =>
 
 /**
  * Practice hub: pick how many test-out reps to run (the only control that affects
- * the session), plus a read-only "Ready to test out" readout of the lessons the
- * learner is closest to mastering — since a clean practice run is what locks them in.
+ * the session), plus a read-only "Needs the most review" readout of the lessons the
+ * learner's mastery is lowest on — where practice will help the most.
  */
 export function PracticeHome() {
   const navigate = useNavigate();
@@ -44,13 +42,13 @@ export function PracticeHome() {
 
   const estMinutes = clampCount(Number(countStr) || DEFAULT_QUESTIONS) * DEFAULT_MINUTES_PER_QUESTION;
 
-  // Lessons closest to mastery (not yet there) — closest first. Read-only.
-  const readyLessons = useMemo(
+  // The lessons the learner is weakest on (lowest mastery, not yet mastered) — read-only.
+  const weakest = useMemo(
     () =>
       (lessons.data ?? [])
-        .filter((l) => !l.mastered && l.pL >= READY_TO_TEST_OUT)
-        .sort((a, b) => b.pL - a.pL)
-        .slice(0, MAX_READY_ROWS),
+        .filter((l) => !l.mastered)
+        .sort((a, b) => a.pL - b.pL)
+        .slice(0, WEAKEST_ROWS),
     [lessons.data],
   );
 
@@ -95,34 +93,36 @@ export function PracticeHome() {
         </Stack>
       </Card>
 
-      <section className="mc-practice__stand">
+      <section className="mc-weakest">
         <div className="mc-practice__standhead">
-          <h2 className="mc-h3">Ready to test out</h2>
-          {readyLessons.length > 0 ? (
+          <h2 className="mc-h3">Needs the most review</h2>
+          {weakest.length > 0 ? (
             <p className="mc-muted mc-fineprint">
-              Lessons you’re closest to mastering — a clean run locks them in.
+              The lessons your mastery is lowest on — reinforce these first.
             </p>
           ) : null}
         </div>
-        {readyLessons.length > 0 ? (
-          <ul className="mc-readyout">
-            {readyLessons.map((l) => {
+        {weakest.length > 0 ? (
+          <div className="mc-weakest__grid">
+            {weakest.map((l, i) => {
               const pct = Math.round(l.pL * 100);
               return (
-                <li key={l.lessonId} className="mc-readyout__row">
-                  <span className="mc-readyout__title">{lessonTitle(l.lessonId)}</span>
-                  <span className="mc-readyout__track" aria-hidden="true">
-                    <span className="mc-readyout__fill" style={{ width: `${Math.max(3, pct)}%` }} />
+                <div key={l.lessonId} className="mc-weakest__card">
+                  <div className="mc-weakest__top">
+                    <span className="mc-weakest__rank">{i + 1}</span>
+                    <span className="mc-weakest__title">{lessonTitle(l.lessonId)}</span>
+                    <span className="mc-weakest__pct">{pct}%</span>
+                  </div>
+                  <span className="mc-weakest__track" aria-hidden="true">
+                    <span className="mc-weakest__fill" style={{ width: `${Math.max(4, pct)}%` }} />
                   </span>
-                  <span className="mc-readyout__pct">{pct}%</span>
-                </li>
+                </div>
               );
             })}
-          </ul>
+          </div>
         ) : (
           <p className="mc-muted">
-            Practice a few lessons and the ones you’re closest to mastering will show up here — so you
-            can lock them in.
+            Practice a few lessons and the ones you need to review most will show up here.
           </p>
         )}
       </section>

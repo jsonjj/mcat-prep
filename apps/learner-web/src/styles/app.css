@@ -2769,46 +2769,71 @@ body {
   justify-content: space-between;
   gap: var(--mc-space-2);
 }
-.mc-readyout {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* "Needs the most review" — the 3 weakest lessons as cards with amber bars. */
+.mc-weakest {
   display: flex;
   flex-direction: column;
   gap: var(--mc-space-3);
 }
-.mc-readyout__row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 100px 44px;
+.mc-weakest__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-weakest__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+  padding: var(--mc-space-3) var(--mc-space-4);
+  border-radius: var(--mc-radius-card);
+  background: color-mix(in srgb, var(--mc-surface) 70%, transparent);
+  border: 1px solid var(--mc-border);
+}
+.mc-weakest__top {
+  display: flex;
   align-items: center;
   gap: var(--mc-space-3);
 }
-.mc-readyout__title {
-  font-size: var(--mc-text-15);
+.mc-weakest__rank {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, #e88a4e 22%, transparent);
+  color: var(--mc-ink);
+  font-size: var(--mc-text-14);
+  font-weight: 700;
+}
+.mc-weakest__title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--mc-text-17);
   font-weight: 600;
   color: var(--mc-ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.mc-readyout__track {
-  height: 10px;
+.mc-weakest__pct {
+  flex: none;
+  font-size: var(--mc-text-17);
+  font-weight: 700;
+  color: var(--mc-ink);
+}
+.mc-weakest__track {
+  height: 12px;
   border-radius: var(--mc-radius-pill);
   background: var(--mc-surface-2);
   overflow: hidden;
 }
-/* Yellow→green fill echoing the mastery brain — these are close to green. */
-.mc-readyout__fill {
+/* Amber fill signals "low mastery — needs work". */
+.mc-weakest__fill {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #f2c14e, #33b87e);
-}
-.mc-readyout__pct {
-  text-align: right;
-  font-size: var(--mc-text-14);
-  font-weight: 700;
-  color: var(--mc-ink-muted);
+  background: linear-gradient(90deg, #e8794e, #e3ad46);
 }
 .mc-practice__options {
   display: flex;
