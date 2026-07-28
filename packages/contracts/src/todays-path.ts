@@ -20,6 +20,11 @@ import { GhostViewSchema, PlannerReasonSchema } from './learner-views';
 export const DAILY_MINUTES_PRESETS = [120, 180, 240, 300, 360] as const;
 export type DailyMinutesPreset = (typeof DAILY_MINUTES_PRESETS)[number];
 
+/** Daily time-budget bounds (minutes): learners may pick any value from 2 to 6 hours. */
+export const DAILY_MINUTES_MIN = 120; // 2 hr
+export const DAILY_MINUTES_MAX = 360; // 6 hr
+export const DAILY_MINUTES_DEFAULT = 240; // 4 hr
+
 export const PlanActivityKindSchema = z.enum([
   'cars_duel',
   'recall',
@@ -172,12 +177,8 @@ export type PlanActivityProgressCommand = z.infer<typeof PlanActivityProgressCom
 export const DailyBudgetCommandSchema = z
   .object({
     envelope: CommandEnvelopeSchema,
-    minutesPerDay: z
-      .number()
-      .int()
-      .refine((v) => (DAILY_MINUTES_PRESETS as readonly number[]).includes(v), {
-        message: 'minutesPerDay must be one of the daily presets (120/180/240/300/360).',
-      }),
+    // Any value from 2 to 6 hours (the client offers a free hours+minutes input).
+    minutesPerDay: z.number().int().min(DAILY_MINUTES_MIN).max(DAILY_MINUTES_MAX),
   })
   .strict();
 export type DailyBudgetCommand = z.infer<typeof DailyBudgetCommandSchema>;

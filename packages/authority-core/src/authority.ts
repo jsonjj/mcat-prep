@@ -1,6 +1,8 @@
 import {
   ContentIdSchema,
-  DAILY_MINUTES_PRESETS,
+  DAILY_MINUTES_DEFAULT,
+  DAILY_MINUTES_MAX,
+  DAILY_MINUTES_MIN,
   REASONING_OPERATIONS,
   SKILL_CLUSTERS,
   daysBetween,
@@ -376,31 +378,30 @@ export class Authority {
     return state.timezoneOffsetMinutes ?? 0;
   }
 
-  private defaultDailyPreset(state: LearnerState): number {
-    const perDay = (state.goal?.minutesPerWeek ?? 1260) / 7;
-    let best = DAILY_MINUTES_PRESETS[0] as number;
-    for (const p of DAILY_MINUTES_PRESETS) {
-      if (Math.abs(p - perDay) < Math.abs(best - perDay)) best = p;
-    }
-    return best;
+  /** Default daily study budget when the learner hasn't set one (4 hours). */
+  private defaultDailyPreset(): number {
+    return DAILY_MINUTES_DEFAULT;
   }
 
   private dailyPreset(state: LearnerState): number {
-    return state.goal?.dailyMinutesPreset ?? this.defaultDailyPreset(state);
+    return state.goal?.dailyMinutesPreset ?? this.defaultDailyPreset();
   }
 
-  /** Set the daily time-budget preset (one of the 2–6 hr presets). */
+  /** Set the daily time-budget in minutes (any value from 2 to 6 hours; clamped). */
   setDailyBudget(state: LearnerState, minutesPerDay: number): void {
-    if (!(DAILY_MINUTES_PRESETS as readonly number[]).includes(minutesPerDay)) return;
+    const clamped = Math.max(
+      DAILY_MINUTES_MIN,
+      Math.min(DAILY_MINUTES_MAX, Math.round(minutesPerDay)),
+    );
     state.goal =
       state.goal === null
         ? {
             testDate: null,
             targetScore: null,
-            minutesPerWeek: minutesPerDay * 7,
-            dailyMinutesPreset: minutesPerDay,
+            minutesPerWeek: clamped * 7,
+            dailyMinutesPreset: clamped,
           }
-        : { ...state.goal, dailyMinutesPreset: minutesPerDay };
+        : { ...state.goal, dailyMinutesPreset: clamped };
   }
 
   /**
@@ -433,10 +434,20 @@ export class Authority {
       this.maybeInjectRecall(state, input.recallLoad);
       return this.todaysPathView(state);
     }
+    // Rebuilding TODAY (e.g. the learner changed their daily time): keep everything
+    // they've already finished or started, and only re-plan the remaining time.
+    const prior = state.plan && state.plan.planDate === planDate ? state.plan : null;
+    const kept = prior
+      ? prior.activities.filter((a) => a.status === 'complete' || a.status === 'in_progress')
+      : [];
+    const keptMinutes = kept.reduce((sum, a) => sum + a.estimatedMinutes, 0);
+
     const preset = this.dailyPreset(state);
     const ctx = this.dayContext(state);
     const carryOver = this.carryOverFrom(state.plan ?? null, planDate);
-    const snapshot = this.todaysPathSnapshot(state, input, planDate, preset, ctx, carryOver);
+    // The engine plans only the time left after what's already done today.
+    const engineBudget = Math.max(0, preset - keptMinutes);
+    const snapshot = this.todaysPathSnapshot(state, input, planDate, engineBudget, ctx, carryOver);
     const result = buildTodaysPathEngine(snapshot, TODAYS_PATH_CONFIG);
     // Dedupe by activityId as a safety net (the engine already avoids re-scheduling
     // a carried kind/lesson, so collisions shouldn't occur).
@@ -447,17 +458,39 @@ export class Authority {
       seen.add(a.activityId);
       activities.push({ ...a, status: 'ready' });
     }
+    if (prior) {
+      // Restore progress on any activity that reappears in the new plan...
+      const priorById = new Map(prior.activities.map((a) => [a.activityId, a] as const));
+      for (const a of activities) {
+        const p = priorById.get(a.activityId);
+        if (p && (p.status === 'complete' || p.status === 'in_progress')) a.status = p.status;
+      }
+      // ...and keep finished/in-progress items that didn't reappear, at the front, so
+      // the learner still sees what they already did (never re-offered as new work).
+      const newIds = new Set(activities.map((a) => a.activityId));
+      const preserved = prior.activities.filter(
+        (a) => (a.status === 'complete' || a.status === 'in_progress') && !newIds.has(a.activityId),
+      );
+      if (preserved.length > 0) activities.unshift(...preserved);
+    }
+
+    const plannedMinutes = activities.reduce((sum, a) => sum + a.estimatedMinutes, 0);
+    const reviewMinutes = activities
+      .filter((a) => a.kind === 'recall' || a.kind === 'review_mistakes')
+      .reduce((sum, a) => sum + a.estimatedMinutes, 0);
     state.plan = {
       planDate: result.planDate,
       dailyMinutesPreset: preset,
-      dailyBudgetMinutes: result.dailyBudgetMinutes,
-      plannedMinutes: result.plannedMinutes,
-      freeStudyMinutes: result.freeStudyMinutes,
-      reviewSharePct: result.reviewSharePct,
+      dailyBudgetMinutes: preset,
+      plannedMinutes,
+      freeStudyMinutes: Math.max(0, preset - plannedMinutes),
+      reviewSharePct: plannedMinutes > 0 ? Math.min(1, reviewMinutes / plannedMinutes) : 0,
       reviewDebtBand: result.reviewDebtBand,
       version: (state.plan?.version ?? 0) + 1,
       generatedAt: now,
-      currentActivityId: activities[0]?.activityId ?? null,
+      currentActivityId:
+        activities.find((a) => a.status === 'ready' || a.status === 'in_progress')?.activityId ??
+        null,
       activities,
       mistakesSessions: activities.filter((a) => a.kind === 'review_mistakes').length,
     };

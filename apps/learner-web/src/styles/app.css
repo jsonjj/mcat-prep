@@ -2807,3 +2807,74 @@ body {
   gap: var(--mc-space-2);
   flex-shrink: 0;
 }
+/* Daily-time card: bigger label + a boxed "% reviewed" badge that pops. */
+.mc-plan__budgetleft {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--mc-space-2);
+}
+.mc-plan__budgetlabel {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-22);
+  color: var(--mc-ink);
+}
+.mc-plan__reviewbadge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--mc-radius-pill);
+  font-size: var(--mc-text-15);
+  font-weight: 700;
+  color: var(--mc-primary-text);
+  background: color-mix(in srgb, var(--mc-primary) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 30%, var(--mc-border));
+}
+/* Free hours + minutes budget input. */
+.mc-timeinput {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-1);
+}
+.mc-timeinput__field {
+  width: 58px;
+  min-height: var(--mc-touch);
+  padding: var(--mc-space-2);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface);
+  color: var(--mc-ink);
+  font-size: var(--mc-text-17);
+  font-weight: 700;
+  text-align: center;
+}
+.mc-timeinput__field:focus {
+  outline: none;
+  border-color: var(--mc-primary);
+}
+.mc-timeinput__unit {
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-15);
+  margin-right: var(--mc-space-2);
+}
+/* Plan header: title on the left, boxed stats on the right. */
+.mc-plan__planhead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mc-space-2);
+  margin-bottom: var(--mc-space-3);
+}
+.mc-plan__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mc-space-2);
+}
+.mc-plan__stat {
+  padding: 6px 12px;
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface-2);
+  font-size: var(--mc-text-15);
+  font-weight: 700;
+  color: var(--mc-ink);
+}

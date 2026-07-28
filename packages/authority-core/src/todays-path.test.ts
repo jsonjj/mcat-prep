@@ -101,6 +101,40 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     expect(state.completedLessons).toContain(lesson!.lessonId);
 
     const rebuilt = auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true });
-    expect(rebuilt.activities.some((a) => a.lessonId === lesson!.lessonId)).toBe(false);
+    // A finished lesson is preserved (shown as complete), never re-offered as new work.
+    expect(
+      rebuilt.activities.some((a) => a.lessonId === lesson!.lessonId && a.status === 'ready'),
+    ).toBe(false);
+    const rebuiltLesson = rebuilt.activities.find((a) => a.lessonId === lesson!.lessonId);
+    if (rebuiltLesson) expect(rebuiltLesson.status).toBe('complete');
+  });
+
+  it('keeps finished work and re-plans the rest when the daily budget changes', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.setDailyBudget(state, 180);
+    const v1 = auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true });
+    const first = v1.activities.find((a) => a.kind === 'lesson');
+    expect(first).toBeDefined();
+    auth.recordPlanActivity(state, first!.activityId, 'complete');
+
+    // Bump the daily time — the finished item is kept, and the day is re-planned larger.
+    auth.setDailyBudget(state, 300);
+    const v2 = auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true });
+    expect(v2.dailyBudgetMinutes).toBe(300);
+    const keptDone = v2.activities.find((a) => a.activityId === first!.activityId);
+    expect(keptDone?.status).toBe('complete');
+    expect(v2.plannedMinutes).toBeLessThanOrEqual(300);
+  });
+
+  it('clamps the daily budget to the 2–6 hr bounds', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.setDailyBudget(state, 30); // below 2 hr
+    expect(auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true }).dailyBudgetMinutes).toBe(120);
+    auth.setDailyBudget(state, 900); // above 6 hr
+    expect(auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true }).dailyBudgetMinutes).toBe(360);
+    auth.setDailyBudget(state, 330); // 5 h 30 m — allowed
+    expect(auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true }).dailyBudgetMinutes).toBe(330);
   });
 });
