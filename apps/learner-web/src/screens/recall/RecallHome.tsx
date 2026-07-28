@@ -63,7 +63,7 @@ export function RecallHome() {
                   className="mc-recall__cta"
                   onClick={() => navigate('/app/recall/review')}
                 >
-                  Learn new cards
+                  Study flashcards
                 </Button>
               ) : null}
             </Stack>
