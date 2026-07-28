@@ -108,7 +108,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--mc-space-3) var(--mc-space-4);
+  padding: var(--mc-space-2) var(--mc-space-4);
   background: transparent;
 }
 .mc-brand {
@@ -336,10 +336,12 @@ body {
   touch-action: pan-y;
   cursor: grab;
 }
-/* On Home the brain is a compact hero so the Today + Passage cards stay in view
-   without scrolling (Progress keeps the large, interactive brain). */
+/* Home: keep the brain full size, but crop the transparent air around it (the brain
+   renders centered in a tall canvas) by pulling its neighbors in — this shrinks the
+   whitespace above and below the brain WITHOUT resizing the brain itself. */
 .mc-atlas--home .mc-atlas__canvas {
-  height: clamp(200px, 30vh, 300px);
+  margin-top: calc(-1 * var(--mc-space-5));
+  margin-bottom: calc(-1 * var(--mc-space-5));
 }
 .mc-atlas__canvas:active {
   cursor: grabbing;
