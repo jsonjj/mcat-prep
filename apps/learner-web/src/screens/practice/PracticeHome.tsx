@@ -30,6 +30,43 @@ const lessonTitle = (id: string): string =>
     .replace(/[-_]/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
+// --- Provisional lesson-unlock frontier (mirrors EvidenceAtlas / the brain) -------------
+// P(L) is only tracked per-lesson once a lesson is touched, so "weakest" is computed over
+// the full unlocked catalog: real P(L) where we have it, the BKT prior otherwise. This keeps
+// the trio in sync with the brain and non-empty even before any practice. Replaced by the
+// authored prerequisite map later (unlocked = all prerequisites mastered).
+const PRIOR_PL = 0.2;
+const UNLOCK_WINDOW = 12;
+
+/** Global teaching-order rank (phase → module → position) for every atlas lesson. */
+const LESSON_ORDER: Map<string, number> = (() => {
+  const meta = new Map<string, { phaseOrder: number; moduleOrder: number; position: number }>();
+  for (const phase of CURRICULUM_PHASES)
+    for (const mod of phase.modules)
+      for (const lesson of mod.lessons)
+        meta.set(lesson.id, {
+          phaseOrder: phase.order,
+          moduleOrder: mod.order,
+          position: lesson.position,
+        });
+  const ranked = ATLAS_REGION_GROUPS.flatMap((rg) => rg.lessons.map((l) => l.lesson_id))
+    .map((id) => ({ id, m: meta.get(id) }))
+    .sort(
+      (a, b) =>
+        (a.m?.phaseOrder ?? 999) - (b.m?.phaseOrder ?? 999) ||
+        (a.m?.moduleOrder ?? 999) - (b.m?.moduleOrder ?? 999) ||
+        (a.m?.position ?? Number.MAX_SAFE_INTEGER) - (b.m?.position ?? Number.MAX_SAFE_INTEGER),
+    );
+  const map = new Map<string, number>();
+  ranked.forEach((r, i) => map.set(r.id, i));
+  return map;
+})();
+
+/** Full atlas lesson catalog (id + title), the source of truth for the "weakest" trio. */
+const LESSON_CATALOG: Array<{ id: string; title: string }> = ATLAS_REGION_GROUPS.flatMap((rg) =>
+  rg.lessons.map((l) => ({ id: l.lesson_id, title: l.title })),
+);
+
 /** A circular mastery gauge (amber = low mastery / needs work). */
 function MasteryRing({ pct }: { pct: number }) {
   const r = 42;
@@ -67,14 +104,24 @@ export function PracticeHome() {
 
   const estMinutes = clampCount(Number(countStr) || DEFAULT_QUESTIONS) * DEFAULT_MINUTES_PER_QUESTION;
 
-  const weakest = useMemo(
-    () =>
-      (lessons.data ?? [])
-        .filter((l) => !l.mastered)
-        .sort((a, b) => a.pL - b.pL)
-        .slice(0, WEAKEST_ROWS),
-    [lessons.data],
-  );
+  // The 3 lowest-mastery *unlocked* lessons: overlay real P(L) where the learner has an
+  // entry, default the rest to the prior, exclude locked/mastered — so it's never empty and
+  // stays consistent with the brain (see the frontier model above).
+  const weakest = useMemo(() => {
+    const byId = new Map((lessons.data ?? []).map((l) => [l.lessonId, l] as const));
+    const masteredCount = (lessons.data ?? []).filter((l) => l.mastered).length;
+    return LESSON_CATALOG.map(({ id }) => {
+      const entry = byId.get(id);
+      const pL = entry?.pL ?? PRIOR_PL;
+      const mastered = entry?.mastered ?? false;
+      const rank = LESSON_ORDER.get(id) ?? Number.MAX_SAFE_INTEGER;
+      const locked = !(mastered || entry !== undefined || rank < masteredCount + UNLOCK_WINDOW);
+      return { lessonId: id, pL, mastered, locked, rank };
+    })
+      .filter((l) => !l.locked && !l.mastered)
+      .sort((a, b) => a.pL - b.pL || a.rank - b.rank)
+      .slice(0, WEAKEST_ROWS);
+  }, [lessons.data]);
 
   const start = () => {
     const x = clampCount(Number(countStr) || DEFAULT_QUESTIONS);
