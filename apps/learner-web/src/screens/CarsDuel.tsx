@@ -142,7 +142,6 @@ export function CarsDuel() {
       void start();
     }
     // start closes over default mode/difficulty/topic; run once on autostart.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navState?.autostart, phase]);
 
   if (unavailable) {
