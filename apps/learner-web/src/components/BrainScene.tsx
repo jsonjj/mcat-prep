@@ -568,14 +568,11 @@ function useGlowTexture(): THREE.Texture {
   }, []);
 }
 
-// Node color scale: LOCKED lessons read grey (no glow); UNLOCKED lessons fade from
-// yellow (just unlocked, no mastery yet) to green (mastered) by their BKT P(L). The
-// prior and mastery cut mirror the engine (P(L)_0 = 0.2, threshold = 0.95).
-const NODE_PRIOR_PL = 0.2;
-const NODE_MASTERY_PL = 0.95;
+// Node color scale: LOCKED lessons read grey; IN-PROGRESS (unlocked, not yet mastered)
+// read flat amber. MASTERED lessons render NO dot at all — mastery shows only as the
+// region filling solid green — so a green dot can never poke out of the brain.
 const NODE_GREY = '#b6b2c4';
 const NODE_YELLOW = new THREE.Color('#f2c14e');
-const NODE_GREEN = new THREE.Color('#33b87e');
 const NODE_GREY_COLOR = new THREE.Color(NODE_GREY);
 
 // On-open reveal (Progress brain only): on each mount, every node starts grey and
@@ -628,11 +625,10 @@ function dotStyle(node: {
   pL: number;
 }): { color: string; opacity: number; scale: number; glow: number } {
   if (node.locked) return { color: NODE_GREY, opacity: 0.4, scale: 0.85, glow: 0 };
-  const t = Math.max(0, Math.min(1, (node.pL - NODE_PRIOR_PL) / (NODE_MASTERY_PL - NODE_PRIOR_PL)));
-  const color = `#${NODE_YELLOW.clone().lerp(NODE_GREEN, t).getHexString()}`;
-  // No rim-glow: the additive halos read as "circles sticking out" of the brain, so
-  // nodes are clean matte dots colored purely by mastery (grey → yellow → green).
-  return { color, opacity: 0.92, scale: 0.9 + 0.1 * t, glow: 0 };
+  // In-progress (unlocked, not yet mastered): a flat amber dot that NEVER fades to green.
+  // Mastered lessons get no dot (see `hidden` in the node build) — they show only through
+  // the region's solid-green fill, so there are no green circles anywhere. No rim-glow.
+  return { color: `#${NODE_YELLOW.getHexString()}`, opacity: 0.92, scale: 0.95, glow: 0 };
 }
 
 /**
@@ -693,6 +689,8 @@ function RegionVisual({
     return geom.dots.map((d, k) => {
       const lesson = region.lessons[k];
       const src = lesson ? { locked: lesson.locked, pL: lesson.pL } : { locked: true, pL: 0 };
+      // Mastered lessons render no dot at all (mastery shows via the region's green fill).
+      const hidden = lesson ? lesson.mastered : false;
       const st = dotStyle(src);
       const nodeStagger = count > 1 ? (k / (count - 1)) * REVEAL_NODE_SPREAD : 0;
       return {
@@ -702,6 +700,7 @@ function RegionVisual({
           number,
         ],
         locked: src.locked,
+        hidden,
         target: st,
         targetColor: new THREE.Color(st.color),
         delay: regionBase + nodeStagger,
@@ -730,16 +729,16 @@ function RegionVisual({
       const a = reducedMotion ? 1 : smoothstep(clamp01((elapsed - n.delay) / REVEAL_NODE_RAMP));
       if (a < minAchieved) minAchieved = a;
       const g = nodeGroups.current[k];
-      if (g) g.scale.setScalar(lerpN(REVEAL_START_SCALE, n.target.scale, a));
+      if (g) g.scale.setScalar(n.hidden ? 0.0001 : lerpN(REVEAL_START_SCALE, n.target.scale, a));
       const cm = coreMats.current[k];
       if (cm) {
         revealNodeColor(a, n.locked, n.targetColor, cm.color);
-        cm.opacity = lerpN(REVEAL_START_OPACITY, n.target.opacity, a);
+        cm.opacity = n.hidden ? 0 : lerpN(REVEAL_START_OPACITY, n.target.opacity, a);
       }
       const gm = glowMats.current[k];
       if (gm) {
         revealNodeColor(a, n.locked, n.targetColor, gm.color);
-        gm.opacity = lerpN(0, n.target.glow, a);
+        gm.opacity = n.hidden ? 0 : lerpN(0, n.target.glow, a);
       }
     }
 
@@ -810,8 +809,8 @@ function RegionVisual({
       <group ref={dotsRef} position={geom.center} visible={reducedMotion ? !region.complete : true}>
         {nodes.map((n, k) => {
           const initColor = reducedMotion ? n.target.color : NODE_GREY;
-          const initOpacity = reducedMotion ? n.target.opacity : REVEAL_START_OPACITY;
-          const initScale = reducedMotion ? n.target.scale : REVEAL_START_SCALE;
+          const initOpacity = n.hidden ? 0 : reducedMotion ? n.target.opacity : REVEAL_START_OPACITY;
+          const initScale = n.hidden ? 0.0001 : reducedMotion ? n.target.scale : REVEAL_START_SCALE;
           const initGlow = reducedMotion ? n.target.glow : 0;
           return (
             <group
