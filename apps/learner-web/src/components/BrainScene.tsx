@@ -576,6 +576,38 @@ const NODE_MASTERY_PL = 0.95;
 const NODE_GREY = '#b6b2c4';
 const NODE_YELLOW = new THREE.Color('#f2c14e');
 const NODE_GREEN = new THREE.Color('#33b87e');
+const NODE_GREY_COLOR = new THREE.Color(NODE_GREY);
+
+// On-open reveal (Progress brain only): on each mount, every node starts grey and
+// ramps up to its target — UNLOCKED nodes grey → yellow → (target), MASTERED nodes
+// continuing on to green (they visibly pass THROUGH yellow first); LOCKED nodes stay
+// grey. Regions/nodes stagger so the build-up cascades over ~1.8–2.4s. Driven
+// imperatively (material/scale mutation in useFrame) — no per-frame React renders.
+const REVEAL_NODE_RAMP = 0.55; // seconds each node takes to ramp grey → target
+const REVEAL_REGION_SPREAD = 0.7; // seconds spread of region start times (the cascade)
+const REVEAL_NODE_SPREAD = 0.28; // seconds spread of node start times within a region
+const REVEAL_FILL_GATE = 0.9; // a region's nodes must be ~this revealed before its fill starts
+const REVEAL_START_OPACITY = 0.45; // grey start dot opacity (matches the locked base dot)
+const REVEAL_START_SCALE = 0.9; // grey start dot scale (matches the locked base dot)
+
+const clamp01 = (x: number): number => (x < 0 ? 0 : x > 1 ? 1 : x);
+const lerpN = (a: number, b: number, t: number): number => a + (b - a) * t;
+const smoothstep = (t: number): number => t * t * (3 - 2 * t);
+
+/**
+ * Reveal color for a node at achieved `a` (0..1): LOCKED stays grey throughout;
+ * UNLOCKED goes grey → yellow across the first half, then yellow → its final target
+ * across the second half, so a mastered node visibly passes THROUGH yellow before it
+ * settles green. Writes into `out` (a live material color) to avoid allocations.
+ */
+function revealNodeColor(a: number, locked: boolean, target: THREE.Color, out: THREE.Color): void {
+  if (locked) {
+    out.copy(NODE_GREY_COLOR);
+    return;
+  }
+  if (a <= 0.5) out.copy(NODE_GREY_COLOR).lerp(NODE_YELLOW, a / 0.5);
+  else out.copy(NODE_YELLOW).lerp(target, (a - 0.5) / 0.5);
+}
 
 /**
  * Per-lesson node styling — matte base dot + a SMALL colored rim-glow so nodes stand
@@ -609,6 +641,9 @@ function RegionVisual({
   coreGeo,
   glowTex,
   modelRadius,
+  revealStart,
+  revealIndex,
+  revealTotal,
   onSelect,
 }: {
   geom: RegionGeom;
@@ -619,15 +654,50 @@ function RegionVisual({
   coreGeo: THREE.BufferGeometry;
   glowTex: THREE.Texture;
   modelRadius: number;
+  /** Shared reveal-clock origin; the first atlas frame stamps it (see RegionAtlasBrain). */
+  revealStart: MutableRefObject<number | null>;
+  /** This region's position in the reveal cascade, and the region count, for stagger. */
+  revealIndex: number;
+  revealTotal: number;
   onSelect: (id: string) => void;
 }) {
   const fillRef = useRef<THREE.Mesh>(null);
   const dotsRef = useRef<THREE.Group>(null);
-  const fillNow = useRef(region.complete ? 1 : 0);
-  // Captured once so the live `complete` prop can't hard-toggle `visible` and skip
-  // the fill/coalesce animation — useFrame owns visibility after the first frame.
-  const initialComplete = useRef(region.complete);
+  // Fill starts empty every mount (even for already-complete regions) so its green
+  // only animates in AFTER this region's nodes have revealed (grey → yellow → green).
+  const fillNow = useRef(0);
   const coreR = modelRadius * 0.02;
+
+  // Per-node refs (group + core/glow materials) so the reveal is driven imperatively.
+  const nodeGroups = useRef<Array<THREE.Group | null>>([]);
+  const coreMats = useRef<Array<THREE.MeshBasicMaterial | null>>([]);
+  const glowMats = useRef<Array<THREE.SpriteMaterial | null>>([]);
+
+  // Per-node target style (at full reveal) + a staggered start delay. The region's
+  // base delay spreads the cascade across regions; a small per-node delay ripples
+  // within the region. Targets come straight from the existing declarative dotStyle.
+  const nodes = useMemo(() => {
+    const count = geom.dots.length;
+    const regionBase =
+      revealTotal > 1 ? (revealIndex / (revealTotal - 1)) * REVEAL_REGION_SPREAD : 0;
+    return geom.dots.map((d, k) => {
+      const lesson = region.lessons[k];
+      const src = lesson ? { locked: lesson.locked, pL: lesson.pL } : { locked: true, pL: 0 };
+      const st = dotStyle(src);
+      const nodeStagger = count > 1 ? (k / (count - 1)) * REVEAL_NODE_SPREAD : 0;
+      return {
+        position: [d.x - geom.center.x, d.y - geom.center.y, d.z - geom.center.z] as [
+          number,
+          number,
+          number,
+        ],
+        locked: src.locked,
+        target: st,
+        targetColor: new THREE.Color(st.color),
+        delay: regionBase + nodeStagger,
+      };
+    });
+  }, [geom.dots, geom.center, region.lessons, revealIndex, revealTotal]);
 
   const interiorCore = useMemo(() => {
     if (!geom.interior) return null;
@@ -636,15 +706,45 @@ function RegionVisual({
     return g;
   }, [geom.interior, geom.count, modelRadius]);
 
-  useFrame((_, dt) => {
-    const target = region.complete ? 1 : 0;
+  useFrame((state, dt) => {
+    // Stamp the shared reveal origin on the first atlas frame; every region reads the
+    // same origin so the cascade is coherent and it replays on each fresh mount.
+    if (revealStart.current === null) revealStart.current = state.clock.elapsedTime;
+    const elapsed = state.clock.elapsedTime - revealStart.current;
+
+    // Per-node reveal: ramp each node's "achieved" 0→1 over its window, then mutate
+    // its core dot + glow color/opacity and node scale from grey up to the target.
+    let minAchieved = 1;
+    for (let k = 0; k < nodes.length; k++) {
+      const n = nodes[k]!;
+      const a = reducedMotion ? 1 : smoothstep(clamp01((elapsed - n.delay) / REVEAL_NODE_RAMP));
+      if (a < minAchieved) minAchieved = a;
+      const g = nodeGroups.current[k];
+      if (g) g.scale.setScalar(lerpN(REVEAL_START_SCALE, n.target.scale, a));
+      const cm = coreMats.current[k];
+      if (cm) {
+        revealNodeColor(a, n.locked, n.targetColor, cm.color);
+        cm.opacity = lerpN(REVEAL_START_OPACITY, n.target.opacity, a);
+      }
+      const gm = glowMats.current[k];
+      if (gm) {
+        revealNodeColor(a, n.locked, n.targetColor, gm.color);
+        gm.opacity = lerpN(0, n.target.glow, a);
+      }
+    }
+
+    // Completion fill, GATED: only begin once this region's nodes are essentially
+    // revealed, so the section never fills green before its dots have gone through
+    // grey → yellow → green. (Non-complete regions never fill; target stays 0.)
+    const nodesRevealed = reducedMotion || minAchieved >= REVEAL_FILL_GATE;
+    const target = region.complete && nodesRevealed ? 1 : 0;
     const rate = reducedMotion ? 1 : Math.min(1, dt * 5);
     let nv = fillNow.current + (target - fillNow.current) * rate;
     if (Math.abs(target - nv) < 0.004) nv = target;
     fillNow.current = nv;
     const fm = fillRef.current;
     if (fm) {
-      // Interior cores only appear once complete; cortical fills stay mounted
+      // Interior cores only appear once filling; cortical fills stay mounted
       // (opacity 0 when empty) so the whole region surface remains a tap target.
       if (geom.interior) fm.visible = nv > 0.01;
       (fm.material as THREE.MeshStandardMaterial).opacity = nv * FILL_OPACITY;
@@ -677,28 +777,45 @@ function RegionVisual({
 
   return (
     <group>
-      {/* Per-lesson nodes: matte dot + a small colored rim-glow (unlocked only). */}
-      <group ref={dotsRef} position={geom.center} visible={!initialComplete.current}>
-        {geom.dots.map((d, k) => {
-          const lesson = region.lessons[k];
-          const st = dotStyle(
-            lesson ? { locked: lesson.locked, pL: lesson.pL } : { locked: true, pL: 0 },
-          );
+      {/* Per-lesson nodes: matte dot + a small colored rim-glow (unlocked only). The
+          initial JSX values are the grey reveal start (or the final target when
+          reducedMotion); useFrame then owns color/opacity/scale from frame one. */}
+      <group ref={dotsRef} position={geom.center} visible={reducedMotion ? !region.complete : true}>
+        {nodes.map((n, k) => {
+          const initColor = reducedMotion ? n.target.color : NODE_GREY;
+          const initOpacity = reducedMotion ? n.target.opacity : REVEAL_START_OPACITY;
+          const initScale = reducedMotion ? n.target.scale : REVEAL_START_SCALE;
+          const initGlow = reducedMotion ? n.target.glow : 0;
           return (
             <group
               key={k}
-              position={[d.x - geom.center.x, d.y - geom.center.y, d.z - geom.center.z]}
+              ref={(el: THREE.Group | null) => {
+                nodeGroups.current[k] = el;
+              }}
+              position={n.position}
+              scale={initScale}
             >
-              <mesh geometry={coreGeo} scale={coreR * st.scale} renderOrder={2}>
-                <meshBasicMaterial color={st.color} transparent opacity={st.opacity} depthWrite={false} />
+              <mesh geometry={coreGeo} scale={coreR} renderOrder={2}>
+                <meshBasicMaterial
+                  ref={(m: THREE.MeshBasicMaterial | null) => {
+                    coreMats.current[k] = m;
+                  }}
+                  color={initColor}
+                  transparent
+                  opacity={initOpacity}
+                  depthWrite={false}
+                />
               </mesh>
-              {st.glow > 0 ? (
+              {n.target.glow > 0 ? (
                 <sprite scale={coreR * 4.2} renderOrder={1.9}>
                   <spriteMaterial
+                    ref={(m: THREE.SpriteMaterial | null) => {
+                      glowMats.current[k] = m;
+                    }}
                     map={glowTex}
-                    color={st.color}
+                    color={initColor}
                     transparent
-                    opacity={st.glow}
+                    opacity={initGlow}
                     blending={THREE.AdditiveBlending}
                     depthWrite={false}
                   />
@@ -715,7 +832,7 @@ function RegionVisual({
           ref={fillRef}
           geometry={interiorCore!}
           position={geom.center}
-          visible={initialComplete.current}
+          visible={reducedMotion ? region.complete : false}
           renderOrder={1.15}
         >
           <meshStandardMaterial
@@ -725,7 +842,7 @@ function RegionVisual({
             roughness={0.5}
             metalness={0}
             transparent
-            opacity={region.complete ? FILL_OPACITY : 0}
+            opacity={reducedMotion && region.complete ? FILL_OPACITY : 0}
             depthWrite={false}
           />
         </mesh>
@@ -738,7 +855,7 @@ function RegionVisual({
             roughness={0.45}
             metalness={0}
             transparent
-            opacity={region.complete ? FILL_OPACITY : 0}
+            opacity={reducedMotion && region.complete ? FILL_OPACITY : 0}
             side={THREE.FrontSide}
             depthWrite={false}
           />
@@ -797,11 +914,15 @@ function RegionAtlasBrain({
     () => new Map(geom.regions.map((g) => [g.id, g])),
     [geom],
   );
+  // Origin of the on-open reveal clock. Null until the first frame the atlas renders
+  // (the model is loaded by then, since useLoader suspends above); the first region's
+  // useFrame stamps it and all regions share it, so the cascade replays on each mount.
+  const revealStart = useRef<number | null>(null);
 
   return (
     <group>
       <mesh geometry={geom.shell} material={shellMat} />
-      {regions.map((r) => {
+      {regions.map((r, i) => {
         const g = geomById.get(r.id);
         if (!g) return null;
         return (
@@ -815,6 +936,9 @@ function RegionAtlasBrain({
             coreGeo={coreGeo}
             glowTex={glowTex}
             modelRadius={geom.radius}
+            revealStart={revealStart}
+            revealIndex={i}
+            revealTotal={regions.length}
             onSelect={onSelect}
           />
         );

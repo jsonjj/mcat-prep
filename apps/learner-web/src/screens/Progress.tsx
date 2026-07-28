@@ -1,6 +1,4 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { Link } from 'react-router-dom';
-import { Callout } from '@mcat/ui-web';
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
 import { CarsReadiness } from '../components/CarsReadiness';
 
@@ -105,22 +103,6 @@ export function Progress() {
       >
         <CarsReadiness />
       </section>
-
-      <Callout tone="info" title="No numeric score">
-        Progress shows direction, not a scaled score — a numeric MCAT prediction stays hidden until it
-        is validated and you have enough recent, broad evidence.
-      </Callout>
-
-      <Link to="/app/wrapped" className="mc-daily" aria-label="See your Wrapped recap">
-        <div className="mc-daily__text">
-          <span className="mc-upnext__eyebrow">Your Wrapped · private</span>
-          <span className="mc-daily__title">See your recap</span>
-          <span className="mc-upnext__meta">A keepable summary of the evidence you have built.</span>
-        </div>
-        <span className="mc-daily__arrow" aria-hidden="true">
-          →
-        </span>
-      </Link>
     </div>
   );
 }
