@@ -71,6 +71,8 @@ export interface TodaysPathConfig {
   readonly newLessonCapMax: number; // 6 (large budgets)
   /** Hard ceiling on practice questions in a day (large budgets fill via practice). */
   readonly practiceMaxQHard: number; // 90
+  /** No single activity may exceed this; larger workloads split into multiple blocks. */
+  readonly maxActivityMinutes: number; // 45
   /** Carry-over ceiling: today's total load <= this * preset. */
   readonly carryOverCapPct: number; // 1.25
   /** Diminishing-returns decay applied per additional pick of the same kind. */
@@ -103,6 +105,7 @@ export const TODAYS_PATH_CONFIG: TodaysPathConfig = {
   newLessonCap: 2,
   newLessonCapMax: 6,
   practiceMaxQHard: 90,
+  maxActivityMinutes: 45,
   carryOverCapPct: 1.25,
   perRepeatDecay: 0.8,
   sectionExamWeight: { bb: 1.0, cp: 0.92, ps: 0.85, cars: 0.8 },
@@ -504,23 +507,37 @@ export function buildTodaysPath(
     }
   }
 
-  // Collapse practice increments into a single Practice block.
+  // Split the practice questions into blocks no longer than maxActivityMinutes,
+  // sized evenly (no tiny leftover), so no single activity runs too long. Ordering
+  // then spreads them through the day. Blocks get unique ids (`practice:N`).
   if (practiceQs > 0) {
     const focus = pickPracticeFocus(snap);
-    scoredBlock.push({
-      activityId: 'practice',
-      kind: 'practice',
-      title: 'Practice',
-      detail: `${practiceQs} adaptive question${practiceQs === 1 ? '' : 's'} — a first correct try moves mastery.`,
-      estimatedMinutes: practiceQs * cfg.costs.practicePerQuestion,
-      count: practiceQs,
-      minutesBudget: practiceQs * cfg.costs.practicePerQuestion,
-      focus,
-      lessonSlug: null,
-      lessonId: null,
-      priorityReason: 'NEW_LEARNING',
-      carriedOver: false,
-    });
+    const perBlockMaxQ = Math.max(
+      1,
+      Math.floor(cfg.maxActivityMinutes / cfg.costs.practicePerQuestion),
+    );
+    const numBlocks = Math.max(1, Math.ceil(practiceQs / perBlockMaxQ));
+    const baseSize = Math.floor(practiceQs / numBlocks);
+    const remainder = practiceQs % numBlocks;
+    for (let b = 0; b < numBlocks; b += 1) {
+      const size = baseSize + (b < remainder ? 1 : 0);
+      if (size <= 0) continue;
+      const minutes = size * cfg.costs.practicePerQuestion;
+      scoredBlock.push({
+        activityId: numBlocks === 1 ? 'practice' : `practice:${b + 1}`,
+        kind: 'practice',
+        title: numBlocks === 1 ? 'Practice' : `Practice ${b + 1} of ${numBlocks}`,
+        detail: `${size} adaptive question${size === 1 ? '' : 's'} — a first correct try moves mastery.`,
+        estimatedMinutes: minutes,
+        count: size,
+        minutesBudget: minutes,
+        focus,
+        lessonSlug: null,
+        lessonId: null,
+        priorityReason: 'NEW_LEARNING',
+        carriedOver: false,
+      });
+    }
   }
 
   const ordered = orderActivities([...carried, ...coreActivities, ...scoredBlock]);
@@ -563,8 +580,16 @@ export function orderActivities(activities: readonly PlannedActivity[]): Planned
   const cars = activities.filter((a) => a.kind === 'cars_duel');
   const mistakes = activities.filter((a) => a.kind === 'review_mistakes');
 
-  // Base teaching order: recall → new lessons → practice (teach-before-test) → mistakes.
-  const base: PlannedActivity[] = [...recall, ...lessons, ...practice, ...mistakes];
+  // Interleave lessons + practice blocks so multiple practice sets are SPREAD
+  // through the day (alternate kinds), a lesson leading each pair (teach-before-test).
+  const interleaved: PlannedActivity[] = [];
+  for (let i = 0, j = 0; i < lessons.length || j < practice.length; ) {
+    if (i < lessons.length) interleaved.push(lessons[i++]!);
+    if (j < practice.length) interleaved.push(practice[j++]!);
+  }
+
+  // Base teaching order: recall → interleaved(lessons+practice) → mistakes.
+  const base: PlannedActivity[] = [...recall, ...interleaved, ...mistakes];
 
   // CARS mid: insert around the middle so it breaks up the block (interleaving break).
   if (cars.length > 0) {

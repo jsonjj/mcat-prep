@@ -187,6 +187,53 @@ describe('Today\u2019s Path engine', () => {
     expect(r.activities.some((a) => a.carriedOver)).toBe(true);
   });
 
+  it('never schedules a single activity longer than maxActivityMinutes', () => {
+    const lessons = Array.from({ length: 6 }, (_, i) => ({ ...lessonHigh, lessonId: `L${i}`, slug: `s${i}` }));
+    for (const budget of [120, 180, 240, 300, 360]) {
+      for (const coveragePct of [0, 0.5, 1]) {
+        const r = buildTodaysPath(
+          snap({
+            dailyBudgetMinutes: budget,
+            coveragePct,
+            practiceWeakness: 1,
+            recall: { dueLearning: 0, dueReviews: 80, newAvailable: 0, due: 80, estimatedMinutesForDue: 30 },
+            mistakesOpen: 20,
+            candidateLessons: lessons,
+          }),
+        );
+        for (const a of r.activities) {
+          expect(a.estimatedMinutes).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.maxActivityMinutes);
+        }
+      }
+    }
+  });
+
+  it('splits a large practice workload into multiple ≤45-min blocks with unique ids', () => {
+    const r = buildTodaysPath(
+      snap({ dailyBudgetMinutes: 360, coveragePct: 1, practiceWeakness: 1, candidateLessons: [] }),
+    );
+    const practice = r.activities.filter((a) => a.kind === 'practice');
+    expect(practice.length).toBeGreaterThan(1);
+    for (const p of practice) {
+      expect(p.estimatedMinutes).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.maxActivityMinutes);
+    }
+    const ids = practice.map((p) => p.activityId);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('spreads practice blocks between lessons (alternate kinds)', () => {
+    const lessons = Array.from({ length: 3 }, (_, i) => ({ ...lessonHigh, lessonId: `L${i}`, slug: `s${i}` }));
+    const r = buildTodaysPath(
+      snap({ dailyBudgetMinutes: 360, coveragePct: 0.7, practiceWeakness: 1, candidateLessons: lessons }),
+    );
+    const kinds = r.activities.map((a) => a.kind);
+    // At least one lesson appears before a practice block, and practice isn't one lump.
+    const firstLesson = kinds.indexOf('lesson');
+    const firstPractice = kinds.indexOf('practice');
+    expect(firstLesson).toBeGreaterThanOrEqual(0);
+    expect(firstPractice).toBeGreaterThan(firstLesson);
+  });
+
   it('produces a sane plan even at the 2-hour floor', () => {
     const r = buildTodaysPath(
       snap({
