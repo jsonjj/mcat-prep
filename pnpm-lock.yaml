@@ -556,6 +556,9 @@ importers:
       '@mcat/learner-api':
         specifier: workspace:*
         version: link:../lambdas/learner-api
+      '@mcat/policies':
+        specifier: workspace:*
+        version: link:../../packages/policies
     devDependencies:
       '@types/node':
         specifier: 22.10.5
