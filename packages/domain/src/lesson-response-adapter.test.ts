@@ -97,7 +97,22 @@ const VALID_SCORING: ServerScoringResolution = {
   scoringValid: true,
   serverItemVersion: 12,
   outcome: 'correct',
+  protectedScoring: false,
 };
+
+const NO_ADMINISTRATION_CONDITIONS = {
+  mixed: false,
+  passage: false,
+  timed: false,
+  protected: false,
+} as const;
+
+const ALL_ADMINISTRATION_CONDITIONS = {
+  mixed: true,
+  passage: true,
+  timed: true,
+  protected: true,
+} as const;
 
 const adapt = (
   patch: Partial<LessonResponseAdapterInput> = {},
@@ -146,7 +161,12 @@ describe('lesson response adapter — qualification', () => {
 
   it('qualifies an independent incorrect first attempt with correct false', () => {
     const result = adapt({
-      scoring: { scoringValid: true, serverItemVersion: 12, outcome: 'incorrect' },
+      scoring: {
+        scoringValid: true,
+        serverItemVersion: 12,
+        outcome: 'incorrect',
+        protectedScoring: false,
+      },
     });
 
     expect(isBktQualificationAccepted(result.qualification)).toBe(true);
@@ -165,7 +185,12 @@ describe('lesson response adapter — qualification', () => {
         omitted: true,
         response: { kind: 'MULTIPLE_CHOICE', chosenChoiceId: null },
       }),
-      scoring: { scoringValid: true, serverItemVersion: 12, outcome: 'omitted' },
+      scoring: {
+        scoringValid: true,
+        serverItemVersion: 12,
+        outcome: 'omitted',
+        protectedScoring: false,
+      },
     });
 
     expect(isBktQualificationAccepted(result.qualification)).toBe(true);
@@ -211,7 +236,12 @@ describe('lesson response adapter — evidence without BKT', () => {
         response: responseFacts(patch),
         scoring:
           patch.omitted === true
-            ? { scoringValid: true, serverItemVersion: 12, outcome: 'omitted' }
+            ? {
+                scoringValid: true,
+                serverItemVersion: 12,
+                outcome: 'omitted',
+                protectedScoring: false,
+              }
             : VALID_SCORING,
       });
 
@@ -327,7 +357,12 @@ describe('lesson response adapter — fail-closed paths', () => {
         omitted: true,
         response: { kind: 'MULTIPLE_CHOICE', chosenChoiceId: null },
       }),
-      scoring: { scoringValid: true, serverItemVersion: 12, outcome: 'omitted' },
+      scoring: {
+        scoringValid: true,
+        serverItemVersion: 12,
+        outcome: 'omitted',
+        protectedScoring: false,
+      },
     });
     const unscorable = adapt({ scoring: { scoringValid: false } });
 
@@ -471,15 +506,18 @@ describe('lesson response adapter — BKT eligibility is an allowlist', () => {
     // The defect this allowlist fixes: a mode that moves P(L) while emitting
     // evidence that can never fill a recipe slot.
     for (const mode of BKT_ELIGIBLE_EVIDENCE_MODES) {
-      const kind = deriveEvidenceKind([mode], responseFacts());
+      const kind = deriveEvidenceKind([mode], responseFacts(), ALL_ADMINISTRATION_CONDITIONS);
       expect(CONTEXTUAL_ONLY_KINDS.has(kind), mode).toBe(false);
     }
     for (const mode of CandidateEvidenceModeSchema.options.filter(
       (candidate) => !EXPECTED_ELIGIBILITY[candidate],
     )) {
-      expect(CONTEXTUAL_ONLY_KINDS.has(deriveEvidenceKind([mode], responseFacts())), mode).toBe(
-        true,
-      );
+      expect(
+        CONTEXTUAL_ONLY_KINDS.has(
+          deriveEvidenceKind([mode], responseFacts(), ALL_ADMINISTRATION_CONDITIONS),
+        ),
+        mode,
+      ).toBe(true);
     }
   });
 
@@ -497,24 +535,109 @@ describe('lesson response adapter — BKT eligibility is an allowlist', () => {
 
   it('classifies a multi-mode binding by its least-credit mode', () => {
     const response = responseFacts();
-    expect(deriveEvidenceKind(['INDEPENDENT', 'PROTECTED'], response)).toBe('independent');
-    expect(deriveEvidenceKind(['PROTECTED'], response)).toBe('protected');
-    expect(deriveEvidenceKind(['ENTRY'], response)).toBe('placement');
+    expect(
+      deriveEvidenceKind(['INDEPENDENT', 'PROTECTED'], response, ALL_ADMINISTRATION_CONDITIONS),
+    ).toBe('independent');
+    expect(deriveEvidenceKind(['PROTECTED'], response, ALL_ADMINISTRATION_CONDITIONS)).toBe(
+      'protected',
+    );
+    expect(deriveEvidenceKind(['ENTRY'], response, ALL_ADMINISTRATION_CONDITIONS)).toBe(
+      'placement',
+    );
+  });
+});
+
+describe('administration conditions come from the runtime, not the author', () => {
+  it('ignores declared modes entirely when stamping conditions', () => {
+    const declaresEverything = parseBinding({
+      candidateEvidenceModes: ['TIMED', 'PASSAGE', 'MIXED', 'PROTECTED'],
+    });
+
+    const notAdministered = adapt({ binding: declaresEverything, accommodations: ['extra-time'] });
+    expect(notAdministered.evidence?.conditions).toEqual({
+      ...NO_ADMINISTRATION_CONDITIONS,
+      accommodations: ['extra-time'],
+    });
+
+    const administered = adapt({
+      binding: declaresEverything,
+      response: responseFacts({
+        mixedAdministration: true,
+        passageAdministration: true,
+        timedAdministration: true,
+      }),
+      scoring: { ...VALID_SCORING, protectedScoring: true },
+    });
+    expect(administered.evidence?.conditions).toEqual({
+      ...ALL_ADMINISTRATION_CONDITIONS,
+      accommodations: [],
+    });
   });
 
-  it('derives evidence conditions from declared modes', () => {
+  it('stamps a condition the runner reports even when no mode declares it', () => {
     const result = adapt({
-      binding: parseBinding({ candidateEvidenceModes: ['TIMED', 'PASSAGE'] }),
-      accommodations: ['extra-time'],
+      binding: parseBinding({ candidateEvidenceModes: ['INDEPENDENT'] }),
+      response: responseFacts({ timedAdministration: true }),
     });
 
-    expect(result.evidence?.conditions).toEqual({
-      mixed: false,
-      passage: true,
-      timed: true,
-      protected: false,
-      accommodations: ['extra-time'],
+    expect(result.evidence?.conditions.timed).toBe(true);
+  });
+
+  it('takes `protected` from the server scoring resolution, never from a declared mode', () => {
+    const declared = adapt({ binding: parseBinding({ candidateEvidenceModes: ['PROTECTED'] }) });
+    expect(declared.evidence?.conditions.protected).toBe(false);
+    // Gated out of the kind too: an unprotected administration is not protected
+    // evidence, whatever the binding declares.
+    expect(declared.evidence?.kind).toBe('instruction');
+
+    const serverDetermined = adapt({
+      binding: parseBinding({ candidateEvidenceModes: ['PROTECTED'] }),
+      scoring: { ...VALID_SCORING, protectedScoring: true },
     });
+    expect(serverDetermined.evidence?.conditions.protected).toBe(true);
+    expect(serverDetermined.evidence?.kind).toBe('protected');
+  });
+
+  it('will not let a declared mode mint an evidence kind the administration did not earn', () => {
+    // Recipe slots key on `kind`, so this is the same author-manufactured
+    // warrant as a fabricated condition flag.
+    for (const [mode, gate] of [
+      ['TIMED', 'timedAdministration'],
+      ['PASSAGE', 'passageAdministration'],
+      ['MIXED', 'mixedAdministration'],
+    ] as const) {
+      const ungated = adapt({ binding: parseBinding({ candidateEvidenceModes: [mode] }) });
+      expect(ungated.evidence?.kind, mode).toBe('instruction');
+
+      const gated = adapt({
+        binding: parseBinding({ candidateEvidenceModes: [mode] }),
+        response: responseFacts({ [gate]: true }),
+      });
+      expect(gated.evidence?.kind, mode).not.toBe('instruction');
+    }
+  });
+
+  it('defaults every unreported administration condition to false', () => {
+    const parsed = LessonRuntimeResponseFactsSchema.parse({
+      questionId: 'q',
+      itemBindingId: 'ib',
+      bindingVersion: 'v',
+      attemptIndex: 1,
+      isRetry: false,
+      isDiagnosticRetry: false,
+      response: { kind: 'MULTIPLE_CHOICE', chosenChoiceId: 'a' },
+      omitted: false,
+      elapsedMs: 0,
+      answerChanges: 0,
+      assistanceLevel: 'A0',
+      contentBearingHintUsed: false,
+      revealUsed: false,
+      occurredAt: '2026-07-27T12:00:00.000Z',
+    });
+
+    expect(parsed.mixedAdministration).toBe(false);
+    expect(parsed.passageAdministration).toBe(false);
+    expect(parsed.timedAdministration).toBe(false);
   });
 });
 
@@ -619,6 +742,22 @@ describe('lesson response adapter — response and item shapes', () => {
 
 describe('authored artifact normalization', () => {
   const envelope = { lessonId: 'V3-LES-XXXXXX', artifactVersion: '9.9.9-envelope' };
+
+  /** The shape of a real scored exit binding, in authored snake_case. */
+  const MEASURABLE_AUTHORED_BINDING: Readonly<Record<string, unknown>> = {
+    item_binding_id: 'ALG-GRAPH-NEAR-01',
+    activity_id: 'ALG-GRAPH-NEAR-01',
+    primary_kc_id: 'V3-KC-452593',
+    secondary_kc_refs: [],
+    activity_role: 'NEAR_EXIT',
+    semantic_family_id: 'ALG-GRAPH-FAM-NEAR-01',
+    stimulus_lineage_id: 'GRAPH-NEAR-POSITION-TIME',
+    first_attempt_policy: 'IMMUTABLE',
+    assistance_available: 'A0',
+    learner_safe_projection_ref: 'GRAPH_LINEAR_FINAL',
+    answer_authority_ref: 'PROTECTED_ITEMS:ALG-GRAPH-NEAR-01',
+    rationale_authority_ref: 'PROTECTED_ITEMS:ALG-GRAPH-NEAR-01',
+  };
 
   it('resolves the envelope version when the binding omits one', () => {
     const { value } = normalizeAuthoredLessonBinding(envelope, { item_binding_id: 'x' });
@@ -787,6 +926,92 @@ describe('authored artifact normalization', () => {
     expect(unrecognizedAuthoredBindingKeys({ brand_new_authoring_key: 1 })).toEqual([
       'brand_new_authoring_key',
     ]);
+  });
+
+  it('surfaces unrecognized keys on the parse path itself, on both branches', () => {
+    // The check used to exist only in the conformance test, so it protected
+    // lessons already on disk and nothing else. It now travels with every parse.
+    const parsed = parseAuthoredLessonBinding(envelope, {
+      ...MEASURABLE_AUTHORED_BINDING,
+      brand_new_authoring_key: 'added tomorrow',
+      another_unmapped_key: 42,
+    });
+    expect(parsed.status).toBe('parsed');
+    expect(parsed.unrecognizedKeys).toEqual(['brand_new_authoring_key', 'another_unmapped_key']);
+
+    const invalid = parseAuthoredLessonBinding(envelope, {
+      item_binding_id: 42,
+      brand_new_authoring_key: 'x',
+    });
+    expect(invalid.status).toBe('invalid');
+    expect(invalid.unrecognizedKeys).toEqual(['brand_new_authoring_key']);
+
+    expect(
+      parseAuthoredLessonBinding(envelope, MEASURABLE_AUTHORED_BINDING).unrecognizedKeys,
+    ).toEqual([]);
+  });
+
+  it('rejects a worked example that still carries attempt-bearing fields', () => {
+    // The reviewer's case: a real measurable exit binding with ONLY
+    // `activity_role` changed. It must not become exposition with its scoring
+    // authority and question id silently dropped.
+    const contradictory = parseAuthoredLessonBinding(envelope, {
+      ...MEASURABLE_AUTHORED_BINDING,
+      activity_role: 'WORKED_EXAMPLE',
+    });
+
+    expect(contradictory.status).toBe('invalid');
+    if (contradictory.status !== 'invalid') return;
+    expect(contradictory.measurementKind).toBe('NON_MEASURABLE');
+    // Four named contradictions, including the `PROTECTED_ITEMS:` scoring ref
+    // that used to be dropped in silence. No `questionId` issue here because
+    // this artifact authors none, and the legacy `item_binding_id` fallback is
+    // a derivation that exposition never receives.
+    expect(new Set(contradictory.issues.map((issue) => issue.path.join('.')))).toEqual(
+      new Set([
+        'activityId',
+        'firstAttemptImmutable',
+        'serverScoringAuthorityRef',
+        'serverRationaleAuthorityRef',
+      ]),
+    );
+  });
+
+  it('accepts a worked example whose attempt-bearing fields are absent or explicitly null', () => {
+    // `null` is the authored spelling of "not applicable" and is not a
+    // contradiction — this is the shape real worked examples use.
+    const exposition = parseAuthoredLessonBinding(envelope, {
+      item_binding_id: 'worked-1',
+      activity_id: null,
+      primary_kc_id: 'kc-1',
+      activity_role: 'WORKED_EXAMPLE',
+      semantic_family_id: 'fam-1',
+      first_attempt_policy: 'NOT_APPLICABLE_WORKED_REASONING',
+      assistance_available: 'VISIBLE_EXPLANATION',
+      learner_safe_projection_ref: 'NODE:worked-1',
+      answer_authority_ref: null,
+      rationale_authority_ref: null,
+    });
+
+    expect(exposition.status).toBe('parsed');
+    if (exposition.status !== 'parsed') return;
+    expect(exposition.measurementKind).toBe('NON_MEASURABLE');
+  });
+
+  it('rejects an exposition binding carrying a question id on its own', () => {
+    const contradictory = parseAuthoredLessonBinding(envelope, {
+      item_binding_id: 'worked-2',
+      question_id: 'scored-item-7',
+      primary_kc_id: 'kc-1',
+      activity_role: 'WORKED_EXAMPLE',
+      semantic_family_id: 'fam-1',
+      assistance_available: 'VISIBLE_EXPLANATION',
+      learner_safe_projection_ref: 'NODE:worked-2',
+    });
+
+    expect(contradictory.status).toBe('invalid');
+    if (contradictory.status !== 'invalid') return;
+    expect(contradictory.issues.map((issue) => issue.path.join('.'))).toEqual(['questionId']);
   });
 
   it('never throws on a malformed artifact', () => {

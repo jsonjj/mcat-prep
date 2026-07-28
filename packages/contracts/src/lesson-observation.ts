@@ -270,6 +270,16 @@ export const LessonRuntimeResponseFactsSchema = z
     assistanceLevel: AssistanceLevelSchema,
     contentBearingHintUsed: z.boolean(),
     revealUsed: z.boolean(),
+    /**
+     * How the attempt was ACTUALLY administered. These are the warrant-bearing
+     * conditions the evidence system reads, so they are runtime facts recorded
+     * by the runner — never inferred from a `candidateEvidenceModes` declaration,
+     * which only says what an item is eligible to serve as. Default `false`: a
+     * runner that does not report a condition has not established it.
+     */
+    mixedAdministration: z.boolean().default(false),
+    passageAdministration: z.boolean().default(false),
+    timedAdministration: z.boolean().default(false),
     occurredAt: UtcTimestampSchema,
   })
   .strict();

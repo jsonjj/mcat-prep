@@ -128,14 +128,17 @@ describe('V3 lesson binding conformance', () => {
             ? raw.item_binding_id
             : '(missing item_binding_id)';
 
-        for (const authorKey of unrecognizedAuthoredBindingKeys(raw)) {
-          addFailure(`author.${authorKey}`, `${bindingId}: unrecognized author key`);
-        }
-
         const parsed = parseAuthoredLessonBinding(
           { lessonId: lesson.id, artifactVersion: lesson.artifactVersion },
           raw,
         );
+
+        // Read off the production parse result, not recomputed here, so the
+        // build fails the moment an authored key stops being mapped.
+        for (const authorKey of parsed.unrecognizedKeys) {
+          addFailure(`author.${authorKey}`, `${bindingId}: unrecognized author key`);
+        }
+        expect(parsed.unrecognizedKeys, bindingId).toEqual(unrecognizedAuthoredBindingKeys(raw));
         if (parsed.status === 'invalid') {
           for (const issue of parsed.issues) {
             addFailure(
@@ -177,7 +180,12 @@ describe('V3 lesson binding conformance', () => {
             revealUsed: false,
             occurredAt: OCCURRED_AT,
           }),
-          scoring: { scoringValid: true, serverItemVersion: 1, outcome: 'correct' },
+          scoring: {
+            scoringValid: true,
+            serverItemVersion: 1,
+            outcome: 'correct',
+            protectedScoring: false,
+          },
           identity: {
             observationId: OBSERVATION_ID,
             eventId: EVENT_ID,

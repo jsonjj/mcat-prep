@@ -387,34 +387,64 @@ export function normalizeAuthoredLessonBinding(
   );
   setIfDefined(value, 'responseMode', raw.response_mode);
 
-  if (measurementKind === 'MEASURABLE') {
-    setIfDefined(value, 'questionId', pick(raw, 'question_id', 'item_binding_id'));
-    setIfDefined(value, 'activityId', raw.activity_id);
-    if (raw.first_attempt_immutable === true || raw.first_attempt_policy === 'IMMUTABLE') {
-      value.firstAttemptImmutable = true;
-    }
-    setIfDefined(
-      value,
-      'serverScoringAuthorityRef',
-      pick(
-        raw,
-        'server_scoring_authority_ref',
-        'server_only_answer_authority_ref',
-        'server_answer_authority_ref',
-        'answer_authority_ref',
-      ) ?? undefined,
-    );
-    setIfDefined(
-      value,
-      'serverRationaleAuthorityRef',
-      pick(raw, 'server_rationale_authority_ref', 'rationale_authority_ref') ?? undefined,
-    );
+  // Attempt-bearing fields are passed through REGARDLESS of role, so the
+  // contract's `z.never()` guards on the non-measurable variant are reachable.
+  // A binding that calls itself a worked example while carrying a scoring
+  // authority ref, an activity, or first-attempt semantics is contradictory and
+  // must be rejected loudly, not silently reinterpreted as exposition with its
+  // scoring material dropped. `null` is the authored spelling of "not
+  // applicable" and is treated as absent, not as a contradiction.
+  //
+  // The one derivation NOT applied to exposition is the legacy
+  // `question_id → item_binding_id` fallback: inventing a question id for a
+  // worked example and then rejecting on it would make every worked example
+  // contradictory. Only an explicitly authored `question_id` carries through.
+  setIfDefined(
+    value,
+    'questionId',
+    measurementKind === 'MEASURABLE'
+      ? pick(raw, 'question_id', 'item_binding_id')
+      : raw.question_id,
+  );
+  setIfDefined(value, 'activityId', raw.activity_id ?? undefined);
+  if (raw.first_attempt_immutable === true || raw.first_attempt_policy === 'IMMUTABLE') {
+    value.firstAttemptImmutable = true;
   }
+  setIfDefined(
+    value,
+    'serverScoringAuthorityRef',
+    pick(
+      raw,
+      'server_scoring_authority_ref',
+      'server_only_answer_authority_ref',
+      'server_answer_authority_ref',
+      'answer_authority_ref',
+    ) ?? undefined,
+  );
+  setIfDefined(
+    value,
+    'serverRationaleAuthorityRef',
+    pick(raw, 'server_rationale_authority_ref', 'rationale_authority_ref') ?? undefined,
+  );
 
   return { measurementKind, value };
 }
 
-export type AuthoredLessonBindingParse =
+export type AuthoredLessonBindingParse = {
+  /**
+   * Author keys the normalizer did not map, on BOTH branches. Non-optional so a
+   * caller cannot fail to see it.
+   *
+   * Deliberately NOT a rejection. An unmapped key is an authoring-pipeline
+   * signal, not evidence that the binding is wrong: rejecting would discard a
+   * whole item's capability evidence over what is frequently an additive or
+   * cosmetic field. A *contradictory* field is different and does reject — see
+   * the attempt-bearing passthrough above. What is not acceptable is silence,
+   * so the list travels with every parse and the three-lesson conformance test
+   * fails the build on any non-empty result.
+   */
+  readonly unrecognizedKeys: readonly string[];
+} & (
   | {
       readonly status: 'parsed';
       readonly measurementKind: MeasurementKind;
@@ -425,22 +455,30 @@ export type AuthoredLessonBindingParse =
       readonly measurementKind: MeasurementKind;
       readonly issues: readonly ZodIssue[];
       readonly normalized: MutableRecord;
-    };
+    }
+);
 
 /** Normalize then validate an authored binding. Never throws. */
 export function parseAuthoredLessonBinding(
   envelope: AuthoredLessonEnvelope,
   raw: AuthoredRecord,
 ): AuthoredLessonBindingParse {
+  const unrecognizedKeys = unrecognizedAuthoredBindingKeys(raw);
   const normalized = normalizeAuthoredLessonBinding(envelope, raw);
   const parsed = LessonItemBindingSchema.safeParse(normalized.value);
   return parsed.success
-    ? { status: 'parsed', measurementKind: normalized.measurementKind, binding: parsed.data }
+    ? {
+        status: 'parsed',
+        measurementKind: normalized.measurementKind,
+        binding: parsed.data,
+        unrecognizedKeys,
+      }
     : {
         status: 'invalid',
         measurementKind: normalized.measurementKind,
         issues: parsed.error.issues,
         normalized: normalized.value,
+        unrecognizedKeys,
       };
 }
 
@@ -476,6 +514,49 @@ const EVIDENCE_KIND_BY_CANDIDATE_MODE: Readonly<Record<CandidateEvidenceMode, Ev
 };
 
 /**
+ * Administration conditions, as ACTUALLY administered.
+ *
+ * A declared `candidateEvidenceMode` says what an item is eligible to serve as.
+ * It says nothing about how one attempt was run, so it must never set a
+ * warrant-bearing condition. `mixed`, `passage` and `timed` come from the
+ * runner; `protected` comes from the server scoring resolution, because every
+ * measurable binding carries a `serverScoringAuthorityRef` and its mere presence
+ * therefore discriminates nothing. The opaque ref is never parsed to find out.
+ */
+export interface AdministrationConditions {
+  readonly mixed: boolean;
+  readonly passage: boolean;
+  readonly timed: boolean;
+  readonly protected: boolean;
+}
+
+const administrationConditions = (
+  response: LessonRuntimeResponseFacts,
+  protectedScoring: boolean,
+): AdministrationConditions => ({
+  mixed: response.mixedAdministration,
+  passage: response.passageAdministration,
+  timed: response.timedAdministration,
+  protected: protectedScoring,
+});
+
+/**
+ * A mode may only classify the evidence if the attempt was actually administered
+ * that way. Without this, declaring `TIMED` would mint a `timed` evidence record
+ * that fills the timed recipe slot on an untimed attempt — the same
+ * author-manufactured warrant as a fabricated condition flag, one field over and
+ * more load-bearing, since recipe slots key on `kind`.
+ */
+const ADMINISTRATION_GATED_MODES: Readonly<
+  Partial<Record<CandidateEvidenceMode, keyof AdministrationConditions>>
+> = {
+  MIXED: 'mixed',
+  PASSAGE: 'passage',
+  TIMED: 'timed',
+  PROTECTED: 'protected',
+};
+
+/**
  * Least-credit-first. A binding declaring several modes is classified by the one
  * that earns the least mastery credit, so a broad permission set can never
  * upgrade a record's evidence quality.
@@ -500,13 +581,19 @@ const CONSERVATIVE_EVIDENCE_MODE_ORDER: readonly CandidateEvidenceMode[] = [
 export const deriveEvidenceKind = (
   modes: readonly CandidateEvidenceMode[],
   response: LessonRuntimeResponseFacts,
+  conditions: AdministrationConditions,
 ): EvidenceKind => {
   if (response.isDiagnosticRetry) return 'diagnostic_retry';
   if (!isIndependentAdministration(response)) return 'instruction';
 
   for (const mode of CONSERVATIVE_EVIDENCE_MODE_ORDER) {
-    if (modes.includes(mode)) return EVIDENCE_KIND_BY_CANDIDATE_MODE[mode];
+    if (!modes.includes(mode)) continue;
+    const gate = ADMINISTRATION_GATED_MODES[mode];
+    if (gate !== undefined && !conditions[gate]) continue;
+    return EVIDENCE_KIND_BY_CANDIDATE_MODE[mode];
   }
+  // Every declared mode was gated out by the administration facts. Fail closed
+  // to contextual-only rather than crediting a condition that did not happen.
   return 'instruction';
 };
 
@@ -524,6 +611,13 @@ export type ServerScoringResolution =
       readonly scoringValid: true;
       readonly serverItemVersion: number;
       readonly outcome: EvidenceOutcome;
+      /**
+       * Server-determined: did the scoring authority score this as a protected,
+       * unseen item? Required rather than defaulted, so a warrant-bearing
+       * condition is never acquired by omission, and structurally unreachable
+       * from an authored binding.
+       */
+      readonly protectedScoring: boolean;
     }
   | { readonly scoringValid: false };
 
@@ -650,11 +744,12 @@ export function adaptLessonResponse(input: LessonResponseAdapterInput): LessonRe
   if (response.revealUsed) rejectionCodes.push('REVEAL_USED');
   if (response.isRetry || response.isDiagnosticRetry) rejectionCodes.push('RETRY_USED');
 
+  const administration = administrationConditions(
+    response,
+    scoring.scoringValid && scoring.protectedScoring,
+  );
   const conditions: EvidenceConditions = {
-    mixed: binding.candidateEvidenceModes.includes('MIXED'),
-    passage: binding.candidateEvidenceModes.includes('PASSAGE'),
-    timed: binding.candidateEvidenceModes.includes('TIMED'),
-    protected: binding.candidateEvidenceModes.includes('PROTECTED'),
+    ...administration,
     accommodations: [...(input.accommodations ?? [])],
   };
 
@@ -665,7 +760,7 @@ export function adaptLessonResponse(input: LessonResponseAdapterInput): LessonRe
         cluster: input.cluster,
         // `operation` is the `OperationTag` authoring-analysis axis, a different
         // axis from the mastery `ReasoningOperation`. Lesson evidence omits it.
-        kind: deriveEvidenceKind(binding.candidateEvidenceModes, response),
+        kind: deriveEvidenceKind(binding.candidateEvidenceModes, response, administration),
         independent: isIndependentAdministration(response),
         assistanceLevel: response.assistanceLevel,
         contentBearingHint: response.contentBearingHintUsed,
