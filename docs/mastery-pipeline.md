@@ -153,31 +153,51 @@ moves `P(L)`.
 **V3 lessons use the seam contract instead**, in three separated stages:
 
 1. The lesson runner emits **facts only** (`LessonRuntimeResponseFacts`): `questionId`,
-   `itemBindingId`, `bindingVersion`, `attemptIndex`, `isRetry`, `isDiagnosticRetry`,
-   `chosenChoiceId`, `omitted`, `elapsedMs`, `answerChanges`, `assistanceLevel`,
-   `contentBearingHintUsed`, `revealUsed`, `occurredAt`. It never emits `correct`, `independent`, an
-   evidence status, or a `P(L)`.
+   `itemBindingId`, `bindingVersion`, `attemptIndex`, `isRetry`, `isDiagnosticRetry`, `response`,
+   `omitted`, `elapsedMs`, `answerChanges`, `assistanceLevel`, `contentBearingHintUsed`,
+   `revealUsed`, `occurredAt`. It never emits `correct`, `independent`, an evidence status, or a
+   `P(L)`. `response` is a discriminated union, not an MCQ choice: `MULTIPLE_CHOICE` carries
+   `chosenChoiceId: string | null`, and `CONSTRUCTED` carries a multi-field record keyed by the
+   author's `response_field_id` values.
 2. The server accepts the response into an `AcceptedLessonObservation` (server-decided `outcome` and
-   `scoringValid`, plus the immutable `LessonItemBinding` snapshot) and routes evidence.
+   `scoringValid`, plus the immutable measurable `LessonItemBinding` snapshot) and routes evidence.
+   Non-measurable exposition — a worked example — produces no observation, no evidence, and no BKT
+   input at all.
 3. BKT qualification runs two gates and, only if both pass, emits a `QualifiedBktObservation` — the
    only lesson-side input the engine accepts.
 
 **Explicit eligibility only.** A lesson observation reaches BKT only when the immutable binding
-explicitly declares `INDEPENDENT` in `candidateEvidenceModes` **and** the runtime response qualifies
-(`attemptIndex === 1`, `assistanceLevel === 'A0'`, no content-bearing hint, no reveal, no retry,
-`scoringValid === true`). There is no default-allow and no inference: a binding that does not declare
-`INDEPENDENT` is rejected with `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED`, and a binding that declares
-it without a `reasoningOperation` is rejected with
+declares **some `candidateEvidenceModes` member other than `INSTRUCTIONAL`** (`hasEligibleEvidenceMode`)
+**and** the runtime response qualifies (`attemptIndex === 1`, `assistanceLevel === 'A0'`, no
+content-bearing hint, no reveal, no retry, `scoringValid === true`). Eligibility is deliberately
+broader than `INDEPENDENT` membership — a `TRANSFER` or `TIMED` binding is eligible too, and must
+therefore carry a `reasoningOperation`. There is no default-allow and no inference: an unauthored
+mode set defaults to `['INSTRUCTIONAL']` and is rejected with
+`INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` (the code name is frozen and now reads as "no eligible mode
+declared"), and an eligible binding without a `reasoningOperation` is rejected with
 `ELIGIBLE_BINDING_MISSING_REASONING_OPERATION`. Every rejection code is recorded for audit; the
 observation still produces evidence, it just does not move `P(L)`.
 
+Only the assistance level the learner **took** bears on independence. The binding's
+`authoredAssistanceAffordances` records what help the item _offered_ — an open, author-defined list
+— and is never read by the independence check.
+
+**Omission qualifies.** An omitted answer is a scored outcome, not a scoring failure: with
+`scoringValid === true` it still produces evidence and, if the gates pass, a `QualifiedBktObservation`
+with `correct: false`. `SERVER_SCORING_INVALID` means one thing only — no `serverItemVersion`
+resolved — and it is the only condition that suppresses the evidence record as well.
+
 A `QualifiedBktObservation` carries `primaryKcId`, `reasoningOperation`, `correct`, and an optional
 `dokLevel`. It has no `lessonId`, `pL`, `mastered`, `masteryThreshold`, `evidenceStatus`, `kind`, or
-`independent` field. `secondaryKcMappings` is never a target.
+`independent` field. `secondaryKcMappings` is never a target. Lesson-sourced `EvidenceRecord`s take a
+caller-resolved `cluster` (via `LESSON_TO_CLUSTER`) and **omit** `operation`, which is the
+`OperationTag` authoring-analysis axis rather than the mastery axis.
 
-**Current state.** Every shipped V3 lesson binding normalizes to `['INSTRUCTIONAL']` or
-`['INSTRUCTIONAL_EXIT']`, so the current V3 vector lesson `V3-LES-130923` moves no `P(L)` at all. It
-produces instructional evidence only. That is the intended end state, not a partial integration.
+**Current state.** No lesson artifact on disk authors `candidateEvidenceModes`, so all 115 bindings
+across the three real lessons take the `['INSTRUCTIONAL']` default — legacy `evidence_eligibility`
+labels, `INSTRUCTIONAL_EXIT_ONLY` included, normalize to the same value. No V3 lesson moves `P(L)` at
+all; they produce instructional evidence only. That is the intended end state, not a partial
+integration.
 
 ### 5.2.1 Lesson summaries are KC-derived
 

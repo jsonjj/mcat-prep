@@ -21,22 +21,24 @@ Automated read-only inspection of the current reference PDF found only page-leve
 The word "operation" names two different, non-interchangeable vocabularies in this repo. Both live in
 `packages/contracts/src/vocab.ts`. Pick by purpose, not by whichever name you saw first.
 
-|                    | Authoring-analysis tags                                       | Mastery axis                                                              |
-| ------------------ | ------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Schema             | `OperationTagSchema`                                          | `ReasoningOperationSchema`                                                |
-| Members            | 8: `K` `Q` `E` `D` `P` `A` `I` `T`                            | 7: `IDENTIFY` `PREDICT` `EXPLAIN` `RELATE` `QUANTIFY` `DESIGN` `EVIDENCE` |
-| Purpose            | Generic blueprint coverage/analysis of what an item exercises | The learner-facing skill axis the BKT engine estimates `P(L)` for         |
-| Where it is stored | `EvidenceRecord.operation`                                    | `reasoning_operation` on an item / lesson item binding                    |
-| Who may set it     | Author, during blueprint analysis                             | Author, deliberately and by name; never inferred                          |
+|                    | Authoring-analysis tags                                                             | Mastery axis                                                              |
+| ------------------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Schema             | `OperationTagSchema`                                                                | `ReasoningOperationSchema`                                                |
+| Members            | 8: `K` `Q` `E` `D` `P` `A` `I` `T`                                                  | 7: `IDENTIFY` `PREDICT` `EXPLAIN` `RELATE` `QUANTIFY` `DESIGN` `EVIDENCE` |
+| Purpose            | Generic blueprint coverage/analysis of what an item exercises                       | The learner-facing skill axis the BKT engine estimates `P(L)` for         |
+| Where it is stored | `EvidenceRecord.operation` (optional; omitted entirely for lesson-sourced evidence) | `reasoning_operation` on an item / lesson item binding                    |
+| Who may set it     | Author, during blueprint analysis                                                   | Author, deliberately and by name; never inferred                          |
 
 Neither is derived from the other. `EvidenceRecord.operation` must stay an `OperationTag` and must
 never be populated from `reasoning_operation`; equally, no `OperationTag` may be widened into a
-`ReasoningOperation`. Free-text fields such as `learner_operation` or `semantic_structure.operation`
-are instructional prose and are never either vocabulary.
+`ReasoningOperation`. Because there is nothing correct to put there, lesson-sourced evidence leaves
+`operation` **absent** rather than inventing a tag. Free-text fields such as `learner_operation`,
+`semantic_structure.operation`, and the open `scope_operation_tags` list are prose or
+authoring-analysis labels and are never either governed vocabulary.
 
-`reasoning_operation` is mandatory only where an item is declared eligible for independent evidence
-(see `docs/lesson-evidence-mastery-contract.md`), because a wrong guess there corrupts a
-learner-facing skill estimate. Elsewhere it is optional.
+`reasoning_operation` is mandatory wherever a lesson item binding declares any evidence mode other
+than `INSTRUCTIONAL` (see `docs/lesson-evidence-mastery-contract.md`), because a wrong guess there
+corrupts a learner-facing skill estimate. Elsewhere it is optional.
 
 ### Authoring-analysis tags (from the blueprint, not the PDF)
 

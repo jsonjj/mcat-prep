@@ -132,16 +132,24 @@ A v7 record's `lesson_id` is _linkage_, not authority. When a question is delive
 lesson, the authoritative classification for evidence and mastery comes from that lesson's immutable
 `LessonItemBinding`, not from the bank row: `question_id`, `binding_version` (opaque string),
 `primary_kc_id`, `reasoning_operation`, `dok_level`, `semantic_family_id`, `activity_role`,
-`representation_id`, `changed_dimensions`, and `candidate_evidence_modes`. Routing consequences:
+`representation_id`, `changed_dimensions`, and `candidate_evidence_modes` (optional; absent defaults
+to `['INSTRUCTIONAL']`). Routing consequences:
 
 - `primary_kc_id → EvidenceRecord.skillId` and `semantic_family_id → EvidenceRecord.familyId`; the
   family is what makes a recipe slot fill at most once.
 - `itemVersion` on an evidence record is the server-resolved positive integer
   (`SERVER_ITEM_VERSION_RESOLUTION`), never a parse of `binding_version`.
-- `candidate_evidence_modes` decides whether a response can ever reach BKT. No bank field, and no
-  `lesson_id`, grants that.
+- `candidate_evidence_modes` decides whether a response can ever reach BKT: **any** declared member
+  other than `INSTRUCTIONAL` opens that path and obliges the binding to carry a
+  `reasoning_operation`. No bank field, and no `lesson_id`, grants it.
+- Lesson-facing evidence IDs (`questionId`, `stimulusId`) use the opaque branded `LessonItemId`, not
+  the global `ContentId`. `ContentId`'s lowercase-hyphen regex was deliberately left unchanged rather
+  than widened to fit lesson artifacts, so bank IDs keep their stricter validation.
+- Lesson-sourced evidence takes a caller-resolved `cluster` and **omits** `operation`, which is the
+  `OperationTag` authoring-analysis axis rather than the mastery axis.
 - Storage must keep `correct_answer` and `explanations` server-only; the lesson seam reaches them
-  only through `server_scoring_authority_ref` / `server_rationale_authority_ref`.
+  only through `server_scoring_authority_ref` / `server_rationale_authority_ref`, and a learner-safe
+  inline projection that carried any of that material is rejected outright.
 
 Full field semantics live in `docs/lesson-evidence-mastery-contract.md`.
 
