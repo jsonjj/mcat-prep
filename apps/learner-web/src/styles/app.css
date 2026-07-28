@@ -2767,13 +2767,17 @@ body {
   gap: var(--mc-space-3);
   text-align: center;
 }
+.mc-practice__count .mc-h3 {
+  font-size: var(--mc-text-28);
+}
 .mc-practice__countinput {
-  width: 96px;
-  font-size: var(--mc-text-22);
+  width: 120px;
+  min-height: 56px;
+  font-size: var(--mc-text-28);
 }
 .mc-practice__esttime {
   color: var(--mc-ink-muted);
-  font-size: var(--mc-text-14);
+  font-size: var(--mc-text-17);
 }
 /* Make the primary CTA bigger + a touch of lift so it draws the eye. */
 .mc-practice__start.mc-button {
