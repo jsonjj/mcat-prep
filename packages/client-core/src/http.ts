@@ -9,6 +9,7 @@ import {
   GuestBootstrapResponseSchema,
   HTTP_API,
   HttpApiErrorSchema,
+  MistakePatternViewSchema,
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
@@ -308,13 +309,6 @@ export class HttpAuthorityClient implements AuthorityPort {
     );
   }
 
-  async recordMistake(source: 'practice' | 'cars' | 'lesson'): Promise<void> {
-    await this.acceptedCommand(HTTP_API.recordMistake.path, {
-      envelope: await this.commandEnvelope(),
-      source,
-    });
-  }
-
   async getSession() {
     await this.ensureBootstrap();
     const response = await this.request(HTTP_API.session.path, StudyStepViewSchema);
@@ -396,7 +390,12 @@ export class HttpAuthorityClient implements AuthorityPort {
 
   async getErrorLog() {
     await this.ensureBootstrap();
-    return this.request('/v1/errors', arrayOf(ErrorEntryViewSchema));
+    return this.request(HTTP_API.errors.path, arrayOf(ErrorEntryViewSchema));
+  }
+
+  async getMistakePatterns() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.errorPatterns.path, arrayOf(MistakePatternViewSchema));
   }
 
   async getSkills() {

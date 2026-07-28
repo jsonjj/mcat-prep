@@ -20,8 +20,10 @@
  * and never enters a queue payload.
  */
 import type { Pool } from 'pg';
+import { randomUUID } from 'node:crypto';
 import type {
   PracticeAnswer,
+  PracticeAttemptLogEntry,
   PracticeBankItem,
   PracticeBankPort,
   PracticeCandidateUnit,
@@ -44,6 +46,11 @@ import {
   type PracticePoolItem,
 } from './question-bank-repository';
 import { getQuestionStat, recordQuestionAttempt } from './question-stats-repository';
+import {
+  hasPracticeAttemptLog,
+  listPracticeAttempts,
+  recordPracticeAttempt,
+} from './practice-attempt-repository';
 
 const REASONING_OPERATIONS = new Set<string>([
   'IDENTIFY',
@@ -158,6 +165,8 @@ interface Schema {
   hasQuestionStats: boolean;
   hasExposure: boolean;
   hasRepair: boolean;
+  /** Migration 0010 (the practice attempt log) has been applied. */
+  hasAttemptLog: boolean;
 }
 
 interface MemExposure {
@@ -175,6 +184,7 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
     string,
     { kcId: string; skill?: ReasoningOperation; at: string }[]
   >();
+  private readonly memAttempts = new Map<string, PracticeAttemptLogEntry[]>();
 
   constructor(private readonly pool: Pool) {}
 
@@ -199,6 +209,7 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
       hasQuestionStats: present.has('question_stats'),
       hasExposure: present.has('practice_exposure'),
       hasRepair: present.has('practice_repair'),
+      hasAttemptLog: await hasPracticeAttemptLog(this.pool),
     };
   }
 
@@ -282,7 +293,7 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
     return rows.map(toBankItem);
   }
 
-  async classify(questionId: string): Promise<PracticeItemClassification | null> {
+  private async learnerSafeRow(questionId: string): Promise<LearnerSafeQuestion | null> {
     const schema = await this.schema();
     const columns = (
       schema.hasReasoningOp
@@ -293,8 +304,12 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
       `select ${columns} from questions where question_id = $1`,
       [questionId],
     );
-    const row = rows[0] as LearnerSafeQuestion | undefined;
-    if (row === undefined) return null;
+    return (rows[0] as LearnerSafeQuestion | undefined) ?? null;
+  }
+
+  async classify(questionId: string): Promise<PracticeItemClassification | null> {
+    const row = await this.learnerSafeRow(questionId);
+    if (row === null) return null;
     const domain = domainOf(row.section, row.primary_skill);
     return {
       kcId: row.kc_id,
@@ -304,7 +319,13 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
       domain,
       dok: row.dok_level,
       lessonId: row.lesson_id,
+      familyId: row.family_id,
     };
+  }
+
+  async getQuestion(questionId: string): Promise<PracticeQuestion | null> {
+    const row = await this.learnerSafeRow(questionId);
+    return row === null ? null : toPracticeQuestion(row);
   }
 
   async getAnswer(questionId: string): Promise<PracticeAnswer | null> {
@@ -422,6 +443,55 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
        values ($1, $2, $3, $4)`,
       [learnerId, target.kcId, target.skill ?? null, now],
     );
+  }
+
+  async recordPracticeAttempt(learnerId: string, entry: PracticeAttemptLogEntry): Promise<void> {
+    const schema = await this.schema();
+    if (!schema.hasAttemptLog) {
+      const list = this.memAttempts.get(learnerId) ?? [];
+      if (list.some((e) => e.questionId === entry.questionId)) return;
+      list.push(entry);
+      this.memAttempts.set(learnerId, list);
+      return;
+    }
+    await recordPracticeAttempt(this.pool, randomUUID(), {
+      learnerId,
+      questionId: entry.questionId,
+      kcId: entry.kcId,
+      skill: entry.skill,
+      familyId: entry.familyId,
+      cluster: entry.cluster,
+      chosenChoiceId: entry.chosenChoiceId,
+      isCorrect: entry.correct,
+      firstAttempt: entry.firstAttempt,
+      activityType: entry.activityType,
+      occurredAt: entry.occurredAt,
+    });
+  }
+
+  async listPracticeAttempts(
+    learnerId: string,
+    { limit }: { limit: number },
+  ): Promise<PracticeAttemptLogEntry[]> {
+    const schema = await this.schema();
+    if (!schema.hasAttemptLog) {
+      return [...(this.memAttempts.get(learnerId) ?? [])]
+        .sort((a, b) => Date.parse(b.occurredAt) - Date.parse(a.occurredAt))
+        .slice(0, Math.max(0, limit));
+    }
+    const rows = await listPracticeAttempts(this.pool, learnerId, { limit });
+    return rows.map((row) => ({
+      questionId: row.questionId,
+      kcId: row.kcId,
+      skill: reasoningOpOf(row.skill),
+      cluster: asCluster(row.cluster),
+      familyId: row.familyId,
+      chosenChoiceId: (row.chosenChoiceId as 'A' | 'B' | 'C' | 'D' | null) ?? null,
+      correct: row.isCorrect,
+      firstAttempt: row.firstAttempt,
+      activityType: 'practice',
+      occurredAt: row.occurredAt as PracticeAttemptLogEntry['occurredAt'],
+    }));
   }
 }
 

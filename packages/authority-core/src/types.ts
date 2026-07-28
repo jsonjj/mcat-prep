@@ -46,11 +46,12 @@ export interface LearnerState {
   /** Learner timezone (Date.getTimezoneOffset(), UTC−local minutes) for the local day boundary. */
   timezoneOffsetMinutes?: number;
   /**
-   * COUNT-ONLY open mistakes (independent misses from Practice / CARS / Lessons).
-   * Used only to decide when to schedule/inject a Mistakes session; the actual
-   * mistake items are owned by the (future) mistakes section.
+   * Watermark: misses that occurred at or before this instant have already been
+   * walked through in a Review Mistakes session, so they no longer schedule
+   * another one. They stay on the Mistakes tab until a fresh-item re-attempt
+   * resolves them — being read is not evidence of repair.
    */
-  mistakeCount?: number;
+  mistakesReviewedThrough?: UtcTimestamp;
   /** KC ids the learner has been taught (union of completed lessons' KCs) — per-KC teach-before-test. */
   taughtKcIds?: string[];
 }
@@ -157,13 +158,26 @@ export interface SessionSummary {
   evidenceCounts: Record<string, number>;
 }
 
+/**
+ * One practice miss with the content needed to act on it. Mirrors
+ * `ErrorEntryViewSchema` in @mcat/contracts. There is deliberately no cause
+ * field — see docs/design/error-handling-design.md §2.3.
+ */
 export interface ErrorEntryView {
   questionId: string;
-  skillId: string;
+  kcId: string | null;
+  skillId: string | null;
+  cluster: string | null;
+  familyId: string | null;
   occurredAt: UtcTimestamp;
-  chosenChoiceId: string | null;
-  cause: string | null;
-  repaired: boolean;
+  stem: string;
+  chosenChoiceId: 'A' | 'B' | 'C' | 'D' | null;
+  chosenChoiceText: string;
+  correctChoiceId: 'A' | 'B' | 'C' | 'D';
+  correctChoiceText: string;
+  choiceRationale: string | null;
+  resolved: boolean;
+  focus: string | null;
 }
 
 export interface TodayView {

@@ -11,6 +11,7 @@ import {
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
+  MistakePatternViewSchema,
   PracticeAttemptCommandSchema,
   PracticeAttemptResultSchema,
   PracticeFocusSchema,
@@ -63,6 +64,7 @@ export type RouteId =
   | 'progressLessons'
   | 'progressCars'
   | 'errors'
+  | 'errorPatterns'
   | 'vectorLessonStatus'
   | 'vectorLessonStart'
   | 'vectorLessonRun'
@@ -438,6 +440,14 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: false,
     responseSchema: ErrorEntryViewSchema.array(),
+  },
+  {
+    id: 'errorPatterns',
+    method: 'GET',
+    path: '/v1/errors/patterns',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: MistakePatternViewSchema.array(),
   },
   {
     id: 'vectorLessonStatus',

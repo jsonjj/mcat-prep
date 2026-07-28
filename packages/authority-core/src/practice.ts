@@ -76,6 +76,31 @@ export interface PracticeItemClassification {
   readonly domain: PracticeDomain;
   readonly dok: number | null;
   readonly lessonId: string | null;
+  /** Item family, so a re-attempt can prefer a sibling rather than a re-serve. */
+  readonly familyId: string | null;
+}
+
+/**
+ * One logged first attempt: which item, which grain, and WHICH WRONG ANSWER.
+ *
+ * Correct attempts are logged too — the pattern section has to show a
+ * denominator ("4 of 6 items in this KC"), and a misses-only log cannot produce
+ * one (docs/design/error-handling-design.md §6.5).
+ *
+ * Deliberately carries no cause, no confidence and no response time: cause is
+ * unrecoverable (§2.3) and the other two are separate, undecided workstreams.
+ */
+export interface PracticeAttemptLogEntry {
+  readonly questionId: string;
+  readonly kcId: string | null;
+  readonly skill: ReasoningOperation | null;
+  readonly cluster: SkillCluster | null;
+  readonly familyId: string | null;
+  readonly chosenChoiceId: 'A' | 'B' | 'C' | 'D' | null;
+  readonly correct: boolean;
+  readonly firstAttempt: boolean;
+  readonly activityType: 'practice';
+  readonly occurredAt: UtcTimestamp;
 }
 
 /** Server-only answer material (never in a queue payload). */
@@ -104,6 +129,8 @@ export interface PracticeBankPort {
     input: { excludeIds: readonly string[]; limit: number },
   ): Promise<PracticeBankItem[]>;
   classify(questionId: string): Promise<PracticeItemClassification | null>;
+  /** The learner-safe item, re-read when a past miss is displayed back. */
+  getQuestion(questionId: string): Promise<PracticeQuestion | null>;
   getAnswer(questionId: string): Promise<PracticeAnswer | null>;
   questionStats(questionId: string): Promise<{ attempts: number; correct: number }>;
   recordAttempt(questionId: string, correct: boolean, now: UtcTimestamp): Promise<void>;
@@ -111,6 +138,13 @@ export interface PracticeBankPort {
   recordExposure(learnerId: string, questionId: string, now: UtcTimestamp): Promise<void>;
   recentMisses(learnerId: string, input: { limit: number }): Promise<PracticeRepairTarget[]>;
   queueRepair(learnerId: string, target: PracticeRepairTarget, now: UtcTimestamp): Promise<void>;
+  /** Append one first-attempt row (idempotent per learner × item). */
+  recordPracticeAttempt(learnerId: string, entry: PracticeAttemptLogEntry): Promise<void>;
+  /** A learner's logged practice attempts, newest first. */
+  listPracticeAttempts(
+    learnerId: string,
+    input: { limit: number },
+  ): Promise<PracticeAttemptLogEntry[]>;
 }
 
 /**
@@ -161,6 +195,8 @@ interface ExposureEntry {
 export class SyntheticPracticeBankPort implements PracticeBankPort {
   private readonly exposure = new Map<string, Map<string, ExposureEntry>>();
   private readonly misses = new Map<string, { kcId: string; skill?: ReasoningOperation; at: string }[]>();
+  /** Practice attempt log. Newest last; keyed per learner, one row per item. */
+  private readonly attempts = new Map<string, PracticeAttemptLogEntry[]>();
 
   constructor(private readonly bank: LoadedBank) {}
 
@@ -252,7 +288,13 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
       domain,
       dok: q.difficulty ?? null,
       lessonId: null,
+      familyId: q.family_id ?? null,
     };
+  }
+
+  async getQuestion(questionId: string): Promise<PracticeQuestion | null> {
+    const compiled = this.bank.compiled.get(questionId);
+    return compiled === undefined ? null : compiledToPracticeQuestion(this.bank, compiled);
   }
 
   async getAnswer(questionId: string): Promise<PracticeAnswer | null> {
@@ -318,5 +360,23 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
     const list = this.misses.get(learnerId) ?? [];
     list.push(target.skill ? { kcId: target.kcId, skill: target.skill, at: now } : { kcId: target.kcId, at: now });
     this.misses.set(learnerId, list);
+  }
+
+  async recordPracticeAttempt(learnerId: string, entry: PracticeAttemptLogEntry): Promise<void> {
+    const list = this.attempts.get(learnerId) ?? [];
+    // Mirrors the partial unique index on (learner_id, question_id): a resubmit
+    // must not double-count a miss.
+    if (list.some((e) => e.questionId === entry.questionId)) return;
+    list.push(entry);
+    this.attempts.set(learnerId, list);
+  }
+
+  async listPracticeAttempts(
+    learnerId: string,
+    { limit }: { limit: number },
+  ): Promise<PracticeAttemptLogEntry[]> {
+    return [...(this.attempts.get(learnerId) ?? [])]
+      .sort((a, b) => Date.parse(b.occurredAt) - Date.parse(a.occurredAt))
+      .slice(0, Math.max(0, limit));
   }
 }

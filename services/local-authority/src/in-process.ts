@@ -6,6 +6,7 @@ import {
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
+  MistakePatternViewSchema,
   PracticeAttemptResultSchema,
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
@@ -85,7 +86,7 @@ export class InProcessAuthorityClient implements AuthorityPort {
   }
 
   async getToday() {
-    return TodayViewSchema.parse(this.mutate((state) => this.authority.getToday(state)));
+    return TodayViewSchema.parse(await this.mutateAsync((state) => this.authority.getToday(state)));
   }
 
   async getTodaysPath() {
@@ -94,7 +95,7 @@ export class InProcessAuthorityClient implements AuthorityPort {
 
   async buildTodaysPath(input: BuildTodaysPathInput) {
     return TodaysPathViewSchema.parse(
-      this.mutate((state) => this.authority.buildTodaysPath(state, input)),
+      await this.mutateAsync((state) => this.authority.buildTodaysPath(state, input)),
     );
   }
 
@@ -102,15 +103,13 @@ export class InProcessAuthorityClient implements AuthorityPort {
     activityId: string,
     status: 'in_progress' | 'complete' | 'skipped',
   ): Promise<void> {
-    this.mutate((state) => this.authority.recordPlanActivity(state, activityId, status));
+    await this.mutateAsync((state) =>
+      this.authority.recordPlanActivity(state, activityId, status),
+    );
   }
 
   async setDailyBudget(minutesPerDay: number): Promise<void> {
     this.mutate((state) => this.authority.setDailyBudget(state, minutesPerDay));
-  }
-
-  async recordMistake(source: 'practice' | 'cars' | 'lesson'): Promise<void> {
-    this.mutate((state) => this.authority.recordMistake(state, source));
   }
 
   async getSession() {
@@ -163,7 +162,13 @@ export class InProcessAuthorityClient implements AuthorityPort {
 
   async getErrorLog() {
     return ErrorEntryViewSchema.array().parse(
-      this.mutate((state) => this.authority.getErrorLog(state)),
+      await this.mutateAsync((state) => this.authority.getErrorLog(state)),
+    );
+  }
+
+  async getMistakePatterns() {
+    return MistakePatternViewSchema.array().parse(
+      await this.mutateAsync((state) => this.authority.getMistakePatterns(state)),
     );
   }
 
@@ -200,7 +205,9 @@ export class InProcessAuthorityClient implements AuthorityPort {
   }
 
   async getWrapped() {
-    return WrappedViewSchema.parse(this.mutate((state) => this.authority.getWrapped(state)));
+    return WrappedViewSchema.parse(
+      await this.mutateAsync((state) => this.authority.getWrapped(state)),
+    );
   }
 
   async getVectorLessonStatus() {

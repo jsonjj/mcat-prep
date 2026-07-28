@@ -63,7 +63,7 @@ describe('Authority — synthetic enzyme vertical', () => {
     expect(JSON.stringify(state.events)).not.toContain('rationales');
   });
 
-  it('runs Diagnose-Before-Reveal on a miss and records an error entry', () => {
+  it('runs Diagnose-Before-Reveal on a miss in the older Study flow', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
 
@@ -90,10 +90,10 @@ describe('Authority — synthetic enzyme vertical', () => {
 
     auth.continueStep(state);
 
-    const errors = auth.getErrorLog(state);
-    expect(errors.length).toBeGreaterThan(0);
-    expect(errors[0]!.cause).toBe('knew_but_misapplied');
-    expect(errors[0]!.repaired).toBe(true);
+    // The Mistakes tab is scoped to adaptive practice
+    // (docs/design/error-handling-design.md §6.4), so a Study-flow miss stays out
+    // of the error log even though the Study flow itself is unchanged.
+    expect(await auth.getErrorLog(state)).toEqual([]);
 
     // The retry did not create independent (mastery) evidence for that item.
     const independentForItem = state.evidence.filter(

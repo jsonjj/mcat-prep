@@ -411,22 +411,26 @@ export function buildTodaysPath(
     spent += Math.max(1, core.recallMinutes);
   }
 
-  // Review Mistakes — RESERVED as short "spacer" sessions (2–3/day), planned even
-  // when nothing is open yet ("a short session still appears"). Ordering interleaves
-  // them so they break up long same-kind runs (back-to-back practice/lessons), and
-  // misses that pile up during the day are caught by the next reserved session (the
-  // authority also injects an extra one mid-day on a real pile-up). Execution is a
-  // placeholder for now (links to the Mistakes page — no repair runner yet).
+  // Review Mistakes — RESERVED as short "spacer" sessions (2–3/day) that also break
+  // up long same-kind runs. They are reserved only once `eligibility.mistakesMinOpen`
+  // misses are actually open: reserving one against nothing is how a shipped slot
+  // came to promise "clear what piled up" and open an empty Mistakes page. Pile-ups
+  // that happen later in the day are caught by the authority's mid-day injector.
   const mistakesWanted =
     snap.dailyBudgetMinutes >= cfg.carsSecondAtBudget
       ? cfg.mistakesReserved.perDayLongBudget
       : cfg.mistakesReserved.perDay;
   const carriedMistakes = carried.filter((c) => c.kind === 'review_mistakes').length;
-  const mistakesToReserve = Math.max(0, mistakesWanted - carriedMistakes);
-  const mistakesPerSession = clamp(
-    Math.ceil(snap.mistakesOpen / Math.max(1, mistakesWanted)),
-    cfg.mistakesReserved.minItems,
-    cfg.mistakesReserved.maxItems,
+  const mistakesEligible = snap.mistakesOpen >= cfg.eligibility.mistakesMinOpen;
+  const mistakesToReserve = mistakesEligible ? Math.max(0, mistakesWanted - carriedMistakes) : 0;
+  // Never promise more items than the Mistakes tab can show.
+  const mistakesPerSession = Math.min(
+    clamp(
+      Math.ceil(snap.mistakesOpen / Math.max(1, mistakesWanted)),
+      cfg.mistakesReserved.minItems,
+      cfg.mistakesReserved.maxItems,
+    ),
+    Math.max(1, snap.mistakesOpen),
   );
   const mistakesSessionMinutes = mistakesPerSession * cfg.costs.mistakePerItem;
   for (let m = 0; m < mistakesToReserve; m += 1) {

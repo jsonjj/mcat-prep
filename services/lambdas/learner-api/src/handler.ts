@@ -852,6 +852,9 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       case 'errors':
         selected = snapshot.errorLog;
         break;
+      case 'errorPatterns':
+        selected = snapshot.errorPatterns;
+        break;
       default:
         return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
     }

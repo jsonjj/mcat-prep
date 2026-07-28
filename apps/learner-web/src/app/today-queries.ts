@@ -101,16 +101,6 @@ export function useSetDailyBudget() {
   });
 }
 
-/** Increment the count-only mistake tally (independent miss from a source). */
-export function useRecordMistake() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (source: 'practice' | 'cars' | 'lesson') => authority.recordMistake(source),
-    onSuccess: () =>
-      Promise.all(TODAYS_PATH_INVALIDATE.map((k) => qc.invalidateQueries({ queryKey: [k] }))),
-  });
-}
-
 /** Card count below which Recall isn't scheduled (mirrors the engine's recallMinDue). */
 const RECALL_MIN_DUE = 5;
 

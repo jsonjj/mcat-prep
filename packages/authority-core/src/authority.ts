@@ -20,6 +20,7 @@ import {
   type LessonMasteryView,
   type MasterySeed,
   type MasteryState,
+  type MistakePatternView,
   type PracticeAttemptCommand,
   type PracticeAttemptResult,
   type PracticeFocus,
@@ -79,6 +80,7 @@ import {
 import { clusterForLesson, loadSyntheticBank, type LoadedBank } from '@mcat/content';
 import {
   SyntheticPracticeBankPort,
+  type PracticeAttemptLogEntry,
   type PracticeBankPort,
   type PracticeCandidateUnit,
   type PracticeItemClassification,
@@ -127,6 +129,21 @@ const ENZYME_PATH: PathActivity[] = [
 
 const ENZYME_SKILL = 'bb1-enzyme-inhibition';
 const ENZYME_LESSON_ID = 'lesson-enz-inhibition';
+
+/**
+ * Focus token a "try again" action carries into the practice queue. The queue's
+ * own repair seam (`recentMisses` → `queueRepair`) then picks a FRESH unseen item
+ * in the missed KC, so this only has to narrow the pool — it must never identify
+ * the item, or the re-attempt would be a re-serve.
+ */
+const focusFor = (
+  cluster: SkillCluster | null,
+  skill: ReasoningOperation | null,
+): PracticeFocus | null =>
+  cluster !== null ? cluster.toLowerCase() : skill !== null ? skill.toLowerCase() : null;
+
+/** `kc-acid-base-buffers` → `kc acid base buffers`, for a display label. */
+const humanize = (id: string): string => id.replace(/[-_]+/g, ' ').trim();
 
 /**
  * DEV-ONLY adapter: the synthetic bank tags items with the 8 operation templates
@@ -316,7 +333,7 @@ export class Authority {
     return { capacityLabel, dayNumber, totalDays, coveragePct, clustersWithEvidence, ghost };
   }
 
-  getToday(state: LearnerState): TodayView {
+  async getToday(state: LearnerState): Promise<TodayView> {
     const ctx = this.dayContext(state);
     const sessionActive = state.session !== null && !this.sessionComplete(state);
     const tasks: Task[] = [
@@ -344,7 +361,7 @@ export class Authority {
         requiresConnection: false,
       },
     ];
-    const repairsOpen = this.getErrorLog(state).filter((e) => !e.repaired).length;
+    const repairsOpen = (await this.getErrorLog(state)).filter((e) => !e.resolved).length;
     return {
       capacityLabel: ctx.capacityLabel,
       continueTaskId: 'task-enzyme',
@@ -404,12 +421,23 @@ export class Authority {
   }
 
   /**
-   * Increment the COUNT-ONLY open-mistake tally (independent misses from Practice /
-   * CARS / Lessons). We deliberately store no mistake content — that's the mistakes
-   * section's job; the count only decides when to schedule/inject a Mistakes session.
+   * Mistakes the Review-Mistakes slot can actually show: unresolved practice
+   * misses the learner has not already been walked through today.
+   *
+   * This is the same list the Mistakes tab renders, deliberately. The slot used
+   * to be sized from a bare `state.mistakeCount` that stored no content, so it
+   * could promise "3 mistakes piled up" and open an empty page. Sizing it from
+   * the tab's own source makes that divergence unrepresentable.
+   *
+   * Lesson and CARS misses are excluded because they are never displayed here
+   * (docs/design/error-handling-design.md §6.4): lesson errors happen during
+   * acquisition, where errorful generation is the mechanism doing the work.
    */
-  recordMistake(state: LearnerState, _source?: string): void {
-    state.mistakeCount = (state.mistakeCount ?? 0) + 1;
+  async openMistakes(state: LearnerState): Promise<ErrorEntryView[]> {
+    const clearedThrough = state.mistakesReviewedThrough ?? null;
+    return (await this.getErrorLog(state)).filter(
+      (e) => !e.resolved && (clearedThrough === null || e.occurredAt > clearedThrough),
+    );
   }
 
   /** Read the current day's plan (built:false when none exists for today yet). */
@@ -418,7 +446,10 @@ export class Authority {
   }
 
   /** Build (and persist) today's plan; idempotent per day unless `force`. */
-  buildTodaysPath(state: LearnerState, input: BuildTodaysPathInput): TodaysPathView {
+  async buildTodaysPath(
+    state: LearnerState,
+    input: BuildTodaysPathInput,
+  ): Promise<TodaysPathView> {
     const now = this.clock.now();
     // Persist the learner's timezone so reads (which have no request body) use the
     // same local day boundary as the build.
@@ -436,7 +467,7 @@ export class Authority {
     const preset = this.dailyPreset(state);
     const ctx = this.dayContext(state);
     const carryOver = this.carryOverFrom(state.plan ?? null, planDate);
-    const snapshot = this.todaysPathSnapshot(state, input, planDate, preset, ctx, carryOver);
+    const snapshot = await this.todaysPathSnapshot(state, input, planDate, preset, ctx, carryOver);
     const result = buildTodaysPathEngine(snapshot, TODAYS_PATH_CONFIG);
     // Dedupe by activityId as a safety net (the engine already avoids re-scheduling
     // a carried kind/lesson, so collisions shouldn't occur).
@@ -465,11 +496,11 @@ export class Authority {
   }
 
   /** Advance the guided runner: mark one activity in_progress / complete / skipped. */
-  recordPlanActivity(
+  async recordPlanActivity(
     state: LearnerState,
     activityId: string,
     status: 'in_progress' | 'complete' | 'skipped',
-  ): void {
+  ): Promise<void> {
     const plan = state.plan;
     if (!plan) return;
     const activity = plan.activities.find((a) => a.activityId === activityId);
@@ -481,13 +512,14 @@ export class Authority {
         done.add(activity.lessonId);
         state.completedLessons = [...done];
       }
-      // Completing a Mistakes session clears the (count-only) open tally — the real
-      // repair runner will replace this placeholder resolution later.
-      if (activity.kind === 'review_mistakes') state.mistakeCount = 0;
+      // Completing a Mistakes session stops those misses from re-scheduling one.
+      // It does NOT hide them from the Mistakes tab: a mistake is resolved by a
+      // correct answer on a fresh item in the same KC, not by having been read.
+      if (activity.kind === 'review_mistakes') state.mistakesReviewedThrough = this.clock.now();
     }
     // Dynamic: if independent misses have piled up during the day, inject a Mistakes
     // session as the next step and push the last still-ready activity to tomorrow.
-    this.maybeInjectMistakesSession(plan, state.mistakeCount ?? 0);
+    this.maybeInjectMistakesSession(plan, (await this.openMistakes(state)).length);
     const next = plan.activities.find((a) => a.status === 'ready' || a.status === 'in_progress');
     plan.currentActivityId = next?.activityId ?? null;
   }
@@ -608,14 +640,14 @@ export class Authority {
       }));
   }
 
-  private todaysPathSnapshot(
+  private async todaysPathSnapshot(
     state: LearnerState,
     input: BuildTodaysPathInput,
     planDate: string,
     preset: number,
     ctx: ReturnType<Authority['dayContext']>,
     carryOver: CarriedActivity[],
-  ): TodaysPathSnapshot {
+  ): Promise<TodaysPathSnapshot> {
     const masteredLessonIds = new Set(
       this.getMasteryLessons(state)
         .filter((l) => l.mastered)
@@ -671,7 +703,7 @@ export class Authority {
       totalDays: ctx.totalDays,
       coveragePct: ctx.coveragePct,
       recall: input.recallLoad,
-      mistakesOpen: state.mistakeCount ?? 0,
+      mistakesOpen: (await this.openMistakes(state)).length,
       practiceUnlocked,
       practiceReviewNeed,
       candidateLessons,
@@ -1198,9 +1230,23 @@ export class Authority {
       }
       await this.practiceBank.recordAttempt(cmd.questionId, correct, now);
       await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
-      // A first, unassisted (independent) miss increments the mistake count for the
-      // Today's Path mistakes-session scheduler (count only — no item stored here).
-      if (!correct) this.recordMistake(state, 'practice');
+      // Log the first attempt WITH the chosen distractor. Which wrong answer they
+      // picked is the diagnostic signal (docs/design/error-handling-design.md §1);
+      // it used to reach only an unread event payload. Correct attempts are logged
+      // too so the pattern section has a denominator. Read-only downstream: this
+      // changes no scoring, mastery, exposure or repair behaviour.
+      await this.practiceBank.recordPracticeAttempt(state.learnerId, {
+        questionId: cmd.questionId,
+        kcId: classification?.kcId ?? null,
+        skill: classification?.skill ?? null,
+        cluster: classification?.cluster ?? null,
+        familyId: classification?.familyId ?? null,
+        chosenChoiceId: cmd.chosenChoiceId,
+        correct,
+        firstAttempt: true,
+        activityType: 'practice',
+        occurredAt: now,
+      });
       if (!correct && classification?.domain === 'science' && classification.kcId !== null) {
         await this.practiceBank.queueRepair(
           state.learnerId,
@@ -1427,17 +1473,11 @@ export class Authority {
         ['argument', 'RWT'],
         ['application', 'RBT'],
       ];
-      const scores: number[] = [];
       for (const [criterion, skill] of map) {
         const score = rubric[criterion];
         if (score !== undefined) {
           this.updateCarsAbility(state, skill, score / 3, CARS_K_DUEL);
-          scores.push(score);
         }
-      }
-      // A "failed" duel (mean rubric < 2 of 3) counts toward the mistake tally.
-      if (scores.length > 0 && scores.reduce((a, b) => a + b, 0) / scores.length < 2) {
-        this.recordMistake(state, 'cars');
       }
     }
   }
@@ -1451,7 +1491,7 @@ export class Authority {
     this.updateCarsAbility(state, skill, correct ? 1 : 0, CARS_K_POTD);
   }
 
-  getWrapped(state: LearnerState): WrappedView {
+  async getWrapped(state: LearnerState): Promise<WrappedView> {
     const map = this.getMasteryMap(state);
     const counts: Record<string, number> = {};
     for (const e of state.evidence) counts[e.kind] = (counts[e.kind] ?? 0) + 1;
@@ -1460,39 +1500,173 @@ export class Authority {
       skillsTouched: map.filter((m) => m.base !== 'not_assessed').length,
       skillsGlowing: map.filter((m) => ['independent', 'retained', 'strong'].includes(m.base)).length,
       evidenceCounts: counts,
-      repairsCompleted: this.getErrorLog(state).filter((e) => e.repaired).length,
+      repairsCompleted: (await this.getErrorLog(state)).filter((e) => e.resolved).length,
       protectedPassed: state.evidence.filter((e) => e.kind === 'protected' && e.outcome === 'correct').length,
     };
   }
 
-  getErrorLog(state: LearnerState): ErrorEntryView[] {
-    const causeByQuestion = new Map<string, ProbableCause>();
-    for (const ev of state.events) {
-      if (ev.type === 'cause_selected') causeByQuestion.set(ev.payload.questionId, ev.payload.cause);
+  // ---- Mistakes ------------------------------------------------------------
+  // Surface B (history) and Surface A (patterns) of docs/design/error-handling-design.md.
+  // Both read the practice attempt log, which is the only place the chosen
+  // distractor survives. Display scope is PRACTICE ONLY (§6.4): an FSRS "Again"
+  // is the scheduler hitting its target retention, not a mistake, and a lesson
+  // error happens during acquisition where errorful generation is the mechanism.
+
+  /** How many logged attempts the Mistakes surfaces read back. */
+  private static readonly ATTEMPT_LOG_LIMIT = 500;
+
+  /**
+   * Distinct items in a group before a pattern may be ASSERTED rather than
+   * hedged. No study sets this number. Ellerton & Clements found the careless
+   * share of errors on a single question ranged from 1% to 71%, so item variance
+   * plausibly dominates learner variance and a small-n "pattern" is most likely
+   * an artifact of which items came up (§6.5 rule 5).
+   */
+  private static readonly PATTERN_ASSERT_ITEMS = 5;
+  private static readonly PATTERN_ASSERT_MISSES = 3;
+  /** Below this a group is not shown at all — one miss is an error, not a pattern. */
+  private static readonly PATTERN_MIN_MISSES = 2;
+
+  /**
+   * A miss is resolved when a LATER first attempt on a DIFFERENT item in the same
+   * KC was correct — i.e. the fresh-item re-attempt landed. Re-answering the same
+   * item is not resolution (Karpicke & Roediger: re-testing the logged item is the
+   * measure that shows nothing, §9), and the practice queue never re-serves.
+   */
+  private static resolved(
+    attempts: readonly PracticeAttemptLogEntry[],
+    miss: PracticeAttemptLogEntry,
+  ): boolean {
+    if (miss.kcId === null) return false;
+    const missedAt = Date.parse(miss.occurredAt);
+    return attempts.some(
+      (a) =>
+        a.correct &&
+        a.kcId === miss.kcId &&
+        a.questionId !== miss.questionId &&
+        Date.parse(a.occurredAt) > missedAt,
+    );
+  }
+
+  /**
+   * Surface B — the question history. One row per missed item, carrying the stem,
+   * what the learner picked, what was correct, and the refutation they were shown.
+   *
+   * The previous implementation walked `attempt_submitted` events and required
+   * `this.bank.compiled.get(questionId)` to resolve, which scoped it to the
+   * 6-question synthetic demo bank; adaptive practice emits no such event, so not
+   * one practice miss could ever appear. The event store is untouched — only the
+   * error log's source moved.
+   */
+  async getErrorLog(state: LearnerState): Promise<ErrorEntryView[]> {
+    const attempts = await this.practiceBank.listPracticeAttempts(state.learnerId, {
+      limit: Authority.ATTEMPT_LOG_LIMIT,
+    });
+    const misses = attempts.filter((a) => !a.correct && a.firstAttempt);
+    const hydrated = await Promise.all(
+      misses.map(async (miss) => {
+        const [question, answer] = await Promise.all([
+          this.practiceBank.getQuestion(miss.questionId),
+          this.practiceBank.getAnswer(miss.questionId),
+        ]);
+        // An item retired from the corpus since the miss can no longer be shown
+        // back, and re-attempting it is impossible; drop it rather than render a
+        // row with no content.
+        if (question === null || answer === null) return null;
+        const textOf = (id: string | null): string =>
+          id === null ? '' : (question.choices.find((c) => c.id === id)?.text ?? '');
+        const entry: ErrorEntryView = {
+          questionId: miss.questionId,
+          kcId: miss.kcId,
+          skillId: miss.skill,
+          cluster: miss.cluster,
+          familyId: miss.familyId,
+          occurredAt: miss.occurredAt,
+          stem: question.stem,
+          chosenChoiceId: miss.chosenChoiceId,
+          chosenChoiceText: textOf(miss.chosenChoiceId),
+          correctChoiceId: answer.correctChoiceId,
+          correctChoiceText: textOf(answer.correctChoiceId),
+          choiceRationale:
+            miss.chosenChoiceId === null
+              ? null
+              : (answer.choiceRationales[miss.chosenChoiceId] ?? null),
+          resolved: Authority.resolved(attempts, miss),
+          focus: focusFor(miss.cluster, miss.skill),
+        };
+        return entry;
+      }),
+    );
+    return hydrated.filter((e): e is ErrorEntryView => e !== null);
+  }
+
+  /**
+   * Surface A — recurring misses, grouped at KC grain (falling back to cluster
+   * for items with no KC, e.g. CARS).
+   *
+   * NOT grouped at misconception grain: `error_models` is populated on 0 of the
+   * 2,108 corpus items, so the best-validated grain has no data. Every row counts
+   * DISTINCT items, carries its denominator, and hedges below the assertion floor.
+   */
+  async getMistakePatterns(state: LearnerState): Promise<MistakePatternView[]> {
+    const attempts = await this.practiceBank.listPracticeAttempts(state.learnerId, {
+      limit: Authority.ATTEMPT_LOG_LIMIT,
+    });
+    interface Group {
+      grain: 'kc' | 'cluster';
+      key: string;
+      label: string;
+      attempted: Set<string>;
+      missed: Set<string>;
+      lastMissedAt: UtcTimestamp | null;
+      cluster: SkillCluster | null;
+      skill: ReasoningOperation | null;
     }
-    const entries: ErrorEntryView[] = [];
-    const seen = new Set<string>();
-    for (const ev of state.events) {
-      if (ev.type !== 'attempt_submitted') continue;
-      const qid = ev.payload.questionId;
-      const compiled = this.bank.compiled.get(qid);
-      if (!compiled) continue;
-      const wrong = ev.payload.chosenChoiceId !== compiled.protected.correct_choice_id;
-      if (wrong && !ev.payload.isDiagnosticRetry && !seen.has(qid)) {
-        seen.add(qid);
-        entries.push({
-          questionId: qid,
-          skillId: ENZYME_SKILL,
-          occurredAt: ev.occurredAt,
-          chosenChoiceId: ev.payload.chosenChoiceId,
-          cause: causeByQuestion.get(qid) ?? null,
-          repaired: state.evidence.some(
-            (e) => e.questionId === qid && e.kind === 'diagnostic_retry',
-          ),
-        });
+    const groups = new Map<string, Group>();
+    for (const attempt of attempts) {
+      if (!attempt.firstAttempt) continue;
+      const grain = attempt.kcId !== null ? 'kc' : 'cluster';
+      const key = attempt.kcId ?? attempt.cluster;
+      if (key === null) continue;
+      const group = groups.get(`${grain}:${key}`) ?? {
+        grain,
+        key,
+        label: grain === 'kc' ? humanize(key) : key,
+        attempted: new Set<string>(),
+        missed: new Set<string>(),
+        lastMissedAt: null,
+        cluster: attempt.cluster,
+        skill: attempt.skill,
+      };
+      group.attempted.add(attempt.questionId);
+      if (!attempt.correct) {
+        group.missed.add(attempt.questionId);
+        if (group.lastMissedAt === null || attempt.occurredAt > group.lastMissedAt) {
+          group.lastMissedAt = attempt.occurredAt;
+        }
       }
+      groups.set(`${grain}:${key}`, group);
     }
-    return entries;
+    const patterns: MistakePatternView[] = [];
+    for (const group of groups.values()) {
+      if (group.missed.size < Authority.PATTERN_MIN_MISSES || group.lastMissedAt === null) continue;
+      patterns.push({
+        grain: group.grain,
+        key: group.key,
+        label: group.label,
+        missedItems: group.missed.size,
+        attemptedItems: group.attempted.size,
+        lastMissedAt: group.lastMissedAt,
+        assertable:
+          group.attempted.size >= Authority.PATTERN_ASSERT_ITEMS &&
+          group.missed.size >= Authority.PATTERN_ASSERT_MISSES,
+        focus: focusFor(group.cluster, group.skill),
+      });
+    }
+    return patterns.sort(
+      (a, b) =>
+        b.missedItems - a.missedItems || Date.parse(b.lastMissedAt) - Date.parse(a.lastMissedAt),
+    );
   }
 
   buildSummary(state: LearnerState, skillId: string): SessionSummary {

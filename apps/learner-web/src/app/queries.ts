@@ -22,6 +22,7 @@ const LEARNER_KEYS = [
   'mastery-lessons',
   'cars-readiness',
   'errors',
+  'error-patterns',
   'vector-lesson-status',
   'vector-lesson-run',
 ];
@@ -47,6 +48,9 @@ export const useCarsReadiness = () =>
   useQuery({ queryKey: ['cars-readiness'], queryFn: () => authority.getCarsReadiness() });
 export const useErrorLog = () =>
   useQuery({ queryKey: ['errors'], queryFn: () => authority.getErrorLog() });
+/** Recurring misses grouped at KC / cluster grain (Mistakes tab, patterns section). */
+export const useMistakePatterns = () =>
+  useQuery({ queryKey: ['error-patterns'], queryFn: () => authority.getMistakePatterns() });
 export const useSkills = () =>
   useQuery({ queryKey: ['skills'], queryFn: () => authority.getSkills() });
 /**

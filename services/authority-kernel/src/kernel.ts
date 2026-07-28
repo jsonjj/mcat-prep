@@ -1,4 +1,4 @@
-import { Authority } from '@mcat/authority-core';
+import { Authority, type PracticeBankPort } from '@mcat/authority-core';
 import {
   AcceptedCommandResponseSchema,
   type AcceptedCommandResponse,
@@ -26,17 +26,24 @@ export interface AuthorityKernelDependencies {
   readonly repository: AuthorityRepository;
   readonly clock: Clock;
   readonly bank: Authority['bank'];
+  /**
+   * Adaptive-practice seam. The snapshot's error log reads the practice attempt
+   * log through it, so a deployed snapshot without it shows no practice misses.
+   */
+  readonly practiceBank?: PracticeBankPort;
 }
 
 export class AuthorityKernel {
   private readonly repository: AuthorityRepository;
   private readonly clock: Clock;
   private readonly bank: Authority['bank'];
+  private readonly practiceBank: PracticeBankPort | undefined;
 
   constructor(dependencies: AuthorityKernelDependencies) {
     this.repository = dependencies.repository;
     this.clock = dependencies.clock;
     this.bank = dependencies.bank;
+    this.practiceBank = dependencies.practiceBank;
   }
 
   async handle(input: unknown, principal: Principal): Promise<AcceptedCommandResponse> {
@@ -124,7 +131,7 @@ export class AuthorityKernel {
     if (projection === null) {
       throw notFound();
     }
-    const authority = new Authority(this.bank, this.clock);
+    const authority = new Authority(this.bank, this.clock, this.practiceBank);
     const state = learnerStateFromProjection(projection);
     return buildLearnerSnapshot(authority, state, projection.sequence);
   }

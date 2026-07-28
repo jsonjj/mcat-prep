@@ -136,12 +136,13 @@ describe('Today\u2019s Path engine', () => {
     );
   });
 
-  it('reserves short Review-Mistakes spacer sessions every day (2/day, 3 on longer budgets), even with none open', () => {
-    const short = buildTodaysPath(snap({ mistakesOpen: 0, dailyBudgetMinutes: 180 }));
+  it('reserves short Review-Mistakes spacer sessions (2/day, 3 on longer budgets) once misses are open', () => {
+    const open = 6;
+    const short = buildTodaysPath(snap({ mistakesOpen: open, dailyBudgetMinutes: 180 }));
     const shortSessions = short.activities.filter((a) => a.kind === 'review_mistakes');
     expect(shortSessions.length).toBe(TODAYS_PATH_CONFIG.mistakesReserved.perDay);
 
-    const long = buildTodaysPath(snap({ mistakesOpen: 0, dailyBudgetMinutes: 360 }));
+    const long = buildTodaysPath(snap({ mistakesOpen: open, dailyBudgetMinutes: 360 }));
     const longSessions = long.activities.filter((a) => a.kind === 'review_mistakes');
     expect(longSessions.length).toBe(TODAYS_PATH_CONFIG.mistakesReserved.perDayLongBudget);
 
@@ -154,9 +155,35 @@ describe('Today\u2019s Path engine', () => {
     }
   });
 
+  /**
+   * The slot must not promise work that the Mistakes tab cannot show. A reserved
+   * session against zero open misses is exactly the dead end that shipped: the
+   * learner is told mistakes piled up and lands on an empty page.
+   */
+  it('reserves no Mistakes session below the declared open-mistake eligibility', () => {
+    for (const openCount of [0, TODAYS_PATH_CONFIG.eligibility.mistakesMinOpen - 1]) {
+      const r = buildTodaysPath(snap({ mistakesOpen: openCount, dailyBudgetMinutes: 360 }));
+      expect(r.activities.some((a) => a.kind === 'review_mistakes')).toBe(false);
+    }
+    const eligible = buildTodaysPath(
+      snap({ mistakesOpen: TODAYS_PATH_CONFIG.eligibility.mistakesMinOpen, dailyBudgetMinutes: 360 }),
+    );
+    const sessions = eligible.activities.filter((a) => a.kind === 'review_mistakes');
+    expect(sessions.length).toBeGreaterThan(0);
+    // And never sized above what is actually open.
+    for (const s of sessions) {
+      expect(s.count!).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.eligibility.mistakesMinOpen);
+    }
+  });
+
   it('uses the reserved Mistakes sessions as spacers to break up long practice runs', () => {
     const r = buildTodaysPath(
-      snap({ dailyBudgetMinutes: 360, practiceUnlocked: true, candidateLessons: manyLessons(2) }),
+      snap({
+        dailyBudgetMinutes: 360,
+        practiceUnlocked: true,
+        candidateLessons: manyLessons(2),
+        mistakesOpen: 6,
+      }),
     );
     // Several practice blocks + reserved mistakes sessions, and no long same-kind run
     // survives — the spacers separate what used to be back-to-back practice.

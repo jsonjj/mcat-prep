@@ -208,6 +208,7 @@ describe('AWS v1 learner HTTP contracts', () => {
       session: { kind: 'locked', reason: 'Finish onboarding.' },
       masteryMap: [],
       errorLog: [],
+      errorPatterns: [],
     };
     expect(LearnerSnapshotSchema.safeParse(snapshot).success).toBe(true);
     expect(

@@ -207,8 +207,7 @@ export class RepositoryLearnerKernel {
 
   async wrapped(principal: Principal): Promise<WrappedView> {
     const state = await this.loadState(principal);
-    const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
-    return WrappedViewSchema.parse(authority.getWrapped(state));
+    return WrappedViewSchema.parse(await this.authority().getWrapped(state));
   }
 
   async masterySkills(principal: Principal): Promise<readonly SkillMasteryView[]> {
