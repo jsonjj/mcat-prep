@@ -13,6 +13,7 @@ import {
   systemClock,
   type BktApplicationRejectionCode,
   type BktClockAdjustment,
+  type BktObservationSource,
   type BootstrapResponse,
   type BuildTodaysPathInput,
   type TodaysPathView,
@@ -31,6 +32,7 @@ import {
   type PracticeQuestion,
   type PracticeQueueItem,
   type PracticeQueueView,
+  type PolicyVersion,
   type QualifiedBktObservation,
   type ReasoningOperation,
   type SkillCluster,
@@ -1575,10 +1577,14 @@ export class Authority {
 
   /**
    * Move the two direct BKT grains, plus the indirect one-hop prerequisite
-   * reinforcement. The single write path for `P(L)`: both the synthetic study
-   * vertical and `applyQualifiedBktObservation` go through it, so neither can
-   * acquire a grain the other does not have, and neither can write an unbounded
-   * decay clock.
+   * reinforcement. The single write path for `P(L)`: the synthetic study
+   * vertical, `applyQualifiedBktObservation` and adaptive practice all go
+   * through it, so none can acquire a grain the others lack, and none can write
+   * an unbounded decay clock.
+   *
+   * Enforced structurally, not by discipline:
+   * `tests/architecture/mastery-write-path.test.ts` fails the build if
+   * `applyMasteryAttempt` or `boundDecayClock` is reached from anywhere else.
    */
   private stepDirectGrains(
     m: MasteryEngineState,
@@ -1589,6 +1595,13 @@ export class Authority {
       /** The time the caller reports. Bounded here; never written raw. */
       reportedAt: UtcTimestamp;
       dokLevel: number | undefined;
+      /**
+       * Population stats for the item, when the caller has them: they carry the
+       * calibrated IRT difficulty. Absent means uncalibrated, so `b` falls back
+       * to the DOK cold start — which is what the synthetic bank and the lesson
+       * corpus both are.
+       */
+      questionStats?: { attempts: number; correct: number };
     },
   ): BoundedDecayClock {
     const prereqKeys = this.bank.skillGraph.edges
@@ -1606,8 +1619,9 @@ export class Authority {
     const result = applyMasteryAttempt({
       correct: input.correct,
       now: clock.appliedAt,
-      // In-memory dev never crosses the calibration floor, so `b` is DOK-derived.
-      questionStats: { attempts: 0, correct: 0 },
+      // Uncalibrated by default: an in-memory bank never crosses the calibration
+      // floor, so `b` is DOK-derived unless the caller supplied real stats.
+      questionStats: input.questionStats ?? { attempts: 0, correct: 0 },
       ...(input.dokLevel !== undefined ? { dokLevel: input.dokLevel } : {}),
       states: {
         kc: m.kc[input.kcId] ?? initialMemoryState(),
@@ -1707,7 +1721,7 @@ export class Authority {
       const rejectionCodes: readonly BktApplicationRejectionCode[] = [
         'OBSERVATION_TIMESTAMP_IN_FUTURE',
       ];
-      this.recordBktObservationEvent(state, observation, {
+      this.recordBktObservationEvent(state, this.lessonObservationLedgerIdentity(observation), {
         appliedOccurredAt: null,
         clockAdjustment: 'none',
         outOfOrder: false,
@@ -1733,7 +1747,7 @@ export class Authority {
       this.recordPracticedLesson(m, input.lessonId.trim());
     }
 
-    this.recordBktObservationEvent(state, observation, {
+    this.recordBktObservationEvent(state, this.lessonObservationLedgerIdentity(observation), {
       appliedOccurredAt: clock.appliedAt,
       clockAdjustment: clock.clockAdjustment,
       outOfOrder,
@@ -1751,14 +1765,30 @@ export class Authority {
   }
 
   /**
-   * Append the audit record for one observation. Written for applications and
-   * refusals alike; a duplicate writes nothing, because the original record
-   * already stands. `occurredAt` on the envelope is when the SERVER acted, so
-   * the runner's claim only ever appears as `payload.reportedOccurredAt`.
+   * Append the audit record for one attempt that reached the BKT engine. The
+   * ONE writer of this record, for every `source`: a second writer is how the
+   * practice path came to move `P(L)` with no ledger entry at all.
+   *
+   * Written for applications and refusals alike; a duplicate lesson observation
+   * writes nothing, because the original record already stands. `occurredAt` on
+   * the envelope is when the SERVER acted, so the caller's claim only ever
+   * appears as `payload.reportedOccurredAt`.
    */
   private recordBktObservationEvent(
     state: LearnerState,
-    observation: QualifiedBktObservation,
+    attempt: {
+      source: BktObservationSource;
+      /** The observation's identity, or `null` on a source that has none. */
+      observationId: string | null;
+      observationSequence: number | null;
+      questionId: string;
+      primaryKcId: string;
+      reasoningOperation: ReasoningOperation;
+      correct: boolean;
+      reportedOccurredAt: UtcTimestamp;
+      contentRelease: string;
+      policies: readonly PolicyVersion[];
+    },
     outcome: {
       appliedOccurredAt: UtcTimestamp | null;
       clockAdjustment: BktClockAdjustment;
@@ -1772,21 +1802,50 @@ export class Authority {
       learnerId: state.learnerId,
       idempotencyKey: newIdempotencyKey(),
       occurredAt: this.clock.now(),
-      contentRelease: observation.contentRelease,
-      policies: observation.policies,
+      contentRelease: attempt.contentRelease,
+      policies: [...attempt.policies],
       payload: {
-        observationId: observation.observationId,
-        observationSequence: observation.sequence,
-        primaryKcId: observation.primaryKcId,
-        reasoningOperation: observation.reasoningOperation,
-        correct: observation.correct,
-        reportedOccurredAt: observation.occurredAt,
+        source: attempt.source,
+        observationId: attempt.observationId,
+        observationSequence: attempt.observationSequence,
+        questionId: attempt.questionId,
+        primaryKcId: attempt.primaryKcId,
+        reasoningOperation: attempt.reasoningOperation,
+        correct: attempt.correct,
+        reportedOccurredAt: attempt.reportedOccurredAt,
         appliedOccurredAt: outcome.appliedOccurredAt,
         clockAdjustment: outcome.clockAdjustment,
         outOfOrder: outcome.outOfOrder,
         rejectionCodes: [...outcome.rejectionCodes],
       },
     });
+  }
+
+  /** The audit identity of one qualified lesson response. */
+  private lessonObservationLedgerIdentity(observation: QualifiedBktObservation): {
+    source: BktObservationSource;
+    observationId: string;
+    observationSequence: number;
+    questionId: string;
+    primaryKcId: string;
+    reasoningOperation: ReasoningOperation;
+    correct: boolean;
+    reportedOccurredAt: UtcTimestamp;
+    contentRelease: string;
+    policies: readonly PolicyVersion[];
+  } {
+    return {
+      source: 'lesson_response',
+      observationId: observation.observationId,
+      observationSequence: observation.sequence,
+      questionId: observation.questionId,
+      primaryKcId: observation.primaryKcId,
+      reasoningOperation: observation.reasoningOperation,
+      correct: observation.correct,
+      reportedOccurredAt: observation.occurredAt,
+      contentRelease: observation.contentRelease,
+      policies: observation.policies,
+    };
   }
 
   /**
@@ -1979,10 +2038,14 @@ export class Authority {
 
   /**
    * Score one practice answer. On a FIRST, unassisted attempt this moves the
-   * P(L) mastery signal (BKT for science KC/skill/lesson, IRT `carsUpdate` at
-   * measurement weight for CARS), records exposure + population stats, and
-   * queues a KC×skill repair on a miss. Retries are learning-only (no P(L)).
-   * Answer material is returned only here (post-submit), never in the queue.
+   * P(L) mastery signal — BKT on the two capability grains, the primary KC and
+   * the primary reasoning operation, through the Authority's single
+   * `stepDirectGrains` step; IRT `carsUpdate` at measurement weight for CARS —
+   * records exposure + population stats, and queues a KC×skill repair on a miss.
+   * A lesson is NOT a grain: practice records the lesson for the rollup's
+   * routing only (see `applyPracticeMastery`). Retries are learning-only (no
+   * P(L)). Answer material is returned only here (post-submit), never in the
+   * queue.
    */
   async submitPracticeAttempt(
     state: LearnerState,
@@ -1999,7 +2062,7 @@ export class Authority {
       const classification = await this.practiceBank.classify(cmd.questionId);
       const stats = await this.practiceBank.questionStats(cmd.questionId);
       if (classification !== null) {
-        this.applyPracticeMastery(state, classification, correct, stats, now);
+        this.applyPracticeMastery(state, cmd.questionId, classification, correct, stats, now);
       }
       await this.practiceBank.recordAttempt(cmd.questionId, correct, now);
       await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
@@ -2126,8 +2189,23 @@ export class Authority {
     return Math.max(0, daysBetween(st.lastPracticedAt, now));
   }
 
+  /**
+   * Apply one first, unassisted practice answer to the mastery signal.
+   *
+   * Science goes through `stepDirectGrains`, the same door the lesson path and
+   * the synthetic study path use. It used to call `applyMasteryAttempt` inline,
+   * which reached the grains without the bounded monotonic decay clock: the
+   * write still succeeded, so decay simply stopped applying on this path and
+   * nothing failed. Routing it here rather than calling `boundDecayClock`
+   * alongside is deliberate — a second caller of the clamp is a duplicated
+   * invariant, and the next writer copies the duplicate.
+   *
+   * CARS is the IRT authority, not BKT: no capability grain moves, so it writes
+   * no BKT ledger record.
+   */
   private applyPracticeMastery(
     state: LearnerState,
+    questionId: string,
     classification: PracticeItemClassification,
     correct: boolean,
     stats: { attempts: number; correct: number },
@@ -2145,29 +2223,52 @@ export class Authority {
     }
     if (classification.kcId === null || classification.skill === null) return;
 
-    const prereqKeys = this.bank.skillGraph.edges
-      .filter((e) => e.kind === 'hard_prerequisite' && e.to === classification.kcId)
-      .map((e) => e.from);
-    const prerequisites = prereqKeys.map((k) => m.kc[k] ?? initialMemoryState());
-
-    const result = applyMasteryAttempt({
+    const clock = this.stepDirectGrains(m, {
+      kcId: classification.kcId,
+      operation: classification.skill,
       correct,
-      now,
+      // Practice is scored inside the request, so `now` is already the Authority
+      // clock; the bound is a no-op on it except where a grain's own history is
+      // newer, which is monotonicity doing its job rather than a clamp.
+      reportedAt: now,
+      dokLevel: classification.dok ?? undefined,
       questionStats: stats,
-      ...(classification.dok !== null ? { dokLevel: classification.dok } : {}),
-      states: {
-        kc: m.kc[classification.kcId] ?? initialMemoryState(),
-        reasoningOperation: m.skill[classification.skill] ?? initialMemoryState(),
-      },
-      prerequisites,
     });
 
-    m.kc[classification.kcId] = result.states.kc;
-    m.skill[classification.skill] = result.states.reasoningOperation;
-    prereqKeys.forEach((k, i) => {
-      const next = result.prerequisites[i];
-      if (next) m.kc[k] = next;
-    });
+    // The rollup reports the lessons a learner has practised, and practice
+    // reaches KCs that belong to lessons. Without this a lesson practised only
+    // here never enters `practicedLessonIds`, so the default
+    // `getMasteryLessons(state)` silently omits it — the lesson looks unstudied
+    // to the planner while its KCs carry real evidence.
+    if (classification.lessonId !== null && classification.lessonId.trim().length > 0) {
+      this.recordPracticedLesson(m, classification.lessonId.trim());
+    }
+
+    // Every capability write leaves a ledger record, whatever moved it. There is
+    // no observation id or sequence here: practice is scored in-request, so
+    // there is nothing to deduplicate against and nothing to order — and the
+    // payload's own guard refuses a record that claims otherwise.
+    this.recordBktObservationEvent(
+      state,
+      {
+        source: 'adaptive_practice',
+        observationId: null,
+        observationSequence: null,
+        questionId,
+        primaryKcId: classification.kcId,
+        reasoningOperation: classification.skill,
+        correct,
+        reportedOccurredAt: now,
+        contentRelease: this.bank.contentRelease,
+        policies: activePolicyVersions(),
+      },
+      {
+        appliedOccurredAt: clock.appliedAt,
+        clockAdjustment: clock.clockAdjustment,
+        outOfOrder: false,
+        rejectionCodes: [],
+      },
+    );
   }
 
   // ---- Practice hooks (Passage of the Day, etc.) ------------------------

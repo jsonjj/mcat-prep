@@ -109,8 +109,27 @@ export const BktApplicationRejectionCodeSchema = z.enum(BKT_APPLICATION_REJECTIO
 export type BktApplicationRejectionCode = z.infer<typeof BktApplicationRejectionCodeSchema>;
 
 /**
- * Server record of one qualified lesson response reaching (or being refused by)
- * the BKT engine.
+ * Which write path moved `P(L)`. An allowlist: a new surface that reaches the
+ * capability grains has to name itself here before it can write a ledger record,
+ * so it cannot arrive unaudited by default.
+ *
+ * Both members go through the Authority's single `stepDirectGrains` step and so
+ * share one bounded decay clock; the distinction is what identifies the attempt.
+ * A lesson response carries a `QualifiedBktObservation` with its own id and
+ * ordering value, which adaptive practice has neither of — see the correlation
+ * enforced on the payload below.
+ */
+export const BKT_OBSERVATION_SOURCES = [
+  /** A qualified lesson response (lesson-evidence-mastery-contract §8.2). */
+  'lesson_response',
+  /** A first, unassisted adaptive-practice answer (docs/practice-engine.md). */
+  'adaptive_practice',
+] as const;
+export const BktObservationSourceSchema = z.enum(BKT_OBSERVATION_SOURCES);
+export type BktObservationSource = z.infer<typeof BktObservationSourceSchema>;
+
+/**
+ * Server record of one attempt reaching (or being refused by) the BKT engine.
  *
  * The runner's `occurredAt` is a runtime FACT, not server time (contract §2), so
  * it may not be used as a decay clock unchecked. This event keeps **both**
@@ -119,14 +138,22 @@ export type BktApplicationRejectionCode = z.infer<typeof BktApplicationRejection
  * bounded, monotonic value state was actually written with. They differ exactly
  * when `clockAdjustment !== 'none'`, so the clamp never destroys the claim it
  * corrected.
+ *
+ * Every write to a capability grain appends one of these, whatever the `source`:
+ * a path that moves `P(L)` without a ledger record leaves the clamp with no
+ * forensic trail, which is how the practice path's clock bypass stayed invisible.
  */
 export const BktObservationAppliedSchema = EventBaseSchema.extend({
   type: z.literal('bkt_observation_applied'),
   payload: z
     .object({
-      observationId: z.string().uuid(),
+      source: BktObservationSourceSchema,
+      /** The observation's id, or `null` on a source that has no observation. */
+      observationId: z.string().uuid().nullable(),
       /** The observation's own ordering value (contract §12), as reported. */
-      observationSequence: z.number().int().nonnegative(),
+      observationSequence: z.number().int().nonnegative().nullable(),
+      /** The item attempted, in whichever id space the source serves from. */
+      questionId: z.string().min(1),
       /** The two grains this observation targets. Never a lesson. */
       primaryKcId: z.string().min(1),
       reasoningOperation: ReasoningOperationSchema,
@@ -141,7 +168,39 @@ export const BktObservationAppliedSchema = EventBaseSchema.extend({
       /** Empty when the observation was applied; otherwise why it was refused. */
       rejectionCodes: z.array(BktApplicationRejectionCodeSchema),
     })
-    .strict(),
+    .strict()
+    .superRefine((payload, context) => {
+      // The identity fields and the source are two derivations of one fact —
+      // whether this write came from an observation — so they are required to
+      // agree rather than each being checked alone. Both directions are
+      // enforced: a lesson record that has lost its observation id is as broken
+      // as a practice record that invented one, and an out-of-order flag on a
+      // source with no ordering value is a claim nothing could have decided.
+      const fromObservation = payload.source === 'lesson_response';
+      const hasIdentity = payload.observationId !== null;
+      const hasSequence = payload.observationSequence !== null;
+      if (fromObservation !== hasIdentity) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `observationId must be ${fromObservation ? 'present' : 'null'} when source is ${payload.source}.`,
+          path: ['observationId'],
+        });
+      }
+      if (fromObservation !== hasSequence) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `observationSequence must be ${fromObservation ? 'present' : 'null'} when source is ${payload.source}.`,
+          path: ['observationSequence'],
+        });
+      }
+      if (!hasSequence && payload.outOfOrder) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'outOfOrder cannot be true without an observationSequence to order against.',
+          path: ['outOfOrder'],
+        });
+      }
+    }),
 });
 export type BktObservationApplied = z.infer<typeof BktObservationAppliedSchema>;
 
