@@ -1,4 +1,4 @@
-import { BKT_CONFIG, bktUpdate, isMastered, PRIOR_PL0, type BktConfig, type BktObservation } from './bkt';
+import { BKT_CONFIG, bktUpdate, isAtCapabilityCut, PRIOR_PL0, type BktConfig, type BktObservation } from './bkt';
 import type { DiagnosticResponse } from './diagnostic';
 import { FC_AXIS, axisIds, indexAxis } from './diagnostic-axis';
 import { lessonsByFc } from './diagnostic-axis-fc';
@@ -97,11 +97,11 @@ export function itemsToDecisionAllCorrect(
   bkt: BktConfig = BKT_CONFIG,
   cap = 64,
 ): number {
-  if (isMastered(prior, bkt)) return 0;
+  if (isAtCapabilityCut(prior, bkt)) return 0;
   let pL = prior;
   for (let n = 1; n <= cap; n += 1) {
     pL = bktUpdate(pL, { correct: true, slip: slipValue }, bkt);
-    if (isMastered(pL, bkt)) return n;
+    if (isAtCapabilityCut(pL, bkt)) return n;
   }
   return Number.POSITIVE_INFINITY;
 }
@@ -146,11 +146,11 @@ export function itemsToDecision(
   bkt: BktConfig = BKT_CONFIG,
   minItems = 0,
 ): number | null {
-  if (minItems <= 0 && isMastered(prior, bkt)) return 0;
+  if (minItems <= 0 && isAtCapabilityCut(prior, bkt)) return 0;
   let pL = prior;
   for (let i = 0; i < stream.length; i += 1) {
     pL = bktUpdate(pL, stream[i]!, bkt);
-    if (i + 1 >= minItems && isMastered(pL, bkt)) return i + 1;
+    if (i + 1 >= minItems && isAtCapabilityCut(pL, bkt)) return i + 1;
   }
   return null;
 }

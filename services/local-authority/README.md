@@ -82,7 +82,7 @@ Two transport-level guards sit in front of every route, debug or not:
       "kcId": "V3-KC-866848",
       "pL": 0.31,
       "storedPL": 0.31,
-      "mastered": false,
+      "atCapabilityCut": false,
       "reviewDue": false,
       "halfLifeDays": 7,
       "lastPracticedAt": "…",
@@ -90,7 +90,7 @@ Two transport-level guards sit in front of every route, debug or not:
   ],
   "reasoningOperations": [
     // always all 7; `observed` false means `pL` is the prior
-    { "operation": "IDENTIFY", "pL": 0.2, "mastered": false, "observed": false },
+    { "operation": "IDENTIFY", "pL": 0.2, "atCapabilityCut": false, "observed": false },
   ],
   "lessons": [
     // DERIVED — a lesson holds no P(L) of its own
@@ -139,7 +139,8 @@ Two transport-level guards sit in front of every route, debug or not:
 Notes on reading it:
 
 - **`pL` is decayed to `now`; `storedPL` is the value as-of `lastPracticedAt`.** They differ once time has passed.
-- **A lesson never reports a fabricated number.** Every required KC of a reported lesson is supplied explicitly — an unstarted one at the prior — so a partly-started lesson rolls up over its **whole** membership rather than over the subset that happens to have moved. `mastered` needs every member at or above the threshold, so one weak KC is deliberately not mastery.
+- **`atCapabilityCut` is not `mastered`.** On a KC or a reasoning operation it means only that `pL >= masteryThreshold`. The mastery **claim** appears on a lesson and its members, where the evidence warrant is also available; a grain can sit at `pL = 1` and never be mastered. The two used to share the name `mastered`, and this view then disagreed with the lesson rollup one field away.
+- **A lesson never reports a fabricated number.** Every required KC of a reported lesson is supplied explicitly — an unstarted one at the prior — so a partly-started lesson rolls up over its **whole** membership rather than over the subset that happens to have moved. `mastered` needs every member at or above the threshold **and** adequately warranted, so one weak KC — or one unwarranted one — is deliberately not mastery.
 - **`unavailable` is a real answer, not "no data".** `LESSON_KC_MAP_MISSING` means the lesson id resolves to no curriculum membership (the synthetic dev lesson `lesson-enz-inhibition` legitimately does this); `LESSON_KC_STATE_MISSING` names the uncovered KC ids. Neither is the same as a lesson sitting at the prior.
 - **No protected material.** Evidence is projected through an explicit field allowlist, so answer keys, rationales, scoring authority refs, item stems and item ids are structurally absent. Assume this response gets logged; it is safe to paste into an issue.
 

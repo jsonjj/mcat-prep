@@ -32,10 +32,11 @@ const MODEL_URL = '/models/brain.glb';
  * the accessible, keyboard-friendly equivalent.
  */
 /**
- * A lesson's display status on the atlas. `done` is BKT's `mastered` and nothing
- * else; `todo` means the lesson has no BKT readout yet. The evidence warrant does
- * not appear here — it answers what the evidence covers, not whether the learner
- * is capable.
+ * A lesson's display status on the atlas. `done` is `LessonMasteryView.mastered`
+ * and nothing else — the composed claim, so it needs the capability cut AND a
+ * sufficient warrant on every required KC; `todo` means the lesson has no
+ * readout yet. Nothing here reads a warrant on its own: a tier, or a freshness
+ * flag, would be the evidence system answering the capability question.
  */
 export type AtlasLessonStatus = 'todo' | 'progress' | 'done';
 

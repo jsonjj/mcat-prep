@@ -137,8 +137,15 @@ contradiction the seam exists to prevent. Reason codes carry the same warrant wi
 along.
 
 - The learner-facing badge now selects on warrant **reason codes**.
-- `WrappedView.skillsGlowing` is a capability claim and so comes from BKT: it counts skills where
-  `getMasterySkills(...).mastered` holds.
+- `WrappedView.skillsGlowing` is a capability reading and so comes from BKT: it counts skills where
+  `getMasterySkills(...).atCapabilityCut` holds. That field was called `mastered` until 2026-07-29
+  and was a bare `pL >= 0.95` — a **second definition of `mastered`** standing beside the composed
+  one in `rollUpLessonMastery` and disagreeing with it, feeding the Progress rings, Home's glowing
+  count and Wrapped. `SkillMasteryView` carries no evidence warrant, so it may report the capability
+  estimate and may not make the claim. The warrant was not conjoined here instead because
+  `EvidenceRecord.skillId` is a KC id and never a reasoning operation, so the warrant set at this
+  grain is empty for every learner on every path; conjoining a producer-less warrant would have made
+  the field the constant `false` rather than gating it.
 - The ordinal tier survives only behind the private `Authority.skillWarrants`, for planner and coverage
   use. Ordinals are legitimate there because the planner genuinely compares them; the tier stops at the
   package boundary.
@@ -367,7 +374,11 @@ its own BKT state:
 
 - **displayed value** — arithmetic mean of the current (lazily decayed) `P(L)` of every required
   member KC;
-- **`mastered`** — `true` only when **every** required KC satisfies `isMastered(pL)` (`P(L) >= 0.95`);
+- **`mastered`** — `true` only when **every** required KC satisfies `isAtCapabilityCut(pL)`
+  (`P(L) >= 0.95`) **and** carries a sufficient evidence warrant. `rollUpLessonMastery` is the only
+  place `mastered` is defined; `isAtCapabilityCut` (renamed from `isMastered` on 2026-07-29) is the
+  only place the cut is compared, and it publishes the capability half under its own name so no
+  learner-facing field can claim mastery from `P(L)` alone;
 - **`reviewDue`** — `true` when **any** previously practiced required KC has decayed below the review
   line (`0.90`); a never-practiced KC is not due. This is BKT decay, not the warrant's `refreshNeeded`
   (§4.1.1);

@@ -571,8 +571,9 @@ describe('Authority — the evidence warrant stays a separate signal', () => {
 
   it('agrees with Home about how many skills are glowing, because both are BKT', async () => {
     // B-2: `skillsGlowing` used to threshold the evidence tier at `>= independent`
-    // while Home counted BKT `mastered`, so a learner could read "3 glowing" on
-    // Wrapped and "0" on Home in one session. Identity, not approximation.
+    // while Home counted the BKT capability cut, so a learner could read "3
+    // glowing" on Wrapped and "0" on Home in one session. Identity, not
+    // approximation.
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
     for (let i = 0; i < 40; i += 1) {
@@ -583,7 +584,7 @@ describe('Authority — the evidence warrant stays a separate signal', () => {
       else if (step.kind === 'question') answerCorrectly(auth, state);
     }
 
-    const homeGlowing = auth.getMasterySkills(state).filter((s) => s.mastered).length;
+    const homeGlowing = auth.getMasterySkills(state).filter((s) => s.atCapabilityCut).length;
     expect((await auth.getWrapped(state)).skillsGlowing).toBe(homeGlowing);
   });
 });

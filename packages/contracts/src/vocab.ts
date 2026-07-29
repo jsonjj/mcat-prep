@@ -165,7 +165,7 @@ export type DistractorFamily = z.infer<typeof DistractorFamilySchema>;
  * `MasteryStateSchema`, and a dormant ordinal on the public contract surface is
  * one import away from becoming a second mastery scale.
  *
- * Capability is BKT's `SkillMasteryView.pL` / `mastered`; the warrant crosses the
+ * Capability is BKT's `SkillMasteryView.pL` / `atCapabilityCut`; the warrant crosses the
  * wire only as `EVIDENCE_REASON_CODES`. The ordinal tier itself stays behind the
  * private `Authority.skillWarrants` as `EVIDENCE_QUALITY_TIERS`
  * (`packages/domain/src/mastery.ts`) and has no mirror here on purpose.

@@ -74,9 +74,9 @@ import {
   currentPL,
   evaluateEvidence,
   initialMemoryState,
+  isAtCapabilityCut,
   isCarsOnTrack,
   isLessonRollupAvailable,
-  MASTERY_THRESHOLD,
   overallCarsReadiness,
   PRACTICE_SELECTION_CONFIG,
   practiceSpecId,
@@ -1109,7 +1109,7 @@ export class Authority {
       for (const kc of taughtKcIds) {
         const st = state.mastery?.kc[kc];
         const pL = st ? currentPL(st, now) : PRIOR_PL0;
-        if (pL < MASTERY_THRESHOLD) practiceReviewNeed += 1;
+        if (!isAtCapabilityCut(pL)) practiceReviewNeed += 1;
       }
     }
 
@@ -2200,7 +2200,21 @@ export class Authority {
     return st.lastPracticedAt !== null && decayed < REVIEW_LINE && st.pL >= REVIEW_LINE;
   }
 
-  /** The 7 reasoning-skill readouts for the Skills page (percentages). */
+  /**
+   * The 7 reasoning-skill readouts for the Skills page (percentages).
+   *
+   * PUBLISHES NO MASTERY CLAIM, and the field name is what enforces that. It
+   * used to publish `mastered: pL >= MASTERY_THRESHOLD` — a second definition
+   * of `mastered`, standing beside the composed one in the lesson rollup and
+   * disagreeing with it, feeding the Progress rings, Home's glowing count and
+   * Wrapped. `669fbcf` gated the rollup on evidence and left this behind, so
+   * the product's most visible mastery claim was the one that skipped the gate.
+   *
+   * The warrant is not conjoined here because there is nothing to conjoin:
+   * `skillWarrants` produces grains keyed by KC id, and no evidence record is
+   * ever keyed to a reasoning operation, so the warrant set at this grain is
+   * empty for every learner. See `SkillMasteryViewSchema` for the measurement.
+   */
   getMasterySkills(state: LearnerState): SkillMasteryView[] {
     const m = this.ensureMastery(state);
     const now = this.clock.now();
@@ -2211,7 +2225,7 @@ export class Authority {
         operation,
         pL,
         reviewDue: st ? this.decayedBelowReviewLine(st, pL) : false,
-        mastered: pL >= MASTERY_THRESHOLD,
+        atCapabilityCut: isAtCapabilityCut(pL),
       };
     });
   }
@@ -3079,10 +3093,15 @@ export class Authority {
   }
 
   /**
-   * `skillsGlowing` is a CAPABILITY claim and comes from BKT, via the very same
+   * `skillsGlowing` is a CAPABILITY reading and comes from BKT, via the very same
    * `getMasterySkills` call Home reads, so the two screens cannot disagree. It
    * used to threshold the ordinal evidence tier at `>= independent`, which let a
    * learner see "3 skills glowing" on Wrapped and "0" on Home in one session.
+   *
+   * "Glowing" is deliberately not "mastered": it counts operations whose `P(L)`
+   * is at the capability cut, and it makes no claim about warrant. The field it
+   * reads is named for what it is, so a future reader cannot mistake this for
+   * the mastery claim the way `mastered` invited.
    *
    * `skillsTouched` still reads the warrant, and correctly: "have I met this at
    * all" is coverage, not attainment, and it makes no claim about capability.
@@ -3095,7 +3114,7 @@ export class Authority {
       skillsTouched: this.skillWarrants(state).filter(
         ({ evidence }) => evidence.evidenceQuality !== 'not_assessed',
       ).length,
-      skillsGlowing: this.getMasterySkills(state).filter((s) => s.mastered).length,
+      skillsGlowing: this.getMasterySkills(state).filter((s) => s.atCapabilityCut).length,
       evidenceCounts: counts,
       repairsCompleted: (await this.getErrorLog(state)).filter((e) => e.resolved).length,
       protectedPassed: state.evidence.filter(

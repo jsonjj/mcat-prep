@@ -22,6 +22,14 @@
  * where conservatism about a lesson channel belongs: in the gate on the claim,
  * never as a cap on the value (see `bkt.ts`, `LESSON_EXIT_GUESS_G`).
  *
+ * THIS MODULE IS THE ONLY DEFINITION OF `mastered` IN THE REPOSITORY. Every
+ * other `mastered` is this value passed along. The capability half is
+ * `isAtCapabilityCut` and it is compared in exactly one place too, so no caller
+ * can assemble a rival claim out of a threshold and a comparison operator.
+ * `tests/architecture/mastery-definition-single-source.test.ts` fails if a
+ * second definition appears — twice now, a parallel `pL >= MASTERY_THRESHOLD`
+ * has outlived a gate added here and gone on publishing the ungated answer.
+ *
  * FAIL-CLOSED ON PARTIAL INPUT. The rollup is only sound if it sees the lesson's
  * WHOLE membership, and "partial" is not otherwise representable: three of a
  * five-KC lesson looks exactly like a complete three-KC lesson, and real lessons
@@ -50,7 +58,7 @@
  */
 import type { UtcTimestamp } from '@mcat/contracts';
 import { evidenceQualityRank, type EvidenceQualityTier } from '@mcat/domain';
-import { BKT_CONFIG, type BktConfig } from './bkt';
+import { BKT_CONFIG, isAtCapabilityCut, type BktConfig } from './bkt';
 import {
   currentPL,
   isDueReview,
@@ -223,7 +231,7 @@ export function rollUpLessonMastery(
     return {
       kcId,
       pL,
-      mastered: pL >= cfg.bkt.masteryThreshold && evidenceSufficient,
+      mastered: isAtCapabilityCut(pL, cfg.bkt) && evidenceSufficient,
       evidenceSufficient,
       reviewDue: state.lastPracticedAt !== null && isDueReview(pL, cfg.forgetting),
     };

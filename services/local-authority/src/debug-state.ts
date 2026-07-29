@@ -38,6 +38,7 @@ import {
   currentPL,
   evaluateEvidence,
   initialMemoryState,
+  isAtCapabilityCut,
   isDueReview,
   rollUpLessonMastery,
   MASTERY_THRESHOLD,
@@ -126,14 +127,24 @@ export function isDebugStateRequestAllowed(input: DebugStateAccessInput): boolea
   );
 }
 
-/** One KC that currently holds a persisted `P(L)`. */
+/**
+ * One KC that currently holds a persisted `P(L)`.
+ *
+ * `atCapabilityCut` is the capability half only. Both this view and the
+ * operation view below published it as `mastered` until 2026-07-29 — two more
+ * bare `pL >= MASTERY_THRESHOLD` comparisons, and a debug surface that
+ * contradicted the lesson rollup one field over. The composed claim reaches
+ * this module through `DebugLessonView.mastered`, which is the rollup's own
+ * value; nothing here recomputes it.
+ */
 export interface DebugKcView {
   readonly kcId: string;
   /** Current value, after lazy decay to `now`. */
   readonly pL: number;
   /** The stored value, as-of `lastPracticedAt`. Equal to `pL` when never practiced. */
   readonly storedPL: number;
-  readonly mastered: boolean;
+  /** `P(L)` at or above the cut. NOT mastery: this view carries no warrant. */
+  readonly atCapabilityCut: boolean;
   readonly reviewDue: boolean;
   readonly halfLifeDays: number;
   readonly lastPracticedAt: string | null;
@@ -143,7 +154,8 @@ export interface DebugKcView {
 export interface DebugReasoningOperationView {
   readonly operation: ReasoningOperation;
   readonly pL: number;
-  readonly mastered: boolean;
+  /** `P(L)` at or above the cut. NOT mastery: this view carries no warrant. */
+  readonly atCapabilityCut: boolean;
   /** False when no observation has ever targeted this operation (`pL` is the prior). */
   readonly observed: boolean;
 }
@@ -268,7 +280,7 @@ function kcViews(
         kcId,
         pL,
         storedPL: state.pL,
-        mastered: pL >= MASTERY_THRESHOLD,
+        atCapabilityCut: isAtCapabilityCut(pL),
         reviewDue: state.lastPracticedAt !== null && isDueReview(pL),
         halfLifeDays: state.halfLifeDays,
         lastPracticedAt: state.lastPracticedAt,
@@ -286,7 +298,7 @@ function reasoningOperationViews(
     return {
       operation,
       pL,
-      mastered: pL >= MASTERY_THRESHOLD,
+      atCapabilityCut: isAtCapabilityCut(pL),
       observed: state !== undefined,
     };
   });

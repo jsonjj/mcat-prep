@@ -17,10 +17,16 @@ import type { AtlasLessonStatus, AtlasRegion } from './BrainScene';
 const BrainScene = lazy(() => import('./BrainScene'));
 
 /**
- * A lesson counts as mastered — and so contributes to its region filling — on BKT's
- * `mastered` alone, which is true only when every required member KC is at or above
- * the threshold. Lessons with no readout have not been practiced and stay dark. The
- * evidence warrant is a separate signal and never decides this.
+ * A lesson counts as mastered — and so contributes to its region filling — on
+ * `LessonMasteryView.mastered`, the one composed claim: every required member KC
+ * at or above the capability cut AND carrying a sufficient evidence warrant.
+ * Lessons with no readout have not been practiced and stay dark.
+ *
+ * The comment here used to say the claim rested on BKT alone and that "the
+ * evidence warrant is a separate signal and never decides this". That stopped
+ * being true when `669fbcf` gated the rollup, and this is the only mastery claim
+ * the learner sees — the reasoning-skill rail publishes `atCapabilityCut`, which
+ * is the capability half under its own name.
  */
 function lessonStatusFor(entry: LessonMasteryView | undefined): AtlasLessonStatus {
   if (!entry) return 'todo';

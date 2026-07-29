@@ -160,6 +160,23 @@ export function bktUpdate(pL: number, obs: BktObservation, cfg: BktConfig = BKT_
   return Math.min(1, Math.max(0, nudged));
 }
 
-/** Whether a unit's `P(L)` has crossed the mastery threshold. */
-export const isMastered = (pL: number, cfg: BktConfig = BKT_CONFIG): boolean =>
+/**
+ * Whether a grain's `P(L)` has crossed the capability cut. THE ONLY PLACE THE
+ * CUT IS COMPARED.
+ *
+ * It answers half a question. `P(L) >= 0.95` says the capability estimate is
+ * high; it says nothing about whether that estimate is warranted, and BKT will
+ * reach the cut on a handful of same-family answers no evidence recipe would
+ * accept. The mastery CLAIM is that half conjoined with a sufficient evidence
+ * warrant, and it is composed in exactly one place — `rollUpLessonMastery` in
+ * ./lesson-rollup.ts.
+ *
+ * It was called `isMastered` until 2026-07-29, and the name was the bug in
+ * miniature: `SkillMasteryView.mastered` was a bare comparison against this
+ * threshold, so the product's most visible mastery claim was the one that
+ * skipped the evidence gate `669fbcf` had added to the lesson rollup. Anything
+ * that only has `P(L)` may call this; nothing that only has `P(L)` may publish
+ * the word "mastered".
+ */
+export const isAtCapabilityCut = (pL: number, cfg: BktConfig = BKT_CONFIG): boolean =>
   pL >= cfg.masteryThreshold;

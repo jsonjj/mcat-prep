@@ -194,7 +194,9 @@ export const DecisionReasonViewSchema = z
  * It deliberately publishes no tier. The field used to be `masteryState`, an
  * ordinal evidence rank, and every consumer that read it ended up presenting
  * evidence sufficiency as attainment however it was worded. The learner-facing
- * capability claim is BKT's `SkillMasteryView.pL` / `mastered` and nothing here.
+ * capability estimate is BKT's `SkillMasteryView.pL` / `atCapabilityCut` and
+ * nothing here; the mastery CLAIM is `LessonMasteryView.mastered`, which needs
+ * that estimate AND a warrant.
  */
 export const SessionSummarySchema = z
   .object({
@@ -379,7 +381,9 @@ export const EvidenceKindSchema = z.enum([
  * legitimately compare tiers; it no longer crosses the wire, because every
  * learner-facing consumer that could read a rank eventually thresholded it and
  * re-created a second mastery scale beside BKT. `SkillMasteryView.pL` /
- * `mastered` is the only capability claim the learner ever sees.
+ * `atCapabilityCut` is the only capability reading the learner ever sees, and it
+ * is deliberately not called `mastered`: it carries no warrant, so it makes no
+ * claim.
  */
 export const MasteryMapEntrySchema = z
   .object({

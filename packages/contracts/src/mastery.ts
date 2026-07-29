@@ -59,7 +59,25 @@ export const MasterySeedSchema = z
   .strict();
 export type MasterySeed = z.infer<typeof MasterySeedSchema>;
 
-/** One of the 7 reasoning-skill readouts shown on the Skills page. */
+/**
+ * One of the 7 reasoning-skill readouts shown on the Skills page.
+ *
+ * PURE CAPABILITY, AND IT SAYS SO. This view carries no evidence warrant, so it
+ * publishes no mastery claim: `atCapabilityCut` replaced a field called
+ * `mastered` on 2026-07-29, which was a bare `pL >= 0.95` and therefore the one
+ * learner-facing mastery claim that skipped the evidence gate `669fbcf` put on
+ * the lesson rollup. Probed at the time: `pL = 0.9622478606`, `mastered: true`,
+ * evidence count 0.
+ *
+ * The claim was not composed here instead, and the reason is measured rather
+ * than assumed: `EvidenceRecord.skillId` is a KC id, never a reasoning
+ * operation, so `Authority.skillWarrants` produces zero grains at this grain —
+ * zero even after a full synthetic run that reaches
+ * `INDEPENDENT_EVIDENCE_SATISFIED` on its KCs. Conjoining a warrant that has no
+ * producer would not gate the claim, it would make it the constant `false` for
+ * every learner on every path. Until something writes evidence per reasoning
+ * operation, the honest publication is the capability half under its own name.
+ */
 export const SkillMasteryViewSchema = z
   .object({
     operation: ReasoningOperationSchema,
@@ -73,7 +91,13 @@ export const SkillMasteryViewSchema = z
      * one shared field name previously invited.
      */
     reviewDue: z.boolean(),
-    mastered: z.boolean(),
+    /**
+     * The CAPABILITY half only: `P(L)` is at or above the cut
+     * (`isAtCapabilityCut` in `@mcat/policies`). It is not mastery and must not
+     * be rendered as mastery — the claim needs a warrant this view does not
+     * carry. `LessonMasteryView.mastered` is the composed claim.
+     */
+    atCapabilityCut: z.boolean(),
   })
   .strict();
 export type SkillMasteryView = z.infer<typeof SkillMasteryViewSchema>;

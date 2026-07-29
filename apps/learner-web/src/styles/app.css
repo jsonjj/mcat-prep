@@ -3045,11 +3045,14 @@ body {
   stroke-linecap: round;
   transition: stroke-dashoffset var(--mc-motion-route) var(--mc-ease);
 }
-/* Tone by mastery, consistent with the app palette: teal when high, amber when
-   low, deep teal-green once mastered, muted violet when a mastered skill decays
-   past its review line. `--refresh` is that BKT review-due tone and NOT the
-   evidence warrant's staleness, despite the name; renaming the class is a
-   separate change. `--review` (Practice's weakest lessons) is always amber. */
+/* Tone by capability, consistent with the app palette: teal when high, amber
+   when low, deep teal-green at the capability cut, muted violet when a strong
+   skill decays past its review line. TWO CLASS NAMES OVERSTATE WHAT THEY SHOW,
+   and both renames are separate changes: `--refresh` is the BKT review-due tone
+   and NOT the evidence warrant's staleness, and `--mastered` is fed
+   `atCapabilityCut`, which is `P(L)` at the cut and carries no warrant — the
+   rail it styles renders "Strong", not "Mastered". `--review` (Practice's
+   weakest lessons) is always amber. */
 .mc-ring__arc--review,
 .mc-ring__arc--low {
   stroke: #e88a4e;

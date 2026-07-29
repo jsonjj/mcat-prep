@@ -151,12 +151,17 @@ describe('buildDebugLearnerState', () => {
 
     expect(view.reasoningOperations.map((o) => o.operation)).toEqual([...REASONING_OPERATIONS]);
     const identify = view.reasoningOperations.find((o) => o.operation === 'IDENTIFY')!;
-    expect(identify).toEqual({ operation: 'IDENTIFY', pL: 0.71, mastered: false, observed: true });
+    expect(identify).toEqual({
+      operation: 'IDENTIFY',
+      pL: 0.71,
+      atCapabilityCut: false,
+      observed: true,
+    });
     for (const operation of view.reasoningOperations.filter((o) => o.operation !== 'IDENTIFY')) {
       expect(operation).toEqual({
         operation: operation.operation,
         pL: PRIOR_PL0,
-        mastered: false,
+        atCapabilityCut: false,
         observed: false,
       });
     }

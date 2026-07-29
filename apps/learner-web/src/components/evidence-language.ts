@@ -3,8 +3,9 @@ import type { EvidenceReasonCode, MasteryMapEntry } from '@mcat/contracts';
 /**
  * Learner-facing wording for the evidence WARRANT — what the evidence on file
  * covers, and the next piece that is missing. None of it states a capability
- * level: the mastery claim is BKT's `P(L)` (the percentage and `mastered` on the
- * Skills and Progress screens) and comes from nowhere else.
+ * level: the capability estimate is BKT's `P(L)` (the percentage and
+ * `atCapabilityCut` on the Progress screen) and comes from nowhere else, and the
+ * mastery claim needs that estimate together with a warrant.
  *
  * The selector is the reason-code set and never an ordinal tier. Both warrant
  * surfaces — `SkillDetail` and the `Study` session summary — read this one

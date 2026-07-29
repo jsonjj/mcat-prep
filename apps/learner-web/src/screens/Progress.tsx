@@ -22,10 +22,25 @@ const toPct = (p: number): number => Math.round(p * 100);
 const REVIEW_DUE_LABEL = 'Review due';
 
 /**
- * Left rail — the seven app-wide reasoning skills as compact mastery rings. Same
- * data and semantics as the old Skills page (`useMasterySkills` → BKT P(L) pooled
- * across every lesson); mastered / review-due are shown with a glyph + label,
- * never color alone.
+ * The badge for a reasoning skill whose BKT `P(L)` has reached the capability
+ * cut.
+ *
+ * It said "Mastered" until 2026-07-29, from `pL >= 0.95` alone. That was the
+ * product's most visible mastery claim and the only one that never consulted
+ * the evidence system — a learner could read "Mastered" on a skill with zero
+ * evidence records behind it. This rail carries no warrant (the seven reasoning
+ * operations have no evidence grain at all), so it may describe the estimate but
+ * may not make the claim: "Strong" says `P(L)` is high, which is exactly what
+ * this rail knows. The mastery claim lives on the Evidence Atlas beside it,
+ * where both halves are available.
+ */
+const AT_CAPABILITY_CUT_LABEL = 'Strong';
+
+/**
+ * Left rail — the seven app-wide reasoning skills as compact capability rings.
+ * Same data and semantics as the old Skills page (`useMasterySkills` → BKT P(L)
+ * pooled across every lesson); strong / review-due are shown with a glyph +
+ * label, never color alone.
  */
 function SkillRail() {
   const skills = useMasterySkills();
@@ -47,22 +62,28 @@ function SkillRail() {
             const pct = toPct(skill.pL);
             const status = skill.reviewDue
               ? `, ${REVIEW_DUE_LABEL.toLowerCase()}`
-              : skill.mastered
-                ? ', mastered'
+              : skill.atCapabilityCut
+                ? `, ${AT_CAPABILITY_CUT_LABEL.toLowerCase()}`
                 : '';
             return (
               <li
                 key={skill.operation}
                 className="mc-skillring"
-                aria-label={`${info.title}: ${pct}% mastery${status}`}
+                aria-label={`${info.title}: ${pct}%${status}`}
               >
-                <MasteryRing pct={pct} mastered={skill.mastered} reviewDue={skill.reviewDue} />
+                <MasteryRing
+                  pct={pct}
+                  atCapabilityCut={skill.atCapabilityCut}
+                  reviewDue={skill.reviewDue}
+                />
                 <span className="mc-skillring__label" aria-hidden="true">
                   <span className="mc-skillring__title">{info.title}</span>
                   {skill.reviewDue ? (
                     <span className="mc-skillring__tag">◐ {REVIEW_DUE_LABEL}</span>
-                  ) : skill.mastered ? (
-                    <span className="mc-skillring__tag mc-skillring__tag--mastered">★ Mastered</span>
+                  ) : skill.atCapabilityCut ? (
+                    <span className="mc-skillring__tag mc-skillring__tag--mastered">
+                      ★ {AT_CAPABILITY_CUT_LABEL}
+                    </span>
                   ) : null}
                 </span>
               </li>

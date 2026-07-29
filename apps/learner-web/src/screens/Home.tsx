@@ -31,10 +31,12 @@ export function Home() {
   const remaining =
     plan?.activities.filter((a) => a.status === 'ready' || a.status === 'in_progress').length ?? 0;
 
-  // "Glowing" is a capability claim, so it counts BKT-mastered reasoning skills —
-  // the same seven the Skills page shows, reached from "All skills" below.
+  // "Glowing" is a capability reading, so it counts reasoning skills whose BKT
+  // P(L) is at the capability cut — the same seven the Progress rail shows, and
+  // read from the same field, so the two screens cannot disagree. It is
+  // deliberately not a mastery claim: this view carries no evidence warrant.
   const skills = useMasterySkills();
-  const glowing = (skills.data ?? []).filter((s) => s.mastered).length;
+  const glowing = (skills.data ?? []).filter((s) => s.atCapabilityCut).length;
 
   const dayLabel = today.data
     ? `Day ${today.data.dayNumber}${today.data.totalDays ? ` of ${today.data.totalDays}` : ''}`

@@ -3,7 +3,7 @@ import { UtcTimestampSchema, type BktObservationSource, type UtcTimestamp } from
 import { coldStartB, difficultyB, slip, MAX_SLIP_SM, IRT_CONFIG } from './irt';
 import {
   bktUpdate,
-  isMastered,
+  isAtCapabilityCut,
   BKT_CONFIG,
   GUESS_BY_OBSERVATION_SOURCE,
   GUESS_G,
@@ -89,7 +89,7 @@ describe('bkt', () => {
     let pL = PRIOR_PL0;
     const s = slip(-1);
     for (let i = 0; i < 25; i += 1) pL = bktUpdate(pL, { correct: true, slip: s });
-    expect(isMastered(pL)).toBe(true);
+    expect(isAtCapabilityCut(pL)).toBe(true);
     expect(pL).toBeGreaterThanOrEqual(MASTERY_THRESHOLD);
   });
 
@@ -476,6 +476,6 @@ describe('lesson-exit observations are discounted through the guess, never cappe
       ),
     );
     // And a lesson exit alone can carry a grain over the cut from just below it.
-    expect(isMastered(step.states.kc.pL)).toBe(true);
+    expect(isAtCapabilityCut(step.states.kc.pL)).toBe(true);
   });
 });
