@@ -286,6 +286,7 @@ export const PlannerReasonSchema = z.enum([
   'PASSAGE_GAP',
   'TIMED_GAP',
   'PROTECTED_GAP',
+  'TAUGHT_NOT_MASTERED',
   'COVERAGE_GAP',
   'CARS_CONTACT',
   'NEW_LEARNING',

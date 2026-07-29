@@ -1041,6 +1041,10 @@ export class Authority {
     const pLByLesson = new Map(masteryLessons.map((l) => [l.lessonId, l.pL]));
     const completed = new Set(state.completedLessons ?? []);
     const now = this.clock.now();
+    // "This material has been put in front of the learner" — delivery OR the
+    // claim, which is the right union for teach-before-test and for prerequisite
+    // release. It is NOT the mastery claim, and it is deliberately not the value
+    // published as `mastered` below.
     const done = (id: string): boolean => completed.has(id) || masteredLessonIds.has(id);
 
     // Prereq pipeline: unlocked = all prereqs done; dependentsCount = how many
@@ -1080,7 +1084,14 @@ export class Authority {
       section: l.section,
       cluster: l.cluster,
       kcCount: l.kcCount,
-      mastered: masteredLessonIds.has(l.lessonId) || completed.has(l.lessonId),
+      // Two facts, two fields. `|| completed.has(...)` used to sit on `mastered`,
+      // which taught the planner that finishing an instructional lesson at
+      // P(L) = 0.2 with zero evidence was the same as having mastered it — and
+      // since the planner drops mastered lessons, the material became
+      // unreachable. Completion is delivery (contract §9) and is published as
+      // such; the planner decides separately what to do with each.
+      mastered: masteredLessonIds.has(l.lessonId),
+      delivered: completed.has(l.lessonId),
       covered: l.cluster !== null && ctx.clustersWithEvidence.has(l.cluster),
       unlocked: l.prerequisiteLessonIds.every((p) => done(p)),
       dependentsCount: hasPrerequisiteGraph ? (dependents.get(l.lessonId) ?? 0) : null,

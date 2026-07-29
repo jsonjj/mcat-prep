@@ -46,11 +46,14 @@ const PRIORITY_RANK: Readonly<Record<PlannerReason, number>> = {
   PASSAGE_GAP: 6,
   TIMED_GAP: 7,
   PROTECTED_GAP: 8,
-  COVERAGE_GAP: 9,
-  CARS_CONTACT: 10,
-  NEW_LEARNING: 11,
-  OPTIONAL_DEPTH: 12,
-  CAPACITY_CONSTRAINT: 13,
+  // Reinforcing material already taught outranks teaching something new, and
+  // ranks below every repair: a withheld claim is not a fault to fix.
+  TAUGHT_NOT_MASTERED: 9,
+  COVERAGE_GAP: 10,
+  CARS_CONTACT: 11,
+  NEW_LEARNING: 12,
+  OPTIONAL_DEPTH: 13,
+  CAPACITY_CONSTRAINT: 14,
 };
 
 export const priorityRank = (reason: PlannerReason): number => PRIORITY_RANK[reason];

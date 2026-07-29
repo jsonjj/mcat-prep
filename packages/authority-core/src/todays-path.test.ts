@@ -305,6 +305,77 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     ).toEqual([UNSEEDED_LESSON_ID, SEEDED_LESSON_ID]);
   });
 
+  /**
+   * The end-to-end shape of the defect this replaces: finishing an instructional
+   * lesson wrote `completedLessons`, the snapshot OR'd that into `mastered`, and
+   * the engine drops mastered lessons — so a learner who understood nothing
+   * never saw the material again. Measured before the fix: rollup
+   * `mastered: false`, `pL: 0.2`, evidence count 0, planned lesson activities
+   * `[]`.
+   *
+   * Both halves are asserted, because either alone is satisfiable by the wrong
+   * fix: deleting the exclusion makes it reachable AND re-offers it as new work,
+   * and keeping the exclusion keeps it off new work AND unreachable.
+   */
+  it('keeps a completed-but-unmastered lesson reachable, and not as new work', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    const today = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons: plannerRegressionCandidates,
+      force: true,
+    });
+    const seeded = today.activities.find((a) => a.lessonId === SEEDED_LESSON_ID);
+    expect(seeded).toBeDefined();
+    await auth.recordPlanActivity(state, seeded!.activityId, 'complete');
+    expect(state.completedLessons).toContain(SEEDED_LESSON_ID);
+
+    // Nothing about the learner's capability changed: the lesson is delivered
+    // and the mastery claim is withheld, with no evidence behind it at all.
+    const rollup = auth.getMasteryLessons(state, [SEEDED_LESSON_ID])[0]!;
+    expect(rollup.mastered).toBe(false);
+    expect(rollup.pL).toBe(PRIOR_PL0);
+    // Scoped to this lesson's own grains: onboarding leaves placement evidence
+    // on the synthetic enzyme skills, and none of it is about this material.
+    expect(
+      state.evidence.filter((e) => SEEDED_LESSON_KCS.includes(e.skillId)),
+      'the lesson must carry no warrant at all for this to be the measured case',
+    ).toHaveLength(0);
+
+    // Same day: still finished, never re-offered while the learner is standing
+    // in front of the plan they just completed it from.
+    const sameDay = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons: plannerRegressionCandidates,
+      force: true,
+    });
+    expect(
+      sameDay.activities.find((a) => a.lessonId === SEEDED_LESSON_ID)?.status,
+      'a lesson finished today must not reappear as ready work today',
+    ).toBe('complete');
+
+    // A later day: reachable again, and labelled as a revisit rather than as
+    // new teaching.
+    const tomorrow = new Authority(loadSyntheticBank(), fixedClock('2026-07-21T12:00:00.000Z'));
+    const nextDay = await tomorrow.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons: plannerRegressionCandidates,
+      force: true,
+    });
+    const offered = nextDay.activities.filter((a) => a.lessonId === SEEDED_LESSON_ID);
+    expect(
+      offered,
+      'a delivered, unmastered lesson was silently dropped from planning',
+    ).toHaveLength(1);
+    expect(offered[0]!.status).toBe('ready');
+    expect(offered[0]!.priorityReason).toBe('TAUGHT_NOT_MASTERED');
+
+    // The lesson that was never delivered is still the one offered as new.
+    expect(
+      nextDay.activities.find((a) => a.lessonId === UNSEEDED_LESSON_ID)?.priorityReason,
+    ).not.toBe('TAUGHT_NOT_MASTERED');
+  });
+
   it('reports a P(L) above the prior for a lesson with recorded practice', async () => {
     const bank = loadSyntheticBank();
     const auth = new Authority(bank, clock, new LessonMappedPracticeBank(bank));

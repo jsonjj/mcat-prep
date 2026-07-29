@@ -13,6 +13,19 @@ export const PLANNER_REASONS = [
   'PASSAGE_GAP',
   'TIMED_GAP',
   'PROTECTED_GAP',
+  /**
+   * The lesson was DELIVERED and the mastery claim is still withheld, so it is
+   * offered again as reinforcement rather than as new teaching.
+   *
+   * It exists because no other member says this. Reusing `OVERDUE_REVIEW` would
+   * assert BKT decay ("the memory was built and has faded"), which is a
+   * different authority answering a different question about a learner who may
+   * never have built the memory at all; `NEW_LEARNING` would assert the
+   * opposite of delivery. Delivery is not capability
+   * (docs/lesson-evidence-mastery-contract.md §9), and a planner that had to
+   * borrow one of those codes would be re-collapsing exactly that distinction.
+   */
+  'TAUGHT_NOT_MASTERED',
   'COVERAGE_GAP',
   'CARS_CONTACT',
   'NEW_LEARNING',

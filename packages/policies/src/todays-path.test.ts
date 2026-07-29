@@ -38,6 +38,7 @@ const lesson = (over: Partial<TodaysPathCandidateLesson> = {}): TodaysPathCandid
   cluster: 'BB1',
   kcCount: 4,
   mastered: false,
+  delivered: false,
   covered: false,
   unlocked: true,
   dependentsCount: null,
@@ -384,6 +385,81 @@ describe('Today\u2019s Path engine', () => {
       }),
     );
     expect(r.activities.some((a) => a.kind === 'lesson')).toBe(false);
+  });
+
+  /**
+   * Delivery is not capability. A lesson finished at the prior with no evidence
+   * used to arrive here as `mastered: true` — the producer OR'd completion into
+   * the claim — and the new-lesson filter then dropped it for good. These three
+   * pin the replacement from both sides: it is no longer NEW work, it is still
+   * REACHABLE, and it is never dressed up as new teaching.
+   */
+  describe('a delivered lesson whose mastery claim is withheld', () => {
+    const deliveredWeak = lesson({
+      ...lessonHigh,
+      delivered: true,
+      mastered: false,
+      pL: 0.2,
+    });
+
+    it('is not offered as new work', () => {
+      const r = buildTodaysPath(
+        snap({ practiceUnlocked: false, candidateLessons: [deliveredWeak] }),
+      );
+      const newWork = r.activities.filter(
+        (a) => a.kind === 'lesson' && a.priorityReason !== 'TAUGHT_NOT_MASTERED',
+      );
+      expect(newWork).toEqual([]);
+    });
+
+    it('stays reachable as reinforcement rather than vanishing from the plan', () => {
+      const r = buildTodaysPath(
+        snap({ practiceUnlocked: false, candidateLessons: [deliveredWeak] }),
+      );
+      const offered = r.activities.filter((a) => a.lessonId === deliveredWeak.lessonId);
+      expect(offered).toHaveLength(1);
+      expect(offered[0]!.priorityReason).toBe('TAUGHT_NOT_MASTERED');
+      expect(offered[0]!.detail).toContain('Revisit');
+      // The same activity id as the new-work offer, so the authority's same-day
+      // rebuild restores its completed status instead of showing a second copy.
+      expect(offered[0]!.activityId).toBe(`lesson:${deliveredWeak.slug}`);
+    });
+
+    it('is dropped once the claim is warranted, and stays dropped while locked', () => {
+      const mastered = buildTodaysPath(
+        snap({
+          practiceUnlocked: false,
+          candidateLessons: [lesson({ ...deliveredWeak, mastered: true })],
+        }),
+      );
+      expect(mastered.activities.some((a) => a.kind === 'lesson')).toBe(false);
+
+      const locked = buildTodaysPath(
+        snap({
+          practiceUnlocked: false,
+          candidateLessons: [lesson({ ...deliveredWeak, unlocked: false })],
+        }),
+      );
+      expect(locked.activities.some((a) => a.kind === 'lesson')).toBe(false);
+    });
+
+    it('never outranks new teaching for the day, and is capped', () => {
+      const delivered = Array.from({ length: 4 }, (_, i) =>
+        lesson({ lessonId: `D${i}`, slug: `d${i}`, delivered: true, pL: 0.2 }),
+      );
+      const r = buildTodaysPath(
+        snap({
+          dailyBudgetMinutes: 120,
+          practiceUnlocked: false,
+          candidateLessons: [...delivered, lessonHigh],
+        }),
+      );
+      const lessons = r.activities.filter((a) => a.kind === 'lesson');
+      expect(lessons.filter((a) => a.priorityReason === 'TAUGHT_NOT_MASTERED')).toHaveLength(
+        TODAYS_PATH_CONFIG.reinforcementLessonCap,
+      );
+      expect(lessons.some((a) => a.lessonSlug === lessonHigh.slug)).toBe(true);
+    });
   });
 
   it('admits more new lessons on a larger budget', () => {

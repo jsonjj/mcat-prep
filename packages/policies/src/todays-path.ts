@@ -71,6 +71,15 @@ export interface TodaysPathConfig {
   /** Base NEW-lesson cap and the max it scales to on larger budgets. */
   readonly newLessonCap: number; // 2 (base, small budgets)
   readonly newLessonCapMax: number; // 6 (large budgets)
+  /**
+   * How many DELIVERED-but-unmastered lessons may be re-offered per day as
+   * reinforcement. Deliberately small: adaptive Practice is the main
+   * reinforcement channel, and re-running whole lesson scripts is the expensive
+   * way to reach the same KCs. One keeps the material reachable — which is the
+   * property that was lost — without letting a backlog of half-learned lessons
+   * crowd out new teaching.
+   */
+  readonly reinforcementLessonCap: number; // 1
   /** Hard ceiling on practice questions in a day (large budgets fill via practice). */
   readonly practiceMaxQHard: number; // 90
   /** No splittable workload block may exceed this; lesson scripts are atomic. */
@@ -130,6 +139,7 @@ export const TODAYS_PATH_CONFIG: TodaysPathConfig = {
   reviewDebt: { reduceNewAt: 0.3, pauseNewAt: 0.5 },
   newLessonCap: 2,
   newLessonCapMax: 6,
+  reinforcementLessonCap: 1,
   practiceMaxQHard: 90,
   maxActivityMinutes: 45,
   carryOverCapPct: 1.25,
@@ -167,8 +177,26 @@ export interface TodaysPathCandidateLesson {
   readonly section: string | null;
   readonly cluster: string | null;
   readonly kcCount: number;
-  /** True when this lesson's P(L) has already crossed the mastery threshold (or was completed). */
+  /**
+   * The MASTERY CLAIM for this lesson: every required member KC over the
+   * capability cut AND adequately warranted (`LessonMasteryView.mastered`, from
+   * `rollUpLessonMastery`). It is a statement about the learner.
+   *
+   * This used to be OR'd with completion by its producer, which made finishing
+   * an instructional lesson at `P(L) = 0.2` with no evidence indistinguishable
+   * from mastering it — and since `mastered` excluded a lesson from planning,
+   * a learner who understood nothing never saw that material again. Delivery is
+   * `delivered` below and it is a different fact
+   * (docs/lesson-evidence-mastery-contract.md §9).
+   */
   readonly mastered: boolean;
+  /**
+   * DELIVERY, not capability: the learner has finished this lesson. It says
+   * nothing about whether they can do anything, so it must never be read as, or
+   * merged into, `mastered`. The planner uses it to decide that a lesson is no
+   * longer NEW work — never that it is finished with.
+   */
+  readonly delivered: boolean;
   /** True when the lesson's cluster already has evidence (coverage). */
   readonly covered: boolean;
   /** All prerequisite lessons are complete (authority-computed). Locked lessons are never offered. */
@@ -494,11 +522,23 @@ export function buildTodaysPath(
   const scoredBlock: PlannedActivity[] = [];
   let remaining = budgetForNew - spent;
 
-  // 1) New lessons: only UNLOCKED (prereqs met) + not mastered/carried, best score
-  //    first, up to the (band + budget) cap. Same-cluster picks diminish via coverage.
+  // 1) New lessons: only UNLOCKED (prereqs met) + never delivered + not mastered
+  //    + not carried, best score first, up to the (band + budget) cap. Same-cluster
+  //    picks diminish via coverage.
+  //
+  //    `delivered` and `mastered` are excluded SEPARATELY and for different
+  //    reasons: a delivered lesson is not NEW teaching whatever the learner can
+  //    do, and a mastered one is not needed whether or not it was ever taught
+  //    here. They used to be one flag, and collapsing them is what made a
+  //    finished, unmastered, evidence-free lesson unreachable forever — the
+  //    exclusion was right, the conflation was not, so both survive and step 1b
+  //    below is what gives the delivered half somewhere to go.
   const coveredNow = new Set<string>();
-  const rankedLessons = snap.candidateLessons
-    .filter((l) => l.unlocked && !l.mastered && !carriedLessonSlugs.has(l.slug))
+  const eligible = snap.candidateLessons.filter(
+    (l) => l.unlocked && !l.mastered && !carriedLessonSlugs.has(l.slug),
+  );
+  const rankedLessons = eligible
+    .filter((l) => !l.delivered)
     .map((l) => ({ l, base: scoreLesson(l, snap, cfg) }))
     .sort((a, b) => b.base - a.base || a.l.slug.localeCompare(b.l.slug));
 
@@ -525,6 +565,43 @@ export function buildTodaysPath(
     });
     if (l.cluster !== null) coveredNow.add(l.cluster);
     lessonsPicked += 1;
+    remaining -= l.estimatedMinutes;
+  }
+
+  // 1b) Reinforcement: DELIVERED lessons whose mastery claim is still withheld,
+  //     weakest first, after new teaching has taken its share and before
+  //     practice fills the rest.
+  //
+  //     They are re-offered under `TAUGHT_NOT_MASTERED` with revisit copy, never
+  //     as `NEW_LEARNING`, so nothing tells the learner that finished material is
+  //     new. The activity id is the SAME `lesson:<slug>`, which is what keeps a
+  //     same-day rebuild from re-offering a lesson finished an hour ago: the
+  //     authority restores that id's completed status onto the rebuilt plan.
+  //     A fresh id would have looked like a second, unfinished activity.
+  const reinforcement = eligible
+    .filter((l) => l.delivered)
+    .map((l) => ({ l, base: scoreLesson(l, snap, cfg) }))
+    .sort((a, b) => b.base - a.base || a.l.slug.localeCompare(b.l.slug));
+
+  let reinforcementPicked = 0;
+  for (const { l } of reinforcement) {
+    if (reinforcementPicked >= cfg.reinforcementLessonCap) break;
+    if (remaining < l.estimatedMinutes) break;
+    scoredBlock.push({
+      activityId: `lesson:${l.slug}`,
+      kind: 'lesson',
+      title: l.title,
+      detail: 'Revisit — you have finished this, but it is not mastered yet.',
+      estimatedMinutes: l.estimatedMinutes,
+      count: null,
+      minutesBudget: null,
+      focus: null,
+      lessonSlug: l.slug,
+      lessonId: l.lessonId,
+      priorityReason: 'TAUGHT_NOT_MASTERED',
+      carriedOver: false,
+    });
+    reinforcementPicked += 1;
     remaining -= l.estimatedMinutes;
   }
 
