@@ -68,6 +68,16 @@ export const PRACTICE_TEST_CADENCE_CONFIG: PracticeTestCadenceConfig = {
   intervals: { baseline: 0, monthly: 28, biweekly: 14, weekly: 7 },
 };
 
+/**
+ * How long a half-length sitting is reserved for in Today's Path, in minutes.
+ *
+ * A scored MCAT is 230 items over ~6¼ hours of testing time; a half-length form
+ * is ~115 items ({@link HALF_LENGTH_BLUEPRINT}), so ~3 hours end to end. The
+ * Today's-Path engine reserves this atomically — the test IS the day on a small
+ * budget — so it is a single scheduling constant rather than a per-item sum.
+ */
+export const PRACTICE_TEST_ESTIMATED_MINUTES = 180;
+
 export interface PracticeTestCadenceInput {
   /** Today, learner-local, `YYYY-MM-DD`. */
   readonly today: string;

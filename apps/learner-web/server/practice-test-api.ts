@@ -37,6 +37,19 @@ export const practiceTestSessionStore = new DiagnosticSessionStore();
 
 const bankSingleton: PracticeTestBank | null = createPracticeTestBank();
 
+/**
+ * The seam that closes the WS5 completion→state loop. A sitting COMPLETES inside
+ * the session store (in memory); this reports that fact to the authority so the
+ * persisted `LearnerState.practiceTests` reflects it and the §6 cadence can
+ * schedule the next test. Injected (not imported) so the flow stays testable and
+ * the authority stack is pulled in only where the loop is actually mounted (local
+ * dev); a review is a separate signal, mirroring the authority's two commands.
+ */
+export interface PracticeTestAuthorityRecorder {
+  recordCompleted(): Promise<void> | void;
+  recordReviewed(): Promise<void> | void;
+}
+
 function trustsProxyHeaders(): boolean {
   return process.env.TRUST_PROXY === '1';
 }
@@ -199,6 +212,7 @@ export function handlePracticeTestBlockRequest(
   request: IncomingMessage,
   response: ServerResponse,
   bank: PracticeTestBank | null = bankSingleton,
+  recorder?: PracticeTestAuthorityRecorder,
 ): void {
   if (request.method !== 'POST') {
     response.setHeader('Allow', 'POST');
@@ -211,7 +225,7 @@ export function handlePracticeTestBlockRequest(
   }
   if (!bankOr503(response, bank)) return;
   void readJsonBody(request)
-    .then((body) => {
+    .then(async (body) => {
       const learnerId = clientId(request);
       const sessionToken = typeof body.sessionToken === 'string' ? body.sessionToken : '';
       const blockToken = typeof body.blockToken === 'string' ? body.blockToken : '';
@@ -222,7 +236,48 @@ export function handlePracticeTestBlockRequest(
       const record = practiceTestSessionStore.get(sessionToken);
       const questionIds = practiceTestSessionStore.consumeBlockToken(record, blockId, blockToken);
       recordPracticeTestBlock(bank, record, questionIds, answers, elapsedMs);
-      writeJson(response, 200, serveBlock(bank, record, sessionToken, learnerId));
+      // Capture completion BEFORE serving: `serveBlock` (→ resolvePracticeTestBlock)
+      // is what flips `record.completed` once the last block is committed.
+      const wasCompleted = record.completed;
+      const payload = serveBlock(bank, record, sessionToken, learnerId);
+      // The sitting just finished on THIS commit → report the completion so the
+      // authority's cadence state (last-test date, count, review-gate) moves. The
+      // block still succeeds even if the best-effort record hiccups.
+      if (!wasCompleted && record.completed && recorder !== undefined) {
+        try {
+          await recorder.recordCompleted();
+        } catch {
+          // Best-effort: a dev-authority hiccup must not fail a committed block.
+        }
+      }
+      writeJson(response, 200, payload);
+    })
+    .catch((error: unknown) => handleError(response, error));
+}
+
+/**
+ * POST /api/practice-test/review — the learner finished reviewing the prior test.
+ * Distinct from completion: the §6 cadence blocks the NEXT test until the last
+ * one has been reviewed, so this releases that gate through the authority command.
+ */
+export function handlePracticeTestReviewRequest(
+  request: IncomingMessage,
+  response: ServerResponse,
+  recorder?: PracticeTestAuthorityRecorder,
+): void {
+  if (request.method !== 'POST') {
+    response.setHeader('Allow', 'POST');
+    writeJson(response, 405, { error: 'Use POST for the practice test.' });
+    return;
+  }
+  if (!isSameOriginRequest(request)) {
+    writeJson(response, 403, { error: 'This practice-test request was not accepted.' });
+    return;
+  }
+  void readJsonBody(request)
+    .then(async () => {
+      if (recorder !== undefined) await recorder.recordReviewed();
+      writeJson(response, 200, { ok: true });
     })
     .catch((error: unknown) => handleError(response, error));
 }

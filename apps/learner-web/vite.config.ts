@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import { aiApiPlugin } from './server/ai-api-plugin';
 import { authorityApiPlugin } from './server/authority-api-plugin';
 import { diagnosticApiPlugin } from './server/diagnostic-api-plugin';
+import { practiceTestApiPlugin } from './server/practice-test-api-plugin';
 
 /**
  * Dev-only AI proxy: `aiApiPlugin` (see ./server/ai-api-plugin.ts). It keeps the
@@ -61,7 +62,17 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    plugins: [react(), aiApiPlugin(env), authorityApiPlugin(), diagnosticApiPlugin()],
+    // Local mode owns `/v1` in-process, so the practice-test API can close its
+    // completion→state loop against that same authority (WS5). In remote-proxy
+    // mode above it is intentionally NOT mounted: the deployed backend owns the
+    // test flow there.
+    plugins: [
+      react(),
+      aiApiPlugin(env),
+      authorityApiPlugin(),
+      diagnosticApiPlugin(),
+      practiceTestApiPlugin(),
+    ],
     server: { port: 5173 },
     ...shared,
   };

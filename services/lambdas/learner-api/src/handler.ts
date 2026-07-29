@@ -103,6 +103,14 @@ interface KernelPort {
     input: CarsDuelCommandBody,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handleCarsDuel']>;
+  handlePracticeTestCompleted(
+    input: ContinueCommandBody,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handlePracticeTestCompleted']>;
+  handlePracticeTestReviewed(
+    input: ContinueCommandBody,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handlePracticeTestReviewed']>;
   handleMasterySeed(
     input: MasterySeedCommandBody,
     principal: Principal,
@@ -663,6 +671,26 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
           return jsonResponse(
             200,
             await dependencies.kernel.handleCarsDuel(parsed.data as CarsDuelCommandBody, principal),
+            origin,
+            requestIdValue,
+          );
+        case 'practiceTestCompleted':
+          return jsonResponse(
+            200,
+            await dependencies.kernel.handlePracticeTestCompleted(
+              parsed.data as ContinueCommandBody,
+              principal,
+            ),
+            origin,
+            requestIdValue,
+          );
+        case 'practiceTestReviewed':
+          return jsonResponse(
+            200,
+            await dependencies.kernel.handlePracticeTestReviewed(
+              parsed.data as ContinueCommandBody,
+              principal,
+            ),
             origin,
             requestIdValue,
           );

@@ -692,6 +692,30 @@ export class RepositoryLearnerKernel {
   }
 
   /**
+   * WS5 (§6): record a completed periodic practice test. Formative like the CARS
+   * Duel — it moves only the cadence slice (`state.practiceTests`), never mastery
+   * — so no evidence is bound. The re-measure lives in WS5's own scorer.
+   */
+  async handlePracticeTestCompleted(command: ContinueCommandBody, principal: Principal) {
+    return AcceptedCommandResponseSchema.parse(
+      await this.mutate(command.envelope, principal, (authority, state) => {
+        authority.recordPracticeTestCompleted(state);
+        return { eventType: 'practice_test_completed', payload: toJsonObject(command) };
+      }),
+    );
+  }
+
+  /** WS5 (§6): record that the last completed test's review is done (releases the gate). */
+  async handlePracticeTestReviewed(command: ContinueCommandBody, principal: Principal) {
+    return AcceptedCommandResponseSchema.parse(
+      await this.mutate(command.envelope, principal, (authority, state) => {
+        authority.recordPracticeTestReviewed(state);
+        return { eventType: 'practice_test_reviewed', payload: toJsonObject(command) };
+      }),
+    );
+  }
+
+  /**
    * Apply the diagnostic's opening priors. No evidence is bound: a seed is not
    * an attempt, and nothing here can move a unit the learner has practised.
    *

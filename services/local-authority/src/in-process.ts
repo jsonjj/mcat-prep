@@ -215,6 +215,14 @@ export class InProcessAuthorityClient implements AuthorityPort {
     this.mutate((state) => this.authority.recordCarsDuel(state, outcome));
   }
 
+  async recordPracticeTestCompleted(): Promise<void> {
+    this.mutate((state) => this.authority.recordPracticeTestCompleted(state));
+  }
+
+  async recordPracticeTestReviewed(): Promise<void> {
+    this.mutate((state) => this.authority.recordPracticeTestReviewed(state));
+  }
+
   async applyMasterySeed(seed: MasterySeed): Promise<void> {
     const parsed = MasterySeedSchema.parse(seed);
     this.mutate((state) => this.authority.applyMasterySeed(state, parsed));

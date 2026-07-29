@@ -306,4 +306,24 @@ describe('learner projections', () => {
     expect(lesson.mastered).toBe(false);
     expect(lesson.pL).toBeLessThan(0.99);
   });
+
+  it('round-trips the WS5 practice-test cadence slice through the projection', () => {
+    // The cadence state rides `state_json` like `goal`/`mastery` — no dedicated
+    // column — so a completed-then-reviewed test must survive a save/load with no
+    // migration. This is the persistence half of the completion→state loop.
+    const authority = new Authority(undefined, clock);
+    const state = authority.createGuest();
+
+    authority.recordPracticeTestCompleted(state);
+    authority.recordPracticeTestReviewed(state);
+    expect(state.practiceTests).toEqual({
+      lastTestDate: '2026-07-20',
+      lastTestReviewed: true,
+      testsCompleted: 1,
+    });
+
+    const restored = learnerStateFromProjection(toProjectionRecord(state, 4, NOW));
+    expect(restored.practiceTests).toEqual(state.practiceTests);
+    expect(restored.nextSequence).toBe(4);
+  });
 });

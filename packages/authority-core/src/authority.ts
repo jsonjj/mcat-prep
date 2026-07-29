@@ -77,6 +77,7 @@ import {
   classifyCapacity,
   computeGhost,
   currentPL,
+  decidePracticeTest,
   evaluateEvidence,
   initialMemoryState,
   isAtCapabilityCut,
@@ -84,6 +85,7 @@ import {
   isLessonRollupAvailable,
   overallCarsReadiness,
   PRACTICE_SELECTION_CONFIG,
+  PRACTICE_TEST_ESTIMATED_MINUTES,
   practiceSpecId,
   predictedCorrect,
   PRIOR_PL0,
@@ -1259,6 +1261,32 @@ export class Authority {
       }
     }
 
+    // WS5 (§6): schedule the periodic half-length practice test on cadence. The
+    // schedule itself is decided ENTIRELY by policies (`decidePracticeTest`) from
+    // the persisted cadence slice + the goal's exam date — this only reads that
+    // state and hands the decision to the engine, which reserves the sitting when
+    // `due`. Gated on `practiceUnlocked` (teach-before-test: a test measures
+    // teaching, so there must be enough teaching to measure before one is offered;
+    // the same gate Practice uses). Writes no mastery.
+    const pt = state.practiceTests;
+    const testDecision = decidePracticeTest({
+      today: planDate,
+      examDate: state.goal?.testDate ?? null,
+      lastTestDate: pt?.lastTestDate ?? null,
+      // Absent state has nothing to block on; the decision ignores this when no
+      // prior test exists anyway.
+      lastTestReviewed: pt?.lastTestReviewed ?? true,
+      testsCompleted: pt?.testsCompleted ?? 0,
+    });
+    const practiceTest = practiceUnlocked
+      ? {
+          due: testDecision.due,
+          phase: testDecision.phase,
+          estimatedMinutes: PRACTICE_TEST_ESTIMATED_MINUTES,
+          reason: testDecision.reason,
+        }
+      : undefined;
+
     const candidateLessons: TodaysPathCandidateLesson[] = input.candidateLessons.map((l) => ({
       lessonId: l.lessonId,
       slug: l.slug,
@@ -1294,6 +1322,7 @@ export class Authority {
       practiceReviewNeed,
       candidateLessons,
       carryOver,
+      ...(practiceTest ? { practiceTest } : {}),
     };
   }
 
@@ -3430,6 +3459,43 @@ export class Authority {
    */
   recordCarsPassage(state: LearnerState, skill: CarsSkill, correct: boolean): void {
     this.updateCarsAbility(state, skill, correct ? 1 : 0, CARS_K_POTD);
+  }
+
+  /** Initialize the WS5 cadence slice on first touch (older projections lack it). */
+  private ensurePracticeTests(state: LearnerState): NonNullable<LearnerState['practiceTests']> {
+    if (state.practiceTests === undefined) {
+      state.practiceTests = { lastTestDate: null, lastTestReviewed: true, testsCompleted: 0 };
+    }
+    return state.practiceTests;
+  }
+
+  /**
+   * Record that a periodic half-length practice test was COMPLETED (WS5, §6).
+   *
+   * This is the first half of the completion→state loop the Today's-Path
+   * scheduler closes: it stamps the last-test day (learner-local, the same 4 AM
+   * rollover the plan uses), increments the completed count, and — critically —
+   * marks the review as NOT yet done, which is what lets `decidePracticeTest`
+   * block the NEXT test until this one has been reviewed. Recording is the whole
+   * effect; a test re-measures capability through WS5's own decay-weighted scorer,
+   * so this writes NO mastery (mirrors the formative `recordCarsDuel` seam).
+   */
+  recordPracticeTestCompleted(state: LearnerState): void {
+    const tests = this.ensurePracticeTests(state);
+    tests.lastTestDate = this.planDateFor(this.clock.now(), this.timezoneOffset(state));
+    tests.lastTestReviewed = false;
+    tests.testsCompleted += 1;
+  }
+
+  /**
+   * Record that the last completed test's REVIEW is done (WS5, §6) — the second
+   * half of the loop. It releases the block-until-reviewed gate so the cadence
+   * can schedule the next test; a review with no prior completion is a no-op it
+   * tolerates rather than a state it invents. Writes NO mastery.
+   */
+  recordPracticeTestReviewed(state: LearnerState): void {
+    const tests = this.ensurePracticeTests(state);
+    tests.lastTestReviewed = true;
   }
 
   /**

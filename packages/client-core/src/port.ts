@@ -112,6 +112,17 @@ export interface AuthorityPort {
    */
   recordCarsDuel(outcome?: CarsDuelOutcomeInput): Promise<void>;
   /**
+   * Record that a periodic half-length practice test (WS5) was COMPLETED. Stamps
+   * the last-test day, increments the count, and re-opens the review gate so the
+   * §6 cadence blocks the next test until it is reviewed. Never mastery.
+   */
+  recordPracticeTestCompleted(): Promise<void>;
+  /**
+   * Record that the last completed practice test's review is done (WS5), releasing
+   * the block-until-reviewed gate so the cadence can schedule the next one.
+   */
+  recordPracticeTestReviewed(): Promise<void>;
+  /**
    * Hand a finished diagnostic's opening priors to the mastery engine. Seeds
    * only ever initialize units the learner has not practised, and are capped far
    * below the mastery threshold — see `applyMasterySeed`.

@@ -54,6 +54,8 @@ export type RouteId =
   | 'practiceQueue'
   | 'practiceAdaptiveAttempt'
   | 'carsDuel'
+  | 'practiceTestCompleted'
+  | 'practiceTestReviewed'
   | 'masterySeed'
   | 'wrapped'
   | 'resetProgress'
@@ -363,6 +365,26 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: true,
     bodySchema: CarsDuelCommandBodySchema,
+  },
+  {
+    // WS5: the learner reports a completed periodic test — envelope only, no
+    // payload; the authority stamps the date/count off its own clock.
+    id: 'practiceTestCompleted',
+    method: 'POST',
+    path: '/v1/hooks/practice-test/completed',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: ContinueCommandBodySchema,
+  },
+  {
+    // WS5: the learner reports the prior test's review is done — releases the
+    // block-until-reviewed cadence gate. Envelope only.
+    id: 'practiceTestReviewed',
+    method: 'POST',
+    path: '/v1/hooks/practice-test/reviewed',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: ContinueCommandBodySchema,
   },
   {
     id: 'masterySeed',

@@ -49,7 +49,11 @@ const store = {
 const practiceBank = selectPracticeBankSource();
 console.warn(practiceBankSourceLine(practiceBank));
 
-const client = new InProcessAuthorityClient(store, undefined, practiceBank.port);
+// Exported so the practice-test API plugin can close the WS5 completion→state
+// loop through the SAME single-process dev authority the `/v1` surface uses:
+// recording a completed/reviewed test here updates the very `LearnerState` that
+// `POST /v1/plan/today/build` then reads to schedule the periodic test.
+export const client = new InProcessAuthorityClient(store, undefined, practiceBank.port);
 
 // One CSRF token per dev process; the client echoes it back but we don't verify.
 const csrfToken = `${randomUUID()}${randomUUID()}`.replace(/-/g, '');
@@ -271,6 +275,14 @@ export async function handleAuthorityRequest(
     }
     if (path === '/v1/hooks/cars-duel' && method === 'POST') {
       await client.recordCarsDuel(body.rubric as Parameters<typeof client.recordCarsDuel>[0]);
+      return sendJson(response, 200, accepted());
+    }
+    if (path === '/v1/hooks/practice-test/completed' && method === 'POST') {
+      await client.recordPracticeTestCompleted();
+      return sendJson(response, 200, accepted());
+    }
+    if (path === '/v1/hooks/practice-test/reviewed' && method === 'POST') {
+      await client.recordPracticeTestReviewed();
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/hooks/mastery-seed' && method === 'POST') {

@@ -467,3 +467,138 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     expect(mastery?.pL).toBeGreaterThan(PRIOR_PL0);
   });
 });
+
+/**
+ * WS5 (§6): the periodic half-length practice test is scheduled into Today's Path
+ * on the cadence decided by `decidePracticeTest`. These pin the AUTHORITY seam —
+ * that the snapshot reads `state.practiceTests` + `goal.testDate` and feeds the
+ * policy, and that a completion/review moves that state — while the cadence rules
+ * themselves are exercised in policies' `practice-test-cadence.test.ts`.
+ *
+ * The scheduler is gated on practice being UNLOCKED (teach-before-test), so these
+ * mark three lessons complete before building; a fresh learner (every test in the
+ * block above) never sees a test, which is why those stay green.
+ */
+describe("Authority — periodic practice test in Today\u2019s Path (WS5)", () => {
+  /** Unlock practice (>= 3 completed lessons) so the cadence is consulted at all. */
+  const unlockPractice = (state: LearnerState): void => {
+    state.completedLessons = ['done-1', 'done-2', 'done-3'];
+  };
+  const build = (auth: Authority, state: LearnerState) =>
+    auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true });
+  const hasTest = (activities: { kind: string }[]): boolean =>
+    activities.some((a) => a.kind === 'practice_test');
+
+  it('does not surface a test until practice is unlocked', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth); // zero completed lessons → practice locked
+    expect(hasTest((await build(auth, state)).activities)).toBe(false);
+  });
+
+  it('schedules the baseline test once unlocked, at the half-length duration, writing no mastery', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    unlockPractice(state);
+    const before = auth.getMasterySkills(state).map((s) => s.pL);
+
+    const test = (await build(auth, state)).activities.find((a) => a.kind === 'practice_test');
+    expect(test).toBeDefined();
+    expect(test!.estimatedMinutes).toBe(180);
+    // A test day still reads mastery but must never move it (the guardrail).
+    expect(auth.getMasterySkills(state).map((s) => s.pL)).toEqual(before);
+  });
+
+  it('does not surface a test inside the pre-exam blackout window', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock); // today = 2026-07-20
+    const state = onboard(auth);
+    unlockPractice(state);
+    // Exam three days out → inside the ~5-day blackout.
+    auth.confirmPlan(state, { testDate: '2026-07-23', targetScore: 515, minutesPerWeek: 1260 });
+    expect(hasTest((await build(auth, state)).activities)).toBe(false);
+  });
+
+  it('does not surface a test within the one-per-week cap of a recent sitting', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock); // today = 2026-07-20
+    const state = onboard(auth);
+    unlockPractice(state);
+    // A sitting two days ago, already reviewed → capped, not blocked.
+    state.practiceTests = { lastTestDate: '2026-07-18', lastTestReviewed: true, testsCompleted: 2 };
+    expect(hasTest((await build(auth, state)).activities)).toBe(false);
+  });
+
+  it('blocks the next test until the prior one is reviewed, then releases it', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    unlockPractice(state);
+    // A long-past sitting whose cadence is otherwise due, but still unreviewed.
+    state.practiceTests = { lastTestDate: '2026-06-01', lastTestReviewed: false, testsCompleted: 1 };
+    expect(hasTest((await build(auth, state)).activities)).toBe(false);
+
+    // Reviewing it releases the gate; the cadence is now due.
+    state.practiceTests.lastTestReviewed = true;
+    expect(hasTest((await build(auth, state)).activities)).toBe(true);
+  });
+
+  it('records a completed then reviewed test into LearnerState (and it round-trips)', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    expect(state.practiceTests).toBeUndefined();
+
+    auth.recordPracticeTestCompleted(state);
+    expect(state.practiceTests).toEqual({
+      lastTestDate: '2026-07-20', // learner-local today (4 AM rollover)
+      lastTestReviewed: false, // completion re-opens the review gate
+      testsCompleted: 1,
+    });
+
+    auth.recordPracticeTestReviewed(state);
+    expect(state.practiceTests!.lastTestReviewed).toBe(true);
+
+    // A second completion bumps the count and re-opens the gate again.
+    auth.recordPracticeTestCompleted(state);
+    expect(state.practiceTests).toEqual({
+      lastTestDate: '2026-07-20',
+      lastTestReviewed: false,
+      testsCompleted: 2,
+    });
+
+    // Rides the event-sourced state_json blob: a plain JSON round-trip (what the
+    // projection persistence does) preserves it, so no migration is needed.
+    const roundTripped = JSON.parse(JSON.stringify(state)) as LearnerState;
+    expect(roundTripped.practiceTests).toEqual(state.practiceTests);
+  });
+
+  it('closes the loop: a completed+reviewed test then re-gates the next by cadence', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    unlockPractice(state);
+
+    // Baseline is due for a freshly-unlocked learner.
+    expect(hasTest((await build(auth, state)).activities)).toBe(true);
+
+    // Complete it (today) → within the weekly cap, so the next is not due…
+    auth.recordPracticeTestCompleted(state);
+    expect(hasTest((await build(auth, state)).activities)).toBe(false);
+    expect(state.practiceTests).toEqual({
+      lastTestDate: '2026-07-20',
+      lastTestReviewed: false,
+      testsCompleted: 1,
+    });
+
+    // …and even once a month passes, an UNREVIEWED prior still blocks it.
+    const later = new Authority(loadSyntheticBank(), fixedClock('2026-08-25T12:00:00.000Z'));
+    expect(hasTest((await later.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons,
+      force: true,
+    })).activities)).toBe(false);
+
+    // Reviewing it releases the gate and the monthly cadence surfaces the next.
+    auth.recordPracticeTestReviewed(state);
+    expect(hasTest((await later.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons,
+      force: true,
+    })).activities)).toBe(true);
+  });
+});

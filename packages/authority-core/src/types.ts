@@ -74,6 +74,28 @@ export interface LearnerState {
    * mastery — this slice only shapes which duel is served next.
    */
   carsDuel?: CarsDuelEngineState;
+  /**
+   * Periodic half-length practice-test cadence state (WS5, §6). It is the only
+   * thing `todaysPathSnapshot` needs to call `decidePracticeTest` — the last
+   * completed test's local day, whether that test's review is done, and how many
+   * tests are complete — so the periodic test can be scheduled into Today's Path
+   * on the §6 cadence (baseline → monthly → biweekly → weekly).
+   *
+   * It rides the event-sourced `state_json` projection blob exactly like `goal`
+   * and `mastery`, so no DB migration/column is needed: recording a completed or
+   * reviewed test mutates this slice and the existing projection persists it.
+   * Optional so older projections deserialize; the authority initializes it
+   * lazily on the first record. Writes NO mastery — a test re-measures capability
+   * through WS5's own decay-weighted scorer, never through this slice.
+   */
+  practiceTests?: {
+    /** Last COMPLETED test's learner-local day (`YYYY-MM-DD`), or null if none. */
+    lastTestDate: string | null;
+    /** Whether the last completed test's review is done (the §6 block-until-reviewed gate). */
+    lastTestReviewed: boolean;
+    /** How many practice tests the learner has completed (drives the baseline case). */
+    testsCompleted: number;
+  };
 }
 
 /** One scheduled activity plus its per-learner run status (persisted). */

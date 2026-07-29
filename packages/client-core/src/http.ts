@@ -466,6 +466,18 @@ export class HttpAuthorityClient implements AuthorityPort {
     });
   }
 
+  async recordPracticeTestCompleted(): Promise<void> {
+    await this.acceptedCommand('/v1/hooks/practice-test/completed', {
+      envelope: await this.commandEnvelope(),
+    });
+  }
+
+  async recordPracticeTestReviewed(): Promise<void> {
+    await this.acceptedCommand('/v1/hooks/practice-test/reviewed', {
+      envelope: await this.commandEnvelope(),
+    });
+  }
+
   async applyMasterySeed(seed: MasterySeed): Promise<void> {
     await this.acceptedCommand('/v1/hooks/mastery-seed', {
       envelope: await this.commandEnvelope(),
