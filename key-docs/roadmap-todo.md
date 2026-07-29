@@ -98,3 +98,98 @@ In `V3-LES-844372`'s `question_evidence_plan` (`research/mcat-curriculum-archite
 Both sibling lessons corroborate this from the outside. `V3-LES-130923`'s analogous items (`vtr-vec-near-exit-reentry`, `vtr-vec-changed-exit-reentry`, and the `vtr-trig-*` / `vtr-dir-*` equivalents) and `V3-LES-789208`'s (`prompt-qms-*-reentryNear` / `-reentryChanged`) are already labeled `activity_role: 'NEAR_EXIT'` / `'CHANGED_EXIT'` directly. Neither sibling ever routes a re-entry item through `REPAIR_CONFIRMATION`; `V3-LES-844372` is the only one of the three that does.
 
 **Recommended fix**, blocked only by the item above: relabel `ALG-*-REENTRY-NEAR-01` → `activity_role: 'NEAR_EXIT'` and `ALG-*-REENTRY-CHANGED-01` → `activity_role: 'CHANGED_EXIT'`, for all three KC families (`GRAPH`, `SYS`, `LOG`). `V3-LES-844372`'s `question_evidence_plan` already has 3 correctly labeled `NEAR_EXIT` and 3 correctly labeled `CHANGED_EXIT` items outside this mislabeled set, so the fix does not create new terminal checks — it stops six existing ones from hiding under the wrong role, taking the lesson's `NEAR_EXIT`/`CHANGED_EXIT` surface from 3/3 to 6/6 and making all 6 eligible for the same `CHANGED_EXIT` licensing treatment `e579779` gave `V3-LES-130923`, once the lesson itself is committable.
+
+## Lesson-only mastery is unreachable, and the suspected cause is not the real one
+
+Established in `d438d43`, pinned in both directions by a 7-case test at
+`tests/architecture/lesson-mastery-reachability.test.ts` that drives the real runtime, the real
+adapter, and the real warrant policy end to end.
+
+**The premise everyone reached for first is false.** `isRetry` on a re-entry exit looks like the
+obvious blocker — the re-entry is the second of two administrations a KC needs, and
+`isIndependentAdministration` refuses whenever `isRetry` is set. It isn't the blocker.
+`vector-lesson-response-source.ts:355` emits `isRetry: false` as a literal on every response, and the
+runtime's own comment there says why: "repair confirmations and exact re-entries are distinct items
+with their own bindings, not retries of this one." The re-entry is committed under its own
+`itemBindingId` and its own `semanticFamilyId`, never as a second attempt at the initial. I verified
+this against the runtime rather than the comment: walking the lesson and missing every initial exit
+(`tests/architecture/lesson-mastery-reachability.test.ts`, "commits the re-entry exit as its own item,
+never as a retry of the initial") shows both halves administered, `isRetry`/`isDiagnosticRetry` false
+and `attemptIndex: 1` on every one of them, and 6 distinct `semanticFamilyId`s across the 3 KCs — two
+per KC, exactly what a `minFamilies: 2` slot counts. Family diversity is present. Retry status is
+false. Neither is the blocker.
+
+**The real cause is structural, in `EVIDENCE_CONFIG`.** All three recipes in
+`packages/policies/src/mastery-policy.ts` (`EVIDENCE_CONFIG.recipes`, lines 73–114) — `independent`,
+`independent_corroborated_by_transfer`, `retained`, `strong` — open with the identical first slot,
+`{ kind: 'independent', minFamilies: 2 }` (lines 77, 87, 95, 105). The lesson channel emits no
+`independent`-kind record on any path it can reach. `e579779` licensed exactly six bindings for BKT —
+the `CHANGED_EXIT` initial/re-entry pair on each of `V3-LES-130923`'s three KCs — and all six declare
+`candidate_evidence_modes: ['TRANSFER']` (`packages/content/src/v3-vector-lesson-artifacts.ts:1402`),
+never `INDEPENDENT`. `TRANSFER` resolves to `kind: 'transfer'`, which fills the _second_ slot in the
+`independent_corroborated_by_transfer`/`retained`/`strong` recipes — a slot that cannot be reached
+while the first slot, the one every recipe requires, sits empty. The reachability test confirms this
+is the only two kinds the lesson channel ever produces ("emits no independent-kind evidence from the
+lesson channel, on any path": `kinds` equals exactly `{'instruction', 'transfer'}`), that every KC
+this can reach lands on `evidenceQuality: 'learning'` with `satisfiedSlots: []` ("leaves the
+independence slot open on every KC, so no recipe is satisfied"), and that swapping only the `kind`
+field from `'transfer'` to `'independent'` on the identical records — same walks, same families, same
+correctness — flips every KC straight to `mastered: true` ("clears the gate the moment the same
+records are the independent kind"). So the diagnosis is not a guess: the one variable that matters was
+isolated and toggled.
+
+**What this withholds, concretely.** `mastered` on a lesson rollup requires both halves —
+`pL >= 0.95` _and_ `evidenceSufficient` on every required KC (`packages/policies/src/lesson-rollup.ts`,
+`isEvidenceSufficientForMastery`, lines 91–96, added by `669fbcf`). The reachability test hands the
+capability half its maximum possible value directly (`initialMemoryState(1)`, i.e. `pL = 1` on every
+required KC) and still gets `rollup.view.mastered === false`, with `members.some((m) =>
+m.evidenceSufficient)` false across the board ("withholds `mastered` from a lesson-only learner even
+at P(L) = 1"). No amount of lesson success moves this. It is not a quantity shortfall — a seventh or a
+seventieth correct exit changes nothing, because the missing ingredient is a `kind`, not a count.
+
+**This is a real constraint, not a dead end — say it that way.** The _capability_ half is reachable:
+`bktUpdate` under the lesson's own discounted guess rate (`LESSON_EXIT_GUESS_G = 0.5`, twice the
+practice guess, from `669fbcf`) carries `P(L)` from the `0.2` prior over the `0.95` cut in exactly 5
+correct exits (`packages/policies/src/bkt.ts`; pinned by "carries P(L) over the cut on repeated correct
+exits, so only the warrant is missing"). Only the _warrant_ half is closed, and only for the lesson
+channel — practice already emits the missing kind and does clear the gate
+(`packages/authority-core/src/lesson-discounting.test.ts`, "writes independent evidence"). Writing this
+up as "lessons can't reach mastery" would misrepresent it: lessons move the estimate all the way to its
+ceiling and hand off cleanly to practice, which is arguably the seam working as designed (§11 of
+`docs/lesson-evidence-mastery-contract.md` frames the intended division this way). The finding is
+narrower and more specific than that framing suggests — one recipe slot, one evidence kind, nothing
+else.
+
+**Two supporting facts worth pinning down before an owner decides.**
+
+- **On a clean walk, only 3 of the 6 licensed bindings are ever administered.** The re-entry half of
+  each `CHANGED_EXIT` pair is only reached after the initial exit is missed
+  (`walkLesson`'s `wrongOn` parameter in the reachability test); a learner who answers every initial
+  exit correctly never sees the re-entry item at all, and so never produces the second family in the
+  pair. The 6-family, both-halves-administered picture above is the _union_ of a clean walk and a
+  miss-every-initial walk, not what any single learner actually accumulates in one pass.
+- **This interacts with the out-of-repo lesson gap above.** Options 2 and 3 below are both authoring
+  changes, and two of the three V3 lessons — `V3-LES-789208` and `V3-LES-844372` — are not in version
+  control (see "Two of the three V3 lessons that BKT eligibility depends on are not in the repository,"
+  above). Any authoring fix applied today can only land on `V3-LES-130923`.
+
+**Owner decision, not a task.** Three options, each conceding something different:
+
+1. **Leave it.** Lessons teach and move the estimate; practice supplies the warrant that lets the claim
+   stand. This is exactly what the code does today, and it is arguably the design working as intended
+   — §11 of the contract already frames the split this way. Concedes: a KC can sit at `pL = 1` with
+   `mastered: false` for as long as the learner never practices it, which reads as a bug to anyone who
+   has not read this file.
+2. **Declare `INDEPENDENT` alongside `TRANSFER`** on the six licensed bindings
+   (`packages/content/src/v3-vector-lesson-artifacts.ts:1402`). Verified against the reachability
+   test's own relabeling case to flip the gate; a one-line authoring change on an in-repo file, no
+   policy code touched. Concedes real ground: it asserts that a just-taught `CHANGED_EXIT` check
+   demonstrates _independent_ capability, which is the exact claim `LESSON_EXIT_GUESS_G = 0.5` was
+   introduced to discount (`669fbcf`'s message: a lesson-exit check asks about material the learner was
+   shown moments ago, so a correct answer is weaker evidence than a practice answer, not equal
+   evidence under a different label). Declaring `INDEPENDENT` here partly undoes that commit's premise
+   without changing the guess-rate math it introduced.
+3. **Add an `independent`-kind lesson item that is not an exit check.** New authoring surface, not a
+   policy change and not a relabeling of an existing claim — a genuinely new administration designed to
+   warrant independence rather than to teach. Concedes the most engineering cost of the three, and,
+   per the fact above, can only be built into `V3-LES-130923` today.
