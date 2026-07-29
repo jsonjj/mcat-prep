@@ -138,7 +138,8 @@ export function PracticeSession() {
    * button that could only fail. See `PracticeSession.test.ts`.
    */
   const finish = (complete: boolean) => {
-    if (returnTo) navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
+    if (returnTo)
+      navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
     else navigate('/app/practice');
   };
 
