@@ -133,7 +133,7 @@ describe('every mutation that can write or clear a miss drops the tab’s caches
   it('keeps the key sets in one dependency-free module rather than per-hook literals', () => {
     const keys = read('apps/learner-web/src/app/invalidation-keys.ts');
     expect(keys).not.toBe('');
-    expect(keys).toMatch(/MISTAKE_KEYS = \['errors', 'error-patterns'\]/);
+    expect(keys).toMatch(/MISTAKE_KEYS = \['errors', 'error-patterns', 'shaky-wins'\]/);
     // No imports: the sets stay unit-testable without a browser or the authority.
     expect(code('apps/learner-web/src/app/invalidation-keys.ts')).not.toMatch(/^import /m);
   });
@@ -296,11 +296,19 @@ describe('pattern analysis stays at KC / cluster grain', () => {
   const mistakes = read('apps/learner-web/src/screens/Mistakes.tsx');
   const views = read('packages/contracts/src/learner-views.ts');
 
-  it('never names a misconception grain (error_models is populated on 0 items)', () => {
-    expect(code('apps/learner-web/src/screens/Mistakes.tsx')).not.toMatch(
-      /misconception|error_model|errorModel/i,
-    );
-    expect(views).not.toMatch(/misconceptionId|errorModelId/);
+  it('names the picked misconception but keeps the raw error_models map server-only, grain unchanged', () => {
+    // Phase-0 corrected the premise this used to rest on ("error_models populated
+    // on 0 items"): the corpus is ~100% filled, so WS2/WS3 DO surface the picked
+    // distractor's misconception (post-answer) and the pattern's leaning — as
+    // derived fields, never the raw per-choice map, and never a new grain.
+    const ui = code('apps/learner-web/src/screens/Mistakes.tsx');
+    expect(ui).toMatch(/chosenMisconception/);
+    expect(ui).toMatch(/leaningMisconception/);
+    // The raw server-only map never appears in the UI or on the learner view (the
+    // learner view carries only the two derived strings).
+    expect(ui).not.toMatch(/error_models|errorModels/);
+    expect(code('packages/contracts/src/learner-views.ts')).not.toMatch(/error_models|errorModels/);
+    // The pattern grain stays KC / cluster — misconception is a description on it.
     expect(views).toMatch(/grain: z\.enum\(\['kc', 'cluster', 'skill'\]\)/);
   });
 
@@ -317,6 +325,40 @@ describe('pattern analysis stays at KC / cluster grain', () => {
 
   it('ends each pattern row in a re-attempt action', () => {
     expect(mistakes).toMatch(/onTryAgain\(pattern\.focus\)/);
+  });
+});
+
+describe('WS3 — calibration ordering, shaky wins, and the picked misconception', () => {
+  const mistakes = read('apps/learner-web/src/screens/Mistakes.tsx');
+
+  it('orders confidently-wrong misses first', () => {
+    // The sort ranks confidently_wrong ahead of the rest — worst-first, for
+    // hypercorrection — and the miss list is rendered through it.
+    expect(mistakes).toMatch(/calibration === 'confidently_wrong'/);
+    expect(mistakes).toMatch(/\.sort\(missOrder\)/);
+  });
+
+  it('renders a distinct shaky-wins group from the separate read', () => {
+    expect(mistakes).toMatch(/useShakyWins/);
+    expect(mistakes).toMatch(/ShakyWinRow/);
+    expect(mistakes).toMatch(/Wins worth locking in/);
+    // The shaky-wins list is its own section, not merged into the misses list.
+    expect(mistakes).toMatch(/shaky\.map/);
+  });
+
+  it('names the picked distractor’s misconception on a miss card', () => {
+    expect(mistakes).toContain('entry.chosenMisconception');
+  });
+
+  it('names the leaned-toward misconception on a pattern row', () => {
+    expect(mistakes).toContain('pattern.leaningMisconception');
+  });
+
+  it('still routes every card to a fresh practice item, shaky wins included', () => {
+    // The shaky-win card reuses the same focus→queue routing as a miss card.
+    const shaky = mistakes.slice(mistakes.indexOf('function ShakyWinRow'));
+    expect(shaky).not.toBe('');
+    expect(shaky).toMatch(/onTryAgain\(entry\.focus\)/);
   });
 });
 

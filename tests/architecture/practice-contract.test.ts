@@ -59,6 +59,9 @@ describe('practice queue payload safety', () => {
       'rationale',
       'rationales',
       'explanations',
+      // WS2: the authored per-choice misconception map is answer-revealing.
+      'error_models',
+      'errorModels',
     ]) {
       expect(queueBlock, `queue DTOs must not name ${forbidden}`).not.toContain(forbidden);
     }

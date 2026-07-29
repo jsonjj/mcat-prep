@@ -171,6 +171,12 @@ export class InProcessAuthorityClient implements AuthorityPort {
     );
   }
 
+  async getShakyWins() {
+    return ErrorEntryViewSchema.array().parse(
+      await this.mutateAsync((state) => this.authority.getShakyWins(state)),
+    );
+  }
+
   async getMistakePatterns() {
     return MistakePatternViewSchema.array().parse(
       await this.mutateAsync((state) => this.authority.getMistakePatterns(state)),

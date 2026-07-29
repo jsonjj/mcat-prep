@@ -227,12 +227,35 @@ export interface QuestionAnswer {
   question_id: string;
   correct_answer: 'A' | 'B' | 'C' | 'D';
   explanations: Record<string, string>;
+  /**
+   * Per-choice authored misconceptions (WS2). SERVER-ONLY, in the same protected
+   * table as `explanations`. Nullable: the column (migration 0015) starts NULL
+   * for rows loaded before the error-model re-publish, and older databases that
+   * predate the column report it absent — both read as "no error models".
+   */
+  error_models: Record<string, string> | null;
 }
 
 export async function getQuestionAnswer(pool: Pool, questionId: string): Promise<QuestionAnswer | null> {
   const { rows } = await pool.query(
-    'select question_id, correct_answer, explanations from question_protected where question_id = $1',
+    // `error_models` is read column-agnostically. On a database that predates
+    // migration 0015 the column does not exist, and naming it directly would make
+    // this query throw for every scored attempt; `to_jsonb(question_protected) ->
+    // 'error_models'` yields NULL when the key is absent and the authored map when
+    // it is present, so getAnswer degrades to "no error models" instead of failing.
+    `select question_id, correct_answer, explanations,
+            to_jsonb(question_protected) -> 'error_models' as error_models
+       from question_protected where question_id = $1`,
     [questionId],
   );
-  return (rows[0] as QuestionAnswer | undefined) ?? null;
+  const row = rows[0] as
+    | { question_id: string; correct_answer: 'A' | 'B' | 'C' | 'D'; explanations: Record<string, string>; error_models?: Record<string, string> | null }
+    | undefined;
+  if (row === undefined) return null;
+  return {
+    question_id: row.question_id,
+    correct_answer: row.correct_answer,
+    explanations: row.explanations,
+    error_models: row.error_models ?? null,
+  };
 }

@@ -351,6 +351,8 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
       correctChoiceId: answer.correct_answer,
       rationale: explanations[answer.correct_answer] ?? 'See the per-choice explanations.',
       choiceRationales: explanations,
+      // Server-only per-choice misconceptions (WS2); null on a pre-0015 database.
+      errorModels: answer.error_models ?? null,
     };
   }
 

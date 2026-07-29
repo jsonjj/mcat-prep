@@ -163,6 +163,8 @@ export async function handleAuthorityRequest(
           return sendJson(response, 200, await client.getCarsReadiness());
         case '/v1/errors':
           return sendJson(response, 200, await client.getErrorLog());
+        case '/v1/errors/shaky-wins':
+          return sendJson(response, 200, await client.getShakyWins());
         case '/v1/errors/patterns':
           return sendJson(response, 200, await client.getMistakePatterns());
         case '/v1/skills':

@@ -39,6 +39,14 @@ export interface PulledProtected {
   question_id: string;
   correct_answer: 'A' | 'B' | 'C' | 'D';
   explanations: Record<string, string>;
+  /**
+   * Per-choice authored misconceptions (WS2). SERVER-ONLY, like `explanations`.
+   * Optional/nullable so an older pull produced before the re-publish reads as
+   * "no error models" rather than failing to load; the reader passes it through
+   * untouched, and the join that surfaces the picked option's misconception
+   * degrades to null when it is absent.
+   */
+  error_models?: Record<string, string> | null;
 }
 
 export interface PulledCorpus {

@@ -1,5 +1,11 @@
 import type { EngineQuestion } from './engine-schema';
-import type { Asset, ChoiceLetter, Question as V7Question, V7Explanations } from './schema';
+import type {
+  Asset,
+  ChoiceLetter,
+  Question as V7Question,
+  V7ErrorModels,
+  V7Explanations,
+} from './schema';
 
 /**
  * Compile a canonical question into two artifacts using an ALLOWLIST (never a
@@ -104,6 +110,12 @@ export interface ProtectedV7Payload {
   id: string;
   correct_answer: ChoiceLetter;
   explanations: V7Explanations;
+  /**
+   * Per-choice authored misconceptions (WS2). Answer-revealing (the correct
+   * choice is tagged `correct_model`), so it lives here and never on the safe
+   * payload. Optional: an item authored before error models existed omits it.
+   */
+  error_models?: V7ErrorModels;
 }
 
 export interface CompiledV7Question {
@@ -132,6 +144,9 @@ export function compileV7Question(q: V7Question): CompiledV7Question {
     id: q.id,
     correct_answer: q.correct_answer,
     explanations: q.explanations,
+    // Server-only. Omitted (not null) when the item carries no error models, so
+    // the shape stays identical to a pre-WS2 payload for items without them.
+    ...(q.error_models === undefined ? {} : { error_models: q.error_models }),
   };
   return { safe, protected: protectedPayload };
 }
@@ -149,6 +164,11 @@ const PROTECTED_KEYS = [
   'correct_answer',
   'rationales',
   'explanations',
+  // The authored per-choice misconception map (WS2). Answer-revealing — the
+  // correct choice is tagged `correct_model` — so the WHOLE map is server-only;
+  // only the picked option's misconception is surfaced, post-answer, elsewhere.
+  'error_models',
+  'errorModels',
   'distractor_families',
   'option_rationales',
   'proposed_key',

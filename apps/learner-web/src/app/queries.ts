@@ -43,6 +43,9 @@ export const useCarsReadiness = () =>
   useQuery({ queryKey: ['cars-readiness'], queryFn: () => authority.getCarsReadiness() });
 export const useErrorLog = () =>
   useQuery({ queryKey: ['errors'], queryFn: () => authority.getErrorLog() });
+/** Correct-but-shaky wins worth another rep (Mistakes tab, shaky-wins group). */
+export const useShakyWins = () =>
+  useQuery({ queryKey: ['shaky-wins'], queryFn: () => authority.getShakyWins() });
 /** Recurring misses grouped at KC / cluster grain (Mistakes tab, patterns section). */
 export const useMistakePatterns = () =>
   useQuery({ queryKey: ['error-patterns'], queryFn: () => authority.getMistakePatterns() });
