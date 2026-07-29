@@ -4,6 +4,7 @@ import {
   DiagnosticNextSchema,
   ErrorEntryViewSchema,
   LessonMasteryViewSchema,
+  LessonWarrantViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
   MistakePatternViewSchema,
@@ -146,6 +147,12 @@ export class InProcessAuthorityClient implements AuthorityPort {
   async getMasteryLessons() {
     return LessonMasteryViewSchema.array().parse(
       this.mutate((state) => this.authority.getMasteryLessons(state)),
+    );
+  }
+
+  async getLessonWarrants() {
+    return LessonWarrantViewSchema.array().parse(
+      this.mutate((state) => this.authority.getLessonWarrants(state)),
     );
   }
 

@@ -120,6 +120,43 @@ function independentRecord(state: LearnerState, skillId: string, familyId: strin
   );
 }
 
+/**
+ * One instructional record — guided work, which is what completing a lesson
+ * leaves behind. Never mastery-eligible (`assistanceLevelTaken` fail-closes to
+ * `A3` on every lesson response), so it moves the warrant from "nothing on file"
+ * to "guided work only" and no further.
+ */
+function instructionalRecord(state: LearnerState, skillId: string, familyId: string): void {
+  state.evidence.push(
+    EvidenceRecordSchema.parse({
+      evidenceId: crypto.randomUUID(),
+      skillId,
+      cluster: clusterForKc(skillId),
+      kind: 'instruction',
+      independent: false,
+      assistanceLevel: 'A3',
+      contentBearingHint: false,
+      questionId: `${skillId}-${familyId}`,
+      itemVersion: 1,
+      familyId,
+      changeDimensions: [],
+      conditions: {
+        mixed: false,
+        passage: false,
+        timed: false,
+        protected: false,
+        accommodations: [],
+      },
+      outcome: 'correct',
+      valid: true,
+      occurredAt: NOW,
+      sequence: state.evidence.length + 1,
+      contentRelease: 'synthetic-2026.07',
+      policies: [],
+    }),
+  );
+}
+
 const kcPL = (state: LearnerState, kcId = KC): number => state.mastery!.kc[kcId]!.pL;
 
 /**
@@ -265,6 +302,100 @@ describe('a lesson is mastered only with the warrant to say so', () => {
       LESSON_KCS.at(-1),
     ]);
     expect(rollup.view.mastered).toBe(false);
+  });
+
+  /**
+   * A WITHHELD CLAIM HAS TO SAY WHY, and until this landed nothing on the
+   * Progress page could.
+   *
+   * `LessonMasteryView` carries `pL` and `mastered` and no reasons, and the
+   * Evidence Atlas knew only done / in-progress / not-started — so the learner
+   * above, who answered every question in the lesson correctly, read "In
+   * progress" indefinitely with no account of which half was missing. Worse, the
+   * high `P(L)` also drops the lesson off "Needs the most review", so it left
+   * every "what next" surface at the same time.
+   *
+   * What this asserts is that the reasons reach the lesson grain AND that they
+   * are the specific pair the Atlas's wording needs — a status and a gap, not
+   * just any codes. `NO_USEFUL_EVIDENCE` would produce "No evidence on file yet."
+   * for a learner who has done the whole lesson, which is the same unexplained
+   * state one sentence over.
+   */
+  it('names why a perfected lesson is still not mastered, and what would close it', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    driveEveryKcOverTheCut(auth, state);
+    // Completing the lesson leaves guided work on every required KC. Without it
+    // the honest answer would be "no evidence", which is a different sentence.
+    for (const kcId of LESSON_KCS) instructionalRecord(state, kcId, `${kcId}-lesson`);
+
+    const lesson = lessonView(auth, state);
+    expect(lesson.pL).toBeGreaterThanOrEqual(MASTERY_THRESHOLD);
+    expect(lesson.mastered).toBe(false);
+
+    const [warrant] = auth.getLessonWarrants(state, [LESSON_ID]);
+    expect(warrant?.lessonId).toBe(LESSON_ID);
+    const codes = (warrant?.reasons ?? []).map((reason) => reason.code);
+    // The status half: what is on file. `evidence-language.ts` words this
+    // "Guided work only so far."
+    expect(codes).toContain('INSTRUCTIONAL_EVIDENCE_ONLY');
+    expect(codes).not.toContain('NO_USEFUL_EVIDENCE');
+    // The gap half: the next missing piece, worded "unassisted practice".
+    expect(codes).toContain('INDEPENDENT_EVIDENCE_GAP');
+
+    // Reasons, not a rank: the view carries the grain id and the codes and
+    // nothing else, the same way `MasteryMapEntry` publishes no tier.
+    expect(Object.keys(warrant!)).toEqual(['lessonId', 'reasons']);
+  });
+
+  it('stops explaining once there is nothing to explain', () => {
+    // Empty reasons are how the Atlas knows to say nothing at all. A mastered
+    // lesson that published its satisfied reasons would need every reader to
+    // know to suppress them, which is the sort of thing one reader forgets.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    driveEveryKcOverTheCut(auth, state);
+    for (const kcId of LESSON_KCS) {
+      independentRecord(state, kcId, `${kcId}-fam-a`);
+      independentRecord(state, kcId, `${kcId}-fam-b`);
+    }
+
+    expect(lessonView(auth, state).mastered).toBe(true);
+    expect(auth.getLessonWarrants(state, [LESSON_ID])).toEqual([
+      { lessonId: LESSON_ID, reasons: [] },
+    ]);
+  });
+
+  /**
+   * Which member's reasons get published, and why it is not the weakest by
+   * `P(L)`. A lesson has no warrant of its own, so the explanation belongs to the
+   * member that makes the claim false — and where a member is over the cut but
+   * unwarranted, that member is the one with no other surface, because `pL` is
+   * already on screen as a percentage.
+   */
+  it('explains from the member holding the claim back, not the lowest one', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    driveEveryKcOverTheCut(auth, state);
+    // Every member but the last is fully warranted; the last carries guided work
+    // only. The last is also NOT the weakest by `P(L)` — they are all at the top.
+    for (const kcId of LESSON_KCS.slice(0, -1)) {
+      independentRecord(state, kcId, `${kcId}-fam-a`);
+      independentRecord(state, kcId, `${kcId}-fam-b`);
+    }
+    const blocking = LESSON_KCS.at(-1)!;
+    instructionalRecord(state, blocking, `${blocking}-lesson`);
+
+    const [rollup] = auth.getLessonRollups(state, [LESSON_ID]);
+    if (rollup?.status !== 'available') throw new Error('expected an available rollup');
+    expect(rollup.view.members.filter((m) => !m.evidenceSufficient).map((m) => m.kcId)).toEqual([
+      blocking,
+    ]);
+
+    const codes = (auth.getLessonWarrants(state, [LESSON_ID])[0]?.reasons ?? []).map((r) => r.code);
+    // The blocking member's story, not a satisfied one borrowed from a sibling.
+    expect(codes).toContain('INSTRUCTIONAL_EVIDENCE_ONLY');
+    expect(codes).not.toContain('INDEPENDENT_EVIDENCE_SATISFIED');
   });
 
   it('reads the same warrant the Evidence Atlas publishes, not a second one', () => {

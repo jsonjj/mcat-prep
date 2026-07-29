@@ -27,6 +27,7 @@ import {
   CarsReadinessViewSchema,
   DiagnosticNextSchema,
   LessonMasteryViewSchema,
+  LessonWarrantViewSchema,
   PracticeAttemptResultSchema,
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
@@ -43,6 +44,7 @@ import {
   type ContentId,
   type DiagnosticNext,
   type LessonMasteryView,
+  type LessonWarrantView,
   type PracticeAttemptResult,
   type PracticeItemView,
   type PracticeQueueView,
@@ -282,6 +284,12 @@ export class RepositoryLearnerKernel {
     const state = await this.loadState(principal);
     const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
     return LessonMasteryViewSchema.array().parse(authority.getMasteryLessons(state));
+  }
+
+  async lessonWarrants(principal: Principal): Promise<readonly LessonWarrantView[]> {
+    const state = await this.loadState(principal);
+    const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
+    return LessonWarrantViewSchema.array().parse(authority.getLessonWarrants(state));
   }
 
   async carsReadiness(principal: Principal): Promise<CarsReadinessView> {

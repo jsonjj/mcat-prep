@@ -281,6 +281,21 @@ export interface MasteryMapEntry {
   title: string;
 }
 
+/**
+ * One LESSON's evidence warrant: why its mastery claim is being withheld, as
+ * reason codes. The lesson-grain companion to `MasteryMapEntry`, and the reason
+ * it is a view of its own rather than fields on `LessonMasteryView` is recorded
+ * on `LessonWarrantViewSchema` in @mcat/contracts — a view carrying both a
+ * capability estimate and the warrant is what an architecture assertion forbids.
+ *
+ * No ordinal tier here either, for the same reason `MasteryMapEntry` has none.
+ */
+export interface LessonWarrantView {
+  lessonId: string;
+  /** Empty when nothing is being withheld — see `Authority.getLessonWarrants`. */
+  reasons: DecisionReason<EvidenceReason>[];
+}
+
 export interface PracticeItemView {
   question: LearnerSafeQuestion;
   stimulus: StimulusView | null;

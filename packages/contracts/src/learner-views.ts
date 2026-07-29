@@ -405,6 +405,46 @@ export const MasteryMapEntrySchema = z
 export type MasteryMapEntry = z.infer<typeof MasteryMapEntrySchema>;
 
 /**
+ * One lesson's evidence warrant, for the Evidence Atlas: why the mastery claim
+ * on that lesson is being withheld, and what would close it. Reason codes only,
+ * never a rank — the same vocabulary `MasteryMapEntry` publishes at KC grain,
+ * worded by the same `evidenceWarrant()` in the app, because two vocabularies
+ * for one concept is how "Needs refresh" came to mean two different things.
+ *
+ * WHY THIS IS A SEPARATE VIEW rather than fields on `LessonMasteryView`. Since
+ * `d438d43` a lesson-only path can never satisfy the evidence gate, so a learner
+ * who perfects a lesson reads "In progress" on the flagship Progress page with
+ * no explanation anywhere — and a high `P(L)` simultaneously drops it off "Needs
+ * the most review", so it disappears rather than surfacing as one step from
+ * done. The obvious repair is to hang `reasons` on `LessonMasteryView` beside
+ * `pL` and `mastered`; `tests/architecture/lesson-mastery-integration.test.ts`
+ * forbids exactly that, because a view carrying a capability estimate and the
+ * warrant together invites the next consumer to read the warrant as attainment,
+ * which is what happened to the ordinal `base` tier and to `masteryState` before
+ * it. Its failure text names the alternative taken here: publish two views. The
+ * Atlas joins them by `lessonId`, the same way `SkillDetail` already joins the
+ * skill list with `getMasteryMap`.
+ *
+ * The reasons belong to ONE required member KC — the one holding the claim back
+ * — because a lesson has no warrant of its own any more than it has a `P(L)`.
+ * Warrant-insufficient members are preferred over merely-below-the-cut ones:
+ * capability already has a surface (the percentage), and the warrant is the half
+ * with none, so naming a satisfied warrant on a lesson whose claim is withheld
+ * would reproduce the same unexplained state one grain down.
+ *
+ * EMPTY MEANS NOTHING IS BEING WITHHELD. A mastered lesson has no limiting
+ * member, so it publishes no reasons — as opposed to publishing the reasons that
+ * happen to be satisfied, which a reader would have to know to suppress.
+ */
+export const LessonWarrantViewSchema = z
+  .object({
+    lessonId: z.string().min(1),
+    reasons: z.array(DecisionReasonViewSchema),
+  })
+  .strict();
+export type LessonWarrantView = z.infer<typeof LessonWarrantViewSchema>;
+
+/**
  * One practice miss, carrying the content the learner needs to act on it.
  *
  * Answer material is authorized here because the learner already answered and

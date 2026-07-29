@@ -6,6 +6,7 @@ import type {
   DiagnosticNext,
   ErrorEntryView,
   LessonMasteryView,
+  LessonWarrantView,
   MasteryMapEntry,
   MasterySeed,
   MistakePatternView,
@@ -65,6 +66,12 @@ export interface AuthorityPort {
   getMasterySkills(): Promise<SkillMasteryView[]>;
   /** BKT mastery: per-lesson P(L) (drives the Progress brain). */
   getMasteryLessons(): Promise<LessonMasteryView[]>;
+  /**
+   * The evidence WARRANT per lesson: why a mastery claim is withheld. A separate
+   * call from `getMasteryLessons` because one view may not publish both a
+   * capability estimate and the warrant — see `LessonWarrantViewSchema`.
+   */
+  getLessonWarrants(): Promise<LessonWarrantView[]>;
   /** CARS IRT readiness (gauge + 3 sub-skill bars). */
   getCarsReadiness(): Promise<CarsReadinessView>;
   /** Mistakes tab, Surface B: question misses (practice and study) with their content. */

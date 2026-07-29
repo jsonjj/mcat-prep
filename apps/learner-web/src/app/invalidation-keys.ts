@@ -24,12 +24,21 @@
 /** The Mistakes tab's own two query keys. */
 export const MISTAKE_KEYS = ['errors', 'error-patterns'] as const;
 
-/** Mastery and progress readouts that a scored first attempt moves. */
+/**
+ * Mastery and progress readouts that a scored first attempt moves.
+ *
+ * `lesson-warrants` sits beside `mastery-lessons` because the two are one
+ * reading split across two payloads (see `LessonWarrantViewSchema`): an answer
+ * that changes whether a lesson is mastered changes why it is not, so refreshing
+ * one without the other is how the Atlas would explain a state it is no longer
+ * in.
+ */
 export const MASTERY_KEYS = [
   'bootstrap',
   'mastery',
   'mastery-skills',
   'mastery-lessons',
+  'lesson-warrants',
   'cars-readiness',
   'today',
 ] as const;
@@ -58,6 +67,7 @@ export const LEARNER_KEYS: readonly string[] = [
   'mastery',
   'mastery-skills',
   'mastery-lessons',
+  'lesson-warrants',
   'cars-readiness',
   ...MISTAKE_KEYS,
   'vector-lesson-status',

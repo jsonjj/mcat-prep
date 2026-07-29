@@ -31,6 +31,13 @@ export const useMasterySkills = () =>
 /** BKT mastery: per-lesson P(L) (Progress brain). */
 export const useMasteryLessons = () =>
   useQuery({ queryKey: ['mastery-lessons'], queryFn: () => authority.getMasteryLessons() });
+/**
+ * The evidence WARRANT per lesson — why a mastery claim is withheld — read
+ * alongside `useMasteryLessons` and joined by `lessonId` in the Evidence Atlas.
+ * Two calls rather than one payload: see `LessonWarrantViewSchema`.
+ */
+export const useLessonWarrants = () =>
+  useQuery({ queryKey: ['lesson-warrants'], queryFn: () => authority.getLessonWarrants() });
 /** CARS IRT readiness (gauge + sub-skill bars). */
 export const useCarsReadiness = () =>
   useQuery({ queryKey: ['cars-readiness'], queryFn: () => authority.getCarsReadiness() });

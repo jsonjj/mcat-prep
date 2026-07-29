@@ -5,13 +5,15 @@ import {
   ATLAS_REGION_GROUPS,
   CLUSTER_INFO,
   type LessonMasteryView,
+  type LessonWarrantView,
   type SkillCluster,
 } from '@mcat/contracts';
 import { detectCapabilities } from '@mcat/platform-web';
 import { Button } from '@mcat/ui-web';
 import { CURRICULUM_PHASES } from '../data/curriculum-v3.generated';
-import { useMasteryLessons } from '../app/queries';
+import { useLessonWarrants, useMasteryLessons } from '../app/queries';
 import { BrainAtlas } from './BrainAtlas';
+import { lessonWarrantLine } from './evidence-language';
 import type { AtlasLessonStatus, AtlasRegion } from './BrainScene';
 
 const BrainScene = lazy(() => import('./BrainScene'));
@@ -88,6 +90,17 @@ interface RegionLessonRow {
   id: string;
   title: string;
   status: AtlasLessonStatus;
+  /**
+   * Why the mastery claim is being withheld, in the warrant's own words, or null
+   * when nothing is being withheld. See `lessonWarrantLine`.
+   *
+   * This row read "In progress" and nothing else for a learner who had answered
+   * every question in the lesson correctly, because a lesson-only path cannot
+   * satisfy the evidence gate (`d438d43`) — and the high `P(L)` simultaneously
+   * dropped the lesson off "Needs the most review", so it vanished from the
+   * "what next" surfaces instead of reading as one step from done.
+   */
+  warrantLine: string | null;
 }
 interface RegionLessonGroup {
   moduleId: string;
@@ -95,8 +108,17 @@ interface RegionLessonGroup {
   lessons: RegionLessonRow[];
 }
 
-/** Region's lessons in teaching order, grouped by their curriculum module. */
-function lessonGroupsFor(region: AtlasRegion): RegionLessonGroup[] {
+/**
+ * Region's lessons in teaching order, grouped by their curriculum module.
+ *
+ * `warrantByLesson` is joined in here rather than carried on `AtlasRegion`,
+ * because the 3D scene renders nodes and knows nothing about evidence; only this
+ * tap panel has anywhere to put a sentence.
+ */
+function lessonGroupsFor(
+  region: AtlasRegion,
+  warrantByLesson: ReadonlyMap<string, LessonWarrantView>,
+): RegionLessonGroup[] {
   const enriched = region.lessons.map((l) => {
     const meta = LESSON_META[l.id];
     return {
@@ -120,7 +142,12 @@ function lessonGroupsFor(region: AtlasRegion): RegionLessonGroup[] {
       group = { moduleId: row.moduleId, moduleTitle: row.moduleTitle, lessons: [] };
       groups.push(group);
     }
-    group.lessons.push({ id: row.id, title: row.title, status: row.status });
+    group.lessons.push({
+      id: row.id,
+      title: row.title,
+      status: row.status,
+      warrantLine: lessonWarrantLine(warrantByLesson.get(row.id)),
+    });
   }
   return groups;
 }
@@ -136,6 +163,7 @@ function lessonGroupsFor(region: AtlasRegion): RegionLessonGroup[] {
 export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'progress' } = {}) {
   const navigate = useNavigate();
   const lessonMastery = useMasteryLessons();
+  const lessonWarrants = useLessonWarrants();
   const caps = useMemo(() => detectCapabilities(), []);
   const [selected, setSelected] = useState<string | null>(null);
   const isHome = variant === 'home';
@@ -145,6 +173,12 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
   const lessonById = useMemo(
     () => new Map((lessonMastery.data ?? []).map((l) => [l.lessonId, l] as const)),
     [lessonMastery.data],
+  );
+  // The warrant half of the same reading, keyed the same way. The Home hero is
+  // decorative and shows no lesson list, so it needs none of this.
+  const warrantByLesson = useMemo(
+    () => new Map((lessonWarrants.data ?? []).map((w) => [w.lessonId, w] as const)),
+    [lessonWarrants.data],
   );
   const masteredLessonCount = useMemo(
     () => (lessonMastery.data ?? []).filter((l) => l.mastered).length,
@@ -206,7 +240,10 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
 
   const sel = selected ? (regions.find((r) => r.id === selected) ?? null) : null;
   const selCluster = sel ? (sel.tapCluster as SkillCluster) : null;
-  const groups = useMemo(() => (sel ? lessonGroupsFor(sel) : []), [sel]);
+  const groups = useMemo(
+    () => (sel ? lessonGroupsFor(sel, warrantByLesson) : []),
+    [sel, warrantByLesson],
+  );
 
   if (!caps.webgl) {
     return (
@@ -275,7 +312,14 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
                         >
                           {display.glyph}
                         </span>
-                        <span className="mc-atlas__ltitle">{lesson.title}</span>
+                        <span className="mc-atlas__ltitle">
+                          {lesson.title}
+                          {lesson.warrantLine !== null ? (
+                            <span className="mc-atlas__lwarrant mc-muted mc-fineprint">
+                              {lesson.warrantLine}
+                            </span>
+                          ) : null}
+                        </span>
                         <span className={`mc-atlas__lstate mc-atlas__lstate--${lesson.status}`}>
                           {display.label}
                         </span>

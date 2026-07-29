@@ -87,3 +87,46 @@ export function evidenceWarrant(reasons: MasteryMapEntry['reasons']): EvidenceWa
   }
   return { status: status ?? NO_EVIDENCE_TEXT, nextGap };
 }
+
+/**
+ * The warrant as one rendered sentence: what the evidence covers, then the next
+ * missing piece.
+ *
+ * Shared rather than composed at each call site, because the lesson grain and
+ * the skill grain are the same claim about different grains — the Evidence Atlas
+ * and `SkillDetail` — and a sentence assembled twice is a sentence that can
+ * drift. `SkillDetail` appends its own freshness badge after this; that badge is
+ * a different fact and stays separate.
+ *
+ * It always returns a sentence, including `evidenceWarrant`'s "no evidence"
+ * fallback for an empty list. Whether an empty list is worth saying anything
+ * about is the CALLER's question and the answer differs: at skill grain it means
+ * the grain has no entry, at lesson grain it means nothing is being withheld.
+ */
+export function warrantSentence(reasons: MasteryMapEntry['reasons']): string {
+  const { status, nextGap } = evidenceWarrant(reasons);
+  return nextGap === null ? status : `${status} Next: ${nextGap}.`;
+}
+
+/**
+ * The lesson-grain sentence for the Evidence Atlas, or null when there is
+ * nothing to say.
+ *
+ * The whole point of the field is the case it was added for: a learner who
+ * perfects a lesson reads "In progress" indefinitely, because a lesson-only path
+ * cannot satisfy the evidence gate, and no surface said which half was missing.
+ * So the line appears exactly when a claim is being withheld.
+ *
+ * Null in two cases, and they are different facts that happen to want the same
+ * silence. An absent warrant is a lesson with no rollup at all — unpractised, and
+ * the row already reads "Not started". EMPTY reasons are the deliberate signal
+ * from `LessonWarrantViewSchema` that nothing is being withheld, i.e. the lesson
+ * is mastered; rendering `warrantSentence([])` there would tell a learner who has
+ * finished and mastered a lesson that there is "No evidence on file yet."
+ */
+export function lessonWarrantLine(
+  warrant: { reasons: MasteryMapEntry['reasons'] } | undefined,
+): string | null {
+  if (warrant === undefined || warrant.reasons.length === 0) return null;
+  return warrantSentence(warrant.reasons);
+}

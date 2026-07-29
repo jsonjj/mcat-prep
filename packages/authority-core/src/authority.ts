@@ -120,6 +120,7 @@ import {
 import type {
   ErrorEntryView,
   LearnerState,
+  LessonWarrantView,
   MasteryEngineState,
   MasteryMapEntry,
   PracticeItemView,
@@ -2310,6 +2311,23 @@ export class Authority {
   }
 
   /**
+   * The warrant REASON CODES per grain, keyed by grain id — the same list
+   * `getMasteryMap` publishes, indexed for the lesson-grain join below.
+   *
+   * Kept separate from {@link evidenceQualityByGrain} rather than folded into
+   * it, because the tier is package-private and the reason codes are the thing
+   * that crosses the wire; one map carrying both would put an ordinal one
+   * property access away from every caller that only wanted the codes.
+   */
+  private evidenceReasonsByGrain(state: LearnerState): Record<string, MasteryMapEntry['reasons']> {
+    const byGrain: Record<string, MasteryMapEntry['reasons']> = {};
+    for (const { evidence } of this.skillWarrants(state)) {
+      byGrain[evidence.skillId] = [...evidence.reasons];
+    }
+    return byGrain;
+  }
+
+  /**
    * Per-lesson readout for the Evidence Atlas brain nodes on Progress, rolled up
    * from each lesson's required member KCs (see {@link getLessonRollups}). A
    * lesson whose membership does not resolve is omitted rather than reported as
@@ -2330,6 +2348,46 @@ export class Authority {
         reviewDue: view.reviewDue,
         mastered: view.mastered,
       }));
+  }
+
+  /**
+   * Per-lesson evidence WARRANT for the Evidence Atlas: why a lesson's mastery
+   * claim is being withheld, as reason codes.
+   *
+   * The companion to {@link getMasteryLessons}, joined by `lessonId`, and
+   * deliberately not merged into it — `LessonWarrantViewSchema` records why, and
+   * an architecture assertion enforces it. Without this, a learner who perfects
+   * a lesson reads "In progress" forever with nothing on the page saying that
+   * the capability half is done and the evidence half is what is open.
+   *
+   * THE REASONS BELONG TO ONE MEMBER KC, because a lesson has no warrant of its
+   * own any more than it has a `P(L)`: the claim is `members.every(...)`, so the
+   * honest explanation is the member that makes it false. Warrant-insufficient
+   * members come first and only then merely-below-the-cut ones, because `pL`
+   * already has a learner-facing surface and the warrant has none — reporting a
+   * SATISFIED warrant on a lesson whose claim is withheld would be the same
+   * unexplained state one grain down.
+   *
+   * A grain the evidence system has never seen reports `NO_USEFUL_EVIDENCE`
+   * rather than an empty list, matching `getSessionSummary`; empty is reserved
+   * for a mastered lesson, where nothing is being withheld at all.
+   */
+  getLessonWarrants(state: LearnerState, lessonIds?: readonly string[]): LessonWarrantView[] {
+    const reasonsByGrain = this.evidenceReasonsByGrain(state);
+    return this.getLessonRollups(state, lessonIds)
+      .filter(isLessonRollupAvailable)
+      .map(({ view }) => {
+        const limiting =
+          view.members.find((member) => !member.evidenceSufficient) ??
+          view.members.find((member) => !member.mastered);
+        return {
+          lessonId: view.lessonId,
+          reasons:
+            limiting === undefined
+              ? []
+              : (reasonsByGrain[limiting.kcId] ?? [{ code: 'NO_USEFUL_EVIDENCE' as const }]),
+        };
+      });
   }
 
   /** CARS readiness (gauge + 3 sub-skill bars). */

@@ -5,6 +5,7 @@ import { ErrorCodeSchema } from './errors';
 import { EventIdSchema } from './ids';
 import {
   ErrorEntryViewSchema,
+  LessonWarrantViewSchema,
   MasteryMapEntrySchema,
   MistakePatternViewSchema,
   StudyStepViewSchema,
@@ -119,6 +120,16 @@ export const HTTP_API = {
     method: 'GET',
     path: '/v1/progress/lessons',
     response: z.array(LessonMasteryViewSchema),
+  },
+  /**
+   * The lesson-grain evidence warrant, beside `progressLessons` rather than on
+   * it: one payload may not carry a capability estimate and the warrant. See
+   * `LessonWarrantViewSchema`.
+   */
+  progressLessonWarrants: {
+    method: 'GET',
+    path: '/v1/progress/lesson-warrants',
+    response: z.array(LessonWarrantViewSchema),
   },
   progressCars: {
     method: 'GET',

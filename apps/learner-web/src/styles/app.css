@@ -442,6 +442,16 @@ body {
   font-size: var(--mc-text-15);
   line-height: 1.3;
 }
+/*
+ * Why a lesson is not done, on its own line under the title. A lesson-only path
+ * cannot satisfy the evidence gate, so a perfected lesson read "In progress"
+ * here with no explanation; this is the warrant's own wording
+ * (`components/evidence-language.ts`), never a second phrasing of it.
+ */
+.mc-atlas__lwarrant {
+  display: block;
+  margin-top: 2px;
+}
 .mc-atlas__lstate {
   flex: 0 0 auto;
   font-size: var(--mc-text-12);

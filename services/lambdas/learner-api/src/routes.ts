@@ -9,6 +9,7 @@ import {
   ErrorEntryViewSchema,
   GoalCommandSchema,
   LessonMasteryViewSchema,
+  LessonWarrantViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
   MistakePatternViewSchema,
@@ -59,6 +60,7 @@ export type RouteId =
   | 'mastery'
   | 'progressSkills'
   | 'progressLessons'
+  | 'progressLessonWarrants'
   | 'progressCars'
   | 'errors'
   | 'errorPatterns'
@@ -405,6 +407,14 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: false,
     responseSchema: LessonMasteryViewSchema.array(),
+  },
+  {
+    id: 'progressLessonWarrants',
+    method: 'GET',
+    path: '/v1/progress/lesson-warrants',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: LessonWarrantViewSchema.array(),
   },
   {
     id: 'progressCars',
