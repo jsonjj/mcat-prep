@@ -12,7 +12,7 @@ const toPct = (p: number): number => Math.round(p * 100);
  * Label for the CTA under the brain that opens the full curriculum. The final
  * wording is being decided separately — change THIS one constant to update it.
  */
-const CURRICULUM_CTA_LABEL = 'View full curriculum';
+const CURRICULUM_CTA_LABEL = 'Expand Lesson Mastery';
 
 /**
  * Plain-language descriptions for the 7 reasoning skills, shown on Progress. Kept

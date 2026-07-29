@@ -1296,16 +1296,19 @@ body {
   margin-top: auto;
   align-self: center;
 }
-/* "Lesson mastery" key above the brain — tells the learner what the node colors mean. */
+/* "Lesson mastery" key above the brain — tells the learner what the node colors mean.
+   The title + item labels are sized up from 12px to 14px for readability; the column
+   gaps are trimmed a touch so the whole key still sits on ONE line inside the narrow
+   center column at 1280px-wide laptops (no wrap, no vertical scroll). */
 .mc-masterykey {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: var(--mc-space-2) var(--mc-space-3);
+  gap: var(--mc-space-2);
 }
 .mc-masterykey__title {
-  font-size: var(--mc-text-12);
+  font-size: var(--mc-text-14);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1314,7 +1317,7 @@ body {
 .mc-masterykey__items {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--mc-space-3);
+  gap: var(--mc-space-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1323,7 +1326,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: var(--mc-space-1);
-  font-size: var(--mc-text-12);
+  font-size: var(--mc-text-14);
   color: var(--mc-ink-muted);
 }
 .mc-masterykey__dot {

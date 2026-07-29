@@ -6,7 +6,7 @@ import {
   type MutableRefObject,
   type ReactNode,
 } from 'react';
-import { Canvas, useFrame, useLoader, type ThreeEvent } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {
@@ -53,8 +53,6 @@ export interface AtlasRegion {
   lessons: AtlasRegionLessonState[];
   masteredCount: number;
   complete: boolean;
-  /** Where a tap on this region navigates (cluster of the first incomplete lesson). */
-  tapCluster: string;
 }
 
 interface DragState {
@@ -569,21 +567,25 @@ function useGlowTexture(): THREE.Texture {
 }
 
 // Node color scale: LOCKED lessons read grey; IN-PROGRESS (unlocked, not yet mastered)
-// read flat amber. MASTERED lessons render NO dot at all — mastery shows only as the
-// region filling solid green — so a green dot can never poke out of the brain.
+// read flat amber. In a COMPLETE region, MASTERED lessons animate up to green (matching
+// FILL_COLOR) node-by-node and are then covered by the rising fill — so the SETTLED state
+// is still a clean solid-green region with no green dots poking out. In an incomplete
+// region a mastered node stays hidden (that region never fills, so a dot would linger).
 const NODE_GREY = '#b6b2c4';
 const NODE_YELLOW = new THREE.Color('#f2c14e');
+const NODE_GREEN = new THREE.Color(FILL_COLOR); // mastered-node target — matches the region fill
 const NODE_GREY_COLOR = new THREE.Color(NODE_GREY);
 
 // On-open reveal (Progress brain only): on each mount, every node starts grey and
 // ramps up to its target — UNLOCKED nodes grey → yellow → (target), MASTERED nodes
 // continuing on to green (they visibly pass THROUGH yellow first); LOCKED nodes stay
-// grey. Regions/nodes stagger so the build-up cascades over ~1.8–2.4s. Driven
-// imperatively (material/scale mutation in useFrame) — no per-frame React renders.
-const REVEAL_NODE_RAMP = 0.55; // seconds each node takes to ramp grey → target
-const REVEAL_REGION_SPREAD = 0.7; // seconds spread of region start times (the cascade)
-const REVEAL_NODE_SPREAD = 0.28; // seconds spread of node start times within a region
-const REVEAL_FILL_GATE = 0.9; // a region's nodes must be ~this revealed before its fill starts
+// grey. Regions/nodes stagger so the build-up cascades over ~3.0–3.5s (slowed so the
+// reveal reads as a smooth, deliberate "lighting up" rather than a quick flash).
+// Driven imperatively (material/scale mutation in useFrame) — no per-frame React renders.
+const REVEAL_NODE_RAMP = 0.85; // seconds each node takes to ramp grey → target
+const REVEAL_REGION_SPREAD = 1.15; // seconds spread of region start times (the cascade)
+const REVEAL_NODE_SPREAD = 0.45; // seconds spread of node start times within a region
+const REVEAL_FILL_GATE = 0.98; // nodes must be essentially fully GREEN before the fill starts
 const REVEAL_START_OPACITY = 0.45; // grey start dot opacity (matches the locked base dot)
 const REVEAL_START_SCALE = 0.9; // grey start dot scale (matches the locked base dot)
 
@@ -641,8 +643,6 @@ function dotStyle(node: {
 function RegionVisual({
   geom,
   region,
-  selected,
-  interactive,
   reducedMotion,
   coreGeo,
   glowTex,
@@ -650,12 +650,9 @@ function RegionVisual({
   revealStart,
   revealIndex,
   revealTotal,
-  onSelect,
 }: {
   geom: RegionGeom;
   region: AtlasRegion;
-  selected: boolean;
-  interactive: boolean;
   reducedMotion: boolean;
   coreGeo: THREE.BufferGeometry;
   glowTex: THREE.Texture;
@@ -665,7 +662,6 @@ function RegionVisual({
   /** This region's position in the reveal cascade, and the region count, for stagger. */
   revealIndex: number;
   revealTotal: number;
-  onSelect: (id: string) => void;
 }) {
   const fillRef = useRef<THREE.Mesh>(null);
   const dotsRef = useRef<THREE.Group>(null);
@@ -689,8 +685,12 @@ function RegionVisual({
     return geom.dots.map((d, k) => {
       const lesson = region.lessons[k];
       const src = lesson ? { locked: lesson.locked, pL: lesson.pL } : { locked: true, pL: 0 };
-      // Mastered lessons render no dot at all (mastery shows via the region's green fill).
-      const hidden = lesson ? lesson.mastered : false;
+      const mastered = lesson ? lesson.mastered : false;
+      // In a COMPLETE region, mastered nodes animate grey → yellow → green node-by-node,
+      // then get covered by the rising green fill (settled state = clean solid fill, no
+      // green dots). In an INCOMPLETE region a mastered node stays hidden — that region
+      // never fills, so a visible green dot would linger as a "green circle".
+      const hidden = mastered && !region.complete;
       const st = dotStyle(src);
       const nodeStagger = count > 1 ? (k / (count - 1)) * REVEAL_NODE_SPREAD : 0;
       return {
@@ -702,11 +702,11 @@ function RegionVisual({
         locked: src.locked,
         hidden,
         target: st,
-        targetColor: new THREE.Color(st.color),
+        targetColor: mastered ? NODE_GREEN : new THREE.Color(st.color),
         delay: regionBase + nodeStagger,
       };
     });
-  }, [geom.dots, geom.center, region.lessons, revealIndex, revealTotal]);
+  }, [geom.dots, geom.center, region.lessons, region.complete, revealIndex, revealTotal]);
 
   useFrame((state, dt) => {
     // Stamp the shared reveal origin on the first atlas frame; every region reads the
@@ -740,7 +740,7 @@ function RegionVisual({
     // grey → yellow → green. (Non-complete regions never fill; target stays 0.)
     const nodesRevealed = reducedMotion || minAchieved >= REVEAL_FILL_GATE;
     const target = region.complete && nodesRevealed ? 1 : 0;
-    const rate = reducedMotion ? 1 : Math.min(1, dt * 5);
+    const rate = reducedMotion ? 1 : Math.min(1, dt * 3);
     let nv = fillNow.current + (target - fillNow.current) * rate;
     if (Math.abs(target - nv) < 0.004) nv = target;
     fillNow.current = nv;
@@ -775,22 +775,6 @@ function RegionVisual({
       dg.visible = nv < FILL_HIDE_NODES;
     }
   });
-
-  const handlers = interactive
-    ? {
-        onPointerOver: (e: ThreeEvent<PointerEvent>) => {
-          e.stopPropagation();
-          document.body.style.cursor = 'pointer';
-        },
-        onPointerOut: () => {
-          document.body.style.cursor = '';
-        },
-        onClick: (e: ThreeEvent<MouseEvent>) => {
-          e.stopPropagation();
-          onSelect(region.id);
-        },
-      }
-    : {};
 
   return (
     <group>
@@ -848,11 +832,11 @@ function RegionVisual({
           instead of glossy "balls". Interior white-matter regions render NO fill: their old
           ellipsoid cores protruded through the shell as smooth green balls. */}
       {geom.interior ? null : (
-        <mesh ref={fillRef} geometry={geom.fillGeometry!} renderOrder={1.2} {...handlers}>
+        <mesh ref={fillRef} geometry={geom.fillGeometry!} renderOrder={1.2}>
           <meshStandardMaterial
             color={FILL_COLOR}
             emissive={FILL_EMISSIVE}
-            emissiveIntensity={selected ? 0.32 : 0.12}
+            emissiveIntensity={0.12}
             roughness={0.98}
             metalness={0}
             transparent
@@ -862,13 +846,6 @@ function RegionVisual({
           />
         </mesh>
       )}
-
-      {/* Invisible surface handle so deep white-matter regions stay tappable. */}
-      {geom.interior && geom.handle ? (
-        <mesh geometry={coreGeo} position={geom.handle} scale={modelRadius * 0.24} {...handlers}>
-          <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
-        </mesh>
-      ) : null}
     </group>
   );
 }
@@ -879,14 +856,10 @@ function RegionVisual({
  */
 function RegionAtlasBrain({
   regions,
-  selected,
   reducedMotion,
-  onSelect,
 }: {
   regions: AtlasRegion[];
-  selected: string | null;
   reducedMotion: boolean;
-  onSelect: (id: string) => void;
 }) {
   const gltf = useLoader(GLTFLoader, MODEL_URL);
   const geom = useMemo(() => buildAtlasGeometry(gltf), [gltf]);
@@ -931,8 +904,6 @@ function RegionAtlasBrain({
             key={r.id}
             geom={g}
             region={r}
-            selected={selected === r.id}
-            interactive
             reducedMotion={reducedMotion}
             coreGeo={coreGeo}
             glowTex={glowTex}
@@ -940,7 +911,6 @@ function RegionAtlasBrain({
             revealStart={revealStart}
             revealIndex={i}
             revealTotal={regions.length}
-            onSelect={onSelect}
           />
         );
       })}
@@ -968,16 +938,12 @@ class ModelErrorBoundary extends Component<
 function Scene({
   regions,
   reducedMotion,
-  selected,
   interactive,
-  onSelect,
   drag,
 }: {
   regions: AtlasRegion[];
   reducedMotion: boolean;
-  selected: string | null;
   interactive: boolean;
-  onSelect: (id: string) => void;
   drag: MutableRefObject<DragState>;
 }) {
   const group = useRef<THREE.Group>(null);
@@ -1026,12 +992,7 @@ function Scene({
         ) : (
           <ModelErrorBoundary fallback={<ProceduralBrain opaque={false} />}>
             <Suspense fallback={<ProceduralBrain opaque={false} />}>
-              <RegionAtlasBrain
-                regions={regions}
-                selected={selected}
-                reducedMotion={reducedMotion}
-                onSelect={onSelect}
-              />
+              <RegionAtlasBrain regions={regions} reducedMotion={reducedMotion} />
             </Suspense>
           </ModelErrorBoundary>
         )}
@@ -1043,15 +1004,11 @@ function Scene({
 export default function BrainScene({
   regions,
   reducedMotion,
-  selected,
   interactive = true,
-  onSelect,
 }: {
   regions: AtlasRegion[];
   reducedMotion: boolean;
-  selected: string | null;
   interactive?: boolean;
-  onSelect: (id: string) => void;
 }) {
   // Default to the recognizable side profile (front of the brain to the right).
   const drag = useRef<DragState>({ dragging: false, lastX: 0, lastY: 0, x: 0.12, y: Math.PI / 2 });
@@ -1094,9 +1051,7 @@ export default function BrainScene({
         <Scene
           regions={regions}
           reducedMotion={reducedMotion}
-          selected={selected}
           interactive={interactive}
-          onSelect={onSelect}
           drag={drag}
         />
       </Canvas>

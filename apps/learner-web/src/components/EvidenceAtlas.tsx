@@ -1,15 +1,7 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  ATLAS_LESSON_CLUSTER,
-  ATLAS_REGION_GROUPS,
-  CLUSTER_INFO,
-  type LessonMasteryView,
-  type SkillCluster,
-} from '@mcat/contracts';
+import { lazy, Suspense, useMemo } from 'react';
+import { ATLAS_REGION_GROUPS, type LessonMasteryView } from '@mcat/contracts';
 import { baseStateRank, type BaseMasteryState } from '@mcat/domain';
 import { detectCapabilities } from '@mcat/platform-web';
-import { Button } from '@mcat/ui-web';
 import { CURRICULUM_PHASES } from '../data/curriculum-v3.generated';
 import { useMasteryLessons } from '../app/queries';
 import { BrainAtlas } from './BrainAtlas';
@@ -42,12 +34,10 @@ function lessonStateFromPL(entry: LessonMasteryView | undefined): BaseMasterySta
   return entry.mastered ? 'independent' : 'learning';
 }
 
-const brainPartLabel = (part: string) => part.replace(/_/g, ' ');
-
 /**
  * lesson_id → teaching-order + module context, read from the checked-in curriculum
- * manifest (the same source the Curriculum tab renders). Used to label and order
- * the region's lessons in the tap panel — no new data, no network.
+ * manifest (the same source the Curriculum tab renders). Used to order lessons for
+ * the provisional unlock frontier — no new data, no network.
  */
 interface LessonMeta {
   shortTitle: string;
@@ -76,68 +66,17 @@ const LESSON_META: Record<string, LessonMeta> = (() => {
   return map;
 })();
 
-type LessonStatusKey = 'done' | 'progress' | 'todo';
-function lessonStatus(state: BaseMasteryState): { key: LessonStatusKey; label: string; glyph: string } {
-  const rank = baseStateRank(state);
-  if (rank >= MASTERED_RANK) return { key: 'done', label: 'Done', glyph: '●' };
-  if (rank >= 1) return { key: 'progress', label: 'In progress', glyph: '◐' };
-  return { key: 'todo', label: 'Not started', glyph: '○' };
-}
-
-interface RegionLessonRow {
-  id: string;
-  title: string;
-  state: BaseMasteryState;
-}
-interface RegionLessonGroup {
-  moduleId: string;
-  moduleTitle: string;
-  lessons: RegionLessonRow[];
-}
-
-/** Region's lessons in teaching order, grouped by their curriculum module. */
-function lessonGroupsFor(region: AtlasRegion): RegionLessonGroup[] {
-  const enriched = region.lessons.map((l) => {
-    const meta = LESSON_META[l.id];
-    return {
-      id: l.id,
-      title: meta?.shortTitle ?? l.title,
-      state: l.state,
-      position: meta?.position ?? Number.MAX_SAFE_INTEGER,
-      moduleId: meta?.moduleId ?? '~',
-      moduleTitle: meta?.moduleTitle ?? 'Other lessons',
-      moduleOrder: meta?.moduleOrder ?? 999,
-      phaseOrder: meta?.phaseOrder ?? 999,
-    };
-  });
-  enriched.sort(
-    (a, b) => a.phaseOrder - b.phaseOrder || a.moduleOrder - b.moduleOrder || a.position - b.position,
-  );
-  const groups: RegionLessonGroup[] = [];
-  for (const row of enriched) {
-    let group = groups.find((g) => g.moduleId === row.moduleId);
-    if (!group) {
-      group = { moduleId: row.moduleId, moduleTitle: row.moduleTitle, lessons: [] };
-      groups.push(group);
-    }
-    group.lessons.push({ id: row.id, title: row.title, state: row.state });
-  }
-  return groups;
-}
-
 /**
  * variant "home": a full, decorative, spinnable brain (opaque real model) — the
  * aspirational hero, unchanged.
  * variant "progress": the Evidence Atlas — the translucent real brain split into
  * the 15 anatomical lesson-groups. Each region shows one dot per lesson and snaps
- * to a solid glowing-green fill once every lesson in it is mastered. Tapping a
- * region lists its lessons.
+ * to a solid glowing-green fill once every lesson in it is mastered. The brain is
+ * display-only (drag to rotate); the Skills list route is the interactive path.
  */
 export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'progress' } = {}) {
-  const navigate = useNavigate();
   const lessonMastery = useMasteryLessons();
   const caps = useMemo(() => detectCapabilities(), []);
-  const [selected, setSelected] = useState<string | null>(null);
   const isHome = variant === 'home';
 
   // Per-lesson BKT P(L), keyed by lesson id — the real mastery signal that drives
@@ -186,8 +125,6 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
             : !(mastered || entry !== undefined || rank < masteredLessonCount + UNLOCK_WINDOW);
           return { id: l.lesson_id, title: l.title, state, mastered, locked, pL };
         });
-        const tapLessonId = (lessons.find((l) => !l.mastered) ?? lessons[0])?.id;
-        const tapCluster = (tapLessonId ? ATLAS_LESSON_CLUSTER[tapLessonId] : undefined) ?? 'BB1';
         return {
           id: rg.region_id,
           name: rg.name,
@@ -197,15 +134,10 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
           lessons,
           masteredCount,
           complete: rg.lesson_count > 0 && masteredCount === rg.lesson_count,
-          tapCluster,
         };
       }),
     [lessonById, isHome, lessonRank, masteredLessonCount],
   );
-
-  const sel = selected ? (regions.find((r) => r.id === selected) ?? null) : null;
-  const selCluster = sel ? (sel.tapCluster as SkillCluster) : null;
-  const groups = useMemo(() => (sel ? lessonGroupsFor(sel) : []), [sel]);
 
   if (!caps.webgl) {
     return (
@@ -224,75 +156,11 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
   return (
     <div className={`mc-atlas mc-atlas--${variant}`}>
       <Suspense fallback={<BrainAtlas glowing={isHome ? 6 : masteredLessonCount} />}>
-        <BrainScene
-          regions={regions}
-          reducedMotion={caps.reducedMotion}
-          selected={selected}
-          interactive={!isHome}
-          onSelect={setSelected}
-        />
+        <BrainScene regions={regions} reducedMotion={caps.reducedMotion} interactive={!isHome} />
       </Suspense>
       <p className="mc-atlas__hint mc-muted mc-fineprint" aria-hidden="true">
-        {isHome ? 'Drag to spin' : 'Drag to rotate · tap a region for its lessons'}
+        {isHome ? 'Drag to spin' : 'Drag to rotate'}
       </p>
-      {!isHome && sel ? (
-        <div className="mc-atlas__panel" role="status" aria-live="polite" key={sel.id}>
-          <div className="mc-atlas__paneltop">
-            <div>
-              <span className="mc-upnext__eyebrow">
-                {sel.id} · {brainPartLabel(sel.brainPart)}
-                {sel.hemisphere !== 'midline' ? ` · ${sel.hemisphere}` : ''}
-              </span>
-              <p className="mc-atlas__paneltitle">{sel.name}</p>
-              <p className="mc-muted mc-fineprint">
-                {sel.masteredCount} of {sel.lessons.length} lessons mastered
-                {sel.complete ? ' · complete' : ''}
-              </p>
-            </div>
-            <button
-              type="button"
-              className="mc-atlas__panelclose"
-              onClick={() => setSelected(null)}
-              aria-label="Close region details"
-            >
-              ×
-            </button>
-          </div>
-
-          <div className="mc-atlas__lessons">
-            {groups.map((group) => (
-              <section key={group.moduleId} className="mc-atlas__lgroup">
-                <p className="mc-atlas__lgroup-head">{group.moduleTitle}</p>
-                <ul className="mc-atlas__llist">
-                  {group.lessons.map((lesson) => {
-                    const status = lessonStatus(lesson.state);
-                    return (
-                      <li key={lesson.id} className="mc-atlas__lesson">
-                        <span
-                          className={`mc-atlas__lstatus mc-atlas__lstatus--${status.key}`}
-                          aria-hidden="true"
-                        >
-                          {status.glyph}
-                        </span>
-                        <span className="mc-atlas__ltitle">{lesson.title}</span>
-                        <span className={`mc-atlas__lstate mc-atlas__lstate--${status.key}`}>
-                          {status.label}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-            ))}
-          </div>
-
-          {selCluster ? (
-            <Button variant="secondary" onClick={() => navigate(`/app/skills/${selCluster}`)}>
-              {sel.complete ? 'Review' : 'Practice'} {CLUSTER_INFO[selCluster].title}
-            </Button>
-          ) : null}
-        </div>
-      ) : null}
     </div>
   );
 }
