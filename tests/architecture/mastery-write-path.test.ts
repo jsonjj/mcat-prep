@@ -178,9 +178,24 @@ function writeSpellings(map: string): readonly string[] {
  * scan cannot lean on that — a lesson grain needs no engine symbol to store —
  * so it chases the alias itself.
  */
-const GRAIN_WRITE = new RegExp(writeSpellings(CAPABILITY_MAP)[0]!, 'g');
+const GRAIN_WRITES: readonly RegExp[] = writeSpellings(CAPABILITY_MAP).map(
+  (spelling) => new RegExp(spelling, 'g'),
+);
 
-/** The same write, with the assigned expression captured. */
+/** Which members store a capability grain, counted with multiplicity. */
+function capabilityGrainWriters(): string[] {
+  return GRAIN_WRITES.flatMap((pattern) =>
+    [...source.matchAll(pattern)].map((match) => memberAt(match.index!)),
+  );
+}
+
+/**
+ * The INDEXED write alone, with the assigned expression captured, for the seed
+ * assertion below — which needs to inspect what is stored, and can only do that
+ * where there is one value per key. Deliberately not widened to the whole-map
+ * forms: a seed rewritten as `m.kc = { ...m.kc, ... }` finds zero matches here
+ * and fails the exact-count check, which is the outcome that assertion wants.
+ */
 const GRAIN_WRITE_RHS =
   /(?:\.(?:kc|skill)|\[\s*['"](?:kc|skill)['"]\s*\])\s*\[[^\]]*\]\s*(?:\?\?|\|\|)?=\s*([^;]+);/g;
 
@@ -333,10 +348,44 @@ describe('the capability write path has exactly one door', () => {
 
   it('writes a capability grain only from the step and the seed', () => {
     // The assignment itself, so this covers a bypass that reimplements the
-    // engine rather than calling it.
-    const writes = [...source.matchAll(GRAIN_WRITE)].map((match) => memberAt(match.index!));
+    // engine rather than calling it — which is the case the caller scans above
+    // cannot see, precisely because a reimplementation never calls the engine.
+    // That made the omission here self-concealing: this assertion required an
+    // index after `.kc`/`.skill`, so `m.kc = { ...m.kc, [id]: next }` and
+    // `Object.assign(m.kc, { [id]: s })` stored a grain and tripped nothing.
+    const writes = capabilityGrainWriters();
     expect(writes.length).toBeGreaterThan(2);
     expect(new Set(writes)).toEqual(new Set(['stepDirectGrains', 'applyMasterySeed']));
+  });
+
+  /**
+   * Anti-vacuity for the scan above, and the mirror of the lesson-side specimen
+   * check. The two maps are one question, and the reason this assertion exists
+   * at all is that they were allowed to answer it differently for a while.
+   */
+  it('recognizes every spelling of a capability-grain write', () => {
+    const recognized = (code: string): boolean =>
+      writeSpellings(CAPABILITY_MAP).some((spelling) => new RegExp(spelling).test(code));
+    for (const store of [
+      'm.kc[id] = s;',
+      'm.kc[id] ??= s;',
+      "m['skill'][op] = s;",
+      'm.kc = { ...m.kc, [kcId]: next };',
+      'm.skill = { ...m.skill, [op]: next };',
+      'm.kc = Object.fromEntries(pairs);',
+      'Object.assign(m.kc, { [id]: s });',
+      'Object.assign(m.skill, { [op]: next });',
+    ]) {
+      expect(recognized(store), `not recognized as a capability-grain write: ${store}`).toBe(true);
+    }
+    for (const innocent of [
+      'const entry = m.kc[id];',
+      'if (m.skill[op] === undefined) return null;',
+      'view.skillId = evidence.skillId;',
+      'const ranked = bySkill[id] ?? [];',
+    ]) {
+      expect(recognized(innocent), `false positive on: ${innocent}`).toBe(false);
+    }
   });
 
   /**
