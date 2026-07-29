@@ -295,7 +295,24 @@ export function evaluateEvidence(
     reasons.push({ code: 'NO_USEFUL_EVIDENCE' });
   }
 
-  // Fresh failure: a valid, independent, incorrect attempt more recent than supporting success.
+  /**
+   * Fresh failure: a valid, independent, incorrect attempt more recent than the
+   * supporting success.
+   *
+   * `>` is load-bearing and must stay strict. A tie is not evidence of order,
+   * and every channel that writes a record numbers it with the sequence its
+   * command is accepted at — which is unique per learner, because the projection
+   * write requires `current_sequence = sequence - 1`. So two records can only
+   * tie if a producer numbered one of them wrong, and relaxing to `>=` would
+   * hide that by letting genuinely simultaneous records satisfy an ordering
+   * requirement.
+   *
+   * This was found the other way round: adaptive practice wrote the PRIOR
+   * sequence while lesson evidence wrote the next one, so a practice miss could
+   * tie with the lesson record before it and a learner who had just failed kept
+   * a clean warrant. The fix belonged to the producer
+   * (`Authority.submitPracticeAttempt`), not to this comparison.
+   */
   const latestEligibleSeq = eligible.reduce((m, e) => Math.max(m, e.sequence), -1);
   const hasFreshFailure = input.records.some(
     (r) => r.valid && r.independent && r.outcome === 'incorrect' && r.sequence > latestEligibleSeq,

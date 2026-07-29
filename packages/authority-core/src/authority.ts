@@ -2534,6 +2534,35 @@ export class Authority {
     const correct = outcome === 'correct';
 
     /**
+     * The accepted-stream sequence this response's evidence will carry,
+     * ALLOCATED here rather than read off the state as it stands.
+     *
+     * `state.nextSequence` is the sequence of the last accepted command, so
+     * writing it into the record stamped this response with the sequence of the
+     * one BEFORE it. Lesson evidence has always carried `nextSequence + 1`, the
+     * sequence this command will be accepted at
+     * (`services/lambdas/learner-api/src/workflow.ts`), so the two channels were
+     * counting from different places by exactly one — and a practice answer
+     * could therefore SHARE a sequence with the lesson record immediately
+     * preceding it.
+     *
+     * That is not a cosmetic mismatch. `evaluateEvidence` detects a fresh
+     * failure by strict sequence ordering, so a miss that tied with the
+     * preceding lesson record was not "more recent than" it, `FRESH_FAILURE`
+     * never fired, and a learner who had just demonstrably failed kept a clean
+     * warrant. Measured as `[0, 1, 3, 3]`, the last of those an independent
+     * incorrect practice answer, with `refreshNeeded` still false.
+     *
+     * Allocating it cannot collide across channels, because the accepted
+     * sequence is strictly serialized per learner: the projection write requires
+     * `current_sequence = sequence - 1`, so two commands can never be accepted
+     * at the same number. Within this one command it is also the value
+     * `recordBktObservationEvent` advances `nextSequence` to, so the record and
+     * the stream agree rather than merely being close.
+     */
+    const acceptedSequence = state.nextSequence + 1;
+
+    /**
      * Whether this is the learner's first answer to this item, DERIVED.
      *
      * The wire command carries a `firstAttempt` claim and this method cannot
@@ -2572,6 +2601,7 @@ export class Authority {
       this.applyPracticeMastery(state, cmd.questionId, classification, outcome, stats, {
         firstAttempt,
         now,
+        sequence: acceptedSequence,
       });
     }
 
@@ -2751,7 +2781,7 @@ export class Authority {
     classification: PracticeItemClassification,
     outcome: EvidenceOutcome,
     stats: { attempts: number; correct: number },
-    administration: { firstAttempt: boolean; now: UtcTimestamp },
+    administration: { firstAttempt: boolean; now: UtcTimestamp; sequence: number },
   ): void {
     const m = this.ensureMastery(state);
     const correct = outcome === 'correct';
@@ -2785,7 +2815,7 @@ export class Authority {
     const cluster = clusterForKc(classification.kcId) ?? classification.cluster;
     if (cluster === null) return;
 
-    const record = this.practiceEvidence(state, {
+    const record = this.practiceEvidence({
       questionId,
       skillId: classification.kcId,
       cluster,
@@ -2793,6 +2823,7 @@ export class Authority {
       outcome,
       firstAttempt: administration.firstAttempt,
       occurredAt: administration.now,
+      sequence: administration.sequence,
     });
     state.evidence.push(record);
 
@@ -2883,18 +2914,17 @@ export class Authority {
    * `OperationTag` authoring-analysis axis has no honest source here, and the
    * item's reasoning operation is a different axis that already reaches BKT.
    */
-  private practiceEvidence(
-    state: LearnerState,
-    input: {
-      questionId: string;
-      skillId: string;
-      cluster: SkillCluster;
-      familyId: string | null;
-      outcome: EvidenceOutcome;
-      firstAttempt: boolean;
-      occurredAt: UtcTimestamp;
-    },
-  ): EvidenceRecord {
+  private practiceEvidence(input: {
+    questionId: string;
+    skillId: string;
+    cluster: SkillCluster;
+    familyId: string | null;
+    outcome: EvidenceOutcome;
+    firstAttempt: boolean;
+    occurredAt: UtcTimestamp;
+    /** The accepted-stream sequence, allocated by `submitPracticeAttempt`. */
+    sequence: number;
+  }): EvidenceRecord {
     /**
      * The administration, as the server observed it.
      *
@@ -2944,7 +2974,12 @@ export class Authority {
       // routing through it is what makes "never a client-supplied time" a
       // property of the type rather than of this call site's discipline.
       occurredAt: boundOccurredAtToServerTime(input.occurredAt, input.occurredAt),
-      sequence: state.nextSequence,
+      // The sequence this command WILL be accepted at, not the one before it.
+      // The lesson channel's records are numbered the same way, and
+      // `evaluateEvidence` compares the two strictly, so an off-by-one here is
+      // the difference between a fresh failure that fires and one that ties with
+      // the record it should outrank. See `submitPracticeAttempt`.
+      sequence: input.sequence,
       contentRelease: this.bank.contentRelease,
       policies: activePolicyVersions(),
     });
