@@ -4,6 +4,7 @@ import {
   EVIDENCE_REASON_CODES,
   fixedClock,
   MasteryMapEntrySchema,
+  MasterySeedSchema,
   QualifiedBktObservationSchema,
   UtcTimestampSchema,
   type MasterySeed,
@@ -15,10 +16,15 @@ import { clusterForKc, loadSyntheticBank, orderedKcsForLesson } from '@mcat/cont
 import { EVIDENCE_QUALITY_TIERS, EVIDENCE_REASONS, EvidenceRecordSchema } from '@mcat/domain';
 import {
   currentPL,
+  fcForLesson,
+  kcsByFc,
+  lessonsByFc,
   MASTERY_THRESHOLD,
+  masterySeedFromUnitSeeds,
   PRIOR_PL0,
   SEED_PRIOR_CAP,
   SEED_PRIOR_FLOOR,
+  seedsFromBucketReads,
 } from '@mcat/policies';
 import {
   Authority,
@@ -1330,7 +1336,6 @@ describe('Authority — no write path stores a lesson grain', () => {
     auth.applyMasterySeed(state, {
       kcPriors: Object.fromEntries(V3_LESSON_KCS.map((kcId) => [kcId, SEED_PRIOR_CAP])),
       skillPriors: {},
-      lessonPriors: {},
       carsAbility: {},
     });
 
@@ -1368,7 +1373,6 @@ describe('Authority — diagnostic mastery seeding', () => {
   const emptySeed = (): MasterySeed => ({
     kcPriors: {},
     skillPriors: {},
-    lessonPriors: {},
     carsAbility: {},
   });
 
@@ -1457,5 +1461,52 @@ describe('Authority — diagnostic mastery seeding', () => {
     expect(auth.getMasterySkills(state).find((s) => s.operation === 'IDENTIFY')!.pL).toBe(
       SEED_PRIOR_CAP,
     );
+  });
+
+  /**
+   * End to end on real data, because the failure this replaces was invisible at
+   * every layer taken alone: the producer emitted only `lessonPriors`, the schema
+   * had no such key, the authority ignored it, and so a completed diagnostic moved
+   * nothing at all. Nothing threw and nothing reported.
+   *
+   * The chain here is the production one — the real FC -> lesson -> ordered-KC
+   * membership from @mcat/content, the real packer, the real wire schema, the real
+   * authority, the real rollup — so a break anywhere along it fails here.
+   */
+  it('carries a real concept read through to a real lesson rollup', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+
+    // Discovered, not hardcoded: `V3-LES-130923` carries no FC tag, and which
+    // lessons are both tagged and resolvable is generated data that drifts.
+    const seedable = [...lessonsByFc().values()]
+      .flat()
+      .find((lessonId) => (orderedKcsForLesson(lessonId) ?? []).length > 0);
+    expect(seedable, 'no FC-tagged lesson has resolvable ordered-KC membership').toBeDefined();
+    const concept = fcForLesson(seedable!)!;
+    const memberKcs = orderedKcsForLesson(seedable!)!;
+
+    const seed = masterySeedFromUnitSeeds(
+      seedsFromBucketReads(
+        [{ bucketId: concept, gap: 1, certainty: 1, itemsSeen: 20 }],
+        kcsByFc(orderedKcsForLesson),
+        'kc',
+      ),
+    );
+
+    // It validates at the boundary the authority actually parses at...
+    expect(() => MasterySeedSchema.parse(seed)).not.toThrow();
+    // ...it reaches the KCs the lesson is made of...
+    for (const kcId of memberKcs) expect(seed.kcPriors[kcId]).toBeDefined();
+    // ...and a weak read lands at the floor rather than anywhere near mastery.
+    auth.applyMasterySeed(state, MasterySeedSchema.parse(seed));
+
+    const rollup = auth.getMasteryLessons(state, [seedable!])[0]!;
+    expect(rollup.pL).toBeGreaterThanOrEqual(SEED_PRIOR_FLOOR);
+    expect(rollup.pL).toBeLessThanOrEqual(SEED_PRIOR_CAP);
+    expect(rollup.pL).toBeLessThan(PRIOR_PL0);
+    expect(rollup.mastered).toBe(false);
+    // Not a no-op: the readout moved off the default prior.
+    expect(rollup.pL).not.toBe(PRIOR_PL0);
   });
 });

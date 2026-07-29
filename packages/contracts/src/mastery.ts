@@ -33,21 +33,26 @@ export type CarsDuelRubric = z.infer<typeof CarsDuelRubricSchema>;
 
 /**
  * Seed values emitted once by the diagnostic and applied by the mastery engine.
- * Seeds only — never mastery. Priors are asymmetric & capped upstream (≤ 0.4).
+ * Seeds only — never mastery. Priors are asymmetric & capped upstream (≤ 0.4) and
+ * re-clamped on arrival, because a seed crosses a service boundary to get here.
+ *
+ * There is NO `lessonPriors` key, and its absence is load-bearing. A lesson has no
+ * stored `P(L)`: its readout is rolled up from its required member KCs on read, so
+ * a lesson-grain prior has no destination in the engine. While the key was
+ * declared here the authority simply ignored it, and the diagnostic producer
+ * emitted nothing else — so diagnostic seeding was a complete no-op that no check
+ * reported. `.strict()` is what turns that silence into a named rejection: a
+ * producer still sending `lessonPriors` now fails validation instead of being
+ * quietly dropped. Widening this schema to accept it again re-creates the stored
+ * lesson grain at a different layer; distribute the read over the lesson's
+ * required member KCs instead (`kcsByFc` in @mcat/policies).
  */
 export const MasterySeedSchema = z
   .object({
-    /** primary_kc_id → prior P(L)_0. */
+    /** primary_kc_id → prior P(L)_0. The grain the diagnostic seeds. */
     kcPriors: z.record(z.string().min(1), Probability),
-    /** reasoning operation → prior P(L)_0. */
+    /** reasoning operation → prior P(L)_0. Open for a producer that measures them. */
     skillPriors: z.record(ReasoningOperationSchema, Probability),
-    /**
-     * lesson_id → prior P(L)_0. The diagnostic reads coarse buckets and the
-     * mastery store keys on lessons, so this is the grain the handoff actually
-     * carries; the KC and reasoning-operation records stay open for producers
-     * that measure those directly.
-     */
-    lessonPriors: z.record(z.string().min(1), Probability),
     /** CARS sub-skill → initial ability V_0 (may be negative). */
     carsAbility: z.record(CarsSkillSchema, z.number()),
   })

@@ -6,6 +6,7 @@ import {
   DecisionReasonViewSchema,
   EVIDENCE_REASON_CODES,
   LearnerEventSchema,
+  MasterySeedSchema,
   newEventId,
   newIdempotencyKey,
   newLearnerId,
@@ -177,6 +178,43 @@ describe('contracts', () => {
         isAcceptedLessonObservation(AcceptedEventSchema.parse(acceptedLessonObservation)),
       ).toBe(true);
     }
+  });
+
+  /**
+   * A lesson has no stored `P(L)`, so a lesson-grain prior has no destination in
+   * the engine. While `lessonPriors` was declared the authority ignored it and the
+   * producer emitted nothing else, which made diagnostic seeding a no-op that no
+   * check reported. The fix is a REJECTION, not a clamp and not a drop: a producer
+   * that has not been updated must fail loudly at the boundary.
+   */
+  it('rejects a lesson-grain mastery seed by name rather than dropping it', () => {
+    const kcSeed = { kcPriors: { 'V3-KC-199229': 0.3 }, skillPriors: {}, carsAbility: {} };
+    expect(MasterySeedSchema.safeParse(kcSeed).success).toBe(true);
+
+    const stale = MasterySeedSchema.safeParse({
+      ...kcSeed,
+      lessonPriors: { 'V3-LES-130923': 0.3 },
+    });
+    expect(stale.success).toBe(false);
+    expect(stale.error!.issues[0]!.code).toBe('unrecognized_keys');
+    expect(JSON.stringify(stale.error!.issues)).toContain('lessonPriors');
+  });
+
+  it('holds the seed priors to a probability, whatever a producer sends', () => {
+    // The asymmetric floor/cap is the producer's; this is the type floor beneath
+    // it, and the authority re-clamps to the policy bounds on arrival.
+    expect(
+      MasterySeedSchema.safeParse({ kcPriors: { k: 1.2 }, skillPriors: {}, carsAbility: {} })
+        .success,
+    ).toBe(false);
+    expect(
+      MasterySeedSchema.safeParse({ kcPriors: { k: -0.1 }, skillPriors: {}, carsAbility: {} })
+        .success,
+    ).toBe(false);
+    expect(
+      MasterySeedSchema.safeParse({ kcPriors: { '': 0.3 }, skillPriors: {}, carsAbility: {} })
+        .success,
+    ).toBe(false);
   });
 });
 

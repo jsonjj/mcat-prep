@@ -136,3 +136,39 @@ export function lessonsByFc(): ReadonlyMap<string, readonly string[]> {
   lessonsByFcCache = map;
   return map;
 }
+
+/**
+ * KCs grouped by Foundational Concept — the bucket -> unit map for seeding at the
+ * grain the mastery engine actually stores.
+ *
+ * A lesson is not a mastery grain: `P(L)` lives on the primary KC and the primary
+ * reasoning operation, and a lesson readout is rolled up from its required member
+ * KCs on read. So a concept's read has to reach the KCs beneath that concept,
+ * which is what this map expresses.
+ *
+ * `kcsForLesson` is INJECTED rather than imported: the authoritative ordered
+ * membership lives in `@mcat/content` (`orderedKcsForLesson`), and this package
+ * must not depend on it (asserted by `tests/architecture/boundaries.test.ts`).
+ * Duplicating the table here instead would create a second derivation of one
+ * fact, which is worse than the parameter.
+ *
+ * Uncached, because the resolver is the caller's. A lesson with no resolvable
+ * membership contributes no KCs — its concept still seeds the KCs it can
+ * identify, and an unidentifiable KC is left at the default prior rather than
+ * guessed at. Cardinality is what carries that through: certainty is attenuated
+ * by the number of units actually returned here, so a concept whose membership is
+ * thin is credited less, not more.
+ */
+export function kcsByFc(
+  kcsForLesson: (lessonId: string) => readonly string[] | null | undefined,
+): ReadonlyMap<string, readonly string[]> {
+  const map = new Map<string, string[]>();
+  for (const [fc, lessons] of lessonsByFc()) {
+    const kcIds = new Set<string>();
+    for (const lessonId of lessons) {
+      for (const kcId of kcsForLesson(lessonId) ?? []) kcIds.add(kcId);
+    }
+    map.set(fc, [...kcIds].sort());
+  }
+  return map;
+}

@@ -8,6 +8,7 @@ import {
   SEED_PRIOR_CAP,
 } from '@mcat/policies';
 import { buildDiagnosticBank } from '@mcat/content';
+import { MasterySeedSchema } from '@mcat/contracts';
 import { DiagnosticBank } from './diagnostic-bank';
 import { DiagnosticSessionError, DiagnosticSessionStore } from './diagnostic-session-store';
 import {
@@ -552,7 +553,7 @@ describe.skipIf(!PRODUCTION_FORM_SERVABLE)('diagnostic engine end-to-end', () =>
     assertNoLeak(view.result, 'widened result view');
   });
 
-  it('emits lesson priors that can never reach mastery', () => {
+  it('emits KC priors that can never reach mastery', () => {
     const store = new DiagnosticSessionStore();
     // Answer from the key throughout: the strongest read the form can produce,
     // and so the one that pushes seeded priors as high as they can go.
@@ -562,14 +563,17 @@ describe.skipIf(!PRODUCTION_FORM_SERVABLE)('diagnostic engine end-to-end', () =>
       (questionId) => (['A', 'B', 'C', 'D'] as const).find((c) => bank.score(questionId, c)) ?? null,
     );
     const seed = view.result!.masterySeed;
-    const priors = Object.values(seed.lessonPriors);
+    const priors = Object.values(seed.kcPriors);
 
     expect(priors.length).toBeGreaterThan(0);
     for (const prior of priors) expect(prior).toBeLessThanOrEqual(SEED_PRIOR_CAP);
-    // CARS is off the diagnostic's axis, so it seeds no ability at all.
+    // CARS is off the diagnostic's axis, so it seeds no ability at all, and the
+    // form measures content buckets rather than the 7 reasoning operations.
     expect(seed.carsAbility).toEqual({});
-    expect(seed.kcPriors).toEqual({});
     expect(seed.skillPriors).toEqual({});
+    // The payload the authority will actually parse — a lesson-grain key is
+    // rejected by name now, so an emitter regression fails here.
+    expect(() => MasterySeedSchema.parse(seed)).not.toThrow();
   });
 
   it('produces identical delivery for the same seed', () => {

@@ -36,15 +36,27 @@ describe('bucket read -> unit seeds', () => {
     const seeds = seedsFromBucketReads(
       [{ bucketId: 'CP1', gap: 0.9, certainty: 0.8, itemsSeen: 10 }],
       units,
+      'lesson',
     );
     expect(seeds).toHaveLength(4);
     expect(new Set(seeds.map((s) => s.prior)).size).toBe(1);
     expect(seeds.every((s) => s.bucketId === 'CP1')).toBe(true);
+    // The grain is carried, never inferred from the id: a unit id says nothing
+    // about whether the mastery engine stores that grain.
+    expect(seeds.every((s) => s.grain === 'lesson')).toBe(true);
   });
 
   it('trusts a read less the more units share it', () => {
-    const wide = seedsFromBucketReads([{ bucketId: 'CP1', gap: 0.9, certainty: 0.8, itemsSeen: 10 }], units);
-    const narrow = seedsFromBucketReads([{ bucketId: 'CP2', gap: 0.9, certainty: 0.8, itemsSeen: 10 }], units);
+    const wide = seedsFromBucketReads(
+      [{ bucketId: 'CP1', gap: 0.9, certainty: 0.8, itemsSeen: 10 }],
+      units,
+      'lesson',
+    );
+    const narrow = seedsFromBucketReads(
+      [{ bucketId: 'CP2', gap: 0.9, certainty: 0.8, itemsSeen: 10 }],
+      units,
+      'lesson',
+    );
     // Same read, but CP1 spreads it over four units and CP2 over one.
     expect(wide[0]!.certainty).toBeLessThan(narrow[0]!.certainty);
     expect(attenuateCertainty(0.8, 4)).toBeCloseTo(0.4, 10);
@@ -52,13 +64,33 @@ describe('bucket read -> unit seeds', () => {
   });
 
   it('emits nothing for an unsampled or unmapped bucket', () => {
-    expect(seedsFromBucketReads([{ bucketId: 'CP1', gap: 0.9, certainty: 0.8, itemsSeen: 0 }], units)).toEqual([]);
-    expect(seedsFromBucketReads([{ bucketId: 'ZZ9', gap: 0.9, certainty: 0.8, itemsSeen: 10 }], units)).toEqual([]);
+    expect(
+      seedsFromBucketReads(
+        [{ bucketId: 'CP1', gap: 0.9, certainty: 0.8, itemsSeen: 0 }],
+        units,
+        'kc',
+      ),
+    ).toEqual([]);
+    expect(
+      seedsFromBucketReads(
+        [{ bucketId: 'ZZ9', gap: 0.9, certainty: 0.8, itemsSeen: 10 }],
+        units,
+        'kc',
+      ),
+    ).toEqual([]);
   });
 
   it('lets a weak read sink a prior but caps how far a strong one may raise it', () => {
-    const weak = seedsFromBucketReads([{ bucketId: 'CP2', gap: 1, certainty: 1, itemsSeen: 20 }], units);
-    const strong = seedsFromBucketReads([{ bucketId: 'CP2', gap: 0, certainty: 1, itemsSeen: 20 }], units);
+    const weak = seedsFromBucketReads(
+      [{ bucketId: 'CP2', gap: 1, certainty: 1, itemsSeen: 20 }],
+      units,
+      'kc',
+    );
+    const strong = seedsFromBucketReads(
+      [{ bucketId: 'CP2', gap: 0, certainty: 1, itemsSeen: 20 }],
+      units,
+      'kc',
+    );
     expect(weak[0]!.prior).toBeLessThan(PRIOR_PL0);
     expect(weak[0]!.prior).toBeGreaterThanOrEqual(SEED_PRIOR_FLOOR);
     expect(strong[0]!.prior).toBeGreaterThan(PRIOR_PL0);
