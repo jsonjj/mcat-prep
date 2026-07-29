@@ -3,6 +3,7 @@ import { SkipLink, useTheme } from '@mcat/ui-web';
 import { useBootstrap } from '../app/queries';
 import {
   IconBrain,
+  IconCarsDuel,
   IconCurriculum,
   IconHome,
   IconMistakesX,
@@ -24,12 +25,13 @@ const NAV = [
 
 const TODAY_ITEM = { to: '/app/today', end: false, label: 'Today', Icon: IconToday };
 const PRACTICE_ITEM = { to: '/app/practice', end: false, label: 'Practice', Icon: IconPractice };
+const CARS_ITEM = { to: '/app/cars-duel', end: false, label: 'CARS Duel', Icon: IconCarsDuel };
 
 // Desktop sidebar order: Today's Path sits right under Home; Practice sits above
-// Recall. The mobile bottom nav stays the shared five-item NAV so the longest
-// label ("Curriculum") never overflows a narrow phone — Today's Path and Practice
-// are reached from Home on mobile (Home's hero links straight into Today's Path).
-const SIDEBAR = [NAV[0], TODAY_ITEM, NAV[1], PRACTICE_ITEM, NAV[2], NAV[3], NAV[4]];
+// Recall; CARS Duel sits just below Recall. The mobile bottom nav stays the shared
+// five-item NAV so the longest label ("Curriculum") never overflows a narrow phone
+// — Today's Path, Practice, and CARS Duel are reached from elsewhere on mobile.
+const SIDEBAR = [NAV[0], TODAY_ITEM, NAV[1], PRACTICE_ITEM, NAV[2], CARS_ITEM, NAV[3], NAV[4]];
 
 export function AppShell() {
   const bootstrap = useBootstrap();
