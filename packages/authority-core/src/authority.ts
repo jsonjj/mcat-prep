@@ -1032,7 +1032,7 @@ export class Authority {
     carryOver: CarriedActivity[],
   ): Promise<TodaysPathSnapshot> {
     // Single mastery read, reused for both the mastered-id gate and the per-lesson
-    // P(L) map that feeds scoreLesson's minor mastery nudge (avoid computing twice).
+    // P(L) map that feeds scoreLesson's learning-need term (avoid computing twice).
     const candidateLessonIds = input.candidateLessons.map((lesson) => lesson.lessonId);
     const masteryLessons = this.getMasteryLessons(state, candidateLessonIds);
     const masteredLessonIds = new Set(
@@ -1043,8 +1043,12 @@ export class Authority {
     const now = this.clock.now();
     const done = (id: string): boolean => completed.has(id) || masteredLessonIds.has(id);
 
-    // Prereq pipeline (ready for the authored map): unlocked = all prereqs done;
-    // dependentsCount = how many candidates list this lesson as a prerequisite.
+    // Prereq pipeline: unlocked = all prereqs done; dependentsCount = how many
+    // candidates list this lesson as a prerequisite. An actual graph's leaf must
+    // remain zero, rather than silently regaining the old KC-count proxy.
+    const hasPrerequisiteGraph = input.candidateLessons.some(
+      (lesson) => lesson.prerequisiteLessonIds.length > 0,
+    );
     const dependents = new Map<string, number>();
     for (const l of input.candidateLessons) {
       for (const p of l.prerequisiteLessonIds) dependents.set(p, (dependents.get(p) ?? 0) + 1);
@@ -1079,7 +1083,8 @@ export class Authority {
       mastered: masteredLessonIds.has(l.lessonId) || completed.has(l.lessonId),
       covered: l.cluster !== null && ctx.clustersWithEvidence.has(l.cluster),
       unlocked: l.prerequisiteLessonIds.every((p) => done(p)),
-      dependentsCount: dependents.get(l.lessonId) ?? 0,
+      dependentsCount: hasPrerequisiteGraph ? (dependents.get(l.lessonId) ?? 0) : null,
+      estimatedMinutes: l.estimatedMinutes,
       // Untracked lessons have no memory state yet → fall back to the P(L)_0 prior.
       pL: pLByLesson.get(l.lessonId) ?? PRIOR_PL0,
     }));

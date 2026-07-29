@@ -146,6 +146,22 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     expect(view.plannedMinutes).toBeLessThanOrEqual(120);
   });
 
+  it('passes a candidate lesson’s real duration through to the scheduler', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.setDailyBudget(state, 120);
+
+    const view = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons: [{ ...candidateLessons[0]!, estimatedMinutes: 57 }],
+      force: true,
+    });
+
+    expect(view.activities.find((activity) => activity.kind === 'lesson')?.estimatedMinutes).toBe(
+      57,
+    );
+  });
+
   it('injects Recall as the next step when a deck is added after the plan was built', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);

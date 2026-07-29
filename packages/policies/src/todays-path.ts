@@ -31,7 +31,8 @@ export interface TodaysPathConfig {
   /** Time costs (minutes). 1 slot = 1 minute. */
   readonly costs: {
     readonly carsDuel: number; // 12 fixed
-    readonly lesson: number; // 20 flat
+    /** Nominal estimate used only to scale the new-lesson admission cap. */
+    readonly lesson: number; // 20
     readonly practicePerQuestion: number; // 2 / question
     readonly recallPerCard: number; // 0.33 (20s) / card
     readonly mistakePerItem: number; // 2 / mistake
@@ -72,7 +73,7 @@ export interface TodaysPathConfig {
   readonly newLessonCapMax: number; // 6 (large budgets)
   /** Hard ceiling on practice questions in a day (large budgets fill via practice). */
   readonly practiceMaxQHard: number; // 90
-  /** No single activity may exceed this; larger workloads split into multiple blocks. */
+  /** No splittable workload block may exceed this; lesson scripts are atomic. */
   readonly maxActivityMinutes: number; // 45
   /** Carry-over ceiling: today's total load <= this * preset. */
   readonly carryOverCapPct: number; // 1.25
@@ -81,11 +82,7 @@ export interface TodaysPathConfig {
   /** Provisional per-section exam weight (blueprint proxy). */
   readonly sectionExamWeight: Readonly<Record<string, number>>;
   readonly defaultExamWeight: number;
-  /**
-   * Weight of the MINOR mastery nudge in scoreLesson (0 = ignore mastery). Kept
-   * small so a less-mastered lesson scores slightly higher without ever
-   * overriding the primary drivers (exam weight / unlock / coverage urgency).
-   */
+  /** Weight of the learning-need term in scoreLesson (0 = ignore mastery). */
   readonly masteryWeight: number;
   /** Practice unlocks only after this many lessons are completed. */
   readonly practiceUnlockLessons: number; // 3
@@ -139,7 +136,7 @@ export const TODAYS_PATH_CONFIG: TodaysPathConfig = {
   perRepeatDecay: 0.8,
   sectionExamWeight: { bb: 1.0, cp: 0.92, ps: 0.85, cars: 0.8 },
   defaultExamWeight: 0.7,
-  masteryWeight: 0.2,
+  masteryWeight: 0.7,
   practiceUnlockLessons: 3,
   questionsPerReviewKc: 2,
   carsSecondAtBudget: 240,
@@ -176,9 +173,15 @@ export interface TodaysPathCandidateLesson {
   readonly covered: boolean;
   /** All prerequisite lessons are complete (authority-computed). Locked lessons are never offered. */
   readonly unlocked: boolean;
-  /** How many other candidate lessons this one unlocks (downstream dependents) — drives "how much it unlocks". */
-  readonly dependentsCount: number;
-  /** BKT mastery P(L) in [0,1], a MINOR scoring nudge. Omitted when unknown (falls back to the P(L)_0 prior). */
+  /**
+   * How many other candidate lessons this one unlocks. Zero is an authoritative
+   * leaf in a supplied graph; null means the client supplied no graph, so the
+   * legacy KC-count proxy is the only available unlock signal.
+   */
+  readonly dependentsCount: number | null;
+  /** Script-authored duration, used directly when reserving the day’s budget. */
+  readonly estimatedMinutes: number;
+  /** BKT mastery P(L) in [0,1], a learning-need input. Omitted when unknown (falls back to the P(L)_0 prior). */
   readonly pL?: number;
 }
 
@@ -334,18 +337,18 @@ export function scoreLesson(
   const examWeight =
     (lesson.section !== null ? cfg.sectionExamWeight[lesson.section.toLowerCase()] : undefined) ??
     cfg.defaultExamWeight;
-  // How much it unlocks: real downstream-dependent count when the prereq map is
-  // present; falls back to KC count as a proxy until then.
+  // A real graph's zero is meaningful: a leaf unlocks nothing. Only absent graph
+  // data uses KC count as the legacy proxy.
   const unlock =
-    lesson.dependentsCount > 0 ? clamp01(lesson.dependentsCount / 4) : clamp01(lesson.kcCount / 6);
+    lesson.dependentsCount === null
+      ? clamp01(lesson.kcCount / 6)
+      : clamp01(lesson.dependentsCount / 4);
   // Coverage/deadline urgency: uncovered clusters climb as test day nears.
   const pressure = snap.totalDays !== null ? clamp01(snap.dayNumber / snap.totalDays) : 0.3;
   const coverageUrgency = (lesson.covered ? 0.4 : 1.0) * (0.6 + 0.4 * pressure);
-  // Mastery is a MINOR nudge, not a driver: all else equal, a LESS-mastered lesson
-  // (lower P(L)) scores slightly higher because it still needs the work. Bounded to
-  // [1 - masteryWeight, 1] so it can only tip near-ties — it can never override exam
-  // weight / unlock / coverage. Unknown mastery falls back to the P(L)_0 prior, so
-  // score is unchanged (== the prior) when no mastery signal is present.
+  // Lower P(L) means more learning need. The stronger weight lets a lesson whose
+  // capability has only moved through discounted lesson evidence outrank a
+  // nearly-mastered lesson's KC-count proxy; unknown mastery falls back to P(L)_0.
   const pL = clamp01(lesson.pL ?? PRIOR_PL0);
   const masteryFactor = 1 - cfg.masteryWeight + cfg.masteryWeight * (1 - pL); // in [1-w, 1]
   return clamp01(examWeight * (0.5 + 0.5 * unlock) * coverageUrgency * masteryFactor);
@@ -482,7 +485,9 @@ export function buildTodaysPath(
   const lessonCap = newLessonCapFor(band, snap.dailyBudgetMinutes, cfg);
 
   const carriedLessonSlugs = new Set(
-    carried.filter((c) => c.kind === 'lesson' && c.lessonSlug !== null).map((c) => c.lessonSlug as string),
+    carried
+      .filter((c) => c.kind === 'lesson' && c.lessonSlug !== null)
+      .map((c) => c.lessonSlug as string),
   );
   const practiceEnabled = snap.practiceUnlocked && !carried.some((c) => c.kind === 'practice');
 
@@ -499,14 +504,17 @@ export function buildTodaysPath(
 
   let lessonsPicked = 0;
   for (const { l } of rankedLessons) {
-    if (lessonsPicked >= lessonCap || remaining < cfg.costs.lesson) break;
+    if (lessonsPicked >= lessonCap) break;
+    // Preserve the ranked teaching decision instead of admitting a lower-ranked
+    // lesson merely because it happens to fit the remaining minutes.
+    if (remaining < l.estimatedMinutes) break;
     const covered = l.cluster !== null ? coveredNow.has(l.cluster) || l.covered : l.covered;
     scoredBlock.push({
       activityId: `lesson:${l.slug}`,
       kind: 'lesson',
       title: l.title,
       detail: 'New lesson — teach before testing.',
-      estimatedMinutes: cfg.costs.lesson,
+      estimatedMinutes: l.estimatedMinutes,
       count: null,
       minutesBudget: null,
       focus: null,
@@ -517,7 +525,7 @@ export function buildTodaysPath(
     });
     if (l.cluster !== null) coveredNow.add(l.cluster);
     lessonsPicked += 1;
-    remaining -= cfg.costs.lesson;
+    remaining -= l.estimatedMinutes;
   }
 
   // 2) Practice FILLS the remaining budget once unlocked (per-KC teach-before-test),
@@ -629,7 +637,9 @@ function interleaveNoAdjacent(
     const remaining = [...buckets.entries()].filter(([, arr]) => arr.length > 0);
     let pool = remaining.filter(([k]) => k !== last);
     if (pool.length === 0) pool = remaining;
-    pool.sort((a, b) => b[1].length - a[1].length || KIND_SPREAD_RANK[a[0]] - KIND_SPREAD_RANK[b[0]]);
+    pool.sort(
+      (a, b) => b[1].length - a[1].length || KIND_SPREAD_RANK[a[0]] - KIND_SPREAD_RANK[b[0]],
+    );
     const [kind, arr] = pool[0]!;
     result.push(arr.shift()!);
     last = kind;
@@ -695,7 +705,10 @@ export function orderActivities(activities: readonly PlannedActivity[]): Planned
   const recall = activities.filter((a) => a.kind === 'recall');
   // Recall pinned first; everything else (incl. CARS) is max-spread so no two of the
   // same kind are adjacent when feasible (CARS participates so it can break up practice).
-  const seq: PlannedActivity[] = [...recall, ...maxSpread(activities.filter((a) => a.kind !== 'recall'))];
+  const seq: PlannedActivity[] = [
+    ...recall,
+    ...maxSpread(activities.filter((a) => a.kind !== 'recall')),
+  ];
 
   // Nudge CARS toward ~middle (1) or ~1/3 & ~2/3 (2) via adjacency-safe swaps.
   placeCars(seq);

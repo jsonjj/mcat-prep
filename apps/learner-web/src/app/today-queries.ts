@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CandidateLessonInput, PlanActivityView, RecallLoadInput } from '@mcat/contracts';
+import {
+  ATLAS_LESSON_CLUSTER,
+  type CandidateLessonInput,
+  type PlanActivityView,
+  type RecallLoadInput,
+} from '@mcat/contracts';
 import { authority } from './authority';
 import { useRecallLoad, useRecallService } from './recall-queries';
 import { PLAN_ACTIVITY_COMPLETE_INVALIDATE, TODAYS_PATH_INVALIDATE } from './invalidation-keys';
@@ -32,6 +37,20 @@ function sectionForSubject(subject: string): string | null {
   return null;
 }
 
+/**
+ * Reachable hard prerequisite edges from
+ * `curriculum/v3/v3-lesson-authoring-manifest.json`.
+ *
+ * This is intentionally the app-native projection: raw manifest edges whose
+ * prerequisite has no app-native candidate cannot be completed through Today's
+ * Path, so sending them would permanently lock the dependent lesson. Add an
+ * external completion writer before expanding this table beyond catalog-resolved
+ * edges.
+ */
+const APP_NATIVE_HARD_PREREQUISITES: Readonly<Partial<Record<string, readonly string[]>>> = {
+  'V3-LES-128144': ['V3-LES-765609'],
+};
+
 /** The app-native lessons offered as Today's Path candidates (client-owned catalog). */
 export function buildCandidateLessons(): CandidateLessonInput[] {
   return APP_NATIVE_LESSONS.map(({ script }) => ({
@@ -39,12 +58,10 @@ export function buildCandidateLessons(): CandidateLessonInput[] {
     slug: script.slug,
     title: script.title,
     section: sectionForSubject(script.subject),
-    cluster: null,
+    cluster: ATLAS_LESSON_CLUSTER[script.id] ?? null,
     kcCount: script.requiredKcs.length,
     kcIds: script.requiredKcs.map((kc) => kc.id),
-    // Empty until the authored prerequisite map is provided; the engine is ready to
-    // honor it (unlock-gating, prereqs-first, score-by-downstream) as soon as it is.
-    prerequisiteLessonIds: [],
+    prerequisiteLessonIds: [...(APP_NATIVE_HARD_PREREQUISITES[script.id] ?? [])],
     estimatedMinutes: script.estimatedMinutes,
   }));
 }
