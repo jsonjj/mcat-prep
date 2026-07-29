@@ -1079,6 +1079,16 @@ NOT read an evidence rank or status. Only policy owns `pL`.
 
 ## 11. The current V3 lessons move no `pL` — and that is correct
 
+> **Update — `e579779` (2026-07-29).** The "no lesson on disk moves `pL` at all" / "0 of 115"
+> framing below, and §3.5 rule 1's "No lesson on disk authors it — 0 of 115 bindings," describe the
+> state _before_ this commit. `V3-LES-130923` now authors `candidate_evidence_modes: ['TRANSFER']`
+> (plus a `reasoningOperation`) on its 6 `CHANGED_EXIT` terminal checks, and
+> `EXPECTED_QUALIFIED_BKT_OBSERVATIONS` in `tests/architecture/v3-lesson-binding-conformance.test.ts`
+> now expects `6`, not `0`, for that lesson. `V3-LES-789208` and `V3-LES-844372` are unchanged, so
+> "0 of 115" is accurate for 109 of 115 bindings rather than all 115. See `key-docs/roadmap-todo.md`
+> for why those two remain unlicensed — they live outside any `.git` and cannot be edited from this
+> checkout — and for a related mislabeling finding on `V3-LES-844372`.
+
 Three lesson artifacts exist on disk, contributing 115 bindings in total:
 
 | Lesson          | Bindings | Learner-safe arm                     | Authors `candidate_evidence_modes`? | Authors a binding version? |
