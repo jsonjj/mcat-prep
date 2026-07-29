@@ -8,6 +8,37 @@ const learnerRoot = join(root, 'apps/learner-web');
 
 const read = (path: string): string => readFileSync(join(root, path), 'utf8');
 
+// Matches the module specifier as written in real import/export/require syntax
+// (always quote-terminated), not a bare mention of the package name in prose —
+// so a rationale comment explaining an exemption can name the package without
+// itself satisfying the "still references it" check below.
+const SERVER_ONLY_REFERENCE = /@mcat\/(?:authority-core|content)["']|InProcessAuthorityClient/;
+
+/**
+ * This boundary protects the SHIPPED BROWSER BUNDLE, not the source tree at
+ * large: the commit that introduced it (89a771e, "enforce remote authority
+ * boundary") replaced an in-process authority/full-content dependency in the
+ * browser client with a remote HTTP call, and
+ * docs/governance/authority-boundaries.md's protected-content rule is scoped
+ * to "learner client bundles or source maps". A `*.test.ts` file under `src`
+ * is never reachable from `src/main.tsx` — vitest is not even a dependency of
+ * this app — so it is never part of what `vite build` emits (verified by
+ * building apps/learner-web and confirming `dist/` contains none of these
+ * markers).
+ *
+ * Each entry below is therefore a deliberately named, individually justified
+ * exception for a non-bundled test file with a real reason to reach a server
+ * package (see its own file for that reason) — not a blanket pass for
+ * `*.test.ts`. Any file NOT listed here, test or not, still fails the check
+ * below on a match. Both directions are enforced: an entry must still (a)
+ * exist as a test file — so it can never quietly become bundled — and (b)
+ * still actually contain a server-only reference, so a resolved exemption
+ * cannot linger as cover for the next real leak.
+ */
+const ALLOWED_SERVER_PACKAGE_REFERENCES: readonly string[] = [
+  'app/lesson-mastery-id-parity.test.ts',
+];
+
 describe('learner browser authority boundary', () => {
   it('has no server authority or full content dependency', () => {
     const manifest = JSON.parse(read('apps/learner-web/package.json')) as {
@@ -19,14 +50,44 @@ describe('learner browser authority boundary', () => {
     expect(dependencies).not.toContain('@mcat/content');
   });
 
-  it('contains no browser import of server authority or full content', () => {
-    const source = readdirSync(join(learnerRoot, 'src'), { recursive: true })
-      .filter((entry) => /\.(?:ts|tsx)$/.test(String(entry)))
-      .map((entry) => readFileSync(join(learnerRoot, 'src', String(entry)), 'utf8'))
-      .join('\n');
+  it('contains no bundle-reachable import of server authority or full content', () => {
+    const entries = readdirSync(join(learnerRoot, 'src'), { recursive: true })
+      .map(String)
+      .filter((entry) => /\.(?:ts|tsx)$/.test(entry));
 
-    expect(source).not.toMatch(/@mcat\/(?:authority-core|content)/);
-    expect(source).not.toContain('InProcessAuthorityClient');
+    const offenders = entries.filter((entry) => {
+      const contents = readFileSync(join(learnerRoot, 'src', entry), 'utf8');
+      return (
+        SERVER_ONLY_REFERENCE.test(contents) && !ALLOWED_SERVER_PACKAGE_REFERENCES.includes(entry)
+      );
+    });
+
+    expect(
+      offenders,
+      [
+        `${offenders.join(', ')} reference(s) a server-only package or InProcessAuthorityClient`,
+        'from a file the browser bundle can reach. Either remove the reference, or — only if the',
+        'file is a non-bundled test with a real reason to cross this boundary — add it by name to',
+        'ALLOWED_SERVER_PACKAGE_REFERENCES with that reason recorded in the file itself.',
+      ].join('\n'),
+    ).toEqual([]);
+
+    for (const allowed of ALLOWED_SERVER_PACKAGE_REFERENCES) {
+      const abs = join(learnerRoot, 'src', allowed);
+      expect(
+        existsSync(abs) && /\.test\.tsx?$/.test(allowed),
+        `ALLOWED_SERVER_PACKAGE_REFERENCES exempts "${allowed}", which is no longer a test file ` +
+          'at that path. A non-test file is bundle-reachable, so this exemption no longer holds ' +
+          '— delete the entry and fix the underlying reference instead.',
+      ).toBe(true);
+
+      const contents = readFileSync(abs, 'utf8');
+      expect(
+        SERVER_ONLY_REFERENCE.test(contents),
+        `ALLOWED_SERVER_PACKAGE_REFERENCES exempts "${allowed}", which no longer references a ` +
+          'server-only package. Delete the entry.',
+      ).toBe(true);
+    }
   });
 
   it('requires the configured HTTP authority and has no learner question preview', () => {
@@ -69,9 +130,7 @@ describe('learner browser authority boundary', () => {
   it('lets the learner shell and atlas shrink to narrow mobile viewports', () => {
     const styles = read('apps/learner-web/src/styles/app.css');
 
-    expect(styles).toMatch(
-      /\.mc-shell\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
-    );
+    expect(styles).toMatch(/\.mc-shell\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s);
     expect(styles).toMatch(/\.mc-shell__main\s*\{[^}]*min-width:\s*0/s);
     expect(styles).toMatch(
       /@media \(min-width: 840px\)[\s\S]*?\.mc-shell\s*\{[^}]*grid-template-columns:\s*248px minmax\(0,\s*1fr\)/,
