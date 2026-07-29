@@ -2,55 +2,56 @@
  * The practice session's step machine, kept separate from the screen so the flow
  * decisions are testable without the authority client.
  *
- * The flow on a miss is: answer → feedback refuting the option they picked, with
- * the key WITHHELD → the item is re-inserted a few questions later → a second
- * miss discloses everything. There is no step in between that asks the learner
- * what happened. See docs/design/error-handling-design.md §3.3 (amended
- * 2026-07-28) and §2.2–§2.3.
+ * The flow on a miss is: answer → the key, the rationale that explains it, and the
+ * refutation of the option the learner picked, all at once. No step defers the
+ * key, and no step asks the learner what happened.
+ *
+ * Why disclosure is immediate. Feedback that never carries the correct answer is
+ * worth about nothing: Pashler et al. (2005) found right/wrong-only feedback
+ * statistically indistinguishable from a blank screen, while supplying the key
+ * raised one-week retention by 494%. A withhold is therefore only defensible as a
+ * *deferral*, and only while something guarantees the key still arrives — which,
+ * in the shape this file used to have, was the same item returning a few
+ * questions later. That guarantee is what paid for the delay, and it is worth
+ * roughly nothing on its own: the unaided retry it bought self-corrects 4–9% of
+ * the time (Finn & Metcalfe 2010), and multiple-try versus single-try feedback is
+ * a flat null (Butler, Karpicke & Roediger 2007: .71 vs .71, then .64 vs .65).
+ *
+ * The re-test that replaces it is a different question on the same KC × skill,
+ * which is a retrieval attempt *after* feedback rather than before it, and which
+ * measures the concept instead of memory of one item (.30 on a new item vs .62 on
+ * a repeat — Butler et al. 2013). It also cannot be solved by elimination, which
+ * a re-ask with one option already refuted can. That re-test is owned by the
+ * cross-session repair path (`PracticeRepairTarget` in `@mcat/policies`), not by
+ * this file: an in-session sibling needs an item this session's queue does not
+ * contain, because the queue holds at most one item per KC × skill by
+ * construction.
+ *
+ * What is deliberately absent. There is no lag-0 re-ask. Retrying an item
+ * immediately is the one arrangement in this literature with direct evidence of
+ * harm (Karpicke & Roediger 2007: .19 at two days against .60 at a lag of five,
+ * and worse than not retrying at all, .36). The old end-of-session clamp produced
+ * exactly that whenever a miss landed in the last few steps; it was tolerable
+ * only because the re-ask was then the sole route to the key.
+ *
+ * See docs/design/error-handling-design.md §3.3 (amended 2026-07-29) and
+ * docs/research/practice-feedback/00-DECISIONS.md.
  */
 
 /**
- * `feedback` and `reveal` are both answer-side cards; they differ only in whether
- * the key is disclosed, and that difference is the SINGLE thing that decides it —
- * see {@link feedbackFor}.
+ * `answering` collects the attempt; `reveal` is the only answer-side card, and it
+ * always discloses in full. The absence of a third step is the design.
  */
-export type Sub = 'answering' | 'retry' | 'feedback' | 'reveal';
+export type Sub = 'answering' | 'reveal';
 
-/** The two answer-side steps, i.e. the ones {@link feedbackFor} builds a card for. */
-export type AnswerSub = Extract<Sub, 'feedback' | 'reveal'>;
-
-/** How many questions later a missed item comes back for its (spaced) second go. */
-export const RETRY_GAP = 3;
-
-/**
- * The step a scored FIRST attempt lands on. A correct answer is confirmed at
- * once, unchanged. A miss lands on `feedback`, which carries the refutation of
- * the option they chose and not the key; the item returns RETRY_GAP questions
- * later for the second go that discloses it.
- */
-export const subAfterFirstAttempt = (correct: boolean): Sub => (correct ? 'reveal' : 'feedback');
-
-/**
- * The step a SECOND attempt lands on: always `reveal`. Right or wrong, the second
- * go ends with the key — feedback that never contains the correct answer buys
- * "virtually no benefit" (Pashler et al. 2005), so the withhold is a single
- * deferral and not a policy of silence.
- */
-export const subAfterSecondAttempt = (): Sub => 'reveal';
-
-/**
- * Where a missed item is re-inserted for its spaced second go. Clamped to the end
- * of the sequence, so the last remaining step retries immediately rather than
- * dropping the second pass — the behaviour the removed cause picker used to
- * produce.
- */
-export const resurfaceAt = (index: number, sequenceLength: number, gap = RETRY_GAP): number =>
-  Math.min(index + 1 + gap, sequenceLength);
+/** The step a scored attempt lands on. Right or wrong, the learner gets the key. */
+export const subAfterAttempt = (): Sub => 'reveal';
 
 /**
  * The answer material a scored attempt returns. `PracticeAttemptResult` satisfies
- * it structurally; it is restated here so the redaction below is testable without
- * the contracts package and without a complete four-option rationale record.
+ * it structurally; it is restated here so the card's contents are testable
+ * without the contracts package and without a complete four-option rationale
+ * record.
  */
 export interface ScoredAnswer {
   readonly correctChoiceId: string;
@@ -58,42 +59,36 @@ export interface ScoredAnswer {
   readonly choiceRationales: Readonly<Record<string, string | undefined>>;
 }
 
-/**
- * Everything the answer-side card is allowed to render, after redaction.
- *
- * The point of this type is that the withheld fields are `null` rather than
- * merely unrendered: the card component is handed a `Feedback`, never a
- * `PracticeAttemptResult`, so on a first miss the key is not reachable from the
- * component that draws the DOM. The server response legitimately carries the key
- * (the retry is scored locally, with no second round trip), so this redaction at
- * the render boundary is where the discipline has to live.
- */
+/** Everything the answer-side card renders. */
 export interface Feedback {
   readonly correct: boolean;
-  /** The key, and the explanation of it. Both null while the key is withheld. */
-  readonly correctChoiceId: string | null;
-  readonly rationale: string | null;
-  /** The wrong option just chosen, and its refutation. Shown on every miss. */
+  /** The key, and the explanation of it. Always present. */
+  readonly correctChoiceId: string;
+  readonly rationale: string;
+  /** The wrong option chosen, and its refutation. Null on a correct answer. */
   readonly wrongChoiceId: string | null;
   readonly wrongChoiceRationale: string | null;
 }
 
 /**
- * Redact a scored result down to what `sub` licenses.
+ * The card's contents for a scored result.
  *
- * `chosen` is the option picked on THIS attempt, which is why correctness is
- * recomputed here rather than read off `result.correct`: on a second go the
- * result object is the first attempt's, and its `correct` is false by
- * construction.
+ * Both halves are supplied on a miss, and they do different work. The refutation
+ * of the chosen option is what makes the feedback a *refutation* rather than a
+ * bare correction, which is the form under which Van Loon et al. (2015) observed
+ * confident errors being corrected at all. The explanation of the key is what
+ * carries transfer to items the learner has not seen: Butler, Godbole & Marsh
+ * (2013) measured .45 on new inference questions with it, against .30 for the
+ * bare key and .28 for no feedback whatsoever (d = 0.90). Since every real MCAT
+ * item is novel, dropping either half would forfeit most of the benefit.
  */
-export function feedbackFor(result: ScoredAnswer, chosen: string | null, sub: AnswerSub): Feedback {
+export function feedbackFor(result: ScoredAnswer, chosen: string | null): Feedback {
   const correct = chosen !== null && chosen === result.correctChoiceId;
-  const disclose = sub === 'reveal';
   const wrongChoiceId = correct ? null : chosen;
   return {
     correct,
-    correctChoiceId: disclose ? result.correctChoiceId : null,
-    rationale: disclose ? result.rationale : null,
+    correctChoiceId: result.correctChoiceId,
+    rationale: result.rationale,
     wrongChoiceId,
     wrongChoiceRationale:
       wrongChoiceId === null ? null : (result.choiceRationales[wrongChoiceId] ?? null),

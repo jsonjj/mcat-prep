@@ -73,11 +73,23 @@ Input from Today's Path: a **count** `N` (how many mistakes to repair) — mirro
    The refutation source is the item's per-choice rationale, not a misconception
    catalog: `error_models` is populated on **0 of 2,108** corpus items.
 
-   **Temporary stand-in:** until the fresh-twin selection in step 1 exists,
-   Practice re-inserts the *same* missed item about three questions later
-   (`RETRY_GAP`) for a second pass. That is deliberately weaker than a sibling
-   item — it measures memory of one item rather than transfer — and it is what the
-   fresh twin is meant to replace, not a second mechanism to keep alongside it.
+   **Resolved 2026-07-29 — the stand-in is gone rather than replaced in place.**
+   Practice no longer re-inserts the missed item at all. The same-item re-ask was
+   the weaker mechanism this plan always intended the fresh twin to supersede, and
+   it was load-bearing only because it carried the deferred key; once disclosure
+   became immediate it had nothing left to do, and re-asking a question whose answer
+   the learner has just been given is worse than not asking. The clamp that turned a
+   late miss into a lag-0 re-ask went with it (`.19` at two days against `.60` at a
+   lag of five — Karpicke & Roediger 2007).
+
+   The re-test a miss earns is therefore, for now, entirely the cross-session repair
+   path: a **different** item on the same KC × skill, next session. The in-session
+   sibling still wants building, and it needs something this repo does not yet have —
+   an endpoint that can fetch one more item for a given KC × skill mid-session, since
+   a session's queue is deduped to at most one item per KC × skill. Note also that
+   the fresh-twin selection in step 1 cannot lean on `family_id`: all 2,108 corpus
+   items carry a distinct one, so every family is a singleton and there are no
+   authored siblings to draw on. KC × skill is the only grouping available.
 3. **Write repair evidence through the existing path.** A first, unassisted correct
    attempt is independent evidence (moves `P(L)` via the normal mastery path and
    flips the mistake's `resolved` to true once a delayed success on a different

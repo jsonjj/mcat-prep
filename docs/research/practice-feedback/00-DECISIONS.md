@@ -10,16 +10,23 @@ over from those files unchanged.
 
 ## Decisions
 
-**1. Post-error flow — keep the shipped design. Confidence: high** that it is not
-harmful and should not be reverted to immediate full reveal on current evidence.
-The shipped flow is not answer-withholding; it is a spaced two-attempt retrieval
-sequence with terminal elaborated feedback, and the literature cannot distinguish
-it from the alternative. Ship two fixes: stop the end-of-session clamp from
-producing a lag-0 retry (Tier B, evidence-mandated), and retry with a fresh
-sibling item rather than the same item (Tier B/C, validity grounds). Confidence
-on both: medium. The third candidate — ensuring the concept returns in a later
-session, the only Tier A item on the list — is **already satisfied** by the
-repair-target path in `practice-selection.ts`; verified, no change needed.
+**1. Post-error flow — switched to immediate disclosure, implemented 2026-07-29.**
+The review below concluded that *keeping* the withhold was defensible, and that
+conclusion still stands on its own terms: the deferral is worth approximately zero
+in either direction. What settled it was the second fix rather than the first. Once
+the re-test becomes a fresh sibling on the same KC × skill (Tier B/C, validity
+grounds), nothing can disclose the original item's key, so withhold-plus-sibling is
+permanent silence — the one arrangement Pashler et al. rules out. The two decisions
+are a package, and the package resolves toward disclosing at once. The
+end-of-session lag-0 clamp went with it, which was the one evidence-mandated fix
+(Tier B). The third candidate — ensuring the concept returns in a later session, the
+only Tier A item on the list — was **already satisfied** by the repair-target path in
+`practice-selection.ts`.
+
+**Shipped:** immediate full disclosure on every scored attempt; no in-session
+re-ask; the re-test is the cross-session repair path. **Deferred:** an in-session
+sibling, which needs a KC × skill fetch endpoint the repo does not have — a session
+queue holds at most one item per KC × skill by construction.
 
 **2. Per-item confidence ratings — do not build. Confidence: medium-high.** Both
 hypothesised payoffs are real phenomena, but the causal ingredient in each is the
@@ -255,6 +262,17 @@ product already does.
 ---
 
 ## Code deltas
+
+> **Status 2026-07-29.** Rows 1, 2, 3 and 5 are **done**, though not as written: the
+> decision to swap in a sibling forced immediate disclosure, so instead of fixing the
+> clamp it was deleted along with the whole in-session re-ask. `RETRY_GAP`,
+> `resurfaceAt`, `subAfterFirstAttempt` and `subAfterSecondAttempt` no longer exist;
+> `session-flow.ts` is down to a two-step `Sub` and an always-disclosing
+> `feedbackFor`. Row 4's cross-session return was already satisfied. **Outstanding:**
+> the in-session sibling itself, which needs a new endpoint — see the note under
+> Decision 1. `mistakes-ui-contract.test.ts` was re-pinned to the new contract rather
+> than relaxed, including a guard that the withhold and the re-ask cannot return
+> singly.
 
 | File | Current state | Change | Why | Priority |
 |---|---|---|---|---|

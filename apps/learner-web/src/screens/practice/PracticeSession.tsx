@@ -3,14 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import type { PracticeAttemptResult, PracticeQueueItem } from '@mcat/contracts';
 import { usePracticeQueue, useSubmitPracticeAttempt } from '../../app/practice-queries';
-import {
-  feedbackFor,
-  resurfaceAt,
-  subAfterFirstAttempt,
-  subAfterSecondAttempt,
-  type Feedback,
-  type Sub,
-} from './session-flow';
+import { feedbackFor, subAfterAttempt, type Feedback, type Sub } from './session-flow';
 
 type ChoiceId = 'A' | 'B' | 'C' | 'D';
 
@@ -28,13 +21,6 @@ interface SessionState {
   activityId?: string;
 }
 
-/** A step in the working sequence: a first attempt, or a spaced second go. */
-interface Slot {
-  item: PracticeQueueItem;
-  kind: 'first' | 'retry';
-  firstChoice?: ChoiceId;
-}
-
 export function PracticeSession() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,41 +29,31 @@ export function PracticeSession() {
   const queue = usePracticeQueue(x, focus, true);
   const submit = useSubmitPracticeAttempt();
 
-  const [sequence, setSequence] = useState<Slot[]>([]);
+  const [sequence, setSequence] = useState<PracticeQueueItem[]>([]);
   const [index, setIndex] = useState(0);
   const [choice, setChoice] = useState<ChoiceId | null>(null);
-  const [firstChoice, setFirstChoice] = useState<ChoiceId | null>(null);
   const [sub, setSub] = useState<Sub>('answering');
   const [result, setResult] = useState<PracticeAttemptResult | null>(null);
-  // First-attempt results, kept so a deferred second go can score and disclose
-  // locally (the second go is learning-only — no extra server scoring). These
-  // hold the key, and are never handed to a component: everything rendered goes
-  // through `feedbackFor`, which nulls the key out on a first miss.
-  const [resultsByQ, setResultsByQ] = useState<Record<string, PracticeAttemptResult>>({});
 
-  // Seed the working sequence from the loaded queue (once).
+  // Seed the working sequence from the loaded queue (once). The sequence is fixed
+  // for the session: a miss no longer inserts a step, because the re-test it earns
+  // is a *different* item on the same KC × skill and this queue holds at most one
+  // item per KC × skill. That re-test is the cross-session repair path's job.
   useEffect(() => {
     const loaded = queue.data?.items ?? [];
     if (loaded.length > 0 && sequence.length === 0) {
-      setSequence(loaded.map((item) => ({ item, kind: 'first' as const })));
+      setSequence(loaded);
     }
   }, [queue.data, sequence.length]);
 
-  const slot: Slot | undefined = sequence[index];
+  const item: PracticeQueueItem | undefined = sequence[index];
 
   // Reset per-step working state whenever the active step changes.
   useEffect(() => {
-    if (slot === undefined) return;
+    if (item === undefined) return;
     setChoice(null);
-    if (slot.kind === 'retry') {
-      setFirstChoice(slot.firstChoice ?? null);
-      setResult(resultsByQ[slot.item.question.id] ?? null);
-      setSub('retry');
-    } else {
-      setFirstChoice(null);
-      setResult(null);
-      setSub('answering');
-    }
+    setResult(null);
+    setSub('answering');
     // Intentionally keyed on `index` only: the step is identified by position.
   }, [index]);
 
@@ -98,7 +74,7 @@ export function PracticeSession() {
     );
   }
 
-  if (slot === undefined) {
+  if (item === undefined) {
     return (
       <div className="mc-screen mc-practice">
         <Eyebrow>Practice</Eyebrow>
@@ -113,7 +89,6 @@ export function PracticeSession() {
     );
   }
 
-  const item = slot.item;
   const q = item.question;
   const isLastStep = index + 1 >= sequence.length;
 
@@ -130,71 +105,26 @@ export function PracticeSession() {
 
   const checkAnswer = () => {
     if (choice === null) return;
-    setFirstChoice(choice);
     submit.mutate(
       { questionId: q.id, specId: item.specId, chosenChoiceId: choice, firstAttempt: true },
       {
         onSuccess: (r) => {
           setResult(r);
-          setResultsByQ((m) => ({ ...m, [q.id]: r }));
-          setSub(subAfterFirstAttempt(r.correct));
+          setSub(subAfterAttempt());
         },
       },
     );
   };
 
-  /**
-   * A missed first attempt still earns its spaced second go — and `feedback` is
-   * reachable only from a missed first attempt, so the step itself is the test.
-   */
-  const resurfacing = slot.kind === 'first' && sub === 'feedback';
-
-  /**
-   * Leaving the answer-side card. On a missed first attempt this re-inserts the
-   * item ~RETRY_GAP questions later for a second pass — the spaced resurface is
-   * retained; only the cause-asking step in front of it is gone. On the last
-   * remaining step the clamp lands it immediately after this one, which is the
-   * behaviour the cause picker used to produce.
-   */
-  const onRevealContinue = () => {
-    if (resurfacing && firstChoice !== null) {
-      const insertAt = resurfaceAt(index, sequence.length);
-      const retrySlot: Slot = { item, kind: 'retry', firstChoice };
-      setSequence((seq) => {
-        const next = [...seq];
-        next.splice(insertAt, 0, retrySlot);
-        return next;
-      });
-      // insertAt is never below index + 1, so the next step always exists.
-      setIndex(index + 1);
-      return;
-    }
-    advance();
-  };
-
-  const submitRetry = () => {
-    if (choice === null) return;
-    // Learning-only: scored and disclosed locally from the first-attempt result,
-    // so no second command is sent and no duplicate mistake row can be written.
-    setSub(subAfterSecondAttempt());
-  };
-
-  /**
-   * The one place a scored result becomes renderable. `sub` decides disclosure and
-   * the pick is the option chosen on THIS attempt, so a first miss yields a card
-   * with no key in it at all.
-   */
+  /** The one place a scored result becomes renderable, and it always discloses. */
   const feedback: Feedback | null =
-    result === null || (sub !== 'feedback' && sub !== 'reveal')
-      ? null
-      : feedbackFor(result, choice ?? firstChoice, sub);
+    result === null || sub !== 'reveal' ? null : feedbackFor(result, choice);
 
   return (
     <div className="mc-screen mc-study mc-practice">
       <div className="mc-practice__progress">
         <Eyebrow>
-          {PURPOSE_LABEL[item.purpose] ?? 'Practice'}
-          {slot.kind === 'retry' ? ' · Second try' : ''} · Question {index + 1} of {sequence.length}
+          {PURPOSE_LABEL[item.purpose] ?? 'Practice'} · Question {index + 1} of {sequence.length}
         </Eyebrow>
         <div
           className="mc-practice__bar"
@@ -221,29 +151,7 @@ export function PracticeSession() {
       <h1 className="mc-h2">{q.stem}</h1>
 
       {feedback !== null ? (
-        <FeedbackCard
-          feedback={feedback}
-          onContinue={onRevealContinue}
-          last={isLastStep}
-          resurfacing={resurfacing}
-        />
-      ) : sub === 'retry' ? (
-        <Stack gap={3}>
-          <Callout tone="info" title="Back for a second pass">
-            You picked {firstChoice ?? '—'} earlier and saw why it misses. Take another run at it —
-            the answer comes after this one.
-          </Callout>
-          <ChoiceList
-            q={q}
-            name={`retry-${index}`}
-            choice={choice}
-            onSelect={setChoice}
-            disabledChoice={firstChoice}
-          />
-          <Button variant="primary" size="lg" disabled={choice === null} onClick={submitRetry}>
-            Try once more
-          </Button>
-        </Stack>
+        <FeedbackCard feedback={feedback} onContinue={advance} last={isLastStep} />
       ) : (
         <Stack gap={3}>
           <ChoiceList q={q} name={`answer-${index}`} choice={choice} onSelect={setChoice} />
@@ -266,85 +174,72 @@ function ChoiceList({
   name,
   choice,
   onSelect,
-  disabledChoice,
 }: {
   q: PracticeQueueItem['question'];
   name: string;
   choice: ChoiceId | null;
   onSelect: (c: ChoiceId) => void;
-  disabledChoice?: ChoiceId | null;
 }) {
   return (
     <fieldset className="mc-choices">
       <legend className="mc-visually-hidden">Answer choices</legend>
-      {q.choices.map((c) => {
-        const isTried = !!disabledChoice && c.id === disabledChoice;
-        return (
-          <label
-            key={c.id}
-            className={`mc-choice ${choice === c.id ? 'mc-choice--selected' : ''} ${
-              isTried ? 'mc-choice--tried' : ''
-            }`}
-          >
-            <input
-              type="radio"
-              name={name}
-              value={c.id}
-              checked={choice === c.id}
-              disabled={isTried}
-              onChange={() => onSelect(c.id as ChoiceId)}
-            />
-            <span className="mc-choice__key">{c.id}</span>
-            <span className="mc-choice__text">{c.text}</span>
-            {isTried ? <span className="mc-choice__note">your first answer</span> : null}
-          </label>
-        );
-      })}
+      {q.choices.map((c) => (
+        <label
+          key={c.id}
+          className={`mc-choice ${choice === c.id ? 'mc-choice--selected' : ''}`}
+        >
+          <input
+            type="radio"
+            name={name}
+            value={c.id}
+            checked={choice === c.id}
+            onChange={() => onSelect(c.id as ChoiceId)}
+          />
+          <span className="mc-choice__key">{c.id}</span>
+          <span className="mc-choice__text">{c.text}</span>
+        </label>
+      ))}
     </fieldset>
   );
 }
 
 /**
- * The answer-side card, for both disclosure levels. It takes a redacted
- * {@link Feedback} and never a `PracticeAttemptResult`, so on a first miss the key
- * is not present in this component to render, style, or label a choice with.
+ * The answer-side card. Both halves of a miss are shown together: the key with the
+ * rationale that explains it, and the refutation of the option the learner chose.
+ * A miss also says where the concept comes back, so the immediate disclosure does
+ * not read as the end of the matter.
  */
 function FeedbackCard({
   feedback,
   onContinue,
   last,
-  resurfacing,
 }: {
   feedback: Feedback;
   onContinue: () => void;
   last: boolean;
-  resurfacing: boolean;
 }) {
   return (
     <Card elevated>
       <Stack gap={3}>
         <div className="mc-inline">
           <span className={`mc-reveal__key ${feedback.correct ? 'mc-reveal__key--ok' : ''}`}>
-            {feedback.correctChoiceId === null
-              ? 'Not quite'
-              : `${feedback.correct ? 'Correct' : 'Answer'}: ${feedback.correctChoiceId}`}
+            {`${feedback.correct ? 'Correct' : 'Answer'}: ${feedback.correctChoiceId}`}
           </span>
         </div>
-        {feedback.rationale !== null ? <p>{feedback.rationale}</p> : null}
+        <p>{feedback.rationale}</p>
         {feedback.wrongChoiceId !== null && feedback.wrongChoiceRationale !== null ? (
           <Callout tone="info" title={`Why ${feedback.wrongChoiceId} misses`}>
             {feedback.wrongChoiceRationale}
           </Callout>
         ) : null}
-        {resurfacing ? (
+        {feedback.correct ? null : (
           <p className="mc-muted mc-fineprint">
-            {last
-              ? 'One more pass at this one before you finish — we’re holding the answer until then.'
-              : 'This one comes back in a few questions — a short gap helps it stick. We’re holding the answer until then.'}
+            You’ll get a fresh question on this idea in a later session — a gap between the two is
+            what makes it stick.
           </p>
-        ) : null}
+        )}
         <Button variant="primary" size="lg" onClick={onContinue}>
-          {resurfacing && last ? 'Try it again' : last ? 'Finish' : 'Next question'}
+          {last ? 'Finish' : 'Next question'}
         </Button>
       </Stack>
     </Card>
