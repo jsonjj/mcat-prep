@@ -33,10 +33,7 @@ rule is enforced because it is written down — this project has already shipped
 documented in a source comment and a README, believed by everyone, and did not exist.
 
 **Two authoring-facing consequences you will hit immediately** — read §3.3 and §5.2 before writing a
-binding. First, no lesson response produced by the current runtime can establish an independent
-administration, because the runtime cannot yet observe how much help the learner took and therefore
-fail-closes to `A3`. Second, no binding on disk declares a BKT-eligible mode. Either one alone is
-enough to stop `pL` moving, and both are the intended state rather than a bug — §11 explains why, and
+binding. First, the runtime now observes the assistance it actually delivered (emitting `A0`–`A2`), but `AssistanceLevel` has no `UNOBSERVED` member, so unmeasurable cases still emit `A3` by convention. Second, no binding on disk declares a BKT-eligible mode. This second reason is now the **only** reason `pL` does not move, and it is the intended state rather than a bug — §11 explains why, and
 §16.3 is how to verify it by hand.
 
 ---
@@ -244,29 +241,20 @@ invitation to conflate the two again, which is how an assisted attempt became fa
 the first time. Read an affordance as "this item offers a level-2 scaffold", never as "this response was
 unassisted".
 
-#### The consequence you will hit immediately: every response is `A3`
+#### The consequence you will hit immediately: no binding declares a BKT-eligible mode
 
-The runtime **cannot yet observe a graded assistance level**. It knows whether support was requested,
-but not which of `A0`–`A3` the learner effectively worked at, and it cannot see whether the learner
-consumed a scaffold that an assisted screen presents without being asked. Absence of a support request
-is therefore not evidence that no help was taken.
+The runtime **now observes a graded assistance level**. It measures its own delivery: which support mechanism it actually put on screen. A single `presentedSupportFor` decision drives the rendered screen, the support authorization, and the commit-time observation, so the runtime cannot present help it didn't record or record help it didn't present. Levels: nothing displayed is `A0`, a released cue is `A1`, and a standing scaffold is `A2`.
 
-So `assistanceLevelTaken` in `services/lambdas/learner-api/src/vector-lesson-response-source.ts`
-**fail-closes to `A3` for every response.** Concretely, today:
+Because the runtime now measures its own delivery, the fail-closed `A3` behavior is gone for observed responses. `A3` now means only "unobserved": no mechanism in this runtime displays a worked solution path beside a scored item, so no measured administration emits it. However, `AssistanceLevel` has no `UNOBSERVED` member, so on the evidence record a measured `A0` and an unmeasurable case are still not fully distinguishable — `A3` from this runtime means "unobserved" by convention, enforced by test rather than by type. A contracts change to carry that distinction properly has been requested and not yet made.
 
-- every `EvidenceRecord.independent` from this runtime is `false`;
-- every BKT qualification carries `ASSISTANCE_NOT_A0`;
-- **no real lesson response currently establishes an independent administration on assistance
-  grounds.**
+Concretely, today:
 
-The tempting exception is the authored-`A0` item, where the runtime really does present no scaffold and
-really does refuse `REQUEST_SUPPORT`. It is still refused, because the author's byte is what produced
-that behaviour, and no runtime observation contradicts it. "The author decides independence" is the
-same defect whether the decision travels in one hop or three. §3.3's prohibition is currently blanket
-for that reason; whether it should be narrowed for items that offer no assistance by design is an open
-question for the owner, recorded in §15.
+- lesson responses can now establish an independent administration on assistance grounds;
+- however, **`pL` still does not move** because all 115 authored bindings normalize to instructional-only and none carries a reasoning operation, so every measurable binding is still ineligible.
 
-**What a future runtime must measure to unlock this.** `assistanceLevelTaken` is the single function
+The authored `assistance_state` field was **deleted** from the response record rather than left unread. The runtime neither trusts the authored value nor refuses it blanket; it observes its own delivery.
+
+**What the runtime measures to unlock this.** `assistanceLevelTaken` is the single function
 where the measurement lands. To return anything but `A3` it needs, per response:
 
 1. whether any scaffold, worked step, or hint was **displayed** — not merely available, and including
@@ -276,15 +264,13 @@ where the measurement lands. To return anything but `A3` it needs, per response:
 3. that both are captured **at or before commit**, since help taken after commit does not contaminate
    the attempt.
 
-Until all three exist, the fail-closed `A3` is the correct emission and MUST NOT be replaced by
-reading the authored value.
+These three requirements are now **satisfied** by the `presentedSupportFor` decision.
 
-**The BKT path itself is proven working, so this default is safe rather than inert.** An end-to-end
+**The BKT path itself is proven working, so this is safe rather than inert.** An end-to-end
 test (`services/lambdas/learner-api/src/second-lesson-mastery-seam.test.ts`) drives `V3-LES-844372`
 through the real recording workflow and asserts, for **each** of the seven allowlisted modes in turn,
 that a clean first attempt raises `pL` above the `0.20` prior on both grains — the primary KC and the
-reasoning operation. It supplies the clean response facts directly, which is exactly the one thing the
-runtime cannot yet produce. So what is missing is the assistance observation alone, not the integration.
+reasoning operation.
 
 ### 3.4 `LessonActivityRole` and the exit function are two different fields
 
@@ -645,9 +631,9 @@ Only `response.assistanceLevel` is consulted, and it is the level the learner **
 the design offered. `authoredAssistanceAffordances` is **never** read here (§3.3): an item may advertise
 `A0` and still be answered at `A2`, and it is the `A2` that counts.
 
-**Today this gate rejects every real lesson response.** The runtime cannot observe a graded assistance
-level, so it fail-closes to `A3` and `ASSISTANCE_NOT_A0` fires on every response (§3.3). If you are
-wondering why a clean-looking attempt did not move `pL`, this is the reason, and it is intended.
+**Today this gate passes for clean lesson responses.** The runtime now observes a graded assistance
+level, so `ASSISTANCE_NOT_A0` no longer fires on every response (§3.3). If you are
+wondering why a clean-looking attempt did not move `pL`, it is because no binding declares a BKT-eligible mode, and that is intended.
 
 **Omission qualifies; it is not a rejection.** An omitted answer is a scored outcome, not a scoring
 failure. If `scoringValid` is `true` and the outcome is `omitted`, the response still produces an
@@ -1111,15 +1097,12 @@ contextual-only `EvidenceRecord` and every BKT qualification is rejected with
 every binding parses, every measurable binding yields an evidence record, and the qualified-BKT count
 is `0`.
 
-**There are now two independent reasons, and they fail closed at different layers.** Fixing either one
-alone still moves no `pL`:
+**There is now only one reason `pL` does not move.** (Previously there were two independent reasons, but the runtime assistance fail-close was resolved.)
 
 1. **Gate 1, author-time.** No binding declares an allowlisted evidence mode, so
    `INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED` fires. Resolved only by an author and reviewer
    deliberately declaring an eligible mode and labeling `reasoningOperation`.
-2. **Gate 2, runtime.** The runtime cannot observe a graded assistance level, so every response is
-   `A3` and `ASSISTANCE_NOT_A0` fires (§3.3). Resolved only by teaching the runtime to measure help
-   actually taken.
+2. **Gate 2, runtime.** The runtime now observes a graded assistance level, so `ASSISTANCE_NOT_A0` no longer fires on every response (§3.3). The runtime measures help actually taken, satisfying this gate for clean responses.
 
 That defence in depth is the intended state. It is also why "the lesson integration does not work" is
 the wrong reading: the BKT path is exercised end to end for all seven eligible modes on
@@ -1295,27 +1278,13 @@ so there is no second copy to keep in sync.
 enumerated. The durable fix deleted one of them. If you find yourself reconciling two computations of
 the same fact, the reconciliation is the defect.
 
-### 15.2 Open — should §3.3's blanket prohibition be narrowed? (for the owner)
+### 15.2 Resolved — §3.3's blanket prohibition was replaced by runtime observation
 
-**Not a licence to guess. Do not implement either reading until the owner decides.**
+**Resolved.** The question of whether to narrow the prohibition on reading the authored assistance value was answered in a way neither option anticipated.
 
-§3.3 prohibits reading the authored assistance value for **any** independence purpose, without
-exception. There is a real argument that the prohibition is one notch broader than the hazard:
+Instead of either trusting the authored value (narrowing) or refusing it blanket (against narrowing), the runtime was changed to observe its own delivery: which support mechanism it actually put on screen. A single `presentedSupportFor` decision now drives the rendered screen, the support authorization, and the commit-time observation, so the runtime cannot present help it didn't record or record help it didn't present.
 
-- **For narrowing.** An item that offers no assistance by design cannot have had assistance taken.
-  On an authored-`A0` item the runtime presents no scaffold and refuses `REQUEST_SUPPORT`, so the
-  learner provably was unassisted. The distinction would be between reading the authored value for
-  **availability** — arguably legitimate, since availability is exactly what the author owns — and
-  reading it for **what was taken**, which is never legitimate. Under this reading, a subset of items
-  could establish independent administration today, without waiting for the runtime work in §3.3.
-- **Against narrowing.** The author's byte is what produced the "no scaffold" behaviour, so the
-  author would still be deciding independence — in three hops rather than one. The current code takes
-  this position deliberately. It also depends on a runtime property (that an authored-`A0` screen
-  really does refuse support) that nothing asserts, so the argument would rest on an unenforced
-  invariant, which §16 exists to warn about.
-
-The owner decides. If narrowing is approved it needs a governed decision, an assertion that authored
-`A0` really does imply no scaffold is reachable, and an explicit statement of which items qualify.
+The authored `assistanceState` field was **deleted** from the response record rather than left unread. This third path was available because the runtime could be made to measure its own behavior, closing the three-site re-derivation that this section named as an unenforced invariant.
 
 ### 15.3 Open — the ordinal tier is still recoverable from the published reason codes (for the owner)
 
