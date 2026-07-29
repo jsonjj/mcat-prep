@@ -256,7 +256,6 @@ export async function handleAuthorityRequest(
         questionId: String(body.questionId ?? ''),
         specId: String(body.specId ?? ''),
         chosenChoiceId: (body.chosenChoiceId ?? null) as 'A' | 'B' | 'C' | 'D' | null,
-        firstAttempt: Boolean(body.firstAttempt),
       });
       return sendJson(response, 200, result);
     }

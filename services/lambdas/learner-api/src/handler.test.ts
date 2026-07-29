@@ -640,12 +640,15 @@ describe('learner Lambda API security boundary', () => {
     expect(JSON.stringify(queue)).not.toMatch(/correct_choice_id|correctChoiceId|rationale/i);
 
     const first = queue.items[0]!;
+    // No `firstAttempt` key: the field is gone from the practice command
+    // contract entirely (packages/contracts/src/practice.ts), and this real
+    // route accepting a body without it is the proof the removal did not
+    // break a live submission.
     const body = {
       envelope: commandEnvelope(0),
       questionId: first.question.id,
       specId: first.specId,
       chosenChoiceId: 'A',
-      firstAttempt: true,
     };
     const scored = await api.handle(request('POST', '/v1/practice/attempts/adaptive', body, write));
     const duplicate = await api.handle(
@@ -672,7 +675,6 @@ describe('learner Lambda API security boundary', () => {
       questionId: 'q-enz-indep-competitive',
       specId: 'sci:bb1-enzyme-inhibition:EXPLAIN:train',
       chosenChoiceId: 'A',
-      firstAttempt: true,
     };
     const denied = await api.handle(
       request('POST', '/v1/practice/attempts/adaptive', body, {
@@ -681,6 +683,56 @@ describe('learner Lambda API security boundary', () => {
       }),
     );
     expect(denied.statusCode).toBe(403);
+  });
+
+  /**
+   * The named "done" condition for the contract removal: a real body missing
+   * `firstAttempt` is accepted, and a body that still sends the retired key is
+   * rejected as an unknown field rather than silently ignored — the exact-key
+   * body check in `routes.ts` no longer lists it on either side.
+   */
+  it('accepts an adaptive practice attempt with no firstAttempt key, and rejects one that still sends it', async () => {
+    const { api } = harness();
+    const read = { origin: APP_ORIGIN, authenticated: true } as const;
+    const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
+
+    const queued = await api.handle(request('GET', '/v1/practice/queue/2', undefined, read));
+    const queue = responseBody(queued) as {
+      items: Array<{ specId: string; question: { id: string } }>;
+    };
+    const item = queue.items[0]!;
+
+    const withoutField = await api.handle(
+      request(
+        'POST',
+        '/v1/practice/attempts/adaptive',
+        {
+          envelope: commandEnvelope(0),
+          questionId: item.question.id,
+          specId: item.specId,
+          chosenChoiceId: 'A',
+        },
+        write,
+      ),
+    );
+    expect(withoutField.statusCode).toBe(200);
+    expect(responseBody(withoutField)).toMatchObject({ correct: expect.any(Boolean) });
+
+    const withField = await api.handle(
+      request(
+        'POST',
+        '/v1/practice/attempts/adaptive',
+        {
+          envelope: commandEnvelope(1),
+          questionId: item.question.id,
+          specId: item.specId,
+          chosenChoiceId: 'A',
+          firstAttempt: true,
+        },
+        write,
+      ),
+    );
+    expect(withField.statusCode).toBe(400);
   });
 
   it('persists deterministic non-mastery CARS evidence and serves Wrapped', async () => {

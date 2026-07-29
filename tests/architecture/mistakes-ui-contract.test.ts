@@ -115,10 +115,12 @@ describe('adaptive practice asks for no cause', () => {
   });
 
   it('sends no second command, so the retry cannot double-count anything', () => {
-    // One `submit.mutate` in the file, and it is the first attempt.
+    // One `submit.mutate` in the file — the retry reuses it, so there is
+    // nothing to double-count. `firstAttempt` is not on the wire at all: which
+    // attempt this is is the server's derivation from its own exposure
+    // records, never a claim the client makes (see packages/contracts/src/practice.ts).
     expect([...session.matchAll(/submit\.mutate\(/g)]).toHaveLength(1);
-    expect(session).toMatch(/firstAttempt: true/);
-    expect(session).not.toMatch(/firstAttempt: false/);
+    expect(session).not.toMatch(/firstAttempt/);
   });
 });
 

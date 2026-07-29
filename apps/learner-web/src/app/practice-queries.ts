@@ -28,13 +28,17 @@ export function useSubmitPracticeAttempt() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (command: PracticeAttemptCommand) => authority.submitPracticeAttempt(command),
-    onSuccess: (_result, command) => {
-      // Only a scored first attempt changes mastery; skip churn on retries.
-      if (command.firstAttempt) {
-        void Promise.all(
-          PRACTICE_INVALIDATE_KEYS.map((k) => qc.invalidateQueries({ queryKey: [k] })),
-        );
-      }
+    onSuccess: () => {
+      // Whether this was the scored first attempt is the server's derivation
+      // (from its own exposure records) and never reaches the client — the
+      // command carries no `firstAttempt` claim and the result carries no
+      // signal either. Invalidating on every response is the honest gate: a
+      // redundant refetch on a retry is a wasted round trip, not a staleness
+      // bug, and reconstructing a client-side guess would just be the removed
+      // heuristic under a new name.
+      void Promise.all(
+        PRACTICE_INVALIDATE_KEYS.map((k) => qc.invalidateQueries({ queryKey: [k] })),
+      );
     },
   });
 }

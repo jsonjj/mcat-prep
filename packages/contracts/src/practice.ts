@@ -104,42 +104,43 @@ export type PracticeQueueView = z.infer<typeof PracticeQueueViewSchema>;
 /**
  * A practice answer, as it crosses the wire.
  *
- * `firstAttempt` is INERT. It was a browser boolean hardcoded `true`, so every
- * response claimed to be a first attempt and every first-attempt-conditioned
- * rule was permanently satisfied — and it is a claim about server-held state in
- * the first place, which makes it a fact the client is in no position to
- * report. The authority derives it from its own exposure records instead
- * (`Authority.submitPracticeAttempt`) and never reads this field.
+ * There is no `firstAttempt` field here. It used to be a browser boolean
+ * hardcoded `true`, so every response claimed to be a first attempt and every
+ * first-attempt-conditioned rule was permanently satisfied — and it was a
+ * claim about server-held state in the first place, which put it in no
+ * position to be a claim the client could make. `Authority.submitPracticeAttempt`
+ * derives it from the exposure records the server already holds.
  *
- * It survives here only because the deployed route lists it in an exact-key
- * body check (`services/lambdas/learner-api/src/routes.ts`), so removing it
- * from this schema would reject every live practice submission. Deleting it is
- * a coordinated change with that route, not a change to this file alone.
- *
- * Nothing on the server can read it in the meantime: {@link PracticeAttemptSchema}
- * is what the authority consumes, and the field is not on it.
+ * It was kept, briefly, as an unread field on this schema alone: present on
+ * the wire type so the deployed route's exact-key body check would not reject
+ * live submissions, but already absent from the type the authority consumed.
+ * That was a coordination hazard rather than a fix — a field nothing reads can
+ * still be re-trusted by a future author, where a field that does not exist
+ * cannot. Removing it here and from the route's key check in the same change
+ * closes that gap.
  */
 export const PracticeAttemptCommandSchema = z
   .object({
     questionId: z.string().min(1),
     specId: z.string().min(1),
     chosenChoiceId: ChoiceIdSchema.nullable(),
-    firstAttempt: z.boolean(),
   })
   .strict();
 export type PracticeAttemptCommand = z.infer<typeof PracticeAttemptCommandSchema>;
 
 /**
- * The practice answer the AUTHORITY consumes: the wire command with the
- * client's `firstAttempt` claim removed.
+ * The practice answer the AUTHORITY consumes.
  *
- * Derived by omission from the wire schema rather than restated, so the two
- * cannot drift into disagreeing about what a practice answer is. A wire command
- * is assignable to this type, which is why no caller needs to strip anything —
- * and reaching for `cmd.firstAttempt` inside the authority is a compile error
- * rather than a habit somebody has to remember not to have.
+ * Historically this was `PracticeAttemptCommandSchema.omit({ firstAttempt: true })`
+ * — the wire command with the client's `firstAttempt` claim stripped, so the
+ * two schemas could not drift into disagreeing about what else a practice
+ * answer carries. With `firstAttempt` gone from the wire schema entirely, the
+ * two shapes are identical; this alias is kept so `Authority.submitPracticeAttempt`
+ * and its callers keep a name for "the answer the authority consumes" that is
+ * independent of "the answer the wire carries," in case the two need to
+ * diverge again for an unrelated reason.
  */
-export const PracticeAttemptSchema = PracticeAttemptCommandSchema.omit({ firstAttempt: true });
+export const PracticeAttemptSchema = PracticeAttemptCommandSchema;
 export type PracticeAttempt = z.infer<typeof PracticeAttemptSchema>;
 
 /** Answer-bearing feedback, authorized only after a practice answer is submitted. */

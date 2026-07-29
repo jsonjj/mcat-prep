@@ -19,10 +19,11 @@ import type { LearnerState } from './types';
  * first-attempt-conditioned logic was permanently satisfied. Lessons face
  * eleven conditions; practice faced none.
  *
- * The fix is to DERIVE it from the exposure records the server already holds,
- * not to validate the client's claim against them. A validate-and-warn keeps
- * the client's value on the path — it is still what the code reads when the two
- * agree, which is every request that is not actively hostile.
+ * The fix was to DERIVE it from the exposure records the server already
+ * holds, not to validate a client claim against them — and then to remove the
+ * claim from the wire entirely, so nothing downstream can ever re-trust it.
+ * `PracticeAttemptCommandSchema` has no `firstAttempt` field at all; there is
+ * no longer a value for the client to get right or wrong.
  */
 
 const NOW = '2026-07-27T12:00:00.000Z';
@@ -54,13 +55,12 @@ class FixedGrainPracticeBank extends SyntheticPracticeBankPort {
   }
 }
 
-/** The wire command, with whatever the client claims about the attempt index. */
+/** The wire command. There is no `firstAttempt` claim to carry on it. */
 const claiming = (
   questionId: string,
   specId: string,
   chosenChoiceId: 'A' | 'B' | 'C' | 'D' | null,
-  firstAttempt: boolean,
-): PracticeAttemptCommand => ({ questionId, specId, chosenChoiceId, firstAttempt });
+): PracticeAttemptCommand => ({ questionId, specId, chosenChoiceId });
 
 function fixedGrainLearner(clock: Clock = CLOCK): {
   authority: Authority;
@@ -82,16 +82,12 @@ const bktRecords = (state: LearnerState) =>
   state.events.filter((event) => event.type === 'bkt_observation_applied');
 
 describe('the authority derives firstAttempt rather than reading it', () => {
-  /**
-   * The named "done" condition for this task. The client sends `true` on both
-   * submissions — which is exactly what the shipped browser does — and the
-   * second is still classified as a repeat.
-   */
-  it('classifies a second attempt on the same item as not-first, though the client says true', async () => {
+  /** The named "done" condition for this task: a repeat is still a repeat. */
+  it('classifies a second attempt on the same item as not-first', async () => {
     const { authority, state } = fixedGrainLearner();
     const item = await firstQueuedScienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
-    const wire = claiming(item.question.id, item.specId, answer!.correctChoiceId, true);
+    const wire = claiming(item.question.id, item.specId, answer!.correctChoiceId);
 
     await authority.submitPracticeAttempt(state, wire);
     const afterFirst = state.mastery!.kc[FIXED_KC_ID]!.pL;
@@ -108,20 +104,14 @@ describe('the authority derives firstAttempt rather than reading it', () => {
     expect(isMasteryEligible(state.evidence[1]!)).toBe(false);
   });
 
-  /**
-   * The other direction, and the reason this is a derivation rather than a
-   * check. A client claiming `false` on a genuine first attempt must not be
-   * able to suppress its own evidence either — a mismatch is not a signal to
-   * warn about, it is a value with no standing at all.
-   */
-  it('classifies a genuine first attempt as first, though the client says false', async () => {
+  it('classifies a genuine first attempt as first', async () => {
     const { authority, state } = fixedGrainLearner();
     const item = await firstQueuedScienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
 
     await authority.submitPracticeAttempt(
       state,
-      claiming(item.question.id, item.specId, answer!.correctChoiceId, false),
+      claiming(item.question.id, item.specId, answer!.correctChoiceId),
     );
 
     expect(state.mastery!.kc[FIXED_KC_ID]).toBeDefined();
@@ -130,23 +120,23 @@ describe('the authority derives firstAttempt rather than reading it', () => {
   });
 
   /**
-   * The client's field cannot be read at all: the authority's input type does
-   * not carry it. The wire schema still does, because the deployed route
-   * requires the key to be present — but nothing downstream of the parse can
-   * reach it, so re-trusting it later is a compile error rather than a habit.
+   * The field is gone from both schemas, not merely unread by one of them. A
+   * body that still carries it is rejected as an unknown key on either side —
+   * there is no longer a "wire-only" shape for it to survive in.
    */
-  it('takes an input type with no firstAttempt on it', () => {
+  it('has no firstAttempt field on the wire schema or the schema the authority consumes', () => {
+    expect(Object.keys(PracticeAttemptCommandSchema.shape)).not.toContain('firstAttempt');
     expect(Object.keys(PracticeAttemptSchema.shape)).not.toContain('firstAttempt');
-    expect(Object.keys(PracticeAttemptCommandSchema.shape)).toContain('firstAttempt');
-    // Still `.strict()` on both sides, so nothing else can ride along either.
-    expect(
-      PracticeAttemptSchema.safeParse({
-        questionId: 'q',
-        specId: 's',
-        chosenChoiceId: 'A',
-        firstAttempt: true,
-      }).success,
-    ).toBe(false);
+    for (const schema of [PracticeAttemptCommandSchema, PracticeAttemptSchema]) {
+      expect(
+        schema.safeParse({
+          questionId: 'q',
+          specId: 's',
+          chosenChoiceId: 'A',
+          firstAttempt: true,
+        }).success,
+      ).toBe(false);
+    }
   });
 
   /**
@@ -159,7 +149,7 @@ describe('the authority derives firstAttempt rather than reading it', () => {
     const { authority, state } = fixedGrainLearner(clock);
     const item = await firstQueuedScienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
-    const wire = claiming(item.question.id, item.specId, answer!.correctChoiceId, true);
+    const wire = claiming(item.question.id, item.specId, answer!.correctChoiceId);
 
     await authority.submitPracticeAttempt(state, wire);
     set('2027-07-27T12:00:00.000Z');
@@ -176,14 +166,8 @@ describe('the authority derives firstAttempt rather than reading it', () => {
     const [one, two] = queue.items;
     expect(two).toBeDefined();
 
-    await authority.submitPracticeAttempt(
-      state,
-      claiming(one!.question.id, one!.specId, 'A', true),
-    );
-    await authority.submitPracticeAttempt(
-      state,
-      claiming(two!.question.id, two!.specId, 'A', true),
-    );
+    await authority.submitPracticeAttempt(state, claiming(one!.question.id, one!.specId, 'A'));
+    await authority.submitPracticeAttempt(state, claiming(two!.question.id, two!.specId, 'A'));
 
     expect(bktRecords(state)).toHaveLength(2);
     expect(state.evidence.every((e) => e.independent)).toBe(true);
@@ -203,7 +187,7 @@ describe('a repeat attempt cannot inflate either Mistakes surface', () => {
     const item = await firstQueuedScienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
     const wrong = (['A', 'B', 'C', 'D'] as const).find((c) => c !== answer!.correctChoiceId)!;
-    const wire = claiming(item.question.id, item.specId, wrong, true);
+    const wire = claiming(item.question.id, item.specId, wrong);
 
     await authority.submitPracticeAttempt(state, wire);
     await authority.submitPracticeAttempt(state, wire);
@@ -231,13 +215,10 @@ describe('a repeat attempt cannot inflate either Mistakes surface', () => {
     const answer = await authority.practiceBank.getAnswer(item.question.id);
     const wrong = (['A', 'B', 'C', 'D'] as const).find((c) => c !== answer!.correctChoiceId)!;
 
+    await authority.submitPracticeAttempt(state, claiming(item.question.id, item.specId, wrong));
     await authority.submitPracticeAttempt(
       state,
-      claiming(item.question.id, item.specId, wrong, true),
-    );
-    await authority.submitPracticeAttempt(
-      state,
-      claiming(item.question.id, item.specId, answer!.correctChoiceId, true),
+      claiming(item.question.id, item.specId, answer!.correctChoiceId),
     );
 
     const log = await authority.getErrorLog(state);
@@ -256,14 +237,14 @@ describe('a repeat attempt cannot inflate either Mistakes surface', () => {
     const wrong = (['A', 'B', 'C', 'D'] as const).find((c) => c !== missedAnswer!.correctChoiceId)!;
     await authority.submitPracticeAttempt(
       state,
-      claiming(missed!.question.id, missed!.specId, wrong, true),
+      claiming(missed!.question.id, missed!.specId, wrong),
     );
 
     set('2026-07-27T12:30:00.000Z');
     const nextAnswer = await authority.practiceBank.getAnswer(next!.question.id);
     await authority.submitPracticeAttempt(
       state,
-      claiming(next!.question.id, next!.specId, nextAnswer!.correctChoiceId, true),
+      claiming(next!.question.id, next!.specId, nextAnswer!.correctChoiceId),
     );
 
     const log = await authority.getErrorLog(state);

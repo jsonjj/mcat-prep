@@ -52,9 +52,20 @@ describe('practice queue DTOs', () => {
       }).success,
     ).toBe(false);
     // The queue item itself rejects any stray protected field, too.
-    expect(PracticeQueueItemSchema.safeParse({ ...item, correctChoiceId: 'B' }).success).toBe(false);
-    expect(JSON.stringify(PracticeQueueViewSchema.parse({ requested: 1, focus: null, items: [item] })))
-      .not.toMatch(/correct|rationale/i);
+    expect(PracticeQueueItemSchema.safeParse({ ...item, correctChoiceId: 'B' }).success).toBe(
+      false,
+    );
+    expect(
+      JSON.stringify(
+        PracticeQueueViewSchema.parse({
+          requested: 1,
+          focus: null,
+          items: [item],
+          shortfall: 0,
+          taughtGap: false,
+        }),
+      ),
+    ).not.toMatch(/correct|rationale/i);
   });
 
   it('requires exactly four choices', () => {
@@ -78,40 +89,42 @@ describe('practice attempt DTOs', () => {
       questionId: 'v7-relabel-a538789a9daa94d4',
       specId: 'sci:kc-1:EXPLAIN:d2:train',
       chosenChoiceId: 'B',
-      firstAttempt: true,
     };
     expect(PracticeAttemptCommandSchema.parse(cmd)).toEqual(cmd);
     expect(PracticeAttemptCommandSchema.safeParse({ ...cmd, extra: 1 }).success).toBe(false);
-    expect(
-      PracticeAttemptCommandSchema.safeParse({ ...cmd, chosenChoiceId: null }).success,
-    ).toBe(true);
+    expect(PracticeAttemptCommandSchema.safeParse({ ...cmd, chosenChoiceId: null }).success).toBe(
+      true,
+    );
   });
 
   /**
-   * `firstAttempt` is a claim about state only the server holds, and it was a
-   * browser boolean hardcoded `true`. The wire still carries it because the
-   * deployed route's exact-key body check requires the key; what the authority
-   * consumes does not, so nothing on the server can re-trust it.
+   * `firstAttempt` used to be a claim about state only the server holds — a
+   * browser boolean hardcoded `true` — carried on the wire schema alone so the
+   * deployed route's exact-key body check would accept it, while the schema
+   * the authority actually consumed never had the field. That was a
+   * coordination hazard, not a fix: an unread field can be re-trusted by a
+   * future author, where a field that does not exist cannot. It has been
+   * removed from both schemas entirely, and the route no longer requires it
+   * (`services/lambdas/learner-api/src/routes.ts`).
    */
-  it('keeps the client firstAttempt claim off the schema the authority consumes', () => {
-    expect(Object.keys(PracticeAttemptCommandSchema.shape)).toContain('firstAttempt');
+  it('has no firstAttempt field on either the wire schema or the schema the authority consumes', () => {
+    expect(Object.keys(PracticeAttemptCommandSchema.shape)).not.toContain('firstAttempt');
     expect(Object.keys(PracticeAttemptSchema.shape)).not.toContain('firstAttempt');
-    // Omitted from the wire schema rather than restated, so the two cannot
-    // drift into disagreeing about what else a practice answer carries.
+    // The two shapes now agree exactly — nothing was ever restated between them.
     expect(Object.keys(PracticeAttemptSchema.shape).sort()).toEqual(
-      Object.keys(PracticeAttemptCommandSchema.shape)
-        .filter((key) => key !== 'firstAttempt')
-        .sort(),
+      Object.keys(PracticeAttemptCommandSchema.shape).sort(),
     );
-    // Strict on both sides: the claim cannot ride along as an unknown key.
-    expect(
-      PracticeAttemptSchema.safeParse({
-        questionId: 'v7-relabel-a538789a9daa94d4',
-        specId: 'sci:kc-1:EXPLAIN:d2:train',
-        chosenChoiceId: 'B',
-        firstAttempt: true,
-      }).success,
-    ).toBe(false);
+    // Strict on both sides: a resurrected claim cannot ride along as an unknown key.
+    for (const schema of [PracticeAttemptCommandSchema, PracticeAttemptSchema]) {
+      expect(
+        schema.safeParse({
+          questionId: 'v7-relabel-a538789a9daa94d4',
+          specId: 'sci:kc-1:EXPLAIN:d2:train',
+          chosenChoiceId: 'B',
+          firstAttempt: true,
+        }).success,
+      ).toBe(false);
+    }
   });
 
   it('carries answer material only in the result', () => {

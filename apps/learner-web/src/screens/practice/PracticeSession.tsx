@@ -132,7 +132,7 @@ export function PracticeSession() {
     if (choice === null) return;
     setFirstChoice(choice);
     submit.mutate(
-      { questionId: q.id, specId: item.specId, chosenChoiceId: choice, firstAttempt: true },
+      { questionId: q.id, specId: item.specId, chosenChoiceId: choice },
       {
         onSuccess: (r) => {
           setResult(r);
