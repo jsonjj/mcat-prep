@@ -18,7 +18,7 @@ function SkillRail() {
   const data = skills.data ?? [];
 
   return (
-    <Card elevated className="mc-progress__rail mc-progress__rail--skills">
+    <Card elevated className="mc-progressboard__rail mc-progressboard__rail--skills">
       <Eyebrow>Reasoning skills</Eyebrow>
       {skills.isLoading ? (
         <p className="mc-muted mc-fineprint">Loading your skills…</p>
@@ -64,14 +64,14 @@ function SkillRail() {
  * Progress — one merged dashboard (Concept B). All three evidence views show at
  * once, no tab switching: the reasoning-skill rings (left), the Evidence Atlas
  * brain as the hero (center), and CARS reading ability (right). On a laptop the
- * page widens past the usual 760px shell cap (via `.mc-progress--wide`, scoped so
+ * page widens past the usual 760px shell cap (via `.mc-progressboard--wide`, scoped so
  * no other screen changes) so the three zones sit side by side without scrolling;
  * it stacks vertically on narrower viewports.
  */
 export function Progress() {
   return (
-    <div className="mc-screen mc-progress mc-progress--wide">
-      <header className="mc-screen__head mc-progress__head">
+    <div className="mc-screen mc-progressboard mc-progressboard--wide">
+      <header className="mc-screen__head mc-progressboard__head">
         <h1 className="mc-h1">Progress</h1>
         <p className="mc-muted">
           Everything at a glance — your reasoning skills, the lessons you have mastered, and your CARS
@@ -79,10 +79,10 @@ export function Progress() {
         </p>
       </header>
 
-      <div className="mc-progress__grid">
+      <div className="mc-progressboard__grid">
         <SkillRail />
 
-        <section className="mc-progress__center" aria-label="Lessons mastered — Evidence Atlas">
+        <section className="mc-progressboard__center" aria-label="Lessons mastered — Evidence Atlas">
           <EvidenceAtlas />
         </section>
 

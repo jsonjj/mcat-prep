@@ -1260,22 +1260,23 @@ body {
    One merged, single-screen view — all three evidence surfaces at once, no tabs.
    Mobile-first it stacks in normal flow; on a laptop (>=1180px) it becomes a
    three-zone grid and the shell main column is allowed to grow past the 760px cap.
-   Both the widen and the grid are gated behind `.mc-progress--wide`, so every
-   other screen keeps the shared 760px cap and nothing else changes. */
-.mc-progress__head {
+   Both the widen and the grid are gated behind `.mc-progressboard--wide`, so every
+   other screen keeps the shared 760px cap and nothing else changes. The block is
+   `mc-progressboard`, not `mc-progress`, to avoid the thin progress-*bar* class. */
+.mc-progressboard__head {
   gap: var(--mc-space-1);
 }
-.mc-progress__grid {
+.mc-progressboard__grid {
   display: flex;
   flex-direction: column;
   gap: var(--mc-space-5);
 }
-.mc-progress__center {
+.mc-progressboard__center {
   min-width: 0;
   display: flex;
   flex-direction: column;
 }
-.mc-progress__rail {
+.mc-progressboard__rail {
   min-width: 0;
   padding: var(--mc-space-4);
 }
@@ -1354,17 +1355,22 @@ body {
    keeps its usual size and stays the hero; the rails are compact but readable.
    Below 1180px the page keeps the 760px cap, stacks, and scrolls like any screen. */
 @media (min-width: 1180px) {
-  .mc-shell__main:has(.mc-progress--wide) {
+  .mc-shell__main:has(.mc-progressboard--wide) {
     max-width: 1180px;
   }
-  .mc-progress--wide .mc-progress__grid {
+  .mc-progressboard--wide .mc-progressboard__grid {
     display: grid;
     grid-template-columns: 200px minmax(0, 1fr) 270px;
     gap: var(--mc-space-5);
     align-items: start;
   }
-  .mc-progress--wide .mc-atlas {
+  .mc-progressboard--wide .mc-atlas {
     margin-top: 0;
+  }
+  /* Keep the no-WebGL still-image fallback within the (narrower) center column. */
+  .mc-progressboard--wide .mc-brainhero__img,
+  .mc-progressboard--wide .mc-brainhero__halo {
+    max-width: 100%;
   }
 }
 
