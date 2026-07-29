@@ -588,3 +588,60 @@ Nothing in the code can choose between them, because the choice is about what th
 asked to do next. It is filed here rather than as a task because option 2 in particular is a planner
 weighting decision wearing a UI hat: the same `pL`-versus-warrant question the planner's
 `masteryWeight` faces, arriving on the surface a learner actually reads.
+
+## Two named-as-owed items, and why neither is a same-day fix
+
+Both were found by searching for work that a docblock or a commit message said was owed rather than
+doing it. Recorded here because each is blocked on something a single edit cannot supply. Everything
+else that search turned up was already paid or already recorded at its own site.
+
+**The lesson submission shape's stated long-term home does not exist.**
+`services/lambdas/learner-api/src/lesson-response-seam.ts:4-13` says the module holds the generic
+lesson → mastery submission shape (`LessonSubmission`, `LessonBindingResolution`) so that a second
+lesson's runtime can produce it without importing the vector lesson's consumer, and that "its proper
+long-term home is `@mcat/contracts` next to `LessonRuntimeResponseFactsSchema`; moving it there is out
+of this task's scope, and it is recorded as owed."
+
+Two things are wrong with that sentence, and the second is the interesting one. First, it was recorded
+nowhere — this entry is the record it claimed to have. Second, **the stated destination is not
+available.** The shape carries a `ServerScoringResolution`, which is declared in `@mcat/domain`, and
+`@mcat/domain` depends on `@mcat/contracts` (`packages/contracts/package.json` declares exactly one
+dependency, `zod`, and no workspace package at all). Moving the type into contracts would mean
+contracts importing from domain, which is the cycle the cross-package enum mirrors exist to avoid —
+recorded in the ledger as the reason `ChangeDimensionSchema` is mirrored rather than imported, with
+`tests/architecture/cross-package-enum-parity.test.ts` enforcing the parity that mirroring costs.
+
+So the real options are narrower than "move it":
+
+1. **Move `ServerScoringResolution` to `@mcat/contracts` first**, then the submission shape follows.
+   It is a wire-adjacent type, so contracts is arguably where it belongs anyway. Concedes a
+   non-trivial refactor of `@mcat/domain`'s public surface, and every domain consumer of that type has
+   to be re-pointed in the same change.
+2. **Leave the shape where it is and correct the docblock.** The module already achieves the thing the
+   comment gives as the reason for wanting the move — a second lesson runtime can import it without
+   touching the vector lesson — so the practical benefit of relocating is small. Concedes that a
+   type describing a cross-service contract lives in a lambda.
+3. **Mirror it**, the way the enums are mirrored, with parity asserted. Concedes a second copy of a
+   shape, which is the thing this branch has spent the night removing.
+
+The docblock now points here instead of claiming a record, so the false half is paid; the choice
+between the three is not something the code can make.
+
+**`LessonMasteryView.pL` should be `meanMemberPL`, and the rename is governed.**
+`packages/contracts/src/mastery.ts:110-119` is explicit about the hazard: `pL` on a lesson view is the
+arithmetic MEAN of the member KCs' current `P(L)`, it is a display value rather than a probability of
+lesson mastery, and it MUST NOT be compared against `MASTERY_THRESHOLD` — a high mean with one weak KC
+is correctly not mastered. The docblock says the field keeps the misleading name because
+`apps/learner-web` reads it, and that renaming it to `meanMemberPL` "is owed by the UI follow-up."
+
+This is already named as an open owner-facing item in the project ledger, but only inside the section
+the ledger marks as closed archive, which is where an open item goes to be forgotten. Repeating it
+here so it survives.
+
+Why it stays owed rather than being done: the original run looked for a cheap structural fix and found
+none, and strengthened the prohibition on the producer instead. The name reaches the wire — it is a
+published view field — so renaming it touches the contract schema, every learner-web read, and the
+tests that pin the payload shape, and it is a learner-adjacent vocabulary change of the same class as
+the "Review due" / "Evidence needs refreshing" split the owner already holds. The honest summary is
+that the danger the name creates is currently contained by a comment and by a producer-side
+prohibition, which is exactly the arrangement this codebase has learned not to trust.

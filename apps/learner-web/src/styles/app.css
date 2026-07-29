@@ -1173,9 +1173,6 @@ body {
   font-size: var(--mc-text-12);
   white-space: nowrap;
 }
-.mc-skillbar__tag--mastered {
-  color: var(--mc-state-strong);
-}
 .mc-skillbar__track {
   height: 12px;
   border-radius: var(--mc-radius-pill);
@@ -1188,9 +1185,6 @@ body {
   background: linear-gradient(90deg, var(--mc-primary), var(--mc-primary-hover));
   transition: width 240ms ease;
   min-width: 2px;
-}
-.mc-skillbar__fill--mastered {
-  background: linear-gradient(90deg, var(--mc-primary-hover), var(--mc-state-strong));
 }
 .mc-skillbar__fill--refresh {
   opacity: 0.6;

@@ -114,8 +114,9 @@ export type SkillMasteryView = z.infer<typeof SkillMasteryViewSchema>;
  * with one weak KC is correctly not mastered. `reviewDue` is true when any
  * previously practiced required KC is due for review; it is BKT decay, not the
  * evidence warrant's `refreshNeeded`. The field keeps the name `pL` because
- * `apps/learner-web` reads it; renaming it to `meanMemberPL` is owed by the UI
- * follow-up.
+ * `apps/learner-web` reads it; renaming it to `meanMemberPL` is owed, and is
+ * recorded in `key-docs/roadmap-todo.md` under "Two named-as-owed items" with
+ * why it is a governed rename rather than a mechanical one.
  *
  * A lesson whose required-KC membership cannot be resolved emits no entry at
  * all (fail-closed); it is never reported as `0` or as vacuously mastered.

@@ -76,7 +76,10 @@
   --mc-glow-cream: #fbe8c6;
   --mc-glow-rose: #ebd5d6;
 
-  /* Mastered accent (learner-web `.mc-skillbar__tag--mastered` / `--fill--mastered`). */
+  /* At-the-capability-cut accent (learner-web `.mc-skillring__tag--atcut`,
+     `.mc-ring__arc--atcut`, `.mc-reveal__key--ok`). It named two
+     `.mc-skillbar__*--mastered` rules that had no JSX consumer and were deleted;
+     the token itself is live. */
   --mc-state-strong: #0b6a63;
 
   --mc-shadow-card: 0 1px 2px rgba(16, 34, 46, 0.06), 0 8px 24px rgba(16, 34, 46, 0.06);

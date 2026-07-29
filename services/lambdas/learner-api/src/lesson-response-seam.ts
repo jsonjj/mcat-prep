@@ -7,9 +7,15 @@ import type { ServerScoringResolution } from '@mcat/domain';
  *
  * It lives in its own module rather than in `workflow.ts` so that a second
  * lesson's runtime can produce the shape without importing the vector lesson's
- * consumer. Its proper long-term home is `@mcat/contracts` next to
- * `LessonRuntimeResponseFactsSchema`; moving it there is out of this task's
- * scope, and it is recorded as owed.
+ * consumer.
+ *
+ * This docblock used to name `@mcat/contracts` as the shape's proper long-term
+ * home and say the move was "recorded as owed". It was recorded nowhere, and the
+ * destination is not available as stated: the shape carries a
+ * `ServerScoringResolution` from `@mcat/domain`, and domain depends on contracts,
+ * so contracts cannot import it back without the cycle the cross-package enum
+ * mirrors exist to avoid. The three real options, and what each concedes, are in
+ * `key-docs/roadmap-todo.md` under "Two named-as-owed items".
  */
 
 /**
