@@ -269,7 +269,7 @@ const lessonChannelEvidence = (): EvidenceRecord[] => [
  */
 function transferPairWithIndependenceSupplied(): {
   readonly skillId: string;
-  readonly records: readonly EvidenceRecord[];
+  readonly records: EvidenceRecord[];
 } {
   const eligible = lessonChannelEvidence().filter(isMasteryEligible);
   for (const [skillId, forSkill] of bySkill(eligible)) {
