@@ -143,6 +143,18 @@ const PREREQUISITE_BLOCKING_EVIDENCE_REASONS: ReadonlySet<EvidenceReason> = new 
   'PREREQUISITE_BLOCKED',
 ]);
 
+/**
+ * `PracticeSnapshot` (from `@mcat/policies`) plus the one fact the selection
+ * engine has no use for but `getPracticeQueue` does: whether the taught-set
+ * gate in `buildPracticeSnapshot` found a real, non-empty taught set that
+ * shared nothing with the loaded bank. Extended locally rather than in the
+ * shared policies package, because it is authority-side bookkeeping about
+ * WHY a snapshot looks the way it does, not an input the pure engine reads.
+ */
+interface ScopedPracticeSnapshot extends PracticeSnapshot {
+  readonly taughtGapDetected: boolean;
+}
+
 /** A grain a warrant is produced for, with the labels a view needs. */
 interface WarrantGrain {
   readonly skillId: string;
@@ -2210,7 +2222,16 @@ export class Authority {
    * Build the ordered queue of up to `x` fresh practice items. Reads the mastery
    * signal + bank catalog into a snapshot, asks the pure selection engine for
    * specs, then pulls one fresh matching item per spec (excluding recently-seen
-   * and anything already queued). Missing specs are skipped (graceful).
+   * and anything already queued).
+   *
+   * A spec can still come up with nothing at the pull step — the exact KC×skill
+   * combination the engine chose may have no fresh item left once recently-seen
+   * exclusion is applied, even though the unit looked eligible going in. That
+   * shortfall is counted (`shortfall = requested - items.length`) and returned
+   * on the view rather than left for the caller to infer from a shorter array;
+   * see `PracticeQueueView.shortfall`. `taughtGap` carries the more specific
+   * signal that the shortfall (if any) traces to `buildPracticeSnapshot`'s
+   * taught-set gate finding zero overlap, not to the bank running dry.
    */
   async getPracticeQueue(
     state: LearnerState,
@@ -2219,7 +2240,9 @@ export class Authority {
   ): Promise<PracticeQueueView> {
     const requested = Math.max(0, Math.min(Math.floor(x), 50));
     const focusToken = focus ?? null;
-    if (requested === 0) return { requested: 0, focus: focusToken, items: [] };
+    if (requested === 0) {
+      return { requested: 0, focus: focusToken, items: [], shortfall: 0, taughtGap: false };
+    }
 
     const now = this.clock.now();
     const [units, repairs, recentlySeen] = await Promise.all([
@@ -2260,7 +2283,13 @@ export class Authority {
       if (items.length >= requested) break;
     }
 
-    return { requested, focus: focusToken, items };
+    return {
+      requested,
+      focus: focusToken,
+      items,
+      shortfall: Math.max(0, requested - items.length),
+      taughtGap: snapshot.taughtGapDetected,
+    };
   }
 
   /**
@@ -2379,7 +2408,7 @@ export class Authority {
     repairs: readonly PracticeRepairTarget[],
     now: UtcTimestamp,
     focus: PracticeFocus | null,
-  ): PracticeSnapshot {
+  ): ScopedPracticeSnapshot {
     const m = state.mastery;
     const focused = this.filterByFocus(units, focus);
 
@@ -2400,6 +2429,11 @@ export class Authority {
         continue;
       }
       if (u.skill === null || u.cluster === null) continue;
+      // `itemCount` is the bank's declared supply for this KC × skill unit
+      // (see `PracticeCandidateUnit.itemCount`). A unit with nothing behind it
+      // must never occupy a selection slot only to come up empty when the
+      // authority later tries to pull a concrete item for it.
+      if (u.itemCount <= 0) continue;
       const kcState = m?.kc[u.kcId];
       const skillState = m?.skill[u.skill];
       const neverPractised = kcState === undefined;
@@ -2421,20 +2455,35 @@ export class Authority {
       });
     }
 
-    // Per-KC teach-before-test: only serve KCs the learner has been taught (union of
-    // completed lessons' KCs, cached at plan-build). Falls back to unfiltered when the
-    // taught set doesn't intersect the loaded bank (e.g. dev synthetic bank) so local
-    // practice still works.
+    /**
+     * Per-KC teach-before-test: only serve KCs the learner has been taught
+     * (union of completed lessons' KCs, cached at plan-build).
+     *
+     * FAILS CLOSED. A taught set that shares nothing with the loaded bank is a
+     * MISS, not an invitation to widen back out to the unfiltered corpus — that
+     * used to serve untaught material dressed up as graceful degradation. An
+     * empty result is a signal a caller can act on; wrong material reaching a
+     * learner is a harm no caller can undo. `taughtGapDetected` on the returned
+     * snapshot is exactly that signal, so `getPracticeQueue` can surface it
+     * rather than let a mysteriously-empty science queue speak for itself.
+     *
+     * Only the true ABSENCE of a taught set (no lesson completions recorded at
+     * all — a guest who has never run Today's Path) skips the filter: there is
+     * no taught claim to violate yet, which is a different fact from a taught
+     * claim that missed.
+     */
     const taught =
       state.taughtKcIds && state.taughtKcIds.length > 0 ? new Set(state.taughtKcIds) : null;
-    const taughtUnits = taught ? scienceUnits.filter((u) => taught.has(u.kcId)) : scienceUnits;
-    const scopedUnits = taughtUnits.length > 0 ? taughtUnits : scienceUnits;
+    const scopedUnits = taught ? scienceUnits.filter((u) => taught.has(u.kcId)) : scienceUnits;
+    const taughtGapDetected =
+      taught !== null && scienceUnits.length > 0 && scopedUnits.length === 0;
 
     return {
       units: scopedUnits,
       cars: carsUnits,
       repairs: repairs.map((r) => (r.skill ? { kcId: r.kcId, skill: r.skill } : { kcId: r.kcId })),
       coveredClusters: covered,
+      taughtGapDetected,
     };
   }
 

@@ -124,6 +124,56 @@ describe('Authority.getPracticeQueue (synthetic fallback)', () => {
     const next = await authority.getPracticeQueue(state, 6);
     expect(next.items.map((i) => i.question.id)).not.toContain(item.question.id);
   });
+
+  /**
+   * The taught-set gate used to fall back to the unfiltered bank whenever a
+   * real, non-empty taught set shared nothing with the loaded bank — serving
+   * untaught material while looking like graceful degradation. It must now
+   * fail closed: fewer items, or none, never material outside the taught set.
+   */
+  it('fails closed on a taught-set miss instead of serving the unfiltered bank', async () => {
+    const { authority, state } = freshLearner();
+
+    // With no taught set recorded at all (a guest who hasn't run Today's Path),
+    // the bank's science units ARE served — establishing the bank genuinely has
+    // science content, so a later zero is the gate acting, not an empty bank.
+    const untrackedTaught = await authority.getPracticeQueue(state, 8);
+    expect(untrackedTaught.items.some((i) => i.domain === 'science')).toBe(true);
+    expect(untrackedTaught.taughtGap).toBe(false);
+
+    // A real taught set that shares nothing with the loaded bank's KCs is the
+    // MISS this closes: previously this widened back out to every science
+    // unit; now it must return no science material at all.
+    state.taughtKcIds = ['kc-never-taught-by-any-lesson'];
+    const gapped = await authority.getPracticeQueue(state, 8);
+
+    expect(gapped.items.filter((i) => i.domain === 'science')).toHaveLength(0);
+    expect(gapped.taughtGap).toBe(true);
+  });
+
+  /**
+   * `itemCount` used to be read off `PracticeCandidateUnit` and then dropped on
+   * the floor — nothing checked whether the bank could actually fill a request
+   * before selection ran, so a request for more than the bank holds came back
+   * short with no signal at all. `shortfall` is the caller-visible fix: always
+   * present, and equal to exactly how many slots the queue could not fill.
+   */
+  it('surfaces a shortfall explicitly rather than silently truncating the queue', async () => {
+    const { authority, state } = freshLearner();
+    const requested = 50; // far more distinct items than the synthetic fixture holds
+    const queue = await authority.getPracticeQueue(state, requested);
+
+    expect(queue.items.length).toBeLessThan(requested);
+    expect(queue.shortfall).toBe(requested - queue.items.length);
+    expect(queue.shortfall).toBeGreaterThan(0);
+  });
+
+  it('reports zero shortfall when the queue fills the request', async () => {
+    const { authority, state } = freshLearner();
+    const queue = await authority.getPracticeQueue(state, 2);
+    expect(queue.items.length).toBe(2);
+    expect(queue.shortfall).toBe(0);
+  });
 });
 
 describe('Authority.submitPracticeAttempt (test-out mastery)', () => {

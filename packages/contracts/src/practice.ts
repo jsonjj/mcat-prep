@@ -79,12 +79,24 @@ export const PracticeFocusSchema = z
   .regex(/^[a-z0-9-]+$/, 'lowercase alphanumeric focus token');
 export type PracticeFocus = z.infer<typeof PracticeFocusSchema>;
 
-/** The queue the client renders: the ordered items plus its echoed parameters. */
+/**
+ * The queue the client renders: the ordered items plus its echoed parameters.
+ *
+ * `shortfall` is `requested - items.length`, always present (0 when the queue
+ * is full). Selection can allocate a slot to a KC×skill spec that turns out to
+ * have no fresh item left once recently-seen exclusion runs, and silently
+ * truncating there left every downstream count assumption wrong with nothing
+ * to show for it. `taughtGap` narrows the cause: true when the shortfall (if
+ * any) traces to the taught-set gate finding zero overlap with the loaded
+ * bank, as opposed to the bank or fresh-item supply simply running dry.
+ */
 export const PracticeQueueViewSchema = z
   .object({
     requested: z.number().int().nonnegative(),
     focus: PracticeFocusSchema.nullable(),
     items: z.array(PracticeQueueItemSchema),
+    shortfall: z.number().int().nonnegative(),
+    taughtGap: z.boolean(),
   })
   .strict();
 export type PracticeQueueView = z.infer<typeof PracticeQueueViewSchema>;
