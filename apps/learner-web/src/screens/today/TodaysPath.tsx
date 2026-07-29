@@ -16,6 +16,7 @@ const KIND_LABEL: Record<PlanActivityView['kind'], string> = {
   review_mistakes: 'Review Mistakes',
   lesson: 'Lesson',
   practice: 'Practice',
+  practice_test: 'Practice Test',
 };
 
 const BAND_NOTE: Record<TodaysPathView['reviewDebtBand'], string | null> = {

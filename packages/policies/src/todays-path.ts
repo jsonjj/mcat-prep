@@ -158,7 +158,11 @@ export type TodaysPathActivityKind =
   | 'recall'
   | 'review_mistakes'
   | 'lesson'
-  | 'practice';
+  | 'practice'
+  // A scheduled periodic half-length practice test (WS5). Cadence is decided by
+  // `practice-test-cadence.ts` and handed in on the snapshot; this engine only
+  // reserves the sitting when it is due.
+  | 'practice_test';
 
 export type ReviewDebtBand = 'normal' | 'reduce_new' | 'pause_new';
 
@@ -228,6 +232,20 @@ export interface CarriedActivity {
   readonly priorityReason: PlannerReason;
 }
 
+/**
+ * The scheduled-practice-test signal, computed by `practice-test-cadence.ts` and
+ * handed in on the snapshot. Optional so every existing caller (and its tests)
+ * is unaffected: absent, or `due: false`, means no test is reserved today.
+ */
+export interface TodaysPathPracticeTest {
+  readonly due: boolean;
+  readonly phase: 'baseline' | 'monthly' | 'biweekly' | 'weekly';
+  /** Sitting length in minutes (a half-length test ≈ 3 hours), reserved atomically. */
+  readonly estimatedMinutes: number;
+  /** Human-auditable cadence reason for the "why this now?" line. */
+  readonly reason: string;
+}
+
 export interface TodaysPathSnapshot {
   readonly planDate: string;
   readonly dailyBudgetMinutes: number;
@@ -244,6 +262,8 @@ export interface TodaysPathSnapshot {
   readonly practiceReviewNeed: number;
   readonly candidateLessons: readonly TodaysPathCandidateLesson[];
   readonly carryOver: readonly CarriedActivity[];
+  /** Scheduled periodic practice test, when the cadence has one due today (WS5). */
+  readonly practiceTest?: TodaysPathPracticeTest;
 }
 
 export interface PlannedActivity {
@@ -414,6 +434,36 @@ export function buildTodaysPath(
   // --- Reserve the mandatory core (skip a kind already carried over). ---
   const coreActivities: PlannedActivity[] = [];
   let spent = 0;
+
+  // Scheduled periodic practice test (WS5) — the day's anchor when the cadence
+  // has one due. Reserved FIRST and atomically: a half-length sitting is long
+  // and its length is the day, so it is not gated on the remaining budget the
+  // way the shorter core blocks are (an existing carry-over of the same kind
+  // still takes precedence, so a resumed test is not double-booked). Whatever it
+  // consumes, the sizing below sees the smaller `budgetForNew - spent` and fills
+  // the rest normally, which on a small preset is little or nothing — a test day.
+  if (snap.practiceTest?.due === true && !carriedKinds.has('practice_test')) {
+    const test = snap.practiceTest;
+    coreActivities.push({
+      activityId: 'practice-test',
+      kind: 'practice_test',
+      title: 'Practice Test',
+      detail: `Half-length test (${test.phase}) — spaced retrieval practice; review it before the next one.`,
+      estimatedMinutes: Math.max(1, test.estimatedMinutes),
+      count: null,
+      minutesBudget: null,
+      focus: null,
+      lessonSlug: null,
+      lessonId: null,
+      // Reuses the existing spaced-review reason: a periodic test is a scheduled
+      // spaced-retrieval checkpoint at the plan level. A dedicated planner reason
+      // would add churn to the contended domain/contracts reason enums for no
+      // learner-visible gain here.
+      priorityReason: 'OVERDUE_REVIEW',
+      carriedOver: false,
+    });
+    spent += Math.max(1, test.estimatedMinutes);
+  }
 
   // CARS Duel — every day (1 near the middle; a 2nd on longer presets, ordered at
   // ~1/3 and ~2/3). Fixed cost; placement handled in orderActivities.
@@ -685,6 +735,10 @@ const KIND_SPREAD_RANK: Record<TodaysPathActivityKind, number> = {
   cars_duel: 2,
   review_mistakes: 3,
   practice: 4,
+  // A test is a single atomic activity — spread rank only matters when a kind
+  // has more than one item, which a practice test never does — but the Record is
+  // exhaustive, so it is listed.
+  practice_test: 5,
 };
 
 function bucketsByKind(

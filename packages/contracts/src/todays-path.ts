@@ -31,6 +31,8 @@ export const PlanActivityKindSchema = z.enum([
   'review_mistakes',
   'lesson',
   'practice',
+  // Scheduled periodic half-length practice test (WS5).
+  'practice_test',
 ]);
 export type PlanActivityKind = z.infer<typeof PlanActivityKindSchema>;
 
