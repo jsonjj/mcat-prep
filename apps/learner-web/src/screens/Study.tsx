@@ -1,27 +1,31 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { ChoiceId, ProbableCause, StudyStepView } from '@mcat/contracts';
+import type { ChoiceId, StudyStepView } from '@mcat/contracts';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { evidenceWarrant } from '../components/evidence-language';
 import {
   useContinueStep,
   useRequestReveal,
-  useSelectCause,
   useSession,
   useSubmitAttempt,
   useSubmitRecall,
 } from '../app/queries';
 
-const CAUSES: { value: ProbableCause; label: string }[] = [
-  { value: 'did_not_know_content', label: 'I did not know the content' },
-  { value: 'knew_but_misapplied', label: 'I knew it but applied it incorrectly' },
-  { value: 'misread_question_or_passage', label: 'I misread the question or passage' },
-  { value: 'missed_condition_unit_sign', label: 'I missed a condition, unit, or sign' },
-  { value: 'misinterpreted_graph_or_experiment', label: 'I misread the graph or experiment' },
-  { value: 'calculation_error', label: 'I made a calculation error' },
-  { value: 'rushing_or_time', label: 'I was rushing or ran out of time' },
-  { value: 'not_sure', label: 'I am not sure' },
-];
+/**
+ * The Study loop. A miss reveals immediately — the key plus the refutation of the
+ * option this learner actually picked — and the one unassisted retry follows the
+ * correction rather than standing in front of it.
+ *
+ * The learner is never asked why they erred. Experts naming which bias produced an
+ * error agree at κ = 0.000–0.063, and students call 81% of their execution errors
+ * "simple" against an expert rate of 40%, worst among the weakest students — so a
+ * self-reported cause is a field we cannot trust and have decided not to store
+ * (docs/design/error-handling-design.md §2.3, §7).
+ *
+ * This loop still names the key on the first miss. Adaptive Practice defers it to
+ * a second miss by product decision (§3.3, amended 2026-07-28); that amendment is
+ * scoped to Practice and this flow is deliberately unchanged.
+ */
 
 const PHASE_LABEL: Record<string, string> = {
   independent: 'Independent check',
@@ -35,7 +39,6 @@ export function Study() {
   const navigate = useNavigate();
   const session = useSession();
   const submitAttempt = useSubmitAttempt();
-  const selectCause = useSelectCause();
   const requestReveal = useRequestReveal();
   const continueStep = useContinueStep();
   const submitRecall = useSubmitRecall();
@@ -197,12 +200,7 @@ export function Study() {
       ) : null}
 
       {step.sub === 'reveal' && step.reveal ? (
-        <Reveal reveal={step.reveal} chosen={choice} onContinue={() => continueStep.mutate()} />
-      ) : step.sub === 'cause' ? (
-        <CausePicker
-          onPick={(c) => selectCause.mutate(c)}
-          pending={selectCause.isPending}
-        />
+        <Reveal reveal={step.reveal} onContinue={() => continueStep.mutate()} />
       ) : (
         <fieldset className="mc-choices">
           <legend className="mc-visually-hidden">Answer choices</legend>
@@ -242,7 +240,10 @@ export function Study() {
 
       {step.sub === 'retry' ? (
         <Stack gap={2}>
-          <Callout tone="info">One unassisted retry. This is diagnostic — it won&apos;t count as mastery.</Callout>
+          <Callout tone="info" title="Back for a second pass">
+            You&apos;ve seen the answer and why your pick missed. Answer it once more from memory —
+            this is diagnostic and won&apos;t count as mastery.
+          </Callout>
           <Button
             variant="primary"
             size="lg"
@@ -257,41 +258,21 @@ export function Study() {
   );
 }
 
-function CausePicker({ onPick, pending }: { onPick: (c: ProbableCause) => void; pending: boolean }) {
-  return (
-    <Card elevated>
-      <Stack gap={3}>
-        <h2 className="mc-h3">Before the answer — what happened?</h2>
-        <p className="mc-muted mc-fineprint">
-          Naming the cause is more useful than the key. You&apos;ll get one unassisted retry next.
-        </p>
-        <div className="mc-causegrid">
-          {CAUSES.map((c) => (
-            <button
-              key={c.value}
-              type="button"
-              className="mc-cause"
-              disabled={pending}
-              onClick={() => onPick(c.value)}
-            >
-              {c.label}
-            </button>
-          ))}
-        </div>
-      </Stack>
-    </Card>
-  );
-}
-
+/**
+ * The reveal. `reveal.chosenChoiceId` comes from the server, not from this
+ * screen's selection state: the step change clears the local pick, so reading it
+ * here would silently drop the one thing the reveal has to say — why the option
+ * THEY chose is wrong (§3.3).
+ */
 function Reveal({
   reveal,
-  chosen,
   onContinue,
 }: {
   reveal: NonNullable<Extract<StudyStepView, { kind: 'question' }>['reveal']>;
-  chosen: ChoiceId | null;
   onContinue: () => void;
 }) {
+  const chosen = reveal.chosenChoiceId;
+  const missed = chosen !== null && chosen !== reveal.correctChoiceId;
   return (
     <Card elevated>
       <Stack gap={3}>
@@ -299,13 +280,18 @@ function Reveal({
           <span className="mc-reveal__key">Answer: {reveal.correctChoiceId}</span>
         </div>
         <p>{reveal.correctRationale}</p>
-        {chosen && chosen !== reveal.correctChoiceId && reveal.choiceRationales[chosen] ? (
+        {missed && reveal.choiceRationales[chosen] ? (
           <Callout tone="info" title={`Why ${chosen} misses`}>
             {reveal.choiceRationales[chosen]}
           </Callout>
         ) : null}
+        {missed ? (
+          <p className="mc-muted mc-fineprint">
+            One more unassisted pass at this one before you move on.
+          </p>
+        ) : null}
         <Button variant="primary" size="lg" onClick={onContinue}>
-          Continue
+          {missed ? 'Try it again' : 'Continue'}
         </Button>
       </Stack>
     </Card>

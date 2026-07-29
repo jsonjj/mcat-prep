@@ -1,17 +1,22 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { getAppNativeLesson } from '../app-native';
 import { LessonRenderer } from '../app-native/LessonRenderer';
 
 /**
  * App-native lesson host. Resolves the `:slug` route param to one of the
- * data-driven pilot lessons and hands it to the shared `LessonRenderer`. The
- * "back to lessons" affordance points at the curriculum map.
+ * data-driven pilot lessons and hands it to the shared `LessonRenderer`. When
+ * launched from Today's Path (returnTo in nav state), completion returns to the
+ * plan and marks the activity done; otherwise "back to lessons" points at the map.
  */
 export function Lesson() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { slug = null } = useParams();
   const lesson = getAppNativeLesson(slug);
+  const navState = location.state as { returnTo?: string; activityId?: string } | null;
+  const returnTo = navState?.returnTo;
+  const activityId = navState?.activityId;
 
   if (!lesson) {
     return (
@@ -38,7 +43,10 @@ export function Lesson() {
       key={`${lesson.script.id}:${lesson.script.contentVersion}`}
       script={lesson.script}
       presentation={lesson.presentation}
-      lessonIndexHref="/app/curriculum"
+      lessonIndexHref={returnTo ?? '/app/curriculum'}
+      {...(returnTo
+        ? { onComplete: () => navigate(returnTo, { state: { completedActivityId: activityId } }) }
+        : {})}
     />
   );
 }

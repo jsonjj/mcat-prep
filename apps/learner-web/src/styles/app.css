@@ -108,7 +108,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--mc-space-3) var(--mc-space-4);
+  padding: var(--mc-space-2) var(--mc-space-4);
   background: transparent;
 }
 .mc-brand {
@@ -336,6 +336,13 @@ body {
   touch-action: pan-y;
   cursor: grab;
 }
+/* Home: keep the brain full size, but crop the transparent air around it (the brain
+   renders centered in a tall canvas) by pulling its neighbors in — this shrinks the
+   whitespace above and below the brain WITHOUT resizing the brain itself. */
+.mc-atlas--home .mc-atlas__canvas {
+  margin-top: calc(-1 * var(--mc-space-5));
+  margin-bottom: calc(-1 * var(--mc-space-5));
+}
 .mc-atlas__canvas:active {
   cursor: grabbing;
 }
@@ -453,8 +460,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: var(--mc-space-3);
-  padding-top: var(--mc-space-2);
+  gap: var(--mc-space-2);
+  padding-top: 0;
+  /* Pull the greeting up so there's little dead space above "Good morning"
+     (cancels the main content top padding). */
+  margin-top: calc(-1 * var(--mc-space-4));
 }
 .mc-home__greeting {
   text-align: center;
@@ -500,6 +510,69 @@ body {
 .mc-upnext:hover {
   transform: translateY(-2px);
   box-shadow: 0 14px 48px color-mix(in srgb, var(--mc-primary) 18%, transparent);
+}
+/* Same hero as a real button (one-tap "continue" from Home). */
+.mc-upnext--btn {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.mc-upnext__link {
+  display: inline-block;
+  margin-top: var(--mc-space-2);
+  padding-left: var(--mc-space-2);
+  font-size: var(--mc-text-14);
+  color: var(--mc-ink-muted);
+}
+/* Passage of the Day — a prominent hero-style card with a warm reading accent so it
+   reads as its own thing next to Today's Path (not a plain link row). */
+.mc-passage {
+  background: color-mix(in srgb, #ffd98a 20%, var(--mc-surface));
+  border-color: color-mix(in srgb, #f0b95a 32%, var(--mc-border));
+}
+.mc-passage__play {
+  background:
+    radial-gradient(circle at 30% 25%, color-mix(in srgb, #ffffff 55%, transparent), transparent 60%),
+    linear-gradient(135deg, #ffcf6b 0%, #ffb14e 55%, #f59e3c 100%);
+  box-shadow: 0 8px 22px color-mix(in srgb, #f0b95a 34%, transparent);
+}
+
+/* "Up next" running card: text on the left, then a bigger "see the plan" button
+   in the gap before the round start button. The card itself isn't clickable. */
+.mc-upnext--running:hover {
+  transform: none;
+}
+.mc-upnext__actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-upnext__planbtn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--mc-space-2) var(--mc-space-4);
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 34%, var(--mc-border));
+  background: color-mix(in srgb, var(--mc-surface) 72%, transparent);
+  color: var(--mc-primary-text);
+  font-size: var(--mc-text-14);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--mc-motion-control) var(--mc-ease),
+    transform var(--mc-motion-control) var(--mc-ease);
+}
+.mc-upnext__planbtn:hover {
+  background: color-mix(in srgb, var(--mc-primary) 14%, var(--mc-surface));
+  transform: translateY(-1px);
+}
+.mc-upnext__play--btn {
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 .mc-upnext__text {
   display: flex;
@@ -801,6 +874,16 @@ body {
 .mc-choice__text {
   flex: 1;
 }
+/* A choice already tried on the first attempt (disabled on the second go). */
+.mc-choice--tried {
+  opacity: 0.55;
+}
+.mc-choice__note {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-style: italic;
+  opacity: 0.75;
+}
 .mc-choice--correct {
   border-color: var(--mc-primary);
   box-shadow: inset 0 0 0 1px var(--mc-primary);
@@ -935,18 +1018,6 @@ body {
   border-radius: var(--mc-radius-control);
   background: var(--mc-surface);
 }
-.mc-diag-priority__rank {
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-family: var(--mc-font-mono);
-  font-weight: 700;
-  background: color-mix(in srgb, var(--mc-primary) 16%, transparent);
-  color: var(--mc-primary-text);
-}
 .mc-diag-priority__body {
   display: flex;
   flex-direction: column;
@@ -1003,30 +1074,6 @@ body {
   cursor: pointer;
   font: inherit;
   padding: var(--mc-space-2);
-}
-.mc-causegrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--mc-space-2);
-}
-@media (min-width: 560px) {
-  .mc-causegrid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-.mc-cause {
-  text-align: left;
-  padding: var(--mc-space-3) var(--mc-space-4);
-  border: 1px solid var(--mc-border);
-  border-radius: var(--mc-radius-control);
-  background: var(--mc-surface);
-  color: var(--mc-ink);
-  cursor: pointer;
-  min-height: var(--mc-touch);
-  font: inherit;
-}
-.mc-cause:hover {
-  background: var(--mc-surface-2);
 }
 .mc-reveal__key {
   font-family: var(--mc-font-mono);
@@ -1207,6 +1254,124 @@ body {
 .mc-cars-subskills {
   width: 100%;
   margin-top: var(--mc-space-4);
+}
+
+/* ---- Progress dashboard (Concept B): skills rail · brain · CARS ----
+   One merged, single-screen view — all three evidence surfaces at once, no tabs.
+   Mobile-first it stacks in normal flow; on a laptop (>=1180px) it becomes a
+   three-zone grid and the shell main column is allowed to grow past the 760px cap.
+   Both the widen and the grid are gated behind `.mc-progressboard--wide`, so every
+   other screen keeps the shared 760px cap and nothing else changes. The block is
+   `mc-progressboard`, not `mc-progress`, to avoid the thin progress-*bar* class. */
+.mc-progressboard__head {
+  gap: var(--mc-space-1);
+}
+.mc-progressboard__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-5);
+}
+.mc-progressboard__center {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.mc-progressboard__rail {
+  min-width: 0;
+  padding: var(--mc-space-4);
+}
+
+/* Left rail — the seven reasoning skills as compact mastery rings + labels. */
+.mc-skillrings {
+  list-style: none;
+  margin: var(--mc-space-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-skillring {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-skillring .mc-ring {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+}
+.mc-skillring .mc-ring__pct {
+  font-size: 30px;
+}
+.mc-skillring__label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.mc-skillring__title {
+  font-size: var(--mc-text-15);
+  font-weight: 600;
+  line-height: 1.2;
+}
+.mc-skillring__tag {
+  font-size: var(--mc-text-12);
+  font-weight: 600;
+  color: var(--mc-ink-muted);
+}
+.mc-skillring__tag--mastered {
+  color: var(--mc-state-strong);
+}
+
+/* Right rail — a tighter CARS card that abbreviates the sub-skills to FOC/RWT/RBT. */
+.mc-cars--compact {
+  padding: var(--mc-space-4);
+}
+.mc-cars--compact .mc-cars-gauge {
+  margin-top: var(--mc-space-2);
+}
+.mc-cars--compact .mc-cars-gauge svg {
+  max-width: 230px;
+}
+.mc-cars--compact .mc-cars-gauge__word {
+  font-size: var(--mc-text-22);
+}
+.mc-cars--compact .mc-cars-subskills {
+  margin-top: var(--mc-space-3);
+}
+.mc-cars--compact .mc-skillbars {
+  gap: var(--mc-space-3);
+}
+.mc-cars--compact .mc-skillbar__head {
+  margin-bottom: var(--mc-space-1);
+}
+.mc-cars--compact .mc-skillbar__label {
+  font-family: var(--mc-font-body);
+  font-size: var(--mc-text-15);
+  font-weight: 700;
+}
+
+/* Laptop: widen just this page and lay the three zones side by side. The brain
+   keeps its usual size and stays the hero; the rails are compact but readable.
+   Below 1180px the page keeps the 760px cap, stacks, and scrolls like any screen. */
+@media (min-width: 1180px) {
+  .mc-shell__main:has(.mc-progressboard--wide) {
+    max-width: 1180px;
+  }
+  .mc-progressboard--wide .mc-progressboard__grid {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr) 270px;
+    gap: var(--mc-space-5);
+    align-items: start;
+  }
+  .mc-progressboard--wide .mc-atlas {
+    margin-top: 0;
+  }
+  /* Keep the no-WebGL still-image fallback within the (narrower) center column. */
+  .mc-progressboard--wide .mc-brainhero__img,
+  .mc-progressboard--wide .mc-brainhero__halo {
+    max-width: 100%;
+  }
 }
 
 /* ---- Segmented control (Progress: Lessons | CARS) ---- */
@@ -1583,6 +1748,25 @@ body {
   border: 1px solid var(--mc-border);
   border-radius: var(--mc-radius-control);
   background: var(--mc-surface);
+}
+/* A lesson arrived at via ?lesson= deep-link — briefly draw the eye to it. */
+.mc-curriculum__lesson--highlight {
+  border-color: var(--mc-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mc-primary) 28%, transparent);
+  animation: mc-curriculum-pulse 1.6s var(--mc-ease) 1;
+}
+@keyframes mc-curriculum-pulse {
+  0% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--mc-primary) 42%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mc-primary) 28%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc-curriculum__lesson--highlight {
+    animation: none;
+  }
 }
 .mc-curriculum__lesson-main {
   display: flex;
@@ -2061,11 +2245,100 @@ body {
 }
 
 /* Entry-point action rows (home, editor, import) */
+/* Tighten the Recall tab so the deck card + glance + forecast fit without scrolling. */
+.mc-recall.mc-screen {
+  gap: var(--mc-space-2);
+  margin-top: calc(-1 * var(--mc-space-3));
+}
+.mc-recall .mc-card {
+  padding: var(--mc-space-4);
+}
+/* The primary Recall action (Start review / Learn new cards) — a bit larger. */
+.mc-recall__cta.mc-button {
+  min-height: 60px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.mc-recall__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mc-space-2);
+  text-align: center;
+}
 .mc-recall__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--mc-space-3);
+}
+/* Distribute the Add / Import actions evenly across the card. */
+.mc-recall__actions > .mc-button {
+  flex: 1 1 160px;
+}
+
+/* Deck-at-a-glance: next-7-days due forecast (home) */
+.mc-recall__forecast {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--mc-space-2);
+}
+.mc-recall__forecast-col {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mc-space-2);
+  min-width: 0;
+}
+.mc-recall__forecast-count {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-15);
+  line-height: var(--mc-leading-tight);
+  color: var(--mc-ink);
+}
+.mc-recall__forecast-track {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 96px;
+}
+.mc-recall__forecast-bar {
+  width: 100%;
+  min-height: 4px;
+  border-radius: var(--mc-radius-control) var(--mc-radius-control) 0 0;
+  background: var(--mc-primary);
+}
+.mc-recall__forecast-bar--empty {
+  background: var(--mc-border);
+}
+.mc-recall__forecast-label {
+  font-size: var(--mc-text-12);
+  color: var(--mc-ink-muted);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.mc-recall__forecast-label--today {
+  color: var(--mc-primary-text);
+  font-weight: 700;
+}
+
+/* Build-a-strong-deck tips (empty deck) */
+.mc-recall__tips {
+  margin: 0;
+  padding-left: var(--mc-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+  color: var(--mc-ink-muted);
+}
+.mc-recall__tips li {
+  line-height: var(--mc-leading-body);
+}
+.mc-recall__tips strong {
+  color: var(--mc-ink);
+  font-weight: 700;
 }
 
 /* Review screen */
@@ -2409,4 +2682,543 @@ body {
   background: color-mix(in srgb, var(--mc-primary) 16%, transparent);
   color: var(--mc-primary-text);
   font-weight: 700;
+}
+
+/* ---- Diagnostic block palette (multistage jump grid) ---- */
+.mc-diag-palette {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-diag-palette__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+}
+.mc-diag-palette__count {
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-12);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mc-ink-muted);
+}
+.mc-diag-palette__legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mc-space-3);
+  font-size: var(--mc-text-12);
+  color: var(--mc-ink-muted);
+}
+.mc-diag-palette__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-1);
+}
+.mc-diag-palette__swatch {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border: 1px dashed var(--mc-border);
+  border-radius: 4px;
+  background: var(--mc-surface);
+}
+.mc-diag-palette__swatch--answered {
+  border-style: solid;
+  background: color-mix(in srgb, var(--mc-primary) 20%, var(--mc-surface));
+}
+.mc-diag-palette__swatch--flagged::after,
+.mc-diag-palette__cell--flagged::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-top: 9px solid var(--mc-warning);
+  border-left: 9px solid transparent;
+}
+.mc-diag-palette__cell--flagged::after {
+  border-top-width: 12px;
+  border-left-width: 12px;
+}
+/* Scrolls only on the narrowest viewports, where a block wraps past a screen. */
+.mc-diag-palette__grid {
+  list-style: none;
+  margin: 0;
+  /* Room for the focus ring, which an overflow container would otherwise clip. */
+  padding: var(--mc-focus-width);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(2.75rem, 1fr));
+  gap: var(--mc-space-2);
+  max-height: 19rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.mc-diag-palette__cell {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--mc-border);
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface);
+  color: var(--mc-ink);
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-14);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.mc-diag-palette__cell:focus-visible {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+}
+.mc-diag-palette__cell--answered {
+  border-style: solid;
+  background: color-mix(in srgb, var(--mc-primary) 18%, var(--mc-surface));
+  color: var(--mc-primary-text);
+  font-weight: 700;
+}
+.mc-diag-palette__cell--current {
+  border-style: solid;
+  box-shadow: inset 0 0 0 2px var(--mc-ink);
+  font-weight: 700;
+}
+
+/* ---- Per-bucket gap chart (diagnostic result) ---- */
+.mc-gapchart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-4);
+}
+.mc-gapchart__rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-4);
+}
+.mc-gapchart__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+  /* Every row is indented equally so that colouring the rule on a starting
+     point shifts nothing else on the chart. */
+  border-left: 3px solid transparent;
+  padding-left: var(--mc-space-3);
+}
+.mc-gapchart__row--priority {
+  border-left-color: var(--mc-primary);
+}
+.mc-gapchart__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+}
+.mc-gapchart__label {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--mc-space-2);
+  min-width: 0;
+}
+.mc-gapchart__mark {
+  padding: 0 var(--mc-space-2);
+  border: 1px solid var(--mc-primary);
+  border-radius: var(--mc-radius-pill);
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  color: var(--mc-primary-text);
+  white-space: nowrap;
+}
+.mc-gapchart__title {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-15);
+  font-weight: 600;
+}
+.mc-gapchart__pct {
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-14);
+  font-variant-numeric: tabular-nums;
+  color: var(--mc-primary-text);
+}
+.mc-gapchart__track {
+  position: relative;
+  height: 22px;
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface-2);
+  overflow: hidden;
+}
+.mc-gapchart__fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 13px;
+  min-width: 2px;
+  border-radius: var(--mc-radius-pill);
+  background: linear-gradient(90deg, var(--mc-primary), var(--mc-primary-hover));
+}
+/* Plausible range. Hatch + caliper ends read in greyscale. The whisker sits in
+   the top 9px and the fill in the bottom 13px of the 22px track, so no span can
+   collide with the bar however wide it gets — the widest the served form has
+   produced is ~63% of the scale. `min-width` keeps the tightest span (under 1%)
+   from vanishing, and the track clips the 2px floor rather than letting it run
+   past the right edge. */
+.mc-gapchart__range {
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  height: 9px;
+  min-width: 2px;
+  border-left: 1px solid var(--mc-ink);
+  border-right: 1px solid var(--mc-ink);
+  background: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc-ink) 45%, transparent) 0 2px,
+    transparent 2px 5px
+  );
+}
+.mc-gapchart__track--provisional .mc-gapchart__range {
+  background: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc-ink) 45%, transparent) 0 2px,
+    transparent 2px 8px
+  );
+}
+/* A borderline bar is porous, so a shaky high gap never reads as solid. */
+.mc-gapchart__track--provisional .mc-gapchart__fill {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--mc-primary) 0 6px,
+    color-mix(in srgb, var(--mc-primary) 30%, transparent) 6px 11px
+  );
+}
+.mc-gapchart__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mc-space-2);
+  margin: var(--mc-space-1) 0 0;
+}
+.mc-gapchart__band {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--mc-space-2);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-pill);
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+}
+.mc-gapchart__band--confident {
+  border-color: var(--mc-primary);
+  color: var(--mc-primary-text);
+}
+.mc-gapchart__band--moderate {
+  border-style: dashed;
+}
+.mc-gapchart__band--provisional {
+  border-style: dotted;
+  color: var(--mc-ink-muted);
+}
+.mc-gapchart__axis {
+  margin: 0;
+}
+
+/* ---- Practice (adaptive test-out) ---- */
+.mc-practice {
+  gap: var(--mc-space-4);
+}
+/* Practice intro: a touch bigger than fineprint, easy to read. */
+.mc-practice__intro {
+  font-size: var(--mc-text-15);
+  color: var(--mc-ink-muted);
+  line-height: 1.55;
+}
+/* "How many questions?" — centered label + number input. */
+.mc-practice__count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mc-space-3);
+  text-align: center;
+}
+.mc-practice__count .mc-h3 {
+  font-size: var(--mc-text-28);
+}
+.mc-practice__countinput {
+  width: 120px;
+  min-height: 56px;
+  font-size: var(--mc-text-28);
+}
+.mc-practice__esttime {
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-17);
+}
+/* Make the primary CTA bigger + a touch of lift so it draws the eye. */
+.mc-practice__start.mc-button {
+  min-height: 64px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  box-shadow: var(--mc-shadow-card);
+}
+.mc-practice__start.mc-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 2px 4px rgba(16, 34, 46, 0.1),
+    0 14px 34px rgba(16, 34, 46, 0.16);
+}
+/* Read-only "Where you stand" — 7 reasoning-skill mastery bars (weakest first). */
+.mc-practice__stand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-practice__standhead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mc-space-2);
+}
+/* "Needs the most review" — the 3 weakest lessons as mastery rings, side by side.
+   Each ring links into the curriculum. Amber arc = low mastery / needs work. */
+.mc-weakest {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-weakest__rings {
+  display: flex;
+  gap: var(--mc-space-3);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.mc-weakest__ring {
+  flex: 1 1 0;
+  min-width: 120px;
+  max-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mc-space-2);
+  padding: var(--mc-space-4) var(--mc-space-3);
+  border-radius: var(--mc-radius-card);
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border);
+  box-shadow: var(--mc-shadow-card);
+  text-decoration: none;
+  color: var(--mc-ink);
+  transition:
+    transform var(--mc-motion-control) var(--mc-ease),
+    box-shadow var(--mc-motion-control) var(--mc-ease),
+    border-color var(--mc-motion-control) var(--mc-ease);
+}
+.mc-weakest__ring:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--mc-primary) 45%, var(--mc-border));
+  box-shadow:
+    0 2px 4px rgba(16, 34, 46, 0.08),
+    0 12px 30px rgba(16, 34, 46, 0.1);
+}
+.mc-ring {
+  width: 104px;
+  height: 104px;
+  display: block;
+}
+.mc-ring__track {
+  fill: none;
+  stroke: var(--mc-surface-2);
+  stroke-width: 9;
+}
+.mc-ring__arc {
+  fill: none;
+  stroke: #e88a4e;
+  stroke-width: 9;
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--mc-motion-route) var(--mc-ease);
+}
+/* Tone by mastery, consistent with the app palette: teal when high, amber when
+   low, deep teal-green once mastered, muted violet when a mastered skill decays
+   and needs a refresh. `--review` (Practice's weakest lessons) is always amber. */
+.mc-ring__arc--review,
+.mc-ring__arc--low {
+  stroke: #e88a4e;
+}
+.mc-ring__arc--high {
+  stroke: var(--mc-primary);
+}
+.mc-ring__arc--mastered {
+  stroke: var(--mc-state-strong);
+}
+.mc-ring__arc--refresh {
+  stroke: var(--mc-retained);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc-ring__arc {
+    transition: none;
+  }
+}
+.mc-ring__pct {
+  font-family: var(--mc-font-display);
+  font-size: 24px;
+  font-weight: 700;
+  fill: var(--mc-ink);
+}
+.mc-weakest__ringtitle {
+  font-size: var(--mc-text-14);
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.25;
+}
+.mc-practice__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mc-space-2);
+  margin-top: var(--mc-space-2);
+}
+.mc-practice__chip {
+  min-height: var(--mc-touch);
+  min-width: var(--mc-touch);
+  padding: var(--mc-space-2) var(--mc-space-4);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-surface);
+  color: var(--mc-ink);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+.mc-practice__chip:hover {
+  background: var(--mc-surface-2);
+}
+.mc-practice__chip--on {
+  border-color: var(--mc-primary);
+  background: color-mix(in srgb, var(--mc-primary) 12%, transparent);
+  color: var(--mc-primary-text);
+  font-weight: 700;
+}
+.mc-practice__progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-practice__bar {
+  height: 8px;
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-surface-2);
+  overflow: hidden;
+}
+.mc-practice__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--mc-glow-aqua), var(--mc-primary));
+  transition: width var(--mc-motion-route) var(--mc-ease);
+}
+.mc-reveal__key--ok {
+  color: var(--mc-state-strong);
+}
+
+/* ---- Today's Path (daily plan + guided runner) ---- */
+.mc-plan__budgetrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+}
+.mc-plan__current {
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 40%, transparent);
+}
+.mc-plan__row--current {
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 32%, transparent);
+  background: color-mix(in srgb, var(--mc-primary) 5%, var(--mc-surface));
+}
+.mc-plan__rowtext {
+  min-width: 0;
+}
+.mc-plan__rowactions {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+  flex-shrink: 0;
+}
+/* Daily-time card: bigger label + a boxed "% reviewed" badge that pops. */
+.mc-plan__budgetleft {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--mc-space-2);
+}
+.mc-plan__budgetlabel {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-22);
+  color: var(--mc-ink);
+}
+.mc-plan__reviewbadge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--mc-radius-pill);
+  font-size: var(--mc-text-15);
+  font-weight: 700;
+  color: var(--mc-primary-text);
+  background: color-mix(in srgb, var(--mc-primary) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 30%, var(--mc-border));
+}
+/* Free hours + minutes budget input. */
+.mc-timeinput {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-1);
+}
+.mc-timeinput__field {
+  width: 58px;
+  min-height: var(--mc-touch);
+  padding: var(--mc-space-2);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface);
+  color: var(--mc-ink);
+  font-size: var(--mc-text-17);
+  font-weight: 700;
+  text-align: center;
+}
+.mc-timeinput__field:focus {
+  outline: none;
+  border-color: var(--mc-primary);
+}
+.mc-timeinput__unit {
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-15);
+  margin-right: var(--mc-space-2);
+}
+/* Plan header: title on the left, boxed stats on the right. */
+.mc-plan__planhead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mc-space-2);
+  margin-bottom: var(--mc-space-3);
+}
+.mc-plan__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mc-space-2);
+}
+.mc-plan__stat {
+  padding: 6px 12px;
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface-2);
+  font-size: var(--mc-text-15);
+  font-weight: 700;
+  color: var(--mc-ink);
 }

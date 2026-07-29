@@ -67,6 +67,13 @@ export const IconBrain = (p: SVGProps<SVGSVGElement>) => (
     <path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5.8V15a3 3 0 0 1-4 2.8V4Z" />
   </svg>
 );
+export const IconPractice = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="12" r="8" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="12" cy="12" r="0.6" fill="currentColor" />
+  </svg>
+);
 export const IconUser = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}>
     <circle cx="12" cy="8" r="3.5" />

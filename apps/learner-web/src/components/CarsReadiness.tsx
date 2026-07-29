@@ -1,5 +1,5 @@
 import { CARS_SKILL_INFO, type CarsReadinessLabel } from '@mcat/contracts';
-import { Card, Eyebrow } from '@mcat/ui-web';
+import { Card, Eyebrow, VisuallyHidden } from '@mcat/ui-web';
 import { useCarsReadiness } from '../app/queries';
 
 /**
@@ -8,6 +8,10 @@ import { useCarsReadiness } from '../app/queries';
  * target; the three CARS sub-skills reuse the Skills-page bars for consistency.
  * Ability is an IRT `V` (never a scaled score); it grows from Passage of the Day
  * and, more gently, the CARS Duel.
+ *
+ * `compact` is the Progress-dashboard variant: a tighter card that abbreviates the
+ * sub-skills to FOC / RWT / RBT (full names kept for assistive tech) so it sits in
+ * the right rail beside the brain without vertical scroll.
  */
 
 const CX = 130;
@@ -33,7 +37,7 @@ const LABEL_TEXT: Record<CarsReadinessLabel, string> = {
   on_track: 'On-track',
 };
 
-export function CarsReadiness() {
+export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
   const cars = useCarsReadiness();
   const d = cars.data;
   if (!d) return null;
@@ -46,7 +50,7 @@ export function CarsReadiness() {
   const tickLabel = pointAt(targetF, R + 22);
 
   return (
-    <Card elevated>
+    <Card elevated className={compact ? 'mc-cars mc-cars--compact' : 'mc-cars'}>
       <Eyebrow>CARS reading ability</Eyebrow>
       <div className="mc-cars-gauge">
         <svg viewBox="0 0 260 152" role="img" aria-label={`Reading ability: ${LABEL_TEXT[d.label]}`}>
@@ -82,18 +86,24 @@ export function CarsReadiness() {
           <circle className="mc-cars-gauge__marker" cx={r1(marker.x)} cy={r1(marker.y)} r="6" />
         </svg>
         <p className="mc-cars-gauge__word">{LABEL_TEXT[d.label]}</p>
-        <p className="mc-muted mc-fineprint">
-          On-track once the marker passes the tick — never a scaled score.
-        </p>
+        {compact ? null : (
+          <p className="mc-muted mc-fineprint">
+            On-track once the marker passes the tick — never a scaled score.
+          </p>
+        )}
       </div>
 
       <ul className="mc-skillbars mc-cars-subskills" aria-label="CARS sub-skills">
         {d.skills.map((s) => {
           const pct = Math.round(s.pct * 100);
+          const full = CARS_SKILL_INFO[s.skill].title;
           return (
             <li key={s.skill} className="mc-skillbar">
               <div className="mc-skillbar__head">
-                <span className="mc-skillbar__label">{CARS_SKILL_INFO[s.skill].title}</span>
+                <span className="mc-skillbar__label" title={compact ? full : undefined}>
+                  {compact ? s.skill : full}
+                  {compact ? <VisuallyHidden> — {full}</VisuallyHidden> : null}
+                </span>
                 <span className="mc-skillbar__meta">
                   <span className="mc-skillbar__pct">{pct}%</span>
                 </span>

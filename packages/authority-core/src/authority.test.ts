@@ -6,13 +6,20 @@ import {
   MasteryMapEntrySchema,
   QualifiedBktObservationSchema,
   UtcTimestampSchema,
+  type MasterySeed,
   type QualifiedBktObservation,
   type ReasoningOperation,
   type UtcTimestamp,
 } from '@mcat/contracts';
 import { clusterForKc, loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
 import { EVIDENCE_QUALITY_TIERS, EVIDENCE_REASONS, EvidenceRecordSchema } from '@mcat/domain';
-import { currentPL, MASTERY_THRESHOLD, PRIOR_PL0 } from '@mcat/policies';
+import {
+  currentPL,
+  MASTERY_THRESHOLD,
+  PRIOR_PL0,
+  SEED_PRIOR_CAP,
+  SEED_PRIOR_FLOOR,
+} from '@mcat/policies';
 import {
   Authority,
   BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS,
@@ -39,8 +46,8 @@ function onboard(auth: Authority): LearnerState {
 }
 
 /** Answer the current question step correctly (all synthetic keys are 'A'). */
-function answerCorrectly(auth: Authority, state: LearnerState): void {
-  auth.submitAttempt(state, 'A');
+async function answerCorrectly(auth: Authority, state: LearnerState): Promise<void> {
+  await auth.submitAttempt(state, 'A');
 }
 
 describe('Authority — synthetic enzyme vertical', () => {
@@ -51,7 +58,7 @@ describe('Authority — synthetic enzyme vertical', () => {
     expect(auth.bootstrap(state).onboardingComplete).toBe(false);
   });
 
-  it('completes the placement-to-protected-proof loop and produces mastery evidence', () => {
+  it('completes the placement-to-protected-proof loop and produces mastery evidence', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
     expect(auth.bootstrap(state).onboardingComplete).toBe(true);
@@ -65,7 +72,7 @@ describe('Authority — synthetic enzyme vertical', () => {
       } else if (step.kind === 'recall') {
         auth.submitRecall(state, 'increases; unchanged');
       } else if (step.kind === 'question') {
-        answerCorrectly(auth, state);
+        await answerCorrectly(auth, state);
       }
     }
 
@@ -90,7 +97,20 @@ describe('Authority — synthetic enzyme vertical', () => {
     expect(JSON.stringify(state.events)).not.toContain('rationales');
   });
 
-  it('runs Diagnose-Before-Reveal on a miss and records an error entry', () => {
+  /**
+   * Rewritten from the Diagnose-Before-Reveal assertion this test used to carry.
+   * That flow asked the learner to name the cause of the miss BEFORE showing the
+   * key. The cause question is gone on tier-A evidence — experts naming which bias
+   * produced an error agree at κ = 0.000–0.063 (§2.3) — and it stays gone. The old
+   * test also asserted the error log was practice-scoped; the human's decision is
+   * that a Study question is a genuine question attempt and belongs on the tab
+   * (§6.5).
+   *
+   * The Study reveal still names the key on the first miss. Deferring the key to a
+   * second miss is a §3.3 amendment (2026-07-28) scoped to adaptive Practice, whose
+   * step machine is client-local; this assertion is about Study and stands.
+   */
+  it('reveals a Study miss immediately, refuting the option that was chosen', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
 
@@ -100,33 +120,88 @@ describe('Authority — synthetic enzyme vertical', () => {
     let step = auth.getSession(state);
     expect(step.kind).toBe('question');
 
-    // Miss it.
-    auth.submitAttempt(state, 'B');
-    step = auth.getSession(state);
-    expect(step.kind === 'question' && step.sub === 'cause').toBe(true);
-
-    auth.selectCause(state, 'knew_but_misapplied');
-    step = auth.getSession(state);
-    expect(step.kind === 'question' && step.sub === 'retry').toBe(true);
-
-    // Unassisted retry (correct) -> reveal.
-    auth.submitAttempt(state, 'A');
+    // Miss it: the very next step is the correction, with no step in between.
+    await auth.submitAttempt(state, 'B');
     step = auth.getSession(state);
     expect(step.kind === 'question' && step.sub === 'reveal').toBe(true);
-    if (step.kind === 'question') expect(step.reveal?.correctChoiceId).toBe('A');
+    if (step.kind === 'question') {
+      expect(step.reveal?.correctChoiceId).toBe('A');
+      // The refutation is of THEIR option, carried by the server so it survives
+      // the step change and a reload.
+      expect(step.reveal?.chosenChoiceId).toBe('B');
+      expect(step.reveal?.choiceRationales['B']).toMatch(/competitive/i);
+    }
+  });
 
+  it('still owes one unassisted retry, now after the reveal instead of before it', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.continueStep(state); // past the lesson
+
+    await auth.submitAttempt(state, 'B');
+    // Leaving the reveal spends the retry rather than advancing the path.
     auth.continueStep(state);
+    let step = auth.getSession(state);
+    expect(step.kind === 'question' && step.sub === 'retry').toBe(true);
+    if (step.kind === 'question') expect(step.question.id).toBe('q-enz-indep-competitive');
 
-    const errors = auth.getErrorLog(state);
-    expect(errors.length).toBeGreaterThan(0);
-    expect(errors[0]!.cause).toBe('knew_but_misapplied');
-    expect(errors[0]!.repaired).toBe(true);
+    await auth.submitAttempt(state, 'A');
+    step = auth.getSession(state);
+    // The correction was already shown, so the retry advances rather than
+    // re-revealing.
+    expect(step.kind === 'question' && step.sub === 'answering').toBe(true);
+    if (step.kind === 'question') expect(step.question.id).toBe('q-enz-indep-noncompetitive');
 
+    expect(
+      state.evidence.filter(
+        (e) => e.questionId === 'q-enz-indep-competitive' && e.kind === 'diagnostic_retry',
+      ),
+    ).toHaveLength(1);
     // The retry did not create independent (mastery) evidence for that item.
     const independentForItem = state.evidence.filter(
       (e) => e.questionId === 'q-enz-indep-competitive' && e.kind === 'independent',
     );
     expect(independentForItem.length).toBe(0);
+  });
+
+  it('puts a Study miss on the Mistakes tab with the distractor preserved', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.continueStep(state); // past the lesson
+    await auth.submitAttempt(state, 'B');
+
+    const log = await auth.getErrorLog(state);
+    expect(log).toHaveLength(1);
+    const entry = log[0]!;
+    expect(entry.questionId).toBe('q-enz-indep-competitive');
+    expect(entry.chosenChoiceId).toBe('B');
+    expect(entry.chosenChoiceText.length).toBeGreaterThan(0);
+    expect(entry.correctChoiceId).toBe('A');
+    expect(entry.choiceRationale).not.toBeNull();
+    expect(entry.stem.length).toBeGreaterThan(0);
+    // A v3 KC id, not the skill-graph node this used to log. Adaptive Practice logs
+    // `questions.kc_id` from the same 422-KC space, so the two now compare equal.
+    expect(entry.kcId).toBe('V3-KC-525816');
+    // The re-attempt token routes into the adaptive queue, whose exposure seam
+    // picks a fresh unseen item rather than re-serving this one.
+    expect(entry.focus).toBe('bb1');
+    expect(entry).not.toHaveProperty('cause');
+  });
+
+  it('resumes a session persisted on the removed cause step at the reveal', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.continueStep(state);
+    await auth.submitAttempt(state, 'B');
+    // Simulate a projection written before the cause step was removed.
+    (state.session as unknown as { sub: string }).sub = 'cause';
+    state.session!.retryPending = false;
+
+    const step = auth.getSession(state);
+    expect(step.kind === 'question' && step.sub === 'reveal').toBe(true);
+    // The retry it was about to offer is still owed.
+    auth.continueStep(state);
+    expect(auth.getSession(state)).toMatchObject({ kind: 'question', sub: 'retry' });
   });
 
   it('keeps numeric readiness gated and mastery honest when work is assisted-only', () => {
@@ -143,7 +218,7 @@ describe('Authority — synthetic enzyme vertical', () => {
 describe('Authority — BKT mastery engine (P(L))', () => {
   const PRIOR = 0.2;
 
-  it('exposes 7 skills that start at the prior and rise with independent-correct work', () => {
+  it('exposes 7 skills that start at the prior and rise with independent-correct work', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
 
@@ -156,7 +231,7 @@ describe('Authority — BKT mastery engine (P(L))', () => {
       if (step.kind === 'complete') break;
       if (step.kind === 'lesson' || step.kind === 'simulation') auth.continueStep(state);
       else if (step.kind === 'recall') auth.submitRecall(state, 'increases; unchanged');
-      else if (step.kind === 'question') auth.submitAttempt(state, 'A');
+      else if (step.kind === 'question') await auth.submitAttempt(state, 'A');
     }
 
     const after = auth.getMasterySkills(state);
@@ -176,14 +251,14 @@ describe('Authority — BKT mastery engine (P(L))', () => {
     });
   });
 
-  it('is fail-closed: an assisted retry after a miss never raises P(L)', () => {
+  it('is fail-closed: an assisted retry after a miss never raises P(L)', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
     auth.continueStep(state); // past lesson → first independent question
 
-    auth.submitAttempt(state, 'B'); // independent WRONG → lowers P(L)
-    auth.selectCause(state, 'knew_but_misapplied');
-    auth.submitAttempt(state, 'A'); // retry CORRECT but non-independent → no change
+    await auth.submitAttempt(state, 'B'); // independent WRONG → lowers P(L)
+    auth.continueStep(state); // leave the reveal → spends the one retry
+    await auth.submitAttempt(state, 'A'); // retry CORRECT but non-independent → no change
 
     const skills = auth.getMasterySkills(state);
     // Nothing was pushed above the prior by the assisted retry...
@@ -474,7 +549,7 @@ describe('Authority — the evidence warrant stays a separate signal', () => {
     expect(carriesATier(auth.buildSummary(state, 'bb1-enzyme-inhibition'))).toBe(false);
   });
 
-  it('agrees with Home about how many skills are glowing, because both are BKT', () => {
+  it('agrees with Home about how many skills are glowing, because both are BKT', async () => {
     // B-2: `skillsGlowing` used to threshold the evidence tier at `>= independent`
     // while Home counted BKT `mastered`, so a learner could read "3 glowing" on
     // Wrapped and "0" on Home in one session. Identity, not approximation.
@@ -489,7 +564,7 @@ describe('Authority — the evidence warrant stays a separate signal', () => {
     }
 
     const homeGlowing = auth.getMasterySkills(state).filter((s) => s.mastered).length;
-    expect(auth.getWrapped(state).skillsGlowing).toBe(homeGlowing);
+    expect((await auth.getWrapped(state)).skillsGlowing).toBe(homeGlowing);
   });
 });
 
@@ -1209,5 +1284,101 @@ describe('Authority — the decay clock is bounded below as well as above', () =
       clockAdjustment: 'held_at_last_practiced',
       appliedOccurredAt: at(NOW),
     });
+  });
+});
+
+describe('Authority — diagnostic mastery seeding', () => {
+  const emptySeed = (): MasterySeed => ({
+    kcPriors: {},
+    skillPriors: {},
+    lessonPriors: {},
+    carsAbility: {},
+  });
+
+  /** A second registry lesson, so the floor is read at a different membership. */
+  const FLOOR_LESSON_ID = 'V3-LES-789208';
+
+  /** Seed every required member KC of a lesson, which is the grain a seed writes. */
+  const kcPriorsFor = (lessonId: string, prior: number): Record<string, number> =>
+    Object.fromEntries((orderedKcsForLesson(lessonId) ?? []).map((kcId) => [kcId, prior]));
+
+  const rollupOf = (auth: Authority, state: LearnerState, lessonId: string) => {
+    const [rollup] = auth.getLessonRollups(state, [lessonId]);
+    if (rollup?.status !== 'available') {
+      throw new Error(`expected an available rollup for ${lessonId}`);
+    }
+    return rollup.view;
+  };
+
+  it('initializes an unpractised lesson through its member KCs', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+
+    auth.applyMasterySeed(state, { ...emptySeed(), kcPriors: kcPriorsFor(V3_LESSON_ID, 0.35) });
+
+    // Seeding is not practice, so the lesson is reported only when a caller names
+    // it. The seeded value is read back through the rollup over the member KCs
+    // the seed actually wrote — there is no lesson grain to read it from.
+    expect(auth.getMasteryLessons(state).map((l) => l.lessonId)).not.toContain(V3_LESSON_ID);
+    const seeded = auth.getMasteryLessons(state, [V3_LESSON_ID])[0]!;
+    expect(seeded.pL).toBeCloseTo(0.35, 9);
+    expect(seeded.mastered).toBe(false);
+  });
+
+  it('never overwrites a grain the learner has already practised', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ correct: true }),
+      lessonId: V3_LESSON_ID,
+    });
+    const practicedKcId = V3_LESSON_KCS[0]!;
+    const practiced = rollupOf(auth, state, V3_LESSON_ID).members.find(
+      (m) => m.kcId === practicedKcId,
+    )!.pL;
+    expect(practiced).toBeGreaterThan(PRIOR_PL0);
+
+    auth.applyMasterySeed(state, {
+      ...emptySeed(),
+      kcPriors: kcPriorsFor(V3_LESSON_ID, SEED_PRIOR_FLOOR),
+    });
+
+    const members = rollupOf(auth, state, V3_LESSON_ID).members;
+    expect(members.find((m) => m.kcId === practicedKcId)!.pL).toBe(practiced);
+    // ...and the seed was not a no-op, so the assertion above is not vacuous:
+    // the same call did initialize the lesson's unpractised KCs.
+    for (const kcId of V3_LESSON_KCS.slice(1)) {
+      expect(members.find((m) => m.kcId === kcId)!.pL).toBe(SEED_PRIOR_FLOOR);
+    }
+  });
+
+  /**
+   * The producer already caps at `SEED_PRIOR_CAP`, but seeds cross a service
+   * boundary to get here, so the guarantee has to hold against whatever arrives
+   * rather than against what a well-behaved producer sends.
+   */
+  it('clamps an out-of-range prior instead of trusting the producer', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+
+    auth.applyMasterySeed(state, {
+      ...emptySeed(),
+      kcPriors: { ...kcPriorsFor(V3_LESSON_ID, 1), ...kcPriorsFor(FLOOR_LESSON_ID, 0) },
+      skillPriors: { IDENTIFY: 1 },
+    });
+
+    const capped = rollupOf(auth, state, V3_LESSON_ID);
+    expect(capped.members.map((m) => m.pL)).toEqual(V3_LESSON_KCS.map(() => SEED_PRIOR_CAP));
+    expect(capped.pL).toBeCloseTo(SEED_PRIOR_CAP, 12);
+    expect(capped.pL).toBeLessThan(MASTERY_THRESHOLD);
+    expect(capped.mastered).toBe(false);
+
+    const floored = rollupOf(auth, state, FLOOR_LESSON_ID);
+    expect(floored.members.every((m) => m.pL === SEED_PRIOR_FLOOR)).toBe(true);
+    expect(floored.pL).toBeCloseTo(SEED_PRIOR_FLOOR, 12);
+
+    expect(auth.getMasterySkills(state).find((s) => s.operation === 'IDENTIFY')!.pL).toBe(
+      SEED_PRIOR_CAP,
+    );
   });
 });

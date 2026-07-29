@@ -3,10 +3,12 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import {
   AcceptedCommandResponseSchema,
   GuestBootstrapResponseSchema,
+  MasterySeedSchema,
   newEventId,
   type HttpErrorCode,
 } from '@mcat/contracts';
 import { InProcessAuthorityClient } from '@mcat/local-authority';
+import { practiceBankSourceLine, selectPracticeBankSource } from './practice-bank-source';
 
 /**
  * Dev-only learner authority. This runs the real synthetic authority
@@ -38,7 +40,16 @@ const store = {
   },
 } as unknown as StoreArg;
 
-const client = new InProcessAuthorityClient(store);
+/**
+ * Which corpus backs adaptive Practice here: Postgres when DATABASE_URL is set,
+ * else the local corpus pull, else the synthetic fixture (see
+ * ./practice-bank-source). Announced once so a starved bank is never mistaken
+ * for a selection bug.
+ */
+const practiceBank = selectPracticeBankSource();
+console.warn(practiceBankSourceLine(practiceBank));
+
+const client = new InProcessAuthorityClient(store, undefined, practiceBank.port);
 
 // One CSRF token per dev process; the client echoes it back but we don't verify.
 const csrfToken = `${randomUUID()}${randomUUID()}`.replace(/-/g, '');
@@ -136,6 +147,8 @@ export async function handleAuthorityRequest(
       switch (path) {
         case '/v1/plan/today':
           return sendJson(response, 200, await client.getToday());
+        case '/v1/plan/today/path':
+          return sendJson(response, 200, await client.getTodaysPath());
         case '/v1/learning/session':
           return sendJson(response, 200, await client.getSession());
         case '/v1/progress/mastery':
@@ -148,18 +161,38 @@ export async function handleAuthorityRequest(
           return sendJson(response, 200, await client.getCarsReadiness());
         case '/v1/errors':
           return sendJson(response, 200, await client.getErrorLog());
+        case '/v1/errors/patterns':
+          return sendJson(response, 200, await client.getMistakePatterns());
         case '/v1/skills':
           return sendJson(response, 200, await client.getSkills());
         case '/v1/hooks/wrapped':
           return sendJson(response, 200, await client.getWrapped());
         case '/v1/diagnostic/next':
           return sendJson(response, 200, await client.getDiagnosticNext());
+        // The vector lesson runs on the persisted HTTP authority
+        // (services/local-authority), not in-process. Serving its status here
+        // lets the curriculum render it as unavailable instead of erroring on a
+        // missing route; `run` deliberately reports the same limitation.
+        case '/v1/lessons/vectors-and-trigonometry/status':
+          return sendJson(response, 200, await client.getVectorLessonStatus());
+        case '/v1/lessons/vectors-and-trigonometry/run':
+          return sendJson(response, 503, {
+            code: 'lesson_requires_http_authority',
+            message: 'This lesson requires the persisted HTTP authority.',
+            retryable: false,
+          });
         default:
           break;
       }
       if (path.startsWith('/v1/practice/items/')) {
         const questionId = decodeURIComponent(path.slice('/v1/practice/items/'.length));
         return sendJson(response, 200, await client.getPracticeItem(questionId));
+      }
+      const queueMatch = /^\/v1\/practice\/queue\/(\d{1,2})(?:\/([a-z0-9-]{1,32}))?$/.exec(path);
+      if (queueMatch) {
+        const x = Number.parseInt(queueMatch[1]!, 10);
+        const focus = queueMatch[2];
+        return sendJson(response, 200, await client.getPracticeQueue(x, focus));
       }
     }
 
@@ -170,12 +203,25 @@ export async function handleAuthorityRequest(
       await client.confirmPlan(body.goal as Parameters<typeof client.confirmPlan>[0]);
       return sendJson(response, 200, accepted());
     }
-    if (path === '/v1/attempts' && method === 'POST') {
-      await client.submitAttempt((body.choiceId ?? null) as string | null);
+    if (path === '/v1/plan/today/build' && method === 'POST') {
+      const view = await client.buildTodaysPath(
+        body.input as Parameters<typeof client.buildTodaysPath>[0],
+      );
+      return sendJson(response, 200, view);
+    }
+    if (path === '/v1/plan/today/activity' && method === 'POST') {
+      await client.recordPlanActivity(
+        String(body.activityId ?? ''),
+        body.status as 'in_progress' | 'complete' | 'skipped',
+      );
       return sendJson(response, 200, accepted());
     }
-    if (path === '/v1/attempts/cause' && method === 'POST') {
-      await client.selectCause(body.cause as Parameters<typeof client.selectCause>[0]);
+    if (path === '/v1/profile/daily-budget' && method === 'PUT') {
+      await client.setDailyBudget(Number(body.minutesPerDay));
+      return sendJson(response, 200, accepted());
+    }
+    if (path === '/v1/attempts' && method === 'POST') {
+      await client.submitAttempt((body.choiceId ?? null) as string | null);
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/attempts/reveal' && method === 'POST') {
@@ -197,8 +243,29 @@ export async function handleAuthorityRequest(
       );
       return sendJson(response, 200, result);
     }
+    if (path.startsWith('/v1/lessons/vectors-and-trigonometry/') && method === 'POST') {
+      return sendJson(response, 503, {
+        code: 'lesson_requires_http_authority',
+        message: 'This lesson requires the persisted HTTP authority.',
+        retryable: false,
+      });
+    }
+
+    if (path === '/v1/practice/attempts/adaptive' && method === 'POST') {
+      const result = await client.submitPracticeAttempt({
+        questionId: String(body.questionId ?? ''),
+        specId: String(body.specId ?? ''),
+        chosenChoiceId: (body.chosenChoiceId ?? null) as 'A' | 'B' | 'C' | 'D' | null,
+        firstAttempt: Boolean(body.firstAttempt),
+      });
+      return sendJson(response, 200, result);
+    }
     if (path === '/v1/hooks/cars-duel' && method === 'POST') {
       await client.recordCarsDuel(body.rubric as Parameters<typeof client.recordCarsDuel>[0]);
+      return sendJson(response, 200, accepted());
+    }
+    if (path === '/v1/hooks/mastery-seed' && method === 'POST') {
+      await client.applyMasterySeed(MasterySeedSchema.parse(body.seed));
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/account/progress' && method === 'DELETE') {

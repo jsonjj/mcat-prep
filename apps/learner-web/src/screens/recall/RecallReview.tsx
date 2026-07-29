@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { tallyRatings, type Card as RecallCard, type RecallRating } from '@mcat/recall-core';
 import {
@@ -23,6 +23,20 @@ export function RecallReview() {
   const suspend = useSetSuspended();
   const remove = useSoftDeleteCard();
   const navigate = useNavigate();
+  const location = useLocation();
+  // Today's Path launches Recall with a scheduler budget + a return target.
+  const navState = location.state as
+    | { returnTo?: string; activityId?: string; minutesBudget?: number; maxCards?: number }
+    | null;
+  const returnTo = navState?.returnTo;
+  const activityId = navState?.activityId;
+  const minutesBudget = navState?.minutesBudget;
+  const maxCards = navState?.maxCards;
+  const finishHref = returnTo ?? '/app/recall';
+  const finish = useCallback(() => {
+    if (returnTo) navigate(returnTo, { state: { completedActivityId: activityId } });
+    else navigate('/app/recall');
+  }, [navigate, returnTo, activityId]);
 
   const [queue, setQueue] = useState<RecallCard[] | null>(null);
   const [index, setIndex] = useState(0);
@@ -35,7 +49,7 @@ export function RecallReview() {
   useEffect(() => {
     if (!service) return;
     let active = true;
-    void service.getQueue({}).then((cards) => {
+    void service.getQueue({ minutesBudget, maxCards }).then((cards) => {
       if (!active) return;
       setQueue(cards);
       startRef.current = Date.now();
@@ -43,7 +57,7 @@ export function RecallReview() {
     return () => {
       active = false;
     };
-  }, [service]);
+  }, [service, minutesBudget, maxCards]);
 
   const current = queue && index < queue.length ? queue[index] : null;
 
@@ -124,9 +138,9 @@ export function RecallReview() {
           <Stack gap={3}>
             <Eyebrow>Nothing due</Eyebrow>
             <p className="mc-muted">You have no cards due right now. Add cards or import a deck.</p>
-            <Link to="/app/recall" className="mc-button mc-button--primary mc-button--lg">
-              <span className="mc-button__label">Back to Recall</span>
-            </Link>
+            <Button variant="primary" size="lg" onClick={finish}>
+              {returnTo ? 'Back to plan' : 'Back to Recall'}
+            </Button>
           </Stack>
         </Card>
       </div>
@@ -153,7 +167,7 @@ export function RecallReview() {
               <Stat label="Good" value={tally.good} />
               <Stat label="Easy" value={tally.easy} />
             </div>
-            <Button variant="primary" size="lg" fullWidth onClick={() => navigate('/app/recall')}>
+            <Button variant="primary" size="lg" fullWidth onClick={finish}>
               Done
             </Button>
           </Stack>
@@ -170,7 +184,7 @@ export function RecallReview() {
         <Eyebrow>
           {index + 1} / {queue.length}
         </Eyebrow>
-        <Link to="/app/recall" className="mc-textbtn">
+        <Link to={finishHref} className="mc-textbtn">
           End session
         </Link>
       </div>

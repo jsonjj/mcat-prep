@@ -71,19 +71,25 @@ export function learnerStateFromProjection(record: LearnerProjectionRecord): Lea
   return state;
 }
 
-export function buildLearnerSnapshot(
+export async function buildLearnerSnapshot(
   authority: Authority,
   state: LearnerState,
   streamVersion: number,
-): LearnerSnapshot {
+): Promise<LearnerSnapshot> {
   const viewState = structuredClone(state);
+  const [today, errorLog, errorPatterns] = await Promise.all([
+    viewState.onboarding.planConfirmed ? authority.getToday(viewState) : Promise.resolve(null),
+    authority.getErrorLog(viewState),
+    authority.getMistakePatterns(viewState),
+  ]);
   return LearnerSnapshotSchema.parse({
     streamVersion,
     contentRelease: authority.bank.contentRelease,
-    today: viewState.onboarding.planConfirmed ? authority.getToday(viewState) : null,
+    today,
     session: authority.getSession(viewState),
     masteryMap: authority.getMasteryMap(viewState),
-    errorLog: authority.getErrorLog(viewState),
+    errorLog,
+    errorPatterns,
   });
 }
 

@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Navigate, NavLink, Outlet } from 'react-router-dom';
 import { SkipLink, useTheme } from '@mcat/ui-web';
 import { useBootstrap } from '../app/queries';
 import {
@@ -7,8 +7,10 @@ import {
   IconHome,
   IconMistakesX,
   IconMoon,
+  IconPractice,
   IconProgress,
   IconSun,
+  IconToday,
   IconUser,
 } from '../components/icons';
 
@@ -20,9 +22,17 @@ const NAV = [
   { to: '/app/progress', end: false, label: 'Progress', Icon: IconProgress },
 ];
 
+const TODAY_ITEM = { to: '/app/today', end: false, label: 'Today', Icon: IconToday };
+const PRACTICE_ITEM = { to: '/app/practice', end: false, label: 'Practice', Icon: IconPractice };
+
+// Desktop sidebar order: Today's Path sits right under Home; Practice sits above
+// Recall. The mobile bottom nav stays the shared five-item NAV so the longest
+// label ("Curriculum") never overflows a narrow phone — Today's Path and Practice
+// are reached from Home on mobile (Home's hero links straight into Today's Path).
+const SIDEBAR = [NAV[0], TODAY_ITEM, NAV[1], PRACTICE_ITEM, NAV[2], NAV[3], NAV[4]];
+
 export function AppShell() {
   const bootstrap = useBootstrap();
-  const navigate = useNavigate();
   const { resolved, setPreference } = useTheme();
 
   if (bootstrap.isLoading) {
@@ -30,8 +40,7 @@ export function AppShell() {
   }
   if (bootstrap.data && !bootstrap.data.onboardingComplete) {
     // Learning stays locked until placement + plan are complete.
-    navigate('/', { replace: true });
-    return null;
+    return <Navigate to="/" replace />;
   }
 
   return (
@@ -58,7 +67,10 @@ export function AppShell() {
       </header>
 
       <nav className="mc-sidebar" aria-label="Primary">
-        {NAV.map(({ to, end, label, Icon }) => (
+        {/* Desktop order puts Practice right above Recall; the mobile bottom nav
+            below stays the five-item shared NAV. Skills stays a desktop-only
+            secondary link. */}
+        {SIDEBAR.map(({ to, end, label, Icon }) => (
           <NavLink key={to} to={to} end={end} className="mc-navitem">
             <Icon className="mc-navitem__icon" />
             <span className="mc-navitem__label">{label}</span>

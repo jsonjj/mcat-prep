@@ -1,5 +1,8 @@
 import {
   ContentIdSchema,
+  DAILY_MINUTES_DEFAULT,
+  DAILY_MINUTES_MAX,
+  DAILY_MINUTES_MIN,
   QualifiedBktObservationSchema,
   REASONING_OPERATIONS,
   SKILL_CLUSTERS,
@@ -11,6 +14,8 @@ import {
   type BktApplicationRejectionCode,
   type BktClockAdjustment,
   type BootstrapResponse,
+  type BuildTodaysPathInput,
+  type TodaysPathView,
   type CarsDuelRubric,
   type CarsReadinessLabel,
   type CarsReadinessView,
@@ -19,7 +24,13 @@ import {
   type LearnerEvent,
   type LessonMasteryView,
   type MasterySeed,
-  type ProbableCause,
+  type MistakePatternView,
+  type PracticeAttemptCommand,
+  type PracticeAttemptResult,
+  type PracticeFocus,
+  type PracticeQuestion,
+  type PracticeQueueItem,
+  type PracticeQueueView,
   type QualifiedBktObservation,
   type ReasoningOperation,
   type SkillCluster,
@@ -29,6 +40,7 @@ import {
 import {
   EvidenceRecordSchema,
   scoreAttempt,
+  type CapacityLabel,
   type EvidenceKind,
   type SkillEvidenceState,
   type Task,
@@ -36,6 +48,10 @@ import {
 import {
   activePolicyVersions,
   applyMasteryAttempt,
+  bandCenter,
+  buildTodaysPath as buildTodaysPathEngine,
+  sizeRecall,
+  TODAYS_PATH_CONFIG,
   CARS_K_DUEL,
   CARS_K_POTD,
   CARS_V0,
@@ -49,12 +65,26 @@ import {
   isLessonRollupAvailable,
   MASTERY_THRESHOLD,
   overallCarsReadiness,
+  PRACTICE_SELECTION_CONFIG,
+  practiceSpecId,
   predictedCorrect,
   PRIOR_PL0,
   REVIEW_LINE,
   rollUpLessonMastery,
+  SEED_CARS_MAX,
+  SEED_CARS_MIN,
+  SEED_PRIOR_CAP,
+  SEED_PRIOR_FLOOR,
+  selectPracticeQueue,
+  type CarriedActivity,
+  type GhostView,
   type LessonRollupResult,
   type MemoryState,
+  type PracticeCarsUnit,
+  type PracticeSnapshot,
+  type PracticeUnit,
+  type TodaysPathCandidateLesson,
+  type TodaysPathSnapshot,
 } from '@mcat/policies';
 import {
   clusterForLesson,
@@ -63,6 +93,16 @@ import {
   orderedKcsForLesson,
   type LoadedBank,
 } from '@mcat/content';
+import {
+  compiledToPracticeQuestion,
+  SyntheticPracticeBankPort,
+  type PracticeAnswer,
+  type PracticeAttemptLogEntry,
+  type PracticeBankPort,
+  type PracticeCandidateUnit,
+  type PracticeItemClassification,
+  type PracticeRepairTarget,
+} from './practice';
 import type {
   ErrorEntryView,
   LearnerState,
@@ -74,6 +114,8 @@ import type {
   StudyPhase,
   StudyStepView,
   TodayView,
+  TodaysPathActivityState,
+  TodaysPathState,
   WrappedView,
 } from './types';
 
@@ -198,14 +240,6 @@ const ENZYME_SKILL = 'bb1-enzyme-inhibition';
 const ENZYME_LESSON_ID = 'lesson-enz-inhibition';
 
 /**
- * Evidence item IDs are opaque `LessonItemId`s while bank IDs are global
- * `ContentId`s (lesson-evidence-mastery-contract §3.9). The two brands are
- * deliberately not interchangeable, so cross-brand matching is done on the
- * underlying value, explicitly and in one place.
- */
-const sameItemId = (a: string, b: string): boolean => a === b;
-
-/**
  * How far ahead of the Authority clock a runner-reported `occurredAt` may be and
  * still be treated as honest clock skew rather than a broken or hostile client.
  *
@@ -291,6 +325,25 @@ export type QualifiedBktApplication = {
 );
 
 /**
+ * Focus token a "try again" action carries into the practice queue. The queue's
+ * own repair seam (`recentMisses` → `queueRepair`) then picks a FRESH unseen item
+ * in the missed KC, so this only has to narrow the pool — it must never identify
+ * the item, or the re-attempt would be a re-serve.
+ */
+const focusFor = (
+  cluster: SkillCluster | null,
+  skill: ReasoningOperation | null,
+): PracticeFocus | null =>
+  cluster !== null ? cluster.toLowerCase() : skill !== null ? skill.toLowerCase() : null;
+
+/** `kc-acid-base-buffers` → `kc acid base buffers`, for a display label. */
+const humanize = (id: string): string => id.replace(/[-_]+/g, ' ').trim();
+
+/** Narrow a loose choice id to the four deliverable options (null when skipped). */
+const asChoiceId = (value: string | null): 'A' | 'B' | 'C' | 'D' | null =>
+  value === 'A' || value === 'B' || value === 'C' || value === 'D' ? value : null;
+
+/**
  * DEV-ONLY adapter: the synthetic bank tags items with the 8 operation templates
  * (K/Q/E/D/P/A/I/T), not the 7 reasoning operations the mastery engine tracks.
  * This heuristic lets the synthetic vertical populate real mastery numbers in dev;
@@ -333,10 +386,17 @@ const evidenceKindForPhase = (phase: StudyPhase): EvidenceKind => {
 export class Authority {
   readonly bank: LoadedBank;
   private readonly clock: Clock;
+  /** Item corpus + per-learner exposure/repair seam for adaptive Practice. */
+  readonly practiceBank: PracticeBankPort;
 
-  constructor(bank: LoadedBank = loadSyntheticBank(), clock: Clock = systemClock) {
+  constructor(
+    bank: LoadedBank = loadSyntheticBank(),
+    clock: Clock = systemClock,
+    practiceBank?: PracticeBankPort,
+  ) {
     this.bank = bank;
     this.clock = clock;
+    this.practiceBank = practiceBank ?? new SyntheticPracticeBankPort(bank);
   }
 
   createGuest(): LearnerState {
@@ -425,13 +485,57 @@ export class Authority {
 
   // ---- Today / plan -------------------------------------------------------
 
-  getToday(state: LearnerState): TodayView {
+  /**
+   * Shared day framing (capacity label, day number/total, coverage, ghost) used by
+   * both the legacy Today view and the Today's Path engine so they never drift.
+   */
+  private dayContext(state: LearnerState): {
+    capacityLabel: CapacityLabel;
+    dayNumber: number;
+    totalDays: number | null;
+    coveragePct: number;
+    clustersWithEvidence: Set<string>;
+    ghost: GhostView;
+  } {
     const capacityLabel = classifyCapacity({
       availableMinutesPerWeek: state.goal?.minutesPerWeek ?? 300,
       weeksRemaining: state.goal?.testDate ? this.weeksUntil(state.goal.testDate) : null,
       requiredP50Minutes: 1800,
       requiredP80Minutes: 2600,
     });
+    const dayNumber = Math.max(1, Math.floor(daysBetween(state.createdAt, this.clock.now())) + 1);
+    const totalDays = state.goal?.testDate
+      ? Math.max(1, Math.round(daysBetween(state.createdAt, state.goal.testDate as unknown as UtcTimestamp)))
+      : null;
+    // Ghost companion: derived only from the learner's own goal, timeline, and
+    // coverage. Reads the internal warrant, since "has any evidence at all" is a
+    // tier comparison and the published view no longer carries the tier.
+    const clustersWithEvidence = new Set(
+      this.skillWarrants(state)
+        .filter(({ evidence }) => evidence.evidenceQuality !== 'not_assessed')
+        .map(({ grain }) => grain.cluster),
+    );
+    const coveragePct = clustersWithEvidence.size / SKILL_CLUSTERS.length;
+    let lastEvidenceAt: string | null = null;
+    for (const e of state.evidence) {
+      if (lastEvidenceAt === null || e.occurredAt > lastEvidenceAt) lastEvidenceAt = e.occurredAt;
+    }
+    const lastActiveDaysAgo =
+      lastEvidenceAt !== null
+        ? Math.floor(daysBetween(lastEvidenceAt as unknown as UtcTimestamp, this.clock.now()))
+        : null;
+    const ghost = computeGhost({
+      scheduled: Boolean(state.goal?.testDate),
+      dayNumber,
+      totalDays,
+      coveragePct,
+      lastActiveDaysAgo,
+    });
+    return { capacityLabel, dayNumber, totalDays, coveragePct, clustersWithEvidence, ghost };
+  }
+
+  async getToday(state: LearnerState): Promise<TodayView> {
+    const ctx = this.dayContext(state);
     const sessionActive = state.session !== null && !this.sessionComplete(state);
     const tasks: Task[] = [
       {
@@ -458,47 +562,447 @@ export class Authority {
         requiresConnection: false,
       },
     ];
-    const dayNumber = Math.max(1, Math.floor(daysBetween(state.createdAt, this.clock.now())) + 1);
-    const totalDays = state.goal?.testDate
-      ? Math.max(1, Math.round(daysBetween(state.createdAt, state.goal.testDate as unknown as UtcTimestamp)))
-      : null;
-    const repairsOpen = this.getErrorLog(state).filter((e) => !e.repaired).length;
-
-    // Ghost companion: derived only from the learner's own goal, timeline, and
-    // coverage. Reads the internal warrant, since "has any evidence at all" is a
-    // tier comparison and the published view no longer carries the tier.
-    const clustersWithEvidence = new Set(
-      this.skillWarrants(state)
-        .filter(({ evidence }) => evidence.evidenceQuality !== 'not_assessed')
-        .map(({ grain }) => grain.cluster),
-    );
-    const coveragePct = clustersWithEvidence.size / SKILL_CLUSTERS.length;
-    let lastEvidenceAt: string | null = null;
-    for (const e of state.evidence) {
-      if (lastEvidenceAt === null || e.occurredAt > lastEvidenceAt) lastEvidenceAt = e.occurredAt;
-    }
-    const lastActiveDaysAgo =
-      lastEvidenceAt !== null
-        ? Math.floor(daysBetween(lastEvidenceAt as unknown as UtcTimestamp, this.clock.now()))
-        : null;
-    const ghost = computeGhost({
-      scheduled: Boolean(state.goal?.testDate),
-      dayNumber,
-      totalDays,
-      coveragePct,
-      lastActiveDaysAgo,
-    });
-
+    const repairsOpen = (await this.getErrorLog(state)).filter((e) => !e.resolved).length;
     return {
-      capacityLabel,
+      capacityLabel: ctx.capacityLabel,
       continueTaskId: 'task-enzyme',
       tasks,
       reviewSharePct: 0.25,
-      dayNumber,
-      totalDays,
+      dayNumber: ctx.dayNumber,
+      totalDays: ctx.totalDays,
       reviewsDue: 0,
       repairsOpen,
-      ghost,
+      ghost: ctx.ghost,
+    };
+  }
+
+  // ---- Today's Path — daily learning-plan engine --------------------------
+  // Orchestrates the other engines (CARS/Recall/Lessons/Practice/Review Mistakes)
+  // and WRITES NO MASTERY. It reads mastery/coverage + a client-fed recall load +
+  // candidate lessons, sizes the day to the preset, and persists an ordered plan.
+
+  /**
+   * Learner-local plan date with a 4 AM rollover. `offsetMinutes` is the client's
+   * `Date.getTimezoneOffset()` (UTC − local, in minutes); 0 falls back to UTC.
+   */
+  private planDateFor(nowIso: string, offsetMinutes: number): string {
+    const localMs = Date.parse(nowIso) - offsetMinutes * 60_000 - 4 * 60 * 60 * 1000;
+    return new Date(localMs).toISOString().slice(0, 10);
+  }
+
+  private timezoneOffset(state: LearnerState): number {
+    return state.timezoneOffsetMinutes ?? 0;
+  }
+
+  /** Default daily study budget when the learner hasn't set one (4 hours). */
+  private defaultDailyPreset(): number {
+    return DAILY_MINUTES_DEFAULT;
+  }
+
+  private dailyPreset(state: LearnerState): number {
+    return state.goal?.dailyMinutesPreset ?? this.defaultDailyPreset();
+  }
+
+  /** Set the daily time-budget in minutes (any value from 2 to 6 hours; clamped). */
+  setDailyBudget(state: LearnerState, minutesPerDay: number): void {
+    const clamped = Math.max(
+      DAILY_MINUTES_MIN,
+      Math.min(DAILY_MINUTES_MAX, Math.round(minutesPerDay)),
+    );
+    state.goal =
+      state.goal === null
+        ? {
+            testDate: null,
+            targetScore: null,
+            minutesPerWeek: clamped * 7,
+            dailyMinutesPreset: clamped,
+          }
+        : { ...state.goal, dailyMinutesPreset: clamped };
+  }
+
+  /**
+   * Mistakes the Review-Mistakes slot can actually show: unresolved question
+   * misses (practice and study) the learner has not already been walked through
+   * today.
+   *
+   * This is the same list the Mistakes tab renders, deliberately. The slot used
+   * to be sized from a bare `state.mistakeCount` that stored no content, so it
+   * could promise "3 mistakes piled up" and open an empty page. Sizing it from
+   * the tab's own source makes that divergence unrepresentable.
+   *
+   * Recall lapses, in-lesson comprehension checks and CARS duels are excluded
+   * because they are never displayed here (docs/design/error-handling-design.md
+   * §6.5): those happen during acquisition or scheduling, where errorful
+   * generation is the mechanism doing the work rather than a fault to repair.
+   * Including study misses moves this threshold earlier in the day, which is the
+   * intended effect — the slot is sized from real repairable content either way.
+   */
+  async openMistakes(state: LearnerState): Promise<ErrorEntryView[]> {
+    const clearedThrough = state.mistakesReviewedThrough ?? null;
+    return (await this.getErrorLog(state)).filter(
+      (e) => !e.resolved && (clearedThrough === null || e.occurredAt > clearedThrough),
+    );
+  }
+
+  /** Read the current day's plan (built:false when none exists for today yet). */
+  getTodaysPath(state: LearnerState): TodaysPathView {
+    return this.todaysPathView(state);
+  }
+
+  /** Build (and persist) today's plan; idempotent per day unless `force`. */
+  async buildTodaysPath(
+    state: LearnerState,
+    input: BuildTodaysPathInput,
+  ): Promise<TodaysPathView> {
+    const now = this.clock.now();
+    // Persist the learner's timezone so reads (which have no request body) use the
+    // same local day boundary as the build.
+    if (input.timezoneOffsetMinutes !== undefined) {
+      state.timezoneOffsetMinutes = input.timezoneOffsetMinutes;
+    }
+    const planDate = this.planDateFor(now, this.timezoneOffset(state));
+    if (state.plan && state.plan.planDate === planDate && !input.force) {
+      // Plan already exists for today: don't rebuild, but if Recall just became
+      // available (e.g. the learner added their first deck), inject it as the next
+      // step so it surfaces immediately with a card count.
+      this.maybeInjectRecall(state, input.recallLoad);
+      return this.todaysPathView(state);
+    }
+    // Rebuilding TODAY (e.g. the learner changed their daily time): keep everything
+    // they've already finished or started, and only re-plan the remaining time.
+    const prior = state.plan && state.plan.planDate === planDate ? state.plan : null;
+    const kept = prior
+      ? prior.activities.filter((a) => a.status === 'complete' || a.status === 'in_progress')
+      : [];
+    const keptMinutes = kept.reduce((sum, a) => sum + a.estimatedMinutes, 0);
+
+    const preset = this.dailyPreset(state);
+    const ctx = this.dayContext(state);
+    const carryOver = this.carryOverFrom(state.plan ?? null, planDate);
+    // The engine plans only the time left after what's already done today.
+    const engineBudget = Math.max(0, preset - keptMinutes);
+    const snapshot = await this.todaysPathSnapshot(state, input, planDate, engineBudget, ctx, carryOver);
+    const result = buildTodaysPathEngine(snapshot, TODAYS_PATH_CONFIG);
+    // Dedupe by activityId as a safety net (the engine already avoids re-scheduling
+    // a carried kind/lesson, so collisions shouldn't occur).
+    const seen = new Set<string>();
+    const activities: TodaysPathActivityState[] = [];
+    for (const a of result.activities) {
+      if (seen.has(a.activityId)) continue;
+      seen.add(a.activityId);
+      activities.push({ ...a, status: 'ready' });
+    }
+    if (prior) {
+      // Restore progress on any activity that reappears in the new plan...
+      const priorById = new Map(prior.activities.map((a) => [a.activityId, a] as const));
+      for (const a of activities) {
+        const p = priorById.get(a.activityId);
+        if (p && (p.status === 'complete' || p.status === 'in_progress')) a.status = p.status;
+      }
+      // ...and keep finished/in-progress items that didn't reappear, at the front, so
+      // the learner still sees what they already did (never re-offered as new work).
+      const newIds = new Set(activities.map((a) => a.activityId));
+      const preserved = prior.activities.filter(
+        (a) => (a.status === 'complete' || a.status === 'in_progress') && !newIds.has(a.activityId),
+      );
+      if (preserved.length > 0) activities.unshift(...preserved);
+    }
+
+    const plannedMinutes = activities.reduce((sum, a) => sum + a.estimatedMinutes, 0);
+    const reviewMinutes = activities
+      .filter((a) => a.kind === 'recall' || a.kind === 'review_mistakes')
+      .reduce((sum, a) => sum + a.estimatedMinutes, 0);
+    state.plan = {
+      planDate: result.planDate,
+      dailyMinutesPreset: preset,
+      dailyBudgetMinutes: preset,
+      plannedMinutes,
+      freeStudyMinutes: Math.max(0, preset - plannedMinutes),
+      reviewSharePct: plannedMinutes > 0 ? Math.min(1, reviewMinutes / plannedMinutes) : 0,
+      reviewDebtBand: result.reviewDebtBand,
+      version: (state.plan?.version ?? 0) + 1,
+      generatedAt: now,
+      currentActivityId:
+        activities.find((a) => a.status === 'ready' || a.status === 'in_progress')?.activityId ??
+        null,
+      activities,
+      mistakesSessions: activities.filter((a) => a.kind === 'review_mistakes').length,
+    };
+    return this.todaysPathView(state);
+  }
+
+  /** Advance the guided runner: mark one activity in_progress / complete / skipped. */
+  async recordPlanActivity(
+    state: LearnerState,
+    activityId: string,
+    status: 'in_progress' | 'complete' | 'skipped',
+  ): Promise<void> {
+    const plan = state.plan;
+    if (!plan) return;
+    const activity = plan.activities.find((a) => a.activityId === activityId);
+    if (!activity) return;
+    activity.status = status;
+    if (status === 'complete') {
+      if (activity.kind === 'lesson' && activity.lessonId !== null) {
+        const done = new Set(state.completedLessons ?? []);
+        done.add(activity.lessonId);
+        state.completedLessons = [...done];
+      }
+      // Completing a Mistakes session stops those misses from re-scheduling one.
+      // It does NOT hide them from the Mistakes tab: a mistake is resolved by a
+      // correct answer on a fresh item in the same KC, not by having been read.
+      if (activity.kind === 'review_mistakes') state.mistakesReviewedThrough = this.clock.now();
+    }
+    // Dynamic: if independent misses have piled up during the day, inject a Mistakes
+    // session as the next step and push the last still-ready activity to tomorrow.
+    this.maybeInjectMistakesSession(plan, (await this.openMistakes(state)).length);
+    const next = plan.activities.find((a) => a.status === 'ready' || a.status === 'in_progress');
+    plan.currentActivityId = next?.activityId ?? null;
+  }
+
+  private static readonly MISTAKES_SESSION_THRESHOLD = 5;
+
+  /** Inject a Mistakes session mid-day when enough misses pile up (bumps the last item to tomorrow). */
+  private maybeInjectMistakesSession(plan: TodaysPathState, openMistakes: number): void {
+    if (openMistakes < Authority.MISTAKES_SESSION_THRESHOLD) return;
+    const cap = plan.dailyBudgetMinutes >= TODAYS_PATH_CONFIG.carsSecondAtBudget ? 3 : 2;
+    if (plan.mistakesSessions >= cap) return;
+    // Don't stack a second while one is still pending.
+    if (
+      plan.activities.some(
+        (a) => a.kind === 'review_mistakes' && (a.status === 'ready' || a.status === 'in_progress'),
+      )
+    ) {
+      return;
+    }
+    const count = Math.min(openMistakes, TODAYS_PATH_CONFIG.blocks.mistakesMax);
+    const minutes = Math.min(
+      count * TODAYS_PATH_CONFIG.costs.mistakePerItem,
+      TODAYS_PATH_CONFIG.maxActivityMinutes,
+    );
+    const session: TodaysPathActivityState = {
+      activityId: `review-mistakes:${plan.mistakesSessions + 1}`,
+      kind: 'review_mistakes',
+      title: 'Review Mistakes',
+      detail: `${count} mistake${count === 1 ? '' : 's'} piled up today — clear them before they stack.`,
+      estimatedMinutes: minutes,
+      count,
+      minutesBudget: null,
+      focus: null,
+      lessonSlug: null,
+      lessonId: null,
+      priorityReason: 'UNRESOLVED_ERROR',
+      status: 'ready',
+      carriedOver: false,
+    };
+    // Bump the LAST still-ready activity to tomorrow so the day stays within budget.
+    for (let i = plan.activities.length - 1; i >= 0; i -= 1) {
+      if (plan.activities[i]!.status === 'ready') {
+        plan.activities[i]!.status = 'snoozed';
+        break;
+      }
+    }
+    // Insert the session as the next up (before the first remaining ready item).
+    const firstReadyIdx = plan.activities.findIndex((a) => a.status === 'ready');
+    const insertAt = firstReadyIdx === -1 ? plan.activities.length : firstReadyIdx;
+    plan.activities.splice(insertAt, 0, session);
+    plan.mistakesSessions += 1;
+  }
+
+  /**
+   * Inject a Recall block into today's existing plan when it wasn't scheduled at
+   * build time (no cards then) but cards are now due — e.g. the learner just added
+   * their first deck. Placed as the NEXT ready item (the very first when nothing is
+   * started yet), sized exactly like the build so Recall gets a card count to stop at.
+   */
+  private maybeInjectRecall(
+    state: LearnerState,
+    recallLoad: BuildTodaysPathInput['recallLoad'],
+  ): void {
+    const plan = state.plan;
+    if (!plan) return;
+    // Already have a Recall block today (pending or done) — never duplicate it.
+    if (plan.activities.some((a) => a.kind === 'recall')) return;
+    const sized = sizeRecall(recallLoad, plan.dailyBudgetMinutes, TODAYS_PATH_CONFIG);
+    if (!sized) return;
+    const recall: TodaysPathActivityState = {
+      activityId: 'recall',
+      kind: 'recall',
+      title: 'Recall',
+      detail: `${sized.cards} flashcard${sized.cards === 1 ? '' : 's'} due (spaced repetition).`,
+      estimatedMinutes: Math.max(1, sized.minutes),
+      count: sized.cards,
+      minutesBudget: sized.minutes,
+      focus: null,
+      lessonSlug: null,
+      lessonId: null,
+      priorityReason: 'OVERDUE_REVIEW',
+      status: 'ready',
+      carriedOver: false,
+    };
+    // Next ready item (index 0 when nothing is started yet). An in-progress activity
+    // is left alone; Recall slots in right after it.
+    const firstReadyIdx = plan.activities.findIndex((a) => a.status === 'ready');
+    const insertAt = firstReadyIdx === -1 ? plan.activities.length : firstReadyIdx;
+    plan.activities.splice(insertAt, 0, recall);
+    // Refresh derived fields the view reads straight off the plan.
+    plan.plannedMinutes = plan.activities.reduce((sum, a) => sum + a.estimatedMinutes, 0);
+    plan.freeStudyMinutes = Math.max(0, plan.dailyBudgetMinutes - plan.plannedMinutes);
+    const reviewMinutes = plan.activities
+      .filter((a) => a.kind === 'recall' || a.kind === 'review_mistakes')
+      .reduce((sum, a) => sum + a.estimatedMinutes, 0);
+    plan.reviewSharePct =
+      plan.plannedMinutes > 0 ? Math.min(1, reviewMinutes / plan.plannedMinutes) : 0;
+    const next = plan.activities.find((a) => a.status === 'ready' || a.status === 'in_progress');
+    plan.currentActivityId = next?.activityId ?? null;
+  }
+
+  private carryOverFrom(prev: TodaysPathState | null, planDate: string): CarriedActivity[] {
+    if (!prev || prev.planDate === planDate) return [];
+    return prev.activities
+      .filter((a) => a.status === 'ready' || a.status === 'in_progress' || a.status === 'snoozed')
+      .map((a) => ({
+        activityId: a.activityId,
+        kind: a.kind,
+        title: a.title,
+        detail: a.detail,
+        estimatedMinutes: a.estimatedMinutes,
+        count: a.count,
+        minutesBudget: a.minutesBudget,
+        focus: a.focus,
+        lessonSlug: a.lessonSlug,
+        lessonId: a.lessonId,
+        priorityReason: a.priorityReason,
+      }));
+  }
+
+  private async todaysPathSnapshot(
+    state: LearnerState,
+    input: BuildTodaysPathInput,
+    planDate: string,
+    preset: number,
+    ctx: ReturnType<Authority['dayContext']>,
+    carryOver: CarriedActivity[],
+  ): Promise<TodaysPathSnapshot> {
+    // Single mastery read, reused for both the mastered-id gate and the per-lesson
+    // P(L) map that feeds scoreLesson's minor mastery nudge (avoid computing twice).
+    const masteryLessons = this.getMasteryLessons(state);
+    const masteredLessonIds = new Set(
+      masteryLessons.filter((l) => l.mastered).map((l) => l.lessonId),
+    );
+    const pLByLesson = new Map(masteryLessons.map((l) => [l.lessonId, l.pL]));
+    const completed = new Set(state.completedLessons ?? []);
+    const now = this.clock.now();
+    const done = (id: string): boolean => completed.has(id) || masteredLessonIds.has(id);
+
+    // Prereq pipeline (ready for the authored map): unlocked = all prereqs done;
+    // dependentsCount = how many candidates list this lesson as a prerequisite.
+    const dependents = new Map<string, number>();
+    for (const l of input.candidateLessons) {
+      for (const p of l.prerequisiteLessonIds) dependents.set(p, (dependents.get(p) ?? 0) + 1);
+    }
+
+    // Per-KC teach-before-test: taught KCs = union of completed lessons' KCs.
+    const taughtKcIds = new Set<string>();
+    for (const l of input.candidateLessons) {
+      if (done(l.lessonId)) for (const kc of l.kcIds) taughtKcIds.add(kc);
+    }
+    state.taughtKcIds = [...taughtKcIds];
+
+    // Practice unlocks after N completed lessons; sized to review need (# taught KCs
+    // not yet mastered), bounded — not budget-fill.
+    const practiceUnlocked = completed.size >= TODAYS_PATH_CONFIG.practiceUnlockLessons;
+    let practiceReviewNeed = 0;
+    if (practiceUnlocked) {
+      for (const kc of taughtKcIds) {
+        const st = state.mastery?.kc[kc];
+        const pL = st ? currentPL(st, now) : PRIOR_PL0;
+        if (pL < MASTERY_THRESHOLD) practiceReviewNeed += 1;
+      }
+    }
+
+    const candidateLessons: TodaysPathCandidateLesson[] = input.candidateLessons.map((l) => ({
+      lessonId: l.lessonId,
+      slug: l.slug,
+      title: l.title,
+      section: l.section,
+      cluster: l.cluster,
+      kcCount: l.kcCount,
+      mastered: masteredLessonIds.has(l.lessonId) || completed.has(l.lessonId),
+      covered: l.cluster !== null && ctx.clustersWithEvidence.has(l.cluster),
+      unlocked: l.prerequisiteLessonIds.every((p) => done(p)),
+      dependentsCount: dependents.get(l.lessonId) ?? 0,
+      // Untracked lessons have no memory state yet → fall back to the P(L)_0 prior.
+      pL: pLByLesson.get(l.lessonId) ?? PRIOR_PL0,
+    }));
+
+    return {
+      planDate,
+      dailyBudgetMinutes: preset,
+      dayNumber: ctx.dayNumber,
+      totalDays: ctx.totalDays,
+      coveragePct: ctx.coveragePct,
+      recall: input.recallLoad,
+      mistakesOpen: (await this.openMistakes(state)).length,
+      practiceUnlocked,
+      practiceReviewNeed,
+      candidateLessons,
+      carryOver,
+    };
+  }
+
+  private todaysPathView(state: LearnerState): TodaysPathView {
+    const ctx = this.dayContext(state);
+    const planDate = this.planDateFor(this.clock.now(), this.timezoneOffset(state));
+    const preset = this.dailyPreset(state);
+    const plan = state.plan && state.plan.planDate === planDate ? state.plan : null;
+    if (plan === null) {
+      return {
+        built: false,
+        planDate,
+        dailyMinutesPreset: preset,
+        dailyBudgetMinutes: 0,
+        plannedMinutes: 0,
+        capacityLabel: ctx.capacityLabel,
+        dayNumber: ctx.dayNumber,
+        totalDays: ctx.totalDays,
+        reviewSharePct: 0,
+        reviewDebtBand: 'normal',
+        activities: [],
+        currentActivityId: null,
+        freeStudyMinutes: 0,
+        ghost: ctx.ghost,
+      };
+    }
+    return {
+      built: true,
+      planDate: plan.planDate,
+      dailyMinutesPreset: plan.dailyMinutesPreset,
+      dailyBudgetMinutes: plan.dailyBudgetMinutes,
+      plannedMinutes: plan.plannedMinutes,
+      capacityLabel: ctx.capacityLabel,
+      dayNumber: ctx.dayNumber,
+      totalDays: ctx.totalDays,
+      reviewSharePct: plan.reviewSharePct,
+      reviewDebtBand: plan.reviewDebtBand,
+      activities: plan.activities.map((a) => ({
+        activityId: a.activityId,
+        kind: a.kind,
+        title: a.title,
+        detail: a.detail,
+        estimatedMinutes: a.estimatedMinutes,
+        count: a.count,
+        minutesBudget: a.minutesBudget,
+        focus: a.focus,
+        lessonSlug: a.lessonSlug,
+        lessonId: a.lessonId,
+        priorityReason: a.priorityReason,
+        status: a.status,
+        carriedOver: a.carriedOver,
+      })),
+      currentActivityId: plan.currentActivityId,
+      freeStudyMinutes: plan.freeStudyMinutes,
+      ghost: ctx.ghost,
     };
   }
 
@@ -512,7 +1016,19 @@ export class Authority {
         sub: 'answering',
         currentFirstChoiceId: null,
         revealed: false,
+        retryPending: false,
       };
+      return;
+    }
+    // A session persisted mid-flight on the removed cause step resumes at the
+    // reveal it should have been given, with its retry still owed. The cast is the
+    // point: 'cause' is no longer representable in the type, but it is still
+    // representable in a stored projection, and without this a resumed session
+    // would render no control at all.
+    const s = state.session;
+    if ((s.sub as string) === 'cause') {
+      s.sub = 'reveal';
+      s.retryPending = true;
     }
   }
 
@@ -565,6 +1081,10 @@ export class Authority {
             correctChoiceId: compiled.protected.correct_choice_id,
             correctRationale: compiled.protected.rationales.correct,
             choiceRationales: compiled.protected.rationales.choices as Record<string, string>,
+            // Which option THEY picked, so the reveal can refute that specific
+            // reasoning rather than restate the key (§3.3). Read off session state
+            // rather than the browser's selection, which does not survive the step.
+            chosenChoiceId: asChoiceId(s.currentFirstChoiceId),
           }
         : null;
     return {
@@ -579,8 +1099,20 @@ export class Authority {
     };
   }
 
-  /** Learner submits an answer for the current question step. */
-  submitAttempt(state: LearnerState, choiceId: string | null): void {
+  /**
+   * Learner submits an answer for the current question step.
+   *
+   * A missed first attempt goes STRAIGHT to the reveal, which names the key and
+   * refutes the option they actually picked. The learner is not asked what
+   * happened first: experts naming the cause of an error agree at κ = 0.000–0.063
+   * and learner self-report is biased worst in the weakest learners (§2.3). The
+   * 2026-07-28 amendment to §3.3, which defers the key to a second miss, is scoped
+   * to adaptive Practice and leaves this path as it is.
+   * Study's one unassisted retry survives — `retryPending` spends it when the
+   * learner leaves the reveal, so it now follows the correction instead of
+   * standing in front of it.
+   */
+  async submitAttempt(state: LearnerState, choiceId: string | null): Promise<void> {
     this.startSession(state);
     const s = state.session!;
     const activity = this.currentActivity(state);
@@ -597,6 +1129,7 @@ export class Authority {
       // revealed), so it moves P(L) — up on correct, down on wrong. Retries and
       // reveals below are non-independent and never touch mastery (fail-closed).
       this.updateMasteryForAttempt(state, activity.questionId!, choiceId === correctId);
+      await this.logStudyAttempt(state, activity, choiceId, choiceId === correctId);
 
       if (phase === 'protected') {
         // No feedback during a protected block; record protected evidence and advance.
@@ -635,7 +1168,8 @@ export class Authority {
         });
         this.advance(state);
       } else {
-        s.sub = 'cause';
+        s.sub = 'reveal';
+        s.retryPending = true;
       }
       return;
     }
@@ -652,26 +1186,62 @@ export class Authority {
         independent: false,
         changeDimensions: [],
       });
-      s.sub = 'reveal';
+      // The correction was already shown before this retry, so there is nothing
+      // left to reveal — move on.
+      this.advance(state);
     }
   }
 
-  selectCause(state: LearnerState, cause: ProbableCause): void {
-    this.startSession(state);
-    const s = state.session;
-    const activity = this.currentActivity(state);
-    if (!s || !activity || activity.kind !== 'question' || s.sub !== 'cause') return;
-    this.recordEvent(state, {
-      type: 'cause_selected',
-      eventId: newEventId(),
-      learnerId: state.learnerId,
-      idempotencyKey: newIdempotencyKey(),
+  /**
+   * Log one Study first attempt into the SAME attempt log adaptive Practice
+   * writes, tagged `activity_type = 'study'`, so a Study miss reaches the Mistakes
+   * tab with the distractor the learner chose.
+   *
+   * `kcId` is the item's `kc_ids[0]` — a v3 KC id, the SAME grain and the same id
+   * space adaptive Practice logs from `questions.kc_id`. It used to be
+   * `internal_skill_ids[0]`, a skill-graph node (`bb1-enzyme-inhibition`), which
+   * could never compare equal to a corpus KC id (`V3-KC-525816`); a study miss and
+   * a practice miss on one concept therefore formed two patterns instead of one.
+   * The lesson graph and the corpus share all 422 of their KCs, so this is a
+   * field-selection fix, not a translation between id spaces. `internal_skill_ids`
+   * is untouched and still resolves the display skill and the prerequisite edges.
+   *
+   * The other three grain columns already agreed with Practice and are unchanged:
+   * `skill` is the item's 7-op reasoning operation, `cluster` its 15-cluster
+   * rollup, `familyId` its item family.
+   *
+   * Additive and read-only downstream: it changes no scoring, no mastery, no
+   * evidence and no exposure. It deliberately does NOT call `queueRepair`. That is
+   * now a scope decision rather than an id-space limitation — a study KC WOULD
+   * match corpus items — and the re-attempt path is the `focus` token on the
+   * Mistakes row, which the practice queue's own exposure seam resolves to a fresh
+   * unseen item. Spending a queue slot from here is a separate change.
+   *
+   * Guided-phase questions are excluded: those are in-lesson comprehension checks
+   * during acquisition, where errorful generation is the mechanism doing the work,
+   * and §6.5 keeps them off this surface.
+   */
+  private async logStudyAttempt(
+    state: LearnerState,
+    activity: PathActivity,
+    choiceId: string | null,
+    correct: boolean,
+  ): Promise<void> {
+    const questionId = activity.questionId;
+    if (questionId === undefined || activity.phase === 'guided') return;
+    const q = this.bank.questions.find((x) => x.id === questionId);
+    await this.practiceBank.recordPracticeAttempt(state.learnerId, {
+      questionId,
+      kcId: q?.kc_ids[0] ?? null,
+      skill: this.masteryTarget(questionId, state.session?.skillId ?? ENZYME_SKILL).op,
+      cluster: q?.skill_cluster ?? null,
+      familyId: q?.family_id ?? null,
+      chosenChoiceId: asChoiceId(choiceId),
+      correct,
+      firstAttempt: true,
+      activityType: 'study',
       occurredAt: this.clock.now(),
-      contentRelease: this.bank.contentRelease,
-      policies: activePolicyVersions(),
-      payload: { questionId: ContentIdSchema.parse(activity.questionId!), cause },
     });
-    s.sub = 'retry';
   }
 
   requestReveal(state: LearnerState): void {
@@ -694,9 +1264,21 @@ export class Authority {
     s.sub = 'reveal';
   }
 
-  /** Advance from a non-question step (lesson/simulation/recall) or after a reveal. */
+  /**
+   * Advance from a non-question step (lesson/simulation/recall) or after a reveal.
+   *
+   * Leaving the reveal on a missed item spends the one unassisted retry rather
+   * than advancing. This is the same reordering adaptive Practice made: the retry
+   * is kept, only the answer-withholding in front of it is gone.
+   */
   continueStep(state: LearnerState): void {
     this.startSession(state);
+    const s = state.session!;
+    if (s.sub === 'reveal' && s.retryPending === true) {
+      s.sub = 'retry';
+      s.retryPending = false;
+      return;
+    }
     this.advance(state);
   }
 
@@ -1307,20 +1889,285 @@ export class Authority {
     m.cars[skill] = carsUpdate(m.cars[skill] ?? CARS_V0, { r, b, k });
   }
 
-  /** Consume diagnostic seeds (never mastery): initialize unpracticed priors only. */
+  /**
+   * Consume diagnostic seeds (never mastery): initialize unpracticed priors only.
+   *
+   * The cap is re-applied here rather than trusted from the producer. Seeds are
+   * built where the diagnostic runs and reach the authority over the wire, so
+   * this is the last point at which "a read can move where you start, never
+   * whether you have mastered something" can be enforced; `SEED_PRIOR_CAP` sits
+   * far below BKT's 0.95 mastery threshold, which is what makes the guarantee
+   * hold whatever a caller sends.
+   */
   applyMasterySeed(state: LearnerState, seed: MasterySeed): void {
     const m = this.ensureMastery(state);
+    const capped = (prior: number): number => Math.min(SEED_PRIOR_CAP, Math.max(SEED_PRIOR_FLOOR, prior));
     for (const [kcId, prior] of Object.entries(seed.kcPriors)) {
-      if (!m.kc[kcId]) m.kc[kcId] = initialMemoryState(prior);
+      if (!m.kc[kcId]) m.kc[kcId] = initialMemoryState(capped(prior));
     }
     for (const [op, prior] of Object.entries(seed.skillPriors)) {
       const operation = op as ReasoningOperation;
-      if (!m.skill[operation]) m.skill[operation] = initialMemoryState(prior);
+      if (!m.skill[operation]) m.skill[operation] = initialMemoryState(capped(prior));
     }
     for (const [skill, v] of Object.entries(seed.carsAbility)) {
       const cars = skill as CarsSkill;
-      if (m.cars[cars] === undefined) m.cars[cars] = v;
+      if (m.cars[cars] === undefined) m.cars[cars] = Math.min(SEED_CARS_MAX, Math.max(SEED_CARS_MIN, v));
     }
+  }
+
+  // ---- Adaptive Practice (test-out; practice-selection / provisional-v1) --
+  // Server-authoritative WRITE path: a first, unassisted answer moves P(L)
+  // through the existing mastery-bkt engine. Items come from the injected bank
+  // port (real Postgres corpus in prod, synthetic fallback in dev/tests).
+
+  /**
+   * Build the ordered queue of up to `x` fresh practice items. Reads the mastery
+   * signal + bank catalog into a snapshot, asks the pure selection engine for
+   * specs, then pulls one fresh matching item per spec (excluding recently-seen
+   * and anything already queued). Missing specs are skipped (graceful).
+   */
+  async getPracticeQueue(
+    state: LearnerState,
+    x: number,
+    focus?: PracticeFocus,
+  ): Promise<PracticeQueueView> {
+    const requested = Math.max(0, Math.min(Math.floor(x), 50));
+    const focusToken = focus ?? null;
+    if (requested === 0) return { requested: 0, focus: focusToken, items: [] };
+
+    const now = this.clock.now();
+    const [units, repairs, recentlySeen] = await Promise.all([
+      this.practiceBank.listUnits({ limit: 400 }),
+      this.practiceBank.recentMisses(state.learnerId, { limit: 20 }),
+      this.practiceBank.recentlySeenIds(state.learnerId, { withinDays: 14, limit: 500 }),
+    ]);
+
+    const snapshot = this.buildPracticeSnapshot(state, units, repairs, now, focusToken);
+    const specs = selectPracticeQueue(snapshot, requested, PRACTICE_SELECTION_CONFIG);
+
+    const served = new Set<string>(recentlySeen);
+    const items: PracticeQueueItem[] = [];
+    for (const spec of specs) {
+      const candidates = await this.practiceBank.findItems(
+        {
+          domain: spec.domain,
+          ...(spec.kcId !== undefined ? { kcId: spec.kcId } : {}),
+          ...(spec.skill !== undefined ? { skill: spec.skill } : {}),
+          ...(spec.carsSkill !== undefined ? { carsSkill: spec.carsSkill } : {}),
+          targetB: bandCenter(spec.difficultyBand),
+        },
+        { excludeIds: [...served], limit: 8 },
+      );
+      const chosen = candidates.find((c) => !served.has(c.question.id));
+      if (chosen === undefined) continue;
+      served.add(chosen.question.id);
+      items.push({
+        specId: practiceSpecId(spec),
+        domain: spec.domain,
+        purpose: spec.purpose,
+        kcId: chosen.kcId ?? spec.kcId ?? null,
+        skill: chosen.skill ?? spec.skill ?? null,
+        carsSkill: chosen.carsSkill ?? spec.carsSkill ?? null,
+        dok: chosen.dok ?? spec.dok ?? null,
+        question: chosen.question,
+      });
+      if (items.length >= requested) break;
+    }
+
+    return { requested, focus: focusToken, items };
+  }
+
+  /**
+   * Score one practice answer. On a FIRST, unassisted attempt this moves the
+   * P(L) mastery signal (BKT for science KC/skill/lesson, IRT `carsUpdate` at
+   * measurement weight for CARS), records exposure + population stats, and
+   * queues a KC×skill repair on a miss. Retries are learning-only (no P(L)).
+   * Answer material is returned only here (post-submit), never in the queue.
+   */
+  async submitPracticeAttempt(
+    state: LearnerState,
+    cmd: PracticeAttemptCommand,
+  ): Promise<PracticeAttemptResult> {
+    const answer = await this.practiceBank.getAnswer(cmd.questionId);
+    if (answer === null) {
+      throw new Error(`Practice item ${cmd.questionId} is unavailable.`);
+    }
+    const correct = cmd.chosenChoiceId !== null && cmd.chosenChoiceId === answer.correctChoiceId;
+    const now = this.clock.now();
+
+    if (cmd.firstAttempt) {
+      const classification = await this.practiceBank.classify(cmd.questionId);
+      const stats = await this.practiceBank.questionStats(cmd.questionId);
+      if (classification !== null) {
+        this.applyPracticeMastery(state, classification, correct, stats, now);
+      }
+      await this.practiceBank.recordAttempt(cmd.questionId, correct, now);
+      await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
+      // Log the first attempt WITH the chosen distractor. Which wrong answer they
+      // picked is the diagnostic signal (docs/design/error-handling-design.md §1);
+      // it used to reach only an unread event payload. Correct attempts are logged
+      // too so the pattern section has a denominator. Read-only downstream: this
+      // changes no scoring, mastery, exposure or repair behaviour.
+      await this.practiceBank.recordPracticeAttempt(state.learnerId, {
+        questionId: cmd.questionId,
+        kcId: classification?.kcId ?? null,
+        skill: classification?.skill ?? null,
+        cluster: classification?.cluster ?? null,
+        familyId: classification?.familyId ?? null,
+        chosenChoiceId: cmd.chosenChoiceId,
+        correct,
+        firstAttempt: true,
+        activityType: 'practice',
+        occurredAt: now,
+      });
+      if (!correct && classification?.domain === 'science' && classification.kcId !== null) {
+        await this.practiceBank.queueRepair(
+          state.learnerId,
+          classification.skill
+            ? { kcId: classification.kcId, skill: classification.skill }
+            : { kcId: classification.kcId },
+          now,
+        );
+      }
+    }
+
+    return {
+      correct,
+      correctChoiceId: answer.correctChoiceId,
+      rationale: answer.rationale,
+      choiceRationales: answer.choiceRationales,
+    };
+  }
+
+  private buildPracticeSnapshot(
+    state: LearnerState,
+    units: readonly PracticeCandidateUnit[],
+    repairs: readonly PracticeRepairTarget[],
+    now: UtcTimestamp,
+    focus: PracticeFocus | null,
+  ): PracticeSnapshot {
+    const m = state.mastery;
+    const focused = this.filterByFocus(units, focus);
+
+    const covered = new Set<SkillCluster>();
+    const scienceUnits: PracticeUnit[] = [];
+    const carsUnits: PracticeCarsUnit[] = [];
+
+    for (const u of focused) {
+      if (u.domain === 'cars') {
+        if (u.carsSkill === null) continue;
+        const v = m?.cars[u.carsSkill];
+        carsUnits.push({
+          carsSkill: u.carsSkill,
+          v: v ?? CARS_V0,
+          neverPractised: v === undefined,
+          recency: 0,
+        });
+        continue;
+      }
+      if (u.skill === null || u.cluster === null) continue;
+      const kcState = m?.kc[u.kcId];
+      const skillState = m?.skill[u.skill];
+      const neverPractised = kcState === undefined;
+      if (!neverPractised) covered.add(u.cluster);
+      scienceUnits.push({
+        kcId: u.kcId,
+        skill: u.skill,
+        cluster: u.cluster,
+        plKc: kcState ? currentPL(kcState, now) : PRIOR_PL0,
+        plSkill: skillState ? currentPL(skillState, now) : PRIOR_PL0,
+        // Provisional: real-bank items imply available instruction and no
+        // per-learner prerequisite gate yet (see docs/practice-engine.md).
+        taught: true,
+        prereqMet: true,
+        ...(u.dok !== null ? { dok: u.dok } : {}),
+        overdueDays: kcState ? this.overduePracticeDays(kcState, now) : 0,
+        neverPractised,
+        recency: 0,
+      });
+    }
+
+    // Per-KC teach-before-test: only serve KCs the learner has been taught (union of
+    // completed lessons' KCs, cached at plan-build). Falls back to unfiltered when the
+    // taught set doesn't intersect the loaded bank (e.g. dev synthetic bank) so local
+    // practice still works.
+    const taught =
+      state.taughtKcIds && state.taughtKcIds.length > 0 ? new Set(state.taughtKcIds) : null;
+    const taughtUnits = taught ? scienceUnits.filter((u) => taught.has(u.kcId)) : scienceUnits;
+    const scopedUnits = taughtUnits.length > 0 ? taughtUnits : scienceUnits;
+
+    return {
+      units: scopedUnits,
+      cars: carsUnits,
+      repairs: repairs.map((r) => (r.skill ? { kcId: r.kcId, skill: r.skill } : { kcId: r.kcId })),
+      coveredClusters: covered,
+    };
+  }
+
+  private filterByFocus(
+    units: readonly PracticeCandidateUnit[],
+    focus: PracticeFocus | null,
+  ): readonly PracticeCandidateUnit[] {
+    if (focus === null) return units;
+    const upper = focus.toUpperCase();
+    if (upper === 'CARS') return units.filter((u) => u.domain === 'cars');
+    if ((SKILL_CLUSTERS as readonly string[]).includes(upper)) {
+      return units.filter((u) => u.cluster === (upper as SkillCluster));
+    }
+    if ((REASONING_OPERATIONS as readonly string[]).includes(upper)) {
+      return units.filter((u) => u.skill === (upper as ReasoningOperation));
+    }
+    return units;
+  }
+
+  private overduePracticeDays(st: MemoryState, now: UtcTimestamp): number {
+    if (st.lastPracticedAt === null) return 0;
+    if (currentPL(st, now) >= REVIEW_LINE) return 0;
+    return Math.max(0, daysBetween(st.lastPracticedAt, now));
+  }
+
+  private applyPracticeMastery(
+    state: LearnerState,
+    classification: PracticeItemClassification,
+    correct: boolean,
+    stats: { attempts: number; correct: number },
+    now: UtcTimestamp,
+  ): void {
+    const m = this.ensureMastery(state);
+    if (classification.domain === 'cars') {
+      if (classification.carsSkill === null) return;
+      m.cars[classification.carsSkill] = carsUpdate(m.cars[classification.carsSkill] ?? CARS_V0, {
+        r: correct ? 1 : 0,
+        b: 0,
+        k: CARS_K_POTD,
+      });
+      return;
+    }
+    if (classification.kcId === null || classification.skill === null) return;
+
+    const prereqKeys = this.bank.skillGraph.edges
+      .filter((e) => e.kind === 'hard_prerequisite' && e.to === classification.kcId)
+      .map((e) => e.from);
+    const prerequisites = prereqKeys.map((k) => m.kc[k] ?? initialMemoryState());
+
+    const result = applyMasteryAttempt({
+      correct,
+      now,
+      questionStats: stats,
+      ...(classification.dok !== null ? { dokLevel: classification.dok } : {}),
+      states: {
+        kc: m.kc[classification.kcId] ?? initialMemoryState(),
+        reasoningOperation: m.skill[classification.skill] ?? initialMemoryState(),
+      },
+      prerequisites,
+    });
+
+    m.kc[classification.kcId] = result.states.kc;
+    m.skill[classification.skill] = result.states.reasoningOperation;
+    prereqKeys.forEach((k, i) => {
+      const next = result.prerequisites[i];
+      if (next) m.kc[k] = next;
+    });
   }
 
   // ---- Practice hooks (Passage of the Day, etc.) ------------------------
@@ -1396,7 +2243,9 @@ export class Authority {
       ];
       for (const [criterion, skill] of map) {
         const score = rubric[criterion];
-        if (score !== undefined) this.updateCarsAbility(state, skill, score / 3, CARS_K_DUEL);
+        if (score !== undefined) {
+          this.updateCarsAbility(state, skill, score / 3, CARS_K_DUEL);
+        }
       }
     }
   }
@@ -1419,7 +2268,7 @@ export class Authority {
    * `skillsTouched` still reads the warrant, and correctly: "have I met this at
    * all" is coverage, not attainment, and it makes no claim about capability.
    */
-  getWrapped(state: LearnerState): WrappedView {
+  async getWrapped(state: LearnerState): Promise<WrappedView> {
     const counts: Record<string, number> = {};
     for (const e of state.evidence) counts[e.kind] = (counts[e.kind] ?? 0) + 1;
     return {
@@ -1429,39 +2278,206 @@ export class Authority {
       ).length,
       skillsGlowing: this.getMasterySkills(state).filter((s) => s.mastered).length,
       evidenceCounts: counts,
-      repairsCompleted: this.getErrorLog(state).filter((e) => e.repaired).length,
+      repairsCompleted: (await this.getErrorLog(state)).filter((e) => e.resolved).length,
       protectedPassed: state.evidence.filter((e) => e.kind === 'protected' && e.outcome === 'correct').length,
     };
   }
 
-  getErrorLog(state: LearnerState): ErrorEntryView[] {
-    const causeByQuestion = new Map<string, ProbableCause>();
-    for (const ev of state.events) {
-      if (ev.type === 'cause_selected') causeByQuestion.set(ev.payload.questionId, ev.payload.cause);
+  // ---- Mistakes ------------------------------------------------------------
+  // Surface B (history) and Surface A (patterns) of docs/design/error-handling-design.md.
+  // Both read the attempt log, which is the only place the chosen distractor
+  // survives. Display scope is QUESTION ATTEMPTS — adaptive Practice and the Study
+  // path (§6.5). What stays out: an FSRS "Again" is the scheduler hitting its
+  // target retention, not a mistake, and an in-lesson comprehension check happens
+  // during acquisition where errorful generation is the mechanism doing the work.
+  // Neither is written to this log at all, so the scope is enforced at the write.
+
+  /** How many logged attempts the Mistakes surfaces read back. */
+  private static readonly ATTEMPT_LOG_LIMIT = 500;
+
+  /**
+   * Distinct items in a group before a pattern may be ASSERTED rather than
+   * hedged. No study sets this number. Ellerton & Clements found the careless
+   * share of errors on a single question ranged from 1% to 71%, so item variance
+   * plausibly dominates learner variance and a small-n "pattern" is most likely
+   * an artifact of which items came up (§6.5 rule 5).
+   */
+  private static readonly PATTERN_ASSERT_ITEMS = 5;
+  private static readonly PATTERN_ASSERT_MISSES = 3;
+  /** Below this a group is not shown at all — one miss is an error, not a pattern. */
+  private static readonly PATTERN_MIN_MISSES = 2;
+
+  /**
+   * A miss is resolved when a LATER first attempt on a DIFFERENT item in the same
+   * KC was correct — i.e. the fresh-item re-attempt landed. Re-answering the same
+   * item is not resolution (Karpicke & Roediger: re-testing the logged item is the
+   * measure that shows nothing, §9), and the practice queue never re-serves.
+   */
+  private static resolved(
+    attempts: readonly PracticeAttemptLogEntry[],
+    miss: PracticeAttemptLogEntry,
+  ): boolean {
+    if (miss.kcId === null) return false;
+    const missedAt = Date.parse(miss.occurredAt);
+    return attempts.some(
+      (a) =>
+        a.correct &&
+        a.kcId === miss.kcId &&
+        a.questionId !== miss.questionId &&
+        Date.parse(a.occurredAt) > missedAt,
+    );
+  }
+
+  /**
+   * Re-read the content behind one logged attempt.
+   *
+   * The two surfaces serve items from different corpora, so a row is hydrated from
+   * the corpus it was served out of: adaptive Practice from the injected bank port
+   * (real v7 Postgres in prod), the Study path from the authored lesson bank this
+   * authority holds. Routing on `activityType` rather than trying both keeps the
+   * practice path — the one that could not see a single miss before migration 0010
+   * — free of any dependency on the synthetic bank being loaded.
+   */
+  private async hydrateAttempt(
+    entry: PracticeAttemptLogEntry,
+  ): Promise<{ question: PracticeQuestion; answer: PracticeAnswer } | null> {
+    if (entry.activityType === 'study') {
+      const compiled = this.bank.compiled.get(entry.questionId);
+      if (compiled === undefined) return null;
+      return {
+        question: compiledToPracticeQuestion(this.bank, compiled),
+        answer: {
+          correctChoiceId: compiled.protected.correct_choice_id,
+          rationale: compiled.protected.rationales.correct,
+          choiceRationales: compiled.protected.rationales.choices as Record<string, string>,
+        },
+      };
     }
-    const entries: ErrorEntryView[] = [];
-    const seen = new Set<string>();
-    for (const ev of state.events) {
-      if (ev.type !== 'attempt_submitted') continue;
-      const qid = ev.payload.questionId;
-      const compiled = this.bank.compiled.get(qid);
-      if (!compiled) continue;
-      const wrong = ev.payload.chosenChoiceId !== compiled.protected.correct_choice_id;
-      if (wrong && !ev.payload.isDiagnosticRetry && !seen.has(qid)) {
-        seen.add(qid);
-        entries.push({
-          questionId: qid,
-          skillId: ENZYME_SKILL,
-          occurredAt: ev.occurredAt,
-          chosenChoiceId: ev.payload.chosenChoiceId,
-          cause: causeByQuestion.get(qid) ?? null,
-          repaired: state.evidence.some(
-            (e) => sameItemId(e.questionId, qid) && e.kind === 'diagnostic_retry',
-          ),
-        });
+    const [question, answer] = await Promise.all([
+      this.practiceBank.getQuestion(entry.questionId),
+      this.practiceBank.getAnswer(entry.questionId),
+    ]);
+    return question === null || answer === null ? null : { question, answer };
+  }
+
+  /**
+   * Surface B — the question history. One row per missed item, carrying the stem,
+   * what the learner picked, what was correct, and the refutation they were shown.
+   *
+   * The previous implementation walked `attempt_submitted` events and required
+   * `this.bank.compiled.get(questionId)` to resolve, which scoped it to the
+   * 6-question synthetic demo bank; adaptive practice emits no such event, so not
+   * one practice miss could ever appear. The event store is untouched — only the
+   * error log's source moved.
+   */
+  async getErrorLog(state: LearnerState): Promise<ErrorEntryView[]> {
+    const attempts = await this.practiceBank.listPracticeAttempts(state.learnerId, {
+      limit: Authority.ATTEMPT_LOG_LIMIT,
+    });
+    const misses = attempts.filter((a) => !a.correct && a.firstAttempt);
+    const hydrated = await Promise.all(
+      misses.map(async (miss) => {
+        const content = await this.hydrateAttempt(miss);
+        // An item retired from its corpus since the miss can no longer be shown
+        // back, and re-attempting it is impossible; drop it rather than render a
+        // row with no content.
+        if (content === null) return null;
+        const { question, answer } = content;
+        const textOf = (id: string | null): string =>
+          id === null ? '' : (question.choices.find((c) => c.id === id)?.text ?? '');
+        const entry: ErrorEntryView = {
+          questionId: miss.questionId,
+          kcId: miss.kcId,
+          skillId: miss.skill,
+          cluster: miss.cluster,
+          familyId: miss.familyId,
+          occurredAt: miss.occurredAt,
+          stem: question.stem,
+          chosenChoiceId: miss.chosenChoiceId,
+          chosenChoiceText: textOf(miss.chosenChoiceId),
+          correctChoiceId: answer.correctChoiceId,
+          correctChoiceText: textOf(answer.correctChoiceId),
+          choiceRationale:
+            miss.chosenChoiceId === null
+              ? null
+              : (answer.choiceRationales[miss.chosenChoiceId] ?? null),
+          resolved: Authority.resolved(attempts, miss),
+          focus: focusFor(miss.cluster, miss.skill),
+        };
+        return entry;
+      }),
+    );
+    return hydrated.filter((e): e is ErrorEntryView => e !== null);
+  }
+
+  /**
+   * Surface A — recurring misses, grouped at KC grain (falling back to cluster
+   * for items with no KC, e.g. CARS). Practice and study attempts group together:
+   * the grain is a property of the content, not of the surface it was served on.
+   *
+   * NOT grouped at misconception grain: `error_models` is populated on 0 of the
+   * 2,108 corpus items, so the best-validated grain has no data. Every row counts
+   * DISTINCT items, carries its denominator, and hedges below the assertion floor.
+   */
+  async getMistakePatterns(state: LearnerState): Promise<MistakePatternView[]> {
+    const attempts = await this.practiceBank.listPracticeAttempts(state.learnerId, {
+      limit: Authority.ATTEMPT_LOG_LIMIT,
+    });
+    interface Group {
+      grain: 'kc' | 'cluster';
+      key: string;
+      label: string;
+      attempted: Set<string>;
+      missed: Set<string>;
+      lastMissedAt: UtcTimestamp | null;
+      cluster: SkillCluster | null;
+      skill: ReasoningOperation | null;
+    }
+    const groups = new Map<string, Group>();
+    for (const attempt of attempts) {
+      if (!attempt.firstAttempt) continue;
+      const grain = attempt.kcId !== null ? 'kc' : 'cluster';
+      const key = attempt.kcId ?? attempt.cluster;
+      if (key === null) continue;
+      const group = groups.get(`${grain}:${key}`) ?? {
+        grain,
+        key,
+        label: grain === 'kc' ? humanize(key) : key,
+        attempted: new Set<string>(),
+        missed: new Set<string>(),
+        lastMissedAt: null,
+        cluster: attempt.cluster,
+        skill: attempt.skill,
+      };
+      group.attempted.add(attempt.questionId);
+      if (!attempt.correct) {
+        group.missed.add(attempt.questionId);
+        if (group.lastMissedAt === null || attempt.occurredAt > group.lastMissedAt) {
+          group.lastMissedAt = attempt.occurredAt;
+        }
       }
+      groups.set(`${grain}:${key}`, group);
     }
-    return entries;
+    const patterns: MistakePatternView[] = [];
+    for (const group of groups.values()) {
+      if (group.missed.size < Authority.PATTERN_MIN_MISSES || group.lastMissedAt === null) continue;
+      patterns.push({
+        grain: group.grain,
+        key: group.key,
+        label: group.label,
+        missedItems: group.missed.size,
+        attemptedItems: group.attempted.size,
+        lastMissedAt: group.lastMissedAt,
+        assertable:
+          group.attempted.size >= Authority.PATTERN_ASSERT_ITEMS &&
+          group.missed.size >= Authority.PATTERN_ASSERT_MISSES,
+        focus: focusFor(group.cluster, group.skill),
+      });
+    }
+    return patterns.sort(
+      (a, b) =>
+        b.missedItems - a.missedItems || Date.parse(b.lastMissedAt) - Date.parse(a.lastMissedAt),
+    );
   }
 
   /**
@@ -1494,6 +2510,7 @@ export class Authority {
     s.sub = 'answering';
     s.currentFirstChoiceId = null;
     s.revealed = false;
+    s.retryPending = false;
   }
 
   /**

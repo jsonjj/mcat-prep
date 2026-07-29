@@ -50,6 +50,14 @@ interface LessonRendererProps {
   readonly script: LessonScriptPreview;
   readonly presentation: LessonPresentationPreview;
   readonly lessonIndexHref: string;
+  /**
+   * When provided (e.g. launched from Today's Path), the completion action calls
+   * this instead of a hard link — so the guided runner can mark the lesson done
+   * and return to the plan with React Router state intact.
+   */
+  readonly onComplete?: () => void;
+  /** Fired on a first wrong answer to an independent-stage question (count-only mistake signal). */
+  readonly onIndependentMiss?: (questionId: string, chosenOptionId: string) => void;
 }
 
 const GROUP_LABELS: Record<LessonPresentationScreenPreview['progressGroup'], string> = {
@@ -931,10 +939,12 @@ function CompletionScreen({
   node,
   actionLabel,
   lessonIndexHref,
+  onComplete,
 }: {
   node: LessonCompletionNodePreview;
   actionLabel: string;
   lessonIndexHref: string;
+  onComplete?: () => void;
 }) {
   return (
     <Stack gap={4}>
@@ -947,12 +957,22 @@ function CompletionScreen({
         </ul>
       </Card>
       <p className="mc-muted">{node.nextStep}</p>
-      <a
-        className="mc-button mc-button--primary mc-button--lg mc-button--full"
-        href={lessonIndexHref}
-      >
-        <span className="mc-button__label">{actionLabel}</span>
-      </a>
+      {onComplete ? (
+        <button
+          type="button"
+          className="mc-button mc-button--primary mc-button--lg mc-button--full"
+          onClick={onComplete}
+        >
+          <span className="mc-button__label">{actionLabel}</span>
+        </button>
+      ) : (
+        <a
+          className="mc-button mc-button--primary mc-button--lg mc-button--full"
+          href={lessonIndexHref}
+        >
+          <span className="mc-button__label">{actionLabel}</span>
+        </a>
+      )}
     </Stack>
   );
 }
@@ -965,6 +985,7 @@ function renderScreenBody({
   onSelect,
   onSubmit,
   onContinue,
+  onComplete,
 }: {
   node: LessonNodePreview;
   response: StoredQuestionResponse | undefined;
@@ -973,6 +994,7 @@ function renderScreenBody({
   onSelect: (optionId: string) => void;
   onSubmit: () => void;
   onContinue: () => void;
+  onComplete?: () => void;
 }) {
   switch (node.kind) {
     case 'intro':
@@ -994,12 +1016,23 @@ function renderScreenBody({
       return <RepairScreen node={node} actionLabel={actionLabel} onContinue={onContinue} />;
     case 'completion':
       return (
-        <CompletionScreen node={node} actionLabel={actionLabel} lessonIndexHref={lessonIndexHref} />
+        <CompletionScreen
+          node={node}
+          actionLabel={actionLabel}
+          lessonIndexHref={lessonIndexHref}
+          onComplete={onComplete}
+        />
       );
   }
 }
 
-export function LessonRenderer({ script, presentation, lessonIndexHref }: LessonRendererProps) {
+export function LessonRenderer({
+  script,
+  presentation,
+  lessonIndexHref,
+  onComplete,
+  onIndependentMiss,
+}: LessonRendererProps) {
   useMemo(() => validateLessonPreviewPair(script, presentation), [presentation, script]);
   const [runtime, setRuntime] = useState<LessonPreviewRuntime>(() => readRuntime(script));
   const nodes = useMemo(() => new Map(script.nodes.map((node) => [node.id, node])), [script.nodes]);
@@ -1065,11 +1098,17 @@ export function LessonRenderer({ script, presentation, lessonIndexHref }: Lesson
     ) {
       return;
     }
-    updateResponse({
-      ...response,
-      submitted: true,
-      correct: response.selectedOptionId === currentNode.evaluation.correctOptionId,
-    });
+    const correct = response.selectedOptionId === currentNode.evaluation.correctOptionId;
+    updateResponse({ ...response, submitted: true, correct });
+    // A first wrong answer at an independent stage is an independent miss (count-only
+    // signal for Today's Path; no mistake content is stored here).
+    const independentStage =
+      currentNode.stage === 'independent' ||
+      currentNode.stage === 'exit-near' ||
+      currentNode.stage === 'exit-changed';
+    if (!correct && independentStage) {
+      onIndependentMiss?.(currentNode.id, response.selectedOptionId);
+    }
   };
 
   const continueLesson = () => {
@@ -1154,6 +1193,7 @@ export function LessonRenderer({ script, presentation, lessonIndexHref }: Lesson
             onSelect: selectOption,
             onSubmit: submitQuestion,
             onContinue: continueLesson,
+            onComplete,
           })}
         </article>
       </main>

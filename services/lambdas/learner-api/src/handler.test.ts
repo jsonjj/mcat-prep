@@ -386,7 +386,14 @@ describe('learner Lambda API security boundary', () => {
     });
   });
 
-  it('persists cause, retry, reveal, and continue transitions with idempotent commands', async () => {
+  /**
+   * Was 'persists cause, retry, reveal, and continue…'. The cause command and its
+   * route no longer exist: a miss is corrected immediately rather than interrogated
+   * first (§2.2–§2.3). The retry it used to precede is unchanged in kind and
+   * count — it just happens after the correction now — so the event count and the
+   * retry's position in the stream are the same as before.
+   */
+  it('persists reveal, retry, and continue transitions with idempotent commands', async () => {
     const { api, principal, repository } = harness({ state: 'question' });
     const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
 
@@ -395,16 +402,42 @@ describe('learner Lambda API security boundary', () => {
     );
     expect(wrong.statusCode).toBe(200);
 
-    const causeCommand = {
-      envelope: commandEnvelope(1),
-      cause: 'knew_but_misapplied',
-    };
-    const cause = await api.handle(request('POST', '/v1/attempts/cause', causeCommand, write));
-    const duplicateCause = await api.handle(
-      request('POST', '/v1/attempts/cause', causeCommand, write),
+    // The correction arrives with no intervening step, and it refutes the option
+    // this learner actually picked.
+    const revealed = await api.handle(
+      request('GET', '/v1/learning/session', undefined, {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
     );
-    expect(cause.statusCode).toBe(200);
-    expect(responseBody(duplicateCause)).toEqual(responseBody(cause));
+    expect(responseBody(revealed)).toMatchObject({
+      kind: 'question',
+      sub: 'reveal',
+      reveal: { correctChoiceId: 'A', chosenChoiceId: 'B' },
+    });
+
+    // Leaving the reveal spends the one unassisted retry instead of advancing.
+    const continueCommand = { envelope: commandEnvelope(1) };
+    const toRetry = await api.handle(
+      request('POST', '/v1/learning/session/continue', continueCommand, write),
+    );
+    const duplicateContinue = await api.handle(
+      request('POST', '/v1/learning/session/continue', continueCommand, write),
+    );
+    expect(toRetry.statusCode).toBe(200);
+    expect(responseBody(duplicateContinue)).toEqual(responseBody(toRetry));
+
+    const atRetry = await api.handle(
+      request('GET', '/v1/learning/session', undefined, {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(responseBody(atRetry)).toMatchObject({
+      kind: 'question',
+      sub: 'retry',
+      question: { id: 'q-enz-indep-competitive' },
+    });
 
     const retry = await api.handle(
       request(
@@ -418,38 +451,25 @@ describe('learner Lambda API security boundary', () => {
     );
     expect(retry.statusCode).toBe(200);
 
-    const revealed = await api.handle(
-      request('GET', '/v1/learning/session', undefined, {
-        origin: APP_ORIGIN,
-        authenticated: true,
-      }),
-    );
-    expect(responseBody(revealed)).toMatchObject({
-      kind: 'question',
-      sub: 'reveal',
-      reveal: { correctChoiceId: 'A' },
-    });
-
-    const continued = await api.handle(
-      request('POST', '/v1/learning/session/continue', { envelope: commandEnvelope(3) }, write),
-    );
+    // The retry advances on its own: the correction it used to lead to has already
+    // been shown, so there is no second reveal and no extra continue.
     const next = await api.handle(
       request('GET', '/v1/learning/session', undefined, {
         origin: APP_ORIGIN,
         authenticated: true,
       }),
     );
-
-    expect(continued.statusCode).toBe(200);
     expect(responseBody(next)).toMatchObject({
       kind: 'question',
       sub: 'answering',
       question: { id: 'q-enz-indep-noncompetitive' },
     });
-    expect(repository.eventsFor(principal.learnerId)).toHaveLength(4);
-    expect(repository.eventsFor(principal.learnerId)[2]?.payload).toMatchObject({
-      isDiagnosticRetry: true,
-    });
+
+    // Three commands where the cause step needed four: attempt, continue, retry.
+    const events = repository.eventsFor(principal.learnerId);
+    expect(events).toHaveLength(3);
+    expect(events[2]?.payload).toMatchObject({ isDiagnosticRetry: true });
+    expect(JSON.stringify(events)).not.toMatch(/cause/i);
   });
 
   it('supports Reveal Now without exposing protected-form answers', async () => {
@@ -603,6 +623,66 @@ describe('learner Lambda API security boundary', () => {
     expect(repository.eventsFor(principal.learnerId)).toHaveLength(0);
   });
 
+  it('serves an adaptive practice queue and scores an adaptive attempt (synthetic fallback)', async () => {
+    const { api, principal, repository } = harness();
+    const read = { origin: APP_ORIGIN, authenticated: true } as const;
+    const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
+
+    const queued = await api.handle(request('GET', '/v1/practice/queue/3', undefined, read));
+    expect(queued.statusCode).toBe(200);
+    const queue = responseBody(queued) as {
+      requested: number;
+      items: Array<{ specId: string; question: { id: string; choices: unknown[] } }>;
+    };
+    expect(queue.requested).toBe(3);
+    expect(queue.items.length).toBeGreaterThan(0);
+    expect(queue.items[0]!.question.choices).toHaveLength(4);
+    expect(JSON.stringify(queue)).not.toMatch(/correct_choice_id|correctChoiceId|rationale/i);
+
+    const first = queue.items[0]!;
+    const body = {
+      envelope: commandEnvelope(0),
+      questionId: first.question.id,
+      specId: first.specId,
+      chosenChoiceId: 'A',
+      firstAttempt: true,
+    };
+    const scored = await api.handle(request('POST', '/v1/practice/attempts/adaptive', body, write));
+    const duplicate = await api.handle(
+      request('POST', '/v1/practice/attempts/adaptive', body, write),
+    );
+
+    expect(scored.statusCode).toBe(200);
+    expect(responseBody(scored)).toMatchObject({
+      correct: expect.any(Boolean),
+      correctChoiceId: expect.stringMatching(/^[A-D]$/),
+      rationale: expect.any(String),
+    });
+    // Idempotent: a replay returns the same result and appends no new event.
+    expect(responseBody(duplicate)).toEqual(responseBody(scored));
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(1);
+    const projection = repository.projectionFor(principal.learnerId)?.state as { mastery?: unknown };
+    expect(projection.mastery).toBeDefined();
+  });
+
+  it('rejects an adaptive practice attempt without CSRF', async () => {
+    const { api } = harness();
+    const body = {
+      envelope: commandEnvelope(0),
+      questionId: 'q-enz-indep-competitive',
+      specId: 'sci:bb1-enzyme-inhibition:EXPLAIN:train',
+      chosenChoiceId: 'A',
+      firstAttempt: true,
+    };
+    const denied = await api.handle(
+      request('POST', '/v1/practice/attempts/adaptive', body, {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(denied.statusCode).toBe(403);
+  });
+
   it('persists deterministic non-mastery CARS evidence and serves Wrapped', async () => {
     const { api, principal, repository } = harness();
     const command = { envelope: commandEnvelope() };
@@ -670,7 +750,7 @@ describe('learner Lambda API security boundary', () => {
   });
 
   it.each([
-    ['POST', '/v1/attempts/cause', { envelope: commandEnvelope(), cause: 'not_sure' }],
+    ['POST', '/v1/attempts', { envelope: commandEnvelope(), questionId: 'q1', choiceId: 'A' }],
     ['POST', '/v1/attempts/reveal', { envelope: commandEnvelope(), revealNow: true }],
     ['POST', '/v1/learning/session/continue', { envelope: commandEnvelope() }],
     ['POST', '/v1/recall', { envelope: commandEnvelope(), answer: 'answer' }],
@@ -688,6 +768,23 @@ describe('learner Lambda API security boundary', () => {
     );
 
     expect(response.statusCode).toBe(403);
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(0);
+  });
+
+  it('no longer routes the cause command at all', async () => {
+    const { api, principal, repository } = harness({ state: 'question' });
+    const response = await api.handle(
+      request(
+        'POST',
+        '/v1/attempts/cause',
+        { envelope: commandEnvelope(), cause: 'knew_but_misapplied' },
+        { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN },
+      ),
+    );
+
+    // 404, not 403: the route is gone rather than merely guarded, so an older
+    // client cannot record a cause even with a valid session and token.
+    expect(response.statusCode).toBe(404);
     expect(repository.eventsFor(principal.learnerId)).toHaveLength(0);
   });
 

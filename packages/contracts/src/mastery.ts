@@ -41,6 +41,13 @@ export const MasterySeedSchema = z
     kcPriors: z.record(z.string().min(1), Probability),
     /** reasoning operation → prior P(L)_0. */
     skillPriors: z.record(ReasoningOperationSchema, Probability),
+    /**
+     * lesson_id → prior P(L)_0. The diagnostic reads coarse buckets and the
+     * mastery store keys on lessons, so this is the grain the handoff actually
+     * carries; the KC and reasoning-operation records stay open for producers
+     * that measure those directly.
+     */
+    lessonPriors: z.record(z.string().min(1), Probability),
     /** CARS sub-skill → initial ability V_0 (may be negative). */
     carsAbility: z.record(CarsSkillSchema, z.number()),
   })

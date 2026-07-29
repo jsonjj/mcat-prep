@@ -9,14 +9,19 @@ import {
   GuestBootstrapResponseSchema,
   HTTP_API,
   HttpApiErrorSchema,
+  MistakePatternViewSchema,
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
+  MasterySeedSchema,
+  PracticeAttemptResultSchema,
   PracticeItemViewSchema,
+  PracticeQueueViewSchema,
   SkillMasteryViewSchema,
   PracticeResultSchema,
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
+  TodaysPathViewSchema,
   VectorLessonCommandSchema,
   VectorLessonRunViewSchema,
   VectorLessonStartCommandSchema,
@@ -27,8 +32,11 @@ import {
   newIdempotencyKey,
   newTaskInstanceId,
   type BootstrapResponse,
+  type BuildTodaysPathInput,
   type HttpApiError,
   type HttpErrorCode,
+  type MasterySeed,
+  type PracticeAttemptCommand,
   type VectorLessonAction,
 } from '@mcat/contracts';
 import type { AuthorityPort, GoalInput, SessionPort } from './port';
@@ -266,6 +274,41 @@ export class HttpAuthorityClient implements AuthorityPort {
     return this.request(HTTP_API.today.path, TodayViewSchema);
   }
 
+  async getTodaysPath() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.todaysPath.path, TodaysPathViewSchema);
+  }
+
+  async buildTodaysPath(input: BuildTodaysPathInput) {
+    const view = await this.request(HTTP_API.todaysPathBuild.path, TodaysPathViewSchema, {
+      method: HTTP_API.todaysPathBuild.method,
+      body: JSON.stringify({ envelope: await this.commandEnvelope(), input }),
+    });
+    // Build persists the plan (advances the stream) but returns a view, not an
+    // AcceptedCommandResponse — resync the stream version like the practice attempt does.
+    await this.bootstrap();
+    return view;
+  }
+
+  async recordPlanActivity(
+    activityId: string,
+    status: 'in_progress' | 'complete' | 'skipped',
+  ): Promise<void> {
+    await this.acceptedCommand(HTTP_API.todaysPathActivity.path, {
+      envelope: await this.commandEnvelope(),
+      activityId,
+      status,
+    });
+  }
+
+  async setDailyBudget(minutesPerDay: number): Promise<void> {
+    await this.acceptedCommand(
+      HTTP_API.dailyBudget.path,
+      { envelope: await this.commandEnvelope(), minutesPerDay },
+      HTTP_API.dailyBudget.method,
+    );
+  }
+
   async getSession() {
     await this.ensureBootstrap();
     const response = await this.request(HTTP_API.session.path, StudyStepViewSchema);
@@ -294,13 +337,6 @@ export class HttpAuthorityClient implements AuthorityPort {
       isDiagnosticRetry: false,
     });
     await this.acceptedCommand(HTTP_API.attempt.path, command);
-  }
-
-  async selectCause(cause: Parameters<AuthorityPort['selectCause']>[0]): Promise<void> {
-    await this.acceptedCommand('/v1/attempts/cause', {
-      envelope: await this.commandEnvelope(),
-      cause,
-    });
   }
 
   async requestReveal(): Promise<void> {
@@ -347,7 +383,12 @@ export class HttpAuthorityClient implements AuthorityPort {
 
   async getErrorLog() {
     await this.ensureBootstrap();
-    return this.request('/v1/errors', arrayOf(ErrorEntryViewSchema));
+    return this.request(HTTP_API.errors.path, arrayOf(ErrorEntryViewSchema));
+  }
+
+  async getMistakePatterns() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.errorPatterns.path, arrayOf(MistakePatternViewSchema));
   }
 
   async getSkills() {
@@ -376,11 +417,41 @@ export class HttpAuthorityClient implements AuthorityPort {
     return response;
   }
 
+  async getPracticeQueue(x: number, focus?: string) {
+    await this.ensureBootstrap();
+    const count = encodeURIComponent(String(Math.max(1, Math.floor(x))));
+    const path =
+      focus === undefined
+        ? `/v1/practice/queue/${count}`
+        : `/v1/practice/queue/${count}/${encodeURIComponent(focus)}`;
+    return this.request(path, PracticeQueueViewSchema);
+  }
+
+  async submitPracticeAttempt(command: PracticeAttemptCommand) {
+    const response = await this.request('/v1/practice/attempts/adaptive', PracticeAttemptResultSchema, {
+      method: 'POST',
+      body: JSON.stringify({ envelope: await this.commandEnvelope(), ...command }),
+    });
+    // The adaptive attempt advances the stream but returns feedback (not an
+    // AcceptedCommandResponse), so resync the stream version like PotD does.
+    await this.bootstrap();
+    return response;
+  }
+
   async recordCarsDuel(rubric?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {
     await this.acceptedCommand('/v1/hooks/cars-duel', {
       envelope: await this.commandEnvelope(),
       ...(rubric === undefined ? {} : { rubric }),
     });
+  }
+
+  async applyMasterySeed(seed: MasterySeed): Promise<void> {
+    await this.acceptedCommand('/v1/hooks/mastery-seed', {
+      envelope: await this.commandEnvelope(),
+      seed: MasterySeedSchema.parse(seed),
+    });
+    // The seed moves per-lesson priors, which the Progress brain reads.
+    await this.bootstrap();
   }
 
   async getWrapped() {

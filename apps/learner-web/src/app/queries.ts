@@ -1,25 +1,19 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CarsDuelRubric, ProbableCause, VectorLessonAction } from '@mcat/contracts';
+import type { CarsDuelRubric, MasterySeed, VectorLessonAction } from '@mcat/contracts';
 import type { GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
-import { diagnosticClient, type ChoiceId, type DiagnosticNextView } from './diagnostic-client';
+import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
+import { LEARNER_KEYS } from './invalidation-keys';
 
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 0, refetchOnWindowFocus: false, retry: false } },
 });
 
-const LEARNER_KEYS = [
-  'bootstrap',
-  'today',
-  'session',
-  'mastery',
-  'mastery-skills',
-  'mastery-lessons',
-  'cars-readiness',
-  'errors',
-  'vector-lesson-status',
-  'vector-lesson-run',
-];
+/**
+ * The Study loop's attempt / reveal / continue mutations go through here. A study
+ * miss writes an attempt-log row exactly like a practice miss, so the Mistakes
+ * keys have to be in this set too — they are, via ./invalidation-keys.ts.
+ */
 const invalidateLearner = (qc: QueryClient) =>
   Promise.all(LEARNER_KEYS.map((k) => qc.invalidateQueries({ queryKey: [k] })));
 
@@ -42,25 +36,32 @@ export const useCarsReadiness = () =>
   useQuery({ queryKey: ['cars-readiness'], queryFn: () => authority.getCarsReadiness() });
 export const useErrorLog = () =>
   useQuery({ queryKey: ['errors'], queryFn: () => authority.getErrorLog() });
+/** Recurring misses grouped at KC / cluster grain (Mistakes tab, patterns section). */
+export const useMistakePatterns = () =>
+  useQuery({ queryKey: ['error-patterns'], queryFn: () => authority.getMistakePatterns() });
 export const useSkills = () =>
   useQuery({ queryKey: ['skills'], queryFn: () => authority.getSkills() });
 /**
- * The diagnostic is served by the real balanced-adaptive engine over the v7
- * learner-safe bank (dev/preview Vite plugin; API Gateway in prod). It is wired
- * through the dedicated {@link diagnosticClient} rather than the generic authority
- * port because it carries one-use item tokens and never receives an answer key.
+ * The diagnostic is served by the real multistage engine over the v7
+ * learner-safe bank (dev/preview Vite plugin; API Gateway in prod), a whole
+ * block at a time. It is wired through the dedicated {@link diagnosticClient}
+ * rather than the generic authority port because it carries one-use block
+ * tokens and never receives an answer key.
  */
 export const useDiagnosticNext = () =>
   useQuery({ queryKey: ['diagnostic'], queryFn: () => diagnosticClient.start() });
 
-export function useSubmitDiagnostic() {
+export function useSubmitDiagnosticBlock() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (v: { questionId: string; choiceId: ChoiceId | null; elapsedMs: number }) =>
-      diagnosticClient.answer(v.questionId, v.choiceId, v.elapsedMs),
-    // The answer response already contains the next item/result — seed the cache
-    // directly to avoid re-serving (and re-tokenizing) the same item.
-    onSuccess: (next: DiagnosticNextView) => qc.setQueryData(['diagnostic'], next),
+    mutationFn: (v: {
+      questionIds: readonly string[];
+      answers: Readonly<Record<string, string>>;
+      elapsedMs?: Readonly<Record<string, number>>;
+    }) => diagnosticClient.submitBlock(v.questionIds, v.answers, v.elapsedMs),
+    // The commit response already contains the next block/result — seed the cache
+    // directly to avoid re-serving (and re-tokenizing) it.
+    onSuccess: (next: DiagnosticBlockView) => qc.setQueryData(['diagnostic'], next),
   });
 }
 
@@ -76,14 +77,6 @@ export function useSubmitAttempt() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (choiceId: string | null) => authority.submitAttempt(choiceId),
-    onSuccess: () => invalidateLearner(qc),
-  });
-}
-
-export function useSelectCause() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (cause: ProbableCause) => authority.selectCause(cause),
     onSuccess: () => invalidateLearner(qc),
   });
 }
@@ -167,6 +160,21 @@ export function useCheckPractice() {
   return useMutation({
     mutationFn: (v: { questionId: string; choiceId: string | null }) =>
       authority.checkPractice(v.questionId, v.choiceId),
+    onSuccess: () => invalidateLearner(qc),
+  });
+}
+
+/**
+ * Hand the finished diagnostic's opening priors to the authority.
+ *
+ * This is the only point at which the diagnostic touches mastery. It initializes
+ * unpractised lessons and nothing else, so it is safe to fire once on completion
+ * and safe to have no effect when it runs again.
+ */
+export function useApplyMasterySeed() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (seed: MasterySeed) => authority.applyMasterySeed(seed),
     onSuccess: () => invalidateLearner(qc),
   });
 }

@@ -8,6 +8,7 @@ import {
   PostgresFixedWindowRateLimiter,
   PostgresGuestSessionService,
   createPgPool,
+  createPostgresPracticeBankPort,
 } from '@mcat/persistence-postgres';
 
 import { createRepositoryLearnerApi, type LearnerApi } from './handler';
@@ -199,6 +200,9 @@ async function createRuntime(): Promise<LearnerApi> {
     repository,
     clock: systemClock,
     bank: authority.bank,
+    // Adaptive Practice draws fresh items from the real v7 corpus in Postgres and
+    // writes exposure/repair there; mastery persists via the projection.
+    practiceBank: createPostgresPracticeBankPort(pool),
     sessions: new PostgresGuestSessionService(pool, createGuestProjection),
     rateLimiter: new PostgresFixedWindowRateLimiter(pool),
     rateLimitPepper,

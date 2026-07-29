@@ -31,20 +31,6 @@ const EventBaseSchema = z.object({
   taskInstanceId: TaskInstanceIdSchema.optional(),
 });
 
-export const ProbableCauseSchema = z.enum([
-  'did_not_know_content',
-  'knew_but_misapplied',
-  'misread_question_or_passage',
-  'missed_condition_unit_sign',
-  'misinterpreted_graph_or_experiment',
-  'calculation_error',
-  'outside_passage_scope',
-  'rushing_or_time',
-  'changed_from_better_reasoning',
-  'not_sure',
-]);
-export type ProbableCause = z.infer<typeof ProbableCauseSchema>;
-
 export const AttemptSubmittedSchema = EventBaseSchema.extend({
   type: z.literal('attempt_submitted'),
   payload: z.object({
@@ -66,15 +52,6 @@ export const AttemptSubmittedSchema = EventBaseSchema.extend({
   }),
 });
 export type AttemptSubmitted = z.infer<typeof AttemptSubmittedSchema>;
-
-export const CauseSelectedSchema = EventBaseSchema.extend({
-  type: z.literal('cause_selected'),
-  payload: z.object({
-    questionId: ContentIdSchema,
-    cause: ProbableCauseSchema,
-  }),
-});
-export type CauseSelected = z.infer<typeof CauseSelectedSchema>;
 
 export const RevealRequestedSchema = EventBaseSchema.extend({
   type: z.literal('reveal_requested'),
@@ -168,9 +145,20 @@ export const BktObservationAppliedSchema = EventBaseSchema.extend({
 });
 export type BktObservationApplied = z.infer<typeof BktObservationAppliedSchema>;
 
+/**
+ * There is no `cause_selected` member. Self-reported error cause is not a fact we
+ * store: experts naming which bias produced an error agree at κ = 0.000–0.063 and
+ * learner self-report is biased worst in the weakest learners
+ * (docs/design/error-handling-design.md §2.3).
+ *
+ * Historical `cause_selected` rows in `accepted_events` are unaffected. That table
+ * types `event_type` as plain `text` with no CHECK constraint, its `payload` is
+ * opaque JSONB, and the learner projection is rehydrated by an unchecked cast
+ * (`learnerStateFromProjection`) rather than parsed through this union — so
+ * removing the member cannot fail a replay or a deserialization.
+ */
 export const LearnerEventSchema = z.discriminatedUnion('type', [
   AttemptSubmittedSchema,
-  CauseSelectedSchema,
   RevealRequestedSchema,
   ReviewRatedSchema,
   BktObservationAppliedSchema,

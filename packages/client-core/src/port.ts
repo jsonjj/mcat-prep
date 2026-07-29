@@ -1,18 +1,24 @@
 import type {
   BootstrapResponse,
+  BuildTodaysPathInput,
   CarsDuelRubric,
   CarsReadinessView,
   DiagnosticNext,
   ErrorEntryView,
   LessonMasteryView,
   MasteryMapEntry,
+  MasterySeed,
+  MistakePatternView,
+  PracticeAttemptCommand,
+  PracticeAttemptResult,
   PracticeItemView,
+  PracticeQueueView,
   PracticeResult,
-  ProbableCause,
   SkillMasteryView,
   SkillSummary,
   StudyStepView,
   TodayView,
+  TodaysPathView,
   VectorLessonAction,
   VectorLessonRunView,
   VectorLessonStartResponse,
@@ -38,9 +44,19 @@ export interface AuthorityPort {
   submitDiagnostic(questionId: string, choiceId: string | null): Promise<void>;
   confirmPlan(goal: GoalInput): Promise<void>;
   getToday(): Promise<TodayView>;
+  /** Today's Path: read the current day's plan (built:false when none exists yet). */
+  getTodaysPath(): Promise<TodaysPathView>;
+  /** Today's Path: build/persist today's plan from a client-fed recall load + candidate lessons. */
+  buildTodaysPath(input: BuildTodaysPathInput): Promise<TodaysPathView>;
+  /** Today's Path: advance the guided runner (mark an activity in_progress / complete / skipped). */
+  recordPlanActivity(
+    activityId: string,
+    status: 'in_progress' | 'complete' | 'skipped',
+  ): Promise<void>;
+  /** Today's Path: set the daily time-budget preset (a 2–6 hr preset, in minutes). */
+  setDailyBudget(minutesPerDay: number): Promise<void>;
   getSession(): Promise<StudyStepView>;
   submitAttempt(choiceId: string | null): Promise<void>;
-  selectCause(cause: ProbableCause): Promise<void>;
   requestReveal(): Promise<void>;
   continueStep(): Promise<void>;
   submitRecall(answer: string): Promise<boolean>;
@@ -51,12 +67,25 @@ export interface AuthorityPort {
   getMasteryLessons(): Promise<LessonMasteryView[]>;
   /** CARS IRT readiness (gauge + 3 sub-skill bars). */
   getCarsReadiness(): Promise<CarsReadinessView>;
+  /** Mistakes tab, Surface B: question misses (practice and study) with their content. */
   getErrorLog(): Promise<ErrorEntryView[]>;
+  /** Mistakes tab, Surface A: recurring misses grouped at KC / cluster grain. */
+  getMistakePatterns(): Promise<MistakePatternView[]>;
   getSkills(): Promise<SkillSummary[]>;
   getPracticeItem(questionId: string): Promise<PracticeItemView | null>;
   checkPractice(questionId: string, choiceId: string | null): Promise<PracticeResult>;
+  /** Adaptive Practice: an ordered queue of up to `x` fresh test-out items. */
+  getPracticeQueue(x: number, focus?: string): Promise<PracticeQueueView>;
+  /** Adaptive Practice: score one answer (a first, unassisted attempt moves mastery). */
+  submitPracticeAttempt(command: PracticeAttemptCommand): Promise<PracticeAttemptResult>;
   /** Record a CARS Duel; an optional rubric feeds a low-weight CARS ability nudge. */
   recordCarsDuel(rubric?: CarsDuelRubric): Promise<void>;
+  /**
+   * Hand a finished diagnostic's opening priors to the mastery engine. Seeds
+   * only ever initialize units the learner has not practised, and are capped far
+   * below the mastery threshold — see `applyMasterySeed`.
+   */
+  applyMasterySeed(seed: MasterySeed): Promise<void>;
   getWrapped(): Promise<WrappedView>;
   resetProgress(): Promise<void>;
   getVectorLessonStatus(): Promise<VectorLessonStatusView>;

@@ -10,9 +10,14 @@ import {
   GoalCommandSchema,
   LessonMasteryViewSchema,
   MasteryMapEntrySchema,
+  MasterySeedSchema,
+  MistakePatternViewSchema,
+  PracticeAttemptCommandSchema,
+  PracticeAttemptResultSchema,
+  PracticeFocusSchema,
   PracticeItemViewSchema,
+  PracticeQueueViewSchema,
   PracticeResultSchema,
-  ProbableCauseSchema,
   SkillMasteryViewSchema,
   SkillSummarySchema,
   StudyStepViewSchema,
@@ -27,7 +32,8 @@ import {
   type ChoiceId,
   type CommandEnvelope,
   type ContentId,
-  type ProbableCause,
+  type MasterySeed,
+  type PracticeAttemptCommand,
 } from '@mcat/contracts';
 
 export type RouteId =
@@ -36,14 +42,16 @@ export type RouteId =
   | 'diagnosticNext'
   | 'goal'
   | 'attempt'
-  | 'cause'
   | 'reveal'
   | 'continue'
   | 'recall'
   | 'skills'
   | 'practiceItem'
   | 'practiceAttempt'
+  | 'practiceQueue'
+  | 'practiceAdaptiveAttempt'
   | 'carsDuel'
+  | 'masterySeed'
   | 'wrapped'
   | 'resetProgress'
   | 'today'
@@ -53,6 +61,7 @@ export type RouteId =
   | 'progressLessons'
   | 'progressCars'
   | 'errors'
+  | 'errorPatterns'
   | 'vectorLessonStatus'
   | 'vectorLessonStart'
   | 'vectorLessonRun'
@@ -61,11 +70,6 @@ export type RouteId =
 interface RuntimeSchema<T = unknown> {
   parse(value: unknown): T;
   safeParse(value: unknown): { success: true; data: T } | { success: false };
-}
-
-export interface CauseCommandBody {
-  readonly envelope: CommandEnvelope;
-  readonly cause: ProbableCause;
 }
 
 export interface RevealCommandBody {
@@ -91,6 +95,16 @@ export interface PracticeAttemptCommandBody {
 export interface CarsDuelCommandBody {
   readonly envelope: CommandEnvelope;
   readonly rubric?: CarsDuelRubric;
+}
+
+export interface MasterySeedCommandBody {
+  readonly envelope: CommandEnvelope;
+  readonly seed: MasterySeed;
+}
+
+export interface PracticeAdaptiveAttemptCommandBody {
+  readonly envelope: CommandEnvelope;
+  readonly command: PracticeAttemptCommand;
 }
 
 function record(value: unknown): Record<string, unknown> | null {
@@ -119,13 +133,6 @@ function workflowSchema<T>(parse: (value: Record<string, unknown>) => T | null):
   };
 }
 
-const CauseCommandBodySchema = workflowSchema<CauseCommandBody>((value) => {
-  if (!exactKeys(value, ['envelope', 'cause'])) return null;
-  const envelope = CommandEnvelopeSchema.safeParse(value.envelope);
-  const cause = ProbableCauseSchema.safeParse(value.cause);
-  return envelope.success && cause.success ? { envelope: envelope.data, cause: cause.data } : null;
-});
-
 const RevealCommandBodySchema = workflowSchema<RevealCommandBody>((value) => {
   if (!exactKeys(value, ['envelope', 'revealNow']) || value.revealNow !== true) return null;
   const envelope = CommandEnvelopeSchema.safeParse(value.envelope);
@@ -146,6 +153,14 @@ const CarsDuelCommandBodySchema = workflowSchema<CarsDuelCommandBody>((value) =>
   if (!('rubric' in value)) return { envelope: envelope.data };
   const rubric = CarsDuelRubricSchema.safeParse(value.rubric);
   return rubric.success ? { envelope: envelope.data, rubric: rubric.data } : null;
+});
+
+const MasterySeedCommandBodySchema = workflowSchema<MasterySeedCommandBody>((value) => {
+  if (!exactKeys(value, ['envelope', 'seed'])) return null;
+  const envelope = CommandEnvelopeSchema.safeParse(value.envelope);
+  if (!envelope.success) return null;
+  const seed = MasterySeedSchema.safeParse(value.seed);
+  return seed.success ? { envelope: envelope.data, seed: seed.data } : null;
 });
 
 const RecallCommandBodySchema = workflowSchema<RecallCommandBody>((value) => {
@@ -170,6 +185,20 @@ const PracticeAttemptCommandBodySchema = workflowSchema<PracticeAttemptCommandBo
     ? { envelope: envelope.data, questionId: questionId.data, choiceId: choiceId.data }
     : null;
 });
+
+const PracticeAdaptiveAttemptCommandBodySchema = workflowSchema<PracticeAdaptiveAttemptCommandBody>(
+  (value) => {
+    if (!exactKeys(value, ['envelope', 'questionId', 'specId', 'chosenChoiceId', 'firstAttempt'])) {
+      return null;
+    }
+    const envelope = CommandEnvelopeSchema.safeParse(value.envelope);
+    const { envelope: _envelope, ...rest } = value;
+    const command = PracticeAttemptCommandSchema.safeParse(rest);
+    return envelope.success && command.success
+      ? { envelope: envelope.data, command: command.data }
+      : null;
+  },
+);
 
 const NullablePracticeItemViewSchema: RuntimeSchema = {
   parse(value: unknown) {
@@ -232,14 +261,6 @@ export const ROUTES: readonly RouteDefinition[] = [
     bodySchema: AttemptCommandSchema,
   },
   {
-    id: 'cause',
-    method: 'POST',
-    path: '/v1/attempts/cause',
-    auth: 'session',
-    stateChanging: true,
-    bodySchema: CauseCommandBodySchema,
-  },
-  {
     id: 'reveal',
     method: 'POST',
     path: '/v1/attempts/reveal',
@@ -289,12 +310,41 @@ export const ROUTES: readonly RouteDefinition[] = [
     responseSchema: PracticeResultSchema,
   },
   {
+    id: 'practiceQueue',
+    method: 'GET',
+    // Path-parameterized (`/v1/practice/queue/{x}` [+ `/{focus}`]); the edge
+    // rejects query strings, so count + focus ride in the path.
+    path: '/v1/practice/queue',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: PracticeQueueViewSchema,
+  },
+  {
+    id: 'practiceAdaptiveAttempt',
+    method: 'POST',
+    // Deliberately namespaced so it never collides with the single-item
+    // Passage-of-the-Day `POST /v1/practice/attempts`.
+    path: '/v1/practice/attempts/adaptive',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: PracticeAdaptiveAttemptCommandBodySchema,
+    responseSchema: PracticeAttemptResultSchema,
+  },
+  {
     id: 'carsDuel',
     method: 'POST',
     path: '/v1/hooks/cars-duel',
     auth: 'session',
     stateChanging: true,
     bodySchema: CarsDuelCommandBodySchema,
+  },
+  {
+    id: 'masterySeed',
+    method: 'POST',
+    path: '/v1/hooks/mastery-seed',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: MasterySeedCommandBodySchema,
   },
   {
     id: 'wrapped',
@@ -369,6 +419,14 @@ export const ROUTES: readonly RouteDefinition[] = [
     responseSchema: ErrorEntryViewSchema.array(),
   },
   {
+    id: 'errorPatterns',
+    method: 'GET',
+    path: '/v1/errors/patterns',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: MistakePatternViewSchema.array(),
+  },
+  {
     id: 'vectorLessonStatus',
     method: 'GET',
     path: '/v1/lessons/vectors-and-trigonometry/status',
@@ -412,13 +470,33 @@ export function allowedMethodsFor(path: string): readonly string[] {
 }
 
 const PRACTICE_ITEM_PATH = /^\/v1\/practice\/items\/([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+const PRACTICE_QUEUE_PATH = /^\/v1\/practice\/queue\/(\d{1,2})(?:\/([a-z0-9-]{1,32}))?$/;
 
 function routeMatches(route: RouteDefinition, path: string): boolean {
-  return route.id === 'practiceItem' ? PRACTICE_ITEM_PATH.test(path) : route.path === path;
+  if (route.id === 'practiceItem') return PRACTICE_ITEM_PATH.test(path);
+  if (route.id === 'practiceQueue') return PRACTICE_QUEUE_PATH.test(path);
+  return route.path === path;
 }
 
 export function practiceQuestionId(path: string): ContentId | null {
   const value = PRACTICE_ITEM_PATH.exec(path)?.[1];
   const parsed = ContentIdSchema.safeParse(value);
   return parsed.success ? parsed.data : null;
+}
+
+export interface PracticeQueueParams {
+  readonly x: number;
+  readonly focus: string | null;
+}
+
+/** Extract the requested count (+ optional focus token) from the queue path. */
+export function practiceQueueParams(path: string): PracticeQueueParams | null {
+  const match = PRACTICE_QUEUE_PATH.exec(path);
+  if (match === null) return null;
+  const x = Number.parseInt(match[1]!, 10);
+  if (!Number.isInteger(x) || x < 1) return null;
+  const rawFocus = match[2];
+  if (rawFocus === undefined) return { x, focus: null };
+  const focus = PracticeFocusSchema.safeParse(rawFocus);
+  return focus.success ? { x, focus: focus.data } : null;
 }

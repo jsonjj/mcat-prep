@@ -1,5 +1,5 @@
-import { useRef, useState, type KeyboardEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@mcat/ui-web';
 import {
   CURRICULUM_PHASES,
@@ -33,6 +33,16 @@ const PANEL_ID = 'mc-curriculum-panel';
 const TARGET_LESSON_ID = 'V3-LES-130923';
 
 const tabId = (phaseId: string): string => `mc-curriculum-tab-${phaseId}`;
+
+/** lesson_id → its phase index + containing module id, for `?lesson=` deep-links. */
+const LESSON_LOCATION: Record<string, { phaseIndex: number; moduleId: string }> = (() => {
+  const map: Record<string, { phaseIndex: number; moduleId: string }> = {};
+  CURRICULUM_PHASES.forEach((phase, phaseIndex) => {
+    for (const mod of phase.modules)
+      for (const lesson of mod.lessons) map[lesson.id] = { phaseIndex, moduleId: mod.id };
+  });
+  return map;
+})();
 const firstModuleId = (phase: CurriculumPhase): string => phase.modules[0]?.id ?? '';
 
 function phaseMeta(phase: CurriculumPhase): string {
@@ -66,6 +76,24 @@ export function Curriculum() {
   const [openModuleIds, setOpenModuleIds] = useState<ReadonlySet<string>>(
     () => new Set([firstModuleId(activePhase)]),
   );
+
+  // Deep-link support: /app/curriculum?lesson=<id> opens that lesson's phase + module
+  // and scrolls to it (e.g. from Practice's "Needs the most review").
+  const [searchParams] = useSearchParams();
+  const targetLessonId = searchParams.get('lesson');
+  useEffect(() => {
+    if (!targetLessonId) return;
+    const loc = LESSON_LOCATION[targetLessonId];
+    if (!loc) return;
+    setActiveIndex(loc.phaseIndex);
+    setOpenModuleIds((previous) => new Set([...previous, loc.moduleId]));
+    const timer = setTimeout(() => {
+      document
+        .getElementById(`mc-curriculum-lesson-${targetLessonId}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [targetLessonId]);
 
   const selectPhase = (index: number): void => {
     const phase = CURRICULUM_PHASES[index];
@@ -179,6 +207,7 @@ export function Curriculum() {
               module={module}
               open={openModuleIds.has(module.id)}
               onToggle={toggleModule}
+              highlightLessonId={targetLessonId}
             />
           ))}
         </div>
@@ -191,10 +220,12 @@ function ModuleSection({
   module,
   open,
   onToggle,
+  highlightLessonId,
 }: {
   module: CurriculumModule;
   open: boolean;
   onToggle: (id: string) => void;
+  highlightLessonId?: string | null;
 }) {
   const isCars = module.lane === CARS_LANE;
   const hasLessons = module.lessons.length > 0;
@@ -231,7 +262,7 @@ function ModuleSection({
           <ol className="mc-curriculum__lessons">
             {module.lessons.map((lesson) => (
               <li key={lesson.id}>
-                <LessonCard lesson={lesson} />
+                <LessonCard lesson={lesson} highlighted={lesson.id === highlightLessonId} />
               </li>
             ))}
           </ol>
@@ -243,14 +274,17 @@ function ModuleSection({
   );
 }
 
-function LessonCard({ lesson }: { lesson: CurriculumLesson }) {
+function LessonCard({ lesson, highlighted = false }: { lesson: CurriculumLesson; highlighted?: boolean }) {
   const ordinal = String(lesson.position).padStart(3, '0');
   const kcCount = lesson.kcs.length;
   const titleId = `mc-curriculum-lesson-${lesson.id}`;
   const isTarget = lesson.id === TARGET_LESSON_ID;
   const playableSlug = PLAYABLE_SLUG_BY_LESSON_ID[lesson.id];
   return (
-    <article className="mc-curriculum__lesson" aria-labelledby={titleId}>
+    <article
+      className={`mc-curriculum__lesson${highlighted ? ' mc-curriculum__lesson--highlight' : ''}`}
+      aria-labelledby={titleId}
+    >
       <div className="mc-curriculum__lesson-main">
         <span className="mc-curriculum__ordinal" aria-hidden="true">
           {ordinal}

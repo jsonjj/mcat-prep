@@ -1,8 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
-import { useDiagnosticNext, useSubmitDiagnostic } from '../app/queries';
-import type { ChoiceId, DiagnosticResultView } from '../app/diagnostic-client';
+import { Button, Callout, Card, Eyebrow, Inline, Stack } from '@mcat/ui-web';
+import { useApplyMasterySeed, useDiagnosticNext, useSubmitDiagnosticBlock } from '../app/queries';
+import {
+  loadBlockDrafts,
+  saveBlockDrafts,
+  type DiagnosticItemView,
+  type DiagnosticResultView,
+} from '../app/diagnostic-client';
+import { useBlockNavigation } from '../app/use-block-navigation';
+import { BucketGapChart, type BucketGapRow } from '../components/BucketGapChart';
+import { PriorityList, priorityFraming, priorityHeading } from '../components/PriorityList';
+import { QuestionPalette } from '../components/QuestionPalette';
 import { markDiagnosticCompleted } from '../app/diagnostic-status';
 
 const CONFIDENCE_SENTENCE: Record<DiagnosticResultView['confidenceLabel'], string> = {
@@ -11,34 +20,88 @@ const CONFIDENCE_SENTENCE: Record<DiagnosticResultView['confidenceLabel'], strin
   'Still building': 'We have an early direction — your first week of study will confirm the details.',
 };
 
+const NO_QUESTIONS: DiagnosticItemView[] = [];
+
 export function Diagnostic() {
   const navigate = useNavigate();
   const next = useDiagnosticNext();
-  const submit = useSubmitDiagnostic();
-  const [choice, setChoice] = useState<ChoiceId | null>(null);
+  const submit = useSubmitDiagnosticBlock();
 
+  const questions = next.data?.questions ?? NO_QUESTIONS;
+  const stageId = next.data?.stageId ?? null;
+  const blockQuestions = useMemo(
+    () => questions.map((question) => ({ questionId: question.id })),
+    [questions],
+  );
+  const nav = useBlockNavigation(blockQuestions);
+  const { answer: draftAnswer, answers, answeredCount } = nav;
+
+  const [visited, setVisited] = useState<ReadonlySet<string>>(() => new Set<string>());
+  const [confirming, setConfirming] = useState(false);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
-  const startedAtRef = useRef<number>(Date.now());
-  const previousSectionRef = useRef<string | null>(null);
-  const question = next.data?.question ?? null;
 
-  // Section transition is computed against the last committed item's section.
-  const isSectionChange =
-    question !== null &&
-    previousSectionRef.current !== null &&
-    previousSectionRef.current !== question.section;
+  // Time on each question, accumulated across every visit to it. The block is
+  // navigable, so a single start timestamp would only ever measure the last look.
+  const elapsedRef = useRef<Record<string, number>>({});
+  const dwellRef = useRef<{ questionId: string | null; since: number }>({
+    questionId: null,
+    since: Date.now(),
+  });
 
-  // Reset per-item state, note the new section, and move focus to the question
-  // heading so keyboard/screen-reader users land on the new prompt.
-  const questionId = question?.id ?? null;
-  const questionSection = question?.section ?? null;
+  const question = questions[nav.currentIndex] ?? null;
+  const currentId = question?.id ?? null;
+
+  const flushDwell = useCallback(() => {
+    const now = Date.now();
+    const open = dwellRef.current;
+    if (open.questionId !== null) {
+      elapsedRef.current[open.questionId] =
+        (elapsedRef.current[open.questionId] ?? 0) + (now - open.since);
+    }
+    dwellRef.current = { questionId: null, since: now };
+  }, []);
+
+  // A new block is a new sitting as far as timing, review state and the
+  // one-per-block confirmation are concerned.
   useEffect(() => {
-    if (questionId === null) return;
-    setChoice(null);
-    startedAtRef.current = Date.now();
-    previousSectionRef.current = questionSection;
+    elapsedRef.current = {};
+    dwellRef.current = { questionId: null, since: Date.now() };
+    setConfirming(false);
+  }, [stageId]);
+
+  // The server only learns an answer at commit, so drafts live in sessionStorage
+  // and are replayed into the block after `useBlockNavigation` has reset for it.
+  useEffect(() => {
+    if (stageId === null) return;
+    const drafts = loadBlockDrafts(
+      stageId,
+      blockQuestions.map((q) => q.questionId),
+    );
+    for (const [questionId, choiceId] of Object.entries(drafts)) {
+      if (choiceId !== null) draftAnswer(questionId, choiceId);
+    }
+  }, [stageId, blockQuestions, draftAnswer]);
+
+  // Skipping the empty map matters: this effect and the restore above run in the
+  // same commit, and writing `{}` here would erase the drafts before they land.
+  useEffect(() => {
+    if (stageId === null || answeredCount === 0) return;
+    saveBlockDrafts(stageId, answers);
+  }, [stageId, answers, answeredCount]);
+
+  // Focus moves to the new stem so keyboard and screen-reader users land on the
+  // question they navigated to rather than back at the top of the block.
+  useEffect(() => {
+    if (currentId === null) return;
+    dwellRef.current = { questionId: currentId, since: Date.now() };
+    setVisited((seen) => (seen.has(currentId) ? seen : new Set(seen).add(currentId)));
     headingRef.current?.focus();
-  }, [questionId, questionSection]);
+  }, [currentId]);
+
+  const goTo = (index: number) => {
+    flushDwell();
+    nav.goTo(index);
+  };
 
   if (next.isLoading || !next.data) {
     return <div className="mc-center mc-muted">Preparing your diagnostic…</div>;
@@ -68,23 +131,23 @@ export function Diagnostic() {
   }
 
   const progressPct = Math.round(next.data.progress * 100);
-  const questionNumber = next.data.itemsScored + 1;
+  const startNumber = next.data.itemsCommitted + 1;
+  const questionNumber = startNumber + nav.currentIndex;
+  const totalItems = next.data.totalItems ?? 0;
+  const unanswered = questions.length - answeredCount;
+  // An answered question has plainly been seen, which also means a refresh
+  // mid-block does not send the learner back through everything they drafted.
+  const seenWholeBlock = questions.every(
+    (q) => visited.has(q.id) || answers[q.id] !== undefined,
+  );
+  const isFlagged = nav.flagged.has(question.id);
 
-  const onSubmit = () => {
+  const onCommit = () => {
+    flushDwell();
     submit.mutate({
-      questionId: question.id,
-      choiceId: choice,
-      elapsedMs: Date.now() - startedAtRef.current,
-    });
-  };
-
-  // "I don't know" submits no choice. The engine scores a null answer as
-  // not-known — cleaner signal than forcing a lucky guess into the estimate.
-  const onDontKnow = () => {
-    submit.mutate({
-      questionId: question.id,
-      choiceId: null,
-      elapsedMs: Date.now() - startedAtRef.current,
+      questionIds: blockQuestions.map((q) => q.questionId),
+      answers,
+      elapsedMs: elapsedRef.current,
     });
   };
 
@@ -98,7 +161,11 @@ export function Diagnostic() {
     <div className="mc-onboarding">
       <Card elevated>
         <Stack gap={4}>
-          <Eyebrow>Diagnostic · question {questionNumber}</Eyebrow>
+          <Eyebrow>
+            Diagnostic · block {next.data.stageNumber} of {next.data.stageCount} · question{' '}
+            {questionNumber}
+            {totalItems > 0 ? ` of ${totalItems}` : ''}
+          </Eyebrow>
 
           <div
             className="mc-progress"
@@ -110,12 +177,6 @@ export function Diagnostic() {
           >
             <span style={{ width: `${Math.max(6, progressPct)}%` }} />
           </div>
-
-          {isSectionChange ? (
-            <Callout tone="info" title={`Now: ${question.sectionTitle}`}>
-              We’re shifting to a new area of the test. Take your time.
-            </Callout>
-          ) : null}
 
           <p className="mc-diag-section" aria-hidden="true">
             {question.sectionTitle}
@@ -138,14 +199,14 @@ export function Diagnostic() {
             {question.choices.map((c) => (
               <label
                 key={c.id}
-                className={`mc-choice ${choice === c.id ? 'mc-choice--selected' : ''}`}
+                className={`mc-choice ${answers[question.id] === c.id ? 'mc-choice--selected' : ''}`}
               >
                 <input
                   type="radio"
-                  name="answer"
+                  name={`answer-${question.id}`}
                   value={c.id}
-                  checked={choice === c.id}
-                  onChange={() => setChoice(c.id)}
+                  checked={answers[question.id] === c.id}
+                  onChange={() => nav.answer(question.id, c.id)}
                 />
                 <span className="mc-choice__key">{c.id}</span>
                 <span className="mc-choice__text">{c.text}</span>
@@ -153,29 +214,108 @@ export function Diagnostic() {
             ))}
           </fieldset>
 
-          <Button
-            variant="primary"
-            size="lg"
-            fullWidth
-            disabled={choice === null || submit.isPending}
-            onClick={onSubmit}
-          >
-            {submit.isPending ? 'Saving…' : 'Submit and continue'}
-          </Button>
+          <Inline style={{ justifyContent: 'space-between' }}>
+            <Inline>
+              <Button
+                variant="secondary"
+                disabled={nav.currentIndex === 0}
+                onClick={() => {
+                  flushDwell();
+                  nav.previous();
+                }}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="secondary"
+                aria-pressed={isFlagged}
+                onClick={() => nav.toggleFlag(question.id)}
+              >
+                {isFlagged ? 'Unflag this question' : 'Flag for review'}
+              </Button>
+            </Inline>
+            <Button
+              variant="secondary"
+              disabled={nav.currentIndex >= questions.length - 1}
+              onClick={() => {
+                flushDwell();
+                nav.next();
+              }}
+            >
+              Next
+            </Button>
+          </Inline>
 
-          <Button
-            variant="secondary"
-            size="lg"
-            fullWidth
-            disabled={submit.isPending}
-            onClick={onDontKnow}
-          >
-            I don’t know — skip this question
-          </Button>
+          <QuestionPalette
+            questions={blockQuestions}
+            currentIndex={nav.currentIndex}
+            answers={answers}
+            flagged={nav.flagged}
+            onSelect={goTo}
+            startNumber={startNumber}
+            label="Jump to a question in this block"
+          />
+
+          {confirming ? (
+            <Callout
+              tone={unanswered > 0 ? 'warning' : 'info'}
+              title={
+                unanswered > 0
+                  ? `Submit with ${unanswered} left blank?`
+                  : 'Submit this block?'
+              }
+            >
+              <Stack gap={3}>
+                <p>
+                  {unanswered > 0
+                    ? 'A blank counts as “I don’t know”, which is a cleaner signal than a guess. You cannot come back to this block afterwards.'
+                    : 'You cannot come back to this block afterwards.'}
+                </p>
+                {submit.isError ? (
+                  <p>
+                    That submission did not go through. Your answers are still here — try again, or{' '}
+                    <button type="button" className="mc-textbtn" onClick={() => next.refetch()}>
+                      reload this block
+                    </button>
+                    .
+                  </p>
+                ) : null}
+                <Inline>
+                  <Button variant="primary" disabled={submit.isPending} onClick={onCommit}>
+                    {submit.isPending ? 'Submitting…' : 'Submit block'}
+                  </Button>
+                  <Button
+                    variant="text"
+                    disabled={submit.isPending}
+                    onClick={() => setConfirming(false)}
+                  >
+                    Keep working
+                  </Button>
+                </Inline>
+              </Stack>
+            </Callout>
+          ) : (
+            <Stack gap={2}>
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
+                disabled={!seenWholeBlock || submit.isPending}
+                onClick={() => setConfirming(true)}
+              >
+                Review and submit block
+              </Button>
+              {seenWholeBlock ? null : (
+                <p className="mc-fineprint mc-muted">
+                  Open every question in this block before submitting it.
+                </p>
+              )}
+            </Stack>
+          )}
 
           <p className="mc-fineprint mc-muted">
-            This finds your highest-leverage starting point across every area of the test — not a
-            score. Answer as you would on test day.
+            You can change any answer in this block until you submit it. This finds your
+            highest-leverage starting point across every area of the test — not a score.
           </p>
 
           <button type="button" className="mc-textbtn mc-diag-skip" onClick={onSkip}>
@@ -195,11 +335,54 @@ function DiagnosticComplete({
   onContinue: () => void;
 }) {
   const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const applySeed = useApplyMasterySeed();
+  const seeded = useRef(false);
+  const seed = result.masterySeed;
+
+  // A concept the form never reached carries `gap: 0` — absence of evidence,
+  // which the chart's point estimate would draw as a confident "nothing to do
+  // here". Those concepts are named in prose below the chart instead.
+  const { rows, unmeasured } = useMemo(() => {
+    const measured: BucketGapRow[] = [];
+    const missing: string[] = [];
+    for (const signal of result.perCluster) {
+      if (signal.itemsSeen === 0) {
+        missing.push(signal.title);
+        continue;
+      }
+      measured.push({
+        bucketId: signal.cluster,
+        title: signal.title,
+        gap: signal.gap,
+        certainty: signal.certainty,
+        itemsSeen: signal.itemsSeen,
+      });
+    }
+    return { rows: measured, unmeasured: missing };
+  }, [result.perCluster]);
+
+  const priorityIds = useMemo(
+    () => result.topPriorities.map((p) => p.cluster),
+    [result.topPriorities],
+  );
+
   useEffect(() => {
     headingRef.current?.focus();
     // Mark the diagnostic as genuinely completed so Welcome stops re-offering it.
     markDiagnosticCompleted();
   }, []);
+
+  // Hand the read to the mastery engine. The completed block is re-served on
+  // every refetch, so this is guarded to one attempt per mount; the write itself
+  // only ever initializes lessons the learner has not practised, so a repeat
+  // would be harmless rather than corrupting. A failure is deliberately not
+  // surfaced — the learner's plan does not depend on it, and the priors it sets
+  // are an opening guess the first few attempts overwrite anyway.
+  useEffect(() => {
+    if (seeded.current || Object.keys(seed.lessonPriors).length === 0) return;
+    seeded.current = true;
+    applySeed.mutate(seed);
+  }, [seed, applySeed]);
 
   return (
     <div className="mc-onboarding">
@@ -219,18 +402,9 @@ function DiagnosticComplete({
 
           {result.topPriorities.length > 0 ? (
             <Stack gap={3}>
-              <h2 className="mc-h3">Focus here first</h2>
-              <ol className="mc-diag-priorities">
-                {result.topPriorities.map((p, i) => (
-                  <li key={p.cluster} className="mc-diag-priority">
-                    <span className="mc-diag-priority__rank">{i + 1}</span>
-                    <span className="mc-diag-priority__body">
-                      <strong>{p.title}</strong>
-                      <span className="mc-muted mc-fineprint">{p.tested}</span>
-                    </span>
-                  </li>
-                ))}
-              </ol>
+              <h2 className="mc-h3">{priorityHeading(result.topPriorities.length)}</h2>
+              <p className="mc-muted">{priorityFraming(result.topPriorities.length)}</p>
+              <PriorityList priorities={result.topPriorities} />
             </Stack>
           ) : (
             <Callout tone="info">
@@ -244,6 +418,19 @@ function DiagnosticComplete({
               We’ll quietly check {formatList(result.stillConfirming.map((s) => s.title))} during your
               first week of study — no separate re-test.
             </Callout>
+          ) : null}
+
+          {rows.length > 0 ? (
+            <Stack gap={3}>
+              <h2 className="mc-h3">Across every area</h2>
+              <BucketGapChart rows={rows} priorityIds={priorityIds} />
+              {unmeasured.length > 0 ? (
+                <p className="mc-fineprint mc-muted">
+                  This form did not reach {formatList(unmeasured)}, so there is nothing to show
+                  there yet — not a clean bill of health.
+                </p>
+              ) : null}
+            </Stack>
           ) : null}
 
           <Button variant="primary" size="lg" fullWidth onClick={onContinue}>

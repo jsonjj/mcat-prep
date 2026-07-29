@@ -1,9 +1,10 @@
-import { Navigate, createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AppShell } from '../screens/AppShell';
 import { Welcome } from '../screens/Welcome';
 import { Diagnostic } from '../screens/Diagnostic';
 import { PlanSetup } from '../screens/PlanSetup';
 import { Home } from '../screens/Home';
+import { TodaysPath } from '../screens/today/TodaysPath';
 import { Curriculum } from '../screens/Curriculum';
 import { VectorLesson } from '../screens/VectorLesson';
 import { Lesson } from '../screens/Lesson';
@@ -15,10 +16,11 @@ import { CardEditor } from '../screens/recall/CardEditor';
 import { ImportApkg } from '../screens/recall/ImportApkg';
 import { Mistakes } from '../screens/Mistakes';
 import { Progress } from '../screens/Progress';
-import { Skills } from '../screens/Skills';
 import { SkillDetail } from '../screens/SkillDetail';
 import { Profile } from '../screens/Profile';
 import { PassageOfDay } from '../screens/PassageOfDay';
+import { PracticeHome } from '../screens/practice/PracticeHome';
+import { PracticeSession } from '../screens/practice/PracticeSession';
 import { CarsDuel } from '../screens/CarsDuel';
 import { Wrapped } from '../screens/Wrapped';
 
@@ -37,8 +39,8 @@ export const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'curriculum', element: <Curriculum /> },
       { path: 'lessons/vectors-and-trigonometry', element: <VectorLesson /> },
-      // Today merged into Home; keep the path working for bookmarks.
-      { path: 'today', element: <Navigate to="/app" replace /> },
+      // Today's Path — the daily learning-plan engine (guided one-at-a-time runner).
+      { path: 'today', element: <TodaysPath /> },
       { path: 'learn', element: <Study /> },
       // Recall (Anki-style flashcards): the tab landing plus its child surfaces.
       { path: 'recall', element: <RecallHome /> },
@@ -49,15 +51,20 @@ export const router = createBrowserRouter([
       { path: 'recall/import', element: <ImportApkg /> },
       { path: 'mistakes', element: <Mistakes /> },
       { path: 'progress', element: <Progress /> },
-      { path: 'skills', element: <Skills /> },
+      // The standalone Skills page is merged into Progress (Concept B): its seven
+      // reasoning-skill readouts now render as the Progress dashboard's left rail.
+      // The nav item still points at /app/skills (kept for the app-shell contract),
+      // so this redirect lands it on the merged dashboard. The per-cluster detail
+      // (linked from the brain) keeps its own route below.
+      { path: 'skills', element: <Navigate to="/app/progress" replace /> },
       { path: 'skills/:skillId', element: <SkillDetail /> },
       // Hooks now surface contextually rather than living under a Practice tab.
       { path: 'passage', element: <PassageOfDay /> },
       { path: 'cars', element: <CarsDuel /> },
       { path: 'wrapped', element: <Wrapped /> },
-      // Practice tab + Focus mode removed; redirect old paths for bookmarks.
-      { path: 'practice', element: <Navigate to="/app" replace /> },
-      { path: 'practice/*', element: <Navigate to="/app" replace /> },
+      // Adaptive Practice: the hub plus its in-place session.
+      { path: 'practice', element: <PracticeHome /> },
+      { path: 'practice/session', element: <PracticeSession /> },
       { path: 'profile', element: <Profile /> },
     ],
   },
