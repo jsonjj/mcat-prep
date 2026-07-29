@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   RETRY_GAP,
   feedbackFor,
+  queueNotices,
   resurfaceAt,
   subAfterFirstAttempt,
   subAfterSecondAttempt,
@@ -159,5 +160,32 @@ describe('an unanswered step', () => {
   it('tolerates an item with no refutation authored for the chosen option', () => {
     const sparse = { ...RESULT, choiceRationales: { D: 'only the key is explained' } };
     expect(feedbackFor(sparse, 'B', 'feedback').wrongChoiceRationale).toBeNull();
+  });
+});
+
+/**
+ * The two degraded-queue facts the authority reports. Independence is the point
+ * worth pinning: neither implies the other, so deriving one from the other
+ * would silently drop a case.
+ */
+describe('degraded-queue notices', () => {
+  it('says nothing about a queue that arrived as asked', () => {
+    expect(queueNotices({ shortfall: 0, taughtGap: false })).toEqual([]);
+  });
+
+  it('reports a taught gap on a queue that nevertheless came back full', () => {
+    expect(queueNotices({ shortfall: 0, taughtGap: true })).toEqual(['taught-gap']);
+  });
+
+  it('reports a shortfall with no taught gap as its own cause', () => {
+    expect(queueNotices({ shortfall: 3, taughtGap: false })).toEqual(['shortfall']);
+  });
+
+  it('reports both, taught gap first, when both hold', () => {
+    expect(queueNotices({ shortfall: 8, taughtGap: true })).toEqual(['taught-gap', 'shortfall']);
+  });
+
+  it('reports nothing at all before a queue has loaded', () => {
+    expect(queueNotices(undefined)).toEqual([]);
   });
 });

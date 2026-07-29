@@ -5,10 +5,12 @@ import type { PracticeAttemptResult, PracticeQueueItem } from '@mcat/contracts';
 import { usePracticeQueue, useSubmitPracticeAttempt } from '../../app/practice-queries';
 import {
   feedbackFor,
+  queueNotices,
   resurfaceAt,
   subAfterFirstAttempt,
   subAfterSecondAttempt,
   type Feedback,
+  type QueueNotice,
   type Sub,
 } from './session-flow';
 
@@ -19,6 +21,17 @@ const PURPOSE_LABEL: Record<string, string> = {
   probe: 'Check-in',
   repair: 'Repair',
 };
+
+/**
+ * The learner-facing sentence for one degraded-queue fact. Plain statements of
+ * what happened: a taught gap is a "not yet", not a fault, and a short session
+ * is worth saying up front rather than letting the learner find out when the
+ * questions run out.
+ */
+const noticeText = (notice: QueueNotice, delivered: number, requested: number): string =>
+  notice === 'taught-gap'
+    ? 'Some questions are sitting out — they come from lessons you haven’t finished yet.'
+    : `Shorter set than usual: ${delivered} of the ${requested} questions you asked for were available today.`;
 
 interface SessionState {
   x?: number;
@@ -65,6 +78,21 @@ export function PracticeSession() {
 
   const slot: Slot | undefined = sequence[index];
 
+  /**
+   * Return to the plan (or the Practice hub). `complete` marks the plan
+   * activity done.
+   *
+   * Declared ABOVE the early returns below, not beside the other handlers.
+   * Every degraded branch of this screen offers a way out, and a `const` read
+   * from a branch that returns before the declaration is evaluated throws on
+   * click rather than navigating — so the errored and empty states each had a
+   * button that could only fail. See `PracticeSession.test.ts`.
+   */
+  const finish = (complete: boolean) => {
+    if (returnTo) navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
+    else navigate('/app/practice');
+  };
+
   // Reset per-step working state whenever the active step changes.
   useEffect(() => {
     if (slot === undefined) return;
@@ -98,15 +126,29 @@ export function PracticeSession() {
     );
   }
 
+  /**
+   * An empty queue has two quite different causes and used to give one answer
+   * to both. A taught-set miss is not a shortage — it is material the learner
+   * has not reached yet, and the useful next step is a lesson, so that branch
+   * says so and offers one instead of dead-ending on a Back button.
+   */
   if (slot === undefined) {
+    const taughtGap = queue.data?.taughtGap === true;
     return (
       <div className="mc-screen mc-practice">
         <Eyebrow>Practice</Eyebrow>
-        <h1 className="mc-h1">Nothing to practice yet</h1>
+        <h1 className="mc-h1">{taughtGap ? 'Not taught yet' : 'Nothing to practice yet'}</h1>
         <p className="mc-muted">
-          There aren’t enough eligible questions for this focus yet. Learn a bit more, then come back.
+          {taughtGap
+            ? 'Practice only pulls questions from lessons you’ve already finished, and none of the questions we have are from those yet. Finish a lesson and they’ll turn up here.'
+            : 'There aren’t enough eligible questions for this focus yet. Learn a bit more, then come back.'}
         </p>
-        <Button variant="primary" onClick={() => finish(true)}>
+        {taughtGap ? (
+          <Button variant="primary" onClick={() => navigate('/app/curriculum')}>
+            Find a lesson
+          </Button>
+        ) : null}
+        <Button variant={taughtGap ? 'secondary' : 'primary'} onClick={() => finish(true)}>
           {returnTo ? 'Back to plan' : 'Back to Practice'}
         </Button>
       </div>
@@ -117,15 +159,20 @@ export function PracticeSession() {
   const q = item.question;
   const isLastStep = index + 1 >= sequence.length;
 
+  /**
+   * What the authority said about the SHAPE of this queue, as opposed to its
+   * contents. Both were reported and read by nothing, which left a short
+   * session to announce itself by ending early. Counted off the delivered queue
+   * rather than `sequence.length`, because a missed item is re-inserted for its
+   * second go and would otherwise make the session look longer than it is.
+   */
+  const requested = queue.data?.requested ?? 0;
+  const delivered = queue.data?.items.length ?? 0;
+  const notices = queueNotices(queue.data);
+
   const advance = () => {
     if (index + 1 < sequence.length) setIndex(index + 1);
     else finish(true);
-  };
-
-  // Return to the plan (or the Practice hub). `complete` marks the plan activity done.
-  const finish = (complete: boolean) => {
-    if (returnTo) navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
-    else navigate('/app/practice');
   };
 
   const checkAnswer = () => {
@@ -205,6 +252,11 @@ export function PracticeSession() {
         >
           <span style={{ width: `${((index + 1) / sequence.length) * 100}%` }} />
         </div>
+        {notices.length > 0 ? (
+          <p className="mc-muted mc-fineprint">
+            {notices.map((notice) => noticeText(notice, delivered, requested)).join(' ')}
+          </p>
+        ) : null}
       </div>
 
       {q.passage.trim().length > 0 ? (
