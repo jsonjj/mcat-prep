@@ -33,7 +33,7 @@ export * from './planner';
 export * from './readiness';
 export * from './ghost';
 export * from './todays-path';
-// Mastery engine (mastery-bkt / provisional-v1).
+// Mastery engine (mastery-bkt).
 export * from './irt';
 export * from './bkt';
 export * from './forgetting';

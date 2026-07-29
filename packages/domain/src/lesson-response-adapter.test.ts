@@ -135,7 +135,7 @@ const adapt = (
     acceptedAt: UtcTimestampSchema.parse('2026-07-27T12:00:01.000Z'),
     sequence: 4,
     contentRelease: 'release-alt-2099',
-    policies: [{ policyId: 'mastery-bkt', version: 'provisional-v1' }],
+    policies: [{ policyId: 'mastery-bkt', version: 'provisional-v2' }],
     ...patch,
   });
 

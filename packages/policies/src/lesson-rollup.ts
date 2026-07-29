@@ -1,5 +1,5 @@
 /**
- * Lesson mastery ROLLUP (mastery-bkt / provisional-v1).
+ * Lesson mastery ROLLUP (mastery-bkt).
  *
  * A lesson has no BKT state of its own. Only two grains receive direct
  * observations — the primary KC and the primary reasoning operation (see

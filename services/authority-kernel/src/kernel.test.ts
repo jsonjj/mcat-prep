@@ -292,7 +292,7 @@ describe('learner projections', () => {
         occurredAt: NOW,
         sequence: 1,
         contentRelease: 'synthetic-2026.07',
-        policies: [{ policyId: 'mastery-bkt', version: 'provisional-v1' }],
+        policies: [{ policyId: 'mastery-bkt', version: 'provisional-v2' }],
       }),
       lessonId: 'V3-LES-130923',
     });

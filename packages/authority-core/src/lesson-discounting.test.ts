@@ -53,7 +53,7 @@ const lessonExit = (overrides: Record<string, unknown> = {}): QualifiedBktObserv
     occurredAt: NOW,
     sequence: 1,
     contentRelease: 'synthetic-2026.07',
-    policies: [{ policyId: 'mastery-bkt', version: 'provisional-v1' }],
+    policies: [{ policyId: 'mastery-bkt', version: 'provisional-v2' }],
     // A lesson exit is uncalibrated (`dokLevel` absent → b = 0), which is what
     // makes the practice comparison below an apples-to-apples one.
     ...overrides,

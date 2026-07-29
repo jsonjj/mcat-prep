@@ -133,7 +133,7 @@ function lessonEvidence(): EvidenceRecord {
     acceptedAt: UtcTimestampSchema.parse(NOW),
     sequence: 4,
     contentRelease: 'release-1',
-    policies: [{ policyId: 'mastery-bkt', version: 'provisional-v1' }],
+    policies: [{ policyId: 'mastery-bkt', version: 'provisional-v2' }],
   });
   if (result.evidence === null) throw new Error('expected the lesson adapter to write evidence');
   return result.evidence;

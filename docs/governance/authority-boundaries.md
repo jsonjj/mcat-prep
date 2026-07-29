@@ -38,7 +38,7 @@ The content compiler builds three artifact classes from an allowlist (not a deny
 - Numeric score prediction stays disabled unless every product- and learner-level gate is satisfied.
 - Replaying the same accepted events under the same policy versions reproduces identical state.
 
-## Mastery signal — `P(L)` (mastery-bkt / provisional-v1)
+## Mastery signal — `P(L)` (mastery-bkt)
 
 The learner-facing mastery number is the Bayesian Knowledge Tracing probability `P(L)` per unit
 (KC / the 7 reasoning skills / lesson), with a separate IRT ability for CARS; `P(L) >= 0.95` is the

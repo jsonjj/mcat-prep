@@ -1,8 +1,8 @@
 /**
  * Shared composition for applying ONE independent attempt to a learner's mastery
- * state (mastery-bkt / provisional-v1). Kept pure so the in-process authority
- * (@mcat/authority-core) and the Postgres authority (learner-api) run identical
- * logic; each call site loads/saves the states.
+ * state (mastery-bkt). Kept pure so the in-process authority (@mcat/authority-core)
+ * and the Postgres authority (learner-api) run identical logic; each call site
+ * loads/saves the states.
  *
  * Exactly TWO grains take a direct BKT observation: the primary KC and the primary
  * reasoning operation. A lesson has no state of its own — its view is derived from

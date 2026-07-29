@@ -1,5 +1,5 @@
 /**
- * Diagnostic → mastery seeding (mastery-bkt / provisional-v1).
+ * Diagnostic → mastery seeding (mastery-bkt).
  *
  * The diagnostic never awards mastery; it only seeds initial values. Seeding is
  * ASYMMETRIC and CAPPED so it fails closed: a weak read may lower the prior freely

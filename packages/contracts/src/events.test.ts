@@ -41,7 +41,7 @@ function ledgerEvent(payload: LedgerPayload): Record<string, unknown> {
     idempotencyKey: newIdempotencyKey(),
     occurredAt: NOW,
     contentRelease: 'synthetic-2026.07',
-    policies: [{ policyId: 'mastery-bkt', version: 'provisional-v1' }],
+    policies: [{ policyId: 'mastery-bkt', version: 'provisional-v2' }],
     payload,
   };
 }

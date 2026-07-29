@@ -1,5 +1,5 @@
 /**
- * Bayesian Knowledge Tracing — the main mastery engine (mastery-bkt / provisional-v1).
+ * Bayesian Knowledge Tracing — the main mastery engine (mastery-bkt).
  *
  * `P(L)` is the probability the learner has mastered a unit. It is updated by the
  * Bayes rule after every *independent* observation (assistance/reveal/retry are
@@ -17,10 +17,24 @@ import type { PolicyManifest } from './manifest';
  * Manifest for the whole BKT/IRT/forgetting/CARS mastery engine. Provisional:
  * constants are defaults to be refit from real data; item difficulty is
  * uncalibrated (DOK cold-start) until items accumulate attempts.
+ *
+ * THE ONLY PLACE THIS ENGINE'S VERSION IS SPELLED. Every ledger record cites it
+ * through `activePolicyVersions()`, so the citation is only worth anything if it
+ * describes what actually ran — a second copy in a comment or a fixture is a
+ * second answer to the same question, and the drift `v2` exists to close was
+ * exactly that. `tests/architecture/policy-version-single-source.test.ts` keeps
+ * it a single copy.
+ *
+ * `v2` because `669fbcf` changed the engine's behaviour under `v1`: a
+ * lesson-exit observation is now discounted through a raised guess
+ * (`LESSON_EXIT_GUESS_G`), and `mastered` is no longer `P(L) >= 0.95` alone but
+ * that conjoined with an `independent`-tier evidence warrant. Both are visible
+ * in the output, so a record stamped `v1` and a record stamped `v2` are not
+ * comparable, which is what a version is for.
  */
 export const MASTERY_BKT_MANIFEST: PolicyManifest = {
   policyId: 'mastery-bkt',
-  version: 'provisional-v1',
+  version: 'provisional-v2',
   status: 'provisional_active',
   summary:
     'Sole owner of the learner-facing capability estimate: BKT P(L) per unit with IRT difficulty-aware slip; forgetting half-life decay and review-due; 1-hop prerequisite reinforcement; separate CARS IRT ability. Direct observations update exactly two grains (primary KC, primary reasoning operation); lesson views are derived rollups. A lesson-exit observation is discounted through a raised guess, never a capped value. P(L) >= 0.95 is the capability half of mastery; the claim also requires a sufficient warrant from the separate evidence-warrant policy, which owns quality/freshness/gaps. Constants provisional; difficulty uncalibrated.',

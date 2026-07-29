@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { CarsSkillSchema, ReasoningOperationSchema, SkillClusterSchema } from './vocab';
 
 /**
- * Mastery pipeline DTOs (mastery-bkt / provisional-v1).
+ * Mastery pipeline DTOs (mastery-bkt).
  *
  * The engine tracks a probability `P(L)` on exactly two grains — the primary KC
  * and the primary reasoning operation — plus an IRT ability `V` per CARS

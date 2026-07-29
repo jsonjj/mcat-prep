@@ -39,9 +39,9 @@ export interface LearnerState {
   diagnostic: DiagnosticSessionState | null;
   session: StudySessionState | null;
   /**
-   * BKT/IRT mastery engine state (mastery-bkt / provisional-v1). Optional so older
-   * persisted projections deserialize; initialized lazily. In the deployed
-   * learner-api path mastery lives in dedicated Postgres tables instead.
+   * BKT/IRT mastery engine state (mastery-bkt). Optional so older persisted
+   * projections deserialize; initialized lazily. In the deployed learner-api
+   * path mastery lives in dedicated Postgres tables instead.
    */
   mastery?: MasteryEngineState;
   /** Today's Path — the persisted daily plan + per-activity progress (optional; per-day). */

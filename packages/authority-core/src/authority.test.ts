@@ -306,7 +306,7 @@ function qualifiedObservation(
     occurredAt: '2026-07-20T12:00:00.000Z',
     sequence: 1,
     contentRelease: 'synthetic-2026.07',
-    policies: [{ policyId: 'mastery-bkt', version: 'provisional-v1' }],
+    policies: [{ policyId: 'mastery-bkt', version: 'provisional-v2' }],
     ...overrides,
   });
 }

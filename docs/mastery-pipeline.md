@@ -56,7 +56,7 @@
 
 ---
 
-## 2. The engine (implemented in `@mcat/policies`, `mastery-bkt / provisional-v1`)
+## 2. The engine (implemented in `@mcat/policies`, `mastery-bkt`)
 
 Pure modules: `irt.ts`, `bkt.ts`, `forgetting.ts`, `prerequisite.ts`, `cars.ts`, `mastery-seed.ts`,
 `mastery-attempt.ts`.
