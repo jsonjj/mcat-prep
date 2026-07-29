@@ -180,7 +180,6 @@ export function CarsDuel() {
   if (phase === 'setup') {
     return (
       <div className="mc-screen">
-        <Eyebrow>CARS Duel</Eyebrow>
         <h1 className="mc-h1">Debate to sharpen your reasoning</h1>
         <p className="mc-muted mc-fineprint">
           No winner or loser — it ends with constructive feedback. This builds CARS reps; it never
