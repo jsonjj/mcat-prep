@@ -1,9 +1,9 @@
 import { createHash } from 'node:crypto';
 import {
   Authority,
+  MasterySeedNotCorroboratedError,
   PracticeAttemptNotAuthorizedError,
   SyntheticPracticeBankPort,
-  corroborateMasterySeed,
   type LearnerState,
   type PracticeBankPort,
 } from '@mcat/authority-core';
@@ -683,35 +683,44 @@ export class RepositoryLearnerKernel {
    * Apply the diagnostic's opening priors. No evidence is bound: a seed is not
    * an attempt, and nothing here can move a unit the learner has practised.
    *
-   * The payload is corroborated before it is applied. `MasterySeedSchema`
-   * validates SHAPE — that the values are probabilities and the keys are
-   * non-empty strings — and the authority re-clamps every value on the way in,
+   * The payload is corroborated inside the authority before it is applied.
+   * `MasterySeedSchema` validates SHAPE — that the values are probabilities and
+   * the keys are non-empty strings — and the authority re-clamps every value,
    * which is why a fabricated seed cannot mint mastery. Neither of those says
    * anything about WHICH units a seed is entitled to move, and the planner ranks
    * on exactly that: a caller could name arbitrary KC ids at the floor or the
    * cap with no diagnostic taken at all.
    *
-   * `corroborateMasterySeed` refuses any payload the one real producer could not
-   * have emitted. Refusal is a 400 rather than a silent drop of the offending
-   * entries: keeping the acceptable half of a payload the server has already
-   * decided is dishonest is how a restriction loses to a permission. See that
-   * function for what this does and does not establish — it is a shape check,
-   * not proof that a diagnostic was taken, and closing the remainder needs the
-   * issuing service and the authority to share a fact.
+   * `applyMasterySeed` refuses any payload the one real producer could not have
+   * emitted, and it does so INSIDE the authority rather than here. This route
+   * used to hold the check itself, which left the in-process dev authority — the
+   * other real caller of the same method — with no check at all. All this route
+   * owns now is the status code. See `corroborateMasterySeed` for what the
+   * refusal does and does not establish: it is a shape check, not proof that a
+   * diagnostic was taken, and closing the remainder needs the issuing service
+   * and the authority to share a fact.
+   *
+   * The refusal is a 400 rather than a silent drop of the offending entries:
+   * keeping the acceptable half of a payload the server has already decided is
+   * dishonest is how a restriction loses to a permission. The reason names which
+   * of the four producer properties failed and stays server-side.
    */
   async handleMasterySeed(command: MasterySeedCommandBody, principal: Principal) {
-    const corroboration = corroborateMasterySeed(command.seed);
-    if (corroboration.status === 'refused') {
-      throw validationError(
-        `The diagnostic seed is not one this server could have produced (${corroboration.reason}).`,
+    try {
+      return AcceptedCommandResponseSchema.parse(
+        await this.mutate(command.envelope, principal, (authority, state) => {
+          authority.applyMasterySeed(state, command.seed);
+          return { eventType: 'mastery_seed_applied', payload: toJsonObject(command) };
+        }),
       );
+    } catch (error) {
+      if (error instanceof MasterySeedNotCorroboratedError) {
+        throw validationError(
+          `The diagnostic seed is not one this server could have produced (${error.reason}).`,
+        );
+      }
+      throw error;
     }
-    return AcceptedCommandResponseSchema.parse(
-      await this.mutate(command.envelope, principal, (authority, state) => {
-        authority.applyMasterySeed(state, command.seed);
-        return { eventType: 'mastery_seed_applied', payload: toJsonObject(command) };
-      }),
-    );
   }
 
   async handleReset(command: ContinueCommandBody, principal: Principal) {

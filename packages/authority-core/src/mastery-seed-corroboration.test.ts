@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { MasterySeedSchema, type MasterySeed } from '@mcat/contracts';
-import { orderedKcsForLesson } from '@mcat/content';
+import { MasterySeedSchema, fixedClock, type MasterySeed } from '@mcat/contracts';
+import { loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
 import {
   FC_AXIS,
   SEED_PRIOR_CAP,
@@ -11,7 +11,13 @@ import {
   masterySeedFromUnitSeeds,
   type DiagnosticResponse,
 } from '@mcat/policies';
-import { corroborateMasterySeed } from './mastery-seed-corroboration';
+import { Authority } from './authority';
+import {
+  MasterySeedNotCorroboratedError,
+  corroborateMasterySeed,
+} from './mastery-seed-corroboration';
+
+const NOW = '2026-07-20T12:00:00.000Z';
 
 /**
  * A diagnostic seed has to look like something a diagnostic produced.
@@ -200,5 +206,80 @@ describe('a fabricated seed is refused', () => {
       seedOf({ ...uniform(concept('FC10'), 0.17), 'kc-i-just-made-up': SEED_PRIOR_CAP }),
     );
     expect(result.status).toBe('refused');
+  });
+});
+
+/**
+ * WHERE the check runs, which is the half a pure-function test cannot cover.
+ *
+ * The corroboration first landed as a pre-check at the lambda seed route. That
+ * left it bypassable by every other caller of `applyMasterySeed`, and there is
+ * a second real one: the in-process dev authority (`services/local-authority`)
+ * calls the same method with a payload that has crossed no route at all. A guard
+ * at one entry point is a property of that call site's discipline; a guard at the
+ * write path is a property of the write path.
+ *
+ * So these drive the AUTHORITY, not the function. Every assertion below fails if
+ * the check is moved back out in front of a route.
+ */
+describe('the check runs at the single door', () => {
+  const authority = (): Authority => new Authority(loadSyntheticBank(), fixedClock(NOW));
+
+  it('refuses a fabricated payload at applyMasterySeed, writing no grain at all', () => {
+    const auth = authority();
+    const state = auth.createGuest();
+    const fabricated = seedOf({
+      'V3-KC-000000': SEED_PRIOR_FLOOR,
+      'kc-i-just-made-up': SEED_PRIOR_CAP,
+    });
+
+    expect(() => auth.applyMasterySeed(state, fabricated)).toThrow(MasterySeedNotCorroboratedError);
+
+    // Nothing partial survived: not the mastery block, not a single grain. A
+    // refusal that still initialized the KCs it recognized would be the same
+    // defect with fewer entries.
+    expect(state.mastery?.kc ?? {}).toEqual({});
+    expect(state.mastery?.skill ?? {}).toEqual({});
+  });
+
+  it('names the refusal rather than reporting a generic failure', () => {
+    const auth = authority();
+    const error = (() => {
+      try {
+        auth.applyMasterySeed(
+          auth.createGuest(),
+          MasterySeedSchema.parse({
+            kcPriors: {},
+            skillPriors: { IDENTIFY: SEED_PRIOR_CAP },
+            carsAbility: {},
+          }),
+        );
+        return null;
+      } catch (thrown: unknown) {
+        return thrown;
+      }
+    })();
+
+    expect(error).toBeInstanceOf(MasterySeedNotCorroboratedError);
+    expect((error as MasterySeedNotCorroboratedError).reason).toBe(
+      'SEED_GRAIN_NOT_DIAGNOSTIC_PRODUCED',
+    );
+  });
+
+  /**
+   * The other half of the "done" condition. A door that also refuses the real
+   * producer is not a fix, so the production chain is driven through the same
+   * method and its priors are read back off the state.
+   */
+  it('applies the seed the real producer emits, through the same door', () => {
+    const auth = authority();
+    const state = auth.createGuest();
+    const seed = producedSeed();
+
+    auth.applyMasterySeed(state, seed);
+
+    const seededKcIds = Object.keys(seed.kcPriors);
+    expect(seededKcIds.length).toBeGreaterThan(0);
+    expect(Object.keys(state.mastery!.kc).sort()).toEqual([...seededKcIds].sort());
   });
 });

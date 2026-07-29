@@ -107,6 +107,10 @@ import {
   type LoadedBank,
 } from '@mcat/content';
 import {
+  corroborateMasterySeed,
+  MasterySeedNotCorroboratedError,
+} from './mastery-seed-corroboration';
+import {
   compiledToPracticeQuestion,
   SyntheticPracticeBankPort,
   type PracticeAnswer,
@@ -2422,8 +2426,31 @@ export class Authority {
    * whether you have mastered something" can be enforced; `SEED_PRIOR_CAP` sits
    * far below BKT's 0.95 mastery threshold, which is what makes the guarantee
    * hold whatever a caller sends.
+   *
+   * CORROBORATION RUNS HERE, not in front of this. The cap bounds how far a
+   * prior may move and says nothing about WHICH units get moved, and the planner
+   * ranks on exactly that. `corroborateMasterySeed` refuses any payload the one
+   * real producer could not have emitted; it used to sit at the lambda route,
+   * where the in-process dev authority — a second real caller — bypassed it
+   * entirely. A check at one route is bypassable by every other caller, so it
+   * belongs at the door all of them pass through.
+   *
+   * Refusal THROWS and moves nothing: the whole payload is refused rather than
+   * filtered down to the entries that pass, because keeping the acceptable half
+   * of a payload the server has already judged dishonest is how a restriction
+   * loses to a permission.
+   *
+   * One consequence worth naming: the producer emits `kcPriors` only, so
+   * corroboration refuses any `skillPriors` or `carsAbility` outright and the
+   * two clamps below can no longer be reached with a non-empty record. They
+   * stay because `MasterySeed` still declares those grains, and a clamp that is
+   * only unreachable while a sibling check holds is worth keeping.
    */
   applyMasterySeed(state: LearnerState, seed: MasterySeed): void {
+    const corroboration = corroborateMasterySeed(seed);
+    if (corroboration.status === 'refused') {
+      throw new MasterySeedNotCorroboratedError(corroboration.reason, corroboration.detail);
+    }
     const m = this.ensureMastery(state);
     const capped = (prior: number): number =>
       Math.min(SEED_PRIOR_CAP, Math.max(SEED_PRIOR_FLOOR, prior));

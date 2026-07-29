@@ -291,6 +291,38 @@ describe('Authority — BKT mastery engine (P(L))', () => {
 const V3_LESSON_ID = 'V3-LES-130923';
 const V3_LESSON_KCS = orderedKcsForLesson(V3_LESSON_ID)!;
 
+/**
+ * A concept the diagnostic can actually seed, and a lesson to read it back from.
+ *
+ * `applyMasterySeed` now refuses any payload the one real producer could not
+ * have emitted, and the producer distributes a CONCEPT's read uniformly over
+ * every KC beneath it (`seedsFromBucketReads`). So a seedable fixture names a
+ * whole Foundational Concept at one prior; a lesson-sized subset of a concept is
+ * a shape the distribution never makes, and the door refuses it.
+ *
+ * `V3_LESSON_ID` carries no FC tag at all, so none of its KCs are on the
+ * diagnostic axis and no seed can ever reach it — which is what the seeding
+ * fixtures below used to assume. Discovered rather than hardcoded, because which
+ * lessons are both FC-tagged and resolvable is generated data that drifts.
+ */
+const SEEDABLE_CONCEPTS: readonly { concept: string; lessonId: string; lessonKcs: string[] }[] = [
+  ...lessonsByFc(),
+]
+  .sort(([a], [b]) => a.localeCompare(b))
+  .flatMap(([concept, lessonIds]) => {
+    const lessonId = [...lessonIds].sort().find((id) => (orderedKcsForLesson(id) ?? []).length > 1);
+    return lessonId === undefined
+      ? []
+      : [{ concept, lessonId, lessonKcs: [...orderedKcsForLesson(lessonId)!] }];
+  });
+
+/** Every KC beneath one concept at a single prior — the producer's only shape. */
+const conceptPriors = (concept: string, prior: number): Record<string, number> => {
+  const kcs = kcsByFc(orderedKcsForLesson).get(concept);
+  if (kcs === undefined || kcs.length === 0) throw new Error(`${concept} has no KC membership`);
+  return Object.fromEntries(kcs.map((kcId) => [kcId, prior]));
+};
+
 function qualifiedObservation(
   overrides: Partial<Record<string, unknown>> = {},
 ): QualifiedBktObservation {
@@ -1445,15 +1477,16 @@ describe('Authority — no write path stores a lesson grain', () => {
   it('leaves it absent after a diagnostic seed', () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
+    const seeded = SEEDABLE_CONCEPTS[0]!;
 
     auth.applyMasterySeed(state, {
-      kcPriors: Object.fromEntries(V3_LESSON_KCS.map((kcId) => [kcId, SEED_PRIOR_CAP])),
+      kcPriors: conceptPriors(seeded.concept, SEED_PRIOR_CAP),
       skillPriors: {},
       carsAbility: {},
     });
 
     expect(state.mastery!.lesson).toBeUndefined();
-    expect(auth.getMasteryLessons(state, [V3_LESSON_ID])[0]!.pL).toBeCloseTo(SEED_PRIOR_CAP, 12);
+    expect(auth.getMasteryLessons(state, [seeded.lessonId])[0]!.pL).toBeCloseTo(SEED_PRIOR_CAP, 12);
   });
 
   it('resolves the lesson readout from the members, not from a stored value', () => {
@@ -1489,12 +1522,13 @@ describe('Authority — diagnostic mastery seeding', () => {
     carsAbility: {},
   });
 
-  /** A second registry lesson, so the floor is read at a different membership. */
-  const FLOOR_LESSON_ID = 'V3-LES-789208';
-
-  /** Seed every required member KC of a lesson, which is the grain a seed writes. */
-  const kcPriorsFor = (lessonId: string, prior: number): Record<string, number> =>
-    Object.fromEntries((orderedKcsForLesson(lessonId) ?? []).map((kcId) => [kcId, prior]));
+  /**
+   * Two seedable concepts, so the cap and the floor are read at different
+   * memberships. Both halves of each pair come from `SEEDABLE_CONCEPTS`, which
+   * is derived from the pinned registry rather than written down here.
+   */
+  const CAP_CONCEPT = SEEDABLE_CONCEPTS[0]!;
+  const FLOOR_CONCEPT = SEEDABLE_CONCEPTS[1]!;
 
   const rollupOf = (auth: Authority, state: LearnerState, lessonId: string) => {
     const [rollup] = auth.getLessonRollups(state, [lessonId]);
@@ -1504,17 +1538,40 @@ describe('Authority — diagnostic mastery seeding', () => {
     return rollup.view;
   };
 
+  it('registers two seedable concepts, each with a resolvable lesson', () => {
+    // Anti-vacuity for every fixture below: the seeding tests read their result
+    // back through a lesson inside the concept they seeded, so a concept with no
+    // resolvable lesson would make them assert nothing.
+    expect(SEEDABLE_CONCEPTS.length).toBeGreaterThan(1);
+    expect(CAP_CONCEPT.concept).not.toBe(FLOOR_CONCEPT.concept);
+    for (const seedable of [CAP_CONCEPT, FLOOR_CONCEPT]) {
+      expect(seedable.lessonKcs.length).toBeGreaterThan(1);
+      const conceptKcs = new Set(Object.keys(conceptPriors(seedable.concept, 0.2)));
+      expect(seedable.lessonKcs.every((kcId) => conceptKcs.has(kcId))).toBe(true);
+    }
+    // ...and the lesson the rest of this file uses is NOT seedable, which is why
+    // these fixtures cannot simply reuse it: no concept on the diagnostic axis
+    // contains any of its KCs.
+    const axisKcs = new Set([...kcsByFc(orderedKcsForLesson).values()].flat());
+    expect(V3_LESSON_KCS.filter((kcId) => axisKcs.has(kcId))).toEqual([]);
+  });
+
   it('initializes an unpractised lesson through its member KCs', () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
 
-    auth.applyMasterySeed(state, { ...emptySeed(), kcPriors: kcPriorsFor(V3_LESSON_ID, 0.35) });
+    auth.applyMasterySeed(state, {
+      ...emptySeed(),
+      kcPriors: conceptPriors(CAP_CONCEPT.concept, 0.35),
+    });
 
     // Seeding is not practice, so the lesson is reported only when a caller names
     // it. The seeded value is read back through the rollup over the member KCs
     // the seed actually wrote — there is no lesson grain to read it from.
-    expect(auth.getMasteryLessons(state).map((l) => l.lessonId)).not.toContain(V3_LESSON_ID);
-    const seeded = auth.getMasteryLessons(state, [V3_LESSON_ID])[0]!;
+    expect(auth.getMasteryLessons(state).map((l) => l.lessonId)).not.toContain(
+      CAP_CONCEPT.lessonId,
+    );
+    const seeded = auth.getMasteryLessons(state, [CAP_CONCEPT.lessonId])[0]!;
     expect(seeded.pL).toBeCloseTo(0.35, 9);
     expect(seeded.mastered).toBe(false);
   });
@@ -1522,26 +1579,26 @@ describe('Authority — diagnostic mastery seeding', () => {
   it('never overwrites a grain the learner has already practised', () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = auth.createGuest();
+    const practicedKcId = CAP_CONCEPT.lessonKcs[0]!;
     auth.applyQualifiedBktObservation(state, {
-      observation: qualifiedObservation({ correct: true }),
-      lessonId: V3_LESSON_ID,
+      observation: qualifiedObservation({ correct: true, primaryKcId: practicedKcId }),
+      lessonId: CAP_CONCEPT.lessonId,
     });
-    const practicedKcId = V3_LESSON_KCS[0]!;
-    const practiced = rollupOf(auth, state, V3_LESSON_ID).members.find(
+    const practiced = rollupOf(auth, state, CAP_CONCEPT.lessonId).members.find(
       (m) => m.kcId === practicedKcId,
     )!.pL;
     expect(practiced).toBeGreaterThan(PRIOR_PL0);
 
     auth.applyMasterySeed(state, {
       ...emptySeed(),
-      kcPriors: kcPriorsFor(V3_LESSON_ID, SEED_PRIOR_FLOOR),
+      kcPriors: conceptPriors(CAP_CONCEPT.concept, SEED_PRIOR_FLOOR),
     });
 
-    const members = rollupOf(auth, state, V3_LESSON_ID).members;
+    const members = rollupOf(auth, state, CAP_CONCEPT.lessonId).members;
     expect(members.find((m) => m.kcId === practicedKcId)!.pL).toBe(practiced);
     // ...and the seed was not a no-op, so the assertion above is not vacuous:
     // the same call did initialize the lesson's unpractised KCs.
-    for (const kcId of V3_LESSON_KCS.slice(1)) {
+    for (const kcId of CAP_CONCEPT.lessonKcs.slice(1)) {
       expect(members.find((m) => m.kcId === kcId)!.pL).toBe(SEED_PRIOR_FLOOR);
     }
   });
@@ -1550,6 +1607,13 @@ describe('Authority — diagnostic mastery seeding', () => {
    * The producer already caps at `SEED_PRIOR_CAP`, but seeds cross a service
    * boundary to get here, so the guarantee has to hold against whatever arrives
    * rather than against what a well-behaved producer sends.
+   *
+   * Both concepts are seeded WHOLE and UNIFORMLY, because that is the only shape
+   * the door accepts — the out-of-range part is the prior, not the membership.
+   * The `skillPriors: { IDENTIFY: 1 }` this fixture used to carry alongside is
+   * now a negative case of its own below: the diagnostic has no read for a
+   * reasoning operation, so the corroboration refuses the whole payload before
+   * the clamp is reached.
    */
   it('clamps an out-of-range prior instead of trusting the producer', () => {
     const auth = new Authority(loadSyntheticBank(), clock);
@@ -1557,23 +1621,55 @@ describe('Authority — diagnostic mastery seeding', () => {
 
     auth.applyMasterySeed(state, {
       ...emptySeed(),
-      kcPriors: { ...kcPriorsFor(V3_LESSON_ID, 1), ...kcPriorsFor(FLOOR_LESSON_ID, 0) },
-      skillPriors: { IDENTIFY: 1 },
+      kcPriors: {
+        ...conceptPriors(CAP_CONCEPT.concept, 1),
+        ...conceptPriors(FLOOR_CONCEPT.concept, 0),
+      },
     });
 
-    const capped = rollupOf(auth, state, V3_LESSON_ID);
-    expect(capped.members.map((m) => m.pL)).toEqual(V3_LESSON_KCS.map(() => SEED_PRIOR_CAP));
+    const capped = rollupOf(auth, state, CAP_CONCEPT.lessonId);
+    expect(capped.members.map((m) => m.pL)).toEqual(
+      CAP_CONCEPT.lessonKcs.map(() => SEED_PRIOR_CAP),
+    );
     expect(capped.pL).toBeCloseTo(SEED_PRIOR_CAP, 12);
     expect(capped.pL).toBeLessThan(MASTERY_THRESHOLD);
     expect(capped.mastered).toBe(false);
 
-    const floored = rollupOf(auth, state, FLOOR_LESSON_ID);
+    const floored = rollupOf(auth, state, FLOOR_CONCEPT.lessonId);
     expect(floored.members.every((m) => m.pL === SEED_PRIOR_FLOOR)).toBe(true);
     expect(floored.pL).toBeCloseTo(SEED_PRIOR_FLOOR, 12);
+  });
 
-    expect(auth.getMasterySkills(state).find((s) => s.operation === 'IDENTIFY')!.pL).toBe(
-      SEED_PRIOR_CAP,
-    );
+  /**
+   * The impossible payload, kept as an explicitly negative case rather than
+   * dropped.
+   *
+   * A reasoning-operation prior was a legal thing to send until the corroboration
+   * moved inside the door: the form measures content concepts, so the producer
+   * returns `skillPriors` and `carsAbility` empty every time, and a value in
+   * either is a claim with no source. The refusal is whole-payload — the
+   * otherwise-legitimate concept read alongside it is refused too, because
+   * keeping the acceptable half of a payload the server has judged dishonest is
+   * how a restriction loses to a permission.
+   */
+  it('refuses a reasoning-operation prior, and the legitimate half with it', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+
+    expect(() =>
+      auth.applyMasterySeed(state, {
+        ...emptySeed(),
+        kcPriors: conceptPriors(CAP_CONCEPT.concept, SEED_PRIOR_CAP),
+        skillPriors: { IDENTIFY: 1 },
+      }),
+    ).toThrow(/SEED_GRAIN_NOT_DIAGNOSTIC_PRODUCED/);
+
+    // Refused before the mastery block is even created, so there is nothing
+    // partial to inspect: neither the operation grain the payload asked for nor
+    // the concept read it travelled with.
+    expect(state.mastery?.skill ?? {}).toEqual({});
+    expect(state.mastery?.kc ?? {}).toEqual({});
+    expect(rollupOf(auth, state, CAP_CONCEPT.lessonId).pL).toBeCloseTo(PRIOR_PL0, 12);
   });
 
   /**

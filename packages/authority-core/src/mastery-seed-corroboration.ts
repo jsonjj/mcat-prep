@@ -44,6 +44,12 @@ import { kcsByFc } from '@mcat/policies';
  * fail-closed on everything else, and REFUSES rather than dropping the offending
  * entries, because silently keeping the acceptable half of a payload the server
  * has already decided is dishonest is how a restriction loses to a permission.
+ *
+ * WHERE IT RUNS. Inside `Authority.applyMasterySeed`, which is the single door
+ * every seed passes through — the lambda route, the in-process dev authority,
+ * and any caller added later. It began life as a pre-check at the lambda route
+ * only, which left the second existing caller unguarded and made the guarantee
+ * a property of that one call site's discipline rather than of the write path.
  */
 
 export type MasterySeedRefusal =
@@ -55,6 +61,29 @@ export type MasterySeedRefusal =
 export type MasterySeedCorroboration =
   | { readonly status: 'corroborated' }
   | { readonly status: 'refused'; readonly reason: MasterySeedRefusal; readonly detail: string };
+
+/**
+ * This seed is not a shape the one real producer could have emitted.
+ *
+ * Thrown rather than returned, and thrown before any grain is touched, so a
+ * caller that has not considered the refusal aborts instead of silently
+ * receiving a value it can ignore. The transport decides the status code; the
+ * seed route maps this to the same 400 the pre-check used to return, and the
+ * refusal reason stays server-side.
+ */
+export class MasterySeedNotCorroboratedError extends Error {
+  constructor(
+    readonly reason: MasterySeedRefusal,
+    readonly detail: string,
+  ) {
+    super(
+      `The diagnostic seed is not one this server could have produced (${reason}): ${detail}. ` +
+        'A seed is accepted only in the shape the diagnostic producer emits: KC priors ' +
+        'only, on the diagnostic axis, whole concepts, one prior per concept.',
+    );
+    this.name = 'MasterySeedNotCorroboratedError';
+  }
+}
 
 /**
  * Concept -> its KC membership, and the reverse, from the SHA-pinned registry.

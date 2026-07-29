@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { fixedClock, type CandidateLessonInput } from '@mcat/contracts';
 import { loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
-import { PRIOR_PL0 } from '@mcat/policies';
+import { kcsByFc, lessonsByFc, PRIOR_PL0 } from '@mcat/policies';
 import { Authority } from './authority';
 import { SyntheticPracticeBankPort, type PracticeItemClassification } from './practice';
 import type { LearnerState } from './types';
@@ -60,6 +60,51 @@ if (seededLessonKcs === null || unseededLessonKcs === null) {
 }
 const SEEDED_LESSON_KCS = seededLessonKcs;
 const UNSEEDED_LESSON_KCS = unseededLessonKcs;
+
+/**
+ * A seedable candidate pair: two lessons in two different Foundational Concepts.
+ *
+ * Discovered from the pinned registry rather than written down, because which
+ * lessons are both FC-tagged and have resolvable ordered-KC membership is
+ * generated data. `SEEDED_LESSON_ID` and `UNSEEDED_LESSON_ID` above carry no FC
+ * tag at all, so no diagnostic seed can reach either of them.
+ */
+interface SeedableCandidate {
+  readonly concept: string;
+  readonly lessonId: string;
+  readonly candidate: CandidateLessonInput;
+}
+
+const conceptPriors = (concept: string, prior: number): Record<string, number> => {
+  const kcs = kcsByFc(orderedKcsForLesson).get(concept);
+  if (kcs === undefined || kcs.length === 0) throw new Error(`${concept} has no KC membership`);
+  return Object.fromEntries(kcs.map((kcId) => [kcId, prior]));
+};
+
+function seedableCandidatePair(): readonly [SeedableCandidate, SeedableCandidate] {
+  const found: SeedableCandidate[] = [];
+  for (const [concept, lessonIds] of [...lessonsByFc()].sort(([a], [b]) => a.localeCompare(b))) {
+    const lessonId = [...lessonIds].sort().find((id) => (orderedKcsForLesson(id) ?? []).length > 0);
+    if (lessonId === undefined) continue;
+    found.push({
+      concept,
+      lessonId,
+      candidate: {
+        lessonId,
+        slug: `seedable-${concept.toLowerCase()}`,
+        title: `Lesson in ${concept}`,
+        section: 'bb',
+        cluster: null,
+        kcCount: 4,
+        kcIds: [...orderedKcsForLesson(lessonId)!],
+        prerequisiteLessonIds: [],
+        estimatedMinutes: 20,
+      },
+    });
+    if (found.length === 2) return [found[0]!, found[1]!];
+  }
+  throw new Error('the registry must carry two FC-tagged lessons with resolvable KC membership');
+}
 
 const plannerRegressionCandidates: CandidateLessonInput[] = [
   {
@@ -279,11 +324,26 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     ).toBe(330);
   });
 
+  /**
+   * The candidates here are FC-tagged lessons rather than the two the rest of
+   * this file uses, because the seed has to be one the door accepts.
+   * `applyMasterySeed` refuses any payload the diagnostic producer could not have
+   * emitted, and the producer distributes a CONCEPT's read over every KC beneath
+   * it — so the seed names a whole Foundational Concept, and the lesson whose
+   * priors move is one inside it. The unseeded lesson is drawn from a DIFFERENT
+   * concept, so seeding one leaves the other genuinely at the default prior.
+   *
+   * `kcCount` is held equal across the pair on purpose: it feeds the planner's
+   * unlock term with a 2× swing against mastery's 1.25×, so an unequal pair would
+   * let KC count decide the order and the seed would prove nothing.
+   */
   it('uses candidate lesson ids to rank KC priors with no practice routing', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = auth.createGuest();
+    const [seeded, unseeded] = seedableCandidatePair();
+
     auth.applyMasterySeed(state, {
-      kcPriors: Object.fromEntries(SEEDED_LESSON_KCS.map((kcId) => [kcId, 0.4])),
+      kcPriors: conceptPriors(seeded.concept, 0.4),
       skillPriors: {},
       carsAbility: {},
     });
@@ -291,10 +351,14 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     // Diagnostic KC priors are deliberately not practice: the default lesson read
     // omits them, while the planner must still roll up every supplied candidate.
     expect(state.mastery!.practicedLessonIds).toEqual([]);
+    // The seed reached the seeded lesson's KCs and nothing else, so the ranking
+    // below is about the priors rather than about which lessons exist.
+    expect(auth.getMasteryLessons(state, [seeded.lessonId])[0]!.pL).toBeCloseTo(0.4, 12);
+    expect(auth.getMasteryLessons(state, [unseeded.lessonId])[0]!.pL).toBeCloseTo(PRIOR_PL0, 12);
 
     const view = await auth.buildTodaysPath(state, {
       recallLoad: EMPTY_LOAD,
-      candidateLessons: plannerRegressionCandidates,
+      candidateLessons: [seeded.candidate, unseeded.candidate],
       force: true,
     });
 
@@ -302,7 +366,7 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
       view.activities
         .filter((activity) => activity.kind === 'lesson')
         .map((activity) => activity.lessonId),
-    ).toEqual([UNSEEDED_LESSON_ID, SEEDED_LESSON_ID]);
+    ).toEqual([unseeded.lessonId, seeded.lessonId]);
   });
 
   /**

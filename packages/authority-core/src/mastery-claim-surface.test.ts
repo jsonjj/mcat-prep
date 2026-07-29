@@ -63,16 +63,23 @@ const candidateLessons: CandidateLessonInput[] = [
   },
 ];
 
-/** Maximum capability everywhere, zero evidence anywhere. */
+/**
+ * Maximum capability everywhere, zero evidence anywhere.
+ *
+ * Written by hand, and it has to be. No seed can produce this state: the seed
+ * cap sits far below the cut on purpose, and `applyMasterySeed` additionally
+ * refuses any payload the diagnostic producer could not have emitted — this
+ * probe lesson carries no FC tag, so its KCs are not even on the diagnostic
+ * axis. The state below is deliberately one production cannot reach, which is
+ * the point: it is the adversarial input for every surface that might claim
+ * mastery from `P(L)` alone.
+ */
 function maximumCapabilityNoEvidence(auth: Authority): LearnerState {
   const state = auth.createGuest();
-  // Reached through the seed rather than by hand-writing grains, then raised:
-  // the seed is capped far below the cut on purpose, so the raise is explicit.
-  auth.applyMasterySeed(state, {
-    kcPriors: Object.fromEntries(LESSON_KCS.map((kcId) => [kcId, 0.4])),
-    skillPriors: {},
-    carsAbility: {},
-  });
+  // An empty seed, which the door corroborates as the no-op it is, so the
+  // authority initializes its own mastery block rather than this fixture
+  // hand-building one. Every value below is then written explicitly.
+  auth.applyMasterySeed(state, { kcPriors: {}, skillPriors: {}, carsAbility: {} });
   const mastery = state.mastery!;
   for (const kcId of LESSON_KCS) mastery.kc[kcId] = MAXIMUM_CAPABILITY();
   for (const operation of REASONING_OPERATIONS) mastery.skill[operation] = MAXIMUM_CAPABILITY();
