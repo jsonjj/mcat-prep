@@ -113,17 +113,26 @@ export type BktApplicationRejectionCode = z.infer<typeof BktApplicationRejection
  * capability grains has to name itself here before it can write a ledger record,
  * so it cannot arrive unaudited by default.
  *
- * Both members go through the Authority's single `stepDirectGrains` step and so
- * share one bounded decay clock; the distinction is what identifies the attempt.
- * A lesson response carries a `QualifiedBktObservation` with its own id and
- * ordering value, which adaptive practice has neither of — see the correlation
- * enforced on the payload below.
+ * EVERY member goes through the Authority's single `stepDirectGrains` step and
+ * so shares one bounded decay clock; the distinction is only what identifies the
+ * attempt. A lesson response carries a `QualifiedBktObservation` with its own id
+ * and ordering value, which neither of the in-request paths has — see the
+ * correlation enforced on the payload below. The membership of this list and the
+ * set of methods that may call the step are two derivations of one fact, and
+ * `tests/architecture/mastery-write-path.test.ts` asserts the second half
+ * exactly rather than by containment.
  */
 export const BKT_OBSERVATION_SOURCES = [
   /** A qualified lesson response (lesson-evidence-mastery-contract §8.2). */
   'lesson_response',
   /** A first, unassisted adaptive-practice answer (docs/practice-engine.md). */
   'adaptive_practice',
+  /**
+   * The study loop's first answering attempt, scored in-request against the
+   * synthetic bank (`Authority.updateMasteryForAttempt`, reached from
+   * `POST /v1/attempts`).
+   */
+  'synthetic_study',
 ] as const;
 export const BktObservationSourceSchema = z.enum(BKT_OBSERVATION_SOURCES);
 export type BktObservationSource = z.infer<typeof BktObservationSourceSchema>;
@@ -135,13 +144,19 @@ export type BktObservationSource = z.infer<typeof BktObservationSourceSchema>;
  * it may not be used as a decay clock unchecked. This event keeps **both**
  * times: `reportedOccurredAt` is the runner's verbatim claim and is the only
  * surviving evidence that a client misreported, while `appliedOccurredAt` is the
- * bounded, monotonic value state was actually written with. They differ exactly
- * when `clockAdjustment !== 'none'`, so the clamp never destroys the claim it
- * corrected.
+ * bounded, monotonic value state was actually written with.
+ *
+ * On an APPLIED record the two differ exactly when `clockAdjustment !== 'none'`,
+ * so the clamp never destroys the claim it corrected. The qualifier is not
+ * decoration: a REFUSED record has no applied time at all, and reports
+ * `clockAdjustment: 'none'` because no clock was chosen — so the unscoped
+ * version of this sentence was false on every rejection the Authority has ever
+ * written. Both halves are now enforced below rather than described here.
  *
  * Every write to a capability grain appends one of these, whatever the `source`:
  * a path that moves `P(L)` without a ledger record leaves the clamp with no
- * forensic trail, which is how the practice path's clock bypass stayed invisible.
+ * forensic trail, which is how the practice path's clock bypass stayed invisible
+ * and how the study path's stayed invisible after it.
  */
 export const BktObservationAppliedSchema = EventBaseSchema.extend({
   type: z.literal('bkt_observation_applied'),
@@ -199,6 +214,41 @@ export const BktObservationAppliedSchema = EventBaseSchema.extend({
           message: 'outOfOrder cannot be true without an observationSequence to order against.',
           path: ['outOfOrder'],
         });
+      }
+
+      // The outcome is likewise derived twice — once as `rejectionCodes`, once
+      // as the presence of an applied clock — and the two must agree. A record
+      // with an applied time AND a rejection code describes a write that both
+      // did and did not happen; one with neither claims a write nothing can be
+      // audited against.
+      const refused = payload.rejectionCodes.length > 0;
+      const { appliedOccurredAt } = payload;
+      if (refused === (appliedOccurredAt !== null)) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: refused
+            ? 'appliedOccurredAt must be null when the observation was refused.'
+            : 'appliedOccurredAt must be present when no rejection code fired.',
+          path: ['appliedOccurredAt'],
+        });
+      }
+
+      // And on an applied record, `clockAdjustment` is a third derivation of
+      // the same fact: it says 'none' exactly when the claim survived the bound
+      // verbatim. Compared as instants rather than strings, because the two
+      // fields are not required to carry the same ISO spelling.
+      if (!refused && appliedOccurredAt !== null) {
+        const usedVerbatim =
+          Date.parse(appliedOccurredAt) === Date.parse(payload.reportedOccurredAt);
+        if ((payload.clockAdjustment === 'none') !== usedVerbatim) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: usedVerbatim
+              ? `clockAdjustment is '${payload.clockAdjustment}' but appliedOccurredAt equals reportedOccurredAt, so nothing was adjusted.`
+              : "clockAdjustment is 'none' but appliedOccurredAt differs from reportedOccurredAt.",
+            path: ['clockAdjustment'],
+          });
+        }
       }
     }),
 });
