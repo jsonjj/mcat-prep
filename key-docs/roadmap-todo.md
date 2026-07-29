@@ -217,3 +217,180 @@ else.
    policy change and not a relabeling of an existing claim — a genuinely new administration designed to
    warrant independence rather than to teach. Concedes the most engineering cost of the three, and,
    per the fact above, can only be built into `V3-LES-130923` today.
+
+## Every lesson Today's Path can schedule is preview content, and none of it reaches the evidence pipeline
+
+**This predates tonight and is not a regression from any of tonight's commits.** No evidence write has
+ever existed on this path: `git log --all -S` for `attempts`, `adaptLessonResponse`, and `evidence`
+against both `apps/learner-web/src/screens/Lesson.tsx` and
+`apps/learner-web/src/app-native/LessonRenderer.tsx` returns zero commits for either file, across the
+whole history of both. Tonight's work did not break this; it is what made the disconnect legible and
+consequential, because tonight is when the evidence gate, the discounting math, and the reachability
+boundary became real enough for their absence on this path to matter.
+
+**The finding.** `APP_NATIVE_LESSONS` (`apps/learner-web/src/app-native/index.ts:47-68`) holds 14
+lessons, and `buildCandidateLessons()` (`apps/learner-web/src/app/today-queries.ts:55-56`) feeds
+exactly that list into `POST /v1/plan/today/build` — so those 14 are every "New Lesson" Today's Path
+can ever schedule. `LessonRenderer` makes no HTTP call at all: its entire runtime is a
+`localStorage` blob (`LessonRenderer.tsx:1054`), and `submitQuestion` (lines 1092-1112) grades the
+answer client-side against `evaluation.correctOptionId` and stores it locally. `Lesson.tsx:41-51`
+passes the renderer exactly one behaviour that leaves the browser — `onComplete`, which navigates
+back with a `completedActivityId` that `useConsumeCompletedActivity` turns into a single
+`POST /v1/plan/today/activity` (`today-queries.ts:206-217`); `useLaunchPlanActivity` fires the
+matching `in_progress` on the way in (`today-queries.ts:162-168`). Two plan-status calls, and
+nothing else.
+
+**I reproduced this against the real authority rather than trusting the report.** Building a plan
+from the real `buildCandidateLessons()` shape, then driving `recordPlanActivity(…, 'in_progress')`
+and `recordPlanActivity(…, 'complete')` — the only two server calls the lesson screen makes —
+leaves `getMasteryLessons(state)` at `[]` both before and after, all seven skills at the raw
+`pL: 0.2` prior both before and after, `state.mastery.kc` an empty object, and
+`practicedLessonIds` empty. The scheduled activity was `V3-LES-386478`, titled "Map the structure of
+an argument", detail `New lesson — teach before testing.`
+
+**Why `GET /v1/progress/lessons` returns `[]` rather than a stale number.**
+`services/lambdas/learner-api/src/workflow.ts:280-284` calls `authority.getMasteryLessons(state)`
+with no id list, and `getLessonRollups` defaults `ids` to `m.practicedLessonIds`
+(`packages/authority-core/src/authority.ts:2267`). That array is appended only by
+`recordPracticedLesson`, reached only from the practice/BKT path (`authority.ts:2871-2873`). An
+app-native completion never touches it, so these lessons are absent from the surface entirely. This
+matters for how the failure should be described: the Progress page does not display a wrong number
+for them, it displays nothing, and the plan's own copy — "teach before testing" — is literally
+honest about the seam. The harm is an unmet expectation and a silent surface, not a false claim
+rendered on screen.
+
+**Completion is not inert, and the difference is the whole point.** `recordPlanActivity`
+(`authority.ts:918-944`) adds the lesson to `state.completedLessons`, and the next plan build folds
+its KCs into `state.taughtKcIds` (`authority.ts:1097-1102`) — three KCs, in the run above. That is
+what unlocks Practice at `practiceUnlockLessons: 3` and what scopes the practice queue's
+teach-before-test filter. `authority.ts:1080-1083` names the distinction directly: "'This material
+has been put in front of the learner' — delivery OR the claim … It is NOT the mastery claim." So
+app-native lessons do real planner work. They deliver, and they unlock the channel that does supply
+evidence. They simply never supply any themselves.
+
+### Intentional, not an unfinished integration
+
+**The verdict is intentional, and it rests on five things, one of which is decisive.**
+
+1. **The contract says so, twice, unprompted.** `apps/learner-web/src/app-native/contract.ts:1-7`:
+   these "are visual-authoring inputs. They are not production LessonDefinition records and they
+   intentionally contain no React nodes, callbacks, HTML strings, planner decisions, or mastery
+   claims." `authoring-helpers.ts:1-9` repeats it: "no planner/mastery claims."
+2. **Every script declares itself preview.** All 14 carry `status: 'internal-preview'` and
+   `schemaVersion: 'lesson-script-preview/v2'` (`contract.ts:210-213`).
+3. **The decisive one: the lessons declare their own coverage gaps in data.**
+   `LessonKnowledgeComponentPreview` (`contract.ts:10-15`) carries
+   `previewCoverage: 'complete-review-focus' | 'boundary-map-only'`. Across the 14 lessons there are
+   54 required-KC slots, of which 31 are flagged `boundary-map-only`. I checked the flag against
+   actual node coverage rather than taking it at face value: those 31 are **exactly** the 31 required
+   KCs that carry no question node anywhere in their lesson, with **zero** mismatches in either
+   direction. An unfinished integration does not ship a per-KC field that names, precisely, which
+   required KCs it deliberately does not check.
+4. **The split from the real pipeline is commented as a choice.** `index.ts:56-58`: "V3-LES-130923 is
+   intentionally absent: it is delivered by the server-authoritative lesson runtime instead."
+5. **The one write this path ever had was removed on purpose.** `658a8c3` deleted `Lesson.tsx`'s
+   `onIndependentMiss={() => recordMistake.mutate('lesson')}`, replacing a content-free tally with a
+   real error log that only practice writes; its message ends "No change to BKT/mastery, the
+   independence gate, Recall/FSRS, or scoring." It was never a mastery write.
+
+**Two loose ends that cut the other way, and should be said.** `onIndependentMiss` is still a live
+prop on `LessonRenderer` (`LessonRenderer.tsx:60`, fired at line 1110) with no caller anywhere in the
+repository — dead code since `658a8c3`, and the reason lessons contribute nothing even to the
+Mistakes tally. And `c607696` authored wave 2 "against real V3 registry ids and KCs", while
+`apps/learner-web/src/app/lesson-mastery-id-parity.test.ts:16-28` pins those ids against
+`getMasteryLessons`. So these lessons are genuinely wired for planning and identity, which is what
+makes the non-scoring easy to misread as an oversight. Neither loose end is an interrupted evidence
+integration; nothing in the tree is half-connected to the adapter. **Nothing guards this boundary
+either way** — no architecture test asserts that app-native lessons write no evidence, and none
+would catch a wiring attempt that skipped the metadata.
+
+### The metadata does not exist, so authoring is the cost and transport is the rounding error
+
+`normalizeBinding` in `packages/domain/src/lesson-response-adapter.ts` reads `item_binding_id` (535),
+`activity_role` (548), `semantic_family_id` (549), the assistance-level alias group (561),
+`candidate_evidence_modes` (566-567) and `reasoning_operation` (569); BKT eligibility then requires
+`assistanceLevel === 'A0'` (1102), a defined `reasoningOperation` (1087, 1149) and an eligible
+candidate mode. Measured across all **168** question nodes in the 14 lessons:
+
+- **Present:** `kcIds` (168/168, from `LessonNodeBase`, `contract.ts:135-140`) and `stage` (168/168,
+  `contract.ts:168-185`).
+- **Absent, 0 of 168:** `activity_role`, `candidate_evidence_modes`, `reasoning_operation`,
+  assistance level under all three spellings the adapter accepts, `semantic_family_id`,
+  `item_binding_id`, `exact_reentry_for`, `exit_function`.
+
+Two of the six things a binding needs are derivable rather than authored: `stage` maps cleanly onto
+the role vocabulary (`exit-changed` → `CHANGED_EXIT`, `exit-near` → `NEAR_EXIT`) and the node `id`
+could serve as `itemBindingId`. **The three fields BKT eligibility actually turns on — the candidate
+mode, the reasoning operation, and the assistance level — are absent entirely, on every item.** So
+wiring the transport is a screen-level change; supplying the evidence is an authoring programme.
+
+**The scale, so nobody re-derives it.** The 14 lessons hold 27 sections, 168 question nodes, 23
+`exit-near` and 23 `exit-changed` — one of each per section, since `buildSectionNodes`
+(`section-authoring.ts:103-127`) emits exactly seven question nodes per section and one section binds
+exactly one KC. Against the shape `e579779` licensed — an initial plus a re-entry `CHANGED_EXIT` per
+KC — covering all 54 required KCs means on the order of 108 terminal checks, against 23
+`exit-changed` nodes that exist today and **zero** authored re-entry items, plus a semantic family,
+an assistance level and a reasoning operation on each. Tonight's licensing moved **6 of 115**
+bindings, on one lesson, over artifacts that were already authored in the target schema. This is
+one to two orders of magnitude more authoring than that, and it is content work, not engineering.
+
+### How this meets the out-of-repo lesson gap — the two are the same problem twice
+
+**The intersection of "lessons Today's Path schedules" and "lessons connected to the evidence
+pipeline" is currently empty.** The one pipeline-connected lesson, `V3-LES-130923`, is deliberately
+excluded from `APP_NATIVE_LESSONS` and reachable only at `/app/lessons/vectors-and-trigonometry`
+from Curriculum (`router.tsx:41`, `Curriculum.tsx:33`), where `VectorLesson.tsx` submits every
+response to the server (`useSubmitVectorLessonAction`, `SUBMIT_RESPONSE` at line 173) and so reaches
+`adaptLessonResponse`. Every lesson the planner can offer is on the other side of that line.
+
+**And two of the 14 reuse the exact ids of the two out-of-repo drafts.** App-native
+`V3-LES-789208` (`scientific-notation`) and `V3-LES-844372` (`graphs-and-slopes`) carry the same
+lesson ids as the two artifacts recorded above as living outside version control. They are thin
+single-KC previews of the same lessons:
+
+| Lesson          | App-native (in repo)                                     | Drafts artifact (out of repo)                            |
+| --------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `V3-LES-789208` | 7 questions, 1 exit-changed, 1 of 4 required KCs covered | 40 bindings, 8 `CHANGED_EXIT`, all 4 required KCs        |
+| `V3-LES-844372` | 7 questions, 1 exit-changed, 1 of 3 required KCs covered | 33 bindings, 3 `CHANGED_EXIT` + 12 `REPAIR_CONFIRMATION` |
+
+The KC sets match: the app-native previews cover `V3-KC-981438` and `V3-KC-452593` respectively, each
+the first member of the drafts artifact's own `required_kcs`. I re-counted the drafts' `activity_role`
+tallies directly and they agree with the counts recorded in the earlier section (`CHANGED_EXIT` 6/8/3
+across the three lessons).
+
+**This changes the cost of wiring for those two specifically.** For 12 of the 14 lessons, connecting
+them means authoring evidence metadata that has never existed. For `V3-LES-789208` and
+`V3-LES-844372` it means vendoring an artifact that is already fully authored in the target schema
+and pointing the scheduled lesson at it — which is the same vendoring decision already recorded
+above, now with a second, larger payoff attached. Vendoring those two would take the pool of
+pipeline-connected lessons from one to three, and — if the scheduled lessons were pointed at the
+real artifacts rather than the previews — would be the only path that makes a scheduled lesson score
+without a new authoring programme.
+
+### Owner decision, not a task
+
+**The current state is the one option that is clearly wrong.** Not because anything on screen lies —
+"teach before testing" is accurate, and the Progress page omits rather than misstates — but because
+the product schedules 14 lessons as the learner's primary daily work, and a learner can complete
+every one of them, forever, and watch a mastery surface that never acquires a single row. Whatever
+is chosen, the current arrangement should not survive by default.
+
+1. **Wire the app-native lessons into the real pipeline.** Honest scale: a screen-level transport
+   change plus an authoring programme on the order of 100+ new terminal checks with candidate modes,
+   reasoning operations, assistance levels and semantic families, across 54 required KCs of which 31
+   have no item at all today. For two of the 14 this collapses into the vendoring decision already
+   on the table. Concedes: this is content headcount, not a sprint, and it re-opens the question
+   `LESSON_EXIT_GUESS_G = 0.5` and the `TRANSFER`-only licensing were introduced to settle — whether
+   a just-taught exit check warrants anything on its own.
+2. **Keep them explicitly non-scoring, and stop presenting them as the path to mastery.** Cheap and
+   truthful: the lessons already declare themselves preview in three places, so this is mostly making
+   the product agree with its own contract — surface that a scheduled lesson teaches and unlocks
+   practice but does not itself move mastery, and let the Progress page say why it is empty rather
+   than merely being empty. Concedes: it makes the seam visible to the learner, and it admits that
+   the daily plan's headline activity is, for now, delivery only.
+
+The choice is not really between wiring and labelling; it is a decision about what a scheduled lesson
+is _for_. Option 2 is the current design stated out loud — lessons teach and unlock, practice
+warrants — and is coherent with §11 of `docs/lesson-evidence-mastery-contract.md` and with the
+lesson-only reachability finding above. Option 1 changes what the lesson channel is. Nothing in the
+code can make that call.

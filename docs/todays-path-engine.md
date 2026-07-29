@@ -18,9 +18,24 @@ Today's Path is the top-level engine that decides **what to study today and in
 what order**, sized to a daily time budget, then runs it top-to-bottom, one
 activity at a time. It **calls** the existing engines (CARS Duel, Recall,
 Lessons, Practice, Review Mistakes) with a computed input; each called engine
-owns its own writes (Practice moves `P(L)`; Recall/CARS stay formative). Today's
-Path reads mastery/forgetting/coverage/review-debt state and **writes none of it** —
-an authority test asserts `getMasterySkills` is unchanged by a build.
+owns its own writes (Practice moves `P(L)`; Recall/CARS stay formative; the
+app-native lessons this engine schedules write **no mastery evidence at all** —
+see below). Today's Path reads mastery/forgetting/coverage/review-debt state and
+**writes none of it** — an authority test asserts `getMasterySkills` is unchanged
+by a build.
+
+> **The scheduled lesson channel is delivery-only.** Every lesson this engine can
+> offer comes from `APP_NATIVE_LESSONS`, whose scripts all declare themselves
+> internal preview content, and whose renderer
+> (`apps/learner-web/src/app-native/LessonRenderer.tsx`) grades answers in the
+> browser and stores them in `localStorage`, making no HTTP call. Completing one
+> sends only `POST /v1/plan/today/activity`, which records delivery
+> (`completedLessons`, and `taughtKcIds` on the next build — this is what unlocks
+> Practice) and writes no attempt, no evidence record and no BKT observation. The
+> one lesson wired to the evidence pipeline, `V3-LES-130923`, is deliberately
+> excluded from that catalog and reachable only from Curriculum. This is
+> long-standing and intentional, not a defect in this engine; the decision it
+> forces is recorded in `key-docs/roadmap-todo.md`.
 
 ## The 5 steps (Current Implementation)
 
