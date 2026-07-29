@@ -1,11 +1,18 @@
+import { useNavigate } from 'react-router-dom';
 import { REASONING_OPERATION_INFO } from '@mcat/contracts';
-import { Card, Eyebrow } from '@mcat/ui-web';
+import { Button, Card, Eyebrow } from '@mcat/ui-web';
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
 import { CarsReadiness } from '../components/CarsReadiness';
 import { MasteryRing } from '../components/MasteryRing';
 import { useMasterySkills } from '../app/queries';
 
 const toPct = (p: number): number => Math.round(p * 100);
+
+/**
+ * Label for the CTA under the brain that opens the full curriculum. The final
+ * wording is being decided separately — change THIS one constant to update it.
+ */
+const CURRICULUM_CTA_LABEL = 'View full curriculum';
 
 /**
  * Plain-language descriptions for the 7 reasoning skills, shown on Progress. Kept
@@ -89,6 +96,7 @@ function SkillRail() {
  * it stacks vertically on narrower viewports.
  */
 export function Progress() {
+  const navigate = useNavigate();
   return (
     <div className="mc-screen mc-progressboard mc-progressboard--wide">
       <header className="mc-screen__head mc-progressboard__head">
@@ -121,6 +129,14 @@ export function Progress() {
             </ul>
           </div>
           <EvidenceAtlas />
+          <Button
+            variant="primary"
+            size="lg"
+            className="mc-progressboard__cta"
+            onClick={() => navigate('/app/curriculum')}
+          >
+            {CURRICULUM_CTA_LABEL}
+          </Button>
         </section>
 
         <CarsReadiness compact />

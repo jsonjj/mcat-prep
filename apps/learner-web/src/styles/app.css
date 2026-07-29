@@ -349,6 +349,11 @@ body {
 .mc-atlas__hint {
   margin-top: calc(-1 * var(--mc-space-2));
 }
+/* On the Progress board, lift the caption a little tighter to the brain so there's
+   clean vertical space for the curriculum CTA beneath it (Home hero is unchanged). */
+.mc-atlas--progress .mc-atlas__hint {
+  margin-top: calc(-1 * var(--mc-space-4));
+}
 .mc-atlas__panel {
   width: 100%;
   max-width: 440px;
@@ -1259,7 +1264,7 @@ body {
    (CARS_SKILL_BLURB). Small and tight so three blurbs add minimal height. */
 .mc-cars-subskill__desc {
   margin: var(--mc-space-1) 0 0;
-  font-size: var(--mc-text-12);
+  font-size: var(--mc-text-14);
   line-height: 1.3;
   color: var(--mc-ink-muted);
 }
@@ -1283,6 +1288,13 @@ body {
   min-width: 0;
   display: flex;
   flex-direction: column;
+}
+/* Curriculum CTA under the brain. `margin-top: auto` pins it to the bottom of the
+   (stretched) center column so its bottom edge lines up with the left/right boxes;
+   `align-self: center` keeps it a tidy centered pill rather than a full-width bar. */
+.mc-progressboard__cta {
+  margin-top: auto;
+  align-self: center;
 }
 /* "Lesson mastery" key above the brain — tells the learner what the node colors mean. */
 .mc-masterykey {
@@ -1354,12 +1366,12 @@ body {
   gap: var(--mc-space-2);
 }
 .mc-skillring .mc-ring {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   flex: 0 0 auto;
 }
 .mc-skillring .mc-ring__pct {
-  font-size: 30px;
+  font-size: 32px;
 }
 /* The text column beside the ring — takes the remaining width and may shrink. */
 .mc-skillring__label {
@@ -1377,7 +1389,7 @@ body {
   gap: var(--mc-space-1) var(--mc-space-2);
 }
 .mc-skillring__title {
-  font-size: var(--mc-text-15);
+  font-size: var(--mc-text-17);
   font-weight: 600;
   line-height: 1.2;
 }
@@ -1386,7 +1398,7 @@ body {
    the rail width, so it adds minimal height. */
 .mc-skillring__desc {
   margin: 0;
-  font-size: var(--mc-text-12);
+  font-size: var(--mc-text-14);
   line-height: 1.3;
   color: var(--mc-ink-muted);
 }
@@ -1424,7 +1436,7 @@ body {
 }
 .mc-cars--compact .mc-skillbar__label {
   font-family: var(--mc-font-body);
-  font-size: 13px;
+  font-size: var(--mc-text-14);
   font-weight: 700;
   display: block;
   line-height: 1.25;
@@ -1442,7 +1454,7 @@ body {
 }
 .mc-cars-subskill__barrow .mc-skillbar__pct {
   flex: none;
-  font-size: var(--mc-text-12);
+  font-size: var(--mc-text-14);
 }
 
 /* Laptop: widen just this page and lay the three zones side by side. The brain
@@ -1450,13 +1462,21 @@ body {
    Below 1180px the page keeps the 760px cap, stacks, and scrolls like any screen. */
 @media (min-width: 1180px) {
   .mc-shell__main:has(.mc-progressboard--wide) {
-    max-width: 1180px;
+    max-width: 1220px;
+    /* This dashboard is a single, no-scroll screen and the wide layout only ever
+       runs in desktop sidebar mode (no bottom nav), so the tall mobile bottom-nav
+       clearance isn't needed — trim it back to buy vertical room for the CTA. */
+    padding-bottom: var(--mc-space-5);
   }
+  /* Give the two side panels a little more width; the center keeps the brain at its
+     rendered size (the canvas is height-driven, so a narrower column just trims the
+     empty air beside it). Rows stretch so all three zones are equal height, which
+     lets the CTA's bottom edge align with the side boxes. */
   .mc-progressboard--wide .mc-progressboard__grid {
     display: grid;
-    grid-template-columns: 276px minmax(0, 1fr) 236px;
+    grid-template-columns: 300px minmax(0, 1fr) 268px;
     gap: var(--mc-space-5);
-    align-items: start;
+    align-items: stretch;
   }
   .mc-progressboard--wide .mc-atlas {
     margin-top: 0;
