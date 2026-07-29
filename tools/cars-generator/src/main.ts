@@ -35,14 +35,18 @@ import {
   ABLATION_CONDITIONS,
   EXAMPLE_BLUEPRINT,
   EXAMPLE_SET,
+  SKILL_SET,
+  PERFORMANCE_SET,
   GeneratedPassageSetSchema,
   PassageSetBlueprintSchema,
+  deriveSkill,
   generatePassageSet,
   runDeterministicChecks,
   summarize,
   toSafePassageSet,
   verdict,
   type AblationCondition,
+  type GeneratedPassageSet,
   type NamedSolver,
   type PassageSetBlueprint,
 } from '@mcat/cars-generation';
@@ -54,6 +58,7 @@ interface Args {
   readonly command: 'audit' | 'generate' | 'calibrate';
   readonly blueprintPath?: string;
   readonly setPath?: string;
+  readonly fixture?: string;
   readonly outPath?: string;
   readonly dirs: readonly string[];
   readonly matches: readonly string[];
@@ -112,6 +117,7 @@ function parseArgs(argv: readonly string[]): Args {
     : 'audit';
   let blueprintPath: string | undefined;
   let setPath: string | undefined;
+  let fixture: string | undefined;
   let outPath: string | undefined;
   let keysPath: string | undefined;
   let maxSets: number | undefined;
@@ -128,6 +134,9 @@ function parseArgs(argv: readonly string[]): Args {
       i += 1;
     } else if (argv[i] === '--set' && next) {
       setPath = next;
+      i += 1;
+    } else if (argv[i] === '--fixture' && next) {
+      fixture = next;
       i += 1;
     } else if (argv[i] === '--out' && next) {
       outPath = next;
@@ -169,6 +178,7 @@ function parseArgs(argv: readonly string[]): Args {
     yes,
     ...(blueprintPath ? { blueprintPath } : {}),
     ...(setPath ? { setPath } : {}),
+    ...(fixture ? { fixture } : {}),
     ...(outPath ? { outPath } : {}),
     ...(keysPath ? { keysPath } : {}),
     ...(maxSets && Number.isFinite(maxSets) ? { maxSets } : {}),
@@ -209,10 +219,48 @@ function buildSolvers(generatorModel: string): NamedSolver[] {
     .map((model) => ({ id: model, chat: new OpenAiChat({ apiKey, baseUrl, model }) }));
 }
 
+/** The hand-authored sets, addressable by name so `audit` can score any of them. */
+const FIXTURES: Record<string, GeneratedPassageSet> = {
+  cartography: EXAMPLE_SET,
+  skill: SKILL_SET,
+  performance: PERFORMANCE_SET,
+};
+
 function audit(args: Args): number {
-  const set = args.setPath
-    ? GeneratedPassageSetSchema.parse(JSON.parse(readFileSync(args.setPath, 'utf8')))
-    : EXAMPLE_SET;
+  let set: GeneratedPassageSet;
+  if (args.setPath) {
+    set = GeneratedPassageSetSchema.parse(JSON.parse(readFileSync(args.setPath, 'utf8')));
+  } else if (args.fixture) {
+    const found = FIXTURES[args.fixture];
+    if (!found) {
+      process.stderr.write(
+        `unknown fixture "${args.fixture}"; available: ${Object.keys(FIXTURES).join(', ')}\n`,
+      );
+      return 1;
+    }
+    // Re-parsed rather than trusted: a fixture that no longer satisfies its own schema
+    // should fail loudly here rather than be scored as if it were valid.
+    set = GeneratedPassageSetSchema.parse(found);
+  } else {
+    set = EXAMPLE_SET;
+  }
+
+  // A set carries no evidence spans, so set-level checks cannot catch an item model whose
+  // spans are out of bounds or whose declared skill disagrees with its retrieval scope.
+  // Both were live defects in the preview fixtures that the set audit passed cleanly, so
+  // the blueprint is validated here whenever one is supplied.
+  if (args.blueprintPath) {
+    const blueprint = loadBlueprint(args.blueprintPath);
+    process.stdout.write(`Blueprint ${blueprint.passage.id}: schema-valid\n`);
+    for (const item of blueprint.items) {
+      const derived = deriveSkill(item);
+      if (derived !== item.skill) {
+        process.stdout.write(
+          `  FAIL ${item.id}: declared ${item.skill} but evidence scope derives ${derived}\n`,
+        );
+      }
+    }
+  }
 
   const report = { results: runDeterministicChecks(set) };
   process.stdout.write(`Auditing ${set.items.length} item(s) on passage "${set.passage.title}"\n\n`);

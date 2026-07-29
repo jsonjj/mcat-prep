@@ -12,6 +12,7 @@ import {
   mechanismsAreDistinct,
   deriveSkill,
   PassageSetBlueprintSchema,
+  GeneratedPassageSetSchema,
   runDeterministicChecks,
   auditItem,
   checkOriginality,
@@ -32,6 +33,12 @@ import {
   type NamedSolver,
 } from './index';
 import { EXAMPLE_BLUEPRINT, EXAMPLE_SET } from './fixtures/example-set';
+import {
+  PERFORMANCE_BLUEPRINT,
+  PERFORMANCE_SET,
+  SKILL_BLUEPRINT,
+  SKILL_SET,
+} from './fixtures/preview-sets';
 import type { AiChat, AiChatRequest, AiChatResult } from '@mcat/ai-gateway';
 
 /** Deep clone so mutation-based tests cannot leak into one another. */
@@ -546,6 +553,40 @@ describe('ablation measurement on unannotated items', () => {
     const consensus = consensusPick(measured.trials, 'ref-1', 'full', 0.6);
     expect(consensus?.label).toBe('A');
     expect(consensus?.share).toBe(1);
+  });
+});
+
+/**
+ * The preview sets exist to be shown to a reader, which only means anything if they still
+ * satisfy the harness. Asserting `accept` rather than merely "parses" is deliberate: the
+ * verbatim-evidence check caught a real misquote in one of them during authoring, and a
+ * regression there would be invisible by eye.
+ */
+describe('preview fixtures', () => {
+  for (const [name, blueprint, set] of [
+    ['skill', SKILL_BLUEPRINT, SKILL_SET],
+    ['performance', PERFORMANCE_BLUEPRINT, PERFORMANCE_SET],
+  ] as const) {
+    it(`${name}: blueprint and set are schema-valid and audit clean`, () => {
+      expect(() => PassageSetBlueprintSchema.parse(blueprint)).not.toThrow();
+      expect(() => GeneratedPassageSetSchema.parse(set)).not.toThrow();
+      const results = runDeterministicChecks(set);
+      const failures = results.filter((r) => !r.passed);
+      expect(failures.map((f) => `${f.itemId ?? 'set'}:${f.id}`)).toEqual([]);
+      expect(verdict({ results })).toBe('accept');
+    });
+
+    it(`${name}: every item's skill tag matches what the evidence scope derives`, () => {
+      for (const item of blueprint.items) {
+        expect(deriveSkill(item)).toBe(item.skill);
+      }
+    });
+  }
+
+  it('the two preview passages differ in thesis position, which is the difficulty lever', () => {
+    expect(SKILL_BLUEPRINT.passage.thesisPosition).not.toBe(
+      PERFORMANCE_BLUEPRINT.passage.thesisPosition,
+    );
   });
 });
 

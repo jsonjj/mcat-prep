@@ -24,3 +24,11 @@ export * from './checks/deterministic';
 export * from './checks/originality';
 export * from './checks/solver';
 export { EXAMPLE_BLUEPRINT, EXAMPLE_SET, EXAMPLE_PARAGRAPHS } from './fixtures/example-set';
+export {
+  SKILL_BLUEPRINT,
+  SKILL_SET,
+  SKILL_PARAGRAPHS,
+  PERFORMANCE_BLUEPRINT,
+  PERFORMANCE_SET,
+  PERFORMANCE_PARAGRAPHS,
+} from './fixtures/preview-sets';

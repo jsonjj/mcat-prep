@@ -130,6 +130,16 @@ The generating model is refused as a solver or adjudicator. A self-preferring ju
 
 `packages/cars-generation/src/fixtures/example-set.ts` holds an original hand-authored passage set. It is the harness's **positive control**: a battery that only ever rejects is untestable, and this set is what stops the thresholds drifting stricter than the corpus they were calibrated against.
 
+`fixtures/preview-sets.ts` adds two more hand-authored sets, `skill` and `performance`, for showing a reader what the target looks like without spending provider budget. They deliberately differ in thesis position — mid-text against opening — so a sitting exercises the difficulty lever rather than holding it fixed. Audit any of the three by name:
+
+```bash
+pnpm cars:audit -- --fixture skill        # or performance, cartography
+```
+
+Read them as the **ceiling, not a sample**. A careful author sees the audit result and revises; the pipeline has to hit the same constraints blind. Treating these as representative of live output would overstate what the generator does.
+
+Pass `--blueprint` to `audit` to validate the item models as well as the set. This matters more than it looks: a `GeneratedPassageSet` carries no evidence spans, so set-level checks cannot see an out-of-bounds span or a declared skill that disagrees with its retrieval scope. Both were live defects in the preview fixtures while the set audit reported 135/135 — the blueprint schema and `deriveSkill` are the only things that catch them.
+
 ## Known limitations
 
 These bound what the system can currently claim.
