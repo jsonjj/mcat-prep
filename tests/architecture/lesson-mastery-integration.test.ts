@@ -518,6 +518,55 @@ const LESSON_AGNOSTIC_ANCHORS = [
   'packages/policies/src/lesson-rollup.ts',
 ];
 
+/**
+ * Generated content TABLES inside those trees, exempt from the identifier scan
+ * below and from nothing else.
+ *
+ * `fc-lessons.generated.ts` is the lesson → Foundational Concept partition
+ * (scripts/generate-fc-lessons.mjs, from the V3 manifest, cross-checked against
+ * the atlas). It is made of lesson ids because that is what it is: a mapping
+ * keyed by lesson cannot be written without naming the lessons.
+ *
+ * What §13 forbids is lesson-shaped CODE — a policy module that treats one
+ * lesson differently from another. Every consumer reads this table uniformly:
+ * `fcForLesson` is a lookup, `lessonsByFc` inverts it, `kcsByFc` walks it. A
+ * 115th lesson is regenerated into the table and gets exactly the treatment the
+ * other 114 get, with no edit to any policy module — which IS the criterion,
+ * not a way around it.
+ *
+ * That is a licence for a table and not for a file that is data-shaped in its
+ * name only. Since `37de483` this table is load-bearing on the diagnostic →
+ * mastery path (`lessonsByFc()` → `kcsByFc(orderedKcsForLesson)` →
+ * `kcSeedsFromDiagnostic`), so a `.generated.ts` that grew one conditional
+ * would be branching on a lesson id ON THE WAY TO P(L). The assertion below
+ * re-earns each entry every run: it must still be in the scan, must still carry
+ * a lesson id, and must still be nothing but literals. It fails rather than
+ * lapsing when any of the three stops holding.
+ *
+ * Exempt here, checked elsewhere: this table restates a partition that also
+ * lives in `packages/contracts/src/atlas-region-groups.json`, and
+ * `packages/policies/src/fc-lessons.test.ts` pins the two equal lesson for
+ * lesson, so the exemption does not leave a second derivation unguarded.
+ */
+const LESSON_AGNOSTIC_DATA_TABLES: readonly string[] = [
+  'packages/policies/src/data/fc-lessons.generated.ts',
+];
+
+/**
+ * The lines a pure data table is allowed to be made of: the `export const … =`
+ * opener, its closer, a `'key': 'value'` entry, a bare element, a comment, or
+ * nothing. An import, a conditional, a function — anything that can act on the
+ * id it names — is code, and code is what the scan exists to find.
+ */
+const DATA_TABLE_LINES: readonly RegExp[] = [
+  /^\s*$/,
+  /^\s*(?:\/\/|\/\*|\*)/,
+  /^export const [A-Za-z_$][\w$]*\s*:[^=]*=\s*[[{]$/,
+  /^[\]}];$/,
+  /^\s*'[^']*'\s*:\s*(?:'[^']*'|-?\d+(?:\.\d+)?|true|false),$/,
+  /^\s*'[^']*',$/,
+];
+
 describe('the lesson seam is generic (no lesson is a special case)', () => {
   it('knows what a lesson-specific identifier looks like', () => {
     // The pattern list is the whole assertion below; prove it recognises the
@@ -554,11 +603,19 @@ describe('the lesson seam is generic (no lesson is a special case)', () => {
   });
 
   it('no lesson-specific identifier appears in the generic adapter, router, or engine', () => {
-    const files = productionSources(LESSON_AGNOSTIC_TREES);
+    const files = productionSources(LESSON_AGNOSTIC_TREES).filter(
+      (file) => !LESSON_AGNOSTIC_DATA_TABLES.includes(file.path),
+    );
     const scanned = new Set(files.map((file) => file.path));
     for (const anchor of LESSON_AGNOSTIC_ANCHORS) {
       expect(scanned.has(anchor), `${anchor} dropped out of the lesson-agnostic scan.`).toBe(true);
     }
+    // The exemption list must stay the exception. Anchors alone would not notice
+    // the trees being exempted a file at a time.
+    expect(
+      files.length,
+      'The lesson-agnostic scan is down to a handful of files. Exemptions are eating it.',
+    ).toBeGreaterThan(30);
 
     const offenders: string[] = [];
     for (const file of files) {
@@ -581,6 +638,51 @@ describe('the lesson seam is generic (no lesson is a special case)', () => {
         'branch here.',
       ].join('\n'),
     ).toEqual([]);
+  });
+
+  it('keeps every exempted data table live, present, and still nothing but a table', () => {
+    const files = new Map(
+      productionSources(LESSON_AGNOSTIC_TREES).map((file) => [file.path, file]),
+    );
+    expect(LESSON_AGNOSTIC_DATA_TABLES.length).toBeGreaterThan(0);
+
+    for (const path of LESSON_AGNOSTIC_DATA_TABLES) {
+      const file = files.get(path);
+      expect(
+        file,
+        `${path} is exempted from the lesson-agnostic scan but is not in it. If the file ` +
+          'moved, move the entry with it; if it is gone, delete the entry.',
+      ).toBeDefined();
+      if (file === undefined) continue;
+
+      // Still necessary. An exemption covering nothing is cover for the next
+      // one, so it fails here instead of sitting on as dead permission.
+      expect(
+        LESSON_SPECIFIC_PATTERNS.some((pattern) => pattern.test(file.text)),
+        `${path} is exempted from the lesson-agnostic scan but no longer carries a ` +
+          'lesson-specific identifier. Delete the entry.',
+      ).toBe(true);
+
+      // Still only a table, which is the entire basis of the exemption: data
+      // KEYED BY a lesson is not a branch ON a lesson. One conditional and it is.
+      const notLiterals = file.text
+        .split('\n')
+        .filter((line) => !DATA_TABLE_LINES.some((shape) => shape.test(line)));
+      expect(
+        notLiterals,
+        [
+          `${path} is exempted as a generated data table but contains a line that is not a`,
+          'literal.',
+          '',
+          'The exemption says this file NAMES lessons; it does not say the file may ACT on',
+          'them. Anything executable here is policy code in a lesson-agnostic tree, and this',
+          'table is read on the diagnostic → mastery seeding path, so a lesson-shaped branch',
+          'in it reaches P(L).',
+          '',
+          'Move the logic into a module the scan reads, or drop the exemption.',
+        ].join('\n'),
+      ).toEqual([]);
+    }
   });
 
   it('the generic seam never reaches into content for lesson data', () => {
