@@ -124,10 +124,12 @@ interface MirroredEnum {
  * planner may legitimately compare tiers, and never crosses the learner-facing
  * wire. BKT's `pL` / `mastered` is the only capability claim a learner sees.
  *
- * `MasteryStateSchema` in contracts/vocab.ts is NOT that mirror — it carries a
- * seventh member, `exam_ready_now`, so asserting parity against it would fail.
- * If a tier ever needs to cross the wire again, add the entry back rather than
- * relaxing the comparison.
+ * There is no candidate mirror to weigh against that: the last one, a seven-step
+ * ordinal in contracts/vocab.ts, was deleted rather than kept in parity, and
+ * `contracts-ladder-ban.test.ts` now fails if a ladder returns to that package
+ * under any name. So this absence is enforced elsewhere, not merely observed
+ * here. If a tier ever genuinely needs to cross the wire again, that ban is the
+ * decision to reopen first; adding an entry back here comes after it.
  */
 const MIRRORED_ENUMS: readonly MirroredEnum[] = [
   {

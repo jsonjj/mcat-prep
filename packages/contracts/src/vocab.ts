@@ -160,27 +160,19 @@ export const DistractorFamilySchema = z.enum([
 export type DistractorFamily = z.infer<typeof DistractorFamilySchema>;
 
 /**
- * The historical evidence ladder, as a wire enum. NOT learner-visible and no
- * longer read by anything: capability is BKT's `SkillMasteryView.pL` / `mastered`
- * and the warrant crosses the wire only as `EVIDENCE_REASON_CODES`. The badge
- * that rendered these seven members was deleted precisely because a dormant
- * ordinal is one import away from becoming a second mastery scale.
+ * The historical evidence ladder is DELETED from this package, not merely unused.
+ * It was a seven-member ordinal (`not_assessed` … `exam_ready_now`) exported as
+ * `MasteryStateSchema`, and a dormant ordinal on the public contract surface is
+ * one import away from becoming a second mastery scale.
  *
- * It is kept, rather than deleted with the badge, only because
- * `tests/architecture/cross-package-enum-parity.test.ts` names it while
- * explaining why `EVIDENCE_QUALITY_TIERS` has no contracts-side mirror. Deleting
- * it is an owner call, and it means updating that explanation in the same change.
+ * Capability is BKT's `SkillMasteryView.pL` / `mastered`; the warrant crosses the
+ * wire only as `EVIDENCE_REASON_CODES`. The ordinal tier itself stays behind the
+ * private `Authority.skillWarrants` as `EVIDENCE_QUALITY_TIERS`
+ * (`packages/domain/src/mastery.ts`) and has no mirror here on purpose.
+ *
+ * `tests/architecture/contracts-ladder-ban.test.ts` fails if any ladder returns
+ * to `packages/contracts` under any name.
  */
-export const MasteryStateSchema = z.enum([
-  'not_assessed',
-  'foundation_needed',
-  'learning',
-  'independent',
-  'retained',
-  'strong',
-  'exam_ready_now',
-]);
-export type MasteryState = z.infer<typeof MasteryStateSchema>;
 
 /** Assistance ladder: A3 worked model → A0 fully independent. */
 export const AssistanceLevelSchema = z.enum(['A3', 'A2', 'A1', 'A0']);

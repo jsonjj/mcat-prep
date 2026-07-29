@@ -82,6 +82,11 @@ import {
  *
  * Deliberately NOT duplicated here:
  * - `cross-package-enum-parity.test.ts` owns mirrored-enum divergence.
+ * - `contracts-ladder-ban.test.ts` owns the ban on an evidence ladder returning
+ *   to `packages/contracts`. The view scan below reads two contract modules and
+ *   classifies by field name, so a bare `z.enum` in a third file is outside it
+ *   twice over — which is how the seven-step `MasteryStateSchema` survived in
+ *   `vocab.ts`. That guard scans the package, not a file list.
  * - `v3-lesson-binding-conformance.test.ts` owns real-artifact conformance for
  *   the three on-disk lessons; this file uses synthetic bindings so it can test
  *   the violations no shipped artifact contains.
