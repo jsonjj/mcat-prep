@@ -1,4 +1,5 @@
 import {
+  BktObservationAppliedSchema,
   ContentIdSchema,
   DAILY_MINUTES_DEFAULT,
   DAILY_MINUTES_MAX,
@@ -324,8 +325,52 @@ const laterOf = (a: UtcTimestamp, b: UtcTimestamp): UtcTimestamp =>
 
 /** The server-bounded decay clock actually used, with what it took to get there. */
 interface BoundedDecayClock {
+  /** The time the step treated as reported, whoever generated it. */
+  reportedAt: UtcTimestamp;
   appliedAt: UtcTimestamp;
   clockAdjustment: BktClockAdjustment;
+}
+
+/**
+ * Who generated the time a caller offers the single write path.
+ *
+ * The two cases are not interchangeable and must not be spelled the same way.
+ * A `server` time is the Authority's own clock, read inside the step, so there
+ * is nothing to verify. A `caller` time is a runtime FACT reported by something
+ * the server does not control (contract §2) and is therefore checked — refused
+ * outright when implausibly ahead, clamped otherwise.
+ *
+ * Making the distinction part of the INPUT is the point. `reportedAt:
+ * UtcTimestamp` accepted both with one spelling, so the future-skew refusal
+ * could only live in the one caller that happened to know its time was
+ * untrusted, and every other path was safe by contingency — its `reportedAt`
+ * merely happened to be server-generated. A fourth path accepting a client time
+ * has to name it `caller` to compile, and naming it is what applies the guard.
+ */
+type ReportedTime =
+  | { readonly origin: 'server' }
+  | { readonly origin: 'caller'; readonly at: UtcTimestamp };
+
+/** A server-generated time, read inside the step. The common case. */
+const SERVER_REPORTED_TIME: ReportedTime = { origin: 'server' };
+
+/**
+ * The single write path refused a caller-reported time before anything moved.
+ *
+ * Thrown rather than returned deliberately. A refusal is the fail-closed
+ * outcome, so a caller that has not thought about it must abort its write, not
+ * receive a value it can ignore and carry on with — which is the shape of every
+ * fail-open in this codebase's ledger. `applyQualifiedBktObservation` catches
+ * it and turns it into the audited `rejected` result the contract specifies.
+ */
+export class BktObservationRefusedError extends Error {
+  readonly rejectionCodes: readonly BktApplicationRejectionCode[];
+
+  constructor(rejectionCodes: readonly BktApplicationRejectionCode[]) {
+    super(`The BKT write path refused the observation: ${rejectionCodes.join(', ')}.`);
+    this.name = 'BktObservationRefusedError';
+    this.rejectionCodes = rejectionCodes;
+  }
 }
 
 /** Outcome of applying one `QualifiedBktObservation`. */
@@ -1599,10 +1644,15 @@ export class Authority {
    */
   private boundDecayClock(
     m: MasteryEngineState,
-    reportedAt: UtcTimestamp,
+    times: { serverNow: UtcTimestamp; reportedAt: UtcTimestamp },
     grainKeys: { kcIds: readonly string[]; operation: ReasoningOperation },
   ): BoundedDecayClock {
-    const serverNow = this.clock.now();
+    // The clock is read ONCE per write, by the caller, and both bounds are taken
+    // against that single reading. Reading it again here would let the two
+    // readings disagree, and on a server-generated time that is the only way
+    // `appliedAt` could ever diverge from `reportedAt` — a clamp reported
+    // against a path that has nothing to clamp.
+    const { serverNow, reportedAt } = times;
     const ceiling = earlierOf(reportedAt, serverNow);
     const serverFloor = shiftedBy(serverNow, -BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS);
 
@@ -1634,7 +1684,7 @@ export class Authority {
           ? 'held_at_last_practiced'
           : 'bounded_to_server_clock';
 
-    return { appliedAt, clockAdjustment };
+    return { reportedAt, appliedAt, clockAdjustment };
   }
 
   /**
@@ -1643,6 +1693,15 @@ export class Authority {
    * vertical, `applyQualifiedBktObservation` and adaptive practice all go
    * through it, so none can acquire a grain the others lack, and none can write
    * an unbounded decay clock.
+   *
+   * BOTH HALVES of the clock invariant live here, which is the whole reason the
+   * door exists. Below tolerance the claim is CLAMPED (`boundDecayClock`); above
+   * it the claim is REFUSED with `OBSERVATION_TIMESTAMP_IN_FUTURE`. The refusal
+   * used to live in `applyQualifiedBktObservation` alone, so the other paths
+   * were safe only because their reported time happened to be server-generated
+   * — contingent reasoning of exactly the kind the clamp was moved in here to
+   * eliminate. A fourth path that accepts a client time now inherits the refusal
+   * by construction rather than by remembering to re-implement it.
    *
    * Enforced structurally, not by discipline:
    * `tests/architecture/mastery-write-path.test.ts` fails the build if
@@ -1654,8 +1713,12 @@ export class Authority {
       kcId: string;
       operation: ReasoningOperation;
       correct: boolean;
-      /** The time the caller reports. Bounded here; never written raw. */
-      reportedAt: UtcTimestamp;
+      /**
+       * The time to decay from, and who generated it. A `caller` time is
+       * refused when implausibly ahead of the Authority clock and bounded
+       * otherwise; it is never written raw.
+       */
+      reportedAt: ReportedTime;
       dokLevel: number | undefined;
       /**
        * Population stats for the item, when the caller has them: they carry the
@@ -1666,6 +1729,17 @@ export class Authority {
       questionStats?: { attempts: number; correct: number };
     },
   ): BoundedDecayClock {
+    // Refused BEFORE any grain is read or written, so a rejected observation is
+    // never partially applied.
+    const serverNow = this.clock.now();
+    const reportedAt = input.reportedAt.origin === 'server' ? serverNow : input.reportedAt.at;
+    if (
+      input.reportedAt.origin === 'caller' &&
+      instant(reportedAt) - instant(serverNow) > BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS
+    ) {
+      throw new BktObservationRefusedError(['OBSERVATION_TIMESTAMP_IN_FUTURE']);
+    }
+
     const prereqKeys = this.bank.skillGraph.edges
       .filter((e) => e.kind === 'hard_prerequisite' && e.to === input.kcId)
       .map((e) => e.from);
@@ -1673,10 +1747,14 @@ export class Authority {
     // `reinforcePrerequisite` runs on a correct answer only, so on a miss the
     // prerequisite grains are not written and must not raise the floor.
     const writtenKcIds = input.correct ? [input.kcId, ...prereqKeys] : [input.kcId];
-    const clock = this.boundDecayClock(m, input.reportedAt, {
-      kcIds: writtenKcIds,
-      operation: input.operation,
-    });
+    const clock = this.boundDecayClock(
+      m,
+      { serverNow, reportedAt },
+      {
+        kcIds: writtenKcIds,
+        operation: input.operation,
+      },
+    );
 
     const result = applyMasteryAttempt({
       correct: input.correct,
@@ -1713,20 +1791,58 @@ export class Authority {
     return { kcKey, op, dok: q?.difficulty };
   }
 
-  /** Apply one independent synthetic-path attempt to the two grains (+ prereqs). */
+  /**
+   * Apply one independent synthetic-path attempt to the two grains (+ prereqs).
+   *
+   * The study loop's first answering attempt, reached in production from
+   * `POST /v1/attempts` through `submitAttempt`. It is scored inside the
+   * request, so the step reads the Authority clock itself and no client-reported
+   * time touches the decay baseline.
+   *
+   * The ledger record is appended AFTER the attempt event, and that ordering is
+   * load-bearing: `applyAttempt` in the authority kernel rewrites the event at
+   * the index it recorded, so the attempt must stay first in the slice this call
+   * appends to.
+   */
   private updateMasteryForAttempt(state: LearnerState, questionId: string, correct: boolean): void {
     const m = this.ensureMastery(state);
     const target = this.masteryTarget(questionId, state.session?.skillId ?? ENZYME_SKILL);
-    this.stepDirectGrains(m, {
+    const clock = this.stepDirectGrains(m, {
       kcId: target.kcKey,
       operation: target.op,
       correct,
-      // The synthetic path never left the server, so its reported time is
-      // already the server clock and the bound below is a no-op for it.
-      reportedAt: this.clock.now(),
+      reportedAt: SERVER_REPORTED_TIME,
       dokLevel: target.dok,
     });
     this.recordPracticedLesson(m, ENZYME_LESSON_ID);
+
+    // Every capability write leaves a ledger record, whatever moved it. This
+    // path moved `P(L)` with no record at all until now, which is the same
+    // defect the practice path had: the clamp applies, but nothing survives to
+    // show what it applied to. There is no observation id or sequence here —
+    // the study loop scores in-request, so there is nothing to deduplicate
+    // against and nothing to order.
+    this.recordBktObservationEvent(
+      state,
+      {
+        source: 'synthetic_study',
+        observationId: null,
+        observationSequence: null,
+        questionId,
+        primaryKcId: target.kcKey,
+        reasoningOperation: target.op,
+        correct,
+        reportedOccurredAt: clock.reportedAt,
+        contentRelease: this.bank.contentRelease,
+        policies: activePolicyVersions(),
+      },
+      {
+        appliedOccurredAt: clock.appliedAt,
+        clockAdjustment: clock.clockAdjustment,
+        outOfOrder: false,
+        rejectionCodes: [],
+      },
+    );
   }
 
   /**
@@ -1778,11 +1894,25 @@ export class Authority {
       return { ...identity, status: 'duplicate' };
     }
 
-    const skewMs = instant(observation.occurredAt) - instant(this.clock.now());
-    if (skewMs > BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS) {
-      const rejectionCodes: readonly BktApplicationRejectionCode[] = [
-        'OBSERVATION_TIMESTAMP_IN_FUTURE',
-      ];
+    const highestApplied = m.highestAppliedObservationSequence;
+    const outOfOrder = highestApplied !== null && observation.sequence <= highestApplied;
+
+    // The future-skew refusal is NOT re-checked here. It belongs to
+    // `stepDirectGrains`, alongside the clamp that is the other half of the same
+    // invariant, so no write path can route around it; this method only turns
+    // the refusal into the audited result the contract specifies.
+    let clock: BoundedDecayClock;
+    try {
+      clock = this.stepDirectGrains(m, {
+        kcId: observation.primaryKcId,
+        operation: observation.reasoningOperation,
+        correct: observation.correct,
+        reportedAt: { origin: 'caller', at: observation.occurredAt },
+        dokLevel: observation.dokLevel,
+      });
+    } catch (error) {
+      if (!(error instanceof BktObservationRefusedError)) throw error;
+      const { rejectionCodes } = error;
       this.recordBktObservationEvent(state, this.lessonObservationLedgerIdentity(observation), {
         appliedOccurredAt: null,
         clockAdjustment: 'none',
@@ -1791,17 +1921,6 @@ export class Authority {
       });
       return { ...identity, status: 'rejected', rejectionCodes };
     }
-
-    const highestApplied = m.highestAppliedObservationSequence;
-    const outOfOrder = highestApplied !== null && observation.sequence <= highestApplied;
-
-    const clock = this.stepDirectGrains(m, {
-      kcId: observation.primaryKcId,
-      operation: observation.reasoningOperation,
-      correct: observation.correct,
-      reportedAt: observation.occurredAt,
-      dokLevel: observation.dokLevel,
-    });
 
     m.appliedObservationIds.push(observation.observationId);
     if (!outOfOrder) m.highestAppliedObservationSequence = observation.sequence;
@@ -1835,6 +1954,15 @@ export class Authority {
    * writes nothing, because the original record already stands. `occurredAt` on
    * the envelope is when the SERVER acted, so the caller's claim only ever
    * appears as `payload.reportedOccurredAt`.
+   *
+   * The record is PARSED through `BktObservationAppliedSchema` here, not merely
+   * typed as it. The payload's cross-field guards are `superRefine`s, which
+   * `z.infer` drops, so the compiler cannot see them and a record contradicting
+   * itself — a practice write carrying an observation id, an applied clock on a
+   * refusal — would type-check and append cleanly. This is the only writer, so
+   * parsing here makes those guards live on the whole write path at one call
+   * site. Deliberately NOT in `recordEvent`: that appends every event type and
+   * would turn one narrow ledger invariant into a repo-wide re-parse.
    */
   private recordBktObservationEvent(
     state: LearnerState,
@@ -1858,7 +1986,7 @@ export class Authority {
       rejectionCodes: readonly BktApplicationRejectionCode[];
     },
   ): void {
-    this.recordEvent(state, {
+    const event = BktObservationAppliedSchema.parse({
       type: 'bkt_observation_applied',
       eventId: newEventId(),
       learnerId: state.learnerId,
@@ -1881,6 +2009,7 @@ export class Authority {
         rejectionCodes: [...outcome.rejectionCodes],
       },
     });
+    this.recordEvent(state, event);
   }
 
   /** The audit identity of one qualified lesson response. */
@@ -2130,7 +2259,9 @@ export class Authority {
       const classification = await this.practiceBank.classify(cmd.questionId);
       const stats = await this.practiceBank.questionStats(cmd.questionId);
       if (classification !== null) {
-        this.applyPracticeMastery(state, cmd.questionId, classification, correct, stats, now);
+        // No `now` is threaded in: the write path reads the Authority clock
+        // itself, so this method has no way to offer it a time at all.
+        this.applyPracticeMastery(state, cmd.questionId, classification, correct, stats);
       }
       await this.practiceBank.recordAttempt(cmd.questionId, correct, now);
       await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
@@ -2277,7 +2408,6 @@ export class Authority {
     classification: PracticeItemClassification,
     correct: boolean,
     stats: { attempts: number; correct: number },
-    now: UtcTimestamp,
   ): void {
     const m = this.ensureMastery(state);
     if (classification.domain === 'cars') {
@@ -2295,10 +2425,11 @@ export class Authority {
       kcId: classification.kcId,
       operation: classification.skill,
       correct,
-      // Practice is scored inside the request, so `now` is already the Authority
-      // clock; the bound is a no-op on it except where a grain's own history is
-      // newer, which is monotonicity doing its job rather than a clamp.
-      reportedAt: now,
+      // Practice is scored inside the request, so the step reads the Authority
+      // clock itself; the bound is a no-op on it except where a grain's own
+      // history is newer, which is monotonicity doing its job rather than a
+      // clamp. Nothing a client sent reaches the decay clock on this path.
+      reportedAt: SERVER_REPORTED_TIME,
       dokLevel: classification.dok ?? undefined,
       questionStats: stats,
     });
@@ -2314,8 +2445,9 @@ export class Authority {
 
     // Every capability write leaves a ledger record, whatever moved it. There is
     // no observation id or sequence here: practice is scored in-request, so
-    // there is nothing to deduplicate against and nothing to order — and the
-    // payload's own guard refuses a record that claims otherwise.
+    // there is nothing to deduplicate against and nothing to order — and a
+    // record claiming otherwise is refused by the payload's own guard, which
+    // `recordBktObservationEvent` runs rather than merely typing against.
     this.recordBktObservationEvent(
       state,
       {
@@ -2326,7 +2458,10 @@ export class Authority {
         primaryKcId: classification.kcId,
         reasoningOperation: classification.skill,
         correct,
-        reportedOccurredAt: now,
+        // The step's own reading of the clock, not this method's `now`: the
+        // ledger's two times must come from one source, or `clockAdjustment`
+        // and the pair it describes can disagree by a millisecond of drift.
+        reportedOccurredAt: clock.reportedAt,
         contentRelease: this.bank.contentRelease,
         policies: activePolicyVersions(),
       },
