@@ -2319,6 +2319,19 @@ export class Authority {
    * see `PracticeQueueView.shortfall`. `taughtGap` carries the more specific
    * signal that the shortfall (if any) traces to `buildPracticeSnapshot`'s
    * taught-set gate finding zero overlap, not to the bank running dry.
+   *
+   * SERVING IS NOT AN EXPOSURE. This method writes nothing: an item handed to a
+   * learner who never answers it stays eligible for the next queue, and only
+   * `submitPracticeAttempt` calls `recordExposure`. That is deliberate, because
+   * one record carries two facts — `recentlySeenIds` reads it for rotation and
+   * `submitPracticeAttempt` derives `firstAttempt` from its count — so counting
+   * a serve would make every practice answer a repeat and stop P(L) moving at
+   * all. The cost accepted in exchange is that an abandoned item can come back.
+   * Enforced, not merely stated: `practice-exposure-timing.test.ts` fails on a
+   * serve-time exposure write anywhere in this method, and measures both sides
+   * of the trade. A third state — served-but-unanswered, distinct from both —
+   * is the option that would avoid each harm, and is recorded as deferred work
+   * in `key-docs/roadmap-todo.md`.
    */
   async getPracticeQueue(
     state: LearnerState,

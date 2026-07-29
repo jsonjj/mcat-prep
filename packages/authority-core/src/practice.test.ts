@@ -113,7 +113,11 @@ describe('Authority.getPracticeQueue (synthetic fallback)', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('excludes items the learner has already been served (exposure)', async () => {
+  // ANSWERED, not merely served: exposure is written by `submitPracticeAttempt`
+  // and by nothing else. `practice-exposure-timing.test.ts` owns that boundary
+  // and the reasoning behind it; the title here used to say "served", which
+  // described a behaviour this queue has never had.
+  it('excludes items the learner has already answered (exposure)', async () => {
     const { authority, state } = freshLearner();
     const item = await firstQueuedScienceItem(authority, state);
     await authority.submitPracticeAttempt(state, {
