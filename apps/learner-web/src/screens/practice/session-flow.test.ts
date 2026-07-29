@@ -31,12 +31,19 @@ describe('practice attempt flow', () => {
     // was only licensed by the guarantee that the same item returned, so neither
     // survives without the other. Guarding the module surface keeps a future change
     // from reintroducing one half alone.
+    // Named symbols rather than an exact export list: the module legitimately grows
+    // (`queueNotices` arrived with the queue-shortfall work), and freezing its whole
+    // surface would make an unrelated addition look like a regression here.
     const flow = (await import('./session-flow')) as Record<string, unknown>;
-    expect(Object.keys(flow).sort()).toEqual(['feedbackFor', 'subAfterAttempt']);
-    expect(flow.RETRY_GAP).toBeUndefined();
-    expect(flow.resurfaceAt).toBeUndefined();
-    expect(flow.subAfterFirstAttempt).toBeUndefined();
-    expect(flow.subAfterSecondAttempt).toBeUndefined();
+    for (const gone of [
+      'RETRY_GAP',
+      'resurfaceAt',
+      'subAfterFirstAttempt',
+      'subAfterSecondAttempt',
+    ]) {
+      expect(flow[gone], `${gone} must not come back`).toBeUndefined();
+    }
+    expect(flow.subAfterAttempt).toBeTypeOf('function');
   });
 });
 

@@ -112,10 +112,14 @@ describe('adaptive practice asks for no cause', () => {
   });
 
   it('sends exactly one command per item, so nothing can double-count a miss', () => {
-    // One `submit.mutate` in the file, and it is the first attempt. With the
-    // in-session re-ask gone there is no second scoring path to guard, but the pin
-    // stays: a duplicate would write a second `attempt_results` row and inflate the
-    // Mistakes tab's open count.
+    // One `submit.mutate` in the file. With the in-session re-ask gone there is no
+    // second scoring path to guard, but the pin stays: a duplicate would write a
+    // second `attempt_results` row and inflate the Mistakes tab's open count.
+    //
+    // Whether an attempt is the learner's first is no longer the client's to assert.
+    // It left `PracticeAttemptCommandSchema` because it was a claim about
+    // server-held state, and the authority derives it from its own exposure records;
+    // sending it would now fail the route's exact-key body check.
     expect([...session.matchAll(/submit\.mutate\(/g)]).toHaveLength(1);
     expect(session).not.toMatch(/firstAttempt/);
   });
