@@ -394,3 +394,197 @@ is _for_. Option 2 is the current design stated out loud — lessons teach and u
 warrants — and is coherent with §11 of `docs/lesson-evidence-mastery-contract.md` and with the
 lesson-only reachability finding above. Option 1 changes what the lesson channel is. Nothing in the
 code can make that call.
+
+## Deploying the practice gate needs migration `0013` **and** a grant that does not exist yet
+
+Operational, not a design gap: this is the sequencing note a deploy of the new server-issued practice
+gate needs, and there is nothing to decide — only something to do before shipping.
+
+**What the gate is.** `Authority.submitPracticeAttempt` will not score an adaptive-practice answer
+unless the server's own record says it served that item, under that spec, at the current content
+release, and the record has not expired (`packages/authority-core/src/authority.ts`, the
+`consumeAttemptGrant` call at the top of that method; `PRACTICE_ATTEMPT_GRANT_TTL_MS` is 12 hours at
+line 271). The store is `practice_attempt_grant`, created by
+`database/migrations/0013_practice_attempt_grant.sql:20` with a primary key of
+`(learner_id, question_id)` and an expiry index.
+
+**What happens if the migration has not run.** `PostgresPracticeBankPort` probes for the table
+(`services/persistence-postgres/src/practice-exposure-repository.ts:213`, recorded as
+`hasAttemptGrant` at line 227) and, when it is absent, keeps grants in a per-process `Map`
+(`memGrants`, line 201; the fallback branches at lines 450 and 485). Exposure and repair already
+degrade the same way on a content-only dev database, so the shape is not new — but the consequence
+is different in kind, and the method's own docblock says so. An in-memory grant store behind more
+than one process **refuses legitimate answers**: the queue is served by one instance, the answer
+arrives at another, that instance has no grant for it, and `submitPracticeAttempt` throws
+`PracticeAttemptNotAuthorizedError` for a learner who did exactly what they were asked to do. It
+fails closed, which is the right direction — it does not admit illegitimate answers — but on a
+multi-instance deployment without the migration, adaptive practice does not work at all.
+
+**The second condition, which is easy to miss.** The migration alone is not sufficient. The learner
+API connects as `mcat_learner_api`, and that role's grants are enumerated by hand in
+`services/lambdas/migration/src/runtime.ts:225-231`: `learners`, `guest_sessions`,
+`learner_streams`, `api_rate_limits`, `accepted_events`, `outbox`, and the `mastery_*` /
+`cars_ability` / `question_stats` group. **`practice_attempt_grant` is not in that list, and neither
+are `practice_exposure`, `practice_repair`, `practice_attempt_log` or `study_attempt_log`** — I
+searched for a grant on any of them across the migrations, the migration lambda and `infra/cdk`, and
+there is none anywhere. Those tables are ungranted for the role that would write them, which
+predates tonight; `0013` inherits the pattern rather than introducing it.
+
+That interacts with the schema probe in a way worth stating exactly, because it decides which failure
+a deploy actually gets: `information_schema.tables` only lists tables the current role holds some
+privilege on, so an ungranted table reads as **absent**, `hasAttemptGrant` comes back `false`, and the
+port takes the memory fallback rather than raising `permission denied`. The fail-closed path is
+therefore reached by either condition failing, and the two are indistinguishable from inside the
+application. So the deploy checklist is two items, not one: run `0013`, and add
+`practice_attempt_grant` (with `select, insert, update`) to `dataGrantSql` — most likely alongside the
+other four practice/study tables, which have the same gap for the same reason.
+
+## The practice queue's `GET` performs a write
+
+Also operational, and bounded — recorded because it is new I/O on a read and someone should know
+before it surprises them, not because anything is known to be wrong.
+
+`GET /v1/practice/queue/{x}` is declared `stateChanging: false`
+(`services/lambdas/learner-api/src/routes.ts:318-327`). In this handler that flag carries two
+consequences: a state-changing route requires an allowed `Origin`
+(`services/lambdas/learner-api/src/handler.ts:443`) and a session-authenticated state-changing route
+requires a valid double-submit CSRF token (same file, line 483). A `stateChanging: false` route gets
+neither check. It is still session-authenticated, and the edge still rejects query strings, so the
+count and focus ride in the path.
+
+Since the practice gate landed, that route writes. `Authority.getPracticeQueue` issues one attempt
+grant per item it is about to hand over (`packages/authority-core/src/authority.ts:2599-2612`),
+deliberately after the queue is settled so the shortfall path cannot authorize items it discarded.
+Each grant is an upsert through the bank port — a real row in Postgres when `0013` has run, a `Map`
+entry otherwise.
+
+**Why the harm is bounded, stated so the bound is checkable rather than asserted.** The write
+authorizes only items the server itself chose: the payload is the queue's own selection, so a caller
+cannot name an item and have it authorized, and the same route already had to build that selection to
+answer at all. A repeated `GET` re-issues grants for items the learner was genuinely served, which is
+the renewal the client's refetch-on-mount already depends on. And a grant is not an exposure — it
+does not touch `practice_exposure.seen_count`, so it cannot make a first answer look like a repeat
+(the reason that separation exists is recorded under "A practice item that was served but never
+answered has no state of its own", above, and measured in
+`packages/authority-core/src/practice-exposure-timing.test.ts`).
+
+**What is left to decide, if anything.** Whether a route that writes should still be declared
+non-state-changing. The flag currently means two things at once — "no CSRF" and "no `Origin`
+requirement" — and it is being used as a statement about the request's intent rather than about its
+effects. Nothing observed today turns on it. The reason to write it down is that the next person to
+reason about CSRF coverage from the route table will read `stateChanging: false` as "this route writes
+nothing," and that is no longer true.
+
+## The diagnostic's effective seeding range is a fraction of its intended one
+
+Measured twice tonight and never recorded as a decision. **This is a calibration question for the
+owner, not a bug** — every function involved does what its own docblock says it does, and the
+composition lands somewhere nobody chose.
+
+**The intended bounds.** `packages/policies/src/mastery-seed.ts:17,19` sets `SEED_PRIOR_FLOOR = 0.05`
+and `SEED_PRIOR_CAP = 0.4`, and the module docblock states the design: seeding is asymmetric and
+capped, so a weak read may lower a prior a long way while a strong read may raise it only a little.
+`Authority.applyMasterySeed` re-applies both bounds on ingress, which is what makes "a diagnostic read
+moves where you start, never whether you have mastered something" hold whatever arrives over the wire.
+
+**The effective range, through the production axis and the production functions.** Driving
+`seedsFromBucketReads` over `kcsByFc(orderedKcsForLesson)` for all 10 real Foundational Concepts, at
+`certainty: 1` and the extreme reads (`gap: 1` weakest, `gap: 0` strongest):
+
+| Concept | KCs | attenuated certainty | weakest reachable | strongest reachable |
+| ------- | --- | -------------------- | ----------------- | ------------------- |
+| FC10    | 7   | 0.37796              | 0.14331           | 0.27559             |
+| FC9     | 20  | 0.22361              | 0.16646           | 0.24472             |
+| FC8     | 22  | 0.21320              | 0.16802           | 0.24264             |
+| FC2     | 23  | 0.20851              | 0.16872           | 0.24170             |
+| FC6     | 27  | 0.19245              | 0.17113           | 0.23849             |
+| FC7     | 32  | 0.17678              | 0.17348           | 0.23536             |
+| FC3     | 38  | 0.16222              | 0.17567           | 0.23244             |
+| FC5     | 57  | 0.13245              | 0.18013           | 0.22649             |
+| FC1     | 58  | 0.13131              | 0.18030           | 0.22626             |
+| FC4     | 79  | 0.11251              | 0.18312           | 0.22250             |
+
+So the **effective reachable range is 0.14331 to 0.27559**, against intended bounds of 0.05 and 0.4.
+The caps hold and are never approached from either side — nothing can reach the floor, and nothing can
+reach the cap. The reachable span is `0.13229` against an intended `0.35`, which is **38% of the
+intended span at maximum certainty**. At the real median per-bucket certainty of `0.80` (from
+`diagnostic-bayes.ts`'s own calibration over 3,200 simulated reads at the production 140-item /
+10-concept shape) the reachable range narrows to `0.15464`–`0.26047`, or **30%**. An earlier summary
+described this as "about a quarter of its intended span"; the direction is right and the figure is
+low — a quarter is roughly what a _median_ concept spans (FC7 reaches 0.17348–0.23536, 18%), not what
+the corpus reaches end to end. The three numbers are different measurements, and the one to quote
+depends on whether the question is "how far can any read move any unit" (38%) or "how far does a
+typical read move a typical unit" (18%).
+
+**The binding constraint is the attenuation, and it is nowhere near the caps.**
+`attenuateCertainty` (`mastery-seed.ts:115-116`) divides certainty by `sqrt(units)`, and
+`seedsFromBucketReads` passes it the number of **KCs** beneath the concept (line 136). Every real
+concept has between 7 and 79 KCs, so the divisor is between 2.65 and 8.89 before any read is even
+considered — which is why the table above is almost entirely a function of the KC count rather than of
+the learner's answers. The 79-KC concept **cannot exceed `0.2225` from a perfect read**: a learner who
+answers every item in FC4 correctly starts only `0.0225` above the `0.2` default. The attenuation is a
+deliberate and documented modelling choice — its own comment says it is "a modelling choice, not a
+measured quantity", chosen in the conservative direction — so the finding is not that it is wrong; it
+is that nobody has looked at what it composes to.
+
+**The decision, and the one option that is not on the table.** If the intended operational range
+really is `0.05`–`0.4`, then either the attenuation exponent or the gap-to-prior mapping
+(`seedPriorFromRead`, `mastery-seed.ts:37-50`) has to change — the choice is between crediting a
+bucket read more per unit, or making the same attenuated certainty travel further. What must **not**
+change is the ingress caps in `Authority.applyMasterySeed`: they are the last line of defence against
+a rigged seed, they are what makes the "a seed can never mint mastery" guarantee independent of the
+producer, and widening them to make the range look right would trade a calibration mismatch for a
+security property. Equally defensible is leaving all of it alone and correcting the stated intent to
+match: a seed that moves a prior by at most `±0.08` is a weak opening guess, which is arguably what an
+opening guess should be, and the first few real attempts overwhelm it either way.
+
+Cross-reference: the open Gate 1 item about diagnostic attenuation weakening the asymmetry is the same
+mechanism seen from a different angle — that entry asks whether `sqrt(KC count)` was the right change
+from `sqrt(lesson count)`, and this one asks what either choice composes to against the declared
+bounds. They should be decided together. Also note `packages/policies/src/mastery-seed-value.ts` still
+runs the `sqrt(lesson count)` model, so any number it reports about seeding strength describes a
+seeder that no longer ships.
+
+## "Needs the most review" ranks on `P(L)` alone, so a perfected-but-unwarranted lesson is invisible to it
+
+A decision about what that list is for. It belongs with the planner-weighting work, because it is the
+same question one surface over: what a mastery number is allowed to decide on its own.
+
+`PracticeHome`'s trio (`apps/learner-web/src/screens/practice/PracticeHome.tsx:86-100`) takes the full
+atlas catalog, overlays real `P(L)` where the learner has an entry and the `0.2` prior everywhere
+else, drops locked and `mastered` lessons (line 97), and then sorts **purely by `pL`**, with curriculum
+order as the tie-break (line 98), taking the first three.
+
+The gap is at the top of the ordering rather than in the filter. A learner who has answered every
+question in a lesson correctly through the lesson channel alone carries `pL` at or near `1` with
+`mastered: false`, because the claim needs both halves and the warrant half is unreachable from that
+channel (recorded above under "Lesson-only mastery is unreachable, and the suspected cause is not the
+real one"). The `!mastered` filter therefore keeps that lesson eligible — and the `pL` sort buries it
+at the very bottom, so it can never be in the first three. The one lesson whose mastery claim is being
+withheld for a reason the learner could act on is the one this list is structurally least likely to
+show them.
+
+`2315095` fixed the adjacent half of this: the Evidence Atlas now states why a lesson is stuck rather
+than reading "In progress" forever, and its docblock
+(`apps/learner-web/src/components/EvidenceAtlas.tsx:93-103`) names this ranking as the other place the
+same learner disappears from. So the "what next" surfaces are no longer silent — but the ranking still
+sorts on the capability estimate alone.
+
+**Why it is a decision and not a fix.** "Needs the most review" could reasonably mean any of three
+things, and they disagree exactly on this learner:
+
+1. **Lowest capability estimate**, which is what it does today. Coherent, and honest about its own
+   copy ("the lessons your mastery is lowest on"). Concedes that a learner one warrant away from a
+   mastered lesson gets no prompt from this surface.
+2. **Furthest from the mastery claim**, which would rank on both halves — capability distance and
+   warrant sufficiency together — and would put a `pL: 1`, warrant-empty lesson near the top rather
+   than the bottom. Concedes that "review" then means two different kinds of work under one heading:
+   learn this material, versus demonstrate it independently.
+3. **Lowest capability, plus a separate list for withheld claims.** Keeps this list meaning one thing
+   and gives the other case its own surface and its own verb. Concedes screen space and a second
+   concept for the learner to hold.
+
+Nothing in the code can choose between them, because the choice is about what the learner is being
+asked to do next. It is filed here rather than as a task because option 2 in particular is a planner
+weighting decision wearing a UI hat: the same `pL`-versus-warrant question the planner's
+`masteryWeight` faces, arriving on the surface a learner actually reads.
