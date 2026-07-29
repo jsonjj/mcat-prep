@@ -1628,7 +1628,7 @@ export class Authority {
     }));
   }
 
-  // ---- Mastery engine (BKT/IRT, mastery-bkt / provisional-v1) --------------
+  // ---- Mastery engine (BKT/IRT, mastery-bkt) -------------------------------
   // P(L) is the only learner-facing capability number; the evidence warrant
   // above is a separate signal. A qualified response moves exactly two grains.
   // Runs ONLY for independent attempts (fail-closed).
