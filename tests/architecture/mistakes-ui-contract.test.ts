@@ -44,69 +44,66 @@ describe('adaptive practice asks for no cause', () => {
   });
 
   /**
-   * §3.3 was amended on 2026-07-28: the key is withheld on a FIRST miss and
-   * disclosed on the second. The previous revision of this test pinned the
-   * opposite — `subAfterFirstAttempt` constant at `'reveal'` — so the pin is
-   * inverted here rather than relaxed. A correct first attempt is untouched.
+   * §3.3 was amended again on 2026-07-29, reversing the 2026-07-28 revision: the
+   * key is disclosed immediately on a miss. This pin has now been inverted twice,
+   * so state the reasoning rather than only the expectation. The withhold was
+   * defensible only as a *deferral*, and only while the same item returning
+   * guaranteed the key still arrived. Once the re-test became a different item on
+   * the same KC × skill, that guarantee was gone and the original's key would never
+   * have landed — the permanent-silence case Pashler et al. (2005) rules out. The
+   * two therefore move together, which is what the next test guards.
    */
-  it('withholds the key on a first miss and confirms a correct answer at once', () => {
+  it('discloses the key on every scored attempt, miss included', () => {
     const flow = code('apps/learner-web/src/screens/practice/session-flow.ts');
-    expect(session).toMatch(/setSub\(subAfterFirstAttempt\(r\.correct\)\)/);
-    expect(flow).toMatch(
-      /export const subAfterFirstAttempt = \(correct: boolean\): Sub =>\s*\(?correct \? 'reveal' : 'feedback'\)?/,
-    );
-    // The deferral is one step, not a policy of silence: the second go discloses
-    // whichever way it goes (Pashler et al. — feedback must reach the key).
-    expect(flow).toMatch(/export const subAfterSecondAttempt = \(\): Sub => 'reveal'/);
-    expect(session).toMatch(/setSub\(subAfterSecondAttempt\(\)\)/);
-    // Still no step between the answer and its feedback — nothing asks what happened.
-    expect(flow).toMatch(/'answering' \| 'retry' \| 'feedback' \| 'reveal'/);
+    expect(session).toMatch(/setSub\(subAfterAttempt\(\)\)/);
+    expect(flow).toMatch(/export const subAfterAttempt = \(\): Sub => 'reveal'/);
+    // Two steps only. A third would be somewhere for a deferral to live again.
+    expect(flow).toMatch(/'answering' \| 'reveal'/);
+    expect(flow).not.toMatch(/'feedback'|'retry'|'diagnose'/);
   });
 
   /**
-   * The correctness risk in the withhold: the server response legitimately carries
-   * `correctChoiceId`, so what stops it reaching the DOM is that the card is handed
-   * a redacted `Feedback` and never the result itself.
+   * The card still takes a `Feedback` rather than the raw result. Nothing is
+   * redacted from it any more, but the boundary is what keeps the choice list from
+   * being able to mark the right option before an answer is submitted.
    */
-  it('keeps the withheld key out of the component that renders the card', () => {
-    const flow = code('apps/learner-web/src/screens/practice/session-flow.ts');
-    // Disclosure is decided in one place, off the step, and nulls BOTH the key and
-    // the rationale that explains the key.
-    expect(flow).toMatch(/const disclose = sub === 'reveal'/);
-    expect(flow).toMatch(/correctChoiceId: disclose \? result\.correctChoiceId : null/);
-    expect(flow).toMatch(/rationale: disclose \? result\.rationale : null/);
-
-    // The card takes `Feedback` only. If it took the result it could render, style
-    // or label a choice with the key regardless of what the step machine decided.
+  it('renders the card from Feedback, and never lets the chooser see correctness', () => {
     const card = session.slice(session.indexOf('function FeedbackCard'));
     expect(card).not.toBe('');
     expect(card).not.toMatch(/PracticeAttemptResult|result\./);
     expect(session).toMatch(/feedback: Feedback;/);
-    expect(session).toMatch(/feedbackFor\(result, choice \?\? firstChoice, sub\)/);
+    expect(session).toMatch(/feedbackFor\(result, choice\)/);
 
-    // Nothing outside the card may mark the right option either: the choice list
-    // knows no correctness, and the only choice the retry singles out is the
-    // learner's own pick.
     const chooser = session.slice(
       session.indexOf('function ChoiceList'),
       session.indexOf('function FeedbackCard'),
     );
     expect(chooser).not.toBe('');
     expect(chooser).not.toMatch(/correct/i);
-    expect(session).toMatch(/disabledChoice=\{firstChoice\}/);
   });
 
-  it('keeps the spaced resurface of the missed item', () => {
+  /**
+   * The withhold and the same-item re-ask were removed as a pair, and neither may
+   * come back alone: a re-ask without a withhold asks a question whose answer the
+   * learner was just given, and a withhold without a re-ask is permanent silence.
+   * A lag-0 re-ask is separately the one arrangement in this literature with direct
+   * evidence of harm (Karpicke & Roediger 2007: .19 at two days vs .60 at lag 5,
+   * and worse than not retrying at all), which the old end-of-session clamp
+   * produced whenever a miss landed in the last few steps.
+   */
+  it('re-asks nothing in-session: no gap constant, no clamp, no retry slot', () => {
     const flow = read('apps/learner-web/src/screens/practice/session-flow.ts');
-    expect(flow).toMatch(/RETRY_GAP = 3/);
-    expect(flow).toMatch(/Math\.min\(index \+ 1 \+ gap, sequenceLength\)/);
-    expect(session).toMatch(/resurfaceAt\(index, sequence\.length\)/);
-    expect(session).toMatch(/kind: 'retry'/);
-    // The resurface is keyed on the withholding step, so it cannot drift from it.
-    expect(session).toMatch(/slot\.kind === 'first' && sub === 'feedback'/);
+    expect(flow).not.toMatch(/RETRY_GAP/);
+    expect(flow).not.toMatch(/resurfaceAt/);
+    expect(flow).not.toMatch(/Math\.min\(index \+ 1 \+ gap/);
+    expect(session).not.toMatch(/resurfaceAt|kind: 'retry'|firstChoice/);
+    // The sequence is seeded from the queue and never spliced, so no step can be
+    // inserted behind the learner.
+    expect(session).toMatch(/setSequence\(loaded\)/);
+    expect(session).not.toMatch(/\.splice\(/);
   });
 
-  it('still refutes the specific distractor that was chosen, on both attempts', () => {
+  it('still refutes the specific distractor that was chosen', () => {
     expect(session).toMatch(/feedback\.wrongChoiceRationale/);
     expect(session).toMatch(/Why \$\{feedback\.wrongChoiceId\} misses/);
     expect(code('apps/learner-web/src/screens/practice/session-flow.ts')).toMatch(
@@ -114,11 +111,15 @@ describe('adaptive practice asks for no cause', () => {
     );
   });
 
-  it('sends no second command, so the retry cannot double-count anything', () => {
-    // One `submit.mutate` in the file — the retry reuses it, so there is
-    // nothing to double-count. `firstAttempt` is not on the wire at all: which
-    // attempt this is is the server's derivation from its own exposure
-    // records, never a claim the client makes (see packages/contracts/src/practice.ts).
+  it('sends exactly one command per item, so nothing can double-count a miss', () => {
+    // One `submit.mutate` in the file. With the in-session re-ask gone there is no
+    // second scoring path to guard, but the pin stays: a duplicate would write a
+    // second `attempt_results` row and inflate the Mistakes tab's open count.
+    //
+    // Whether an attempt is the learner's first is no longer the client's to assert.
+    // It left `PracticeAttemptCommandSchema` because it was a claim about
+    // server-held state, and the authority derives it from its own exposure records;
+    // sending it would now fail the route's exact-key body check.
     expect([...session.matchAll(/submit\.mutate\(/g)]).toHaveLength(1);
     expect(session).not.toMatch(/firstAttempt/);
   });

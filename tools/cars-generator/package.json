@@ -1,0 +1,19 @@
+{
+  "name": "@mcat/cars-generator-cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --import tsx src/main.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mcat/ai-gateway": "workspace:*",
+    "@mcat/cars-generation": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.5",
+    "tsx": "4.23.1",
+    "typescript": "5.7.3"
+  }
+}

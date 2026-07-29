@@ -20,6 +20,9 @@
     "test:watch": "vitest",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,css,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md,css,yaml,yml}\"",
+    "cars:audit": "pnpm --filter @mcat/cars-generator-cli start audit",
+    "cars:generate": "pnpm --filter @mcat/cars-generator-cli start generate",
+    "cars:calibrate": "pnpm --filter @mcat/cars-generator-cli start calibrate",
     "scan:protected": "node tools/scanners/protected-field-scan.mjs",
     "scan:vector-lesson-bundle": "node tools/scanners/vector-lesson-bundle-scan.mjs",
     "verify": "pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run scan:protected"

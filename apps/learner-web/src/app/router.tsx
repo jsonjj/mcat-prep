@@ -23,6 +23,7 @@ import { PracticeHome } from '../screens/practice/PracticeHome';
 import { PracticeSession } from '../screens/practice/PracticeSession';
 import { CarsDuel } from '../screens/CarsDuel';
 import { Wrapped } from '../screens/Wrapped';
+import { CarsPreview } from '../screens/CarsPreview';
 
 export const router = createBrowserRouter([
   { path: '/', element: <Welcome /> },
@@ -32,6 +33,9 @@ export const router = createBrowserRouter([
   // own shell/header, so they live *outside* AppShell to avoid a duplicate
   // top bar. Curriculum still links to `/app/lesson/:slug`.
   { path: '/app/lesson/:slug', element: <Lesson /> },
+  // Generator review surface. Outside AppShell on purpose: it sits on fixtures and mints
+  // no evidence, so it must not appear as a learner tab or touch the authority kernel.
+  { path: '/cars-preview', element: <CarsPreview /> },
   {
     path: '/app',
     element: <AppShell />,
