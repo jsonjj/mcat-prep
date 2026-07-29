@@ -30,6 +30,16 @@
 export const MISTAKE_KEYS = ['errors', 'error-patterns', 'shaky-wins'] as const;
 
 /**
+ * The CARS reasoning-pattern repair surface (WS7), read under its own key by
+ * `useCarsReasoningPatterns`. Deliberately NOT one of `MISTAKE_KEYS`: those three
+ * all read the practice attempt log, while this reads `state.carsRepairs`, which a
+ * DUEL writes (not a scored practice attempt) and a later correct CARS answer
+ * resolves. So it rides the duel mutation (`LEARNER_KEYS`) and the practice
+ * attempt (`PRACTICE_INVALIDATE_KEYS`) rather than the mistakes-only set.
+ */
+export const CARS_REASONING_KEY = 'cars-reasoning-patterns';
+
+/**
  * Mastery and progress readouts that a scored first attempt moves.
  *
  * `lesson-warrants` sits beside `mastery-lessons` because the two are one
@@ -48,8 +58,16 @@ export const MASTERY_KEYS = [
   'today',
 ] as const;
 
-/** Adaptive Practice: a scored first attempt moves P(L) and writes/clears a miss. */
-export const PRACTICE_INVALIDATE_KEYS: readonly string[] = [...MASTERY_KEYS, ...MISTAKE_KEYS];
+/**
+ * Adaptive Practice: a scored first attempt moves P(L) and writes/clears a miss —
+ * and a correct CARS answer can resolve a WS7 reasoning-pattern repair, so its key
+ * rides here too.
+ */
+export const PRACTICE_INVALIDATE_KEYS: readonly string[] = [
+  ...MASTERY_KEYS,
+  ...MISTAKE_KEYS,
+  CARS_REASONING_KEY,
+];
 
 /** Today's Path views rebuilt after any plan mutation. */
 export const TODAYS_PATH_INVALIDATE: readonly string[] = ['today', 'todays-path', 'bootstrap'];
@@ -76,6 +94,9 @@ export const LEARNER_KEYS: readonly string[] = [
   'lesson-warrants',
   'cars-readiness',
   ...MISTAKE_KEYS,
+  // A CARS Duel is one of the learner mutations this set covers, and a weak duel
+  // writes a WS7 reasoning-pattern repair, so its read key must be dropped too.
+  CARS_REASONING_KEY,
   'vector-lesson-status',
   'vector-lesson-run',
 ];

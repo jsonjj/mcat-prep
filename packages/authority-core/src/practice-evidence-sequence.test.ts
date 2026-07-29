@@ -317,12 +317,12 @@ describe('every evidence writer numbers a record with its accepted sequence', ()
     return { authority, state };
   }
 
-  it('stamps the CARS duel with the accepted sequence rather than the one before it', () => {
+  it('stamps the CARS duel with the accepted sequence rather than the one before it', async () => {
     const authority = new Authority(loadSyntheticBank(), CLOCK);
     const state = authority.createGuest();
     state.nextSequence = LAST_ACCEPTED;
 
-    authority.recordCarsDuel(state, { rubric: { position: 1, argument: 1, application: 1 } });
+    await authority.recordCarsDuel(state, { rubric: { position: 1, argument: 1, application: 1 } });
 
     // Two records from ONE command, so sharing a number is correct: they are not
     // a tie between commands, they are one command's evidence.

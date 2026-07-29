@@ -1,6 +1,7 @@
 import {
   BootstrapResponseSchema,
   CarsReadinessViewSchema,
+  CarsReasoningPatternViewSchema,
   DiagnosticNextSchema,
   ErrorEntryViewSchema,
   GoalViewSchema,
@@ -188,6 +189,12 @@ export class InProcessAuthorityClient implements AuthorityPort {
     );
   }
 
+  async getCarsReasoningPatterns() {
+    return CarsReasoningPatternViewSchema.array().parse(
+      await this.mutateAsync((state) => this.authority.getCarsReasoningPatterns(state)),
+    );
+  }
+
   async getPracticeItem(questionId: string) {
     const item = this.authority.getPracticeItem(questionId);
     return item === null ? null : PracticeItemViewSchema.parse(item);
@@ -212,7 +219,7 @@ export class InProcessAuthorityClient implements AuthorityPort {
   }
 
   async recordCarsDuel(outcome?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {
-    this.mutate((state) => this.authority.recordCarsDuel(state, outcome));
+    await this.mutateAsync((state) => this.authority.recordCarsDuel(state, outcome));
   }
 
   async recordPracticeTestCompleted(): Promise<void> {

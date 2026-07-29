@@ -4,6 +4,7 @@ import { AttemptCommandSchema, GoalCommandSchema, GoalViewSchema } from './comma
 import { ErrorCodeSchema } from './errors';
 import { EventIdSchema } from './ids';
 import {
+  CarsReasoningPatternViewSchema,
   ErrorEntryViewSchema,
   LessonWarrantViewSchema,
   MasteryMapEntrySchema,
@@ -127,6 +128,12 @@ export const HTTP_API = {
     method: 'GET',
     path: '/v1/errors/shaky-wins',
     response: z.array(ErrorEntryViewSchema),
+  },
+  /** CARS reasoning-pattern repairs from weak duels (WS7); a distinct sub-skill surface. */
+  carsReasoningPatterns: {
+    method: 'GET',
+    path: '/v1/errors/cars-reasoning',
+    response: z.array(CarsReasoningPatternViewSchema),
   },
   progressSkills: {
     method: 'GET',

@@ -5,6 +5,7 @@ import { PracticeFocusSchema } from './practice';
 import { UtcTimestampSchema } from './time';
 import {
   AssistanceLevelSchema,
+  CarsSkillSchema,
   OperationTagSchema,
   QuestionFormatSchema,
   SectionSchema,
@@ -550,6 +551,59 @@ export const MistakePatternViewSchema = z
   })
   .strict();
 export type MistakePatternView = z.infer<typeof MistakePatternViewSchema>;
+
+/**
+ * One CARS reasoning-pattern repair (WS7): a weak CARS Duel, mapped to the AAMC
+ * CARS sub-skill behind its weakest rubric dimension, with a specific real CARS
+ * passage question from the bank pinned as a spaced retrieval repair.
+ *
+ * This is DELIBERATELY a distinct surface from `MistakePatternView`, not a
+ * per-distractor misconception and not a KC/cluster miss group:
+ * - a duel is a formative debate, so there is no "X of Y questions missed"
+ *   denominator to publish — the honesty signal is the duel hold-rate instead;
+ * - the repair names a *sub-skill* (FOC/RWT/RBT) and a *specific passage* to
+ *   practise, which the KC/cluster pattern shape has no field for;
+ * - it carries its own `resolved` flag (a later correct CARS answer in the same
+ *   sub-skill), which patterns do not.
+ *
+ * FORMATIVE by construction: it carries no mastery, no key, and no rationale —
+ * only the sub-skill, why it was flagged, and the passage to practise. The CARS
+ * Duel that produces it writes no mastery either (see `Authority.recordCarsDuel`).
+ */
+export const CarsReasoningPatternViewSchema = z
+  .object({
+    /** The AAMC CARS sub-skill this repair targets (weakest rubric dimension). */
+    skill: CarsSkillSchema,
+    /** Human title of the sub-skill, e.g. "Reasoning Beyond the Text". */
+    title: z.string().min(1),
+    /**
+     * The duel hold-rate that flagged this repair, as a 0–100 percentage. Shown
+     * as the honest reason ("your reasoning held at 33% in this duel"), in place
+     * of the miss-count denominator a KC/cluster pattern carries.
+     */
+    holdRatePct: z.number().int().min(0).max(100),
+    /** The specific real CARS bank item selected to target this sub-skill. */
+    questionId: z.string().min(1),
+    /**
+     * The pinned passage/question stem, so the card can name the passage to
+     * practise. Null when that item has since left the corpus — the repair is
+     * still actionable through the sub-skill focus below.
+     */
+    passageStem: z.string().min(1).nullable(),
+    /**
+     * Focus token that launches a CARS practice session scoped to this sub-skill
+     * (e.g. `cars-rbt`). The queue's own exposure/repair seam then serves a fresh
+     * CARS item in the sub-skill — the pinned item being one such candidate — so
+     * the re-attempt is real evidence, never a re-serve.
+     */
+    focus: PracticeFocusSchema,
+    /** When the weak duel flagged this repair. */
+    flaggedAt: UtcTimestampSchema,
+    /** A later correct CARS answer in this sub-skill has landed (repair cleared). */
+    resolved: z.boolean(),
+  })
+  .strict();
+export type CarsReasoningPatternView = z.infer<typeof CarsReasoningPatternViewSchema>;
 
 export const SkillSummarySchema = z
   .object({

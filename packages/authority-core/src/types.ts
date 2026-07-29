@@ -96,6 +96,38 @@ export interface LearnerState {
     /** How many practice tests the learner has completed (drives the baseline case). */
     testsCompleted: number;
   };
+  /**
+   * CARS reasoning-pattern repairs (WS7): a weak CARS Duel maps its weakest
+   * rubric dimension to a CARS sub-skill (FOC/RWT/RBT) and pins a specific real
+   * CARS bank item as a spaced retrieval repair surfaced in Mistakes. At most one
+   * OPEN repair per sub-skill (a fresh weak duel refreshes the existing one in
+   * place), so the list holds at most three entries.
+   *
+   * FORMATIVE — writes NO mastery, exactly like the CARS Duel that produces it.
+   * Resolution (a later correct CARS answer in the same sub-skill) is COMPUTED at
+   * read time in `getCarsReasoningPatterns`, mirroring `Authority.resolved`, so
+   * this slice stores only the flag, not the outcome. Rides the event-sourced
+   * `state_json` projection blob like `practiceTests`/`carsDuel` — no migration.
+   * Optional so older projections deserialize.
+   */
+  carsRepairs?: CarsReasoningRepair[];
+}
+
+/**
+ * One pinned CARS reasoning-pattern repair (WS7). It records only the trigger —
+ * which sub-skill, which specific bank item, and the duel hold-rate that flagged
+ * it — never any mastery or answer material. Whether it is resolved is derived on
+ * read from the learner's later CARS attempts, not stored here.
+ */
+export interface CarsReasoningRepair {
+  /** The AAMC CARS sub-skill the weakest rubric dimension mapped to. */
+  readonly skill: CarsSkill;
+  /** The specific real CARS bank item selected to target that sub-skill. */
+  readonly questionId: string;
+  /** The duel rubric hold-rate R ∈ [0,1] that fell below the competence bar. */
+  readonly holdRate: number;
+  /** When the weak duel flagged this repair (a later correct answer must beat it). */
+  readonly createdAt: UtcTimestamp;
 }
 
 /** One scheduled activity plus its per-learner run status (persisted). */

@@ -43,6 +43,7 @@ export * from './lesson-rollup';
 export * from './cars';
 export * from './calibration';
 export * from './cars-duel';
+export * from './cars-duel-mistakes';
 export * from './mastery-seed';
 export * from './practice-selection';
 export * from './practice-test-assembler';

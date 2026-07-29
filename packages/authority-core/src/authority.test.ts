@@ -1195,12 +1195,12 @@ describe('Authority — the warrant covers every grain a lesson writes', () => {
     ]);
   });
 
-  it('resolves the cluster of a grain outside both the graph and the registry', () => {
+  it('resolves the cluster of a grain outside both the graph and the registry', async () => {
     // The CARS duel writes `cars-ca1`, which is neither a graph skill nor a V3 KC.
     // Its records carry the cluster, so the warrant resolves from them.
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = auth.createGuest();
-    auth.recordCarsDuel(state);
+    await auth.recordCarsDuel(state);
 
     const entry = auth.getMasteryMap(state).find((m) => m.skillId === 'cars-ca1');
     expect(entry).toBeDefined();
@@ -1721,11 +1721,11 @@ describe('Authority — diagnostic mastery seeding', () => {
 });
 
 describe('CARS Duel — formative engine state, never mastery (WS6)', () => {
-  it('folds a graded duel into the selection engine while writing no BKT mastery grain', () => {
+  it('folds a graded duel into the selection engine while writing no BKT mastery grain', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = auth.createGuest();
 
-    auth.recordCarsDuel(state, {
+    await auth.recordCarsDuel(state, {
       rubric: { position: 3, argument: 3, application: 3 },
       mode: 'rebut',
       topicId: 'cars-topic-001',
@@ -1751,10 +1751,10 @@ describe('CARS Duel — formative engine state, never mastery (WS6)', () => {
     expect(Object.keys(state.mastery?.cars ?? {}).length).toBeGreaterThan(0);
   });
 
-  it('records the ability nudge but no engine history when the topic is unknown/omitted', () => {
+  it('records the ability nudge but no engine history when the topic is unknown/omitted', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = auth.createGuest();
-    auth.recordCarsDuel(state, { rubric: { position: 2 } });
+    await auth.recordCarsDuel(state, { rubric: { position: 2 } });
     expect(state.carsDuel).toBeUndefined();
     expect(state.mastery?.kc ?? {}).toEqual({});
     expect(state.mastery?.skill ?? {}).toEqual({});

@@ -3,6 +3,7 @@ import {
   AttemptCommandSchema,
   BootstrapResponseSchema,
   CarsReadinessViewSchema,
+  CarsReasoningPatternViewSchema,
   DiagnosticNextSchema,
   ErrorEntryViewSchema,
   GoalCommandSchema,
@@ -410,6 +411,14 @@ export class HttpAuthorityClient implements AuthorityPort {
   async getMistakePatterns() {
     await this.ensureBootstrap();
     return this.request(HTTP_API.errorPatterns.path, arrayOf(MistakePatternViewSchema));
+  }
+
+  async getCarsReasoningPatterns() {
+    await this.ensureBootstrap();
+    return this.request(
+      HTTP_API.carsReasoningPatterns.path,
+      arrayOf(CarsReasoningPatternViewSchema),
+    );
   }
 
   async getSkills() {

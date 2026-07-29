@@ -3,6 +3,7 @@ import type {
   BuildTodaysPathInput,
   CarsDuelOutcomeInput,
   CarsReadinessView,
+  CarsReasoningPatternView,
   DiagnosticNext,
   ErrorEntryView,
   GoalView,
@@ -98,6 +99,8 @@ export interface AuthorityPort {
   getShakyWins(): Promise<ErrorEntryView[]>;
   /** Mistakes tab, Surface A: recurring misses grouped at KC / cluster grain. */
   getMistakePatterns(): Promise<MistakePatternView[]>;
+  /** Mistakes tab, Surface C (WS7): CARS reasoning-pattern repairs from weak duels. */
+  getCarsReasoningPatterns(): Promise<CarsReasoningPatternView[]>;
   getSkills(): Promise<SkillSummary[]>;
   getPracticeItem(questionId: string): Promise<PracticeItemView | null>;
   checkPractice(questionId: string, choiceId: string | null): Promise<PracticeResult>;

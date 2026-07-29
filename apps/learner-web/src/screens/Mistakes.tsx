@@ -3,12 +3,18 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import {
   CLUSTER_INFO,
+  type CarsReasoningPatternView,
   type ErrorEntryView,
   type MistakePatternView,
   type SkillCluster,
 } from '@mcat/contracts';
 import { ExplainAnotherWay } from '../components/ExplainAnotherWay';
-import { useErrorLog, useMistakePatterns, useShakyWins } from '../app/queries';
+import {
+  useCarsReasoningPatterns,
+  useErrorLog,
+  useMistakePatterns,
+  useShakyWins,
+} from '../app/queries';
 
 /**
  * Mistakes — the two surfaces of docs/design/error-handling-design.md §6, now
@@ -52,6 +58,7 @@ export function Mistakes() {
   const errors = useErrorLog();
   const shakyWins = useShakyWins();
   const patterns = useMistakePatterns();
+  const carsPatterns = useCarsReasoningPatterns();
   const location = useLocation();
   const navigate = useNavigate();
   const [showResolved, setShowResolved] = useState(false);
@@ -67,7 +74,13 @@ export function Mistakes() {
   const rows = [...(showResolved ? all : open)].sort(missOrder);
   const shaky = shakyWins.data ?? [];
   const patternRows = patterns.data ?? [];
-  const nothingToShow = patternRows.length === 0 && rows.length === 0 && shaky.length === 0;
+  // WS7: CARS reasoning-pattern repairs from weak duels. Open ones show always;
+  // cleared ones join behind the same "show cleared" filter as the miss list.
+  const carsAll = carsPatterns.data ?? [];
+  const carsCleared = carsAll.filter((p) => p.resolved).length;
+  const carsRows = showResolved ? carsAll : carsAll.filter((p) => !p.resolved);
+  const nothingToShow =
+    patternRows.length === 0 && rows.length === 0 && shaky.length === 0 && carsRows.length === 0;
 
   /**
    * Hand the re-attempt to the ordinary practice queue. The focus token narrows it
@@ -118,6 +131,29 @@ export function Mistakes() {
           <Stack gap={3}>
             {patternRows.map((p) => (
               <PatternRow key={`${p.grain}:${p.key}`} pattern={p} onTryAgain={tryAgain} />
+            ))}
+          </Stack>
+        </section>
+      ) : null}
+
+      {carsRows.length > 0 ? (
+        <section>
+          <div className="mc-task">
+            <h2 className="mc-h3">CARS reasoning patterns</h2>
+            {carsCleared > 0 ? (
+              <Button variant="text" onClick={() => setShowResolved(!showResolved)}>
+                {showResolved ? 'Hide cleared' : `Show ${carsCleared} cleared`}
+              </Button>
+            ) : null}
+          </div>
+          <p className="mc-muted mc-fineprint">
+            A recent CARS Duel came in below the mark on one kind of reasoning. Each card names the
+            skill and hands you a real CARS passage to rebuild it — it clears when you next read a
+            CARS passage in that skill correctly.
+          </p>
+          <Stack gap={3}>
+            {carsRows.map((p) => (
+              <CarsReasoningRow key={`${p.skill}:${p.questionId}`} pattern={p} onTryAgain={tryAgain} />
             ))}
           </Stack>
         </section>
@@ -207,6 +243,48 @@ function PatternRow({
           Practice this
         </Button>
       </div>
+    </Card>
+  );
+}
+
+/**
+ * A CARS reasoning-pattern repair (WS7). Unlike a KC/cluster pattern it carries no
+ * "X of Y missed" denominator — a duel is a formative debate — so the honest
+ * signal is the duel hold-rate, and the action is a specific real CARS passage in
+ * the flagged sub-skill. "Practice this passage" routes into the same adaptive
+ * queue with a CARS sub-skill focus, so the queue's exposure seam serves a fresh
+ * passage in that skill; answering one correctly is what clears the card.
+ */
+function CarsReasoningRow({
+  pattern,
+  onTryAgain,
+}: {
+  pattern: CarsReasoningPatternView;
+  onTryAgain: (focus: string | null) => void;
+}) {
+  return (
+    <Card elevated>
+      <Stack gap={3}>
+        <div className="mc-task">
+          <div>
+            <Eyebrow>CARS reasoning · {pattern.skill}</Eyebrow>
+            <p className="mc-task__title">{pattern.title}</p>
+            <p className="mc-muted mc-fineprint">
+              A recent CARS Duel held at {pattern.holdRatePct}% here — below the ~75% mark, so this
+              skill is worth a focused rep.
+            </p>
+          </div>
+          {pattern.resolved ? <span className="mc-pill mc-pill--ok">Cleared</span> : null}
+        </div>
+        {pattern.passageStem !== null ? (
+          <Callout tone="info" title="Practice passage">
+            {pattern.passageStem}
+          </Callout>
+        ) : null}
+        <Button variant="primary" onClick={() => onTryAgain(pattern.focus)}>
+          Practice this passage
+        </Button>
+      </Stack>
     </Card>
   );
 }

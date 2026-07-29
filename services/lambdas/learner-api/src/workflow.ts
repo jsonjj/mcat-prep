@@ -25,6 +25,7 @@ import {
   AcceptedCommandResponseSchema,
   AttemptCommandSchema,
   CarsReadinessViewSchema,
+  CarsReasoningPatternViewSchema,
   DiagnosticNextSchema,
   GoalViewSchema,
   LessonMasteryViewSchema,
@@ -40,6 +41,7 @@ import {
   VectorLessonStatusViewSchema,
   WrappedViewSchema,
   type CarsReadinessView,
+  type CarsReasoningPatternView,
   type Clock,
   type CommandEnvelope,
   type ContentId,
@@ -298,6 +300,18 @@ export class RepositoryLearnerKernel {
     const state = await this.loadState(principal);
     const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
     return CarsReadinessViewSchema.parse(authority.getCarsReadiness(state));
+  }
+
+  /**
+   * Mistakes Surface C (WS7): CARS reasoning-pattern repairs from weak duels.
+   * Uses the bank-backed authority (`this.authority()`) because the read hydrates
+   * the pinned passage and classifies later CARS answers to compute resolution.
+   */
+  async carsReasoningPatterns(principal: Principal): Promise<readonly CarsReasoningPatternView[]> {
+    const state = await this.loadState(principal);
+    return CarsReasoningPatternViewSchema.array().parse(
+      await this.authority().getCarsReasoningPatterns(state),
+    );
   }
 
   /** Read-only goal projection for the Account/Profile editor prefill (WS8). */
@@ -680,11 +694,13 @@ export class RepositoryLearnerKernel {
   async handleCarsDuel(command: CarsDuelCommandBody, principal: Principal) {
     const { envelope, ...outcome } = command;
     return AcceptedCommandResponseSchema.parse(
-      await this.mutate(envelope, principal, (authority, state) => {
+      await this.mutate(envelope, principal, async (authority, state) => {
         const previousEvidenceCount = state.evidence.length;
-        // Formative only: records the ability nudge + duel-selection history (WS6),
-        // never mastery. The rubric + which selection was played ride in `outcome`.
-        authority.recordCarsDuel(state, outcome);
+        // Formative only: records the ability nudge + duel-selection history (WS6)
+        // and, on a weak duel, pins a CARS reasoning-pattern repair (WS7) — never
+        // mastery. The rubric + which selection was played ride in `outcome`. Async
+        // since WS7 (the repair selects a real CARS bank item); still no mastery.
+        await authority.recordCarsDuel(state, outcome);
         bindNewEvidence(state, previousEvidenceCount, envelope);
         return { eventType: 'cars_duel_recorded', payload: toJsonObject(command) };
       }),

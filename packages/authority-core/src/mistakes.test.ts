@@ -436,7 +436,7 @@ describe('Mistakes — a row with no KC id', () => {
 describe('Mistakes — display scope', () => {
   it('excludes CARS duels and lesson misses (practice only)', async () => {
     const { authority, state } = learner();
-    authority.recordCarsDuel(state, { rubric: { position: 1, argument: 1, application: 1 } });
+    await authority.recordCarsDuel(state, { rubric: { position: 1, argument: 1, application: 1 } });
     expect(await authority.getErrorLog(state)).toEqual([]);
     expect(await authority.getMistakePatterns(state)).toEqual([]);
   });

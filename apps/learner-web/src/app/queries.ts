@@ -3,7 +3,7 @@ import type { CarsDuelOutcomeInput, MasterySeed, VectorLessonAction } from '@mca
 import type { AttemptTiming, GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
-import { LEARNER_KEYS } from './invalidation-keys';
+import { CARS_REASONING_KEY, LEARNER_KEYS } from './invalidation-keys';
 
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 0, refetchOnWindowFocus: false, retry: false } },
@@ -51,6 +51,12 @@ export const useShakyWins = () =>
 /** Recurring misses grouped at KC / cluster grain (Mistakes tab, patterns section). */
 export const useMistakePatterns = () =>
   useQuery({ queryKey: ['error-patterns'], queryFn: () => authority.getMistakePatterns() });
+/** CARS reasoning-pattern repairs from weak duels (WS7; Mistakes tab, CARS section). */
+export const useCarsReasoningPatterns = () =>
+  useQuery({
+    queryKey: [CARS_REASONING_KEY],
+    queryFn: () => authority.getCarsReasoningPatterns(),
+  });
 export const useSkills = () =>
   useQuery({ queryKey: ['skills'], queryFn: () => authority.getSkills() });
 /**

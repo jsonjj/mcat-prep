@@ -2,6 +2,7 @@ import {
   AttemptCommandSchema,
   CarsDuelOutcomeInputSchema,
   CarsReadinessViewSchema,
+  CarsReasoningPatternViewSchema,
   ChoiceIdSchema,
   CommandEnvelopeSchema,
   ContentIdSchema,
@@ -69,6 +70,7 @@ export type RouteId =
   | 'errors'
   | 'shakyWins'
   | 'errorPatterns'
+  | 'carsReasoningPatterns'
   | 'vectorLessonStatus'
   | 'vectorLessonStart'
   | 'vectorLessonRun'
@@ -489,6 +491,14 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: false,
     responseSchema: MistakePatternViewSchema.array(),
+  },
+  {
+    id: 'carsReasoningPatterns',
+    method: 'GET',
+    path: '/v1/errors/cars-reasoning',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: CarsReasoningPatternViewSchema.array(),
   },
   {
     id: 'vectorLessonStatus',

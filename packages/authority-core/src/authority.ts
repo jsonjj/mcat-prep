@@ -1,5 +1,6 @@
 import {
   BktObservationAppliedSchema,
+  CARS_SKILL_INFO,
   ContentIdSchema,
   DAILY_MINUTES_DEFAULT,
   DAILY_MINUTES_MAX,
@@ -26,6 +27,7 @@ import {
   type CarsDuelSelectionView,
   type CarsReadinessLabel,
   type CarsReadinessView,
+  type CarsReasoningPatternView,
   type CarsSkill,
   type Clock,
   type GoalView,
@@ -100,6 +102,8 @@ import {
   recordCarsDuelOutcome,
   initialCarsDuelState,
   rubricToR,
+  isWeakCarsDuel,
+  weakestCarsSkill,
   type CarriedActivity,
   type GhostView,
   type LessonRollupResult,
@@ -135,6 +139,7 @@ import {
   type PracticeRepairTarget,
 } from './practice';
 import type {
+  CarsReasoningRepair,
   ErrorEntryView,
   LearnerState,
   LessonWarrantView,
@@ -3085,6 +3090,14 @@ export class Authority {
     if (focus === null) return units;
     const upper = focus.toUpperCase();
     if (upper === 'CARS') return units.filter((u) => u.domain === 'cars');
+    // WS7: a CARS sub-skill focus (`cars-foc` / `cars-rwt` / `cars-rbt`) narrows to
+    // that one sub-skill's CARS units, so a Mistakes "practice this passage" repair
+    // drills the flagged reasoning skill rather than all of CARS.
+    const carsSkillFocus = /^CARS-(FOC|RWT|RBT)$/.exec(upper);
+    if (carsSkillFocus !== null) {
+      const skill = carsSkillFocus[1] as CarsSkill;
+      return units.filter((u) => u.domain === 'cars' && u.carsSkill === skill);
+    }
     if ((SKILL_CLUSTERS as readonly string[]).includes(upper)) {
       return units.filter((u) => u.cluster === (upper as SkillCluster));
     }
@@ -3398,9 +3411,16 @@ export class Authority {
    * practice channel, kept alive by two properties of these two records rather
    * than by anything structural. The kind is now the reason the record is
    * contextual, not the reason its number is safe.
+   *
+   * ASYNC since WS7: a duel below the competence bar also pins a specific real
+   * CARS bank item as a spaced Mistakes repair, which needs the item corpus (the
+   * async `practiceBank`). All the synchronous, mastery-free work above still runs
+   * first and unchanged; the bank read is awaited only at the end. The repair path
+   * writes NO mastery either — it stores a formative pointer, nothing more.
    */
-  recordCarsDuel(state: LearnerState, outcome?: CarsDuelOutcomeInput): void {
+  async recordCarsDuel(state: LearnerState, outcome?: CarsDuelOutcomeInput): Promise<void> {
     const rubric = outcome?.rubric;
+    const holdRate = rubric ? rubricToR(rubric) : null;
     const acceptedSequence = state.nextSequence + 1;
     for (const cluster of ['CA1', 'CA2'] as const) {
       this.appendEvidence(state, {
@@ -3441,7 +3461,6 @@ export class Authority {
     const topic =
       outcome?.topicId !== undefined ? CARS_DUEL_TOPICS_BY_ID.get(outcome.topicId) : undefined;
     if (topic && outcome?.mode !== undefined && outcome.intensity !== undefined) {
-      const holdRate = rubric ? rubricToR(rubric) : null;
       state.carsDuel = recordCarsDuelOutcome(state.carsDuel ?? initialCarsDuelState(), {
         topic,
         mode: outcome.mode,
@@ -3450,6 +3469,56 @@ export class Authority {
         at: this.clock.now(),
       });
     }
+    // WS7: a duel below the competence bar becomes a concrete, spaced repair —
+    // the weakest rubric dimension names a CARS sub-skill, and a specific real
+    // CARS bank item targeting it is pinned into Mistakes. FORMATIVE: this writes
+    // no mastery (it appends only to `state.carsRepairs`), and it runs on the
+    // rubric alone, so a manual (topic-less) duel can still earn a repair.
+    if (rubric && isWeakCarsDuel(rubric)) {
+      const skill = weakestCarsSkill(rubric);
+      if (skill !== null) {
+        await this.enqueueCarsReasoningRepair(state, skill, holdRate ?? 0);
+      }
+    }
+  }
+
+  /**
+   * Pin a specific real CARS bank item as a spaced reasoning-pattern repair for
+   * one sub-skill (WS7). Keeps at most ONE repair per sub-skill: a fresh weak duel
+   * refreshes the pinned item and the trigger time in place rather than stacking
+   * duplicates, so the surface never shows the same weakness twice.
+   *
+   * A READ of the item corpus and a WRITE of a formative pointer — never mastery.
+   * If the bank has no CARS item for the sub-skill (or none the learner has not
+   * just seen), nothing is pinned: a repair with no passage to practise would be a
+   * dead end, so the absence is left as-is rather than invented.
+   */
+  private async enqueueCarsReasoningRepair(
+    state: LearnerState,
+    skill: CarsSkill,
+    holdRate: number,
+  ): Promise<void> {
+    const recentlySeen = await this.practiceBank.recentlySeenIds(state.learnerId, {
+      withinDays: 30,
+      limit: 200,
+    });
+    const candidates = await this.practiceBank.findItems(
+      { domain: 'cars', carsSkill: skill, targetB: 0 },
+      { excludeIds: recentlySeen, limit: 8 },
+    );
+    // Prefer an item the port confirms is in this sub-skill; fall back to the first
+    // CARS candidate (the synthetic port reports carsSkill:null but still serves
+    // CARS items). No candidate at all → no repair to pin.
+    const chosen = candidates.find((c) => c.carsSkill === skill) ?? candidates[0];
+    if (chosen === undefined) return;
+    const repair: CarsReasoningRepair = {
+      skill,
+      questionId: chosen.question.id,
+      holdRate,
+      createdAt: this.clock.now(),
+    };
+    const others = (state.carsRepairs ?? []).filter((r) => r.skill !== skill);
+    state.carsRepairs = [...others, repair];
   }
 
   /**
@@ -3862,6 +3931,70 @@ export class Authority {
     return patterns.sort(
       (a, b) =>
         b.missedItems - a.missedItems || Date.parse(b.lastMissedAt) - Date.parse(a.lastMissedAt),
+    );
+  }
+
+  /**
+   * Surface C (WS7) — CARS reasoning-pattern repairs from weak duels. A distinct
+   * surface from the KC/cluster patterns above: each entry is one CARS sub-skill a
+   * weak duel flagged, plus the specific real CARS passage pinned to repair it.
+   *
+   * A READ. Resolution is COMPUTED here, never stored, mirroring
+   * `Authority.resolved`: a repair is resolved once the learner records a LATER
+   * correct CARS answer in the SAME sub-skill (whether the pinned passage itself
+   * or any sibling in the sub-skill — "completes the offered repair"). The
+   * classification of each correct CARS answer is read back through the same port
+   * that served it, so this stays free of any stored outcome that could go stale.
+   * Moves NO mastery.
+   */
+  async getCarsReasoningPatterns(state: LearnerState): Promise<CarsReasoningPatternView[]> {
+    const repairs = state.carsRepairs ?? [];
+    if (repairs.length === 0) return [];
+    const attempts = await this.practiceBank.listPracticeAttempts(state.learnerId, {
+      limit: Authority.ATTEMPT_LOG_LIMIT,
+    });
+    // The CARS sub-skill of each distinct correctly-answered item, resolved once
+    // through the port (a CARS item carries no sub-skill on the attempt log, so it
+    // is read back from the corpus). Only correct answers can resolve a repair.
+    const correctByItem = new Map<string, { at: string; skill: CarsSkill | null }>();
+    await Promise.all(
+      attempts
+        .filter((a) => a.correct)
+        .map(async (a) => {
+          const existing = correctByItem.get(a.questionId);
+          if (existing !== undefined && Date.parse(existing.at) >= Date.parse(a.occurredAt)) return;
+          const classification = await this.practiceBank.classify(a.questionId);
+          correctByItem.set(a.questionId, { at: a.occurredAt, skill: classification?.carsSkill ?? null });
+        }),
+    );
+    const resolvedFor = (repair: CarsReasoningRepair): boolean => {
+      const createdMs = Date.parse(repair.createdAt);
+      for (const { at, skill } of correctByItem.values()) {
+        if (skill === repair.skill && Date.parse(at) > createdMs) return true;
+      }
+      return false;
+    };
+    const views = await Promise.all(
+      repairs.map(async (repair): Promise<CarsReasoningPatternView> => {
+        // Re-show the pinned passage's stem; a retired item degrades to null rather
+        // than dropping the repair (the sub-skill focus still launches practice).
+        const question = await this.practiceBank.getQuestion(repair.questionId);
+        return {
+          skill: repair.skill,
+          title: CARS_SKILL_INFO[repair.skill].title,
+          holdRatePct: Math.round(Math.max(0, Math.min(1, repair.holdRate)) * 100),
+          questionId: repair.questionId,
+          passageStem: question?.stem ?? null,
+          focus: `cars-${repair.skill.toLowerCase()}`,
+          flaggedAt: repair.createdAt,
+          resolved: resolvedFor(repair),
+        };
+      }),
+    );
+    // Open first, then most-recently-flagged first within each group.
+    return views.sort(
+      (a, b) =>
+        Number(a.resolved) - Number(b.resolved) || Date.parse(b.flaggedAt) - Date.parse(a.flaggedAt),
     );
   }
 
