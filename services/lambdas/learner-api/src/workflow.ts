@@ -3,6 +3,7 @@ import {
   Authority,
   PracticeAttemptNotAuthorizedError,
   SyntheticPracticeBankPort,
+  corroborateMasterySeed,
   type LearnerState,
   type PracticeBankPort,
 } from '@mcat/authority-core';
@@ -673,8 +674,30 @@ export class RepositoryLearnerKernel {
   /**
    * Apply the diagnostic's opening priors. No evidence is bound: a seed is not
    * an attempt, and nothing here can move a unit the learner has practised.
+   *
+   * The payload is corroborated before it is applied. `MasterySeedSchema`
+   * validates SHAPE — that the values are probabilities and the keys are
+   * non-empty strings — and the authority re-clamps every value on the way in,
+   * which is why a fabricated seed cannot mint mastery. Neither of those says
+   * anything about WHICH units a seed is entitled to move, and the planner ranks
+   * on exactly that: a caller could name arbitrary KC ids at the floor or the
+   * cap with no diagnostic taken at all.
+   *
+   * `corroborateMasterySeed` refuses any payload the one real producer could not
+   * have emitted. Refusal is a 400 rather than a silent drop of the offending
+   * entries: keeping the acceptable half of a payload the server has already
+   * decided is dishonest is how a restriction loses to a permission. See that
+   * function for what this does and does not establish — it is a shape check,
+   * not proof that a diagnostic was taken, and closing the remainder needs the
+   * issuing service and the authority to share a fact.
    */
   async handleMasterySeed(command: MasterySeedCommandBody, principal: Principal) {
+    const corroboration = corroborateMasterySeed(command.seed);
+    if (corroboration.status === 'refused') {
+      throw validationError(
+        `The diagnostic seed is not one this server could have produced (${corroboration.reason}).`,
+      );
+    }
     return AcceptedCommandResponseSchema.parse(
       await this.mutate(command.envelope, principal, (authority, state) => {
         authority.applyMasterySeed(state, command.seed);

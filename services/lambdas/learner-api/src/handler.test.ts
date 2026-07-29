@@ -773,6 +773,45 @@ describe('learner Lambda API security boundary', () => {
     expect(withField.statusCode).toBe(400);
   });
 
+  /**
+   * The seed route used to pass `command.seed` straight to the authority, with
+   * the body check validating shape only. A caller could therefore name KC ids
+   * of their choosing at the floor or the cap and change planner priority with
+   * no diagnostic taken. It could never mint mastery — the ingress clamp holds
+   * whatever arrives — which is what kept this bounded.
+   *
+   * The body below is well-formed under `MasterySeedSchema` and every value is
+   * a legal probability. It is refused because no diagnostic could have
+   * produced it.
+   */
+  it('refuses a mastery seed no diagnostic could have produced', async () => {
+    const { api, principal, repository } = harness();
+    const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
+
+    const denied = await api.handle(
+      request(
+        'POST',
+        '/v1/hooks/mastery-seed',
+        {
+          envelope: commandEnvelope(0),
+          seed: {
+            kcPriors: { 'V3-KC-000000': 0.05, 'kc-i-just-made-up': 0.4 },
+            skillPriors: {},
+            carsAbility: {},
+          },
+        },
+        write,
+      ),
+    );
+
+    expect(denied.statusCode).toBe(400);
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(0);
+    const projection = repository.projectionFor(principal.learnerId)?.state as {
+      mastery?: { kc?: Record<string, unknown> };
+    };
+    expect(projection.mastery?.kc ?? {}).toEqual({});
+  });
+
   it('persists deterministic non-mastery CARS evidence and serves Wrapped', async () => {
     const { api, principal, repository } = harness();
     const command = { envelope: commandEnvelope() };
