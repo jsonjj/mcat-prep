@@ -643,6 +643,9 @@ export class Authority {
   }
 
   submitDiagnosticAnswer(state: LearnerState, questionId: string, choiceId: string | null): void {
+    // Allocated before any write, because `recordEvent` below moves
+    // `nextSequence`. See `appendEvidence`.
+    const acceptedSequence = state.nextSequence + 1;
     this.startDiagnostic(state);
     const d = state.diagnostic!;
     if (d.seenQuestionIds.includes(questionId)) return;
@@ -670,6 +673,7 @@ export class Authority {
       correct,
       independent: false,
       changeDimensions: [],
+      sequence: acceptedSequence,
     });
   }
 
@@ -1341,6 +1345,12 @@ export class Authority {
    * standing in front of it.
    */
   async submitAttempt(state: LearnerState, choiceId: string | null): Promise<void> {
+    // Allocated before any write. This path appends TWO events on a first answer
+    // — the attempt and the BKT ledger record — so reading `nextSequence` at the
+    // append would stamp the evidence one past the sequence this command is
+    // accepted at, on a record that is `independent` and mastery-eligible. See
+    // `appendEvidence`.
+    const acceptedSequence = state.nextSequence + 1;
     this.startSession(state);
     const s = state.session!;
     const activity = this.currentActivity(state);
@@ -1375,6 +1385,7 @@ export class Authority {
           correct: choiceId === correctId,
           independent: true,
           changeDimensions: [],
+          sequence: acceptedSequence,
           conditions: { protected: true },
         });
         this.advance(state);
@@ -1398,6 +1409,7 @@ export class Authority {
           correct: true,
           independent: scored.independent,
           changeDimensions: activity.changeDimensions ?? [],
+          sequence: acceptedSequence,
           conditions: phase === 'passage' ? { passage: true } : {},
         });
         this.advance(state);
@@ -1425,6 +1437,7 @@ export class Authority {
         correct: choiceId === correctId,
         independent: false,
         changeDimensions: [],
+        sequence: acceptedSequence,
       });
       // The correction was already shown before this retry, so there is nothing
       // left to reveal — move on.
@@ -3146,6 +3159,8 @@ export class Authority {
   }
 
   checkPractice(state: LearnerState, questionId: string, choiceId: string | null): PracticeResult {
+    // Allocated before any write. See `appendEvidence`.
+    const acceptedSequence = state.nextSequence + 1;
     const compiled = this.bank.compiled.get(questionId)!;
     const correctId = compiled.protected.correct_choice_id;
     const correct = choiceId === correctId;
@@ -3167,6 +3182,7 @@ export class Authority {
       correct,
       independent: false,
       changeDimensions: [],
+      sequence: acceptedSequence,
     });
     const rationales = compiled.protected.rationales.choices as Record<string, string>;
     return {
@@ -3181,8 +3197,18 @@ export class Authority {
    * CARS Duel is an AI sparring session, so it can never mint mastery. It logs
    * contextual (placement-kind) evidence to the two CARS clusters so the Atlas
    * reflects the reps without treating an AI as proof.
+   *
+   * This path appends no event of its own, so it used to stamp its records with
+   * the sequence of the command BEFORE it. Harmless as it stood — a `placement`
+   * record is contextual-only, so it can never be the mastery-eligible record
+   * `latestEligibleSeq` reads, and `independent: false` means it can never be a
+   * fresh failure either — but it was the same off-by-one `b845489` fixed on the
+   * practice channel, kept alive by two properties of these two records rather
+   * than by anything structural. The kind is now the reason the record is
+   * contextual, not the reason its number is safe.
    */
   recordCarsDuel(state: LearnerState, rubric?: CarsDuelRubric): void {
+    const acceptedSequence = state.nextSequence + 1;
     for (const cluster of ['CA1', 'CA2'] as const) {
       this.appendEvidence(state, {
         skillId: `cars-${cluster.toLowerCase()}`,
@@ -3192,6 +3218,7 @@ export class Authority {
         correct: true,
         independent: false,
         changeDimensions: [],
+        sequence: acceptedSequence,
         cluster,
         operation: 'A',
         familyId: 'fam-cars-duel',
@@ -3547,6 +3574,34 @@ export class Authority {
     };
   }
 
+  /**
+   * Append one evidence record, numbered with the sequence its COMMAND is
+   * accepted at.
+   *
+   * `sequence` is a required input rather than read off `state.nextSequence`
+   * here, and that is the whole point. `nextSequence` is the sequence of the last
+   * accepted command on entry, and `recordEvent` advances it in place — so what
+   * this method would read depends on how many events a sibling call happened to
+   * append first. Measured before this became a parameter: `recordCarsDuel`
+   * appends no event and stamped the PRIOR sequence, `submitAttempt` appends both
+   * an attempt and a BKT ledger record and stamped one PAST the accepted
+   * sequence, and only the two paths that append exactly one event landed on it.
+   * Three call sites, three different answers to one question.
+   *
+   * That is not cosmetic. `evaluateEvidence` decides a fresh failure by strict
+   * sequence ordering against the highest mastery-eligible record, so an
+   * overshooting `independent`-kind record raises the bar above the sequence any
+   * later command can reach, and the next genuine independent miss TIES rather
+   * than outranks it — `FRESH_FAILURE` never fires and a learner who has just
+   * demonstrably failed keeps a clean warrant. That is the same defect `b845489`
+   * fixed on the practice channel, reached from the other direction.
+   *
+   * So every caller allocates the accepted sequence ONCE, at entry, before any
+   * write: `state.nextSequence + 1`, which is what the kernel will persist
+   * (`projection.sequence + 1`) and what the lesson channel already passes to the
+   * adapter. Two records from the same command share it, which is correct — they
+   * are one command.
+   */
   private appendEvidence(
     state: LearnerState,
     input: {
@@ -3557,6 +3612,8 @@ export class Authority {
       correct: boolean;
       independent: boolean;
       changeDimensions: string[];
+      /** The accepted-stream sequence, allocated by the calling command at entry. */
+      sequence: number;
       conditions?: { mixed?: boolean; passage?: boolean; timed?: boolean; protected?: boolean };
       /** Overrides for evidence not backed by a bank question (e.g., CARS Duel). */
       cluster?: string;
@@ -3588,7 +3645,7 @@ export class Authority {
       outcome: input.correct ? 'correct' : 'incorrect',
       valid: true,
       occurredAt: this.clock.now(),
-      sequence: state.nextSequence,
+      sequence: input.sequence,
       contentRelease: this.bank.contentRelease,
       policies: activePolicyVersions(),
     });

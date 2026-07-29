@@ -269,3 +269,141 @@ describe('a practice miss after a lesson record outranks it', () => {
     expect(tiedSuccess.outcome).toBe('correct');
   });
 });
+
+/**
+ * THE SAME QUESTION, ASKED OF EVERY OTHER WRITER.
+ *
+ * `b845489` fixed the practice channel. The remaining writers all go through
+ * `Authority.appendEvidence`, which read `state.nextSequence` at the moment of
+ * the append — and `recordEvent` moves that counter in place, so what each one
+ * stamped depended on how many events its own command had already appended.
+ * Measured across the four callers, three different answers to one question:
+ *
+ * - `recordCarsDuel` appends no event, and stamped the PRIOR sequence.
+ * - `submitAttempt` appends two — the attempt and the BKT ledger record — and
+ *   stamped ONE PAST the accepted sequence, on a record that is `independent` and
+ *   mastery-eligible.
+ * - `submitDiagnosticAnswer` and `checkPractice` append exactly one, and landed
+ *   on the accepted sequence by arithmetic coincidence.
+ *
+ * The CARS duel was harmless, and that is asserted below rather than assumed: a
+ * `placement` record is contextual-only and non-independent, so it can be neither
+ * the eligible record the bar is read from nor a fresh failure. The Study
+ * overshoot was not harmless — it raises the bar above the sequence any later
+ * command can reach, which is the reviewer's defect with the sign flipped.
+ */
+describe('every evidence writer numbers a record with its accepted sequence', () => {
+  /** The state a command's `apply` sees, and the sequence it will be accepted at. */
+  const LAST_ACCEPTED = 5;
+  const ACCEPTED = LAST_ACCEPTED + 1;
+
+  /** Onboarded, advanced past the lesson, standing on the first Study question. */
+  async function learnerAtFirstStudyQuestion(): Promise<{
+    authority: Authority;
+    state: LearnerState;
+  }> {
+    const authority = new Authority(loadSyntheticBank(), CLOCK);
+    const state = authority.createGuest();
+    let next = authority.diagnosticNext(state);
+    while (!next.done) {
+      authority.submitDiagnosticAnswer(state, next.questionId!, 'A');
+      next = authority.diagnosticNext(state);
+    }
+    authority.confirmPlan(state, { testDate: null, targetScore: 515, minutesPerWeek: 420 });
+    authority.continueStep(state);
+    if (authority.getSession(state).kind !== 'question') {
+      throw new Error('expected the session to be standing on a question');
+    }
+    return { authority, state };
+  }
+
+  it('stamps the CARS duel with the accepted sequence rather than the one before it', () => {
+    const authority = new Authority(loadSyntheticBank(), CLOCK);
+    const state = authority.createGuest();
+    state.nextSequence = LAST_ACCEPTED;
+
+    authority.recordCarsDuel(state, { position: 1, argument: 1, application: 1 });
+
+    // Two records from ONE command, so sharing a number is correct: they are not
+    // a tie between commands, they are one command's evidence.
+    expect(state.evidence.map((e) => e.sequence)).toEqual([ACCEPTED, ACCEPTED]);
+    // Why the old number was harmless, measured rather than asserted from the
+    // commit message. Both properties have to hold; either alone is not enough.
+    expect(state.evidence.some(isMasteryEligible)).toBe(false);
+    expect(state.evidence.some((e) => e.independent)).toBe(false);
+  });
+
+  it('stamps a Study answer with the accepted sequence rather than one past it', async () => {
+    const { authority, state } = await learnerAtFirstStudyQuestion();
+    state.nextSequence = LAST_ACCEPTED;
+    const before = state.evidence.length;
+
+    await authority.submitAttempt(state, 'A');
+
+    const written = state.evidence.slice(before);
+    expect(written).toHaveLength(1);
+    expect(written[0]!.sequence).toBe(ACCEPTED);
+    // Not a coincidence of this fixture: the command really did append two
+    // events, which is what used to carry the record past its own command.
+    expect(state.nextSequence).toBe(ACCEPTED + 1);
+    // And this is the record that matters — `latestEligibleSeq` reads exactly
+    // this class of record, which is why the overshoot was not cosmetic.
+    expect(isMasteryEligible(written[0]!)).toBe(true);
+    expect(written[0]!.independent).toBe(true);
+  });
+
+  it('stamps the diagnostic and the daily check the same way', () => {
+    const authority = new Authority(loadSyntheticBank(), CLOCK);
+    const diagnosing = authority.createGuest();
+    const first = authority.diagnosticNext(diagnosing);
+    diagnosing.nextSequence = LAST_ACCEPTED;
+    authority.submitDiagnosticAnswer(diagnosing, first.questionId!, 'A');
+
+    const checking = authority.createGuest();
+    checking.nextSequence = LAST_ACCEPTED;
+    authority.checkPractice(checking, authority.bank.questions[0]!.id, 'A');
+
+    expect(diagnosing.evidence.map((e) => e.sequence)).toEqual([ACCEPTED]);
+    expect(checking.evidence.map((e) => e.sequence)).toEqual([ACCEPTED]);
+  });
+
+  /**
+   * The overshoot's consequence, replayed as the reviewer's scenario with the
+   * sign flipped, because nothing else in the suite can tell the two numberings
+   * apart: the records differ only in that one field.
+   *
+   * A Study answer accepted at 6 used to write its evidence at 7. The next
+   * command is accepted at 7, so an independent miss it writes carries 7 — level
+   * with a success that should have been below it, and strict ordering correctly
+   * refuses to call a tie "later".
+   */
+  it('would silence a later miss if a Study record overshot its own command', () => {
+    const miss = (sequence: number): EvidenceRecord => ({
+      ...lessonEvidenceAt(sequence, 'family-c', 9),
+      outcome: 'incorrect',
+    });
+    const warrantOver = (records: EvidenceRecord[]) =>
+      evaluateEvidence({ skillId: SHARED_KC_ID, records, now: CLOCK.now() });
+
+    // The old numbering: the success sits at 7 rather than at the 6 its command
+    // was accepted at, and the miss from the NEXT command ties with it.
+    const overshot = warrantOver([
+      lessonEvidenceAt(0, 'family-a', 1),
+      lessonEvidenceAt(7, 'family-b', 2),
+      miss(7),
+    ]);
+    expect(overshot.refreshNeeded).toBe(false);
+    expect(overshot.reasons.map((r) => r.code)).not.toContain('FRESH_FAILURE');
+
+    // The same stream with the success numbered honestly. Only that one field
+    // differs, and the warrant now reports what the learner just demonstrated.
+    const honest = warrantOver([
+      lessonEvidenceAt(0, 'family-a', 1),
+      lessonEvidenceAt(6, 'family-b', 2),
+      miss(7),
+    ]);
+    expect(honest.refreshNeeded).toBe(true);
+    expect(honest.reasons.map((r) => r.code)).toContain('FRESH_FAILURE');
+    expect(honest.evidenceQuality).toBe('independent');
+  });
+});
