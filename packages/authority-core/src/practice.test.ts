@@ -71,7 +71,8 @@ class CarsPracticeBank extends SyntheticPracticeBankPort {
 async function firstQueuedScienceItem(authority: Authority, state: LearnerState) {
   const queue = await authority.getPracticeQueue(state, 5);
   const item = queue.items.find((i) => i.domain === 'science');
-  if (item === undefined) throw new Error('expected a science practice item from the synthetic bank');
+  if (item === undefined)
+    throw new Error('expected a science practice item from the synthetic bank');
   return item;
 }
 
@@ -271,7 +272,9 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
         source: 'adaptive_practice',
         // Practice is scored in-request: there is no observation to deduplicate
         // against and nothing to order, and the payload guard refuses a record
-        // that claims otherwise.
+        // that claims otherwise — enforced, not merely typed, because
+        // `recordBktObservationEvent` parses what it appends. The disagreement
+        // cases are pinned in `packages/contracts/src/events.test.ts`.
         observationId: null,
         observationSequence: null,
         questionId: item.question.id,
@@ -351,5 +354,69 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
     }
     expect(state.mastery!.kc[FIXED_KC_ID]!.lastPracticedAt).toBe(records.at(-1)!.appliedOccurredAt);
     expect(state.mastery!.skill.IDENTIFY!.lastPracticedAt).toBe(records.at(-1)!.appliedOccurredAt);
+  });
+
+  /**
+   * The case above holds the clock still, so every candidate coincides and a
+   * mutation recording the wrong one passes unchanged. Here the clock ADVANCES
+   * between the two writes, which separates them: the first record, the second
+   * record and the grain now carry three distinguishable values, so recording a
+   * stale clock, or failing to move the grain on the second write, fails by
+   * name.
+   *
+   * What this deliberately does NOT try to do is make `reportedOccurredAt` and
+   * `appliedOccurredAt` differ. On this path they CANNOT differ, and that is a
+   * property of construction rather than of the fixture. `stepDirectGrains`
+   * reads the Authority clock itself for a server-origin write, so the reported
+   * time IS the ceiling; the grain floor is separately capped at the same
+   * reading; and the applied clock is therefore pinned to it from both sides.
+   * A test that pre-seeded a grain ahead of the clock to force
+   * `held_at_last_practiced` here would be asserting something unreachable —
+   * the cap exists precisely so a poisoned timestamp heals instead of becoming
+   * a permanent floor. The separating cases belong to the one path that accepts
+   * a caller-reported time, and `authority.test.ts` owns them
+   * ('bounded_to_server_clock' and 'held_at_last_practiced' on
+   * `applyQualifiedBktObservation`).
+   */
+  it('moves the recorded clock with the server clock, on the ledger and the grains', async () => {
+    const FIRST = '2026-07-27T12:00:00.000Z';
+    const SECOND = '2026-07-27T12:40:00.000Z';
+    const { clock, set } = movableClock(FIRST);
+    const bank = loadSyntheticBank();
+    const authority = new Authority(bank, clock, new FixedGrainPracticeBank(bank));
+    const state = authority.createGuest();
+
+    const first = await firstQueuedScienceItem(authority, state);
+    await authority.submitPracticeAttempt(state, {
+      questionId: first.question.id,
+      specId: first.specId,
+      chosenChoiceId: 'A',
+      firstAttempt: true,
+    });
+
+    set(SECOND);
+    const second = await secondScienceItem(authority, state, first.question.id);
+    await authority.submitPracticeAttempt(state, {
+      questionId: second,
+      specId: first.specId,
+      chosenChoiceId: 'A',
+      firstAttempt: true,
+    });
+
+    const records = bktRecords(state);
+    expect(records).toHaveLength(2);
+    // Distinguishable, which is what the still-clock version could not manage.
+    expect(records[0]!.appliedOccurredAt).toBe(FIRST);
+    expect(records[1]!.appliedOccurredAt).toBe(SECOND);
+
+    for (const record of records) {
+      expect(record.reportedOccurredAt).toBe(record.appliedOccurredAt);
+      expect(record.clockAdjustment).toBe('none');
+    }
+
+    // The second write moved both grains to the newer clock, and the ledger's
+    // last record is the one that describes them.
+    expect(state.mastery!.kc[FIXED_KC_ID]!.lastPracticedAt).toBe(SECOND);
+    expect(state.mastery!.skill.IDENTIFY!.lastPracticedAt).toBe(SECOND);
   });
 });

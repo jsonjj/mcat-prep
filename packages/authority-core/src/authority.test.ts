@@ -574,6 +574,100 @@ describe('Authority — the evidence warrant stays a separate signal', () => {
   });
 });
 
+/**
+ * The synthetic study path is the third writer of `P(L)`, reached in production
+ * from `POST /v1/attempts`. It moved the grains with no ledger record at all
+ * while `BktObservationAppliedSchema`'s docblock said "every write to a
+ * capability grain appends one of these" — so the clamp applied on this path
+ * and left nothing behind to show what it applied to.
+ */
+describe('Authority — the study path leaves the same ledger trail as the others', () => {
+  const ledger = (state: LearnerState) =>
+    state.events.filter((e) => e.type === 'bkt_observation_applied');
+
+  async function firstStudyAttempt(correct: boolean): Promise<LearnerState> {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.continueStep(state); // past the lesson, onto the first question
+    expect(auth.getSession(state).kind).toBe('question');
+    await auth.submitAttempt(state, correct ? 'A' : 'B');
+    return state;
+  }
+
+  it('appends one audit record naming the study source', async () => {
+    const state = await firstStudyAttempt(true);
+    const records = ledger(state);
+    expect(records).toHaveLength(1);
+    expect(records[0]!.payload).toEqual({
+      source: 'synthetic_study',
+      // Scored in-request: nothing to deduplicate against, nothing to order.
+      observationId: null,
+      observationSequence: null,
+      questionId: 'q-enz-indep-competitive',
+      primaryKcId: expect.any(String),
+      reasoningOperation: expect.any(String),
+      correct: true,
+      reportedOccurredAt: NOW,
+      appliedOccurredAt: NOW,
+      clockAdjustment: 'none',
+      outOfOrder: false,
+      rejectionCodes: [],
+    });
+  });
+
+  it('records a miss as a miss, since a miss moves P(L) too', async () => {
+    const state = await firstStudyAttempt(false);
+    expect(ledger(state)).toHaveLength(1);
+    expect(ledger(state)[0]!.payload).toMatchObject({
+      source: 'synthetic_study',
+      correct: false,
+    });
+  });
+
+  it('names the grains it actually moved', async () => {
+    const state = await firstStudyAttempt(true);
+    const payload = ledger(state)[0]!.payload as {
+      primaryKcId: string;
+      reasoningOperation: string;
+      appliedOccurredAt: string;
+    };
+    // The ledger and the stored grains are two derivations of one write.
+    const kc = state.mastery!.kc[payload.primaryKcId];
+    const skill = state.mastery!.skill[payload.reasoningOperation as ReasoningOperation];
+    expect(kc, `no grain exists for the recorded KC ${payload.primaryKcId}`).toBeDefined();
+    expect(skill).toBeDefined();
+    expect(kc!.lastPracticedAt).toBe(payload.appliedOccurredAt);
+    expect(skill!.lastPracticedAt).toBe(payload.appliedOccurredAt);
+  });
+
+  it('appends the record AFTER the attempt event it describes', async () => {
+    // Load-bearing for `applyAttempt` in the authority kernel, which rewrites
+    // the event at the index it recorded before the call. A record appended
+    // first would make `POST /v1/attempts` reject every valid attempt.
+    const state = await firstStudyAttempt(true);
+    const types = state.events.map((event) => event.type);
+    expect(types.indexOf('attempt_submitted')).toBeLessThan(
+      types.indexOf('bkt_observation_applied'),
+    );
+  });
+
+  it('writes no record for a retry, which moves nothing', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.continueStep(state);
+    await auth.submitAttempt(state, 'B');
+    expect(ledger(state)).toHaveLength(1);
+
+    auth.continueStep(state); // spend the retry
+    await auth.submitAttempt(state, 'A');
+    expect(
+      ledger(state),
+      'A non-independent retry appended a BKT record. The ledger must describe capability ' +
+        'writes only, or it stops being evidence that one happened.',
+    ).toHaveLength(1);
+  });
+});
+
 describe('Authority — the runner does not control the BKT decay clock', () => {
   /** Every `bkt_observation_applied` record in ledger order. */
   const ledger = (state: LearnerState) =>
