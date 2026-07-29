@@ -8,9 +8,23 @@ import { useMasterySkills } from '../app/queries';
 const toPct = (p: number): number => Math.round(p * 100);
 
 /**
+ * The badge for BKT decay (`reviewDue`): this memory has decayed below the
+ * review line and the capability estimate wants a fresh look.
+ *
+ * It is deliberately NOT the warrant's wording. "Evidence needs refreshing"
+ * (`EVIDENCE_REFRESH_LABEL`, in `components/evidence-language.ts`) means the
+ * supporting evidence has gone stale, which is a different authority answering a
+ * different question. Both said "Needs refresh" until 2026-07-29. This one stays
+ * here rather than moving into that module: the evidence module is the warrant's
+ * copy, and putting a capability string in it would re-blur the boundary the
+ * split exists to hold. This rail is its only site.
+ */
+const REVIEW_DUE_LABEL = 'Review due';
+
+/**
  * Left rail — the seven app-wide reasoning skills as compact mastery rings. Same
  * data and semantics as the old Skills page (`useMasterySkills` → BKT P(L) pooled
- * across every lesson); mastered / needs-refresh are shown with a glyph + label,
+ * across every lesson); mastered / review-due are shown with a glyph + label,
  * never color alone.
  */
 function SkillRail() {
@@ -32,7 +46,7 @@ function SkillRail() {
             const info = REASONING_OPERATION_INFO[skill.operation];
             const pct = toPct(skill.pL);
             const status = skill.reviewDue
-              ? ', needs refresh'
+              ? `, ${REVIEW_DUE_LABEL.toLowerCase()}`
               : skill.mastered
                 ? ', mastered'
                 : '';
@@ -42,11 +56,11 @@ function SkillRail() {
                 className="mc-skillring"
                 aria-label={`${info.title}: ${pct}% mastery${status}`}
               >
-                <MasteryRing pct={pct} mastered={skill.mastered} refreshNeeded={skill.reviewDue} />
+                <MasteryRing pct={pct} mastered={skill.mastered} reviewDue={skill.reviewDue} />
                 <span className="mc-skillring__label" aria-hidden="true">
                   <span className="mc-skillring__title">{info.title}</span>
                   {skill.reviewDue ? (
-                    <span className="mc-skillring__tag">◐ Needs refresh</span>
+                    <span className="mc-skillring__tag">◐ {REVIEW_DUE_LABEL}</span>
                   ) : skill.mastered ? (
                     <span className="mc-skillring__tag mc-skillring__tag--mastered">★ Mastered</span>
                   ) : null}

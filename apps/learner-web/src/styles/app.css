@@ -3047,7 +3047,9 @@ body {
 }
 /* Tone by mastery, consistent with the app palette: teal when high, amber when
    low, deep teal-green once mastered, muted violet when a mastered skill decays
-   and needs a refresh. `--review` (Practice's weakest lessons) is always amber. */
+   past its review line. `--refresh` is that BKT review-due tone and NOT the
+   evidence warrant's staleness, despite the name; renaming the class is a
+   separate change. `--review` (Practice's weakest lessons) is always amber. */
 .mc-ring__arc--review,
 .mc-ring__arc--low {
   stroke: #e88a4e;

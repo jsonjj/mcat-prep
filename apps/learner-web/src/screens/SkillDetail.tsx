@@ -2,7 +2,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { CLUSTER_INFO, type SkillCluster } from '@mcat/contracts';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { useMasteryMap, useSkills } from '../app/queries';
-import { evidenceWarrant } from '../components/evidence-language';
+import { EVIDENCE_REFRESH_LABEL, evidenceWarrant } from '../components/evidence-language';
 
 export function SkillDetail() {
   const { skillId } = useParams();
@@ -68,7 +68,7 @@ export function SkillDetail() {
                     {warrant.status}
                     {warrant.nextGap ? ` Next: ${warrant.nextGap}.` : ''}
                     {m?.refreshNeeded ? (
-                      <span className="mc-skillbar__tag"> · ◐ Needs refresh</span>
+                      <span className="mc-skillbar__tag"> · ◐ {EVIDENCE_REFRESH_LABEL}</span>
                     ) : null}
                   </p>
                 </Stack>

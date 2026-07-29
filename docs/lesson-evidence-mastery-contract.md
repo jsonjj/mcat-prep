@@ -1342,12 +1342,23 @@ specificity is worth the recoverable ordinal.
 This is a Gate A exported-symbol change, so it needs a governed revision rather than a rename in passing.
 Until it lands, §9's prohibition is the only thing standing between the field's name and the defect.
 
-### 15.5 Open — learner-facing copy says "Needs refresh" for both authorities
+### 15.5 Owner ratification — the "Needs refresh" copy, now split
 
-`Skills.tsx` renders "Needs refresh" from `reviewDue` (BKT decay) while `Study.tsx` and `SkillDetail.tsx`
-render the same words from `refreshNeeded` (warrant staleness). The **fields** are correctly distinct
-(§9.1); the shared **wording** predates the split and has not been re-adjudicated. It is a copy decision
-for the owner, not a code defect — and the two are genuinely different things to tell a learner.
+"Needs refresh" was rendered from `reviewDue` (BKT decay) on the Progress skill rail and from
+`refreshNeeded` (warrant staleness) on `Study.tsx` and `SkillDetail.tsx`. The **fields** were already
+distinct (§9.1); the shared **wording** predated the split, so the learner saw one phrase for two
+authorities.
+
+As of 2026-07-29 the strings are distinct: the BKT side reads **"Review due"** (`REVIEW_DUE_LABEL` in
+`apps/learner-web/src/screens/Progress.tsx`, its only site, including the list item's `aria-label`) and
+the warrant side reads **"Evidence needs refreshing"** (`EVIDENCE_REFRESH_LABEL`, exported from
+`apps/learner-web/src/components/evidence-language.ts`, which both warrant surfaces read so they cannot
+re-converge one screen at a time). The capability string is deliberately not kept in the evidence
+module: warrant copy and capability copy sharing a home is how they converged.
+
+**The exact wording is still the owner's.** What is settled is that the two authorities may not share a
+phrase; which words each gets is a product-voice call awaiting ratification. No architecture assertion
+holds this — see §16.2.
 
 ### 15.6 How to report a doc-vs-code divergence
 
@@ -1384,6 +1395,7 @@ future reader can verify rather than trust.
 | **`pL` is order-independent within the skew window**                              | §7.4        | "keeps P(L) within the skew window of itself whichever order observations arrive in"                                                                                                                                                      |
 | **The decay clock is bounded symmetrically, and narrowly**                        | §7.4        | "bounds the decay clock symmetrically, and narrowly"                                                                                                                                                                                      |
 | **No view type both claims capability and reports the warrant**                   | §9.1, §10   | "no view type both claims capability and reports the warrant"                                                                                                                                                                             |
+| **No evidence ladder anywhere in `@mcat/contracts`, exported or not**             | §9.1, §10   | `tests/architecture/contracts-ladder-ban.test.ts` — the package, not a file list: exported enums, exported member lists, every file's source text, the banned symbol names, plus a non-vacuity calibration                                |
 | **No field name means capability on one view and warrant on another**             | §9.1        | "no field name means capability on one view and warrant on another"                                                                                                                                                                       |
 | BKT eligibility is an allowlist; an unrecognized or future mode is ineligible     | §3.5, §5.1  | "keeps BKT eligibility an allowlist, so a future evidence mode is ineligible by default"                                                                                                                                                  |
 | A declared mode never mints an administration condition the runner did not report | §4.2, §7.2  | "never lets a declared mode mint an administration condition the runner did not report"; also "never credits a condition the administration facts did not establish"                                                                      |
@@ -1404,6 +1416,11 @@ future reader can verify rather than trust.
 
 ### 16.2 Held only by review — treat as unenforced
 
+- **Learner-facing copy (§15.5).** Nothing asserts that the capability badge and the warrant badge
+  read differently. A guard would have to know which authority a string belongs to, and a string is
+  the one thing a type cannot carry. `EVIDENCE_REFRESH_LABEL` limits the blast radius — both warrant
+  surfaces read it, so they cannot diverge from each other — but a future screen wording BKT decay as
+  "needs refresh" again would pass every check in this repo.
 - **Field-by-field `EvidenceRecord` mapping (§7.3).** Individual rows beyond the ones named above are
   checked by review and by unit tests of the adapter, not by an invariant that would survive a
   refactor.

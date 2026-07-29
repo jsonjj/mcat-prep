@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ChoiceId, StudyStepView } from '@mcat/contracts';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
-import { evidenceWarrant } from '../components/evidence-language';
+import { EVIDENCE_REFRESH_LABEL, evidenceWarrant } from '../components/evidence-language';
 import {
   useContinueStep,
   useRequestReveal,
@@ -156,7 +156,9 @@ export function Study() {
                 {warrant.status}
                 {warrant.nextGap ? ` Next: ${warrant.nextGap}.` : ''}
               </span>
-              {s.refreshNeeded ? <span className="mc-skillbar__tag">◐ Needs refresh</span> : null}
+              {s.refreshNeeded ? (
+                <span className="mc-skillbar__tag">◐ {EVIDENCE_REFRESH_LABEL}</span>
+              ) : null}
             </div>
             <ul className="mc-evidence">
               {Object.entries(s.evidenceCounts).map(([kind, n]) => (

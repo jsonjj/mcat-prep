@@ -496,9 +496,11 @@ CARS_FOC / CARS_RWT / CARS_RBT → the separate CARS IRT track (not a science op
    it needs a governed revision rather than a rename in passing.
 7. **Coarsening the `*_SATISFIED` reason codes** (§4.1: the ordinal tier is losslessly recoverable from
    the published codes). Trades learner-facing specificity for making the rank unreconstructable.
-8. **Learner-facing copy**: "Needs refresh" is currently rendered from `reviewDue` on the Skills page and
-   from `refreshNeeded` on the warrant surfaces. The fields are correctly distinct (§4.1.1); the shared
-   wording has not been re-adjudicated.
+8. **Learner-facing copy — ratify the wording**: "Needs refresh" was rendered from `reviewDue` on the
+   Progress skill rail and from `refreshNeeded` on the warrant surfaces. The fields were already
+   distinct (§4.1.1); the shared wording was not. As of 2026-07-29 the BKT side reads "Review due" and
+   the warrant side "Evidence needs refreshing". That the two authorities may not share a phrase is
+   settled; the exact words are a product-voice call still owed.
 
 ---
 
