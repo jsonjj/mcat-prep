@@ -183,8 +183,10 @@ export function CarsDuel() {
       <div className="mc-screen">
         <h1 className="mc-h1">Debate to sharpen your reasoning</h1>
         <p className="mc-muted mc-fineprint">
-          No winner or loser — it ends with constructive feedback. This builds CARS reps; it never
-          counts toward mastery.
+          CARS Duel is a live, back-and-forth debate with an AI sparring partner — the fastest way to
+          train the exact skill CARS tests: reading an argument closely and pressure-testing it.
+          Choose how you want to spar, trade a few rounds on the topic below, and finish with a
+          constructive reflection. No winner or loser, and it never counts toward mastery.
         </p>
 
         <Card elevated>
