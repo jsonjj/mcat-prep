@@ -81,7 +81,7 @@ function SkillRail() {
                   {skill.reviewDue ? (
                     <span className="mc-skillring__tag">◐ {REVIEW_DUE_LABEL}</span>
                   ) : skill.atCapabilityCut ? (
-                    <span className="mc-skillring__tag mc-skillring__tag--mastered">
+                    <span className="mc-skillring__tag mc-skillring__tag--atcut">
                       ★ {AT_CAPABILITY_CUT_LABEL}
                     </span>
                   ) : null}

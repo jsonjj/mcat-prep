@@ -14,7 +14,10 @@
  * passed `reviewDue`, the warrant's name on a capability input.
  * `atCapabilityCut` is `P(L)` at or above the cut, and it was called `mastered`
  * for the same reason and with the same consequence: a claim's name on a value
- * that carries no warrant.
+ * that carries no warrant. The CSS suffixes now match — `--reviewdue` and
+ * `--atcut`, not `--refresh` and `--mastered` — so the class a reader finds in
+ * the stylesheet no longer names a different question from the prop that picks
+ * it.
  *
  * The ring is decorative (`aria-hidden`); the surrounding control/list item
  * carries the accessible name and value.
@@ -25,8 +28,8 @@ type RingTone = 'mastery' | 'review';
 
 function arcClass(pct: number, atCut: boolean, reviewDue: boolean, tone: RingTone): string {
   if (tone === 'review') return 'mc-ring__arc mc-ring__arc--review';
-  if (reviewDue) return 'mc-ring__arc mc-ring__arc--refresh';
-  if (atCut) return 'mc-ring__arc mc-ring__arc--mastered';
+  if (reviewDue) return 'mc-ring__arc mc-ring__arc--reviewdue';
+  if (atCut) return 'mc-ring__arc mc-ring__arc--atcut';
   return pct >= HIGH_MASTERY_PCT ? 'mc-ring__arc mc-ring__arc--high' : 'mc-ring__arc mc-ring__arc--low';
 }
 

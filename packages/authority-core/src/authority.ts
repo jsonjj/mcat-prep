@@ -2441,7 +2441,13 @@ export class Authority {
     }
   }
 
-  // ---- Adaptive Practice (test-out; practice-selection / provisional-v1) --
+  // ---- Adaptive Practice (test-out; the `practice-selection` policy) -------
+  // Named by policy id alone: the version belongs to
+  // `PRACTICE_SELECTION_MANIFEST` and nowhere else. This line used to spell the
+  // pair, which was true and still owed — an in-step second copy is exactly what
+  // the twelve stale `mastery-bkt` citations were before their bump, and
+  // `tests/architecture/policy-version-single-source.test.ts` can only catch the
+  // spelling once it drifts.
   // Server-authoritative WRITE path: a first, unassisted answer moves P(L)
   // through the existing mastery-bkt engine. Items come from the injected bank
   // port (real Postgres corpus in prod, synthetic fallback in dev/tests).

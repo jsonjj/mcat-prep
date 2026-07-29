@@ -10,8 +10,12 @@ import { EVIDENCE_QUALITY_TIERS } from '../../packages/domain/src/mastery';
  * `services/`, except the packages that legitimately own or consume the tier.
  *
  * The ordinal evidence ladder is a WARRANT rank — how independent, diverse and
- * fresh the supporting evidence is. Capability is BKT's `pL` / `mastered` / the
- * 0.95 cut and nothing else. The tier is legitimate behind the private
+ * fresh the supporting evidence is. Capability is BKT's `pL` / `atCapabilityCut`
+ * / the 0.95 cut and nothing else — `mastered` used to stand where
+ * `atCapabilityCut` does, and it stopped belonging in this sentence when
+ * `488be1b` made `mastered` the COMPOSED claim: capability AND a warrant, which
+ * is both authorities rather than BKT's alone. The tier is legitimate behind the
+ * private
  * `Authority.skillWarrants`, where the planner may compare ranks; it is
  * illegitimate everywhere else, because a published ordinal is read as
  * attainment by the next consumer to arrive, and then two systems are answering

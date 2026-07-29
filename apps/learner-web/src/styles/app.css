@@ -1329,7 +1329,9 @@ body {
   font-weight: 600;
   color: var(--mc-ink-muted);
 }
-.mc-skillring__tag--mastered {
+/* Fed `atCapabilityCut` and labelled "Strong". It was `--mastered`, which is the
+   composed claim's name on the capability half alone — see the ring tones. */
+.mc-skillring__tag--atcut {
   color: var(--mc-state-strong);
 }
 
@@ -3057,12 +3059,18 @@ body {
 }
 /* Tone by capability, consistent with the app palette: teal when high, amber
    when low, deep teal-green at the capability cut, muted violet when a strong
-   skill decays past its review line. TWO CLASS NAMES OVERSTATE WHAT THEY SHOW,
-   and both renames are separate changes: `--refresh` is the BKT review-due tone
-   and NOT the evidence warrant's staleness, and `--mastered` is fed
-   `atCapabilityCut`, which is `P(L)` at the cut and carries no warrant — the
-   rail it styles renders "Strong", not "Mastered". `--review` (Practice's
-   weakest lessons) is always amber. */
+   skill decays past its review line. `--review` (Practice's weakest lessons) is
+   always amber.
+
+   Each suffix is named for the value that selects it. `--atcut` was `--mastered`
+   while being fed `atCapabilityCut`, which is `P(L)` at the cut and carries no
+   warrant, and `--reviewdue` was `--refresh` while being fed BKT decay rather
+   than the evidence warrant's staleness. Both were the claim's name on a value
+   that does not support it — the same defect as the `MasteryRing` prop they are
+   passed (`refreshNeeded` fed `reviewDue`), fixed in `e499396`, and as
+   `getMasterySkills`'s `mastered`, fixed in `488be1b`. A comment recorded the
+   mismatch here instead; the comment was the last place in this app still
+   spelling a claim over a capability value. */
 .mc-ring__arc--review,
 .mc-ring__arc--low {
   stroke: #e88a4e;
@@ -3070,10 +3078,10 @@ body {
 .mc-ring__arc--high {
   stroke: var(--mc-primary);
 }
-.mc-ring__arc--mastered {
+.mc-ring__arc--atcut {
   stroke: var(--mc-state-strong);
 }
-.mc-ring__arc--refresh {
+.mc-ring__arc--reviewdue {
   stroke: var(--mc-retained);
 }
 @media (prefers-reduced-motion: reduce) {
