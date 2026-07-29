@@ -139,16 +139,12 @@ function lessonEvidence(): EvidenceRecord {
   return result.evidence;
 }
 
-/**
- * A wire command. Typed as the full `PracticeAttemptCommand` deliberately: the
- * client's `firstAttempt` claim still crosses the wire, and the authority is
- * required to reach the same answer without it.
- */
+/** A wire command. There is no `firstAttempt` claim on it at all. */
 const command = (
   questionId: string,
   specId: string,
   chosenChoiceId: 'A' | 'B' | 'C' | 'D' | null,
-): PracticeAttemptCommand => ({ questionId, specId, chosenChoiceId, firstAttempt: true });
+): PracticeAttemptCommand => ({ questionId, specId, chosenChoiceId });
 
 /** Submit one practice answer and return the evidence records it appended. */
 async function submitAndCollect(
@@ -345,7 +341,6 @@ describe('the practice evidence timestamp is server-bounded', () => {
         questionId: 'q',
         specId: 's',
         chosenChoiceId: 'A',
-        firstAttempt: true,
         occurredAt: '2999-01-01T00:00:00.000Z',
       }).success,
     ).toBe(false);
