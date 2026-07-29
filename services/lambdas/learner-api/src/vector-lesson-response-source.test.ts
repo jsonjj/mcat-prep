@@ -279,19 +279,19 @@ describe('vector lesson response source', () => {
     expect(submission?.assistanceObserved).toBe(true);
     expect(submission?.binding?.activityRole).toBe('CHANGED_EXIT');
 
-    // The administration is now independent. It still moves no P(L), because the
-    // binding declares instructional-only and carries no reasoning operation —
-    // the two blockers the queued Phase 7 items address, and the only two left.
+    // The administration is independent, and since `e579779` licensed this
+    // binding it now moves P(L) too. Both blockers this test was written to
+    // record are gone: `80ac186` removed the assistance one by observing the
+    // help the screen carried, and `e579779` removed the declaration one.
     const adaptation = adapt(submission!);
     expect(adaptation.evidence?.independent).toBe(true);
     expect(adaptation.evidence?.assistanceLevel).toBe('A0');
-    expect(adaptation.qualification.status).toBe('rejected');
-    if (adaptation.qualification.status === 'rejected') {
-      expect(adaptation.qualification.rejectionCodes).not.toContain('ASSISTANCE_NOT_A0');
-      expect(adaptation.qualification.rejectionCodes).toEqual([
-        'INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED',
-      ]);
-    }
+    expect(adaptation.qualification.status).toBe('qualified');
+    // `transfer`, not `independent`: the binding declares `TRANSFER`, and the
+    // resolved kind is what BKT and the evidence record both read. That
+    // distinction is the whole lesson-only mastery boundary — see
+    // `tests/architecture/lesson-mastery-reachability.test.ts`.
+    expect(adaptation.evidence?.kind).toBe('transfer');
   });
 
   it('qualifies an unassisted terminal check once its binding is declared eligible', () => {
@@ -534,10 +534,10 @@ describe('vector lesson response source', () => {
     }
   });
 
-  it('produces one evidence record and zero BKT observations for all 42 items', () => {
+  it('produces one evidence record for all 42 items and BKT observations for exactly the 6 licensed', () => {
     let evidenceRecords = 0;
-    let qualified = 0;
     let independent = 0;
+    const qualifiedIds: string[] = [];
     const rejectionCodes = new Set<string>();
 
     for (const authored of AUTHORED_BINDINGS) {
@@ -558,21 +558,34 @@ describe('vector lesson response source', () => {
       expect(adaptation.status).toBe('adapted');
       if (adaptation.evidence !== null) evidenceRecords += 1;
       if (adaptation.evidence?.independent === true) independent += 1;
-      if (adaptation.qualification.status === 'qualified') qualified += 1;
-      else for (const code of adaptation.qualification.rejectionCodes) rejectionCodes.add(code);
+      if (adaptation.qualification.status === 'qualified') {
+        qualifiedIds.push(authored.item_binding_id);
+      } else for (const code of adaptation.qualification.rejectionCodes) rejectionCodes.add(code);
     }
 
     expect(evidenceRecords).toBe(AUTHORED_BINDINGS.length);
-    // 30 of the 42 are now genuinely independent administrations, up from 0 —
-    // and every one of the 12 fabricated `independent: true` records that
+    // 30 of the 42 are genuinely independent administrations, up from 0 — and
+    // every one of the 12 fabricated `independent: true` records that
     // fail-open 6 produced is still absent, because none of these came from an
     // authored byte.
     expect(independent).toBe(30);
-    // P(L) still moves for none of them. The assistance blocker is gone; the
-    // remaining reason is the one the queued Phase 7 items address, and it is
-    // now the ONLY one — which is what makes relabelling those checks able to
-    // change behaviour at all.
-    expect(qualified).toBe(0);
+    // Exactly 6, up from 0: the `CHANGED_EXIT` pairs `e579779` licensed, one
+    // `initial` and one `reentry` per KC. Named rather than counted, because a
+    // count would pass just as well if the wrong six had been licensed, and
+    // held exact in both directions — a floor would tolerate a silent slide
+    // back toward zero, which is what the original `toBe(0)` guarded against
+    // from the other side.
+    expect(qualifiedIds.sort()).toEqual([
+      'vtr-dir-changed-exit-initial',
+      'vtr-dir-changed-exit-reentry',
+      'vtr-trig-changed-exit-initial',
+      'vtr-trig-changed-exit-reentry',
+      'vtr-vec-changed-exit-initial',
+      'vtr-vec-changed-exit-reentry',
+    ]);
+    // The other 36 still refuse, and for the same two reasons as before: 12
+    // scaffolded administrations on assistance, the rest on the legacy
+    // instructional-only label `NEAR_EXIT` and every non-terminal role keep.
     expect([...rejectionCodes].sort()).toEqual([
       'ASSISTANCE_NOT_A0',
       'INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED',
@@ -632,13 +645,27 @@ describe('vector lesson response source', () => {
 
     const adaptations = submissions.map(adapt);
     expect(adaptations.filter((a) => a.evidence?.independent === true)).toHaveLength(12);
-    // Still zero P(L) movement, and now for exactly ONE reason rather than two.
-    expect(adaptations.filter((a) => a.qualification.status === 'qualified')).toHaveLength(0);
+    // THREE, not six. Six bindings are licensed, but a clean walk administers
+    // only the `initial` half of each pair: the `reentry` exit is reachable
+    // solely through the repair path, which a learner who answers correctly
+    // never enters. That asymmetry is the reachability finding this number
+    // belongs to — see `tests/architecture/lesson-mastery-reachability.test.ts`.
+    expect(
+      adaptations
+        .filter((a) => a.qualification.status === 'qualified')
+        .map((a) => a.evidence?.questionId)
+        .sort(),
+    ).toEqual([
+      'vtr-dir-changed-exit-initial',
+      'vtr-trig-changed-exit-initial',
+      'vtr-vec-changed-exit-initial',
+    ]);
     const codes = adaptations.flatMap((a) =>
       a.qualification.status === 'rejected' ? [...a.qualification.rejectionCodes] : [],
     );
+    // 18 committed responses less the 3 that now qualify.
     expect(codes.filter((code) => code === 'INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED')).toHaveLength(
-      18,
+      15,
     );
     expect(codes.filter((code) => code === 'ASSISTANCE_NOT_A0')).toHaveLength(6);
   });

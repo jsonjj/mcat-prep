@@ -70,9 +70,19 @@ function body(response: { body?: string }) {
   return JSON.parse(response.body ?? 'null') as Record<string, unknown>;
 }
 
+/** Only the grain fields these tests read; the projection carries far more. */
+interface PersistedGrain {
+  readonly pL: number;
+}
+
 interface PersistedLessonState {
   readonly evidence: readonly Record<string, unknown>[];
-  readonly mastery?: { readonly kc: Record<string, unknown> };
+  readonly mastery?: {
+    readonly kc: Record<string, PersistedGrain>;
+    readonly skill: Record<string, PersistedGrain | undefined>;
+    readonly practicedLessonIds: readonly string[];
+    readonly appliedObservationIds: readonly string[];
+  };
   readonly vectorLessonRun?: { readonly committedResponses: Record<string, unknown> };
 }
 
@@ -534,8 +544,7 @@ describe('V3-LES-130923 server-authoritative HTTP integration', () => {
     });
     expect(JSON.stringify(projection?.state.vectorLessonRun)).not.toMatch(/"mastery"|"readiness"/i);
 
-    // One committed response, one evidence record, across the whole delivery —
-    // and all 42 bindings are instructional-only, so nothing reaches BKT.
+    // One committed response, one evidence record, across the whole delivery.
     const persisted = learnerState(repository, principal);
     const committed = Object.keys(persisted.vectorLessonRun?.committedResponses ?? {});
     expect(committed.length).toBeGreaterThan(0);
@@ -543,10 +552,53 @@ describe('V3-LES-130923 server-authoritative HTTP integration', () => {
     expect(new Set(persisted.evidence.map((record) => record.evidenceId)).size).toBe(
       committed.length,
     );
+
+    // Two kinds, not one. `e579779` licensed the three `CHANGED_EXIT` checks a
+    // clean walk administers, so this delivery now writes `transfer` evidence
+    // alongside the instructional records — stated as an exact set, because a
+    // floor here would tolerate the licensed bindings silently going back to
+    // instructional-only, which is what the original single-kind assertion was
+    // guarding against from the other side.
     expect(new Set(persisted.evidence.map((record) => record.kind))).toEqual(
-      new Set(['instruction']),
+      new Set(['instruction', 'transfer']),
     );
-    expect(persisted.mastery).toBeUndefined();
+    // And exactly which records they are. A count alone would pass if the
+    // wrong three items had been licensed.
+    expect(
+      persisted.evidence
+        .filter((record) => record.kind === 'transfer')
+        .map((record) => record.questionId)
+        .sort(),
+    ).toEqual([
+      'vtr-dir-changed-exit-initial',
+      'vtr-trig-changed-exit-initial',
+      'vtr-vec-changed-exit-initial',
+    ]);
+    // A delivery that used to write NO mastery at all now writes some, and this
+    // is the end-to-end proof that the licensing reaches BKT through the real
+    // HTTP kernel rather than only through the adapter in isolation. Exact
+    // values: `669fbcf` puts one correct lesson exit at 0.2 -> 0.4304 through
+    // the raised guess, so a drift here means the discount moved.
+    const mastery = persisted.mastery;
+    expect(mastery).toBeDefined();
+    expect(mastery?.appliedObservationIds).toHaveLength(3);
+    expect(Object.keys(mastery?.kc ?? {}).sort()).toEqual([
+      'V3-KC-159529',
+      'V3-KC-700208',
+      'V3-KC-866848',
+    ]);
+    for (const [kcId, grain] of Object.entries(mastery?.kc ?? {})) {
+      expect(grain.pL, kcId).toBeCloseTo(0.4304005556947988, 12);
+    }
+    // The two reasoning-operation grains the three exits target: `QUANTIFY`
+    // twice (vectors and trig), `PREDICT` once (direction). Two observations
+    // compound, one does not, which is what separates the values.
+    expect(mastery?.skill?.QUANTIFY?.pL).toBeCloseTo(0.6583458447033395, 12);
+    expect(mastery?.skill?.PREDICT?.pL).toBeCloseTo(0.4304005556947988, 12);
+    // Nowhere near the 0.95 cut, and no warrant either — see
+    // `tests/architecture/lesson-mastery-reachability.test.ts` for why a
+    // lesson cannot finish this on its own.
+    expect(mastery?.practicedLessonIds).toEqual(['V3-LES-130923']);
 
     const reopened = await api.handle(
       request(
