@@ -480,6 +480,15 @@ export class RepositoryLearnerKernel {
         resolution: submission.bindingResolution.status,
         unrecognizedKeys: [...submission.bindingResolution.unrecognizedKeys],
       },
+      // The level AND whether the runtime measured it. `EvidenceRecord` carries
+      // only the level, and `AssistanceLevel` has no `UNOBSERVED` member, so
+      // "we saw no help taken" and "we could not tell" are indistinguishable
+      // there. Recording the pair here keeps them distinguishable somewhere
+      // durable until the contract can carry the fact itself.
+      assistance: {
+        level: submission.response.assistanceLevel,
+        observed: submission.assistanceObserved,
+      },
       observationId: adaptation.observation?.observationId ?? null,
       evidenceId: adaptation.evidence === null || refusedByAuthority ? null : evidenceId,
       evidenceKind: refusedByAuthority ? null : (adaptation.evidence?.kind ?? null),
@@ -678,7 +687,11 @@ export class RepositoryLearnerKernel {
   }
 
   private authority(): Authority {
-    return new Authority(this.dependencies.bank, this.dependencies.clock, this.dependencies.practiceBank);
+    return new Authority(
+      this.dependencies.bank,
+      this.dependencies.clock,
+      this.dependencies.practiceBank,
+    );
   }
 
   /**
@@ -722,7 +735,10 @@ export class RepositoryLearnerKernel {
   private async mutate(
     envelope: CommandEnvelope,
     principal: Principal,
-    apply: (authority: Authority, state: LearnerState) => MutationApplication | Promise<MutationApplication>,
+    apply: (
+      authority: Authority,
+      state: LearnerState,
+    ) => MutationApplication | Promise<MutationApplication>,
   ): Promise<JsonObject> {
     return this.dependencies.repository.transaction(async (transaction) => {
       const projection = await transaction.lockLearner(principal.learnerId);

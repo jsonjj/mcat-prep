@@ -273,11 +273,13 @@ describe('V3-LES-130923 server-authoritative HTTP integration', () => {
       skillId: 'V3-KC-866848',
       cluster: 'R1',
       kind: 'instruction',
-      // This runtime does not observe help taken, so it cannot establish an
-      // independent administration. The authored `assistance_state: 'A0'` on
-      // this item used to become the runtime level and fabricate the warrant.
-      independent: false,
-      assistanceLevel: 'A3',
+      // The entry check's screen carries no scaffold and offers no cue, and the
+      // runtime observed that it displayed neither, so this really was an
+      // independent administration. The level comes from the delivery ledger the
+      // runtime wrote at commitment, never from the item's authored byte — that
+      // byte no longer reaches the response record at all.
+      independent: true,
+      assistanceLevel: 'A0',
       questionId: 'vtr-vec-entry-check-1',
       itemVersion: 1,
       valid: true,
@@ -292,7 +294,13 @@ describe('V3-LES-130923 server-authoritative HTTP integration', () => {
       evidenceId: events[1]?.eventId,
       evidenceKind: 'instruction',
       bkt: 'not_qualified',
-      rejectionCodes: ['INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED', 'ASSISTANCE_NOT_A0'],
+      // One reason left, not two. The assistance fail-close is gone; what still
+      // holds P(L) still is the authored declaration, which is what the queued
+      // Phase 7 relabelling addresses — and could not have addressed while every
+      // response also collected ASSISTANCE_NOT_A0.
+      rejectionCodes: ['INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED'],
+      // The level, and that the runtime MEASURED it rather than fail-closing.
+      assistance: { level: 'A0', observed: true },
       // The binding-load diagnostics ride on every accepted response, so an
       // unmapped author key or a withheld binding can never be silent.
       binding: { resolution: 'parsed', unrecognizedKeys: [] },
@@ -596,6 +604,7 @@ describe('a refused BKT application leaves no evidence behind', () => {
         serverScoringAuthorityRef: 'server-only://refusal-probe',
       }),
       bindingResolution: { status: 'parsed', unrecognizedKeys: [] },
+      assistanceObserved: true,
       response: LessonRuntimeResponseFactsSchema.parse({
         questionId: 'refusal-probe-question',
         itemBindingId: 'refusal-probe-binding',

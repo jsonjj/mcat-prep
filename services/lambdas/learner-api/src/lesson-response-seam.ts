@@ -52,4 +52,21 @@ export interface LessonResponseSubmission {
   readonly bindingResolution: LessonBindingResolution;
   readonly response: LessonRuntimeResponseFacts;
   readonly scoring: ServerScoringResolution;
+  /**
+   * Whether the runtime MEASURED the `response.assistanceLevel` it reported, or
+   * fail-closed because it could not tell.
+   *
+   * "We saw them take no help" and "we could not see" are different facts, and
+   * collapsing them is what made every check ineligible for a whole phase.
+   * `AssistanceLevel` is a closed four-member vocabulary with no `UNOBSERVED`
+   * member, so an unobserved level has to borrow one — and the borrowed value
+   * cannot then be told from a measured one by looking at the level alone. This
+   * flag is the distinction, and the workflow persists it on the response ledger.
+   *
+   * Required rather than optional, and NOT defaulted to `true`: a source that
+   * does not state whether it observed has not observed. It is a report, never a
+   * gate — the level it accompanies is what fails closed, so a source that lies
+   * here gains no qualification it did not already have.
+   */
+  readonly assistanceObserved: boolean;
 }

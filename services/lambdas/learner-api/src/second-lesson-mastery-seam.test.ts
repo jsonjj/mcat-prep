@@ -42,11 +42,12 @@ import { RepositoryLearnerKernel, type LessonResponseSubmission } from './workfl
  * Two halves, and both are load-bearing:
  *
  * 1. The real artifact, exactly as authored. Every one of its bindings takes the
- *    fail-closed `['INSTRUCTIONAL']` default (contract §3.5/§11), and a lesson
- *    runtime cannot observe assistance taken so it must emit `A3` (§3.3, and the
- *    defect commit `9fcaea3`). The correct outcome is therefore evidence
- *    recorded, `mastery` untouched, zero BKT observations — asserted here as the
- *    RIGHT answer, not as a shortfall.
+ *    fail-closed `['INSTRUCTIONAL']` default (contract §3.5/§11), and this lesson
+ *    has no delivery runtime, so nothing can observe the assistance its screens
+ *    would carry and its responses stay unobserved (§3.3, and the defect commit
+ *    `9fcaea3`). The correct outcome is therefore evidence recorded, `mastery`
+ *    untouched, zero BKT observations — asserted here as the RIGHT answer, not as
+ *    a shortfall.
  * 2. The same real artifact with one binding deliberately declared BKT-eligible
  *    by an author, answered cleanly. `P(L)` must move, for every member of the
  *    seven-mode allowlist. Without this half, half 1 would pass just as well
@@ -189,13 +190,14 @@ const clock = fixedClock(NOW);
 /**
  * One committed response, expressed only in seam vocabulary.
  *
- * `assistanceLevel` defaults to `A3` for the same reason
- * `vector-lesson-response-source.ts` fail-closes it: a lesson runtime that
- * cannot observe the help a learner took must not state a level, and `A3` is the
- * only member of the closed vocabulary that can never satisfy `ASSISTANCE_NOT_A0`.
- * Hint and reveal are left `false` because those two ARE observable from a run's
- * own state machine, which isolates the assistance fail-close as the single
- * runtime reason `P(L)` does not move.
+ * `assistanceLevel` defaults to `A3` with `assistanceObserved: false`, and for
+ * this lesson that is the honest report rather than a placeholder: `V3-LES-844372`
+ * **has no delivery runtime at all**, so there is no screen whose support could
+ * be observed. The vector lesson now measures its own delivery and emits `A0`
+ * through `A2` accordingly; a lesson with no runtime cannot, and its responses
+ * stay unobserved and therefore fail closed. Hint and reveal are left `false` so
+ * the assistance fail-close is isolated as the single runtime reason `P(L)` does
+ * not move.
  */
 function submissionFor(
   binding: LessonItemBinding,
@@ -210,6 +212,7 @@ function submissionFor(
     envelopeBindingVersion: SECOND_LESSON.artifactVersion,
     binding,
     bindingResolution: { status: 'parsed', unrecognizedKeys: [] },
+    assistanceObserved: overrides.assistanceLevel !== undefined,
     response: LessonRuntimeResponseFactsSchema.parse({
       questionId,
       itemBindingId: binding.itemBindingId,

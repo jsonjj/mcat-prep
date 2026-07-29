@@ -32,8 +32,9 @@ import type { VectorLessonResponseRecord, VectorLessonRun } from './vector-lesso
  *   here from the protected scoring authority rather than read off the
  *   persisted run, so a tampered projection cannot assert an outcome.
  * - Nothing an author wrote may cross into a field the adapter reads as a
- *   runtime fact. See `assistanceLevelTaken` below: this is the rule that was
- *   broken once already and is now enforced by construction.
+ *   runtime fact. See `assistanceTaken` below: this is the rule that was broken
+ *   once already and is now enforced by construction — the runtime's response
+ *   record carries no authored assistance field for this module to read.
  */
 
 const LESSON_SCRIPT = buildVectorLessonArtifacts().script;
@@ -195,53 +196,102 @@ export function resolveVectorLessonScoring(
 // ---------------------------------------------------------------------------
 
 /**
- * The least-independent member of the closed `AssistanceLevel` vocabulary.
+ * The graded level each of this runtime's own support mechanisms supplies.
  *
- * There is no `UNKNOWN` member and this module may not add one, so `A3` is what
- * "assistance taken was not observed" has to be spelled as. It is chosen
- * because it is the value that can never satisfy `ASSISTANCE_NOT_A0`, not
- * because the attempt is believed to have been fully scaffolded.
+ * This is the measurement lesson-evidence-mastery-contract §3.3 asks for: the
+ * level names WHICH MECHANISM the runtime displayed, so it is a property of the
+ * delivery rather than a copy of an authored string. The runtime has exactly two
+ * ways to put solution-path support on a question screen, and it knows which one
+ * it used:
+ *
+ * - the persistent structured reference panel (`visual`) — a standing scaffold,
+ *   `A2`-class structured support;
+ * - the released `REQUEST_SUPPORT` cue (`supportFor`) — one bounded procedural
+ *   cue, `A1`-class.
+ *
+ * `A3` has no member here on purpose. `A3` means a worked solution path was in
+ * front of the learner, and this runtime never puts one on a scored screen:
+ * worked examples are exposition stages with no item and no commit, and feedback
+ * is only reachable after commitment. So no OBSERVED administration from this
+ * runtime is ever `A3`, which is what makes `A3` from this runtime mean exactly
+ * one thing — see {@link UNOBSERVED_ASSISTANCE}. That property is asserted by
+ * test rather than left as a reading of this comment.
+ */
+const SCAFFOLD_PANEL_LEVEL: AssistanceLevel = 'A2';
+const RELEASED_CUE_LEVEL: AssistanceLevel = 'A1';
+const NO_SUPPORT_DISPLAYED: AssistanceLevel = 'A0';
+
+/**
+ * How "assistance taken was not observed" is spelled, and why it is not simply
+ * "maximum assistance".
+ *
+ * The closed `AssistanceLevel` vocabulary has no `UNOBSERVED` member and this
+ * module may not add one — that is a `@mcat/contracts` change, reported and not
+ * made. So the fail-closed emission borrows `A3`, chosen because it is the value
+ * that can never satisfy `ASSISTANCE_NOT_A0`.
+ *
+ * Two things keep that borrowing from collapsing the distinction the way the
+ * blanket `A3` did:
+ *
+ * - No observed level from this runtime is `A3` (above), so an `A3` on a record
+ *   from this runtime is unambiguously "could not tell" rather than "we know
+ *   they took the most help".
+ * - `LessonResponseSubmission.assistanceObserved` states it outright, and the
+ *   workflow writes it onto the response ledger, so the distinction is a
+ *   persisted fact rather than an inference from the level.
+ *
+ * It remains fail-closed for qualification: unobserved cannot become permissive,
+ * because the level it emits is the one the BKT gate refuses.
  */
 const UNOBSERVED_ASSISTANCE: AssistanceLevel = 'A3';
 
 /**
- * What help the learner actually took.
+ * What help the learner actually took, and whether the runtime saw it.
  *
- * THIS RUNTIME CANNOT MEASURE IT, so the seam refuses to state a level.
+ * NOTHING AN AUTHOR WROTE REACHES THIS. `VectorLessonResponseRecord` carries no
+ * authored `assistance_state` field at all — it was deleted rather than left
+ * unread, because fail-open 6 was a guard defeated by reading around it, and an
+ * unread field is an invitation to read it. The only inputs are the delivery
+ * facts `commitResponse` captured from run state at the moment of commitment.
  *
- * `record.assistanceState` looks like the answer and is not: it is the authored
- * `assistance_state` copied verbatim from the artifact
- * (`v3-vector-lesson-artifacts.ts` → `exposeCurrentStage`), so it describes
- * what help the DESIGN makes available, not what the learner took. Emitting it
- * here handed the lesson author the independence decision and, through
- * `ASSISTANCE_NOT_A0`, the `P(L)` decision: flipping one authored byte from
- * `A2` to `A0` flipped a response from rejected to qualified. §3.3 says that
- * field never touches independence, and the adapter rewrites those same bytes
- * to `AUTHORED_ASSISTANCE_LEVEL_A0` on the binding path for exactly this
- * reason. Reading them off the artifact's other side defeated that guard.
+ * The level is the MOST support displayed, which is the standing scaffold when
+ * one was present: a panel that sat on screen for the whole administration
+ * supplies more of the solution path than one bounded cue, and a learner who
+ * took the cue as well took nothing beyond it that this runtime can see. Taking
+ * the cue is not thereby forgotten — it lands on `contentBearingHintUsed`, which
+ * disqualifies on its own.
  *
- * What this runtime does observe is one binary: whether `REQUEST_SUPPORT` was
- * issued and the cue released. It observes neither the graded level of help
- * taken nor whether the learner consumed the scaffold that an assisted screen
- * presents without being asked. Absence of a support request is therefore not
- * evidence that no help was taken.
+ * An OFFER is not help. `observedSupportOffered` never raises the level, because
+ * a cue the learner declined carried no content toward the answer. That is the
+ * whole difference between assistance offered and assistance taken (§3.3), and
+ * it is why the old blanket refusal was wider than the hazard: what the design
+ * makes available is the author's, but what the runtime DISPLAYED is the
+ * runtime's own act, and observing your own output is not trusting the artifact.
  *
- * The tempting exception is the authored-`A0` item, where the runtime really
- * does present no scaffold and really does refuse `REQUEST_SUPPORT`, so the
- * learner really was unassisted. It is still refused, because the author's byte
- * is what produced that behaviour and no runtime observation can contradict it.
- * "The author decides independence" is the defect whether the decision travels
- * in one hop or three.
- *
- * So there is no case in which this runtime establishes an independent
- * administration, and the honest emission is the fail-closed level in every
- * case. Concretely: every response is `A3`, every `EvidenceRecord.independent`
- * is `false`, and no response can ever qualify for BKT on assistance grounds —
- * which is the correct answer until the runtime is taught to measure help
- * taken, at which point this function is where that measurement lands.
+ * The scope of the observation is the administration itself — the screen bearing
+ * the item. Instruction the learner met earlier in the lesson is not assistance
+ * on this attempt; if it were, no lesson item could ever be unassisted, since
+ * every lesson item follows teaching. Cross-item contamination is the freshness
+ * and family axis, and it is enforced there.
  */
-function assistanceLevelTaken(_record: VectorLessonResponseRecord): AssistanceLevel {
-  return UNOBSERVED_ASSISTANCE;
+interface ObservedAssistance {
+  readonly observed: boolean;
+  readonly level: AssistanceLevel;
+}
+
+function assistanceTaken(record: VectorLessonResponseRecord): ObservedAssistance {
+  // `restoreVectorLessonRun` casts unvalidated JSON, so the declared type cannot
+  // express a run persisted before the delivery ledger existed. Checked rather
+  // than trusted, and absence fails closed to unobserved.
+  if (
+    typeof record.observedScaffoldDisplayed !== 'boolean' ||
+    typeof record.observedSupportRequested !== 'boolean'
+  ) {
+    return { observed: false, level: UNOBSERVED_ASSISTANCE };
+  }
+  if (record.observedScaffoldDisplayed) return { observed: true, level: SCAFFOLD_PANEL_LEVEL };
+  if (record.observedSupportRequested) return { observed: true, level: RELEASED_CUE_LEVEL };
+  return { observed: true, level: NO_SUPPORT_DISPLAYED };
 }
 
 /**
@@ -253,9 +303,6 @@ function assistanceLevelTaken(_record: VectorLessonResponseRecord): AssistanceLe
  * fact has no observation, which fails closed to `true`.
  */
 function contentBearingHintUsed(record: VectorLessonResponseRecord): boolean {
-  // `restoreVectorLessonRun` casts unvalidated JSON, so the declared type
-  // cannot express a run persisted before this observation existed. Checked
-  // rather than trusted.
   return typeof record.observedSupportRequested === 'boolean'
     ? record.observedSupportRequested
     : true;
@@ -285,11 +332,13 @@ export function vectorLessonResponseSubmission(
 ): LessonResponseSubmission {
   const binding = AUTHORED_BINDINGS.bindings.get(record.itemId) ?? null;
   const bindingVersion = binding?.bindingVersion ?? AUTHORED_ENVELOPE.artifactVersion;
+  const assistance = assistanceTaken(record);
 
   return {
     lessonId: AUTHORED_ENVELOPE.lessonId,
     envelopeBindingVersion: AUTHORED_ENVELOPE.artifactVersion,
     binding,
+    assistanceObserved: assistance.observed,
     bindingResolution:
       AUTHORED_BINDINGS.resolutionByItemBindingId.get(record.itemId) ?? ABSENT_BINDING,
     response: LessonRuntimeResponseFactsSchema.parse({
@@ -315,7 +364,7 @@ export function vectorLessonResponseSubmission(
       // choice and has no pre-commit answer-change channel to count.
       elapsedMs: 0,
       answerChanges: 0,
-      assistanceLevel: assistanceLevelTaken(record),
+      assistanceLevel: assistance.level,
       contentBearingHintUsed: contentBearingHintUsed(record),
       revealUsed: revealUsed(record),
       // Administration facts, not author declarations: one item at a time, no

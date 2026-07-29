@@ -38,6 +38,14 @@ const IDENTITY = {
 const SCRIPT = buildVectorLessonArtifacts().script;
 const AUTHORED_BINDINGS = SCRIPT.payload.question_evidence_plan;
 
+/**
+ * One committed response, with an EMPTY delivery ledger by default: no scaffold
+ * on screen, no cue offered, no cue taken, no reveal. That is a genuine
+ * unassisted administration, and it is the default here so that any test
+ * asserting an assisted level has to say what help was displayed.
+ *
+ * There is no `assistanceState` to set. The record type does not have one.
+ */
 function record(
   overrides: Partial<VectorLessonResponseRecord> & Pick<VectorLessonResponseRecord, 'itemId'>,
 ): VectorLessonResponseRecord {
@@ -47,7 +55,8 @@ function record(
     itemFamilyId: `fam-${overrides.itemId}`,
     kcId: 'V3-KC-866848',
     activityRole: 'ENTRY_CHECK',
-    assistanceState: 'A0',
+    observedScaffoldDisplayed: false,
+    observedSupportOffered: false,
     observedSupportRequested: false,
     observedAnswerRevealed: false,
     firstAttempt: true,
@@ -119,67 +128,190 @@ describe('vector lesson response source', () => {
     });
   });
 
-  it('never lets the authored assistance_state become the runtime assistanceLevel', () => {
+  it('derives the assistance level from the delivery ledger and from nothing else', () => {
     // The defect this asserts against: `assistance_state` is authoring metadata
     // describing help the design OFFERS, and it used to be emitted as the
     // learner's assistance TAKEN. That handed the author `independent` and,
     // through ASSISTANCE_NOT_A0, P(L).
+    //
+    // The corpus spans three authored levels, so an authored input would show up
+    // as three different emitted levels below.
     const authoredLevels = new Set(AUTHORED_BINDINGS.map((b) => b.assistance_state));
-    expect(authoredLevels.size).toBeGreaterThan(1);
+    expect([...authoredLevels].sort()).toEqual(['A0', 'A1', 'A2']);
 
-    for (const authored of AUTHORED_BINDINGS) {
-      const emitted = vectorLessonResponseSubmission(
-        record({ itemId: authored.item_binding_id, assistanceState: authored.assistance_state }),
-      ).response.assistanceLevel;
-
-      // Not the authored value, and never the one value that unlocks BKT.
-      expect(emitted, authored.item_binding_id).toBe('A3');
-      expect(emitted, authored.item_binding_id).not.toBe('A0');
-    }
-
-    // Independent of the authored byte in both directions: an item the author
-    // marked A0 and one marked A2 emit the same unobserved level.
-    for (const assistanceState of ['A0', 'A1', 'A2', 'A3'] as const) {
-      expect(
-        vectorLessonResponseSubmission(record({ itemId: 'vtr-vec-entry-check-1', assistanceState }))
-          .response.assistanceLevel,
-      ).toBe('A3');
+    // ONE delivery ledger, every item in the lesson. If any authored field
+    // reached the level, these 42 answers could not all be equal.
+    for (const ledger of [
+      { observedScaffoldDisplayed: false, observedSupportRequested: false, level: 'A0' },
+      { observedScaffoldDisplayed: false, observedSupportRequested: true, level: 'A1' },
+      { observedScaffoldDisplayed: true, observedSupportRequested: false, level: 'A2' },
+      // Both displayed: the standing scaffold is the greater help, and the cue is
+      // not forgotten — it lands on `contentBearingHintUsed`, asserted below.
+      { observedScaffoldDisplayed: true, observedSupportRequested: true, level: 'A2' },
+    ] as const) {
+      const emitted = new Set(
+        AUTHORED_BINDINGS.map(
+          (authored) =>
+            vectorLessonResponseSubmission(
+              record({
+                itemId: authored.item_binding_id,
+                observedScaffoldDisplayed: ledger.observedScaffoldDisplayed,
+                // An OFFER never raises the level; only what was taken does.
+                observedSupportOffered: true,
+                observedSupportRequested: ledger.observedSupportRequested,
+              }),
+            ).response.assistanceLevel,
+        ),
+      );
+      expect([...emitted], JSON.stringify(ledger)).toEqual([ledger.level]);
     }
   });
 
-  it('establishes no independent administration and no BKT-eligible attempt, for any item', () => {
-    let independent = 0;
-    for (const authored of AUTHORED_BINDINGS) {
-      const answer = VECTOR_LESSON_PROTECTED_ANSWERS[authored.item_binding_id]!;
-      const adaptation = adapt(
+  it('does not reproduce the authored byte, and diverges from it where delivery does', () => {
+    // The corpus is arranged so that the authored value and the delivered support
+    // AGREE on 36 of the 42 items, which means "the level equals the authored
+    // byte" would pass most of a lesson walk. The six A1 items are where the two
+    // part company: an A1 screen carries the standing scaffold as well as
+    // offering the cue, so the support actually displayed is A2-class. If this
+    // ever went back to copying the byte, these six would read A1.
+    const authoredA1 = AUTHORED_BINDINGS.filter((a) => a.assistance_state === 'A1');
+    expect(authoredA1).toHaveLength(6);
+
+    for (const authored of authoredA1) {
+      expect(
         vectorLessonResponseSubmission(
           record({
             itemId: authored.item_binding_id,
-            assistanceState: authored.assistance_state,
-            choiceId: answer.correctChoiceId,
+            observedScaffoldDisplayed: true,
+            observedSupportOffered: true,
           }),
-        ),
-      );
-      if (adaptation.evidence?.independent === true) independent += 1;
-      expect(adaptation.evidence?.kind, authored.item_binding_id).toBe('instruction');
+        ).response.assistanceLevel,
+        authored.item_binding_id,
+      ).toBe('A2');
     }
-    // Was 12 of 18 fabricated `independent: true` across a full lesson walk.
-    expect(independent).toBe(0);
   });
 
-  it('refuses BKT on assistance grounds even when the binding is made eligible', () => {
-    // The reviewer's P3b: declare an eligible mode and label the operation —
-    // the two edits §6 legitimately permits — and change nothing about the
-    // administration. Before the fix, the item whose author wrote `A0`
-    // qualified and moved P(L) from the 0.20 prior to 0.5717.
-    const qualifiedItemIds: string[] = [];
+  it('leaves no authored assistance value on the record for a later reader to pick up', () => {
+    // Fail-open 6 was a guard defeated by reading AROUND it: the adapter already
+    // rewrote authored `A0`-`A3` bytes so they could not be parsed back into an
+    // AssistanceLevel, and the runtime record carried the same byte untagged one
+    // field over. So the assertion is not "the level is derived correctly" — it
+    // is that there is no bare level string anywhere on the record to derive it
+    // from, under any field name a future writer might choose.
+    const token = (value: VectorLessonRun) => renderVectorLessonRun(value).screen.screenToken;
+    let run = createVectorLessonRun({ now: NOW });
+    run = applyVectorLessonAction(
+      run,
+      {
+        runId: run.runId,
+        screenToken: token(run),
+        action: { type: 'SUBMIT_RESPONSE', choiceId: 'A' },
+      },
+      NOW,
+    );
+
+    const committed = Object.values(run.committedResponses);
+    expect(committed).toHaveLength(1);
+    for (const [key, value] of Object.entries(committed[0]!)) {
+      expect(
+        ['A0', 'A1', 'A2', 'A3'].includes(String(value)),
+        `The committed response carries a bare AssistanceLevel in "${key}". A level-shaped ` +
+          'string on this record is what fail-open 6 read; the record must carry only what the ' +
+          'runtime observed about its own delivery.',
+      ).toBe(false);
+    }
+  });
+
+  it('records A0 for a terminal changed-task check completed with no help taken', () => {
+    // The gate this task exists to open: a CHANGED_EXIT check administered with
+    // an empty delivery ledger is an independent administration, and the record
+    // says so. Driven through the REAL runtime, not a fixture, so what the
+    // learner was shown and what the record claims are the same fact.
+    const token = (value: VectorLessonRun) => renderVectorLessonRun(value).screen.screenToken;
+    let run = createVectorLessonRun({ now: NOW });
+    while (run.currentItemId !== 'vtr-vec-changed-exit-initial') {
+      run = applyVectorLessonAction(
+        run,
+        {
+          runId: run.runId,
+          screenToken: token(run),
+          action:
+            run.currentItemId === null
+              ? { type: 'CONTINUE' }
+              : {
+                  type: 'SUBMIT_RESPONSE',
+                  choiceId: VECTOR_LESSON_PROTECTED_ANSWERS[run.currentItemId]!.correctChoiceId,
+                },
+        },
+        NOW,
+      );
+    }
+
+    // The screen really carries no help: no scaffold, and no cue to ask for.
+    const screen = renderVectorLessonRun(run).screen as Record<string, unknown>;
+    expect(screen).toMatchObject({ kind: 'QUESTION', visual: null, supportActionLabel: null });
+    expect(() =>
+      applyVectorLessonAction(
+        run,
+        { runId: run.runId, screenToken: token(run), action: { type: 'REQUEST_SUPPORT' } },
+        NOW,
+      ),
+    ).toThrow(/not authorized/i);
+
+    const answered = applyVectorLessonAction(
+      run,
+      {
+        runId: run.runId,
+        screenToken: token(run),
+        action: {
+          type: 'SUBMIT_RESPONSE',
+          choiceId:
+            VECTOR_LESSON_PROTECTED_ANSWERS['vtr-vec-changed-exit-initial']!.correctChoiceId,
+        },
+      },
+      NOW,
+    );
+
+    const [submission] = vectorLessonResponseSubmissions(run, answered);
+    expect(submission?.response.assistanceLevel).toBe('A0');
+    expect(submission?.response.contentBearingHintUsed).toBe(false);
+    expect(submission?.response.revealUsed).toBe(false);
+    expect(submission?.assistanceObserved).toBe(true);
+    expect(submission?.binding?.activityRole).toBe('CHANGED_EXIT');
+
+    // The administration is now independent. It still moves no P(L), because the
+    // binding declares instructional-only and carries no reasoning operation —
+    // the two blockers the queued Phase 7 items address, and the only two left.
+    const adaptation = adapt(submission!);
+    expect(adaptation.evidence?.independent).toBe(true);
+    expect(adaptation.evidence?.assistanceLevel).toBe('A0');
+    expect(adaptation.qualification.status).toBe('rejected');
+    if (adaptation.qualification.status === 'rejected') {
+      expect(adaptation.qualification.rejectionCodes).not.toContain('ASSISTANCE_NOT_A0');
+      expect(adaptation.qualification.rejectionCodes).toEqual([
+        'INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED',
+      ]);
+    }
+  });
+
+  it('qualifies an unassisted terminal check once its binding is declared eligible', () => {
+    // The reviewer's P3b, now the other way round. Declaring an eligible mode and
+    // labelling the operation — the two edits §6 permits — used to change nothing,
+    // because the runtime marked every administration maximally assisted. It now
+    // qualifies exactly the administrations that were genuinely unassisted, and
+    // still refuses the assisted ones on assistance grounds.
+    const qualified: string[] = [];
+    const refusedOnAssistance: string[] = [];
 
     for (const authored of AUTHORED_BINDINGS) {
       const answer = VECTOR_LESSON_PROTECTED_ANSWERS[authored.item_binding_id]!;
+      // The delivery ledger the real runtime produces for this item: a scaffold
+      // whenever the design puts one on the screen, and no cue taken.
       const submission = vectorLessonResponseSubmission(
         record({
           itemId: authored.item_binding_id,
-          assistanceState: authored.assistance_state,
+          observedScaffoldDisplayed: authored.assistance_state !== 'A0',
+          observedSupportOffered: ['A1', 'A2'].includes(authored.assistance_state),
           choiceId: answer.correctChoiceId,
         }),
       );
@@ -191,57 +323,96 @@ describe('vector lesson response source', () => {
 
       const adaptation = adapt({ ...submission, binding: eligible });
       if (adaptation.qualification.status === 'qualified') {
-        qualifiedItemIds.push(authored.item_binding_id);
-      } else {
-        expect(adaptation.qualification.rejectionCodes).toContain('ASSISTANCE_NOT_A0');
+        qualified.push(authored.item_binding_id);
+      } else if (adaptation.qualification.rejectionCodes.includes('ASSISTANCE_NOT_A0')) {
+        refusedOnAssistance.push(authored.item_binding_id);
       }
     }
 
-    expect(qualifiedItemIds).toEqual([]);
+    // 30 unscaffolded administrations qualify, 12 scaffolded ones do not. Was
+    // 0 and 42.
+    expect(qualified).toHaveLength(30);
+    expect(refusedOnAssistance).toHaveLength(12);
+    expect(qualified).toContain('vtr-vec-changed-exit-initial');
+    expect(refusedOnAssistance).toContain('vtr-vec-guided-practice-1');
   });
 
-  it('reports a content-bearing hint from the observed request, not the authored level', () => {
-    // An item the author marked A0 whose learner did take a released cue.
+  it('reports a content-bearing hint from the released cue, not from the offer', () => {
+    // A cue that was offered and taken.
     expect(
       vectorLessonResponseSubmission(
         record({
-          itemId: 'vtr-vec-entry-check-1',
-          assistanceState: 'A0',
+          itemId: 'vtr-vec-guided-practice-1',
+          observedScaffoldDisplayed: true,
+          observedSupportOffered: true,
           observedSupportRequested: true,
         }),
       ).response.contentBearingHintUsed,
     ).toBe(true);
 
-    // An item the author marked A2 whose learner never asked for the cue.
+    // The same offer, declined.
     expect(
       vectorLessonResponseSubmission(
         record({
           itemId: 'vtr-vec-guided-practice-1',
-          assistanceState: 'A2',
+          observedScaffoldDisplayed: true,
+          observedSupportOffered: true,
           observedSupportRequested: false,
         }),
       ).response.contentBearingHintUsed,
     ).toBe(false);
   });
 
-  it('fails closed when a persisted record predates the help-taken observations', () => {
+  it('marks a record that predates the delivery ledger unobserved, not maximally assisted', () => {
     const legacy = record({ itemId: 'vtr-vec-entry-check-1' }) as unknown as Record<
       string,
       unknown
     >;
+    delete legacy.observedScaffoldDisplayed;
     delete legacy.observedSupportRequested;
     delete legacy.observedAnswerRevealed;
 
-    const response = vectorLessonResponseSubmission(
+    const submission = vectorLessonResponseSubmission(
       legacy as unknown as VectorLessonResponseRecord,
-    ).response;
-    expect(response.contentBearingHintUsed).toBe(true);
-    expect(response.revealUsed).toBe(true);
+    );
+    expect(submission.response.contentBearingHintUsed).toBe(true);
+    expect(submission.response.revealUsed).toBe(true);
+
+    // Fails closed for qualification — A3 can never satisfy ASSISTANCE_NOT_A0 —
+    // while staying distinguishable from a measured level.
+    expect(submission.response.assistanceLevel).toBe('A3');
+    expect(submission.assistanceObserved).toBe(false);
+    expect(adapt(submission).qualification).toMatchObject({ status: 'rejected' });
   });
 
-  it('records the hint the real runtime actually released', () => {
+  it('never emits A3 for an administration it did observe, so A3 means only "unobserved"', () => {
+    // What keeps the borrowed fail-closed value from collapsing the two facts
+    // again: this runtime has no mechanism that displays a worked solution path
+    // beside a scored item, so A3 is not a level it can measure.
+    for (const scaffold of [false, true]) {
+      for (const requested of [false, true]) {
+        for (const offered of [false, true]) {
+          const submission = vectorLessonResponseSubmission(
+            record({
+              itemId: 'vtr-vec-guided-practice-1',
+              observedScaffoldDisplayed: scaffold,
+              observedSupportOffered: offered,
+              observedSupportRequested: requested,
+            }),
+          );
+          expect(submission.assistanceObserved).toBe(true);
+          expect(
+            submission.response.assistanceLevel,
+            `observed (scaffold ${scaffold}, offered ${offered}, requested ${requested}) emitted A3`,
+          ).not.toBe('A3');
+        }
+      }
+    }
+  });
+
+  it('records the scaffold and the hint the real runtime actually put on the screen', () => {
     // Driven through the runtime rather than a fixture, so the observation is
-    // proved to survive `commitResponse` before `enterFeedback` clears it.
+    // proved to survive `commitResponse` before `enterFeedback` closes the ledger.
     const token = (value: VectorLessonRun) => renderVectorLessonRun(value).screen.screenToken;
     let run = createVectorLessonRun({ now: NOW });
     while (run.currentItemId !== 'vtr-vec-guided-practice-1') {
@@ -279,7 +450,8 @@ describe('vector lesson response source', () => {
 
     const [submission] = vectorLessonResponseSubmissions(withCue, answered);
     expect(submission?.response.contentBearingHintUsed).toBe(true);
-    expect(submission?.response.assistanceLevel).toBe('A3');
+    expect(submission?.response.assistanceLevel).toBe('A2');
+    expect(submission?.assistanceObserved).toBe(true);
   });
 
   it('takes administration conditions from the runtime, never from the binding', () => {
@@ -365,6 +537,7 @@ describe('vector lesson response source', () => {
   it('produces one evidence record and zero BKT observations for all 42 items', () => {
     let evidenceRecords = 0;
     let qualified = 0;
+    let independent = 0;
     const rejectionCodes = new Set<string>();
 
     for (const authored of AUTHORED_BINDINGS) {
@@ -372,24 +545,102 @@ describe('vector lesson response source', () => {
       expect(answer, authored.item_binding_id).toBeDefined();
       const adaptation = adapt(
         vectorLessonResponseSubmission(
-          record({ itemId: authored.item_binding_id, choiceId: answer!.correctChoiceId }),
+          record({
+            itemId: authored.item_binding_id,
+            choiceId: answer!.correctChoiceId,
+            // The ledger the real runtime produces for this item, with no cue taken.
+            observedScaffoldDisplayed: authored.assistance_state !== 'A0',
+            observedSupportOffered: ['A1', 'A2'].includes(authored.assistance_state),
+          }),
         ),
       );
 
       expect(adaptation.status).toBe('adapted');
       if (adaptation.evidence !== null) evidenceRecords += 1;
+      if (adaptation.evidence?.independent === true) independent += 1;
       if (adaptation.qualification.status === 'qualified') qualified += 1;
       else for (const code of adaptation.qualification.rejectionCodes) rejectionCodes.add(code);
     }
 
     expect(evidenceRecords).toBe(AUTHORED_BINDINGS.length);
-    // Every binding normalizes to instructional-only, and the runtime observes
-    // no help taken, so P(L) must not move for two independent reasons.
+    // 30 of the 42 are now genuinely independent administrations, up from 0 —
+    // and every one of the 12 fabricated `independent: true` records that
+    // fail-open 6 produced is still absent, because none of these came from an
+    // authored byte.
+    expect(independent).toBe(30);
+    // P(L) still moves for none of them. The assistance blocker is gone; the
+    // remaining reason is the one the queued Phase 7 items address, and it is
+    // now the ONLY one — which is what makes relabelling those checks able to
+    // change behaviour at all.
     expect(qualified).toBe(0);
     expect([...rejectionCodes].sort()).toEqual([
       'ASSISTANCE_NOT_A0',
       'INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED',
     ]);
+  });
+
+  it('measures a whole lesson walked with no help taken', () => {
+    // The end-to-end number this task is judged on, taken through the real
+    // runtime rather than a fixture. The 18 committed responses of a clean walk
+    // are the same 18 fail-open 6 measured, so the two figures are directly
+    // comparable:
+    //
+    //   before: 18 × A3, 0 independent, 18 × ASSISTANCE_NOT_A0 — and 12 of the
+    //           18 records carried `independent: true` FABRICATED from the
+    //           authored byte before `9fcaea3` closed it.
+    //   after:  12 × A0 and 6 × A2, all 18 observed, 12 independent — the same
+    //           count as the fabricated one, and that is the point: the honest
+    //           answer for this artifact was always 12. What changed is what the
+    //           number is a function of. It is now the support the runtime put on
+    //           the screen, re-derivable from the definition at restore, with the
+    //           authored field deleted from the record rather than merely unread.
+    const token = (value: VectorLessonRun) => renderVectorLessonRun(value).screen.screenToken;
+    let run = createVectorLessonRun({ now: NOW });
+    const submissions: ReturnType<typeof vectorLessonResponseSubmission>[] = [];
+
+    for (let guard = 0; guard < 400 && run.status === 'IN_PROGRESS'; guard += 1) {
+      const before = run;
+      run = applyVectorLessonAction(
+        run,
+        {
+          runId: run.runId,
+          screenToken: token(run),
+          action:
+            run.currentItemId === null
+              ? { type: 'CONTINUE' }
+              : {
+                  type: 'SUBMIT_RESPONSE',
+                  choiceId: VECTOR_LESSON_PROTECTED_ANSWERS[run.currentItemId]!.correctChoiceId,
+                },
+        },
+        NOW,
+      );
+      submissions.push(...vectorLessonResponseSubmissions(before, run));
+    }
+
+    // A clean walk really did finish the lesson, or the counts below are partial.
+    expect(run.status).toBe('DELIVERY_COMPLETE');
+    expect(submissions).toHaveLength(18);
+
+    const levels = submissions.map((submission) => submission.response.assistanceLevel);
+    expect(levels.filter((level) => level === 'A0')).toHaveLength(12);
+    expect(levels.filter((level) => level === 'A2')).toHaveLength(6);
+    // No response fell back to the unobserved level, so the fail-close is now
+    // genuinely reserved for the case where the runtime cannot see.
+    expect(levels.filter((level) => level === 'A3')).toHaveLength(0);
+    expect(submissions.every((submission) => submission.assistanceObserved)).toBe(true);
+
+    const adaptations = submissions.map(adapt);
+    expect(adaptations.filter((a) => a.evidence?.independent === true)).toHaveLength(12);
+    // Still zero P(L) movement, and now for exactly ONE reason rather than two.
+    expect(adaptations.filter((a) => a.qualification.status === 'qualified')).toHaveLength(0);
+    const codes = adaptations.flatMap((a) =>
+      a.qualification.status === 'rejected' ? [...a.qualification.rejectionCodes] : [],
+    );
+    expect(codes.filter((code) => code === 'INDEPENDENT_EVIDENCE_MODE_NOT_DECLARED')).toHaveLength(
+      18,
+    );
+    expect(codes.filter((code) => code === 'ASSISTANCE_NOT_A0')).toHaveLength(6);
   });
 
   it('surfaces unrecognized author keys and withheld bindings instead of dropping them', () => {
