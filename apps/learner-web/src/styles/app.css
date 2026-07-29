@@ -1095,6 +1095,28 @@ body {
   font-weight: 600;
   color: var(--mc-primary-text);
 }
+
+/* ---- Explain it another way (WS4): grounded re-expression below a reveal ---- */
+.mc-explain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+  margin-top: var(--mc-space-3);
+  padding-top: var(--mc-space-3);
+  border-top: 1px dashed color-mix(in srgb, var(--mc-border) 70%, transparent);
+}
+.mc-explain__prompt {
+  margin: 0;
+}
+.mc-explain__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-explain__body p {
+  margin: 0;
+}
+
 .mc-evidence {
   list-style: none;
   margin: 0;

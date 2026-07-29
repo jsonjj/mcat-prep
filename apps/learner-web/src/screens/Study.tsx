@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { ChoiceId, StudyStepView } from '@mcat/contracts';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { EVIDENCE_REFRESH_LABEL, evidenceWarrant } from '../components/evidence-language';
+import { ExplainAnotherWay } from '../components/ExplainAnotherWay';
 import {
   useContinueStep,
   useRequestReveal,
@@ -221,7 +222,12 @@ export function Study() {
       ) : null}
 
       {step.sub === 'reveal' && step.reveal ? (
-        <Reveal reveal={step.reveal} onContinue={() => continueStep.mutate()} />
+        <Reveal
+          reveal={step.reveal}
+          questionId={q.id}
+          section={q.section}
+          onContinue={() => continueStep.mutate()}
+        />
       ) : (
         <fieldset className="mc-choices">
           <legend className="mc-visually-hidden">Answer choices</legend>
@@ -287,9 +293,13 @@ export function Study() {
  */
 function Reveal({
   reveal,
+  questionId,
+  section,
   onContinue,
 }: {
   reveal: NonNullable<Extract<StudyStepView, { kind: 'question' }>['reveal']>;
+  questionId: string;
+  section: string;
   onContinue: () => void;
 }) {
   const chosen = reveal.chosenChoiceId;
@@ -306,6 +316,12 @@ function Reveal({
             {reveal.choiceRationales[chosen]}
           </Callout>
         ) : null}
+        {/* Study's LearnerSafeQuestion carries no skill/DOK, so "Step by step" gates off section. */}
+        <ExplainAnotherWay
+          questionId={questionId}
+          source={{ rationale: reveal.correctRationale, choiceRationales: reveal.choiceRationales }}
+          gate={{ skill: null, section, dok: null }}
+        />
         {missed ? (
           <p className="mc-muted mc-fineprint">
             One more unassisted pass at this one before you move on.
