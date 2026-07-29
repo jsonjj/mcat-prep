@@ -58,7 +58,6 @@ const answer = (authority: Authority, state: LearnerState, questionId: string, c
     questionId,
     specId: 'sci:bb1-enzyme-inhibition:EXPLAIN:train',
     chosenChoiceId: choice as 'A' | 'B',
-    firstAttempt: true,
   });
 
 describe('Mistakes — the practice attempt log is the source', () => {

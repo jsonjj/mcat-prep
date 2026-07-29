@@ -125,6 +125,20 @@ export interface PracticeRepairTarget {
 }
 
 /**
+ * A learner's exposure to one item, as of immediately after recording this one.
+ *
+ * `recordExposure` returns it rather than a separate reader answering the same
+ * question, because the two would be a read and a write of one fact with a gap
+ * between them: two concurrent submissions of the same item would both read
+ * zero and both count as a first attempt. Incrementing and reporting in one
+ * operation makes exactly one of them first, whatever the ordering.
+ */
+export interface PracticeExposure {
+  /** How many times the learner had answered this item BEFORE this response. */
+  readonly priorExposures: number;
+}
+
+/**
  * The single seam between the authority and the item corpus + per-learner
  * practice bookkeeping. `findItems`/`getAnswer` are the core (as planned); the
  * remaining methods carry the difficulty stats, recent-exposure freshness, and
@@ -144,7 +158,19 @@ export interface PracticeBankPort {
   questionStats(questionId: string): Promise<{ attempts: number; correct: number }>;
   recordAttempt(questionId: string, correct: boolean, now: UtcTimestamp): Promise<void>;
   recentlySeenIds(learnerId: string, input: { withinDays: number; limit: number }): Promise<string[]>;
-  recordExposure(learnerId: string, questionId: string, now: UtcTimestamp): Promise<void>;
+  /**
+   * Record one exposure and report what the learner's history was before it.
+   *
+   * The prior count is what the authority derives `firstAttempt` from, so this
+   * must be the learner's WHOLE history with the item and never a recent
+   * window: a window would let a repeat far enough in the past read as a first
+   * attempt again.
+   */
+  recordExposure(
+    learnerId: string,
+    questionId: string,
+    now: UtcTimestamp,
+  ): Promise<PracticeExposure>;
   recentMisses(learnerId: string, input: { limit: number }): Promise<PracticeRepairTarget[]>;
   queueRepair(learnerId: string, target: PracticeRepairTarget, now: UtcTimestamp): Promise<void>;
   /** Append one first-attempt row (idempotent per learner × activity type × item). */
@@ -351,11 +377,17 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
       .map(([id]) => id);
   }
 
-  async recordExposure(learnerId: string, questionId: string, now: UtcTimestamp): Promise<void> {
+  async recordExposure(
+    learnerId: string,
+    questionId: string,
+    now: UtcTimestamp,
+  ): Promise<PracticeExposure> {
     const map = this.exposure.get(learnerId) ?? new Map<string, ExposureEntry>();
     const entry = map.get(questionId);
-    map.set(questionId, { count: (entry?.count ?? 0) + 1, lastSeenAt: now });
+    const priorExposures = entry?.count ?? 0;
+    map.set(questionId, { count: priorExposures + 1, lastSeenAt: now });
     this.exposure.set(learnerId, map);
+    return { priorExposures };
   }
 
   async recentMisses(

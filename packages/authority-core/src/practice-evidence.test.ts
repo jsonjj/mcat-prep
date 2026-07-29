@@ -384,11 +384,14 @@ describe('the practice evidence timestamp is server-bounded', () => {
 });
 
 /**
- * The two halves of a practice write are one unit: the capability estimate and
- * the record that justifies it. Asserting each separately would pass a build in
- * which one of them had stopped happening.
+ * The two halves of a BKT practice write are one unit: the capability estimate
+ * and the record that justifies it. Asserting each separately would pass a
+ * build in which one of them had stopped happening.
+ *
+ * Scoped to BKT deliberately. CARS is the IRT authority and its ability is not
+ * `P(L)`; the boundary is pinned below rather than left as an implied gap.
  */
-describe('practice never moves a capability estimate without warranting it', () => {
+describe('the BKT half of practice never moves without warranting it', () => {
   /** The synthetic bank always routes, so the fail-closed path needs a port that does not. */
   class UnroutableClusterBank extends SyntheticPracticeBankPort {
     override async classify(questionId: string): Promise<PracticeItemClassification | null> {
@@ -432,5 +435,36 @@ describe('practice never moves a capability estimate without warranting it', () 
     await authority.submitPracticeAttempt(state, command(item.question.id, item.specId, 'A'));
 
     expect(() => authority.getMasteryMap(state)).not.toThrow();
+  });
+
+  /**
+   * The CARS boundary, stated rather than implied. A CARS practice answer moves
+   * the IRT ability and writes no evidence record — so the invariant above is
+   * genuinely scoped to BKT, and this is the one place that says so.
+   *
+   * Deliberate: the warrant surface is keyed to the BKT capability grains, and
+   * giving CARS one means choosing a grain vocabulary for it. The existing
+   * `cars-ca1`/`cars-ca2` duel grains are the obvious candidate and the corpus
+   * cluster column is nullable for CARS rows, so the change can silently stop
+   * the ability moving if it is made carelessly. That is its own task.
+   */
+  it('leaves the CARS ability outside the evidence surface, as a stated boundary', async () => {
+    class CarsPracticeBank extends SyntheticPracticeBankPort {
+      override async classify(questionId: string): Promise<PracticeItemClassification | null> {
+        const base = await super.classify(questionId);
+        return base === null
+          ? null
+          : { ...base, domain: 'cars', carsSkill: 'FOC', kcId: null, skill: null, cluster: 'CA1' };
+      }
+    }
+    const bank = loadSyntheticBank();
+    const authority = new Authority(bank, CLOCK, new CarsPracticeBank(bank));
+    const state = authority.createGuest();
+    const item = await firstQueuedScienceItem(authority, state);
+
+    await authority.submitPracticeAttempt(state, command(item.question.id, item.specId, 'A'));
+
+    expect(state.mastery!.cars.FOC).toBeDefined();
+    expect(state.evidence).toEqual([]);
   });
 });

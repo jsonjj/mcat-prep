@@ -4,6 +4,7 @@ import type {
   PracticeBankItem,
   PracticeBankPort,
   PracticeCandidateUnit,
+  PracticeExposure,
   PracticeItemClassification,
   PracticeItemQuery,
   PracticeRepairTarget,
@@ -348,11 +349,17 @@ export class FilePracticeBankPort implements PracticeBankPort {
       .map(([id]) => id);
   }
 
-  async recordExposure(learnerId: string, questionId: string, now: UtcTimestamp): Promise<void> {
+  async recordExposure(
+    learnerId: string,
+    questionId: string,
+    now: UtcTimestamp,
+  ): Promise<PracticeExposure> {
     const map = this.exposure.get(learnerId) ?? new Map<string, ExposureEntry>();
     const entry = map.get(questionId);
-    map.set(questionId, { count: (entry?.count ?? 0) + 1, lastSeenAt: now });
+    const priorExposures = entry?.count ?? 0;
+    map.set(questionId, { count: priorExposures + 1, lastSeenAt: now });
     this.exposure.set(learnerId, map);
+    return { priorExposures };
   }
 
   async recentMisses(

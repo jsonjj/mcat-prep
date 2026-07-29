@@ -3,6 +3,7 @@ import {
   HTTP_API,
   PracticeAttemptCommandSchema,
   PracticeAttemptResultSchema,
+  PracticeAttemptSchema,
   PracticeFocusSchema,
   PracticeQueueItemSchema,
   PracticeQueueViewSchema,
@@ -84,6 +85,33 @@ describe('practice attempt DTOs', () => {
     expect(
       PracticeAttemptCommandSchema.safeParse({ ...cmd, chosenChoiceId: null }).success,
     ).toBe(true);
+  });
+
+  /**
+   * `firstAttempt` is a claim about state only the server holds, and it was a
+   * browser boolean hardcoded `true`. The wire still carries it because the
+   * deployed route's exact-key body check requires the key; what the authority
+   * consumes does not, so nothing on the server can re-trust it.
+   */
+  it('keeps the client firstAttempt claim off the schema the authority consumes', () => {
+    expect(Object.keys(PracticeAttemptCommandSchema.shape)).toContain('firstAttempt');
+    expect(Object.keys(PracticeAttemptSchema.shape)).not.toContain('firstAttempt');
+    // Omitted from the wire schema rather than restated, so the two cannot
+    // drift into disagreeing about what else a practice answer carries.
+    expect(Object.keys(PracticeAttemptSchema.shape).sort()).toEqual(
+      Object.keys(PracticeAttemptCommandSchema.shape)
+        .filter((key) => key !== 'firstAttempt')
+        .sort(),
+    );
+    // Strict on both sides: the claim cannot ride along as an unknown key.
+    expect(
+      PracticeAttemptSchema.safeParse({
+        questionId: 'v7-relabel-a538789a9daa94d4',
+        specId: 'sci:kc-1:EXPLAIN:d2:train',
+        chosenChoiceId: 'B',
+        firstAttempt: true,
+      }).success,
+    ).toBe(false);
   });
 
   it('carries answer material only in the result', () => {

@@ -354,11 +354,26 @@ describe('the attempt log is the error log’s source, for both flows', () => {
     expect(authority).toMatch(/reveal_requested/);
   });
 
-  it('writes the chosen distractor next to the existing exposure/repair calls', () => {
-    expect(authority).toMatch(
-      /recordExposure\([\s\S]{0,600}recordPracticeAttempt\([\s\S]{0,600}queueRepair\(/,
+  /**
+   * The distractor log is written on the same path as exposure and repair,
+   * asserted by MEMBERSHIP of `submitPracticeAttempt` rather than by textual
+   * proximity. Proximity was the original spelling and it says less than it
+   * looks: it never checked that the three calls were in one method at all, and
+   * it failed on a reordering that kept every one of them where it belongs.
+   */
+  it('writes the chosen distractor on the same path as exposure and repair', () => {
+    const start = authority.indexOf('async submitPracticeAttempt(');
+    const end = authority.indexOf('private buildPracticeSnapshot');
+    expect(start).toBeGreaterThan(-1);
+    expect(end).toBeGreaterThan(start);
+    const body = authority.slice(start, end);
+
+    const order = ['recordExposure(', 'recordPracticeAttempt(', 'queueRepair('].map((call) =>
+      body.indexOf(call),
     );
-    expect(authority).toMatch(/chosenChoiceId: cmd\.chosenChoiceId/);
+    expect(order.every((at) => at > -1)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(body).toMatch(/chosenChoiceId: cmd\.chosenChoiceId/);
   });
 
   it('logs a Study first attempt additively, without touching scoring or repair', () => {

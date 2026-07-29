@@ -28,7 +28,7 @@ import {
   type LessonMasteryView,
   type MasterySeed,
   type MistakePatternView,
-  type PracticeAttemptCommand,
+  type PracticeAttempt,
   type PracticeAttemptResult,
   type PracticeFocus,
   type PracticeQuestion,
@@ -2264,19 +2264,25 @@ export class Authority {
   }
 
   /**
-   * Score one practice answer. On a FIRST, unassisted attempt this moves the
-   * P(L) mastery signal — BKT on the two capability grains, the primary KC and
-   * the primary reasoning operation, through the Authority's single
-   * `stepDirectGrains` step; IRT `carsUpdate` at measurement weight for CARS —
-   * records exposure + population stats, and queues a KC×skill repair on a miss.
-   * A lesson is NOT a grain: practice records the lesson for the rollup's
-   * routing only (see `applyPracticeMastery`). Retries are learning-only (no
-   * P(L)). Answer material is returned only here (post-submit), never in the
-   * queue.
+   * Score one practice answer.
+   *
+   * Every response records exposure and writes an evidence record. On a FIRST
+   * attempt — a fact this method DERIVES, never one the request supplies — it
+   * also moves the P(L) mastery signal through the Authority's single
+   * `stepDirectGrains` step (BKT on the two capability grains, the primary KC
+   * and the primary reasoning operation; IRT `carsUpdate` at measurement weight
+   * for CARS), records population stats, logs the chosen distractor, and queues
+   * a KC×skill repair on a miss.
+   *
+   * A repeat is learning-only: no P(L), no ledger record, and a contextual-only
+   * evidence record rather than silence. A lesson is NOT a grain — practice
+   * records the lesson for the rollup's routing only (see
+   * `applyPracticeMastery`). Answer material is returned only here
+   * (post-submit), never in the queue.
    */
   async submitPracticeAttempt(
     state: LearnerState,
-    cmd: PracticeAttemptCommand,
+    cmd: PracticeAttempt,
   ): Promise<PracticeAttemptResult> {
     const answer = await this.practiceBank.getAnswer(cmd.questionId);
     if (answer === null) {
@@ -2296,21 +2302,41 @@ export class Authority {
     const correct = outcome === 'correct';
     const now = this.clock.now();
 
-    if (cmd.firstAttempt) {
-      const classification = await this.practiceBank.classify(cmd.questionId);
+    /**
+     * Whether this is the learner's first answer to this item, DERIVED.
+     *
+     * The wire command carries a `firstAttempt` claim and this method cannot
+     * read it: `PracticeAttempt` does not have the field. It arrived as a
+     * browser boolean hardcoded `true`, so every response asserted a first
+     * attempt and every first-attempt-conditioned rule was permanently
+     * satisfied — but the deeper problem is that it is a claim about state only
+     * the SERVER holds, which no client is in a position to make. Validating
+     * the claim against the exposure records and warning on a mismatch would
+     * have left it on the path for every request that is not actively hostile.
+     *
+     * The count comes back from the write that increments it, so a repeat
+     * submitted concurrently with its original cannot have both read zero.
+     */
+    const exposure = await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
+    const firstAttempt = exposure.priorExposures === 0;
+
+    const classification = await this.practiceBank.classify(cmd.questionId);
+    if (classification !== null) {
       const stats = await this.practiceBank.questionStats(cmd.questionId);
-      if (classification !== null) {
-        // `now` reaches the evidence record only. The BKT decay clock is still
-        // read inside `stepDirectGrains`, because the ledger's reported and
-        // applied times must come from one reading or `clockAdjustment` can
-        // describe a clamp that never happened.
-        this.applyPracticeMastery(state, cmd.questionId, classification, outcome, stats, {
-          firstAttempt: cmd.firstAttempt,
-          now,
-        });
-      }
+      // Every response, first or repeat: a repeat records contextual-only
+      // evidence and moves no grain, which is a different thing from leaving no
+      // trace of the answer at all. `now` reaches the evidence record only —
+      // the BKT decay clock is still read inside `stepDirectGrains`, because
+      // the ledger's reported and applied times must come from one reading or
+      // `clockAdjustment` can describe a clamp that never happened.
+      this.applyPracticeMastery(state, cmd.questionId, classification, outcome, stats, {
+        firstAttempt,
+        now,
+      });
+    }
+
+    if (firstAttempt) {
       await this.practiceBank.recordAttempt(cmd.questionId, correct, now);
-      await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
       // Log the first attempt WITH the chosen distractor. Which wrong answer they
       // picked is the diagnostic signal (docs/design/error-handling-design.md §1);
       // it used to reach only an unread event payload. Correct attempts are logged
@@ -2324,7 +2350,7 @@ export class Authority {
         familyId: classification?.familyId ?? null,
         chosenChoiceId: cmd.chosenChoiceId,
         correct,
-        firstAttempt: true,
+        firstAttempt,
         activityType: 'practice',
         occurredAt: now,
       });

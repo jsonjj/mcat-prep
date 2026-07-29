@@ -304,7 +304,6 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
       questionId: item.question.id,
       specId: item.specId,
       chosenChoiceId: answer.correctChoiceId,
-      firstAttempt: true,
     });
 
     const [mastery] = auth.getMasteryLessons(state, [SEEDED_LESSON_ID]);

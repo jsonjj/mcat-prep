@@ -360,7 +360,6 @@ describe('the Mistakes pipeline over the file-backed bank', () => {
       questionId: 'sirs2-a',
       specId: 'spec-1',
       chosenChoiceId: 'A',
-      firstAttempt: true,
     });
     expect(result.correct).toBe(false);
     expect(result.choiceRationales.A).toBe('why A is wrong on sirs2-a');
@@ -390,7 +389,6 @@ describe('the Mistakes pipeline over the file-backed bank', () => {
         questionId,
         specId: 'spec-1',
         chosenChoiceId: 'A',
-        firstAttempt: true,
       });
     }
 
@@ -416,7 +414,6 @@ describe('the Mistakes pipeline over the file-backed bank', () => {
         questionId: item.question.id,
         specId: item.specId,
         chosenChoiceId: 'A',
-        firstAttempt: true,
       });
     }
 

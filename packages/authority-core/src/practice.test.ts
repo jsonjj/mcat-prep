@@ -120,7 +120,6 @@ describe('Authority.getPracticeQueue (synthetic fallback)', () => {
       questionId: item.question.id,
       specId: item.specId,
       chosenChoiceId: 'A',
-      firstAttempt: true,
     });
     const next = await authority.getPracticeQueue(state, 6);
     expect(next.items.map((i) => i.question.id)).not.toContain(item.question.id);
@@ -138,7 +137,6 @@ describe('Authority.submitPracticeAttempt (test-out mastery)', () => {
       questionId: item.question.id,
       specId: item.specId,
       chosenChoiceId: answer!.correctChoiceId,
-      firstAttempt: true,
     });
 
     expect(result.correct).toBe(true);
@@ -162,7 +160,6 @@ describe('Authority.submitPracticeAttempt (test-out mastery)', () => {
       questionId: item.question.id,
       specId: item.specId,
       chosenChoiceId: wrong,
-      firstAttempt: true,
     });
 
     expect(result.correct).toBe(false);
@@ -172,19 +169,27 @@ describe('Authority.submitPracticeAttempt (test-out mastery)', () => {
     expect(misses.some((r) => r.kcId === item.kcId)).toBe(true);
   });
 
-  it('does not move mastery on a retry (firstAttempt=false)', async () => {
+  /**
+   * Retries are learning-only, and WHICH attempt this is is the server's call.
+   * `packages/authority-core/src/practice-gating.test.ts` owns the derivation
+   * itself; what belongs here is that a repeat leaves the grain where the first
+   * attempt put it.
+   */
+  it('does not move mastery a second time on a repeat of the same item', async () => {
     const { authority, state } = freshLearner();
     const item = await firstQueuedScienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
-
-    await authority.submitPracticeAttempt(state, {
+    const attempt = {
       questionId: item.question.id,
       specId: item.specId,
       chosenChoiceId: answer!.correctChoiceId,
-      firstAttempt: false,
-    });
+    };
 
-    expect(state.mastery?.kc[item.kcId!]).toBeUndefined();
+    await authority.submitPracticeAttempt(state, attempt);
+    const afterFirst = state.mastery!.kc[item.kcId!]!.pL;
+    await authority.submitPracticeAttempt(state, attempt);
+
+    expect(state.mastery!.kc[item.kcId!]!.pL).toBe(afterFirst);
   });
 
   it('rejects an unknown practice item', async () => {
@@ -194,7 +199,6 @@ describe('Authority.submitPracticeAttempt (test-out mastery)', () => {
         questionId: 'not-a-real-item',
         specId: 'sci:x:EXPLAIN:train',
         chosenChoiceId: 'A',
-        firstAttempt: true,
       }),
     ).rejects.toThrow();
   });
@@ -223,7 +227,6 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
       questionId: item.question.id,
       specId: item.specId,
       chosenChoiceId: 'A',
-      firstAttempt: true,
     });
 
     expect(state.mastery!.practicedLessonIds).toEqual([PRACTICED_LESSON_ID]);
@@ -249,7 +252,6 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
       questionId: item.question.id,
       specId: item.specId,
       chosenChoiceId: 'A',
-      firstAttempt: true,
     });
 
     expect(state.mastery!.practicedLessonIds).toEqual([]);
@@ -264,7 +266,6 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
       questionId: item.question.id,
       specId: item.specId,
       chosenChoiceId: answer!.correctChoiceId,
-      firstAttempt: true,
     });
 
     expect(bktRecords(state)).toEqual([
@@ -300,7 +301,6 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
       questionId: item.question.id,
       specId: item.specId,
       chosenChoiceId: 'A',
-      firstAttempt: true,
     });
 
     // The ability moved, so the empty ledger is a CARS/BKT boundary rather than
@@ -336,14 +336,12 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
       questionId: first.question.id,
       specId: first.specId,
       chosenChoiceId: 'A',
-      firstAttempt: true,
     });
     const second = await secondScienceItem(authority, state, first.question.id);
     await authority.submitPracticeAttempt(state, {
       questionId: second,
       specId: first.specId,
       chosenChoiceId: 'A',
-      firstAttempt: true,
     });
 
     const records = bktRecords(state);
@@ -391,7 +389,6 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
       questionId: first.question.id,
       specId: first.specId,
       chosenChoiceId: 'A',
-      firstAttempt: true,
     });
 
     set(SECOND);
@@ -400,7 +397,6 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
       questionId: second,
       specId: first.specId,
       chosenChoiceId: 'A',
-      firstAttempt: true,
     });
 
     const records = bktRecords(state);

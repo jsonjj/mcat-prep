@@ -28,6 +28,7 @@ import type {
   PracticeBankItem,
   PracticeBankPort,
   PracticeCandidateUnit,
+  PracticeExposure,
   PracticeItemClassification,
   PracticeItemQuery,
   PracticeRepairTarget,
@@ -381,23 +382,43 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
     return rows.map((r) => r.question_id);
   }
 
-  async recordExposure(learnerId: string, questionId: string, now: string): Promise<void> {
+  /**
+   * `seen_count` comes back from the upsert that increments it, so the prior
+   * count the authority derives `firstAttempt` from is read and written in one
+   * statement. A separate `select` would leave a window in which two concurrent
+   * submissions of the same item both read zero and both counted as first.
+   *
+   * `returning` is on the whole statement, so it reports the post-increment
+   * value on both branches of the upsert: 1 on the insert, n+1 on the update.
+   */
+  async recordExposure(
+    learnerId: string,
+    questionId: string,
+    now: string,
+  ): Promise<PracticeExposure> {
     const schema = await this.schema();
     if (!schema.hasExposure) {
       const map = this.memExposure.get(learnerId) ?? new Map<string, MemExposure>();
       const entry = map.get(questionId);
-      map.set(questionId, { count: (entry?.count ?? 0) + 1, lastSeenAt: now });
+      const priorExposures = entry?.count ?? 0;
+      map.set(questionId, { count: priorExposures + 1, lastSeenAt: now });
       this.memExposure.set(learnerId, map);
-      return;
+      return { priorExposures };
     }
-    await this.pool.query(
+    const { rows } = await this.pool.query<{ seen_count: number }>(
       `insert into practice_exposure (learner_id, question_id, last_seen_at, seen_count)
        values ($1, $2, $3, 1)
        on conflict (learner_id, question_id) do update set
          last_seen_at = excluded.last_seen_at,
-         seen_count = practice_exposure.seen_count + 1`,
+         seen_count = practice_exposure.seen_count + 1
+       returning seen_count`,
       [learnerId, questionId, now],
     );
+    // No row back means the write did not land, and an unknown history must not
+    // read as an empty one: fail closed to "seen before" rather than crediting
+    // an attempt the server cannot vouch for.
+    const seen = rows[0]?.seen_count;
+    return { priorExposures: seen === undefined ? 1 : Math.max(0, Number(seen) - 1) };
   }
 
   async recentMisses(
