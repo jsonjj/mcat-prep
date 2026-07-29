@@ -1,5 +1,5 @@
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
@@ -149,5 +149,124 @@ describe('the capability write path has exactly one door', () => {
     expect(new Set(callersOf('recordBktObservationEvent'))).toEqual(
       new Set(['applyQualifiedBktObservation', 'applyPracticeMastery']),
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Lesson mastery is derived, never stored
+// ---------------------------------------------------------------------------
+
+/** Trees that ship or run product code. `tests/` is the guard, not the subject. */
+const PRODUCT_TREES = ['apps', 'database', 'infra', 'packages', 'services', 'tools'];
+const SKIPPED_DIRECTORIES: ReadonlySet<string> = new Set([
+  'node_modules',
+  'dist',
+  'build',
+  'coverage',
+  '.turbo',
+  '.next',
+  'cdk.out',
+]);
+const SOURCE_EXTENSIONS = /\.(?:ts|tsx|mts|cts|js|jsx|mjs|cjs)$/;
+const TEST_FILE = /\.(?:test|spec)\.[cm]?[jt]sx?$/;
+
+function walk(absolute: string, out: string[]): void {
+  if (!existsSync(absolute)) return;
+  for (const entry of readdirSync(absolute, { withFileTypes: true })) {
+    const child = join(absolute, entry.name);
+    if (entry.isDirectory()) {
+      if (!SKIPPED_DIRECTORIES.has(entry.name)) walk(child, out);
+      continue;
+    }
+    if (SOURCE_EXTENSIONS.test(entry.name)) out.push(child);
+  }
+}
+
+const productionSources: readonly { path: string; text: string }[] = PRODUCT_TREES.flatMap(
+  (tree) => {
+    const files: string[] = [];
+    walk(join(root, tree), files);
+    return files
+      .filter((absolute) => !TEST_FILE.test(absolute))
+      .map((absolute) => ({
+        path: relative(root, absolute).split(sep).join('/'),
+        text: readFileSync(absolute, 'utf8'),
+      }));
+  },
+);
+
+/**
+ * Lesson mastery is a DERIVED ROLLUP over the lesson's required member KCs, never
+ * a stored grain (docs/lesson-evidence-mastery-contract.md §8.2, §9). A stored
+ * `mastery.lesson` competes with the rollup as a source of truth, with no arbiter
+ * between them — so the type keeps the field only so pre-seam projections
+ * deserialize, and the kernel drops it on read.
+ *
+ * That promise is written in a comment on `MasteryEngineState.lesson`, and a
+ * documented guard is not a guard: four comments in this codebase asserted a
+ * guard that did not exist. These assertions are the guard.
+ */
+describe('lesson mastery is derived, never stored', () => {
+  const types = readFileSync(join(root, 'packages/authority-core/src/types.ts'), 'utf8');
+  const kernelViews = readFileSync(join(root, 'services/authority-kernel/src/views.ts'), 'utf8');
+
+  it('scans the product trees', () => {
+    expect(productionSources.length).toBeGreaterThan(200);
+    const scanned = new Set(productionSources.map((file) => file.path));
+    expect(scanned.has(AUTHORITY_PATH)).toBe(true);
+    expect(scanned.has('services/authority-kernel/src/views.ts')).toBe(true);
+  });
+
+  it('never assigns a lesson-keyed mastery grain', () => {
+    // `m.lesson[id] = ...` in either spelling. The two sites this replaces were
+    // `applyMasterySeed` and `applyPracticeMastery`.
+    const offenders = productionSources
+      .filter((file) =>
+        /\b(?:m|mastery|state\.mastery)\??\.lesson\s*\[[^\]]*\]\s*=[^=]/.test(file.text),
+      )
+      .map((file) => file.path);
+    expect(
+      offenders,
+      'A stored lesson grain competes with the rollup as a source of truth. Roll the ' +
+        'lesson up from its required member KCs instead (Authority.getLessonRollups).',
+    ).toEqual([]);
+  });
+
+  it('never falls back to an empty lesson map', () => {
+    // THE most dangerous line available here: with the writes removed, `?? {}` is
+    // permanently `{}`, so the planner's mastery signal becomes a constant, every
+    // lesson looks identically un-mastered, and NOTHING goes red — it compiles,
+    // and it passes both the authority suite and this suite's other assertions.
+    const offenders = productionSources
+      .filter((file) => /\.lesson\s*\?\?\s*\{\s*\}/.test(file.text))
+      .map((file) => file.path);
+    expect(
+      offenders,
+      'A `?? {}` fallback on the lesson-mastery path silently turns the mastery signal ' +
+        'into a constant. There is no stored lesson grain to fall back FROM; read the rollup.',
+    ).toEqual([]);
+  });
+
+  it('keeps the legacy field optional, deprecated and unwritten', () => {
+    // If it ever became required, something would have to write it.
+    const declaration = types.indexOf('lesson?: Record<string, MemoryState>;');
+    expect(declaration).toBeGreaterThan(-1);
+    const doc = types.slice(0, declaration);
+    expect(doc.slice(doc.lastIndexOf('/**'))).toContain('@deprecated');
+    expect(types).not.toMatch(/^\s*lesson: Record<string, MemoryState>;/m);
+  });
+
+  /**
+   * The BEHAVIOUR is owned by `services/authority-kernel/src/kernel.test.ts`
+   * ("loads a legacy projection but drops its per-lesson BKT chain"). What is
+   * checked here is that the drop is still WIRED into the loader, because a guard
+   * the caller no longer reaches is the failure mode this file exists to catch —
+   * and both patterns are line-anchored, since a version that matched inside a
+   * comment would pass against the mutation that comments the statement out.
+   */
+  it('still drops the legacy field on read, as the type comment promises', () => {
+    expect(kernelViews).toMatch(/^\s*delete state\.mastery\.lesson;\s*$/m);
+    expect(kernelViews).toMatch(/^\s*dropLegacyLessonBkt\(state\);\s*$/m);
+    expect(types).toContain('learnerStateFromProjection');
   });
 });

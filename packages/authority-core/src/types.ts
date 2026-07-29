@@ -126,6 +126,14 @@ export interface MasteryEngineState {
    * lesson → evidence → mastery seam, so this is NEVER written. It is declared
    * only so projections persisted before the seam still deserialize; the kernel
    * drops it on read (`learnerStateFromProjection`).
+   *
+   * Both halves of that are ENFORCED, not merely documented — a documented guard
+   * is not a guard. `tests/architecture/mastery-write-path.test.ts` fails on any
+   * assignment to a lesson-keyed mastery grain, on the `?? {}` fallback that would
+   * silently freeze the planner's mastery signal, and on the drop-on-read losing
+   * its wiring; `authority.test.ts` ("no write path stores a lesson grain") checks
+   * every write path leaves it absent, and `kernel.test.ts` owns the legacy-load
+   * behaviour. Read a lesson through `Authority.getLessonRollups` instead.
    */
   lesson?: Record<string, MemoryState>;
 }

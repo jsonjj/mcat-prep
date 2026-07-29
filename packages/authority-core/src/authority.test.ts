@@ -1287,6 +1287,83 @@ describe('Authority — the decay clock is bounded below as well as above', () =
   });
 });
 
+/**
+ * Lesson mastery is a rollup over the lesson's required member KCs, computed on
+ * read. There is no stored lesson grain, because two sources of truth for one
+ * number have no arbiter between them.
+ *
+ * The type still declares `MasteryEngineState.lesson` so pre-seam projections
+ * deserialize, and its comment says it is never written. This is that claim as an
+ * assertion, over every path that writes mastery at all — the structural half is
+ * `tests/architecture/mastery-write-path.test.ts`.
+ */
+describe('Authority — no write path stores a lesson grain', () => {
+  it('leaves the legacy lesson map absent after a lesson observation', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+
+    auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ correct: true }),
+      lessonId: V3_LESSON_ID,
+    });
+
+    expect(state.mastery!.lesson).toBeUndefined();
+    // The lesson is reported, so the absence above is a derived readout rather
+    // than a write that did not happen.
+    expect(auth.getMasteryLessons(state).map((l) => l.lessonId)).toContain(V3_LESSON_ID);
+  });
+
+  it('leaves it absent after the synthetic study path', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.continueStep(state);
+    await auth.submitAttempt(state, 'A');
+
+    expect(state.mastery!.lesson).toBeUndefined();
+    expect(Object.keys(state.mastery!.kc).length).toBeGreaterThan(0);
+  });
+
+  it('leaves it absent after a diagnostic seed', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+
+    auth.applyMasterySeed(state, {
+      kcPriors: Object.fromEntries(V3_LESSON_KCS.map((kcId) => [kcId, SEED_PRIOR_CAP])),
+      skillPriors: {},
+      lessonPriors: {},
+      carsAbility: {},
+    });
+
+    expect(state.mastery!.lesson).toBeUndefined();
+    expect(auth.getMasteryLessons(state, [V3_LESSON_ID])[0]!.pL).toBeCloseTo(SEED_PRIOR_CAP, 12);
+  });
+
+  it('resolves the lesson readout from the members, not from a stored value', () => {
+    // If a stored grain existed and were read, poisoning it would move the
+    // readout. The rollup ignores it entirely, which is what "one source of
+    // truth" has to mean in the presence of legacy state.
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    auth.applyQualifiedBktObservation(state, {
+      observation: qualifiedObservation({ correct: true }),
+      lessonId: V3_LESSON_ID,
+    });
+    const derived = auth.getMasteryLessons(state, [V3_LESSON_ID])[0]!;
+
+    state.mastery!.lesson = {
+      [V3_LESSON_ID]: {
+        pL: 0.99,
+        halfLifeDays: 14,
+        lastPracticedAt: at(NOW),
+        lastDueReviewAt: null,
+      },
+    };
+
+    expect(auth.getMasteryLessons(state, [V3_LESSON_ID])[0]).toEqual(derived);
+    expect(derived.mastered).toBe(false);
+  });
+});
+
 describe('Authority — diagnostic mastery seeding', () => {
   const emptySeed = (): MasterySeed => ({
     kcPriors: {},
