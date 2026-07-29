@@ -209,31 +209,48 @@ invisible confound.
 **Spec.** Every attempt terminates in feedback that states the correct answer and explains why the
 *specific option the learner chose* is wrong. This is not optional and not deferred.
 
-> **Amended 2026-07-28 — the correct answer is withheld until a SECOND miss.** This is a product
-> decision by the product owner, recorded here because it partially reverses the paragraph above and
-> the §7 line "withholding the correct option — not building." The shipped adaptive-practice flow is
-> now: a correct first attempt is confirmed immediately, unchanged; a **first** miss terminates in the
-> refutation of the option the learner chose **without** the key and **without** the general rationale
-> that explains the key; the item resurfaces `RETRY_GAP` questions later; a **second** miss discloses
-> everything — key, general rationale, and the refutation of the second pick. A correct second attempt
-> is a plain correct confirmation.
+> **Amended 2026-07-29 — the withhold is reversed; the spec paragraph above stands as written.** The
+> 2026-07-28 amendment (recorded below for the record) deferred the key to a second miss and re-asked
+> the same item `RETRY_GAP` questions later. Both halves are now removed, together. The shipped flow
+> is: every scored attempt, right or wrong, terminates in the key, the general rationale that explains
+> it, and the refutation of the option the learner chose. No item is re-asked inside a session.
 >
-> **The evidence, as it stands.** Butler, Karpicke & Roediger (2007) tested this contrast on
-> multiple-choice items and found **.71 versus .71** (tier A) — withholding is not expected to harm
-> learning, and its measured cost is time. Pashler et al. (2005) found feedback must **eventually**
-> contain the correct answer, since being told only right-or-wrong yields "virtually no benefit"
-> (tier A); the amendment defers the key by one attempt rather than omitting it, and the second
-> attempt discloses whichever way it goes. Two properties of what we actually ship bear on the
-> transfer from that literature and are stated without extrapolation: a **targeted refutation of the
-> chosen distractor is materially more informative than bare right/wrong**, which is the condition
-> Pashler measured (bare right/wrong ≈ 0.05 versus elaborated ≈ 0.49, tier A); and **withholding the
-> key on a four-option item narrows the retry to three options**, so the second attempt is a
-> constrained choice rather than free generation.
+> **Why the two halves could not be separated.** The deferral was licensed entirely by the guarantee
+> that the same item returned and disclosed. The re-test a miss earns is now a *different* item on the
+> same KC × skill — better measurement, since a repeat scores **.62** against **.30** for a new item
+> and that gap is memory of the item rather than knowledge of the concept (Butler et al. 2013, tier
+> B), and not solvable by elimination, which a re-ask with one option already refuted is. But a
+> different item cannot disclose the original's key, so keeping the withhold alongside it would have
+> produced exactly the permanent silence Pashler et al. (2005) rules out (bare right/wrong
+> statistically indistinguishable from no feedback; supplying the key raised one-week retention by
+> **494%**, tier A). Withhold-plus-sibling is the one combination that is indefensible.
+>
+> **What the withhold was worth.** Little, in either direction. Butler, Karpicke & Roediger (2007)
+> found the deferral contrast at **.71 versus .71** and **.64 versus .65** — a flat null (tier A) — so
+> removing it forfeits nothing measurable. The unaided retry it bought self-corrects only **4–9%** of
+> the time (Finn & Metcalfe 2010, tier B). Against that, disclosing at once delivers the
+> transfer-carrying half of the feedback while the question is still in the learner's head: **.45** on
+> new inference items with the explanation, **.30** for the bare key, **.28** for no feedback at all
+> (Butler, Godbole & Marsh 2013, d = 0.90, tier A).
+>
+> **Also removed: the end-of-session clamp.** `resurfaceAt` used to clamp a late miss to the next step,
+> producing a lag-0 re-ask. That is the single arrangement in this literature with direct evidence of
+> harm — **.19** at two days against **.60** at a lag of five, and worse than not retrying at all at
+> **.36** (Karpicke & Roediger 2007, tier B). It was tolerable only while the re-ask was the sole route
+> to the key.
+>
+> **Where the re-test now lives.** The cross-session repair path (`PracticeRepairTarget` in
+> `@mcat/policies`): recent misses are flagged, scheduled ahead of `train` and `probe`, allocated up to
+> `maxRepairFraction = 0.3` of the science budget, and aimed at ~85% success. An in-session sibling is
+> **not** currently served, because a session's queue holds at most one item per KC × skill by
+> construction and there is no endpoint to fetch another mid-session. That endpoint is a tracked
+> follow-up, not a silent gap.
 >
 > Nothing else in this section changes. The refutation of the chosen distractor remains mandatory on
-> every miss, no attempt ends in bare right/wrong, and the two dropped stages stay dropped — the
-> withhold does **not** reintroduce a cause self-report (§2.3) or any other step between the answer
-> and its feedback.
+> every miss, no attempt ends in bare right/wrong, and the two dropped stages stay dropped — no cause
+> self-report (§2.3) and no step of any kind between the answer and its feedback.
+>
+> Full reasoning, with the alternatives that were rejected: `docs/research/practice-feedback/`.
 
 **Evidence:**
 

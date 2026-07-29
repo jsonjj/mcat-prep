@@ -1,17 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import {
-  RETRY_GAP,
-  feedbackFor,
-  queueNotices,
-  resurfaceAt,
-  subAfterFirstAttempt,
-  subAfterSecondAttempt,
-} from './session-flow';
+import { feedbackFor, subAfterAttempt } from './session-flow';
 
 /**
- * The practice miss flow: no cause naming, spaced resurface kept, and — since the
- * 2026-07-28 amendment to docs/design/error-handling-design.md §3.3 — the correct
- * answer withheld until a SECOND miss. See also §2.2–§2.3 on what stayed dropped.
+ * The practice miss flow: no cause naming, and — since the 2026-07-29 amendment to
+ * docs/design/error-handling-design.md §3.3, which reverses the 2026-07-28 one —
+ * the key disclosed immediately on a miss, with no same-item re-ask at all. The
+ * re-test a miss earns is a different item on the same KC × skill, owned by the
+ * cross-session repair path. See docs/research/practice-feedback/00-DECISIONS.md.
  */
 
 /** A four-option item whose key is D, with a refutation for every distractor. */
@@ -26,43 +21,27 @@ const RESULT = {
   },
 } as const;
 
-describe('practice miss flow', () => {
-  it('confirms a correct first attempt at once and withholds on a miss', () => {
-    expect(subAfterFirstAttempt(true)).toBe('reveal');
-    expect(subAfterFirstAttempt(false)).toBe('feedback');
+describe('practice attempt flow', () => {
+  it('lands every scored attempt on the disclosing card, right or wrong', () => {
+    expect(subAfterAttempt()).toBe('reveal');
   });
 
-  it('always discloses on the second attempt, right or wrong', () => {
-    expect(subAfterSecondAttempt()).toBe('reveal');
-  });
-
-  it('still re-inserts the missed item a few questions later', () => {
-    // Mid-session: the item comes back after a gap, not on the next screen.
-    expect(resurfaceAt(0, 8)).toBe(1 + RETRY_GAP);
-    expect(resurfaceAt(2, 8)).toBe(3 + RETRY_GAP);
-    expect(resurfaceAt(0, 8)).toBeGreaterThan(1);
-  });
-
-  it('keeps the second pass on the last remaining step rather than dropping it', () => {
-    // index 7 of an 8-step sequence: clamped to the end, so it retries next.
-    expect(resurfaceAt(7, 8)).toBe(8);
-    expect(resurfaceAt(6, 8)).toBe(8);
-  });
-
-  it('never re-inserts before the step that follows the miss', () => {
-    for (const [index, length] of [
-      [0, 1],
-      [3, 4],
-      [5, 12],
-    ] as const) {
-      expect(resurfaceAt(index, length)).toBeGreaterThanOrEqual(index + 1);
-    }
+  it('exposes no step that defers the key and no re-ask offset', async () => {
+    // The withhold and the same-item resurface were removed together: the deferral
+    // was only licensed by the guarantee that the same item returned, so neither
+    // survives without the other. Guarding the module surface keeps a future change
+    // from reintroducing one half alone.
+    const flow = (await import('./session-flow')) as Record<string, unknown>;
+    expect(Object.keys(flow).sort()).toEqual(['feedbackFor', 'subAfterAttempt']);
+    expect(flow.RETRY_GAP).toBeUndefined();
+    expect(flow.resurfaceAt).toBeUndefined();
+    expect(flow.subAfterFirstAttempt).toBeUndefined();
+    expect(flow.subAfterSecondAttempt).toBeUndefined();
   });
 });
 
-describe('a FIRST miss gets the refutation and nothing that names the key', () => {
-  // 'feedback' is exactly what `subAfterFirstAttempt(false)` returns, asserted above.
-  const feedback = feedbackFor(RESULT, 'B', 'feedback');
+describe('a MISS discloses everything at once', () => {
+  const feedback = feedbackFor(RESULT, 'B');
 
   it('refutes the specific option that was chosen', () => {
     expect(feedback.correct).toBe(false);
@@ -70,22 +49,24 @@ describe('a FIRST miss gets the refutation and nothing that names the key', () =
     expect(feedback.wrongChoiceRationale).toBe(RESULT.choiceRationales.B);
   });
 
-  it('withholds the key and the explanation OF the key', () => {
-    expect(feedback.correctChoiceId).toBeNull();
-    // `rationale` explains why the correct answer is correct, so it names the key
-    // as surely as the letter does.
-    expect(feedback.rationale).toBeNull();
+  it('gives the key AND the explanation of the key, not one or the other', () => {
+    // The explanation is the half that carries transfer to unseen items (Butler,
+    // Godbole & Marsh 2013: .45 with it vs .30 for the bare key and .28 for no
+    // feedback at all), so a card with the letter and no prose is not sufficient.
+    expect(feedback.correctChoiceId).toBe('D');
+    expect(feedback.rationale).toBe(RESULT.rationale);
   });
 
-  it('carries no other field the key could be read out of', () => {
-    // The whole point of the redaction: the values reachable from the card cannot
-    // spell, contain, or index the answer. Every rationale but the chosen one is
-    // gone, so the correct choice's own explanation is not among them either.
-    const rendered = Object.values(feedback).filter((v) => v !== null);
-    expect(rendered).not.toContain('D');
-    expect(rendered).not.toContain(RESULT.rationale);
-    expect(rendered).not.toContain(RESULT.choiceRationales.D);
-    expect(JSON.stringify(feedback)).not.toContain(RESULT.rationale);
+  it('discloses on every wrong option, not just the one this fixture picked', () => {
+    for (const pick of ['A', 'B', 'C'] as const) {
+      const f = feedbackFor(RESULT, pick);
+      expect(f.correctChoiceId).toBe('D');
+      expect(f.rationale).toBe(RESULT.rationale);
+      expect(f.wrongChoiceRationale).toBe(RESULT.choiceRationales[pick]);
+    }
+  });
+
+  it('carries exactly the fields the card renders', () => {
     expect(Object.keys(feedback).sort()).toEqual([
       'correct',
       'correctChoiceId',
@@ -94,64 +75,27 @@ describe('a FIRST miss gets the refutation and nothing that names the key', () =
       'wrongChoiceRationale',
     ]);
   });
-
-  it('withholds on every wrong option, not just the one this fixture picked', () => {
-    for (const pick of ['A', 'B', 'C'] as const) {
-      const f = feedbackFor(RESULT, pick, 'feedback');
-      expect(f.correctChoiceId).toBeNull();
-      expect(f.rationale).toBeNull();
-      expect(f.wrongChoiceRationale).toBe(RESULT.choiceRationales[pick]);
-    }
-  });
 });
 
-describe('a correct FIRST attempt is unchanged', () => {
-  const feedback = feedbackFor(RESULT, 'D', 'reveal');
+describe('a correct attempt', () => {
+  const feedback = feedbackFor(RESULT, 'D');
 
   it('confirms with the key and the general rationale, and refutes nothing', () => {
     expect(feedback.correct).toBe(true);
     expect(feedback.correctChoiceId).toBe('D');
     expect(feedback.rationale).toBe(RESULT.rationale);
+    // Not "Correct: D" over a callout explaining why some other option misses.
     expect(feedback.wrongChoiceId).toBeNull();
     expect(feedback.wrongChoiceRationale).toBeNull();
-  });
-});
-
-describe('the SECOND attempt', () => {
-  it('discloses fully on a second miss: key, rationale, and the new refutation', () => {
-    // The result object is still the FIRST attempt's, so correctness has to be
-    // recomputed from this attempt's pick rather than read off `result.correct`.
-    const feedback = feedbackFor(RESULT, 'C', 'reveal');
-    expect(feedback.correct).toBe(false);
-    expect(feedback.correctChoiceId).toBe('D');
-    expect(feedback.rationale).toBe(RESULT.rationale);
-    expect(feedback.wrongChoiceId).toBe('C');
-    expect(feedback.wrongChoiceRationale).toBe(RESULT.choiceRationales.C);
-  });
-
-  it('reads as a plain correct answer when it lands, with nothing to contradict it', () => {
-    const feedback = feedbackFor(RESULT, 'D', 'reveal');
-    expect(feedback.correct).toBe(true);
-    expect(feedback.correctChoiceId).toBe('D');
-    expect(feedback.rationale).toBe(RESULT.rationale);
-    // Not "Correct: D" over a callout explaining why the first pick misses.
-    expect(feedback.wrongChoiceId).toBeNull();
-    expect(feedback.wrongChoiceRationale).toBeNull();
-  });
-
-  it('does not treat the first attempt’s recorded miss as this attempt’s outcome', () => {
-    const second = feedbackFor(RESULT, 'D', 'reveal');
-    const first = feedbackFor(RESULT, 'B', 'feedback');
-    expect(first.correct).toBe(false);
-    expect(second.correct).toBe(true);
   });
 });
 
 describe('an unanswered step', () => {
-  it('names no wrong choice when nothing was picked', () => {
-    expect(feedbackFor(RESULT, null, 'feedback')).toMatchObject({
+  it('names no wrong choice when nothing was picked, but still shows the key', () => {
+    expect(feedbackFor(RESULT, null)).toMatchObject({
       correct: false,
-      correctChoiceId: null,
+      correctChoiceId: 'D',
+      rationale: RESULT.rationale,
       wrongChoiceId: null,
       wrongChoiceRationale: null,
     });
@@ -159,33 +103,10 @@ describe('an unanswered step', () => {
 
   it('tolerates an item with no refutation authored for the chosen option', () => {
     const sparse = { ...RESULT, choiceRationales: { D: 'only the key is explained' } };
-    expect(feedbackFor(sparse, 'B', 'feedback').wrongChoiceRationale).toBeNull();
-  });
-});
-
-/**
- * The two degraded-queue facts the authority reports. Independence is the point
- * worth pinning: neither implies the other, so deriving one from the other
- * would silently drop a case.
- */
-describe('degraded-queue notices', () => {
-  it('says nothing about a queue that arrived as asked', () => {
-    expect(queueNotices({ shortfall: 0, taughtGap: false })).toEqual([]);
-  });
-
-  it('reports a taught gap on a queue that nevertheless came back full', () => {
-    expect(queueNotices({ shortfall: 0, taughtGap: true })).toEqual(['taught-gap']);
-  });
-
-  it('reports a shortfall with no taught gap as its own cause', () => {
-    expect(queueNotices({ shortfall: 3, taughtGap: false })).toEqual(['shortfall']);
-  });
-
-  it('reports both, taught gap first, when both hold', () => {
-    expect(queueNotices({ shortfall: 8, taughtGap: true })).toEqual(['taught-gap', 'shortfall']);
-  });
-
-  it('reports nothing at all before a queue has loaded', () => {
-    expect(queueNotices(undefined)).toEqual([]);
+    const f = feedbackFor(sparse, 'B');
+    expect(f.wrongChoiceRationale).toBeNull();
+    // The key still lands: a missing distractor refutation must not suppress it.
+    expect(f.correctChoiceId).toBe('D');
+    expect(f.rationale).toBe(sparse.rationale);
   });
 });
