@@ -52,7 +52,8 @@ export function CarsDuel() {
   const [phase, setPhase] = useState<Phase>('setup');
   const [mode, setMode] = useState<DuelMode>('rebut');
   const [difficulty, setDifficulty] = useState<DuelDifficulty>('standard');
-  const [topic, setTopic] = useState(SUGGESTED_TOPICS[0] ?? '');
+  // The system picks the topic (for now, the first default). Shown read-only on setup.
+  const [topic] = useState(SUGGESTED_TOPICS[0] ?? '');
 
   const sent = useRef<AiMessage[]>([]);
   const [shown, setShown] = useState<Shown[]>([]);
@@ -225,23 +226,10 @@ export function CarsDuel() {
             </div>
 
             <div>
-              <label className="mc-label" htmlFor="duel-topic">
-                Topic
-              </label>
-              <textarea
-                id="duel-topic"
-                className="mc-input"
-                rows={2}
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-              />
-              <div className="mc-home__pills" style={{ justifyContent: 'flex-start' }}>
-                {SUGGESTED_TOPICS.map((t) => (
-                  <button key={t} type="button" className="mc-hpill" onClick={() => setTopic(t)}>
-                    {t.length > 42 ? `${t.slice(0, 42)}…` : t}
-                  </button>
-                ))}
-              </div>
+              <p className="mc-label">Topic</p>
+              <p style={{ margin: '6px 0 0', fontSize: '1.25rem', lineHeight: 1.5, fontWeight: 600 }}>
+                {topic}
+              </p>
             </div>
 
             <Button
