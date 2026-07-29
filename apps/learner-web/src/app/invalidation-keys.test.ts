@@ -21,8 +21,8 @@ import {
 const missing = (set: readonly string[]): string[] => MISTAKE_KEYS.filter((k) => !set.includes(k));
 
 describe('the Mistakes tab’s query keys', () => {
-  it('are the keys useErrorLog and useMistakePatterns actually read under', () => {
-    expect([...MISTAKE_KEYS]).toEqual(['errors', 'error-patterns']);
+  it('are the keys useErrorLog, useMistakePatterns and useShakyWins actually read under', () => {
+    expect([...MISTAKE_KEYS]).toEqual(['errors', 'error-patterns', 'shaky-wins']);
   });
 
   it('are named by a scored practice attempt — the write that hid the bug', () => {
