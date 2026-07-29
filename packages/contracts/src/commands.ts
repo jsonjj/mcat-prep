@@ -36,6 +36,21 @@ export const GoalCommandSchema = z
   .strict();
 export type GoalCommand = z.infer<typeof GoalCommandSchema>;
 
+/**
+ * Read-only projection of the learner's goal so the account/profile surface can
+ * PREFILL the editor (WS8). Every field is nullable because a guest who has not
+ * confirmed a plan has no goal yet; the writer is still `GoalCommand`. This never
+ * carries the daily-time preset — that is owned by the Today's Path budget seam.
+ */
+export const GoalViewSchema = z
+  .object({
+    testDate: DateOnlySchema.nullable(),
+    targetScore: z.number().int().min(472).max(528).nullable(),
+    minutesPerWeek: z.number().int().positive().max(10_080).nullable(),
+  })
+  .strict();
+export type GoalView = z.infer<typeof GoalViewSchema>;
+
 export const ChoiceIdSchema = z.enum(['A', 'B', 'C', 'D']);
 export type ChoiceId = z.infer<typeof ChoiceIdSchema>;
 

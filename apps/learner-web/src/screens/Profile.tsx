@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack, useTheme, type ThemePreference } from '@mcat/ui-web';
 import { DAILY_MINUTES_PRESETS } from '@mcat/contracts';
-import { useBootstrap, useResetProgress } from '../app/queries';
+import { useBootstrap, useConfirmPlan, useGoal, useResetProgress } from '../app/queries';
 import { useBuildTodaysPath, useSetDailyBudget, useTodaysPath } from '../app/today-queries';
 import { isGhostOptedOut, setGhostOptOut } from '../components/GhostCompanion';
 
@@ -20,6 +20,34 @@ export function Profile() {
   const todaysPath = useTodaysPath();
   const setBudget = useSetDailyBudget();
   const buildPath = useBuildTodaysPath();
+  // Goal editor (WS8): exam date / target / weekly minutes, saved via the same
+  // useConfirmPlan seam onboarding uses. Prefilled from the read-only goal view.
+  const goal = useGoal();
+  const confirmGoal = useConfirmPlan();
+  const [scheduled, setScheduled] = useState(false);
+  const [testDate, setTestDate] = useState('');
+  const [target, setTarget] = useState('511');
+  const [hours, setHours] = useState('7');
+  useEffect(() => {
+    const g = goal.data;
+    if (!g) return;
+    setScheduled(g.testDate !== null);
+    setTestDate(g.testDate ?? '');
+    if (g.targetScore !== null) setTarget(String(g.targetScore));
+    if (g.minutesPerWeek !== null) setHours(String(Math.round((g.minutesPerWeek / 60) * 2) / 2));
+  }, [goal.data]);
+  const parsedHours = Number(hours);
+  const minutesPerWeek =
+    Number.isFinite(parsedHours) && parsedHours > 0 ? Math.round(parsedHours * 60) : 0;
+  const saveGoal = (e: FormEvent) => {
+    e.preventDefault();
+    if (minutesPerWeek <= 0) return;
+    confirmGoal.mutate({
+      testDate: scheduled && testDate ? new Date(testDate).toISOString() : null,
+      targetScore: Number(target) || null,
+      minutesPerWeek,
+    });
+  };
   const [ghostOn, setGhostOn] = useState(() => !isGhostOptedOut());
   const [remindersOn, setRemindersOn] = useState(() => {
     try {
@@ -69,6 +97,86 @@ export function Profile() {
           {bootstrap.data?.contentRelease ?? '—'}
         </p>
       </header>
+
+      <Card elevated>
+        <form onSubmit={saveGoal}>
+          <Stack gap={3}>
+            <Eyebrow>Exam date &amp; goal</Eyebrow>
+            <Stack gap={2}>
+              <span className="mc-label">Test date</span>
+              <label className="mc-switch">
+                <input
+                  type="checkbox"
+                  checked={scheduled}
+                  onChange={(e) => setScheduled(e.target.checked)}
+                />
+                <span>I have a scheduled test date</span>
+              </label>
+              {scheduled ? (
+                <input
+                  className="mc-input"
+                  type="date"
+                  aria-label="Test date"
+                  value={testDate}
+                  onChange={(e) => setTestDate(e.target.value)}
+                />
+              ) : (
+                <p className="mc-muted mc-fineprint">
+                  No date yet is fine — you&apos;ll keep a rolling plan and can add one anytime.
+                </p>
+              )}
+            </Stack>
+
+            <Stack gap={2}>
+              <label className="mc-label" htmlFor="goal-target">
+                Target score
+              </label>
+              <input
+                id="goal-target"
+                className="mc-input"
+                type="number"
+                min={472}
+                max={528}
+                value={target}
+                onChange={(e) => setTarget(e.target.value)}
+              />
+            </Stack>
+
+            <Stack gap={2}>
+              <label className="mc-label" htmlFor="goal-hours">
+                Weekly study time
+              </label>
+              <div className="mc-input-suffix">
+                <input
+                  id="goal-hours"
+                  className="mc-input"
+                  type="number"
+                  min={1}
+                  max={80}
+                  step={0.5}
+                  inputMode="decimal"
+                  value={hours}
+                  onChange={(e) => setHours(e.target.value)}
+                />
+                <span className="mc-input-suffix__unit">hours / week</span>
+              </div>
+            </Stack>
+
+            <p className="mc-muted mc-fineprint">
+              Your exam date paces the plan and tapers CARS Duel&apos;s harder Defend rounds in the
+              final weeks. It never changes correctness or what counts as mastery.
+            </p>
+            {confirmGoal.isSuccess ? <Callout tone="success">Goal saved.</Callout> : null}
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={confirmGoal.isPending || minutesPerWeek <= 0}
+            >
+              {confirmGoal.isPending ? 'Saving…' : 'Save goal'}
+            </Button>
+          </Stack>
+        </form>
+      </Card>
 
       <Card elevated>
         <Stack gap={3}>

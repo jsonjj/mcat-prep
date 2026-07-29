@@ -37,11 +37,15 @@ export function carsUpdate(v: number, input: CarsUpdateInput): number {
   return v + input.k * (input.r - q);
 }
 
-/** CARS Duel rubric (each criterion scored 0–3 on what the response exercised). */
+/**
+ * CARS Duel rubric (each criterion scored 0–3 on what the response exercised).
+ * Each field is `number | undefined` so the wire `CarsDuelRubric` (whose optional
+ * fields carry `| undefined` under exactOptionalPropertyTypes) is assignable here.
+ */
 export interface DuelRubric {
-  position?: number;
-  argument?: number;
-  application?: number;
+  position?: number | undefined;
+  argument?: number | undefined;
+  application?: number | undefined;
 }
 
 const RUBRIC_WEIGHTS = { position: 0.25, argument: 0.4, application: 0.35 } as const;

@@ -7,6 +7,8 @@ import type { AiMessage } from './port';
  */
 export type DuelMode = 'defend' | 'rebut';
 export type DuelDifficulty = 'warmup' | 'standard' | 'challenge';
+/** The stance the learner is assigned to argue (system-set — the learner never picks). */
+export type DuelSide = 'affirm' | 'oppose';
 
 /** Hard caps applied on every turn to bound cost and latency. */
 export const MAX_OUTPUT_TOKENS = 320;
@@ -38,13 +40,24 @@ const DIFFICULTY_NOTE: Record<DuelDifficulty, string> = {
     'Press hard but fairly. Surface subtle assumptions, scope errors, and unstated premises; rarely concede without strong support.',
 };
 
-export function buildCarsSystemPrompt(mode: DuelMode, difficulty: DuelDifficulty, topic: string): string {
+const sideNote = (side: DuelSide): string =>
+  `The student has been assigned (they did NOT choose) to argue ${
+    side === 'affirm' ? 'IN FAVOR OF' : 'AGAINST'
+  } the proposition. Take and hold the OPPOSING side throughout so they must argue their assigned stance.`;
+
+export function buildCarsSystemPrompt(
+  mode: DuelMode,
+  difficulty: DuelDifficulty,
+  topic: string,
+  side?: DuelSide,
+): string {
   return [
     'You are a principled debate sparring partner inside an MCAT CARS practice tool.',
     "Your job is to sharpen the student's critical analysis and reasoning skills, not to win.",
     'Tone: sharp but respectful. Never mock, demean, insult, or use hostile language.',
     `Debate topic: ${topic}`,
     MODE_NOTE[mode],
+    ...(side === undefined ? [] : [sideNote(side)]),
     DIFFICULTY_NOTE[difficulty],
     'Rules:',
     '- Debate reasoning and argument structure only. Do NOT assert real-world facts, statistics, citations, or scientific results as settled; if a factual claim matters, frame it hypothetically ("suppose that...").',

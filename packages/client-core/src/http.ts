@@ -6,6 +6,7 @@ import {
   DiagnosticNextSchema,
   ErrorEntryViewSchema,
   GoalCommandSchema,
+  GoalViewSchema,
   GuestBootstrapResponseSchema,
   HTTP_API,
   HttpApiErrorSchema,
@@ -270,6 +271,11 @@ export class HttpAuthorityClient implements AuthorityPort {
     await this.acceptedCommand(HTTP_API.goal.path, command, HTTP_API.goal.method);
   }
 
+  async getGoal() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.goalView.path, GoalViewSchema);
+  }
+
   async getToday() {
     await this.ensureBootstrap();
     return this.request(HTTP_API.today.path, TodayViewSchema);
@@ -453,10 +459,10 @@ export class HttpAuthorityClient implements AuthorityPort {
     return response;
   }
 
-  async recordCarsDuel(rubric?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {
+  async recordCarsDuel(outcome?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {
     await this.acceptedCommand('/v1/hooks/cars-duel', {
       envelope: await this.commandEnvelope(),
-      ...(rubric === undefined ? {} : { rubric }),
+      ...(outcome ?? {}),
     });
   }
 

@@ -1,4 +1,5 @@
 import type { PlannerReason } from '@mcat/domain';
+import type { CarsDuelSelectionView } from '@mcat/contracts';
 import { PRIOR_PL0 } from './bkt';
 import type { PolicyManifest } from './manifest';
 
@@ -226,6 +227,8 @@ export interface CarriedActivity {
   readonly lessonSlug: string | null;
   readonly lessonId: string | null;
   readonly priorityReason: PlannerReason;
+  /** CARS Duel selection ({mode, topicId, intensity, side}); set by the authority for cars_duel. */
+  readonly carsDuel?: CarsDuelSelectionView;
 }
 
 export interface TodaysPathSnapshot {
@@ -259,6 +262,8 @@ export interface PlannedActivity {
   readonly lessonId: string | null;
   readonly priorityReason: PlannerReason;
   readonly carriedOver: boolean;
+  /** CARS Duel selection ({mode, topicId, intensity, side}); set by the authority for cars_duel. */
+  readonly carsDuel?: CarsDuelSelectionView;
 }
 
 export interface TodaysPathResult {

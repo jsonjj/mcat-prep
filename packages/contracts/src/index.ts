@@ -8,6 +8,7 @@ export * from './atlas';
 export * from './events';
 export * from './lesson-observation';
 export * from './commands';
+export * from './cars-duel';
 export * from './learner-views';
 export * from './mastery';
 export * from './practice';

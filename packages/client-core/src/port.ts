@@ -1,10 +1,11 @@
 import type {
   BootstrapResponse,
   BuildTodaysPathInput,
-  CarsDuelRubric,
+  CarsDuelOutcomeInput,
   CarsReadinessView,
   DiagnosticNext,
   ErrorEntryView,
+  GoalView,
   LessonMasteryView,
   LessonWarrantView,
   MasteryMapEntry,
@@ -54,6 +55,8 @@ export interface AuthorityPort {
   getDiagnosticNext(): Promise<DiagnosticNext>;
   submitDiagnostic(questionId: string, choiceId: string | null): Promise<void>;
   confirmPlan(goal: GoalInput): Promise<void>;
+  /** Read-only goal projection so the Account/Profile editor can prefill (WS8). */
+  getGoal(): Promise<GoalView>;
   getToday(): Promise<TodayView>;
   /** Today's Path: read the current day's plan (built:false when none exists yet). */
   getTodaysPath(): Promise<TodaysPathView>;
@@ -102,8 +105,12 @@ export interface AuthorityPort {
   getPracticeQueue(x: number, focus?: string): Promise<PracticeQueueView>;
   /** Adaptive Practice: score one answer (a first, unassisted attempt moves mastery). */
   submitPracticeAttempt(command: PracticeAttemptCommand): Promise<PracticeAttemptResult>;
-  /** Record a CARS Duel; an optional rubric feeds a low-weight CARS ability nudge. */
-  recordCarsDuel(rubric?: CarsDuelRubric): Promise<void>;
+  /**
+   * Record a CARS Duel. The optional rubric feeds a low-weight CARS ability nudge;
+   * the optional {mode, topicId, intensity} let the formative engine update its
+   * selection history, intensity rating, and Defend unlock (WS6). Never mastery.
+   */
+  recordCarsDuel(outcome?: CarsDuelOutcomeInput): Promise<void>;
   /**
    * Hand a finished diagnostic's opening priors to the mastery engine. Seeds
    * only ever initialize units the learner has not practised, and are capped far

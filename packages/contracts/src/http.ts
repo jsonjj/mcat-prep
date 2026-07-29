@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { GuestBootstrapResponseSchema, SyncSubmitRequestSchema } from './api';
-import { AttemptCommandSchema, GoalCommandSchema } from './commands';
+import { AttemptCommandSchema, GoalCommandSchema, GoalViewSchema } from './commands';
 import { ErrorCodeSchema } from './errors';
 import { EventIdSchema } from './ids';
 import {
@@ -90,6 +90,9 @@ export const HTTP_API = {
     response: GuestBootstrapResponseSchema,
   },
   goal: { method: 'PUT', path: '/v1/profile/goal', body: GoalCommandSchema },
+  // Read-only goal projection so the Account/Profile editor can prefill (WS8).
+  // Same path as the PUT writer, distinguished by method.
+  goalView: { method: 'GET', path: '/v1/profile/goal', response: GoalViewSchema },
   today: { method: 'GET', path: '/v1/plan/today', response: TodayViewSchema },
   // Today's Path — the daily learning-plan engine (orchestrates the other engines).
   todaysPath: { method: 'GET', path: '/v1/plan/today/path', response: TodaysPathViewSchema },

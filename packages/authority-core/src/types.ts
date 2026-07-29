@@ -1,6 +1,7 @@
 import type {
   AccountState,
   CalibrationBand,
+  CarsDuelSelectionView,
   CarsSkill,
   LearnerEvent,
   LearnerId,
@@ -16,7 +17,13 @@ import type {
   Task,
 } from '@mcat/domain';
 import type { LearnerSafeQuestion } from '@mcat/content';
-import type { GhostView, MemoryState, PlannedActivity, ReviewDebtBand } from '@mcat/policies';
+import type {
+  CarsDuelEngineState,
+  GhostView,
+  MemoryState,
+  PlannedActivity,
+  ReviewDebtBand,
+} from '@mcat/policies';
 
 export type { GhostView, GhostState } from '@mcat/policies';
 
@@ -60,11 +67,24 @@ export interface LearnerState {
   mistakesReviewedThrough?: UtcTimestamp;
   /** KC ids the learner has been taught (union of completed lessons' KCs) — per-KC teach-before-test. */
   taughtKcIds?: string[];
+  /**
+   * CARS Duel engine state (WS6): the formative duel history + intensity rating +
+   * Defend unlock latch that drive selection. Optional so older projections
+   * deserialize; the authority initializes it lazily. The CARS Duel writes NO
+   * mastery — this slice only shapes which duel is served next.
+   */
+  carsDuel?: CarsDuelEngineState;
 }
 
 /** One scheduled activity plus its per-learner run status (persisted). */
 export interface TodaysPathActivityState extends PlannedActivity {
   status: PlanActivityStatus;
+  /**
+   * Mutable override of `PlannedActivity.carsDuel` (which is read-only): the pure
+   * engine emits cars_duel activities without a selection, and the authority
+   * resolves + assigns it after the build (WS6).
+   */
+  carsDuel?: CarsDuelSelectionView;
 }
 
 /** The persisted daily plan for one learner-day. Today's Path writes no mastery. */

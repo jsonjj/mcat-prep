@@ -1719,3 +1719,44 @@ describe('Authority — diagnostic mastery seeding', () => {
     expect(rollup.pL).not.toBe(PRIOR_PL0);
   });
 });
+
+describe('CARS Duel — formative engine state, never mastery (WS6)', () => {
+  it('folds a graded duel into the selection engine while writing no BKT mastery grain', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+
+    auth.recordCarsDuel(state, {
+      rubric: { position: 3, argument: 3, application: 3 },
+      mode: 'rebut',
+      topicId: 'cars-topic-001',
+      intensity: 'standard',
+    });
+
+    // The duel updates the formative selection engine (history + rating).
+    expect(state.carsDuel).toBeDefined();
+    expect(state.carsDuel!.history).toHaveLength(1);
+    expect(state.carsDuel!.history[0]).toMatchObject({
+      topicId: 'cars-topic-001',
+      mode: 'rebut',
+      intensity: 'standard',
+      holdRate: 1,
+    });
+
+    // ...and it mints NO mastery: neither a KC nor a reasoning-operation BKT grain
+    // is written. The only capability signal is the low-weight CARS ability nudge.
+    expect(state.mastery?.kc ?? {}).toEqual({});
+    expect(state.mastery?.skill ?? {}).toEqual({});
+    expect(auth.getMasterySkills(state).some((s) => s.atCapabilityCut)).toBe(false);
+    // The formative CARS ability V (K=0.08) is allowed to move — that is the nudge.
+    expect(Object.keys(state.mastery?.cars ?? {}).length).toBeGreaterThan(0);
+  });
+
+  it('records the ability nudge but no engine history when the topic is unknown/omitted', () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    auth.recordCarsDuel(state, { rubric: { position: 2 } });
+    expect(state.carsDuel).toBeUndefined();
+    expect(state.mastery?.kc ?? {}).toEqual({});
+    expect(state.mastery?.skill ?? {}).toEqual({});
+  });
+});

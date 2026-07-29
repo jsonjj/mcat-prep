@@ -168,7 +168,11 @@ export function useLaunchPlanActivity() {
       const state = { returnTo: '/app', activityId: a.activityId } as const;
       switch (a.kind) {
         case 'cars_duel':
-          navigate('/app/cars', { state: { ...state, autostart: true } });
+          // Carry the server-resolved selection ({mode, topicId, intensity, side})
+          // into the autostart path so the duel never picks its own (WS6).
+          navigate('/app/cars', {
+            state: { ...state, autostart: true, selection: a.carsDuel ?? null },
+          });
           break;
         case 'recall':
           navigate('/app/recall/review', {

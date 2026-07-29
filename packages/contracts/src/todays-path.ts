@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { CommandEnvelopeSchema } from './commands';
+import { CarsDuelSelectionViewSchema } from './cars-duel';
 import { GhostViewSchema, PlannerReasonSchema } from './learner-views';
 
 /**
@@ -68,6 +69,13 @@ export const PlanActivityViewSchema = z
     priorityReason: PlannerReasonSchema,
     status: PlanActivityStatusSchema,
     carriedOver: z.boolean(),
+    /**
+     * The resolved CARS Duel selection ({mode, topicId, intensity, side}) for a
+     * `cars_duel` activity, computed server-side at build time so the autostart
+     * path never picks its own topic/mode/intensity/stance (WS6). Optional and
+     * only present on CARS activities.
+     */
+    carsDuel: CarsDuelSelectionViewSchema.optional(),
   })
   .strict();
 export type PlanActivityView = z.infer<typeof PlanActivityViewSchema>;

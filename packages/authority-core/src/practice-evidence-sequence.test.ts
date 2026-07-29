@@ -322,7 +322,7 @@ describe('every evidence writer numbers a record with its accepted sequence', ()
     const state = authority.createGuest();
     state.nextSequence = LAST_ACCEPTED;
 
-    authority.recordCarsDuel(state, { position: 1, argument: 1, application: 1 });
+    authority.recordCarsDuel(state, { rubric: { position: 1, argument: 1, application: 1 } });
 
     // Two records from ONE command, so sharing a number is correct: they are not
     // a tie between commands, they are one command's evidence.
