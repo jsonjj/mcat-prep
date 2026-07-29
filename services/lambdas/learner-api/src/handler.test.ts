@@ -668,6 +668,44 @@ describe('learner Lambda API security boundary', () => {
     expect(projection.mastery).toBeDefined();
   });
 
+  /**
+   * The same refusal the single-item route gives an unassigned question, on the
+   * adaptive route, for the reason the adaptive route needed one: `specId` used
+   * to be parsed here and then read by nobody, so a body naming any corpus item
+   * with an invented spec was scored without the queue ever being asked. The
+   * body below is well-formed and correctly authenticated — the only thing wrong
+   * with it is that the server never served this learner this item.
+   */
+  it('refuses an adaptive practice attempt the queue never issued', async () => {
+    const { api, principal, repository } = harness();
+    const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
+
+    const denied = await api.handle(
+      request(
+        'POST',
+        '/v1/practice/attempts/adaptive',
+        {
+          envelope: commandEnvelope(0),
+          questionId: 'q-enz-indep-competitive',
+          specId: 'sci:bb1-enzyme-inhibition:EXPLAIN:train',
+          chosenChoiceId: 'A',
+        },
+        write,
+      ),
+    );
+
+    expect(denied.statusCode).toBe(403);
+    // The transaction aborted, so the refusal left no accepted event and no
+    // mastery behind it.
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(0);
+    const projection = repository.projectionFor(principal.learnerId)?.state as {
+      mastery?: unknown;
+      evidence?: unknown[];
+    };
+    expect(projection.mastery).toBeUndefined();
+    expect(projection.evidence).toEqual([]);
+  });
+
   it('rejects an adaptive practice attempt without CSRF', async () => {
     const { api } = harness();
     const body = {

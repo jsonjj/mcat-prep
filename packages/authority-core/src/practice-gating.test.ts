@@ -143,6 +143,13 @@ describe('the authority derives firstAttempt rather than reading it', () => {
    * Derived from exposure, which is unwindowed. A recency window would make a
    * repeat far enough in the past look like a first attempt again — the same
    * permanently-satisfied condition, only slower.
+   *
+   * The re-serve is what makes the year-later answer reachable at all, and it
+   * is also the strongest form of the claim: the second attempt arrives with a
+   * FRESH, unspent grant — the server genuinely handed the item over again —
+   * and it is still not a first attempt. Authorization to answer and credit for
+   * a first answer are separate questions, and only the exposure store answers
+   * the second one.
    */
   it('still classifies a repeat a year later as not-first', async () => {
     const { clock, set } = movableClock(NOW);
@@ -153,6 +160,12 @@ describe('the authority derives firstAttempt rather than reading it', () => {
 
     await authority.submitPracticeAttempt(state, wire);
     set('2027-07-27T12:00:00.000Z');
+    await authority.practiceBank.issueAttemptGrant(state.learnerId, {
+      questionId: item.question.id,
+      specId: item.specId,
+      contentRelease: authority.bank.contentRelease,
+      expiresAt: UtcTimestampSchema.parse('2027-07-28T12:00:00.000Z'),
+    });
     await authority.submitPracticeAttempt(state, wire);
 
     expect(bktRecords(state)).toHaveLength(1);

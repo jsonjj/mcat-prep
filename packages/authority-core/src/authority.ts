@@ -7,6 +7,7 @@ import {
   QualifiedBktObservationSchema,
   REASONING_OPERATIONS,
   SKILL_CLUSTERS,
+  UtcTimestampSchema,
   daysBetween,
   newEventId,
   newIdempotencyKey,
@@ -110,6 +111,7 @@ import {
   SyntheticPracticeBankPort,
   type PracticeAnswer,
   type PracticeAttemptLogEntry,
+  type PracticeAttemptRefusal,
   type PracticeBankPort,
   type PracticeCandidateUnit,
   type PracticeItemClassification,
@@ -211,6 +213,40 @@ export class ConflictingWarrantClusterError extends Error {
     this.name = 'ConflictingWarrantClusterError';
   }
 }
+
+/**
+ * The server did not issue this practice attempt, so it will not score it.
+ *
+ * Thrown rather than returned, and thrown BEFORE the answer key is read, so a
+ * caller who was never served the item learns nothing about it — not whether it
+ * exists, not what its answer is, and not what the queue would have chosen. The
+ * transport decides the status code; every practice route maps this to the same
+ * refusal the single-item route already gives an unassigned question.
+ */
+export class PracticeAttemptNotAuthorizedError extends Error {
+  constructor(
+    readonly reason: PracticeAttemptRefusal,
+    readonly questionId: string,
+  ) {
+    super(
+      `This practice attempt was not issued by the server (${reason}). ` +
+        'An adaptive-practice answer is only accepted for an item the queue served ' +
+        'to this learner, under the spec and content release it was served with.',
+    );
+    this.name = 'PracticeAttemptNotAuthorizedError';
+  }
+}
+
+/**
+ * How long a served item stays answerable.
+ *
+ * Long enough that no single sitting can outlast it, short enough that a queue
+ * response is not a standing permission a caller can bank. The client refetches
+ * the queue on every mount, and every serve re-issues, so the window renews for
+ * anyone actually using the product; only a caller holding a response aside
+ * meets the expiry at all.
+ */
+const PRACTICE_ATTEMPT_GRANT_TTL_MS = 12 * 60 * 60 * 1000;
 
 /**
  * The label published for a grain, from a GOVERNED source only.
@@ -2336,18 +2372,30 @@ export class Authority {
    * signal that the shortfall (if any) traces to `buildPracticeSnapshot`'s
    * taught-set gate finding zero overlap, not to the bank running dry.
    *
-   * SERVING IS NOT AN EXPOSURE. This method writes nothing: an item handed to a
-   * learner who never answers it stays eligible for the next queue, and only
-   * `submitPracticeAttempt` calls `recordExposure`. That is deliberate, because
-   * one record carries two facts — `recentlySeenIds` reads it for rotation and
-   * `submitPracticeAttempt` derives `firstAttempt` from its count — so counting
-   * a serve would make every practice answer a repeat and stop P(L) moving at
-   * all. The cost accepted in exchange is that an abandoned item can come back.
-   * Enforced, not merely stated: `practice-exposure-timing.test.ts` fails on a
-   * serve-time exposure write anywhere in this method, and measures both sides
-   * of the trade. A third state — served-but-unanswered, distinct from both —
-   * is the option that would avoid each harm, and is recorded as deferred work
-   * in `key-docs/roadmap-todo.md`.
+   * SERVING IS NOT AN EXPOSURE. This method writes no exposure: an item handed
+   * to a learner who never answers it stays eligible for the next queue, and
+   * only `submitPracticeAttempt` calls `recordExposure`. That is deliberate,
+   * because one record carries two facts — `recentlySeenIds` reads it for
+   * rotation and `submitPracticeAttempt` derives `firstAttempt` from its count
+   * — so counting a serve would make every practice answer a repeat and stop
+   * P(L) moving at all. The cost accepted in exchange is that an abandoned item
+   * can come back. Enforced, not merely stated:
+   * `practice-exposure-timing.test.ts` fails on a serve-time exposure write
+   * anywhere in this method, and measures both sides of the trade. A third
+   * state — served-but-unanswered, distinct from both — is the option that
+   * would avoid each harm, and is recorded as deferred work in
+   * `key-docs/roadmap-todo.md`.
+   *
+   * SERVING IS AN AUTHORIZATION, and that is a different record. Each served
+   * item gets a `PracticeAttemptGrant`: the server's own note that it handed
+   * THIS learner THIS item under THIS spec and content release, expiring, and
+   * spendable once as a capability claim. `submitPracticeAttempt` refuses an
+   * answer with no matching grant, which is what puts everything decided in
+   * this method — teach-before-test, the taught-set gate, selection itself —
+   * in front of every scored practice answer rather than only in front of the
+   * ones a client chose to route through the queue. The grant store is separate
+   * from the exposure store precisely so this write cannot become the
+   * serve-time exposure the paragraph above rules out.
    */
   async getPracticeQueue(
     state: LearnerState,
@@ -2399,6 +2447,21 @@ export class Authority {
       if (items.length >= requested) break;
     }
 
+    // Issue after the queue is settled, so a grant only ever exists for an item
+    // that is actually being handed over. Issuing per candidate inside the loop
+    // would authorize items the shortfall path discarded.
+    const expiresAt = UtcTimestampSchema.parse(
+      new Date(Date.parse(now) + PRACTICE_ATTEMPT_GRANT_TTL_MS).toISOString(),
+    );
+    for (const item of items) {
+      await this.practiceBank.issueAttemptGrant(state.learnerId, {
+        questionId: item.question.id,
+        specId: item.specId,
+        contentRelease: this.bank.contentRelease,
+        expiresAt,
+      });
+    }
+
     return {
       requested,
       focus: focusToken,
@@ -2409,7 +2472,17 @@ export class Authority {
   }
 
   /**
-   * Score one practice answer.
+   * Score one practice answer, for an item the server issued to this learner.
+   *
+   * AUTHORIZATION FIRST, before the answer key is read. `cmd.specId` used to be
+   * parsed and then never looked at by this method, which meant the whole of
+   * `getPracticeQueue` — teach-before-test, the taught-set gate, selection —
+   * could be skipped simply by not calling it: a forged spec plus any corpus
+   * question id bought an independent evidence record and a BKT write. A field
+   * the server merely reads is not a gate. What gates now is a
+   * `PracticeAttemptGrant` the server itself issued at serve time and can
+   * verify: it must exist for this learner and this question, and carry this
+   * spec and the current content release, unexpired.
    *
    * Every response records exposure and writes an evidence record. On a FIRST
    * attempt — a fact this method DERIVES, never one the request supplies — it
@@ -2420,15 +2493,29 @@ export class Authority {
    * a KC×skill repair on a miss.
    *
    * A repeat is learning-only: no P(L), no ledger record, and a contextual-only
-   * evidence record rather than silence. A lesson is NOT a grain — practice
-   * records the lesson for the rollup's routing only (see
-   * `applyPracticeMastery`). Answer material is returned only here
-   * (post-submit), never in the queue.
+   * evidence record rather than silence. A repeat is still ADMITTED — the grant
+   * is one-use for the capability claim, not one-use for the request — because
+   * refusing it would delete a documented outcome rather than gate anything: a
+   * second answer to an item already answered moves nothing either way. A
+   * lesson is NOT a grain — practice records the lesson for the rollup's
+   * routing only (see `applyPracticeMastery`). Answer material is returned only
+   * here (post-submit), never in the queue.
    */
   async submitPracticeAttempt(
     state: LearnerState,
     cmd: PracticeAttempt,
   ): Promise<PracticeAttemptResult> {
+    const now = this.clock.now();
+    const authorization = await this.practiceBank.consumeAttemptGrant(state.learnerId, {
+      questionId: cmd.questionId,
+      specId: cmd.specId,
+      contentRelease: this.bank.contentRelease,
+      now,
+    });
+    if (authorization.status === 'refused') {
+      throw new PracticeAttemptNotAuthorizedError(authorization.reason, cmd.questionId);
+    }
+
     const answer = await this.practiceBank.getAnswer(cmd.questionId);
     if (answer === null) {
       throw new Error(`Practice item ${cmd.questionId} is unavailable.`);
@@ -2445,7 +2532,6 @@ export class Authority {
           ? 'correct'
           : 'incorrect';
     const correct = outcome === 'correct';
-    const now = this.clock.now();
 
     /**
      * Whether this is the learner's first answer to this item, DERIVED.
@@ -2461,9 +2547,18 @@ export class Authority {
      *
      * The count comes back from the write that increments it, so a repeat
      * submitted concurrently with its original cannot have both read zero.
+     *
+     * The exposure count remains the derivation — unwindowed, so a repeat a
+     * year later is still a repeat. `authorization.firstUse` is the SECOND
+     * server-held fact saying the same thing, and the two must agree for a
+     * capability claim: a grant already spent cannot buy another one, whatever
+     * the exposure store says. They can only disagree if one of the two writes
+     * landed without the other, and in that direction the answer is to score
+     * the response as a repeat rather than to credit an attempt the server can
+     * only half account for.
      */
     const exposure = await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
-    const firstAttempt = exposure.priorExposures === 0;
+    const firstAttempt = exposure.priorExposures === 0 && authorization.firstUse;
 
     const classification = await this.practiceBank.classify(cmd.questionId);
     if (classification !== null) {

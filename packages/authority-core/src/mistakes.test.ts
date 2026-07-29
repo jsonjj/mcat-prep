@@ -53,12 +53,36 @@ function learner(clock: Clock = steppingClock('2026-07-27T12:00:00.000Z')): {
   return { authority, state: authority.createGuest() };
 }
 
-const answer = (authority: Authority, state: LearnerState, questionId: string, choice: string) =>
-  authority.submitPracticeAttempt(state, {
+const SPEC_ID = 'sci:bb1-enzyme-inhibition:EXPLAIN:train';
+
+/**
+ * Serve, then answer — the two halves the product performs in that order.
+ *
+ * These tests name the exact items they want a mistake on, which the queue's
+ * own selection will not reliably hand over, so the serve is issued directly
+ * through the port. It has to be issued by SOMETHING: an adaptive-practice
+ * answer is only scored for an item the server recorded serving to this
+ * learner, which is what stops a caller answering straight out of the corpus.
+ * Standing in for the queue is the point — nothing here is testing selection.
+ */
+const answer = async (
+  authority: Authority,
+  state: LearnerState,
+  questionId: string,
+  choice: string,
+) => {
+  await authority.practiceBank.issueAttemptGrant(state.learnerId, {
     questionId,
-    specId: 'sci:bb1-enzyme-inhibition:EXPLAIN:train',
+    specId: SPEC_ID,
+    contentRelease: authority.bank.contentRelease,
+    expiresAt: UtcTimestampSchema.parse('2099-01-01T00:00:00.000Z'),
+  });
+  return authority.submitPracticeAttempt(state, {
+    questionId,
+    specId: SPEC_ID,
     chosenChoiceId: choice as 'A' | 'B',
   });
+};
 
 describe('Mistakes — the practice attempt log is the source', () => {
   it('turns a practice miss into a readable entry that keeps the chosen distractor', async () => {

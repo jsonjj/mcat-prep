@@ -1,9 +1,14 @@
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { Authority } from '@mcat/authority-core';
+import { Authority, type LearnerState } from '@mcat/authority-core';
 import { loadSyntheticBank } from '@mcat/content';
-import { PracticeQuestionSchema, type Clock, type UtcTimestamp } from '@mcat/contracts';
+import {
+  PracticeQuestionSchema,
+  UtcTimestampSchema,
+  type Clock,
+  type UtcTimestamp,
+} from '@mcat/contracts';
 import { createFilePracticeBankPort, FilePracticeBankPort } from './practice-bank-file';
 import {
   loadPulledCorpus,
@@ -347,6 +352,31 @@ describe('FilePracticeBankPort per-learner bookkeeping', () => {
 
 describe('the Mistakes pipeline over the file-backed bank', () => {
   /**
+   * Serve, then answer. These cases name the exact items they want a mistake
+   * on, which selection will not reliably hand over, so the serve is issued
+   * straight through the port — the same record `getPracticeQueue` writes, and
+   * the one without which an adaptive answer is refused as never issued.
+   */
+  const servedAnswer = async (
+    authority: Authority,
+    state: LearnerState,
+    questionId: string,
+    chosenChoiceId: 'A' | 'B' | 'C' | 'D',
+  ) => {
+    await authority.practiceBank.issueAttemptGrant(state.learnerId, {
+      questionId,
+      specId: 'spec-1',
+      contentRelease: authority.bank.contentRelease,
+      expiresAt: UtcTimestampSchema.parse('2099-01-01T00:00:00.000Z'),
+    });
+    return authority.submitPracticeAttempt(state, {
+      questionId,
+      specId: 'spec-1',
+      chosenChoiceId,
+    });
+  };
+
+  /**
    * The regression this guards: the error log hydrates a practice miss through
    * `getQuestion` + `getAnswer` on the injected port. That used to resolve against
    * the synthetic bank, so swapping the corpus underneath is exactly the change
@@ -356,11 +386,7 @@ describe('the Mistakes pipeline over the file-backed bank', () => {
     const authority = new Authority(loadSyntheticBank(), clock, port());
     const state = authority.createGuest();
 
-    const result = await authority.submitPracticeAttempt(state, {
-      questionId: 'sirs2-a',
-      specId: 'spec-1',
-      chosenChoiceId: 'A',
-    });
+    const result = await servedAnswer(authority, state, 'sirs2-a', 'A');
     expect(result.correct).toBe(false);
     expect(result.choiceRationales.A).toBe('why A is wrong on sirs2-a');
 
@@ -385,11 +411,7 @@ describe('the Mistakes pipeline over the file-backed bank', () => {
     const authority = new Authority(loadSyntheticBank(), clock, port());
     const state = authority.createGuest();
     for (const questionId of ['sirs2-a', 'sirs2-b']) {
-      await authority.submitPracticeAttempt(state, {
-        questionId,
-        specId: 'spec-1',
-        chosenChoiceId: 'A',
-      });
+      await servedAnswer(authority, state, questionId, 'A');
     }
 
     const patterns = await authority.getMistakePatterns(state);

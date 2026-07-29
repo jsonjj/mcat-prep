@@ -76,18 +76,19 @@ async function firstQueuedScienceItem(authority: Authority, state: LearnerState)
   return item;
 }
 
-/** A second, distinct deliverable item — the grain it routes to is the port's business. */
-async function secondScienceItem(
-  authority: Authority,
-  state: LearnerState,
-  excludeId: string,
-): Promise<string> {
+/**
+ * A second, distinct deliverable item — the grain it routes to is the port's
+ * business. The whole item comes back, not just its id: an answer is scored
+ * against the spec the server served THAT item under, so borrowing the first
+ * item's spec is now a refusal rather than a harmless test shortcut.
+ */
+async function secondScienceItem(authority: Authority, state: LearnerState, excludeId: string) {
   const queue = await authority.getPracticeQueue(state, 8);
   const next = queue.items.find((i) => i.question.id !== excludeId);
   if (next === undefined) {
     throw new Error('expected a second practice item from the synthetic bank');
   }
-  return next.question.id;
+  return next;
 }
 
 describe('Authority.getPracticeQueue (synthetic fallback)', () => {
@@ -393,8 +394,8 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
     });
     const second = await secondScienceItem(authority, state, first.question.id);
     await authority.submitPracticeAttempt(state, {
-      questionId: second,
-      specId: first.specId,
+      questionId: second.question.id,
+      specId: second.specId,
       chosenChoiceId: 'A',
     });
 
@@ -448,8 +449,8 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
     set(SECOND);
     const second = await secondScienceItem(authority, state, first.question.id);
     await authority.submitPracticeAttempt(state, {
-      questionId: second,
-      specId: first.specId,
+      questionId: second.question.id,
+      specId: second.specId,
       chosenChoiceId: 'A',
     });
 

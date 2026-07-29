@@ -1,5 +1,11 @@
 import { createHash } from 'node:crypto';
-import { Authority, type LearnerState, type PracticeBankPort } from '@mcat/authority-core';
+import {
+  Authority,
+  PracticeAttemptNotAuthorizedError,
+  SyntheticPracticeBankPort,
+  type LearnerState,
+  type PracticeBankPort,
+} from '@mcat/authority-core';
 import {
   AuthorityKernel,
   AuthorityKernelError,
@@ -184,11 +190,28 @@ function bindNewEvidence(
 export class RepositoryLearnerKernel {
   private readonly authorityKernel: AuthorityKernel;
   private readonly practiceAuthorization: PracticeAuthorizationPolicy;
+  /**
+   * ONE practice bank for the lifetime of this kernel, including the synthetic
+   * fallback.
+   *
+   * `Authority` builds its own fallback port when none is injected, and this
+   * class builds a fresh `Authority` per request — so with no `DATABASE_URL`
+   * every request used to get its own empty per-learner bookkeeping. That was
+   * survivable while the only casualties were exposure counts and the repair
+   * queue (a warm instance simply looked like a cold one). It is not survivable
+   * now: `getPracticeQueue` records the attempt grant that
+   * `submitPracticeAttempt` checks for, and those are two different requests.
+   * Hoisting the fallback here is what makes serve-then-answer one
+   * conversation rather than two.
+   */
+  private readonly practiceBank: PracticeBankPort;
 
   constructor(private readonly dependencies: WorkflowDependencies) {
     this.authorityKernel = new AuthorityKernel(dependencies);
     this.practiceAuthorization =
       dependencies.practiceAuthorization ?? syntheticPracticeAuthorizationPolicy;
+    this.practiceBank =
+      dependencies.practiceBank ?? new SyntheticPracticeBankPort(dependencies.bank);
   }
 
   handle(input: unknown, principal: Principal) {
@@ -687,11 +710,7 @@ export class RepositoryLearnerKernel {
   }
 
   private authority(): Authority {
-    return new Authority(
-      this.dependencies.bank,
-      this.dependencies.clock,
-      this.dependencies.practiceBank,
-    );
+    return new Authority(this.dependencies.bank, this.dependencies.clock, this.practiceBank);
   }
 
   /**
@@ -715,21 +734,39 @@ export class RepositoryLearnerKernel {
    * Score one adaptive-practice answer. A first, unassisted attempt moves the
    * P(L) mastery signal (persisted in the projection) and records exposure +
    * repair through the injected bank port; retries are learning-only.
+   *
+   * The authorization check is NOT here, deliberately. `handlePractice` above
+   * gates its own route with `practiceAuthorization.permits`, and copying that
+   * shape here — a second check, at a second door, over a different notion of
+   * "may answer" — is exactly how the two would drift: a third caller of
+   * `submitPracticeAttempt` (the dev in-process authority is already one) would
+   * arrive gated by neither. So the adaptive gate lives on the write itself,
+   * where every caller meets it, and this method's only job is to give the
+   * refusal the transport shape the other practice route already uses.
    */
   async handlePracticeAdaptive(
     body: PracticeAdaptiveAttemptCommandBody,
     principal: Principal,
   ): Promise<PracticeAttemptResult> {
-    return PracticeAttemptResultSchema.parse(
-      await this.mutate(body.envelope, principal, async (authority, state) => {
-        const result = await authority.submitPracticeAttempt(state, body.command);
-        return {
-          eventType: 'practice_adaptive_attempt_submitted',
-          payload: toJsonObject({ envelope: body.envelope, ...body.command }),
-          result: toJsonObject(PracticeAttemptResultSchema.parse(result)),
-        };
-      }),
-    );
+    try {
+      return PracticeAttemptResultSchema.parse(
+        await this.mutate(body.envelope, principal, async (authority, state) => {
+          const result = await authority.submitPracticeAttempt(state, body.command);
+          return {
+            eventType: 'practice_adaptive_attempt_submitted',
+            payload: toJsonObject({ envelope: body.envelope, ...body.command }),
+            result: toJsonObject(PracticeAttemptResultSchema.parse(result)),
+          };
+        }),
+      );
+    } catch (error) {
+      // The refusal reason names which of the four bindings failed and stays
+      // server-side; the learner-facing answer is the same one an unassigned
+      // question gets from `handlePractice`, so probing this route cannot tell
+      // "no such item" apart from "not served to you".
+      if (error instanceof PracticeAttemptNotAuthorizedError) throw forbidden();
+      throw error;
+    }
   }
 
   private async mutate(
