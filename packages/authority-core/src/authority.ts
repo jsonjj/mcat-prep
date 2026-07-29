@@ -21,10 +21,13 @@ import {
   type TodaysPathView,
   type CandidateEvidenceMode,
   type CarsDuelRubric,
+  type CarsDuelOutcomeInput,
+  type CarsDuelSelectionView,
   type CarsReadinessLabel,
   type CarsReadinessView,
   type CarsSkill,
   type Clock,
+  type GoalView,
   type LearnerEvent,
   type LessonMasteryView,
   type MasterySeed,
@@ -89,6 +92,10 @@ import {
   SEED_PRIOR_CAP,
   SEED_PRIOR_FLOOR,
   selectPracticeQueue,
+  selectCarsDuel,
+  recordCarsDuelOutcome,
+  initialCarsDuelState,
+  rubricToR,
   type CarriedActivity,
   type GhostView,
   type LessonRollupResult,
@@ -100,6 +107,8 @@ import {
   type TodaysPathSnapshot,
 } from '@mcat/policies';
 import {
+  CARS_DUEL_TOPICS,
+  CARS_DUEL_TOPICS_BY_ID,
   clusterForLesson,
   clusterForKc,
   loadSyntheticBank,
@@ -681,8 +690,29 @@ export class Authority {
     state: LearnerState,
     goal: { testDate: string | null; targetScore: number | null; minutesPerWeek: number },
   ): void {
-    state.goal = goal;
+    // Preserve the Today's Path daily-time preset across a goal edit. It is set on
+    // a separate seam (`setDailyBudget`), so replacing the whole goal object here —
+    // which is what onboarding does — would silently reset a learner's chosen daily
+    // budget every time they edit their exam date from the Account tab (WS8).
+    const dailyMinutesPreset = state.goal?.dailyMinutesPreset;
+    state.goal = {
+      ...goal,
+      ...(dailyMinutesPreset === undefined ? {} : { dailyMinutesPreset }),
+    };
     state.onboarding.planConfirmed = true;
+  }
+
+  /**
+   * Read-only goal projection for the Account/Profile editor to prefill (WS8).
+   * Null fields when no plan is confirmed yet. The daily-time preset is
+   * deliberately omitted — it is read through the Today's Path budget seam.
+   */
+  getGoal(state: LearnerState): GoalView {
+    return {
+      testDate: (state.goal?.testDate ?? null) as GoalView['testDate'],
+      targetScore: state.goal?.targetScore ?? null,
+      minutesPerWeek: state.goal?.minutesPerWeek ?? null,
+    };
   }
 
   // ---- Today / plan -------------------------------------------------------
@@ -917,6 +947,12 @@ export class Authority {
       if (preserved.length > 0) activities.unshift(...preserved);
     }
 
+    // WS6: resolve each CARS Duel activity's {mode, topicId, intensity, side} from
+    // the formative engine before persisting, so the autostart path never picks its
+    // own topic/mode/intensity/stance. Carried duels keep the selection they were
+    // built with (only newly-planned ones are resolved).
+    this.enrichCarsDuelSelections(state, activities);
+
     const plannedMinutes = activities.reduce((sum, a) => sum + a.estimatedMinutes, 0);
     const reviewMinutes = activities
       .filter((a) => a.kind === 'recall' || a.kind === 'review_mistakes')
@@ -1082,7 +1118,61 @@ export class Authority {
         lessonSlug: a.lessonSlug,
         lessonId: a.lessonId,
         priorityReason: a.priorityReason,
+        // Preserve a carried CARS Duel's resolved selection so it is not re-picked.
+        ...(a.carsDuel === undefined ? {} : { carsDuel: a.carsDuel }),
       }));
+  }
+
+  /** Whole days from now until the exam (WS8's `goal.testDate`), or null for a rolling plan. */
+  private daysUntilTest(state: LearnerState): number | null {
+    const testDate = state.goal?.testDate;
+    if (!testDate) return null;
+    return Math.floor(daysBetween(this.clock.now(), testDate as unknown as UtcTimestamp));
+  }
+
+  /**
+   * Resolve the CARS Duel selection for each cars_duel activity in the plan (WS6):
+   * Rebut is the daily anchor; Defend can substitute for the second CARS once
+   * unlocked, scaled by ability and tapered toward the exam. Difficulty/topic are
+   * spread with novelty cooldown, and the argued side is randomized (the learner
+   * never picks their stance). Only NEW activities are resolved — a carried duel
+   * keeps the selection it was built with.
+   */
+  private enrichCarsDuelSelections(
+    state: LearnerState,
+    activities: TodaysPathActivityState[],
+  ): void {
+    const carsActivities = activities.filter((a) => a.kind === 'cars_duel');
+    if (carsActivities.length === 0) return;
+    const engineState = state.carsDuel ?? initialCarsDuelState();
+    const daysUntilTest = this.daysUntilTest(state);
+    const excludeTopicIds: string[] = [];
+    carsActivities.forEach((activity, slotIndex) => {
+      if (activity.carsDuel !== undefined) {
+        excludeTopicIds.push(activity.carsDuel.topicId);
+        return;
+      }
+      const selection = selectCarsDuel({
+        topics: CARS_DUEL_TOPICS,
+        state: engineState,
+        slotIndex,
+        daysUntilTest,
+        rng: Math.random,
+        excludeTopicIds,
+      });
+      const view: CarsDuelSelectionView = {
+        topicId: selection.topic.id,
+        proposition: selection.topic.proposition,
+        theme: selection.topic.theme,
+        argumentStructure: selection.topic.argumentStructure,
+        difficulty: selection.topic.difficulty,
+        mode: selection.mode,
+        intensity: selection.intensity,
+        side: selection.side,
+      };
+      activity.carsDuel = view;
+      excludeTopicIds.push(selection.topic.id);
+    });
   }
 
   private async todaysPathSnapshot(
@@ -1225,6 +1315,7 @@ export class Authority {
         priorityReason: a.priorityReason,
         status: a.status,
         carriedOver: a.carriedOver,
+        ...(a.carsDuel === undefined ? {} : { carsDuel: a.carsDuel }),
       })),
       currentActivityId: plan.currentActivityId,
       freeStudyMinutes: plan.freeStudyMinutes,
@@ -3249,7 +3340,8 @@ export class Authority {
    * than by anything structural. The kind is now the reason the record is
    * contextual, not the reason its number is safe.
    */
-  recordCarsDuel(state: LearnerState, rubric?: CarsDuelRubric): void {
+  recordCarsDuel(state: LearnerState, outcome?: CarsDuelOutcomeInput): void {
+    const rubric = outcome?.rubric;
     const acceptedSequence = state.nextSequence + 1;
     for (const cluster of ['CA1', 'CA2'] as const) {
       this.appendEvidence(state, {
@@ -3280,6 +3372,24 @@ export class Authority {
           this.updateCarsAbility(state, skill, score / 3, CARS_K_DUEL);
         }
       }
+    }
+    // Fold the duel into the FORMATIVE CARS Duel engine state (WS6): the rolling
+    // history + intensity rating + Defend unlock latch that shape which duel is
+    // served next. This mints NO mastery — the only capability signal a duel emits
+    // is the low-weight ability nudge above (CARS_K_DUEL). Recorded only when the
+    // autostart path reports which topic/mode/intensity was served; a bare
+    // rubric-only call still nudges the ability but adds no selection history.
+    const topic =
+      outcome?.topicId !== undefined ? CARS_DUEL_TOPICS_BY_ID.get(outcome.topicId) : undefined;
+    if (topic && outcome?.mode !== undefined && outcome.intensity !== undefined) {
+      const holdRate = rubric ? rubricToR(rubric) : null;
+      state.carsDuel = recordCarsDuelOutcome(state.carsDuel ?? initialCarsDuelState(), {
+        topic,
+        mode: outcome.mode,
+        intensity: outcome.intensity,
+        holdRate,
+        at: this.clock.now(),
+      });
     }
   }
 

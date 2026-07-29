@@ -3,6 +3,7 @@ import {
   CarsReadinessViewSchema,
   DiagnosticNextSchema,
   ErrorEntryViewSchema,
+  GoalViewSchema,
   LessonMasteryViewSchema,
   LessonWarrantViewSchema,
   MasteryMapEntrySchema,
@@ -83,6 +84,10 @@ export class InProcessAuthorityClient implements AuthorityPort {
 
   async confirmPlan(goal: GoalInput): Promise<void> {
     this.mutate((state) => this.authority.confirmPlan(state, goal));
+  }
+
+  async getGoal() {
+    return GoalViewSchema.parse(this.mutate((state) => this.authority.getGoal(state)));
   }
 
   async getToday() {
@@ -200,8 +205,8 @@ export class InProcessAuthorityClient implements AuthorityPort {
     );
   }
 
-  async recordCarsDuel(rubric?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {
-    this.mutate((state) => this.authority.recordCarsDuel(state, rubric));
+  async recordCarsDuel(outcome?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {
+    this.mutate((state) => this.authority.recordCarsDuel(state, outcome));
   }
 
   async applyMasterySeed(seed: MasterySeed): Promise<void> {

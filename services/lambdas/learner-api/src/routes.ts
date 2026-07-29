@@ -1,6 +1,6 @@
 import {
   AttemptCommandSchema,
-  CarsDuelRubricSchema,
+  CarsDuelOutcomeInputSchema,
   CarsReadinessViewSchema,
   ChoiceIdSchema,
   CommandEnvelopeSchema,
@@ -8,6 +8,7 @@ import {
   DiagnosticNextSchema,
   ErrorEntryViewSchema,
   GoalCommandSchema,
+  GoalViewSchema,
   LessonMasteryViewSchema,
   LessonWarrantViewSchema,
   MasteryMapEntrySchema,
@@ -29,7 +30,7 @@ import {
   VectorLessonStartResponseSchema,
   VectorLessonStatusViewSchema,
   WrappedViewSchema,
-  type CarsDuelRubric,
+  type CarsDuelOutcomeInput,
   type ChoiceId,
   type CommandEnvelope,
   type ContentId,
@@ -42,6 +43,7 @@ export type RouteId =
   | 'bootstrap'
   | 'diagnosticNext'
   | 'goal'
+  | 'goalView'
   | 'attempt'
   | 'reveal'
   | 'continue'
@@ -94,9 +96,8 @@ export interface PracticeAttemptCommandBody {
   readonly choiceId: ChoiceId | null;
 }
 
-export interface CarsDuelCommandBody {
+export interface CarsDuelCommandBody extends CarsDuelOutcomeInput {
   readonly envelope: CommandEnvelope;
-  readonly rubric?: CarsDuelRubric;
 }
 
 export interface MasterySeedCommandBody {
@@ -147,14 +148,16 @@ const ContinueCommandBodySchema = workflowSchema<ContinueCommandBody>((value) =>
   return envelope.success ? { envelope: envelope.data } : null;
 });
 
+const CARS_DUEL_BODY_KEYS = new Set(['envelope', 'rubric', 'mode', 'topicId', 'intensity']);
 const CarsDuelCommandBodySchema = workflowSchema<CarsDuelCommandBody>((value) => {
-  // Accept an envelope alone, or an envelope plus an optional formative rubric.
-  if (!Object.keys(value).every((key) => key === 'envelope' || key === 'rubric')) return null;
+  // Accept an envelope alone, or an envelope plus the optional formative outcome
+  // (rubric + which selection was played, for the WS6 engine). No mastery.
+  if (!Object.keys(value).every((key) => CARS_DUEL_BODY_KEYS.has(key))) return null;
   const envelope = CommandEnvelopeSchema.safeParse(value.envelope);
   if (!envelope.success) return null;
-  if (!('rubric' in value)) return { envelope: envelope.data };
-  const rubric = CarsDuelRubricSchema.safeParse(value.rubric);
-  return rubric.success ? { envelope: envelope.data, rubric: rubric.data } : null;
+  const { envelope: _envelope, ...rest } = value;
+  const outcome = CarsDuelOutcomeInputSchema.safeParse(rest);
+  return outcome.success ? { envelope: envelope.data, ...outcome.data } : null;
 });
 
 const MasterySeedCommandBodySchema = workflowSchema<MasterySeedCommandBody>((value) => {
@@ -264,6 +267,15 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: true,
     bodySchema: GoalCommandSchema,
+  },
+  {
+    // Read-only goal projection for the Account/Profile editor prefill (WS8).
+    id: 'goalView',
+    method: 'GET',
+    path: '/v1/profile/goal',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: GoalViewSchema,
   },
   {
     id: 'attempt',

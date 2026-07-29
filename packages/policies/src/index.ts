@@ -41,6 +41,7 @@ export * from './prerequisite';
 export * from './mastery-attempt';
 export * from './lesson-rollup';
 export * from './cars';
+export * from './cars-duel';
 export * from './mastery-seed';
 export * from './practice-selection';
 

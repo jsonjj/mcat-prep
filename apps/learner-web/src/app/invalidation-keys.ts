@@ -62,6 +62,7 @@ export const PLAN_ACTIVITY_COMPLETE_INVALIDATE: readonly string[] = [
  */
 export const LEARNER_KEYS: readonly string[] = [
   'bootstrap',
+  'goal',
   'today',
   'session',
   'mastery',

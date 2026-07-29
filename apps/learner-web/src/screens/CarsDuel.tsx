@@ -13,7 +13,9 @@ import {
   type AiMessage,
   type DuelDifficulty,
   type DuelMode,
+  type DuelSide,
 } from '@mcat/ai-gateway';
+import type { CarsDuelSelectionView } from '@mcat/contracts';
 import { useRecordCarsDuel } from '../app/queries';
 
 /**
@@ -36,9 +38,16 @@ type Shown = { role: 'user' | 'assistant'; content: string };
 export function CarsDuel() {
   const navigate = useNavigate();
   const location = useLocation();
-  // Today's Path launches the duel with defaults + a return target.
+  // Today's Path launches the duel with the server-resolved selection + a return
+  // target. The selection ({mode, topicId, intensity, side}) is authoritative — the
+  // learner never picks their topic, intensity, or stance (WS6).
   const navState = location.state as
-    | { autostart?: boolean; returnTo?: string; activityId?: string }
+    | {
+        autostart?: boolean;
+        returnTo?: string;
+        activityId?: string;
+        selection?: CarsDuelSelectionView | null;
+      }
     | null;
   const returnTo = navState?.returnTo;
   const activityId = navState?.activityId;
@@ -52,8 +61,17 @@ export function CarsDuel() {
   const [phase, setPhase] = useState<Phase>('setup');
   const [mode, setMode] = useState<DuelMode>('rebut');
   const [difficulty, setDifficulty] = useState<DuelDifficulty>('standard');
-  // The system picks the topic (for now, the first default). Shown read-only on setup.
-  const [topic] = useState(SUGGESTED_TOPICS[0] ?? '');
+  // The system picks the topic. On autostart it comes from the resolved selection;
+  // the manual entry point falls back to a suggested prompt (shown read-only).
+  const [topic, setTopic] = useState(SUGGESTED_TOPICS[0] ?? '');
+  // The selection actually played, reported back so the formative engine can update
+  // its history/intensity/unlock (WS6). topicId stays null for a manual duel, so a
+  // free-text practice never writes engine history.
+  const played = useRef<{
+    mode: DuelMode;
+    intensity: DuelDifficulty;
+    topicId: string | null;
+  }>({ mode: 'rebut', intensity: 'standard', topicId: null });
 
   const sent = useRef<AiMessage[]>([]);
   const [shown, setShown] = useState<Shown[]>([]);
@@ -81,9 +99,32 @@ export function CarsDuel() {
     }
   };
 
-  const start = async () => {
-    const system: AiMessage = { role: 'system', content: buildCarsSystemPrompt(mode, difficulty, topic) };
-    if (mode === 'rebut') {
+  const start = async (override?: {
+    mode: DuelMode;
+    difficulty: DuelDifficulty;
+    topic: string;
+    side?: DuelSide;
+    topicId?: string;
+  }) => {
+    const useMode = override?.mode ?? mode;
+    const useDifficulty = override?.difficulty ?? difficulty;
+    const useTopic = override?.topic ?? topic;
+    const useSide = override?.side;
+    if (override) {
+      setMode(useMode);
+      setDifficulty(useDifficulty);
+      setTopic(useTopic);
+    }
+    played.current = {
+      mode: useMode,
+      intensity: useDifficulty,
+      topicId: override?.topicId ?? null,
+    };
+    const system: AiMessage = {
+      role: 'system',
+      content: buildCarsSystemPrompt(useMode, useDifficulty, useTopic, useSide),
+    };
+    if (useMode === 'rebut') {
       const kickoff: AiMessage = {
         role: 'user',
         content: 'Begin: state your position on the topic in 2-3 sentences, then invite my rebuttal.',
@@ -132,17 +173,37 @@ export function CarsDuel() {
     } catch {
       /* rubric grading is optional */
     }
-    recordDuel.mutate(rubric);
+    // Report the rubric AND which selection was played so the formative engine can
+    // update its history/intensity/unlock. topicId is null for a manual duel, so
+    // only a real (autostarted) selection writes engine history.
+    recordDuel.mutate({
+      ...(rubric ? { rubric } : {}),
+      mode: played.current.mode,
+      intensity: played.current.intensity,
+      ...(played.current.topicId ? { topicId: played.current.topicId } : {}),
+    });
   };
 
-  // Auto-start with defaults when launched from Today's Path (skip the setup screen).
+  // Auto-start when launched from Today's Path (skip the setup screen), using the
+  // server-resolved selection when present and falling back to defaults otherwise.
   const autoStarted = useRef(false);
   useEffect(() => {
     if (navState?.autostart && !autoStarted.current && phase === 'setup') {
       autoStarted.current = true;
-      void start();
+      const sel = navState.selection;
+      if (sel) {
+        void start({
+          mode: sel.mode,
+          difficulty: sel.intensity,
+          topic: sel.proposition,
+          side: sel.side,
+          topicId: sel.topicId,
+        });
+      } else {
+        void start();
+      }
     }
-    // start closes over default mode/difficulty/topic; run once on autostart.
+    // start reads the selection/defaults directly; run once on autostart.
   }, [navState?.autostart, phase]);
 
   if (unavailable) {
@@ -238,7 +299,7 @@ export function CarsDuel() {
               variant="primary"
               size="lg"
               disabled={topic.trim().length === 0 || busy}
-              onClick={start}
+              onClick={() => void start()}
             >
               {busy ? 'Setting up…' : 'Start the duel'}
             </Button>

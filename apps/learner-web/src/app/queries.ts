@@ -1,5 +1,5 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CarsDuelRubric, MasterySeed, VectorLessonAction } from '@mcat/contracts';
+import type { CarsDuelOutcomeInput, MasterySeed, VectorLessonAction } from '@mcat/contracts';
 import type { AttemptTiming, GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
@@ -19,6 +19,8 @@ const invalidateLearner = (qc: QueryClient) =>
 
 export const useBootstrap = () =>
   useQuery({ queryKey: ['bootstrap'], queryFn: () => authority.bootstrap() });
+/** Current goal (exam date / target / weekly minutes) so the Account editor can prefill (WS8). */
+export const useGoal = () => useQuery({ queryKey: ['goal'], queryFn: () => authority.getGoal() });
 export const useToday = () =>
   useQuery({ queryKey: ['today'], queryFn: () => authority.getToday() });
 export const useSession = () =>
@@ -192,7 +194,7 @@ export function useApplyMasterySeed() {
 export function useRecordCarsDuel() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (rubric?: CarsDuelRubric) => authority.recordCarsDuel(rubric),
+    mutationFn: (outcome?: CarsDuelOutcomeInput) => authority.recordCarsDuel(outcome),
     onSuccess: () => invalidateLearner(qc),
   });
 }

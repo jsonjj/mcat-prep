@@ -26,6 +26,7 @@ import {
   AttemptCommandSchema,
   CarsReadinessViewSchema,
   DiagnosticNextSchema,
+  GoalViewSchema,
   LessonMasteryViewSchema,
   LessonWarrantViewSchema,
   PracticeAttemptResultSchema,
@@ -43,6 +44,7 @@ import {
   type CommandEnvelope,
   type ContentId,
   type DiagnosticNext,
+  type GoalView,
   type LessonMasteryView,
   type LessonWarrantView,
   type PracticeAttemptResult,
@@ -296,6 +298,13 @@ export class RepositoryLearnerKernel {
     const state = await this.loadState(principal);
     const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
     return CarsReadinessViewSchema.parse(authority.getCarsReadiness(state));
+  }
+
+  /** Read-only goal projection for the Account/Profile editor prefill (WS8). */
+  async goal(principal: Principal): Promise<GoalView> {
+    const state = await this.loadState(principal);
+    const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
+    return GoalViewSchema.parse(authority.getGoal(state));
   }
 
   async vectorLessonStatus(principal: Principal) {
@@ -669,11 +678,14 @@ export class RepositoryLearnerKernel {
   }
 
   async handleCarsDuel(command: CarsDuelCommandBody, principal: Principal) {
+    const { envelope, ...outcome } = command;
     return AcceptedCommandResponseSchema.parse(
-      await this.mutate(command.envelope, principal, (authority, state) => {
+      await this.mutate(envelope, principal, (authority, state) => {
         const previousEvidenceCount = state.evidence.length;
-        authority.recordCarsDuel(state, command.rubric);
-        bindNewEvidence(state, previousEvidenceCount, command.envelope);
+        // Formative only: records the ability nudge + duel-selection history (WS6),
+        // never mastery. The rubric + which selection was played ride in `outcome`.
+        authority.recordCarsDuel(state, outcome);
+        bindNewEvidence(state, previousEvidenceCount, envelope);
         return { eventType: 'cars_duel_recorded', payload: toJsonObject(command) };
       }),
     );
