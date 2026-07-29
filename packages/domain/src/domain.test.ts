@@ -238,6 +238,10 @@ describe('lesson-sourced evidence stays compatible with the existing evidence mo
   it('keeps the existing family, freshness and mastery-eligibility semantics', () => {
     const evidence = lessonEvidence();
     expect(evidence?.familyId).toBe('fam-enzyme-a');
+    // Aspirational, like the binding above: no real lesson authors
+    // `changed_dimensions`, so every production record carries `[]`
+    // (`tests/architecture/v3-lesson-binding-conformance.test.ts`). This asserts
+    // the adapter would carry them, not that anything does.
     expect(evidence?.changeDimensions).toEqual(['representation', 'domain_context']);
     expect(evidence?.kind).toBe('transfer');
     expect(evidence && isMasteryEligible(evidence)).toBe(true);

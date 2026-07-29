@@ -40,6 +40,26 @@
  * — see `packages/authority-core/src/lesson-discounting.test.ts`, "writes
  * independent evidence". The constraint is that a lesson cannot finish the job
  * by itself, not that the job cannot be finished.
+ *
+ * AND THERE IS A SECOND WALL BEHIND THE FIRST. Suppose the independence slot
+ * were filled tomorrow, from practice or from a relabelling. The transfer slot
+ * asks for two distinct `changeDimensions` as well as two families, and every
+ * evidence record this system writes carries `changeDimensions: []` — six sites
+ * in `authority.ts` and the practice writer hardcode the empty array, and the
+ * lesson adapter copies an authored array that no lesson authors (measured in
+ * `v3-lesson-binding-conformance.test.ts`, "carries no authored change
+ * dimensions"). So `CHANGE_DIMENSION_GAP` is not a gap a learner can close; it
+ * is a permanent reason code, and the last `describe` below measures that with
+ * the independence slot handed to it rather than argued about.
+ *
+ * The two walls are independent and neither hides the other, which is worth
+ * being precise about because it is easy to over-claim here. `retained` and
+ * `strong` were ALREADY unreachable through their `delayed` slot, which has no
+ * producer at all (`key-docs/roadmap-todo.md`, "The delayed-check scheduler"),
+ * so empty dimensions cost no published tier that was not already lost. What
+ * they cost is `independent_corroborated_by_transfer` — the stronger route to
+ * the `independent` tier — and the honesty of every gap report that names
+ * transfer as something still to be earned.
  */
 import { clusterForLesson, orderedKcsForLesson } from '@mcat/content';
 import { describe, expect, it } from 'vitest';
@@ -49,7 +69,11 @@ import {
   LearnerIdSchema,
 } from '../../packages/contracts/src/ids';
 import { UtcTimestampSchema, type UtcTimestamp } from '../../packages/contracts/src/time';
-import type { EvidenceRecord } from '../../packages/domain/src/evidence';
+import {
+  isMasteryEligible,
+  type ChangeDimension,
+  type EvidenceRecord,
+} from '../../packages/domain/src/evidence';
 import { adaptLessonResponse } from '../../packages/domain/src/lesson-response-adapter';
 import type { EvidenceQualityTier } from '../../packages/domain/src/mastery';
 import { BKT_CONFIG, bktConfigForSource, bktUpdate } from '../../packages/policies/src/bkt';
@@ -228,6 +252,46 @@ const lessonChannelEvidence = (): EvidenceRecord[] => [
   ...evidenceFrom(walkLesson(new Set(INITIAL_EXITS)).submissions),
 ];
 
+/**
+ * A skill's two transfer families as production wrote them, plus an independence
+ * slot handed over so it cannot be what is blocking.
+ *
+ * The independence records are copies of the same two transfer records with ONLY
+ * `kind` changed — the same single-variable move the `describe` above uses, so
+ * every other field is still exactly what the runtime produced, `[]` dimensions
+ * included.
+ *
+ * `isMasteryEligible` is applied first because `evaluateEvidence` applies it
+ * first: the miss-every-initial walk contributes INCORRECT records, and building
+ * on those would measure that filter instead of the dimensions. One record per
+ * family, so the family count is the slot's own arithmetic rather than an
+ * accident of how many walks reached the same item.
+ */
+function transferPairWithIndependenceSupplied(): {
+  readonly skillId: string;
+  readonly records: readonly EvidenceRecord[];
+} {
+  const eligible = lessonChannelEvidence().filter(isMasteryEligible);
+  for (const [skillId, forSkill] of bySkill(eligible)) {
+    const byFamily = new Map<string, EvidenceRecord>();
+    for (const record of forSkill) {
+      if (record.kind === 'transfer' && !byFamily.has(record.familyId)) {
+        byFamily.set(record.familyId, record);
+      }
+    }
+    const transfer = [...byFamily.values()].slice(0, 2);
+    if (transfer.length < 2) continue;
+    return {
+      skillId,
+      records: [
+        ...transfer,
+        ...transfer.map((record) => ({ ...record, kind: 'independent' as const })),
+      ],
+    };
+  }
+  throw new Error('no skill has two eligible transfer families; the measurement below is vacuous');
+}
+
 describe('lesson-only mastery reachability', () => {
   describe('the retry axis is not the blocker', () => {
     it('commits the re-entry exit as its own item, never as a retry of the initial', () => {
@@ -372,6 +436,88 @@ describe('lesson-only mastery reachability', () => {
         now: NOW,
       });
       expect(isLessonRollupAvailable(rollup) && rollup.view.mastered).toBe(true);
+    });
+  });
+
+  describe('the transfer slot is blocked a second time, by data that is never written', () => {
+    it('writes an empty change-dimension array on every record it produces', () => {
+      const records = lessonChannelEvidence();
+
+      // Stated over every record rather than sampled, and paired with a count,
+      // because "all of them" is only meaningful if there were some.
+      expect(records.length).toBeGreaterThan(0);
+      expect(records.filter((record) => record.changeDimensions.length > 0)).toEqual([]);
+    });
+
+    it('reports CHANGE_DIMENSION_GAP with the families it asks for already present', () => {
+      const { skillId, records } = transferPairWithIndependenceSupplied();
+      const evaluated = evaluateEvidence({ skillId, records, now: NOW });
+      const transferGap = evaluated.missingSlots.find((gap) => gap.kind === 'transfer');
+
+      // Family diversity satisfied, dimensions the only thing outstanding. That
+      // is the whole finding: the slot is not under-earned, it is unearnable.
+      expect(transferGap?.observedFamilies).toBe(2);
+      expect(transferGap?.reasons).toEqual(['CHANGE_DIMENSION_GAP']);
+      expect(evaluated.satisfiedSlots.map((slot) => slot.kind)).toEqual(['independent']);
+    });
+
+    it('clears that gap the moment two distinct dimensions exist, and only then', () => {
+      // The counterfactual, isolating the one variable. The one-distinct case is
+      // included deliberately: it proves the slot counts DISTINCT values, so a
+      // future authoring pass that labels everything `representation` would buy
+      // nothing, and a coarser test would not say so.
+      const { skillId, records } = transferPairWithIndependenceSupplied();
+      const labelled = (dimensions: readonly ChangeDimension[]) => {
+        let index = 0;
+        return evaluateEvidence({
+          skillId,
+          records: records.map((record) =>
+            record.kind === 'transfer'
+              ? { ...record, changeDimensions: [dimensions[index++] as ChangeDimension] }
+              : record,
+          ),
+          now: NOW,
+        });
+      };
+
+      const oneDistinct = labelled(['representation', 'representation']);
+      expect(oneDistinct.missingSlots.find((gap) => gap.kind === 'transfer')?.reasons).toEqual([
+        'CHANGE_DIMENSION_GAP',
+      ]);
+
+      const twoDistinct = labelled(['representation', 'domain_context']);
+      expect(twoDistinct.missingSlots.find((gap) => gap.kind === 'transfer')).toBeUndefined();
+      expect(twoDistinct.satisfiedSlots.map((slot) => slot.kind)).toEqual([
+        'independent',
+        'transfer',
+      ]);
+    });
+
+    it('leaves `retained` and `strong` blocked anyway, so the cost is stated correctly', () => {
+      // Guards against over-claiming. Even with the transfer slot satisfied,
+      // both higher tiers stay out of reach on their `delayed` slot, which has
+      // no producer at all. Populating dimensions would not deliver a tier; it
+      // would deliver an honest gap report and one stronger route to
+      // `independent`. If this ever fails, a delayed producer has landed and the
+      // roadmap entry it belongs to is stale.
+      const dimensionOnly = EVIDENCE_CONFIG.recipes.filter(
+        (recipe) =>
+          recipe.slots.some((slot) => slot.changeDimensions !== undefined) &&
+          !recipe.slots.some((slot) => slot.minDelayHours !== undefined),
+      );
+      expect(dimensionOnly.map((recipe) => recipe.name)).toEqual([
+        'independent_corroborated_by_transfer',
+      ]);
+      expect(dimensionOnly.map((recipe) => recipe.target)).toEqual(['independent']);
+
+      for (const recipe of EVIDENCE_CONFIG.recipes) {
+        if (recipe.target === 'retained' || recipe.target === 'strong') {
+          expect(
+            recipe.slots.some((slot) => slot.minDelayHours !== undefined),
+            recipe.name,
+          ).toBe(true);
+        }
+      }
     });
   });
 

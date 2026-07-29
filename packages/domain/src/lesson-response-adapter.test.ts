@@ -833,6 +833,11 @@ describe('lesson response adapter — the lesson never decides', () => {
     });
     expect(unmapped.evidence?.changeDimensions).toEqual([]);
 
+    // The two cases above are what production actually looks like: no lesson
+    // authors `changed_dimensions`, so every real record carries `[]` (measured
+    // in `tests/architecture/v3-lesson-binding-conformance.test.ts`). The case
+    // below is the mapping standing ready for authoring that does not exist yet
+    // — it proves the copy is faithful, not that anything is copied today.
     const authored = adapt({
       binding: parseBinding({ changedDimensions: ['representation', 'domain_context'] }),
     });

@@ -159,8 +159,37 @@ describe('diagnostic', () => {
   });
 });
 
+/**
+ * TWO FIELDS IN THIS BLOCK ARE ASPIRATIONAL, NOT PRODUCTION-SHAPED. Read the
+ * results below as arithmetic over the policy, never as evidence that a learner
+ * can reach these tiers.
+ *
+ * `changeDimensions` is hardcoded `[]` at six sites in `authority.ts` and at the
+ * practice writer, and the lesson adapter copies an authored array that none of
+ * the 115 real bindings authors — so every evidence record the running system
+ * has ever written carries `[]`, and `CHANGE_DIMENSION_GAP` is permanent rather
+ * than pending. `delayHours` has no producer either; `workflow.ts` never
+ * supplies it, so `DELAY_WINDOW_GAP` is permanent in the same way
+ * (`key-docs/roadmap-todo.md`, "The delayed-check scheduler").
+ *
+ * The fixtures still write both, deliberately. A policy test's job is to prove
+ * the slot arithmetic is correct — that two families with one shared dimension
+ * is a gap and two distinct dimensions is not — and it cannot prove that using
+ * data in which the answer is always "gap". Deleting the coverage would leave
+ * the arithmetic unmeasured AND the reachability unmeasured, which is strictly
+ * worse than measuring one of them honestly labelled.
+ *
+ * WHAT MAKES THE LABEL FALSIFIABLE rather than a comment that rots: the real
+ * shape is measured, against the real corpus and the real runtime, in
+ * `tests/architecture/v3-lesson-binding-conformance.test.ts` ("carries no
+ * authored change dimensions") and
+ * `tests/architecture/lesson-mastery-reachability.test.ts` ("the transfer slot
+ * is blocked a second time"). Both are written to FAIL the day production
+ * starts populating these fields, which is the day this note stops being true.
+ */
 describe('evidence warrant policy', () => {
-  const fullWarrant = (): EvidenceRecord[] => [
+  /** The full recipe, including the two fields production never emits. */
+  const aspirationalFullWarrant = (): EvidenceRecord[] => [
     mkEv({ kind: 'independent', familyId: 'fam-a' }),
     mkEv({ kind: 'independent', familyId: 'fam-b' }),
     mkEv({ kind: 'transfer', familyId: 'fam-a', changeDimensions: ['representation'] }),
@@ -259,8 +288,10 @@ describe('evidence warrant policy', () => {
     );
   });
 
-  it('satisfies the whole warrant with the full recipe and reports zero gaps', () => {
-    const state = evaluateEvidence({ skillId: 's', records: fullWarrant(), now: NOW });
+  it('satisfies the whole warrant with the full recipe and reports zero gaps (aspirational)', () => {
+    // `strong` is NOT reachable in production. See the block comment above: this
+    // measures that the recipe adds up, on records only a fixture can build.
+    const state = evaluateEvidence({ skillId: 's', records: aspirationalFullWarrant(), now: NOW });
     expect(state.evidenceQuality).toBe('strong');
     expect(state.missingSlots).toEqual([]);
     expect(state.satisfiedSlots).toHaveLength(7);
@@ -346,7 +377,7 @@ describe('evidence warrant policy', () => {
 
   it('applies the tighter strong-condition freshness window to passage/timed/protected evidence', () => {
     const thirtyDaysAgo = boundedAt('2026-06-20T12:00:00.000Z'); // <45d, >21d
-    const records = fullWarrant().map((r) =>
+    const records = aspirationalFullWarrant().map((r) =>
       r.kind === 'timed' ? { ...r, occurredAt: thirtyDaysAgo } : r,
     );
     const state = evaluateEvidence({ skillId: 's', records, now: NOW });
@@ -383,6 +414,12 @@ describe('evidence warrant policy', () => {
   });
 
   it('reports an explicit change-dimension gap on transfer evidence', () => {
+    // The gap is real in production too, but for a different reason than this
+    // test gives: production writes NO dimensions at all, not one repeated. The
+    // production-shaped version of this measurement is in
+    // `tests/architecture/lesson-mastery-reachability.test.ts`; this one exists
+    // to prove the slot counts DISTINCT dimensions rather than any at all,
+    // which is the part `[]` can never demonstrate.
     const records = [
       mkEv({ kind: 'transfer', familyId: 'fam-a', changeDimensions: ['representation'] }),
       mkEv({ kind: 'transfer', familyId: 'fam-b', changeDimensions: ['representation'] }),
@@ -402,7 +439,7 @@ describe('evidence warrant policy', () => {
   it('fails closed to foundation_needed when a prerequisite is blocked', () => {
     const state = evaluateEvidence({
       skillId: 's',
-      records: fullWarrant(),
+      records: aspirationalFullWarrant(),
       now: NOW,
       prerequisiteBlocked: true,
     });
@@ -515,6 +552,11 @@ describe('evidence warrant — every recipe target is a real tier', () => {
   it('reaches `retained` only with delayed and mixed evidence, unchanged by the rename', () => {
     // Guards the behaviour the deleted special case used to produce: transfer
     // evidence corroborates independence, it does not promote past it.
+    //
+    // The two `changeDimensions` here are aspirational, as in the warrant block
+    // above — production writes `[]`, so this satisfied transfer slot is not a
+    // state a learner can be in. What is being measured is the ceiling, and the
+    // ceiling is if anything lower in production, so the guard still holds.
     const withTransfer = evaluateEvidence({
       skillId: 's',
       records: [

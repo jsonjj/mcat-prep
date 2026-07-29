@@ -6,7 +6,7 @@ import {
 } from '../../packages/contracts/src/ids';
 import { UtcTimestampSchema } from '../../packages/contracts/src/time';
 import { LessonRuntimeResponseFactsSchema } from '../../packages/contracts/src/lesson-observation';
-import { EvidenceRecordSchema } from '../../packages/domain/src/evidence';
+import { ChangeDimensionSchema, EvidenceRecordSchema } from '../../packages/domain/src/evidence';
 import {
   adaptLessonResponse,
   parseAuthoredLessonBinding,
@@ -127,6 +127,75 @@ describe('V3 lesson binding conformance', () => {
       total += lesson.bindings.length;
     }
     expect(total).toBe(EXPECTED_TOTAL_BINDINGS);
+  });
+
+  it('carries no authored change dimensions, and no prose that could stand in for them', () => {
+    // `EvidenceRecord.changeDimensions` reaches the transfer recipe slot, which
+    // needs TWO DISTINCT canonical dimensions to be satisfied. The adapter maps
+    // it faithfully from the authored `changed_dimensions` array — and nothing
+    // authors that array, so every evidence record production has ever written
+    // carries `[]` and `CHANGE_DIMENSION_GAP` is permanent. Measured here, at
+    // the authoring end, because that is where the missing thing is missing.
+    //
+    // The plural key is NOT the singular `changed_dimension` the artifacts do
+    // author. That one is reviewed prose and lands in `changedDimensionDetail`;
+    // contract §7 forbids parsing it into the canonical array, and the numbers
+    // below are why that rule is right rather than merely cautious. The three
+    // lessons author the field at three incompatible granularities — free
+    // phrases, single words, SCREAMING_SNAKE labels — and across all 115
+    // bindings exactly ONE distinct value is a canonical dimension. A slot
+    // needing two distinct values could not be filled from this prose even by a
+    // mapping that took every exact match and inferred nothing.
+    //
+    // THIS TEST IS EXPECTED TO FAIL WHEN AUTHORING LANDS, and that is its job.
+    // It is the falsifier for the aspirational fixtures in
+    // `packages/policies/src/policies.test.ts`, which hand-write dimensions that
+    // no artifact produces. When these numbers move, those fixtures stop being
+    // aspirational and their label has to be revisited.
+    expect(missingLessonIds(), lessonCorpusDiagnostic('change-dimension authoring')).toEqual([]);
+
+    const canonical = new Set<string>(ChangeDimensionSchema.options);
+    const authoredDimensions = new Map<string, number>();
+    const prose = new Map<string, number>();
+    let parsedBindings = 0;
+
+    for (const lessonId of EXPECTED_LESSON_IDS) {
+      const lesson = requireLesson(lessonId);
+      for (const raw of lesson.bindings) {
+        const parsed = parseAuthoredLessonBinding(
+          { lessonId: lesson.id, artifactVersion: lesson.artifactVersion },
+          raw,
+        );
+        if (parsed.status !== 'parsed') continue;
+        parsedBindings += 1;
+        for (const dimension of parsed.binding.changedDimensions) {
+          authoredDimensions.set(dimension, (authoredDimensions.get(dimension) ?? 0) + 1);
+        }
+        const detail = parsed.binding.changedDimensionDetail;
+        if (typeof detail === 'string' && detail !== '') {
+          prose.set(detail, (prose.get(detail) ?? 0) + 1);
+        }
+      }
+    }
+
+    // Non-vacuity first: a corpus that stopped parsing would satisfy every
+    // "nothing authors this" claim below by finding nothing at all.
+    expect(parsedBindings).toBe(EXPECTED_TOTAL_BINDINGS);
+    expect(prose.size).toBeGreaterThan(0);
+
+    expect(
+      [...authoredDimensions.keys()],
+      'no lesson authors `changed_dimensions`, so no evidence record can carry one; if this ' +
+        'fails, authoring has landed and the aspirational label in policies.test.ts is stale',
+    ).toEqual([]);
+
+    const usableFromProse = [...prose.keys()].filter((value) => canonical.has(value));
+    expect(
+      usableFromProse.length,
+      'the transfer slot needs 2 distinct canonical dimensions; mapping the prose field by ' +
+        `exact match yields ${usableFromProse.length} across the whole corpus ` +
+        `(${JSON.stringify(usableFromProse)}), so the prose is not a stand-in for the array`,
+    ).toBeLessThan(2);
   });
 
   for (const lessonId of CONFORMANCE_LESSON_IDS) {
