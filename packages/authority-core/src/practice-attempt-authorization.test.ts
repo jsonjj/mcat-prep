@@ -66,14 +66,31 @@ class CountingExposureBank extends FixedGrainPracticeBank {
   }
 }
 
-function learnerWith<T extends SyntheticPracticeBankPort>(
+/**
+ * Teach every KC the bank can serve, so teach-before-test admits this learner.
+ *
+ * The queue is gated per-KC on `state.taughtKcIds` — the union of completed
+ * lessons' KCs — and that gate fails closed on an EMPTY taught set as well as on
+ * a miss, so a guest who has completed no lesson is served no science material
+ * and therefore holds no grant. This file is about the GRANT, so its learners
+ * have to be past the gate; the untaught learner below is constructed
+ * deliberately, and stays untaught.
+ */
+async function teachTheWholeBank(authority: Authority, state: LearnerState): Promise<void> {
+  const units = await authority.practiceBank.listUnits({ limit: 400 });
+  state.taughtKcIds = [...new Set(units.map((u) => u.kcId))];
+}
+
+async function learnerWith<T extends SyntheticPracticeBankPort>(
   make: (bank: ReturnType<typeof loadSyntheticBank>) => T,
   clock: Clock = CLOCK,
-): { authority: Authority; state: LearnerState; bank: T } {
+): Promise<{ authority: Authority; state: LearnerState; bank: T }> {
   const loaded = loadSyntheticBank();
   const bank = make(loaded);
   const authority = new Authority(loaded, clock, bank);
-  return { authority, state: authority.createGuest(), bank };
+  const state = authority.createGuest();
+  await teachTheWholeBank(authority, state);
+  return { authority, state, bank };
 }
 
 function movableClock(initial: string): { clock: Clock; set: (iso: string) => void } {
@@ -110,7 +127,7 @@ describe('an adaptive-practice answer requires a server-issued attempt', () => {
    * return a scored result with a BKT write behind it.
    */
   it('refuses a submission for an item the queue never served', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
 
     await expect(
       authority.submitPracticeAttempt(state, {
@@ -135,7 +152,7 @@ describe('an adaptive-practice answer requires a server-issued attempt', () => {
   });
 
   it('names the refusal rather than reporting a generic failure', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
     const error = await authority
       .submitPracticeAttempt(state, {
         questionId: corpusQuestionId(authority),
@@ -155,7 +172,7 @@ describe('an adaptive-practice answer requires a server-issued attempt', () => {
    * and the evidence record all land exactly as they did before.
    */
   it('scores a queue-then-answer flow end to end', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
     const item = await scienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
 
@@ -179,7 +196,7 @@ describe('an adaptive-practice answer requires a server-issued attempt', () => {
    * served as a probe, so the served spec is compared rather than trusted.
    */
   it('refuses a served item answered under a spec it was not served with', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
     const item = await scienceItem(authority, state);
 
     const error = await authority
@@ -197,7 +214,7 @@ describe('an adaptive-practice answer requires a server-issued attempt', () => {
   });
 
   it('refuses an answer to an item served under a superseded content release', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
     const item = await scienceItem(authority, state);
 
     // Re-issue by hand at the wrong release: the same shape a serve from a
@@ -224,7 +241,10 @@ describe('an adaptive-practice answer requires a server-issued attempt', () => {
 
   it('refuses an answer after the grant has expired', async () => {
     const { clock, set } = movableClock(NOW);
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank), clock);
+    const { authority, state } = await learnerWith(
+      (bank) => new FixedGrainPracticeBank(bank),
+      clock,
+    );
     const item = await scienceItem(authority, state);
 
     // A day later, without ever refetching the queue.
@@ -249,7 +269,7 @@ describe('an adaptive-practice answer requires a server-issued attempt', () => {
    * than gate anything.
    */
   it('spends the grant on the first answer, so a replay can only be a repeat', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
     const item = await scienceItem(authority, state);
     const wire = {
       questionId: item.question.id,
@@ -276,7 +296,7 @@ describe('an adaptive-practice answer requires a server-issued attempt', () => {
    * queue.
    */
   it('puts the taught-set gate in front of every scored answer, not just the queued ones', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
     const reachable = await scienceItem(authority, state);
 
     const untaught = authority.createGuest();
@@ -304,7 +324,7 @@ describe('an adaptive-practice answer requires a server-issued attempt', () => {
    * be a first attempt.
    */
   it('issues grants on the serve without recording an exposure', async () => {
-    const { authority, state, bank } = learnerWith((b) => new CountingExposureBank(b));
+    const { authority, state, bank } = await learnerWith((b) => new CountingExposureBank(b));
 
     const item = await scienceItem(authority, state);
     await authority.getPracticeQueue(state, 5);

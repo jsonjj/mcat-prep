@@ -71,7 +71,22 @@ function fixedGrainLearner(clock: Clock = CLOCK): {
   return { authority, state: authority.createGuest() };
 }
 
+/**
+ * Teach every KC the bank can serve, so teach-before-test admits this learner.
+ *
+ * The queue is gated per-KC on `state.taughtKcIds` — the union of completed
+ * lessons' KCs — and that gate fails closed on an EMPTY taught set as well as on
+ * a miss, so a guest who has completed no lesson is served no science material
+ * at all. Every test in this file is about first-attempt derivation, so each has
+ * to get past the gate first; `practice.test.ts` owns the gate itself.
+ */
+async function teachTheWholeBank(authority: Authority, state: LearnerState): Promise<void> {
+  const units = await authority.practiceBank.listUnits({ limit: 400 });
+  state.taughtKcIds = [...new Set(units.map((u) => u.kcId))];
+}
+
 async function firstQueuedScienceItem(authority: Authority, state: LearnerState) {
+  await teachTheWholeBank(authority, state);
   const queue = await authority.getPracticeQueue(state, 5);
   const item = queue.items.find((i) => i.domain === 'science');
   if (item === undefined) throw new Error('expected a science practice item');
@@ -175,6 +190,7 @@ describe('the authority derives firstAttempt rather than reading it', () => {
 
   it('classifies a different item as its own first attempt', async () => {
     const { authority, state } = fixedGrainLearner();
+    await teachTheWholeBank(authority, state);
     const queue = await authority.getPracticeQueue(state, 6);
     const [one, two] = queue.items;
     expect(two).toBeDefined();
@@ -242,6 +258,7 @@ describe('a repeat attempt cannot inflate either Mistakes surface', () => {
   it('is resolved by a later correct attempt on a different item in the same KC', async () => {
     const { clock, set } = movableClock(NOW);
     const { authority, state } = fixedGrainLearner(clock);
+    await teachTheWholeBank(authority, state);
     const queue = await authority.getPracticeQueue(state, 6);
     const [missed, next] = queue.items;
     expect(next).toBeDefined();

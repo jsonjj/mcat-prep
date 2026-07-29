@@ -80,13 +80,29 @@ class CountingExposureBank extends FixedGrainPracticeBank {
   }
 }
 
-function learnerWith<T extends SyntheticPracticeBankPort>(
+/**
+ * Teach every KC the bank can serve, so teach-before-test admits this learner.
+ *
+ * The queue is gated per-KC on `state.taughtKcIds` — the union of completed
+ * lessons' KCs — and that gate fails closed on an EMPTY taught set as well as on
+ * a miss, so a guest who has completed no lesson is served no science material at
+ * all. This file is about WHEN exposure is written, which needs items to exist.
+ * `listUnits` writes no exposure, so this cannot disturb the counts below.
+ */
+async function teachTheWholeBank(authority: Authority, state: LearnerState): Promise<void> {
+  const units = await authority.practiceBank.listUnits({ limit: 400 });
+  state.taughtKcIds = [...new Set(units.map((u) => u.kcId))];
+}
+
+async function learnerWith<T extends SyntheticPracticeBankPort>(
   make: (bank: ReturnType<typeof loadSyntheticBank>) => T,
-): { authority: Authority; state: LearnerState; bank: T } {
+): Promise<{ authority: Authority; state: LearnerState; bank: T }> {
   const loaded = loadSyntheticBank();
   const bank = make(loaded);
   const authority = new Authority(loaded, CLOCK, bank);
-  return { authority, state: authority.createGuest(), bank };
+  const state = authority.createGuest();
+  await teachTheWholeBank(authority, state);
+  return { authority, state, bank };
 }
 
 const ids = (items: readonly { question: { id: string } }[]): string[] =>
@@ -108,7 +124,7 @@ describe('exposure is recorded on the answer, not on the serve', () => {
    * participated in, so it leaves no trace and the item comes back.
    */
   it('leaves a served-but-unanswered item eligible for the next queue', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
 
     const first = await authority.getPracticeQueue(state, 4);
     expect(first.items.length).toBeGreaterThan(0);
@@ -132,7 +148,7 @@ describe('exposure is recorded on the answer, not on the serve', () => {
    * on serve and then compensated for it somewhere in selection.
    */
   it('writes no exposure while building a queue, and exactly one per answer', async () => {
-    const { authority, state, bank } = learnerWith((b) => new CountingExposureBank(b));
+    const { authority, state, bank } = await learnerWith((b) => new CountingExposureBank(b));
 
     await authority.getPracticeQueue(state, 6);
     expect(bank.exposureWrites).toBe(0);
@@ -156,7 +172,7 @@ describe('exposure is recorded on the answer, not on the serve', () => {
    * once.
    */
   it('does not let repeated serves consume the first attempt', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
 
     const item = await scienceItem(authority, state);
     await authority.getPracticeQueue(state, 5);
@@ -197,7 +213,7 @@ describe('the cost of recording exposure on the serve instead', () => {
   };
 
   it('makes every subsequent answer a repeat, so practice moves no mastery at all', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
     const item = await scienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
 
@@ -217,7 +233,7 @@ describe('the cost of recording exposure on the serve instead', () => {
   });
 
   it('drops the repair a miss should have queued', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
     const item = await scienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
     const wrong = (['A', 'B', 'C', 'D'] as const).find((c) => c !== answer!.correctChoiceId)!;
@@ -243,7 +259,7 @@ describe('the cost of recording exposure on the serve instead', () => {
    * serve would manufacture the condition the signal exists to explain.
    */
   it('burns items the learner never engaged with, one queue per refetch', async () => {
-    const { authority, state } = learnerWith((bank) => new FixedGrainPracticeBank(bank));
+    const { authority, state } = await learnerWith((bank) => new FixedGrainPracticeBank(bank));
 
     // The shipped behaviour first, as the control: refetching spends nothing.
     const first = await authority.getPracticeQueue(state, 3);

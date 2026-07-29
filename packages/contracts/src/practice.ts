@@ -87,8 +87,17 @@ export type PracticeFocus = z.infer<typeof PracticeFocusSchema>;
  * have no fresh item left once recently-seen exclusion runs, and silently
  * truncating there left every downstream count assumption wrong with nothing
  * to show for it. `taughtGap` narrows the cause: true when the shortfall (if
- * any) traces to the taught-set gate finding zero overlap with the loaded
- * bank, as opposed to the bank or fresh-item supply simply running dry.
+ * any) traces to the taught-set gate withholding every science unit the bank
+ * offered, as opposed to the bank or fresh-item supply simply running dry.
+ *
+ * `nothingTaught` narrows it once further, and the extra field earns its place
+ * because the honest sentence differs. A gate that withheld everything because
+ * the learner's finished lessons do not match the loaded bank means "you have
+ * not reached this material"; a gate that withheld everything because the
+ * learner has finished NO lesson means "finish a lesson first". Those are
+ * different situations with different next steps, and a day-one learner gets
+ * the second one — the taught set is empty until a lesson completes, which is
+ * why the gate has to fire there at all.
  */
 export const PracticeQueueViewSchema = z
   .object({
@@ -97,6 +106,8 @@ export const PracticeQueueViewSchema = z
     items: z.array(PracticeQueueItemSchema),
     shortfall: z.number().int().nonnegative(),
     taughtGap: z.boolean(),
+    /** The learner has completed no lesson, so nothing is taught to practise. */
+    nothingTaught: z.boolean(),
   })
   .strict();
 export type PracticeQueueView = z.infer<typeof PracticeQueueViewSchema>;

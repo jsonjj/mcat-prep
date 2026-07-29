@@ -33,6 +33,55 @@ const noticeText = (notice: QueueNotice, delivered: number, requested: number): 
     ? 'Some questions are sitting out — they come from lessons you haven’t finished yet.'
     : `Shorter set than usual: ${delivered} of the ${requested} questions you asked for were available today.`;
 
+/** One empty-queue state: what happened, and whether a lesson is the way out. */
+interface EmptyState {
+  title: string;
+  body: string;
+  /** Offer the curriculum. Only where a lesson is genuinely the next step. */
+  findLesson: boolean;
+}
+
+/**
+ * Which empty-queue state the learner is in, most specific first.
+ *
+ * Three causes, three sentences. The taught-set gate can withhold every science
+ * question for two quite different reasons, and until 2026-07-29 only one of
+ * them existed as far as this screen was concerned — the gate did not run at
+ * all on an empty taught set, so a learner who had finished nothing was served
+ * the unfiltered bank instead of any of these states. Now that it fails closed
+ * there, `nothingTaught` is the common case rather than the exotic one: it is
+ * every learner's first visit.
+ *
+ * It gets its own copy rather than reusing the taught-gap wording, because that
+ * wording says "none of the questions we have are from those yet", which
+ * presupposes finished lessons to draw from. Told to a learner who has finished
+ * none, it reads as a content shortage on work they have done — the opposite of
+ * the truth, and it hides the one action that helps.
+ */
+function emptyStateFor(
+  view: { taughtGap: boolean; nothingTaught: boolean } | undefined,
+): EmptyState {
+  if (view?.nothingTaught === true) {
+    return {
+      title: 'Start with a lesson',
+      body: 'Practice pulls its questions from lessons you’ve finished, and you haven’t finished one yet. Complete a lesson and its questions will show up here.',
+      findLesson: true,
+    };
+  }
+  if (view?.taughtGap === true) {
+    return {
+      title: 'Not taught yet',
+      body: 'Practice only pulls questions from lessons you’ve already finished, and none of the questions we have are from those yet. Finish a lesson and they’ll turn up here.',
+      findLesson: true,
+    };
+  }
+  return {
+    title: 'Nothing to practice yet',
+    body: 'There aren’t enough eligible questions for this focus yet. Learn a bit more, then come back.',
+    findLesson: false,
+  };
+}
+
 interface SessionState {
   x?: number;
   focus?: string;
@@ -127,28 +176,25 @@ export function PracticeSession() {
   }
 
   /**
-   * An empty queue has two quite different causes and used to give one answer
-   * to both. A taught-set miss is not a shortage — it is material the learner
-   * has not reached yet, and the useful next step is a lesson, so that branch
-   * says so and offers one instead of dead-ending on a Back button.
+   * An empty queue has three quite different causes and used to give one answer
+   * to all of them. Neither taught-set state is a shortage — one is material the
+   * learner has not reached yet, the other is a learner who has not started —
+   * and the useful next step for both is a lesson, so each says which it is and
+   * offers one instead of dead-ending on a Back button. See `emptyStateFor`.
    */
   if (slot === undefined) {
-    const taughtGap = queue.data?.taughtGap === true;
+    const empty = emptyStateFor(queue.data);
     return (
       <div className="mc-screen mc-practice">
         <Eyebrow>Practice</Eyebrow>
-        <h1 className="mc-h1">{taughtGap ? 'Not taught yet' : 'Nothing to practice yet'}</h1>
-        <p className="mc-muted">
-          {taughtGap
-            ? 'Practice only pulls questions from lessons you’ve already finished, and none of the questions we have are from those yet. Finish a lesson and they’ll turn up here.'
-            : 'There aren’t enough eligible questions for this focus yet. Learn a bit more, then come back.'}
-        </p>
-        {taughtGap ? (
+        <h1 className="mc-h1">{empty.title}</h1>
+        <p className="mc-muted">{empty.body}</p>
+        {empty.findLesson ? (
           <Button variant="primary" onClick={() => navigate('/app/curriculum')}>
             Find a lesson
           </Button>
         ) : null}
-        <Button variant={taughtGap ? 'secondary' : 'primary'} onClick={() => finish(true)}>
+        <Button variant={empty.findLesson ? 'secondary' : 'primary'} onClick={() => finish(true)}>
           {returnTo ? 'Back to plan' : 'Back to Practice'}
         </Button>
       </div>

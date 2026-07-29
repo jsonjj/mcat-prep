@@ -147,16 +147,33 @@ const PREREQUISITE_BLOCKING_EVIDENCE_REASONS: ReadonlySet<EvidenceReason> = new 
 ]);
 
 /**
- * `PracticeSnapshot` (from `@mcat/policies`) plus the one fact the selection
+ * `PracticeSnapshot` (from `@mcat/policies`) plus the two facts the selection
  * engine has no use for but `getPracticeQueue` does: whether the taught-set
- * gate in `buildPracticeSnapshot` found a real, non-empty taught set that
- * shared nothing with the loaded bank. Extended locally rather than in the
- * shared policies package, because it is authority-side bookkeeping about
- * WHY a snapshot looks the way it does, not an input the pure engine reads.
+ * gate in `buildPracticeSnapshot` withheld every science unit the bank offered,
+ * and whether the learner has been taught anything at all. Extended locally
+ * rather than in the shared policies package, because it is authority-side
+ * bookkeeping about WHY a snapshot looks the way it does, not an input the pure
+ * engine reads.
+ *
+ * Two fields rather than one because they answer different questions and the
+ * learner-facing sentence differs: "the questions we hold are not from your
+ * finished lessons" is not "you have not finished a lesson". They cannot
+ * disagree, because both read the one taught set — see `taughtKcSet`.
  */
 interface ScopedPracticeSnapshot extends PracticeSnapshot {
   readonly taughtGapDetected: boolean;
+  readonly nothingTaughtYet: boolean;
 }
+
+/**
+ * The learner's taught-KC set: the union of their completed lessons' KCs, as
+ * `todaysPathSnapshot` cached it. The ONE derivation, so the gate and the
+ * "nothing taught yet" report can never describe different sets.
+ *
+ * Absent and empty are the same value here on purpose. They were once told
+ * apart — see the teach-before-test docblock in `buildPracticeSnapshot`.
+ */
+const taughtKcSet = (state: LearnerState): ReadonlySet<string> => new Set(state.taughtKcIds ?? []);
 
 /** A grain a warrant is produced for, with the labels a view needs. */
 interface WarrantGrain {
@@ -2384,7 +2401,11 @@ export class Authority {
    * on the view rather than left for the caller to infer from a shorter array;
    * see `PracticeQueueView.shortfall`. `taughtGap` carries the more specific
    * signal that the shortfall (if any) traces to `buildPracticeSnapshot`'s
-   * taught-set gate finding zero overlap, not to the bank running dry.
+   * taught-set gate withholding every science unit, not to the bank running
+   * dry, and `nothingTaught` narrows it once further: the gate withheld
+   * everything because the learner has finished no lesson yet, which is a day
+   * one learner rather than a curriculum mismatch and needs a different
+   * sentence.
    *
    * SERVING IS NOT AN EXPOSURE. This method writes no exposure: an item handed
    * to a learner who never answers it stays eligible for the next queue, and
@@ -2419,7 +2440,17 @@ export class Authority {
     const requested = Math.max(0, Math.min(Math.floor(x), 50));
     const focusToken = focus ?? null;
     if (requested === 0) {
-      return { requested: 0, focus: focusToken, items: [], shortfall: 0, taughtGap: false };
+      // No gate ran, so there is no gap to report — but "you have finished no
+      // lessons" is a fact about the learner and true whatever was asked for,
+      // read through the same single derivation the gate uses.
+      return {
+        requested: 0,
+        focus: focusToken,
+        items: [],
+        shortfall: 0,
+        taughtGap: false,
+        nothingTaught: taughtKcSet(state).size === 0,
+      };
     }
 
     const now = this.clock.now();
@@ -2482,6 +2513,7 @@ export class Authority {
       items,
       shortfall: Math.max(0, requested - items.length),
       taughtGap: snapshot.taughtGapDetected,
+      nothingTaught: snapshot.nothingTaughtYet,
     };
   }
 
@@ -2714,24 +2746,31 @@ export class Authority {
      * Per-KC teach-before-test: only serve KCs the learner has been taught
      * (union of completed lessons' KCs, cached at plan-build).
      *
-     * FAILS CLOSED. A taught set that shares nothing with the loaded bank is a
-     * MISS, not an invitation to widen back out to the unfiltered corpus — that
-     * used to serve untaught material dressed up as graceful degradation. An
-     * empty result is a signal a caller can act on; wrong material reaching a
-     * learner is a harm no caller can undo. `taughtGapDetected` on the returned
-     * snapshot is exactly that signal, so `getPracticeQueue` can surface it
-     * rather than let a mysteriously-empty science queue speak for itself.
+     * FAILS CLOSED, WITH NO SPECIAL CASE FOR AN EMPTY TAUGHT SET. The filter
+     * used to run only when the set was non-empty, on the reading that the true
+     * ABSENCE of a taught set — no lesson completions recorded at all — is a
+     * different fact from a taught claim that missed, and so has no claim to
+     * violate. The distinction is real; the conclusion drawn from it was wrong,
+     * because absence is not an edge case. It is every learner's FIRST state:
+     * `state.taughtKcIds` is empty until `todaysPathSnapshot` writes it from
+     * completed lessons, so a brand-new learner who opened Practice before
+     * opening a lesson fell through to the unfiltered corpus and was served
+     * real scored items on material nothing had taught them — with
+     * `taughtGapDetected` false, so no caller could even report it. That is
+     * exactly the state failing closed on a miss exists to prevent, arriving
+     * through the one door left open, and on the most common path there is.
      *
-     * Only the true ABSENCE of a taught set (no lesson completions recorded at
-     * all — a guest who has never run Today's Path) skips the filter: there is
-     * no taught claim to violate yet, which is a different fact from a taught
-     * claim that missed.
+     * An empty result is a signal a caller can act on; wrong material reaching
+     * a learner is a harm no caller can undo. So the set is read once and
+     * applied unconditionally, and the two facts a caller needs are reported
+     * separately: `taughtGapDetected` says the gate withheld everything the
+     * bank offered, `nothingTaughtYet` says the learner has finished nothing
+     * yet. `getPracticeQueue` publishes both, so an empty science queue never
+     * has to speak for itself.
      */
-    const taught =
-      state.taughtKcIds && state.taughtKcIds.length > 0 ? new Set(state.taughtKcIds) : null;
-    const scopedUnits = taught ? scienceUnits.filter((u) => taught.has(u.kcId)) : scienceUnits;
-    const taughtGapDetected =
-      taught !== null && scienceUnits.length > 0 && scopedUnits.length === 0;
+    const taught = taughtKcSet(state);
+    const scopedUnits = scienceUnits.filter((u) => taught.has(u.kcId));
+    const taughtGapDetected = scienceUnits.length > 0 && scopedUnits.length === 0;
 
     return {
       units: scopedUnits,
@@ -2739,6 +2778,7 @@ export class Authority {
       repairs: repairs.map((r) => (r.skill ? { kcId: r.kcId, skill: r.skill } : { kcId: r.kcId })),
       coveredClusters: covered,
       taughtGapDetected,
+      nothingTaughtYet: taught.size === 0,
     };
   }
 

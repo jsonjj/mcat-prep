@@ -63,6 +63,7 @@ describe('practice queue DTOs', () => {
           items: [item],
           shortfall: 0,
           taughtGap: false,
+          nothingTaught: false,
         }),
       ),
     ).not.toMatch(/correct|rationale/i);

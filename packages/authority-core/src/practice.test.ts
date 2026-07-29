@@ -13,6 +13,31 @@ function freshLearner(): { authority: Authority; state: LearnerState } {
   return { authority, state: authority.createGuest() };
 }
 
+/**
+ * Put a learner past teach-before-test by teaching every KC the bank can serve.
+ *
+ * Practice is gated per-KC on `state.taughtKcIds` — the union of the learner's
+ * completed lessons' KCs, written by `todaysPathSnapshot` — and that gate fails
+ * closed on an EMPTY taught set as well as on a miss, so a guest who has
+ * completed no lesson is served no science material at all. Anything testing
+ * scoring, exposure, routing or the decay clock has to get past the gate first;
+ * only a test ABOUT the gate should start behind it.
+ *
+ * Read off the bank's own units rather than a hardcoded list, so the fixture
+ * cannot drift from the material under test.
+ */
+async function teachTheWholeBank(authority: Authority, state: LearnerState): Promise<void> {
+  const units = await authority.practiceBank.listUnits({ limit: 400 });
+  state.taughtKcIds = [...new Set(units.map((u) => u.kcId))];
+}
+
+/** A learner taught everything the bank holds — see {@link teachTheWholeBank}. */
+async function taughtLearner(): Promise<{ authority: Authority; state: LearnerState }> {
+  const { authority, state } = freshLearner();
+  await teachTheWholeBank(authority, state);
+  return { authority, state };
+}
+
 /** A clock the test can move, so the monotonic floor has something to hold against. */
 function movableClock(initial: string): { clock: Clock; set: (iso: string) => void } {
   let value = UtcTimestampSchema.parse(initial);
@@ -93,7 +118,7 @@ async function secondScienceItem(authority: Authority, state: LearnerState, excl
 
 describe('Authority.getPracticeQueue (synthetic fallback)', () => {
   it('returns a learner-safe queue with no answer key or rationale', async () => {
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
     const queue = await authority.getPracticeQueue(state, 4);
 
     expect(queue.requested).toBe(4);
@@ -108,7 +133,7 @@ describe('Authority.getPracticeQueue (synthetic fallback)', () => {
   });
 
   it('never repeats an item within one queue', async () => {
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
     const queue = await authority.getPracticeQueue(state, 6);
     const ids = queue.items.map((i) => i.question.id);
     expect(new Set(ids).size).toBe(ids.length);
@@ -119,7 +144,7 @@ describe('Authority.getPracticeQueue (synthetic fallback)', () => {
   // and the reasoning behind it; the title here used to say "served", which
   // described a behaviour this queue has never had.
   it('excludes items the learner has already answered (exposure)', async () => {
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
     const item = await firstQueuedScienceItem(authority, state);
     await authority.submitPracticeAttempt(state, {
       questionId: item.question.id,
@@ -137,14 +162,15 @@ describe('Authority.getPracticeQueue (synthetic fallback)', () => {
    * fail closed: fewer items, or none, never material outside the taught set.
    */
   it('fails closed on a taught-set miss instead of serving the unfiltered bank', async () => {
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
 
-    // With no taught set recorded at all (a guest who hasn't run Today's Path),
-    // the bank's science units ARE served — establishing the bank genuinely has
-    // science content, so a later zero is the gate acting, not an empty bank.
-    const untrackedTaught = await authority.getPracticeQueue(state, 8);
-    expect(untrackedTaught.items.some((i) => i.domain === 'science')).toBe(true);
-    expect(untrackedTaught.taughtGap).toBe(false);
+    // A learner taught what the bank holds IS served science — establishing the
+    // bank genuinely has science content, so a later zero is the gate acting
+    // rather than an empty bank.
+    const taught = await authority.getPracticeQueue(state, 8);
+    expect(taught.items.some((i) => i.domain === 'science')).toBe(true);
+    expect(taught.taughtGap).toBe(false);
+    expect(taught.nothingTaught).toBe(false);
 
     // A real taught set that shares nothing with the loaded bank's KCs is the
     // MISS this closes: previously this widened back out to every science
@@ -154,6 +180,58 @@ describe('Authority.getPracticeQueue (synthetic fallback)', () => {
 
     expect(gapped.items.filter((i) => i.domain === 'science')).toHaveLength(0);
     expect(gapped.taughtGap).toBe(true);
+    // A miss is not an absence: this learner HAS finished lessons.
+    expect(gapped.nothingTaught).toBe(false);
+  });
+
+  /**
+   * THE DAY-ONE CASE, and the one the gate used to wave through.
+   *
+   * The filter ran only when the taught set was non-empty, on the reading that
+   * the ABSENCE of a taught set is not a taught claim and so cannot be
+   * violated. But absence is not an edge case — `state.taughtKcIds` is empty
+   * until a lesson completes, so it is every learner's first state, and a
+   * brand-new learner who opened Practice before opening a lesson was served
+   * real scored items from the unfiltered corpus with `taughtGap: false`,
+   * against a Practice page promising "questions from lessons you've already
+   * finished". The empty set now fails closed like any other miss.
+   */
+  it('serves no bank items to a learner with zero taught KCs', async () => {
+    const { authority, state } = freshLearner();
+
+    expect(state.taughtKcIds ?? []).toEqual([]);
+    const queue = await authority.getPracticeQueue(state, 8);
+
+    expect(queue.items.filter((i) => i.domain === 'science')).toHaveLength(0);
+    expect(queue.taughtGap).toBe(true);
+    // Reported apart from the miss, because "finish a lesson first" and "you
+    // have not reached this material" are different sentences.
+    expect(queue.nothingTaught).toBe(true);
+
+    // Not merely quiet: teaching the same learner the bank's KCs and asking
+    // again returns science, so the zero above is this gate and nothing else.
+    await teachTheWholeBank(authority, state);
+    const afterTeaching = await authority.getPracticeQueue(state, 8);
+    expect(afterTeaching.items.some((i) => i.domain === 'science')).toBe(true);
+    expect(afterTeaching.nothingTaught).toBe(false);
+  });
+
+  /**
+   * Practice unlocks at three completed lessons (`practiceUnlockLessons`), and
+   * the same plan build that unlocks it writes `taughtKcIds` — so an unlocked
+   * learner cannot be behind the gate this way. Asserted rather than reasoned:
+   * failing closed is only correct if it does not strand a learner the product
+   * has already invited into Practice.
+   */
+  it('leaves no unlocked learner behind the gate', async () => {
+    const { authority, state } = freshLearner();
+    const units = await authority.practiceBank.listUnits({ limit: 400 });
+    // One lesson's worth of teaching is enough to be served something.
+    state.taughtKcIds = [units[0]!.kcId];
+
+    const queue = await authority.getPracticeQueue(state, 8);
+    expect(queue.nothingTaught).toBe(false);
+    expect(queue.items.some((i) => i.domain === 'science')).toBe(true);
   });
 
   /**
@@ -164,7 +242,7 @@ describe('Authority.getPracticeQueue (synthetic fallback)', () => {
    * present, and equal to exactly how many slots the queue could not fill.
    */
   it('surfaces a shortfall explicitly rather than silently truncating the queue', async () => {
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
     const requested = 50; // far more distinct items than the synthetic fixture holds
     const queue = await authority.getPracticeQueue(state, requested);
 
@@ -174,7 +252,7 @@ describe('Authority.getPracticeQueue (synthetic fallback)', () => {
   });
 
   it('reports zero shortfall when the queue fills the request', async () => {
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
     const queue = await authority.getPracticeQueue(state, 2);
     expect(queue.items.length).toBe(2);
     expect(queue.shortfall).toBe(0);
@@ -183,7 +261,7 @@ describe('Authority.getPracticeQueue (synthetic fallback)', () => {
 
 describe('Authority.submitPracticeAttempt (test-out mastery)', () => {
   it('moves P(L) up on a correct first attempt and returns the rationale', async () => {
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
     const item = await firstQueuedScienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
     expect(answer).not.toBeNull();
@@ -206,7 +284,7 @@ describe('Authority.submitPracticeAttempt (test-out mastery)', () => {
   });
 
   it('moves P(L) down on an incorrect first attempt and queues a repair', async () => {
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
     const item = await firstQueuedScienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
     const wrong = (['A', 'B', 'C', 'D'] as const).find((c) => c !== answer!.correctChoiceId)!;
@@ -231,7 +309,7 @@ describe('Authority.submitPracticeAttempt (test-out mastery)', () => {
    * attempt put it.
    */
   it('does not move mastery a second time on a repeat of the same item', async () => {
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
     const item = await firstQueuedScienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
     const attempt = {
@@ -248,7 +326,7 @@ describe('Authority.submitPracticeAttempt (test-out mastery)', () => {
   });
 
   it('rejects an unknown practice item', async () => {
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
     await expect(
       authority.submitPracticeAttempt(state, {
         questionId: 'not-a-real-item',
@@ -276,6 +354,7 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
     const bank = loadSyntheticBank();
     const authority = new Authority(bank, CLOCK, new LessonTaggedPracticeBank(bank));
     const state = authority.createGuest();
+    await teachTheWholeBank(authority, state);
     const item = await firstQueuedScienceItem(authority, state);
 
     await authority.submitPracticeAttempt(state, {
@@ -300,7 +379,7 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
   it('never routes a lesson the classification does not name', async () => {
     // The synthetic port reports `lessonId: null`; an absent id must stay absent
     // rather than becoming a placeholder the rollup would then report on.
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
     const item = await firstQueuedScienceItem(authority, state);
 
     await authority.submitPracticeAttempt(state, {
@@ -313,7 +392,7 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
   });
 
   it('appends one audit record naming the practice source', async () => {
-    const { authority, state } = freshLearner();
+    const { authority, state } = await taughtLearner();
     const item = await firstQueuedScienceItem(authority, state);
     const answer = await authority.practiceBank.getAnswer(item.question.id);
 
@@ -350,6 +429,7 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
     const bank = loadSyntheticBank();
     const authority = new Authority(bank, CLOCK, new CarsPracticeBank(bank));
     const state = authority.createGuest();
+    await teachTheWholeBank(authority, state);
     const item = await firstQueuedScienceItem(authority, state);
 
     await authority.submitPracticeAttempt(state, {
@@ -385,6 +465,7 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
     const bank = loadSyntheticBank();
     const authority = new Authority(bank, clock, new FixedGrainPracticeBank(bank));
     const state = authority.createGuest();
+    await teachTheWholeBank(authority, state);
 
     const first = await firstQueuedScienceItem(authority, state);
     await authority.submitPracticeAttempt(state, {
@@ -438,6 +519,7 @@ describe('Authority.submitPracticeAttempt (one write path)', () => {
     const bank = loadSyntheticBank();
     const authority = new Authority(bank, clock, new FixedGrainPracticeBank(bank));
     const state = authority.createGuest();
+    await teachTheWholeBank(authority, state);
 
     const first = await firstQueuedScienceItem(authority, state);
     await authority.submitPracticeAttempt(state, {

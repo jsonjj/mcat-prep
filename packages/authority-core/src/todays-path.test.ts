@@ -380,6 +380,11 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     const bank = loadSyntheticBank();
     const auth = new Authority(bank, clock, new LessonMappedPracticeBank(bank));
     const state = auth.createGuest();
+    // Teach-before-test: the queue serves only KCs a completed lesson covered,
+    // and fails closed on an empty taught set, so a learner with practice to
+    // record has one. Read off the bank's own units.
+    const units = await auth.practiceBank.listUnits({ limit: 400 });
+    state.taughtKcIds = [...new Set(units.map((u) => u.kcId))];
     const item = (await auth.getPracticeQueue(state, 5)).items.find(
       (candidate) => candidate.domain === 'science',
     );

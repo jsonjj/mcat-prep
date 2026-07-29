@@ -122,6 +122,19 @@ function independentRecord(state: LearnerState, skillId: string, familyId: strin
 
 const kcPL = (state: LearnerState, kcId = KC): number => state.mastery!.kc[kcId]!.pL;
 
+/**
+ * Teach every KC the bank can serve, so teach-before-test admits this learner.
+ *
+ * The practice queue is gated per-KC on `state.taughtKcIds` and fails closed on
+ * an EMPTY taught set as well as on a miss, so a guest who has completed no
+ * lesson is served no science material. The comparisons below need the practice
+ * channel to actually deliver an item.
+ */
+async function teachTheWholeBank(authority: Authority, state: LearnerState): Promise<void> {
+  const units = await authority.practiceBank.listUnits({ limit: 400 });
+  state.taughtKcIds = [...new Set(units.map((u) => u.kcId))];
+}
+
 const lessonView = (auth: Authority, state: LearnerState) =>
   auth.getMasteryLessons(state, [LESSON_ID]).find((l) => l.lessonId === LESSON_ID)!;
 
@@ -138,6 +151,7 @@ describe('a lesson exit moves P(L) less than a practice answer, via the guess', 
 
     const practiceAuth = new Authority(bank, clock, new SameGrainAsLessonBank(bank));
     const practiceState = practiceAuth.createGuest();
+    await teachTheWholeBank(practiceAuth, practiceState);
     const queue = await practiceAuth.getPracticeQueue(practiceState, 5);
     const item = queue.items.find((i) => i.domain === 'science')!;
     const answer = await practiceAuth.practiceBank.getAnswer(item.question.id);
@@ -284,6 +298,7 @@ describe('a lesson is mastered only with the warrant to say so', () => {
     const bank = loadSyntheticBank();
     const auth = new Authority(bank, clock, new SameGrainAsLessonBank(bank));
     const state = auth.createGuest();
+    await teachTheWholeBank(auth, state);
 
     const queue = await auth.getPracticeQueue(state, 6);
     const answered: string[] = [];

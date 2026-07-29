@@ -52,7 +52,23 @@ function freshLearner(clock: Clock = CLOCK): { authority: Authority; state: Lear
   return { authority, state: authority.createGuest() };
 }
 
+/**
+ * Teach every KC the bank can serve, so teach-before-test admits this learner.
+ *
+ * The queue is gated per-KC on `state.taughtKcIds` — the union of completed
+ * lessons' KCs — and that gate fails closed on an EMPTY taught set as well as on
+ * a miss, so a guest who has completed no lesson is served no science material
+ * at all. Every test in this file is about what an ANSWER records, so each has
+ * to get past the gate first; `practice.test.ts` owns the gate itself. Read off
+ * the bank's own units so the fixture cannot drift from the material under test.
+ */
+async function teachTheWholeBank(authority: Authority, state: LearnerState): Promise<void> {
+  const units = await authority.practiceBank.listUnits({ limit: 400 });
+  state.taughtKcIds = [...new Set(units.map((u) => u.kcId))];
+}
+
 async function firstQueuedScienceItem(authority: Authority, state: LearnerState) {
+  await teachTheWholeBank(authority, state);
   const queue = await authority.getPracticeQueue(state, 5);
   const item = queue.items.find((i) => i.domain === 'science');
   if (item === undefined) throw new Error('expected a science practice item');
@@ -316,6 +332,7 @@ describe('practice evidence has the same field shape as lesson evidence', () => 
     const bank = loadSyntheticBank();
     const authority = new Authority(bank, CLOCK, new UnfamiliedBank(bank));
     const state = authority.createGuest();
+    await teachTheWholeBank(authority, state);
 
     for (const item of (await authority.getPracticeQueue(state, 4)).items) {
       await authority.submitPracticeAttempt(state, command(item.question.id, item.specId, 'A'));

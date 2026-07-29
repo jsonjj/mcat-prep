@@ -60,6 +60,7 @@ const view = (over: Partial<PracticeQueueView> = {}): PracticeQueueView => ({
   items: [item('q-1'), item('q-2')],
   shortfall: 0,
   taughtGap: false,
+  nothingTaught: false,
   ...over,
 });
 
@@ -152,6 +153,52 @@ describe('an empty queue caused by a taught-set miss', () => {
     expect(rendered).toContain('Nothing to practice yet');
     expect(rendered).not.toContain('Not taught yet');
     expect(rendered).not.toContain('Find a lesson');
+  });
+});
+
+/**
+ * The day-one state, which did not exist on this screen until the taught-set
+ * gate started failing closed on an empty taught set: before that a learner who
+ * had finished nothing was served the unfiltered bank, so they never reached an
+ * empty queue at all.
+ *
+ * It gets its own copy because the taught-gap sentence presupposes finished
+ * lessons to draw from ("none of the questions we have are from those yet").
+ * Said to someone who has finished none, that describes a content shortage on
+ * work they have not done.
+ */
+describe('an empty queue caused by having finished no lesson', () => {
+  it('says a lesson comes first, and does not claim a shortage', async () => {
+    queueData.mockReturnValue(
+      view({ items: [], shortfall: 8, taughtGap: true, nothingTaught: true }),
+    );
+    const renderer = await render();
+    const rendered = text(renderer);
+
+    expect(rendered).toContain('Start with a lesson');
+    expect(rendered).toContain('you haven’t finished one yet');
+    expect(rendered).not.toMatch(/error|unavailable|went wrong|couldn’t/i);
+
+    // Not the neighbouring states' copy, either of them.
+    expect(rendered).not.toContain('Not taught yet');
+    expect(rendered).not.toContain('Nothing to practice yet');
+
+    expect(button(renderer, 'Find a lesson')).toBeDefined();
+  });
+
+  it('leaves both of its exits pressable', async () => {
+    queueData.mockReturnValue(
+      view({ items: [], shortfall: 8, taughtGap: true, nothingTaught: true }),
+    );
+    const renderer = await render();
+
+    for (const label of ['Find a lesson', 'Back']) {
+      const target = button(renderer, label);
+      expect(target).toBeDefined();
+      await act(async () => {
+        target!.props.onClick();
+      });
+    }
   });
 });
 

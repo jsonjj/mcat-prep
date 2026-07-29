@@ -137,6 +137,12 @@ function lessonEvidenceAt(sequence: number, familyId: string, n: number): Eviden
  *
  * `state.nextSequence` is left at 3 — the sequence of the last accepted command
  * — which is exactly the state the next command's `apply` sees.
+ *
+ * The taught set is part of that stream rather than scaffolding around it: this
+ * learner has finished lessons, and the practice queue serves only KCs a
+ * completed lesson covered — a gate that fails closed on an empty taught set as
+ * well as on a miss, so without it there is no practice miss to sequence. Read
+ * off the bank's own units so the fixture cannot drift from the material served.
  */
 async function learnerWithLessonHistory(): Promise<{
   authority: Authority;
@@ -151,6 +157,8 @@ async function learnerWithLessonHistory(): Promise<{
     lessonEvidenceAt(3, 'family-a', 3),
   );
   state.nextSequence = 3;
+  const units = await authority.practiceBank.listUnits({ limit: 400 });
+  state.taughtKcIds = [...new Set(units.map((u) => u.kcId))];
   return { authority, state };
 }
 

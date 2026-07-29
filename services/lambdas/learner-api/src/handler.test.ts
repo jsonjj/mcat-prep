@@ -58,6 +58,26 @@ function attemptCommand(
   };
 }
 
+/**
+ * Put a harness learner past teach-before-test.
+ *
+ * The adaptive queue serves only KCs a completed lesson covered, and that gate
+ * fails closed on an EMPTY taught set as well as on a miss — a learner who has
+ * finished nothing is served nothing, which is the point of it. Production
+ * writes the set from `completedLessons` during a plan build; here it goes
+ * straight onto the projection, the same `seedProjection` route the
+ * protected-step case uses. KC ids come from the bank's own units, so the
+ * fixture matches whatever this route will actually serve.
+ */
+async function teachTheWholeBank(h: ReturnType<typeof harness>): Promise<void> {
+  const projection = h.repository.projectionFor(h.principal.learnerId);
+  if (projection === null) throw new Error('expected a seeded projection');
+  const units = await h.authority.practiceBank.listUnits({ limit: 400 });
+  const taught = structuredClone(projection.state) as { taughtKcIds?: string[] };
+  taught.taughtKcIds = [...new Set(units.map((u) => u.kcId))];
+  h.repository.seedProjection({ ...projection, state: taught as typeof projection.state });
+}
+
 function request(
   method: string,
   path: string,
@@ -624,7 +644,9 @@ describe('learner Lambda API security boundary', () => {
   });
 
   it('serves an adaptive practice queue and scores an adaptive attempt (synthetic fallback)', async () => {
-    const { api, principal, repository } = harness();
+    const h = harness();
+    const { api, principal, repository } = h;
+    await teachTheWholeBank(h);
     const read = { origin: APP_ORIGIN, authenticated: true } as const;
     const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
 
@@ -730,7 +752,9 @@ describe('learner Lambda API security boundary', () => {
    * body check in `routes.ts` no longer lists it on either side.
    */
   it('accepts an adaptive practice attempt with no firstAttempt key, and rejects one that still sends it', async () => {
-    const { api } = harness();
+    const h = harness();
+    const { api } = h;
+    await teachTheWholeBank(h);
     const read = { origin: APP_ORIGIN, authenticated: true } as const;
     const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
 
