@@ -135,6 +135,16 @@ export const PracticeAttemptCommandSchema = z
     questionId: z.string().min(1),
     specId: z.string().min(1),
     chosenChoiceId: ChoiceIdSchema.nullable(),
+    /**
+     * Deliberation time from item presentation to submit, in whole ms, and how
+     * many times the selection changed before committing. Both are OPTIONAL and
+     * carry no default: a caller that did not measure them (a synthetic test, a
+     * non-UI client) omits them, and the authority stores the absence as NULL —
+     * "not captured", which WS1 calibration must be able to tell apart from a
+     * real `0`. They are behavioural signals only and never award mastery.
+     */
+    elapsedMs: z.number().int().nonnegative().optional(),
+    answerChanges: z.number().int().nonnegative().optional(),
   })
   .strict();
 export type PracticeAttemptCommand = z.infer<typeof PracticeAttemptCommandSchema>;

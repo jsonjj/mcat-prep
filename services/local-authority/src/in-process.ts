@@ -116,8 +116,11 @@ export class InProcessAuthorityClient implements AuthorityPort {
     return StudyStepViewSchema.parse(this.mutate((state) => this.authority.getSession(state)));
   }
 
-  async submitAttempt(choiceId: string | null): Promise<void> {
-    await this.mutateAsync((state) => this.authority.submitAttempt(state, choiceId));
+  async submitAttempt(
+    choiceId: string | null,
+    timing?: { elapsedMs: number; answerChanges: number },
+  ): Promise<void> {
+    await this.mutateAsync((state) => this.authority.submitAttempt(state, choiceId, timing));
   }
 
   async requestReveal(): Promise<void> {

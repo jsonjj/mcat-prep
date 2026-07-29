@@ -190,11 +190,18 @@ const PracticeAttemptCommandBodySchema = workflowSchema<PracticeAttemptCommandBo
 
 const PracticeAdaptiveAttemptCommandBodySchema = workflowSchema<PracticeAdaptiveAttemptCommandBody>(
   (value) => {
-    // No `firstAttempt` key: the field is gone from `PracticeAttemptCommandSchema`
-    // entirely (see packages/contracts/src/practice.ts), and this exact-key check
-    // is the reason it used to have to survive there — requiring the key here
-    // would reject every body a firstAttempt-less client now sends.
-    if (!exactKeys(value, ['envelope', 'questionId', 'specId', 'chosenChoiceId'])) {
+    // Required keys, plus OPTIONAL diagnose-before-reveal timing (WS0). The
+    // timing keys are allowed but not required: a UI client sends them, and an
+    // older or non-UI client omits them and has its timing logged as "not
+    // captured". No `firstAttempt` key: the field is gone from
+    // `PracticeAttemptCommandSchema` entirely (see packages/contracts/src/practice.ts),
+    // so a body that still sends it is rejected as unknown rather than ignored.
+    const required = ['envelope', 'questionId', 'specId', 'chosenChoiceId'];
+    const allowed = new Set([...required, 'elapsedMs', 'answerChanges']);
+    if (
+      !required.every((key) => key in value) ||
+      !Object.keys(value).every((key) => allowed.has(key))
+    ) {
       return null;
     }
     const envelope = CommandEnvelopeSchema.safeParse(value.envelope);

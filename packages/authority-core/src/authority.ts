@@ -1344,7 +1344,16 @@ export class Authority {
    * learner leaves the reveal, so it now follows the correction instead of
    * standing in front of it.
    */
-  async submitAttempt(state: LearnerState, choiceId: string | null): Promise<void> {
+  async submitAttempt(
+    state: LearnerState,
+    choiceId: string | null,
+    /**
+     * Diagnose-before-reveal timing captured by the Study UI (WS0). Optional so
+     * non-UI callers (tests) still compile; absent means "not captured" and is
+     * logged as NULL rather than a false `0`.
+     */
+    timing?: { elapsedMs: number; answerChanges: number },
+  ): Promise<void> {
     // Allocated before any write. This path appends TWO events on a first answer
     // — the attempt and the BKT ledger record — so reading `nextSequence` at the
     // append would stamp the evidence one past the sequence this command is
@@ -1366,6 +1375,8 @@ export class Authority {
         this.attemptEvent(state, activity.questionId!, choiceId, {
           assistanceLevel: 'A0',
           isDiagnosticRetry: false,
+          elapsedMs: timing?.elapsedMs,
+          answerChanges: timing?.answerChanges,
         }),
       );
 
@@ -1373,7 +1384,7 @@ export class Authority {
       // revealed), so it moves P(L) — up on correct, down on wrong. Retries and
       // reveals below are non-independent and never touch mastery (fail-closed).
       this.updateMasteryForAttempt(state, activity.questionId!, choiceId === correctId);
-      await this.logStudyAttempt(state, activity, choiceId, choiceId === correctId);
+      await this.logStudyAttempt(state, activity, choiceId, choiceId === correctId, timing);
 
       if (phase === 'protected') {
         // No feedback during a protected block; record protected evidence and advance.
@@ -1426,6 +1437,8 @@ export class Authority {
         this.attemptEvent(state, activity.questionId!, choiceId, {
           assistanceLevel: 'A0',
           isDiagnosticRetry: true,
+          elapsedMs: timing?.elapsedMs,
+          answerChanges: timing?.answerChanges,
         }),
       );
       // Retry is diagnostic evidence only — never independent/mastery.
@@ -1479,6 +1492,7 @@ export class Authority {
     activity: PathActivity,
     choiceId: string | null,
     correct: boolean,
+    timing?: { elapsedMs: number; answerChanges: number },
   ): Promise<void> {
     const questionId = activity.questionId;
     if (questionId === undefined || activity.phase === 'guided') return;
@@ -1494,6 +1508,10 @@ export class Authority {
       firstAttempt: true,
       activityType: 'study',
       occurredAt: this.clock.now(),
+      // Diagnose-before-reveal timing (WS0). NULL when the UI did not measure it,
+      // which WS1 must tell apart from a genuine `0`.
+      elapsedMs: timing?.elapsedMs ?? null,
+      answerChanges: timing?.answerChanges ?? null,
     });
   }
 
@@ -2739,6 +2757,26 @@ export class Authority {
     const exposure = await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
     const firstAttempt = exposure.priorExposures === 0 && authorization.firstUse;
 
+    // Emit the attempt event adaptive practice never used to (WS0). The Study
+    // path has always appended one before its mastery write; practice appended
+    // only the BKT ledger record, so a practice answer's response time and
+    // answer-changes reached nothing. Recorded here — after the exposure write
+    // that decides `firstAttempt`, before the mastery write below — so the event
+    // sits ahead of the ledger record on the stream exactly as Study's does, and
+    // the evidence keeps the `acceptedSequence` allocated at entry. It carries
+    // the real timing from the command; the payload's non-nullable fields fall
+    // back to `0` for a caller that sent none. No mastery, no evidence: an event
+    // on the append-only stream, nothing more.
+    this.recordEvent(
+      state,
+      this.attemptEvent(state, cmd.questionId, cmd.chosenChoiceId, {
+        assistanceLevel: 'A0',
+        isDiagnosticRetry: false,
+        elapsedMs: cmd.elapsedMs,
+        answerChanges: cmd.answerChanges,
+      }),
+    );
+
     const classification = await this.practiceBank.classify(cmd.questionId);
     if (classification !== null) {
       const stats = await this.practiceBank.questionStats(cmd.questionId);
@@ -2773,6 +2811,10 @@ export class Authority {
         firstAttempt,
         activityType: 'practice',
         occurredAt: now,
+        // Diagnose-before-reveal timing (WS0). NULL when the command carried
+        // none, which WS1 must tell apart from a genuine `0`.
+        elapsedMs: cmd.elapsedMs ?? null,
+        answerChanges: cmd.answerChanges ?? null,
       });
       if (!correct && classification?.domain === 'science' && classification.kcId !== null) {
         await this.practiceBank.queueRepair(
@@ -3551,7 +3593,19 @@ export class Authority {
     state: LearnerState,
     questionId: string,
     choiceId: string | null,
-    opts: { assistanceLevel: 'A0' | 'A1' | 'A2' | 'A3'; isDiagnosticRetry: boolean },
+    opts: {
+      assistanceLevel: 'A0' | 'A1' | 'A2' | 'A3';
+      isDiagnosticRetry: boolean;
+      /**
+       * Diagnose-before-reveal timing, threaded from the command (WS0). Absent
+       * on the surfaces that do not measure it (diagnostic, PotD), where the
+       * event schema's non-nullable fields fall back to `0`. `| undefined` is
+       * explicit so a caller may forward an unmeasured value under
+       * `exactOptionalPropertyTypes`.
+       */
+      elapsedMs?: number | undefined;
+      answerChanges?: number | undefined;
+    },
   ): LearnerEvent {
     return {
       type: 'attempt_submitted',
@@ -3565,10 +3619,10 @@ export class Authority {
         questionId: ContentIdSchema.parse(questionId),
         itemVersion: 1,
         chosenChoiceId: choiceId,
-        elapsedMs: 0,
+        elapsedMs: opts.elapsedMs ?? 0,
         assistanceLevel: opts.assistanceLevel,
         contentBearingHintUsed: false,
-        answerChanges: 0,
+        answerChanges: opts.answerChanges ?? 0,
         isDiagnosticRetry: opts.isDiagnosticRetry,
       },
     };

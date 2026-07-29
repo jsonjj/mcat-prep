@@ -236,3 +236,62 @@ describe('a session shorter than the learner asked for', () => {
     expect(rendered).not.toContain('sitting out');
   });
 });
+
+/**
+ * WS0 — the diagnose-before-reveal capture. The first attempt now carries how
+ * long the learner deliberated and how many times they changed their selection
+ * first, hooked into the existing submit rather than any new prompt.
+ */
+describe('diagnose-before-reveal capture (WS0)', () => {
+  it('sends response time and the answer-change count with the first attempt', async () => {
+    queueData.mockReturnValue(view());
+    const renderer = await render();
+
+    const radios = renderer.root.findAllByType('input');
+    // Pick A, then change to B — one recorded change before committing.
+    await act(async () => {
+      radios[0]!.props.onChange();
+    });
+    await act(async () => {
+      radios[1]!.props.onChange();
+    });
+
+    const check = button(renderer, 'Check my answer');
+    expect(check).toBeDefined();
+    await act(async () => {
+      check!.props.onClick();
+    });
+
+    expect(mutate).toHaveBeenCalledTimes(1);
+    const command = mutate.mock.calls[0]![0] as {
+      questionId: string;
+      chosenChoiceId: string;
+      elapsedMs: number;
+      answerChanges: number;
+    };
+    expect(command.questionId).toBe('q-1');
+    expect(command.chosenChoiceId).toBe('B');
+    expect(command.answerChanges).toBe(1);
+    // Present and real, not the removed hardcoded 0-field: the value is a
+    // measured duration, which the fake timer keeps non-negative.
+    expect(typeof command.elapsedMs).toBe('number');
+    expect(command.elapsedMs).toBeGreaterThanOrEqual(0);
+  });
+
+  it('counts no change when the learner commits their first pick', async () => {
+    queueData.mockReturnValue(view());
+    const renderer = await render();
+
+    const radios = renderer.root.findAllByType('input');
+    await act(async () => {
+      radios[2]!.props.onChange();
+    });
+    await act(async () => {
+      button(renderer, 'Check my answer')!.props.onClick();
+    });
+
+    const command = mutate.mock.calls[0]![0] as { chosenChoiceId: string; answerChanges: number };
+    expect(command.chosenChoiceId).toBe('C');
+    expect(command.answerChanges).toBe(0);
+  });
+});

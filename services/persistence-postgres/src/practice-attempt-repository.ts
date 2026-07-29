@@ -37,6 +37,9 @@ export interface PracticeAttemptLogRow {
   readonly firstAttempt: boolean;
   readonly activityType: string;
   readonly occurredAt: string;
+  /** Diagnose-before-reveal timing (WS0). `null`/absent when not captured. */
+  readonly elapsedMs?: number | null;
+  readonly answerChanges?: number | null;
 }
 
 interface RawAttemptRow extends Record<string, unknown> {
@@ -50,6 +53,8 @@ interface RawAttemptRow extends Record<string, unknown> {
   first_attempt: boolean | null;
   activity_type: string | null;
   occurred_at: string | Date;
+  elapsed_ms: number | null;
+  answer_changes: number | null;
 }
 
 const iso = (value: string | Date): string =>
@@ -67,6 +72,8 @@ const toRow = (learnerId: string, raw: RawAttemptRow): PracticeAttemptLogRow => 
   firstAttempt: raw.first_attempt ?? true,
   activityType: raw.activity_type ?? 'practice',
   occurredAt: iso(raw.occurred_at),
+  elapsedMs: raw.elapsed_ms ?? null,
+  answerChanges: raw.answer_changes ?? null,
 });
 
 /**
@@ -79,7 +86,11 @@ const toRow = (learnerId: string, raw: RawAttemptRow): PracticeAttemptLogRow => 
  * require Postgres.
  */
 export async function hasPracticeAttemptLog(q: Queryable): Promise<boolean> {
-  const { rows } = await q.query<{ has_column: boolean; has_index: boolean }>(
+  const { rows } = await q.query<{
+    has_column: boolean;
+    has_index: boolean;
+    has_timing: boolean;
+  }>(
     `select
        exists (
          select 1 from information_schema.columns
@@ -90,10 +101,21 @@ export async function hasPracticeAttemptLog(q: Queryable): Promise<boolean> {
          select 1 from pg_indexes
           where schemaname = 'public'
             and indexname = 'attempt_results_question_first_attempt_uidx'
-       ) as has_index`,
+       ) as has_index,
+       exists (
+         select 1 from information_schema.columns
+          where table_schema = 'public' and table_name = 'attempt_results'
+            and column_name = 'elapsed_ms'
+       ) as has_timing`,
   );
+  // 0014's timing columns are probed alongside 0010's column and 0011's index for
+  // the same reason 0011 added the index probe: the insert and the read below
+  // name `elapsed_ms`/`answer_changes`, so a database sitting before 0014 would
+  // accept the column check and then error on every logged attempt. All three
+  // must be present, or the caller degrades to the in-memory log.
   const row = rows[0];
-  return row !== undefined && row.has_column === true && row.has_index === true;
+  if (row === undefined) return false;
+  return row.has_column === true && row.has_index === true && row.has_timing === true;
 }
 
 /**
@@ -115,8 +137,9 @@ export async function recordPracticeAttempt(
     `insert into attempt_results (
        attempt_result_id, learner_id, question_id, kc_id, skill, item_family_id,
        cluster, chosen_choice_id, is_correct, first_attempt,
-       activity_type, assistance_level, eligible_for_mastery, occurred_at, recorded_at
-     ) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'A0', $10, $12, $12)
+       activity_type, assistance_level, eligible_for_mastery, occurred_at, recorded_at,
+       elapsed_ms, answer_changes
+     ) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'A0', $10, $12, $12, $13, $14)
      on conflict (learner_id, activity_type, question_id)
        where activity_type in ('practice', 'study') and first_attempt
        do nothing`,
@@ -133,6 +156,8 @@ export async function recordPracticeAttempt(
       row.firstAttempt,
       row.activityType,
       row.occurredAt,
+      row.elapsedMs ?? null,
+      row.answerChanges ?? null,
     ],
   );
 }
@@ -151,7 +176,8 @@ export async function listPracticeAttempts(
 ): Promise<PracticeAttemptLogRow[]> {
   const { rows } = await q.query<RawAttemptRow>(
     `select question_id, kc_id, skill, item_family_id, cluster,
-            chosen_choice_id, is_correct, first_attempt, activity_type, occurred_at
+            chosen_choice_id, is_correct, first_attempt, activity_type, occurred_at,
+            elapsed_ms, answer_changes
        from attempt_results
       where learner_id = $1 and activity_type = any($2) and occurred_at is not null
       order by occurred_at desc

@@ -40,7 +40,7 @@ import {
   type PracticeAttemptCommand,
   type VectorLessonAction,
 } from '@mcat/contracts';
-import type { AuthorityPort, GoalInput, SessionPort } from './port';
+import type { AttemptTiming, AuthorityPort, GoalInput, SessionPort } from './port';
 
 interface RuntimeSchema<T> {
   parse(value: unknown): T;
@@ -317,7 +317,7 @@ export class HttpAuthorityClient implements AuthorityPort {
     return response;
   }
 
-  async submitAttempt(choiceId: string | null): Promise<void> {
+  async submitAttempt(choiceId: string | null, timing?: AttemptTiming): Promise<void> {
     if (this.currentQuestionId === undefined) await this.getSession();
     if (this.currentQuestionId === undefined) {
       throw ApiClientError.from({
@@ -331,10 +331,14 @@ export class HttpAuthorityClient implements AuthorityPort {
       envelope: await this.commandEnvelope(),
       questionId: this.currentQuestionId,
       choiceId,
-      elapsedMs: 0,
+      // Diagnose-before-reveal capture from the Study UI (WS0). These used to be
+      // hardcoded `0`, so every Study attempt claimed an instantaneous,
+      // never-changed answer. A caller with no timing (a non-UI path) still sends
+      // `0`, which the AttemptCommand's non-nullable contract requires.
+      elapsedMs: timing?.elapsedMs ?? 0,
       assistanceLevel: 'A0',
       contentBearingHintUsed: false,
-      answerChanges: 0,
+      answerChanges: timing?.answerChanges ?? 0,
       isDiagnosticRetry: false,
     });
     await this.acceptedCommand(HTTP_API.attempt.path, command);

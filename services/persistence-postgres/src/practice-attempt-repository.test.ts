@@ -37,6 +37,8 @@ function fakePool(
             {
               has_column: attemptLog !== 'none',
               has_index: attemptLog === 'both',
+              // 0014's timing columns land with the full attempt-log schema.
+              has_timing: attemptLog === 'both',
             },
           ],
           rowCount: 1,
@@ -106,6 +108,29 @@ describe('recordPracticeAttempt', () => {
     // Same shape as practice: no separate table, no separate column set.
     expect(sql).not.toContain('study_');
   });
+
+  it('binds the captured diagnose-before-reveal timing (WS0)', async () => {
+    const { pool, calls } = fakePool([]);
+    await recordPracticeAttempt(pool, '22222222-2222-4222-8222-222222222222', {
+      ...ATTEMPT,
+      elapsedMs: 8_400,
+      answerChanges: 2,
+    });
+    const { sql, params } = calls[0]!;
+    expect(sql).toContain('elapsed_ms');
+    expect(sql).toContain('answer_changes');
+    expect(params).toContain(8_400);
+    expect(params).toContain(2);
+  });
+
+  it('stores absent timing as NULL rather than a false zero', async () => {
+    const { pool, calls } = fakePool([]);
+    // ATTEMPT carries no timing — a surface that did not measure it.
+    await recordPracticeAttempt(pool, '22222222-2222-4222-8222-222222222222', ATTEMPT);
+    const { params } = calls[0]!;
+    // The last two bound params are elapsed_ms, answer_changes: both NULL, not 0.
+    expect(params?.slice(-2)).toEqual([null, null]);
+  });
 });
 
 describe('listPracticeAttempts', () => {
@@ -122,6 +147,8 @@ describe('listPracticeAttempts', () => {
         first_attempt: true,
         activity_type: 'practice',
         occurred_at: new Date('2026-07-27T12:00:00.000Z'),
+        elapsed_ms: 12_000,
+        answer_changes: 1,
       },
     ]);
     const rows = await listPracticeAttempts(pool, ATTEMPT.learnerId, { limit: 50 });
@@ -132,10 +159,36 @@ describe('listPracticeAttempts', () => {
     expect(sql).toContain('activity_type = any($2)');
     expect(params?.[1]).toEqual(['practice', 'study']);
     expect(sql).toContain('order by occurred_at desc');
+    expect(sql).toContain('elapsed_ms');
+    expect(sql).toContain('answer_changes');
     expect(sql).not.toContain('correct_answer');
     expect(sql).not.toContain('explanations');
     expect(rows[0]!.chosenChoiceId).toBe('C');
     expect(rows[0]!.occurredAt).toBe('2026-07-27T12:00:00.000Z');
+    expect(rows[0]!.elapsedMs).toBe(12_000);
+    expect(rows[0]!.answerChanges).toBe(1);
+  });
+
+  it('reads a legacy row with no timing columns as NULL timing', async () => {
+    const { pool } = fakePool([
+      {
+        question_id: 'q1',
+        kc_id: 'V3-KC-1',
+        skill: 'EXPLAIN',
+        item_family_id: 'fam-1',
+        cluster: 'BB1',
+        chosen_choice_id: 'C',
+        is_correct: false,
+        first_attempt: true,
+        activity_type: 'practice',
+        occurred_at: '2026-07-27T12:00:00.000Z',
+        elapsed_ms: null,
+        answer_changes: null,
+      },
+    ]);
+    const rows = await listPracticeAttempts(pool, ATTEMPT.learnerId, { limit: 50 });
+    expect(rows[0]!.elapsedMs).toBeNull();
+    expect(rows[0]!.answerChanges).toBeNull();
   });
 });
 

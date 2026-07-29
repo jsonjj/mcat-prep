@@ -41,7 +41,14 @@ async function applyAttempt(
 
   const eventCount = state.events.length;
   const evidenceCount = state.evidence.length;
-  await authority.submitAttempt(state, command.choiceId);
+  // Thread the command's diagnose-before-reveal timing (WS0) so the study attempt
+  // log carries it. The authoritative event below is rebuilt from the command's
+  // own `elapsedMs`/`answerChanges` regardless; this makes the in-request write
+  // path (event + attempt log) agree with it rather than logging a false `0`.
+  await authority.submitAttempt(state, command.choiceId, {
+    elapsedMs: command.elapsedMs,
+    answerChanges: command.answerChanges,
+  });
 
   // What this needs is that the attempt was accepted and landed at `eventCount`,
   // because the rebind below rewrites exactly that slot. It is NOT "the call

@@ -563,10 +563,38 @@ describe('the study migration widens what 0010 scoped to one activity type', () 
     // insert then fails to infer — a runtime error on every logged attempt.
     expect(repository).toMatch(/attempt_results_question_first_attempt_uidx/);
     expect(repository).toMatch(/has_column === true && row\.has_index === true/);
+    // 0014's timing columns are probed the same way, for the same reason.
+    expect(repository).toMatch(/has_timing === true/);
   });
 
   it('is forward-only and adds no new table', () => {
     expect(migration).not.toMatch(/create table/);
     expect(migration).not.toMatch(/\btimestamp\s+(?!with time zone)/);
+  });
+});
+
+/**
+ * WS0's timing capture extends the same attempt log again: `elapsed_ms` and
+ * `answer_changes`, nullable so "not captured" stays distinct from a real 0.
+ */
+describe('the timing migration adds capture columns to the attempt log', () => {
+  const migration = read('database/migrations/0014_attempt_timing.sql');
+
+  it('adds elapsed_ms and answer_changes to attempt_results rather than a new table', () => {
+    expect(migration).not.toBe('');
+    expect(migration).toMatch(/alter table attempt_results/);
+    expect(migration).not.toMatch(/create table/);
+    expect(migration).toMatch(/add column elapsed_ms integer/);
+    expect(migration).toMatch(/add column answer_changes integer/);
+  });
+
+  it('keeps them nullable with a non-negative check, and no legacy column types', () => {
+    // Nullable + default NULL: "not captured" must be distinct from a real 0.
+    expect(migration).not.toMatch(/elapsed_ms integer not null/);
+    expect(migration).not.toMatch(/answer_changes integer not null/);
+    expect(migration).toMatch(/elapsed_ms is null or elapsed_ms >= 0/);
+    expect(migration).toMatch(/answer_changes is null or answer_changes >= 0/);
+    expect(migration).not.toMatch(/\btimestamp\s+(?!with time zone)/);
+    expect(migration).not.toMatch(/\b(serial|varchar|char)\s*\(/);
   });
 });

@@ -1,6 +1,6 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { CarsDuelRubric, MasterySeed, VectorLessonAction } from '@mcat/contracts';
-import type { GoalInput } from '@mcat/client-core';
+import type { AttemptTiming, GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
 import { LEARNER_KEYS } from './invalidation-keys';
@@ -83,7 +83,10 @@ export function useConfirmPlan() {
 export function useSubmitAttempt() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (choiceId: string | null) => authority.submitAttempt(choiceId),
+    // The Study UI captures diagnose-before-reveal timing (WS0) and passes it
+    // here; the choice stays the primary argument so the call site reads plainly.
+    mutationFn: (vars: { choiceId: string | null; timing?: AttemptTiming }) =>
+      authority.submitAttempt(vars.choiceId, vars.timing),
     onSuccess: () => invalidateLearner(qc),
   });
 }

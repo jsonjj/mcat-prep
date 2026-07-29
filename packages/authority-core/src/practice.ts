@@ -96,8 +96,13 @@ export type AttemptActivityType = 'practice' | 'study';
  * denominator ("4 of 6 items in this KC"), and a misses-only log cannot produce
  * one (docs/design/error-handling-design.md §6.5).
  *
- * Deliberately carries no cause, no confidence and no response time: cause is
- * unrecoverable (§2.3) and the other two are separate, undecided workstreams.
+ * Deliberately carries no cause: cause is unrecoverable (§2.3). It DOES carry
+ * the diagnose-before-reveal timing — `elapsedMs` (deliberation time to submit)
+ * and `answerChanges` (how many times the selection changed first) — as
+ * behavioural proxies for confidence (WS0). Both are OPTIONAL: a surface that
+ * did not measure them omits them and the store records the absence as NULL
+ * ("not captured"), which WS1 must tell apart from a real `0`. Neither ever
+ * awards mastery.
  */
 export interface PracticeAttemptLogEntry {
   readonly questionId: string;
@@ -110,6 +115,10 @@ export interface PracticeAttemptLogEntry {
   readonly firstAttempt: boolean;
   readonly activityType: AttemptActivityType;
   readonly occurredAt: UtcTimestamp;
+  /** Deliberation time to submit, in whole ms. `null` when not captured. */
+  readonly elapsedMs?: number | null;
+  /** Selection changes before submit. `null` when not captured. */
+  readonly answerChanges?: number | null;
 }
 
 /** Server-only answer material (never in a queue payload). */

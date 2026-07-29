@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import type { PracticeAttemptResult, PracticeQueueItem } from '@mcat/contracts';
@@ -110,6 +110,13 @@ export function PracticeSession() {
   const [choice, setChoice] = useState<ChoiceId | null>(null);
   const [firstChoice, setFirstChoice] = useState<ChoiceId | null>(null);
   const [sub, setSub] = useState<Sub>('answering');
+  // Diagnose-before-reveal capture (WS0): how long the learner deliberated before
+  // the first attempt, and how many times they changed the selection first. A ref
+  // for the start instant (so it triggers no re-render) and a counter for the
+  // changes, both reset per step below. Sent only on the first attempt — the step
+  // that lands on `feedback`/`reveal` — since the local retry is not re-scored.
+  const startedAtRef = useRef<number>(Date.now());
+  const [answerChanges, setAnswerChanges] = useState(0);
   const [result, setResult] = useState<PracticeAttemptResult | null>(null);
   // First-attempt results, kept so a deferred second go can score and disclose
   // locally (the second go is learning-only — no extra server scoring). These
@@ -147,6 +154,8 @@ export function PracticeSession() {
   useEffect(() => {
     if (slot === undefined) return;
     setChoice(null);
+    setAnswerChanges(0);
+    startedAtRef.current = Date.now();
     if (slot.kind === 'retry') {
       setFirstChoice(slot.firstChoice ?? null);
       setResult(resultsByQ[slot.item.question.id] ?? null);
@@ -222,11 +231,25 @@ export function PracticeSession() {
     else finish(true);
   };
 
+  // Count a selection change only when it replaces an earlier pick — the first
+  // choice on a fresh question is not a change.
+  const selectAnswer = (c: ChoiceId) => {
+    if (choice !== null && choice !== c) setAnswerChanges((n) => n + 1);
+    setChoice(c);
+  };
+
   const checkAnswer = () => {
     if (choice === null) return;
     setFirstChoice(choice);
     submit.mutate(
-      { questionId: q.id, specId: item.specId, chosenChoiceId: choice },
+      {
+        questionId: q.id,
+        specId: item.specId,
+        chosenChoiceId: choice,
+        // The diagnose-before-reveal signal for this first attempt (WS0).
+        elapsedMs: Math.max(0, Date.now() - startedAtRef.current),
+        answerChanges,
+      },
       {
         onSuccess: (r) => {
           setResult(r);
@@ -345,7 +368,7 @@ export function PracticeSession() {
         </Stack>
       ) : (
         <Stack gap={3}>
-          <ChoiceList q={q} name={`answer-${index}`} choice={choice} onSelect={setChoice} />
+          <ChoiceList q={q} name={`answer-${index}`} choice={choice} onSelect={selectAnswer} />
           <Button
             variant="primary"
             size="lg"

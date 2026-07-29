@@ -223,7 +223,10 @@ export async function handleAuthorityRequest(
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/attempts' && method === 'POST') {
-      await client.submitAttempt((body.choiceId ?? null) as string | null);
+      await client.submitAttempt((body.choiceId ?? null) as string | null, {
+        elapsedMs: Number(body.elapsedMs ?? 0),
+        answerChanges: Number(body.answerChanges ?? 0),
+      });
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/attempts/reveal' && method === 'POST') {
@@ -258,6 +261,9 @@ export async function handleAuthorityRequest(
         questionId: String(body.questionId ?? ''),
         specId: String(body.specId ?? ''),
         chosenChoiceId: (body.chosenChoiceId ?? null) as 'A' | 'B' | 'C' | 'D' | null,
+        // Diagnose-before-reveal timing (WS0); omitted when the UI sent none.
+        ...(typeof body.elapsedMs === 'number' ? { elapsedMs: body.elapsedMs } : {}),
+        ...(typeof body.answerChanges === 'number' ? { answerChanges: body.answerChanges } : {}),
       });
       return sendJson(response, 200, result);
     }

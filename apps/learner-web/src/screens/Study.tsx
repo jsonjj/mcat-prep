@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ChoiceId, StudyStepView } from '@mcat/contracts';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
@@ -45,13 +45,32 @@ export function Study() {
 
   const [choice, setChoice] = useState<ChoiceId | null>(null);
   const [recallText, setRecallText] = useState('');
+  // Diagnose-before-reveal capture (WS0). Study reveals immediately on a miss, so
+  // the only window is between the question appearing and the learner committing —
+  // measured here with no extra step or prompt. `startedAt` is a ref so timing
+  // does not itself trigger a re-render; `answerChanges` counts selection changes
+  // (the first pick is not a change).
+  const startedAtRef = useRef<number>(Date.now());
+  const [answerChanges, setAnswerChanges] = useState(0);
 
   const step = session.data;
   const stepKey = stepIdentity(step);
   useEffect(() => {
     setChoice(null);
     setRecallText('');
+    setAnswerChanges(0);
+    startedAtRef.current = Date.now();
   }, [stepKey]);
+
+  const selectChoice = (id: ChoiceId) => {
+    if (choice !== null && choice !== id) setAnswerChanges((n) => n + 1);
+    setChoice(id);
+  };
+
+  const attemptTiming = () => ({
+    elapsedMs: Math.max(0, Date.now() - startedAtRef.current),
+    answerChanges,
+  });
 
   if (session.isLoading || !step) return <div className="mc-center mc-muted">Loading your task…</div>;
 
@@ -213,7 +232,7 @@ export function Study() {
                 name="answer"
                 value={c.id}
                 checked={choice === c.id}
-                onChange={() => setChoice(c.id)}
+                onChange={() => selectChoice(c.id)}
               />
               <span className="mc-choice__key">{c.id}</span>
               <span className="mc-choice__text">{c.text}</span>
@@ -228,7 +247,7 @@ export function Study() {
             variant="primary"
             size="lg"
             disabled={choice === null || submitAttempt.isPending}
-            onClick={() => submitAttempt.mutate(choice)}
+            onClick={() => submitAttempt.mutate({ choiceId: choice, timing: attemptTiming() })}
           >
             {step.phase === 'protected' ? 'Submit' : 'Check my answer'}
           </Button>
@@ -250,7 +269,7 @@ export function Study() {
             variant="primary"
             size="lg"
             disabled={choice === null || submitAttempt.isPending}
-            onClick={() => submitAttempt.mutate(choice)}
+            onClick={() => submitAttempt.mutate({ choiceId: choice, timing: attemptTiming() })}
           >
             Try once more
           </Button>

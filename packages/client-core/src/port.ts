@@ -39,6 +39,16 @@ export interface GoalInput {
   minutesPerWeek: number;
 }
 
+/**
+ * Diagnose-before-reveal timing captured by a question UI (WS0): deliberation
+ * time from item presentation to submit, and how many times the selection
+ * changed before committing. Behavioural proxies for confidence; never mastery.
+ */
+export interface AttemptTiming {
+  elapsedMs: number;
+  answerChanges: number;
+}
+
 export interface AuthorityPort {
   bootstrap(): Promise<BootstrapResponse>;
   getDiagnosticNext(): Promise<DiagnosticNext>;
@@ -57,7 +67,12 @@ export interface AuthorityPort {
   /** Today's Path: set the daily time-budget preset (a 2–6 hr preset, in minutes). */
   setDailyBudget(minutesPerDay: number): Promise<void>;
   getSession(): Promise<StudyStepView>;
-  submitAttempt(choiceId: string | null): Promise<void>;
+  /**
+   * Score a Study answer. `timing` is the diagnose-before-reveal capture (WS0):
+   * deliberation time to submit and how many times the selection changed first.
+   * Optional so non-UI callers still compile; absent is logged as "not captured".
+   */
+  submitAttempt(choiceId: string | null, timing?: AttemptTiming): Promise<void>;
   requestReveal(): Promise<void>;
   continueStep(): Promise<void>;
   submitRecall(answer: string): Promise<boolean>;

@@ -608,6 +608,8 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
       firstAttempt: entry.firstAttempt,
       activityType: entry.activityType,
       occurredAt: entry.occurredAt,
+      elapsedMs: entry.elapsedMs ?? null,
+      answerChanges: entry.answerChanges ?? null,
     });
   }
 
@@ -636,6 +638,8 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
       // both to 'practice' would send every study miss looking in the wrong place.
       activityType: activityTypeOf(row.activityType),
       occurredAt: row.occurredAt as PracticeAttemptLogEntry['occurredAt'],
+      elapsedMs: row.elapsedMs ?? null,
+      answerChanges: row.answerChanges ?? null,
     }));
   }
 }
