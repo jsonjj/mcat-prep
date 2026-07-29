@@ -129,6 +129,39 @@ function offsetsInClass(pattern: RegExp): number[] {
     .filter((offset) => offset > CLASS_START && !inComment(offset));
 }
 
+/** The grain map as it is spelled at a write site: property or bracket-string. */
+const CAPABILITY_MAP = String.raw`(?:\.(?:kc|skill)\b|\[\s*['"](?:kc|skill)['"]\s*\])`;
+const LESSON_MAP = String.raw`(?:\.lesson\b|\[\s*['"]lesson['"]\s*\])`;
+
+/**
+ * Every shape that STORES into a grain map, given a pattern naming the map.
+ *
+ * Shared by the capability scan and the lesson scan below, because they are one
+ * question asked of two maps and keeping two hand-maintained copies is how they
+ * came to differ: the lesson list grew whole-map replacement and the capability
+ * list did not, so `m.kc = { ...m.kc, [id]: next }` passed the whole suite.
+ *
+ * The `!?` is load-bearing rather than defensive. On an OPTIONAL map — which
+ * `MasteryEngineState.lesson` is, and which this file's own "keeps the legacy
+ * field optional" assertion requires it to stay — the bare `m.lesson[id] = s`
+ * that this pattern used to demand is TS18048 and cannot compile. The scan was
+ * therefore matching only code no one could land, while `m.lesson![id] = s`,
+ * the spelling a writer is forced into, went straight through.
+ */
+function writeSpellings(map: string): readonly string[] {
+  return [
+    // Indexed write, reached directly or through a non-null assertion.
+    `${map}\\s*!?\\s*\\[[^\\]]*\\]\\s*(?:\\?\\?|\\|\\|)?=[^=]`,
+    // Whole-map replacement: `m.kc = { ...m.kc, [id]: next }`. Stores exactly the
+    // same competing grain without ever indexing the map, and it is how a
+    // restored seeding loop gets written.
+    `${map}\\s*(?:\\?\\?|\\|\\|)?=\\s*(?:[{[]|Object\\.)`,
+    // Mutation through the standard library, which indexes nothing either. The
+    // receiver may not cross a paren or comma, so a nested call is not a match.
+    `Object\\.(?:assign|defineProperty)\\(\\s*[^,()]*${map}\\s*!?\\s*,`,
+  ];
+}
+
 /**
  * A write to a capability grain map, in any spelling that reaches one.
  *
@@ -141,10 +174,11 @@ function offsetsInClass(pattern: RegExp): number[] {
  *
  * Alias evasion (`const kc = m.kc; kc[id] = ...`) is NOT chased here. It is
  * covered from the other side instead, by the engine-symbol reachability
- * assertions below: a reimplementation still has to call the engine.
+ * assertions below: a reimplementation still has to call the engine. The lesson
+ * scan cannot lean on that — a lesson grain needs no engine symbol to store —
+ * so it chases the alias itself.
  */
-const GRAIN_WRITE =
-  /(?:\.(?:kc|skill)|\[\s*['"](?:kc|skill)['"]\s*\])\s*\[[^\]]*\]\s*(?:\?\?|\|\|)?=[^=]/g;
+const GRAIN_WRITE = new RegExp(writeSpellings(CAPABILITY_MAP)[0]!, 'g');
 
 /** The same write, with the assigned expression captured. */
 const GRAIN_WRITE_RHS =
@@ -546,18 +580,49 @@ describe('lesson mastery is derived, never stored', () => {
    * `m.lesson[id] = ...`, and matching only that literal shape is what made the
    * guard narrower than the claim above it.
    *
-   * Three spellings are added, each of which a reader reaches for without
-   * meaning to evade anything: any receiver rather than `m`/`mastery` (an
-   * extracted helper renames it), the bracket-string form, and compound
-   * assignment. Whole-map replacement is the fourth and the likeliest of them —
-   * `m.lesson = { ...m.lesson, [id]: state }` is how a restored seeding loop
-   * would be written, and it stores exactly the same competing source of truth
-   * without ever indexing the map.
+   * WHY THE FIELD IS STILL HERE TO GUARD. The stronger fix is to delete
+   * `MasteryEngineState.lesson` outright — a field that cannot be written beats
+   * a field guarded by a regex, and `e0aa670` already took that direction at the
+   * Postgres layer by narrowing `MasteryGrain` to `'kc' | 'skill'`. It does not
+   * carry here, because the field has a live consumer that the narrowing did
+   * not: `dropLegacyLessonBkt` (`services/authority-kernel/src/views.ts:61`)
+   * must keep DELETING `mastery.lesson` at runtime for as long as any
+   * pre-seam projection exists on disk, and `delete` needs the property to be
+   * declared. Removing the declaration does not remove the field from the data;
+   * it only forces a cast at the one place that launders it — which is the
+   * escape hatch a bypass would then reach for, in the file whose whole job is
+   * to be the last reader. So the field stays declared, optional and unwritten,
+   * and these patterns are what make "unwritten" true.
    */
-  const LESSON_GRAIN_WRITES = [
-    /(?:\.lesson|\[\s*['"]lesson['"]\s*\])\s*\[[^\]]*\]\s*(?:\?\?|\|\|)?=[^=]/,
-    /(?:\.lesson|\[\s*['"]lesson['"]\s*\])\s*(?:\?\?|\|\|)?=\s*(?:[{[]|Object\.)/,
-  ];
+  const LESSON_GRAIN_WRITES = writeSpellings(LESSON_MAP).map((spelling) => new RegExp(spelling));
+
+  /**
+   * The map bound to another name: `const g = m.lesson;`. Narrowing an optional
+   * map is the ordinary way to write to it — `if (g) g[id] = s` compiles where
+   * `m.lesson[id] = s` does not — so for this map the alias is not an evasion a
+   * reader has to be trying for, it is the path of least resistance. The
+   * capability scan can leave aliases to the engine-reachability assertions
+   * because a capability bypass still has to call the engine; a lesson grain is
+   * a plain `Record` write with no engine symbol in sight.
+   */
+  const LESSON_ALIAS_BINDING = new RegExp(
+    String.raw`(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*(?::[^=;]*)?=\s*[^;=]*${LESSON_MAP}\s*!?\s*;`,
+    'g',
+  );
+
+  function storesALessonGrain(text: string): boolean {
+    if (LESSON_GRAIN_WRITES.some((pattern) => pattern.test(text))) return true;
+    for (const binding of text.matchAll(LESSON_ALIAS_BINDING)) {
+      // `$` is legal in an identifier and a metacharacter in a pattern.
+      const alias = binding[1]!.replace(/\$/g, '\\$');
+      const throughAlias = [
+        new RegExp(`\\b${alias}\\s*\\[[^\\]]*\\]\\s*(?:\\?\\?|\\|\\|)?=[^=]`),
+        new RegExp(`Object\\.(?:assign|defineProperty)\\(\\s*${alias}\\s*,`),
+      ];
+      if (throughAlias.some((pattern) => pattern.test(text))) return true;
+    }
+    return false;
+  }
 
   /**
    * Every spelling that FALLS BACK to an empty lesson map.
@@ -579,9 +644,48 @@ describe('lesson mastery is derived, never stored', () => {
     /\{[^{}]*\blesson\s*=\s*\{\s*\}/,
   ];
 
+  /**
+   * Anti-vacuity, and the only thing standing between a later narrowing and a
+   * scan that silently matches nothing. Every entry is a spelling that compiles
+   * against the real, OPTIONAL field — which is exactly what the previous
+   * version of this scan could not say, since the one shape it matched was
+   * TS18048.
+   */
+  it('recognizes every compilable spelling of a lesson-grain write', () => {
+    const stores = [
+      'm.lesson![id] = s;',
+      'state.mastery.lesson![id] = s;',
+      "m['lesson']![id] = s;",
+      'm.lesson![id] ??= s;',
+      'm.lesson = { ...m.lesson, [id]: s };',
+      'm.lesson = Object.fromEntries(pairs);',
+      'Object.assign(m.lesson!, { [id]: s });',
+      'const g = m.lesson;\nif (g) g[id] = s;',
+      'const g = state.mastery.lesson!;\nObject.assign(g, { [id]: s });',
+    ];
+    for (const store of stores) {
+      expect(storesALessonGrain(store), `not recognized as a lesson-grain write: ${store}`).toBe(
+        true,
+      );
+    }
+
+    // ...and does not fire on reads, or on unrelated members that merely start
+    // with the same letters, or on the rollup this file exists to protect.
+    const innocent = [
+      'const rollup = this.getLessonRollups(state);',
+      'return Math.ceil(budgetMinutes / cfg.costs.lesson);',
+      'if (m.lesson?.[id]) return m.lesson[id];',
+      'view.lessonId = id;',
+      'const lessons = byLesson[id] ?? [];',
+    ];
+    for (const read of innocent) {
+      expect(storesALessonGrain(read), `false positive on: ${read}`).toBe(false);
+    }
+  });
+
   it('never assigns a lesson-keyed mastery grain', () => {
     const offenders = productionSources
-      .filter((file) => LESSON_GRAIN_WRITES.some((pattern) => pattern.test(file.text)))
+      .filter((file) => storesALessonGrain(file.text))
       .map((file) => file.path);
     expect(
       offenders,
