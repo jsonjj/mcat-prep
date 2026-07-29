@@ -126,6 +126,15 @@ export interface PracticeAnswer {
   readonly correctChoiceId: 'A' | 'B' | 'C' | 'D';
   readonly rationale: string;
   readonly choiceRationales: Record<string, string>;
+  /**
+   * Per-choice authored misconceptions (WS2), keyed by choice letter — the
+   * correct choice tagged `correct_model`, the rest naming the misconception
+   * behind picking them. SERVER-ONLY, exactly like `choiceRationales`: it exists
+   * so the Mistakes read can join the PICKED option's misconception post-answer,
+   * and it is never placed on a learner-safe (queue) payload. Null when the item
+   * carries no error model (older corpus, synthetic bank).
+   */
+  readonly errorModels?: Record<string, string> | null;
 }
 
 export interface PracticeRepairTarget {
@@ -476,6 +485,8 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
       correctChoiceId: compiled.protected.correct_choice_id,
       rationale: compiled.protected.rationales.correct,
       choiceRationales: compiled.protected.rationales.choices as Record<string, string>,
+      // The engine projection carries no error models; the real corpus paths do.
+      errorModels: null,
     };
   }
 

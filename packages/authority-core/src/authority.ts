@@ -21,6 +21,7 @@ import {
   type TodaysPathView,
   type CandidateEvidenceMode,
   type CarsDuelRubric,
+  type CalibrationBand,
   type CarsReadinessLabel,
   type CarsReadinessView,
   type CarsSkill,
@@ -69,6 +70,7 @@ import {
   CARS_K_POTD,
   CARS_V0,
   carsUpdate,
+  classifyCalibration,
   classifyCapacity,
   computeGhost,
   currentPL,
@@ -532,6 +534,34 @@ const focusFor = (
 
 /** `kc-acid-base-buffers` → `kc acid base buffers`, for a display label. */
 const humanize = (id: string): string => id.replace(/[-_]+/g, ' ').trim();
+
+/**
+ * The misconception a learner leaned toward across a KC group's missed items: the
+ * mode of the picked misconceptions over the DISTINCT missed items. Null when no
+ * missed item carried one. A tie resolves to the first reached (insertion order),
+ * which is the earliest-missed item — a stable, defensible pick, not a claim of
+ * strict dominance.
+ */
+const leaningMisconceptionOf = (
+  missedItems: ReadonlySet<string>,
+  misconceptionByItem: ReadonlyMap<string, string | null>,
+): string | null => {
+  const counts = new Map<string, number>();
+  for (const questionId of missedItems) {
+    const misconception = misconceptionByItem.get(questionId);
+    if (misconception === null || misconception === undefined) continue;
+    counts.set(misconception, (counts.get(misconception) ?? 0) + 1);
+  }
+  let best: string | null = null;
+  let bestCount = 0;
+  for (const [misconception, count] of counts) {
+    if (count > bestCount) {
+      best = misconception;
+      bestCount = count;
+    }
+  }
+  return best;
+};
 
 /** Narrow a loose choice id to the four deliverable options (null when skipped). */
 const asChoiceId = (value: string | null): 'A' | 'B' | 'C' | 'D' | null =>
@@ -3369,6 +3399,60 @@ export class Authority {
   }
 
   /**
+   * Parse one authored error-model value into whether it is the key's model and
+   * its human text. The corpus writes `"<tag>: <text>"` — `misconception` for a
+   * distractor, `correct_model` for the key (a few legacy rows use the space
+   * spelling `"correct model"`, tolerated). Returns the text without the tag.
+   */
+  private static parseErrorModel(raw: string): { readonly correctModel: boolean; readonly text: string } {
+    const match = /^\s*(correct[_ ]model|misconception)\s*:?\s*([\s\S]*)$/i.exec(raw);
+    if (match === null) return { correctModel: false, text: raw.trim() };
+    const correctModel = /^correct[_ ]model$/i.test(match[1]!);
+    const text = (match[2] ?? '').trim();
+    return { correctModel, text: text.length > 0 ? text : raw.trim() };
+  }
+
+  /**
+   * The misconception behind the PICKED choice, for a post-answer surface (WS3).
+   * Null when there is no error model, nothing was picked, the value is empty, or
+   * the pick was the keyed choice — a `correct_model` tag is not a misconception.
+   * Only ever the picked option; the full `error_models` map stays server-only.
+   */
+  private static pickedMisconception(
+    errorModels: Record<string, string> | null | undefined,
+    choiceId: string | null,
+  ): string | null {
+    if (!errorModels || choiceId === null) return null;
+    const raw = errorModels[choiceId];
+    if (typeof raw !== 'string' || raw.trim() === '') return null;
+    const parsed = Authority.parseErrorModel(raw);
+    return parsed.correctModel ? null : parsed.text;
+  }
+
+  /**
+   * The calibration band for one logged attempt (WS1). A READ: it reads the KC's
+   * current P(L) and the attempt's WS0 timing and moves NO mastery. The per-item
+   * median RT is not yet aggregated, so speed uses the fixed fallback thresholds
+   * (passed as a null median); when that store lands it is the only change here.
+   *
+   * `kcMastery` is null for a KC-less item (CARS) so "weak KC" cannot fire on it,
+   * the diagnostic prior for a KC with no state yet, else the decayed P(L).
+   */
+  private calibrationFor(state: LearnerState, attempt: PracticeAttemptLogEntry): CalibrationBand {
+    const now = this.clock.now();
+    const kcState = attempt.kcId === null ? undefined : state.mastery?.kc[attempt.kcId];
+    const kcMastery =
+      attempt.kcId === null ? null : kcState ? currentPL(kcState, now) : PRIOR_PL0;
+    return classifyCalibration(
+      attempt.correct,
+      attempt.elapsedMs ?? null,
+      attempt.answerChanges ?? null,
+      kcMastery,
+      null,
+    );
+  }
+
+  /**
    * Re-read the content behind one logged attempt.
    *
    * The two surfaces serve items from different corpora, so a row is hydrated from
@@ -3441,6 +3525,10 @@ export class Authority {
             miss.chosenChoiceId === null
               ? null
               : (answer.choiceRationales[miss.chosenChoiceId] ?? null),
+          // WS1 band (a miss is confidently_wrong or normal) + WS2/WS3 join: the
+          // picked distractor's authored misconception, post-answer, one string.
+          calibration: this.calibrationFor(state, miss),
+          chosenMisconception: Authority.pickedMisconception(answer.errorModels, miss.chosenChoiceId),
           resolved: Authority.resolved(attempts, miss),
           focus: focusFor(miss.cluster, miss.skill),
         };
@@ -3451,18 +3539,95 @@ export class Authority {
   }
 
   /**
+   * Correct-but-shaky first attempts (WS3). The WS1 classifier bands a win
+   * `shaky_win` when it came slowly or landed in a KC still below the review line
+   * — a win worth another rep. Deliberately SEPARATE from `getErrorLog`: a shaky
+   * win is a CORRECT answer, and folding it in would make every misses-only
+   * reader (`openMistakes`, the Today's Path repair count, `getWrapped`) treat a
+   * win as a miss. Reuses `ErrorEntryView` (calibration always `shaky_win`); the
+   * picked choice is the key, so there is no refutation and no misconception.
+   *
+   * A READ — computes bands and hydrates content, moves no mastery.
+   */
+  async getShakyWins(state: LearnerState): Promise<ErrorEntryView[]> {
+    const attempts = await this.practiceBank.listPracticeAttempts(state.learnerId, {
+      limit: Authority.ATTEMPT_LOG_LIMIT,
+    });
+    const wins = attempts.filter(
+      (a) => a.correct && a.firstAttempt && this.calibrationFor(state, a) === 'shaky_win',
+    );
+    const hydrated = await Promise.all(
+      wins.map(async (win) => {
+        const content = await this.hydrateAttempt(win);
+        // A win whose item left the corpus can no longer be re-attempted; drop it.
+        if (content === null) return null;
+        const { question, answer } = content;
+        const textOf = (id: string | null): string =>
+          id === null ? '' : (question.choices.find((c) => c.id === id)?.text ?? '');
+        const entry: ErrorEntryView = {
+          questionId: win.questionId,
+          kcId: win.kcId,
+          skillId: win.skill,
+          cluster: win.cluster,
+          familyId: win.familyId,
+          occurredAt: win.occurredAt,
+          stem: question.stem,
+          // On a win the learner picked the key, so chosen === correct.
+          chosenChoiceId: win.chosenChoiceId,
+          chosenChoiceText: textOf(win.chosenChoiceId),
+          correctChoiceId: answer.correctChoiceId,
+          correctChoiceText: textOf(answer.correctChoiceId),
+          // Nothing to refute on a correct pick, and no misconception behind it.
+          choiceRationale: null,
+          calibration: 'shaky_win',
+          chosenMisconception: null,
+          // A win is not an open miss; resolution is a misses-only concept.
+          resolved: false,
+          focus: focusFor(win.cluster, win.skill),
+        };
+        return entry;
+      }),
+    );
+    return hydrated.filter((e): e is ErrorEntryView => e !== null);
+  }
+
+  /**
+   * The picked distractor's authored misconception for one missed attempt (WS3),
+   * for the pattern "leaning" tally. Study misses have none (the engine
+   * projection carries no error models); practice misses read the port's answer.
+   */
+  private async missedMisconception(entry: PracticeAttemptLogEntry): Promise<string | null> {
+    if (entry.correct || entry.activityType === 'study') return null;
+    const answer = await this.practiceBank.getAnswer(entry.questionId);
+    return Authority.pickedMisconception(answer?.errorModels ?? null, entry.chosenChoiceId);
+  }
+
+  /**
    * Surface A — recurring misses, grouped at KC grain (falling back to cluster
    * for items with no KC, e.g. CARS). Practice and study attempts group together:
    * the grain is a property of the content, not of the surface it was served on.
    *
-   * NOT grouped at misconception grain: `error_models` is populated on 0 of the
-   * 2,108 corpus items, so the best-validated grain has no data. Every row counts
-   * DISTINCT items, carries its denominator, and hedges below the assertion floor.
+   * The GRAIN is still KC / cluster — NOT a misconception grain. The pattern now
+   * also NAMES the misconception most leaned toward across the group's distinct
+   * missed items (`error_models`, ~100% filled per Phase-0, joined server-side
+   * on the picked distractor), but only once the pattern is assertable, so a
+   * small-sample artefact never gets a confident label. Every row still counts
+   * DISTINCT items, carries its denominator, and hedges below the floor.
    */
   async getMistakePatterns(state: LearnerState): Promise<MistakePatternView[]> {
     const attempts = await this.practiceBank.listPracticeAttempts(state.learnerId, {
       limit: Authority.ATTEMPT_LOG_LIMIT,
     });
+    // Pre-pass: the picked misconception for each DISTINCT missed item, so the
+    // per-group "leaning" is a tally over items and hydration happens once each.
+    const missedFirst = attempts.filter((a) => a.firstAttempt && !a.correct);
+    const misconceptionByItem = new Map<string, string | null>();
+    await Promise.all(
+      missedFirst.map(async (miss) => {
+        if (misconceptionByItem.has(miss.questionId)) return;
+        misconceptionByItem.set(miss.questionId, await this.missedMisconception(miss));
+      }),
+    );
     interface Group {
       grain: 'kc' | 'cluster';
       key: string;
@@ -3501,6 +3666,9 @@ export class Authority {
     const patterns: MistakePatternView[] = [];
     for (const group of groups.values()) {
       if (group.missed.size < Authority.PATTERN_MIN_MISSES || group.lastMissedAt === null) continue;
+      const assertable =
+        group.attempted.size >= Authority.PATTERN_ASSERT_ITEMS &&
+        group.missed.size >= Authority.PATTERN_ASSERT_MISSES;
       patterns.push({
         grain: group.grain,
         key: group.key,
@@ -3508,9 +3676,10 @@ export class Authority {
         missedItems: group.missed.size,
         attemptedItems: group.attempted.size,
         lastMissedAt: group.lastMissedAt,
-        assertable:
-          group.attempted.size >= Authority.PATTERN_ASSERT_ITEMS &&
-          group.missed.size >= Authority.PATTERN_ASSERT_MISSES,
+        assertable,
+        // Named only once the pattern is real; the mode of the picked
+        // misconceptions across the group's distinct missed items, else null.
+        leaningMisconception: assertable ? leaningMisconceptionOf(group.missed, misconceptionByItem) : null,
         focus: focusFor(group.cluster, group.skill),
       });
     }

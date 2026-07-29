@@ -850,6 +850,9 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       case 'errors':
         selected = snapshot.errorLog;
         break;
+      case 'shakyWins':
+        selected = snapshot.shakyWins;
+        break;
       case 'errorPatterns':
         selected = snapshot.errorPatterns;
         break;

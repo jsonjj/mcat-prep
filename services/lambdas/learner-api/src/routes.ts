@@ -63,6 +63,7 @@ export type RouteId =
   | 'progressLessonWarrants'
   | 'progressCars'
   | 'errors'
+  | 'shakyWins'
   | 'errorPatterns'
   | 'vectorLessonStatus'
   | 'vectorLessonStart'
@@ -435,6 +436,14 @@ export const ROUTES: readonly RouteDefinition[] = [
     id: 'errors',
     method: 'GET',
     path: '/v1/errors',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: ErrorEntryViewSchema.array(),
+  },
+  {
+    id: 'shakyWins',
+    method: 'GET',
+    path: '/v1/errors/shaky-wins',
     auth: 'session',
     stateChanging: false,
     responseSchema: ErrorEntryViewSchema.array(),

@@ -21,8 +21,13 @@
  * their own caches only.
  */
 
-/** The Mistakes tab's own two query keys. */
-export const MISTAKE_KEYS = ['errors', 'error-patterns'] as const;
+/**
+ * The Mistakes tab's own query keys — misses (`errors`), the recurring-pattern
+ * roll-up (`error-patterns`), and the correct-but-shaky wins (`shaky-wins`, WS3).
+ * All three read the attempt log, so every write that can change a miss or a win
+ * must drop all three.
+ */
+export const MISTAKE_KEYS = ['errors', 'error-patterns', 'shaky-wins'] as const;
 
 /**
  * Mastery and progress readouts that a scored first attempt moves.

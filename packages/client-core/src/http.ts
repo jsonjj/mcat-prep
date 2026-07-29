@@ -396,6 +396,11 @@ export class HttpAuthorityClient implements AuthorityPort {
     return this.request(HTTP_API.errors.path, arrayOf(ErrorEntryViewSchema));
   }
 
+  async getShakyWins() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.shakyWins.path, arrayOf(ErrorEntryViewSchema));
+  }
+
   async getMistakePatterns() {
     await this.ensureBootstrap();
     return this.request(HTTP_API.errorPatterns.path, arrayOf(MistakePatternViewSchema));

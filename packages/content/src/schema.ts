@@ -93,6 +93,21 @@ export type V7Choices = z.infer<typeof V7ChoicesSchema>;
 export const V7ExplanationsSchema = z.record(ChoiceLetterSchema, z.string().min(1));
 export type V7Explanations = z.infer<typeof V7ExplanationsSchema>;
 
+/**
+ * v7 per-choice error models (answer-revealing → SERVER-ONLY after compilation).
+ *
+ * A letter→text record: each choice's value names the misconception behind
+ * picking it, and the correct choice's value is instead tagged `correct_model`.
+ * It is the authored per-distractor diagnostic the Mistakes surface joins on the
+ * PICKED option post-answer (WS2/WS3). Modeled as a partial letter record for the
+ * same reason as `V7Explanations` — shape-validation must not hard-fail on a row
+ * missing one — and it must NEVER reach a learner-safe surface: `compileV7Question`
+ * splits it into the protected payload and the leak guard in `./compile.ts` names
+ * `error_models` a protected key.
+ */
+export const V7ErrorModelsSchema = z.record(ChoiceLetterSchema, z.string().min(1));
+export type V7ErrorModels = z.infer<typeof V7ErrorModelsSchema>;
+
 const V7ConstructSchema = z
   .object({
     reasoning_operation_id: z.string().optional(),
@@ -155,8 +170,15 @@ export const V7QuestionSchema = z
     quality: z.unknown().optional(),
     status: z.string().optional(),
 
+    // --- Protected diagnostic (SERVER-ONLY; split out by compileV7Question) ---
+    /**
+     * Per-choice authored misconceptions. Was `z.unknown()` and dropped at
+     * compile (0 live items); now modeled and carried into the protected payload
+     * (WS2). Answer-revealing, so it never reaches a learner-safe surface.
+     */
+    error_models: V7ErrorModelsSchema.optional(),
+
     // --- Pipeline / QA bookkeeping (optional; accepted, not modeled) ---
-    error_models: z.unknown().optional(),
     empirical_calibration: z.unknown().optional(),
     exposure_status: z.unknown().optional(),
     human_sme_review: z.unknown().optional(),

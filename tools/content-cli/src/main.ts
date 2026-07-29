@@ -200,6 +200,8 @@ const sqlStr = (s: string | null | undefined): string =>
 const sqlNum = (n: number | null | undefined): string =>
   n === null || n === undefined ? 'null' : String(n);
 const sqlJson = (v: unknown): string => `'${JSON.stringify(v).replace(/'/g, "''")}'::jsonb`;
+/** jsonb literal, or SQL NULL when absent — for optional protected columns. */
+const sqlJsonOrNull = (v: unknown): string => (v === undefined || v === null ? 'null' : sqlJson(v));
 
 /**
  * Read the v7 corpus READ-ONLY, derive each question's section + 15-cluster
@@ -272,8 +274,14 @@ function cmdDbSeed(path: string): void {
         ') on conflict (question_id) do nothing;',
     );
     lines.push(
-      'insert into question_protected (question_id, correct_answer, explanations) values (' +
-        [sqlStr(q.id), sqlStr(prot.correct_answer), sqlJson(prot.explanations)].join(', ') +
+      'insert into question_protected (question_id, correct_answer, explanations, error_models) values (' +
+        [
+          sqlStr(q.id),
+          sqlStr(prot.correct_answer),
+          sqlJson(prot.explanations),
+          // Server-only per-choice misconceptions (WS2); NULL when the item has none.
+          sqlJsonOrNull(prot.error_models),
+        ].join(', ') +
         ') on conflict (question_id) do nothing;',
     );
   }
@@ -298,6 +306,8 @@ function cmdDbSeed(path: string): void {
   );
   console.log('  psql "$DATABASE_URL" -f database/migrations/0006_question_bank.sql');
   console.log('  psql "$DATABASE_URL" -f database/migrations/0008_reasoning_operation.sql');
+  // 0015 adds question_protected.error_models, which the seed now populates (WS2).
+  console.log('  psql "$DATABASE_URL" -f database/migrations/0015_question_protected_error_models.sql');
   console.log('  psql "$DATABASE_URL" -f content/question-bank/.local/v7-load/seed.sql');
   console.log(
     '  psql "$DATABASE_URL" -c \'select section, count(*) from questions group by section order by section;\'',

@@ -1,5 +1,6 @@
 import type {
   AccountState,
+  CalibrationBand,
   CarsSkill,
   LearnerEvent,
   LearnerId,
@@ -235,6 +236,10 @@ export interface ErrorEntryView {
   correctChoiceId: 'A' | 'B' | 'C' | 'D';
   correctChoiceText: string;
   choiceRationale: string | null;
+  /** WS1 behavioural band; no mastery moved. Mirrors `ErrorEntryViewSchema`. */
+  calibration: CalibrationBand;
+  /** WS2/WS3: the picked distractor's misconception, post-answer; null otherwise. */
+  chosenMisconception: string | null;
   resolved: boolean;
   focus: string | null;
 }

@@ -445,6 +445,21 @@ export const LessonWarrantViewSchema = z
 export type LessonWarrantView = z.infer<typeof LessonWarrantViewSchema>;
 
 /**
+ * Calibration band for one scored first attempt (WS1). A BEHAVIOURAL read only —
+ * it is derived from response time, answer-changes and the KC's current mastery,
+ * and it NEVER moves mastery. It ranks a miss the learner was confident and wrong
+ * about (best hypercorrection target) above one they laboured over, and marks a
+ * win that may not reflect real mastery (slow, or in a still-weak KC) as "shaky".
+ *
+ * The producer is the pure classifier in `@mcat/policies` (`classifyCalibration`);
+ * this enum is the wire vocabulary, and `@mcat/policies` imports the TYPE from
+ * here so the two cannot drift (contracts is the lower layer, so the direction of
+ * the import is forced).
+ */
+export const CalibrationBandSchema = z.enum(['confidently_wrong', 'shaky_win', 'normal']);
+export type CalibrationBand = z.infer<typeof CalibrationBandSchema>;
+
+/**
  * One practice miss, carrying the content the learner needs to act on it.
  *
  * Answer material is authorized here because the learner already answered and
@@ -452,6 +467,16 @@ export type LessonWarrantView = z.infer<typeof LessonWarrantViewSchema>;
  * There is deliberately NO self-reported cause field — experts naming the cause
  * of an error agree at κ = 0.000–0.063 and learner self-report is biased worst
  * in the weakest learners (docs/design/error-handling-design.md §2.3).
+ *
+ * Two WS1/WS3 additions carry no key material and never move mastery:
+ * - `calibration` — the behavioural band above. On a MISS it is `confidently_wrong`
+ *   or `normal`; the `shaky_win` band belongs to correct attempts and reaches the
+ *   client through the separate shaky-wins list, not here.
+ * - `chosenMisconception` — the authored misconception behind the DISTRACTOR this
+ *   learner picked (`error_models[chosenChoiceId]`, WS2), post-answer and for the
+ *   picked option only. Null when the item carries no error model, or the pick was
+ *   the key, or nothing was picked. The full per-choice `error_models` map stays
+ *   SERVER-ONLY; only this one string crosses.
  */
 export const ErrorEntryViewSchema = z
   .object({
@@ -470,6 +495,14 @@ export const ErrorEntryViewSchema = z
     correctChoiceText: z.string(),
     /** The per-choice refutation that was shown when the miss happened. */
     choiceRationale: z.string().min(1).nullable(),
+    /** WS1 behavioural band for this attempt (no mastery moved). */
+    calibration: CalibrationBandSchema,
+    /**
+     * WS2/WS3: the authored misconception behind the picked distractor, post-answer
+     * and for the picked option only. Null when there is no error model, the pick
+     * was the key, or nothing was picked. The full map is never sent.
+     */
+    chosenMisconception: z.string().min(1).nullable(),
     /** A later correct first attempt on a FRESH item in the same KC landed. */
     resolved: z.boolean(),
     /** Focus token for a fresh re-attempt in this area (never a re-serve). */
@@ -482,9 +515,15 @@ export type ErrorEntryView = z.infer<typeof ErrorEntryViewSchema>;
  * A recurring-miss pattern, grouped at CONTENT grain (KC / cluster / reasoning
  * operation) and stated as a claim about the learner's answers.
  *
- * Misconception grain is not offered: `error_models` is populated on 0 of the
- * 2,108 corpus items, so the best-validated grain has no data behind it. KC
- * grain is the defensible thin version the spec permits (§6.5).
+ * The GRAIN is still KC / cluster (never a misconception grain): the earlier
+ * comment here said misconception grain was unavailable because `error_models`
+ * was "populated on 0 of the 2,108 corpus items", and Phase-0 corrected that —
+ * the corpus is ~100% filled. So the pattern is still grouped and asserted at KC
+ * grain, but it now also NAMES `leaningMisconception`: the single authored
+ * misconception the learner leaned toward most across the DISTINCT missed items
+ * in this group (WS2/WS3). It is a description hung on a KC group, not a new
+ * grouping axis, and it stays null below the assertion floor or when the missed
+ * items carry no shared error model.
  *
  * `attemptedItems` is the denominator and must always be displayed with
  * `missedItems`; `assertable` is false when the sample is below the floor, and
@@ -501,6 +540,12 @@ export const MistakePatternViewSchema = z
     attemptedItems: z.number().int().positive(),
     lastMissedAt: UtcTimestampSchema,
     assertable: z.boolean(),
+    /**
+     * The misconception most leaned toward across the missed items, named only
+     * once the pattern is assertable. Null below the floor or with no shared
+     * error model. A description on the KC group, never a grain of its own.
+     */
+    leaningMisconception: z.string().min(1).nullable(),
     focus: PracticeFocusSchema.nullable(),
   })
   .strict();

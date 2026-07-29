@@ -220,6 +220,7 @@ describe('AWS v1 learner HTTP contracts', () => {
       masteryMap: [],
       errorLog: [],
       errorPatterns: [],
+      shakyWins: [],
     };
     expect(LearnerSnapshotSchema.safeParse(snapshot).success).toBe(true);
     expect(

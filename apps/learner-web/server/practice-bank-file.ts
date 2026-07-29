@@ -182,6 +182,8 @@ export class FilePracticeBankPort implements PracticeBankPort {
         correctChoiceId: key.correct_answer,
         rationale: explanations[key.correct_answer] ?? 'See the per-choice explanations.',
         choiceRationales: explanations,
+        // Server-only per-choice misconceptions (WS2); null until the pull carries them.
+        errorModels: key.error_models ?? null,
       });
     }
     this.items = items;

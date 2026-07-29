@@ -61,6 +61,14 @@ export const LearnerSnapshotSchema = z
     masteryMap: z.array(MasteryMapEntrySchema),
     errorLog: z.array(ErrorEntryViewSchema),
     errorPatterns: z.array(MistakePatternViewSchema),
+    /**
+     * Correct-but-shaky first attempts (WS3): wins that came slowly or landed in
+     * a still-weak KC and are worth another rep. Same `ErrorEntryView` shape as
+     * `errorLog`, but always `calibration: 'shaky_win'`; kept SEPARATE from
+     * `errorLog` so misses-only readers (open-mistakes count, Today's Path repair
+     * scheduling) never treat a win as a miss.
+     */
+    shakyWins: z.array(ErrorEntryViewSchema),
   })
   .strict();
 export type LearnerSnapshot = z.infer<typeof LearnerSnapshotSchema>;
@@ -110,6 +118,12 @@ export const HTTP_API = {
     method: 'GET',
     path: '/v1/errors/patterns',
     response: z.array(MistakePatternViewSchema),
+  },
+  /** Correct-but-shaky wins worth another rep (WS3); same view shape as errors. */
+  shakyWins: {
+    method: 'GET',
+    path: '/v1/errors/shaky-wins',
+    response: z.array(ErrorEntryViewSchema),
   },
   progressSkills: {
     method: 'GET',

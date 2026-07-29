@@ -44,6 +44,15 @@ const question = (over: Partial<PulledQuestion> & { question_id: string }): Pull
   ...over,
 });
 
+/** The authored per-choice misconceptions (WS2): correct choice tagged, rest named. */
+const errorModelsFor = (correct: 'A' | 'B' | 'C' | 'D'): Record<string, string> =>
+  Object.fromEntries(
+    (['A', 'B', 'C', 'D'] as const).map((c) => [
+      c,
+      c === correct ? `correct_model: ${c} applies the principle` : `misconception: ${c} trap`,
+    ]),
+  );
+
 const key = (id: string, correct: 'A' | 'B' | 'C' | 'D' = 'B'): PulledProtected => ({
   question_id: id,
   correct_answer: correct,
@@ -53,6 +62,7 @@ const key = (id: string, correct: 'A' | 'B' | 'C' | 'D' = 'B'): PulledProtected 
     C: `why C is wrong on ${id}`,
     D: `why D is wrong on ${id}`,
   },
+  error_models: errorModelsFor(correct),
 });
 
 const corpusOf = (questions: PulledQuestion[], keys: PulledProtected[]): PulledCorpus => ({
@@ -273,7 +283,7 @@ describe('FilePracticeBankPort item search', () => {
 });
 
 describe('FilePracticeBankPort answers', () => {
-  it('carries the key and all four refutations from protected.json', async () => {
+  it('carries the key, all four refutations, and the error models from protected.json', async () => {
     expect(await port().getAnswer('sirs2-a')).toEqual({
       correctChoiceId: 'B',
       rationale: 'why B is right on sirs2-a',
@@ -283,7 +293,31 @@ describe('FilePracticeBankPort answers', () => {
         C: 'why C is wrong on sirs2-a',
         D: 'why D is wrong on sirs2-a',
       },
+      // WS2: the server-only per-choice misconceptions ride along with the key.
+      errorModels: {
+        A: 'misconception: A trap',
+        B: 'correct_model: B applies the principle',
+        C: 'misconception: C trap',
+        D: 'misconception: D trap',
+      },
     });
+  });
+
+  it('reports null error models for a protected row that carries none', async () => {
+    // A pull produced before the error-model re-publish omits the field; the port
+    // degrades to null rather than inventing an empty map.
+    const corpus = corpusOf(
+      [question({ question_id: 'no-em' })],
+      [
+        {
+          question_id: 'no-em',
+          correct_answer: 'B',
+          explanations: { A: 'a', B: 'b', C: 'c', D: 'd' },
+        },
+      ],
+    );
+    const p = new FilePracticeBankPort(corpus);
+    expect((await p.getAnswer('no-em'))?.errorModels).toBeNull();
   });
 
   it('has no answer for an item it does not serve', async () => {

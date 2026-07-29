@@ -77,9 +77,10 @@ export async function buildLearnerSnapshot(
   streamVersion: number,
 ): Promise<LearnerSnapshot> {
   const viewState = structuredClone(state);
-  const [today, errorLog, errorPatterns] = await Promise.all([
+  const [today, errorLog, shakyWins, errorPatterns] = await Promise.all([
     viewState.onboarding.planConfirmed ? authority.getToday(viewState) : Promise.resolve(null),
     authority.getErrorLog(viewState),
+    authority.getShakyWins(viewState),
     authority.getMistakePatterns(viewState),
   ]);
   return LearnerSnapshotSchema.parse({
@@ -90,6 +91,7 @@ export async function buildLearnerSnapshot(
     masteryMap: authority.getMasteryMap(viewState),
     errorLog,
     errorPatterns,
+    shakyWins,
   });
 }
 

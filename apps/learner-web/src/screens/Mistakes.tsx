@@ -2,13 +2,19 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import type { ErrorEntryView, MistakePatternView } from '@mcat/contracts';
-import { useErrorLog, useMistakePatterns } from '../app/queries';
+import { useErrorLog, useMistakePatterns, useShakyWins } from '../app/queries';
 
 /**
- * Mistakes — the two surfaces of docs/design/error-handling-design.md §6:
- * A. Patterns: recurring misses grouped at KC / cluster grain, with denominators.
- * B. History: the misses themselves, each showing what was picked, what was
- *    right, and the refutation the learner was shown at the time.
+ * Mistakes — the two surfaces of docs/design/error-handling-design.md §6, now
+ * ordered by calibration (WS1) and naming the specific trap (WS2/WS3):
+ * A. Patterns: recurring misses grouped at KC / cluster grain, with denominators,
+ *    and — once a pattern is real — the misconception most leaned toward.
+ * B. History: the misses themselves, CONFIDENTLY-WRONG first (a fast, sure miss is
+ *    the best thing to correct — hypercorrection), each naming what was picked,
+ *    what was right, the refutation shown at the time, and the misconception behind
+ *    the picked distractor.
+ * Plus a "shaky wins" group: answers that were right but came slowly or in a
+ * still-weak KC, worth another rep to lock in.
  *
  * Every row's primary action is "try again", never "read": it routes into the
  * adaptive practice queue with a KC/cluster focus, and that queue's own
@@ -26,8 +32,15 @@ const RETRY_SET_SIZE = 5;
 const dateLabel = (iso: string): string =>
   new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 
+/** Confidently-wrong misses sort ahead of the rest; recent first within each band. */
+const missOrder = (a: ErrorEntryView, b: ErrorEntryView): number => {
+  const rank = (e: ErrorEntryView): number => (e.calibration === 'confidently_wrong' ? 0 : 1);
+  return rank(a) - rank(b) || Date.parse(b.occurredAt) - Date.parse(a.occurredAt);
+};
+
 export function Mistakes() {
   const errors = useErrorLog();
+  const shakyWins = useShakyWins();
   const patterns = useMistakePatterns();
   const location = useLocation();
   const navigate = useNavigate();
@@ -41,7 +54,10 @@ export function Mistakes() {
   const all = errors.data ?? [];
   const open = all.filter((e) => !e.resolved);
   const resolvedCount = all.length - open.length;
-  const rows = showResolved ? all : open;
+  const rows = [...(showResolved ? all : open)].sort(missOrder);
+  const shaky = shakyWins.data ?? [];
+  const patternRows = patterns.data ?? [];
+  const nothingToShow = patternRows.length === 0 && rows.length === 0 && shaky.length === 0;
 
   /**
    * Hand the re-attempt to the ordinary practice queue. The focus token narrows it
@@ -66,7 +82,7 @@ export function Mistakes() {
         <h1 className="mc-h1">Mistakes</h1>
         <p className="mc-muted">
           Every miss keeps the question, the answer you picked, and why it missed — and sends you
-          back in on a fresh question, not the same one.
+          back in on a fresh question, not the same one. The ones you were sure about come first.
         </p>
       </header>
 
@@ -86,11 +102,11 @@ export function Mistakes() {
         </Callout>
       ) : null}
 
-      {(patterns.data ?? []).length > 0 ? (
+      {patternRows.length > 0 ? (
         <section>
           <h2 className="mc-h3">What keeps coming up</h2>
           <Stack gap={3}>
-            {patterns.data!.map((p) => (
+            {patternRows.map((p) => (
               <PatternRow key={`${p.grain}:${p.key}`} pattern={p} onTryAgain={tryAgain} />
             ))}
           </Stack>
@@ -113,13 +129,30 @@ export function Mistakes() {
             ))}
           </Stack>
         </section>
-      ) : (
+      ) : null}
+
+      {shaky.length > 0 ? (
+        <section>
+          <h2 className="mc-h3">Wins worth locking in</h2>
+          <p className="mc-muted mc-fineprint">
+            You got these right, but slowly or in an area that isn’t solid yet — a fresh rep makes
+            the win stick.
+          </p>
+          <Stack gap={3}>
+            {shaky.map((e) => (
+              <ShakyWinRow key={e.questionId} entry={e} onTryAgain={tryAgain} />
+            ))}
+          </Stack>
+        </section>
+      ) : null}
+
+      {nothingToShow ? (
         <Callout tone="success" title="Nothing open right now">
           When you miss a practice question it lands here with the answer you picked and why it
           missed. Recurring patterns appear once there’s evidence across several different
           questions.
         </Callout>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -129,7 +162,9 @@ export function Mistakes() {
  * claim a learner can check, "3 mistakes" is not. Below the assertion floor the
  * copy hedges instead of naming a weakness — Ellerton & Clements found the
  * careless share of errors on a single item ranged from 1% to 71%, so a
- * small-sample "pattern" is most likely an artifact of which items came up.
+ * small-sample "pattern" is most likely an artifact of which items came up. The
+ * leaned-toward misconception is named only once the pattern is assertable, for
+ * the same reason.
  */
 function PatternRow({
   pattern,
@@ -151,6 +186,12 @@ function PatternRow({
               ? ' — enough to call this a weak spot.'
               : ' — too few so far to call it a pattern.'}
           </p>
+          {pattern.leaningMisconception !== null ? (
+            <p className="mc-fineprint">
+              <span className="mc-muted">Most often: </span>
+              {pattern.leaningMisconception}
+            </p>
+          ) : null}
         </div>
         <Button variant="primary" onClick={() => onTryAgain(pattern.focus)}>
           Practice this
@@ -167,12 +208,18 @@ function ErrorRow({
   entry: ErrorEntryView;
   onTryAgain: (focus: string | null) => void;
 }) {
+  const confidentlyWrong = entry.calibration === 'confidently_wrong';
   return (
     <Card elevated>
       <Stack gap={3}>
         <div className="mc-task">
           <Eyebrow>{dateLabel(entry.occurredAt)}</Eyebrow>
-          {entry.resolved ? <span className="mc-pill mc-pill--ok">Cleared</span> : null}
+          <span>
+            {confidentlyWrong ? (
+              <span className="mc-pill mc-pill--warn">Confidently wrong</span>
+            ) : null}
+            {entry.resolved ? <span className="mc-pill mc-pill--ok">Cleared</span> : null}
+          </span>
         </div>
         <p className="mc-task__title">{entry.stem}</p>
         <Stack gap={1}>
@@ -187,11 +234,52 @@ function ErrorRow({
             {entry.correctChoiceText ? ` · ${entry.correctChoiceText}` : ''}
           </p>
         </Stack>
+        {entry.chosenMisconception !== null ? (
+          <p className="mc-fineprint">
+            <span className="mc-muted">The trap: </span>
+            {entry.chosenMisconception}
+          </p>
+        ) : null}
         {entry.choiceRationale !== null ? (
           <Callout tone="info" title={`Why ${entry.chosenChoiceId ?? 'that'} misses`}>
             {entry.choiceRationale}
           </Callout>
         ) : null}
+        <Button variant="primary" onClick={() => onTryAgain(entry.focus)}>
+          Try a fresh one
+        </Button>
+      </Stack>
+    </Card>
+  );
+}
+
+/**
+ * A shaky win: a correct first attempt the calibration read flagged as slow or in
+ * a still-weak KC. There is no refutation to show (the pick was the key) and no
+ * misconception — the row's job is to route a fresh rep in the same area to
+ * convert a shaky win into a solid one.
+ */
+function ShakyWinRow({
+  entry,
+  onTryAgain,
+}: {
+  entry: ErrorEntryView;
+  onTryAgain: (focus: string | null) => void;
+}) {
+  return (
+    <Card elevated>
+      <Stack gap={3}>
+        <div className="mc-task">
+          <Eyebrow>{dateLabel(entry.occurredAt)}</Eyebrow>
+          <span className="mc-pill">Shaky win</span>
+        </div>
+        <p className="mc-task__title">{entry.stem}</p>
+        <p className="mc-fineprint">
+          <span className="mc-muted">You answered </span>
+          {entry.correctChoiceId}
+          {entry.correctChoiceText ? ` · ${entry.correctChoiceText}` : ''}
+          <span className="mc-muted"> — correct.</span>
+        </p>
         <Button variant="primary" onClick={() => onTryAgain(entry.focus)}>
           Try a fresh one
         </Button>

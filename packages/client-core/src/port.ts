@@ -91,6 +91,8 @@ export interface AuthorityPort {
   getCarsReadiness(): Promise<CarsReadinessView>;
   /** Mistakes tab, Surface B: question misses (practice and study) with their content. */
   getErrorLog(): Promise<ErrorEntryView[]>;
+  /** Mistakes tab: correct-but-shaky wins worth another rep (WS3), same view shape. */
+  getShakyWins(): Promise<ErrorEntryView[]>;
   /** Mistakes tab, Surface A: recurring misses grouped at KC / cluster grain. */
   getMistakePatterns(): Promise<MistakePatternView[]>;
   getSkills(): Promise<SkillSummary[]>;
