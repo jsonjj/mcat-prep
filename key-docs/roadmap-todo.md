@@ -94,7 +94,7 @@ Commit `e579779` (`feat(lessons): license CHANGED_EXIT terminal checks for BKT e
 1. **Vendor the drafts tree into the repository** — copy `V3-LES-789208` and `V3-LES-844372` into `content/lessons/`, next to `V3-LES-130923`, so they become committable, reviewable, and eligible for the same `CHANGED_EXIT` licensing `e579779` gave the first lesson. This is also the fix the conformance suite's own failure diagnostic already names (`tests/architecture/lesson-corpus.ts:166-167`). Trade-off: someone has to decide the drafts are final enough to freeze as the reviewed, committed version, rather than whatever the drafts tree evolves into next — vendoring is a one-way door on provenance, not a symlink.
 2. **Leave those lessons permanently ineligible for mastery signal.** Zero engineering cost today, but it caps V3's BKT-eligible surface at 6 of 17 `CHANGED_EXIT` checks — and every other kind of evidence those two lessons could ever carry — indefinitely, not just until someone gets to it.
 
-This is an owner call because it trades a content-provenance decision (is a drafts-tree artifact "done" enough to commit as-is) against real, measurable mastery coverage, and nothing in the code can make that trade-off on its own.
+This is an owner call because it trades a content-provenance decision (is a drafts-tree artifact "done" enough to commit as-is) against real, measurable mastery coverage, and nothing in the code can make that trade-off on its own. **Scope of this decision, stated so it isn't over-read:** "eligible for licensing" here means eligible for the conformance corpus's own BKT-eligibility count — vendoring plus a licensing pass, nothing more. It does not by itself make either lesson a scheduled, scoring experience for a learner; that is a larger and separately-costed claim, corrected in detail under "How this meets the out-of-repo lesson gap" below, which this entry's option 1 is one ingredient of rather than a restatement of.
 
 ## A practice item that was served but never answered has no state of its own
 
@@ -358,14 +358,103 @@ the first member of the drafts artifact's own `required_kcs`. I re-counted the d
 tallies directly and they agree with the counts recorded in the earlier section (`CHANGED_EXIT` 6/8/3
 across the three lessons).
 
-**This changes the cost of wiring for those two specifically.** For 12 of the 14 lessons, connecting
-them means authoring evidence metadata that has never existed. For `V3-LES-789208` and
-`V3-LES-844372` it means vendoring an artifact that is already fully authored in the target schema
-and pointing the scheduled lesson at it — which is the same vendoring decision already recorded
-above, now with a second, larger payoff attached. Vendoring those two would take the pool of
-pipeline-connected lessons from one to three, and — if the scheduled lessons were pointed at the
-real artifacts rather than the previews — would be the only path that makes a scheduled lesson score
-without a new authoring programme.
+**This changes the cost of wiring for those two specifically, but into four steps with separate
+costs, not one.** For 12 of the 14 lessons, connecting them means authoring evidence metadata that
+has never existed. For `V3-LES-789208` and `V3-LES-844372`, the raw material already exists in the
+target schema — but an earlier draft of this entry compressed everything between "exists on disk
+outside git" and "a scheduled lesson scores" into the single word "vendoring," and that compression
+was wrong: vendoring is real, is the necessary first step, and is _cheap_; three more steps sit
+between it and a scoring lesson, and they are not all cheap.
+
+1. **Vendor the JSON.** Copy each draft's `lesson-script.json` (and sibling artifacts) into
+   `content/lessons/`, next to `V3-LES-130923`, exactly as decided above. Mechanical, and everything
+   below depends on it, because none of it can be committed, reviewed, or reasoned about by any test
+   in this repo while it lives one filesystem hop outside version control.
+2. **Run the licensing pass, plus the `844372` relabel.** Vendoring alone buys zero BKT eligibility.
+   I parsed both drafts directly rather than trust the "fully authored" framing: `V3-LES-789208` has
+   40 bindings, **0** carrying `candidate_evidence_modes`, **0** carrying `reasoning_operation`;
+   `V3-LES-844372` has 33 bindings, same — **0** and **0**. With no declared mode, the contract
+   defaults every one of them to `['INSTRUCTIONAL']` (`normalizeCandidateEvidenceModes`,
+   `packages/domain/src/lesson-response-adapter.ts:281-291`; the default itself is pinned by
+   `packages/contracts/src/lesson-observation.test.ts`, "defaults absent evidence modes to
+   instructional"), which resolves to `kind: 'instruction'`
+   (`EVIDENCE_KIND_BY_CANDIDATE_MODE`, same file, lines 807-809) — contextual-only, and rejected for
+   BKT. Separately and independently, a missing `reasoning_operation` on any binding that _did_
+   declare an eligible mode is rejected at parse time by
+   `requireReasoningOperationForEligibleModes` (`packages/contracts/src/lesson-observation.ts:227-245`)
+   with `ELIGIBLE_BINDING_MISSING_REASONING_OPERATION`. So vendored as-is, **0 bindings from either
+   draft would be BKT-eligible** — a licensing pass equivalent to `e579779`, adding both fields, is
+   still required, and it is larger than the "six bindings" precedent suggests: `789208`'s
+   `CHANGED_EXIT` items are **8**, spanning **4** required KCs (`V3-KC-399019`, `V3-KC-799492`,
+   `V3-KC-919842`, `V3-KC-981438`) — not the 3 KCs `V3-LES-130923` licensed. `844372`'s `CHANGED_EXIT`
+   items are **3** as labelled today, or **6** once the re-entry relabel this file already recommends
+   above (`ALG-*-REENTRY-CHANGED-01` across all three KC families) is applied — that relabel is gated
+   on this same vendoring step and rides along with it rather than adding a fifth step. (Worth naming
+   so nobody reads it as a further gap: assistance is authored under different keys per lesson, all
+   adapter-accepted — `130923` and `789208` use `assistance_state`, `844372` uses
+   `assistance_available` — `packages/domain/src/lesson-response-adapter.ts:83-85` — and every
+   `CHANGED_EXIT` binding in both drafts is already authored `A0`, so the licensing pass does not need
+   to touch assistance at all.)
+3. **Generalize the server delivery path beyond a hardcoded single lesson.** This is the step the
+   earlier framing skipped entirely, and it is not cheap. The `130923` pipeline is: a
+   `TARGET_LESSON_ID`-hardcoded generator (`packages/content/src/v3-vector-lesson-artifacts.ts:4`)
+   that the checked-in JSON must object-equal; a stateful runtime
+   (`services/lambdas/learner-api/src/vector-lesson-runtime.ts`) whose own `VectorLessonRun.lessonId`
+   is typed as `typeof TARGET_LESSON_ID` (line 222), and whose stage machine, policy-version strings,
+   and per-KC misconception hypotheses (`MISCONCEPTION_HYPOTHESIS_BY_KC`, lines 29-33) are all written
+   against `130923`'s own three KCs; runtime registration via `buildVectorLessonArtifacts()` in that
+   file and in `vector-lesson-response-source.ts`; a dedicated route,
+   `/app/lessons/vectors-and-trigonometry`; server-authoritative rendering in `VectorLesson.tsx`;
+   deliberate exclusion from `APP_NATIVE_LESSONS` (`apps/learner-web/src/app-native/index.ts:57-58`);
+   and a four-artifact `content_sha256` dependency chain (script → coverage → presentation → quality,
+   each artifact's `dependency_bindings` pinned to the previous one's hash). Copying JSON into
+   `content/lessons/` makes the drafts committable and discoverable by the conformance corpus's own
+   directory scan (`tests/architecture/lesson-corpus.ts`) — and nothing more; none of the rest of that
+   list generalizes for free.
+   - **Some of it already has, and it is worth being exact about how much, because a test in this
+     repo already measures it.** `services/lambdas/learner-api/src/second-lesson-mastery-seam.test.ts`
+     reads `V3-LES-844372`'s real script from the same sibling drafts path cited above and drives it
+     through the real recording workflow. What it establishes: the layer _downstream_ of a lesson
+     response — the binding normalizer (`loadAuthoredLessonBindings` in
+     `vector-lesson-response-source.ts`) and the evidence/BKT recording in `workflow.ts` and
+     `lesson-response-adapter.ts` — is already lesson-agnostic. It parses `844372`'s different
+     authoring dialect (`assistance_available`, `learner_safe_projection_ref`, ...) through the same
+     adapter aliases with no code changes, correctly records evidence-only (never mastery) for the
+     unlicensed real bindings, and correctly moves `P(L)` once a binding is experimentally declared
+     eligible. What it does **not** establish is a second lesson's delivery runtime: the test's own
+     docblock says outright that "`V3-LES-844372` has no delivery runtime and no route of its own," so
+     it drives the vector lesson's `handleVectorLessonStart`/`handleVectorLessonRun` machinery —
+     hardcoded to `V3-LES-130923` — purely as the transaction-opening transport, and substitutes a
+     fabricated submission for the real one through the `lessonResponseSubmissions`
+     dependency-injection seam (`workflow.ts`'s `LessonResponseSubmissionSource`). The stateful part
+     that actually sequences a lesson's screens, nodes, and stages — everything
+     `vector-lesson-runtime.ts` does, entirely for `130923` today — is untouched by this test and
+     still has to be built (or generalized) for a second lesson. So step 3 is smaller than "build the
+     whole pipeline twice," because the recording half already generalizes, but it is not small: the
+     delivery/runtime half, which is most of the file, exists today for exactly one lesson.
+4. **Only then, retire the previews.** Point the two app-native ids at the vendored, licensed,
+   delivery-capable artifacts (or delete the previews outright) once steps 1–3 land. Deleting them
+   before that, with no replacement, is a real regression, not a no-op: `APP_NATIVE_LESSONS` drops
+   14 → 12, Today's Path loses two schedulable candidates, and `getAppNativeLesson` returning `null`
+   for `scientific-notation` / `graphs-and-slopes` turns `/app/lesson/scientific-notation` and
+   `/app/lesson/graphs-and-slopes` into the "This lesson isn't available yet" fallback
+   (`apps/learner-web/src/screens/Lesson.tsx:21-38`) — Curriculum degrades those two rows to "Coming
+   soon" (`Curriculum.tsx`'s `playableSlug` branch) rather than 404, which is a smaller failure than a
+   broken route but still a loss of function a learner had before.
+
+**What vendoring alone buys, stated exactly, because overstating it once is the reason this section
+exists.** These two artifacts _are_ fully authored curriculum in the right envelope schema —
+`130923` carries 42/42 inline `learner_safe_projection`, `789208` carries 40/40
+`learner_safe_prompt_ref`, `844372` carries 33/33 `learner_safe_projection_ref`, all measured
+directly against the artifacts, and all three parse through conformance today — and they _are_
+blocked from every step above by living outside version control, so vendoring _is_ the unavoidable
+first step. What it is **not** is a shortcut past the other three: on its own it moves zero bindings
+from either draft into BKT eligibility, and it connects neither lesson to any delivery pipeline a
+learner would actually run through. The binding-projection-style difference is worth naming as its
+own finding, separate from the eligibility gap: the three lessons are not interchangeable at the
+shape `v3-vector-lesson-artifacts.ts` builds, so step 3's generator work cannot simply be re-run
+against a drafts file once vendored — a second lesson needs its own generator, or a generalized one,
+either way new code, not a copy.
 
 ### Owner decision, not a task
 
