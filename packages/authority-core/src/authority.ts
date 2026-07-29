@@ -44,6 +44,7 @@ import {
   scoreAttempt,
   type CapacityLabel,
   type EvidenceKind,
+  type EvidenceReason,
   type SkillEvidenceState,
   type Task,
 } from '@mcat/domain';
@@ -123,6 +124,16 @@ import type {
 
 /** One node of the loaded skill graph, one of the sources `warrantGrains` unions. */
 type SkillNode = LoadedBank['skillGraph']['skills'][number];
+
+/**
+ * A hard prerequisite blocks only for these named warrant outcomes. They are
+ * the reason-code equivalents of the legacy not-assessed/foundation gate; do
+ * not turn this gate back into an ordinal comparison.
+ */
+const PREREQUISITE_BLOCKING_EVIDENCE_REASONS: ReadonlySet<EvidenceReason> = new Set([
+  'NO_USEFUL_EVIDENCE',
+  'PREREQUISITE_BLOCKED',
+]);
 
 /** A grain a warrant is produced for, with the labels a view needs. */
 interface WarrantGrain {
@@ -228,11 +239,28 @@ interface PathActivity {
 const ENZYME_PATH: PathActivity[] = [
   { id: 'lesson', kind: 'lesson', lessonId: 'lesson-enz-inhibition' },
   { id: 'indep1', kind: 'question', phase: 'independent', questionId: 'q-enz-indep-competitive' },
-  { id: 'indep2', kind: 'question', phase: 'independent', questionId: 'q-enz-indep-noncompetitive' },
-  { id: 'transfer', kind: 'question', phase: 'transfer', questionId: 'q-enz-transfer-lineweaver', changeDimensions: ['representation'] },
+  {
+    id: 'indep2',
+    kind: 'question',
+    phase: 'independent',
+    questionId: 'q-enz-indep-noncompetitive',
+  },
+  {
+    id: 'transfer',
+    kind: 'question',
+    phase: 'transfer',
+    questionId: 'q-enz-transfer-lineweaver',
+    changeDimensions: ['representation'],
+  },
   { id: 'passage', kind: 'question', phase: 'passage', questionId: 'q-enz-passage-1' },
   { id: 'sim', kind: 'simulation', specId: 'sim-enz-inhibition' },
-  { id: 'simTransfer', kind: 'question', phase: 'transfer', questionId: 'q-enz-sim-transfer-1', changeDimensions: ['domain_context'] },
+  {
+    id: 'simTransfer',
+    kind: 'question',
+    phase: 'transfer',
+    questionId: 'q-enz-sim-transfer-1',
+    changeDimensions: ['domain_context'],
+  },
   { id: 'protected', kind: 'question', phase: 'protected', questionId: 'q-enz-protected-1' },
   { id: 'recall', kind: 'recall', promptId: 'recall-enz-competitive' },
   { id: 'complete', kind: 'complete' },
@@ -462,10 +490,14 @@ export class Authority {
     if (correct) d.correctCount += 1;
     this.recordEvent(
       state,
-      this.attemptEvent(state, questionId, choiceId, { assistanceLevel: 'A0', isDiagnosticRetry: false }),
+      this.attemptEvent(state, questionId, choiceId, {
+        assistanceLevel: 'A0',
+        isDiagnosticRetry: false,
+      }),
     );
     // Placement evidence is contextual only (never mastery), attributed to the probed skill.
-    const probedSkill = this.bank.questions.find((q) => q.id === questionId)?.internal_skill_ids[0] ?? ENZYME_SKILL;
+    const probedSkill =
+      this.bank.questions.find((q) => q.id === questionId)?.internal_skill_ids[0] ?? ENZYME_SKILL;
     this.appendEvidence(state, {
       skillId: probedSkill,
       kind: 'placement',
@@ -507,7 +539,10 @@ export class Authority {
     });
     const dayNumber = Math.max(1, Math.floor(daysBetween(state.createdAt, this.clock.now())) + 1);
     const totalDays = state.goal?.testDate
-      ? Math.max(1, Math.round(daysBetween(state.createdAt, state.goal.testDate as unknown as UtcTimestamp)))
+      ? Math.max(
+          1,
+          Math.round(daysBetween(state.createdAt, state.goal.testDate as unknown as UtcTimestamp)),
+        )
       : null;
     // Ghost companion: derived only from the learner's own goal, timeline, and
     // coverage. Reads the internal warrant, since "has any evidence at all" is a
@@ -652,10 +687,7 @@ export class Authority {
   }
 
   /** Build (and persist) today's plan; idempotent per day unless `force`. */
-  async buildTodaysPath(
-    state: LearnerState,
-    input: BuildTodaysPathInput,
-  ): Promise<TodaysPathView> {
+  async buildTodaysPath(state: LearnerState, input: BuildTodaysPathInput): Promise<TodaysPathView> {
     const now = this.clock.now();
     // Persist the learner's timezone so reads (which have no request body) use the
     // same local day boundary as the build.
@@ -683,7 +715,14 @@ export class Authority {
     const carryOver = this.carryOverFrom(state.plan ?? null, planDate);
     // The engine plans only the time left after what's already done today.
     const engineBudget = Math.max(0, preset - keptMinutes);
-    const snapshot = await this.todaysPathSnapshot(state, input, planDate, engineBudget, ctx, carryOver);
+    const snapshot = await this.todaysPathSnapshot(
+      state,
+      input,
+      planDate,
+      engineBudget,
+      ctx,
+      carryOver,
+    );
     const result = buildTodaysPathEngine(snapshot, TODAYS_PATH_CONFIG);
     // Dedupe by activityId as a safety net (the engine already avoids re-scheduling
     // a carried kind/lesson, so collisions shouldn't occur).
@@ -888,7 +927,8 @@ export class Authority {
   ): Promise<TodaysPathSnapshot> {
     // Single mastery read, reused for both the mastered-id gate and the per-lesson
     // P(L) map that feeds scoreLesson's minor mastery nudge (avoid computing twice).
-    const masteryLessons = this.getMasteryLessons(state);
+    const candidateLessonIds = input.candidateLessons.map((lesson) => lesson.lessonId);
+    const masteryLessons = this.getMasteryLessons(state, candidateLessonIds);
     const masteredLessonIds = new Set(
       masteryLessons.filter((l) => l.mastered).map((l) => l.lessonId),
     );
@@ -1069,13 +1109,19 @@ export class Authority {
     }
     if (activity.kind === 'recall') {
       const prompt = this.bank.recallPrompts.find((r) => r.id === activity.promptId)!;
-      return { kind: 'recall', promptId: prompt.id, prompt: prompt.prompt, format: prompt.format, skillId: s.skillId };
+      return {
+        kind: 'recall',
+        promptId: prompt.id,
+        prompt: prompt.prompt,
+        format: prompt.format,
+        skillId: s.skillId,
+      };
     }
     // question
     const compiled = this.bank.compiled.get(activity.questionId!)!;
     const stimulus =
       compiled.safe.stimulus_id !== null
-        ? this.bank.stimuli.find((st) => st.id === compiled.safe.stimulus_id) ?? null
+        ? (this.bank.stimuli.find((st) => st.id === compiled.safe.stimulus_id) ?? null)
         : null;
     const reveal =
       s.sub === 'reveal'
@@ -1125,7 +1171,13 @@ export class Authority {
 
     if (s.sub === 'answering') {
       s.currentFirstChoiceId = choiceId;
-      this.recordEvent(state, this.attemptEvent(state, activity.questionId!, choiceId, { assistanceLevel: 'A0', isDiagnosticRetry: false }));
+      this.recordEvent(
+        state,
+        this.attemptEvent(state, activity.questionId!, choiceId, {
+          assistanceLevel: 'A0',
+          isDiagnosticRetry: false,
+        }),
+      );
 
       // The first answering attempt is INDEPENDENT (A0, no hint, not a retry, not
       // revealed), so it moves P(L) — up on correct, down on wrong. Retries and
@@ -1177,7 +1229,13 @@ export class Authority {
     }
 
     if (s.sub === 'retry') {
-      this.recordEvent(state, this.attemptEvent(state, activity.questionId!, choiceId, { assistanceLevel: 'A0', isDiagnosticRetry: true }));
+      this.recordEvent(
+        state,
+        this.attemptEvent(state, activity.questionId!, choiceId, {
+          assistanceLevel: 'A0',
+          isDiagnosticRetry: true,
+        }),
+      );
       // Retry is diagnostic evidence only — never independent/mastery.
       this.appendEvidence(state, {
         skillId: s.skillId,
@@ -1300,7 +1358,11 @@ export class Authority {
       occurredAt: this.clock.now(),
       contentRelease: this.bank.contentRelease,
       policies: activePolicyVersions(),
-      payload: { reviewObjectId: ContentIdSchema.parse(prompt.id), rating: correct ? 'good' : 'again', elapsedMs: 0 },
+      payload: {
+        reviewObjectId: ContentIdSchema.parse(prompt.id),
+        rating: correct ? 'good' : 'again',
+        elapsedMs: 0,
+      },
     });
     this.advance(state);
     return correct;
@@ -1938,7 +2000,11 @@ export class Authority {
     });
     const overallV = overallCarsReadiness(m.cars.FOC ?? 0, m.cars.RWT ?? 0, m.cars.RBT ?? 0);
     const onTrack = isCarsOnTrack(overallV);
-    const label: CarsReadinessLabel = onTrack ? 'on_track' : overallV >= 0.85 ? 'approaching' : 'building';
+    const label: CarsReadinessLabel = onTrack
+      ? 'on_track'
+      : overallV >= 0.85
+        ? 'approaching'
+        : 'building';
     return { skills, overallV, overallPct: predictedCorrect(overallV, 0), onTrack, label };
   }
 
@@ -1960,7 +2026,8 @@ export class Authority {
    */
   applyMasterySeed(state: LearnerState, seed: MasterySeed): void {
     const m = this.ensureMastery(state);
-    const capped = (prior: number): number => Math.min(SEED_PRIOR_CAP, Math.max(SEED_PRIOR_FLOOR, prior));
+    const capped = (prior: number): number =>
+      Math.min(SEED_PRIOR_CAP, Math.max(SEED_PRIOR_FLOOR, prior));
     for (const [kcId, prior] of Object.entries(seed.kcPriors)) {
       if (!m.kc[kcId]) m.kc[kcId] = initialMemoryState(capped(prior));
     }
@@ -1970,7 +2037,8 @@ export class Authority {
     }
     for (const [skill, v] of Object.entries(seed.carsAbility)) {
       const cars = skill as CarsSkill;
-      if (m.cars[cars] === undefined) m.cars[cars] = Math.min(SEED_CARS_MAX, Math.max(SEED_CARS_MIN, v));
+      if (m.cars[cars] === undefined)
+        m.cars[cars] = Math.min(SEED_CARS_MAX, Math.max(SEED_CARS_MIN, v));
     }
   }
 
@@ -2278,7 +2346,7 @@ export class Authority {
     if (!compiled) return null;
     const stimulus =
       compiled.safe.stimulus_id !== null
-        ? this.bank.stimuli.find((s) => s.id === compiled.safe.stimulus_id) ?? null
+        ? (this.bank.stimuli.find((s) => s.id === compiled.safe.stimulus_id) ?? null)
         : null;
     return {
       question: compiled.safe,
@@ -2292,10 +2360,14 @@ export class Authority {
     const correct = choiceId === correctId;
     this.recordEvent(
       state,
-      this.attemptEvent(state, questionId, choiceId, { assistanceLevel: 'A0', isDiagnosticRetry: false }),
+      this.attemptEvent(state, questionId, choiceId, {
+        assistanceLevel: 'A0',
+        isDiagnosticRetry: false,
+      }),
     );
     // Low-stakes daily practice: contextual evidence only (never mastery).
-    const skillId = this.bank.questions.find((q) => q.id === questionId)?.internal_skill_ids[0] ?? ENZYME_SKILL;
+    const skillId =
+      this.bank.questions.find((q) => q.id === questionId)?.internal_skill_ids[0] ?? ENZYME_SKILL;
     this.appendEvidence(state, {
       skillId,
       kind: 'placement',
@@ -2310,7 +2382,7 @@ export class Authority {
       correct,
       correctChoiceId: correctId,
       rationale: compiled.protected.rationales.correct,
-      choiceRationale: choiceId && choiceId !== correctId ? rationales[choiceId] ?? null : null,
+      choiceRationale: choiceId && choiceId !== correctId ? (rationales[choiceId] ?? null) : null,
     };
   }
 
@@ -2380,7 +2452,9 @@ export class Authority {
       skillsGlowing: this.getMasterySkills(state).filter((s) => s.mastered).length,
       evidenceCounts: counts,
       repairsCompleted: (await this.getErrorLog(state)).filter((e) => e.resolved).length,
-      protectedPassed: state.evidence.filter((e) => e.kind === 'protected' && e.outcome === 'correct').length,
+      protectedPassed: state.evidence.filter(
+        (e) => e.kind === 'protected' && e.outcome === 'correct',
+      ).length,
     };
   }
 
@@ -2616,12 +2690,12 @@ export class Authority {
 
   /**
    * A WARRANT gate, not a capability one: a hard prerequisite blocks while the
-   * evidence behind it is absent or foundation-level. Deliberately kept on the
-   * evidence side after the split, because "we have not seen enough of the right
-   * evidence yet" is a different question from "how likely is success right
-   * now?", and a planner gating a high-consequence action should require both an
-   * acceptable `P(L)` (`getMasterySkills`) AND a sufficient warrant. Two signals
-   * consulted together are not a second mastery number.
+   * warrant emits an absence or blocked-prerequisite reason. Deliberately kept
+   * on the evidence side after the split, because "we have not seen enough of
+   * the right evidence yet" is a different question from "how likely is success
+   * right now?", and a planner gating a high-consequence action should require
+   * both an acceptable `P(L)` (`getMasterySkills`) AND a sufficient warrant. Two
+   * signals consulted together are not a second mastery number.
    */
   private isPrerequisiteBlocked(state: LearnerState, skillId: string): boolean {
     const hardPrereqs = this.bank.skillGraph.edges
@@ -2631,10 +2705,7 @@ export class Authority {
     for (const prereq of hardPrereqs) {
       const records = state.evidence.filter((e) => e.skillId === prereq);
       const evidence = evaluateEvidence({ skillId: prereq, records, now: this.clock.now() });
-      if (
-        evidence.evidenceQuality === 'not_assessed' ||
-        evidence.evidenceQuality === 'foundation_needed'
-      ) {
+      if (evidence.reasons.some(({ code }) => PREREQUISITE_BLOCKING_EVIDENCE_REASONS.has(code))) {
         return true;
       }
     }
