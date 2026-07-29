@@ -349,6 +349,11 @@ body {
 .mc-atlas__hint {
   margin-top: calc(-1 * var(--mc-space-2));
 }
+/* On the Progress board, lift the caption a little tighter to the brain so there's
+   clean vertical space for the curriculum CTA beneath it (Home hero is unchanged). */
+.mc-atlas--progress .mc-atlas__hint {
+  margin-top: calc(-1 * var(--mc-space-4));
+}
 .mc-atlas__panel {
   width: 100%;
   max-width: 440px;
@@ -441,6 +446,16 @@ body {
   flex: 1 1 auto;
   font-size: var(--mc-text-15);
   line-height: 1.3;
+}
+/*
+ * Why a lesson is not done, on its own line under the title. A lesson-only path
+ * cannot satisfy the evidence gate, so a perfected lesson read "In progress"
+ * here with no explanation; this is the warrant's own wording
+ * (`components/evidence-language.ts`), never a second phrasing of it.
+ */
+.mc-atlas__lwarrant {
+  display: block;
+  margin-top: 2px;
 }
 .mc-atlas__lstate {
   flex: 0 0 auto;
@@ -1163,9 +1178,6 @@ body {
   font-size: var(--mc-text-12);
   white-space: nowrap;
 }
-.mc-skillbar__tag--mastered {
-  color: var(--mc-state-strong);
-}
 .mc-skillbar__track {
   height: 12px;
   border-radius: var(--mc-radius-pill);
@@ -1178,9 +1190,6 @@ body {
   background: linear-gradient(90deg, var(--mc-primary), var(--mc-primary-hover));
   transition: width 240ms ease;
   min-width: 2px;
-}
-.mc-skillbar__fill--mastered {
-  background: linear-gradient(90deg, var(--mc-primary-hover), var(--mc-state-strong));
 }
 .mc-skillbar__fill--refresh {
   opacity: 0.6;
@@ -1255,6 +1264,14 @@ body {
   width: 100%;
   margin-top: var(--mc-space-4);
 }
+/* One-line, plain-language explanation under each CARS sub-skill bar
+   (CARS_SKILL_BLURB). Small and tight so three blurbs add minimal height. */
+.mc-cars-subskill__desc {
+  margin: var(--mc-space-1) 0 0;
+  font-size: var(--mc-text-14);
+  line-height: 1.3;
+  color: var(--mc-ink-muted);
+}
 
 /* ---- Progress dashboard (Concept B): skills rail · brain · CARS ----
    One merged, single-screen view — all three evidence surfaces at once, no tabs.
@@ -1276,6 +1293,63 @@ body {
   display: flex;
   flex-direction: column;
 }
+/* Curriculum CTA under the brain. `margin-top: auto` pins it to the bottom of the
+   (stretched) center column so its bottom edge lines up with the left/right boxes;
+   `align-self: center` keeps it a tidy centered pill rather than a full-width bar. */
+.mc-progressboard__cta {
+  margin-top: auto;
+  align-self: center;
+}
+/* "Lesson mastery" key above the brain — tells the learner what the node colors mean.
+   The title + item labels are sized up from 12px to 14px for readability; the column
+   gaps are trimmed a touch so the whole key still sits on ONE line inside the narrow
+   center column at 1280px-wide laptops (no wrap, no vertical scroll). */
+.mc-masterykey {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--mc-space-2);
+}
+.mc-masterykey__title {
+  font-size: var(--mc-text-14);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mc-primary-text);
+}
+.mc-masterykey__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mc-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mc-masterykey__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-1);
+  font-size: var(--mc-text-14);
+  color: var(--mc-ink-muted);
+}
+.mc-masterykey__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex: none;
+}
+/* Match the brain node colors: NODE_GREEN / NODE_YELLOW / NODE_GREY in BrainScene. */
+.mc-masterykey__dot--mastered {
+  background: #33b87e;
+}
+.mc-masterykey__dot--progress {
+  background: #f2c14e;
+}
+.mc-masterykey__dot--locked {
+  background: #b6b2c4;
+}
 .mc-progressboard__rail {
   min-width: 0;
   padding: var(--mc-space-4);
@@ -1290,36 +1364,60 @@ body {
   flex-direction: column;
   gap: var(--mc-space-2);
 }
+/* Each skill is a compact ROW: the mastery ring on the left, and a text column
+   (title + optional status tag, then the one-sentence description) to its right.
+   `align-items: flex-start` so the ring sits at the top of a multi-line label. */
 .mc-skillring {
   display: flex;
-  align-items: center;
-  gap: var(--mc-space-3);
+  align-items: flex-start;
+  gap: var(--mc-space-2);
 }
 .mc-skillring .mc-ring {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   flex: 0 0 auto;
 }
 .mc-skillring .mc-ring__pct {
-  font-size: 30px;
+  font-size: 32px;
 }
+/* The text column beside the ring — takes the remaining width and may shrink. */
 .mc-skillring__label {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  min-width: 0;
+  gap: 2px;
+}
+/* Title + status tag share the first line; the tag wraps under only if needed. */
+.mc-skillring__head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--mc-space-1) var(--mc-space-2);
 }
 .mc-skillring__title {
-  font-size: var(--mc-text-15);
+  font-size: var(--mc-text-17);
   font-weight: 600;
   line-height: 1.2;
+}
+/* One-sentence, plain-language explanation under each reasoning-skill title
+   (REASONING_OPERATION_INFO.description). Small and muted; reads on ~2 lines at
+   the rail width, so it adds minimal height. */
+.mc-skillring__desc {
+  margin: 0;
+  font-size: var(--mc-text-14);
+  line-height: 1.3;
+  color: var(--mc-ink-muted);
 }
 .mc-skillring__tag {
   font-size: var(--mc-text-12);
   font-weight: 600;
   color: var(--mc-ink-muted);
+  white-space: nowrap;
 }
-.mc-skillring__tag--mastered {
+/* Fed `atCapabilityCut` and labelled "Strong". It was `--mastered`, which is the
+   composed claim's name on the capability half alone — see the ring tones. */
+.mc-skillring__tag--atcut {
   color: var(--mc-state-strong);
 }
 
@@ -1347,8 +1445,25 @@ body {
 }
 .mc-cars--compact .mc-skillbar__label {
   font-family: var(--mc-font-body);
-  font-size: var(--mc-text-15);
+  font-size: var(--mc-text-14);
   font-weight: 700;
+  display: block;
+  line-height: 1.25;
+  white-space: nowrap;
+  margin-bottom: var(--mc-space-1);
+}
+/* CARS sub-skill: full-width name on its own line, then bar + percent share a row. */
+.mc-cars-subskill__barrow {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+}
+.mc-cars-subskill__barrow .mc-skillbar__track {
+  flex: 1;
+}
+.mc-cars-subskill__barrow .mc-skillbar__pct {
+  flex: none;
+  font-size: var(--mc-text-14);
 }
 
 /* Laptop: widen just this page and lay the three zones side by side. The brain
@@ -1356,13 +1471,21 @@ body {
    Below 1180px the page keeps the 760px cap, stacks, and scrolls like any screen. */
 @media (min-width: 1180px) {
   .mc-shell__main:has(.mc-progressboard--wide) {
-    max-width: 1180px;
+    max-width: 1220px;
+    /* This dashboard is a single, no-scroll screen and the wide layout only ever
+       runs in desktop sidebar mode (no bottom nav), so the tall mobile bottom-nav
+       clearance isn't needed — trim it back to buy vertical room for the CTA. */
+    padding-bottom: var(--mc-space-5);
   }
+  /* Give the two side panels a little more width; the center keeps the brain at its
+     rendered size (the canvas is height-driven, so a narrower column just trims the
+     empty air beside it). Rows stretch so all three zones are equal height, which
+     lets the CTA's bottom edge align with the side boxes. */
   .mc-progressboard--wide .mc-progressboard__grid {
     display: grid;
-    grid-template-columns: 200px minmax(0, 1fr) 270px;
+    grid-template-columns: 300px minmax(0, 1fr) 268px;
     gap: var(--mc-space-5);
-    align-items: start;
+    align-items: stretch;
   }
   .mc-progressboard--wide .mc-atlas {
     margin-top: 0;
@@ -3045,9 +3168,20 @@ body {
   stroke-linecap: round;
   transition: stroke-dashoffset var(--mc-motion-route) var(--mc-ease);
 }
-/* Tone by mastery, consistent with the app palette: teal when high, amber when
-   low, deep teal-green once mastered, muted violet when a mastered skill decays
-   and needs a refresh. `--review` (Practice's weakest lessons) is always amber. */
+/* Tone by capability, consistent with the app palette: teal when high, amber
+   when low, deep teal-green at the capability cut, muted violet when a strong
+   skill decays past its review line. `--review` (Practice's weakest lessons) is
+   always amber.
+
+   Each suffix is named for the value that selects it. `--atcut` was `--mastered`
+   while being fed `atCapabilityCut`, which is `P(L)` at the cut and carries no
+   warrant, and `--reviewdue` was `--refresh` while being fed BKT decay rather
+   than the evidence warrant's staleness. Both were the claim's name on a value
+   that does not support it — the same defect as the `MasteryRing` prop they are
+   passed (`refreshNeeded` fed `reviewDue`), fixed in `e499396`, and as
+   `getMasterySkills`'s `mastered`, fixed in `488be1b`. A comment recorded the
+   mismatch here instead; the comment was the last place in this app still
+   spelling a claim over a capability value. */
 .mc-ring__arc--review,
 .mc-ring__arc--low {
   stroke: #e88a4e;
@@ -3055,10 +3189,10 @@ body {
 .mc-ring__arc--high {
   stroke: var(--mc-primary);
 }
-.mc-ring__arc--mastered {
+.mc-ring__arc--atcut {
   stroke: var(--mc-state-strong);
 }
-.mc-ring__arc--refresh {
+.mc-ring__arc--reviewdue {
   stroke: var(--mc-retained);
 }
 @media (prefers-reduced-motion: reduce) {

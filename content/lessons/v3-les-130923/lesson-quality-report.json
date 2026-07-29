@@ -9,7 +9,7 @@
     "schema_sha256": "ea5ff6577152fff18d0cb4a0a398ef57e789828a42788768fb3ab3ca4f0be990",
     "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
   },
-  "content_sha256": "6261e29f104dd9dfcbfa9676c3a30f3e7f0326bc4e505d7f6fc989b2b188c3aa",
+  "content_sha256": "a3a6f18db4ff00df9173aeb1d3778fcd5471cdd77c326ec5544c0f1f4c8ceee2",
   "registry_binding": {
     "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
     "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
@@ -59,11 +59,11 @@
   ],
   "dependency_bindings": {
     "lesson_script_id": "V3-LSCR-130923",
-    "lesson_script_sha256": "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a",
+    "lesson_script_sha256": "fe39da36ee66404bcfd168d608dcdce670ba3238bbbe76f87c0537f15b202eff",
     "kc_coverage_matrix_id": "V3-KCOV-130923",
-    "kc_coverage_matrix_sha256": "03edcf4f426df99996ac087ecddcc33e0f53315b29883af43e4cb725832f0876",
+    "kc_coverage_matrix_sha256": "623771d6c6b73c03c01ad9d62d2fda7baa7f6f5dfeacf542f913d5441acdae80",
     "lesson_presentation_plan_id": "V3-LPPL-130923",
-    "lesson_presentation_plan_sha256": "b7fe61b25397352434e1a69dfb2db7421e33751a3f7559183c28aeb270661c30"
+    "lesson_presentation_plan_sha256": "f17a9a25b85f50376c63286ff78c8b51cc10d16b13b156045b60e2274c541861"
   },
   "lineage": {
     "supersedes": null,
@@ -188,7 +188,7 @@
       "evidence_refs": ["V3-KCOV-130923"],
       "reviewer_identities": [],
       "reviewed_dependency_hashes": [
-        "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a"
+        "fe39da36ee66404bcfd168d608dcdce670ba3238bbbe76f87c0537f15b202eff"
       ]
     },
     "presentation_gate": {
@@ -213,11 +213,11 @@
       ],
       "evidence_refs": [
         "V3-LPPL-130923",
-        "tests/browser/evidence/v3-les-130923/browser-report.json#sha256=4f92420e66f2ba4bff5c87c4e4f45618e108c7d2779cbfde63d898d617d8ec7d"
+        "tests/browser/evidence/v3-les-130923/browser-report.json#sha256=ca22e8277bc0264e008400d4a29254da3752b5096ceb3c99d63084800735e615"
       ],
       "reviewer_identities": [],
       "reviewed_dependency_hashes": [
-        "b7fe61b25397352434e1a69dfb2db7421e33751a3f7559183c28aeb270661c30"
+        "f17a9a25b85f50376c63286ff78c8b51cc10d16b13b156045b60e2274c541861"
       ]
     },
     "integrated_gate": {
@@ -271,16 +271,16 @@
       ],
       "reviewer_identities": [],
       "reviewed_dependency_hashes": [
-        "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a",
-        "03edcf4f426df99996ac087ecddcc33e0f53315b29883af43e4cb725832f0876",
-        "b7fe61b25397352434e1a69dfb2db7421e33751a3f7559183c28aeb270661c30"
+        "fe39da36ee66404bcfd168d608dcdce670ba3238bbbe76f87c0537f15b202eff",
+        "623771d6c6b73c03c01ad9d62d2fda7baa7f6f5dfeacf542f913d5441acdae80",
+        "f17a9a25b85f50376c63286ff78c8b51cc10d16b13b156045b60e2274c541861"
       ]
     },
     "findings": [
       {
         "finding_id": "VTR-FINDING-EXTERNAL-REVIEWS",
         "severity": "P1",
-        "affected_artifact_hash": "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a",
+        "affected_artifact_hash": "fe39da36ee66404bcfd168d608dcdce670ba3238bbbe76f87c0537f15b202eff",
         "affected_path": "payload.role_assignments",
         "reproducible_evidence": "Required independent reviewer identities and receipts are absent.",
         "required_correction": "Complete SME, learning-science, blind-solve, accessibility, rights, and final approval.",
@@ -291,7 +291,7 @@
       {
         "finding_id": "VTR-FINDING-PRODUCTION-PINS",
         "severity": "P1",
-        "affected_artifact_hash": "b7fe61b25397352434e1a69dfb2db7421e33751a3f7559183c28aeb270661c30",
+        "affected_artifact_hash": "f17a9a25b85f50376c63286ff78c8b51cc10d16b13b156045b60e2274c541861",
         "affected_path": "schema_binding",
         "reproducible_evidence": "Spec 04 Appendix H leaves production schema/compiler pins open.",
         "required_correction": "Pin production schemas, canonicalization, compiler, renderer, DTO, and harness through the named authorities.",
@@ -302,7 +302,7 @@
       {
         "finding_id": "VTR-FINDING-PREREQUISITE-ROUTE-APPLICABILITY",
         "severity": "P2",
-        "affected_artifact_hash": "03edcf4f426df99996ac087ecddcc33e0f53315b29883af43e4cb725832f0876",
+        "affected_artifact_hash": "623771d6c6b73c03c01ad9d62d2fda7baa7f6f5dfeacf542f913d5441acdae80",
         "affected_path": "payload.rows[*].route_coverage.prerequisite_support",
         "reproducible_evidence": "All target KCs have no canonical hard predecessor, while the candidate matrix schema provides no NOT_APPLICABLE route status.",
         "required_correction": "Schema and policy owners must define the nonapplicable coverage disposition; runtime continues to downgrade attempted support resolutions to STANDARD.",
@@ -313,7 +313,7 @@
     ],
     "evidence_refs": [
       "V3-KCOV-130923",
-      "tests/browser/evidence/v3-les-130923/browser-report.json#sha256=4f92420e66f2ba4bff5c87c4e4f45618e108c7d2779cbfde63d898d617d8ec7d",
+      "tests/browser/evidence/v3-les-130923/browser-report.json#sha256=ca22e8277bc0264e008400d4a29254da3752b5096ceb3c99d63084800735e615",
       "services/lambdas/learner-api/src/vector-lesson-runtime.test.ts",
       "services/lambdas/learner-api/src/vector-lesson-api.test.ts",
       "tools/scanners/vector-lesson-bundle-scan.mjs"

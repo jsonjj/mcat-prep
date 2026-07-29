@@ -1,13 +1,22 @@
 import type { UtcTimestamp } from '@mcat/contracts';
-import type { DecisionReason, MasteryReason } from './reason-codes';
+import type { DecisionReason, EvidenceReason } from './reason-codes';
 import type { EvidenceKind } from './evidence';
 
 /**
- * Base mastery states form an ordered ladder. `exam_ready_now` is NOT a base
- * state — it is a separate, validated, time-bound readiness projection. Staleness
- * is represented by the `refreshNeeded` overlay, which never erases history.
+ * Evidence-warrant types.
+ *
+ * These describe the QUALITY and CURRENCY of the evidence behind a skill — how
+ * independent it is, how many item families it spans, whether transfer/delayed/
+ * mixed/passage/timed/protected conditions have been covered, and how fresh it
+ * all is. They are NOT a learner-facing capability scale: the capability estimate
+ * (`P(L)`, decay, review-due, the mastery percentage and the 0.95 threshold) is
+ * owned by the BKT engine in @mcat/policies. Planners consume the two as separate
+ * signals: "P(L) is 0.94" AND "transfer and delayed evidence are missing".
+ *
+ * The tier values are the historical ladder positions, kept verbatim so recipe
+ * mechanics and persisted rows are unchanged.
  */
-export const BASE_MASTERY_STATES = [
+export const EVIDENCE_QUALITY_TIERS = [
   'not_assessed',
   'foundation_needed',
   'learning',
@@ -15,9 +24,9 @@ export const BASE_MASTERY_STATES = [
   'retained',
   'strong',
 ] as const;
-export type BaseMasteryState = (typeof BASE_MASTERY_STATES)[number];
+export type EvidenceQualityTier = (typeof EVIDENCE_QUALITY_TIERS)[number];
 
-const RANK: Readonly<Record<BaseMasteryState, number>> = {
+const RANK: Readonly<Record<EvidenceQualityTier, number>> = {
   not_assessed: 0,
   foundation_needed: 1,
   learning: 2,
@@ -26,25 +35,58 @@ const RANK: Readonly<Record<BaseMasteryState, number>> = {
   strong: 5,
 };
 
-export const baseStateRank = (s: BaseMasteryState): number => RANK[s];
+export const evidenceQualityRank = (t: EvidenceQualityTier): number => RANK[t];
 
-/** Whether transitioning from `a` to `b` is an advancement (higher rank). */
-export const advances = (a: BaseMasteryState, b: BaseMasteryState): boolean =>
-  baseStateRank(b) > baseStateRank(a);
+/** Whether moving from `a` to `b` is a gain in evidence quality (higher rank). */
+export const evidenceQualityAdvances = (a: EvidenceQualityTier, b: EvidenceQualityTier): boolean =>
+  evidenceQualityRank(b) > evidenceQualityRank(a);
 
-export interface MasterySkillState {
-  skillId: string;
-  base: BaseMasteryState;
-  /** Overlay: current evidence is stale, due, or contradicted. History is preserved. */
+/** Why a recipe slot is not yet satisfied. */
+export const EVIDENCE_GAP_REASONS = [
+  'KIND_ABSENT',
+  'FAMILY_DIVERSITY_GAP',
+  'CHANGE_DIMENSION_GAP',
+  'DELAY_WINDOW_GAP',
+] as const;
+export type EvidenceGapReason = (typeof EVIDENCE_GAP_REASONS)[number];
+
+/** A recipe slot that the eligible evidence already covers. */
+export interface EvidenceSlotStatus {
+  /** The recipe whose slots are being reported (the full warrant). */
+  target: EvidenceQualityTier;
+  kind: EvidenceKind;
+  requiredFamilies: number;
+  observedFamilies: number;
+}
+
+/** A recipe slot that is still open, with the specific reasons it is open. */
+export interface EvidenceGap extends EvidenceSlotStatus {
+  reasons: readonly EvidenceGapReason[];
+}
+
+/** Freshness of the warrant: what is still inside its window, and what aged out. */
+export interface EvidenceFreshness {
+  /** Highest tier satisfied by evidence still inside its freshness window. */
+  freshEvidenceQuality: EvidenceQualityTier | null;
+  /** True when the warrant is stale or contradicted. History is never erased. */
   refreshNeeded: boolean;
-  supportingEvidenceIds: string[];
   /** Freshest timestamp observed per evidence kind (for freshness windows). */
   freshestByKind: Partial<Record<EvidenceKind, UtcTimestamp>>;
-  reasons: DecisionReason<MasteryReason>[];
+}
+
+/** The evidence system's whole readout for one skill: quality, freshness, gaps, audit. */
+export interface SkillEvidenceState extends EvidenceFreshness {
+  skillId: string;
+  /** Highest recipe tier ever satisfied by eligible evidence. */
+  evidenceQuality: EvidenceQualityTier;
+  satisfiedSlots: readonly EvidenceSlotStatus[];
+  missingSlots: readonly EvidenceGap[];
+  supportingEvidenceIds: readonly string[];
+  reasons: readonly DecisionReason<EvidenceReason>[];
   policyVersion: string;
 }
 
-/** An evidence "recipe" slot that must be independently satisfied for a state. */
+/** An evidence "recipe" slot that must be independently satisfied for a tier. */
 export interface RecipeSlot {
   kind: EvidenceKind;
   /** Distinct item families required for this slot. */
@@ -56,6 +98,6 @@ export interface RecipeSlot {
 }
 
 export interface EvidenceRecipe {
-  target: BaseMasteryState;
+  target: EvidenceQualityTier;
   slots: RecipeSlot[];
 }

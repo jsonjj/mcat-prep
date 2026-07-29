@@ -5,6 +5,8 @@ import { Authority } from '@mcat/authority-core';
 import {
   AuthorityKernelError,
   InMemoryAuthorityRepository,
+  learnerStateFromProjection,
+  notFound,
   toProjectionRecord,
   type Principal,
 } from '@mcat/authority-kernel';
@@ -17,12 +19,77 @@ import {
   VectorLessonStatusViewSchema,
   systemClock,
 } from '@mcat/contracts';
+import { orderedKcsForLesson } from '@mcat/content';
 import { RepositoryLearnerKernel } from '@mcat/learner-api';
+import {
+  buildDebugLearnerState,
+  isDebugStateOptedIn,
+  isDebugStateRequestAllowed,
+  DEBUG_LEARNER_STATE_PATH,
+} from './debug-state';
 
 const DEFAULT_HOST = '127.0.0.1';
 const DEFAULT_PORT = 8787;
 const MAX_BODY_BYTES = 64 * 1024;
-const LOCAL_ORIGIN = /^http:\/\/(?:127\.0\.0\.1|localhost):\d+$/;
+/** The one lesson this harness serves; always reported so a rollup is visible before it starts. */
+const HARNESS_LESSON_ID = 'V3-LES-130923';
+
+/**
+ * Bindable hosts. IP literals only: a NAME is resolved outside this process, so
+ * `localhost` makes "binds only to loopback" a claim about `/etc/hosts` rather
+ * than about this server.
+ */
+const BINDABLE_HOSTS: ReadonlySet<string> = new Set(['127.0.0.1', '::1']);
+
+/** Host header names that mean "this loopback server". */
+const LOOPBACK_HOST_NAMES: ReadonlySet<string> = new Set(['127.0.0.1', 'localhost', '[::1]']);
+
+/**
+ * Whole origins, not a shape. The previous `http://localhost:<any port>` regex
+ * paired with `access-control-allow-credentials` let a page served by ANY other
+ * process on this machine read learner state. Override when Vite picks a port
+ * other than its default.
+ */
+const ALLOWED_ORIGINS_ENV_VAR = 'LOCAL_AUTHORITY_ALLOWED_ORIGINS';
+const DEFAULT_ALLOWED_ORIGINS: readonly string[] = [
+  'http://127.0.0.1:5173',
+  'http://localhost:5173',
+];
+
+/** Comma-separated exact origins from the environment, or the Vite dev pair. */
+export function allowedOrigins(
+  env: Readonly<Record<string, string | undefined>>,
+): ReadonlySet<string> {
+  const configured = env[ALLOWED_ORIGINS_ENV_VAR];
+  if (typeof configured !== 'string' || configured.trim().length === 0) {
+    return new Set(DEFAULT_ALLOWED_ORIGINS);
+  }
+  return new Set(
+    configured
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter((origin) => origin.length > 0),
+  );
+}
+
+/**
+ * Reject a request whose `Host` is not this loopback server.
+ *
+ * A loopback bind is not a defence against DNS rebinding: a page on
+ * `attacker.example.com` whose name has been rebound to `127.0.0.1` reaches
+ * this socket, and because that is same-origin to the browser the request
+ * carries no `Origin` at all — so the CORS gate never sees it. The `Host`
+ * header is the one thing that still names the attacker, which is why every
+ * dev server validates it. Allowlist, and the port must be the bound one.
+ */
+export function isLoopbackHostHeader(host: string | undefined, boundPort: number): boolean {
+  if (typeof host !== 'string') return false;
+  const match = /^(\[[0-9a-f:]+\]|[^:[\]]+)(?::(\d{1,5}))?$/.exec(host.trim().toLowerCase());
+  if (match === null) return false;
+  const [, name, port] = match;
+  if (name === undefined || !LOOPBACK_HOST_NAMES.has(name)) return false;
+  return port === undefined ? boundPort === 80 : Number(port) === boundPort;
+}
 
 export interface RunningLocalLessonServer {
   readonly baseUrl: string;
@@ -39,9 +106,9 @@ function statusFor(error: AuthorityKernelError): number {
   return 400;
 }
 
-function corsOrigin(request: IncomingMessage): string | undefined {
+function corsOrigin(request: IncomingMessage, allowed: ReadonlySet<string>): string | undefined {
   const origin = request.headers.origin;
-  return origin !== undefined && LOCAL_ORIGIN.test(origin) ? origin : undefined;
+  return origin !== undefined && allowed.has(origin) ? origin : undefined;
 }
 
 function responseHeaders(origin: string | undefined): Record<string, string> {
@@ -90,8 +157,8 @@ export async function createLocalLessonHttpServer(
 ): Promise<RunningLocalLessonServer> {
   const host = options.host ?? DEFAULT_HOST;
   const port = options.port ?? DEFAULT_PORT;
-  if (host !== '127.0.0.1' && host !== 'localhost') {
-    throw new Error('Local lesson authority must bind only to loopback.');
+  if (!BINDABLE_HOSTS.has(host)) {
+    throw new Error('Local lesson authority must bind only to a loopback IP literal.');
   }
 
   const authority = new Authority(undefined, systemClock);
@@ -115,12 +182,25 @@ export async function createLocalLessonHttpServer(
     bank: authority.bank,
   });
   const csrfToken = `${randomUUID()}${randomUUID()}`;
+  // Read once, at startup: neither the opt-in nor the origin allowlist can be
+  // widened mid-flight.
+  const debugStateOptedIn = isDebugStateOptedIn(process.env);
+  const origins = allowedOrigins(process.env);
+  // The real port is known only after `listen`, and no request can arrive
+  // before that resolves.
+  let boundPort = port;
 
   const server = createServer(async (request, response) => {
-    const origin = corsOrigin(request);
+    const origin = corsOrigin(request, origins);
     const method = request.method ?? 'GET';
     const path = new URL(request.url ?? '/', 'http://localhost').pathname;
 
+    // Before routing, so no path — including the debug route — is reachable
+    // under a rebound hostname.
+    if (!isLoopbackHostHeader(request.headers.host, boundPort)) {
+      sendJson(response, 403, { error: 'Host is not allowed.' }, undefined);
+      return;
+    }
     if (request.headers.origin !== undefined && origin === undefined) {
       sendJson(response, 403, { error: 'Origin is not allowed.' }, undefined);
       return;
@@ -192,6 +272,48 @@ export async function createLocalLessonHttpServer(
         sendJson(response, 200, await kernel.handleVectorLessonCommand(command, principal), origin);
         return;
       }
+      // LOCAL-ONLY inspection route. Three independent guards, all required: an
+      // explicit process opt-in, a loopback peer, and no `Origin` — a web page
+      // never reads this, whatever the CORS allowlist says. Any one missing and
+      // the route answers exactly as an unknown path does, so nothing about it
+      // — not even its existence — is observable without all three.
+      if (method === 'GET' && path === DEBUG_LEARNER_STATE_PATH) {
+        if (
+          isDebugStateRequestAllowed({
+            optedIn: debugStateOptedIn,
+            remoteAddress: request.socket.remoteAddress,
+            originHeader: request.headers.origin,
+          })
+        ) {
+          const projection = await repository.loadProjection(principal.learnerId);
+          if (projection === null) throw notFound();
+          const state = learnerStateFromProjection(projection);
+          const lessonIds = new Set([
+            HARNESS_LESSON_ID,
+            ...(state.mastery?.practicedLessonIds ?? []),
+          ]);
+          sendJson(
+            response,
+            200,
+            buildDebugLearnerState({
+              learnerId: principal.learnerId,
+              streamVersion: projection.sequence,
+              acceptedEventCount: repository.eventsFor(principal.learnerId).length,
+              now: systemClock.now(),
+              mastery: state.mastery,
+              evidence: state.evidence,
+              lessons: [...lessonIds].map((lessonId) => ({
+                lessonId,
+                requiredKcIds: orderedKcsForLesson(lessonId),
+              })),
+            }),
+            // Never CORS-shared. Unreachable with an `Origin`, and no response
+            // header should suggest otherwise.
+            undefined,
+          );
+          return;
+        }
+      }
       sendJson(response, 404, { error: 'Route not found.' }, origin);
     } catch (error) {
       if (error instanceof AuthorityKernelError) {
@@ -235,7 +357,8 @@ export async function createLocalLessonHttpServer(
     await new Promise<void>((resolve) => server.close(() => resolve()));
     throw new Error('Local lesson authority did not bind a TCP port.');
   }
-  const baseUrl = `http://${host}:${address.port}`;
+  boundPort = address.port;
+  const baseUrl = `http://${host.includes(':') ? `[${host}]` : host}:${boundPort}`;
   return {
     baseUrl,
     close: () =>

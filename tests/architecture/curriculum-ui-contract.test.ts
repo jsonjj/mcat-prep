@@ -71,8 +71,8 @@ describe('Curriculum tab source contract', () => {
     expect(homeIdx).toBeGreaterThanOrEqual(0);
     expect(currIdx).toBeGreaterThan(homeIdx);
     expect(recallIdx).toBeGreaterThan(currIdx);
-    // Skills remains a desktop-only secondary link (not part of the shared NAV).
-    expect(shell).toMatch(/to="\/app\/skills"/);
+    // Skills was merged into Progress — it is no longer a top-level nav link.
+    expect(shell).not.toMatch(/to="\/app\/skills"/);
 
     const icons = read(ICONS);
     expect(icons).toMatch(/export const IconCurriculum\b/);

@@ -1,5 +1,5 @@
-import { CARS_SKILL_INFO, type CarsReadinessLabel } from '@mcat/contracts';
-import { Card, Eyebrow, VisuallyHidden } from '@mcat/ui-web';
+import { CARS_SKILL_INFO, type CarsReadinessLabel, type CarsSkill } from '@mcat/contracts';
+import { Card, Eyebrow } from '@mcat/ui-web';
 import { useCarsReadiness } from '../app/queries';
 
 /**
@@ -9,9 +9,10 @@ import { useCarsReadiness } from '../app/queries';
  * Ability is an IRT `V` (never a scaled score); it grows from Passage of the Day
  * and, more gently, the CARS Duel.
  *
- * `compact` is the Progress-dashboard variant: a tighter card that abbreviates the
- * sub-skills to FOC / RWT / RBT (full names kept for assistive tech) so it sits in
- * the right rail beside the brain without vertical scroll.
+ * `compact` is the Progress-dashboard variant: a tighter card that still spells out
+ * the full AAMC sub-skill names (Foundations of Comprehension / Reasoning Within the
+ * Text / Reasoning Beyond the Text), each with a one-line plain-language blurb, so it
+ * sits in the right rail beside the brain and stays legible.
  */
 
 const CX = 130;
@@ -37,6 +38,16 @@ const LABEL_TEXT: Record<CarsReadinessLabel, string> = {
   on_track: 'On-track',
 };
 
+/**
+ * Plain-language, AAMC-aligned one-liners for each CARS sub-skill. `CARS_SKILL_INFO`
+ * carries only the title, so the learner-facing explanations live here.
+ */
+const CARS_SKILL_BLURB: Record<CarsSkill, string> = {
+  FOC: 'Understanding what the passage directly states.',
+  RWT: "Analyzing how the passage's ideas fit together.",
+  RBT: "Applying the passage's ideas to new situations.",
+};
+
 export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
   const cars = useCarsReadiness();
   const d = cars.data;
@@ -51,9 +62,9 @@ export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
 
   return (
     <Card elevated className={compact ? 'mc-cars mc-cars--compact' : 'mc-cars'}>
-      <Eyebrow>CARS reading ability</Eyebrow>
+      <Eyebrow>CARS Readiness</Eyebrow>
       <div className="mc-cars-gauge">
-        <svg viewBox="0 0 260 152" role="img" aria-label={`Reading ability: ${LABEL_TEXT[d.label]}`}>
+        <svg viewBox="0 0 260 152" role="img" aria-label={`CARS readiness: ${LABEL_TEXT[d.label]}`}>
           <defs>
             <linearGradient id="mcCarsFill" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0" stopColor="var(--mc-primary)" />
@@ -97,20 +108,17 @@ export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
         {d.skills.map((s) => {
           const pct = Math.round(s.pct * 100);
           const full = CARS_SKILL_INFO[s.skill].title;
+          const blurb = CARS_SKILL_BLURB[s.skill];
           return (
-            <li key={s.skill} className="mc-skillbar">
-              <div className="mc-skillbar__head">
-                <span className="mc-skillbar__label" title={compact ? full : undefined}>
-                  {compact ? s.skill : full}
-                  {compact ? <VisuallyHidden> — {full}</VisuallyHidden> : null}
-                </span>
-                <span className="mc-skillbar__meta">
-                  <span className="mc-skillbar__pct">{pct}%</span>
-                </span>
+            <li key={s.skill} className="mc-skillbar mc-cars-subskill">
+              <span className="mc-skillbar__label">{full}</span>
+              <div className="mc-cars-subskill__barrow">
+                <div className="mc-skillbar__track">
+                  <div className="mc-skillbar__fill" style={{ width: `${pct}%` }} />
+                </div>
+                <span className="mc-skillbar__pct">{pct}%</span>
               </div>
-              <div className="mc-skillbar__track">
-                <div className="mc-skillbar__fill" style={{ width: `${pct}%` }} />
-              </div>
+              <p className="mc-cars-subskill__desc">{blurb}</p>
             </li>
           );
         })}

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useToday } from '../app/queries';
+import { useMasterySkills, useToday } from '../app/queries';
 import {
   useConsumeCompletedActivity,
   useEnsureTodaysPath,
@@ -31,6 +31,13 @@ export function Home() {
   const remaining =
     plan?.activities.filter((a) => a.status === 'ready' || a.status === 'in_progress').length ?? 0;
 
+  // "Glowing" is a capability reading, so it counts reasoning skills whose BKT
+  // P(L) is at the capability cut — the same seven the Progress rail shows, and
+  // read from the same field, so the two screens cannot disagree. It is
+  // deliberately not a mastery claim: this view carries no evidence warrant.
+  const skills = useMasterySkills();
+  const glowing = (skills.data ?? []).filter((s) => s.atCapabilityCut).length;
+
   const dayLabel = today.data
     ? `Day ${today.data.dayNumber}${today.data.totalDays ? ` of ${today.data.totalDays}` : ''}`
     : 'Welcome back';
@@ -40,6 +47,9 @@ export function Home() {
       <header className="mc-home__greeting">
         <p className="mc-home__hello">{greeting()}</p>
         <h1 className="mc-home__day">{dayLabel}</h1>
+        <p className="mc-home__sub">
+          {glowing > 0 ? `${glowing} skill${glowing === 1 ? '' : 's'} glowing` : 'A calm place to begin'}
+        </p>
       </header>
 
       <EvidenceAtlas variant="home" />

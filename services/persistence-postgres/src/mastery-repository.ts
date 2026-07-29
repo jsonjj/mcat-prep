@@ -16,12 +16,15 @@ export interface Queryable {
   ): Promise<{ rows: R[] }>;
 }
 
-export type MasteryGrain = 'kc' | 'skill' | 'lesson';
+// Lesson mastery is a derived rollup of its member KCs' mastery, computed on
+// read — it has exactly one source of truth and is never stored as its own
+// grain. Do not add 'lesson' back here; that would create a second, competing
+// source with no arbiter. See docs/mastery-pipeline.md.
+export type MasteryGrain = 'kc' | 'skill';
 
 const GRAIN: Readonly<Record<MasteryGrain, { table: string; key: string }>> = {
   kc: { table: 'mastery_kc', key: 'kc_id' },
   skill: { table: 'mastery_skill', key: 'operation' },
-  lesson: { table: 'mastery_lesson', key: 'lesson_id' },
 };
 
 /** Persisted memory state for one unit (timestamps as ISO strings). */

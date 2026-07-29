@@ -1,13 +1,18 @@
 import type {
   PracticeAnswer,
+  PracticeAttemptAuthorization,
+  PracticeAttemptGrant,
   PracticeAttemptLogEntry,
   PracticeBankItem,
   PracticeBankPort,
   PracticeCandidateUnit,
+  PracticeExposure,
   PracticeItemClassification,
   PracticeItemQuery,
   PracticeRepairTarget,
+  StoredPracticeAttemptGrant,
 } from '@mcat/authority-core';
+import { adjudicateAttemptGrant } from '@mcat/authority-core';
 import {
   SKILL_CLUSTERS,
   type CarsSkill,
@@ -153,6 +158,8 @@ export class FilePracticeBankPort implements PracticeBankPort {
   readonly stats: FileBankStats;
 
   private readonly exposure = new Map<string, Map<string, ExposureEntry>>();
+  /** Served-item authorizations, kept strictly apart from `exposure`. */
+  private readonly grants = new Map<string, Map<string, StoredPracticeAttemptGrant>>();
   private readonly misses = new Map<
     string,
     { kcId: string; skill?: ReasoningOperation; at: string }[]
@@ -348,11 +355,36 @@ export class FilePracticeBankPort implements PracticeBankPort {
       .map(([id]) => id);
   }
 
-  async recordExposure(learnerId: string, questionId: string, now: UtcTimestamp): Promise<void> {
+  async recordExposure(
+    learnerId: string,
+    questionId: string,
+    now: UtcTimestamp,
+  ): Promise<PracticeExposure> {
     const map = this.exposure.get(learnerId) ?? new Map<string, ExposureEntry>();
     const entry = map.get(questionId);
-    map.set(questionId, { count: (entry?.count ?? 0) + 1, lastSeenAt: now });
+    const priorExposures = entry?.count ?? 0;
+    map.set(questionId, { count: priorExposures + 1, lastSeenAt: now });
     this.exposure.set(learnerId, map);
+    return { priorExposures };
+  }
+
+  async issueAttemptGrant(learnerId: string, grant: PracticeAttemptGrant): Promise<void> {
+    const map = this.grants.get(learnerId) ?? new Map<string, StoredPracticeAttemptGrant>();
+    map.set(grant.questionId, { ...grant, consumedAt: null });
+    this.grants.set(learnerId, map);
+  }
+
+  async consumeAttemptGrant(
+    learnerId: string,
+    claim: { questionId: string; specId: string; contentRelease: string; now: UtcTimestamp },
+  ): Promise<PracticeAttemptAuthorization> {
+    const map = this.grants.get(learnerId);
+    const entry = map?.get(claim.questionId);
+    const outcome = adjudicateAttemptGrant(entry, claim);
+    if (outcome.status === 'authorized' && outcome.firstUse && entry !== undefined) {
+      map!.set(claim.questionId, { ...entry, consumedAt: claim.now });
+    }
+    return outcome;
   }
 
   async recentMisses(

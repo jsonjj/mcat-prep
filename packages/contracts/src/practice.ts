@@ -79,29 +79,80 @@ export const PracticeFocusSchema = z
   .regex(/^[a-z0-9-]+$/, 'lowercase alphanumeric focus token');
 export type PracticeFocus = z.infer<typeof PracticeFocusSchema>;
 
-/** The queue the client renders: the ordered items plus its echoed parameters. */
+/**
+ * The queue the client renders: the ordered items plus its echoed parameters.
+ *
+ * `shortfall` is `requested - items.length`, always present (0 when the queue
+ * is full). Selection can allocate a slot to a KC×skill spec that turns out to
+ * have no fresh item left once recently-seen exclusion runs, and silently
+ * truncating there left every downstream count assumption wrong with nothing
+ * to show for it. `taughtGap` narrows the cause: true when the shortfall (if
+ * any) traces to the taught-set gate withholding every science unit the bank
+ * offered, as opposed to the bank or fresh-item supply simply running dry.
+ *
+ * `nothingTaught` narrows it once further, and the extra field earns its place
+ * because the honest sentence differs. A gate that withheld everything because
+ * the learner's finished lessons do not match the loaded bank means "you have
+ * not reached this material"; a gate that withheld everything because the
+ * learner has finished NO lesson means "finish a lesson first". Those are
+ * different situations with different next steps, and a day-one learner gets
+ * the second one — the taught set is empty until a lesson completes, which is
+ * why the gate has to fire there at all.
+ */
 export const PracticeQueueViewSchema = z
   .object({
     requested: z.number().int().nonnegative(),
     focus: PracticeFocusSchema.nullable(),
     items: z.array(PracticeQueueItemSchema),
+    shortfall: z.number().int().nonnegative(),
+    taughtGap: z.boolean(),
+    /** The learner has completed no lesson, so nothing is taught to practise. */
+    nothingTaught: z.boolean(),
   })
   .strict();
 export type PracticeQueueView = z.infer<typeof PracticeQueueViewSchema>;
 
 /**
- * A practice answer. `firstAttempt` is the client's claim; the authority still
- * decides whether it moves mastery (only a first, unassisted attempt does).
+ * A practice answer, as it crosses the wire.
+ *
+ * There is no `firstAttempt` field here. It used to be a browser boolean
+ * hardcoded `true`, so every response claimed to be a first attempt and every
+ * first-attempt-conditioned rule was permanently satisfied — and it was a
+ * claim about server-held state in the first place, which put it in no
+ * position to be a claim the client could make. `Authority.submitPracticeAttempt`
+ * derives it from the exposure records the server already holds.
+ *
+ * It was kept, briefly, as an unread field on this schema alone: present on
+ * the wire type so the deployed route's exact-key body check would not reject
+ * live submissions, but already absent from the type the authority consumed.
+ * That was a coordination hazard rather than a fix — a field nothing reads can
+ * still be re-trusted by a future author, where a field that does not exist
+ * cannot. Removing it here and from the route's key check in the same change
+ * closes that gap.
  */
 export const PracticeAttemptCommandSchema = z
   .object({
     questionId: z.string().min(1),
     specId: z.string().min(1),
     chosenChoiceId: ChoiceIdSchema.nullable(),
-    firstAttempt: z.boolean(),
   })
   .strict();
 export type PracticeAttemptCommand = z.infer<typeof PracticeAttemptCommandSchema>;
+
+/**
+ * The practice answer the AUTHORITY consumes.
+ *
+ * Historically this was `PracticeAttemptCommandSchema.omit({ firstAttempt: true })`
+ * — the wire command with the client's `firstAttempt` claim stripped, so the
+ * two schemas could not drift into disagreeing about what else a practice
+ * answer carries. With `firstAttempt` gone from the wire schema entirely, the
+ * two shapes are identical; this alias is kept so `Authority.submitPracticeAttempt`
+ * and its callers keep a name for "the answer the authority consumes" that is
+ * independent of "the answer the wire carries," in case the two need to
+ * diverge again for an unrelated reason.
+ */
+export const PracticeAttemptSchema = PracticeAttemptCommandSchema;
+export type PracticeAttempt = z.infer<typeof PracticeAttemptSchema>;
 
 /** Answer-bearing feedback, authorized only after a practice answer is submitted. */
 export const PracticeAttemptResultSchema = z

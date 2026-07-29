@@ -1,5 +1,5 @@
 /**
- * CARS ability tracking for the mastery engine (mastery-bkt / provisional-v1).
+ * CARS ability tracking for the mastery engine (mastery-bkt).
  *
  * CARS is a skill, not knowledge: it uses IRT ability tracking (no BKT, no
  * forgetting). Each of the three CARS sub-skills carries an ability `V`. Two

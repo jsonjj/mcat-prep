@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { fixedClock } from '@mcat/contracts';
-import { loadSyntheticBank } from '@mcat/content';
+import { fixedClock, type CandidateLessonInput } from '@mcat/contracts';
+import { loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
+import { kcsByFc, lessonsByFc, PRIOR_PL0 } from '@mcat/policies';
 import { Authority } from './authority';
+import { SyntheticPracticeBankPort, type PracticeItemClassification } from './practice';
 import type { LearnerState } from './types';
 
 const clock = fixedClock('2026-07-20T12:00:00.000Z');
@@ -25,9 +27,124 @@ const EMPTY_LOAD = {
   estimatedMinutesForDue: 0,
 };
 const candidateLessons = [
-  { lessonId: 'les-a', slug: 'a', title: 'Lesson A', section: 'bb', cluster: null, kcCount: 4, kcIds: ['kc-a1', 'kc-a2'], prerequisiteLessonIds: [], estimatedMinutes: 20 },
-  { lessonId: 'les-b', slug: 'b', title: 'Lesson B', section: 'cp', cluster: null, kcCount: 2, kcIds: ['kc-b1'], prerequisiteLessonIds: [], estimatedMinutes: 20 },
+  {
+    lessonId: 'les-a',
+    slug: 'a',
+    title: 'Lesson A',
+    section: 'bb',
+    cluster: null,
+    kcCount: 4,
+    kcIds: ['kc-a1', 'kc-a2'],
+    prerequisiteLessonIds: [],
+    estimatedMinutes: 20,
+  },
+  {
+    lessonId: 'les-b',
+    slug: 'b',
+    title: 'Lesson B',
+    section: 'cp',
+    cluster: null,
+    kcCount: 2,
+    kcIds: ['kc-b1'],
+    prerequisiteLessonIds: [],
+    estimatedMinutes: 20,
+  },
 ];
+
+const SEEDED_LESSON_ID = 'V3-LES-789208';
+const UNSEEDED_LESSON_ID = 'V3-LES-844372';
+const seededLessonKcs = orderedKcsForLesson(SEEDED_LESSON_ID);
+const unseededLessonKcs = orderedKcsForLesson(UNSEEDED_LESSON_ID);
+if (seededLessonKcs === null || unseededLessonKcs === null) {
+  throw new Error('planner regression lessons must have registry membership');
+}
+const SEEDED_LESSON_KCS = seededLessonKcs;
+const UNSEEDED_LESSON_KCS = unseededLessonKcs;
+
+/**
+ * A seedable candidate pair: two lessons in two different Foundational Concepts.
+ *
+ * Discovered from the pinned registry rather than written down, because which
+ * lessons are both FC-tagged and have resolvable ordered-KC membership is
+ * generated data. `SEEDED_LESSON_ID` and `UNSEEDED_LESSON_ID` above carry no FC
+ * tag at all, so no diagnostic seed can reach either of them.
+ */
+interface SeedableCandidate {
+  readonly concept: string;
+  readonly lessonId: string;
+  readonly candidate: CandidateLessonInput;
+}
+
+const conceptPriors = (concept: string, prior: number): Record<string, number> => {
+  const kcs = kcsByFc(orderedKcsForLesson).get(concept);
+  if (kcs === undefined || kcs.length === 0) throw new Error(`${concept} has no KC membership`);
+  return Object.fromEntries(kcs.map((kcId) => [kcId, prior]));
+};
+
+function seedableCandidatePair(): readonly [SeedableCandidate, SeedableCandidate] {
+  const found: SeedableCandidate[] = [];
+  for (const [concept, lessonIds] of [...lessonsByFc()].sort(([a], [b]) => a.localeCompare(b))) {
+    const lessonId = [...lessonIds].sort().find((id) => (orderedKcsForLesson(id) ?? []).length > 0);
+    if (lessonId === undefined) continue;
+    found.push({
+      concept,
+      lessonId,
+      candidate: {
+        lessonId,
+        slug: `seedable-${concept.toLowerCase()}`,
+        title: `Lesson in ${concept}`,
+        section: 'bb',
+        cluster: null,
+        kcCount: 4,
+        kcIds: [...orderedKcsForLesson(lessonId)!],
+        prerequisiteLessonIds: [],
+        estimatedMinutes: 20,
+      },
+    });
+    if (found.length === 2) return [found[0]!, found[1]!];
+  }
+  throw new Error('the registry must carry two FC-tagged lessons with resolvable KC membership');
+}
+
+const plannerRegressionCandidates: CandidateLessonInput[] = [
+  {
+    lessonId: SEEDED_LESSON_ID,
+    slug: 'a-seeded',
+    title: 'Seeded lesson',
+    section: 'bb',
+    cluster: null,
+    kcCount: 4,
+    kcIds: [...SEEDED_LESSON_KCS],
+    prerequisiteLessonIds: [],
+    estimatedMinutes: 20,
+  },
+  {
+    lessonId: UNSEEDED_LESSON_ID,
+    slug: 'z-unseeded',
+    title: 'Unseeded lesson',
+    section: 'bb',
+    cluster: null,
+    kcCount: 4,
+    kcIds: [...UNSEEDED_LESSON_KCS],
+    prerequisiteLessonIds: [],
+    estimatedMinutes: 20,
+  },
+];
+
+class LessonMappedPracticeBank extends SyntheticPracticeBankPort {
+  override async classify(questionId: string): Promise<PracticeItemClassification | null> {
+    const base = await super.classify(questionId);
+    return base === null
+      ? null
+      : {
+          ...base,
+          domain: 'science',
+          kcId: SEEDED_LESSON_KCS[0]!,
+          skill: 'IDENTIFY',
+          lessonId: SEEDED_LESSON_ID,
+        };
+  }
+}
 
 describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', () => {
   it('builds and persists a plan and WRITES NO MASTERY', async () => {
@@ -35,7 +152,11 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     const state = onboard(auth);
     const before = auth.getMasterySkills(state).map((s) => s.pL);
 
-    const view = await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: false });
+    const view = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons,
+      force: false,
+    });
     expect(view.built).toBe(true);
     expect(view.activities.length).toBeGreaterThan(0);
     expect(view.activities.some((a) => a.kind === 'cars_duel')).toBe(true);
@@ -60,22 +181,56 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
     auth.setDailyBudget(state, 120);
-    const view = await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true });
+    const view = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons,
+      force: true,
+    });
     expect(view.dailyMinutesPreset).toBe(120);
     expect(view.dailyBudgetMinutes).toBe(120);
     expect(view.plannedMinutes).toBeLessThanOrEqual(120);
+  });
+
+  it('passes a candidate lesson’s real duration through to the scheduler', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    auth.setDailyBudget(state, 120);
+
+    const view = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons: [{ ...candidateLessons[0]!, estimatedMinutes: 57 }],
+      force: true,
+    });
+
+    expect(view.activities.find((activity) => activity.kind === 'lesson')?.estimatedMinutes).toBe(
+      57,
+    );
   });
 
   it('injects Recall as the next step when a deck is added after the plan was built', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
     // Built with no cards due → no Recall block.
-    const first = await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: false });
+    const first = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons,
+      force: false,
+    });
     expect(first.activities.some((a) => a.kind === 'recall')).toBe(false);
 
     // Learner adds a deck → cards now due. A plain (non-force) rebuild injects Recall.
-    const dueLoad = { dueLearning: 4, dueReviews: 16, newAvailable: 6, due: 20, estimatedMinutesForDue: 7 };
-    const after = await auth.buildTodaysPath(state, { recallLoad: dueLoad, candidateLessons, force: false });
+    const dueLoad = {
+      dueLearning: 4,
+      dueReviews: 16,
+      newAvailable: 6,
+      due: 20,
+      estimatedMinutesForDue: 7,
+    };
+    const after = await auth.buildTodaysPath(state, {
+      recallLoad: dueLoad,
+      candidateLessons,
+      force: false,
+    });
     const recall = after.activities.find((a) => a.kind === 'recall');
     expect(recall).toBeDefined();
     expect(recall!.count!).toBeGreaterThan(0); // Recall gets a card count to stop at
@@ -84,23 +239,37 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     expect(after.currentActivityId).toBe(recall!.activityId);
 
     // Idempotent: rebuilding again does not duplicate the Recall block.
-    const again = await auth.buildTodaysPath(state, { recallLoad: dueLoad, candidateLessons, force: false });
+    const again = await auth.buildTodaysPath(state, {
+      recallLoad: dueLoad,
+      candidateLessons,
+      force: false,
+    });
     expect(again.activities.filter((a) => a.kind === 'recall').length).toBe(1);
   });
 
   it('completes an activity and marks a finished lesson for eligibility', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
-    const view = await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: false });
+    const view = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons,
+      force: false,
+    });
     const lesson = view.activities.find((a) => a.kind === 'lesson');
     expect(lesson).toBeDefined();
 
     await auth.recordPlanActivity(state, lesson!.activityId, 'complete');
     const updated = auth.getTodaysPath(state);
-    expect(updated.activities.find((a) => a.activityId === lesson!.activityId)!.status).toBe('complete');
+    expect(updated.activities.find((a) => a.activityId === lesson!.activityId)!.status).toBe(
+      'complete',
+    );
     expect(state.completedLessons).toContain(lesson!.lessonId);
 
-    const rebuilt = await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true });
+    const rebuilt = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons,
+      force: true,
+    });
     // A finished lesson is preserved (shown as complete), never re-offered as new work.
     expect(
       rebuilt.activities.some((a) => a.lessonId === lesson!.lessonId && a.status === 'ready'),
@@ -113,14 +282,22 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
     auth.setDailyBudget(state, 180);
-    const v1 = await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true });
+    const v1 = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons,
+      force: true,
+    });
     const first = v1.activities.find((a) => a.kind === 'lesson');
     expect(first).toBeDefined();
     await auth.recordPlanActivity(state, first!.activityId, 'complete');
 
     // Bump the daily time — the finished item is kept, and the day is re-planned larger.
     auth.setDailyBudget(state, 300);
-    const v2 = await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true });
+    const v2 = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons,
+      force: true,
+    });
     expect(v2.dailyBudgetMinutes).toBe(300);
     const keptDone = v2.activities.find((a) => a.activityId === first!.activityId);
     expect(keptDone?.status).toBe('complete');
@@ -131,10 +308,162 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
     auth.setDailyBudget(state, 30); // below 2 hr
-    expect((await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true })).dailyBudgetMinutes).toBe(120);
+    expect(
+      (await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true }))
+        .dailyBudgetMinutes,
+    ).toBe(120);
     auth.setDailyBudget(state, 900); // above 6 hr
-    expect((await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true })).dailyBudgetMinutes).toBe(360);
+    expect(
+      (await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true }))
+        .dailyBudgetMinutes,
+    ).toBe(360);
     auth.setDailyBudget(state, 330); // 5 h 30 m — allowed
-    expect((await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true })).dailyBudgetMinutes).toBe(330);
+    expect(
+      (await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: true }))
+        .dailyBudgetMinutes,
+    ).toBe(330);
+  });
+
+  /**
+   * The candidates here are FC-tagged lessons rather than the two the rest of
+   * this file uses, because the seed has to be one the door accepts.
+   * `applyMasterySeed` refuses any payload the diagnostic producer could not have
+   * emitted, and the producer distributes a CONCEPT's read over every KC beneath
+   * it — so the seed names a whole Foundational Concept, and the lesson whose
+   * priors move is one inside it. The unseeded lesson is drawn from a DIFFERENT
+   * concept, so seeding one leaves the other genuinely at the default prior.
+   *
+   * `kcCount` is held equal across the pair on purpose: it feeds the planner's
+   * unlock term with a 2× swing against mastery's 1.25×, so an unequal pair would
+   * let KC count decide the order and the seed would prove nothing.
+   */
+  it('uses candidate lesson ids to rank KC priors with no practice routing', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = auth.createGuest();
+    const [seeded, unseeded] = seedableCandidatePair();
+
+    auth.applyMasterySeed(state, {
+      kcPriors: conceptPriors(seeded.concept, 0.4),
+      skillPriors: {},
+      carsAbility: {},
+    });
+
+    // Diagnostic KC priors are deliberately not practice: the default lesson read
+    // omits them, while the planner must still roll up every supplied candidate.
+    expect(state.mastery!.practicedLessonIds).toEqual([]);
+    // The seed reached the seeded lesson's KCs and nothing else, so the ranking
+    // below is about the priors rather than about which lessons exist.
+    expect(auth.getMasteryLessons(state, [seeded.lessonId])[0]!.pL).toBeCloseTo(0.4, 12);
+    expect(auth.getMasteryLessons(state, [unseeded.lessonId])[0]!.pL).toBeCloseTo(PRIOR_PL0, 12);
+
+    const view = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons: [seeded.candidate, unseeded.candidate],
+      force: true,
+    });
+
+    expect(
+      view.activities
+        .filter((activity) => activity.kind === 'lesson')
+        .map((activity) => activity.lessonId),
+    ).toEqual([unseeded.lessonId, seeded.lessonId]);
+  });
+
+  /**
+   * The end-to-end shape of the defect this replaces: finishing an instructional
+   * lesson wrote `completedLessons`, the snapshot OR'd that into `mastered`, and
+   * the engine drops mastered lessons — so a learner who understood nothing
+   * never saw the material again. Measured before the fix: rollup
+   * `mastered: false`, `pL: 0.2`, evidence count 0, planned lesson activities
+   * `[]`.
+   *
+   * Both halves are asserted, because either alone is satisfiable by the wrong
+   * fix: deleting the exclusion makes it reachable AND re-offers it as new work,
+   * and keeping the exclusion keeps it off new work AND unreachable.
+   */
+  it('keeps a completed-but-unmastered lesson reachable, and not as new work', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    const today = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons: plannerRegressionCandidates,
+      force: true,
+    });
+    const seeded = today.activities.find((a) => a.lessonId === SEEDED_LESSON_ID);
+    expect(seeded).toBeDefined();
+    await auth.recordPlanActivity(state, seeded!.activityId, 'complete');
+    expect(state.completedLessons).toContain(SEEDED_LESSON_ID);
+
+    // Nothing about the learner's capability changed: the lesson is delivered
+    // and the mastery claim is withheld, with no evidence behind it at all.
+    const rollup = auth.getMasteryLessons(state, [SEEDED_LESSON_ID])[0]!;
+    expect(rollup.mastered).toBe(false);
+    expect(rollup.pL).toBe(PRIOR_PL0);
+    // Scoped to this lesson's own grains: onboarding leaves placement evidence
+    // on the synthetic enzyme skills, and none of it is about this material.
+    expect(
+      state.evidence.filter((e) => SEEDED_LESSON_KCS.includes(e.skillId)),
+      'the lesson must carry no warrant at all for this to be the measured case',
+    ).toHaveLength(0);
+
+    // Same day: still finished, never re-offered while the learner is standing
+    // in front of the plan they just completed it from.
+    const sameDay = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons: plannerRegressionCandidates,
+      force: true,
+    });
+    expect(
+      sameDay.activities.find((a) => a.lessonId === SEEDED_LESSON_ID)?.status,
+      'a lesson finished today must not reappear as ready work today',
+    ).toBe('complete');
+
+    // A later day: reachable again, and labelled as a revisit rather than as
+    // new teaching.
+    const tomorrow = new Authority(loadSyntheticBank(), fixedClock('2026-07-21T12:00:00.000Z'));
+    const nextDay = await tomorrow.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons: plannerRegressionCandidates,
+      force: true,
+    });
+    const offered = nextDay.activities.filter((a) => a.lessonId === SEEDED_LESSON_ID);
+    expect(
+      offered,
+      'a delivered, unmastered lesson was silently dropped from planning',
+    ).toHaveLength(1);
+    expect(offered[0]!.status).toBe('ready');
+    expect(offered[0]!.priorityReason).toBe('TAUGHT_NOT_MASTERED');
+
+    // The lesson that was never delivered is still the one offered as new.
+    expect(
+      nextDay.activities.find((a) => a.lessonId === UNSEEDED_LESSON_ID)?.priorityReason,
+    ).not.toBe('TAUGHT_NOT_MASTERED');
+  });
+
+  it('reports a P(L) above the prior for a lesson with recorded practice', async () => {
+    const bank = loadSyntheticBank();
+    const auth = new Authority(bank, clock, new LessonMappedPracticeBank(bank));
+    const state = auth.createGuest();
+    // Teach-before-test: the queue serves only KCs a completed lesson covered,
+    // and fails closed on an empty taught set, so a learner with practice to
+    // record has one. Read off the bank's own units.
+    const units = await auth.practiceBank.listUnits({ limit: 400 });
+    state.taughtKcIds = [...new Set(units.map((u) => u.kcId))];
+    const item = (await auth.getPracticeQueue(state, 5)).items.find(
+      (candidate) => candidate.domain === 'science',
+    );
+    if (item === undefined) throw new Error('expected a science practice item');
+    const answer = await auth.practiceBank.getAnswer(item.question.id);
+    if (answer === null) throw new Error('expected the practice item answer');
+
+    await auth.submitPracticeAttempt(state, {
+      questionId: item.question.id,
+      specId: item.specId,
+      chosenChoiceId: answer.correctChoiceId,
+    });
+
+    const [mastery] = auth.getMasteryLessons(state, [SEEDED_LESSON_ID]);
+    expect(state.mastery!.practicedLessonIds).toEqual([SEEDED_LESSON_ID]);
+    expect(mastery?.pL).toBeGreaterThan(PRIOR_PL0);
   });
 });

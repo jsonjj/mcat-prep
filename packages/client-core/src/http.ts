@@ -11,6 +11,7 @@ import {
   HttpApiErrorSchema,
   MistakePatternViewSchema,
   LessonMasteryViewSchema,
+  LessonWarrantViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
   PracticeAttemptResultSchema,
@@ -374,6 +375,11 @@ export class HttpAuthorityClient implements AuthorityPort {
   async getMasteryLessons() {
     await this.ensureBootstrap();
     return this.request(HTTP_API.progressLessons.path, arrayOf(LessonMasteryViewSchema));
+  }
+
+  async getLessonWarrants() {
+    await this.ensureBootstrap();
+    return this.request(HTTP_API.progressLessonWarrants.path, arrayOf(LessonWarrantViewSchema));
   }
 
   async getCarsReadiness() {

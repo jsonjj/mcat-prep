@@ -43,11 +43,16 @@ export interface DiagnosticItemView {
  * Opening BKT priors the diagnostic produced, in `MasterySeedSchema`'s shape.
  * Restated structurally rather than imported so this module keeps its "browser
  * client, no policy imports" character; the authority validates it on arrival.
+ *
+ * There is no `lessonPriors`, deliberately. A lesson has no stored `P(L)` — its
+ * readout is rolled up from its required member KCs — and `MasterySeedSchema` is
+ * `.strict()`, so a payload carrying that key is now rejected by name rather than
+ * silently dropped. Keeping it here would only mean sending something the
+ * authority refuses.
  */
 export interface MasterySeedPayload {
   kcPriors: Record<string, number>;
   skillPriors: Record<string, number>;
-  lessonPriors: Record<string, number>;
   carsAbility: Record<string, number>;
 }
 

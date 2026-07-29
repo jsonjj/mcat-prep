@@ -1,5 +1,5 @@
 /**
- * IRT measurement layer for the mastery engine (mastery-bkt / provisional-v1).
+ * IRT measurement layer for the mastery engine (mastery-bkt).
  *
  * Turns a question's difficulty into the BKT engine's difficulty-aware *slip*.
  * Difficulty `b` is the population log-odds of being wrong; it is UNCALIBRATED

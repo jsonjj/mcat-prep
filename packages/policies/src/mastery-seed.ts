@@ -1,5 +1,5 @@
 /**
- * Diagnostic → mastery seeding (mastery-bkt / provisional-v1).
+ * Diagnostic → mastery seeding (mastery-bkt).
  *
  * The diagnostic never awards mastery; it only seeds initial values. Seeding is
  * ASYMMETRIC and CAPPED so it fails closed: a weak read may lower the prior freely
@@ -62,14 +62,40 @@ const clamp01 = (x: number): number => Math.min(1, Math.max(0, x));
 
 // --- Distributing a bucket read down to tracked units -----------------------
 
-/** A seeded prior for one unit the mastery system tracks. */
-export interface UnitSeed {
+/**
+ * Which grain a unit seed is expressed at.
+ *
+ * A unit id alone does not say what it identifies, and the two are not
+ * interchangeable: `kc` is a grain the mastery engine STORES, `lesson` is not —
+ * a lesson readout is rolled up from its required member KCs on read. Tagging the
+ * grain is what stops a lesson-grain seed being packed into `kcPriors`, where it
+ * would silently create KC state under lesson ids. Branching on the shape of an
+ * id would be the alternative, and this codebase does not do that.
+ */
+export type MasteryUnitGrain = 'kc' | 'lesson';
+
+/** A seeded prior for one unit, at a named grain. */
+export interface UnitSeed<G extends MasteryUnitGrain = MasteryUnitGrain> {
   unitId: string;
+  /** What `unitId` identifies. Carried, never inferred. */
+  grain: G;
   /** The bucket read this was derived from, for auditing a surprising prior. */
   bucketId: string;
   prior: number;
   /** Read confidence after attenuation. Retained so callers can filter weak seeds. */
   certainty: number;
+}
+
+/** A seed reached the wire packer at a grain the mastery engine does not store. */
+export class MasterySeedGrainError extends Error {
+  constructor(readonly grains: readonly MasteryUnitGrain[]) {
+    super(
+      `Only kc-grain seeds can be packed into a MasterySeed; received ${grains.join(', ')}. ` +
+        "A lesson has no stored P(L) — distribute the read over the lesson's required " +
+        'member KCs instead (kcsByFc).',
+    );
+    this.name = 'MasterySeedGrainError';
+  }
 }
 
 /**
@@ -97,11 +123,12 @@ export const attenuateCertainty = (certainty: number, units: number): number =>
  * the diagnostic never sampled, are simply absent from the result: no read means
  * the default prior, never a seeded one.
  */
-export function seedsFromBucketReads(
+export function seedsFromBucketReads<G extends MasteryUnitGrain>(
   reads: readonly { bucketId: string; gap: number; certainty: number; itemsSeen: number }[],
   unitsByBucket: ReadonlyMap<string, readonly string[]>,
-): UnitSeed[] {
-  const seeds: UnitSeed[] = [];
+  grain: G,
+): UnitSeed<G>[] {
+  const seeds: UnitSeed<G>[] = [];
   for (const read of reads) {
     if (read.itemsSeen <= 0) continue;
     const units = unitsByBucket.get(read.bucketId) ?? [];
@@ -109,7 +136,7 @@ export function seedsFromBucketReads(
     const certainty = attenuateCertainty(read.certainty, units.length);
     const prior = seedPriorFromRead({ gap: read.gap, certainty });
     for (const unitId of units) {
-      seeds.push({ unitId, bucketId: read.bucketId, prior, certainty });
+      seeds.push({ unitId, grain, bucketId: read.bucketId, prior, certainty });
     }
   }
   return seeds;
@@ -157,34 +184,71 @@ export function lessonsByCluster(): ReadonlyMap<string, readonly string[]> {
 export function lessonSeedsFromDiagnostic(
   result: DiagnosticResult,
   unitsByBucket: ReadonlyMap<string, readonly string[]> = lessonsByCluster(),
-): UnitSeed[] {
-  return seedsFromBucketReads(
-    result.perCluster.map((s) => ({
-      bucketId: s.cluster,
-      gap: s.gap,
-      certainty: s.certainty,
-      itemsSeen: s.itemsSeen,
-    })),
-    unitsByBucket,
-  );
+): UnitSeed<'lesson'>[] {
+  return seedsFromBucketReads(bucketReads(result), unitsByBucket, 'lesson');
 }
 
 /**
- * Pack unit seeds into the wire shape the authority consumes.
+ * Turn a finished diagnostic into KC-grain BKT priors — the grain the mastery
+ * engine stores, and so the only one the handoff can actually seed.
  *
- * The units are lessons, so only `lessonPriors` is populated: the diagnostic
- * measures content buckets, not the 7 reasoning operations, and CARS is off its
- * axis entirely. Emitting an empty record rather than omitting the field keeps
- * "the diagnostic had nothing to say about this grain" explicit at the boundary.
+ * `kcsByBucket` is the caller's, for the same reason `lessonSeedsFromDiagnostic`
+ * takes one: the bucket axis is whatever the diagnostic ran on and the ordered KC
+ * membership is curriculum data this package must not import. Production passes
+ * `kcsByFc(orderedKcsForLesson)`.
+ *
+ * Each concept-level read is distributed UNIFORMLY: every KC beneath the concept
+ * inherits the same prior, with certainty attenuated by the number of KCs rather
+ * than the number of lessons — a read spread over 300 KCs is weaker evidence
+ * about any one of them than the same read spread over 90 lessons, and
+ * under-crediting is the safe direction.
  */
-export function masterySeedFromUnitSeeds(seeds: readonly UnitSeed[]): MasterySeed {
-  const lessonPriors: Record<string, number> = {};
+export function kcSeedsFromDiagnostic(
+  result: DiagnosticResult,
+  kcsByBucket: ReadonlyMap<string, readonly string[]>,
+): UnitSeed<'kc'>[] {
+  return seedsFromBucketReads(bucketReads(result), kcsByBucket, 'kc');
+}
+
+const bucketReads = (
+  result: DiagnosticResult,
+): { bucketId: string; gap: number; certainty: number; itemsSeen: number }[] =>
+  result.perCluster.map((s) => ({
+    bucketId: s.cluster,
+    gap: s.gap,
+    certainty: s.certainty,
+    itemsSeen: s.itemsSeen,
+  }));
+
+/**
+ * Pack KC-grain unit seeds into the wire shape the authority consumes.
+ *
+ * Only `kcPriors` is populated: the diagnostic measures content buckets, not the
+ * 7 reasoning operations, and CARS is off its axis entirely. Emitting empty
+ * records rather than omitting the fields keeps "the diagnostic had nothing to say
+ * about this grain" explicit at the boundary.
+ *
+ * There is deliberately no lesson-grain output. `MasterySeed` has no
+ * `lessonPriors` key, and because the schema is `.strict()`, a producer that still
+ * emits one is REJECTED by name at the boundary rather than having it dropped —
+ * which is what happened before, and it made diagnostic seeding a complete no-op
+ * that nothing reported.
+ *
+ * The grain tag is checked at runtime as well as in the type, because a cast is
+ * all it would take to get a lesson id in here and the result would be KC state
+ * stored under lesson ids: present, plausible, and matching nothing.
+ */
+export function masterySeedFromUnitSeeds(seeds: readonly UnitSeed<'kc'>[]): MasterySeed {
+  const wrongGrain = [...new Set(seeds.filter((s) => s.grain !== 'kc').map((s) => s.grain))];
+  if (wrongGrain.length > 0) throw new MasterySeedGrainError(wrongGrain);
+
+  const kcPriors: Record<string, number> = {};
   for (const seed of seeds) {
-    // A lesson can only belong to one bucket on a partition axis, so a repeat
-    // would mean the bucket -> unit map is not one; take the weaker read rather
-    // than whichever happened to be last.
-    const existing = lessonPriors[seed.unitId];
-    lessonPriors[seed.unitId] = existing === undefined ? seed.prior : Math.min(existing, seed.prior);
+    // A KC can be reached from more than one bucket (two concepts can share a
+    // lesson's membership), and a partition axis should not produce that — so take
+    // the weaker read rather than whichever happened to be last.
+    const existing = kcPriors[seed.unitId];
+    kcPriors[seed.unitId] = existing === undefined ? seed.prior : Math.min(existing, seed.prior);
   }
-  return { kcPriors: {}, skillPriors: {}, lessonPriors, carsAbility: {} };
+  return { kcPriors, skillPriors: {}, carsAbility: {} };
 }

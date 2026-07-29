@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ChoiceId, StudyStepView } from '@mcat/contracts';
-import { Button, Callout, Card, Eyebrow, MasteryBadge, Stack } from '@mcat/ui-web';
+import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
+import { EVIDENCE_REFRESH_LABEL, evidenceWarrant } from '../components/evidence-language';
 import {
   useContinueStep,
   useRequestReveal,
@@ -143,6 +144,7 @@ export function Study() {
 
   if (step.kind === 'complete') {
     const s = step.summary;
+    const warrant = evidenceWarrant(s.reasons);
     return (
       <div className="mc-screen mc-study">
         <Eyebrow>Session complete</Eyebrow>
@@ -150,8 +152,13 @@ export function Study() {
         <Card elevated>
           <Stack gap={3}>
             <div className="mc-inline">
-              <span>Current evidence:</span>
-              <MasteryBadge state={s.masteryState} refreshNeeded={s.refreshNeeded} />
+              <span>
+                {warrant.status}
+                {warrant.nextGap ? ` Next: ${warrant.nextGap}.` : ''}
+              </span>
+              {s.refreshNeeded ? (
+                <span className="mc-skillbar__tag">◐ {EVIDENCE_REFRESH_LABEL}</span>
+              ) : null}
             </div>
             <ul className="mc-evidence">
               {Object.entries(s.evidenceCounts).map(([kind, n]) => (

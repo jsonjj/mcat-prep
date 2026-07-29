@@ -125,11 +125,80 @@ export interface PracticeRepairTarget {
 }
 
 /**
+ * A learner's exposure to one item, as of immediately after recording this one.
+ *
+ * `recordExposure` returns it rather than a separate reader answering the same
+ * question, because the two would be a read and a write of one fact with a gap
+ * between them: two concurrent submissions of the same item would both read
+ * zero and both count as a first attempt. Incrementing and reporting in one
+ * operation makes exactly one of them first, whatever the ordering.
+ */
+export interface PracticeExposure {
+  /** How many times the learner had answered this item BEFORE this response. */
+  readonly priorExposures: number;
+}
+
+/**
+ * The server's record that it handed ONE item to ONE learner and will accept
+ * one answer to it.
+ *
+ * This is the authorization for an adaptive-practice submission, and it exists
+ * because `specId` alone was not one: the command carried a spec the server
+ * merely read back, so a caller who never asked for a queue could name any
+ * corpus item, forge any spec, and receive an independent evidence record and a
+ * BKT write. Teach-before-test, queue selection and the taught-set gate all
+ * live in `getPracticeQueue`, so anything that can be answered without going
+ * through it is outside every one of them.
+ *
+ * Four facts are bound here and re-checked at submission, so each is a claim
+ * the server issued rather than one the request makes:
+ * - `questionId` — the grant is stored under it, so a grant for one item can
+ *   never authorize another,
+ * - `specId` — the selection decision that produced the serve,
+ * - `contentRelease` — an answer to an item served under a superseded release
+ *   is refused rather than scored against the current one,
+ * - `expiresAt` — a grant is not a standing permission.
+ *
+ * NOT AN EXPOSURE. A grant records that the server served an item; exposure
+ * records that the learner answered one. They are deliberately separate stores
+ * with separate lifetimes — see the `SERVING IS NOT AN EXPOSURE` docblock on
+ * `Authority.getPracticeQueue` for what collapsing them would cost.
+ */
+export interface PracticeAttemptGrant {
+  readonly questionId: string;
+  readonly specId: string;
+  readonly contentRelease: string;
+  readonly expiresAt: UtcTimestamp;
+}
+
+/** Why the server will not accept this answer. Named, never a bare boolean. */
+export type PracticeAttemptRefusal =
+  | 'PRACTICE_ATTEMPT_NOT_ISSUED'
+  | 'PRACTICE_ATTEMPT_EXPIRED'
+  | 'PRACTICE_ATTEMPT_SPEC_MISMATCH'
+  | 'PRACTICE_ATTEMPT_CONTENT_RELEASE_STALE';
+
+/**
+ * The outcome of presenting one answer against a stored grant.
+ *
+ * `firstUse` is the ONE-USE half: a grant is spent by the first answer it
+ * authorizes. A later answer to the same item is still admitted — a repeat is
+ * a documented, learning-only outcome and refusing it would delete that
+ * behaviour rather than gate it — but it can never again be a capability
+ * claim. So the grant is a second, independent server-held fact standing beside
+ * the exposure count, and `firstAttempt` requires BOTH to agree.
+ */
+export type PracticeAttemptAuthorization =
+  | { readonly status: 'authorized'; readonly firstUse: boolean }
+  | { readonly status: 'refused'; readonly reason: PracticeAttemptRefusal };
+
+/**
  * The single seam between the authority and the item corpus + per-learner
  * practice bookkeeping. `findItems`/`getAnswer` are the core (as planned); the
- * remaining methods carry the difficulty stats, recent-exposure freshness, and
- * repair queue. All per-learner methods take an explicit `learnerId` so one port
- * instance can serve every learner (the deployed path shares one pool).
+ * remaining methods carry the difficulty stats, recent-exposure freshness, the
+ * repair queue, and the served-item grants that authorize a submission. All
+ * per-learner methods take an explicit `learnerId` so one port instance can
+ * serve every learner (the deployed path shares one pool).
  */
 export interface PracticeBankPort {
   listUnits(input: { limit: number }): Promise<PracticeCandidateUnit[]>;
@@ -144,7 +213,46 @@ export interface PracticeBankPort {
   questionStats(questionId: string): Promise<{ attempts: number; correct: number }>;
   recordAttempt(questionId: string, correct: boolean, now: UtcTimestamp): Promise<void>;
   recentlySeenIds(learnerId: string, input: { withinDays: number; limit: number }): Promise<string[]>;
-  recordExposure(learnerId: string, questionId: string, now: UtcTimestamp): Promise<void>;
+  /**
+   * Record one exposure and report what the learner's history was before it.
+   *
+   * The prior count is what the authority derives `firstAttempt` from, so this
+   * must be the learner's WHOLE history with the item and never a recent
+   * window: a window would let a repeat far enough in the past read as a first
+   * attempt again.
+   */
+  recordExposure(
+    learnerId: string,
+    questionId: string,
+    now: UtcTimestamp,
+  ): Promise<PracticeExposure>;
+  /**
+   * Record that the server served one item to one learner, replacing any
+   * earlier grant for the same item.
+   *
+   * Replacement rather than accumulation, because a re-serve IS a fresh
+   * authorization: the queue only re-serves an item the rotation window has
+   * released, and at that point a new answer to it is exactly as legitimate as
+   * the first was. What it is not is a fresh FIRST attempt — that stays with
+   * the exposure count, which is unwindowed.
+   */
+  issueAttemptGrant(learnerId: string, grant: PracticeAttemptGrant): Promise<void>;
+  /**
+   * Check one answer against the stored grant and spend it, in one operation.
+   *
+   * Read-then-write would leave a window in which two concurrent submissions of
+   * the same item both saw an unspent grant — the same race `recordExposure`
+   * closes by returning the count from the write that increments it.
+   */
+  consumeAttemptGrant(
+    learnerId: string,
+    claim: {
+      questionId: string;
+      specId: string;
+      contentRelease: string;
+      now: UtcTimestamp;
+    },
+  ): Promise<PracticeAttemptAuthorization>;
   recentMisses(learnerId: string, input: { limit: number }): Promise<PracticeRepairTarget[]>;
   queueRepair(learnerId: string, target: PracticeRepairTarget, now: UtcTimestamp): Promise<void>;
   /** Append one first-attempt row (idempotent per learner × activity type × item). */
@@ -196,6 +304,37 @@ interface ExposureEntry {
   lastSeenAt: string;
 }
 
+/** A stored grant plus whether its one capability use has been spent. */
+export interface StoredPracticeAttemptGrant extends PracticeAttemptGrant {
+  readonly consumedAt: string | null;
+}
+
+/**
+ * Adjudicate one answer against a stored grant, shared by every in-memory
+ * grant store (the synthetic port, the dev file port, and the Postgres port's
+ * schema-absent fallback) so the four checks cannot drift between them.
+ *
+ * Order is deliberate. Absence is reported before any binding mismatch, and a
+ * mismatch before expiry, so the message a caller can provoke says as little as
+ * possible about a grant they were not issued.
+ */
+export function adjudicateAttemptGrant(
+  entry: StoredPracticeAttemptGrant | undefined,
+  claim: { specId: string; contentRelease: string; now: UtcTimestamp },
+): PracticeAttemptAuthorization {
+  if (entry === undefined) return { status: 'refused', reason: 'PRACTICE_ATTEMPT_NOT_ISSUED' };
+  if (entry.specId !== claim.specId) {
+    return { status: 'refused', reason: 'PRACTICE_ATTEMPT_SPEC_MISMATCH' };
+  }
+  if (entry.contentRelease !== claim.contentRelease) {
+    return { status: 'refused', reason: 'PRACTICE_ATTEMPT_CONTENT_RELEASE_STALE' };
+  }
+  if (Date.parse(claim.now) > Date.parse(entry.expiresAt)) {
+    return { status: 'refused', reason: 'PRACTICE_ATTEMPT_EXPIRED' };
+  }
+  return { status: 'authorized', firstUse: entry.consumedAt === null };
+}
+
 /**
  * In-memory `PracticeBankPort` over the loaded synthetic bank. Used in dev when
  * no `DATABASE_URL` is configured and in deterministic tests. Exposure + repair
@@ -203,6 +342,8 @@ interface ExposureEntry {
  */
 export class SyntheticPracticeBankPort implements PracticeBankPort {
   private readonly exposure = new Map<string, Map<string, ExposureEntry>>();
+  /** Served-item authorizations, kept strictly apart from `exposure`. */
+  private readonly grants = new Map<string, Map<string, StoredPracticeAttemptGrant>>();
   private readonly misses = new Map<string, { kcId: string; skill?: ReasoningOperation; at: string }[]>();
   /** Practice attempt log. Newest last; keyed per learner, one row per item. */
   private readonly attempts = new Map<string, PracticeAttemptLogEntry[]>();
@@ -351,11 +492,36 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
       .map(([id]) => id);
   }
 
-  async recordExposure(learnerId: string, questionId: string, now: UtcTimestamp): Promise<void> {
+  async recordExposure(
+    learnerId: string,
+    questionId: string,
+    now: UtcTimestamp,
+  ): Promise<PracticeExposure> {
     const map = this.exposure.get(learnerId) ?? new Map<string, ExposureEntry>();
     const entry = map.get(questionId);
-    map.set(questionId, { count: (entry?.count ?? 0) + 1, lastSeenAt: now });
+    const priorExposures = entry?.count ?? 0;
+    map.set(questionId, { count: priorExposures + 1, lastSeenAt: now });
     this.exposure.set(learnerId, map);
+    return { priorExposures };
+  }
+
+  async issueAttemptGrant(learnerId: string, grant: PracticeAttemptGrant): Promise<void> {
+    const map = this.grants.get(learnerId) ?? new Map<string, StoredPracticeAttemptGrant>();
+    map.set(grant.questionId, { ...grant, consumedAt: null });
+    this.grants.set(learnerId, map);
+  }
+
+  async consumeAttemptGrant(
+    learnerId: string,
+    claim: { questionId: string; specId: string; contentRelease: string; now: UtcTimestamp },
+  ): Promise<PracticeAttemptAuthorization> {
+    const map = this.grants.get(learnerId);
+    const entry = map?.get(claim.questionId);
+    const outcome = adjudicateAttemptGrant(entry, claim);
+    if (outcome.status === 'authorized' && outcome.firstUse && entry !== undefined) {
+      map!.set(claim.questionId, { ...entry, consumedAt: claim.now });
+    }
+    return outcome;
   }
 
   async recentMisses(

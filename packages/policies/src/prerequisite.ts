@@ -1,5 +1,5 @@
 /**
- * Prerequisite reinforcement for the mastery engine (mastery-bkt / provisional-v1).
+ * Prerequisite reinforcement for the mastery engine (mastery-bkt).
  *
  * Practicing a later concept partially reinforces its DIRECT (1-hop) prerequisites:
  * on an independent-correct answer on B, each direct prerequisite A gets a small

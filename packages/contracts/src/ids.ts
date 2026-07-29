@@ -34,6 +34,13 @@ export const ContentIdSchema = z
   .brand<'ContentId'>();
 export type ContentId = z.infer<typeof ContentIdSchema>;
 
+/**
+ * Opaque lesson-authored item identifiers. Unlike `ContentId`, these may use
+ * legacy casing and punctuation and therefore stay isolated from global bank IDs.
+ */
+export const LessonItemIdSchema = z.string().min(1).brand<'LessonItemId'>();
+export type LessonItemId = z.infer<typeof LessonItemIdSchema>;
+
 export const newLearnerId = (): LearnerId => LearnerIdSchema.parse(uuid());
 export const newEventId = (): EventId => EventIdSchema.parse(uuid());
 export const newIdempotencyKey = (): IdempotencyKey => IdempotencyKeySchema.parse(uuid());

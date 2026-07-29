@@ -8,7 +8,11 @@ import {
 } from './ids';
 import { UtcTimestampSchema } from './time';
 import { PolicyVersionSchema } from './versioning';
-import { AssistanceLevelSchema, ReviewRatingSchema } from './vocab';
+import { AssistanceLevelSchema, ReasoningOperationSchema, ReviewRatingSchema } from './vocab';
+import {
+  AcceptedLessonObservationSchema,
+  type AcceptedLessonObservation,
+} from './lesson-observation';
 
 /**
  * Immutable, append-only learner events. The client generates `eventId` and
@@ -71,6 +75,186 @@ export const ReviewRatedSchema = EventBaseSchema.extend({
 export type ReviewRated = z.infer<typeof ReviewRatedSchema>;
 
 /**
+ * How the server had to adjust the runner's reported time before using it as a
+ * decay clock. `none` means the claim was used verbatim; the other two are the
+ * audit record of a claim that could not be trusted as-is.
+ */
+export const BKT_CLOCK_ADJUSTMENTS = [
+  'none',
+  /** The claim was ahead of the Authority clock and was pulled back to it. */
+  'bounded_to_server_clock',
+  /** The claim predated a target grain's `lastPracticedAt` and was held there. */
+  'held_at_last_practiced',
+] as const;
+export const BktClockAdjustmentSchema = z.enum(BKT_CLOCK_ADJUSTMENTS);
+export type BktClockAdjustment = z.infer<typeof BktClockAdjustmentSchema>;
+
+/**
+ * Why the Authority refused to apply an otherwise-qualified observation to BKT.
+ *
+ * Distinct from `BKT_QUALIFICATION_REJECTION_CODES`, which is frozen and covers
+ * the two upstream gates in lesson-evidence-mastery-contract §5. These codes
+ * cover the *application* step, where the server checks claims that only it can
+ * check. Allowlist: an observation is applied only when no code fires.
+ */
+export const BKT_APPLICATION_REJECTION_CODES = [
+  /**
+   * The reported `occurredAt` is further ahead of the Authority clock than the
+   * permitted skew. Clamping alone would silently accept a broken or hostile
+   * runner, so an implausible future claim is refused outright.
+   */
+  'OBSERVATION_TIMESTAMP_IN_FUTURE',
+] as const;
+export const BktApplicationRejectionCodeSchema = z.enum(BKT_APPLICATION_REJECTION_CODES);
+export type BktApplicationRejectionCode = z.infer<typeof BktApplicationRejectionCodeSchema>;
+
+/**
+ * Which write path moved `P(L)`. An allowlist: a new surface that reaches the
+ * capability grains has to name itself here before it can write a ledger record,
+ * so it cannot arrive unaudited by default.
+ *
+ * EVERY member goes through the Authority's single `stepDirectGrains` step and
+ * so shares one bounded decay clock; the distinction is only what identifies the
+ * attempt. A lesson response carries a `QualifiedBktObservation` with its own id
+ * and ordering value, which neither of the in-request paths has — see the
+ * correlation enforced on the payload below. The membership of this list and the
+ * set of methods that may call the step are two derivations of one fact, and
+ * `tests/architecture/mastery-write-path.test.ts` asserts the second half
+ * exactly rather than by containment.
+ */
+export const BKT_OBSERVATION_SOURCES = [
+  /** A qualified lesson response (lesson-evidence-mastery-contract §8.2). */
+  'lesson_response',
+  /** A first, unassisted adaptive-practice answer (docs/practice-engine.md). */
+  'adaptive_practice',
+  /**
+   * The study loop's first answering attempt, scored in-request against the
+   * synthetic bank (`Authority.updateMasteryForAttempt`, reached from
+   * `POST /v1/attempts`).
+   */
+  'synthetic_study',
+] as const;
+export const BktObservationSourceSchema = z.enum(BKT_OBSERVATION_SOURCES);
+export type BktObservationSource = z.infer<typeof BktObservationSourceSchema>;
+
+/**
+ * Server record of one attempt reaching (or being refused by) the BKT engine.
+ *
+ * The runner's `occurredAt` is a runtime FACT, not server time (contract §2), so
+ * it may not be used as a decay clock unchecked. This event keeps **both**
+ * times: `reportedOccurredAt` is the runner's verbatim claim and is the only
+ * surviving evidence that a client misreported, while `appliedOccurredAt` is the
+ * bounded, monotonic value state was actually written with.
+ *
+ * On an APPLIED record the two differ exactly when `clockAdjustment !== 'none'`,
+ * so the clamp never destroys the claim it corrected. The qualifier is not
+ * decoration: a REFUSED record has no applied time at all, and reports
+ * `clockAdjustment: 'none'` because no clock was chosen — so the unscoped
+ * version of this sentence was false on every rejection the Authority has ever
+ * written. Both halves are now enforced below rather than described here.
+ *
+ * Every write to a capability grain appends one of these, whatever the `source`:
+ * a path that moves `P(L)` without a ledger record leaves the clamp with no
+ * forensic trail, which is how the practice path's clock bypass stayed invisible
+ * and how the study path's stayed invisible after it.
+ */
+export const BktObservationAppliedSchema = EventBaseSchema.extend({
+  type: z.literal('bkt_observation_applied'),
+  payload: z
+    .object({
+      source: BktObservationSourceSchema,
+      /** The observation's id, or `null` on a source that has no observation. */
+      observationId: z.string().uuid().nullable(),
+      /** The observation's own ordering value (contract §12), as reported. */
+      observationSequence: z.number().int().nonnegative().nullable(),
+      /** The item attempted, in whichever id space the source serves from. */
+      questionId: z.string().min(1),
+      /** The two grains this observation targets. Never a lesson. */
+      primaryKcId: z.string().min(1),
+      reasoningOperation: ReasoningOperationSchema,
+      correct: z.boolean(),
+      /** VERBATIM runner claim. Never used as the decay clock. */
+      reportedOccurredAt: UtcTimestampSchema,
+      /** The decay clock actually written, or `null` when nothing was applied. */
+      appliedOccurredAt: UtcTimestampSchema.nullable(),
+      clockAdjustment: BktClockAdjustmentSchema,
+      /** An observation with a higher `sequence` had already been applied. */
+      outOfOrder: z.boolean(),
+      /** Empty when the observation was applied; otherwise why it was refused. */
+      rejectionCodes: z.array(BktApplicationRejectionCodeSchema),
+    })
+    .strict()
+    .superRefine((payload, context) => {
+      // The identity fields and the source are two derivations of one fact —
+      // whether this write came from an observation — so they are required to
+      // agree rather than each being checked alone. Both directions are
+      // enforced: a lesson record that has lost its observation id is as broken
+      // as a practice record that invented one, and an out-of-order flag on a
+      // source with no ordering value is a claim nothing could have decided.
+      const fromObservation = payload.source === 'lesson_response';
+      const hasIdentity = payload.observationId !== null;
+      const hasSequence = payload.observationSequence !== null;
+      if (fromObservation !== hasIdentity) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `observationId must be ${fromObservation ? 'present' : 'null'} when source is ${payload.source}.`,
+          path: ['observationId'],
+        });
+      }
+      if (fromObservation !== hasSequence) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `observationSequence must be ${fromObservation ? 'present' : 'null'} when source is ${payload.source}.`,
+          path: ['observationSequence'],
+        });
+      }
+      if (!hasSequence && payload.outOfOrder) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'outOfOrder cannot be true without an observationSequence to order against.',
+          path: ['outOfOrder'],
+        });
+      }
+
+      // The outcome is likewise derived twice — once as `rejectionCodes`, once
+      // as the presence of an applied clock — and the two must agree. A record
+      // with an applied time AND a rejection code describes a write that both
+      // did and did not happen; one with neither claims a write nothing can be
+      // audited against.
+      const refused = payload.rejectionCodes.length > 0;
+      const { appliedOccurredAt } = payload;
+      if (refused === (appliedOccurredAt !== null)) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: refused
+            ? 'appliedOccurredAt must be null when the observation was refused.'
+            : 'appliedOccurredAt must be present when no rejection code fired.',
+          path: ['appliedOccurredAt'],
+        });
+      }
+
+      // And on an applied record, `clockAdjustment` is a third derivation of
+      // the same fact: it says 'none' exactly when the claim survived the bound
+      // verbatim. Compared as instants rather than strings, because the two
+      // fields are not required to carry the same ISO spelling.
+      if (!refused && appliedOccurredAt !== null) {
+        const usedVerbatim =
+          Date.parse(appliedOccurredAt) === Date.parse(payload.reportedOccurredAt);
+        if ((payload.clockAdjustment === 'none') !== usedVerbatim) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: usedVerbatim
+              ? `clockAdjustment is '${payload.clockAdjustment}' but appliedOccurredAt equals reportedOccurredAt, so nothing was adjusted.`
+              : "clockAdjustment is 'none' but appliedOccurredAt differs from reportedOccurredAt.",
+            path: ['clockAdjustment'],
+          });
+        }
+      }
+    }),
+});
+export type BktObservationApplied = z.infer<typeof BktObservationAppliedSchema>;
+
+/**
  * There is no `cause_selected` member. Self-reported error cause is not a fact we
  * store: experts naming which bias produced an error agree at κ = 0.000–0.063 and
  * learner self-report is biased worst in the weakest learners
@@ -86,17 +270,28 @@ export const LearnerEventSchema = z.discriminatedUnion('type', [
   AttemptSubmittedSchema,
   RevealRequestedSchema,
   ReviewRatedSchema,
+  BktObservationAppliedSchema,
 ]);
 export type LearnerEvent = z.infer<typeof LearnerEventSchema>;
 export type LearnerEventType = LearnerEvent['type'];
 
-/** Server-accepted event: base event plus authoritative sequence + acceptance time. */
-export const AcceptedEventSchema = z.object({
+/** Preserves the original non-strict behavior: unknown producer metadata is stripped. */
+const AcceptedLearnerEventSchema = z.object({
   sequence: z.number().int().nonnegative(),
   acceptedAt: UtcTimestampSchema,
   event: LearnerEventSchema,
 });
+
+/** Authoritative accepted-event union, including server-only lesson observations. */
+export const AcceptedEventSchema = z.union([
+  AcceptedLearnerEventSchema,
+  AcceptedLessonObservationSchema,
+]);
 export type AcceptedEvent = z.infer<typeof AcceptedEventSchema>;
+
+export const isAcceptedLessonObservation = (
+  acceptedEvent: AcceptedEvent,
+): acceptedEvent is AcceptedLessonObservation => 'binding' in acceptedEvent;
 
 export const makeIdempotencyKey = IdempotencyKeySchema.parse;
 export const makeEventId = EventIdSchema.parse;

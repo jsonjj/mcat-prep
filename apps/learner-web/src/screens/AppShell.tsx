@@ -3,6 +3,7 @@ import { SkipLink, useTheme } from '@mcat/ui-web';
 import { useBootstrap } from '../app/queries';
 import {
   IconBrain,
+  IconCarsDuel,
   IconCurriculum,
   IconHome,
   IconMistakesX,
@@ -24,12 +25,13 @@ const NAV = [
 
 const TODAY_ITEM = { to: '/app/today', end: false, label: 'Today', Icon: IconToday };
 const PRACTICE_ITEM = { to: '/app/practice', end: false, label: 'Practice', Icon: IconPractice };
+const CARS_ITEM = { to: '/app/cars', end: false, label: 'CARS Duel', Icon: IconCarsDuel };
 
 // Desktop sidebar order: Today's Path sits right under Home; Practice sits above
-// Recall. The mobile bottom nav stays the shared five-item NAV so the longest
-// label ("Curriculum") never overflows a narrow phone — Today's Path and Practice
-// are reached from Home on mobile (Home's hero links straight into Today's Path).
-const SIDEBAR = [NAV[0], TODAY_ITEM, NAV[1], PRACTICE_ITEM, NAV[2], NAV[3], NAV[4]];
+// Recall; CARS Duel sits just below Recall. The mobile bottom nav stays the shared
+// five-item NAV so the longest label ("Curriculum") never overflows a narrow phone
+// — Today's Path, Practice, and CARS Duel are reached from elsewhere on mobile.
+const SIDEBAR = [NAV[0], TODAY_ITEM, NAV[1], PRACTICE_ITEM, NAV[2], CARS_ITEM, NAV[3], NAV[4]];
 
 export function AppShell() {
   const bootstrap = useBootstrap();
@@ -68,18 +70,14 @@ export function AppShell() {
 
       <nav className="mc-sidebar" aria-label="Primary">
         {/* Desktop order puts Practice right above Recall; the mobile bottom nav
-            below stays the five-item shared NAV. Skills stays a desktop-only
-            secondary link. */}
+            below stays the five-item shared NAV. The Skills view is now merged into
+            Progress (its 7 reasoning-skill rings live there). */}
         {SIDEBAR.map(({ to, end, label, Icon }) => (
           <NavLink key={to} to={to} end={end} className="mc-navitem">
             <Icon className="mc-navitem__icon" />
             <span className="mc-navitem__label">{label}</span>
           </NavLink>
         ))}
-        <NavLink to="/app/skills" className="mc-navitem">
-          <IconProgress className="mc-navitem__icon" />
-          <span className="mc-navitem__label">Skills</span>
-        </NavLink>
       </nav>
 
       <main id="main" className="mc-shell__main" tabIndex={-1}>

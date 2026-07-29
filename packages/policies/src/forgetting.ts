@@ -1,5 +1,5 @@
 /**
- * Forgetting layer for the mastery engine (mastery-bkt / provisional-v1).
+ * Forgetting layer for the mastery engine (mastery-bkt).
  *
  * Each unit carries a memory half-life `H` (days). `P(L)` decays as
  * `P(L) * 2^(-elapsedDays / H)`. Decay is computed **lazily** from

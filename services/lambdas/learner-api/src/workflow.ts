@@ -1,5 +1,12 @@
 import { createHash } from 'node:crypto';
-import { Authority, type LearnerState, type PracticeBankPort } from '@mcat/authority-core';
+import {
+  Authority,
+  MasterySeedNotCorroboratedError,
+  PracticeAttemptNotAuthorizedError,
+  SyntheticPracticeBankPort,
+  type LearnerState,
+  type PracticeBankPort,
+} from '@mcat/authority-core';
 import {
   AuthorityKernel,
   AuthorityKernelError,
@@ -13,12 +20,14 @@ import {
   type AuthorityKernelDependencies,
   type Principal,
 } from '@mcat/authority-kernel';
+import { clusterForLesson } from '@mcat/content';
 import {
   AcceptedCommandResponseSchema,
   AttemptCommandSchema,
   CarsReadinessViewSchema,
   DiagnosticNextSchema,
   LessonMasteryViewSchema,
+  LessonWarrantViewSchema,
   PracticeAttemptResultSchema,
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
@@ -35,6 +44,7 @@ import {
   type ContentId,
   type DiagnosticNext,
   type LessonMasteryView,
+  type LessonWarrantView,
   type PracticeAttemptResult,
   type PracticeItemView,
   type PracticeQueueView,
@@ -50,6 +60,7 @@ import type {
   JsonObject,
   OutboxRecord,
 } from '@mcat/database';
+import { adaptLessonResponse } from '@mcat/domain';
 
 import type {
   CarsDuelCommandBody,
@@ -73,6 +84,15 @@ import {
   resumeVectorLessonRun,
   type VectorLessonRun,
 } from './vector-lesson-runtime';
+import { vectorLessonResponseSubmissions } from './vector-lesson-response-source';
+import type { LessonResponseSubmission } from './lesson-response-seam';
+
+/**
+ * Re-exported so existing consumers keep one import site. The declaration lives
+ * in `./lesson-response-seam` because a second lesson's runtime must be able to
+ * produce the shape without importing this lambda's workflow.
+ */
+export type { LessonBindingResolution, LessonResponseSubmission } from './lesson-response-seam';
 
 interface MutationApplication {
   readonly eventType: string;
@@ -81,11 +101,24 @@ interface MutationApplication {
   readonly replacementState?: LearnerState;
 }
 
+/** Produces the responses a lesson runtime committed between two run states. */
+export type LessonResponseSubmissionSource = (
+  before: VectorLessonRun,
+  after: VectorLessonRun,
+) => readonly LessonResponseSubmission[];
+
 interface WorkflowDependencies {
   readonly repository: AuthorityRepository;
   readonly clock: Clock;
   readonly bank: AuthorityKernelDependencies['bank'];
   readonly practiceAuthorization?: PracticeAuthorizationPolicy;
+  /**
+   * Override the lesson-runtime submission source. Production uses the vector
+   * lesson's. A test injects one to reach states no on-disk artifact can express
+   * yet — notably a BKT-eligible response, since all 115 real bindings are
+   * instructional-only (lesson-evidence-mastery-contract §11).
+   */
+  readonly lessonResponseSubmissions?: LessonResponseSubmissionSource;
   /** Adaptive-practice bank/exposure seam. Falls back to synthetic when absent. */
   readonly practiceBank?: PracticeBankPort;
 }
@@ -119,13 +152,28 @@ function rebindRecordedEvent(
   state.seenIdempotencyKeys = [...state.seenIdempotencyKeys.slice(0, -1), envelope.idempotencyKey];
 }
 
-function deterministicEvidenceId(eventId: string, index: number): string {
-  if (index === 0) return eventId;
-  const bytes = createHash('sha256').update(`${eventId}:${index}`, 'utf8').digest().subarray(0, 16);
+function deterministicUuid(seed: string): string {
+  const bytes = createHash('sha256').update(seed, 'utf8').digest().subarray(0, 16);
   bytes[6] = (bytes[6]! & 0x0f) | 0x50;
   bytes[8] = (bytes[8]! & 0x3f) | 0x80;
   const hex = bytes.toString('hex');
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+function deterministicEvidenceId(eventId: string, index: number): string {
+  return index === 0 ? eventId : deterministicUuid(`${eventId}:${index}`);
+}
+
+/**
+ * The observation id for one accepted lesson response.
+ *
+ * Derived from the accepted event rather than generated, because it is the key
+ * BKT deduplicates on (lesson-evidence-mastery-contract §12): a response
+ * re-derived from the same event must resolve to the same observation and move
+ * nothing the second time.
+ */
+function lessonObservationId(eventId: string): string {
+  return deterministicUuid(`${eventId}:lesson-observation`);
 }
 
 function bindNewEvidence(
@@ -145,11 +193,28 @@ function bindNewEvidence(
 export class RepositoryLearnerKernel {
   private readonly authorityKernel: AuthorityKernel;
   private readonly practiceAuthorization: PracticeAuthorizationPolicy;
+  /**
+   * ONE practice bank for the lifetime of this kernel, including the synthetic
+   * fallback.
+   *
+   * `Authority` builds its own fallback port when none is injected, and this
+   * class builds a fresh `Authority` per request — so with no `DATABASE_URL`
+   * every request used to get its own empty per-learner bookkeeping. That was
+   * survivable while the only casualties were exposure counts and the repair
+   * queue (a warm instance simply looked like a cold one). It is not survivable
+   * now: `getPracticeQueue` records the attempt grant that
+   * `submitPracticeAttempt` checks for, and those are two different requests.
+   * Hoisting the fallback here is what makes serve-then-answer one
+   * conversation rather than two.
+   */
+  private readonly practiceBank: PracticeBankPort;
 
   constructor(private readonly dependencies: WorkflowDependencies) {
     this.authorityKernel = new AuthorityKernel(dependencies);
     this.practiceAuthorization =
       dependencies.practiceAuthorization ?? syntheticPracticeAuthorizationPolicy;
+    this.practiceBank =
+      dependencies.practiceBank ?? new SyntheticPracticeBankPort(dependencies.bank);
   }
 
   handle(input: unknown, principal: Principal) {
@@ -219,6 +284,12 @@ export class RepositoryLearnerKernel {
     const state = await this.loadState(principal);
     const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
     return LessonMasteryViewSchema.array().parse(authority.getMasteryLessons(state));
+  }
+
+  async lessonWarrants(principal: Principal): Promise<readonly LessonWarrantView[]> {
+    const state = await this.loadState(principal);
+    const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
+    return LessonWarrantViewSchema.array().parse(authority.getLessonWarrants(state));
   }
 
   async carsReadiness(principal: Principal): Promise<CarsReadinessView> {
@@ -293,14 +364,15 @@ export class RepositoryLearnerKernel {
 
   async handleVectorLessonCommand(command: VectorLessonCommand, principal: Principal) {
     return AcceptedCommandResponseSchema.parse(
-      await this.mutate(command.envelope, principal, (_authority, baseState) => {
+      await this.mutate(command.envelope, principal, (authority, baseState) => {
         const state = withVectorLesson(baseState);
         if (state.vectorLessonRun === undefined) {
           throw validationError('Start this lesson before sending a lesson command.');
         }
+        const previousRun = restoreVectorLessonRun(state.vectorLessonRun);
         try {
           state.vectorLessonRun = applyVectorLessonAction(
-            restoreVectorLessonRun(state.vectorLessonRun),
+            previousRun,
             command,
             command.envelope.occurredAt,
           );
@@ -312,12 +384,152 @@ export class RepositoryLearnerKernel {
               : 'The lesson command does not match the authoritative checkpoint.',
           );
         }
+        const lessonResponse = this.recordLessonResponse(
+          authority,
+          baseState,
+          command.envelope,
+          (this.dependencies.lessonResponseSubmissions ?? vectorLessonResponseSubmissions)(
+            previousRun,
+            state.vectorLessonRun,
+          ),
+        );
         return {
           eventType: 'lesson_command_accepted',
-          payload: toJsonObject(command),
+          payload: toJsonObject({
+            ...command,
+            ...(lessonResponse === null ? {} : { lessonResponse }),
+          }),
         };
       }),
     );
+  }
+
+  /**
+   * Record one lesson response: normalize, route to evidence, qualify for BKT.
+   *
+   * Deliberately generic. It reads `submission.lessonId` and nothing else about
+   * which lesson ran, so a second lesson reuses it by supplying the same shape.
+   * Every judgement is made downstream of here by `adaptLessonResponse` and the
+   * authority; this method decides nothing about correctness, independence,
+   * evidence kind, or whether `pL` moves.
+   *
+   * Atomicity: the caller runs inside one repository transaction, and both
+   * writes land on the same in-memory `state` that transaction persists. A
+   * throw anywhere below aborts the transaction with nothing written — no
+   * event, no evidence, no BKT movement.
+   */
+  private recordLessonResponse(
+    authority: Authority,
+    state: LearnerState,
+    envelope: CommandEnvelope,
+    submissions: readonly LessonResponseSubmission[],
+  ): JsonObject | null {
+    const submission = submissions[0];
+    if (submission === undefined) return null;
+    if (submissions.length > 1) {
+      // One accepted command is one event, so it may carry at most one
+      // response. More than one would make the event/evidence grain ambiguous.
+      throw validationError('A lesson command may commit at most one response.');
+    }
+
+    const cluster = clusterForLesson(submission.lessonId);
+    if (cluster === null) {
+      // `EvidenceRecord.cluster` is caller-resolved and required. Refusing the
+      // command is the fail-closed answer: recording the response without its
+      // cluster would silently drop the evidence instead.
+      throw new AuthorityKernelError({
+        code: 'unavailable',
+        message: 'This lesson has no resolved cluster, so its response cannot be recorded.',
+      });
+    }
+
+    const evidenceId = deterministicEvidenceId(envelope.eventId, 0);
+    const adaptation = adaptLessonResponse({
+      binding: submission.binding,
+      response: submission.response,
+      scoring: submission.scoring,
+      identity: {
+        observationId: lessonObservationId(envelope.eventId),
+        eventId: envelope.eventId,
+        learnerId: state.learnerId,
+        idempotencyKey: envelope.idempotencyKey,
+        evidenceId,
+      },
+      cluster,
+      envelopeBindingVersion: submission.envelopeBindingVersion,
+      acceptedAt: this.dependencies.clock.now(),
+      sequence: state.nextSequence + 1,
+      contentRelease: this.dependencies.bank.contentRelease,
+      policies: state.events.at(-1)?.policies ?? [],
+    });
+
+    // BKT FIRST, then evidence. The authority re-parses the observation through
+    // its strict schema and deduplicates on `observationId`, so this is the
+    // second idempotency guard and the only path by which a lesson can reach
+    // `pL`.
+    const applied =
+      adaptation.qualification.status === 'qualified'
+        ? authority.applyQualifiedBktObservation(state, {
+            observation: adaptation.qualification.observation,
+            lessonId: submission.lessonId,
+          })
+        : null;
+
+    // A REFUSED application means the server rejected the observation's own
+    // premises — today, a timestamp it will not accept. Evidence and BKT then
+    // refuse together: keeping the record would leave a warrant behind for a
+    // response the server just declined, and warrant signals are exactly the
+    // time-derived ones. This is NOT the same as `qualification` merely not
+    // qualifying: an instructional-only binding produces no BKT observation and
+    // its evidence is still recorded, which is the whole point of §7.2.
+    const refusedByAuthority = applied?.status === 'rejected';
+
+    // Two guards already stand ahead of the append: `mutate` returns the stored
+    // result for a seen idempotency key without re-applying, and the repository
+    // rejects a reused event id. This last one makes the append itself
+    // idempotent on the id derived from the event, so "one event, one evidence
+    // record" holds by construction rather than by those two staying correct.
+    if (
+      adaptation.evidence !== null &&
+      !refusedByAuthority &&
+      !state.evidence.some((record) => record.evidenceId === evidenceId)
+    ) {
+      state.evidence.push(adaptation.evidence);
+    }
+
+    // Ids and codes only. The accepted observation itself is server-only and
+    // snapshots the binding, including its protected scoring reference, so it
+    // is never written into an event payload.
+    //
+    // `binding` carries the load diagnostics on EVERY accepted response, empty
+    // list included. §3.7 requires an unmapped author key to be reported rather
+    // than dropped, and a binding that stopped validating must be tellable
+    // apart from an id that never existed — otherwise "this item silently
+    // produces no evidence" has no signal anywhere in production.
+    return toJsonObject({
+      status: adaptation.status,
+      binding: {
+        resolution: submission.bindingResolution.status,
+        unrecognizedKeys: [...submission.bindingResolution.unrecognizedKeys],
+      },
+      // The level AND whether the runtime measured it. `EvidenceRecord` carries
+      // only the level, and `AssistanceLevel` has no `UNOBSERVED` member, so
+      // "we saw no help taken" and "we could not tell" are indistinguishable
+      // there. Recording the pair here keeps them distinguishable somewhere
+      // durable until the contract can carry the fact itself.
+      assistance: {
+        level: submission.response.assistanceLevel,
+        observed: submission.assistanceObserved,
+      },
+      observationId: adaptation.observation?.observationId ?? null,
+      evidenceId: adaptation.evidence === null || refusedByAuthority ? null : evidenceId,
+      evidenceKind: refusedByAuthority ? null : (adaptation.evidence?.kind ?? null),
+      bkt: applied?.status ?? 'not_qualified',
+      rejectionCodes:
+        adaptation.qualification.status === 'rejected'
+          ? [...adaptation.qualification.rejectionCodes]
+          : [],
+    });
   }
 
   async handleVectorLessonInvalidation(envelope: CommandEnvelope, principal: Principal) {
@@ -335,7 +547,7 @@ export class RepositoryLearnerKernel {
           eventType: 'lesson_item_invalidated',
           payload: toJsonObject({
             envelope,
-            lessonId: 'V3-LES-130923',
+            lessonId: state.vectorLessonRun.lessonId,
             runId: state.vectorLessonRun.runId,
           }),
         };
@@ -470,14 +682,45 @@ export class RepositoryLearnerKernel {
   /**
    * Apply the diagnostic's opening priors. No evidence is bound: a seed is not
    * an attempt, and nothing here can move a unit the learner has practised.
+   *
+   * The payload is corroborated inside the authority before it is applied.
+   * `MasterySeedSchema` validates SHAPE — that the values are probabilities and
+   * the keys are non-empty strings — and the authority re-clamps every value,
+   * which is why a fabricated seed cannot mint mastery. Neither of those says
+   * anything about WHICH units a seed is entitled to move, and the planner ranks
+   * on exactly that: a caller could name arbitrary KC ids at the floor or the
+   * cap with no diagnostic taken at all.
+   *
+   * `applyMasterySeed` refuses any payload the one real producer could not have
+   * emitted, and it does so INSIDE the authority rather than here. This route
+   * used to hold the check itself, which left the in-process dev authority — the
+   * other real caller of the same method — with no check at all. All this route
+   * owns now is the status code. See `corroborateMasterySeed` for what the
+   * refusal does and does not establish: it is a shape check, not proof that a
+   * diagnostic was taken, and closing the remainder needs the issuing service
+   * and the authority to share a fact.
+   *
+   * The refusal is a 400 rather than a silent drop of the offending entries:
+   * keeping the acceptable half of a payload the server has already decided is
+   * dishonest is how a restriction loses to a permission. The reason names which
+   * of the four producer properties failed and stays server-side.
    */
   async handleMasterySeed(command: MasterySeedCommandBody, principal: Principal) {
-    return AcceptedCommandResponseSchema.parse(
-      await this.mutate(command.envelope, principal, (authority, state) => {
-        authority.applyMasterySeed(state, command.seed);
-        return { eventType: 'mastery_seed_applied', payload: toJsonObject(command) };
-      }),
-    );
+    try {
+      return AcceptedCommandResponseSchema.parse(
+        await this.mutate(command.envelope, principal, (authority, state) => {
+          authority.applyMasterySeed(state, command.seed);
+          return { eventType: 'mastery_seed_applied', payload: toJsonObject(command) };
+        }),
+      );
+    } catch (error) {
+      if (error instanceof MasterySeedNotCorroboratedError) {
+        throw validationError(
+          `The diagnostic seed is not one this server could have produced (${error.reason}).`,
+        );
+      }
+      throw error;
+    }
   }
 
   async handleReset(command: ContinueCommandBody, principal: Principal) {
@@ -507,7 +750,7 @@ export class RepositoryLearnerKernel {
   }
 
   private authority(): Authority {
-    return new Authority(this.dependencies.bank, this.dependencies.clock, this.dependencies.practiceBank);
+    return new Authority(this.dependencies.bank, this.dependencies.clock, this.practiceBank);
   }
 
   /**
@@ -531,27 +774,48 @@ export class RepositoryLearnerKernel {
    * Score one adaptive-practice answer. A first, unassisted attempt moves the
    * P(L) mastery signal (persisted in the projection) and records exposure +
    * repair through the injected bank port; retries are learning-only.
+   *
+   * The authorization check is NOT here, deliberately. `handlePractice` above
+   * gates its own route with `practiceAuthorization.permits`, and copying that
+   * shape here — a second check, at a second door, over a different notion of
+   * "may answer" — is exactly how the two would drift: a third caller of
+   * `submitPracticeAttempt` (the dev in-process authority is already one) would
+   * arrive gated by neither. So the adaptive gate lives on the write itself,
+   * where every caller meets it, and this method's only job is to give the
+   * refusal the transport shape the other practice route already uses.
    */
   async handlePracticeAdaptive(
     body: PracticeAdaptiveAttemptCommandBody,
     principal: Principal,
   ): Promise<PracticeAttemptResult> {
-    return PracticeAttemptResultSchema.parse(
-      await this.mutate(body.envelope, principal, async (authority, state) => {
-        const result = await authority.submitPracticeAttempt(state, body.command);
-        return {
-          eventType: 'practice_adaptive_attempt_submitted',
-          payload: toJsonObject({ envelope: body.envelope, ...body.command }),
-          result: toJsonObject(PracticeAttemptResultSchema.parse(result)),
-        };
-      }),
-    );
+    try {
+      return PracticeAttemptResultSchema.parse(
+        await this.mutate(body.envelope, principal, async (authority, state) => {
+          const result = await authority.submitPracticeAttempt(state, body.command);
+          return {
+            eventType: 'practice_adaptive_attempt_submitted',
+            payload: toJsonObject({ envelope: body.envelope, ...body.command }),
+            result: toJsonObject(PracticeAttemptResultSchema.parse(result)),
+          };
+        }),
+      );
+    } catch (error) {
+      // The refusal reason names which of the four bindings failed and stays
+      // server-side; the learner-facing answer is the same one an unassigned
+      // question gets from `handlePractice`, so probing this route cannot tell
+      // "no such item" apart from "not served to you".
+      if (error instanceof PracticeAttemptNotAuthorizedError) throw forbidden();
+      throw error;
+    }
   }
 
   private async mutate(
     envelope: CommandEnvelope,
     principal: Principal,
-    apply: (authority: Authority, state: LearnerState) => MutationApplication | Promise<MutationApplication>,
+    apply: (
+      authority: Authority,
+      state: LearnerState,
+    ) => MutationApplication | Promise<MutationApplication>,
   ): Promise<JsonObject> {
     return this.dependencies.repository.transaction(async (transaction) => {
       const projection = await transaction.lockLearner(principal.learnerId);

@@ -6,6 +6,7 @@ export * from './errors';
 export * from './vocab';
 export * from './atlas';
 export * from './events';
+export * from './lesson-observation';
 export * from './commands';
 export * from './learner-views';
 export * from './mastery';

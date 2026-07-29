@@ -1,4 +1,5 @@
 import type { MasterySeed, Section } from '@mcat/contracts';
+import { orderedKcsForLesson } from '@mcat/content';
 import {
   assembleMstStages,
   computeBayesResult,
@@ -6,8 +7,8 @@ import {
   contentionSlots,
   FC_AXIS,
   indexAxis,
-  lessonSeedsFromDiagnostic,
-  lessonsByFc,
+  kcSeedsFromDiagnostic,
+  kcsByFc,
   masterySeedFromUnitSeeds,
   MST_140_RECOMMENDED,
   MST_DESIGNS,
@@ -209,10 +210,16 @@ function buildResultView(record: SessionRecord): DiagnosticResultView {
       itemsSeen: s.itemsSeen,
     })),
     itemsScored: result.itemsScored,
-    // A bucket read is weak evidence about any one lesson beneath it, so
-    // `lessonSeedsFromDiagnostic` attenuates certainty by sqrt(lessons) before
-    // the prior is derived. Concepts the form never sampled produce no seed.
-    masterySeed: masterySeedFromUnitSeeds(lessonSeedsFromDiagnostic(result, lessonsByFc())),
+    // Seeded at KC grain, because that is the grain the mastery engine stores: a
+    // lesson has no `P(L)` of its own, and while this emitted `lessonPriors` the
+    // authority had nowhere to put them, so seeding did nothing at all.
+    //
+    // A concept read is weak evidence about any one KC beneath it, so certainty is
+    // attenuated by sqrt(KCs) before the prior is derived. Concepts the form never
+    // sampled produce no seed.
+    masterySeed: masterySeedFromUnitSeeds(
+      kcSeedsFromDiagnostic(result, kcsByFc(orderedKcsForLesson)),
+    ),
   };
 }
 

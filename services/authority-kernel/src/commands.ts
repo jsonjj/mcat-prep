@@ -42,7 +42,14 @@ async function applyAttempt(
   const eventCount = state.events.length;
   const evidenceCount = state.evidence.length;
   await authority.submitAttempt(state, command.choiceId);
-  if (state.events.length !== eventCount + 1) {
+
+  // What this needs is that the attempt was accepted and landed at `eventCount`,
+  // because the rebind below rewrites exactly that slot. It is NOT "the call
+  // appended one event": the attempt also moves P(L), and every capability write
+  // appends a `bkt_observation_applied` ledger record after it. Counting total
+  // events made an audit record indistinguishable from a rejected attempt.
+  const recorded = state.events[eventCount];
+  if (recorded === undefined || recorded.type !== 'attempt_submitted') {
     throw validationError('The attempt is not valid in the current session state.');
   }
 
@@ -71,8 +78,10 @@ async function applyAttempt(
     },
   });
   state.events.splice(eventCount, 1, authoritativeEvent);
+  // The attempt's generated key by identity, not by position: with a ledger
+  // record appended after it, the attempt's key is no longer the last one.
   state.seenIdempotencyKeys = [
-    ...state.seenIdempotencyKeys.slice(0, -1),
+    ...state.seenIdempotencyKeys.filter((key) => key !== recorded.idempotencyKey),
     command.envelope.idempotencyKey,
   ];
   for (const evidence of state.evidence.slice(evidenceCount)) {

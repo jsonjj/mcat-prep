@@ -1,18 +1,25 @@
 import {
+  BktObservationAppliedSchema,
   ContentIdSchema,
   DAILY_MINUTES_DEFAULT,
   DAILY_MINUTES_MAX,
   DAILY_MINUTES_MIN,
+  QualifiedBktObservationSchema,
   REASONING_OPERATIONS,
   SKILL_CLUSTERS,
+  UtcTimestampSchema,
   daysBetween,
   newEventId,
   newIdempotencyKey,
   newLearnerId,
   systemClock,
+  type BktApplicationRejectionCode,
+  type BktClockAdjustment,
+  type BktObservationSource,
   type BootstrapResponse,
   type BuildTodaysPathInput,
   type TodaysPathView,
+  type CandidateEvidenceMode,
   type CarsDuelRubric,
   type CarsReadinessLabel,
   type CarsReadinessView,
@@ -21,14 +28,15 @@ import {
   type LearnerEvent,
   type LessonMasteryView,
   type MasterySeed,
-  type MasteryState,
   type MistakePatternView,
-  type PracticeAttemptCommand,
+  type PracticeAttempt,
   type PracticeAttemptResult,
   type PracticeFocus,
   type PracticeQuestion,
   type PracticeQueueItem,
   type PracticeQueueView,
+  type PolicyVersion,
+  type QualifiedBktObservation,
   type ReasoningOperation,
   type SkillCluster,
   type SkillMasteryView,
@@ -36,9 +44,18 @@ import {
 } from '@mcat/contracts';
 import {
   EvidenceRecordSchema,
+  boundOccurredAtToServerTime,
+  deriveEvidenceKind,
+  isIndependentAdministration,
   scoreAttempt,
+  type AdministrationFacts,
   type CapacityLabel,
   type EvidenceKind,
+  type EvidenceOutcome,
+  type EvidenceQualityTier,
+  type EvidenceReason,
+  type EvidenceRecord,
+  type SkillEvidenceState,
   type Task,
 } from '@mcat/domain';
 import {
@@ -55,16 +72,18 @@ import {
   classifyCapacity,
   computeGhost,
   currentPL,
-  evaluateMastery,
+  evaluateEvidence,
   initialMemoryState,
+  isAtCapabilityCut,
   isCarsOnTrack,
-  MASTERY_THRESHOLD,
+  isLessonRollupAvailable,
   overallCarsReadiness,
   PRACTICE_SELECTION_CONFIG,
   practiceSpecId,
   predictedCorrect,
   PRIOR_PL0,
   REVIEW_LINE,
+  rollUpLessonMastery,
   SEED_CARS_MAX,
   SEED_CARS_MIN,
   SEED_PRIOR_CAP,
@@ -72,6 +91,7 @@ import {
   selectPracticeQueue,
   type CarriedActivity,
   type GhostView,
+  type LessonRollupResult,
   type MemoryState,
   type PracticeCarsUnit,
   type PracticeSnapshot,
@@ -79,12 +99,23 @@ import {
   type TodaysPathCandidateLesson,
   type TodaysPathSnapshot,
 } from '@mcat/policies';
-import { clusterForLesson, loadSyntheticBank, type LoadedBank } from '@mcat/content';
+import {
+  clusterForLesson,
+  clusterForKc,
+  loadSyntheticBank,
+  orderedKcsForLesson,
+  type LoadedBank,
+} from '@mcat/content';
+import {
+  corroborateMasterySeed,
+  MasterySeedNotCorroboratedError,
+} from './mastery-seed-corroboration';
 import {
   compiledToPracticeQuestion,
   SyntheticPracticeBankPort,
   type PracticeAnswer,
   type PracticeAttemptLogEntry,
+  type PracticeAttemptRefusal,
   type PracticeBankPort,
   type PracticeCandidateUnit,
   type PracticeItemClassification,
@@ -93,6 +124,7 @@ import {
 import type {
   ErrorEntryView,
   LearnerState,
+  LessonWarrantView,
   MasteryEngineState,
   MasteryMapEntry,
   PracticeItemView,
@@ -105,6 +137,171 @@ import type {
   TodaysPathState,
   WrappedView,
 } from './types';
+
+/** One node of the loaded skill graph, one of the sources `warrantGrains` unions. */
+type SkillNode = LoadedBank['skillGraph']['skills'][number];
+
+/**
+ * A hard prerequisite blocks only for these named warrant outcomes. They are
+ * the reason-code equivalents of the legacy not-assessed/foundation gate; do
+ * not turn this gate back into an ordinal comparison.
+ */
+const PREREQUISITE_BLOCKING_EVIDENCE_REASONS: ReadonlySet<EvidenceReason> = new Set([
+  'NO_USEFUL_EVIDENCE',
+  'PREREQUISITE_BLOCKED',
+]);
+
+/**
+ * `PracticeSnapshot` (from `@mcat/policies`) plus the two facts the selection
+ * engine has no use for but `getPracticeQueue` does: whether the taught-set
+ * gate in `buildPracticeSnapshot` withheld every science unit the bank offered,
+ * and whether the learner has been taught anything at all. Extended locally
+ * rather than in the shared policies package, because it is authority-side
+ * bookkeeping about WHY a snapshot looks the way it does, not an input the pure
+ * engine reads.
+ *
+ * Two fields rather than one because they answer different questions and the
+ * learner-facing sentence differs: "the questions we hold are not from your
+ * finished lessons" is not "you have not finished a lesson". They cannot
+ * disagree, because both read the one taught set — see `taughtKcSet`.
+ */
+interface ScopedPracticeSnapshot extends PracticeSnapshot {
+  readonly taughtGapDetected: boolean;
+  readonly nothingTaughtYet: boolean;
+}
+
+/**
+ * The learner's taught-KC set: the union of their completed lessons' KCs, as
+ * `todaysPathSnapshot` cached it. The ONE derivation, so the gate and the
+ * "nothing taught yet" report can never describe different sets.
+ *
+ * Absent and empty are the same value here on purpose. They were once told
+ * apart — see the teach-before-test docblock in `buildPracticeSnapshot`.
+ */
+const taughtKcSet = (state: LearnerState): ReadonlySet<string> => new Set(state.taughtKcIds ?? []);
+
+/** A grain a warrant is produced for, with the labels a view needs. */
+interface WarrantGrain {
+  readonly skillId: string;
+  readonly cluster: SkillCluster;
+  /** Governed label only — never an authored string. See `warrantGrainTitle`. */
+  readonly title: string;
+}
+
+/**
+ * A grain has evidence but no resolvable cluster, so no warrant can be published
+ * for it.
+ *
+ * Thrown rather than skipped. Omitting the grain is what let the evidence
+ * authority publish nothing for every lesson KC while every test passed: an
+ * absent warrant is indistinguishable from "no evidence yet", so the failure had
+ * no symptom. A loud throw names the ids and cannot be mistaken for an empty
+ * result.
+ */
+export class UnresolvedWarrantGrainError extends Error {
+  constructor(readonly skillIds: readonly string[]) {
+    super(
+      `No cluster resolves for warrant-bearing grain(s): ${skillIds.join(', ')}. ` +
+        'Evidence exists for them, so they cannot be omitted from the warrant.',
+    );
+    this.name = 'UnresolvedWarrantGrainError';
+  }
+}
+
+/** One grain whose cluster sources disagree, with every cluster they claim. */
+export interface ConflictingWarrantCluster {
+  readonly skillId: string;
+  readonly clusters: readonly SkillCluster[];
+}
+
+/**
+ * A grain's cluster resolves to two different values, so the warrant cannot say
+ * where it belongs.
+ *
+ * Thrown, not resolved by precedence. This is strictly worse than a grain that
+ * resolves nowhere: precedence picks one of the disagreeing answers and publishes
+ * it confidently, so the routing bug reaches the planner as data rather than as a
+ * failure. Unreachable while the registry keeps one owning lesson per KC — which
+ * is exactly why it is asserted rather than left to the registry's current shape.
+ */
+export class ConflictingWarrantClusterError extends Error {
+  constructor(readonly conflicts: readonly ConflictingWarrantCluster[]) {
+    super(
+      'Conflicting clusters for warrant-bearing grain(s): ' +
+        conflicts.map((c) => `${c.skillId} claims ${c.clusters.join(' and ')}`).join('; ') +
+        '. A grain belongs to exactly one cluster; picking one of the two would ' +
+        'publish a confident wrong answer.',
+    );
+    this.name = 'ConflictingWarrantClusterError';
+  }
+}
+
+/**
+ * The server did not issue this practice attempt, so it will not score it.
+ *
+ * Thrown rather than returned, and thrown BEFORE the answer key is read, so a
+ * caller who was never served the item learns nothing about it — not whether it
+ * exists, not what its answer is, and not what the queue would have chosen. The
+ * transport decides the status code; every practice route maps this to the same
+ * refusal the single-item route already gives an unassigned question.
+ */
+export class PracticeAttemptNotAuthorizedError extends Error {
+  constructor(
+    readonly reason: PracticeAttemptRefusal,
+    readonly questionId: string,
+  ) {
+    super(
+      `This practice attempt was not issued by the server (${reason}). ` +
+        'An adaptive-practice answer is only accepted for an item the queue served ' +
+        'to this learner, under the spec and content release it was served with.',
+    );
+    this.name = 'PracticeAttemptNotAuthorizedError';
+  }
+}
+
+/**
+ * How long a served item stays answerable.
+ *
+ * Long enough that no single sitting can outlast it, short enough that a queue
+ * response is not a standing permission a caller can bank. The client refetches
+ * the queue on every mount, and every serve re-issues, so the window renews for
+ * anyone actually using the product; only a caller holding a response aside
+ * meets the expiry at all.
+ */
+const PRACTICE_ATTEMPT_GRANT_TTL_MS = 12 * 60 * 60 * 1000;
+
+/**
+ * The label published for a grain, from a GOVERNED source only.
+ *
+ * `MasteryMapEntry.title` is a learner-facing field, and `skillId` reaches it
+ * from `binding.primary_kc_id` — a string a lesson author writes. Echoing that
+ * string as display copy would let an author put words on a learner's screen
+ * through an id field, which is the shape of defect this seam spent the whole
+ * run removing. So a title comes from one of exactly two governed sources:
+ *
+ * - the bank's reviewed `SkillNode.title`; or
+ * - a KC id that is a member of the SHA-pinned V3 registry, evidenced by its
+ *   cluster resolving through `clusterForKc`. That id is a governed structural
+ *   identifier, not free author text, and a stable identifier beats a fabricated
+ *   sentence.
+ *
+ * Anything else gets a fixed marker. Membership in the registry is the test, not
+ * the shape of the id: no format matching, so a future id scheme needs no change
+ * here. No consumer renders this field today (`SkillDetail.tsx` joins on
+ * `skillId` and takes its heading from the skills endpoint), so this is
+ * prophylactic — which is the point, because the next consumer will trust the
+ * field's name.
+ */
+const UNTITLED_WARRANT_GRAIN = 'Untitled';
+
+const warrantGrainTitle = (
+  skillId: string,
+  node: SkillNode | undefined,
+  registryCluster: SkillCluster | null,
+): string => {
+  if (node !== undefined) return node.title;
+  return registryCluster === null ? UNTITLED_WARRANT_GRAIN : skillId;
+};
 
 interface PathActivity {
   id: string;
@@ -121,11 +318,28 @@ interface PathActivity {
 const ENZYME_PATH: PathActivity[] = [
   { id: 'lesson', kind: 'lesson', lessonId: 'lesson-enz-inhibition' },
   { id: 'indep1', kind: 'question', phase: 'independent', questionId: 'q-enz-indep-competitive' },
-  { id: 'indep2', kind: 'question', phase: 'independent', questionId: 'q-enz-indep-noncompetitive' },
-  { id: 'transfer', kind: 'question', phase: 'transfer', questionId: 'q-enz-transfer-lineweaver', changeDimensions: ['representation'] },
+  {
+    id: 'indep2',
+    kind: 'question',
+    phase: 'independent',
+    questionId: 'q-enz-indep-noncompetitive',
+  },
+  {
+    id: 'transfer',
+    kind: 'question',
+    phase: 'transfer',
+    questionId: 'q-enz-transfer-lineweaver',
+    changeDimensions: ['representation'],
+  },
   { id: 'passage', kind: 'question', phase: 'passage', questionId: 'q-enz-passage-1' },
   { id: 'sim', kind: 'simulation', specId: 'sim-enz-inhibition' },
-  { id: 'simTransfer', kind: 'question', phase: 'transfer', questionId: 'q-enz-sim-transfer-1', changeDimensions: ['domain_context'] },
+  {
+    id: 'simTransfer',
+    kind: 'question',
+    phase: 'transfer',
+    questionId: 'q-enz-sim-transfer-1',
+    changeDimensions: ['domain_context'],
+  },
   { id: 'protected', kind: 'question', phase: 'protected', questionId: 'q-enz-protected-1' },
   { id: 'recall', kind: 'recall', promptId: 'recall-enz-competitive' },
   { id: 'complete', kind: 'complete' },
@@ -133,6 +347,176 @@ const ENZYME_PATH: PathActivity[] = [
 
 const ENZYME_SKILL = 'bb1-enzyme-inhibition';
 const ENZYME_LESSON_ID = 'lesson-enz-inhibition';
+
+/**
+ * What an adaptive-practice item is eligible to serve as, decided by the SERVER.
+ *
+ * Not an authored declaration and not reachable from one: no byte of item data
+ * reaches this list, so the failure mode where an author widens their own
+ * item's eligibility cannot occur here. It states a property of the CHANNEL —
+ * a corpus item served cold and scored server-side — and `deriveEvidenceKind`
+ * still gates it on the administration facts, so a repeat or an assisted
+ * attempt resolves to a contextual-only kind regardless.
+ */
+const PRACTICE_EVIDENCE_MODES: readonly CandidateEvidenceMode[] = ['INDEPENDENT'];
+
+/**
+ * The family marker for an item whose corpus row names none.
+ *
+ * A family satisfies a recipe slot at most once, so collapsing every
+ * unknown-family item onto one marker makes them share a single slot — fewer
+ * slots filled, never more. Minting a distinct family per item (the questionId,
+ * say) would be the generous direction, and generosity is the wrong default for
+ * a field that decides how much evidence a learner is credited with.
+ */
+const UNKNOWN_ITEM_FAMILY = 'fam-unknown';
+
+/**
+ * How far ahead of the Authority clock a runner-reported `occurredAt` may be and
+ * still be treated as honest clock skew rather than a broken or hostile client.
+ *
+ * Five minutes, the same allowance Kerberos and most JWT `nbf`/`exp` validators
+ * use. It is generous enough for an unsynchronised session server or a device
+ * whose clock drifted, and far too small to buy any decay advantage: at the
+ * initial 7-day half-life, five minutes of forward drift is a ~0.03% difference
+ * in the value read back. Anything beyond it is refused with
+ * `OBSERVATION_TIMESTAMP_IN_FUTURE` rather than silently clamped, because a
+ * clamp alone would accept the bad claim and leave no signal.
+ */
+export const BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS = 5 * 60 * 1000;
+
+/**
+ * How far BEHIND the Authority clock a reported `occurredAt` may be and still be
+ * used as the decay baseline. Symmetric with the future tolerance, and five
+ * minutes for the same reasons.
+ *
+ * A monotonic grain floor already stops a late claim rewinding a grain that has
+ * history. It cannot help on a grain's FIRST write, where the floor is `null`,
+ * and there the reported time was accepted verbatim: a claim dated 2020 produced
+ * `currentPL = 5.4e-104`, and identical evidence delivered old-then-recent
+ * versus recent-then-old produced `0.1497` versus `0.8624` — a 5.8× spread in the
+ * learner-facing number from delivery order alone.
+ *
+ * The claim is CLAMPED, never refused. Refusing any backdating would undo the
+ * deliberate choice to detect rather than enforce ordering: delayed and offline
+ * submissions are normal and their evidence must not be discarded. Clamping keeps
+ * the answer and only declines to apply a decay penalty the server cannot verify.
+ *
+ * Why this width. Order-dependence cannot be eliminated while the reported time
+ * is honoured at all, only bounded — and it is bounded by the decay across the
+ * window, which at the initial 7-day half-life is ~0.03%. A wider window (a day:
+ * ~9%) would leave a spread a learner could see. The cost is the opposite
+ * direction: a genuinely long-delayed submission has its decay baseline treated
+ * as recent, which is generous. That is the right way to be wrong here — the
+ * elapsed time is unverifiable, the server prefers its own clock over an
+ * unverifiable claim, and the WARRANT timestamp is bounded separately against
+ * `acceptedAt` and keeps the honest time, so freshness, delay and retention are
+ * unaffected. Only the memory baseline moves, and `P(L)` still requires real
+ * correct answers to rise: the clamp cannot manufacture evidence.
+ */
+export const BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS = 5 * 60 * 1000;
+
+const instant = (t: UtcTimestamp): number => Date.parse(t);
+const shiftedBy = (t: UtcTimestamp, deltaMs: number): UtcTimestamp =>
+  new Date(instant(t) + deltaMs).toISOString() as UtcTimestamp;
+const earlierOf = (a: UtcTimestamp, b: UtcTimestamp): UtcTimestamp =>
+  instant(a) <= instant(b) ? a : b;
+const laterOf = (a: UtcTimestamp, b: UtcTimestamp): UtcTimestamp =>
+  instant(a) >= instant(b) ? a : b;
+
+/** The server-bounded decay clock actually used, with what it took to get there. */
+interface BoundedDecayClock {
+  /** The time the step treated as reported, whoever generated it. */
+  reportedAt: UtcTimestamp;
+  appliedAt: UtcTimestamp;
+  clockAdjustment: BktClockAdjustment;
+}
+
+/**
+ * Who generated the time a caller offers the single write path.
+ *
+ * The two cases are not interchangeable and must not be spelled the same way.
+ * A `server` time is the Authority's own clock, read inside the step, so there
+ * is nothing to verify. A `caller` time is a runtime FACT reported by something
+ * the server does not control (contract §2) and is therefore checked — refused
+ * outright when implausibly ahead, clamped otherwise.
+ *
+ * Making the distinction part of the INPUT is the point. `reportedAt:
+ * UtcTimestamp` accepted both with one spelling, so the future-skew refusal
+ * could only live in the one caller that happened to know its time was
+ * untrusted, and every other path was safe by contingency — its `reportedAt`
+ * merely happened to be server-generated. A fourth path accepting a client time
+ * has to name it `caller` to compile, and naming it is what applies the guard.
+ */
+type ReportedTime =
+  | { readonly origin: 'server' }
+  | { readonly origin: 'caller'; readonly at: UtcTimestamp };
+
+/** A server-generated time, read inside the step. The common case. */
+const SERVER_REPORTED_TIME: ReportedTime = { origin: 'server' };
+
+/**
+ * The channel each write path's observations arrive on — named once each,
+ * because two things now read the source and they must agree.
+ *
+ * The BKT engine reads it to pick the `guess` term, so a lesson exit is
+ * believed less than a practice answer; the ledger reads it to record what
+ * moved the grain. Two literals per path would let a future edit discount one
+ * thing and audit another, and the disagreement would be invisible — both
+ * halves would still be a valid `BktObservationSource`.
+ *
+ * `tests/architecture/mastery-write-path.test.ts` asserts this set against
+ * `BKT_OBSERVATION_SOURCES` and forbids a bare source literal anywhere else in
+ * this file.
+ */
+const LESSON_OBSERVATION_SOURCE = 'lesson_response' as const satisfies BktObservationSource;
+const PRACTICE_OBSERVATION_SOURCE = 'adaptive_practice' as const satisfies BktObservationSource;
+const STUDY_OBSERVATION_SOURCE = 'synthetic_study' as const satisfies BktObservationSource;
+
+/**
+ * The single write path refused a caller-reported time before anything moved.
+ *
+ * Thrown rather than returned deliberately. A refusal is the fail-closed
+ * outcome, so a caller that has not thought about it must abort its write, not
+ * receive a value it can ignore and carry on with — which is the shape of every
+ * fail-open in this codebase's ledger. `applyQualifiedBktObservation` catches
+ * it and turns it into the audited `rejected` result the contract specifies.
+ */
+export class BktObservationRefusedError extends Error {
+  readonly rejectionCodes: readonly BktApplicationRejectionCode[];
+
+  constructor(rejectionCodes: readonly BktApplicationRejectionCode[]) {
+    super(`The BKT write path refused the observation: ${rejectionCodes.join(', ')}.`);
+    this.name = 'BktObservationRefusedError';
+    this.rejectionCodes = rejectionCodes;
+  }
+}
+
+/** Outcome of applying one `QualifiedBktObservation`. */
+export type QualifiedBktApplication = {
+  observationId: string;
+  /** The two grains this observation targets, echoed for audit. */
+  kcId: string;
+  reasoningOperation: ReasoningOperation;
+} & (
+  | {
+      status: 'applied';
+      /** The runner's verbatim claim, retained even when it was not used. */
+      reportedOccurredAt: UtcTimestamp;
+      /** The bounded, monotonic decay clock the grains were written with. */
+      appliedOccurredAt: UtcTimestamp;
+      clockAdjustment: BktClockAdjustment;
+      /**
+       * An observation with a higher `sequence` was already applied. The BKT
+       * update still happened — see `applyQualifiedBktObservation`.
+       */
+      outOfOrder: boolean;
+    }
+  /** Already applied under this `observationId`; nothing moved at all. */
+  | { status: 'duplicate' }
+  /** Refused before anything moved. Never partially applied. */
+  | { status: 'rejected'; rejectionCodes: readonly BktApplicationRejectionCode[] }
+);
 
 /**
  * Focus token a "try again" action carries into the practice queue. The queue's
@@ -259,6 +643,9 @@ export class Authority {
   }
 
   submitDiagnosticAnswer(state: LearnerState, questionId: string, choiceId: string | null): void {
+    // Allocated before any write, because `recordEvent` below moves
+    // `nextSequence`. See `appendEvidence`.
+    const acceptedSequence = state.nextSequence + 1;
     this.startDiagnostic(state);
     const d = state.diagnostic!;
     if (d.seenQuestionIds.includes(questionId)) return;
@@ -270,10 +657,14 @@ export class Authority {
     if (correct) d.correctCount += 1;
     this.recordEvent(
       state,
-      this.attemptEvent(state, questionId, choiceId, { assistanceLevel: 'A0', isDiagnosticRetry: false }),
+      this.attemptEvent(state, questionId, choiceId, {
+        assistanceLevel: 'A0',
+        isDiagnosticRetry: false,
+      }),
     );
     // Placement evidence is contextual only (never mastery), attributed to the probed skill.
-    const probedSkill = this.bank.questions.find((q) => q.id === questionId)?.internal_skill_ids[0] ?? ENZYME_SKILL;
+    const probedSkill =
+      this.bank.questions.find((q) => q.id === questionId)?.internal_skill_ids[0] ?? ENZYME_SKILL;
     this.appendEvidence(state, {
       skillId: probedSkill,
       kind: 'placement',
@@ -282,6 +673,7 @@ export class Authority {
       correct,
       independent: false,
       changeDimensions: [],
+      sequence: acceptedSequence,
     });
   }
 
@@ -315,12 +707,18 @@ export class Authority {
     });
     const dayNumber = Math.max(1, Math.floor(daysBetween(state.createdAt, this.clock.now())) + 1);
     const totalDays = state.goal?.testDate
-      ? Math.max(1, Math.round(daysBetween(state.createdAt, state.goal.testDate as unknown as UtcTimestamp)))
+      ? Math.max(
+          1,
+          Math.round(daysBetween(state.createdAt, state.goal.testDate as unknown as UtcTimestamp)),
+        )
       : null;
+    // Ghost companion: derived only from the learner's own goal, timeline, and
+    // coverage. Reads the internal warrant, since "has any evidence at all" is a
+    // tier comparison and the published view no longer carries the tier.
     const clustersWithEvidence = new Set(
-      this.getMasteryMap(state)
-        .filter((m) => m.base !== 'not_assessed')
-        .map((m) => m.cluster),
+      this.skillWarrants(state)
+        .filter(({ evidence }) => evidence.evidenceQuality !== 'not_assessed')
+        .map(({ grain }) => grain.cluster),
     );
     const coveragePct = clustersWithEvidence.size / SKILL_CLUSTERS.length;
     let lastEvidenceAt: string | null = null;
@@ -457,10 +855,7 @@ export class Authority {
   }
 
   /** Build (and persist) today's plan; idempotent per day unless `force`. */
-  async buildTodaysPath(
-    state: LearnerState,
-    input: BuildTodaysPathInput,
-  ): Promise<TodaysPathView> {
+  async buildTodaysPath(state: LearnerState, input: BuildTodaysPathInput): Promise<TodaysPathView> {
     const now = this.clock.now();
     // Persist the learner's timezone so reads (which have no request body) use the
     // same local day boundary as the build.
@@ -488,7 +883,14 @@ export class Authority {
     const carryOver = this.carryOverFrom(state.plan ?? null, planDate);
     // The engine plans only the time left after what's already done today.
     const engineBudget = Math.max(0, preset - keptMinutes);
-    const snapshot = await this.todaysPathSnapshot(state, input, planDate, engineBudget, ctx, carryOver);
+    const snapshot = await this.todaysPathSnapshot(
+      state,
+      input,
+      planDate,
+      engineBudget,
+      ctx,
+      carryOver,
+    );
     const result = buildTodaysPathEngine(snapshot, TODAYS_PATH_CONFIG);
     // Dedupe by activityId as a safety net (the engine already avoids re-scheduling
     // a carried kind/lesson, so collisions shouldn't occur).
@@ -692,18 +1094,27 @@ export class Authority {
     carryOver: CarriedActivity[],
   ): Promise<TodaysPathSnapshot> {
     // Single mastery read, reused for both the mastered-id gate and the per-lesson
-    // P(L) map that feeds scoreLesson's minor mastery nudge (avoid computing twice).
-    const masteryLessons = this.getMasteryLessons(state);
+    // P(L) map that feeds scoreLesson's learning-need term (avoid computing twice).
+    const candidateLessonIds = input.candidateLessons.map((lesson) => lesson.lessonId);
+    const masteryLessons = this.getMasteryLessons(state, candidateLessonIds);
     const masteredLessonIds = new Set(
       masteryLessons.filter((l) => l.mastered).map((l) => l.lessonId),
     );
     const pLByLesson = new Map(masteryLessons.map((l) => [l.lessonId, l.pL]));
     const completed = new Set(state.completedLessons ?? []);
     const now = this.clock.now();
+    // "This material has been put in front of the learner" — delivery OR the
+    // claim, which is the right union for teach-before-test and for prerequisite
+    // release. It is NOT the mastery claim, and it is deliberately not the value
+    // published as `mastered` below.
     const done = (id: string): boolean => completed.has(id) || masteredLessonIds.has(id);
 
-    // Prereq pipeline (ready for the authored map): unlocked = all prereqs done;
-    // dependentsCount = how many candidates list this lesson as a prerequisite.
+    // Prereq pipeline: unlocked = all prereqs done; dependentsCount = how many
+    // candidates list this lesson as a prerequisite. An actual graph's leaf must
+    // remain zero, rather than silently regaining the old KC-count proxy.
+    const hasPrerequisiteGraph = input.candidateLessons.some(
+      (lesson) => lesson.prerequisiteLessonIds.length > 0,
+    );
     const dependents = new Map<string, number>();
     for (const l of input.candidateLessons) {
       for (const p of l.prerequisiteLessonIds) dependents.set(p, (dependents.get(p) ?? 0) + 1);
@@ -724,7 +1135,7 @@ export class Authority {
       for (const kc of taughtKcIds) {
         const st = state.mastery?.kc[kc];
         const pL = st ? currentPL(st, now) : PRIOR_PL0;
-        if (pL < MASTERY_THRESHOLD) practiceReviewNeed += 1;
+        if (!isAtCapabilityCut(pL)) practiceReviewNeed += 1;
       }
     }
 
@@ -735,10 +1146,18 @@ export class Authority {
       section: l.section,
       cluster: l.cluster,
       kcCount: l.kcCount,
-      mastered: masteredLessonIds.has(l.lessonId) || completed.has(l.lessonId),
+      // Two facts, two fields. `|| completed.has(...)` used to sit on `mastered`,
+      // which taught the planner that finishing an instructional lesson at
+      // P(L) = 0.2 with zero evidence was the same as having mastered it — and
+      // since the planner drops mastered lessons, the material became
+      // unreachable. Completion is delivery (contract §9) and is published as
+      // such; the planner decides separately what to do with each.
+      mastered: masteredLessonIds.has(l.lessonId),
+      delivered: completed.has(l.lessonId),
       covered: l.cluster !== null && ctx.clustersWithEvidence.has(l.cluster),
       unlocked: l.prerequisiteLessonIds.every((p) => done(p)),
-      dependentsCount: dependents.get(l.lessonId) ?? 0,
+      dependentsCount: hasPrerequisiteGraph ? (dependents.get(l.lessonId) ?? 0) : null,
+      estimatedMinutes: l.estimatedMinutes,
       // Untracked lessons have no memory state yet → fall back to the P(L)_0 prior.
       pL: pLByLesson.get(l.lessonId) ?? PRIOR_PL0,
     }));
@@ -874,13 +1293,19 @@ export class Authority {
     }
     if (activity.kind === 'recall') {
       const prompt = this.bank.recallPrompts.find((r) => r.id === activity.promptId)!;
-      return { kind: 'recall', promptId: prompt.id, prompt: prompt.prompt, format: prompt.format, skillId: s.skillId };
+      return {
+        kind: 'recall',
+        promptId: prompt.id,
+        prompt: prompt.prompt,
+        format: prompt.format,
+        skillId: s.skillId,
+      };
     }
     // question
     const compiled = this.bank.compiled.get(activity.questionId!)!;
     const stimulus =
       compiled.safe.stimulus_id !== null
-        ? this.bank.stimuli.find((st) => st.id === compiled.safe.stimulus_id) ?? null
+        ? (this.bank.stimuli.find((st) => st.id === compiled.safe.stimulus_id) ?? null)
         : null;
     const reveal =
       s.sub === 'reveal'
@@ -920,6 +1345,12 @@ export class Authority {
    * standing in front of it.
    */
   async submitAttempt(state: LearnerState, choiceId: string | null): Promise<void> {
+    // Allocated before any write. This path appends TWO events on a first answer
+    // — the attempt and the BKT ledger record — so reading `nextSequence` at the
+    // append would stamp the evidence one past the sequence this command is
+    // accepted at, on a record that is `independent` and mastery-eligible. See
+    // `appendEvidence`.
+    const acceptedSequence = state.nextSequence + 1;
     this.startSession(state);
     const s = state.session!;
     const activity = this.currentActivity(state);
@@ -930,7 +1361,13 @@ export class Authority {
 
     if (s.sub === 'answering') {
       s.currentFirstChoiceId = choiceId;
-      this.recordEvent(state, this.attemptEvent(state, activity.questionId!, choiceId, { assistanceLevel: 'A0', isDiagnosticRetry: false }));
+      this.recordEvent(
+        state,
+        this.attemptEvent(state, activity.questionId!, choiceId, {
+          assistanceLevel: 'A0',
+          isDiagnosticRetry: false,
+        }),
+      );
 
       // The first answering attempt is INDEPENDENT (A0, no hint, not a retry, not
       // revealed), so it moves P(L) — up on correct, down on wrong. Retries and
@@ -948,6 +1385,7 @@ export class Authority {
           correct: choiceId === correctId,
           independent: true,
           changeDimensions: [],
+          sequence: acceptedSequence,
           conditions: { protected: true },
         });
         this.advance(state);
@@ -971,6 +1409,7 @@ export class Authority {
           correct: true,
           independent: scored.independent,
           changeDimensions: activity.changeDimensions ?? [],
+          sequence: acceptedSequence,
           conditions: phase === 'passage' ? { passage: true } : {},
         });
         this.advance(state);
@@ -982,7 +1421,13 @@ export class Authority {
     }
 
     if (s.sub === 'retry') {
-      this.recordEvent(state, this.attemptEvent(state, activity.questionId!, choiceId, { assistanceLevel: 'A0', isDiagnosticRetry: true }));
+      this.recordEvent(
+        state,
+        this.attemptEvent(state, activity.questionId!, choiceId, {
+          assistanceLevel: 'A0',
+          isDiagnosticRetry: true,
+        }),
+      );
       // Retry is diagnostic evidence only — never independent/mastery.
       this.appendEvidence(state, {
         skillId: s.skillId,
@@ -992,6 +1437,7 @@ export class Authority {
         correct: choiceId === correctId,
         independent: false,
         changeDimensions: [],
+        sequence: acceptedSequence,
       });
       // The correction was already shown before this retry, so there is nothing
       // left to reveal — move on.
@@ -1105,7 +1551,11 @@ export class Authority {
       occurredAt: this.clock.now(),
       contentRelease: this.bank.contentRelease,
       policies: activePolicyVersions(),
-      payload: { reviewObjectId: ContentIdSchema.parse(prompt.id), rating: correct ? 'good' : 'again', elapsedMs: 0 },
+      payload: {
+        reviewObjectId: ContentIdSchema.parse(prompt.id),
+        rating: correct ? 'good' : 'again',
+        elapsedMs: 0,
+      },
     });
     this.advance(state);
     return correct;
@@ -1113,81 +1563,693 @@ export class Authority {
 
   // ---- Views --------------------------------------------------------------
 
-  getMasteryMap(state: LearnerState): MasteryMapEntry[] {
-    const now = this.clock.now();
-    return this.bank.skillGraph.skills.map((skill) => {
-      const records = state.evidence.filter((e) => e.skillId === skill.skillId);
-      const prereqBlocked = this.isPrerequisiteBlocked(state, skill.skillId);
-      const mastery = evaluateMastery({
-        skillId: skill.skillId,
-        records,
-        now,
-        prerequisiteBlocked: prereqBlocked,
-        hasInstruction: records.length > 0,
+  /**
+   * Every grain a warrant must be produced for, with the labels a view needs.
+   *
+   * The bank's skill graph is NOT the answer. It holds two synthetic enzyme ids,
+   * while lesson evidence is keyed on `binding.primaryKcId`, a `V3-KC-*`. Driving
+   * the warrant off the graph alone meant the evidence authority published no
+   * tier, no satisfied or missing slot, no `freshestByKind` and no reason code
+   * for any grain a lesson writes — an empty set, silently, for exactly the
+   * signals the planner is specified to consume. Every seam test still passed,
+   * because `evaluateEvidence` is skillId-agnostic and nothing downstream read
+   * what the adapter wrote.
+   *
+   * So the enumeration is the union of three sources:
+   *
+   * 1. the loaded skill graph — the synthetic vertical's own grains;
+   * 2. every `skillId` that actually has an evidence record;
+   * 3. the required KCs of every practiced lesson, so a KC with NO evidence
+   *    still reports its gaps. "You have practiced this lesson and this KC has
+   *    nothing behind it" is the most actionable warrant there is, and it cannot
+   *    be expressed by omitting the KC.
+   *
+   * `cluster` is resolved from three sources — the graph node, the grain's own
+   * evidence records (`EvidenceRecord.cluster` is required and caller-resolved),
+   * and `clusterForKc` — and they MUST agree. Resolving nowhere throws
+   * {@link UnresolvedWarrantGrainError}; resolving to two different clusters
+   * throws {@link ConflictingWarrantClusterError}. Neither is silently absorbed:
+   * a grain whose routing disagrees with itself is in a worse state than one that
+   * resolves nowhere, because precedence would publish a confident wrong answer
+   * instead of an error.
+   */
+  private warrantGrains(state: LearnerState): WarrantGrain[] {
+    const graphSkills = new Map<string, SkillNode>(
+      this.bank.skillGraph.skills.map((skill) => [skill.skillId, skill]),
+    );
+    const clustersFromRecords = new Map<string, Set<SkillCluster>>();
+    const ordered: string[] = [...graphSkills.keys()];
+    const seen = new Set<string>(ordered);
+
+    const consider = (skillId: string): void => {
+      if (seen.has(skillId)) return;
+      seen.add(skillId);
+      ordered.push(skillId);
+    };
+
+    for (const record of state.evidence) {
+      // EVERY cluster the evidence claims, not the first: precedence between two
+      // disagreeing records is the fail-quiet this collects in order to reject.
+      // A persisted projection is untrusted JSON, so an absent value is possible
+      // even though the type forbids it.
+      const claimed = record.cluster as SkillCluster | undefined;
+      if (claimed !== undefined) {
+        const claims = clustersFromRecords.get(record.skillId) ?? new Set<SkillCluster>();
+        claims.add(claimed);
+        clustersFromRecords.set(record.skillId, claims);
+      }
+      consider(record.skillId);
+    }
+    for (const lessonId of state.mastery?.practicedLessonIds ?? []) {
+      for (const kcId of orderedKcsForLesson(lessonId) ?? []) consider(kcId);
+    }
+
+    const grains: WarrantGrain[] = [];
+    const unresolved: string[] = [];
+    const conflicting: ConflictingWarrantCluster[] = [];
+
+    for (const skillId of ordered) {
+      const node = graphSkills.get(skillId);
+      const candidates = new Set<SkillCluster>(clustersFromRecords.get(skillId) ?? []);
+      if (node !== undefined) candidates.add(node.cluster);
+      const registryCluster = clusterForKc(skillId);
+      if (registryCluster !== null) candidates.add(registryCluster);
+
+      if (candidates.size === 0) {
+        unresolved.push(skillId);
+        continue;
+      }
+      if (candidates.size > 1) {
+        conflicting.push({ skillId, clusters: [...candidates].sort() });
+        continue;
+      }
+
+      grains.push({
+        skillId,
+        cluster: [...candidates][0]!,
+        title: warrantGrainTitle(skillId, node, registryCluster),
       });
-      return { ...mastery, cluster: skill.cluster, title: skill.title };
+    }
+
+    // Conflicts first: a contradictory grain is the more dangerous of the two,
+    // and reporting all of both is what makes one bad registry change legible.
+    if (conflicting.length > 0) throw new ConflictingWarrantClusterError(conflicting);
+    if (unresolved.length > 0) throw new UnresolvedWarrantGrainError(unresolved);
+    return grains;
+  }
+
+  /**
+   * INTERNAL evidence warrant per grain, tier included.
+   *
+   * `evidenceQuality` is an ordinal, and ordinals are legitimate here: the
+   * planner and the coverage counters compare them. It stops at the package
+   * boundary. Anything learner-facing goes through {@link getMasteryMap}, which
+   * projects this without the tier — see the note there.
+   */
+  private skillWarrants(
+    state: LearnerState,
+  ): { grain: WarrantGrain; evidence: SkillEvidenceState }[] {
+    const now = this.clock.now();
+    return this.warrantGrains(state).map((grain) => {
+      const records = state.evidence.filter((e) => e.skillId === grain.skillId);
+      return {
+        grain,
+        evidence: evaluateEvidence({
+          skillId: grain.skillId,
+          records,
+          now,
+          prerequisiteBlocked: this.isPrerequisiteBlocked(state, grain.skillId),
+          hasInstruction: records.length > 0,
+        }),
+      };
     });
   }
 
-  // ---- Mastery engine (BKT/IRT, mastery-bkt / provisional-v1) --------------
-  // P(L) replaces the evidence ladder for the learner-facing mastery number.
-  // Runs ONLY for independent attempts; the ladder above still logs evidence.
+  /**
+   * The evidence WARRANT per skill as the learner sees it: which recipe slots the
+   * evidence fills, how fresh it is, and what is missing — as reason codes. Not a
+   * capability estimate; that is `getMasterySkills`.
+   *
+   * The ordinal `evidenceQuality` tier is deliberately NOT projected. It is the
+   * only thing a consumer could threshold, and every consumer that read it
+   * eventually did: the deleted `countGlowing` ranked it, `getWrapped` ranked it,
+   * and the session badge ordered its wording by it — three rival mastery scales
+   * grown from one published integer. Reason codes carry the same warrant without
+   * an axis to compare along.
+   */
+  getMasteryMap(state: LearnerState): MasteryMapEntry[] {
+    return this.skillWarrants(state).map(({ grain, evidence }) => ({
+      skillId: evidence.skillId,
+      refreshNeeded: evidence.refreshNeeded,
+      supportingEvidenceIds: [...evidence.supportingEvidenceIds],
+      freshestByKind: evidence.freshestByKind,
+      reasons: [...evidence.reasons],
+      policyVersion: evidence.policyVersion,
+      cluster: grain.cluster,
+      title: grain.title,
+    }));
+  }
+
+  // ---- Mastery engine (BKT/IRT, mastery-bkt) -------------------------------
+  // P(L) is the only learner-facing capability number; the evidence warrant
+  // above is a separate signal. A qualified response moves exactly two grains.
+  // Runs ONLY for independent attempts (fail-closed).
 
   private ensureMastery(state: LearnerState): MasteryEngineState {
-    if (!state.mastery) state.mastery = { kc: {}, skill: {}, lesson: {}, cars: {} };
-    return state.mastery;
+    const existing = state.mastery;
+    // Truthiness, not `=== undefined`: a pre-seam projection may deserialize
+    // with `mastery: null`, and this is the one function whose job is tolerating
+    // whatever a legacy projection holds. Narrowing it to `undefined` turned a
+    // tolerated legacy value into a crash.
+    if (!existing) {
+      state.mastery = {
+        kc: {},
+        skill: {},
+        cars: {},
+        practicedLessonIds: [],
+        appliedObservationIds: [],
+        highestAppliedObservationSequence: null,
+      };
+      return state.mastery;
+    }
+    // A projection persisted before these fields existed deserializes without
+    // them; backfill rather than trusting the cast.
+    existing.practicedLessonIds ??= [];
+    existing.appliedObservationIds ??= [];
+    existing.highestAppliedObservationSequence ??= null;
+    return existing;
   }
 
-  /** Derive the mastery grain (KC / 7-op / lesson / DOK) for a bank item. */
-  private masteryTarget(
-    questionId: string,
-    fallbackSkill: string,
-  ): { kcKey: string; op: ReasoningOperation; lessonId: string; dok: number | undefined } {
-    const q = this.bank.questions.find((x) => x.id === questionId);
-    const kcKey = q?.internal_skill_ids[0] ?? fallbackSkill;
-    const op = OPERATION_TAG_TO_REASONING[q?.template_tags[0] ?? 'K'] ?? 'IDENTIFY';
-    return { kcKey, op, lessonId: ENZYME_LESSON_ID, dok: q?.difficulty };
+  /** Record a lesson as practiced. Routing for the rollup only; never a BKT target. */
+  private recordPracticedLesson(m: MasteryEngineState, lessonId: string): void {
+    if (!m.practicedLessonIds.includes(lessonId)) m.practicedLessonIds.push(lessonId);
   }
 
-  /** Apply one independent attempt to the KC / skill / lesson chains (+ prereqs). */
-  private updateMasteryForAttempt(state: LearnerState, questionId: string, correct: boolean): void {
-    const m = this.ensureMastery(state);
-    const target = this.masteryTarget(questionId, state.session?.skillId ?? ENZYME_SKILL);
-    const now = this.clock.now();
+  /**
+   * Bound a reported time into a decay clock the server is willing to write.
+   *
+   * `stepMemory` and `reinforcePrerequisite` both assign `lastPracticedAt = now`
+   * unconditionally, and `currentPL` decays from it, so whoever supplies `now`
+   * controls decay, review-due, and the mastery cut. A runner-reported
+   * `occurredAt` therefore cannot be used raw: forward-dating it buys permanent
+   * mastery, and back-dating it wipes a real estimate through lazy decay over
+   * the invented gap. Both are the client writing a mastery claim, which
+   * contract §10 prohibits.
+   *
+   * The clamp is two-sided:
+   *
+   *   appliedAt = max( serverNow - pastTolerance, min(grainFloor, serverNow), min(reportedAt, serverNow) )
+   *
+   * - **Never ahead of the server clock.** The Authority's own clock is the
+   *   ceiling. (An implausibly future claim is refused before reaching here; see
+   *   `BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS`.)
+   * - **Never rewinds a grain.** `grainFloor` is the newest `lastPracticedAt`
+   *   among the grains this observation writes, so no grain's clock can move
+   *   backwards. A legitimately delayed observation still applies its BKT
+   *   evidence — only the decay clock is held — because discarding it would
+   *   silently lose real evidence.
+   * - **Never further into the past than the server will vouch for.** The grain
+   *   floor is `null` on a grain's FIRST write, and without a third bound the
+   *   clamp degenerated there: an arbitrarily backdated claim became the decay
+   *   baseline, measured at `currentPL = 5.4e-104`, and `P(L)` came out
+   *   arrival-order dependent (0.1497 vs 0.8624 for identical evidence).
+   *   `serverNow - BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS` closes it.
+   *
+   * The grain floor is itself capped at `serverNow`: a stored future timestamp is
+   * invalid on its face, so it must not become a permanent floor, and this makes
+   * any state poisoned before the clamp existed heal on the next write.
+   *
+   * `applyMasteryAttempt` takes one `now` for all the grains it steps, so the
+   * floor is the maximum across them. A grain lagging behind its siblings is
+   * therefore pulled forward to their shared floor rather than rewinding them —
+   * bounded above by `serverNow` and by activity the server itself accepted.
+   *
+   * The floor spans only the grains this observation actually WRITES. Counting a
+   * grain that is left untouched lets it drag the clock forward for no reason:
+   * prerequisites are reinforced on a correct answer only, so on a miss they are
+   * excluded, which is worth doing precisely because the shift is small enough
+   * (~3 days, ~0.005 of `pL`) to go unnoticed.
+   */
+  private boundDecayClock(
+    m: MasteryEngineState,
+    times: { serverNow: UtcTimestamp; reportedAt: UtcTimestamp },
+    grainKeys: { kcIds: readonly string[]; operation: ReasoningOperation },
+  ): BoundedDecayClock {
+    // The clock is read ONCE per write, by the caller, and both bounds are taken
+    // against that single reading. Reading it again here would let the two
+    // readings disagree, and on a server-generated time that is the only way
+    // `appliedAt` could ever diverge from `reportedAt` — a clamp reported
+    // against a path that has nothing to clamp.
+    const { serverNow, reportedAt } = times;
+    const ceiling = earlierOf(reportedAt, serverNow);
+    const serverFloor = shiftedBy(serverNow, -BKT_OBSERVATION_PAST_SKEW_TOLERANCE_MS);
+
+    const touched: readonly (MemoryState | undefined)[] = [
+      ...grainKeys.kcIds.map((kcId) => m.kc[kcId]),
+      m.skill[grainKeys.operation],
+    ];
+    let grainFloor: UtcTimestamp | null = null;
+    for (const state of touched) {
+      const practicedAt = state?.lastPracticedAt ?? null;
+      if (practicedAt === null) continue;
+      grainFloor = grainFloor === null ? practicedAt : laterOf(grainFloor, practicedAt);
+    }
+
+    const cappedGrainFloor = grainFloor === null ? null : earlierOf(grainFloor, serverNow);
+    const floor = cappedGrainFloor === null ? serverFloor : laterOf(cappedGrainFloor, serverFloor);
+    const appliedAt = laterOf(floor, ceiling);
+
+    // Which bound decided, so the ledger says what actually happened. A grain's
+    // own history wins the `held_at_last_practiced` label; the server clock
+    // deciding either end — future ceiling or past window — is
+    // `bounded_to_server_clock`.
+    const heldByGrain =
+      cappedGrainFloor !== null && instant(appliedAt) === instant(cappedGrainFloor);
+    const clockAdjustment: BktClockAdjustment =
+      instant(appliedAt) === instant(reportedAt)
+        ? 'none'
+        : heldByGrain
+          ? 'held_at_last_practiced'
+          : 'bounded_to_server_clock';
+
+    return { reportedAt, appliedAt, clockAdjustment };
+  }
+
+  /**
+   * Move the two direct BKT grains, plus the indirect one-hop prerequisite
+   * reinforcement. The single write path for `P(L)`: the synthetic study
+   * vertical, `applyQualifiedBktObservation` and adaptive practice all go
+   * through it, so none can acquire a grain the others lack, and none can write
+   * an unbounded decay clock.
+   *
+   * BOTH HALVES of the clock invariant live here, which is the whole reason the
+   * door exists. Below tolerance the claim is CLAMPED (`boundDecayClock`); above
+   * it the claim is REFUSED with `OBSERVATION_TIMESTAMP_IN_FUTURE`. The refusal
+   * used to live in `applyQualifiedBktObservation` alone, so the other paths
+   * were safe only because their reported time happened to be server-generated
+   * — contingent reasoning of exactly the kind the clamp was moved in here to
+   * eliminate. A fourth path that accepts a client time now inherits the refusal
+   * by construction rather than by remembering to re-implement it.
+   *
+   * HOW MUCH an observation is believed is decided here too, by handing the
+   * engine `input.source`. That is the whole of lesson discounting: a lesson
+   * exit is scored with a higher `guess`, so the Bayes update itself yields a
+   * smaller move. Nothing on this path bounds, caps or scales the value the
+   * engine returns — a cap would pin the grain and break decay (see
+   * `LESSON_EXIT_GUESS_G`).
+   *
+   * Enforced structurally, not by discipline:
+   * `tests/architecture/mastery-write-path.test.ts` fails the build if
+   * `applyMasteryAttempt` or `boundDecayClock` is reached from anywhere else.
+   */
+  private stepDirectGrains(
+    m: MasteryEngineState,
+    input: {
+      kcId: string;
+      operation: ReasoningOperation;
+      correct: boolean;
+      /**
+       * Which channel produced this observation. The engine reads it to pick
+       * the `guess` term, so a lesson-exit response is believed less than a
+       * practice answer; it is also the `source` the caller writes on the
+       * ledger record, taken from this same constant so the two cannot
+       * disagree about one attempt.
+       */
+      source: BktObservationSource;
+      /**
+       * The time to decay from, and who generated it. A `caller` time is
+       * refused when implausibly ahead of the Authority clock and bounded
+       * otherwise; it is never written raw.
+       */
+      reportedAt: ReportedTime;
+      dokLevel: number | undefined;
+      /**
+       * Population stats for the item, when the caller has them: they carry the
+       * calibrated IRT difficulty. Absent means uncalibrated, so `b` falls back
+       * to the DOK cold start — which is what the synthetic bank and the lesson
+       * corpus both are.
+       */
+      questionStats?: { attempts: number; correct: number };
+    },
+  ): BoundedDecayClock {
+    // Refused BEFORE any grain is read or written, so a rejected observation is
+    // never partially applied.
+    const serverNow = this.clock.now();
+    const reportedAt = input.reportedAt.origin === 'server' ? serverNow : input.reportedAt.at;
+    if (
+      input.reportedAt.origin === 'caller' &&
+      instant(reportedAt) - instant(serverNow) > BKT_OBSERVATION_FUTURE_SKEW_TOLERANCE_MS
+    ) {
+      throw new BktObservationRefusedError(['OBSERVATION_TIMESTAMP_IN_FUTURE']);
+    }
 
     const prereqKeys = this.bank.skillGraph.edges
-      .filter((e) => e.kind === 'hard_prerequisite' && e.to === target.kcKey)
+      .filter((e) => e.kind === 'hard_prerequisite' && e.to === input.kcId)
       .map((e) => e.from);
-    const prerequisites = prereqKeys.map((k) => m.kc[k] ?? initialMemoryState());
+
+    // `reinforcePrerequisite` runs on a correct answer only, so on a miss the
+    // prerequisite grains are not written and must not raise the floor.
+    const writtenKcIds = input.correct ? [input.kcId, ...prereqKeys] : [input.kcId];
+    const clock = this.boundDecayClock(
+      m,
+      { serverNow, reportedAt },
+      {
+        kcIds: writtenKcIds,
+        operation: input.operation,
+      },
+    );
 
     const result = applyMasteryAttempt({
-      correct,
-      now,
-      // In-memory dev never crosses the calibration floor, so `b` is DOK-derived.
-      questionStats: { attempts: 0, correct: 0 },
-      ...(target.dok !== undefined ? { dokLevel: target.dok } : {}),
+      correct: input.correct,
+      now: clock.appliedAt,
+      // How much this channel's evidence is worth is the engine's decision, not
+      // this method's: the Authority hands over the source and the policy picks
+      // the guess. Nothing here scales, caps or otherwise touches what comes
+      // back — `result.states` is written to the grains verbatim.
+      source: input.source,
+      // Uncalibrated by default: an in-memory bank never crosses the calibration
+      // floor, so `b` is DOK-derived unless the caller supplied real stats.
+      questionStats: input.questionStats ?? { attempts: 0, correct: 0 },
+      ...(input.dokLevel !== undefined ? { dokLevel: input.dokLevel } : {}),
       states: {
-        kc: m.kc[target.kcKey] ?? initialMemoryState(),
-        skill: m.skill[target.op] ?? initialMemoryState(),
-        lesson: m.lesson[target.lessonId] ?? initialMemoryState(),
+        kc: m.kc[input.kcId] ?? initialMemoryState(),
+        reasoningOperation: m.skill[input.operation] ?? initialMemoryState(),
       },
-      prerequisites,
+      prerequisites: prereqKeys.map((k) => m.kc[k] ?? initialMemoryState()),
     });
 
-    m.kc[target.kcKey] = result.states.kc;
-    m.skill[target.op] = result.states.skill;
-    m.lesson[target.lessonId] = result.states.lesson;
+    m.kc[input.kcId] = result.states.kc;
+    m.skill[input.operation] = result.states.reasoningOperation;
     prereqKeys.forEach((k, i) => {
       const next = result.prerequisites[i];
       if (next) m.kc[k] = next;
     });
+
+    return clock;
   }
 
-  private refreshNeeded(st: MemoryState, decayed: number): boolean {
+  /** Derive the two BKT grains (+ DOK) for a synthetic bank item. */
+  private masteryTarget(
+    questionId: string,
+    fallbackSkill: string,
+  ): { kcKey: string; op: ReasoningOperation; dok: number | undefined } {
+    const q = this.bank.questions.find((x) => x.id === questionId);
+    const kcKey = q?.internal_skill_ids[0] ?? fallbackSkill;
+    const op = OPERATION_TAG_TO_REASONING[q?.template_tags[0] ?? 'K'] ?? 'IDENTIFY';
+    return { kcKey, op, dok: q?.difficulty };
+  }
+
+  /**
+   * Apply one independent synthetic-path attempt to the two grains (+ prereqs).
+   *
+   * The study loop's first answering attempt, reached in production from
+   * `POST /v1/attempts` through `submitAttempt`. It is scored inside the
+   * request, so the step reads the Authority clock itself and no client-reported
+   * time touches the decay baseline.
+   *
+   * The ledger record is appended AFTER the attempt event, and that ordering is
+   * load-bearing: `applyAttempt` in the authority kernel rewrites the event at
+   * the index it recorded, so the attempt must stay first in the slice this call
+   * appends to.
+   */
+  private updateMasteryForAttempt(state: LearnerState, questionId: string, correct: boolean): void {
+    const m = this.ensureMastery(state);
+    const target = this.masteryTarget(questionId, state.session?.skillId ?? ENZYME_SKILL);
+    const clock = this.stepDirectGrains(m, {
+      kcId: target.kcKey,
+      operation: target.op,
+      correct,
+      // Undiscounted: the study loop serves the synthetic bank cold, with no
+      // instruction immediately before it. Same constant the ledger reads.
+      source: STUDY_OBSERVATION_SOURCE,
+      reportedAt: SERVER_REPORTED_TIME,
+      dokLevel: target.dok,
+    });
+    this.recordPracticedLesson(m, ENZYME_LESSON_ID);
+
+    // Every capability write leaves a ledger record, whatever moved it. This
+    // path moved `P(L)` with no record at all until now, which is the same
+    // defect the practice path had: the clamp applies, but nothing survives to
+    // show what it applied to. There is no observation id or sequence here —
+    // the study loop scores in-request, so there is nothing to deduplicate
+    // against and nothing to order.
+    this.recordBktObservationEvent(
+      state,
+      {
+        source: STUDY_OBSERVATION_SOURCE,
+        observationId: null,
+        observationSequence: null,
+        questionId,
+        primaryKcId: target.kcKey,
+        reasoningOperation: target.op,
+        correct,
+        reportedOccurredAt: clock.reportedAt,
+        contentRelease: this.bank.contentRelease,
+        policies: activePolicyVersions(),
+      },
+      {
+        appliedOccurredAt: clock.appliedAt,
+        clockAdjustment: clock.clockAdjustment,
+        outOfOrder: false,
+        rejectionCodes: [],
+      },
+    );
+  }
+
+  /**
+   * SERVER-ONLY. Apply one already-qualified lesson response to BKT.
+   *
+   * `observation` is the sole input the BKT engine accepts from a lesson, and it
+   * is re-parsed here through the strict `QualifiedBktObservationSchema`: the
+   * shape has no `independent`, `pL`, `mastered`, `masteryThreshold`,
+   * `evidenceStatus` or `kind` field, so a caller cannot assert any of them and
+   * an unrecognized key is rejected rather than ignored. Qualification itself
+   * (both gates in lesson-evidence-mastery-contract §5) happens upstream in
+   * `adaptLessonResponse`; this method never re-decides it and never manufactures
+   * it.
+   *
+   * Exactly two grains move: `primaryKcId` and `reasoningOperation` (§8.2).
+   * `lessonId` is deliberately NOT part of the observation — it is passed
+   * separately as routing/audit only, recorded so the lesson rollup knows which
+   * lessons to report, and it never influences a `P(L)`.
+   *
+   * Idempotent on `observationId` (§12): a re-delivered accepted response
+   * resolves to `duplicate` and moves nothing, not even routing state.
+   *
+   * THE REPORTED TIME IS NOT TRUSTED. `observation.occurredAt` comes from the
+   * lesson runner (§2), so it is refused outright when implausibly ahead of the
+   * Authority clock, and otherwise bounded and made monotonic before it can
+   * become a decay clock (see `boundDecayClock`). The verbatim claim is kept in
+   * the ledger either way, so the clamp cannot erase the evidence that a client
+   * misreported.
+   *
+   * `observation.sequence` is compared against the highest already applied. An
+   * out-of-order arrival is RECORDED, not refused: delayed and reordered
+   * delivery is normal, and dropping a legitimately earlier observation would
+   * silently lose real evidence. The clamp is what keeps the resulting state
+   * sane, since a late arrival can no longer rewind a grain's clock.
+   *
+   * IT IS BELIEVED LESS THAN A PRACTICE ANSWER, AND ONLY THAT. A lesson exit
+   * asks about material the learner was shown moments ago, so a learner without
+   * durable capability gets it right far more often than chance — which is a
+   * statement about `guess`, so that is where it is applied
+   * (`LESSON_EXIT_GUESS_G`). `P(L)` then moves by whatever smaller amount Bayes
+   * yields. What comes back is written verbatim: this path holds no ceiling and
+   * no maximum delta, because pinning the value would make the planner see
+   * permanent unmet need and would leave decay able only to push the grain
+   * down.
+   */
+  applyQualifiedBktObservation(
+    state: LearnerState,
+    input: { observation: QualifiedBktObservation; lessonId?: string },
+  ): QualifiedBktApplication {
+    const observation = QualifiedBktObservationSchema.parse(input.observation);
+    const identity = {
+      observationId: observation.observationId,
+      kcId: observation.primaryKcId,
+      reasoningOperation: observation.reasoningOperation,
+    } as const;
+    const m = this.ensureMastery(state);
+
+    if (m.appliedObservationIds.includes(observation.observationId)) {
+      return { ...identity, status: 'duplicate' };
+    }
+
+    const highestApplied = m.highestAppliedObservationSequence;
+    const outOfOrder = highestApplied !== null && observation.sequence <= highestApplied;
+
+    // The future-skew refusal is NOT re-checked here. It belongs to
+    // `stepDirectGrains`, alongside the clamp that is the other half of the same
+    // invariant, so no write path can route around it; this method only turns
+    // the refusal into the audited result the contract specifies.
+    let clock: BoundedDecayClock;
+    try {
+      clock = this.stepDirectGrains(m, {
+        kcId: observation.primaryKcId,
+        operation: observation.reasoningOperation,
+        correct: observation.correct,
+        // The same `lesson_response` the ledger identity below carries, and
+        // what makes this observation a DISCOUNTED one inside the engine.
+        source: LESSON_OBSERVATION_SOURCE,
+        reportedAt: { origin: 'caller', at: observation.occurredAt },
+        dokLevel: observation.dokLevel,
+      });
+    } catch (error) {
+      if (!(error instanceof BktObservationRefusedError)) throw error;
+      const { rejectionCodes } = error;
+      this.recordBktObservationEvent(state, this.lessonObservationLedgerIdentity(observation), {
+        appliedOccurredAt: null,
+        clockAdjustment: 'none',
+        outOfOrder: false,
+        rejectionCodes,
+      });
+      return { ...identity, status: 'rejected', rejectionCodes };
+    }
+
+    m.appliedObservationIds.push(observation.observationId);
+    if (!outOfOrder) m.highestAppliedObservationSequence = observation.sequence;
+    if (input.lessonId !== undefined && input.lessonId.trim().length > 0) {
+      this.recordPracticedLesson(m, input.lessonId.trim());
+    }
+
+    this.recordBktObservationEvent(state, this.lessonObservationLedgerIdentity(observation), {
+      appliedOccurredAt: clock.appliedAt,
+      clockAdjustment: clock.clockAdjustment,
+      outOfOrder,
+      rejectionCodes: [],
+    });
+
+    return {
+      ...identity,
+      status: 'applied',
+      reportedOccurredAt: observation.occurredAt,
+      appliedOccurredAt: clock.appliedAt,
+      clockAdjustment: clock.clockAdjustment,
+      outOfOrder,
+    };
+  }
+
+  /**
+   * Append the audit record for one attempt that reached the BKT engine. The
+   * ONE writer of this record, for every `source`: a second writer is how the
+   * practice path came to move `P(L)` with no ledger entry at all.
+   *
+   * Written for applications and refusals alike; a duplicate lesson observation
+   * writes nothing, because the original record already stands. `occurredAt` on
+   * the envelope is when the SERVER acted, so the caller's claim only ever
+   * appears as `payload.reportedOccurredAt`.
+   *
+   * The record is PARSED through `BktObservationAppliedSchema` here, not merely
+   * typed as it. The payload's cross-field guards are `superRefine`s, which
+   * `z.infer` drops, so the compiler cannot see them and a record contradicting
+   * itself — a practice write carrying an observation id, an applied clock on a
+   * refusal — would type-check and append cleanly. This is the only writer, so
+   * parsing here makes those guards live on the whole write path at one call
+   * site. Deliberately NOT in `recordEvent`: that appends every event type and
+   * would turn one narrow ledger invariant into a repo-wide re-parse.
+   */
+  private recordBktObservationEvent(
+    state: LearnerState,
+    attempt: {
+      source: BktObservationSource;
+      /** The observation's identity, or `null` on a source that has none. */
+      observationId: string | null;
+      observationSequence: number | null;
+      questionId: string;
+      primaryKcId: string;
+      reasoningOperation: ReasoningOperation;
+      correct: boolean;
+      reportedOccurredAt: UtcTimestamp;
+      contentRelease: string;
+      policies: readonly PolicyVersion[];
+    },
+    outcome: {
+      appliedOccurredAt: UtcTimestamp | null;
+      clockAdjustment: BktClockAdjustment;
+      outOfOrder: boolean;
+      rejectionCodes: readonly BktApplicationRejectionCode[];
+    },
+  ): void {
+    const event = BktObservationAppliedSchema.parse({
+      type: 'bkt_observation_applied',
+      eventId: newEventId(),
+      learnerId: state.learnerId,
+      idempotencyKey: newIdempotencyKey(),
+      occurredAt: this.clock.now(),
+      contentRelease: attempt.contentRelease,
+      policies: [...attempt.policies],
+      payload: {
+        source: attempt.source,
+        observationId: attempt.observationId,
+        observationSequence: attempt.observationSequence,
+        questionId: attempt.questionId,
+        primaryKcId: attempt.primaryKcId,
+        reasoningOperation: attempt.reasoningOperation,
+        correct: attempt.correct,
+        reportedOccurredAt: attempt.reportedOccurredAt,
+        appliedOccurredAt: outcome.appliedOccurredAt,
+        clockAdjustment: outcome.clockAdjustment,
+        outOfOrder: outcome.outOfOrder,
+        rejectionCodes: [...outcome.rejectionCodes],
+      },
+    });
+    this.recordEvent(state, event);
+  }
+
+  /** The audit identity of one qualified lesson response. */
+  private lessonObservationLedgerIdentity(observation: QualifiedBktObservation): {
+    source: BktObservationSource;
+    observationId: string;
+    observationSequence: number;
+    questionId: string;
+    primaryKcId: string;
+    reasoningOperation: ReasoningOperation;
+    correct: boolean;
+    reportedOccurredAt: UtcTimestamp;
+    contentRelease: string;
+    policies: readonly PolicyVersion[];
+  } {
+    return {
+      source: LESSON_OBSERVATION_SOURCE,
+      observationId: observation.observationId,
+      observationSequence: observation.sequence,
+      questionId: observation.questionId,
+      primaryKcId: observation.primaryKcId,
+      reasoningOperation: observation.reasoningOperation,
+      correct: observation.correct,
+      reportedOccurredAt: observation.occurredAt,
+      contentRelease: observation.contentRelease,
+      policies: observation.policies,
+    };
+  }
+
+  /**
+   * BKT review-due for one grain: it was at or above the review line when last
+   * practiced and has decayed below it since.
+   *
+   * This is capability, and it is NOT the evidence warrant's `refreshNeeded`
+   * ("the warrant is stale or contradicted"). The two used to publish under one
+   * field name, which is how a planner reading both would have collapsed them.
+   */
+  private decayedBelowReviewLine(st: MemoryState, decayed: number): boolean {
     return st.lastPracticedAt !== null && decayed < REVIEW_LINE && st.pL >= REVIEW_LINE;
   }
 
-  /** The 7 reasoning-skill readouts for the Skills page (percentages). */
+  /**
+   * The 7 reasoning-skill readouts for the Skills page (percentages).
+   *
+   * PUBLISHES NO MASTERY CLAIM, and the field name is what enforces that. It
+   * used to publish `mastered: pL >= MASTERY_THRESHOLD` — a second definition
+   * of `mastered`, standing beside the composed one in the lesson rollup and
+   * disagreeing with it, feeding the Progress rings, Home's glowing count and
+   * Wrapped. `669fbcf` gated the rollup on evidence and left this behind, so
+   * the product's most visible mastery claim was the one that skipped the gate.
+   *
+   * The warrant is not conjoined here because there is nothing to conjoin:
+   * `skillWarrants` produces grains keyed by KC id, and no evidence record is
+   * ever keyed to a reasoning operation, so the warrant set at this grain is
+   * empty for every learner. See `SkillMasteryViewSchema` for the measurement.
+   */
   getMasterySkills(state: LearnerState): SkillMasteryView[] {
     const m = this.ensureMastery(state);
     const now = this.clock.now();
@@ -1197,26 +2259,152 @@ export class Authority {
       return {
         operation,
         pL,
-        refreshNeeded: st ? this.refreshNeeded(st, pL) : false,
-        mastered: pL >= MASTERY_THRESHOLD,
+        reviewDue: st ? this.decayedBelowReviewLine(st, pL) : false,
+        atCapabilityCut: isAtCapabilityCut(pL),
       };
     });
   }
 
-  /** Per-lesson mastery for the Evidence Atlas brain nodes on Progress. */
-  getMasteryLessons(state: LearnerState): LessonMasteryView[] {
+  /**
+   * Lesson rollups, with their rejections, for audit and inspection.
+   *
+   * A lesson has no BKT state; each view is derived from the lesson's required
+   * member KCs. The membership comes from `orderedKcsForLesson` — the pinned
+   * curriculum registry — and never from whichever KCs happen to have a state,
+   * because those two differ exactly when the caller is under-supplied.
+   *
+   * Every required KC is therefore supplied EXPLICITLY: a KC the learner has
+   * never practiced is passed as `initialMemoryState()`, not omitted. Omitting
+   * it would make every partly-started lesson fail closed with
+   * `LESSON_KC_STATE_MISSING`, which is the rollup correctly refusing to tell a
+   * complete membership apart from a partial one.
+   *
+   * `lessonIds` defaults to the lessons this learner has practiced. A lesson
+   * with no registry membership yields `status: 'unavailable'` and never a
+   * fabricated number.
+   *
+   * BOTH AUTHORITIES ARE SUPPLIED, because `mastered` is a claim that needs
+   * both: the capability estimate from BKT and the warrant from the evidence
+   * system. The warrant arrives from `skillWarrants` — the same computation the
+   * warrant surface publishes — rather than a second sufficiency check written
+   * here, so the rollup and the Evidence Atlas can never disagree about whether
+   * one grain is adequately evidenced.
+   */
+  getLessonRollups(state: LearnerState, lessonIds?: readonly string[]): LessonRollupResult[] {
     const m = this.ensureMastery(state);
     const now = this.clock.now();
-    return Object.entries(m.lesson).map(([lessonId, st]) => {
-      const pL = currentPL(st, now);
-      return {
-        lessonId,
-        cluster: clusterForLesson(lessonId) ?? null,
-        pL,
-        refreshNeeded: this.refreshNeeded(st, pL),
-        mastered: pL >= MASTERY_THRESHOLD,
-      };
+    // Once for the whole call: the warrant is computed over every grain, and
+    // recomputing it per lesson would be the same answer at N times the cost.
+    const kcEvidenceQuality = this.evidenceQualityByGrain(state);
+    // Deduplicated the way `rollUpLessonMastery` dedupes KC ids: a lesson named
+    // twice is one lesson, and two identical rows would double-count it in any
+    // caller that aggregates.
+    const ids = [...new Set(lessonIds ?? m.practicedLessonIds)];
+    return ids.map((lessonId) => {
+      const requiredKcIds = orderedKcsForLesson(lessonId);
+      const kcStates: Record<string, MemoryState> = {};
+      for (const kcId of requiredKcIds ?? []) {
+        kcStates[kcId] = m.kc[kcId] ?? initialMemoryState();
+      }
+      return rollUpLessonMastery({ lessonId, requiredKcIds, kcStates, kcEvidenceQuality, now });
     });
+  }
+
+  /**
+   * The evidence-warrant tier per grain, keyed by grain id.
+   *
+   * A grain with no entry is one the evidence system has never seen, and the
+   * rollup reads that as "no warrant" — which is the honest reading and fails
+   * closed. Deliberately NOT a defaulted tier: writing `not_assessed` for an
+   * absent grain would make "we have nothing on this" and "we assessed it and
+   * found nothing" the same value.
+   */
+  private evidenceQualityByGrain(state: LearnerState): Record<string, EvidenceQualityTier> {
+    const byGrain: Record<string, EvidenceQualityTier> = {};
+    for (const { evidence } of this.skillWarrants(state)) {
+      byGrain[evidence.skillId] = evidence.evidenceQuality;
+    }
+    return byGrain;
+  }
+
+  /**
+   * The warrant REASON CODES per grain, keyed by grain id — the same list
+   * `getMasteryMap` publishes, indexed for the lesson-grain join below.
+   *
+   * Kept separate from {@link evidenceQualityByGrain} rather than folded into
+   * it, because the tier is package-private and the reason codes are the thing
+   * that crosses the wire; one map carrying both would put an ordinal one
+   * property access away from every caller that only wanted the codes.
+   */
+  private evidenceReasonsByGrain(state: LearnerState): Record<string, MasteryMapEntry['reasons']> {
+    const byGrain: Record<string, MasteryMapEntry['reasons']> = {};
+    for (const { evidence } of this.skillWarrants(state)) {
+      byGrain[evidence.skillId] = [...evidence.reasons];
+    }
+    return byGrain;
+  }
+
+  /**
+   * Per-lesson readout for the Evidence Atlas brain nodes on Progress, rolled up
+   * from each lesson's required member KCs (see {@link getLessonRollups}). A
+   * lesson whose membership does not resolve is omitted rather than reported as
+   * `0` or as vacuously mastered; `getLessonRollups` carries the reason why.
+   *
+   * `mastered` here is the composed claim — every required KC over the cut AND
+   * adequately warranted — not a `P(L)` comparison. `pL` continues to publish
+   * the capability estimate on its own, so the planner still sees a strong
+   * lesson as strong even while the claim is withheld for want of evidence.
+   */
+  getMasteryLessons(state: LearnerState, lessonIds?: readonly string[]): LessonMasteryView[] {
+    return this.getLessonRollups(state, lessonIds)
+      .filter(isLessonRollupAvailable)
+      .map(({ view }) => ({
+        lessonId: view.lessonId,
+        cluster: clusterForLesson(view.lessonId) ?? null,
+        pL: view.pL,
+        reviewDue: view.reviewDue,
+        mastered: view.mastered,
+      }));
+  }
+
+  /**
+   * Per-lesson evidence WARRANT for the Evidence Atlas: why a lesson's mastery
+   * claim is being withheld, as reason codes.
+   *
+   * The companion to {@link getMasteryLessons}, joined by `lessonId`, and
+   * deliberately not merged into it — `LessonWarrantViewSchema` records why, and
+   * an architecture assertion enforces it. Without this, a learner who perfects
+   * a lesson reads "In progress" forever with nothing on the page saying that
+   * the capability half is done and the evidence half is what is open.
+   *
+   * THE REASONS BELONG TO ONE MEMBER KC, because a lesson has no warrant of its
+   * own any more than it has a `P(L)`: the claim is `members.every(...)`, so the
+   * honest explanation is the member that makes it false. Warrant-insufficient
+   * members come first and only then merely-below-the-cut ones, because `pL`
+   * already has a learner-facing surface and the warrant has none — reporting a
+   * SATISFIED warrant on a lesson whose claim is withheld would be the same
+   * unexplained state one grain down.
+   *
+   * A grain the evidence system has never seen reports `NO_USEFUL_EVIDENCE`
+   * rather than an empty list, matching `getSessionSummary`; empty is reserved
+   * for a mastered lesson, where nothing is being withheld at all.
+   */
+  getLessonWarrants(state: LearnerState, lessonIds?: readonly string[]): LessonWarrantView[] {
+    const reasonsByGrain = this.evidenceReasonsByGrain(state);
+    return this.getLessonRollups(state, lessonIds)
+      .filter(isLessonRollupAvailable)
+      .map(({ view }) => {
+        const limiting =
+          view.members.find((member) => !member.evidenceSufficient) ??
+          view.members.find((member) => !member.mastered);
+        return {
+          lessonId: view.lessonId,
+          reasons:
+            limiting === undefined
+              ? []
+              : (reasonsByGrain[limiting.kcId] ?? [{ code: 'NO_USEFUL_EVIDENCE' as const }]),
+        };
+      });
   }
 
   /** CARS readiness (gauge + 3 sub-skill bars). */
@@ -1228,7 +2416,11 @@ export class Authority {
     });
     const overallV = overallCarsReadiness(m.cars.FOC ?? 0, m.cars.RWT ?? 0, m.cars.RBT ?? 0);
     const onTrack = isCarsOnTrack(overallV);
-    const label: CarsReadinessLabel = onTrack ? 'on_track' : overallV >= 0.85 ? 'approaching' : 'building';
+    const label: CarsReadinessLabel = onTrack
+      ? 'on_track'
+      : overallV >= 0.85
+        ? 'approaching'
+        : 'building';
     return { skills, overallV, overallPct: predictedCorrect(overallV, 0), onTrack, label };
   }
 
@@ -1247,10 +2439,34 @@ export class Authority {
    * whether you have mastered something" can be enforced; `SEED_PRIOR_CAP` sits
    * far below BKT's 0.95 mastery threshold, which is what makes the guarantee
    * hold whatever a caller sends.
+   *
+   * CORROBORATION RUNS HERE, not in front of this. The cap bounds how far a
+   * prior may move and says nothing about WHICH units get moved, and the planner
+   * ranks on exactly that. `corroborateMasterySeed` refuses any payload the one
+   * real producer could not have emitted; it used to sit at the lambda route,
+   * where the in-process dev authority — a second real caller — bypassed it
+   * entirely. A check at one route is bypassable by every other caller, so it
+   * belongs at the door all of them pass through.
+   *
+   * Refusal THROWS and moves nothing: the whole payload is refused rather than
+   * filtered down to the entries that pass, because keeping the acceptable half
+   * of a payload the server has already judged dishonest is how a restriction
+   * loses to a permission.
+   *
+   * One consequence worth naming: the producer emits `kcPriors` only, so
+   * corroboration refuses any `skillPriors` or `carsAbility` outright and the
+   * two clamps below can no longer be reached with a non-empty record. They
+   * stay because `MasterySeed` still declares those grains, and a clamp that is
+   * only unreachable while a sibling check holds is worth keeping.
    */
   applyMasterySeed(state: LearnerState, seed: MasterySeed): void {
+    const corroboration = corroborateMasterySeed(seed);
+    if (corroboration.status === 'refused') {
+      throw new MasterySeedNotCorroboratedError(corroboration.reason, corroboration.detail);
+    }
     const m = this.ensureMastery(state);
-    const capped = (prior: number): number => Math.min(SEED_PRIOR_CAP, Math.max(SEED_PRIOR_FLOOR, prior));
+    const capped = (prior: number): number =>
+      Math.min(SEED_PRIOR_CAP, Math.max(SEED_PRIOR_FLOOR, prior));
     for (const [kcId, prior] of Object.entries(seed.kcPriors)) {
       if (!m.kc[kcId]) m.kc[kcId] = initialMemoryState(capped(prior));
     }
@@ -1258,16 +2474,20 @@ export class Authority {
       const operation = op as ReasoningOperation;
       if (!m.skill[operation]) m.skill[operation] = initialMemoryState(capped(prior));
     }
-    for (const [lessonId, prior] of Object.entries(seed.lessonPriors)) {
-      if (!m.lesson[lessonId]) m.lesson[lessonId] = initialMemoryState(capped(prior));
-    }
     for (const [skill, v] of Object.entries(seed.carsAbility)) {
       const cars = skill as CarsSkill;
-      if (m.cars[cars] === undefined) m.cars[cars] = Math.min(SEED_CARS_MAX, Math.max(SEED_CARS_MIN, v));
+      if (m.cars[cars] === undefined)
+        m.cars[cars] = Math.min(SEED_CARS_MAX, Math.max(SEED_CARS_MIN, v));
     }
   }
 
-  // ---- Adaptive Practice (test-out; practice-selection / provisional-v1) --
+  // ---- Adaptive Practice (test-out; the `practice-selection` policy) -------
+  // Named by policy id alone: the version belongs to
+  // `PRACTICE_SELECTION_MANIFEST` and nowhere else. This line used to spell the
+  // pair, which was true and still owed — an in-step second copy is exactly what
+  // the twelve stale `mastery-bkt` citations were before their bump, and
+  // `tests/architecture/policy-version-single-source.test.ts` can only catch the
+  // spelling once it drifts.
   // Server-authoritative WRITE path: a first, unassisted answer moves P(L)
   // through the existing mastery-bkt engine. Items come from the injected bank
   // port (real Postgres corpus in prod, synthetic fallback in dev/tests).
@@ -1276,7 +2496,45 @@ export class Authority {
    * Build the ordered queue of up to `x` fresh practice items. Reads the mastery
    * signal + bank catalog into a snapshot, asks the pure selection engine for
    * specs, then pulls one fresh matching item per spec (excluding recently-seen
-   * and anything already queued). Missing specs are skipped (graceful).
+   * and anything already queued).
+   *
+   * A spec can still come up with nothing at the pull step — the exact KC×skill
+   * combination the engine chose may have no fresh item left once recently-seen
+   * exclusion is applied, even though the unit looked eligible going in. That
+   * shortfall is counted (`shortfall = requested - items.length`) and returned
+   * on the view rather than left for the caller to infer from a shorter array;
+   * see `PracticeQueueView.shortfall`. `taughtGap` carries the more specific
+   * signal that the shortfall (if any) traces to `buildPracticeSnapshot`'s
+   * taught-set gate withholding every science unit, not to the bank running
+   * dry, and `nothingTaught` narrows it once further: the gate withheld
+   * everything because the learner has finished no lesson yet, which is a day
+   * one learner rather than a curriculum mismatch and needs a different
+   * sentence.
+   *
+   * SERVING IS NOT AN EXPOSURE. This method writes no exposure: an item handed
+   * to a learner who never answers it stays eligible for the next queue, and
+   * only `submitPracticeAttempt` calls `recordExposure`. That is deliberate,
+   * because one record carries two facts — `recentlySeenIds` reads it for
+   * rotation and `submitPracticeAttempt` derives `firstAttempt` from its count
+   * — so counting a serve would make every practice answer a repeat and stop
+   * P(L) moving at all. The cost accepted in exchange is that an abandoned item
+   * can come back. Enforced, not merely stated:
+   * `practice-exposure-timing.test.ts` fails on a serve-time exposure write
+   * anywhere in this method, and measures both sides of the trade. A third
+   * state — served-but-unanswered, distinct from both — is the option that
+   * would avoid each harm, and is recorded as deferred work in
+   * `key-docs/roadmap-todo.md`.
+   *
+   * SERVING IS AN AUTHORIZATION, and that is a different record. Each served
+   * item gets a `PracticeAttemptGrant`: the server's own note that it handed
+   * THIS learner THIS item under THIS spec and content release, expiring, and
+   * spendable once as a capability claim. `submitPracticeAttempt` refuses an
+   * answer with no matching grant, which is what puts everything decided in
+   * this method — teach-before-test, the taught-set gate, selection itself —
+   * in front of every scored practice answer rather than only in front of the
+   * ones a client chose to route through the queue. The grant store is separate
+   * from the exposure store precisely so this write cannot become the
+   * serve-time exposure the paragraph above rules out.
    */
   async getPracticeQueue(
     state: LearnerState,
@@ -1285,7 +2543,19 @@ export class Authority {
   ): Promise<PracticeQueueView> {
     const requested = Math.max(0, Math.min(Math.floor(x), 50));
     const focusToken = focus ?? null;
-    if (requested === 0) return { requested: 0, focus: focusToken, items: [] };
+    if (requested === 0) {
+      // No gate ran, so there is no gap to report — but "you have finished no
+      // lessons" is a fact about the learner and true whatever was asked for,
+      // read through the same single derivation the gate uses.
+      return {
+        requested: 0,
+        focus: focusToken,
+        items: [],
+        shortfall: 0,
+        taughtGap: false,
+        nothingTaught: taughtKcSet(state).size === 0,
+      };
+    }
 
     const now = this.clock.now();
     const [units, repairs, recentlySeen] = await Promise.all([
@@ -1326,35 +2596,167 @@ export class Authority {
       if (items.length >= requested) break;
     }
 
-    return { requested, focus: focusToken, items };
+    // Issue after the queue is settled, so a grant only ever exists for an item
+    // that is actually being handed over. Issuing per candidate inside the loop
+    // would authorize items the shortfall path discarded.
+    const expiresAt = UtcTimestampSchema.parse(
+      new Date(Date.parse(now) + PRACTICE_ATTEMPT_GRANT_TTL_MS).toISOString(),
+    );
+    for (const item of items) {
+      await this.practiceBank.issueAttemptGrant(state.learnerId, {
+        questionId: item.question.id,
+        specId: item.specId,
+        contentRelease: this.bank.contentRelease,
+        expiresAt,
+      });
+    }
+
+    return {
+      requested,
+      focus: focusToken,
+      items,
+      shortfall: Math.max(0, requested - items.length),
+      taughtGap: snapshot.taughtGapDetected,
+      nothingTaught: snapshot.nothingTaughtYet,
+    };
   }
 
   /**
-   * Score one practice answer. On a FIRST, unassisted attempt this moves the
-   * P(L) mastery signal (BKT for science KC/skill/lesson, IRT `carsUpdate` at
-   * measurement weight for CARS), records exposure + population stats, and
-   * queues a KC×skill repair on a miss. Retries are learning-only (no P(L)).
-   * Answer material is returned only here (post-submit), never in the queue.
+   * Score one practice answer, for an item the server issued to this learner.
+   *
+   * AUTHORIZATION FIRST, before the answer key is read. `cmd.specId` used to be
+   * parsed and then never looked at by this method, which meant the whole of
+   * `getPracticeQueue` — teach-before-test, the taught-set gate, selection —
+   * could be skipped simply by not calling it: a forged spec plus any corpus
+   * question id bought an independent evidence record and a BKT write. A field
+   * the server merely reads is not a gate. What gates now is a
+   * `PracticeAttemptGrant` the server itself issued at serve time and can
+   * verify: it must exist for this learner and this question, and carry this
+   * spec and the current content release, unexpired.
+   *
+   * Every response records exposure and writes an evidence record. On a FIRST
+   * attempt — a fact this method DERIVES, never one the request supplies — it
+   * also moves the P(L) mastery signal through the Authority's single
+   * `stepDirectGrains` step (BKT on the two capability grains, the primary KC
+   * and the primary reasoning operation; IRT `carsUpdate` at measurement weight
+   * for CARS), records population stats, logs the chosen distractor, and queues
+   * a KC×skill repair on a miss.
+   *
+   * A repeat is learning-only: no P(L), no ledger record, and a contextual-only
+   * evidence record rather than silence. A repeat is still ADMITTED — the grant
+   * is one-use for the capability claim, not one-use for the request — because
+   * refusing it would delete a documented outcome rather than gate anything: a
+   * second answer to an item already answered moves nothing either way. A
+   * lesson is NOT a grain — practice records the lesson for the rollup's
+   * routing only (see `applyPracticeMastery`). Answer material is returned only
+   * here (post-submit), never in the queue.
    */
   async submitPracticeAttempt(
     state: LearnerState,
-    cmd: PracticeAttemptCommand,
+    cmd: PracticeAttempt,
   ): Promise<PracticeAttemptResult> {
+    const now = this.clock.now();
+    const authorization = await this.practiceBank.consumeAttemptGrant(state.learnerId, {
+      questionId: cmd.questionId,
+      specId: cmd.specId,
+      contentRelease: this.bank.contentRelease,
+      now,
+    });
+    if (authorization.status === 'refused') {
+      throw new PracticeAttemptNotAuthorizedError(authorization.reason, cmd.questionId);
+    }
+
     const answer = await this.practiceBank.getAnswer(cmd.questionId);
     if (answer === null) {
       throw new Error(`Practice item ${cmd.questionId} is unavailable.`);
     }
-    const correct = cmd.chosenChoiceId !== null && cmd.chosenChoiceId === answer.correctChoiceId;
-    const now = this.clock.now();
+    // One derivation of the outcome, shared by the returned result, the BKT
+    // signal and the evidence record. An unanswered item is `omitted`, a scored
+    // outcome rather than a missing one — the same reading the lesson adapter
+    // takes, and the reason a learner who skips the hard items still accrues a
+    // record rather than a silence.
+    const outcome: EvidenceOutcome =
+      cmd.chosenChoiceId === null
+        ? 'omitted'
+        : cmd.chosenChoiceId === answer.correctChoiceId
+          ? 'correct'
+          : 'incorrect';
+    const correct = outcome === 'correct';
 
-    if (cmd.firstAttempt) {
-      const classification = await this.practiceBank.classify(cmd.questionId);
+    /**
+     * The accepted-stream sequence this response's evidence will carry,
+     * ALLOCATED here rather than read off the state as it stands.
+     *
+     * `state.nextSequence` is the sequence of the last accepted command, so
+     * writing it into the record stamped this response with the sequence of the
+     * one BEFORE it. Lesson evidence has always carried `nextSequence + 1`, the
+     * sequence this command will be accepted at
+     * (`services/lambdas/learner-api/src/workflow.ts`), so the two channels were
+     * counting from different places by exactly one — and a practice answer
+     * could therefore SHARE a sequence with the lesson record immediately
+     * preceding it.
+     *
+     * That is not a cosmetic mismatch. `evaluateEvidence` detects a fresh
+     * failure by strict sequence ordering, so a miss that tied with the
+     * preceding lesson record was not "more recent than" it, `FRESH_FAILURE`
+     * never fired, and a learner who had just demonstrably failed kept a clean
+     * warrant. Measured as `[0, 1, 3, 3]`, the last of those an independent
+     * incorrect practice answer, with `refreshNeeded` still false.
+     *
+     * Allocating it cannot collide across channels, because the accepted
+     * sequence is strictly serialized per learner: the projection write requires
+     * `current_sequence = sequence - 1`, so two commands can never be accepted
+     * at the same number. Within this one command it is also the value
+     * `recordBktObservationEvent` advances `nextSequence` to, so the record and
+     * the stream agree rather than merely being close.
+     */
+    const acceptedSequence = state.nextSequence + 1;
+
+    /**
+     * Whether this is the learner's first answer to this item, DERIVED.
+     *
+     * The wire command carries a `firstAttempt` claim and this method cannot
+     * read it: `PracticeAttempt` does not have the field. It arrived as a
+     * browser boolean hardcoded `true`, so every response asserted a first
+     * attempt and every first-attempt-conditioned rule was permanently
+     * satisfied — but the deeper problem is that it is a claim about state only
+     * the SERVER holds, which no client is in a position to make. Validating
+     * the claim against the exposure records and warning on a mismatch would
+     * have left it on the path for every request that is not actively hostile.
+     *
+     * The count comes back from the write that increments it, so a repeat
+     * submitted concurrently with its original cannot have both read zero.
+     *
+     * The exposure count remains the derivation — unwindowed, so a repeat a
+     * year later is still a repeat. `authorization.firstUse` is the SECOND
+     * server-held fact saying the same thing, and the two must agree for a
+     * capability claim: a grant already spent cannot buy another one, whatever
+     * the exposure store says. They can only disagree if one of the two writes
+     * landed without the other, and in that direction the answer is to score
+     * the response as a repeat rather than to credit an attempt the server can
+     * only half account for.
+     */
+    const exposure = await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
+    const firstAttempt = exposure.priorExposures === 0 && authorization.firstUse;
+
+    const classification = await this.practiceBank.classify(cmd.questionId);
+    if (classification !== null) {
       const stats = await this.practiceBank.questionStats(cmd.questionId);
-      if (classification !== null) {
-        this.applyPracticeMastery(state, classification, correct, stats, now);
-      }
+      // Every response, first or repeat: a repeat records contextual-only
+      // evidence and moves no grain, which is a different thing from leaving no
+      // trace of the answer at all. `now` reaches the evidence record only —
+      // the BKT decay clock is still read inside `stepDirectGrains`, because
+      // the ledger's reported and applied times must come from one reading or
+      // `clockAdjustment` can describe a clamp that never happened.
+      this.applyPracticeMastery(state, cmd.questionId, classification, outcome, stats, {
+        firstAttempt,
+        now,
+        sequence: acceptedSequence,
+      });
+    }
+
+    if (firstAttempt) {
       await this.practiceBank.recordAttempt(cmd.questionId, correct, now);
-      await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
       // Log the first attempt WITH the chosen distractor. Which wrong answer they
       // picked is the diagnostic signal (docs/design/error-handling-design.md §1);
       // it used to reach only an unread event payload. Correct attempts are logged
@@ -1368,7 +2770,7 @@ export class Authority {
         familyId: classification?.familyId ?? null,
         chosenChoiceId: cmd.chosenChoiceId,
         correct,
-        firstAttempt: true,
+        firstAttempt,
         activityType: 'practice',
         occurredAt: now,
       });
@@ -1397,7 +2799,7 @@ export class Authority {
     repairs: readonly PracticeRepairTarget[],
     now: UtcTimestamp,
     focus: PracticeFocus | null,
-  ): PracticeSnapshot {
+  ): ScopedPracticeSnapshot {
     const m = state.mastery;
     const focused = this.filterByFocus(units, focus);
 
@@ -1418,6 +2820,11 @@ export class Authority {
         continue;
       }
       if (u.skill === null || u.cluster === null) continue;
+      // `itemCount` is the bank's declared supply for this KC × skill unit
+      // (see `PracticeCandidateUnit.itemCount`). A unit with nothing behind it
+      // must never occupy a selection slot only to come up empty when the
+      // authority later tries to pull a concrete item for it.
+      if (u.itemCount <= 0) continue;
       const kcState = m?.kc[u.kcId];
       const skillState = m?.skill[u.skill];
       const neverPractised = kcState === undefined;
@@ -1439,20 +2846,43 @@ export class Authority {
       });
     }
 
-    // Per-KC teach-before-test: only serve KCs the learner has been taught (union of
-    // completed lessons' KCs, cached at plan-build). Falls back to unfiltered when the
-    // taught set doesn't intersect the loaded bank (e.g. dev synthetic bank) so local
-    // practice still works.
-    const taught =
-      state.taughtKcIds && state.taughtKcIds.length > 0 ? new Set(state.taughtKcIds) : null;
-    const taughtUnits = taught ? scienceUnits.filter((u) => taught.has(u.kcId)) : scienceUnits;
-    const scopedUnits = taughtUnits.length > 0 ? taughtUnits : scienceUnits;
+    /**
+     * Per-KC teach-before-test: only serve KCs the learner has been taught
+     * (union of completed lessons' KCs, cached at plan-build).
+     *
+     * FAILS CLOSED, WITH NO SPECIAL CASE FOR AN EMPTY TAUGHT SET. The filter
+     * used to run only when the set was non-empty, on the reading that the true
+     * ABSENCE of a taught set — no lesson completions recorded at all — is a
+     * different fact from a taught claim that missed, and so has no claim to
+     * violate. The distinction is real; the conclusion drawn from it was wrong,
+     * because absence is not an edge case. It is every learner's FIRST state:
+     * `state.taughtKcIds` is empty until `todaysPathSnapshot` writes it from
+     * completed lessons, so a brand-new learner who opened Practice before
+     * opening a lesson fell through to the unfiltered corpus and was served
+     * real scored items on material nothing had taught them — with
+     * `taughtGapDetected` false, so no caller could even report it. That is
+     * exactly the state failing closed on a miss exists to prevent, arriving
+     * through the one door left open, and on the most common path there is.
+     *
+     * An empty result is a signal a caller can act on; wrong material reaching
+     * a learner is a harm no caller can undo. So the set is read once and
+     * applied unconditionally, and the two facts a caller needs are reported
+     * separately: `taughtGapDetected` says the gate withheld everything the
+     * bank offered, `nothingTaughtYet` says the learner has finished nothing
+     * yet. `getPracticeQueue` publishes both, so an empty science queue never
+     * has to speak for itself.
+     */
+    const taught = taughtKcSet(state);
+    const scopedUnits = scienceUnits.filter((u) => taught.has(u.kcId));
+    const taughtGapDetected = scienceUnits.length > 0 && scopedUnits.length === 0;
 
     return {
       units: scopedUnits,
       cars: carsUnits,
       repairs: repairs.map((r) => (r.skill ? { kcId: r.kcId, skill: r.skill } : { kcId: r.kcId })),
       coveredClusters: covered,
+      taughtGapDetected,
+      nothingTaughtYet: taught.size === 0,
     };
   }
 
@@ -1478,16 +2908,43 @@ export class Authority {
     return Math.max(0, daysBetween(st.lastPracticedAt, now));
   }
 
+  /**
+   * Apply one practice answer to the mastery signal, and write the warrant for
+   * it in the same breath.
+   *
+   * Science goes through `stepDirectGrains`, the same door the lesson path and
+   * the synthetic study path use. It used to call `applyMasteryAttempt` inline,
+   * which reached the grains without the bounded monotonic decay clock: the
+   * write still succeeded, so decay simply stopped applying on this path and
+   * nothing failed. Routing it here rather than calling `boundDecayClock`
+   * alongside is deliberate — a second caller of the clamp is a duplicated
+   * invariant, and the next writer copies the duplicate.
+   *
+   * The capability write and the evidence record are ONE unit. Practice moved
+   * `P(L)` and wrote no evidence at all, which made it a channel that changed a
+   * learner's capability estimate with nothing on record to justify it — and
+   * because evidence sufficiency is computed across channels, the absence read
+   * as "this learner has no warrant here" rather than as a missing writer. So a
+   * response that cannot produce a record does not move a grain either; see the
+   * cluster refusal below.
+   *
+   * CARS is the IRT authority, not BKT: no capability grain moves, so it writes
+   * no BKT ledger record. It writes no evidence record here either — the
+   * evidence/warrant surface is keyed to the BKT grains, and a CARS warrant
+   * grain vocabulary is a separate question from this one.
+   */
   private applyPracticeMastery(
     state: LearnerState,
+    questionId: string,
     classification: PracticeItemClassification,
-    correct: boolean,
+    outcome: EvidenceOutcome,
     stats: { attempts: number; correct: number },
-    now: UtcTimestamp,
+    administration: { firstAttempt: boolean; now: UtcTimestamp; sequence: number },
   ): void {
     const m = this.ensureMastery(state);
+    const correct = outcome === 'correct';
     if (classification.domain === 'cars') {
-      if (classification.carsSkill === null) return;
+      if (classification.carsSkill === null || !administration.firstAttempt) return;
       m.cars[classification.carsSkill] = carsUpdate(m.cars[classification.carsSkill] ?? CARS_V0, {
         r: correct ? 1 : 0,
         b: 0,
@@ -1497,33 +2954,192 @@ export class Authority {
     }
     if (classification.kcId === null || classification.skill === null) return;
 
-    const prereqKeys = this.bank.skillGraph.edges
-      .filter((e) => e.kind === 'hard_prerequisite' && e.to === classification.kcId)
-      .map((e) => e.from);
-    const prerequisites = prereqKeys.map((k) => m.kc[k] ?? initialMemoryState());
+    /**
+     * The grain's cluster, registry first.
+     *
+     * `EvidenceRecord.cluster` is caller-resolved and `warrantGrains` requires
+     * every source that claims a cluster for a grain to AGREE, throwing rather
+     * than picking a winner. Reading the SHA-pinned registry first and using
+     * the corpus column only where the registry is silent makes a disagreement
+     * unrepresentable from this writer: what lands in the record is what
+     * `clusterForKc` will report back, or the only claim there was.
+     *
+     * No cluster at all means no record can be written, and therefore no grain
+     * may move: an unwarranted capability write is the defect this method
+     * exists to close, and a record with an unroutable grain is worse still —
+     * `warrantGrains` throws on it, taking every OTHER grain's warrant down
+     * with it.
+     */
+    const cluster = clusterForKc(classification.kcId) ?? classification.cluster;
+    if (cluster === null) return;
 
-    const result = applyMasteryAttempt({
+    const record = this.practiceEvidence({
+      questionId,
+      skillId: classification.kcId,
+      cluster,
+      familyId: classification.familyId,
+      outcome,
+      firstAttempt: administration.firstAttempt,
+      occurredAt: administration.now,
+      sequence: administration.sequence,
+    });
+    state.evidence.push(record);
+
+    // Only a first attempt is capability evidence. A repeat has already had the
+    // answer and the rationale shown to it, so its record above is
+    // contextual-only and nothing below runs.
+    if (!administration.firstAttempt) return;
+
+    const clock = this.stepDirectGrains(m, {
+      kcId: classification.kcId,
+      operation: classification.skill,
       correct,
-      now,
+      // The undiscounted channel: a practice item is met cold, with nothing
+      // just shown to reproduce, so it is scored at the plain guess rate. Same
+      // constant the ledger record below carries.
+      source: PRACTICE_OBSERVATION_SOURCE,
+      // Practice is scored inside the request, so the step reads the Authority
+      // clock itself; the bound is a no-op on it except where a grain's own
+      // history is newer, which is monotonicity doing its job rather than a
+      // clamp. Nothing a client sent reaches the decay clock on this path.
+      reportedAt: SERVER_REPORTED_TIME,
+      dokLevel: classification.dok ?? undefined,
       questionStats: stats,
-      ...(classification.dok !== null ? { dokLevel: classification.dok } : {}),
-      states: {
-        kc: m.kc[classification.kcId] ?? initialMemoryState(),
-        skill: m.skill[classification.skill] ?? initialMemoryState(),
-        lesson:
-          classification.lessonId !== null
-            ? (m.lesson[classification.lessonId] ?? initialMemoryState())
-            : initialMemoryState(),
-      },
-      prerequisites,
     });
 
-    m.kc[classification.kcId] = result.states.kc;
-    m.skill[classification.skill] = result.states.skill;
-    if (classification.lessonId !== null) m.lesson[classification.lessonId] = result.states.lesson;
-    prereqKeys.forEach((k, i) => {
-      const next = result.prerequisites[i];
-      if (next) m.kc[k] = next;
+    // The rollup reports the lessons a learner has practised, and practice
+    // reaches KCs that belong to lessons. Without this a lesson practised only
+    // here never enters `practicedLessonIds`, so the default
+    // `getMasteryLessons(state)` silently omits it — the lesson looks unstudied
+    // to the planner while its KCs carry real evidence.
+    if (classification.lessonId !== null && classification.lessonId.trim().length > 0) {
+      this.recordPracticedLesson(m, classification.lessonId.trim());
+    }
+
+    // Every capability write leaves a ledger record, whatever moved it. There is
+    // no observation id or sequence here: practice is scored in-request, so
+    // there is nothing to deduplicate against and nothing to order — and a
+    // record claiming otherwise is refused by the payload's own guard, which
+    // `recordBktObservationEvent` runs rather than merely typing against.
+    this.recordBktObservationEvent(
+      state,
+      {
+        source: PRACTICE_OBSERVATION_SOURCE,
+        observationId: null,
+        observationSequence: null,
+        questionId,
+        primaryKcId: classification.kcId,
+        reasoningOperation: classification.skill,
+        correct,
+        // The step's own reading of the clock, not this method's `now`: the
+        // ledger's two times must come from one source, or `clockAdjustment`
+        // and the pair it describes can disagree by a millisecond of drift.
+        reportedOccurredAt: clock.reportedAt,
+        contentRelease: this.bank.contentRelease,
+        policies: activePolicyVersions(),
+      },
+      {
+        appliedOccurredAt: clock.appliedAt,
+        clockAdjustment: clock.clockAdjustment,
+        outOfOrder: false,
+        rejectionCodes: [],
+      },
+    );
+  }
+
+  /**
+   * The warrant for one practice answer, in the SAME shape lesson evidence
+   * carries — because evidence sufficiency is computed across both channels,
+   * and a slimmer practice-specific record would make "mastered requires
+   * evidence" mean one thing for a lesson and another for a question.
+   *
+   * Practice genuinely faces fewer administration conditions than a lesson
+   * exit does. Every one of them is recorded as ABSENT rather than omitted:
+   *
+   * - `mixed` — the queue may interleave grains, but a submit sees one item and
+   *   has no view of the queue it came from, so the condition is unobservable
+   *   here. Unobservable fails closed to false; crediting it would fill the
+   *   mixed recipe slot on a claim nothing checked.
+   * - `passage` — an item can carry a stimulus, but the recipe slot means
+   *   passage-integrated multi-skill administration, which is a stronger claim
+   *   than "this item had text above it".
+   * - `timed` — practice is untimed.
+   * - `protected` — practice serves the general corpus, not a held-out
+   *   server-scored pool.
+   * - `accommodations` — none are modelled on this path.
+   *
+   * `operation` is omitted for the same reason lesson evidence omits it: the
+   * `OperationTag` authoring-analysis axis has no honest source here, and the
+   * item's reasoning operation is a different axis that already reaches BKT.
+   */
+  private practiceEvidence(input: {
+    questionId: string;
+    skillId: string;
+    cluster: SkillCluster;
+    familyId: string | null;
+    outcome: EvidenceOutcome;
+    firstAttempt: boolean;
+    occurredAt: UtcTimestamp;
+    /** The accepted-stream sequence, allocated by `submitPracticeAttempt`. */
+    sequence: number;
+  }): EvidenceRecord {
+    /**
+     * The administration, as the server observed it.
+     *
+     * `assistanceLevel: 'A0'` is an observation, not the lesson runtime's
+     * fail-closed default: adaptive practice offers no hint, no scaffold and no
+     * reveal before an answer is committed, so there is no help that could have
+     * been taken. `isRetry` is the one fact the client cannot be asked for —
+     * see `submitPracticeAttempt`, which derives it from the exposure records
+     * the server holds.
+     */
+    const facts: AdministrationFacts = {
+      assistanceLevel: 'A0',
+      contentBearingHintUsed: false,
+      revealUsed: false,
+      isRetry: !input.firstAttempt,
+      isDiagnosticRetry: false,
+    };
+    const conditions = {
+      mixed: false,
+      passage: false,
+      timed: false,
+      protected: false,
+      accommodations: [],
+    };
+    return EvidenceRecordSchema.parse({
+      evidenceId: crypto.randomUUID(),
+      skillId: input.skillId,
+      cluster: input.cluster,
+      // The same function the lesson adapter classifies with, so one attempt
+      // cannot be called independent by one channel and instructional by the
+      // other. PRACTICE_EVIDENCE_MODES says what the CHANNEL is eligible to
+      // serve as; the administration facts still outrank it, so a repeat
+      // resolves to a contextual-only kind however the channel is declared.
+      kind: deriveEvidenceKind(PRACTICE_EVIDENCE_MODES, facts, conditions),
+      independent: isIndependentAdministration(facts),
+      assistanceLevel: facts.assistanceLevel,
+      contentBearingHint: facts.contentBearingHintUsed,
+      questionId: input.questionId,
+      itemVersion: 1,
+      familyId: input.familyId ?? UNKNOWN_ITEM_FAMILY,
+      changeDimensions: [],
+      conditions,
+      outcome: input.outcome,
+      valid: true,
+      // Through the one producer of the branded server-bounded type rather than
+      // assigned raw. The ceiling IS this reading, so the bound is a no-op — but
+      // routing through it is what makes "never a client-supplied time" a
+      // property of the type rather than of this call site's discipline.
+      occurredAt: boundOccurredAtToServerTime(input.occurredAt, input.occurredAt),
+      // The sequence this command WILL be accepted at, not the one before it.
+      // The lesson channel's records are numbered the same way, and
+      // `evaluateEvidence` compares the two strictly, so an off-by-one here is
+      // the difference between a fresh failure that fires and one that ties with
+      // the record it should outrank. See `submitPracticeAttempt`.
+      sequence: input.sequence,
+      contentRelease: this.bank.contentRelease,
+      policies: activePolicyVersions(),
     });
   }
 
@@ -1534,7 +3150,7 @@ export class Authority {
     if (!compiled) return null;
     const stimulus =
       compiled.safe.stimulus_id !== null
-        ? this.bank.stimuli.find((s) => s.id === compiled.safe.stimulus_id) ?? null
+        ? (this.bank.stimuli.find((s) => s.id === compiled.safe.stimulus_id) ?? null)
         : null;
     return {
       question: compiled.safe,
@@ -1543,15 +3159,21 @@ export class Authority {
   }
 
   checkPractice(state: LearnerState, questionId: string, choiceId: string | null): PracticeResult {
+    // Allocated before any write. See `appendEvidence`.
+    const acceptedSequence = state.nextSequence + 1;
     const compiled = this.bank.compiled.get(questionId)!;
     const correctId = compiled.protected.correct_choice_id;
     const correct = choiceId === correctId;
     this.recordEvent(
       state,
-      this.attemptEvent(state, questionId, choiceId, { assistanceLevel: 'A0', isDiagnosticRetry: false }),
+      this.attemptEvent(state, questionId, choiceId, {
+        assistanceLevel: 'A0',
+        isDiagnosticRetry: false,
+      }),
     );
     // Low-stakes daily practice: contextual evidence only (never mastery).
-    const skillId = this.bank.questions.find((q) => q.id === questionId)?.internal_skill_ids[0] ?? ENZYME_SKILL;
+    const skillId =
+      this.bank.questions.find((q) => q.id === questionId)?.internal_skill_ids[0] ?? ENZYME_SKILL;
     this.appendEvidence(state, {
       skillId,
       kind: 'placement',
@@ -1560,13 +3182,14 @@ export class Authority {
       correct,
       independent: false,
       changeDimensions: [],
+      sequence: acceptedSequence,
     });
     const rationales = compiled.protected.rationales.choices as Record<string, string>;
     return {
       correct,
       correctChoiceId: correctId,
       rationale: compiled.protected.rationales.correct,
-      choiceRationale: choiceId && choiceId !== correctId ? rationales[choiceId] ?? null : null,
+      choiceRationale: choiceId && choiceId !== correctId ? (rationales[choiceId] ?? null) : null,
     };
   }
 
@@ -1574,8 +3197,18 @@ export class Authority {
    * CARS Duel is an AI sparring session, so it can never mint mastery. It logs
    * contextual (placement-kind) evidence to the two CARS clusters so the Atlas
    * reflects the reps without treating an AI as proof.
+   *
+   * This path appends no event of its own, so it used to stamp its records with
+   * the sequence of the command BEFORE it. Harmless as it stood — a `placement`
+   * record is contextual-only, so it can never be the mastery-eligible record
+   * `latestEligibleSeq` reads, and `independent: false` means it can never be a
+   * fresh failure either — but it was the same off-by-one `b845489` fixed on the
+   * practice channel, kept alive by two properties of these two records rather
+   * than by anything structural. The kind is now the reason the record is
+   * contextual, not the reason its number is safe.
    */
   recordCarsDuel(state: LearnerState, rubric?: CarsDuelRubric): void {
+    const acceptedSequence = state.nextSequence + 1;
     for (const cluster of ['CA1', 'CA2'] as const) {
       this.appendEvidence(state, {
         skillId: `cars-${cluster.toLowerCase()}`,
@@ -1585,6 +3218,7 @@ export class Authority {
         correct: true,
         independent: false,
         changeDimensions: [],
+        sequence: acceptedSequence,
         cluster,
         operation: 'A',
         familyId: 'fam-cars-duel',
@@ -1616,17 +3250,34 @@ export class Authority {
     this.updateCarsAbility(state, skill, correct ? 1 : 0, CARS_K_POTD);
   }
 
+  /**
+   * `skillsGlowing` is a CAPABILITY reading and comes from BKT, via the very same
+   * `getMasterySkills` call Home reads, so the two screens cannot disagree. It
+   * used to threshold the ordinal evidence tier at `>= independent`, which let a
+   * learner see "3 skills glowing" on Wrapped and "0" on Home in one session.
+   *
+   * "Glowing" is deliberately not "mastered": it counts operations whose `P(L)`
+   * is at the capability cut, and it makes no claim about warrant. The field it
+   * reads is named for what it is, so a future reader cannot mistake this for
+   * the mastery claim the way `mastered` invited.
+   *
+   * `skillsTouched` still reads the warrant, and correctly: "have I met this at
+   * all" is coverage, not attainment, and it makes no claim about capability.
+   */
   async getWrapped(state: LearnerState): Promise<WrappedView> {
-    const map = this.getMasteryMap(state);
     const counts: Record<string, number> = {};
     for (const e of state.evidence) counts[e.kind] = (counts[e.kind] ?? 0) + 1;
     return {
       dayNumber: Math.max(1, Math.floor(daysBetween(state.createdAt, this.clock.now())) + 1),
-      skillsTouched: map.filter((m) => m.base !== 'not_assessed').length,
-      skillsGlowing: map.filter((m) => ['independent', 'retained', 'strong'].includes(m.base)).length,
+      skillsTouched: this.skillWarrants(state).filter(
+        ({ evidence }) => evidence.evidenceQuality !== 'not_assessed',
+      ).length,
+      skillsGlowing: this.getMasterySkills(state).filter((s) => s.atCapabilityCut).length,
       evidenceCounts: counts,
       repairsCompleted: (await this.getErrorLog(state)).filter((e) => e.resolved).length,
-      protectedPassed: state.evidence.filter((e) => e.kind === 'protected' && e.outcome === 'correct').length,
+      protectedPassed: state.evidence.filter(
+        (e) => e.kind === 'protected' && e.outcome === 'correct',
+      ).length,
     };
   }
 
@@ -1827,16 +3478,23 @@ export class Authority {
     );
   }
 
+  /**
+   * End-of-session summary: the warrant for the skill just practiced, as reason
+   * codes. No tier — the screen used to pick its sentence out of an ordered list
+   * keyed by the evidence rank, which is the same rival scale under new wording.
+   * A skill with no warrant at all reports the explicit `NO_USEFUL_EVIDENCE`
+   * code rather than an empty list, so the absence is stated and not inferred.
+   */
   buildSummary(state: LearnerState, skillId: string): SessionSummary {
-    const map = this.getMasteryMap(state).find((m) => m.skillId === skillId);
+    const warrant = this.skillWarrants(state).find((w) => w.grain.skillId === skillId)?.evidence;
     const counts: Record<string, number> = {};
     for (const e of state.evidence.filter((x) => x.skillId === skillId)) {
       counts[e.kind] = (counts[e.kind] ?? 0) + 1;
     }
     return {
       skillId,
-      masteryState: (map?.base ?? 'not_assessed') as MasteryState,
-      refreshNeeded: map?.refreshNeeded ?? false,
+      refreshNeeded: warrant?.refreshNeeded ?? false,
+      reasons: warrant ? [...warrant.reasons] : [{ code: 'NO_USEFUL_EVIDENCE' }],
       evidenceCounts: counts,
     };
   }
@@ -1853,6 +3511,15 @@ export class Authority {
     s.retryPending = false;
   }
 
+  /**
+   * A WARRANT gate, not a capability one: a hard prerequisite blocks while the
+   * warrant emits an absence or blocked-prerequisite reason. Deliberately kept
+   * on the evidence side after the split, because "we have not seen enough of
+   * the right evidence yet" is a different question from "how likely is success
+   * right now?", and a planner gating a high-consequence action should require
+   * both an acceptable `P(L)` (`getMasterySkills`) AND a sufficient warrant. Two
+   * signals consulted together are not a second mastery number.
+   */
   private isPrerequisiteBlocked(state: LearnerState, skillId: string): boolean {
     const hardPrereqs = this.bank.skillGraph.edges
       .filter((e) => e.kind === 'hard_prerequisite' && e.to === skillId)
@@ -1860,8 +3527,10 @@ export class Authority {
     if (hardPrereqs.length === 0) return false;
     for (const prereq of hardPrereqs) {
       const records = state.evidence.filter((e) => e.skillId === prereq);
-      const m = evaluateMastery({ skillId: prereq, records, now: this.clock.now() });
-      if (m.base === 'not_assessed' || m.base === 'foundation_needed') return true;
+      const evidence = evaluateEvidence({ skillId: prereq, records, now: this.clock.now() });
+      if (evidence.reasons.some(({ code }) => PREREQUISITE_BLOCKING_EVIDENCE_REASONS.has(code))) {
+        return true;
+      }
     }
     return false;
   }
@@ -1905,6 +3574,34 @@ export class Authority {
     };
   }
 
+  /**
+   * Append one evidence record, numbered with the sequence its COMMAND is
+   * accepted at.
+   *
+   * `sequence` is a required input rather than read off `state.nextSequence`
+   * here, and that is the whole point. `nextSequence` is the sequence of the last
+   * accepted command on entry, and `recordEvent` advances it in place — so what
+   * this method would read depends on how many events a sibling call happened to
+   * append first. Measured before this became a parameter: `recordCarsDuel`
+   * appends no event and stamped the PRIOR sequence, `submitAttempt` appends both
+   * an attempt and a BKT ledger record and stamped one PAST the accepted
+   * sequence, and only the two paths that append exactly one event landed on it.
+   * Three call sites, three different answers to one question.
+   *
+   * That is not cosmetic. `evaluateEvidence` decides a fresh failure by strict
+   * sequence ordering against the highest mastery-eligible record, so an
+   * overshooting `independent`-kind record raises the bar above the sequence any
+   * later command can reach, and the next genuine independent miss TIES rather
+   * than outranks it — `FRESH_FAILURE` never fires and a learner who has just
+   * demonstrably failed keeps a clean warrant. That is the same defect `b845489`
+   * fixed on the practice channel, reached from the other direction.
+   *
+   * So every caller allocates the accepted sequence ONCE, at entry, before any
+   * write: `state.nextSequence + 1`, which is what the kernel will persist
+   * (`projection.sequence + 1`) and what the lesson channel already passes to the
+   * adapter. Two records from the same command share it, which is correct — they
+   * are one command.
+   */
   private appendEvidence(
     state: LearnerState,
     input: {
@@ -1915,6 +3612,8 @@ export class Authority {
       correct: boolean;
       independent: boolean;
       changeDimensions: string[];
+      /** The accepted-stream sequence, allocated by the calling command at entry. */
+      sequence: number;
       conditions?: { mixed?: boolean; passage?: boolean; timed?: boolean; protected?: boolean };
       /** Overrides for evidence not backed by a bank question (e.g., CARS Duel). */
       cluster?: string;
@@ -1946,7 +3645,7 @@ export class Authority {
       outcome: input.correct ? 'correct' : 'incorrect',
       valid: true,
       occurredAt: this.clock.now(),
-      sequence: state.nextSequence,
+      sequence: input.sequence,
       contentRelease: this.bank.contentRelease,
       policies: activePolicyVersions(),
     });

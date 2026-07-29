@@ -157,6 +157,8 @@ export async function handleAuthorityRequest(
           return sendJson(response, 200, await client.getMasterySkills());
         case '/v1/progress/lessons':
           return sendJson(response, 200, await client.getMasteryLessons());
+        case '/v1/progress/lesson-warrants':
+          return sendJson(response, 200, await client.getLessonWarrants());
         case '/v1/progress/cars':
           return sendJson(response, 200, await client.getCarsReadiness());
         case '/v1/errors':
@@ -256,7 +258,6 @@ export async function handleAuthorityRequest(
         questionId: String(body.questionId ?? ''),
         specId: String(body.specId ?? ''),
         chosenChoiceId: (body.chosenChoiceId ?? null) as 'A' | 'B' | 'C' | 'D' | null,
-        firstAttempt: Boolean(body.firstAttempt),
       });
       return sendJson(response, 200, result);
     }

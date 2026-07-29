@@ -1,6 +1,7 @@
 import type { Section, SkillCluster } from '@mcat/contracts';
 import type { V7Section } from './schema';
 import { KC_TO_LESSON, LESSON_TO_CLUSTER } from './data/v3-cluster-map.data';
+import { LESSON_TO_ORDERED_KCS } from './data/lesson-to-ordered-kcs.data';
 
 /**
  * ADAPTER SEAM — v7 sections/skills → the engine's rollups.
@@ -16,6 +17,10 @@ import { KC_TO_LESSON, LESSON_TO_CLUSTER } from './data/v3-cluster-map.data';
  * V3 registry and covers all 114 lessons / 422 KCs with zero gaps. The one
  * teaching module that spans two reasoning clusters (Scientific Models & Evidence
  * Entry) is split per the locked labels: SIRS1/SIRS4 → R2, SIRS2/SIRS3 → R3.
+ *
+ * The same seam also exposes the *ordered* membership of each lesson
+ * (`./data/lesson-to-ordered-kcs.data.ts`, from the pinned authoring manifest),
+ * which is what lesson-level mastery rolls up over.
  */
 
 /**
@@ -48,6 +53,24 @@ export const isCrossSection = (section: V7Section): boolean => section === 'CROS
 export function clusterForLesson(lessonId: string | null | undefined): SkillCluster | null {
   if (!lessonId) return null;
   return LESSON_TO_CLUSTER[lessonId] ?? null;
+}
+
+/**
+ * The required KCs of a V3 lesson, in registry **curriculum order** — the
+ * membership a lesson's mastery rollup is computed over (see
+ * packages/policies/src/lesson-rollup.ts).
+ *
+ * Order is the teaching sequence, not id order; it is read from the pinned
+ * authoring manifest and disagrees with sorting each lesson's KC ids for 100 of
+ * the 114 lessons, so it can never be recovered by inverting {@link KC_TO_LESSON}.
+ *
+ * Returns `null` for an unknown lesson id (a data-integrity signal for callers,
+ * same convention as {@link clusterForLesson}). Never returns an empty array:
+ * every registry lesson has 1–5 required KCs.
+ */
+export function orderedKcsForLesson(lessonId: string | null | undefined): readonly string[] | null {
+  if (!lessonId) return null;
+  return LESSON_TO_ORDERED_KCS[lessonId] ?? null;
 }
 
 /**
