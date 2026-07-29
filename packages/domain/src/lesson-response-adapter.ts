@@ -3,6 +3,7 @@ import {
   LessonItemBindingSchema,
   hasEligibleEvidenceMode,
   type AcceptedLessonObservation,
+  type AssistanceLevel,
   type BktQualificationRejectionCode,
   type BktQualificationResult,
   type CandidateEvidenceMode,
@@ -775,10 +776,28 @@ export function parseAuthoredLessonBinding(
 // ---------------------------------------------------------------------------
 
 /**
+ * The five runtime facts independence is decided from.
+ *
+ * A structural subset of `LessonRuntimeResponseFacts`, so the lesson runtime
+ * satisfies it unchanged, and narrow enough that a channel which is not a
+ * lesson — adaptive practice — can report the same five facts instead of
+ * growing a second copy of the rule. Independence then has exactly one
+ * derivation and both channels read it, which is what makes their evidence
+ * comparable at all.
+ */
+export interface AdministrationFacts {
+  readonly assistanceLevel: AssistanceLevel;
+  readonly contentBearingHintUsed: boolean;
+  readonly revealUsed: boolean;
+  readonly isRetry: boolean;
+  readonly isDiagnosticRetry: boolean;
+}
+
+/**
  * Independence is a fact about the administration, never about what the item
  * offered. `authoredAssistanceAffordances` is deliberately not read here.
  */
-export const isIndependentAdministration = (response: LessonRuntimeResponseFacts): boolean =>
+export const isIndependentAdministration = (response: AdministrationFacts): boolean =>
   response.assistanceLevel === 'A0' &&
   !response.contentBearingHintUsed &&
   !response.revealUsed &&
@@ -868,7 +887,7 @@ const CONSERVATIVE_EVIDENCE_MODE_ORDER: readonly CandidateEvidenceMode[] = [
 /** Evidence classification: assisted administration outranks any declared mode. */
 export const deriveEvidenceKind = (
   modes: readonly CandidateEvidenceMode[],
-  response: LessonRuntimeResponseFacts,
+  response: AdministrationFacts,
   conditions: AdministrationConditions,
 ): EvidenceKind => {
   if (response.isDiagnosticRetry) return 'diagnostic_retry';

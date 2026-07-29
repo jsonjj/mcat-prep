@@ -18,6 +18,7 @@ import {
   type BootstrapResponse,
   type BuildTodaysPathInput,
   type TodaysPathView,
+  type CandidateEvidenceMode,
   type CarsDuelRubric,
   type CarsReadinessLabel,
   type CarsReadinessView,
@@ -42,10 +43,16 @@ import {
 } from '@mcat/contracts';
 import {
   EvidenceRecordSchema,
+  boundOccurredAtToServerTime,
+  deriveEvidenceKind,
+  isIndependentAdministration,
   scoreAttempt,
+  type AdministrationFacts,
   type CapacityLabel,
   type EvidenceKind,
+  type EvidenceOutcome,
   type EvidenceReason,
+  type EvidenceRecord,
   type SkillEvidenceState,
   type Task,
 } from '@mcat/domain';
@@ -269,6 +276,29 @@ const ENZYME_PATH: PathActivity[] = [
 
 const ENZYME_SKILL = 'bb1-enzyme-inhibition';
 const ENZYME_LESSON_ID = 'lesson-enz-inhibition';
+
+/**
+ * What an adaptive-practice item is eligible to serve as, decided by the SERVER.
+ *
+ * Not an authored declaration and not reachable from one: no byte of item data
+ * reaches this list, so the failure mode where an author widens their own
+ * item's eligibility cannot occur here. It states a property of the CHANNEL —
+ * a corpus item served cold and scored server-side — and `deriveEvidenceKind`
+ * still gates it on the administration facts, so a repeat or an assisted
+ * attempt resolves to a contextual-only kind regardless.
+ */
+const PRACTICE_EVIDENCE_MODES: readonly CandidateEvidenceMode[] = ['INDEPENDENT'];
+
+/**
+ * The family marker for an item whose corpus row names none.
+ *
+ * A family satisfies a recipe slot at most once, so collapsing every
+ * unknown-family item onto one marker makes them share a single slot — fewer
+ * slots filled, never more. Minting a distinct family per item (the questionId,
+ * say) would be the generous direction, and generosity is the wrong default for
+ * a field that decides how much evidence a learner is credited with.
+ */
+const UNKNOWN_ITEM_FAMILY = 'fam-unknown';
 
 /**
  * How far ahead of the Authority clock a runner-reported `occurredAt` may be and
@@ -2252,16 +2282,32 @@ export class Authority {
     if (answer === null) {
       throw new Error(`Practice item ${cmd.questionId} is unavailable.`);
     }
-    const correct = cmd.chosenChoiceId !== null && cmd.chosenChoiceId === answer.correctChoiceId;
+    // One derivation of the outcome, shared by the returned result, the BKT
+    // signal and the evidence record. An unanswered item is `omitted`, a scored
+    // outcome rather than a missing one — the same reading the lesson adapter
+    // takes, and the reason a learner who skips the hard items still accrues a
+    // record rather than a silence.
+    const outcome: EvidenceOutcome =
+      cmd.chosenChoiceId === null
+        ? 'omitted'
+        : cmd.chosenChoiceId === answer.correctChoiceId
+          ? 'correct'
+          : 'incorrect';
+    const correct = outcome === 'correct';
     const now = this.clock.now();
 
     if (cmd.firstAttempt) {
       const classification = await this.practiceBank.classify(cmd.questionId);
       const stats = await this.practiceBank.questionStats(cmd.questionId);
       if (classification !== null) {
-        // No `now` is threaded in: the write path reads the Authority clock
-        // itself, so this method has no way to offer it a time at all.
-        this.applyPracticeMastery(state, cmd.questionId, classification, correct, stats);
+        // `now` reaches the evidence record only. The BKT decay clock is still
+        // read inside `stepDirectGrains`, because the ledger's reported and
+        // applied times must come from one reading or `clockAdjustment` can
+        // describe a clamp that never happened.
+        this.applyPracticeMastery(state, cmd.questionId, classification, outcome, stats, {
+          firstAttempt: cmd.firstAttempt,
+          now,
+        });
       }
       await this.practiceBank.recordAttempt(cmd.questionId, correct, now);
       await this.practiceBank.recordExposure(state.learnerId, cmd.questionId, now);
@@ -2389,7 +2435,8 @@ export class Authority {
   }
 
   /**
-   * Apply one first, unassisted practice answer to the mastery signal.
+   * Apply one practice answer to the mastery signal, and write the warrant for
+   * it in the same breath.
    *
    * Science goes through `stepDirectGrains`, the same door the lesson path and
    * the synthetic study path use. It used to call `applyMasteryAttempt` inline,
@@ -2399,19 +2446,31 @@ export class Authority {
    * alongside is deliberate — a second caller of the clamp is a duplicated
    * invariant, and the next writer copies the duplicate.
    *
+   * The capability write and the evidence record are ONE unit. Practice moved
+   * `P(L)` and wrote no evidence at all, which made it a channel that changed a
+   * learner's capability estimate with nothing on record to justify it — and
+   * because evidence sufficiency is computed across channels, the absence read
+   * as "this learner has no warrant here" rather than as a missing writer. So a
+   * response that cannot produce a record does not move a grain either; see the
+   * cluster refusal below.
+   *
    * CARS is the IRT authority, not BKT: no capability grain moves, so it writes
-   * no BKT ledger record.
+   * no BKT ledger record. It writes no evidence record here either — the
+   * evidence/warrant surface is keyed to the BKT grains, and a CARS warrant
+   * grain vocabulary is a separate question from this one.
    */
   private applyPracticeMastery(
     state: LearnerState,
     questionId: string,
     classification: PracticeItemClassification,
-    correct: boolean,
+    outcome: EvidenceOutcome,
     stats: { attempts: number; correct: number },
+    administration: { firstAttempt: boolean; now: UtcTimestamp },
   ): void {
     const m = this.ensureMastery(state);
+    const correct = outcome === 'correct';
     if (classification.domain === 'cars') {
-      if (classification.carsSkill === null) return;
+      if (classification.carsSkill === null || !administration.firstAttempt) return;
       m.cars[classification.carsSkill] = carsUpdate(m.cars[classification.carsSkill] ?? CARS_V0, {
         r: correct ? 1 : 0,
         b: 0,
@@ -2420,6 +2479,41 @@ export class Authority {
       return;
     }
     if (classification.kcId === null || classification.skill === null) return;
+
+    /**
+     * The grain's cluster, registry first.
+     *
+     * `EvidenceRecord.cluster` is caller-resolved and `warrantGrains` requires
+     * every source that claims a cluster for a grain to AGREE, throwing rather
+     * than picking a winner. Reading the SHA-pinned registry first and using
+     * the corpus column only where the registry is silent makes a disagreement
+     * unrepresentable from this writer: what lands in the record is what
+     * `clusterForKc` will report back, or the only claim there was.
+     *
+     * No cluster at all means no record can be written, and therefore no grain
+     * may move: an unwarranted capability write is the defect this method
+     * exists to close, and a record with an unroutable grain is worse still —
+     * `warrantGrains` throws on it, taking every OTHER grain's warrant down
+     * with it.
+     */
+    const cluster = clusterForKc(classification.kcId) ?? classification.cluster;
+    if (cluster === null) return;
+
+    const record = this.practiceEvidence(state, {
+      questionId,
+      skillId: classification.kcId,
+      cluster,
+      familyId: classification.familyId,
+      outcome,
+      firstAttempt: administration.firstAttempt,
+      occurredAt: administration.now,
+    });
+    state.evidence.push(record);
+
+    // Only a first attempt is capability evidence. A repeat has already had the
+    // answer and the rationale shown to it, so its record above is
+    // contextual-only and nothing below runs.
+    if (!administration.firstAttempt) return;
 
     const clock = this.stepDirectGrains(m, {
       kcId: classification.kcId,
@@ -2472,6 +2566,98 @@ export class Authority {
         rejectionCodes: [],
       },
     );
+  }
+
+  /**
+   * The warrant for one practice answer, in the SAME shape lesson evidence
+   * carries — because evidence sufficiency is computed across both channels,
+   * and a slimmer practice-specific record would make "mastered requires
+   * evidence" mean one thing for a lesson and another for a question.
+   *
+   * Practice genuinely faces fewer administration conditions than a lesson
+   * exit does. Every one of them is recorded as ABSENT rather than omitted:
+   *
+   * - `mixed` — the queue may interleave grains, but a submit sees one item and
+   *   has no view of the queue it came from, so the condition is unobservable
+   *   here. Unobservable fails closed to false; crediting it would fill the
+   *   mixed recipe slot on a claim nothing checked.
+   * - `passage` — an item can carry a stimulus, but the recipe slot means
+   *   passage-integrated multi-skill administration, which is a stronger claim
+   *   than "this item had text above it".
+   * - `timed` — practice is untimed.
+   * - `protected` — practice serves the general corpus, not a held-out
+   *   server-scored pool.
+   * - `accommodations` — none are modelled on this path.
+   *
+   * `operation` is omitted for the same reason lesson evidence omits it: the
+   * `OperationTag` authoring-analysis axis has no honest source here, and the
+   * item's reasoning operation is a different axis that already reaches BKT.
+   */
+  private practiceEvidence(
+    state: LearnerState,
+    input: {
+      questionId: string;
+      skillId: string;
+      cluster: SkillCluster;
+      familyId: string | null;
+      outcome: EvidenceOutcome;
+      firstAttempt: boolean;
+      occurredAt: UtcTimestamp;
+    },
+  ): EvidenceRecord {
+    /**
+     * The administration, as the server observed it.
+     *
+     * `assistanceLevel: 'A0'` is an observation, not the lesson runtime's
+     * fail-closed default: adaptive practice offers no hint, no scaffold and no
+     * reveal before an answer is committed, so there is no help that could have
+     * been taken. `isRetry` is the one fact the client cannot be asked for —
+     * see `submitPracticeAttempt`, which derives it from the exposure records
+     * the server holds.
+     */
+    const facts: AdministrationFacts = {
+      assistanceLevel: 'A0',
+      contentBearingHintUsed: false,
+      revealUsed: false,
+      isRetry: !input.firstAttempt,
+      isDiagnosticRetry: false,
+    };
+    const conditions = {
+      mixed: false,
+      passage: false,
+      timed: false,
+      protected: false,
+      accommodations: [],
+    };
+    return EvidenceRecordSchema.parse({
+      evidenceId: crypto.randomUUID(),
+      skillId: input.skillId,
+      cluster: input.cluster,
+      // The same function the lesson adapter classifies with, so one attempt
+      // cannot be called independent by one channel and instructional by the
+      // other. PRACTICE_EVIDENCE_MODES says what the CHANNEL is eligible to
+      // serve as; the administration facts still outrank it, so a repeat
+      // resolves to a contextual-only kind however the channel is declared.
+      kind: deriveEvidenceKind(PRACTICE_EVIDENCE_MODES, facts, conditions),
+      independent: isIndependentAdministration(facts),
+      assistanceLevel: facts.assistanceLevel,
+      contentBearingHint: facts.contentBearingHintUsed,
+      questionId: input.questionId,
+      itemVersion: 1,
+      familyId: input.familyId ?? UNKNOWN_ITEM_FAMILY,
+      changeDimensions: [],
+      conditions,
+      outcome: input.outcome,
+      valid: true,
+      // Through the one producer of the branded server-bounded type rather than
+      // assigned raw. The ceiling IS this reading, so the bound is a no-op — but
+      // routing through it is what makes "never a client-supplied time" a
+      // property of the type rather than of this call site's discipline.
+      occurredAt: boundOccurredAtToServerTime(input.occurredAt, input.occurredAt),
+      sequence: state.nextSequence,
+      contentRelease: this.bank.contentRelease,
+      policies: activePolicyVersions(),
+    });
   }
 
   // ---- Practice hooks (Passage of the Day, etc.) ------------------------
