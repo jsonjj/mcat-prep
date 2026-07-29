@@ -9,7 +9,7 @@
     "schema_sha256": "8759f753eeb8cbe6114c476608e713f20b257b1a6add73a96c14e7344536dac3",
     "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
   },
-  "content_sha256": "ba57a902048691eaf6e977bdbb9483a9b93d5da934abc296615281a68adfef7a",
+  "content_sha256": "fe39da36ee66404bcfd168d608dcdce670ba3238bbbe76f87c0537f15b202eff",
   "registry_binding": {
     "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
     "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
@@ -2763,7 +2763,8 @@
         "server_answer_authority_ref": "server-only:vtr-vec-changed-exit-initial:internal-draft-1",
         "server_rationale_authority_ref": "server-only:vtr-vec-changed-exit-initial:internal-draft-1",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       },
       {
         "item_binding_id": "vtr-vec-repair-confirmation-near-1",
@@ -3069,7 +3070,8 @@
         "server_answer_authority_ref": "server-only:vtr-vec-changed-exit-reentry:internal-draft-1",
         "server_rationale_authority_ref": "server-only:vtr-vec-changed-exit-reentry:internal-draft-1",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       },
       {
         "item_binding_id": "vtr-trig-entry-check-1",
@@ -3477,7 +3479,8 @@
         "server_answer_authority_ref": "server-only:vtr-trig-changed-exit-initial:internal-draft-1",
         "server_rationale_authority_ref": "server-only:vtr-trig-changed-exit-initial:internal-draft-1",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       },
       {
         "item_binding_id": "vtr-trig-repair-confirmation-near-1",
@@ -3783,7 +3786,8 @@
         "server_answer_authority_ref": "server-only:vtr-trig-changed-exit-reentry:internal-draft-1",
         "server_rationale_authority_ref": "server-only:vtr-trig-changed-exit-reentry:internal-draft-1",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       },
       {
         "item_binding_id": "vtr-dir-entry-check-1",
@@ -4191,7 +4195,8 @@
         "server_answer_authority_ref": "server-only:vtr-dir-changed-exit-initial:internal-draft-1",
         "server_rationale_authority_ref": "server-only:vtr-dir-changed-exit-initial:internal-draft-1",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "PREDICT"
       },
       {
         "item_binding_id": "vtr-dir-repair-confirmation-near-1",
@@ -4497,7 +4502,8 @@
         "server_answer_authority_ref": "server-only:vtr-dir-changed-exit-reentry:internal-draft-1",
         "server_rationale_authority_ref": "server-only:vtr-dir-changed-exit-reentry:internal-draft-1",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "PREDICT"
       }
     ],
     "transitions": [

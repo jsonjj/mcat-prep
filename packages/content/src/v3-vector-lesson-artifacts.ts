@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import type { ReasoningOperation } from '@mcat/contracts';
 
 export const TARGET_LESSON_ID = 'V3-LES-130923' as const;
 export const TARGET_GROUPING_ID = 'V3-CL-130923' as const;
@@ -64,6 +65,13 @@ export interface VectorLessonSafeItem {
   readonly feedback_release_point: 'AFTER_COMMITMENT' | 'VISIBLE_WORKED_INSTRUCTION';
   readonly observed_feature_by_choice: Readonly<Partial<Record<VectorLessonChoiceId, string>>>;
   readonly representation_id: string | null;
+  /**
+   * Classifies the reasoning demand of an already-authored `CHANGED_EXIT`
+   * check, read off its existing `learner_operation` prose — never a new
+   * authoring decision. `undefined` for every other activity role: only
+   * `CHANGED_EXIT` is licensed for BKT, so only it carries this label.
+   */
+  readonly reasoning_operation?: ReasoningOperation;
 }
 
 interface WorkedExample {
@@ -120,6 +128,7 @@ const item = (
     readonly changedDimension?: string;
     readonly observed?: Readonly<Partial<Record<VectorLessonChoiceId, string>>>;
     readonly representationId?: string;
+    readonly reasoningOperation?: ReasoningOperation;
   } = {},
 ): VectorLessonSafeItem => {
   const roleSlug = role.toLowerCase().replaceAll('_', '-');
@@ -138,6 +147,9 @@ const item = (
     feedback_release_point: 'AFTER_COMMITMENT',
     observed_feature_by_choice: options.observed ?? {},
     representation_id: options.representationId ?? null,
+    ...(options.reasoningOperation === undefined
+      ? {}
+      : { reasoning_operation: options.reasoningOperation }),
   };
 };
 
@@ -267,6 +279,7 @@ const VECTOR_ITEMS: readonly VectorLessonSafeItem[] = [
         B: 'added the known vector instead of isolating the missing vector',
       },
       representationId: 'rep-vtr-vector-components',
+      reasoningOperation: 'QUANTIFY',
     },
   ),
   item(
@@ -347,6 +360,7 @@ const VECTOR_ITEMS: readonly VectorLessonSafeItem[] = [
       suffix: 'reentry',
       changedDimension: 'unknown variable and signed representation',
       representationId: 'rep-vtr-vector-components',
+      reasoningOperation: 'QUANTIFY',
     },
   ),
 ];
@@ -466,6 +480,7 @@ const TRIG_ITEMS: readonly VectorLessonSafeItem[] = [
       changedDimension: 'verbal physical context and surface-to-structure translation',
       observed: { A: 'used sine for the horizontal side relative to the stated angle' },
       representationId: 'rep-vtr-right-triangle',
+      reasoningOperation: 'QUANTIFY',
     },
   ),
   item(
@@ -540,6 +555,7 @@ const TRIG_ITEMS: readonly VectorLessonSafeItem[] = [
       suffix: 'reentry',
       changedDimension: 'unknown variable and physical context',
       representationId: 'rep-vtr-trig-equation',
+      reasoningOperation: 'QUANTIFY',
     },
   ),
 ];
@@ -662,6 +678,7 @@ const DIRECTION_ITEMS: readonly VectorLessonSafeItem[] = [
       changedDimension: '3D representation and force context',
       observed: { A: 'reversed the ordered velocity-to-field output' },
       representationId: 'rep-vtr-directional-diagram',
+      reasoningOperation: 'PREDICT',
     },
   ),
   item(
@@ -746,6 +763,7 @@ const DIRECTION_ITEMS: readonly VectorLessonSafeItem[] = [
       suffix: 'reentry',
       changedDimension: 'charge sign and field orientation',
       representationId: 'rep-vtr-directional-diagram',
+      reasoningOperation: 'PREDICT',
     },
   ),
 ];
@@ -1374,10 +1392,22 @@ function questionPlanFor(kc: VectorLessonKcAuthoring) {
     server_answer_authority_ref: `server-only:${safeItem.item_id}:internal-draft-1`,
     server_rationale_authority_ref: `server-only:${safeItem.item_id}:internal-draft-1`,
     publication_eligibility: 'INTERNAL_DRAFT_ONLY',
-    evidence_eligibility:
-      safeItem.activity_role === 'NEAR_EXIT' || safeItem.activity_role === 'CHANGED_EXIT'
-        ? 'INSTRUCTIONAL_EXIT_ONLY'
-        : 'INSTRUCTION_TELEMETRY_ONLY',
+    // CHANGED_EXIT is the one activity role licensed to move BKT — a
+    // changed-context first attempt is `TRANSFER` evidence, never
+    // `INSTRUCTIONAL`. NEAR_EXIT stays on the legacy instructional-only
+    // label: a near-transfer exit is teaching, not evidence, and licensing it
+    // would let restatement count as demonstrated capability.
+    ...(safeItem.activity_role === 'CHANGED_EXIT'
+      ? {
+          candidate_evidence_modes: ['TRANSFER'],
+          reasoning_operation: safeItem.reasoning_operation,
+        }
+      : {
+          evidence_eligibility:
+            safeItem.activity_role === 'NEAR_EXIT'
+              ? 'INSTRUCTIONAL_EXIT_ONLY'
+              : 'INSTRUCTION_TELEMETRY_ONLY',
+        }),
   }));
 }
 
@@ -2118,7 +2148,7 @@ function buildQuality(
         ],
         evidence_refs: [
           'V3-LPPL-130923',
-          'tests/browser/evidence/v3-les-130923/browser-report.json#sha256=4f92420e66f2ba4bff5c87c4e4f45618e108c7d2779cbfde63d898d617d8ec7d',
+          'tests/browser/evidence/v3-les-130923/browser-report.json#sha256=ca22e8277bc0264e008400d4a29254da3752b5096ceb3c99d63084800735e615',
         ],
         reviewer_identities: [],
         reviewed_dependency_hashes: [presentation.content_sha256],
@@ -2201,7 +2231,7 @@ function buildQuality(
       ],
       evidence_refs: [
         'V3-KCOV-130923',
-        'tests/browser/evidence/v3-les-130923/browser-report.json#sha256=4f92420e66f2ba4bff5c87c4e4f45618e108c7d2779cbfde63d898d617d8ec7d',
+        'tests/browser/evidence/v3-les-130923/browser-report.json#sha256=ca22e8277bc0264e008400d4a29254da3752b5096ceb3c99d63084800735e615',
         'services/lambdas/learner-api/src/vector-lesson-runtime.test.ts',
         'services/lambdas/learner-api/src/vector-lesson-api.test.ts',
         'tools/scanners/vector-lesson-bundle-scan.mjs',
@@ -2361,7 +2391,14 @@ const SCRIPT_ACTIVITY_KEYS = [
   'authorized_next_node_ids',
 ] as const;
 
-const QUESTION_BINDING_KEYS = [
+/**
+ * Keys every question binding carries regardless of activity role.
+ *
+ * `evidence_eligibility` vs. `candidate_evidence_modes` + `reasoning_operation`
+ * is role-conditional, not a fixed field: only `CHANGED_EXIT` is licensed for
+ * BKT, so only it carries the pair. See {@link questionBindingKeysFor}.
+ */
+const QUESTION_BINDING_COMMON_KEYS = [
   'item_binding_id',
   'activity_id',
   'primary_kc_id',
@@ -2384,8 +2421,12 @@ const QUESTION_BINDING_KEYS = [
   'server_answer_authority_ref',
   'server_rationale_authority_ref',
   'publication_eligibility',
-  'evidence_eligibility',
 ] as const;
+
+const questionBindingKeysFor = (activityRole: VectorLessonActivityRole): readonly string[] =>
+  activityRole === 'CHANGED_EXIT'
+    ? [...QUESTION_BINDING_COMMON_KEYS, 'candidate_evidence_modes', 'reasoning_operation']
+    : [...QUESTION_BINDING_COMMON_KEYS, 'evidence_eligibility'];
 
 const COVERAGE_ROW_KEYS = [
   'kc_id',
@@ -2522,7 +2563,7 @@ export function validateVectorLessonArtifacts(
   );
   if (new Set(familyIds).size !== familyIds.length) issues.push('duplicate semantic family ID');
   for (const binding of script.payload.question_evidence_plan) {
-    if (!exactKeys(binding, QUESTION_BINDING_KEYS)) {
+    if (!exactKeys(binding, questionBindingKeysFor(binding.activity_role))) {
       issues.push(`${binding.item_binding_id}: question binding is not closed`);
     }
   }

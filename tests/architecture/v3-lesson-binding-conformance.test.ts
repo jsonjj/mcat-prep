@@ -44,6 +44,24 @@ import {
  * so the suite went green having checked two thirds of the corpus, or none of it.
  */
 
+/**
+ * Bindings expected to qualify for BKT on this synthetic all-independent
+ * response, by lesson id. `0` for a lesson not listed: every binding still
+ * normalizes to instructional-only, the fail-closed default.
+ *
+ * `V3-LES-130923` carries 6 — its `CHANGED_EXIT` terminal checks (one initial
+ * plus one re-entry per KC, across 3 KCs) now declare `candidate_evidence_modes:
+ * ['TRANSFER']` and a `reasoning_operation`, per `changed-task-license`.
+ * `NEAR_EXIT` was deliberately left instructional, so it contributes 0.
+ * `V3-LES-789208` and `V3-LES-844372` are unlicensed here: both live outside
+ * this repository (`MCAT_LESSON_DRAFTS_DIR`/the workspace-sibling drafts
+ * tree), so an edit to either cannot be committed, reviewed, or pushed from
+ * this branch.
+ */
+const EXPECTED_QUALIFIED_BKT_OBSERVATIONS: Readonly<Record<string, number>> = {
+  'V3-LES-130923': 6,
+};
+
 const OBSERVATION_ID = '9c0ffee0-0000-4000-8000-000000000001';
 const EVIDENCE_ID = '9c0ffee0-0000-4000-8000-000000000002';
 const EVENT_ID = EventIdSchema.parse('9c0ffee0-0000-4000-8000-000000000003');
@@ -252,9 +270,11 @@ describe('V3 lesson binding conformance', () => {
       expect(parsedBindings).toBe(lesson.bindings.length);
       expect(evidenceRecords).toBe(measurableBindings);
       expect(measurableBindings).toBeGreaterThan(0);
-      // Every current V3 binding normalizes to instructional-only, so no lesson
-      // on disk may move BKT yet. This is the fail-closed default made visible.
-      expect(qualifiedBktObservations).toBe(0);
+      // Exact, not a floor, for the same reason as the binding-count pin above:
+      // a licensed lesson that silently qualified fewer (or more) bindings than
+      // its CHANGED_EXIT terminal checks would be a defect worth seeing named,
+      // not absorbed into a `toBeGreaterThan` that only ever moves one way.
+      expect(qualifiedBktObservations).toBe(EXPECTED_QUALIFIED_BKT_OBSERVATIONS[lessonId] ?? 0);
     });
   }
 });
