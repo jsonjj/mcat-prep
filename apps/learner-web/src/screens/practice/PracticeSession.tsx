@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import type { PracticeAttemptResult, PracticeQueueItem } from '@mcat/contracts';
+import { ExplainAnotherWay } from '../../components/ExplainAnotherWay';
 import { usePracticeQueue, useSubmitPracticeAttempt } from '../../app/practice-queries';
 import {
   feedbackFor,
@@ -343,12 +344,27 @@ export function PracticeSession() {
       <h1 className="mc-h2">{q.stem}</h1>
 
       {feedback !== null ? (
-        <FeedbackCard
-          feedback={feedback}
-          onContinue={onRevealContinue}
-          last={isLastStep}
-          resurfacing={resurfacing}
-        />
+        <>
+          <FeedbackCard
+            feedback={feedback}
+            onContinue={onRevealContinue}
+            last={isLastStep}
+            resurfacing={resurfacing}
+          />
+          {/* Post-reveal only: re-express the disclosed rationale, never a first miss. */}
+          {feedback.rationale !== null ? (
+            <ExplainAnotherWay
+              questionId={q.id}
+              source={{
+                rationale: feedback.rationale,
+                ...(feedback.wrongChoiceId !== null && feedback.wrongChoiceRationale !== null
+                  ? { choiceRationales: { [feedback.wrongChoiceId]: feedback.wrongChoiceRationale } }
+                  : {}),
+              }}
+              gate={{ skill: item.skill, section: q.section, dok: item.dok }}
+            />
+          ) : null}
+        </>
       ) : sub === 'retry' ? (
         <Stack gap={3}>
           <Callout tone="info" title="Back for a second pass">

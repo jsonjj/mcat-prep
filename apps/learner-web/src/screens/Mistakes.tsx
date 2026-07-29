@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
-import type { ErrorEntryView, MistakePatternView } from '@mcat/contracts';
+import { CLUSTER_INFO, type ErrorEntryView, type MistakePatternView, type SkillCluster } from '@mcat/contracts';
+import { ExplainAnotherWay } from '../components/ExplainAnotherWay';
 import { useErrorLog, useMistakePatterns } from '../app/queries';
 
 /**
@@ -25,6 +26,10 @@ const RETRY_SET_SIZE = 5;
 
 const dateLabel = (iso: string): string =>
   new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+/** Map an error's 15-cluster rollup to its section, so "Step by step" can gate on C/P. */
+const sectionForCluster = (cluster: string | null): string | null =>
+  cluster !== null && cluster in CLUSTER_INFO ? CLUSTER_INFO[cluster as SkillCluster].section : null;
 
 export function Mistakes() {
   const errors = useErrorLog();
@@ -191,6 +196,14 @@ function ErrorRow({
           <Callout tone="info" title={`Why ${entry.chosenChoiceId ?? 'that'} misses`}>
             {entry.choiceRationale}
           </Callout>
+        ) : null}
+        {/* Re-express the refutation the learner already saw — grounded, no new facts. */}
+        {entry.choiceRationale !== null ? (
+          <ExplainAnotherWay
+            questionId={entry.questionId}
+            source={{ rationale: entry.choiceRationale }}
+            gate={{ skill: entry.skillId, section: sectionForCluster(entry.cluster), dok: null }}
+          />
         ) : null}
         <Button variant="primary" onClick={() => onTryAgain(entry.focus)}>
           Try a fresh one
