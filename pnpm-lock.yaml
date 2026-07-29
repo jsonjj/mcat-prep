@@ -299,6 +299,25 @@ importers:
         specifier: 3.2.6
         version: 3.2.6(@types/node@22.10.5)(tsx@4.23.1)
 
+  packages/cars-generation:
+    dependencies:
+      '@mcat/ai-gateway':
+        specifier: workspace:*
+        version: link:../ai-gateway
+      '@mcat/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      zod:
+        specifier: 3.24.1
+        version: 3.24.1
+    devDependencies:
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
+      vitest:
+        specifier: 3.2.6
+        version: 3.2.6(@types/node@22.10.5)(tsx@4.23.1)
+
   packages/client-core:
     dependencies:
       '@mcat/contracts':
@@ -631,6 +650,25 @@ importers:
       vitest:
         specifier: 3.2.6
         version: 3.2.6(@types/node@22.10.5)(tsx@4.23.1)
+
+  tools/cars-generator:
+    dependencies:
+      '@mcat/ai-gateway':
+        specifier: workspace:*
+        version: link:../../packages/ai-gateway
+      '@mcat/cars-generation':
+        specifier: workspace:*
+        version: link:../../packages/cars-generation
+    devDependencies:
+      '@types/node':
+        specifier: 22.10.5
+        version: 22.10.5
+      tsx:
+        specifier: 4.23.1
+        version: 4.23.1
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
 
   tools/content-cli:
     dependencies:

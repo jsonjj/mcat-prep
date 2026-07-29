@@ -1,0 +1,22 @@
+{
+  "name": "@mcat/cars-generation",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mcat/ai-gateway": "workspace:*",
+    "@mcat/contracts": "workspace:*",
+    "zod": "3.24.1"
+  },
+  "devDependencies": {
+    "typescript": "5.7.3",
+    "vitest": "3.2.6"
+  }
+}

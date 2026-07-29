@@ -27,6 +27,7 @@ const PURE_LAYERS = [
   'packages/content',
   'packages/authority-core',
   'packages/recall-core',
+  'packages/cars-generation',
 ];
 
 const FORBIDDEN_IN_PURE = [
