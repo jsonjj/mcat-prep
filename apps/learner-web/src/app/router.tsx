@@ -22,7 +22,6 @@ import { PassageOfDay } from '../screens/PassageOfDay';
 import { PracticeHome } from '../screens/practice/PracticeHome';
 import { PracticeSession } from '../screens/practice/PracticeSession';
 import { CarsDuel } from '../screens/CarsDuel';
-import { CarsDuelHome } from '../screens/CarsDuelHome';
 import { Wrapped } from '../screens/Wrapped';
 
 export const router = createBrowserRouter([
@@ -62,8 +61,6 @@ export const router = createBrowserRouter([
       // Hooks now surface contextually rather than living under a Practice tab.
       { path: 'passage', element: <PassageOfDay /> },
       { path: 'cars', element: <CarsDuel /> },
-      // CARS Duel landing (nav tab) → links into the duel above.
-      { path: 'cars-duel', element: <CarsDuelHome /> },
       { path: 'wrapped', element: <Wrapped /> },
       // Adaptive Practice: the hub plus its in-place session.
       { path: 'practice', element: <PracticeHome /> },

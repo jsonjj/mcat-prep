@@ -25,7 +25,7 @@ const NAV = [
 
 const TODAY_ITEM = { to: '/app/today', end: false, label: 'Today', Icon: IconToday };
 const PRACTICE_ITEM = { to: '/app/practice', end: false, label: 'Practice', Icon: IconPractice };
-const CARS_ITEM = { to: '/app/cars-duel', end: false, label: 'CARS Duel', Icon: IconCarsDuel };
+const CARS_ITEM = { to: '/app/cars', end: false, label: 'CARS Duel', Icon: IconCarsDuel };
 
 // Desktop sidebar order: Today's Path sits right under Home; Practice sits above
 // Recall; CARS Duel sits just below Recall. The mobile bottom nav stays the shared
