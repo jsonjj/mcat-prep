@@ -51,6 +51,7 @@ import {
   type CapacityLabel,
   type EvidenceKind,
   type EvidenceOutcome,
+  type EvidenceQualityTier,
   type EvidenceReason,
   type EvidenceRecord,
   type SkillEvidenceState,
@@ -395,6 +396,24 @@ type ReportedTime =
 
 /** A server-generated time, read inside the step. The common case. */
 const SERVER_REPORTED_TIME: ReportedTime = { origin: 'server' };
+
+/**
+ * The channel each write path's observations arrive on — named once each,
+ * because two things now read the source and they must agree.
+ *
+ * The BKT engine reads it to pick the `guess` term, so a lesson exit is
+ * believed less than a practice answer; the ledger reads it to record what
+ * moved the grain. Two literals per path would let a future edit discount one
+ * thing and audit another, and the disagreement would be invisible — both
+ * halves would still be a valid `BktObservationSource`.
+ *
+ * `tests/architecture/mastery-write-path.test.ts` asserts this set against
+ * `BKT_OBSERVATION_SOURCES` and forbids a bare source literal anywhere else in
+ * this file.
+ */
+const LESSON_OBSERVATION_SOURCE = 'lesson_response' as const satisfies BktObservationSource;
+const PRACTICE_OBSERVATION_SOURCE = 'adaptive_practice' as const satisfies BktObservationSource;
+const STUDY_OBSERVATION_SOURCE = 'synthetic_study' as const satisfies BktObservationSource;
 
 /**
  * The single write path refused a caller-reported time before anything moved.
@@ -1745,6 +1764,13 @@ export class Authority {
    * eliminate. A fourth path that accepts a client time now inherits the refusal
    * by construction rather than by remembering to re-implement it.
    *
+   * HOW MUCH an observation is believed is decided here too, by handing the
+   * engine `input.source`. That is the whole of lesson discounting: a lesson
+   * exit is scored with a higher `guess`, so the Bayes update itself yields a
+   * smaller move. Nothing on this path bounds, caps or scales the value the
+   * engine returns — a cap would pin the grain and break decay (see
+   * `LESSON_EXIT_GUESS_G`).
+   *
    * Enforced structurally, not by discipline:
    * `tests/architecture/mastery-write-path.test.ts` fails the build if
    * `applyMasteryAttempt` or `boundDecayClock` is reached from anywhere else.
@@ -1755,6 +1781,14 @@ export class Authority {
       kcId: string;
       operation: ReasoningOperation;
       correct: boolean;
+      /**
+       * Which channel produced this observation. The engine reads it to pick
+       * the `guess` term, so a lesson-exit response is believed less than a
+       * practice answer; it is also the `source` the caller writes on the
+       * ledger record, taken from this same constant so the two cannot
+       * disagree about one attempt.
+       */
+      source: BktObservationSource;
       /**
        * The time to decay from, and who generated it. A `caller` time is
        * refused when implausibly ahead of the Authority clock and bounded
@@ -1801,6 +1835,11 @@ export class Authority {
     const result = applyMasteryAttempt({
       correct: input.correct,
       now: clock.appliedAt,
+      // How much this channel's evidence is worth is the engine's decision, not
+      // this method's: the Authority hands over the source and the policy picks
+      // the guess. Nothing here scales, caps or otherwise touches what comes
+      // back — `result.states` is written to the grains verbatim.
+      source: input.source,
       // Uncalibrated by default: an in-memory bank never crosses the calibration
       // floor, so `b` is DOK-derived unless the caller supplied real stats.
       questionStats: input.questionStats ?? { attempts: 0, correct: 0 },
@@ -1853,6 +1892,9 @@ export class Authority {
       kcId: target.kcKey,
       operation: target.op,
       correct,
+      // Undiscounted: the study loop serves the synthetic bank cold, with no
+      // instruction immediately before it. Same constant the ledger reads.
+      source: STUDY_OBSERVATION_SOURCE,
       reportedAt: SERVER_REPORTED_TIME,
       dokLevel: target.dok,
     });
@@ -1867,7 +1909,7 @@ export class Authority {
     this.recordBktObservationEvent(
       state,
       {
-        source: 'synthetic_study',
+        source: STUDY_OBSERVATION_SOURCE,
         observationId: null,
         observationSequence: null,
         questionId,
@@ -1919,6 +1961,16 @@ export class Authority {
    * delivery is normal, and dropping a legitimately earlier observation would
    * silently lose real evidence. The clamp is what keeps the resulting state
    * sane, since a late arrival can no longer rewind a grain's clock.
+   *
+   * IT IS BELIEVED LESS THAN A PRACTICE ANSWER, AND ONLY THAT. A lesson exit
+   * asks about material the learner was shown moments ago, so a learner without
+   * durable capability gets it right far more often than chance — which is a
+   * statement about `guess`, so that is where it is applied
+   * (`LESSON_EXIT_GUESS_G`). `P(L)` then moves by whatever smaller amount Bayes
+   * yields. What comes back is written verbatim: this path holds no ceiling and
+   * no maximum delta, because pinning the value would make the planner see
+   * permanent unmet need and would leave decay able only to push the grain
+   * down.
    */
   applyQualifiedBktObservation(
     state: LearnerState,
@@ -1949,6 +2001,9 @@ export class Authority {
         kcId: observation.primaryKcId,
         operation: observation.reasoningOperation,
         correct: observation.correct,
+        // The same `lesson_response` the ledger identity below carries, and
+        // what makes this observation a DISCOUNTED one inside the engine.
+        source: LESSON_OBSERVATION_SOURCE,
         reportedAt: { origin: 'caller', at: observation.occurredAt },
         dokLevel: observation.dokLevel,
       });
@@ -2068,7 +2123,7 @@ export class Authority {
     policies: readonly PolicyVersion[];
   } {
     return {
-      source: 'lesson_response',
+      source: LESSON_OBSERVATION_SOURCE,
       observationId: observation.observationId,
       observationSequence: observation.sequence,
       questionId: observation.questionId,
@@ -2126,10 +2181,20 @@ export class Authority {
    * `lessonIds` defaults to the lessons this learner has practiced. A lesson
    * with no registry membership yields `status: 'unavailable'` and never a
    * fabricated number.
+   *
+   * BOTH AUTHORITIES ARE SUPPLIED, because `mastered` is a claim that needs
+   * both: the capability estimate from BKT and the warrant from the evidence
+   * system. The warrant arrives from `skillWarrants` — the same computation the
+   * warrant surface publishes — rather than a second sufficiency check written
+   * here, so the rollup and the Evidence Atlas can never disagree about whether
+   * one grain is adequately evidenced.
    */
   getLessonRollups(state: LearnerState, lessonIds?: readonly string[]): LessonRollupResult[] {
     const m = this.ensureMastery(state);
     const now = this.clock.now();
+    // Once for the whole call: the warrant is computed over every grain, and
+    // recomputing it per lesson would be the same answer at N times the cost.
+    const kcEvidenceQuality = this.evidenceQualityByGrain(state);
     // Deduplicated the way `rollUpLessonMastery` dedupes KC ids: a lesson named
     // twice is one lesson, and two identical rows would double-count it in any
     // caller that aggregates.
@@ -2140,8 +2205,25 @@ export class Authority {
       for (const kcId of requiredKcIds ?? []) {
         kcStates[kcId] = m.kc[kcId] ?? initialMemoryState();
       }
-      return rollUpLessonMastery({ lessonId, requiredKcIds, kcStates, now });
+      return rollUpLessonMastery({ lessonId, requiredKcIds, kcStates, kcEvidenceQuality, now });
     });
+  }
+
+  /**
+   * The evidence-warrant tier per grain, keyed by grain id.
+   *
+   * A grain with no entry is one the evidence system has never seen, and the
+   * rollup reads that as "no warrant" — which is the honest reading and fails
+   * closed. Deliberately NOT a defaulted tier: writing `not_assessed` for an
+   * absent grain would make "we have nothing on this" and "we assessed it and
+   * found nothing" the same value.
+   */
+  private evidenceQualityByGrain(state: LearnerState): Record<string, EvidenceQualityTier> {
+    const byGrain: Record<string, EvidenceQualityTier> = {};
+    for (const { evidence } of this.skillWarrants(state)) {
+      byGrain[evidence.skillId] = evidence.evidenceQuality;
+    }
+    return byGrain;
   }
 
   /**
@@ -2149,6 +2231,11 @@ export class Authority {
    * from each lesson's required member KCs (see {@link getLessonRollups}). A
    * lesson whose membership does not resolve is omitted rather than reported as
    * `0` or as vacuously mastered; `getLessonRollups` carries the reason why.
+   *
+   * `mastered` here is the composed claim — every required KC over the cut AND
+   * adequately warranted — not a `P(L)` comparison. `pL` continues to publish
+   * the capability estimate on its own, so the planner still sees a strong
+   * lesson as strong even while the claim is withheld for want of evidence.
    */
   getMasteryLessons(state: LearnerState, lessonIds?: readonly string[]): LessonMasteryView[] {
     return this.getLessonRollups(state, lessonIds)
@@ -2594,6 +2681,10 @@ export class Authority {
       kcId: classification.kcId,
       operation: classification.skill,
       correct,
+      // The undiscounted channel: a practice item is met cold, with nothing
+      // just shown to reproduce, so it is scored at the plain guess rate. Same
+      // constant the ledger record below carries.
+      source: PRACTICE_OBSERVATION_SOURCE,
       // Practice is scored inside the request, so the step reads the Authority
       // clock itself; the bound is a no-op on it except where a grain's own
       // history is newer, which is monotonicity doing its job rather than a
@@ -2620,7 +2711,7 @@ export class Authority {
     this.recordBktObservationEvent(
       state,
       {
-        source: 'adaptive_practice',
+        source: PRACTICE_OBSERVATION_SOURCE,
         observationId: null,
         observationSequence: null,
         questionId,

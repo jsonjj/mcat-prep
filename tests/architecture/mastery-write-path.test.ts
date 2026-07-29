@@ -393,14 +393,40 @@ describe('the capability write path has exactly one door', () => {
    * is worth asserting is that they AGREE. A source with no emitter is an
    * allowlist entry nothing can use; an emitter with no source cannot compile,
    * which is the direction that already holds.
+   *
+   * The scan reads the named constants rather than the emission sites, because
+   * the source is now read TWICE per write path — once by the engine, to pick
+   * how much the channel is believed, and once by the ledger, to record what
+   * moved the grain. Counting emission sites would have expected three and
+   * found six, and the obvious repair (loosen to a set) would have stopped
+   * noticing a path that named one source for the engine and another for the
+   * ledger. Naming each source exactly once makes that unrepresentable, and the
+   * literal ban below is what keeps it that way.
    */
-  it('emits every declared observation source, and no other', () => {
-    const emitted = [...source.matchAll(/source: '([a-z_]+)'/g)].map((match) => match[1]!);
-    expect(new Set(emitted)).toEqual(new Set(BKT_OBSERVATION_SOURCES));
-    expect(emitted.length).toBe(BKT_OBSERVATION_SOURCES.length);
+  it('names every declared observation source exactly once, and no other', () => {
+    const declared = [...source.matchAll(/= '([a-z_]+)' as const satisfies BktObservationSource/g)];
+    const named = declared.map((match) => match[1]!);
+    expect(new Set(named)).toEqual(new Set(BKT_OBSERVATION_SOURCES));
+    expect(named.length).toBe(BKT_OBSERVATION_SOURCES.length);
     expect(new Set(callersOf('recordBktObservationEvent')).size).toBe(
       BKT_OBSERVATION_SOURCES.length,
     );
+  });
+
+  it('never writes a bare source literal, so the engine and the ledger cannot diverge', () => {
+    // A path that discounts as one source and audits as another is the exact
+    // failure the shared constant exists to prevent, and both spellings would
+    // be a valid BktObservationSource, so nothing else would notice.
+    const literals = [...source.matchAll(/source: '([a-z_]+)'/g)].map((match) =>
+      memberAt(match.index!),
+    );
+    expect(
+      literals,
+      'A write path names its observation source with a literal instead of the shared ' +
+        'constant. The engine reads the source to decide how much to believe the ' +
+        'observation and the ledger reads it to record what moved the grain; two literals ' +
+        'let those disagree silently.',
+    ).toEqual([]);
   });
 
   /**

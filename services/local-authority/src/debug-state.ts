@@ -36,14 +36,27 @@ import type { LearnerState, MasteryEngineState } from '@mcat/authority-core';
 import { REASONING_OPERATIONS, type ReasoningOperation, type UtcTimestamp } from '@mcat/contracts';
 import {
   currentPL,
+  evaluateEvidence,
   initialMemoryState,
   isDueReview,
   rollUpLessonMastery,
   MASTERY_THRESHOLD,
   PRIOR_PL0,
+  type LessonRollupInput,
   type LessonRollupRejectionCode,
   type MemoryState,
 } from '@mcat/policies';
+
+/**
+ * The warrant map the rollup expects, taken from the rollup's OWN input type
+ * rather than named here.
+ *
+ * `@mcat/domain` is not a dependency of this service, and adding one so a debug
+ * projection can spell a tier name would be the wrong trade. Deriving it also
+ * means the two cannot drift: a change to what the rollup accepts is a type
+ * error here rather than a second definition that still compiles.
+ */
+type KcEvidenceQuality = LessonRollupInput['kcEvidenceQuality'];
 
 /** Route path, shared by the server and its tests. */
 export const DEBUG_LEARNER_STATE_PATH = '/v1/debug/learner-state';
@@ -138,7 +151,10 @@ export interface DebugReasoningOperationView {
 export interface DebugLessonMemberView {
   readonly kcId: string;
   readonly pL: number;
+  /** Both halves: over the cut AND adequately warranted. */
   readonly mastered: boolean;
+  /** The warrant half on its own, so a withheld claim says which half failed. */
+  readonly evidenceSufficient: boolean;
   readonly reviewDue: boolean;
 }
 
@@ -282,9 +298,42 @@ function reasoningOperationViews(
  * make the rollup fail closed with `LESSON_KC_STATE_MISSING` for every
  * partly-started lesson — correct behaviour on its part, useless here.
  */
+/**
+ * The evidence-warrant tier per grain, so the rollup can decide `mastered` —
+ * which needs the warrant as well as `P(L)`.
+ *
+ * Run here through the same `evaluateEvidence` the Authority uses, over the
+ * same records, because this module is a parallel projection of persisted state
+ * and reaches no Authority instance (it already re-derives `pL`, `reviewDue`
+ * and the rollup the same way).
+ *
+ * ONE INPUT IS MISSING and it is worth naming: `prerequisiteBlocked`, which
+ * only this learner's skill graph can answer and which resolves to
+ * `foundation_needed`. That tier is below the sufficiency bar, so the debug
+ * view can only ever be MORE permissive than the Authority here — never less —
+ * and only for a grain whose prerequisites are unmet.
+ */
+function evidenceQualityByGrain(
+  records: readonly LearnerState['evidence'][number][],
+  now: UtcTimestamp,
+): KcEvidenceQuality {
+  const byGrain: Record<string, ReturnType<typeof evaluateEvidence>['evidenceQuality']> = {};
+  for (const skillId of new Set(records.map((record) => record.skillId))) {
+    const forGrain = records.filter((record) => record.skillId === skillId);
+    byGrain[skillId] = evaluateEvidence({
+      skillId,
+      records: [...forGrain],
+      now,
+      hasInstruction: forGrain.length > 0,
+    }).evidenceQuality;
+  }
+  return byGrain;
+}
+
 function lessonViews(
   lessons: readonly DebugLessonInput[],
   kc: Readonly<Record<string, MemoryState>>,
+  kcEvidenceQuality: KcEvidenceQuality,
   now: UtcTimestamp,
 ): readonly DebugLessonView[] {
   const seen = new Set<string>();
@@ -301,6 +350,7 @@ function lessonViews(
       lessonId: lesson.lessonId,
       requiredKcIds: lesson.requiredKcIds,
       kcStates,
+      kcEvidenceQuality,
       now,
     });
     if (result.status === 'unavailable') {
@@ -326,6 +376,7 @@ function lessonViews(
         kcId: member.kcId,
         pL: member.pL,
         mastered: member.mastered,
+        evidenceSufficient: member.evidenceSufficient,
         reviewDue: member.reviewDue,
       })),
     });
@@ -370,7 +421,12 @@ export function buildDebugLearnerState(input: DebugLearnerStateInput): DebugLear
     masteryThreshold: MASTERY_THRESHOLD,
     knowledgeComponents: kcViews(mastery.kc, input.now),
     reasoningOperations: reasoningOperationViews(mastery.skill, input.now),
-    lessons: lessonViews(input.lessons, mastery.kc, input.now),
+    lessons: lessonViews(
+      input.lessons,
+      mastery.kc,
+      evidenceQualityByGrain(input.evidence, input.now),
+      input.now,
+    ),
     evidence: evidenceViews(input.evidence),
     appliedObservationCount: mastery.appliedObservationIds.length,
     highestAppliedObservationSequence: mastery.highestAppliedObservationSequence,

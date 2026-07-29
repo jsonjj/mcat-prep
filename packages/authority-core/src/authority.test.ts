@@ -311,9 +311,17 @@ function qualifiedObservation(
   });
 }
 
-/** Repeat a clean correct observation until the KC is comfortably above the cut. */
+/**
+ * Repeat a clean correct observation until the KC is comfortably above the cut.
+ *
+ * 60, not 40, because a lesson exit is a DISCOUNTED observation: the residual
+ * `1 - pL` shrinks by ~0.43 per exit rather than ~0.22, so 40 of them land a few
+ * parts in 1e15 short of a saturated `1`. Tests here that assert a value is
+ * unchanged to the bit need the saturation, and this keeps them exact rather
+ * than loosening them to a tolerance.
+ */
 function practiceToMastery(auth: Authority, state: LearnerState, kcId: string): void {
-  for (let i = 0; i < 40; i += 1) {
+  for (let i = 0; i < 60; i += 1) {
     auth.applyQualifiedBktObservation(state, {
       observation: qualifiedObservation({ primaryKcId: kcId, sequence: i + 1 }),
       lessonId: V3_LESSON_ID,
@@ -460,17 +468,23 @@ describe('Authority — lesson mastery is a rollup, never a chain', () => {
     expect(partial.mastered).toBe(false);
     const [partialRollup] = auth.getLessonRollups(state);
     if (partialRollup?.status !== 'available') throw new Error('expected an available rollup');
-    expect(partialRollup.view.members.filter((m) => !m.mastered).map((m) => m.kcId)).toEqual([
-      V3_LESSON_KCS.at(-1),
-    ]);
+    // The capability half specifically: `mastered` is now the composed claim,
+    // and these observations carry no warrant, so it is false for every member.
+    expect(
+      partialRollup.view.members.filter((m) => m.pL < MASTERY_THRESHOLD).map((m) => m.kcId),
+    ).toEqual([V3_LESSON_KCS.at(-1)]);
     expect(partialRollup.view.weakestKcId).toBe(V3_LESSON_KCS.at(-1));
 
     practiceToMastery(auth, state, V3_LESSON_KCS.at(-1)!);
 
     const complete = auth.getMasteryLessons(state).find((l) => l.lessonId === V3_LESSON_ID)!;
-    expect(complete.mastered).toBe(true);
     expect(complete.pL).toBeGreaterThanOrEqual(MASTERY_THRESHOLD);
     expect(complete.cluster).not.toBeNull();
+    // Every KC is over the cut and the lesson is STILL not mastered, because
+    // `applyQualifiedBktObservation` moves capability and writes no evidence:
+    // the claim needs a warrant too. The positive case — both halves satisfied
+    // — is in `lesson-discounting.test.ts`.
+    expect(complete.mastered).toBe(false);
   });
 
   it('fails closed by name for a lesson with no registry membership', () => {
@@ -825,7 +839,9 @@ describe('Authority — the runner does not control the BKT decay clock', () => 
     const pLBefore = auth.getLessonRollups(state, [V3_LESSON_ID])[0];
     if (pLBefore?.status !== 'available') throw new Error('expected an available rollup');
     const memberBefore = pLBefore.view.members.find((m) => m.kcId === kcId)!;
-    expect(memberBefore.mastered).toBe(true);
+    // The capability estimate, which is what a backdated claim could wipe.
+    // `mastered` also needs a warrant, and these observations write none.
+    expect(memberBefore.pL).toBeGreaterThanOrEqual(MASTERY_THRESHOLD);
 
     const result = auth.applyQualifiedBktObservation(state, {
       observation: qualifiedObservation({
@@ -851,7 +867,7 @@ describe('Authority — the runner does not control the BKT decay clock', () => 
     if (pLAfter?.status !== 'available') throw new Error('expected an available rollup');
     const memberAfter = pLAfter.view.members.find((m) => m.kcId === kcId)!;
     // A correct answer must not lower the estimate at all, let alone by ~1.0.
-    expect(memberAfter.mastered).toBe(true);
+    expect(memberAfter.pL).toBeGreaterThanOrEqual(MASTERY_THRESHOLD);
     expect(memberAfter.pL).toBeGreaterThanOrEqual(memberBefore.pL);
     expect(memberBefore.pL - memberAfter.pL).toBe(0);
   });
@@ -1321,8 +1337,10 @@ describe('Authority — the decay clock is bounded below as well as above', () =
       clockAdjustment: 'bounded_to_server_clock',
     });
     expect(kcOf(state).lastPracticedAt).toBe(floor);
-    // Not a collapse: the ordinary post-update estimate, barely decayed.
-    expect(currentPL(kcOf(state), at(NOW))).toBeGreaterThan(0.5);
+    // Not a collapse: the ordinary post-update estimate, barely decayed. The
+    // bar is the DISCOUNTED one because this is a lesson observation — a single
+    // correct exit takes the 0.2 prior to ~0.43, not to practice's ~0.57.
+    expect(currentPL(kcOf(state), at(NOW))).toBeGreaterThan(0.4);
   });
 
   it('draws the past line exactly at the tolerance', () => {

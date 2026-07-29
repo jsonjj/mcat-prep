@@ -10,6 +10,7 @@
  * (owner-approved literal), including the learning nudge on both right and wrong.
  * Pure functions only.
  */
+import type { BktObservationSource } from '@mcat/contracts';
 import type { PolicyManifest } from './manifest';
 
 /**
@@ -22,7 +23,7 @@ export const MASTERY_BKT_MANIFEST: PolicyManifest = {
   version: 'provisional-v1',
   status: 'provisional_active',
   summary:
-    'Sole owner of the learner-facing capability estimate: BKT P(L) per unit with IRT difficulty-aware slip; forgetting half-life decay and review-due; 1-hop prerequisite reinforcement; separate CARS IRT ability. Direct observations update exactly two grains (primary KC, primary reasoning operation); lesson views are derived rollups. Mastered at P(L) >= 0.95. Evidence quality/freshness/gaps belong to the separate evidence-warrant policy. Constants provisional; difficulty uncalibrated.',
+    'Sole owner of the learner-facing capability estimate: BKT P(L) per unit with IRT difficulty-aware slip; forgetting half-life decay and review-due; 1-hop prerequisite reinforcement; separate CARS IRT ability. Direct observations update exactly two grains (primary KC, primary reasoning operation); lesson views are derived rollups. A lesson-exit observation is discounted through a raised guess, never a capped value. P(L) >= 0.95 is the capability half of mastery; the claim also requires a sufficient warrant from the separate evidence-warrant policy, which owns quality/freshness/gaps. Constants provisional; difficulty uncalibrated.',
 };
 
 /** Prior mastery before any data (low = conservative, fail-closed). */
@@ -33,6 +34,56 @@ export const LEARN_RATE_T = 0.15;
 export const GUESS_G = 0.25;
 /** Mastered when `P(L) >= 0.95` (Corbett & Anderson). */
 export const MASTERY_THRESHOLD = 0.95;
+
+/**
+ * Guess for an observation taken at a lesson exit: the same evidence, BELIEVED
+ * LESS.
+ *
+ * `guess` is `P(correct | not mastered)`. `GUESS_G` is the blind-guessing rate
+ * of a 4-option item met cold. A lesson-exit check is not met cold: the learner
+ * has just been shown the method, on this exact content, and knows which idea
+ * is being asked about because the lesson only just taught it. A learner
+ * without durable capability can therefore reproduce the just-demonstrated
+ * procedure from working memory far more often than one in {4} — and being
+ * correct without mastery is exactly what `guess` names. So the honest repair
+ * is a higher `guess` on this channel, not a smaller number written on top of
+ * the result.
+ *
+ * `0.5` is chosen so that `LR = (1 - slip) / guess` is exactly HALF the
+ * likelihood ratio a correct practice answer carries: one correct lesson exit
+ * is worth half a correct practice answer as evidence. `slip` cancels out of
+ * that ratio, so the discount is exactly one half at every item difficulty
+ * rather than a figure that drifts with the DOK label. Read directly, it says a
+ * learner who has not mastered the KC gets a just-taught changed-task exit
+ * right about half the time.
+ *
+ * WHY NOT A CAP ON THE VALUE. Capping `P(L)` for lesson-sourced movement PINS
+ * the grain at the cap: the planner then sees permanent unmet learning need and
+ * re-teaches material the learner already knows, and decay — which multiplies
+ * the stored value — can only ever push a pinned grain down, so the grain can
+ * never express genuine mastery again. A raised guess has neither property.
+ * `P(L)` still converges to 1 under repeated correct exits; it just takes more
+ * of them (5 rather than 3 from the `0.2` prior, measured). There is no
+ * ceiling, no maximum delta and no soft cap anywhere on this path, by
+ * construction: the only thing that changes is one term inside Bayes' rule.
+ */
+export const LESSON_EXIT_GUESS_G = 0.5;
+
+/**
+ * The guess each observation source is scored with.
+ *
+ * TOTAL over `BktObservationSource` on purpose: a fourth source fails the build
+ * until someone decides how much its evidence is worth, rather than silently
+ * inheriting the undiscounted rate. Lesson responses reach BKT only from
+ * terminal exit checks (every other binding resolves contextual-only and never
+ * qualifies), so the source is a faithful stand-in for "this was a lesson exit"
+ * and no second classification is needed to find them.
+ */
+export const GUESS_BY_OBSERVATION_SOURCE: Readonly<Record<BktObservationSource, number>> = {
+  lesson_response: LESSON_EXIT_GUESS_G,
+  adaptive_practice: GUESS_G,
+  synthetic_study: GUESS_G,
+};
 
 export interface BktConfig {
   priorPL0: number;
@@ -46,6 +97,21 @@ export const BKT_CONFIG: BktConfig = {
   learnRate: LEARN_RATE_T,
   guess: GUESS_G,
   masteryThreshold: MASTERY_THRESHOLD,
+};
+
+/**
+ * The BKT config one observation source is scored with.
+ *
+ * `GUESS_BY_OBSERVATION_SOURCE` is authoritative over `cfg.guess`; every other
+ * term is the caller's, so the discount composes with a config that varies the
+ * prior, the learning rate or the threshold.
+ */
+export const bktConfigForSource = (
+  source: BktObservationSource,
+  cfg: BktConfig = BKT_CONFIG,
+): BktConfig => {
+  const guess = GUESS_BY_OBSERVATION_SOURCE[source];
+  return guess === cfg.guess ? cfg : { ...cfg, guess };
 };
 
 export interface BktObservation {
