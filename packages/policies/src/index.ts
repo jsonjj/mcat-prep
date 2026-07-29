@@ -45,6 +45,9 @@ export * from './calibration';
 export * from './cars-duel';
 export * from './mastery-seed';
 export * from './practice-selection';
+export * from './practice-test-assembler';
+export * from './practice-test-scorer';
+export * from './practice-test-cadence';
 
 import { asPolicyVersion } from './manifest';
 import { FSRS_MANIFEST } from './fsrs';
@@ -57,6 +60,8 @@ import { READINESS_MANIFEST } from './readiness';
 import { GHOST_MANIFEST } from './ghost';
 import { PRACTICE_SELECTION_MANIFEST } from './practice-selection';
 import { TODAYS_PATH_MANIFEST } from './todays-path';
+import { PRACTICE_TEST_MANIFEST } from './practice-test-assembler';
+import { PRACTICE_TEST_CADENCE_MANIFEST } from './practice-test-cadence';
 
 /**
  * The active policy set, for recording on every consequential decision/event.
@@ -74,6 +79,8 @@ export const ACTIVE_POLICY_MANIFESTS = [
   GHOST_MANIFEST,
   PRACTICE_SELECTION_MANIFEST,
   TODAYS_PATH_MANIFEST,
+  PRACTICE_TEST_MANIFEST,
+  PRACTICE_TEST_CADENCE_MANIFEST,
 ] as const;
 
 export const activePolicyVersions = () => ACTIVE_POLICY_MANIFESTS.map(asPolicyVersion);
