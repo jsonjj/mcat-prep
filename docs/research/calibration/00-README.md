@@ -140,6 +140,19 @@ Pay premeds rather than crowdworkers because the documented biases — **0.30–
 
 ## Open questions that gate decisions
 
+> **Cross-folder conflict, logged 2026-07-29.** `docs/research/effectiveness-eval/02`
+> reaches the same "randomise the first cohort or lose it forever" conclusion from
+> decision theory — a deterministic scheduler gives support-divergence up to 1, so a
+> deterministic launch cohort is a *zero* sample of every counterfactual, not a small
+> one. **But it wants a different randomisation than this folder does.** Calibration
+> needs *uniform* exposure, items shown to learners who would not otherwise have been
+> routed to them, precisely to break the ability-item confound. Off-policy evaluation
+> wants *tolerance-band* sampling — uniform only among candidates within δ of the top
+> score — which keeps every choice near-optimal and therefore does **not** break that
+> confound. Both are probably needed: a small mandatory uniform-random seeding slot
+> for calibration, plus tolerance-band selection on the remaining slots for policy
+> evaluation. Design the two together; neither folder alone specifies it.
+
 Ordered by value-per-hour. The first two are cheap and gate real money.
 
 1. **How many premed-eligible US participants does Prolific actually have?** The **~$31k** calibrated-spine plan depends on it and it is unverified. Prolific has **no premed prescreener** and states it does not store the attribute and therefore **cannot estimate** how many participants must be screened to reach a target sample. Total US 90-day-active pool is ~134,000 (vendor self-report). **How to resolve, ~1 hour:** create a workspace and call the eligible-count endpoint with your filter set (it returns 0 when fewer than 25 qualify), or read the live count in the audience section of study setup; then apply the 40–50% response-rate rule of thumb. If the number is small, Stage 2 shifts to direct premed recruitment and university partnerships, and the budget moves from ~$31k to ~$43k.
