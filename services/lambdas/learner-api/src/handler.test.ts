@@ -58,6 +58,26 @@ function attemptCommand(
   };
 }
 
+/**
+ * Put a harness learner past teach-before-test.
+ *
+ * The adaptive queue serves only KCs a completed lesson covered, and that gate
+ * fails closed on an EMPTY taught set as well as on a miss — a learner who has
+ * finished nothing is served nothing, which is the point of it. Production
+ * writes the set from `completedLessons` during a plan build; here it goes
+ * straight onto the projection, the same `seedProjection` route the
+ * protected-step case uses. KC ids come from the bank's own units, so the
+ * fixture matches whatever this route will actually serve.
+ */
+async function teachTheWholeBank(h: ReturnType<typeof harness>): Promise<void> {
+  const projection = h.repository.projectionFor(h.principal.learnerId);
+  if (projection === null) throw new Error('expected a seeded projection');
+  const units = await h.authority.practiceBank.listUnits({ limit: 400 });
+  const taught = structuredClone(projection.state) as { taughtKcIds?: string[] };
+  taught.taughtKcIds = [...new Set(units.map((u) => u.kcId))];
+  h.repository.seedProjection({ ...projection, state: taught as typeof projection.state });
+}
+
 function request(
   method: string,
   path: string,
@@ -624,7 +644,9 @@ describe('learner Lambda API security boundary', () => {
   });
 
   it('serves an adaptive practice queue and scores an adaptive attempt (synthetic fallback)', async () => {
-    const { api, principal, repository } = harness();
+    const h = harness();
+    const { api, principal, repository } = h;
+    await teachTheWholeBank(h);
     const read = { origin: APP_ORIGIN, authenticated: true } as const;
     const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
 
@@ -640,12 +662,15 @@ describe('learner Lambda API security boundary', () => {
     expect(JSON.stringify(queue)).not.toMatch(/correct_choice_id|correctChoiceId|rationale/i);
 
     const first = queue.items[0]!;
+    // No `firstAttempt` key: the field is gone from the practice command
+    // contract entirely (packages/contracts/src/practice.ts), and this real
+    // route accepting a body without it is the proof the removal did not
+    // break a live submission.
     const body = {
       envelope: commandEnvelope(0),
       questionId: first.question.id,
       specId: first.specId,
       chosenChoiceId: 'A',
-      firstAttempt: true,
     };
     const scored = await api.handle(request('POST', '/v1/practice/attempts/adaptive', body, write));
     const duplicate = await api.handle(
@@ -665,6 +690,44 @@ describe('learner Lambda API security boundary', () => {
     expect(projection.mastery).toBeDefined();
   });
 
+  /**
+   * The same refusal the single-item route gives an unassigned question, on the
+   * adaptive route, for the reason the adaptive route needed one: `specId` used
+   * to be parsed here and then read by nobody, so a body naming any corpus item
+   * with an invented spec was scored without the queue ever being asked. The
+   * body below is well-formed and correctly authenticated — the only thing wrong
+   * with it is that the server never served this learner this item.
+   */
+  it('refuses an adaptive practice attempt the queue never issued', async () => {
+    const { api, principal, repository } = harness();
+    const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
+
+    const denied = await api.handle(
+      request(
+        'POST',
+        '/v1/practice/attempts/adaptive',
+        {
+          envelope: commandEnvelope(0),
+          questionId: 'q-enz-indep-competitive',
+          specId: 'sci:bb1-enzyme-inhibition:EXPLAIN:train',
+          chosenChoiceId: 'A',
+        },
+        write,
+      ),
+    );
+
+    expect(denied.statusCode).toBe(403);
+    // The transaction aborted, so the refusal left no accepted event and no
+    // mastery behind it.
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(0);
+    const projection = repository.projectionFor(principal.learnerId)?.state as {
+      mastery?: unknown;
+      evidence?: unknown[];
+    };
+    expect(projection.mastery).toBeUndefined();
+    expect(projection.evidence).toEqual([]);
+  });
+
   it('rejects an adaptive practice attempt without CSRF', async () => {
     const { api } = harness();
     const body = {
@@ -672,7 +735,6 @@ describe('learner Lambda API security boundary', () => {
       questionId: 'q-enz-indep-competitive',
       specId: 'sci:bb1-enzyme-inhibition:EXPLAIN:train',
       chosenChoiceId: 'A',
-      firstAttempt: true,
     };
     const denied = await api.handle(
       request('POST', '/v1/practice/attempts/adaptive', body, {
@@ -681,6 +743,97 @@ describe('learner Lambda API security boundary', () => {
       }),
     );
     expect(denied.statusCode).toBe(403);
+  });
+
+  /**
+   * The named "done" condition for the contract removal: a real body missing
+   * `firstAttempt` is accepted, and a body that still sends the retired key is
+   * rejected as an unknown field rather than silently ignored — the exact-key
+   * body check in `routes.ts` no longer lists it on either side.
+   */
+  it('accepts an adaptive practice attempt with no firstAttempt key, and rejects one that still sends it', async () => {
+    const h = harness();
+    const { api } = h;
+    await teachTheWholeBank(h);
+    const read = { origin: APP_ORIGIN, authenticated: true } as const;
+    const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
+
+    const queued = await api.handle(request('GET', '/v1/practice/queue/2', undefined, read));
+    const queue = responseBody(queued) as {
+      items: Array<{ specId: string; question: { id: string } }>;
+    };
+    const item = queue.items[0]!;
+
+    const withoutField = await api.handle(
+      request(
+        'POST',
+        '/v1/practice/attempts/adaptive',
+        {
+          envelope: commandEnvelope(0),
+          questionId: item.question.id,
+          specId: item.specId,
+          chosenChoiceId: 'A',
+        },
+        write,
+      ),
+    );
+    expect(withoutField.statusCode).toBe(200);
+    expect(responseBody(withoutField)).toMatchObject({ correct: expect.any(Boolean) });
+
+    const withField = await api.handle(
+      request(
+        'POST',
+        '/v1/practice/attempts/adaptive',
+        {
+          envelope: commandEnvelope(1),
+          questionId: item.question.id,
+          specId: item.specId,
+          chosenChoiceId: 'A',
+          firstAttempt: true,
+        },
+        write,
+      ),
+    );
+    expect(withField.statusCode).toBe(400);
+  });
+
+  /**
+   * The seed route used to pass `command.seed` straight to the authority, with
+   * the body check validating shape only. A caller could therefore name KC ids
+   * of their choosing at the floor or the cap and change planner priority with
+   * no diagnostic taken. It could never mint mastery — the ingress clamp holds
+   * whatever arrives — which is what kept this bounded.
+   *
+   * The body below is well-formed under `MasterySeedSchema` and every value is
+   * a legal probability. It is refused because no diagnostic could have
+   * produced it.
+   */
+  it('refuses a mastery seed no diagnostic could have produced', async () => {
+    const { api, principal, repository } = harness();
+    const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
+
+    const denied = await api.handle(
+      request(
+        'POST',
+        '/v1/hooks/mastery-seed',
+        {
+          envelope: commandEnvelope(0),
+          seed: {
+            kcPriors: { 'V3-KC-000000': 0.05, 'kc-i-just-made-up': 0.4 },
+            skillPriors: {},
+            carsAbility: {},
+          },
+        },
+        write,
+      ),
+    );
+
+    expect(denied.statusCode).toBe(400);
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(0);
+    const projection = repository.projectionFor(principal.learnerId)?.state as {
+      mastery?: { kc?: Record<string, unknown> };
+    };
+    expect(projection.mastery?.kc ?? {}).toEqual({});
   });
 
   it('persists deterministic non-mastery CARS evidence and serves Wrapped', async () => {
@@ -699,7 +852,11 @@ describe('learner Lambda API security boundary', () => {
 
     expect(first.statusCode).toBe(200);
     expect(responseBody(duplicate)).toEqual(responseBody(first));
-    expect(responseBody(wrapped)).toMatchObject({ skillsTouched: 1, protectedPassed: 0 });
+    // Three touched grains: the prerequisite-blocked enzyme skill, plus `cars-ca1`
+    // and `cars-ca2`, which the duel writes evidence to. The two CARS grains only
+    // started counting once the warrant was enumerated over grains that hold
+    // evidence rather than over the bank's two synthetic skill-graph ids.
+    expect(responseBody(wrapped)).toMatchObject({ skillsTouched: 3, protectedPassed: 0 });
     const state = repository.projectionFor(principal.learnerId)?.state as
       | { evidence?: Array<{ evidenceId?: string; kind?: string }> }
       | undefined;

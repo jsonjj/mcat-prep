@@ -9,6 +9,7 @@ import {
   ErrorEntryViewSchema,
   GoalCommandSchema,
   LessonMasteryViewSchema,
+  LessonWarrantViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
   MistakePatternViewSchema,
@@ -59,6 +60,7 @@ export type RouteId =
   | 'mastery'
   | 'progressSkills'
   | 'progressLessons'
+  | 'progressLessonWarrants'
   | 'progressCars'
   | 'errors'
   | 'errorPatterns'
@@ -188,7 +190,11 @@ const PracticeAttemptCommandBodySchema = workflowSchema<PracticeAttemptCommandBo
 
 const PracticeAdaptiveAttemptCommandBodySchema = workflowSchema<PracticeAdaptiveAttemptCommandBody>(
   (value) => {
-    if (!exactKeys(value, ['envelope', 'questionId', 'specId', 'chosenChoiceId', 'firstAttempt'])) {
+    // No `firstAttempt` key: the field is gone from `PracticeAttemptCommandSchema`
+    // entirely (see packages/contracts/src/practice.ts), and this exact-key check
+    // is the reason it used to have to survive there — requiring the key here
+    // would reject every body a firstAttempt-less client now sends.
+    if (!exactKeys(value, ['envelope', 'questionId', 'specId', 'chosenChoiceId'])) {
       return null;
     }
     const envelope = CommandEnvelopeSchema.safeParse(value.envelope);
@@ -401,6 +407,14 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: false,
     responseSchema: LessonMasteryViewSchema.array(),
+  },
+  {
+    id: 'progressLessonWarrants',
+    method: 'GET',
+    path: '/v1/progress/lesson-warrants',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: LessonWarrantViewSchema.array(),
   },
   {
     id: 'progressCars',

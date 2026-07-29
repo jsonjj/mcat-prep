@@ -199,8 +199,15 @@ async function main() {
 
   // --- the mastery seed write ----------------------------------------------
   const seed = result?.masterySeed;
-  const priorCount = Object.keys(seed?.lessonPriors ?? {}).length;
-  check(`the result carries ${priorCount} lesson priors to seed`, priorCount > 0);
+  // KC grain, not lesson grain: a lesson has no stored P(L), so the diagnostic
+  // seeds the KCs beneath each concept and the lesson readout is rolled up from
+  // them. `lessonPriors` is no longer a key the authority will even accept.
+  const priorCount = Object.keys(seed?.kcPriors ?? {}).length;
+  check(`the result carries ${priorCount} KC priors to seed`, priorCount > 0);
+  check(
+    'the result carries no lesson-grain priors, which the authority would reject',
+    seed !== undefined && seed !== null && !('lessonPriors' in seed),
+  );
 
   await post('/v1/bootstrap', {});
   // The seeding write only ever initializes lessons the learner has not
@@ -217,13 +224,18 @@ async function main() {
   const after = await priorsOf();
   const moved = [...after].filter(([id, pL]) => before.get(id) !== pL);
   check(
-    `the write moved ${moved.length} lesson priors on the authority`,
+    `the write moved ${moved.length} lesson readouts on the authority`,
     moved.length > 0,
     `${before.size} lessons before, ${after.size} after`,
   );
+  // The membership that connects a seeded KC to a lesson readout lives in
+  // @mcat/content, which this script does not load, so the checkable claim is the
+  // one that matters: a seed moves where a learner starts and can never approach
+  // mastery. SEED_PRIOR_CAP is 0.4 against BKT's 0.95 cut.
   check(
-    'every prior the authority moved was one the diagnostic seeded',
-    moved.every(([id]) => seed.lessonPriors[id] !== undefined),
+    'no seeded lesson readout came near the mastery cut',
+    moved.every(([, pL]) => pL <= 0.4),
+    `highest seeded readout ${Math.max(...moved.map(([, pL]) => pL))}`,
   );
 
   // --- an answer changed inside a block ------------------------------------

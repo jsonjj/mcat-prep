@@ -114,7 +114,36 @@ export interface VectorLessonResponseRecord {
   readonly itemFamilyId: string;
   readonly kcId: VectorLessonKcId;
   readonly activityRole: VectorLessonActivityRole;
-  readonly assistanceState: 'A0' | 'A1' | 'A2' | 'A3';
+  /**
+   * What this runtime PUT ON THE SCREEN for this administration, read from the
+   * live delivery state at commit.
+   *
+   * There is deliberately no authored `assistance_state` on this record. It used
+   * to be here, was emitted as the seam's `assistanceLevel`, and thereby handed
+   * the lesson author the independence decision (fail-open 6, commit `9fcaea3`).
+   * The field is gone rather than merely unread, so the authored byte is
+   * unreachable from the seam by construction rather than by discipline.
+   *
+   * Every field below is a fact about the delivery:
+   *
+   * - `observedScaffoldDisplayed` — the persistent structured reference panel
+   *   accompanied the item. Displayed, not merely available, and displayed
+   *   whether or not the learner asked: `presentedSupportFor` decides it once,
+   *   and the screen reads the same value.
+   * - `observedSupportOffered` — the one-bounded-cue mechanism was authorized.
+   *   An OFFER carries no content, so it is audit only and never raises the
+   *   level; recorded so a run where the cue was declined can be told from one
+   *   where it was never available.
+   * - `observedSupportRequested` — the learner issued `REQUEST_SUPPORT` and the
+   *   runtime released the cue's text.
+   * - `observedAnswerRevealed` — the open-feedback state at commit. This state
+   *   machine only enters feedback after a commit, so nothing answer-bearing can
+   *   precede one, but it is read rather than assumed.
+   */
+  readonly observedScaffoldDisplayed: boolean;
+  readonly observedSupportOffered: boolean;
+  readonly observedSupportRequested: boolean;
+  readonly observedAnswerRevealed: boolean;
   readonly firstAttempt: true;
   readonly choiceId: VectorLessonChoiceId | null;
   readonly correct: boolean;
@@ -200,7 +229,21 @@ export interface VectorLessonRun {
   currentItemId: string | null;
   resolvedRoute: VectorLessonRoute;
   plannerResolutionId: string;
+  /**
+   * The authored assistance DESIGN of the current screen, carried for the
+   * checkpoint's audit trail and read by nothing else. It is not the assistance
+   * the learner took and it never leaves this module — the response record has no
+   * such field, so it cannot reach the seam.
+   */
   assistanceState: 'A0' | 'A1' | 'A2' | 'A3';
+  /**
+   * The delivery ledger for the current administration — see
+   * {@link presentedSupportFor}. `scaffoldPresented` and `supportOffered` are
+   * what the runtime decided to put on the screen; `supportRequested` is what
+   * the learner then took.
+   */
+  scaffoldPresented: boolean;
+  supportOffered: boolean;
   supportRequested: boolean;
   supportReturnStage: 'LIGHT' | 'LIGHT_FRESH' | null;
   committedResponses: Record<string, VectorLessonResponseRecord>;
@@ -356,6 +399,58 @@ function itemForStage(run: VectorLessonRun, stage: KcStage): VectorLessonSafeIte
   }
 }
 
+/**
+ * What support this runtime puts on the screen alongside one item.
+ *
+ * ONE decision, in ONE place. The rendered screen, the `REQUEST_SUPPORT`
+ * authorization and the commit-time observation all read its result out of run
+ * state, so the runtime cannot present a scaffold it did not record, and cannot
+ * record one it did not present. Before this existed the same conclusion was
+ * re-derived from `assistance_state` at three separate sites — the screen read
+ * the item's byte while support authorization read the run's copy of it — which
+ * is the "unenforced invariant" lesson-evidence-mastery-contract §15.2 named as
+ * the reason no assistance observation could be trusted.
+ *
+ * The authored design decides what the SCREEN carries, and that is legitimately
+ * the author's to decide, so the authored value is read here — once, for that
+ * purpose only. It is never read to decide what the learner TOOK: that is
+ * derived downstream from the delivery facts this produces, and the response
+ * record carries no authored assistance field at all.
+ */
+interface PresentedSupport {
+  /** A persistent structured reference panel accompanies the item. */
+  readonly scaffoldPresented: boolean;
+  /** The one-bounded-cue mechanism is authorized for this item. */
+  readonly supportOffered: boolean;
+}
+
+const NO_SUPPORT_PRESENTED: PresentedSupport = {
+  scaffoldPresented: false,
+  supportOffered: false,
+};
+
+function presentedSupportFor(item: VectorLessonSafeItem | null): PresentedSupport {
+  if (item === null) return NO_SUPPORT_PRESENTED;
+  return {
+    scaffoldPresented: item.assistance_state !== 'A0',
+    supportOffered: item.assistance_state === 'A1' || item.assistance_state === 'A2',
+  };
+}
+
+/**
+ * Put one item (or no item) on the screen and open a fresh delivery ledger for
+ * it. Every path that changes `currentItemId` goes through here, so no path can
+ * leave the ledger describing the previous screen.
+ */
+function presentItem(run: VectorLessonRun, item: VectorLessonSafeItem | null): void {
+  const presented = presentedSupportFor(item);
+  run.currentItemId = item?.item_id ?? null;
+  run.assistanceState = item?.assistance_state ?? 'A3';
+  run.scaffoldPresented = presented.scaffoldPresented;
+  run.supportOffered = presented.supportOffered;
+  run.supportRequested = false;
+}
+
 function stageNodeId(run: VectorLessonRun, stage = run.stage): string {
   const slug = currentKc(run).slug;
   const suffixByStage: Record<KcStage, string> = {
@@ -480,9 +575,7 @@ function updateCheckpoint(run: VectorLessonRun): void {
 
 function exposeCurrentStage(run: VectorLessonRun, now: string): void {
   const current = itemForStage(run, run.stage);
-  run.currentItemId = current?.item_id ?? null;
-  run.assistanceState = current?.assistance_state ?? (run.stage === 'WORKED' ? 'A3' : 'A3');
-  run.supportRequested = false;
+  presentItem(run, current);
   if (current !== null && !run.exposedFamilyIds.includes(current.semantic_family_id)) {
     run.exposedFamilyIds.push(current.semantic_family_id);
     recordEvent(run, 'item_presented', now);
@@ -541,6 +634,8 @@ export function createVectorLessonRun(options: {
     resolvedRoute: validated.route,
     plannerResolutionId: validated.resolutionId,
     assistanceState: 'A0',
+    scaffoldPresented: false,
+    supportOffered: false,
     supportRequested: false,
     supportReturnStage: null,
     committedResponses: {},
@@ -622,7 +717,7 @@ function beginRepair(
     };
     run.status = 'BLOCKED';
     run.stage = 'BLOCKED';
-    run.currentItemId = null;
+    presentItem(run, null);
     run.feedback = null;
     recordEvent(run, 'kc_planner_handoff_requested', now);
     updateCheckpoint(run);
@@ -662,10 +757,10 @@ function enterFeedback(
   const sourceStage = run.stage;
   const sourceNodeId = stageNodeId(run);
   run.stage = 'FEEDBACK';
-  run.currentItemId = null;
-  run.assistanceState = 'A3';
+  // `commitResponse` has already read the delivery ledger for the attempt this
+  // feedback belongs to, so closing it here cannot erase the observation.
+  presentItem(run, null);
   run.feedback = { ...feedback, sourceStage, sourceNodeId };
-  run.supportRequested = false;
   recordEvent(run, 'feedback_delivered', now);
   updateCheckpoint(run);
 }
@@ -692,7 +787,12 @@ function commitResponse(
     itemFamilyId: item.semantic_family_id,
     kcId: item.primary_kc_id,
     activityRole: item.activity_role,
-    assistanceState: run.assistanceState,
+    // The delivery ledger, captured before `enterFeedback` closes it, so this is
+    // the administration as it stood at the moment of commitment.
+    observedScaffoldDisplayed: run.scaffoldPresented,
+    observedSupportOffered: run.supportOffered,
+    observedSupportRequested: run.supportRequested,
+    observedAnswerRevealed: run.feedback !== null,
     firstAttempt: true,
     choiceId,
     correct,
@@ -1028,8 +1128,7 @@ function continueFromContent(run: VectorLessonRun, now: string): void {
         run.plannerResolutionId = validated.resolutionId;
         run.stage = 'ENTRY';
         run.feedback = null;
-        run.currentItemId = null;
-        run.supportRequested = false;
+        presentItem(run, null);
         run.supportReturnStage = null;
         recordEvent(run, 'kc_microcycle_started', now);
         exposeCurrentStage(run, now);
@@ -1041,7 +1140,7 @@ function continueFromContent(run: VectorLessonRun, now: string): void {
         }
         run.status = 'DELIVERY_COMPLETE';
         run.stage = 'COMPLETE';
-        run.currentItemId = null;
+        presentItem(run, null);
         run.feedback = null;
         recordEvent(run, 'lesson_delivery_completed', now);
         updateCheckpoint(run);
@@ -1081,7 +1180,10 @@ export function applyVectorLessonAction(
       continueFromContent(next, now);
       break;
     case 'REQUEST_SUPPORT': {
-      if (next.currentItemId === null || !['A1', 'A2'].includes(next.assistanceState)) {
+      // Authorized from the delivery ledger, which is also what the screen and
+      // the observation read, so a cue can never be released on an
+      // administration the record will describe as unoffered.
+      if (!next.supportOffered) {
         throw new Error('Support is not authorized for this administration');
       }
       next.supportRequested = true;
@@ -1133,9 +1235,10 @@ export function invalidateCurrentVectorLessonItem(
       replacement !== undefined &&
       !next.exposedFamilyIds.includes(replacement.semantic_family_id)
     ) {
-      next.currentItemId = replacement.item_id;
-      next.assistanceState = 'A0';
-      next.supportRequested = false;
+      // Presented through the one door rather than hand-set. The replacement's
+      // own design decides its screen; assuming `A0` here would have described
+      // an unscaffolded administration for any assisted replacement.
+      presentItem(next, replacement);
       next.exposedFamilyIds.push(replacement.semantic_family_id);
       recordEvent(next, 'item_presented', now);
       updateCheckpoint(next);
@@ -1152,7 +1255,7 @@ export function invalidateCurrentVectorLessonItem(
 
   next.status = 'BLOCKED';
   next.stage = 'BLOCKED';
-  next.currentItemId = null;
+  presentItem(next, null);
   next.feedback = null;
   recordEvent(next, 'kc_planner_handoff_requested', now);
   updateCheckpoint(next);
@@ -1426,15 +1529,15 @@ export function renderVectorLessonRun(run: VectorLessonRun): VectorLessonRunView
           activeItem.activity_role === 'ENTRY_CHECK'
             ? 'Record my starting point'
             : 'Check my answer',
-        supportActionLabel:
-          !run.supportRequested && ['A1', 'A2'].includes(run.assistanceState)
-            ? 'Show one cue'
-            : null,
+        // Every one of these three reads the delivery ledger rather than
+        // re-deriving from the item, so what the learner sees and what the
+        // record says were displayed are the same fact.
+        supportActionLabel: !run.supportRequested && run.supportOffered ? 'Show one cue' : null,
         support:
-          run.supportRequested && ['A1', 'A2'].includes(run.assistanceState)
+          run.supportRequested && run.supportOffered
             ? { label: 'One helpful cue', text: supportFor(kc) }
             : null,
-        visual: activeItem.assistance_state === 'A0' ? null : visualFor(kc, activeItem),
+        visual: run.scaffoldPresented ? visualFor(kc, activeItem) : null,
       },
     });
   }
@@ -1496,7 +1599,51 @@ export function restoreVectorLessonRun(value: unknown): VectorLessonRun {
       throw new Error('Persisted lesson checkpoint references an unexposed item family');
     }
   }
+  assertDeliveryLedgerMatchesDefinition(run);
   return run;
+}
+
+/**
+ * The delivery ledger must be what the definition would actually have produced.
+ *
+ * `restoreVectorLessonRun` casts unvalidated JSON, so without this the ledger is
+ * a learner-writable field — and it is now the sole input to the assistance
+ * level. A tampered projection claiming `observedScaffoldDisplayed: false` on a
+ * scaffolded item would mint an `A0` administration, which is fail-open 6
+ * arriving through a different door. `scaffoldPresented` and `supportOffered`
+ * are pure functions of the item, so the claim is RE-DERIVED and a mismatch is
+ * refused. `supportRequested` is a real event and is not re-derivable, but it
+ * can only ever raise the level, so a lie about it cannot manufacture
+ * independence.
+ *
+ * An ABSENT observation is left alone rather than refused: a record persisted
+ * before the ledger existed has no observation, and the seam's `assistanceTaken`
+ * fail-closes it to unobserved. Deleting the field therefore costs the tamperer
+ * the qualification it was trying to buy.
+ */
+function assertDeliveryLedgerMatchesDefinition(run: VectorLessonRun): void {
+  const current = presentedSupportFor(
+    run.currentItemId === null ? null : itemById(run.currentItemId),
+  );
+  if (
+    run.scaffoldPresented !== current.scaffoldPresented ||
+    run.supportOffered !== current.supportOffered
+  ) {
+    throw new Error('Persisted lesson checkpoint claims support this definition does not present');
+  }
+  for (const response of Object.values(run.committedResponses)) {
+    if (typeof response.observedScaffoldDisplayed !== 'boolean') continue;
+    const presented = presentedSupportFor(itemById(response.itemId));
+    if (
+      response.observedScaffoldDisplayed !== presented.scaffoldPresented ||
+      response.observedSupportOffered !== presented.supportOffered ||
+      (response.observedSupportRequested && !presented.supportOffered)
+    ) {
+      throw new Error(
+        'A persisted lesson response claims support this definition does not present',
+      );
+    }
+  }
 }
 
 export function resumeVectorLessonRun(run: VectorLessonRun, now: string): VectorLessonRun {

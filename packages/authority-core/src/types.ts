@@ -3,12 +3,17 @@ import type {
   CarsSkill,
   LearnerEvent,
   LearnerId,
-  MasteryState,
   PlanActivityStatus,
   ReasoningOperation,
   UtcTimestamp,
 } from '@mcat/contracts';
-import type { EvidenceRecord, MasterySkillState, Task } from '@mcat/domain';
+import type {
+  DecisionReason,
+  EvidenceKind,
+  EvidenceReason,
+  EvidenceRecord,
+  Task,
+} from '@mcat/domain';
 import type { LearnerSafeQuestion } from '@mcat/content';
 import type { GhostView, MemoryState, PlannedActivity, ReviewDebtBand } from '@mcat/policies';
 
@@ -34,9 +39,9 @@ export interface LearnerState {
   diagnostic: DiagnosticSessionState | null;
   session: StudySessionState | null;
   /**
-   * BKT/IRT mastery engine state (mastery-bkt / provisional-v1). Optional so older
-   * persisted projections deserialize; initialized lazily. In the deployed
-   * learner-api path mastery lives in dedicated Postgres tables instead.
+   * BKT/IRT mastery engine state (mastery-bkt). Optional so older persisted
+   * projections deserialize; initialized lazily. In the deployed learner-api
+   * path mastery lives in dedicated Postgres tables instead.
    */
   mastery?: MasteryEngineState;
   /** Today's Path — the persisted daily plan + per-activity progress (optional; per-day). */
@@ -78,16 +83,59 @@ export interface TodaysPathState {
   mistakesSessions: number;
 }
 
-/** Per-learner mastery engine state. `P(L)` values are as-of `lastPracticedAt`. */
+/**
+ * Per-learner mastery engine state. `P(L)` values are as-of `lastPracticedAt`.
+ *
+ * Exactly TWO grains hold a directly observed `P(L)`: the primary KC (`kc`) and
+ * the primary reasoning operation (`skill`). A lesson has none — its readout is
+ * rolled up from its required member KCs on read. See
+ * docs/lesson-evidence-mastery-contract.md §8.2 and §9.
+ */
 export interface MasteryEngineState {
-  /** Per-KC P(L) (stored, never displayed; used for selection). */
+  /** Per-KC P(L) (stored, never displayed; used for selection and lesson rollup). */
   kc: Record<string, MemoryState>;
   /** Per-reasoning-operation P(L) (the 7 displayed skills). */
   skill: Partial<Record<ReasoningOperation, MemoryState>>;
-  /** Per-lesson P(L) (drives the Progress brain). */
-  lesson: Record<string, MemoryState>;
   /** Per-CARS-sub-skill IRT ability V. */
   cars: Partial<Record<CarsSkill, number>>;
+  /**
+   * Lessons this learner has practiced, for ROUTING only: they are the default
+   * set of lessons `getMasteryLessons` rolls up. A lesson id never reaches BKT
+   * and never contributes to any `P(L)`.
+   */
+  practicedLessonIds: string[];
+  /**
+   * `QualifiedBktObservation.observationId`s already applied. Re-delivering the
+   * same accepted response MUST NOT move `P(L)` twice
+   * (lesson-evidence-mastery-contract §12).
+   */
+  appliedObservationIds: string[];
+  /**
+   * The highest `QualifiedBktObservation.sequence` applied so far, or `null`
+   * before the first one. An arrival at or below it is applied but flagged
+   * out-of-order, which is how replay ordering is made detectable (§12) without
+   * discarding a legitimately delayed observation.
+   *
+   * A projection written before this field existed deserializes without it;
+   * `ensureMastery` backfills it to `null`, the same way it backfills the two
+   * lists above, so it is always present once the engine has touched the state.
+   */
+  highestAppliedObservationSequence: number | null;
+  /**
+   * @deprecated Legacy per-lesson BKT chain. Lessons have no BKT state under the
+   * lesson → evidence → mastery seam, so this is NEVER written. It is declared
+   * only so projections persisted before the seam still deserialize; the kernel
+   * drops it on read (`learnerStateFromProjection`).
+   *
+   * Both halves of that are ENFORCED, not merely documented — a documented guard
+   * is not a guard. `tests/architecture/mastery-write-path.test.ts` fails on any
+   * assignment to a lesson-keyed mastery grain, on the `?? {}` fallback that would
+   * silently freeze the planner's mastery signal, and on the drop-on-read losing
+   * its wiring; `authority.test.ts` ("no write path stores a lesson grain") checks
+   * every write path leaves it absent, and `kernel.test.ts` owns the legacy-load
+   * behaviour. Read a lesson through `Authority.getLessonRollups` instead.
+   */
+  lesson?: Record<string, MemoryState>;
 }
 
 export interface DiagnosticSessionState {
@@ -162,8 +210,10 @@ export interface RevealView {
 
 export interface SessionSummary {
   skillId: string;
-  masteryState: MasteryState;
+  /** WARRANT staleness, not BKT decay. The capability question is `reviewDue`. */
   refreshNeeded: boolean;
+  /** The warrant as reason codes. Never an ordinal tier — see `MasteryMapEntry`. */
+  reasons: DecisionReason<EvidenceReason>[];
   evidenceCounts: Record<string, number>;
 }
 
@@ -205,9 +255,45 @@ export interface TodayView {
   ghost: GhostView;
 }
 
-export interface MasteryMapEntry extends MasterySkillState {
+/**
+ * One skill's EVIDENCE WARRANT, plus its presentation labels. This is a view of
+ * `SkillEvidenceState` — what the evidence covers and what is missing — not a
+ * capability estimate; the learner-facing capability number is
+ * `SkillMasteryView.pL` from the BKT engine.
+ *
+ * It publishes NO ordinal tier. The evidence-quality rank stays inside the
+ * authority (see `Authority.skillWarrants`), where comparing tiers is a planner
+ * concern; `reasons` is what reaches the learner.
+ */
+export interface MasteryMapEntry {
+  skillId: string;
+  /**
+   * The WARRANT is stale or contradicted by a fresh failure. Not BKT decay: that
+   * is `SkillMasteryView.reviewDue`, which the two shared this name with until the
+   * split made them distinguishable to a planner reading both.
+   */
+  refreshNeeded: boolean;
+  supportingEvidenceIds: string[];
+  freshestByKind: Partial<Record<EvidenceKind, UtcTimestamp>>;
+  reasons: DecisionReason<EvidenceReason>[];
+  policyVersion: string;
   cluster: string;
   title: string;
+}
+
+/**
+ * One LESSON's evidence warrant: why its mastery claim is being withheld, as
+ * reason codes. The lesson-grain companion to `MasteryMapEntry`, and the reason
+ * it is a view of its own rather than fields on `LessonMasteryView` is recorded
+ * on `LessonWarrantViewSchema` in @mcat/contracts — a view carrying both a
+ * capability estimate and the warrant is what an architecture assertion forbids.
+ *
+ * No ordinal tier here either, for the same reason `MasteryMapEntry` has none.
+ */
+export interface LessonWarrantView {
+  lessonId: string;
+  /** Empty when nothing is being withheld — see `Authority.getLessonWarrants`. */
+  reasons: DecisionReason<EvidenceReason>[];
 }
 
 export interface PracticeItemView {

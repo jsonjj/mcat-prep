@@ -1,11 +1,12 @@
 import { z } from 'zod';
 import {
   AssistanceLevelSchema,
-  ContentIdSchema,
+  LessonItemIdSchema,
   OperationTagSchema,
   PolicyVersionSchema,
   SkillClusterSchema,
   UtcTimestampSchema,
+  type UtcTimestamp,
 } from '@mcat/contracts';
 
 /**
@@ -56,6 +57,48 @@ export type ChangeDimension = z.infer<typeof ChangeDimensionSchema>;
 export const EvidenceOutcomeSchema = z.enum(['correct', 'incorrect', 'omitted']);
 export type EvidenceOutcome = z.infer<typeof EvidenceOutcomeSchema>;
 
+/**
+ * An occurrence time the SERVER is willing to stand behind.
+ *
+ * Every warrant signal the planner consumes is time-derived — freshness windows,
+ * staleness, retention — so whoever supplies `EvidenceRecord.occurredAt` decides
+ * whether the warrant is fresh. A lesson runner's reported time is a runtime
+ * fact (lesson-evidence-mastery-contract §2), and a future-dated one sits inside
+ * every freshness window forever. That is the same defect the BKT decay clock
+ * had, one layer over.
+ *
+ * The brand is the structural half of the fix: the field's type is narrower than
+ * `UtcTimestamp`, so `response.occurredAt` cannot be assigned to it. The only
+ * producer is {@link boundOccurredAtToServerTime}, so bounding is not something
+ * a caller has to remember to do — it is the only way to obtain a value of this
+ * type at all.
+ *
+ * The brand is compile-time only, so `EvidenceRecordSchema.parse` on a plain
+ * object still accepts a raw string. That path belongs to callers that stamp
+ * their own server clock directly (`Authority.appendEvidence`), which is
+ * already bounded by construction.
+ */
+const ServerBoundedTimestampSchema = UtcTimestampSchema.brand<'ServerBoundedTime'>();
+export type ServerBoundedTimestamp = z.infer<typeof ServerBoundedTimestampSchema>;
+
+/**
+ * Bound a reported occurrence time by a server-owned ceiling — for lesson
+ * responses, the server's `acceptedAt`, which the accepted-event contract
+ * already designates as server authority.
+ *
+ * Ceiling only, deliberately. Unlike the BKT decay clock there is no floor to
+ * hold: an `EvidenceRecord` is an immutable append, not a running estimate, so
+ * nothing can be rewound. An earlier-than-expected time simply makes the record
+ * age out sooner, which is the safe direction.
+ */
+export const boundOccurredAtToServerTime = (
+  reportedAt: UtcTimestamp,
+  serverCeiling: UtcTimestamp,
+): ServerBoundedTimestamp =>
+  (Date.parse(reportedAt) <= Date.parse(serverCeiling)
+    ? reportedAt
+    : serverCeiling) as ServerBoundedTimestamp;
+
 export const EvidenceConditionsSchema = z.object({
   mixed: z.boolean().default(false),
   passage: z.boolean().default(false),
@@ -68,18 +111,24 @@ export type EvidenceConditions = z.infer<typeof EvidenceConditionsSchema>;
 export const EvidenceRecordSchema = z.object({
   evidenceId: z.string().uuid(),
   skillId: z.string().min(1),
+  /** Resolved by the caller from lesson → cluster routing, never inferred here. */
   cluster: SkillClusterSchema,
-  operation: OperationTagSchema,
+  /**
+   * Optional authoring-analysis axis (`K|Q|E|D|P|A|I|T`), intentionally
+   * distinct from the lesson mastery `ReasoningOperation`. Lesson evidence
+   * omits it until an honest authoring-analysis source is available.
+   */
+  operation: OperationTagSchema.optional(),
   kind: EvidenceKindSchema,
   /** True only when A0, no content-bearing hint, not a retry, and not revealed. */
   independent: z.boolean(),
   assistanceLevel: AssistanceLevelSchema,
   contentBearingHint: z.boolean(),
-  questionId: ContentIdSchema,
+  questionId: LessonItemIdSchema,
   itemVersion: z.number().int().positive(),
   /** Item family the question belongs to; a family satisfies a recipe slot at most once. */
   familyId: z.string().min(1),
-  stimulusId: ContentIdSchema.optional(),
+  stimulusId: LessonItemIdSchema.optional(),
   changeDimensions: z.array(ChangeDimensionSchema).default([]),
   /** Hours since the prior related evidence, if this is a delayed callback. */
   delayHours: z.number().nonnegative().optional(),
@@ -87,7 +136,8 @@ export const EvidenceRecordSchema = z.object({
   outcome: EvidenceOutcomeSchema,
   /** False if the underlying content was retired/invalidated by a correction. */
   valid: z.boolean().default(true),
-  occurredAt: UtcTimestampSchema,
+  /** Server-bounded; never a raw runner claim. See {@link ServerBoundedTimestamp}. */
+  occurredAt: ServerBoundedTimestampSchema,
   sequence: z.number().int().nonnegative(),
   contentRelease: z.string().min(1),
   policies: z.array(PolicyVersionSchema),

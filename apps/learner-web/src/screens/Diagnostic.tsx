@@ -379,7 +379,9 @@ function DiagnosticComplete({
   // surfaced — the learner's plan does not depend on it, and the priors it sets
   // are an opening guess the first few attempts overwrite anyway.
   useEffect(() => {
-    if (seeded.current || Object.keys(seed.lessonPriors).length === 0) return;
+    // Gated on the grain the seed actually carries. This read `lessonPriors`,
+    // which the emitter no longer sends and the authority now rejects.
+    if (seeded.current || Object.keys(seed.kcPriors).length === 0) return;
     seeded.current = true;
     applySeed.mutate(seed);
   }, [seed, applySeed]);

@@ -117,19 +117,93 @@ export type StudyPhase = z.infer<typeof StudyPhaseSchema>;
 export const QuestionSubStateSchema = z.enum(['answering', 'retry', 'reveal']);
 export type QuestionSubState = z.infer<typeof QuestionSubStateSchema>;
 
+/**
+ * Evidence-WARRANT reason codes: what the evidence behind a skill covers, how
+ * current it is, and what is still missing. None of them states a capability
+ * level or an attainment rank. The `*_ACHIEVED` codes this list replaced were
+ * evidence-ladder ranks worn as learner-facing attainment language, which is
+ * exactly the second mastery scale the seam exists to remove; the capability
+ * claim comes from the BKT estimate (`SkillMasteryView.pL`) and nowhere else.
+ *
+ * These codes are the ONLY warrant vocabulary that crosses to the learner, and
+ * the numeric `base` tier no longer does. What that bought is narrower than an
+ * earlier version of this comment claimed, and the claim is corrected here
+ * rather than left standing: it asserted that a set of codes "cannot be compared
+ * and thresholded". It can. `evaluateEvidence` in
+ * `packages/policies/src/mastery-policy.ts` emits exactly one of
+ * `NO_USEFUL_EVIDENCE`, `INSTRUCTIONAL_EVIDENCE_ONLY`,
+ * `INDEPENDENT_EVIDENCE_SATISFIED`, `RETENTION_EVIDENCE_SATISFIED`,
+ * `STRONG_CONDITIONS_EVIDENCE_SATISFIED` per entry, mutually exclusive and in
+ * ladder order, so a consumer can recover the internal rank losslessly by
+ * indexing that list. Removing `base` removed a rank the wire INVITED a client
+ * to threshold; it did not make the rank unrecoverable.
+ *
+ * The real guarantee is narrower and still worth having: no field on this
+ * boundary is typed as an ordinal, nothing in the repo compares these codes, and
+ * a rival scale now takes deliberate work to rebuild rather than being handed
+ * over ready-made. Capability remains `SkillMasteryView.pL` alone.
+ *
+ * Coarsening the three `*_SATISFIED` codes into one — which is what would make
+ * the rank genuinely unrecoverable — is an OWNER decision, not a cleanup: these
+ * strings are learner-facing vocabulary, `apps/learner-web` words them as
+ * distinct sentences, and collapsing them would lose the "what is still missing"
+ * detail this list exists to carry. Not done unilaterally.
+ *
+ * MIRROR of `EVIDENCE_REASONS` in `packages/domain/src/reason-codes.ts`, which
+ * is the producer. It cannot be imported: `@mcat/domain` depends on
+ * `@mcat/contracts`, so the reverse import would be a dependency cycle. The two
+ * lists MUST stay member-for-member identical — a divergence means the domain
+ * emits a code this view rejects at the wire boundary. The cross-package parity
+ * assertion belongs in `tests/architecture/`, which may import both.
+ */
+export const EVIDENCE_REASON_CODES = [
+  'NO_USEFUL_EVIDENCE',
+  'PREREQUISITE_BLOCKED',
+  'INSTRUCTIONAL_EVIDENCE_ONLY',
+  'INDEPENDENT_EVIDENCE_SATISFIED',
+  'RETENTION_EVIDENCE_SATISFIED',
+  'STRONG_CONDITIONS_EVIDENCE_SATISFIED',
+  'EVIDENCE_STALE',
+  'FRESH_FAILURE',
+  'CORRECTION_INVALIDATED_EVIDENCE',
+  'INDEPENDENT_EVIDENCE_GAP',
+  'TRANSFER_EVIDENCE_GAP',
+  'DELAYED_EVIDENCE_GAP',
+  'MIXED_EVIDENCE_GAP',
+  'PASSAGE_EVIDENCE_GAP',
+  'TIMED_EVIDENCE_GAP',
+  'PROTECTED_EVIDENCE_GAP',
+  'EVIDENCE_GAP',
+] as const;
+
+export const EvidenceReasonCodeSchema = z.enum(EVIDENCE_REASON_CODES);
+export type EvidenceReasonCode = z.infer<typeof EvidenceReasonCodeSchema>;
+
+export const DecisionReasonViewSchema = z
+  .object({
+    code: EvidenceReasonCodeSchema,
+    detail: z.string().min(1).optional(),
+  })
+  .strict();
+
+/**
+ * End-of-session summary. It reports the evidence WARRANT for the skill just
+ * practiced — which slots the evidence fills and which are still open — as
+ * `reasons`, the same non-ordinal code list `MasteryMapEntrySchema` carries.
+ *
+ * It deliberately publishes no tier. The field used to be `masteryState`, an
+ * ordinal evidence rank, and every consumer that read it ended up presenting
+ * evidence sufficiency as attainment however it was worded. The learner-facing
+ * capability estimate is BKT's `SkillMasteryView.pL` / `atCapabilityCut` and
+ * nothing here; the mastery CLAIM is `LessonMasteryView.mastered`, which needs
+ * that estimate AND a warrant.
+ */
 export const SessionSummarySchema = z
   .object({
     skillId: z.string().min(1),
-    masteryState: z.enum([
-      'not_assessed',
-      'foundation_needed',
-      'learning',
-      'independent',
-      'retained',
-      'strong',
-      'exam_ready_now',
-    ]),
+    /** WARRANT staleness. BKT's decay question is `SkillMasteryView.reviewDue`. */
     refreshNeeded: z.boolean(),
+    reasons: z.array(DecisionReasonViewSchema),
     evidenceCounts: z.record(z.string(), z.number().int().nonnegative()),
   })
   .strict();
@@ -214,6 +288,7 @@ export const PlannerReasonSchema = z.enum([
   'PASSAGE_GAP',
   'TIMED_GAP',
   'PROTECTED_GAP',
+  'TAUGHT_NOT_MASTERED',
   'COVERAGE_GAP',
   'CARS_CONTACT',
   'NEW_LEARNING',
@@ -297,37 +372,27 @@ export const EvidenceKindSchema = z.enum([
   'pacing',
 ]);
 
-export const MasteryReasonSchema = z.enum([
-  'NO_USEFUL_EVIDENCE',
-  'PREREQUISITE_BLOCKED',
-  'DEPENDS_ON_INSTRUCTION',
-  'INDEPENDENT_ACHIEVED',
-  'TRANSFER_ACHIEVED',
-  'RETAINED_ACHIEVED',
-  'STRONG_ACHIEVED',
-  'EVIDENCE_STALE',
-  'FRESH_FAILURE',
-  'CORRECTION_INVALIDATED_EVIDENCE',
-]);
-
-export const DecisionReasonViewSchema = z
-  .object({
-    code: MasteryReasonSchema,
-    detail: z.string().min(1).optional(),
-  })
-  .strict();
-
+/**
+ * One skill's evidence warrant: which recipe slots the evidence fills, how fresh
+ * it is, and what is still open — reported only as `reasons`, never as a rank.
+ *
+ * The ordinal `base` tier this used to publish is gone. It stayed internal to
+ * `packages/authority-core`, where the planner and the coverage counters may
+ * legitimately compare tiers; it no longer crosses the wire, because every
+ * learner-facing consumer that could read a rank eventually thresholded it and
+ * re-created a second mastery scale beside BKT. `SkillMasteryView.pL` /
+ * `atCapabilityCut` is the only capability reading the learner ever sees, and it
+ * is deliberately not called `mastered`: it carries no warrant, so it makes no
+ * claim.
+ */
 export const MasteryMapEntrySchema = z
   .object({
     skillId: z.string().min(1),
-    base: z.enum([
-      'not_assessed',
-      'foundation_needed',
-      'learning',
-      'independent',
-      'retained',
-      'strong',
-    ]),
+    /**
+     * The warrant is stale or contradicted by a fresh failure. This is the
+     * EVIDENCE system's question and it is not BKT decay — that is
+     * `SkillMasteryView.reviewDue`. A planner consumes both, separately.
+     */
     refreshNeeded: z.boolean(),
     supportingEvidenceIds: z.array(z.string().uuid()),
     freshestByKind: z.record(EvidenceKindSchema, UtcTimestampSchema),
@@ -338,6 +403,46 @@ export const MasteryMapEntrySchema = z
   })
   .strict();
 export type MasteryMapEntry = z.infer<typeof MasteryMapEntrySchema>;
+
+/**
+ * One lesson's evidence warrant, for the Evidence Atlas: why the mastery claim
+ * on that lesson is being withheld, and what would close it. Reason codes only,
+ * never a rank — the same vocabulary `MasteryMapEntry` publishes at KC grain,
+ * worded by the same `evidenceWarrant()` in the app, because two vocabularies
+ * for one concept is how "Needs refresh" came to mean two different things.
+ *
+ * WHY THIS IS A SEPARATE VIEW rather than fields on `LessonMasteryView`. Since
+ * `d438d43` a lesson-only path can never satisfy the evidence gate, so a learner
+ * who perfects a lesson reads "In progress" on the flagship Progress page with
+ * no explanation anywhere — and a high `P(L)` simultaneously drops it off "Needs
+ * the most review", so it disappears rather than surfacing as one step from
+ * done. The obvious repair is to hang `reasons` on `LessonMasteryView` beside
+ * `pL` and `mastered`; `tests/architecture/lesson-mastery-integration.test.ts`
+ * forbids exactly that, because a view carrying a capability estimate and the
+ * warrant together invites the next consumer to read the warrant as attainment,
+ * which is what happened to the ordinal `base` tier and to `masteryState` before
+ * it. Its failure text names the alternative taken here: publish two views. The
+ * Atlas joins them by `lessonId`, the same way `SkillDetail` already joins the
+ * skill list with `getMasteryMap`.
+ *
+ * The reasons belong to ONE required member KC — the one holding the claim back
+ * — because a lesson has no warrant of its own any more than it has a `P(L)`.
+ * Warrant-insufficient members are preferred over merely-below-the-cut ones:
+ * capability already has a surface (the percentage), and the warrant is the half
+ * with none, so naming a satisfied warrant on a lesson whose claim is withheld
+ * would reproduce the same unexplained state one grain down.
+ *
+ * EMPTY MEANS NOTHING IS BEING WITHHELD. A mastered lesson has no limiting
+ * member, so it publishes no reasons — as opposed to publishing the reasons that
+ * happen to be satisfied, which a reader would have to know to suppress.
+ */
+export const LessonWarrantViewSchema = z
+  .object({
+    lessonId: z.string().min(1),
+    reasons: z.array(DecisionReasonViewSchema),
+  })
+  .strict();
+export type LessonWarrantView = z.infer<typeof LessonWarrantViewSchema>;
 
 /**
  * One practice miss, carrying the content the learner needs to act on it.

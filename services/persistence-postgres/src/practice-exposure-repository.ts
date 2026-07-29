@@ -24,20 +24,26 @@ import { randomUUID } from 'node:crypto';
 import type {
   AttemptActivityType,
   PracticeAnswer,
+  PracticeAttemptAuthorization,
+  PracticeAttemptGrant,
   PracticeAttemptLogEntry,
   PracticeBankItem,
   PracticeBankPort,
   PracticeCandidateUnit,
+  PracticeExposure,
   PracticeItemClassification,
   PracticeItemQuery,
   PracticeRepairTarget,
+  StoredPracticeAttemptGrant,
 } from '@mcat/authority-core';
+import { adjudicateAttemptGrant } from '@mcat/authority-core';
 import type {
   CarsSkill,
   PracticeDomain,
   PracticeQuestion,
   ReasoningOperation,
   SkillCluster,
+  UtcTimestamp,
 } from '@mcat/contracts';
 import {
   findPracticeItems,
@@ -172,6 +178,8 @@ interface Schema {
   hasRepair: boolean;
   /** Migrations 0010 + 0011 (the question attempt log) have been applied. */
   hasAttemptLog: boolean;
+  /** Migration 0013 (server-issued practice attempt grants) has been applied. */
+  hasAttemptGrant: boolean;
 }
 
 interface MemExposure {
@@ -190,6 +198,7 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
     { kcId: string; skill?: ReasoningOperation; at: string }[]
   >();
   private readonly memAttempts = new Map<string, PracticeAttemptLogEntry[]>();
+  private readonly memGrants = new Map<string, Map<string, StoredPracticeAttemptGrant>>();
 
   constructor(private readonly pool: Pool) {}
 
@@ -201,7 +210,7 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
     const tables = await this.pool.query<{ table_name: string }>(
       `select table_name from information_schema.tables
         where table_schema = 'public' and table_name = any($1)`,
-      [['question_stats', 'practice_exposure', 'practice_repair']],
+      [['question_stats', 'practice_exposure', 'practice_repair', 'practice_attempt_grant']],
     );
     const present = new Set(tables.rows.map((r) => r.table_name));
     const col = await this.pool.query(
@@ -215,6 +224,7 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
       hasExposure: present.has('practice_exposure'),
       hasRepair: present.has('practice_repair'),
       hasAttemptLog: await hasPracticeAttemptLog(this.pool),
+      hasAttemptGrant: present.has('practice_attempt_grant'),
     };
   }
 
@@ -381,22 +391,143 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
     return rows.map((r) => r.question_id);
   }
 
-  async recordExposure(learnerId: string, questionId: string, now: string): Promise<void> {
+  /**
+   * `seen_count` comes back from the upsert that increments it, so the prior
+   * count the authority derives `firstAttempt` from is read and written in one
+   * statement. A separate `select` would leave a window in which two concurrent
+   * submissions of the same item both read zero and both counted as first.
+   *
+   * `returning` is on the whole statement, so it reports the post-increment
+   * value on both branches of the upsert: 1 on the insert, n+1 on the update.
+   */
+  async recordExposure(
+    learnerId: string,
+    questionId: string,
+    now: string,
+  ): Promise<PracticeExposure> {
     const schema = await this.schema();
     if (!schema.hasExposure) {
       const map = this.memExposure.get(learnerId) ?? new Map<string, MemExposure>();
       const entry = map.get(questionId);
-      map.set(questionId, { count: (entry?.count ?? 0) + 1, lastSeenAt: now });
+      const priorExposures = entry?.count ?? 0;
+      map.set(questionId, { count: priorExposures + 1, lastSeenAt: now });
       this.memExposure.set(learnerId, map);
-      return;
+      return { priorExposures };
     }
-    await this.pool.query(
+    const { rows } = await this.pool.query<{ seen_count: number }>(
       `insert into practice_exposure (learner_id, question_id, last_seen_at, seen_count)
        values ($1, $2, $3, 1)
        on conflict (learner_id, question_id) do update set
          last_seen_at = excluded.last_seen_at,
-         seen_count = practice_exposure.seen_count + 1`,
+         seen_count = practice_exposure.seen_count + 1
+       returning seen_count`,
       [learnerId, questionId, now],
+    );
+    // No row back means the write did not land, and an unknown history must not
+    // read as an empty one: fail closed to "seen before" rather than crediting
+    // an attempt the server cannot vouch for.
+    const seen = rows[0]?.seen_count;
+    return { priorExposures: seen === undefined ? 1 : Math.max(0, Number(seen) - 1) };
+  }
+
+  /**
+   * Record that the queue served one item, replacing any earlier grant for it.
+   *
+   * `consumed_at` resets on the upsert, and that is correct: the queue only
+   * re-serves an item once the rotation window has released it, so a re-serve
+   * IS a fresh authorization. It is not a fresh FIRST attempt — that stays with
+   * `practice_exposure.seen_count`, which is unwindowed and untouched here.
+   *
+   * With migration 0013 absent (a content-only dev database) grants fall back
+   * to process memory, exactly as exposure and repair already do. The failure
+   * mode differs, though, and it is worth naming: an in-memory grant store
+   * behind more than one process refuses legitimate answers rather than
+   * admitting illegitimate ones. That is the safe direction, but it does mean
+   * the deployed path depends on the migration having run.
+   */
+  async issueAttemptGrant(learnerId: string, grant: PracticeAttemptGrant): Promise<void> {
+    const schema = await this.schema();
+    if (!schema.hasAttemptGrant) {
+      const map = this.memGrants.get(learnerId) ?? new Map<string, StoredPracticeAttemptGrant>();
+      map.set(grant.questionId, { ...grant, consumedAt: null });
+      this.memGrants.set(learnerId, map);
+      return;
+    }
+    await this.pool.query(
+      `insert into practice_attempt_grant
+         (learner_id, question_id, spec_id, content_release, issued_at, expires_at, consumed_at)
+       values ($1, $2, $3, $4, now(), $5, null)
+       on conflict (learner_id, question_id) do update set
+         spec_id = excluded.spec_id,
+         content_release = excluded.content_release,
+         issued_at = excluded.issued_at,
+         expires_at = excluded.expires_at,
+         consumed_at = null`,
+      [learnerId, grant.questionId, grant.specId, grant.contentRelease, grant.expiresAt],
+    );
+  }
+
+  /**
+   * Spend the grant for one item, in one statement.
+   *
+   * The conditional `update ... where consumed_at is null` is the atomic half:
+   * of two concurrent submissions of the same item, exactly one can see
+   * `firstUse: true`, whatever the interleaving. The follow-up `select` runs
+   * only when that update matched nothing, and it decides between "already
+   * spent" (still authorized, as a repeat) and the four refusals. It is a
+   * classification, not a gate, so its non-atomicity costs nothing.
+   */
+  async consumeAttemptGrant(
+    learnerId: string,
+    claim: { questionId: string; specId: string; contentRelease: string; now: UtcTimestamp },
+  ): Promise<PracticeAttemptAuthorization> {
+    const schema = await this.schema();
+    if (!schema.hasAttemptGrant) {
+      const map = this.memGrants.get(learnerId);
+      const entry = map?.get(claim.questionId);
+      const outcome = adjudicateAttemptGrant(entry, claim);
+      if (outcome.status === 'authorized' && outcome.firstUse && entry !== undefined) {
+        map!.set(claim.questionId, { ...entry, consumedAt: claim.now });
+      }
+      return outcome;
+    }
+
+    const spent = await this.pool.query(
+      `update practice_attempt_grant
+          set consumed_at = $5::timestamptz
+        where learner_id = $1
+          and question_id = $2
+          and spec_id = $3
+          and content_release = $4
+          and consumed_at is null
+          and expires_at >= $5::timestamptz`,
+      [learnerId, claim.questionId, claim.specId, claim.contentRelease, claim.now],
+    );
+    if ((spent.rowCount ?? 0) === 1) return { status: 'authorized', firstUse: true };
+
+    const { rows } = await this.pool.query<{
+      spec_id: string;
+      content_release: string;
+      expires_at: Date | string;
+      consumed_at: Date | string | null;
+    }>(
+      `select spec_id, content_release, expires_at, consumed_at
+         from practice_attempt_grant
+        where learner_id = $1 and question_id = $2`,
+      [learnerId, claim.questionId],
+    );
+    const row = rows[0];
+    return adjudicateAttemptGrant(
+      row === undefined
+        ? undefined
+        : {
+            questionId: claim.questionId,
+            specId: row.spec_id,
+            contentRelease: row.content_release,
+            expiresAt: new Date(row.expires_at).toISOString() as UtcTimestamp,
+            consumedAt: row.consumed_at === null ? null : new Date(row.consumed_at).toISOString(),
+          },
+      claim,
     );
   }
 

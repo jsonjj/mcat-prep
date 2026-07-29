@@ -38,14 +38,31 @@ const lesson = (over: Partial<TodaysPathCandidateLesson> = {}): TodaysPathCandid
   cluster: 'BB1',
   kcCount: 4,
   mastered: false,
+  delivered: false,
   covered: false,
   unlocked: true,
-  dependentsCount: 0,
+  dependentsCount: null,
+  estimatedMinutes: 20,
   ...over,
 });
 
-const lessonHigh = lesson({ lessonId: 'L-high', slug: 'high', title: 'High', section: 'bb', cluster: 'BB1', kcCount: 6 });
-const lessonLow = lesson({ lessonId: 'L-low', slug: 'low', title: 'Low', section: 'ps', cluster: 'PS1', kcCount: 1, covered: true });
+const lessonHigh = lesson({
+  lessonId: 'L-high',
+  slug: 'high',
+  title: 'High',
+  section: 'bb',
+  cluster: 'BB1',
+  kcCount: 6,
+});
+const lessonLow = lesson({
+  lessonId: 'L-low',
+  slug: 'low',
+  title: 'Low',
+  section: 'ps',
+  cluster: 'PS1',
+  kcCount: 1,
+  covered: true,
+});
 
 const manyLessons = (n: number): TodaysPathCandidateLesson[] =>
   Array.from({ length: n }, (_, i) => lesson({ lessonId: `L${i}`, slug: `s${i}` }));
@@ -106,13 +123,21 @@ describe('Today\u2019s Path engine', () => {
   it('puts Recall first when eligible; otherwise opens on a lesson', () => {
     const withRecall = buildTodaysPath(
       snap({
-        recall: { dueLearning: 0, dueReviews: 12, newAvailable: 0, due: 12, estimatedMinutesForDue: 4 },
+        recall: {
+          dueLearning: 0,
+          dueReviews: 12,
+          newAvailable: 0,
+          due: 12,
+          estimatedMinutesForDue: 4,
+        },
         candidateLessons: manyLessons(2),
       }),
     );
     expect(withRecall.activities[0]!.kind).toBe('recall');
 
-    const noRecall = buildTodaysPath(snap({ practiceUnlocked: false, candidateLessons: manyLessons(2) }));
+    const noRecall = buildTodaysPath(
+      snap({ practiceUnlocked: false, candidateLessons: manyLessons(2) }),
+    );
     expect(noRecall.activities[0]!.kind).toBe('lesson');
   });
 
@@ -122,7 +147,13 @@ describe('Today\u2019s Path engine', () => {
         dailyBudgetMinutes: 360,
         coveragePct: 0.6,
         practiceUnlocked: false, // no practice fill → a varied mix, so no-adjacency is achievable
-        recall: { dueLearning: 0, dueReviews: 10, newAvailable: 0, due: 10, estimatedMinutesForDue: 4 },
+        recall: {
+          dueLearning: 0,
+          dueReviews: 10,
+          newAvailable: 0,
+          due: 10,
+          estimatedMinutesForDue: 4,
+        },
         mistakesOpen: 5,
         candidateLessons: manyLessons(3),
       }),
@@ -184,7 +215,15 @@ describe('Today\u2019s Path engine', () => {
 
   it('includes Recall only when enough cards are due, within the card floor/ceiling', () => {
     const withDue = buildTodaysPath(
-      snap({ recall: { dueLearning: 0, dueReviews: 10, newAvailable: 5, due: 10, estimatedMinutesForDue: 4 } }),
+      snap({
+        recall: {
+          dueLearning: 0,
+          dueReviews: 10,
+          newAvailable: 5,
+          due: 10,
+          estimatedMinutesForDue: 4,
+        },
+      }),
     );
     const recall = withDue.activities.find((a) => a.kind === 'recall');
     expect(recall).toBeDefined();
@@ -192,7 +231,15 @@ describe('Today\u2019s Path engine', () => {
     expect(recall!.count!).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.recallCeiling.normal);
 
     const belowFloor = buildTodaysPath(
-      snap({ recall: { dueLearning: 0, dueReviews: 3, newAvailable: 0, due: 3, estimatedMinutesForDue: 1 } }),
+      snap({
+        recall: {
+          dueLearning: 0,
+          dueReviews: 3,
+          newAvailable: 0,
+          due: 3,
+          estimatedMinutesForDue: 1,
+        },
+      }),
     );
     expect(belowFloor.activities.some((a) => a.kind === 'recall')).toBe(false);
   });
@@ -200,7 +247,10 @@ describe('Today\u2019s Path engine', () => {
   it('sizeRecall returns a bounded card count when enough are due, else null', () => {
     // Below the due floor → not scheduled.
     expect(
-      sizeRecall({ dueLearning: 0, dueReviews: 2, newAvailable: 0, due: 2, estimatedMinutesForDue: 1 }, 180),
+      sizeRecall(
+        { dueLearning: 0, dueReviews: 2, newAvailable: 0, due: 2, estimatedMinutesForDue: 1 },
+        180,
+      ),
     ).toBeNull();
     // Enough due → a count within the floor/ceiling, minutes derived from the card cost.
     const r = sizeRecall(
@@ -214,7 +264,13 @@ describe('Today\u2019s Path engine', () => {
   });
 
   it('flexes the recall ceiling above the normal 20 under a high review-debt band', () => {
-    const highDebt = { dueLearning: 0, dueReviews: 80, newAvailable: 0, due: 80, estimatedMinutesForDue: 200 };
+    const highDebt = {
+      dueLearning: 0,
+      dueReviews: 80,
+      newAvailable: 0,
+      due: 80,
+      estimatedMinutesForDue: 200,
+    };
     const r = buildTodaysPath(snap({ dailyBudgetMinutes: 360, recall: highDebt }));
     expect(r.reviewDebtBand).toBe('pause_new');
     expect(r.activities.find((a) => a.kind === 'recall')!.count!).toBeGreaterThan(
@@ -252,7 +308,10 @@ describe('Today\u2019s Path engine', () => {
       expect(r.activities.some((a) => a.kind === 'review_mistakes')).toBe(false);
     }
     const eligible = buildTodaysPath(
-      snap({ mistakesOpen: TODAYS_PATH_CONFIG.eligibility.mistakesMinOpen, dailyBudgetMinutes: 360 }),
+      snap({
+        mistakesOpen: TODAYS_PATH_CONFIG.eligibility.mistakesMinOpen,
+        dailyBudgetMinutes: 360,
+      }),
     );
     const sessions = eligible.activities.filter((a) => a.kind === 'review_mistakes');
     expect(sessions.length).toBeGreaterThan(0);
@@ -274,15 +333,28 @@ describe('Today\u2019s Path engine', () => {
     // Several practice blocks + reserved mistakes sessions: the extra kinds give the
     // orderer more gaps to work with, so back-to-back practice shrinks further.
     expect(r.activities.filter((a) => a.kind === 'practice').length).toBeGreaterThan(1);
-    expect(r.activities.filter((a) => a.kind === 'review_mistakes').length).toBeGreaterThanOrEqual(2);
+    expect(r.activities.filter((a) => a.kind === 'review_mistakes').length).toBeGreaterThanOrEqual(
+      2,
+    );
     expect(maxSameKindRun(r.activities)).toBeLessThanOrEqual(2);
   });
 
   it('pauses new lessons under a high review-debt band', () => {
-    expect(reviewDebtBand({ dueLearning: 0, dueReviews: 0, newAvailable: 0, due: 0, estimatedMinutesForDue: 0 }, 180)).toBe('normal');
+    expect(
+      reviewDebtBand(
+        { dueLearning: 0, dueReviews: 0, newAvailable: 0, due: 0, estimatedMinutesForDue: 0 },
+        180,
+      ),
+    ).toBe('normal');
     const r = buildTodaysPath(
       snap({
-        recall: { dueLearning: 0, dueReviews: 60, newAvailable: 0, due: 60, estimatedMinutesForDue: 120 },
+        recall: {
+          dueLearning: 0,
+          dueReviews: 60,
+          newAvailable: 0,
+          due: 60,
+          estimatedMinutesForDue: 120,
+        },
         candidateLessons: [lessonHigh],
       }),
     );
@@ -293,7 +365,11 @@ describe('Today\u2019s Path engine', () => {
   it('only offers UNLOCKED, non-mastered lessons, stronger value first', () => {
     const locked = lesson({ lessonId: 'L-locked', slug: 'locked', unlocked: false });
     const r = buildTodaysPath(
-      snap({ dailyBudgetMinutes: 120, practiceUnlocked: false, candidateLessons: [lessonLow, lessonHigh, locked] }),
+      snap({
+        dailyBudgetMinutes: 120,
+        practiceUnlocked: false,
+        candidateLessons: [lessonLow, lessonHigh, locked],
+      }),
     );
     const lessons = r.activities.filter((a) => a.kind === 'lesson');
     expect(lessons.length).toBeGreaterThan(0);
@@ -303,32 +379,123 @@ describe('Today\u2019s Path engine', () => {
 
   it('excludes mastered lessons', () => {
     const r = buildTodaysPath(
-      snap({ practiceUnlocked: false, candidateLessons: [lesson({ ...lessonHigh, mastered: true })] }),
+      snap({
+        practiceUnlocked: false,
+        candidateLessons: [lesson({ ...lessonHigh, mastered: true })],
+      }),
     );
     expect(r.activities.some((a) => a.kind === 'lesson')).toBe(false);
   });
 
+  /**
+   * Delivery is not capability. A lesson finished at the prior with no evidence
+   * used to arrive here as `mastered: true` — the producer OR'd completion into
+   * the claim — and the new-lesson filter then dropped it for good. These three
+   * pin the replacement from both sides: it is no longer NEW work, it is still
+   * REACHABLE, and it is never dressed up as new teaching.
+   */
+  describe('a delivered lesson whose mastery claim is withheld', () => {
+    const deliveredWeak = lesson({
+      ...lessonHigh,
+      delivered: true,
+      mastered: false,
+      pL: 0.2,
+    });
+
+    it('is not offered as new work', () => {
+      const r = buildTodaysPath(
+        snap({ practiceUnlocked: false, candidateLessons: [deliveredWeak] }),
+      );
+      const newWork = r.activities.filter(
+        (a) => a.kind === 'lesson' && a.priorityReason !== 'TAUGHT_NOT_MASTERED',
+      );
+      expect(newWork).toEqual([]);
+    });
+
+    it('stays reachable as reinforcement rather than vanishing from the plan', () => {
+      const r = buildTodaysPath(
+        snap({ practiceUnlocked: false, candidateLessons: [deliveredWeak] }),
+      );
+      const offered = r.activities.filter((a) => a.lessonId === deliveredWeak.lessonId);
+      expect(offered).toHaveLength(1);
+      expect(offered[0]!.priorityReason).toBe('TAUGHT_NOT_MASTERED');
+      expect(offered[0]!.detail).toContain('Revisit');
+      // The same activity id as the new-work offer, so the authority's same-day
+      // rebuild restores its completed status instead of showing a second copy.
+      expect(offered[0]!.activityId).toBe(`lesson:${deliveredWeak.slug}`);
+    });
+
+    it('is dropped once the claim is warranted, and stays dropped while locked', () => {
+      const mastered = buildTodaysPath(
+        snap({
+          practiceUnlocked: false,
+          candidateLessons: [lesson({ ...deliveredWeak, mastered: true })],
+        }),
+      );
+      expect(mastered.activities.some((a) => a.kind === 'lesson')).toBe(false);
+
+      const locked = buildTodaysPath(
+        snap({
+          practiceUnlocked: false,
+          candidateLessons: [lesson({ ...deliveredWeak, unlocked: false })],
+        }),
+      );
+      expect(locked.activities.some((a) => a.kind === 'lesson')).toBe(false);
+    });
+
+    it('never outranks new teaching for the day, and is capped', () => {
+      const delivered = Array.from({ length: 4 }, (_, i) =>
+        lesson({ lessonId: `D${i}`, slug: `d${i}`, delivered: true, pL: 0.2 }),
+      );
+      const r = buildTodaysPath(
+        snap({
+          dailyBudgetMinutes: 120,
+          practiceUnlocked: false,
+          candidateLessons: [...delivered, lessonHigh],
+        }),
+      );
+      const lessons = r.activities.filter((a) => a.kind === 'lesson');
+      expect(lessons.filter((a) => a.priorityReason === 'TAUGHT_NOT_MASTERED')).toHaveLength(
+        TODAYS_PATH_CONFIG.reinforcementLessonCap,
+      );
+      expect(lessons.some((a) => a.lessonSlug === lessonHigh.slug)).toBe(true);
+    });
+  });
+
   it('admits more new lessons on a larger budget', () => {
     const count = (b: number) =>
-      buildTodaysPath(snap({ dailyBudgetMinutes: b, practiceUnlocked: false, candidateLessons: manyLessons(8) }))
-        .activities.filter((a) => a.kind === 'lesson').length;
+      buildTodaysPath(
+        snap({ dailyBudgetMinutes: b, practiceUnlocked: false, candidateLessons: manyLessons(8) }),
+      ).activities.filter((a) => a.kind === 'lesson').length;
     expect(count(360)).toBeGreaterThan(count(120));
   });
 
   it('locks Practice until enough lessons are completed (unlock gate)', () => {
-    expect(buildTodaysPath(snap({ practiceUnlocked: false, practiceReviewNeed: 20 })).activities.some((a) => a.kind === 'practice')).toBe(false);
-    expect(buildTodaysPath(snap({ practiceUnlocked: true, practiceReviewNeed: 20 })).activities.some((a) => a.kind === 'practice')).toBe(true);
+    expect(
+      buildTodaysPath(snap({ practiceUnlocked: false, practiceReviewNeed: 20 })).activities.some(
+        (a) => a.kind === 'practice',
+      ),
+    ).toBe(false);
+    expect(
+      buildTodaysPath(snap({ practiceUnlocked: true, practiceReviewNeed: 20 })).activities.some(
+        (a) => a.kind === 'practice',
+      ),
+    ).toBe(true);
   });
 
   it('fills (nearly) the whole budget once Practice is unlocked', () => {
-    const r = buildTodaysPath(snap({ dailyBudgetMinutes: 360, practiceUnlocked: true, candidateLessons: manyLessons(2) }));
+    const r = buildTodaysPath(
+      snap({ dailyBudgetMinutes: 360, practiceUnlocked: true, candidateLessons: manyLessons(2) }),
+    );
     expect(r.plannedMinutes).toBeGreaterThanOrEqual(340);
     expect(r.freeStudyMinutes).toBeLessThanOrEqual(20);
     expect(r.plannedMinutes).toBeLessThanOrEqual(360);
   });
 
   it('leaves the day only partly filled (free study) when Practice is locked and lessons run out', () => {
-    const r = buildTodaysPath(snap({ dailyBudgetMinutes: 360, practiceUnlocked: false, candidateLessons: manyLessons(2) }));
+    const r = buildTodaysPath(
+      snap({ dailyBudgetMinutes: 360, practiceUnlocked: false, candidateLessons: manyLessons(2) }),
+    );
     expect(r.activities.some((a) => a.kind === 'practice')).toBe(false);
     expect(r.freeStudyMinutes).toBeGreaterThan(0);
   });
@@ -338,12 +505,16 @@ describe('Today\u2019s Path engine', () => {
     const practice = r.activities.find((a) => a.kind === 'practice');
     expect(practice).toBeDefined();
     expect(practice!.count!).toBeLessThanOrEqual(
-      Math.floor(TODAYS_PATH_CONFIG.maxActivityMinutes / TODAYS_PATH_CONFIG.costs.practicePerQuestion),
+      Math.floor(
+        TODAYS_PATH_CONFIG.maxActivityMinutes / TODAYS_PATH_CONFIG.costs.practicePerQuestion,
+      ),
     );
-    expect(practice!.estimatedMinutes).toBe(practice!.count! * TODAYS_PATH_CONFIG.costs.practicePerQuestion);
+    expect(practice!.estimatedMinutes).toBe(
+      practice!.count! * TODAYS_PATH_CONFIG.costs.practicePerQuestion,
+    );
   });
 
-  it('never schedules a single activity longer than maxActivityMinutes', () => {
+  it('keeps non-lesson activities within maxActivityMinutes', () => {
     for (const budget of [120, 180, 240, 300, 360]) {
       const r = buildTodaysPath(
         snap({
@@ -351,12 +522,18 @@ describe('Today\u2019s Path engine', () => {
           coveragePct: 0.5,
           practiceUnlocked: true,
           practiceReviewNeed: 60,
-          recall: { dueLearning: 0, dueReviews: 80, newAvailable: 0, due: 80, estimatedMinutesForDue: 30 },
+          recall: {
+            dueLearning: 0,
+            dueReviews: 80,
+            newAvailable: 0,
+            due: 80,
+            estimatedMinutesForDue: 30,
+          },
           mistakesOpen: 20,
           candidateLessons: manyLessons(6),
         }),
       );
-      for (const a of r.activities) {
+      for (const a of r.activities.filter((activity) => activity.kind !== 'lesson')) {
         expect(a.estimatedMinutes).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.maxActivityMinutes);
       }
     }
@@ -368,7 +545,8 @@ describe('Today\u2019s Path engine', () => {
     );
     const practice = r.activities.filter((a) => a.kind === 'practice');
     expect(practice.length).toBeGreaterThan(1);
-    for (const p of practice) expect(p.estimatedMinutes).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.maxActivityMinutes);
+    for (const p of practice)
+      expect(p.estimatedMinutes).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.maxActivityMinutes);
     const ids = practice.map((p) => p.activityId);
     expect(new Set(ids).size).toBe(ids.length);
   });
@@ -382,15 +560,50 @@ describe('Today\u2019s Path engine', () => {
 
   it('reserves carry-over first and caps total load at ~125% of the preset (no duplicate ids)', () => {
     const carryOver: CarriedActivity[] = [
-      { activityId: 'practice', kind: 'practice', title: 'Practice', detail: 'carried', estimatedMinutes: 20, count: 10, minutesBudget: 20, focus: null, lessonSlug: null, lessonId: null, priorityReason: 'NEW_LEARNING' },
-      { activityId: 'lesson:s0', kind: 'lesson', title: 'L0', detail: 'carried', estimatedMinutes: 20, count: null, minutesBudget: null, focus: null, lessonSlug: 's0', lessonId: 'L0', priorityReason: 'NEW_LEARNING' },
+      {
+        activityId: 'practice',
+        kind: 'practice',
+        title: 'Practice',
+        detail: 'carried',
+        estimatedMinutes: 20,
+        count: 10,
+        minutesBudget: 20,
+        focus: null,
+        lessonSlug: null,
+        lessonId: null,
+        priorityReason: 'NEW_LEARNING',
+      },
+      {
+        activityId: 'lesson:s0',
+        kind: 'lesson',
+        title: 'L0',
+        detail: 'carried',
+        estimatedMinutes: 20,
+        count: null,
+        minutesBudget: null,
+        focus: null,
+        lessonSlug: 's0',
+        lessonId: 'L0',
+        priorityReason: 'NEW_LEARNING',
+      },
     ];
     const r = buildTodaysPath(
-      snap({ dailyBudgetMinutes: 240, practiceUnlocked: true, practiceReviewNeed: 40, candidateLessons: [lesson({ lessonId: 'L0', slug: 's0' }), lesson({ lessonId: 'L1', slug: 's1' })], carryOver }),
+      snap({
+        dailyBudgetMinutes: 240,
+        practiceUnlocked: true,
+        practiceReviewNeed: 40,
+        candidateLessons: [
+          lesson({ lessonId: 'L0', slug: 's0' }),
+          lesson({ lessonId: 'L1', slug: 's1' }),
+        ],
+        carryOver,
+      }),
     );
     const ids = r.activities.map((a) => a.activityId);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(r.plannedMinutes).toBeLessThanOrEqual(Math.round(240 * TODAYS_PATH_CONFIG.carryOverCapPct));
+    expect(r.plannedMinutes).toBeLessThanOrEqual(
+      Math.round(240 * TODAYS_PATH_CONFIG.carryOverCapPct),
+    );
     expect(r.activities.filter((a) => a.activityId === 'practice').length).toBe(1);
     expect(r.activities.filter((a) => a.activityId === 'lesson:s0').length).toBe(1);
   });
@@ -399,13 +612,33 @@ describe('Today\u2019s Path engine', () => {
     const r = buildTodaysPath(
       snap({
         dailyBudgetMinutes: 120,
-        recall: { dueLearning: 0, dueReviews: 8, newAvailable: 0, due: 8, estimatedMinutesForDue: 3 },
+        recall: {
+          dueLearning: 0,
+          dueReviews: 8,
+          newAvailable: 0,
+          due: 8,
+          estimatedMinutesForDue: 3,
+        },
         candidateLessons: [lessonHigh],
       }),
     );
     expect(r.activities.length).toBeGreaterThan(0);
     expect(r.plannedMinutes).toBeLessThanOrEqual(120);
     expect(r.activities.some((a) => a.kind === 'cars_duel')).toBe(true);
+  });
+
+  it('budgets a lesson at its supplied 57-minute estimate, not the flat 20-minute cost', () => {
+    const r = buildTodaysPath(
+      snap({
+        dailyBudgetMinutes: 120,
+        practiceUnlocked: false,
+        candidateLessons: [lesson({ lessonId: 'L-long', slug: 'long', estimatedMinutes: 57 })],
+      }),
+    );
+
+    const scheduled = r.activities.find((a) => a.kind === 'lesson');
+    expect(scheduled?.estimatedMinutes).toBe(57);
+    expect(r.plannedMinutes).toBe(69); // 12-minute CARS + the real 57-minute lesson
   });
 });
 
@@ -421,24 +654,61 @@ describe('scoreLesson mastery nudge', () => {
     expect(lessMastered).toBeGreaterThan(moreMastered);
   });
 
-  it('keeps mastery MINOR: a clearly stronger primary driver still outranks a slightly-less-mastered lesson', () => {
+  it('uses a confirmed zero downstream count instead of the KC-count fallback', () => {
     const s = snap();
-    // Strong primary driver (unlocks many downstream lessons) but MORE mastered, so
-    // the mastery nudge works AGAINST it.
-    const strongDriver = scoreLesson(
-      lesson({ section: 'bb', dependentsCount: 4, covered: false, pL: 0.5 }),
-      s,
-      cfg,
+    const leafInRealGraph = lesson({ kcCount: 6, dependentsCount: 0 });
+    const missingGraph = { ...leafInRealGraph, dependentsCount: null } as TodaysPathCandidateLesson;
+
+    expect(scoreLesson(leafInRealGraph, s, cfg)).toBeLessThan(scoreLesson(missingGraph, s, cfg));
+  });
+
+  it('lets post-discount learning need outrank a short lesson’s KC-count proxy', () => {
+    const s = snap();
+    // One correct lesson exit moves P(L) from 0.2 to 0.430401 at the discounted
+    // guess rate. That 57-minute lesson still needs teaching; the 12-minute
+    // comparison lesson is nearly mastered but has the larger KC-count proxy.
+    const highNeedLong = lesson({
+      lessonId: 'L-high-need',
+      slug: 'high-need',
+      title: 'High need',
+      kcCount: 1,
+      pL: 0.430401,
+      estimatedMinutes: 57,
+    });
+    const lowNeedShort = lesson({
+      lessonId: 'L-low-need',
+      slug: 'low-need',
+      title: 'Low need',
+      kcCount: 6,
+      pL: 0.9,
+      estimatedMinutes: 12,
+    });
+    const before = { ...cfg, masteryWeight: 0.2 };
+
+    // Before the tuning, KC count wins. The raised weight reverses this exact
+    // ordering, and only 58 minutes remain after CARS: just one of these lessons
+    // fits. The old order picks the easy short lesson; the tuned order picks need.
+    expect(scoreLesson(highNeedLong, s, before)).toBeLessThan(scoreLesson(lowNeedShort, s, before));
+    expect(scoreLesson(highNeedLong, s, cfg)).toBeGreaterThan(scoreLesson(lowNeedShort, s, cfg));
+    const input = snap({
+      dailyBudgetMinutes: 70,
+      practiceUnlocked: false,
+      candidateLessons: [lowNeedShort, highNeedLong],
+    });
+    const beforePath = buildTodaysPath(input, before);
+    const r = buildTodaysPath(
+      snap({
+        dailyBudgetMinutes: 70,
+        practiceUnlocked: false,
+        candidateLessons: [lowNeedShort, highNeedLong],
+      }),
     );
-    // Weak primary driver (nothing depends on it) but slightly LESS mastered, so the
-    // mastery nudge works FOR it.
-    const weakDriver = scoreLesson(
-      lesson({ section: 'bb', dependentsCount: 0, kcCount: 1, covered: false, pL: 0.4 }),
-      s,
-      cfg,
+    expect(beforePath.activities.filter((a) => a.kind === 'lesson').map((a) => a.lessonId)).toEqual(
+      ['L-low-need'],
     );
-    // The driver gap dominates: mastery can tip near-ties, never override a real driver.
-    expect(strongDriver).toBeGreaterThan(weakDriver);
+    expect(r.activities.filter((a) => a.kind === 'lesson').map((a) => a.lessonId)).toEqual([
+      'L-high-need',
+    ]);
   });
 
   it('treats undefined pL identically to the P(L)_0 prior (0.2) — no change vs baseline', () => {

@@ -115,10 +115,12 @@ describe('adaptive practice asks for no cause', () => {
   });
 
   it('sends no second command, so the retry cannot double-count anything', () => {
-    // One `submit.mutate` in the file, and it is the first attempt.
+    // One `submit.mutate` in the file — the retry reuses it, so there is
+    // nothing to double-count. `firstAttempt` is not on the wire at all: which
+    // attempt this is is the server's derivation from its own exposure
+    // records, never a claim the client makes (see packages/contracts/src/practice.ts).
     expect([...session.matchAll(/submit\.mutate\(/g)]).toHaveLength(1);
-    expect(session).toMatch(/firstAttempt: true/);
-    expect(session).not.toMatch(/firstAttempt: false/);
+    expect(session).not.toMatch(/firstAttempt/);
   });
 });
 
@@ -354,11 +356,26 @@ describe('the attempt log is the error log’s source, for both flows', () => {
     expect(authority).toMatch(/reveal_requested/);
   });
 
-  it('writes the chosen distractor next to the existing exposure/repair calls', () => {
-    expect(authority).toMatch(
-      /recordExposure\([\s\S]{0,600}recordPracticeAttempt\([\s\S]{0,600}queueRepair\(/,
+  /**
+   * The distractor log is written on the same path as exposure and repair,
+   * asserted by MEMBERSHIP of `submitPracticeAttempt` rather than by textual
+   * proximity. Proximity was the original spelling and it says less than it
+   * looks: it never checked that the three calls were in one method at all, and
+   * it failed on a reordering that kept every one of them where it belongs.
+   */
+  it('writes the chosen distractor on the same path as exposure and repair', () => {
+    const start = authority.indexOf('async submitPracticeAttempt(');
+    const end = authority.indexOf('private buildPracticeSnapshot');
+    expect(start).toBeGreaterThan(-1);
+    expect(end).toBeGreaterThan(start);
+    const body = authority.slice(start, end);
+
+    const order = ['recordExposure(', 'recordPracticeAttempt(', 'queueRepair('].map((call) =>
+      body.indexOf(call),
     );
-    expect(authority).toMatch(/chosenChoiceId: cmd\.chosenChoiceId/);
+    expect(order.every((at) => at > -1)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(body).toMatch(/chosenChoiceId: cmd\.chosenChoiceId/);
   });
 
   it('logs a Study first attempt additively, without touching scoring or repair', () => {

@@ -31,6 +31,12 @@
  * diagnostic's scope, which the bank reports as a count rather than dropping
  * quietly.
  *
+ * EMIT LITERALS ONLY. The output lands in `packages/policies/src`, which
+ * `tests/architecture/lesson-mastery-integration.test.ts` requires to be
+ * lesson-agnostic. It is exempted there as a pure data table — naming lessons is
+ * allowed, acting on one is not — and that suite fails if this script ever emits
+ * an import, a conditional or a function alongside the entries.
+ *
  * Run: node scripts/generate-fc-lessons.mjs
  */
 import { readFileSync, writeFileSync } from 'node:fs';

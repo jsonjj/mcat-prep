@@ -48,6 +48,40 @@ export const resurfaceAt = (index: number, sequenceLength: number, gap = RETRY_G
   Math.min(index + 1 + gap, sequenceLength);
 
 /**
+ * The two ways a queue can arrive degraded, both reported by the authority on
+ * `PracticeQueueView` and neither previously read by anything.
+ *
+ * - `taught-gap`: the authority found a real taught set that shared nothing
+ *   with the loaded bank, so it served no science material rather than serving
+ *   material the learner has not been taught. It means "not taught yet", not
+ *   "something broke".
+ * - `shortfall`: fewer items came back than were asked for.
+ */
+export type QueueNotice = 'taught-gap' | 'shortfall';
+
+/** The queue facts a session has to be honest with the learner about. */
+export interface QueueShape {
+  readonly shortfall: number;
+  readonly taughtGap: boolean;
+}
+
+/**
+ * Which degraded-queue facts this session owes the learner, most specific
+ * first. Both are reported independently, because they are not the same fact
+ * and neither implies the other: a taught-set miss with CARS filling every
+ * requested slot is a FULL queue (`shortfall === 0`) that is nonetheless
+ * missing every science question the learner expected, and a shortfall with no
+ * taught gap means the bank ran dry rather than the curriculum.
+ */
+export function queueNotices(view: QueueShape | undefined): QueueNotice[] {
+  if (view === undefined) return [];
+  const notices: QueueNotice[] = [];
+  if (view.taughtGap) notices.push('taught-gap');
+  if (view.shortfall > 0) notices.push('shortfall');
+  return notices;
+}
+
+/**
  * The answer material a scored attempt returns. `PracticeAttemptResult` satisfies
  * it structurally; it is restated here so the redaction below is testable without
  * the contracts package and without a complete four-option rationale record.

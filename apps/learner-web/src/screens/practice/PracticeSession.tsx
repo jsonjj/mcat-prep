@@ -5,10 +5,12 @@ import type { PracticeAttemptResult, PracticeQueueItem } from '@mcat/contracts';
 import { usePracticeQueue, useSubmitPracticeAttempt } from '../../app/practice-queries';
 import {
   feedbackFor,
+  queueNotices,
   resurfaceAt,
   subAfterFirstAttempt,
   subAfterSecondAttempt,
   type Feedback,
+  type QueueNotice,
   type Sub,
 } from './session-flow';
 
@@ -19,6 +21,66 @@ const PURPOSE_LABEL: Record<string, string> = {
   probe: 'Check-in',
   repair: 'Repair',
 };
+
+/**
+ * The learner-facing sentence for one degraded-queue fact. Plain statements of
+ * what happened: a taught gap is a "not yet", not a fault, and a short session
+ * is worth saying up front rather than letting the learner find out when the
+ * questions run out.
+ */
+const noticeText = (notice: QueueNotice, delivered: number, requested: number): string =>
+  notice === 'taught-gap'
+    ? 'Some questions are sitting out — they come from lessons you haven’t finished yet.'
+    : `Shorter set than usual: ${delivered} of the ${requested} questions you asked for were available today.`;
+
+/** One empty-queue state: what happened, and whether a lesson is the way out. */
+interface EmptyState {
+  title: string;
+  body: string;
+  /** Offer the curriculum. Only where a lesson is genuinely the next step. */
+  findLesson: boolean;
+}
+
+/**
+ * Which empty-queue state the learner is in, most specific first.
+ *
+ * Three causes, three sentences. The taught-set gate can withhold every science
+ * question for two quite different reasons, and until 2026-07-29 only one of
+ * them existed as far as this screen was concerned — the gate did not run at
+ * all on an empty taught set, so a learner who had finished nothing was served
+ * the unfiltered bank instead of any of these states. Now that it fails closed
+ * there, `nothingTaught` is the common case rather than the exotic one: it is
+ * every learner's first visit.
+ *
+ * It gets its own copy rather than reusing the taught-gap wording, because that
+ * wording says "none of the questions we have are from those yet", which
+ * presupposes finished lessons to draw from. Told to a learner who has finished
+ * none, it reads as a content shortage on work they have done — the opposite of
+ * the truth, and it hides the one action that helps.
+ */
+function emptyStateFor(
+  view: { taughtGap: boolean; nothingTaught: boolean } | undefined,
+): EmptyState {
+  if (view?.nothingTaught === true) {
+    return {
+      title: 'Start with a lesson',
+      body: 'Practice pulls its questions from lessons you’ve finished, and you haven’t finished one yet. Complete a lesson and its questions will show up here.',
+      findLesson: true,
+    };
+  }
+  if (view?.taughtGap === true) {
+    return {
+      title: 'Not taught yet',
+      body: 'Practice only pulls questions from lessons you’ve already finished, and none of the questions we have are from those yet. Finish a lesson and they’ll turn up here.',
+      findLesson: true,
+    };
+  }
+  return {
+    title: 'Nothing to practice yet',
+    body: 'There aren’t enough eligible questions for this focus yet. Learn a bit more, then come back.',
+    findLesson: false,
+  };
+}
 
 interface SessionState {
   x?: number;
@@ -65,6 +127,22 @@ export function PracticeSession() {
 
   const slot: Slot | undefined = sequence[index];
 
+  /**
+   * Return to the plan (or the Practice hub). `complete` marks the plan
+   * activity done.
+   *
+   * Declared ABOVE the early returns below, not beside the other handlers.
+   * Every degraded branch of this screen offers a way out, and a `const` read
+   * from a branch that returns before the declaration is evaluated throws on
+   * click rather than navigating — so the errored and empty states each had a
+   * button that could only fail. See `PracticeSession.test.ts`.
+   */
+  const finish = (complete: boolean) => {
+    if (returnTo)
+      navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
+    else navigate('/app/practice');
+  };
+
   // Reset per-step working state whenever the active step changes.
   useEffect(() => {
     if (slot === undefined) return;
@@ -98,15 +176,26 @@ export function PracticeSession() {
     );
   }
 
+  /**
+   * An empty queue has three quite different causes and used to give one answer
+   * to all of them. Neither taught-set state is a shortage — one is material the
+   * learner has not reached yet, the other is a learner who has not started —
+   * and the useful next step for both is a lesson, so each says which it is and
+   * offers one instead of dead-ending on a Back button. See `emptyStateFor`.
+   */
   if (slot === undefined) {
+    const empty = emptyStateFor(queue.data);
     return (
       <div className="mc-screen mc-practice">
         <Eyebrow>Practice</Eyebrow>
-        <h1 className="mc-h1">Nothing to practice yet</h1>
-        <p className="mc-muted">
-          There aren’t enough eligible questions for this focus yet. Learn a bit more, then come back.
-        </p>
-        <Button variant="primary" onClick={() => finish(true)}>
+        <h1 className="mc-h1">{empty.title}</h1>
+        <p className="mc-muted">{empty.body}</p>
+        {empty.findLesson ? (
+          <Button variant="primary" onClick={() => navigate('/app/curriculum')}>
+            Find a lesson
+          </Button>
+        ) : null}
+        <Button variant={empty.findLesson ? 'secondary' : 'primary'} onClick={() => finish(true)}>
           {returnTo ? 'Back to plan' : 'Back to Practice'}
         </Button>
       </div>
@@ -117,22 +206,27 @@ export function PracticeSession() {
   const q = item.question;
   const isLastStep = index + 1 >= sequence.length;
 
+  /**
+   * What the authority said about the SHAPE of this queue, as opposed to its
+   * contents. Both were reported and read by nothing, which left a short
+   * session to announce itself by ending early. Counted off the delivered queue
+   * rather than `sequence.length`, because a missed item is re-inserted for its
+   * second go and would otherwise make the session look longer than it is.
+   */
+  const requested = queue.data?.requested ?? 0;
+  const delivered = queue.data?.items.length ?? 0;
+  const notices = queueNotices(queue.data);
+
   const advance = () => {
     if (index + 1 < sequence.length) setIndex(index + 1);
     else finish(true);
-  };
-
-  // Return to the plan (or the Practice hub). `complete` marks the plan activity done.
-  const finish = (complete: boolean) => {
-    if (returnTo) navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
-    else navigate('/app/practice');
   };
 
   const checkAnswer = () => {
     if (choice === null) return;
     setFirstChoice(choice);
     submit.mutate(
-      { questionId: q.id, specId: item.specId, chosenChoiceId: choice, firstAttempt: true },
+      { questionId: q.id, specId: item.specId, chosenChoiceId: choice },
       {
         onSuccess: (r) => {
           setResult(r);
@@ -205,6 +299,11 @@ export function PracticeSession() {
         >
           <span style={{ width: `${((index + 1) / sequence.length) * 100}%` }} />
         </div>
+        {notices.length > 0 ? (
+          <p className="mc-muted mc-fineprint">
+            {notices.map((notice) => noticeText(notice, delivered, requested)).join(' ')}
+          </p>
+        ) : null}
       </div>
 
       {q.passage.trim().length > 0 ? (

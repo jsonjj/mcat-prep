@@ -60,4 +60,4 @@ export const CLUSTER_AXIS: DiagnosticAxis = {
   })),
 };
 
-export { FC_AXIS, FC_PLUS_AXIS, fcForLesson, lessonsByFc } from './diagnostic-axis-fc';
+export { FC_AXIS, FC_PLUS_AXIS, fcForLesson, kcsByFc, lessonsByFc } from './diagnostic-axis-fc';

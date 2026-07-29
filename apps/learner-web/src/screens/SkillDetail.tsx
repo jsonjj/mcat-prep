@@ -1,7 +1,8 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { CLUSTER_INFO, type MasteryState, type SkillCluster } from '@mcat/contracts';
-import { Button, Callout, Card, Eyebrow, MasteryBadge, Stack } from '@mcat/ui-web';
+import { CLUSTER_INFO, type SkillCluster } from '@mcat/contracts';
+import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { useMasteryMap, useSkills } from '../app/queries';
+import { EVIDENCE_REFRESH_LABEL, warrantSentence } from '../components/evidence-language';
 
 export function SkillDetail() {
   const { skillId } = useParams();
@@ -62,11 +63,12 @@ export function SkillDetail() {
                 <Stack gap={2}>
                   <p className="mc-task__title">{s.title}</p>
                   <p className="mc-muted mc-fineprint">{s.objective}</p>
-                  <MasteryBadge
-                    state={(m?.base ?? 'not_assessed') as MasteryState}
-                    refreshNeeded={m?.refreshNeeded ?? false}
-                    size="sm"
-                  />
+                  <p className="mc-muted mc-fineprint">
+                    {warrantSentence(m?.reasons ?? [])}
+                    {m?.refreshNeeded ? (
+                      <span className="mc-skillbar__tag"> · ◐ {EVIDENCE_REFRESH_LABEL}</span>
+                    ) : null}
+                  </p>
                 </Stack>
               </Card>
             );

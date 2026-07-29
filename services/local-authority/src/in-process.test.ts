@@ -48,6 +48,33 @@ describe('InProcessAuthorityClient (synthetic local seam)', () => {
     expect(enzyme).toBeDefined();
   });
 
+  /**
+   * The second caller of `applyMasterySeed`, and the reason the diagnostic-seed
+   * corroboration had to move off the lambda route.
+   *
+   * This client reaches the same authority method with a payload that has crossed
+   * no HTTP route at all, so while the check lived as a pre-check in
+   * `services/lambdas/learner-api/src/workflow.ts` it applied here not at all: a
+   * fabricated seed named arbitrary KC ids and moved planner priority. Nothing
+   * about this client changed to fix that; the check moved to the door both
+   * callers pass through.
+   */
+  it('refuses a fabricated diagnostic seed, with no route in front of it', async () => {
+    const store = memoryStore<LearnerState>();
+    const client = new InProcessAuthorityClient(store, fixedClock('2026-07-20T12:00:00.000Z'));
+    await client.bootstrap();
+
+    await expect(
+      client.applyMasterySeed({
+        kcPriors: { 'V3-KC-000000': 0.05, 'kc-i-just-made-up': 0.4 },
+        skillPriors: {},
+        carsAbility: {},
+      }),
+    ).rejects.toThrow(/SEED_KC_OUTSIDE_DIAGNOSTIC_AXIS/);
+
+    expect(store.load()?.mastery?.kc ?? {}).toEqual({});
+  });
+
   it('persists across client instances via the shared store', async () => {
     const store = memoryStore<LearnerState>();
     const clock = fixedClock('2026-07-20T12:00:00.000Z');

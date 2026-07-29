@@ -108,9 +108,9 @@ export type RecallLoadInput = z.infer<typeof RecallLoadInputSchema>;
 
 /**
  * A schedulable lesson the client offers as a candidate (app-native catalog).
- * The server scores it using the drivers that have data (section exam-weight,
- * KC count as an unlock proxy, coverage/deadline urgency) + its own mastery
- * reads (to exclude mastered lessons); it never trusts the client for mastery.
+ * The server scores its client-owned curriculum metadata (section, cluster,
+ * prerequisite edges, duration) against server-owned mastery and evidence reads;
+ * it never trusts the client for mastery or completion.
  */
 export const CandidateLessonInputSchema = z
   .object({
@@ -123,9 +123,10 @@ export const CandidateLessonInputSchema = z
     /** KC ids this lesson teaches (drives per-KC teach-before-test for Practice). */
     kcIds: z.array(z.string().min(1)),
     /**
-     * Lesson ids that must be COMPLETED before this one unlocks. Empty today;
-     * populated once the authored prerequisite map is provided (the pipeline is
-     * ready to honor it: only-unlocked, prereqs-first, score-by-downstream).
+     * Reachable hard-prerequisite lesson ids that must be COMPLETED before this
+     * candidate unlocks. The app-native projection includes only prerequisites
+     * with an app-native completion path, so an unavailable external lesson can
+     * never permanently lock a candidate.
      */
     prerequisiteLessonIds: z.array(z.string().min(1)),
     estimatedMinutes: z.number().int().positive(),

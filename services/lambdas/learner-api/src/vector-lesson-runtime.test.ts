@@ -291,7 +291,56 @@ describe('V3-LES-130923 target-specific lesson runtime', () => {
       support: { label: 'One helpful cue' },
     });
     run = act(run, { type: 'SUBMIT_RESPONSE', choiceId: correctChoice(run) });
-    expect(run.committedResponses['vtr-vec-guided-practice-1']?.assistanceState).toBe('A2');
+    // The delivery ledger as it stood at commitment: what the screen carried,
+    // and what the learner took off it.
+    expect(run.committedResponses['vtr-vec-guided-practice-1']).toMatchObject({
+      observedScaffoldDisplayed: true,
+      observedSupportOffered: true,
+      observedSupportRequested: true,
+      observedAnswerRevealed: false,
+    });
+  });
+
+  it('records an empty delivery ledger for a check that carries no help', () => {
+    let run = createVectorLessonRun({ runId: RUN_ID, now: NOW });
+    run = advanceCorrectly(
+      run,
+      (candidate) => candidate.currentItemId === 'vtr-vec-changed-exit-initial',
+    );
+    expect(renderVectorLessonRun(run).screen).toMatchObject({
+      kind: 'QUESTION',
+      visual: null,
+      supportActionLabel: null,
+      support: null,
+    });
+    expect(() => act(run, { type: 'REQUEST_SUPPORT' })).toThrow(/not authorized/i);
+
+    run = act(run, { type: 'SUBMIT_RESPONSE', choiceId: correctChoice(run) });
+    expect(run.committedResponses['vtr-vec-changed-exit-initial']).toMatchObject({
+      observedScaffoldDisplayed: false,
+      observedSupportOffered: false,
+      observedSupportRequested: false,
+      observedAnswerRevealed: false,
+    });
+  });
+
+  it('refuses a persisted run whose delivery ledger the definition would not produce', () => {
+    let run = createVectorLessonRun({ runId: RUN_ID, now: NOW });
+    run = advanceCorrectly(
+      run,
+      (candidate) => candidate.currentItemId === 'vtr-vec-guided-practice-1',
+    );
+    run = act(run, { type: 'SUBMIT_RESPONSE', choiceId: correctChoice(run) });
+    expect(() => restoreVectorLessonRun(structuredClone(run))).not.toThrow();
+
+    // The ledger is the sole input to the assistance level, and a restored run is
+    // unvalidated JSON, so a claim of "no scaffold" on a scaffolded item would
+    // mint an independent administration. It is re-derived and refused.
+    const forged = structuredClone(run) as unknown as {
+      committedResponses: Record<string, { observedScaffoldDisplayed: boolean }>;
+    };
+    forged.committedResponses['vtr-vec-guided-practice-1']!.observedScaffoldDisplayed = false;
+    expect(() => restoreVectorLessonRun(forged)).toThrow(/does not present/i);
   });
 
   it('repairs a near-use miss and returns to the exact near-use function on a fresh family', () => {

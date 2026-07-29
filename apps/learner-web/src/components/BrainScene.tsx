@@ -14,7 +14,6 @@ import {
   type AtlasBrainPart,
   type AtlasHemisphere,
 } from '@mcat/contracts';
-import { type BaseMasteryState } from '@mcat/domain';
 
 /**
  * Optional realistic brain model. Ships at apps/learner-web/public/models/brain.glb
@@ -32,11 +31,19 @@ const MODEL_URL = '/models/brain.glb';
  * every lesson in it is mastered (dots coalesce inward). The Skills list route is
  * the accessible, keyboard-friendly equivalent.
  */
+/**
+ * A lesson's display status on the atlas. `done` is `LessonMasteryView.mastered`
+ * and nothing else — the composed claim, so it needs the capability cut AND a
+ * sufficient warrant on every required KC; `todo` means the lesson has no
+ * readout yet. Nothing here reads a warrant on its own: a tier, or a freshness
+ * flag, would be the evidence system answering the capability question.
+ */
+export type AtlasLessonStatus = 'todo' | 'progress' | 'done';
+
 export interface AtlasRegionLessonState {
   id: string;
   title: string;
-  state: BaseMasteryState;
-  mastered: boolean;
+  status: AtlasLessonStatus;
   /** True when the lesson's prerequisites aren't met yet — the node reads grey. */
   locked: boolean;
   /** BKT P(L) 0..1 — drives the yellow→green node fade when unlocked. */
@@ -685,12 +692,15 @@ function RegionVisual({
     return geom.dots.map((d, k) => {
       const lesson = region.lessons[k];
       const src = lesson ? { locked: lesson.locked, pL: lesson.pL } : { locked: true, pL: 0 };
-      const mastered = lesson ? lesson.mastered : false;
+      // Render flag only (not a mastery claim): a "done"-status node animates to
+      // green then hides under the region fill. The mastery claim itself is the
+      // authority's — this only reacts to the status it already published.
+      const nodeDone = lesson ? lesson.status === 'done' : false;
       // In a COMPLETE region, mastered nodes animate grey → yellow → green node-by-node,
       // then get covered by the rising green fill (settled state = clean solid fill, no
       // green dots). In an INCOMPLETE region a mastered node stays hidden — that region
       // never fills, so a visible green dot would linger as a "green circle".
-      const hidden = mastered && !region.complete;
+      const hidden = nodeDone && !region.complete;
       const st = dotStyle(src);
       const nodeStagger = count > 1 ? (k / (count - 1)) * REVEAL_NODE_SPREAD : 0;
       return {
@@ -702,7 +712,7 @@ function RegionVisual({
         locked: src.locked,
         hidden,
         target: st,
-        targetColor: mastered ? NODE_GREEN : new THREE.Color(st.color),
+        targetColor: nodeDone ? NODE_GREEN : new THREE.Color(st.color),
         delay: regionBase + nodeStagger,
       };
     });

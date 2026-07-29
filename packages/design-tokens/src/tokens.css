@@ -76,15 +76,11 @@
   --mc-glow-cream: #fbe8c6;
   --mc-glow-rose: #ebd5d6;
 
-  /* Mastery state accents (always paired with icon + label + pattern) */
-  --mc-state-not-assessed: #6b7a83;
-  --mc-state-foundation: #7a4b00;
-  --mc-state-learning: #0e7c74;
-  --mc-state-independent: #1e5a96;
-  --mc-state-retained: #574a9e;
+  /* At-the-capability-cut accent (learner-web `.mc-skillring__tag--atcut`,
+     `.mc-ring__arc--atcut`, `.mc-reveal__key--ok`). It named two
+     `.mc-skillbar__*--mastered` rules that had no JSX consumer and were deleted;
+     the token itself is live. */
   --mc-state-strong: #0b6a63;
-  --mc-state-exam-ready: #8a6d1f;
-  --mc-state-refresh: #a3283d;
 
   --mc-shadow-card: 0 1px 2px rgba(16, 34, 46, 0.06), 0 8px 24px rgba(16, 34, 46, 0.06);
   color-scheme: light;
@@ -107,14 +103,7 @@
   --mc-danger: #ff9aa6;
   --mc-focus: #4fd1c4;
 
-  --mc-state-not-assessed: #9fb0b8;
-  --mc-state-foundation: #f0c56b;
-  --mc-state-learning: #4fd1c4;
-  --mc-state-independent: #7fbbf2;
-  --mc-state-retained: #c3b8ff;
   --mc-state-strong: #46cabd;
-  --mc-state-exam-ready: #e9cd83;
-  --mc-state-refresh: #ff9aa6;
 
   --mc-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
   color-scheme: dark;
