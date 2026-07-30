@@ -59,12 +59,17 @@ import {
  * `CHANGED_TASK` exit function, which the production adapter qualifies on
  * `candidate_evidence_modes` + `reasoning_operation`, never on the role label.
  * `NEAR_EXIT` and every instructional stage stay ineligible, contributing 0.
- * `V3-LES-789208` is still unlicensed here (contributes 0) pending its own
- * changed-task pass. All three lessons are vendored in-repo under
+ * `V3-LES-789208` carries 8 by the same rule: its four QMS KCs (units,
+ * precision, ratios, notation) each license two `CHANGED_EXIT` terminal checks —
+ * the `INITIAL` changed task and its `CHANGED_TASK` re-delivery. Its legacy
+ * `evidence_eligibility: INSTRUCTIONAL_EXIT_ONLY` was replaced by
+ * `candidate_evidence_modes: ['TRANSFER']` + `reasoning_operation` (mutually
+ * exclusive, per L1's generator). All three lessons are vendored in-repo under
  * `content/lessons/` since Phase 2 — none live outside the repository.
  */
 const EXPECTED_QUALIFIED_BKT_OBSERVATIONS: Readonly<Record<string, number>> = {
   'V3-LES-130923': 6,
+  'V3-LES-789208': 8,
   'V3-LES-844372': 6,
 };
 
@@ -72,7 +77,7 @@ const EXPECTED_QUALIFIED_BKT_OBSERVATIONS: Readonly<Record<string, number>> = {
 // observations. Pinned as an explicit literal (not derived from the map above)
 // so licensing a lesson — or a per-lesson pin drifting — forces a conscious
 // edit to this catalog-wide total as well.
-const EXPECTED_CATALOG_TOTAL = 12;
+const EXPECTED_CATALOG_TOTAL = 20;
 
 const OBSERVATION_ID = '9c0ffee0-0000-4000-8000-000000000001';
 const EVIDENCE_ID = '9c0ffee0-0000-4000-8000-000000000002';

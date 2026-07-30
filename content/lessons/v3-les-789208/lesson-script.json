@@ -9,7 +9,7 @@
     "schema_sha256": "8759f753eeb8cbe6114c476608e713f20b257b1a6add73a96c14e7344536dac3",
     "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
   },
-  "content_sha256": "ed7019433bff26cbbdfa48e5bf8b0fc20e93be7941a259c2ca25d1d96f84d1b0",
+  "content_sha256": "bce8010490b939c606ef8057a8b1dcca40bdc00ed18288751d3cc51c301fb754",
   "registry_binding": {
     "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
     "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
@@ -4564,7 +4564,8 @@
         "server_only_answer_authority_ref": "protected-items.json#prompt-qms-units-changed",
         "rationale_authority_ref": "protected-items.json#prompt-qms-units-changed",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       },
       {
         "item_binding_id": "prompt-qms-units-repairNear",
@@ -4696,7 +4697,8 @@
         "server_only_answer_authority_ref": "protected-items.json#prompt-qms-units-reentryChanged",
         "rationale_authority_ref": "protected-items.json#prompt-qms-units-reentryChanged",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       },
       {
         "item_binding_id": "prompt-qms-precision-entry",
@@ -4896,7 +4898,8 @@
         "server_only_answer_authority_ref": "protected-items.json#prompt-qms-precision-changed",
         "rationale_authority_ref": "protected-items.json#prompt-qms-precision-changed",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       },
       {
         "item_binding_id": "prompt-qms-precision-repairNear",
@@ -5028,7 +5031,8 @@
         "server_only_answer_authority_ref": "protected-items.json#prompt-qms-precision-reentryChanged",
         "rationale_authority_ref": "protected-items.json#prompt-qms-precision-reentryChanged",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       },
       {
         "item_binding_id": "prompt-qms-ratios-entry",
@@ -5228,7 +5232,8 @@
         "server_only_answer_authority_ref": "protected-items.json#prompt-qms-ratios-changed",
         "rationale_authority_ref": "protected-items.json#prompt-qms-ratios-changed",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       },
       {
         "item_binding_id": "prompt-qms-ratios-repairNear",
@@ -5360,7 +5365,8 @@
         "server_only_answer_authority_ref": "protected-items.json#prompt-qms-ratios-reentryChanged",
         "rationale_authority_ref": "protected-items.json#prompt-qms-ratios-reentryChanged",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       },
       {
         "item_binding_id": "prompt-qms-notation-entry",
@@ -5560,7 +5566,8 @@
         "server_only_answer_authority_ref": "protected-items.json#prompt-qms-notation-changed",
         "rationale_authority_ref": "protected-items.json#prompt-qms-notation-changed",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       },
       {
         "item_binding_id": "prompt-qms-notation-repairNear",
@@ -5692,7 +5699,8 @@
         "server_only_answer_authority_ref": "protected-items.json#prompt-qms-notation-reentryChanged",
         "rationale_authority_ref": "protected-items.json#prompt-qms-notation-reentryChanged",
         "publication_eligibility": "INTERNAL_DRAFT_ONLY",
-        "evidence_eligibility": "INSTRUCTIONAL_EXIT_ONLY"
+        "candidate_evidence_modes": ["TRANSFER"],
+        "reasoning_operation": "QUANTIFY"
       }
     ],
     "transitions": [
