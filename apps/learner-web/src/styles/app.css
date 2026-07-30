@@ -3788,10 +3788,12 @@ body {
   max-width: 40ch;
   font-size: var(--mc-text-14);
 }
-/* Deferred "Start test": a full-width, warm-accented, disabled CTA that names the
-   coming action + its status (icon + label on one row, "coming soon" beneath),
-   matching the mockup's amber button. Not the teal primary — teal is the live
-   Questions CTA. `margin-top: auto` seats it at the base of the stretched card. */
+/* "Start test": a full-width CTA that names the action + its status (icon + label
+   on one row, the time/status beneath). It wears the app's welcoming green primary
+   (--mc-primary) so it reads as inviting; the test card keeps its amber top-accent
+   bar for differentiation. `margin-top: auto` seats it at the base of the stretched
+   card. This base rule is the muted, disabled/"coming soon" state (green-tinted, not
+   amber); `--ready` fills it in as a live primary CTA when a test is due. */
 .mc-teststart {
   display: flex;
   flex-direction: column;
@@ -3802,10 +3804,10 @@ body {
   min-height: 72px;
   margin-top: auto;
   padding: var(--mc-space-3) var(--mc-space-4);
-  border: 1px solid color-mix(in srgb, var(--mc-accent-warm) 50%, var(--mc-border));
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 45%, var(--mc-border));
   border-radius: var(--mc-radius-control);
-  background: color-mix(in srgb, var(--mc-accent-warm) 12%, var(--mc-surface));
-  color: var(--mc-accent-warm-text);
+  background: color-mix(in srgb, var(--mc-primary) 10%, var(--mc-surface));
+  color: var(--mc-primary-text);
   cursor: not-allowed;
   font: inherit;
 }
@@ -3823,29 +3825,34 @@ body {
   font-size: var(--mc-text-22);
   font-weight: 700;
 }
+/* The "≈ N min" time (ready) / status line (deferred) — noticeably larger than the
+   old 14px so the estimate reads at a glance under the label. */
 .mc-teststart__soon {
-  font-size: var(--mc-text-14);
+  font-size: var(--mc-text-17);
   font-weight: 600;
   opacity: 0.85;
 }
-/* A DUE test turns the tile into a real call to action (the deferred/next-due
-   state keeps the muted, not-allowed look above). */
+/* A DUE test turns the tile into a real, INVITING call to action: the app's filled
+   green primary (--mc-primary), so it reads like the "Start practice" CTA. The
+   deferred/next-due state keeps the muted green, not-allowed look above. */
 .mc-teststart--ready {
   cursor: pointer;
-  border-color: var(--mc-accent-warm);
-  background: color-mix(in srgb, var(--mc-accent-warm) 22%, var(--mc-surface));
+  border-color: var(--mc-primary);
+  background: var(--mc-primary);
+  color: var(--mc-on-primary);
   transition:
     background 120ms ease,
     transform 60ms ease;
 }
 .mc-teststart--ready:hover {
-  background: color-mix(in srgb, var(--mc-accent-warm) 30%, var(--mc-surface));
+  background: var(--mc-primary-hover);
+  border-color: var(--mc-primary-hover);
 }
 .mc-teststart--ready:active {
   transform: translateY(1px);
 }
 .mc-teststart--ready:focus-visible {
-  outline: 2px solid var(--mc-accent-warm);
+  outline: 2px solid var(--mc-primary);
   outline-offset: 2px;
 }
 

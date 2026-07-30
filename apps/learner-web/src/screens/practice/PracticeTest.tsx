@@ -310,28 +310,16 @@ export function PracticeTest() {
               </Stack>
             </Callout>
           ) : (
-            <Stack gap={2}>
-              <Button
-                variant="primary"
-                size="lg"
-                fullWidth
-                disabled={!seenWholeBlock || submit.isPending}
-                onClick={() => setConfirming(true)}
-              >
-                Review and submit section
-              </Button>
-              {seenWholeBlock ? null : (
-                <p className="mc-fineprint mc-muted">
-                  Open every question in this section before submitting it.
-                </p>
-              )}
-            </Stack>
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              disabled={!seenWholeBlock || submit.isPending}
+              onClick={() => setConfirming(true)}
+            >
+              Review and submit section
+            </Button>
           )}
-
-          <p className="mc-fineprint mc-muted">
-            You can change any answer in this section until you submit it. The whole test is scored at
-            the end — no answers are revealed until then.
-          </p>
         </Stack>
       </Card>
     </div>
