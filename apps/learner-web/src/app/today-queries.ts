@@ -3,11 +3,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   type CandidateLessonInput,
+  type LessonMasteryView,
   type PlanActivityView,
   type RecallLoadInput,
 } from '@mcat/contracts';
 import { authority } from './authority';
 import { REGISTERED_LESSONS, lessonBySlug } from './lesson-catalog';
+import { useMasteryLessons } from './queries';
 import { useRecallLoad, useRecallService } from './recall-queries';
 import { PLAN_ACTIVITY_COMPLETE_INVALIDATE, TODAYS_PATH_INVALIDATE } from './invalidation-keys';
 
@@ -49,6 +51,57 @@ export function buildCandidateLessons(): CandidateLessonInput[] {
     prerequisiteLessonIds: [...lesson.prerequisiteLessonIds],
     estimatedMinutes: lesson.estimatedMinutes,
   }));
+}
+
+// ---- Honest catalog-completion state ---------------------------------------
+// The daily planner ALWAYS reserves a CARS Duel, so Today's Path is never
+// literally empty — the meaningful "empty state" is the servable LESSON catalog
+// being finished. That's derived here (not from the plan's activity list, and
+// not from how candidates are built) so the screen can say so honestly instead
+// of falling through to onboarding copy that implies a lesson is still missing.
+
+export interface CatalogCompletion {
+  /** Registered (servable) lessons in the catalog. */
+  readonly total: number;
+  /** How many of them the learner has finished (see below for the bar). */
+  readonly complete: number;
+  /** True once every registered lesson is complete (and the catalog is non-empty). */
+  readonly allComplete: boolean;
+}
+
+/**
+ * Whether the learner has finished the entire servable catalog, joining the
+ * registration manifest (the servability source of record) to the per-lesson
+ * mastery read. A lesson counts as complete only when its WARRANTED mastery claim
+ * holds (`LessonMasteryView.mastered`) — the one terminal per-lesson signal the
+ * client holds, and deliberately the STRICT bar: the completion state must never
+ * overclaim while a lesson is merely delivered-but-not-mastered, because the
+ * planner still reinforces those (todays-path.ts §1b). Pure + manifest-injectable
+ * so the all-complete state is unit-testable without a live authority.
+ */
+export function catalogCompletion(
+  masteryLessons: readonly Pick<LessonMasteryView, 'lessonId' | 'mastered'>[],
+  registered: readonly { readonly lessonId: string }[] = REGISTERED_LESSONS,
+): CatalogCompletion {
+  const masteredIds = new Set(
+    masteryLessons.filter((lesson) => lesson.mastered).map((lesson) => lesson.lessonId),
+  );
+  const complete = registered.filter((lesson) => masteredIds.has(lesson.lessonId)).length;
+  return {
+    total: registered.length,
+    complete,
+    allComplete: registered.length > 0 && complete === registered.length,
+  };
+}
+
+/**
+ * Catalog-completion state for the Today's Path empty state. Reports not-complete
+ * while the mastery read is loading, so the plan never flashes a premature
+ * "you've finished everything" before the authority has answered.
+ */
+export function useCatalogComplete(): CatalogCompletion {
+  const mastery = useMasteryLessons();
+  return catalogCompletion(mastery.data ?? []);
 }
 
 export const useTodaysPath = () =>

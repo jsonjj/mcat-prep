@@ -4,6 +4,7 @@ import type { PlanActivityView, TodaysPathView } from '@mcat/contracts';
 import { DAILY_MINUTES_MAX, DAILY_MINUTES_MIN } from '@mcat/contracts';
 import {
   useBuildTodaysPath,
+  useCatalogComplete,
   useConsumeCompletedActivity,
   useEnsureTodaysPath,
   useLaunchPlanActivity,
@@ -32,6 +33,7 @@ export function TodaysPath() {
   const build = useBuildTodaysPath();
   const setBudget = useSetDailyBudget();
   const launch = useLaunchPlanActivity();
+  const catalog = useCatalogComplete();
   useConsumeCompletedActivity();
 
   const view = path.data ?? null;
@@ -131,7 +133,12 @@ export function TodaysPath() {
         </Stack>
       </Card>
 
-      {allDone ? (
+      {catalog.allComplete ? (
+        <Callout tone="success" title="You’ve finished the lesson catalog">
+          Every lesson available is complete — nice work. Today’s path now keeps you sharp with
+          recall and practice while new lessons are on the way.
+        </Callout>
+      ) : allDone ? (
         <Callout tone="success" title="Path complete">
           You finished today’s path. Anything you skipped will come back tomorrow — capped so it never
           snowballs.
