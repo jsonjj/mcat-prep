@@ -1505,6 +1505,12 @@ body {
      alone is moot, so widen the shell here and let the two equal cards breathe. */
   .mc-shell__main:has(.mc-practice) {
     max-width: 1280px;
+    /* This is a single, no-scroll screen and the wide layout only runs in desktop
+       sidebar mode (no bottom nav), so trim the top whitespace above the "Practice"
+       heading and the tall mobile bottom clearance — both cards then clear a laptop
+       viewport without vertical scroll. */
+    padding-top: var(--mc-space-3);
+    padding-bottom: var(--mc-space-4);
   }
   /* CARS Duel setup: a wider, sectioned page (mode cards · intensity · topic),
      matching the approved mockup — same PARENT-cap escape as above. The top/bottom
@@ -3417,7 +3423,10 @@ body {
 
 /* ---- Practice (adaptive test-out) ---- */
 .mc-practice {
-  gap: var(--mc-space-5);
+  /* Tightened from space-5: pulls the two cards up under the "Practice" heading so
+     the screen fits a laptop viewport without scrolling (see the padding trim on
+     `.mc-shell__main:has(.mc-practice)` in the desktop media block above). */
+  gap: var(--mc-space-4);
   /* The real width cap is on the PARENT `.mc-shell__main:has(.mc-practice)` (desktop
      media block above); a child cap here would only re-narrow it, so this screen
      fills the widened shell. */
@@ -3798,13 +3807,21 @@ body {
   width: 100%;
   height: auto;
 }
+/* Soft tinted, hairline-framed plot panel so the chart reads as its own surface
+   (matches the approved mockup) rather than floating lines on the card. */
+.mc-trend__plot {
+  fill: color-mix(in srgb, var(--mc-surface-2) 42%, transparent);
+  stroke: color-mix(in srgb, var(--mc-border) 90%, transparent);
+  stroke-width: 1;
+}
 .mc-trend__grid {
-  stroke: color-mix(in srgb, var(--mc-border) 70%, transparent);
+  stroke: color-mix(in srgb, var(--mc-border) 55%, transparent);
   stroke-width: 1;
 }
 .mc-trend__axis {
   fill: var(--mc-ink-muted);
   font-size: 10px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 /* One colour per section, applied to the line + dots via currentColor. */
@@ -3823,7 +3840,7 @@ body {
 .mc-trend__line {
   fill: none;
   stroke: currentColor;
-  stroke-width: 2.5;
+  stroke-width: 2.75;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -3831,6 +3848,13 @@ body {
   fill: currentColor;
   stroke: var(--mc-surface);
   stroke-width: 1.5;
+}
+/* The latest test on each line reads as a hollow marker — a white core ringed in
+   the section colour — so the eye lands on "where they are now". */
+.mc-trend__dot--last {
+  fill: var(--mc-surface);
+  stroke: currentColor;
+  stroke-width: 2.5;
 }
 .mc-trend__legend {
   display: flex;

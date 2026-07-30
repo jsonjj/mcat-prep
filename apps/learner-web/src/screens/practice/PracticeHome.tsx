@@ -39,15 +39,10 @@ const lessonTitle = (id: string): string =>
     .replace(/[-_]/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
-// --- Provisional lesson-unlock frontier (mirrors EvidenceAtlas / the brain) -------------
-// P(L) is only tracked per-lesson once a lesson is touched, so "weakest" is computed over
-// the full unlocked catalog: real P(L) where we have it, the BKT prior otherwise. This keeps
-// the trio in sync with the brain and non-empty even before any practice. Replaced by the
-// authored prerequisite map later (unlocked = all prerequisites mastered).
-const PRIOR_PL = 0.2;
-const UNLOCK_WINDOW = 12;
-
-/** Global teaching-order rank (phase → module → position) for every atlas lesson. */
+/**
+ * Global teaching-order rank (phase → module → position) for every atlas lesson.
+ * Used only to break ties when two done lessons share a P(L) (earlier-taught first).
+ */
 const LESSON_ORDER: Map<string, number> = (() => {
   const meta = new Map<string, { phaseOrder: number; moduleOrder: number; position: number }>();
   for (const phase of CURRICULUM_PHASES)
@@ -71,11 +66,6 @@ const LESSON_ORDER: Map<string, number> = (() => {
   return map;
 })();
 
-/** Full atlas lesson catalog (id + title), the source of truth for the "weakest" trio. */
-const LESSON_CATALOG: Array<{ id: string; title: string }> = ATLAS_REGION_GROUPS.flatMap((rg) =>
-  rg.lessons.map((l) => ({ id: l.lesson_id, title: l.title })),
-);
-
 /**
  * Practice hub: pick how many test-out reps to run (the only control that affects
  * the session), plus a read-only trio of the lessons the learner's mastery is lowest
@@ -88,23 +78,22 @@ export function PracticeHome() {
 
   const estMinutes = count * DEFAULT_MINUTES_PER_QUESTION;
 
-  // The 3 lowest-mastery *unlocked* lessons: overlay real P(L) where the learner has an
-  // entry, default the rest to the prior (`getMasteryLessons` only returns *practiced*
-  // lessons, so a fresh learner has none — the catalog + prior keep the trio populated),
-  // exclude locked/mastered. `weakest` is empty ONLY once every unlocked lesson is mastered.
+  // The 3 weakest lessons the learner has actually DONE. `getMasteryLessons` returns a row
+  // only for lessons that carry real practice evidence — a fresh learner gets none — which
+  // is exactly the "finished" set Practice draws its questions from ("Practice pulls fresh
+  // questions from lessons you've already finished"). So the trio is ranked straight from
+  // those rows, never the full catalog with a BKT-prior overlay of un-started lessons.
+  // Sorted by P(L) ascending (earlier-taught breaks ties) and capped at three; the lowest
+  // three show even when every done lesson is already mastered. Empty ONLY when nothing is
+  // done yet, which is the single "do a lesson first" state.
   const weakest = useMemo(() => {
-    const byId = new Map((lessons.data ?? []).map((l) => [l.lessonId, l] as const));
-    const masteredCount = (lessons.data ?? []).filter((l) => l.mastered).length;
-    return LESSON_CATALOG.map(({ id }) => {
-      const entry = byId.get(id);
-      const pL = entry?.pL ?? PRIOR_PL;
-      const mastered = entry?.mastered ?? false;
-      const rank = LESSON_ORDER.get(id) ?? Number.MAX_SAFE_INTEGER;
-      const locked = !(mastered || entry !== undefined || rank < masteredCount + UNLOCK_WINDOW);
-      return { lessonId: id, pL, mastered, locked, rank };
-    })
-      .filter((l) => !l.locked && !l.mastered)
-      .sort((a, b) => a.pL - b.pL || a.rank - b.rank)
+    return [...(lessons.data ?? [])]
+      .sort(
+        (a, b) =>
+          a.pL - b.pL ||
+          (LESSON_ORDER.get(a.lessonId) ?? Number.MAX_SAFE_INTEGER) -
+            (LESSON_ORDER.get(b.lessonId) ?? Number.MAX_SAFE_INTEGER),
+      )
       .slice(0, WEAKEST_ROWS);
   }, [lessons.data]);
 
@@ -201,11 +190,11 @@ export function PracticeHome() {
                   })}
                 </div>
               ) : (
-                // Reachable only when every unlocked lesson is already mastered — a
-                // positive state, not a "no data yet" prompt.
+                // Reachable ONLY before the learner has finished a single lesson: Practice
+                // pulls fresh questions from finished lessons, so there is nothing to rank yet.
                 <p className="mc-muted">
-                  You&rsquo;ve mastered every lesson unlocked so far — nice work. New weak spots
-                  will appear here as you unlock more.
+                  Finish a lesson to see your weakest spots here — Practice pulls fresh questions
+                  from lessons you&rsquo;ve already finished.
                 </p>
               )}
             </section>
@@ -318,18 +307,22 @@ const round1 = (v: number): number => Math.round(v * 10) / 10;
 
 /**
  * "Improvement over time": one line per section, plotting each past test's
- * %-correct in chronological order. Dependency-free SVG; a single point renders
- * as a dot (no line). The section %s ARE the trend — there is no separate series.
+ * %-correct in chronological order inside a subtly tinted, framed plot area.
+ * Dependency-free SVG; a single point renders as a dot (no line). The section %s
+ * ARE the trend — there is no separate series. The last point of each line gets a
+ * hollow marker so the eye lands on "where they are now".
  */
 function TrendChart({ pastTests }: { pastTests: readonly PastPracticeTest[] }) {
-  const W = 320;
-  const H = 190;
-  const ml = 30;
-  const mr = 10;
+  const W = 336;
+  const H = 184;
+  const ml = 34;
+  const mr = 14;
   const mt = 12;
-  const mb = 40;
+  const mb = 34;
   const plotW = W - ml - mr;
   const plotH = H - mt - mb;
+  const plotR = ml + plotW;
+  const plotB = mt + plotH;
   const n = pastTests.length;
   const xAt = (i: number): number => ml + (n <= 1 ? plotW / 2 : (i / (n - 1)) * plotW);
   const yAt = (pct: number): number => mt + (1 - Math.max(0, Math.min(100, pct)) / 100) * plotH;
@@ -351,16 +344,28 @@ function TrendChart({ pastTests }: { pastTests: readonly PastPracticeTest[] }) {
         role="img"
         aria-label={`Section percent-correct across ${n} past test${n === 1 ? '' : 's'}`}
       >
+        {/* A soft tinted panel + hairline frame so the chart reads as its own surface. */}
+        <rect
+          className="mc-trend__plot"
+          x={ml}
+          y={mt}
+          width={plotW}
+          height={plotH}
+          rx={10}
+        />
         {gridlines.map((g) => (
           <g key={g}>
-            <line
-              className="mc-trend__grid"
-              x1={ml}
-              y1={round1(yAt(g))}
-              x2={W - mr}
-              y2={round1(yAt(g))}
-            />
-            <text className="mc-trend__axis" x={ml - 6} y={round1(yAt(g)) + 3} textAnchor="end">
+            {/* 0% / 100% ride the frame; only the interior lines are drawn. */}
+            {g > 0 && g < 100 ? (
+              <line
+                className="mc-trend__grid"
+                x1={ml}
+                y1={round1(yAt(g))}
+                x2={plotR}
+                y2={round1(yAt(g))}
+              />
+            ) : null}
+            <text className="mc-trend__axis" x={ml - 8} y={round1(yAt(g)) + 3} textAnchor="end">
               {g}%
             </text>
           </g>
@@ -370,7 +375,7 @@ function TrendChart({ pastTests }: { pastTests: readonly PastPracticeTest[] }) {
             key={t.testId}
             className="mc-trend__axis"
             x={round1(xAt(i))}
-            y={H - mb + 18}
+            y={plotB + 18}
             textAnchor="middle"
           >
             {testDateLabel(t.takenOn)}
@@ -385,7 +390,15 @@ function TrendChart({ pastTests }: { pastTests: readonly PastPracticeTest[] }) {
               />
             ) : null}
             {l.pts.map((p, i) => (
-              <circle key={i} className="mc-trend__dot" cx={round1(p.x)} cy={round1(p.y)} r={3} />
+              <circle
+                key={i}
+                className={
+                  i === l.pts.length - 1 ? 'mc-trend__dot mc-trend__dot--last' : 'mc-trend__dot'
+                }
+                cx={round1(p.x)}
+                cy={round1(p.y)}
+                r={i === l.pts.length - 1 ? 3.8 : 3}
+              />
             ))}
           </g>
         ))}

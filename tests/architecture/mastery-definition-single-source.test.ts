@@ -236,11 +236,9 @@ const EXPECTED_PASS_THROUGHS: readonly { path: string; rhs: string }[] = [
   // The debug projection, which re-runs the same rollup rather than re-deciding.
   { path: 'services/local-authority/src/debug-state.ts', rhs: 'view.mastered' },
   { path: 'services/local-authority/src/debug-state.ts', rhs: 'member.mastered' },
-  // Practice hub: reads `LessonMasteryView.mastered` to hide finished lessons.
-  {
-    path: 'apps/learner-web/src/screens/practice/PracticeHome.tsx',
-    rhs: 'entry?.mastered ?? false',
-  },
+  // (The Practice hub used to read `entry?.mastered ?? false` to hide finished lessons.
+  // It now ranks the lessons the learner has DONE by P(L) and shows the lowest three —
+  // even when all are mastered — so it no longer produces a `mastered` value at all.)
   // NOT a claim about a learner. `mastery-seed-value.ts` is an offline value
   // model that writes no mastery anywhere: this `mastered` is the SIMULATED
   // GROUND TRUTH of a two-state synthetic learner, the thing BKT's decision is
