@@ -95,6 +95,21 @@ const IconChevron = (p: SVGProps<SVGSVGElement>) => (
     <path d="M9 6l6 6-6 6" />
   </svg>
 );
+/** Calm "all caught up" mark for the empty state: a check inside a soft circle. */
+const IconCaughtUp = (p: SVGProps<SVGSVGElement>) => (
+  <svg width={96} height={96} viewBox="0 0 96 96" fill="none" aria-hidden="true" {...p}>
+    <circle cx="48" cy="48" r="44" fill="currentColor" opacity="0.08" />
+    <circle cx="48" cy="48" r="26" fill="none" stroke="currentColor" strokeWidth="2.5" />
+    <path
+      d="M37 48.5l7.4 7.4L60 40.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 type TabKey = 'tofix' | 'patterns' | 'wins' | 'cars';
 const TAB_ORDER: readonly TabKey[] = ['tofix', 'patterns', 'wins', 'cars'];
@@ -258,16 +273,6 @@ export function Mistakes() {
     }
   };
 
-  /** The miss card's subtle "Skip for now" — advance to the next row in the active tab. */
-  const advance = (): void => {
-    if (activeRows.length === 0) return;
-    const nextRow = activeRows[(selectedIndex + 1) % activeRows.length];
-    if (nextRow) {
-      setPickedRowId(nextRow.id);
-      window.requestAnimationFrame(() => rowRefs.current[nextRow.id]?.focus());
-    }
-  };
-
   const clearedCount = activeTab === 'cars' ? carsCleared : resolvedCount;
   const showClearedToggle = (activeTab === 'tofix' || activeTab === 'cars') && clearedCount > 0;
 
@@ -281,6 +286,32 @@ export function Mistakes() {
         : activeTab === 'wins'
           ? 'Wins worth locking in'
           : 'CARS reasoning patterns';
+
+  // The four-group tablist. It anchors both surfaces — the master–detail list and the
+  // all-caught-up launchpad — so the empty state still shows every group at zero.
+  const tabList = (
+    <div role="tablist" aria-label="Mistake groups" className="mc-mistakes__tabs">
+      {TAB_ORDER.map((k, i) => (
+        <button
+          key={k}
+          type="button"
+          role="tab"
+          id={tabDomId(k)}
+          aria-selected={k === activeTab}
+          aria-controls="mc-mistakes-panel"
+          tabIndex={k === activeTab ? 0 : -1}
+          ref={(el) => {
+            tabRefs.current[k] = el;
+          }}
+          className="mc-mistakes__tab"
+          onClick={() => selectTab(k)}
+          onKeyDown={(e) => onTabKeyDown(e, i)}
+        >
+          {TAB_LABEL[k]} ({rowsByTab[k].length})
+        </button>
+      ))}
+    </div>
+  );
 
   return (
     <div className={`mc-screen mc-mistakes${detailOpen ? ' mc-mistakes--detailopen' : ''}`}>
@@ -309,45 +340,47 @@ export function Mistakes() {
       ) : null}
 
       {nothingToShow ? (
-        <Callout tone="success" title="Nothing open right now">
-          <Stack gap={3}>
-            <p className="mc-fineprint">
-              When you miss a practice question it lands here with the answer you picked and why it
-              missed. Recurring patterns appear once there’s evidence across several different
-              questions.
+        // Empty state: keep the four-group tablist (all at 0) above a calm launchpad
+        // that points forward into practice rather than dead-ending on a Callout.
+        <div className="mc-mistakes__solo">
+          <div className="mc-mistakes__tabsrow">{tabList}</div>
+          <Card
+            elevated
+            as="section"
+            className="mc-caughtup"
+            id="mc-mistakes-panel"
+            role="tabpanel"
+            aria-labelledby={tabDomId(activeTab)}
+          >
+            <IconCaughtUp className="mc-caughtup__art" />
+            <h2 className="mc-caughtup__title">You’re all caught up</h2>
+            <p className="mc-caughtup__sub">
+              No mistakes to review right now — every miss lands here, worst-first, so you can fix it
+              fast.
             </p>
+            <div className="mc-caughtup__actions">
+              <Button variant="primary" onClick={() => navigate('/app/practice')}>
+                Do practice questions
+              </Button>
+              <Button variant="secondary" onClick={() => navigate('/app/practice')}>
+                Take a practice test
+              </Button>
+              <Button variant="secondary" onClick={() => navigate('/app/today')}>
+                Back to today’s plan
+              </Button>
+            </div>
             {hiddenCleared > 0 ? (
               <Button variant="text" onClick={() => setShowResolved(true)}>
                 Show {hiddenCleared} cleared
               </Button>
             ) : null}
-          </Stack>
-        </Callout>
+          </Card>
+        </div>
       ) : (
         <div className="mc-mistakes__panes">
           <div className="mc-mistakes__master">
             <div className="mc-mistakes__tabsrow">
-              <div role="tablist" aria-label="Mistake groups" className="mc-mistakes__tabs">
-                {TAB_ORDER.map((k, i) => (
-                  <button
-                    key={k}
-                    type="button"
-                    role="tab"
-                    id={tabDomId(k)}
-                    aria-selected={k === activeTab}
-                    aria-controls="mc-mistakes-panel"
-                    tabIndex={k === activeTab ? 0 : -1}
-                    ref={(el) => {
-                      tabRefs.current[k] = el;
-                    }}
-                    className="mc-mistakes__tab"
-                    onClick={() => selectTab(k)}
-                    onKeyDown={(e) => onTabKeyDown(e, i)}
-                  >
-                    {TAB_LABEL[k]} ({rowsByTab[k].length})
-                  </button>
-                ))}
-              </div>
+              {tabList}
               {showClearedToggle ? (
                 <Button variant="text" onClick={() => setShowResolved(!showResolved)}>
                   {showResolved ? 'Hide cleared' : `Show ${clearedCount} cleared`}
@@ -416,7 +449,6 @@ export function Mistakes() {
                     position={selectedIndex + 1}
                     total={activeRows.length}
                     onTryAgain={tryAgain}
-                    onNext={activeRows.length > 1 ? advance : null}
                   />
                 ) : selectedRow.kind === 'pattern' ? (
                   <PatternRow pattern={selectedRow.pattern} onTryAgain={tryAgain} />
@@ -499,13 +531,11 @@ function ErrorRow({
   position,
   total,
   onTryAgain,
-  onNext,
 }: {
   entry: ErrorEntryView;
   position: number;
   total: number;
   onTryAgain: (focus: string | null) => void;
-  onNext: (() => void) | null;
 }) {
   const confidentlyWrong = entry.calibration === 'confidently_wrong';
   return (
@@ -539,7 +569,7 @@ function ErrorRow({
       {entry.chosenMisconception !== null ? (
         <p className="mc-mdetail__trap">
           <IconTrap className="mc-mdetail__trapicon" />
-          <span className="mc-fineprint">
+          <span className="mc-mdetail__traptext">
             <span className="mc-muted">The trap: </span>
             {entry.chosenMisconception}
           </span>
@@ -562,11 +592,6 @@ function ErrorRow({
         <Button variant="primary" onClick={() => onTryAgain(entry.focus)}>
           Try a fresh one
         </Button>
-        {onNext ? (
-          <Button variant="text" onClick={onNext}>
-            Skip for now
-          </Button>
-        ) : null}
       </div>
     </div>
   );

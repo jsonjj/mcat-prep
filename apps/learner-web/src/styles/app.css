@@ -4516,6 +4516,13 @@ body {
   flex: none;
   color: var(--mc-accent-warm-text);
 }
+/* The named misconception is the payload of the card, so it reads a step larger and
+   a touch heavier than the surrounding fineprint — the "The trap:" label stays muted. */
+.mc-mdetail__traptext {
+  font-size: var(--mc-text-17);
+  font-weight: 600;
+  line-height: var(--mc-leading-body);
+}
 .mc-mdetail__actions {
   display: flex;
   flex-wrap: wrap;
@@ -4527,6 +4534,58 @@ body {
   padding: var(--mc-space-5) var(--mc-space-3);
   text-align: center;
   color: var(--mc-ink-muted);
+}
+
+/* All-caught-up launchpad: the empty state keeps the four-group tablist (all at 0)
+   above a calm, centered panel that routes forward into practice. Full width on every
+   breakpoint — it never enters the two-pane grid — and the actions wrap to stack on
+   narrow screens. */
+.mc-mistakes__solo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+  min-width: 0;
+}
+.mc-caughtup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--mc-space-3);
+  padding: var(--mc-space-7) var(--mc-space-5);
+}
+.mc-caughtup__art {
+  color: var(--mc-primary);
+}
+.mc-caughtup__title {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-28);
+  line-height: var(--mc-leading-tight);
+  margin: 0;
+}
+.mc-caughtup__sub {
+  max-width: 52ch;
+  margin: 0;
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-15);
+  line-height: var(--mc-leading-body);
+}
+.mc-caughtup__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--mc-space-3);
+  margin-top: var(--mc-space-2);
+}
+/* On the narrowest screens the three CTAs stack full-width for a comfortable target. */
+@media (max-width: 520px) {
+  .mc-caughtup__actions {
+    align-self: stretch;
+    flex-direction: column;
+  }
+  .mc-caughtup__actions .mc-button {
+    width: 100%;
+  }
 }
 
 /* Laptop and up: escape the 760px shell cap (same `:has()` pattern as Practice /
