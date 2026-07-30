@@ -7,7 +7,13 @@ export {
   ruleR3,
   ruleR4,
   ruleR5,
+  ruleR6,
+  ruleR8,
+  ruleR9,
+  ruleR10,
   ruleR11,
+  ruleR12,
+  ruleR13,
   ruleR15,
 } from './rules';
 export { validateLesson, validateCatalog } from './validate';

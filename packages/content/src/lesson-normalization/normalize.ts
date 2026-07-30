@@ -72,7 +72,7 @@ function assertRole(raw: unknown, lessonId: string, itemId: string): ActivityRol
 }
 
 function deriveIsReentry(item: Json): boolean {
-  if (item.exact_reentry_for != null) return true; // L3 explicit
+  if (item.exact_reentry_for !== null && item.exact_reentry_for !== undefined) return true; // L3 explicit
   const id = String(item.activity_id ?? '').toLowerCase();
   return id.includes('reentry'); // L1 id suffix
 }
@@ -222,7 +222,13 @@ function buildItem(
     activityId: typeof item.activity_id === 'string' && item.activity_id.length > 0 ? item.activity_id : null,
     primaryKcId: asString(item.primary_kc_id, `${itemId}.primary_kc_id`, { lessonId, itemId }),
     activityRole,
-    exitFunction: normalizeExitFunction(item.exit_function ?? item.near_or_changed_function),
+    // `exitFunction` is reserved for actual exit items (model contract: "exit items
+    // only; otherwise NONE"). L3 repair/re-entry items also carry an `exit_function`
+    // naming the exit they repair — that flows to `repairsFunction`, not here.
+    exitFunction:
+      activityRole === 'NEAR_EXIT' || activityRole === 'CHANGED_EXIT'
+        ? normalizeExitFunction(item.exit_function ?? item.near_or_changed_function)
+        : 'NONE',
     repairsFunction: activityRole === 'REPAIR_CONFIRMATION' ? deriveRepairsFunction(item) : null,
     isReentry: deriveIsReentry(item),
     semanticFamilyId: asString(item.semantic_family_id, `${itemId}.semantic_family_id`, { lessonId, itemId }),

@@ -39,13 +39,13 @@ function fileJson(input: LessonValidationInput, name: string): Record<string, un
 
 describe('structural validator — all three real lessons pass every implemented rule', () => {
   for (const [lessonId, dirName] of LESSONS) {
-    it(`${lessonId} is green (R1–R5, R11, R15)`, () => {
+    it(`${lessonId} is green (R1–R6, R8–R13, R15)`, () => {
       const report = validateLesson(buildInput(lessonId, dirName));
       const failures = report.results.filter((r) => !r.ok).map((r) => `${r.rule}: ${r.detail}`);
       expect(failures, `unexpected failures:\n${failures.join('\n')}`).toEqual([]);
       expect(report.ok).toBe(true);
       // every implemented rule produced at least one result
-      for (const rule of ['R1', 'R2', 'R3', 'R4', 'R5', 'R11', 'R15']) {
+      for (const rule of ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R8', 'R9', 'R10', 'R11', 'R12', 'R13', 'R15']) {
         expect(report.results.some((r) => r.rule === rule)).toBe(true);
       }
     });
@@ -99,5 +99,69 @@ describe('structural validator — each rule actually catches its defect', () =>
     const report = validateLesson(input);
     expect(report.results.some((r) => r.rule === 'R15' && !r.ok)).toBe(true);
     expect(report.results.some((r) => r.rule === 'R11' && !r.ok)).toBe(true);
+  });
+
+  it('R6 fails when a node record carries an unknown field', () => {
+    const input = clone(buildInput('V3-LES-130923', 'v3-les-130923'));
+    const payload = fileJson(input, 'lesson-script.json').payload as { nodes: Array<Record<string, unknown>> };
+    payload.nodes[0]!.unexpected_field = true;
+    const report = validateLesson(input);
+    expect(report.results.some((r) => r.rule === 'R6' && !r.ok)).toBe(true);
+  });
+
+  it('R8 fails when a KC is missing a required node kind', () => {
+    const input = clone(buildInput('V3-LES-130923', 'v3-les-130923'));
+    const payload = fileJson(input, 'lesson-script.json').payload as { nodes: Array<{ node_kind: string }> };
+    const recap = payload.nodes.find((n) => n.node_kind === 'RECAP');
+    if (!recap) throw new Error('fixture missing a RECAP node');
+    recap.node_kind = 'EXPLANATION'; // remove the only RECAP → KC now lacks it
+    const report = validateLesson(input);
+    expect(report.results.some((r) => r.rule === 'R8' && !r.ok)).toBe(true);
+  });
+
+  it('R9 fails when a content route loses an exit id', () => {
+    const input = clone(buildInput('V3-LES-130923', 'v3-les-130923'));
+    const payload = fileJson(input, 'kc-coverage-matrix.json').payload as {
+      rows: Array<{ route_coverage: { concise: { exit_ids: string[] } } }>;
+    };
+    payload.rows[0]!.route_coverage.concise.exit_ids = [payload.rows[0]!.route_coverage.concise.exit_ids[0]!];
+    const report = validateLesson(input);
+    expect(report.results.some((r) => r.rule === 'R9' && !r.ok)).toBe(true);
+  });
+
+  it('R10 fails when a transition targets a non-existent node', () => {
+    const input = clone(buildInput('V3-LES-130923', 'v3-les-130923'));
+    const payload = fileJson(input, 'lesson-script.json').payload as {
+      activities: Array<{ authorized_next_node_ids?: string[] }>;
+    };
+    const act = payload.activities.find((a) => (a.authorized_next_node_ids?.length ?? 0) > 0);
+    if (!act?.authorized_next_node_ids) throw new Error('fixture missing an activity with transitions');
+    act.authorized_next_node_ids[0] = 'vtr-does-not-exist-node';
+    const report = validateLesson(input);
+    expect(report.results.some((r) => r.rule === 'R10' && !r.ok)).toBe(true);
+  });
+
+  it('R12 fails when a draft overclaims release readiness', () => {
+    const input = clone(buildInput('V3-LES-130923', 'v3-les-130923'));
+    const payload = fileJson(input, 'lesson-quality-report.json').payload as {
+      claim_limits: Record<string, boolean>;
+    };
+    payload.claim_limits.mastery_calibrated = true; // the "we're calibrated" lie
+    const report = validateLesson(input);
+    expect(report.results.some((r) => r.rule === 'R12' && !r.ok)).toBe(true);
+  });
+
+  it('R13 fails when an item labels itself an exit it does not exercise', () => {
+    const input = clone(buildInput('V3-LES-130923', 'v3-les-130923'));
+    const payload = fileJson(input, 'lesson-script.json').payload as {
+      question_evidence_plan: Array<{ activity_role: string; near_or_changed_function?: string | null; exit_function?: string }>;
+    };
+    // Flip a NEAR_EXIT item's function to CHANGED_TASK: the label now lies about its structure.
+    const near = payload.question_evidence_plan.find((it) => it.activity_role === 'NEAR_EXIT');
+    if (!near) throw new Error('fixture missing a NEAR_EXIT item');
+    near.near_or_changed_function = 'CHANGED_TASK';
+    near.exit_function = 'CHANGED_TASK';
+    const report = validateLesson(input);
+    expect(report.results.some((r) => r.rule === 'R13' && !r.ok)).toBe(true);
   });
 });
