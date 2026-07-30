@@ -156,8 +156,10 @@ export function useEnsureTodaysPath() {
 /**
  * Launch a plan activity in the guided runner: mark it in-progress and open the
  * matching engine, telling each one how much to do (Recall cards/minutes, Practice
- * question count, CARS defaults). On finish the activity returns to HOME, which marks
- * it complete and surfaces the next step.
+ * question count, CARS defaults). On finish the activity returns to the PLAN
+ * (`/app/today`) — the surface every runner's "Back to plan" control names — which
+ * marks it complete and surfaces the next step. (Home also consumes a returned
+ * completion, so an activity that lands there is still marked done.)
  */
 export function useLaunchPlanActivity() {
   const navigate = useNavigate();
@@ -165,7 +167,7 @@ export function useLaunchPlanActivity() {
   return useCallback(
     (a: PlanActivityView): void => {
       record.mutate({ activityId: a.activityId, status: 'in_progress' });
-      const state = { returnTo: '/app', activityId: a.activityId } as const;
+      const state = { returnTo: '/app/today', activityId: a.activityId } as const;
       switch (a.kind) {
         case 'cars_duel':
           // Carry the server-resolved selection ({mode, topicId, intensity, side})

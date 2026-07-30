@@ -4516,12 +4516,19 @@ body {
   flex: none;
   color: var(--mc-accent-warm-text);
 }
-/* The named misconception is the payload of the card, so it reads a step larger and
-   a touch heavier than the surrounding fineprint — the "The trap:" label stays muted. */
-.mc-mdetail__traptext {
-  font-size: var(--mc-text-17);
-  font-weight: 600;
+/* The named misconception is the PAYLOAD of the card and its visual anchor. It now
+   reads clearly larger than the 17px body (20px) and at the same bold 700 the answer
+   lines use, so it stands out. Previously it matched its neighbors at 17px and its 600
+   weight did not render as a visible bold, so it read as ordinary body text. The small
+   muted "The trap:" label stays at body size ahead of it (wrapped together in
+   `__trapbody` so the pair still flows as one line beside the icon). */
+.mc-mdetail__trapbody {
+  min-width: 0;
   line-height: var(--mc-leading-body);
+}
+.mc-mdetail__traptext {
+  font-size: var(--mc-text-20);
+  font-weight: 700;
 }
 .mc-mdetail__actions {
   display: flex;

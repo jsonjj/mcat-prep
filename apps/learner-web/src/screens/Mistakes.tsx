@@ -569,9 +569,9 @@ function ErrorRow({
       {entry.chosenMisconception !== null ? (
         <p className="mc-mdetail__trap">
           <IconTrap className="mc-mdetail__trapicon" />
-          <span className="mc-mdetail__traptext">
+          <span className="mc-mdetail__trapbody">
             <span className="mc-muted">The trap: </span>
-            {entry.chosenMisconception}
+            <span className="mc-mdetail__traptext">{entry.chosenMisconception}</span>
           </span>
         </p>
       ) : null}

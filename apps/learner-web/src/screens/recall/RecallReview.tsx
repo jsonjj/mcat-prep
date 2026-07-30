@@ -8,6 +8,7 @@ import {
   useSetSuspended,
   useSoftDeleteCard,
 } from '../../app/recall-queries';
+import { useRecordPlanActivity } from '../../app/today-queries';
 import { CardHtml } from './CardHtml';
 
 const RATINGS: { rating: RecallRating; label: string; key: string }[] = [
@@ -22,6 +23,7 @@ export function RecallReview() {
   const record = useRecordReview();
   const suspend = useSetSuspended();
   const remove = useSoftDeleteCard();
+  const recordPlan = useRecordPlanActivity();
   const navigate = useNavigate();
   const location = useLocation();
   // Today's Path launches Recall with a scheduler budget + a return target.
@@ -45,6 +47,7 @@ export function RecallReview() {
   const [elapsedTotal, setElapsedTotal] = useState(0);
   const startRef = useRef<number>(Date.now());
   const undoRef = useRef<{ card: RecallCard; reviewId: string } | null>(null);
+  const advancedEmptyRef = useRef(false);
 
   useEffect(() => {
     if (!service) return;
@@ -58,6 +61,20 @@ export function RecallReview() {
       active = false;
     };
   }, [service, minutesBudget, maxCards]);
+
+  // Safety net for the strictly in-order plan: when this step was launched from
+  // Today's Path but its queue comes back empty (a Recall reserved as "N due" against
+  // 0 actual cards), mark the step complete so the plan advances. Otherwise the empty
+  // runner pins `currentActivityId` to itself and every later step stays Locked — a
+  // dead end the learner can't escape by finishing anything. Completing a Recall step
+  // writes no mastery, and an empty queue means no reviews were recorded either.
+  useEffect(() => {
+    if (advancedEmptyRef.current) return;
+    if (!queue || queue.length > 0) return;
+    if (!returnTo || !activityId) return;
+    advancedEmptyRef.current = true;
+    recordPlan.mutate({ activityId, status: 'complete' });
+  }, [queue, returnTo, activityId, recordPlan]);
 
   const current = queue && index < queue.length ? queue[index] : null;
 

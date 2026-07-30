@@ -1,4 +1,4 @@
-import { useEffect, useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import type { PlanActivityView, TodaysPathView } from '@mcat/contracts';
 import { DAILY_MINUTES_MAX, DAILY_MINUTES_MIN } from '@mcat/contracts';
@@ -39,25 +39,45 @@ export function TodaysPath() {
   const built = view?.built ?? false;
   const budgetMinutes = view ? view.dailyBudgetMinutes || view.dailyMinutesPreset : DAILY_MINUTES_MIN;
 
-  // Free hours + minutes input, seeded from the current budget; committed on blur/Enter.
+  // Free hours + minutes inputs, seeded from the current budget and committed on
+  // blur/Enter. They are the source of truth WHILE the learner is editing: committing
+  // one field fires an async plan recompute that echoes the same budget back on
+  // `view`, and re-seeding both inputs on that echo is what reverted a second field
+  // typed during the round-trip (edit hours → tab to minutes → recompute lands →
+  // minutes snaps back). So the inputs stay live (never disabled mid-recompute) and we
+  // re-seed only for a budget we did NOT just set, and never while a field is focused.
   const [hoursStr, setHoursStr] = useState('');
   const [minsStr, setMinsStr] = useState('');
+  const syncedTotalRef = useRef<number | null>(null);
+  const editingRef = useRef(false);
   useEffect(() => {
     if (!view) return;
     const total = view.dailyBudgetMinutes || view.dailyMinutesPreset;
+    // Our own recompute echo, or the learner is mid-edit → leave the inputs alone.
+    if (syncedTotalRef.current === total || editingRef.current) return;
+    syncedTotalRef.current = total;
     setHoursStr(String(Math.floor(total / 60)));
     setMinsStr(String(total % 60));
   }, [view?.dailyBudgetMinutes, view?.dailyMinutesPreset]);
 
-  const budgetBusy = setBudget.isPending || build.isPending;
   const commitBudget = () => {
     const total = clampMinutes((Number(hoursStr) || 0) * 60 + (Number(minsStr) || 0));
+    // Record the committed value BEFORE the mutate so the recompute's echo is
+    // recognised as our own and does not clobber the field the learner edits next.
+    syncedTotalRef.current = total;
     setHoursStr(String(Math.floor(total / 60)));
     setMinsStr(String(total % 60));
     // Changing the time re-plans the day but keeps everything already finished/started.
     if (total !== budgetMinutes) {
       setBudget.mutate(total, { onSuccess: () => build.mutate({ force: true }) });
     }
+  };
+  const onBudgetFocus = () => {
+    editingRef.current = true;
+  };
+  const onBudgetBlur = () => {
+    editingRef.current = false;
+    commitBudget();
   };
   const onBudgetKey = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
@@ -104,9 +124,9 @@ export function TodaysPath() {
                 max={6}
                 value={hoursStr}
                 onChange={(e) => setHoursStr(e.target.value)}
-                onBlur={commitBudget}
+                onFocus={onBudgetFocus}
+                onBlur={onBudgetBlur}
                 onKeyDown={onBudgetKey}
-                disabled={budgetBusy}
                 aria-label="Hours per day"
               />
               <span className="mc-timeinput__unit">h</span>
@@ -118,9 +138,9 @@ export function TodaysPath() {
                 max={59}
                 value={minsStr}
                 onChange={(e) => setMinsStr(e.target.value)}
-                onBlur={commitBudget}
+                onFocus={onBudgetFocus}
+                onBlur={onBudgetBlur}
                 onKeyDown={onBudgetKey}
-                disabled={budgetBusy}
                 aria-label="Minutes per day"
               />
               <span className="mc-timeinput__unit">m</span>

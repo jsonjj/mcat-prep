@@ -23,7 +23,8 @@ export function Home() {
   const today = useToday();
   const path = useEnsureTodaysPath();
   const launch = useLaunchPlanActivity();
-  // Activities launched from the plan return HOME; mark the finished one complete here.
+  // Activities launched from the plan return to the plan (/app/today); this consumer
+  // is a safety net for any completion that still lands back here on Home.
   useConsumeCompletedActivity();
 
   const plan = path.data ?? null;

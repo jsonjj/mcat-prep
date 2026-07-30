@@ -642,6 +642,85 @@ describe('Today\u2019s Path engine', () => {
   });
 });
 
+/**
+ * Today's Path is strictly in-order with no skip, so a scheduled step whose runner
+ * opens empty (e.g. Recall reserved as "N due" against 0 actual cards) pins the plan
+ * to itself and locks every later step. The engine's job is to not emit such a step in
+ * the first place; the runner carries a matching safety net for the estimate/reality
+ * gap it cannot see. No mastery is read or written on this path.
+ */
+describe('never schedules a step it cannot fulfil (no deadlock)', () => {
+  const carriedRecall = (over: Partial<CarriedActivity> = {}): CarriedActivity => ({
+    activityId: 'recall',
+    kind: 'recall',
+    title: 'Recall',
+    detail: '10 flashcards due (spaced repetition).',
+    estimatedMinutes: 4,
+    count: 10,
+    minutesBudget: 4,
+    focus: null,
+    lessonSlug: null,
+    lessonId: null,
+    priorityReason: 'OVERDUE_REVIEW',
+    ...over,
+  });
+
+  const nothingDue = {
+    dueLearning: 0,
+    dueReviews: 0,
+    newAvailable: 0,
+    due: 0,
+    estimatedMinutesForDue: 0,
+  };
+
+  it('omits fresh Recall when zero cards are due', () => {
+    const r = buildTodaysPath(
+      snap({ recall: nothingDue, candidateLessons: manyLessons(2), practiceUnlocked: false }),
+    );
+    expect(r.activities.some((a) => a.kind === 'recall')).toBe(false);
+  });
+
+  it('drops a carried-over Recall when nothing is due today, and leads with real work', () => {
+    // Without the guard the carried step is re-reserved verbatim — "N due" against 0
+    // actual cards — and, pinned first, deadlocks the whole day. It is dropped instead,
+    // so the plan opens on something the learner can actually do.
+    const r = buildTodaysPath(
+      snap({
+        recall: nothingDue,
+        carryOver: [carriedRecall()],
+        candidateLessons: manyLessons(2),
+        practiceUnlocked: false,
+      }),
+    );
+    expect(r.activities.some((a) => a.kind === 'recall')).toBe(false);
+    expect(r.activities.length).toBeGreaterThan(0);
+    expect(r.activities[0]!.kind).not.toBe('recall');
+  });
+
+  it('still carries Recall forward when cards are genuinely due', () => {
+    // The guard is scoped to the unfulfillable case only: real due cards keep the
+    // carried Recall (and the orderer still pins it first).
+    const r = buildTodaysPath(
+      snap({
+        recall: {
+          dueLearning: 0,
+          dueReviews: 10,
+          newAvailable: 0,
+          due: 10,
+          estimatedMinutesForDue: 4,
+        },
+        carryOver: [carriedRecall()],
+        candidateLessons: manyLessons(2),
+        practiceUnlocked: false,
+      }),
+    );
+    const recall = r.activities.filter((a) => a.kind === 'recall');
+    expect(recall).toHaveLength(1);
+    expect(recall[0]!.carriedOver).toBe(true);
+    expect(r.activities[0]!.kind).toBe('recall');
+  });
+});
+
 describe('scoreLesson mastery nudge', () => {
   const cfg = TODAYS_PATH_CONFIG;
 

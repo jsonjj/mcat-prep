@@ -431,6 +431,14 @@ export function buildTodaysPath(
   const carried: PlannedActivity[] = [];
   let carriedMinutes = 0;
   for (const c of snap.carryOver) {
+    // Never re-schedule a step that can no longer be fulfilled. Today's Path is
+    // strictly in-order with no skip, so a step whose runner opens empty pins
+    // `currentActivityId` to itself and locks every later step. Recall with nothing
+    // due today is the concrete case: drop it rather than reserve a deadlocking step
+    // (its time returns to new planning below). Fresh Recall is already gated by
+    // `sizeRecall`'s due floor; the runner-side safety net covers any estimate/reality
+    // gap that still slips through. No mastery is read or written here.
+    if (c.kind === 'recall' && snap.recall.due === 0) continue;
     if (carriedMinutes + c.estimatedMinutes > carryCap) break;
     carried.push({ ...c, carriedOver: true });
     carriedMinutes += c.estimatedMinutes;
