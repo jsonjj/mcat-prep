@@ -4,6 +4,7 @@ import { useBootstrap } from '../app/queries';
 import {
   IconBrain,
   IconCarsDuel,
+  IconClipboard,
   IconCurriculum,
   IconHome,
   IconMistakesX,
@@ -25,6 +26,7 @@ const NAV = [
 const TODAY_ITEM = { to: '/app/today', end: false, label: 'Today', Icon: IconToday };
 const PRACTICE_ITEM = { to: '/app/practice', end: false, label: 'Practice', Icon: IconPractice };
 const CARS_ITEM = { to: '/app/cars', end: false, label: 'CARS Duel', Icon: IconCarsDuel };
+const TESTS_ITEM = { to: '/app/tests', end: false, label: 'Tests', Icon: IconClipboard };
 // Account (exam date / goal + settings) is TEMPORARILY HIDDEN for now. The screen
 // (screens/Profile.tsx), its /app/profile route, the backend goal.testDate storage,
 // bootstrap goal exposure, and the CARS Defend-taper wiring all remain intact — only
@@ -34,10 +36,11 @@ const CARS_ITEM = { to: '/app/cars', end: false, label: 'CARS Duel', Icon: IconC
 // const ACCOUNT_ITEM = { to: '/app/profile', end: false, label: 'Account', Icon: IconUser };
 
 // Desktop sidebar order: Today's Path sits right under Home; Practice sits above
-// Recall; CARS Duel sits just below Recall. The mobile bottom nav stays the shared
-// five-item NAV so the longest label ("Curriculum") never overflows a narrow phone
-// — Today's Path, Practice, and CARS Duel are reached from elsewhere on mobile.
-// (Account is temporarily hidden — see the note above.)
+// Recall; CARS Duel sits just below Recall; Tests (the half-length checkpoint)
+// sits at the end as a distinct assessment entry. The mobile bottom nav stays the
+// shared five-item NAV so the longest label ("Curriculum") never overflows a
+// narrow phone — Today's Path, Practice, CARS Duel, and Tests are reached from
+// elsewhere on mobile. (Account is temporarily hidden — see the note above.)
 const SIDEBAR = [
   NAV[0],
   TODAY_ITEM,
@@ -47,6 +50,7 @@ const SIDEBAR = [
   CARS_ITEM,
   NAV[3],
   NAV[4],
+  TESTS_ITEM,
 ];
 
 export function AppShell() {

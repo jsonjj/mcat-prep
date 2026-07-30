@@ -26,6 +26,7 @@ import { PracticeSession } from '../screens/practice/PracticeSession';
 import { CarsDuel } from '../screens/CarsDuel';
 import { Wrapped } from '../screens/Wrapped';
 import { CarsPreview } from '../screens/CarsPreview';
+import { Tests } from '../screens/Tests';
 
 export const router = createBrowserRouter([
   { path: '/', element: <Welcome /> },
@@ -71,6 +72,10 @@ export const router = createBrowserRouter([
       // Adaptive Practice: the hub plus its in-place session.
       { path: 'practice', element: <PracticeHome /> },
       { path: 'practice/session', element: <PracticeSession /> },
+      // Tests — the half-length practice-test checkpoint. Presentational landing
+      // only for now: the runner/scoring/history are still in design, so this
+      // route just renders the "start your checkpoint" screen with a disabled Start.
+      { path: 'tests', element: <Tests /> },
       // Account/Profile route TEMPORARILY DISABLED (see the commented import above).
       // Re-enable this line and the import to restore /app/profile.
       // { path: 'profile', element: <Profile /> },

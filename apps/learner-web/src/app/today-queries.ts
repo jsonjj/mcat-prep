@@ -194,6 +194,14 @@ export function useLaunchPlanActivity() {
         case 'review_mistakes':
           navigate('/app/mistakes', { state });
           break;
+        case 'practice_test':
+          // The test engine itself is still in design, so this just OPENS the
+          // presentational Tests checkpoint landing — it does not start (or
+          // score) a sitting. Without this case the card was a silent dead-end.
+          navigate('/app/tests', { state });
+          break;
+        default:
+          break;
       }
     },
     [navigate, record],

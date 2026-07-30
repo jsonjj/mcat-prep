@@ -86,6 +86,13 @@ export const IconUser = (p: SVGProps<SVGSVGElement>) => (
     <path d="M5 20a7 7 0 0 1 14 0" />
   </svg>
 );
+export const IconClipboard = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}>
+    <path d="M9 4.5H7.5A2 2 0 0 0 5.5 6.5V19A2 2 0 0 0 7.5 21H16.5A2 2 0 0 0 18.5 19V6.5A2 2 0 0 0 16.5 4.5H15" />
+    <rect x="9" y="3" width="6" height="3.5" rx="1.2" />
+    <path d="M9 13.5l2 2 4-4.5" />
+  </svg>
+);
 export const IconSun = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}>
     <circle cx="12" cy="12" r="4" />

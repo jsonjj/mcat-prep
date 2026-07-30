@@ -1073,6 +1073,38 @@ body {
   background: color-mix(in srgb, var(--mc-primary) 14%, transparent);
 }
 
+/* ---- Tests (checkpoint landing) ---- */
+.mc-test__covers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-test__sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--mc-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mc-test__section {
+  padding: var(--mc-space-3) var(--mc-space-4);
+  border: 1px solid color-mix(in srgb, var(--mc-border) 70%, transparent);
+  border-radius: var(--mc-radius-control);
+  background: color-mix(in srgb, var(--mc-surface-2) 55%, transparent);
+  color: var(--mc-ink);
+  font-size: var(--mc-text-15);
+}
+.mc-test__start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-test__soon {
+  margin: 0;
+}
+
 /* ---- Study ---- */
 .mc-study {
   gap: var(--mc-space-4);
