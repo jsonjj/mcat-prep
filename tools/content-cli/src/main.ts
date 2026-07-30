@@ -26,6 +26,7 @@ import {
 } from '@mcat/content/v3-vector-lesson';
 import {
   buildResolvableIds,
+  computeQuality,
   lessonOrderedKcIds,
   planLessonRehash,
   planProposedKcs,
@@ -542,6 +543,46 @@ function cmdProposedKcs(): void {
   }
 }
 
+/**
+ * Computed-quality checks (Real Lesson Catalog, Phase 3): estimatedMinutes plausibility and
+ * difficulty-label distribution — the two computed rubric dimensions not already in the gate
+ * (R11 = evidence independence, R14 = declared-vs-actual coverage). Detect-then-assert: N/A
+ * when a lesson carries no calibrated timing / no difficulty labels (today's catalog), FAIL
+ * (non-zero exit) only when a lesson populates them implausibly. `--json` for machine output.
+ */
+function cmdComputedQuality(): void {
+  const jsonOut = args.includes('--json');
+  const lessonsRoot = join(REPO_ROOT, 'content', 'lessons');
+  const reports = readdirSync(lessonsRoot)
+    .map((name) => join(lessonsRoot, name))
+    .filter((d) => {
+      try {
+        return statSync(d).isDirectory() && existsSync(join(d, 'lesson-script.json'));
+      } catch {
+        return false;
+      }
+    })
+    .sort()
+    .map((dir) =>
+      computeQuality(
+        basename(dir).toUpperCase(),
+        JSON.parse(readFileSync(join(dir, 'lesson-script.json'), 'utf8')) as unknown,
+      ),
+    );
+
+  if (jsonOut) {
+    console.log(JSON.stringify(reports, null, 2));
+  } else {
+    for (const r of reports) {
+      console.log(`\n  ${r.ok ? 'OK  ' : 'FAIL'} ${r.lessonId}`);
+      for (const c of r.checks) console.log(`     ${c.status.toUpperCase().padEnd(4)} ${c.check}: ${c.detail}`);
+    }
+    const failed = reports.filter((r) => !r.ok).length;
+    console.log(`\ncomputed-quality: ${reports.length} lesson(s), ${failed} with FAIL(s) (N/A never blocks).`);
+  }
+  if (reports.some((r) => !r.ok)) process.exit(1);
+}
+
 switch (command) {
   case 'manifest':
     cmdManifest();
@@ -573,6 +614,9 @@ switch (command) {
   case 'proposed-kcs':
     cmdProposedKcs();
     break;
+  case 'computed-quality':
+    cmdComputedQuality();
+    break;
   default:
     console.log(
       'MCAT content CLI\n\nCommands:\n' +
@@ -585,6 +629,7 @@ switch (command) {
         '  vector-lesson-artifacts  Generate exactly four V3-LES-130923 internal-draft artifacts\n' +
         '  rehash <lessonDir>  Recompute a lesson content-hash chain (content_sha256 + file_sha256) after an authored edit\n' +
         '  lesson-validate [dir] [--json]  Structural R1–R15 gate over content/lessons/ (non-zero exit on failure; CI merge gate)\n' +
-        '  proposed-kcs [--write]  Advisory queue of lesson KCs absent from the curriculum catalog (mirrors R14; never gates)\n',
+        '  proposed-kcs [--write]  Advisory queue of lesson KCs absent from the curriculum catalog (mirrors R14; never gates)\n' +
+        '  computed-quality [--json]  estimatedMinutes plausibility + difficulty distribution (N/A when uncalibrated; FAIL gates)\n',
     );
 }

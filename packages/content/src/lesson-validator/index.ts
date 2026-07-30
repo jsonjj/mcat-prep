@@ -8,6 +8,14 @@ export {
   type ProposedKc,
   type ProposedKcsPlan,
 } from './proposed-kcs';
+export {
+  computeQuality,
+  checkEstimatedMinutes,
+  checkDifficultyDistribution,
+  type QualityStatus,
+  type QualityCheck,
+  type QualityReport,
+} from './computed-quality';
 export { buildResolvableIds } from './resolvable';
 export {
   reconcileManifest,
