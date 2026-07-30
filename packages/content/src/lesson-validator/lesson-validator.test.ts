@@ -3,10 +3,15 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-import { validateCatalog, validateLesson, type LessonValidationInput } from './index';
+import { buildResolvableIds, validateCatalog, validateLesson, type LessonValidationInput } from './index';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const lessonDir = (id: string): string => join(repoRoot, 'content/lessons', id);
+
+// The real in-repo curriculum catalog R14 resolves against (indexes.kc_by_id etc.).
+const RESOLVABLE_IDS = buildResolvableIds(
+  JSON.parse(readFileSync(join(repoRoot, 'curriculum/v3/v3-lesson-authoring-manifest.json'), 'utf8')) as unknown,
+);
 
 function buildInput(lessonId: string, dirName: string): LessonValidationInput {
   const dir = lessonDir(dirName);
@@ -16,16 +21,14 @@ function buildInput(lessonId: string, dirName: string): LessonValidationInput {
       const rawBytes = readFileSync(join(dir, relPath), 'utf8');
       return { relPath, rawBytes, json: JSON.parse(rawBytes) as unknown };
     });
-  // Browser evidence lives outside the lesson dir; supply it (as `browser-report.json`)
-  // when present so R7 can bind it. Only L1 has one today.
-  const reportPath = join(repoRoot, 'tests/browser/evidence', dirName, 'browser-report.json');
-  if (existsSync(reportPath)) {
-    const rawBytes = readFileSync(reportPath, 'utf8');
-    files.push({ relPath: 'browser-report.json', rawBytes, json: JSON.parse(rawBytes) as unknown });
-  }
   const manifestPath = join(dir, 'artifact-manifest.json');
   const manifest = existsSync(manifestPath) ? (JSON.parse(readFileSync(manifestPath, 'utf8')) as unknown) : null;
-  return { lessonId, files, manifest };
+  // Browser evidence lives outside the lesson dir; supply it for R7 when present (L1 only today).
+  const reportPath = join(repoRoot, 'tests/browser/evidence', dirName, 'browser-report.json');
+  const browserEvidence = existsSync(reportPath)
+    ? { reportRawText: readFileSync(reportPath, 'utf8'), reportJson: JSON.parse(readFileSync(reportPath, 'utf8')) as unknown }
+    : null;
+  return { lessonId, files, manifest, resolvableIds: RESOLVABLE_IDS, browserEvidence };
 }
 
 const LESSONS = [
@@ -34,9 +37,22 @@ const LESSONS = [
   ['V3-LES-844372', 'v3-les-844372'],
 ] as const;
 
-// Deep-clone an input so a negative test can mutate JSON without touching disk.
+// Clone an input so a negative test can mutate JSON without touching disk. `resolvableIds`
+// holds Sets (which JSON round-tripping would destroy) so it is carried by reference — tests
+// never mutate it; only files/manifest/browserEvidence JSON are deep-cloned.
 function clone(input: LessonValidationInput): LessonValidationInput {
-  return JSON.parse(JSON.stringify(input)) as LessonValidationInput;
+  return {
+    lessonId: input.lessonId,
+    files: JSON.parse(JSON.stringify(input.files)) as LessonValidationInput['files'],
+    manifest: input.manifest === null ? null : (JSON.parse(JSON.stringify(input.manifest)) as unknown),
+    resolvableIds: input.resolvableIds ?? null,
+    browserEvidence: input.browserEvidence
+      ? {
+          reportRawText: input.browserEvidence.reportRawText,
+          reportJson: JSON.parse(JSON.stringify(input.browserEvidence.reportJson)) as unknown,
+        }
+      : null,
+  };
 }
 function fileJson(input: LessonValidationInput, name: string): Record<string, unknown> {
   const f = input.files.find((x) => x.relPath === name);
@@ -181,9 +197,9 @@ describe('structural validator — each rule actually catches its defect', () =>
 
   it('R7 fails when browser evidence hashes drift from the artifacts', () => {
     const input = clone(buildInput('V3-LES-130923', 'v3-les-130923'));
-    const report = input.files.find((f) => f.relPath === 'browser-report.json');
-    if (!report) throw new Error('fixture missing browser-report.json');
-    (report.json as { artifact_hashes: Record<string, string> }).artifact_hashes.lesson_script = '0'.repeat(64);
+    const ev = input.browserEvidence;
+    if (!ev) throw new Error('fixture missing browser evidence');
+    (ev.reportJson as { artifact_hashes: Record<string, string> }).artifact_hashes.lesson_script = '0'.repeat(64);
     const result = validateLesson(input);
     expect(result.results.some((r) => r.rule === 'R7' && !r.ok)).toBe(true);
   });
@@ -194,6 +210,17 @@ describe('structural validator — each rule actually catches its defect', () =>
       nodes: Array<{ primary_kc_id: string }>;
     };
     payload.nodes[0]!.primary_kc_id = 'V3-KC-000000'; // undeclared KC
+    const result = validateLesson(input);
+    expect(result.results.some((r) => r.rule === 'R14' && !r.ok)).toBe(true);
+  });
+
+  it('R14 fails when a lesson KC is absent from the curriculum catalog', () => {
+    const base = buildInput('V3-LES-130923', 'v3-les-130923');
+    // Empty catalog → the lesson's real KCs cannot resolve against curriculum kc_by_id.
+    const input: LessonValidationInput = {
+      ...base,
+      resolvableIds: { kcIds: new Set<string>(), sourceAnchorIds: new Set<string>(), relationIds: new Set<string>() },
+    };
     const result = validateLesson(input);
     expect(result.results.some((r) => r.rule === 'R14' && !r.ok)).toBe(true);
   });

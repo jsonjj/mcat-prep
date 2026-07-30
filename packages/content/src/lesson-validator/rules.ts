@@ -1,7 +1,11 @@
 import { normalizeLesson, type RawLessonArtifacts } from '../lesson-normalization';
 import { contentSha256, fileSha256, sha256Hex } from './canonical';
 import {
+  KC_SCRIPT_ALLOWED_KEYS,
+  NODE_ALLOWED_KEYS,
   PRIMARY_ARTIFACT_FILES,
+  REQUIRED_NODE_KINDS,
+  REQUIRED_ROUTES,
   type ArtifactFile,
   type LessonValidationInput,
   type ManifestRecord,
@@ -54,45 +58,6 @@ function orderedKcIds(payload: Record<string, unknown> | undefined): string[] {
   if (direct.length) return direct;
   return asArray(asRec(payload?.registry_binding)?.ordered_kc_ids).filter(str);
 }
-
-/**
- * The 15 instructional node kinds every KC must exhibit (generator test :14-30).
- * Verified present in all three real lessons; L3 additionally carries a `TRANSITION`
- * kind, so R8 requires a SUPERSET of these, not exact equality.
- */
-const REQUIRED_NODE_KINDS = [
-  'ENTRY_CHECK_BOUNDARY',
-  'ORIENTATION',
-  'EXPLANATION',
-  'MENTAL_MODEL',
-  'EXPERT_THINK_ALOUD',
-  'WORKED_EXAMPLE',
-  'GUIDED_PRACTICE',
-  'LIGHT_SUPPORT_PRACTICE',
-  'SOLO_PRACTICE',
-  'CONTRAST_BOUNDARY',
-  'NEAR_EXIT',
-  'CHANGED_EXIT',
-  'TARGETED_REPAIR',
-  'EXACT_REENTRY',
-  'RECAP',
-] as const;
-
-/** The closed field set of a `nodes[]` record — identical across all three grammars. */
-const ALLOWED_NODE_FIELDS = new Set([
-  'node_id',
-  'node_kind',
-  'primary_kc_id',
-  'secondary_kc_refs',
-  'route_eligibility',
-  'learner_content_blocks',
-  'representation_ids',
-  'activity_ids',
-  'checkpoint_ref',
-  'source_claim_refs',
-]);
-
-const CONTENT_ROUTES = ['concise', 'standard', 'misconception'] as const;
 
 /** The five release-honesty flags every uncalibrated draft must pin false (generator test :158-164). */
 const CORE_CLAIM_FLAGS = [
@@ -231,19 +196,30 @@ export function ruleR5(input: LessonValidationInput): RuleResult[] {
   return results;
 }
 
-/** R6 — closed nested records: no unknown fields on `nodes[]` (generator test :233-244). */
+/** R6 — closed nested records: no unknown fields on nodes[] or kc_scripts[] (generator test :233-244). */
 export function ruleR6(input: LessonValidationInput): RuleResult[] {
-  const nodes = asArray(payloadOf(input, 'lesson-script.json')?.nodes);
+  const payload = payloadOf(input, 'lesson-script.json');
+  const nodes = asArray(payload?.nodes);
+  const kcScripts = asArray(payload?.kc_scripts);
   if (!nodes.length) return [fail('R6', input.lessonId, 'lesson-script payload has no nodes[]')];
-  const offenders: string[] = [];
-  for (const n of nodes) {
-    const node = asRec(n);
-    if (!node) continue;
-    const extra = Object.keys(node).filter((k) => !ALLOWED_NODE_FIELDS.has(k));
-    if (extra.length) offenders.push(`${String(node.node_id ?? '?')}:{${extra.join(',')}}`);
-  }
-  if (offenders.length) return [fail('R6', input.lessonId, `node record(s) not closed: ${cap(offenders)}`)];
-  return [pass('R6', input.lessonId, `all ${nodes.length} node records closed (${ALLOWED_NODE_FIELDS.size}-field schema)`)];
+  const offendersOf = (records: readonly unknown[], idField: string, allowed: ReadonlySet<string>): string[] => {
+    const out: string[] = [];
+    for (const r of records) {
+      const rec = asRec(r);
+      if (!rec) continue;
+      const extra = Object.keys(rec).filter((k) => !allowed.has(k));
+      if (extra.length) out.push(`${String(rec[idField] ?? '?')}:{${extra.join(',')}}`);
+    }
+    return out;
+  };
+  const nodeOff = offendersOf(nodes, 'node_id', NODE_ALLOWED_KEYS);
+  const scriptOff = offendersOf(kcScripts, 'kc_id', KC_SCRIPT_ALLOWED_KEYS);
+  const results: RuleResult[] = [];
+  if (nodeOff.length) results.push(fail('R6', input.lessonId, `node record(s) not closed: ${cap(nodeOff)}`));
+  else results.push(pass('R6', input.lessonId, `all ${nodes.length} node records closed (${NODE_ALLOWED_KEYS.size}-field schema)`));
+  if (scriptOff.length) results.push(fail('R6', input.lessonId, `kc_script record(s) not closed: ${cap(scriptOff)}`));
+  else results.push(pass('R6', input.lessonId, `all ${kcScripts.length} kc_script records closed (${KC_SCRIPT_ALLOWED_KEYS.size}-field schema)`));
+  return results;
 }
 
 /** R8 — every KC exhibits all 15 required node kinds (superset; L3 adds TRANSITION). */
@@ -280,7 +256,7 @@ export function ruleR9(input: LessonValidationInput): RuleResult[] {
       continue;
     }
     const problems: string[] = [];
-    for (const route of CONTENT_ROUTES) {
+    for (const route of REQUIRED_ROUTES) {
       const v = asRec(cov[route]);
       const exits = asArray(v?.exit_ids).length;
       const repairs = asArray(v?.repair_ids).length;
@@ -362,23 +338,23 @@ const BROWSER_HASH_MAP = [
 
 /**
  * R7 — browser-evidence hash binding (generator test :206-231). Conditional: only
- * applies when a `browser-report.json` is supplied in the input (L1 today; L2/L3
- * have no browser evidence → N/A). Verifies the report's artifact_hashes equal the
- * recomputed content_sha256 of script/coverage/presentation, and that the quality
- * report's evidence_refs embed sha256(reportBytes).
+ * applies when `input.browserEvidence` is supplied (L1 today; L2/L3 have no browser
+ * evidence → N/A). Verifies the report's artifact_hashes equal the recomputed
+ * content_sha256 of script/coverage/presentation, and that the quality report's
+ * evidence_refs embed sha256(reportBytes).
  */
 export function ruleR7(input: LessonValidationInput): RuleResult[] {
-  const reportFile = fileByName(input, 'browser-report.json');
-  if (!reportFile) return [pass('R7', input.lessonId, 'no browser evidence supplied — binding N/A')];
-  const hashes = asRec(asRec(reportFile.json)?.artifact_hashes);
-  if (!hashes) return [fail('R7', input.lessonId, 'browser-report.json has no artifact_hashes')];
+  const evidence = input.browserEvidence;
+  if (!evidence) return [pass('R7', input.lessonId, 'no browser evidence supplied — binding N/A')];
+  const hashes = asRec(asRec(evidence.reportJson)?.artifact_hashes);
+  if (!hashes) return [fail('R7', input.lessonId, 'browser evidence has no artifact_hashes')];
   const problems: string[] = [];
   for (const [key, file] of BROWSER_HASH_MAP) {
     const obj = objByName(input, file);
     const recomputed = obj ? contentSha256(obj) : null;
     if (hashes[key] !== recomputed) problems.push(`${key}: report ${short(hashes[key])} != recomputed ${short(recomputed)}`);
   }
-  const reportHash = sha256Hex(reportFile.rawBytes);
+  const reportHash = sha256Hex(evidence.reportRawText);
   const refs = JSON.stringify(payloadOf(input, 'lesson-quality-report.json')?.evidence_refs ?? []);
   if (!refs.includes(reportHash)) problems.push(`quality.evidence_refs missing report sha256 ${short(reportHash)}`);
   if (problems.length) return [fail('R7', input.lessonId, problems.join('; '))];
@@ -390,17 +366,32 @@ const kcField = (arr: unknown, field: string): string[] =>
     .map((x) => asRec(x)?.[field])
     .filter((x): x is string => typeof x === 'string');
 
+/** Collect every string value anywhere under `obj` (for pattern-based id extraction). */
+function collectStrings(obj: unknown, out: Set<string>): void {
+  if (typeof obj === 'string') {
+    out.add(obj);
+    return;
+  }
+  if (obj === null || typeof obj !== 'object') return;
+  for (const v of Array.isArray(obj) ? obj : Object.values(obj)) collectStrings(v, out);
+}
+
 /**
- * R14 — KC referential integrity (in-repo). NOTE: the brief specified resolving KC
- * and R14-REM relation ids against the three frozen ontology inputs
- * (`key-docs/MCAT-skills`, `ontology-adjudication.md`, `research-evidence-registry.json`),
- * but those files hold operation vocabulary + schemas, NOT the KC/relation catalog —
- * none of the ten lesson KC ids nor any relation id appears in them. The authoritative
- * catalog is the assembled skill-graph package, which lives OUTSIDE this git repo and
- * therefore cannot gate merges here. R14 accordingly enforces the strongest in-repo
- * guarantee: every KC referenced anywhere in a lesson resolves to a declared
- * `ordered_kc_ids` entry, and coverage rows + kc_scripts cover exactly those KCs.
- * (Global-ontology resolution remains a separate, out-of-repo check.)
+ * R14 — KC (+ relation) id resolution. NOTE: the brief said to resolve KC and
+ * R14-REM relation ids against the three FROZEN ontology inputs (`key-docs/MCAT-skills`,
+ * `ontology-adjudication.md`, `research-evidence-registry.json`), but those hold
+ * operation vocabulary + schema templates, NOT the id catalog — none of the ten
+ * lesson KC ids appears in them. The authoritative catalog is the in-repo authoring
+ * manifest `curriculum/v3/v3-lesson-authoring-manifest.json`
+ * (`indexes.kc_by_id` (422) / `sequence_relation_by_id` (1583) / `source_anchor_by_id` (110)),
+ * which the caller passes as `resolvableIds` (see {@link buildResolvableIds}). When
+ * supplied, R14 proves every lesson KC and every `R14-*` relation id is a REAL
+ * curriculum entity. R14 ALWAYS enforces in-repo referential integrity (every KC
+ * reference ⊆ ordered_kc_ids) and coverage/kc_scripts completeness.
+ *
+ * `source_claim_refs` are intentionally NOT gated: L2/L3 carry a lesson-local claim
+ * namespace (`claim-qms-*`, `ALG-*-CLAIM-*`) distinct from the curriculum source
+ * anchors, so resolving them against `source_anchor_by_id` would wrongly fail valid drafts.
  */
 export function ruleR14(input: LessonValidationInput): RuleResult[] {
   const s = payloadOf(input, 'lesson-script.json');
@@ -409,24 +400,44 @@ export function ruleR14(input: LessonValidationInput): RuleResult[] {
   const declared = new Set(orderedKcIds(s));
   if (!declared.size) return [fail('R14', input.lessonId, 'no ordered_kc_ids to resolve against')];
   const results: RuleResult[] = [];
-  const resolves = (label: string, ids: string[]): void => {
-    const bad = [...new Set(ids)].filter((k) => !declared.has(k));
-    if (bad.length) results.push(fail('R14', input.lessonId, `${label}: KC id(s) not in ordered_kc_ids: ${bad.join(', ')}`));
+  const inSet = (label: string, ids: string[], set: ReadonlySet<string>, what: string): void => {
+    const bad = [...new Set(ids)].filter((k) => !set.has(k));
+    if (bad.length) results.push(fail('R14', input.lessonId, `${label}: ${what}: ${bad.slice(0, 6).join(', ')}`));
   };
-  resolves('nodes.primary_kc_id', kcField(s.nodes, 'primary_kc_id'));
-  resolves('activities.primary_kc_id', kcField(s.activities, 'primary_kc_id'));
-  resolves('question_evidence_plan.primary_kc_id', kcField(s.question_evidence_plan, 'primary_kc_id'));
-  resolves('kc_scripts.kc_id', kcField(s.kc_scripts, 'kc_id'));
-  if (cov) resolves('coverage.rows.kc_id', kcField(cov.rows, 'kc_id'));
-  resolves('attachment_bindings.host_kc_id', kcField(s.attachment_bindings, 'host_kc_id'));
+  // (1) in-repo referential integrity — always
+  inSet('nodes.primary_kc_id', kcField(s.nodes, 'primary_kc_id'), declared, 'KC id(s) not in ordered_kc_ids');
+  inSet('activities.primary_kc_id', kcField(s.activities, 'primary_kc_id'), declared, 'KC id(s) not in ordered_kc_ids');
+  inSet('question_evidence_plan.primary_kc_id', kcField(s.question_evidence_plan, 'primary_kc_id'), declared, 'KC id(s) not in ordered_kc_ids');
+  inSet('kc_scripts.kc_id', kcField(s.kc_scripts, 'kc_id'), declared, 'KC id(s) not in ordered_kc_ids');
+  if (cov) inSet('coverage.rows.kc_id', kcField(cov.rows, 'kc_id'), declared, 'KC id(s) not in ordered_kc_ids');
+  inSet('attachment_bindings.host_kc_id', kcField(s.attachment_bindings, 'host_kc_id'), declared, 'KC id(s) not in ordered_kc_ids');
+  // (2) completeness — always
   const rowKcs = new Set(kcField(cov?.rows, 'kc_id'));
   const scriptKcs = new Set(kcField(s.kc_scripts, 'kc_id'));
   const missingRows = [...declared].filter((k) => !rowKcs.has(k));
   const missingScripts = [...declared].filter((k) => !scriptKcs.has(k));
   if (missingRows.length) results.push(fail('R14', input.lessonId, `coverage rows missing KC(s): ${missingRows.join(', ')}`));
   if (missingScripts.length) results.push(fail('R14', input.lessonId, `kc_scripts missing KC(s): ${missingScripts.join(', ')}`));
-  if (!results.length)
-    results.push(pass('R14', input.lessonId, `all KC refs resolve to the ${declared.size} declared KCs; coverage + kc_scripts complete`));
+  // (3) real curriculum resolution — when the manifest catalog is supplied
+  const ids = input.resolvableIds;
+  if (ids) {
+    inSet('ordered_kc_ids', [...declared], ids.kcIds, 'KC id(s) not in curriculum kc_by_id');
+    const allStrings = new Set<string>();
+    collectStrings(s, allStrings);
+    const relTokens = [...allStrings].filter((v) => /^R14-[A-Z]+-/.test(v));
+    inSet('relation refs', relTokens, ids.relationIds, 'R14 relation id(s) not in sequence_relation_by_id');
+  }
+  if (!results.some((r) => !r.ok)) {
+    results.push(
+      pass(
+        'R14',
+        input.lessonId,
+        ids
+          ? `all ${declared.size} KCs + relation refs resolve in the curriculum catalog; refs ⊆ ordered_kc_ids; coverage + kc_scripts complete`
+          : `KC refs ⊆ the ${declared.size} declared KCs; coverage + kc_scripts complete (curriculum catalog N/A — no manifest supplied)`,
+      ),
+    );
+  }
   return results;
 }
 
