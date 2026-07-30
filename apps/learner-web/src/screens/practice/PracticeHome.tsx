@@ -191,11 +191,47 @@ export function PracticeHome() {
                 </div>
               ) : (
                 // Reachable ONLY before the learner has finished a single lesson: Practice
-                // pulls fresh questions from finished lessons, so there is nothing to rank yet.
-                <p className="mc-muted">
-                  Finish a lesson to see your weakest spots here — Practice pulls fresh questions
-                  from lessons you&rsquo;ve already finished.
-                </p>
+                // pulls fresh questions from finished lessons, so there is nothing to rank
+                // yet. Preview the three rings that WILL populate here with muted, dashed
+                // GHOST skeletons (no real numbers, no navigation), then the copy that
+                // explains what fills them — so the section reads as "three rings will show
+                // up once you finish lessons" rather than as an empty line of text.
+                <div className="mc-weakest__empty">
+                  <div className="mc-weakest__rings mc-weakest__rings--ghost" aria-hidden="true">
+                    {[0, 1, 2].map((i) => (
+                      <div key={i} className="mc-weakest__ghost">
+                        <svg className="mc-ring mc-ring--ghost" viewBox="0 0 100 100" aria-hidden="true">
+                          <circle
+                            className="mc-ring__track mc-ring__track--ghost"
+                            cx="50"
+                            cy="50"
+                            r="42"
+                          />
+                          <circle
+                            className="mc-ring__arc mc-ring__arc--ghost"
+                            cx="50"
+                            cy="50"
+                            r="42"
+                          />
+                          <text
+                            className="mc-ring__ghostmark"
+                            x="50"
+                            y="50"
+                            dominantBaseline="central"
+                            textAnchor="middle"
+                          >
+                            &mdash;
+                          </text>
+                        </svg>
+                        <span className="mc-weakest__ringtitle mc-weakest__ghosttitle">Lesson</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mc-muted">
+                    Finish a lesson to see your weakest spots here — Practice pulls fresh questions
+                    from lessons you&rsquo;ve already finished.
+                  </p>
+                </div>
               )}
             </section>
           </Stack>

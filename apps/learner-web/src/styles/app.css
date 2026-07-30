@@ -3673,6 +3673,45 @@ body {
   color: var(--mc-primary-text);
 }
 
+/* Empty state (no lesson finished yet): preview the three rings that WILL populate
+   here as muted, dashed GHOST skeletons in the SAME 3-across layout and ring size as
+   the real rings — but with no real numbers and no navigation — then the explanatory
+   copy below. Reads as "three rings will fill in once you finish lessons." */
+.mc-weakest__empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-4);
+}
+.mc-weakest__ghost {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mc-space-2);
+  padding: var(--mc-space-2);
+}
+/* A fainter track than the real ring's, so the whole skeleton reads as "pending". */
+.mc-ring--ghost .mc-ring__track--ghost {
+  stroke: color-mix(in srgb, var(--mc-ink) 8%, transparent);
+}
+/* Dashed, muted outline in place of a filled progress arc — an unmistakable "not
+   yet", carrying no percentage. Static (no dash transition). */
+.mc-ring__arc--ghost {
+  stroke: color-mix(in srgb, var(--mc-ink) 22%, transparent);
+  stroke-dasharray: 5 9;
+  transition: none;
+}
+/* A muted em dash where the percent would be, so a ghost never shows a fake number. */
+.mc-ring__ghostmark {
+  font-family: var(--mc-font-display);
+  font-size: 24px;
+  font-weight: 700;
+  fill: color-mix(in srgb, var(--mc-ink) 30%, transparent);
+}
+.mc-weakest__ghosttitle {
+  color: color-mix(in srgb, var(--mc-ink) 45%, transparent);
+  font-weight: 600;
+}
+
 /* ---- Practice test dashboard (presentational, empty states only) ---- */
 .mc-testdash__head {
   display: flex;
