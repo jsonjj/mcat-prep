@@ -1,0 +1,387 @@
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import {
+  normalizeLesson,
+  type NormalizedItem,
+  type NormalizedLesson,
+  type RawLessonArtifacts,
+} from '@mcat/content/lesson-normalization';
+
+import { VECTOR_LESSON_PROTECTED_ANSWERS } from './vector-lesson-protected';
+
+/**
+ * The one seam through which the learner runtime obtains lesson content.
+ *
+ * It reads the vendored catalog under `content/lessons/<id>/`, hands the raw
+ * artifacts to `@mcat/content` `normalizeLesson`, and returns the SAME
+ * `NormalizedLesson` every downstream consumer already speaks (the Phase 3
+ * validator, the Phase 5 runtime). The learner-facing surface
+ * (`getNormalizedLesson`) is answer-free by construction — normalization never
+ * reads protected material. Correct answers live ONLY behind `getAnswerKey`,
+ * which is server-only and is the seam the browser-boundary architecture test
+ * forbids `apps/learner-web` from reaching.
+ *
+ * Storage is an implementation detail: this repo-backed provider satisfies the
+ * interface with the filesystem today; a bundle- or DB-backed provider can drop
+ * in later without changing a caller (design note D5).
+ */
+export interface LessonContentProvider {
+  /** Every lesson id discovered in the catalog, sorted. */
+  listLessonIds(): readonly string[];
+  hasLesson(lessonId: string): boolean;
+  /** Learner-safe normalized lesson. Throws `UnknownLessonError` / normalization errors; never returns a key. */
+  getNormalizedLesson(lessonId: string): NormalizedLesson;
+  /** SERVER ONLY. Correct answers for every scored item. Never serialize to a browser route. */
+  getAnswerKey(lessonId: string): ServerAnswerKey;
+  /** `content_sha256` of the lesson script — the content revision to attribute evidence to. */
+  getDefinitionHash(lessonId: string): string;
+}
+
+/** SERVER-ONLY correct-answer record for one scored item. */
+export interface ServerItemAnswer {
+  readonly itemId: string;
+  readonly primaryKcId: string;
+  /** Projection response type (`single_select`, `MULTIPLE_CHOICE`, `SHORT_RESPONSE`, …). */
+  readonly responseType: string;
+  /**
+   * The winning `NormalizedChoice.choiceId` for select items; `null` for
+   * free/short-response items, whose answer is `acceptedResponses` instead.
+   */
+  readonly correctChoiceId: string | null;
+  /** One or more canonical correct responses (option text or accepted free text). Always non-empty. */
+  readonly acceptedResponses: readonly string[];
+  /** Post-commitment rationale/derivation when the source supplies one. */
+  readonly rationale: string | null;
+  /**
+   * For structured/constructed-response items that have no single correct
+   * option, the raw server-only scoring authority (e.g. L3
+   * `constructed_system_and_solution`: required fields + expected equation forms
+   * + solution pair). Absent for plain multiple-choice / short-response items.
+   */
+  readonly structuredAuthority?: Readonly<Record<string, unknown>>;
+}
+
+/** SERVER-ONLY answer key for a lesson: `itemId -> answer`, over scored items only. */
+export interface ServerAnswerKey {
+  readonly lessonId: string;
+  readonly definitionHash: string;
+  readonly byItemId: Readonly<Record<string, ServerItemAnswer>>;
+}
+
+export class UnknownLessonError extends Error {
+  constructor(
+    readonly lessonId: string,
+    readonly known: readonly string[],
+  ) {
+    super(`unknown lesson "${lessonId}"; known: ${known.join(', ') || '(none)'}`);
+    this.name = 'UnknownLessonError';
+  }
+}
+
+/**
+ * A scored item's correct answer could not be resolved from its protected
+ * material. This is always a hard failure — the provider NEVER guesses or
+ * silently drops an item, because a lesson that scores against a hole is worse
+ * than one that refuses to load.
+ */
+export class AnswerKeyResolutionError extends Error {
+  constructor(
+    message: string,
+    readonly detail: { lessonId: string; itemId?: string },
+  ) {
+    super(message);
+    this.name = 'AnswerKeyResolutionError';
+  }
+}
+
+// The vendored catalog root, resolved relative to THIS module so the provider is
+// cwd-independent (services/lambdas/learner-api/src -> repo root -> content/lessons).
+const DEFAULT_CONTENT_ROOT = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+  '..',
+  '..',
+  'content',
+  'lessons',
+);
+
+type JsonRecord = Record<string, unknown>;
+
+const asRecord = (value: unknown): JsonRecord | undefined =>
+  value !== null && typeof value === 'object' && !Array.isArray(value) ? (value as JsonRecord) : undefined;
+
+const asArray = (value: unknown): readonly unknown[] => (Array.isArray(value) ? value : []);
+
+const readJsonFile = (path: string): unknown => JSON.parse(readFileSync(path, 'utf8'));
+
+function readArtifacts(dir: string): RawLessonArtifacts {
+  const learnerSafePath = join(dir, 'learner-safe-items.json');
+  const protectedPath = join(dir, 'protected-items.json');
+  return {
+    script: readJsonFile(join(dir, 'lesson-script.json')),
+    learnerSafeItems: existsSync(learnerSafePath) ? readJsonFile(learnerSafePath) : undefined,
+    protectedItems: existsSync(protectedPath) ? readJsonFile(protectedPath) : undefined,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Per-grammar answer resolution. Each returns the choice whose id/ordinal/text
+// the runtime will score the learner's committed choice against — resolved
+// against the SAME normalized choices the learner sees, so a scored answer can
+// never reference an option that does not exist.
+// ---------------------------------------------------------------------------
+
+function resolveL1Answer(lessonId: string, item: NormalizedItem): ServerItemAnswer {
+  // L1 keeps its key in code (no protected-items.json): a letter per item_binding_id.
+  const record = VECTOR_LESSON_PROTECTED_ANSWERS[item.itemId];
+  if (record === undefined) {
+    throw new AnswerKeyResolutionError(`L1 item "${item.itemId}" has no entry in the protected answer authority`, {
+      lessonId,
+      itemId: item.itemId,
+    });
+  }
+  const choice = item.projection.choices.find((c) => c.choiceId === record.correctChoiceId);
+  if (choice === undefined) {
+    throw new AnswerKeyResolutionError(
+      `L1 correct choice "${record.correctChoiceId}" is not among the ${item.projection.choices.length} options for "${item.itemId}"`,
+      { lessonId, itemId: item.itemId },
+    );
+  }
+  return {
+    itemId: item.itemId,
+    primaryKcId: item.primaryKcId,
+    responseType: item.projection.responseType,
+    correctChoiceId: choice.choiceId,
+    acceptedResponses: [choice.text],
+    rationale: record.derivation,
+  };
+}
+
+interface L2ProtectedRecord {
+  readonly acceptedResponses: readonly string[];
+  readonly rationale: string | null;
+}
+
+function buildL2Index(artifacts: RawLessonArtifacts): Map<string, L2ProtectedRecord> {
+  const index = new Map<string, L2ProtectedRecord>();
+  for (const raw of asArray(asRecord(artifacts.protectedItems)?.items)) {
+    const rec = asRecord(raw);
+    if (rec === undefined) continue;
+    const key =
+      typeof rec.internal_item_binding_id === 'string'
+        ? rec.internal_item_binding_id
+        : typeof rec.prompt_ref === 'string'
+          ? rec.prompt_ref
+          : undefined;
+    if (key === undefined) continue;
+    const accepted = asArray(rec.accepted_responses).filter((x): x is string => typeof x === 'string');
+    const correct = typeof rec.correct_response === 'string' ? rec.correct_response : undefined;
+    const acceptedResponses = [...new Set([...(correct !== undefined ? [correct] : []), ...accepted])];
+    const rationale =
+      typeof rec.rationale === 'string'
+        ? rec.rationale
+        : typeof rec.post_commitment_feedback === 'string'
+          ? rec.post_commitment_feedback
+          : null;
+    index.set(key, { acceptedResponses, rationale });
+  }
+  return index;
+}
+
+function resolveL2Answer(
+  lessonId: string,
+  item: NormalizedItem,
+  index: Map<string, L2ProtectedRecord>,
+): ServerItemAnswer {
+  const record = index.get(item.itemId);
+  if (record === undefined) {
+    throw new AnswerKeyResolutionError(
+      `L2 item "${item.itemId}" has no protected record (by internal_item_binding_id/prompt_ref)`,
+      { lessonId, itemId: item.itemId },
+    );
+  }
+  if (record.acceptedResponses.length === 0) {
+    throw new AnswerKeyResolutionError(`L2 item "${item.itemId}" has no correct_response`, {
+      lessonId,
+      itemId: item.itemId,
+    });
+  }
+  const base = {
+    itemId: item.itemId,
+    primaryKcId: item.primaryKcId,
+    responseType: item.projection.responseType,
+    rationale: record.rationale,
+  };
+  // Multiple-choice: the correct_response is the TEXT of one option. Free/short
+  // response items carry no options, so the accepted text(s) ARE the key.
+  if (item.projection.choices.length === 0) {
+    return { ...base, correctChoiceId: null, acceptedResponses: record.acceptedResponses };
+  }
+  const accepted = new Set(record.acceptedResponses);
+  const choice = item.projection.choices.find((c) => accepted.has(c.text));
+  if (choice === undefined) {
+    throw new AnswerKeyResolutionError(
+      `L2 correct_response for "${item.itemId}" ("${record.acceptedResponses[0]}") matches none of the ${item.projection.choices.length} options`,
+      { lessonId, itemId: item.itemId },
+    );
+  }
+  return { ...base, correctChoiceId: choice.choiceId, acceptedResponses: [choice.text] };
+}
+
+interface L3ProtectedRecord {
+  /** Present for multiple-choice items; absent for constructed-response items. */
+  readonly correctOptionIndex: number | undefined;
+  /** Present for `constructed_system_and_solution` items; absent for multiple choice. */
+  readonly responseAuthority: Record<string, unknown> | undefined;
+  readonly rationale: string | null;
+}
+
+function buildL3Index(artifacts: RawLessonArtifacts): Map<string, L3ProtectedRecord> {
+  const index = new Map<string, L3ProtectedRecord>();
+  for (const raw of asArray(asRecord(artifacts.protectedItems)?.records)) {
+    const rec = asRecord(raw);
+    if (rec === undefined) continue;
+    if (typeof rec.answer_record_id !== 'string') continue;
+    index.set(rec.answer_record_id, {
+      correctOptionIndex: typeof rec.correct_option_index === 'number' ? rec.correct_option_index : undefined,
+      responseAuthority: asRecord(rec.response_authority),
+      rationale: typeof rec.rationale === 'string' ? rec.rationale : null,
+    });
+  }
+  return index;
+}
+
+function resolveL3Answer(
+  lessonId: string,
+  item: NormalizedItem,
+  index: Map<string, L3ProtectedRecord>,
+): ServerItemAnswer {
+  const record = index.get(item.itemId);
+  if (record === undefined) {
+    throw new AnswerKeyResolutionError(`L3 item "${item.itemId}" has no protected record (by answer_record_id)`, {
+      lessonId,
+      itemId: item.itemId,
+    });
+  }
+  const base = {
+    itemId: item.itemId,
+    primaryKcId: item.primaryKcId,
+    responseType: item.projection.responseType,
+    rationale: record.rationale,
+  };
+
+  // Constructed-response items (`constructed_system_and_solution`) carry a
+  // response_authority (equation forms + solution pair) instead of an option
+  // index — they are NOT multiple choice, so there is no choiceId to point at.
+  if (record.correctOptionIndex === undefined) {
+    if (record.responseAuthority === undefined) {
+      throw new AnswerKeyResolutionError(
+        `L3 item "${item.itemId}" has neither a correct_option_index nor a response_authority`,
+        { lessonId, itemId: item.itemId },
+      );
+    }
+    const accepted = [
+      ...asArray(record.responseAuthority.expected_equation_forms),
+      ...asArray(record.responseAuthority.expected_solution_pair),
+    ].filter((x): x is string => typeof x === 'string');
+    if (accepted.length === 0) {
+      throw new AnswerKeyResolutionError(
+        `L3 item "${item.itemId}" response_authority carries no expected equation/solution strings`,
+        { lessonId, itemId: item.itemId },
+      );
+    }
+    return { ...base, correctChoiceId: null, acceptedResponses: accepted, structuredAuthority: record.responseAuthority };
+  }
+
+  if (!Number.isInteger(record.correctOptionIndex)) {
+    throw new AnswerKeyResolutionError(`L3 item "${item.itemId}" has a non-integer correct_option_index`, {
+      lessonId,
+      itemId: item.itemId,
+    });
+  }
+  const choice = item.projection.choices.find((c) => c.ordinal === record.correctOptionIndex);
+  if (choice === undefined) {
+    throw new AnswerKeyResolutionError(
+      `L3 correct_option_index ${record.correctOptionIndex} for "${item.itemId}" is out of range (${item.projection.choices.length} options)`,
+      { lessonId, itemId: item.itemId },
+    );
+  }
+  return { ...base, correctChoiceId: choice.choiceId, acceptedResponses: [choice.text] };
+}
+
+function buildAnswerKey(normalized: NormalizedLesson, artifacts: RawLessonArtifacts): ServerAnswerKey {
+  const scored = normalized.items.filter((item) => item.scored);
+  const byItemId: Record<string, ServerItemAnswer> = {};
+  switch (normalized.grammar) {
+    case 'L1_INLINE':
+      for (const item of scored) byItemId[item.itemId] = resolveL1Answer(normalized.lessonId, item);
+      break;
+    case 'L2_PROMPTREF': {
+      const index = buildL2Index(artifacts);
+      for (const item of scored) byItemId[item.itemId] = resolveL2Answer(normalized.lessonId, item, index);
+      break;
+    }
+    case 'L3_PROJECTIONREF': {
+      const index = buildL3Index(artifacts);
+      for (const item of scored) byItemId[item.itemId] = resolveL3Answer(normalized.lessonId, item, index);
+      break;
+    }
+  }
+  return { lessonId: normalized.lessonId, definitionHash: normalized.definitionHash, byItemId };
+}
+
+/**
+ * The repo-backed provider. Discovers every `content/lessons/<id>/` carrying a
+ * `lesson-script.json`, keyed by the script's own `payload.lesson_id`.
+ * Normalization and answer keys are resolved lazily and cached.
+ */
+export function createRepoLessonContentProvider(contentRoot: string = DEFAULT_CONTENT_ROOT): LessonContentProvider {
+  const dirById = new Map<string, string>();
+  if (existsSync(contentRoot)) {
+    for (const entry of readdirSync(contentRoot, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const dir = join(contentRoot, entry.name);
+      const scriptPath = join(dir, 'lesson-script.json');
+      if (!existsSync(scriptPath)) continue;
+      const payload = asRecord(asRecord(readJsonFile(scriptPath))?.payload);
+      const lessonId = typeof payload?.lesson_id === 'string' ? payload.lesson_id : undefined;
+      if (lessonId !== undefined) dirById.set(lessonId, dir);
+    }
+  }
+  const ids = [...dirById.keys()].sort();
+  const normalizedCache = new Map<string, NormalizedLesson>();
+  const answerCache = new Map<string, ServerAnswerKey>();
+
+  const dirOf = (lessonId: string): string => {
+    const dir = dirById.get(lessonId);
+    if (dir === undefined) throw new UnknownLessonError(lessonId, ids);
+    return dir;
+  };
+  const normalizedOf = (lessonId: string): NormalizedLesson => {
+    const cached = normalizedCache.get(lessonId);
+    if (cached !== undefined) return cached;
+    const normalized = normalizeLesson(readArtifacts(dirOf(lessonId)));
+    normalizedCache.set(lessonId, normalized);
+    return normalized;
+  };
+
+  return {
+    listLessonIds: () => ids,
+    hasLesson: (lessonId) => dirById.has(lessonId),
+    getNormalizedLesson: normalizedOf,
+    getDefinitionHash: (lessonId) => normalizedOf(lessonId).definitionHash,
+    getAnswerKey: (lessonId) => {
+      const cached = answerCache.get(lessonId);
+      if (cached !== undefined) return cached;
+      const key = buildAnswerKey(normalizedOf(lessonId), readArtifacts(dirOf(lessonId)));
+      answerCache.set(lessonId, key);
+      return key;
+    },
+  };
+}
+
+/** Default catalog-backed provider for the deployed learner runtime. */
+export const lessonContentProvider = createRepoLessonContentProvider();
