@@ -96,6 +96,38 @@ export interface RunningLocalLessonServer {
   close(): Promise<void>;
 }
 
+/**
+ * The delivered-revision field the learner-api runtime pins onto each persisted
+ * run. Read STRUCTURALLY on purpose: local-authority owns neither run type, and
+ * a debug projection should not import a lesson-runtime internal just to name one
+ * string. L1 keeps a single bespoke `vectorLessonRun`; every normalized lesson
+ * (L2, L3, and whatever the authoring template yields next) is keyed by id under
+ * `normalizedLessonRuns`. Both carry `definitionHash` = the script `content_sha256`
+ * the runtime scored against.
+ */
+interface PersistedLessonRuns {
+  readonly vectorLessonRun?: { readonly definitionHash?: unknown };
+  readonly normalizedLessonRuns?: Readonly<
+    Record<string, { readonly definitionHash?: unknown } | undefined>
+  >;
+}
+
+/**
+ * The `content_sha256` this learner was delivered for `lessonId`, or `null` when
+ * no run exists yet. The normalized map is authoritative for every lesson it
+ * holds; the bespoke `vectorLessonRun` slot answers only for L1 (its sole
+ * occupant), so a normalized L1 would never be shadowed by it.
+ */
+function deliveredContentSha256For(state: PersistedLessonRuns, lessonId: string): string | null {
+  const normalized = state.normalizedLessonRuns?.[lessonId]?.definitionHash;
+  if (typeof normalized === 'string') return normalized;
+  if (lessonId === HARNESS_LESSON_ID) {
+    const vector = state.vectorLessonRun?.definitionHash;
+    if (typeof vector === 'string') return vector;
+  }
+  return null;
+}
+
 function statusFor(error: AuthorityKernelError): number {
   if (error.code === 'not_found') return 404;
   if (error.code === 'stream_conflict' || error.code === 'content_version_conflict') {
@@ -288,6 +320,7 @@ export async function createLocalLessonHttpServer(
           const projection = await repository.loadProjection(principal.learnerId);
           if (projection === null) throw notFound();
           const state = learnerStateFromProjection(projection);
+          const runs = state as unknown as PersistedLessonRuns;
           const lessonIds = new Set([
             HARNESS_LESSON_ID,
             ...(state.mastery?.practicedLessonIds ?? []),
@@ -305,6 +338,7 @@ export async function createLocalLessonHttpServer(
               lessons: [...lessonIds].map((lessonId) => ({
                 lessonId,
                 requiredKcIds: orderedKcsForLesson(lessonId),
+                deliveredContentSha256: deliveredContentSha256For(runs, lessonId),
               })),
             }),
             // Never CORS-shared. Unreachable with an `Origin`, and no response

@@ -1,5 +1,6 @@
 import { request as httpRequest } from 'node:http';
 import { assertNoProtectedFields } from '@mcat/content';
+import { buildVectorLessonArtifacts } from '@mcat/content/v3-vector-lesson';
 import {
   VectorLessonRunViewSchema,
   VectorLessonStartResponseSchema,
@@ -277,6 +278,33 @@ describe('local debug learner-state route', () => {
     expect(lesson.requiredKcCount).toBe(3);
     expect(lesson.members).toHaveLength(3);
     expect(lesson.members.every((member) => member.pL > 0)).toBe(true);
+  });
+
+  it('surfaces the delivered content revision the runtime pinned, null before a run', async () => {
+    vi.stubEnv(DEBUG_STATE_OPT_IN_ENV_VAR, '1');
+    const server = await createLocalLessonHttpServer({ port: 0 });
+    running.push(server);
+
+    // Before any run the harness lesson is still reported, but it carries no
+    // revision: "never delivered" must not read as "delivered revision 000…0".
+    const before = (await (
+      await fetch(`${server.baseUrl}${DEBUG_LEARNER_STATE_PATH}`)
+    ).json()) as DebugLearnerStateView;
+    const beforeLesson = before.lessons.find((entry) => entry.lessonId === 'V3-LES-130923');
+    expect(beforeLesson?.deliveredContentSha256).toBeNull();
+
+    // After delivery the endpoint returns the EXACT content_sha256 the runtime
+    // pinned onto the run and scored against — the attribution key for the
+    // evidence that same run just wrote.
+    await runOneLessonQuestion(server);
+    const after = (await (
+      await fetch(`${server.baseUrl}${DEBUG_LEARNER_STATE_PATH}`)
+    ).json()) as DebugLearnerStateView;
+    const afterLesson = after.lessons.find((entry) => entry.lessonId === 'V3-LES-130923');
+    expect(afterLesson?.deliveredContentSha256).toMatch(/^[0-9a-f]{64}$/);
+    expect(afterLesson?.deliveredContentSha256).toBe(
+      buildVectorLessonArtifacts().script.content_sha256,
+    );
   });
 
   it('returns no protected material', async () => {

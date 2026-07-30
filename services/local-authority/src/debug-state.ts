@@ -180,6 +180,14 @@ export type DebugLessonView =
   | {
       readonly lessonId: string;
       readonly status: 'available';
+      /**
+       * `content_sha256` of the revision this learner was actually delivered —
+       * the attribution key for every piece of evidence the run produced. On
+       * BOTH arms because delivery is independent of whether the lesson rolls
+       * up: an unavailable lesson can still have been served an old revision.
+       * `null` means no run yet, kept distinct from "served a stale revision".
+       */
+      readonly deliveredContentSha256: string | null;
       readonly pL: number;
       readonly mastered: boolean;
       readonly reviewDue: boolean;
@@ -191,6 +199,7 @@ export type DebugLessonView =
   | {
       readonly lessonId: string;
       readonly status: 'unavailable';
+      readonly deliveredContentSha256: string | null;
       readonly rejectionCodes: readonly LessonRollupRejectionCode[];
       readonly missingKcIds: readonly string[];
     };
@@ -245,6 +254,14 @@ export interface DebugLessonInput {
    * reported as `LESSON_KC_MAP_MISSING` rather than hidden.
    */
   readonly requiredKcIds: readonly string[] | null;
+  /**
+   * The `content_sha256` of the revision this learner was actually delivered —
+   * the `definitionHash` the runtime pins onto the persisted run (`VectorLessonRun`
+   * for L1, `NormalizedLessonRun` for every normalized lesson). The caller reads
+   * it off the run; this projection only forwards it. `null` when there is no run
+   * yet, so "never started" never looks like "served revision 000…0".
+   */
+  readonly deliveredContentSha256: string | null;
 }
 
 export interface DebugLearnerStateInput {
@@ -369,6 +386,7 @@ function lessonViews(
       views.push({
         lessonId: result.lessonId,
         status: 'unavailable',
+        deliveredContentSha256: lesson.deliveredContentSha256,
         rejectionCodes: result.rejectionCodes,
         missingKcIds: result.missingKcIds,
       });
@@ -378,6 +396,7 @@ function lessonViews(
     views.push({
       lessonId: view.lessonId,
       status: 'available',
+      deliveredContentSha256: lesson.deliveredContentSha256,
       pL: view.pL,
       mastered: view.mastered,
       reviewDue: view.reviewDue,

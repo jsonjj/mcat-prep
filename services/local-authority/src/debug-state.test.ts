@@ -13,6 +13,10 @@ import {
 
 const NOW = '2026-07-27T12:00:00.000Z' as UtcTimestamp;
 
+/** Obviously-synthetic 64-hex content hashes; two distinct so a swap would show. */
+const SAMPLE_CONTENT_SHA = 'ab'.repeat(32);
+const OTHER_CONTENT_SHA = 'cd'.repeat(32);
+
 const practiced = (pL: number, lastPracticedAt = NOW): MemoryState => ({
   ...initialMemoryState(pL),
   lastPracticedAt,
@@ -203,6 +207,7 @@ describe('buildDebugLearnerState', () => {
           {
             lessonId: 'V3-LES-130923',
             requiredKcIds: ['V3-KC-866848', 'V3-KC-700208', 'V3-KC-159529'],
+            deliveredContentSha256: SAMPLE_CONTENT_SHA,
           },
         ],
       }),
@@ -211,6 +216,7 @@ describe('buildDebugLearnerState', () => {
     const lesson = view.lessons[0]!;
     expect(lesson.status).toBe('available');
     if (lesson.status !== 'available') throw new Error('unreachable');
+    expect(lesson.deliveredContentSha256).toBe(SAMPLE_CONTENT_SHA);
     expect(lesson.requiredKcCount).toBe(3);
     expect(lesson.members.map((m) => m.kcId)).toEqual([
       'V3-KC-866848',
@@ -231,8 +237,15 @@ describe('buildDebugLearnerState', () => {
     const view = buildDebugLearnerState(
       baseInput({
         lessons: [
-          { lessonId: 'lesson-enz-inhibition', requiredKcIds: null },
-          { lessonId: 'V3-LES-EMPTY', requiredKcIds: [] },
+          // Served an old revision, then lost its curriculum membership: the
+          // rollup is unavailable, but the delivered revision still attributes
+          // whatever evidence that run produced.
+          {
+            lessonId: 'lesson-enz-inhibition',
+            requiredKcIds: null,
+            deliveredContentSha256: OTHER_CONTENT_SHA,
+          },
+          { lessonId: 'V3-LES-EMPTY', requiredKcIds: [], deliveredContentSha256: null },
         ],
       }),
     );
@@ -241,12 +254,14 @@ describe('buildDebugLearnerState', () => {
       {
         lessonId: 'lesson-enz-inhibition',
         status: 'unavailable',
+        deliveredContentSha256: OTHER_CONTENT_SHA,
         rejectionCodes: ['LESSON_KC_MAP_MISSING'],
         missingKcIds: [],
       },
       {
         lessonId: 'V3-LES-EMPTY',
         status: 'unavailable',
+        deliveredContentSha256: null,
         rejectionCodes: ['LESSON_KC_MAP_EMPTY'],
         missingKcIds: [],
       },
@@ -257,12 +272,65 @@ describe('buildDebugLearnerState', () => {
     const view = buildDebugLearnerState(
       baseInput({
         lessons: [
-          { lessonId: 'V3-LES-130923', requiredKcIds: ['V3-KC-866848'] },
-          { lessonId: 'V3-LES-130923', requiredKcIds: ['V3-KC-866848'] },
+          {
+            lessonId: 'V3-LES-130923',
+            requiredKcIds: ['V3-KC-866848'],
+            deliveredContentSha256: SAMPLE_CONTENT_SHA,
+          },
+          {
+            lessonId: 'V3-LES-130923',
+            requiredKcIds: ['V3-KC-866848'],
+            deliveredContentSha256: SAMPLE_CONTENT_SHA,
+          },
         ],
       }),
     );
     expect(view.lessons).toHaveLength(1);
+  });
+
+  it('forwards the delivered content revision on both arms, null before a run', () => {
+    const view = buildDebugLearnerState(
+      baseInput({
+        mastery: mastery({ kc: { 'V3-KC-866848': practiced(0.5) } }),
+        lessons: [
+          // Delivered and rolls up.
+          {
+            lessonId: 'V3-LES-130923',
+            requiredKcIds: ['V3-KC-866848'],
+            deliveredContentSha256: SAMPLE_CONTENT_SHA,
+          },
+          // Available membership, but never started: revision is null, not a hash.
+          {
+            lessonId: 'V3-LES-789208',
+            requiredKcIds: ['V3-KC-866848'],
+            deliveredContentSha256: null,
+          },
+          // Unavailable rollup, yet the served revision is still attributed.
+          {
+            lessonId: 'lesson-enz-inhibition',
+            requiredKcIds: null,
+            deliveredContentSha256: OTHER_CONTENT_SHA,
+          },
+        ],
+      }),
+    );
+
+    const [delivered, unstarted, unavailable] = view.lessons;
+    expect(delivered).toMatchObject({
+      lessonId: 'V3-LES-130923',
+      status: 'available',
+      deliveredContentSha256: SAMPLE_CONTENT_SHA,
+    });
+    expect(unstarted).toMatchObject({
+      lessonId: 'V3-LES-789208',
+      status: 'available',
+      deliveredContentSha256: null,
+    });
+    expect(unavailable).toMatchObject({
+      lessonId: 'lesson-enz-inhibition',
+      status: 'unavailable',
+      deliveredContentSha256: OTHER_CONTENT_SHA,
+    });
   });
 
   it('copies only allowlisted evidence fields', () => {
@@ -322,7 +390,13 @@ describe('buildDebugLearnerState', () => {
         highestAppliedObservationSequence: 1,
       }),
       evidence: [evidenceRecord()],
-      lessons: [{ lessonId: 'V3-LES-130923', requiredKcIds: ['V3-KC-866848'] }],
+      lessons: [
+        {
+          lessonId: 'V3-LES-130923',
+          requiredKcIds: ['V3-KC-866848'],
+          deliveredContentSha256: SAMPLE_CONTENT_SHA,
+        },
+      ],
     });
     const snapshot = structuredClone(input);
 
