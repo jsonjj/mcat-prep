@@ -242,12 +242,22 @@ export interface CarriedActivity {
  */
 export interface TodaysPathPracticeTest {
   readonly due: boolean;
-  readonly phase: 'baseline' | 'monthly' | 'biweekly' | 'weekly';
-  /** Sitting length in minutes (a half-length test ≈ 3 hours), reserved atomically. */
+  /** Cadence ramp phase (frequency): baseline → early → mid → final. */
+  readonly phase: 'baseline' | 'early' | 'mid' | 'final';
+  /** Length tier the due test is sized to (short ≈ 40m, standard ≈ 90m, long ≈ 3h). */
+  readonly tier: 'short' | 'standard' | 'long';
+  /** Sitting length in minutes for the chosen tier, reserved atomically. */
   readonly estimatedMinutes: number;
   /** Human-auditable cadence reason for the "why this now?" line. */
   readonly reason: string;
 }
+
+/** Learner-facing label for a length tier (used in the day's activity detail). */
+const PRACTICE_TEST_TIER_LABEL: Readonly<Record<TodaysPathPracticeTest['tier'], string>> = {
+  short: 'Short',
+  standard: 'Half-length',
+  long: 'Full-length',
+};
 
 export interface TodaysPathSnapshot {
   readonly planDate: string;
@@ -453,7 +463,7 @@ export function buildTodaysPath(
       activityId: 'practice-test',
       kind: 'practice_test',
       title: 'Practice Test',
-      detail: `Half-length test (${test.phase}) — spaced retrieval practice; review it before the next one.`,
+      detail: `${PRACTICE_TEST_TIER_LABEL[test.tier]} practice test — spaced retrieval practice; review it before the next one.`,
       estimatedMinutes: Math.max(1, test.estimatedMinutes),
       count: null,
       minutesBudget: null,

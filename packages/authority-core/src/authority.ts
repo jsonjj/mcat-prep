@@ -41,6 +41,8 @@ import {
   type PracticeQuestion,
   type PracticeQueueItem,
   type PracticeQueueView,
+  type PastPracticeTest,
+  type PracticeTestSummaryView,
   type PolicyVersion,
   type QualifiedBktObservation,
   type ReasoningOperation,
@@ -87,7 +89,9 @@ import {
   isLessonRollupAvailable,
   overallCarsReadiness,
   PRACTICE_SELECTION_CONFIG,
-  PRACTICE_TEST_ESTIMATED_MINUTES,
+  PRACTICE_TEST_TIER_MINUTES,
+  estimatePracticeTestScaled,
+  practiceReadinessLabel,
   practiceSpecId,
   predictedCorrect,
   PRIOR_PL0,
@@ -111,6 +115,7 @@ import {
   type MemoryState,
   type PracticeCarsUnit,
   type PracticeSnapshot,
+  type PracticeTestLengthTier,
   type PracticeUnit,
   type TodaysPathCandidateLesson,
   type TodaysPathSnapshot,
@@ -148,6 +153,8 @@ import type {
   MasteryMapEntry,
   PracticeItemView,
   PracticeResult,
+  PracticeTestCompletion,
+  PracticeTestSittingRecord,
   SessionSummary,
   StudyPhase,
   StudyStepView,
@@ -618,6 +625,27 @@ const evidenceKindForPhase = (phase: StudyPhase): EvidenceKind => {
       return 'instruction';
   }
 };
+
+/**
+ * The serve-boundary decision for STARTING a practice test (WS5, §6): whether one
+ * is due right now and the length tier it should be dealt at. The dev practice-
+ * test API consults this before creating a session, so a test cannot be started
+ * off-cadence — the §6 rules are enforced at the serving boundary, not only in
+ * Today's Path.
+ */
+export interface PracticeTestServeGate {
+  readonly due: boolean;
+  readonly reason: string;
+  readonly tier: PracticeTestLengthTier;
+}
+
+/** Reverse of {@link PRACTICE_TEST_TIER_MINUTES}: a reserved duration → its tier. */
+function tierFromReservedMinutes(minutes: number): PracticeTestLengthTier {
+  for (const tier of ['short', 'standard', 'long'] as const) {
+    if (PRACTICE_TEST_TIER_MINUTES[tier] === minutes) return tier;
+  }
+  return 'standard';
+}
 
 /**
  * The authoritative engine. Pure with respect to injected `clock`; holds no I/O.
@@ -1275,6 +1303,16 @@ export class Authority {
     // teaching, so there must be enough teaching to measure before one is offered;
     // the same gate Practice uses). Writes no mastery.
     const pt = state.practiceTests;
+    // Stage signal for the LENGTH tier: blend current mastery (mean reasoning-op
+    // P(L)) with lesson completion; days-to-exam is added inside the policy. Both
+    // are learner reads the snapshot already has — no new mastery is written.
+    const skillStates = Object.values(state.mastery?.skill ?? {});
+    const masteryPct =
+      skillStates.length > 0
+        ? skillStates.reduce((sum, ms) => sum + currentPL(ms, now), 0) / skillStates.length
+        : 0;
+    const lessonCompletionPct =
+      input.candidateLessons.length > 0 ? completed.size / input.candidateLessons.length : 0;
     const testDecision = decidePracticeTest({
       today: planDate,
       examDate: state.goal?.testDate ?? null,
@@ -1283,12 +1321,16 @@ export class Authority {
       // prior test exists anyway.
       lastTestReviewed: pt?.lastTestReviewed ?? true,
       testsCompleted: pt?.testsCompleted ?? 0,
+      masteryPct,
+      lessonCompletionPct,
     });
     const practiceTest = practiceUnlocked
       ? {
           due: testDecision.due,
           phase: testDecision.phase,
-          estimatedMinutes: PRACTICE_TEST_ESTIMATED_MINUTES,
+          tier: testDecision.tier,
+          // Sized to the decided length tier (short ≈ 40m, standard ≈ 90m, long ≈ 3h).
+          estimatedMinutes: PRACTICE_TEST_TIER_MINUTES[testDecision.tier],
           reason: testDecision.reason,
         }
       : undefined;
@@ -3558,14 +3600,136 @@ export class Authority {
   }
 
   /**
+   * Record a completed test's SCORED RESULT (WS5, §6): the same cadence-state
+   * bump as {@link recordPracticeTestCompleted}, plus the persisted sitting the
+   * dashboard summary reads (trends / readiness / estimated range / past tests),
+   * plus enqueuing every science miss into the repair/Mistakes queue.
+   *
+   * GUARDRAIL: this writes NO mastery. A test re-measures capability through
+   * WS5's own decay-weighted scorer, and the misses become spaced-repair targets
+   * exactly like a practice miss (`queueRepair`, deduplicated by KC) — neither
+   * mints BKT mastery beyond the single-door write path.
+   */
+  async recordPracticeTestResult(
+    state: LearnerState,
+    completion: PracticeTestCompletion,
+  ): Promise<void> {
+    this.recordPracticeTestCompleted(state);
+    const tests = this.ensurePracticeTests(state);
+    const sitting: PracticeTestSittingRecord = {
+      sittingId: completion.sittingId,
+      takenOn: completion.takenOn,
+      tier: completion.tier,
+      itemsScored: completion.itemsScored,
+      correct: completion.correct,
+      sections: completion.sections.map((s) => ({ section: s.section, pctCorrect: s.pctCorrect })),
+      scaledScore: completion.scaledScore,
+      reviewed: false,
+    };
+    tests.sittings = [...(tests.sittings ?? []), sitting];
+
+    // Misses → repair queue, deduplicated by KC (a test that missed the same KC
+    // twice queues it once). CARS misses carry no KC and are not per-KC repairs,
+    // so the scorer already excludes them from `reviewTargets`.
+    const seen = new Set<string>();
+    for (const target of completion.reviewTargets) {
+      if (seen.has(target.kcId)) continue;
+      seen.add(target.kcId);
+      await this.practiceBank.queueRepair(
+        state.learnerId,
+        target.skill ? { kcId: target.kcId, skill: target.skill } : { kcId: target.kcId },
+        completion.takenOn,
+      );
+    }
+  }
+
+  /**
    * Record that the last completed test's REVIEW is done (WS5, §6) — the second
    * half of the loop. It releases the block-until-reviewed gate so the cadence
-   * can schedule the next test; a review with no prior completion is a no-op it
-   * tolerates rather than a state it invents. Writes NO mastery.
+   * can schedule the next test, and marks the most recent stored sitting reviewed
+   * so the dashboard's per-test "Reviewed" badge is honest. A review with no
+   * prior completion is a no-op it tolerates rather than a state it invents.
+   * Writes NO mastery.
    */
   recordPracticeTestReviewed(state: LearnerState): void {
     const tests = this.ensurePracticeTests(state);
     tests.lastTestReviewed = true;
+    const sittings = tests.sittings;
+    if (sittings && sittings.length > 0) sittings[sittings.length - 1]!.reviewed = true;
+  }
+
+  /**
+   * The Practice-test dashboard summary, built from the learner's REAL completed
+   * sittings (WS5, §6) — null until at least one test is scored, exactly the
+   * "no summary yet" answer the graceful client path already tolerates. The
+   * per-section trend points ARE each sitting's `sections`; readiness and the
+   * estimated RANGE are re-derived from the most recent sitting's %-correct via
+   * the conservative estimate policy (never a single fabricated score).
+   */
+  /**
+   * The serve-boundary gate for STARTING a practice test (WS5, §6). Due-ness is
+   * the pure §6 cadence (which needs no candidate-lesson list, so it is exact
+   * server-side) gated on practice being unlocked; the length tier prefers the
+   * one the current day's plan already reserved (built with the real candidate
+   * list) and falls back to a state-only stage read. Writes nothing.
+   */
+  practiceTestServeGate(state: LearnerState): PracticeTestServeGate {
+    const now = this.clock.now();
+    const planDate = this.planDateFor(now, this.timezoneOffset(state));
+    const practiceUnlocked =
+      (state.completedLessons?.length ?? 0) >= TODAYS_PATH_CONFIG.practiceUnlockLessons;
+    const skillStates = Object.values(state.mastery?.skill ?? {});
+    const masteryPct =
+      skillStates.length > 0
+        ? skillStates.reduce((sum, ms) => sum + currentPL(ms, now), 0) / skillStates.length
+        : 0;
+    const decision = decidePracticeTest({
+      today: planDate,
+      examDate: state.goal?.testDate ?? null,
+      lastTestDate: state.practiceTests?.lastTestDate ?? null,
+      lastTestReviewed: state.practiceTests?.lastTestReviewed ?? true,
+      testsCompleted: state.practiceTests?.testsCompleted ?? 0,
+      masteryPct,
+      // The candidate list is a client input to `buildTodaysPath`, absent at the
+      // serve boundary, so the plan's already-decided tier is preferred below.
+      lessonCompletionPct: 0,
+    });
+    const plannedTest =
+      state.plan?.planDate === planDate
+        ? state.plan.activities.find((a) => a.kind === 'practice_test')
+        : undefined;
+    const tier = plannedTest
+      ? tierFromReservedMinutes(plannedTest.estimatedMinutes)
+      : decision.tier;
+    return {
+      due: practiceUnlocked && decision.due,
+      reason: practiceUnlocked ? decision.reason : 'not_unlocked',
+      tier,
+    };
+  }
+
+  getPracticeTestSummary(state: LearnerState): PracticeTestSummaryView | null {
+    const sittings = state.practiceTests?.sittings ?? [];
+    if (sittings.length === 0) return null;
+    const pastTests: PastPracticeTest[] = sittings.map((s, index) => ({
+      testId: s.sittingId,
+      label: index === 0 ? 'Baseline' : `Checkpoint ${index + 1}`,
+      takenOn: s.takenOn,
+      // The contract's phase names the test's LENGTH: the first sitting is the
+      // baseline, a long-tier sitting is a full-length, everything else half.
+      phase: index === 0 ? 'baseline' : s.tier === 'long' ? 'full_length' : 'half_length',
+      sections: s.sections.map((sec) => ({ section: sec.section, pctCorrect: sec.pctCorrect })),
+      scaledScore: s.scaledScore,
+      reviewed: s.reviewed,
+    }));
+    const latest = sittings[sittings.length - 1]!;
+    const latestPct = latest.itemsScored > 0 ? (latest.correct / latest.itemsScored) * 100 : 0;
+    const est = estimatePracticeTestScaled(latestPct, latest.itemsScored);
+    return {
+      readinessLabel: practiceReadinessLabel(latestPct),
+      estimatedScore: { low: est.low, high: est.high },
+      pastTests,
+    };
   }
 
   /**

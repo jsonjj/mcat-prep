@@ -11,6 +11,7 @@ import {
 } from '@mcat/contracts';
 import { CURRICULUM_PHASES } from '../../data/curriculum-v3.generated';
 import { useMasteryLessons, usePracticeTestSummary } from '../../app/queries';
+import { useLaunchPlanActivity, useTodaysPath } from '../../app/today-queries';
 import { MasteryRing } from '../../components/MasteryRing';
 import { IconCheck, IconClock } from '../../components/icons';
 
@@ -97,15 +98,25 @@ export function PracticeHome() {
       .slice(0, WEAKEST_ROWS);
   }, [lessons.data]);
 
-  // Practice-TEST dashboard summary. The scored-test engine is deferred, so the
-  // real backend serves no summary and this resolves to null → the card keeps its
-  // existing "coming soon" / empty states (verified unchanged on the real app).
-  // Only the local mastery simulator fills it, which flips each region to its
-  // populated view below. A present-but-empty summary reads the same as a missing
-  // one; `dashboard` is the non-null value the regions render from.
+  // Practice-TEST dashboard summary, now served from the learner's REAL completed
+  // sittings (WS5). Until they have taken one it resolves to null → the card keeps
+  // its empty/next-due states; once a test is scored each region fills from the
+  // summary. A present-but-empty summary reads the same as a missing one;
+  // `dashboard` is the non-null value the regions render from.
   const testSummary = usePracticeTestSummary();
   const summary = testSummary.data ?? null;
   const dashboard = summary !== null && summary.pastTests.length > 0 ? summary : null;
+
+  // A practice test is startable when today's plan reserved one that has not been
+  // run yet (the plan owns cadence + length tier). Launching it goes through the
+  // shared plan-activity runner path, and the serve boundary re-checks the §6
+  // cadence, so a stale tile can never start an off-cadence sitting.
+  const todaysPath = useTodaysPath();
+  const launch = useLaunchPlanActivity();
+  const dueTest =
+    todaysPath.data?.activities.find(
+      (a) => a.kind === 'practice_test' && a.status !== 'complete' && a.status !== 'skipped',
+    ) ?? null;
 
   const start = () => {
     navigate('/app/practice/session', { state: { x: count } });
@@ -247,7 +258,9 @@ export function PracticeHome() {
             <div className="mc-testdash__head">
               <Eyebrow>Practice test</Eyebrow>
               <h2 className="mc-h3">Practice Test</h2>
-              <p className="mc-muted mc-testdash__sub">about 90 min &middot; scored</p>
+              <p className="mc-muted mc-testdash__sub">
+                {dueTest ? `about ${dueTest.estimatedMinutes} min · scored` : 'scored · length adapts'}
+              </p>
             </div>
 
             <hr className="mc-practice__rule" />
@@ -301,13 +314,35 @@ export function PracticeHome() {
               )}
             </section>
 
-            <button type="button" className="mc-teststart" disabled aria-label="Start test — coming soon">
-              <span className="mc-teststart__main">
-                <IconClock className="mc-teststart__icon" />
-              <span className="mc-teststart__label">Start test</span>
-            </span>
-              <span className="mc-teststart__soon">coming soon</span>
-            </button>
+            {dueTest ? (
+              <button
+                type="button"
+                className="mc-teststart mc-teststart--ready"
+                onClick={() => launch(dueTest)}
+                aria-label={`Start practice test — about ${dueTest.estimatedMinutes} minutes`}
+              >
+                <span className="mc-teststart__main">
+                  <IconClock className="mc-teststart__icon" />
+                  <span className="mc-teststart__label">Start test</span>
+                </span>
+                <span className="mc-teststart__soon">&#8776; {dueTest.estimatedMinutes} min</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="mc-teststart"
+                disabled
+                aria-label="No practice test due yet"
+              >
+                <span className="mc-teststart__main">
+                  <IconClock className="mc-teststart__icon" />
+                  <span className="mc-teststart__label">Start test</span>
+                </span>
+                <span className="mc-teststart__soon">
+                  {dashboard ? 'next one on your plan' : 'after your first checkpoint'}
+                </span>
+              </button>
+            )}
           </Stack>
         </Card>
       </div>

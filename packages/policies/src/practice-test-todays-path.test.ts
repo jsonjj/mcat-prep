@@ -29,21 +29,50 @@ describe("today's path — scheduled practice test", () => {
   it('reserves a practice_test activity when the cadence says one is due', () => {
     const result = buildTodaysPath(
       snap({
-        practiceTest: { due: true, phase: 'biweekly', estimatedMinutes: 180, reason: 'cadence_due' },
+        practiceTest: {
+          due: true,
+          phase: 'mid',
+          tier: 'standard',
+          estimatedMinutes: 90,
+          reason: 'cadence_due',
+        },
       }),
     );
     const test = result.activities.find((a) => a.kind === 'practice_test');
     expect(test).toBeDefined();
-    expect(test!.estimatedMinutes).toBe(180);
+    expect(test!.estimatedMinutes).toBe(90);
     expect(test!.title).toBe('Practice Test');
-    expect(test!.detail).toContain('biweekly');
+    // The detail names the LENGTH tier, not the cadence phase.
+    expect(test!.detail).toContain('Half-length');
+  });
+
+  it('sizes the reserved test to the tier it is handed (short / standard / long)', () => {
+    const forTier = (tier: 'short' | 'standard' | 'long', estimatedMinutes: number) =>
+      buildTodaysPath(
+        snap({
+          dailyBudgetMinutes: 360,
+          practiceTest: { due: true, phase: 'mid', tier, estimatedMinutes, reason: 'cadence_due' },
+        }),
+      ).activities.find((a) => a.kind === 'practice_test');
+    expect(forTier('short', 40)!.estimatedMinutes).toBe(40);
+    expect(forTier('short', 40)!.detail).toContain('Short');
+    expect(forTier('long', 180)!.estimatedMinutes).toBe(180);
+    expect(forTier('long', 180)!.detail).toContain('Full-length');
   });
 
   it('reserves nothing when no practice test is due (or the field is absent)', () => {
     expect(buildTodaysPath(snap()).activities.some((a) => a.kind === 'practice_test')).toBe(false);
     expect(
       buildTodaysPath(
-        snap({ practiceTest: { due: false, phase: 'monthly', estimatedMinutes: 180, reason: 'not_due_recent' } }),
+        snap({
+          practiceTest: {
+            due: false,
+            phase: 'early',
+            tier: 'short',
+            estimatedMinutes: 40,
+            reason: 'not_due_recent',
+          },
+        }),
       ).activities.some((a) => a.kind === 'practice_test'),
     ).toBe(false);
   });
@@ -51,7 +80,13 @@ describe("today's path — scheduled practice test", () => {
   it('does not double-book a practice test already carried over from a prior day', () => {
     const result = buildTodaysPath(
       snap({
-        practiceTest: { due: true, phase: 'weekly', estimatedMinutes: 180, reason: 'cadence_due' },
+        practiceTest: {
+          due: true,
+          phase: 'final',
+          tier: 'long',
+          estimatedMinutes: 180,
+          reason: 'cadence_due',
+        },
         carryOver: [
           {
             activityId: 'practice-test',
@@ -78,7 +113,13 @@ describe("today's path — scheduled practice test", () => {
     const result = buildTodaysPath(
       snap({
         dailyBudgetMinutes: 120,
-        practiceTest: { due: true, phase: 'weekly', estimatedMinutes: 180, reason: 'cadence_due' },
+        practiceTest: {
+          due: true,
+          phase: 'final',
+          tier: 'long',
+          estimatedMinutes: 180,
+          reason: 'cadence_due',
+        },
       }),
     );
     expect(result.activities.some((a) => a.kind === 'practice_test')).toBe(true);

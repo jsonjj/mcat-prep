@@ -7,6 +7,7 @@ import type {
   LearnerId,
   PlanActivityStatus,
   ReasoningOperation,
+  Section,
   UtcTimestamp,
 } from '@mcat/contracts';
 import type {
@@ -95,6 +96,15 @@ export interface LearnerState {
     lastTestReviewed: boolean;
     /** How many practice tests the learner has completed (drives the baseline case). */
     testsCompleted: number;
+    /**
+     * Completed sittings in chronological order (earliest first), the real
+     * source for the Practice-test dashboard summary (trends / readiness /
+     * estimated range / past tests). Present once at least one test is scored;
+     * absent on older projections and on a learner who has taken none. Rides the
+     * same event-sourced `state_json` blob as the counters above — no migration
+     * needed for the running app — and mirrors `practice_test_sitting` (0016).
+     */
+    sittings?: PracticeTestSittingRecord[];
   };
   /**
    * CARS reasoning-pattern repairs (WS7): a weak CARS Duel maps its weakest
@@ -111,6 +121,49 @@ export interface LearnerState {
    * Optional so older projections deserialize.
    */
   carsRepairs?: CarsReasoningRepair[];
+}
+
+/**
+ * One completed practice-test sitting, as the dashboard summary reads it (WS5,
+ * §6). It stores the SCORED result — per-section %-correct, the estimated scaled
+ * midpoint, and whether the review is done — never any answer material. The
+ * per-section trend points ARE `sections`; there is no separate series. Mirrors
+ * `practice_test_sitting` + its section scores in migration 0016.
+ */
+export interface PracticeTestSittingRecord {
+  /** Opaque sitting id (also the summary's `testId`). */
+  readonly sittingId: string;
+  /** When the sitting was scored (UTC instant). */
+  readonly takenOn: UtcTimestamp;
+  /** The length tier this sitting was dealt at. */
+  readonly tier: 'short' | 'standard' | 'long';
+  readonly itemsScored: number;
+  readonly correct: number;
+  /** Per-section %-correct (0–100) — the trend points. */
+  readonly sections: ReadonlyArray<{ section: Section; pctCorrect: number }>;
+  /** Conservative estimated scaled-score midpoint (472–528); the range is derived on read. */
+  readonly scaledScore: number;
+  /** The learner has worked through this sitting's review (releases the §6 gate). */
+  reviewed: boolean;
+}
+
+/**
+ * The scored result of one completed practice test, handed to
+ * `Authority.recordPracticeTestResult` to persist a sitting + enqueue its misses
+ * (WS5, §6). The server computes it from the answer key (the runner never sees a
+ * key); the authority stores the dashboard-facing fields and queues the repairs.
+ */
+export interface PracticeTestCompletion {
+  readonly sittingId: string;
+  readonly takenOn: UtcTimestamp;
+  readonly tier: 'short' | 'standard' | 'long';
+  readonly itemsScored: number;
+  readonly correct: number;
+  readonly sections: ReadonlyArray<{ section: Section; pctCorrect: number }>;
+  /** Conservative estimated scaled-score midpoint (472–528). */
+  readonly scaledScore: number;
+  /** Science misses as review-queue targets (CARS misses excluded — no per-KC repair). */
+  readonly reviewTargets: ReadonlyArray<{ kcId: string; skill?: ReasoningOperation }>;
 }
 
 /**

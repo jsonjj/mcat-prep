@@ -49,6 +49,7 @@ export * from './practice-selection';
 export * from './practice-test-assembler';
 export * from './practice-test-scorer';
 export * from './practice-test-cadence';
+export * from './practice-test-estimate';
 
 import { asPolicyVersion } from './manifest';
 import { FSRS_MANIFEST } from './fsrs';
@@ -63,6 +64,7 @@ import { PRACTICE_SELECTION_MANIFEST } from './practice-selection';
 import { TODAYS_PATH_MANIFEST } from './todays-path';
 import { PRACTICE_TEST_MANIFEST } from './practice-test-assembler';
 import { PRACTICE_TEST_CADENCE_MANIFEST } from './practice-test-cadence';
+import { PRACTICE_TEST_ESTIMATE_MANIFEST } from './practice-test-estimate';
 
 /**
  * The active policy set, for recording on every consequential decision/event.
@@ -82,6 +84,7 @@ export const ACTIVE_POLICY_MANIFESTS = [
   TODAYS_PATH_MANIFEST,
   PRACTICE_TEST_MANIFEST,
   PRACTICE_TEST_CADENCE_MANIFEST,
+  PRACTICE_TEST_ESTIMATE_MANIFEST,
 ] as const;
 
 export const activePolicyVersions = () => ACTIVE_POLICY_MANIFESTS.map(asPolicyVersion);

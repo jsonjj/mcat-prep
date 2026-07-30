@@ -3,7 +3,8 @@ import type { CarsDuelOutcomeInput, MasterySeed, VectorLessonAction } from '@mca
 import type { AttemptTiming, GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
-import { CARS_REASONING_KEY, LEARNER_KEYS } from './invalidation-keys';
+import { practiceTestClient, type PracticeTestBlockView } from './practice-test-client';
+import { CARS_REASONING_KEY, LEARNER_KEYS, TODAYS_PATH_INVALIDATE } from './invalidation-keys';
 
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 0, refetchOnWindowFocus: false, retry: false } },
@@ -92,6 +93,54 @@ export function useSubmitDiagnosticBlock() {
     // The commit response already contains the next block/result — seed the cache
     // directly to avoid re-serving (and re-tokenizing) it.
     onSuccess: (next: DiagnosticBlockView) => qc.setQueryData(['diagnostic'], next),
+  });
+}
+
+/**
+ * The periodic practice TEST is served by the fixed-form engine over the same
+ * learner-safe bank, a whole section-block at a time, through the dedicated
+ * {@link practiceTestClient} (one-use block tokens, never an answer key). Starting
+ * consults the §6 cadence at the serve boundary, so a `notDue` view is a normal
+ * result the runner renders — not an error.
+ */
+export const usePracticeTestNext = () =>
+  useQuery({ queryKey: ['practice-test'], queryFn: () => practiceTestClient.start() });
+
+export function useSubmitPracticeTestBlock() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (v: {
+      questionIds: readonly string[];
+      answers: Readonly<Record<string, string>>;
+      elapsedMs?: Readonly<Record<string, number>>;
+    }) => practiceTestClient.submitBlock(v.questionIds, v.answers, v.elapsedMs),
+    onSuccess: (next: PracticeTestBlockView) => {
+      qc.setQueryData(['practice-test'], next);
+      // A completed sitting moves server state (a scored sitting + queued repairs
+      // + the re-opened review gate), so the dashboard summary, the plan, and the
+      // Mistakes tab all need refreshing once the last block commits.
+      if (next.done) {
+        void Promise.all(
+          [...TODAYS_PATH_INVALIDATE, 'practice-test-summary', 'errors', 'error-patterns'].map((k) =>
+            qc.invalidateQueries({ queryKey: [k] }),
+          ),
+        );
+      }
+    },
+  });
+}
+
+/** Mark the just-completed test reviewed (releases the §6 gate); refresh the summary + plan. */
+export function useMarkPracticeTestReviewed() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => practiceTestClient.markReviewed(),
+    onSuccess: () =>
+      Promise.all(
+        [...TODAYS_PATH_INVALIDATE, 'practice-test-summary'].map((k) =>
+          qc.invalidateQueries({ queryKey: [k] }),
+        ),
+      ),
   });
 }
 

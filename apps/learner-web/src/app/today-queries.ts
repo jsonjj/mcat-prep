@@ -195,11 +195,10 @@ export function useLaunchPlanActivity() {
           navigate('/app/mistakes', { state });
           break;
         case 'practice_test':
-          // The test engine itself is still in design, so this just OPENS the
-          // Practice page (whose Practice Test panel holds the presentational
-          // checkpoint) — it does not start (or score) a sitting. Without this
-          // case the card was a silent dead-end.
-          navigate('/app/practice', { state });
+          // Launch the fixed-form runner, which takes the test block-by-block and
+          // scores it at the end. The serve boundary re-checks the §6 cadence, so
+          // a stale tile can never start an off-cadence sitting.
+          navigate('/app/practice/test', { state });
           break;
         default:
           break;

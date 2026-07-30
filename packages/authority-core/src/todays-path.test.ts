@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { fixedClock, type CandidateLessonInput } from '@mcat/contracts';
+import { fixedClock, type CandidateLessonInput, type UtcTimestamp } from '@mcat/contracts';
 import { loadSyntheticBank, orderedKcsForLesson } from '@mcat/content';
 import { kcsByFc, lessonsByFc, PRIOR_PL0 } from '@mcat/policies';
 import { Authority } from './authority';
 import { SyntheticPracticeBankPort, type PracticeItemClassification } from './practice';
-import type { LearnerState } from './types';
+import type { LearnerState, PracticeTestCompletion } from './types';
 
 const clock = fixedClock('2026-07-20T12:00:00.000Z');
 
@@ -495,7 +495,7 @@ describe("Authority — periodic practice test in Today\u2019s Path (WS5)", () =
     expect(hasTest((await build(auth, state)).activities)).toBe(false);
   });
 
-  it('schedules the baseline test once unlocked, at the half-length duration, writing no mastery', async () => {
+  it('schedules the baseline test once unlocked, sized to its length tier, writing no mastery', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
     unlockPractice(state);
@@ -503,7 +503,10 @@ describe("Authority — periodic practice test in Today\u2019s Path (WS5)", () =
 
     const test = (await build(auth, state)).activities.find((a) => a.kind === 'practice_test');
     expect(test).toBeDefined();
-    expect(test!.estimatedMinutes).toBe(180);
+    // Variable length by stage: reserved at one of the tier durations (short 40 /
+    // standard 90 / long 180), never zero — the exact tier depends on the stage
+    // blend, which the cadence policy owns and pins in its own suite.
+    expect([40, 90, 180]).toContain(test!.estimatedMinutes);
     // A test day still reads mastery but must never move it (the guardrail).
     expect(auth.getMasterySkills(state).map((s) => s.pL)).toEqual(before);
   });
@@ -600,5 +603,87 @@ describe("Authority — periodic practice test in Today\u2019s Path (WS5)", () =
       candidateLessons,
       force: true,
     })).activities)).toBe(true);
+  });
+});
+
+/**
+ * WS5 (§6): a completed test's SCORED RESULT persists as a sitting, feeds the
+ * Practice-test dashboard summary from REAL data, and enqueues its science
+ * misses into the repair/Mistakes queue — all without minting mastery.
+ */
+describe('Authority — practice-test results → dashboard summary + repair queue (WS5)', () => {
+  const completion = (over: Partial<PracticeTestCompletion> = {}): PracticeTestCompletion => ({
+    sittingId: 'sit-1',
+    takenOn: '2026-07-20T15:00:00.000Z' as UtcTimestamp,
+    tier: 'standard',
+    itemsScored: 59,
+    correct: 35,
+    sections: [
+      { section: 'cp', pctCorrect: 60 },
+      { section: 'cars', pctCorrect: 55 },
+      { section: 'bb', pctCorrect: 62 },
+      { section: 'ps', pctCorrect: 58 },
+    ],
+    scaledScore: 500,
+    // kc-a1 appears twice (must dedup); a CARS miss carries no KC and is already
+    // excluded upstream by the scorer, so none is passed here.
+    reviewTargets: [
+      { kcId: 'kc-a1', skill: 'IDENTIFY' },
+      { kcId: 'kc-a1' },
+      { kcId: 'kc-b1' },
+    ],
+    ...over,
+  });
+
+  it('serves null until a test is scored, then a real summary from the sitting', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    expect(auth.getPracticeTestSummary(state)).toBeNull();
+
+    await auth.recordPracticeTestResult(state, completion());
+    const summary = auth.getPracticeTestSummary(state)!;
+    expect(summary).not.toBeNull();
+    expect(summary.pastTests).toHaveLength(1);
+    expect(summary.pastTests[0]!.label).toBe('Baseline');
+    expect(summary.pastTests[0]!.phase).toBe('baseline');
+    expect(summary.pastTests[0]!.sections).toHaveLength(4);
+    // Honest RANGE, never a single number.
+    expect(summary.estimatedScore.low).toBeLessThanOrEqual(summary.estimatedScore.high);
+    // A second sitting appends chronologically and is labelled a checkpoint.
+    await auth.recordPracticeTestResult(state, completion({ sittingId: 'sit-2', tier: 'long' }));
+    const next = auth.getPracticeTestSummary(state)!;
+    expect(next.pastTests).toHaveLength(2);
+    expect(next.pastTests[1]!.label).toBe('Checkpoint 2');
+    expect(next.pastTests[1]!.phase).toBe('full_length');
+  });
+
+  it('enqueues each missed KC once into the repair queue (dedup)', async () => {
+    const bank = new SyntheticPracticeBankPort(loadSyntheticBank());
+    const auth = new Authority(loadSyntheticBank(), clock, bank);
+    const state = onboard(auth);
+    await auth.recordPracticeTestResult(state, completion());
+    const repairs = await bank.recentMisses(state.learnerId, { limit: 10 });
+    expect(repairs.map((r) => r.kcId).sort()).toEqual(['kc-a1', 'kc-b1']);
+  });
+
+  it('re-opens the review gate on completion; reviewing marks the sitting reviewed', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    await auth.recordPracticeTestResult(state, completion());
+    expect(state.practiceTests!.lastTestReviewed).toBe(false);
+    expect(state.practiceTests!.sittings![0]!.reviewed).toBe(false);
+
+    auth.recordPracticeTestReviewed(state);
+    expect(state.practiceTests!.lastTestReviewed).toBe(true);
+    expect(state.practiceTests!.sittings![0]!.reviewed).toBe(true);
+    expect(auth.getPracticeTestSummary(state)!.pastTests[0]!.reviewed).toBe(true);
+  });
+
+  it('writes no mastery when recording a result (the guardrail)', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    const before = auth.getMasterySkills(state).map((s) => s.pL);
+    await auth.recordPracticeTestResult(state, completion());
+    expect(auth.getMasterySkills(state).map((s) => s.pL)).toEqual(before);
   });
 });

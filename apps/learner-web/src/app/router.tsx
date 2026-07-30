@@ -23,6 +23,7 @@ import { SkillDetail } from '../screens/SkillDetail';
 import { PassageOfDay } from '../screens/PassageOfDay';
 import { PracticeHome } from '../screens/practice/PracticeHome';
 import { PracticeSession } from '../screens/practice/PracticeSession';
+import { PracticeTest } from '../screens/practice/PracticeTest';
 import { CarsDuel } from '../screens/CarsDuel';
 import { Wrapped } from '../screens/Wrapped';
 import { CarsPreview } from '../screens/CarsPreview';
@@ -71,6 +72,8 @@ export const router = createBrowserRouter([
       // Adaptive Practice: the hub plus its in-place session.
       { path: 'practice', element: <PracticeHome /> },
       { path: 'practice/session', element: <PracticeSession /> },
+      // The periodic, scored practice TEST (fixed-form, block-by-block runner).
+      { path: 'practice/test', element: <PracticeTest /> },
       // Account/Profile route TEMPORARILY DISABLED (see the commented import above).
       // Re-enable this line and the import to restore /app/profile.
       // { path: 'profile', element: <Profile /> },

@@ -40,10 +40,11 @@ export const PRACTICE_TEST_MANIFEST: PolicyManifest = {
   version: 'provisional-v1',
   status: 'provisional_active',
   summary:
-    'Fixed-form half-length practice test assembler: deal fresh (never-scored) items to per-section ' +
-    'content, per-skill and per-format blueprint FLOORS including CARS, validate the assembled form ' +
-    'against every floor before serving, and rebuild on a fresh tie-break seed if any floor is unmet. ' +
-    'No adaptive routing; no mastery writes.',
+    'Fixed-form practice test assembler with a short/standard/long blueprint family: deal fresh ' +
+    '(never-scored) items to per-section content, per-skill and per-format blueprint FLOORS including ' +
+    'CARS, scaled proportionally to the chosen length tier, validate the assembled form against every ' +
+    'floor before serving, and rebuild on a fresh tie-break seed if any floor is unmet. No adaptive ' +
+    'routing; no mastery writes.',
 };
 
 /**
@@ -95,7 +96,27 @@ export interface PracticeTestBlueprint {
 }
 
 /**
- * The served half-length blueprint.
+ * The three length TIERS a practice test can be dealt at (WS5, §6).
+ *
+ * A periodic test is not one fixed length: it grows with the learner's stage.
+ * Early on a SHORT form (~30 items, ~40 min) is a low-cost checkpoint; by
+ * mid-prep a STANDARD ~half-length form (~59 items, ~90 min) is the honest
+ * measure; in the final weeks a LONG ~full form (~115 items, ~3 h) rehearses the
+ * real sitting. The cadence policy decides which tier is due from the stage
+ * signal ({@link practiceTestLengthTier}); the assembler just deals to whichever
+ * blueprint it is handed.
+ */
+export type PracticeTestLengthTier = 'short' | 'standard' | 'long';
+
+/** Exact form length per tier. `long` is the full {@link HALF_LENGTH_BLUEPRINT}. */
+export const PRACTICE_TEST_TIER_TOTALS: Readonly<Record<PracticeTestLengthTier, number>> = {
+  short: 30,
+  standard: 59,
+  long: 115,
+};
+
+/**
+ * The served long/full-length blueprint (the `long` tier).
  *
  * A scored MCAT is 230 questions — 59 C/P, 53 CARS, 59 B/B, 59 P/S — so a
  * half-length test is ~115. The section floors hold each section's share and sum
@@ -144,6 +165,62 @@ export const HALF_LENGTH_BLUEPRINT: PracticeTestBlueprint = {
     discrete_mcq: 0,
   },
 };
+
+/**
+ * Scale a blueprint to a shorter total, floor by floor.
+ *
+ * Every floor is scaled by `targetItems / base.totalItems` and rounded DOWN, so
+ * a shorter form asks for proportionally fewer of each thing while keeping the
+ * exact same shape: CARS stays a real floor, the section floors keep summing
+ * below the total (the slack the balance top-up needs), and a floor that rounds
+ * to zero simply becomes unconstrained — which is the honest thing on a short
+ * form the corpus could otherwise not fill. Because it only ever shrinks the
+ * canonical (corpus-feasible) long blueprint, every scaled tier is feasible
+ * against any pool the long tier is, and `long` (ratio 1) is byte-identical to
+ * {@link HALF_LENGTH_BLUEPRINT}.
+ */
+export function scalePracticeTestBlueprint(
+  targetItems: number,
+  base: PracticeTestBlueprint = HALF_LENGTH_BLUEPRINT,
+): PracticeTestBlueprint {
+  const ratio = base.totalItems > 0 ? targetItems / base.totalItems : 1;
+  const scale = (n: number): number => Math.max(0, Math.floor(n * ratio));
+  const sectionFloors = Object.fromEntries(
+    SectionSchema.options.map((section) => [
+      section,
+      // CARS must never round away — it is the defining floor — so it keeps a
+      // floor of at least 1 even on the shortest tier.
+      section === 'cars'
+        ? Math.max(1, scale(base.sectionFloors[section] ?? 0))
+        : scale(base.sectionFloors[section] ?? 0),
+    ]),
+  ) as Record<Section, number>;
+  const skillFloors = Object.fromEntries(
+    Object.entries(base.skillFloors).map(([key, floor]) => [key, scale(floor)]),
+  );
+  const formatFloors = Object.fromEntries(
+    Object.entries(base.formatFloors).map(([key, floor]) => [key, scale(floor ?? 0)]),
+  ) as Partial<Record<QuestionFormat, number>>;
+  return { totalItems: targetItems, sectionFloors, skillFloors, formatFloors };
+}
+
+/**
+ * The blueprint family, one per length tier. `long` is the canonical
+ * {@link HALF_LENGTH_BLUEPRINT}; `standard` and `short` are proportional
+ * shrinks of it, so all three are blueprint-valid and corpus-feasible.
+ */
+export const PRACTICE_TEST_BLUEPRINTS: Readonly<
+  Record<PracticeTestLengthTier, PracticeTestBlueprint>
+> = {
+  short: scalePracticeTestBlueprint(PRACTICE_TEST_TIER_TOTALS.short),
+  standard: scalePracticeTestBlueprint(PRACTICE_TEST_TIER_TOTALS.standard),
+  long: HALF_LENGTH_BLUEPRINT,
+};
+
+/** The blueprint for a length tier — what the server assembles a due test against. */
+export function practiceTestBlueprintFor(tier: PracticeTestLengthTier): PracticeTestBlueprint {
+  return PRACTICE_TEST_BLUEPRINTS[tier];
+}
 
 /** The skill axis a candidate contributes to: CARS sub-skill for CARS, else reasoning op. */
 export const candidateSkillKey = (c: PracticeTestCandidate): string | null =>

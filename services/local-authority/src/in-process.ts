@@ -14,8 +14,8 @@ import {
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
   PracticeResultSchema,
+  PracticeTestSummaryViewSchema,
   SkillMasteryViewSchema,
-  type PracticeTestSummaryView,
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
@@ -29,7 +29,13 @@ import {
   type PracticeAttemptCommand,
   type VectorLessonAction,
 } from '@mcat/contracts';
-import { Authority, type LearnerState, type PracticeBankPort } from '@mcat/authority-core';
+import {
+  Authority,
+  type LearnerState,
+  type PracticeBankPort,
+  type PracticeTestCompletion,
+  type PracticeTestServeGate,
+} from '@mcat/authority-core';
 import { loadSyntheticBank } from '@mcat/content';
 import type { AuthorityPort, GoalInput, StatePort } from '@mcat/client-core';
 
@@ -220,15 +226,14 @@ export class InProcessAuthorityClient implements AuthorityPort {
   }
 
   /**
-   * The scored practice-TEST engine is deferred, so the synthetic authority holds
-   * no test history: it reports `null`, the same "no summary yet" answer the
-   * deployed backend gives, and the Practice card renders its coming-soon states.
-   * Wired here to satisfy the port; the local `/v1` dev surface intentionally has
-   * no route for it, so a browser read falls through to the client's graceful
-   * `not_found → null` path.
+   * The Practice-test dashboard summary, now built from the learner's REAL
+   * completed sittings once the runner records them (WS5). A learner who has
+   * taken none reads `null` — the same "no summary yet" answer the deployed
+   * backend gives — and the Practice card keeps its empty/next-due states.
    */
-  async getPracticeTestSummary(): Promise<PracticeTestSummaryView | null> {
-    return null;
+  async getPracticeTestSummary() {
+    const view = this.authority.getPracticeTestSummary(this.state());
+    return view === null ? null : PracticeTestSummaryViewSchema.parse(view);
   }
 
   async recordCarsDuel(outcome?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {
@@ -237,6 +242,27 @@ export class InProcessAuthorityClient implements AuthorityPort {
 
   async recordPracticeTestCompleted(): Promise<void> {
     this.mutate((state) => this.authority.recordPracticeTestCompleted(state));
+  }
+
+  /**
+   * Record a completed test's SCORED RESULT (WS5): persist the sitting for the
+   * dashboard summary + enqueue its misses into the repair queue. Called by the
+   * dev practice-test API's completion recorder — not part of `AuthorityPort`,
+   * because the server computes the result from the answer key (the browser
+   * never sees one), so it is a dev-server-only seam like the recorder itself.
+   */
+  async recordPracticeTestResult(completion: PracticeTestCompletion): Promise<void> {
+    await this.mutateAsync((state) => this.authority.recordPracticeTestResult(state, completion));
+  }
+
+  /**
+   * The serve-boundary gate the dev practice-test API consults before STARTING a
+   * sitting: whether a test is due right now and the length tier to deal it at
+   * (WS5, §6). Not part of `AuthorityPort` — the practice-test flow is a dev-only
+   * server seam (the browser never sees the answer key), like the recorder.
+   */
+  practiceTestServeGate(): PracticeTestServeGate {
+    return this.authority.practiceTestServeGate(this.state());
   }
 
   async recordPracticeTestReviewed(): Promise<void> {

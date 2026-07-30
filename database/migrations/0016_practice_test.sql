@@ -19,13 +19,23 @@
 -- One row per sitting. `completed_at` is null until the form is finished and
 -- scored; `reviewed_at` is null until the learner works the review, which is the
 -- fact the cadence's block-until-reviewed rule reads.
+--
+-- `length_tier` is the variable-length TIER the form was dealt at
+-- (packages/policies/src/practice-test-assembler.ts): a short early checkpoint, a
+-- standard half-length, or a long full-length. `items_correct` + the per-section
+-- child table + `scaled_score` are the SCORED result the dashboard summary reads
+-- (trends / readiness / estimated range); the estimate is a conservative
+-- midpoint (472–528), never a claimed concordance.
 create table practice_test_sitting (
   sitting_id uuid primary key,
   learner_id uuid not null references learners (learner_id) on delete cascade,
   -- Per-sitting assembly seed, so the same fixed form replays across re-serves.
   form_seed text not null,
-  phase text not null check (phase in ('baseline', 'monthly', 'biweekly', 'weekly')),
+  length_tier text not null check (length_tier in ('short', 'standard', 'long')),
   items_total integer not null check (items_total > 0),
+  items_correct integer not null default 0 check (items_correct >= 0 and items_correct <= items_total),
+  -- Conservative estimated scaled-score midpoint (472–528); null until scored.
+  scaled_score integer check (scaled_score between 472 and 528),
   started_at timestamptz not null,
   completed_at timestamptz,
   reviewed_at timestamptz,
@@ -39,6 +49,17 @@ create table practice_test_sitting (
 -- The learner's most recent sittings, newest first (cadence + history reads).
 create index practice_test_sitting_learner_idx
   on practice_test_sitting (learner_id, started_at desc);
+
+-- Per-section %-correct for one scored sitting — the dashboard's trend points.
+-- The improvement-over-time chart is exactly this series read across the
+-- learner's ordered sittings; there is no separate trend payload to fall out of
+-- sync with it (contracts/src/practice-test.ts).
+create table practice_test_section_score (
+  sitting_id uuid not null references practice_test_sitting (sitting_id) on delete cascade,
+  section text not null check (section in ('cp', 'cars', 'bb', 'ps')),
+  pct_correct numeric(5, 2) not null check (pct_correct between 0 and 100),
+  primary key (sitting_id, section)
+);
 
 -- At most one still-open (unreviewed) sitting per learner: the review gate means a
 -- new test cannot start while the prior one is unreviewed, so two open sittings is

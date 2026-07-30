@@ -3828,12 +3828,85 @@ body {
   font-weight: 600;
   opacity: 0.85;
 }
+/* A DUE test turns the tile into a real call to action (the deferred/next-due
+   state keeps the muted, not-allowed look above). */
+.mc-teststart--ready {
+  cursor: pointer;
+  border-color: var(--mc-accent-warm);
+  background: color-mix(in srgb, var(--mc-accent-warm) 22%, var(--mc-surface));
+  transition:
+    background 120ms ease,
+    transform 60ms ease;
+}
+.mc-teststart--ready:hover {
+  background: color-mix(in srgb, var(--mc-accent-warm) 30%, var(--mc-surface));
+}
+.mc-teststart--ready:active {
+  transform: translateY(1px);
+}
+.mc-teststart--ready:focus-visible {
+  outline: 2px solid var(--mc-accent-warm);
+  outline-offset: 2px;
+}
+
+/* ---- Practice test RESULT summary (the runner's completion screen) ----
+   Per-section %-correct bars, coloured to match the dashboard trend series so a
+   learner reads the same section colours on both surfaces. */
+.mc-testresult__sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-testresult__row {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr) 3rem;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-testresult__label {
+  font-weight: 600;
+  font-size: var(--mc-text-15);
+}
+.mc-testresult__bar {
+  position: relative;
+  display: block;
+  height: 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mc-border) 60%, var(--mc-surface));
+  overflow: hidden;
+}
+.mc-testresult__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: currentColor;
+}
+.mc-testresult__fill--cp {
+  color: var(--mc-primary);
+}
+.mc-testresult__fill--cars {
+  color: var(--mc-accent-warm);
+}
+.mc-testresult__fill--bb {
+  color: var(--mc-retained);
+}
+.mc-testresult__fill--ps {
+  color: #2e9e5b;
+}
+.mc-testresult__pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: var(--mc-text-15);
+}
 
 /* ---- Practice test dashboard (POPULATED states) ----
-   Dormant on the real app (no summary is ever served there), so these classes
-   never render at :5173 and the deferred card stays byte-for-byte its empty
-   self. They light up only when a summary is present (the local mastery
-   simulator), filling the same regions the empty states occupy. */
+   Rendered once the learner has completed at least one scored practice test (WS5):
+   the summary is served from their real sittings, filling the same regions the
+   empty/next-due states occupy. Before the first test these classes never render
+   and the card stays its empty self. */
 
 /* "Improvement over time": a dependency-free multi-line SVG chart + a legend. */
 .mc-trend {

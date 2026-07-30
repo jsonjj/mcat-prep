@@ -7,9 +7,14 @@ import {
   HALF_LENGTH_BLUEPRINT,
   PracticeTestAssemblyError,
   poolSupportsPracticeTest,
+  practiceTestBlueprintFor,
+  PRACTICE_TEST_BLUEPRINTS,
+  PRACTICE_TEST_TIER_TOTALS,
+  scalePracticeTestBlueprint,
   validatePracticeTestForm,
   type PracticeTestBlueprint,
   type PracticeTestCandidate,
+  type PracticeTestLengthTier,
 } from './practice-test-assembler';
 
 /**
@@ -304,6 +309,58 @@ describe('practice test assembler — DEFAULT blueprint is feasible against the 
     // the 500 the eval saw, reproduced as a feasibility failure.
     const pool = makeCorpusShapedPool();
     expect(poolSupportsPracticeTest(pool, { blueprint: PRE_FIX_BLUEPRINT })).toBe(false);
+  });
+});
+
+describe('practice test assembler — variable-length blueprint family', () => {
+  const TIERS: readonly PracticeTestLengthTier[] = ['short', 'standard', 'long'];
+
+  it('the long tier is byte-identical to the shipped HALF_LENGTH_BLUEPRINT', () => {
+    expect(PRACTICE_TEST_BLUEPRINTS.long).toEqual(HALF_LENGTH_BLUEPRINT);
+    expect(practiceTestBlueprintFor('long')).toBe(HALF_LENGTH_BLUEPRINT);
+  });
+
+  it('each tier hits its target length, with floors summing below it (balance slack)', () => {
+    for (const tier of TIERS) {
+      const bp = PRACTICE_TEST_BLUEPRINTS[tier];
+      expect(bp.totalItems).toBe(PRACTICE_TEST_TIER_TOTALS[tier]);
+      const floorSum = Object.values(bp.sectionFloors).reduce((s, n) => s + n, 0);
+      expect(floorSum, `${tier} section floors`).toBeLessThanOrEqual(bp.totalItems);
+      // CARS is a real, non-trivial floor at every tier — the defining property.
+      expect(bp.sectionFloors.cars, `${tier} cars floor`).toBeGreaterThan(0);
+    }
+  });
+
+  it('scales floors down monotonically as the form shrinks', () => {
+    expect(PRACTICE_TEST_BLUEPRINTS.short.totalItems).toBeLessThan(
+      PRACTICE_TEST_BLUEPRINTS.standard.totalItems,
+    );
+    expect(PRACTICE_TEST_BLUEPRINTS.standard.totalItems).toBeLessThan(
+      PRACTICE_TEST_BLUEPRINTS.long.totalItems,
+    );
+    expect(PRACTICE_TEST_BLUEPRINTS.short.sectionFloors.cp).toBeLessThanOrEqual(
+      PRACTICE_TEST_BLUEPRINTS.standard.sectionFloors.cp,
+    );
+  });
+
+  it('every tier is feasible against the real corpus-shaped pool, CARS included', () => {
+    const pool = makeCorpusShapedPool();
+    for (const tier of TIERS) {
+      const bp = PRACTICE_TEST_BLUEPRINTS[tier];
+      expect(poolSupportsPracticeTest(pool, { blueprint: bp }), `${tier} feasible`).toBe(true);
+      const { items } = assemblePracticeTest(pool, { blueprint: bp, seed: `corpus-${tier}` });
+      expect(validatePracticeTestForm(items, bp), `${tier} valid`).toEqual([]);
+      expect(items.length).toBe(bp.totalItems);
+      expect(items.filter((c) => c.section === 'cars').length).toBeGreaterThanOrEqual(
+        bp.sectionFloors.cars,
+      );
+    }
+  });
+
+  it('scalePracticeTestBlueprint keeps a CARS floor even on the shortest forms', () => {
+    const tiny = scalePracticeTestBlueprint(12);
+    expect(tiny.totalItems).toBe(12);
+    expect(tiny.sectionFloors.cars).toBeGreaterThanOrEqual(1);
   });
 });
 

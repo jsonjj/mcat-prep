@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   cadencePhase,
   decidePracticeTest,
+  practiceTestLengthTier,
+  practiceTestReadiness,
   PRACTICE_TEST_CADENCE_CONFIG,
+  PRACTICE_TEST_TIER_MINUTES,
   type PracticeTestCadenceInput,
 } from './practice-test-cadence';
 
@@ -31,24 +34,18 @@ describe('practice test cadence — baseline', () => {
   });
 });
 
-describe('practice test cadence — cap of one per week', () => {
-  it('refuses a second test within 7 days of the last', () => {
-    const d = decide({ testsCompleted: 1, lastTestDate: '2026-02-26', lastTestReviewed: true }); // 3 days ago
+describe('practice test cadence — cap of one per day', () => {
+  it('refuses a second test on the same day as the last', () => {
+    const d = decide({ testsCompleted: 1, lastTestDate: '2026-03-01', lastTestReviewed: true }); // today
     expect(d.due).toBe(false);
-    expect(d.reason).toBe('capped_this_week');
-    expect(d.nextEligibleDate).toBe('2026-03-05'); // lastTest + 7
+    expect(d.reason).toBe('capped_today');
+    expect(d.nextEligibleDate).toBe('2026-03-02'); // lastTest + 1
   });
 
-  it('never exceeds one per week even if a phase interval were shorter', () => {
-    // Weekly phase (near exam), last test 6 days ago → still capped.
-    const d = decide({
-      testsCompleted: 4,
-      lastTestDate: '2026-02-24',
-      examDate: '2026-03-20', // 19 days out → weekly phase
-    });
-    expect(d.phase).toBe('weekly');
-    expect(d.due).toBe(false);
-    expect(d.reason).toBe('capped_this_week');
+  it('is not capped once a day has passed (the ramp then decides)', () => {
+    // A day ago clears the 1/day cap; the early ramp (~6d) then holds it back.
+    const d = decide({ testsCompleted: 2, lastTestDate: '2026-02-28', lastTestReviewed: true });
+    expect(d.reason).not.toBe('capped_today');
   });
 });
 
@@ -107,62 +104,142 @@ describe('practice test cadence — block until the prior test is reviewed', () 
   });
 });
 
-describe('practice test cadence — phase ramp (monthly → biweekly → weekly)', () => {
-  it('is monthly far from the exam', () => {
-    expect(cadencePhase(120)).toBe('monthly');
+describe('practice test cadence — frequency ramp (early → mid → final)', () => {
+  it('is early (~every 6 days) far from the exam', () => {
+    expect(cadencePhase(120)).toBe('early');
     const d = decide({
       testsCompleted: 2,
-      lastTestDate: '2026-02-20', // 9 days ago (< 28)
+      lastTestDate: '2026-02-26', // 3 days ago (< 6)
       examDate: '2026-07-01', // ~122 days out
     });
-    expect(d.phase).toBe('monthly');
+    expect(d.phase).toBe('early');
     expect(d.due).toBe(false);
     expect(d.reason).toBe('not_due_recent');
-    expect(d.nextEligibleDate).toBe('2026-03-20'); // lastTest + 28
+    expect(d.nextEligibleDate).toBe('2026-03-04'); // lastTest + 6
   });
 
-  it('is biweekly in the mid-range', () => {
-    expect(cadencePhase(50)).toBe('biweekly');
+  it('becomes due in the early ramp once ~6 days have passed', () => {
     const d = decide({
-      testsCompleted: 3,
-      lastTestDate: '2026-02-16', // 13 days ago (< 14)
-      examDate: '2026-04-20', // ~50 days out
+      testsCompleted: 2,
+      lastTestDate: '2026-02-22', // 7 days ago (>= 6)
+      examDate: '2026-07-01',
     });
-    expect(d.phase).toBe('biweekly');
-    expect(d.due).toBe(false);
-    expect(d.nextEligibleDate).toBe('2026-03-02'); // lastTest + 14
-  });
-
-  it('is weekly in the final stretch and becomes due after 7 days', () => {
-    expect(cadencePhase(20)).toBe('weekly');
-    const d = decide({
-      testsCompleted: 5,
-      lastTestDate: '2026-02-22', // 7 days ago
-      examDate: '2026-03-18', // ~17 days out → weekly, outside blackout
-    });
-    expect(d.phase).toBe('weekly');
+    expect(d.phase).toBe('early');
     expect(d.due).toBe(true);
     expect(d.reason).toBe('cadence_due');
   });
 
-  it('with no exam date set, defaults to the monthly cadence', () => {
+  it('is mid (~every 3 days) in the mid-range', () => {
+    expect(cadencePhase(50)).toBe('mid');
+    const d = decide({
+      testsCompleted: 3,
+      lastTestDate: '2026-02-27', // 2 days ago (< 3)
+      examDate: '2026-04-20', // ~50 days out
+    });
+    expect(d.phase).toBe('mid');
+    expect(d.due).toBe(false);
+    expect(d.nextEligibleDate).toBe('2026-03-02'); // lastTest + 3
+  });
+
+  it('is final (near-daily, ~every 2 days) in the last ~3 weeks', () => {
+    expect(cadencePhase(20)).toBe('final');
+    const d = decide({
+      testsCompleted: 5,
+      lastTestDate: '2026-02-27', // 2 days ago (>= 2)
+      examDate: '2026-03-18', // ~17 days out → final, outside blackout
+    });
+    expect(d.phase).toBe('final');
+    expect(d.due).toBe(true);
+    expect(d.reason).toBe('cadence_due');
+  });
+
+  it('with no exam date set, defaults to the early cadence', () => {
     const d = decide({ testsCompleted: 2, lastTestDate: '2026-02-25', examDate: null });
-    expect(d.phase).toBe('monthly');
+    expect(d.phase).toBe('early');
     expect(d.daysToExam).toBeNull();
   });
 });
 
 describe('practice test cadence — config sanity', () => {
-  it('caps at one per week and blacks out the final days', () => {
-    expect(PRACTICE_TEST_CADENCE_CONFIG.minDaysBetweenTests).toBe(7);
+  it('caps at one per day and blacks out the final days', () => {
+    expect(PRACTICE_TEST_CADENCE_CONFIG.minDaysBetweenTests).toBe(1);
     expect(PRACTICE_TEST_CADENCE_CONFIG.blackoutDaysBeforeExam).toBeGreaterThanOrEqual(4);
     expect(PRACTICE_TEST_CADENCE_CONFIG.blackoutDaysBeforeExam).toBeLessThanOrEqual(5);
-    // Cadence tightens toward the exam.
-    expect(PRACTICE_TEST_CADENCE_CONFIG.intervals.monthly).toBeGreaterThan(
-      PRACTICE_TEST_CADENCE_CONFIG.intervals.biweekly,
+    // The ramp tightens toward the exam: early is least frequent, final most.
+    expect(PRACTICE_TEST_CADENCE_CONFIG.intervals.early).toBeGreaterThan(
+      PRACTICE_TEST_CADENCE_CONFIG.intervals.mid,
     );
-    expect(PRACTICE_TEST_CADENCE_CONFIG.intervals.biweekly).toBeGreaterThan(
-      PRACTICE_TEST_CADENCE_CONFIG.intervals.weekly,
+    expect(PRACTICE_TEST_CADENCE_CONFIG.intervals.mid).toBeGreaterThan(
+      PRACTICE_TEST_CADENCE_CONFIG.intervals.final,
     );
+    // Every ramp interval respects the one-per-day floor.
+    expect(PRACTICE_TEST_CADENCE_CONFIG.intervals.final).toBeGreaterThanOrEqual(
+      PRACTICE_TEST_CADENCE_CONFIG.minDaysBetweenTests,
+    );
+  });
+});
+
+describe('practice test length tier — stage signal (mastery + lessons + days-to-exam)', () => {
+  it('is SHORT early: low mastery, few lessons, far from the exam', () => {
+    expect(
+      practiceTestLengthTier({ daysToExam: 120, masteryPct: 0, lessonCompletionPct: 0 }),
+    ).toBe('short');
+    // A rolling plan (no exam date) with nothing learned yet is also short.
+    expect(
+      practiceTestLengthTier({ daysToExam: null, masteryPct: 0.05, lessonCompletionPct: 0.05 }),
+    ).toBe('short');
+  });
+
+  it('is STANDARD mid-prep', () => {
+    expect(
+      practiceTestLengthTier({ daysToExam: 60, masteryPct: 0.4, lessonCompletionPct: 0.6 }),
+    ).toBe('standard');
+  });
+
+  it('is LONG in the final weeks with high readiness', () => {
+    expect(
+      practiceTestLengthTier({ daysToExam: 14, masteryPct: 0.7, lessonCompletionPct: 0.9 }),
+    ).toBe('long');
+  });
+
+  it('never serves the shortest tier inside the final ~3 weeks (rehearsal floor)', () => {
+    // Blend alone would pick short (low mastery/lessons), but ≤21 days floors it up.
+    expect(
+      practiceTestLengthTier({ daysToExam: 21, masteryPct: 0, lessonCompletionPct: 0 }),
+    ).toBe('standard');
+  });
+
+  it('readiness rises monotonically with mastery, completion, and proximity', () => {
+    const early = practiceTestReadiness({ daysToExam: 120, masteryPct: 0.1, lessonCompletionPct: 0.1 });
+    const mid = practiceTestReadiness({ daysToExam: 60, masteryPct: 0.4, lessonCompletionPct: 0.5 });
+    const late = practiceTestReadiness({ daysToExam: 10, masteryPct: 0.8, lessonCompletionPct: 0.9 });
+    expect(early).toBeLessThan(mid);
+    expect(mid).toBeLessThan(late);
+  });
+
+  it('decidePracticeTest carries the length tier alongside the schedule', () => {
+    const shortDue = decidePracticeTest({
+      today: '2026-03-01',
+      examDate: '2026-08-01', // far out
+      lastTestDate: null,
+      lastTestReviewed: true,
+      testsCompleted: 0,
+      masteryPct: 0,
+      lessonCompletionPct: 0,
+    });
+    expect(shortDue.due).toBe(true);
+    expect(shortDue.tier).toBe('short');
+
+    const longDue = decidePracticeTest({
+      today: '2026-03-01',
+      examDate: '2026-03-18', // ~17 days out → final ramp
+      lastTestDate: '2026-02-26',
+      lastTestReviewed: true,
+      testsCompleted: 4,
+      masteryPct: 0.75,
+      lessonCompletionPct: 0.9,
+    });
+    expect(longDue.tier).toBe('long');
+    expect(PRACTICE_TEST_TIER_MINUTES[longDue.tier]).toBe(180);
   });
 });

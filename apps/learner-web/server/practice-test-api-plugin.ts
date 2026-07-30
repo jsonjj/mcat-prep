@@ -14,15 +14,36 @@ import type { Plugin } from 'vite';
  * a completed/reviewed test moves the very `LearnerState` Today's Path reads.
  */
 
-type Handler = (request: IncomingMessage, response: ServerResponse) => void;
+/** Structural mirror of the authority's serve gate + scored-result completion (WS5). */
+interface ServeGate {
+  due: boolean;
+  reason: string;
+  tier: 'short' | 'standard' | 'long';
+}
+interface CompletionPayload {
+  sittingId: string;
+  takenOn: string;
+  tier: 'short' | 'standard' | 'long';
+  itemsScored: number;
+  correct: number;
+  sections: { section: string; pctCorrect: number }[];
+  scaledScore: number;
+  reviewTargets: { kcId: string; skill?: string }[];
+}
 
 interface PracticeTestRecorder {
-  recordCompleted(): Promise<void> | void;
+  gate(): Promise<ServeGate> | ServeGate;
+  recordCompleted(completion?: CompletionPayload): Promise<void> | void;
   recordReviewed(): Promise<void> | void;
 }
 
 interface PracticeTestApiModule {
-  handlePracticeTestNextRequest: Handler;
+  handlePracticeTestNextRequest: (
+    request: IncomingMessage,
+    response: ServerResponse,
+    bank?: unknown,
+    recorder?: PracticeTestRecorder,
+  ) => void;
   handlePracticeTestBlockRequest: (
     request: IncomingMessage,
     response: ServerResponse,
@@ -38,7 +59,9 @@ interface PracticeTestApiModule {
 
 interface AuthorityApiModule {
   client: {
+    practiceTestServeGate(): ServeGate;
     recordPracticeTestCompleted(): Promise<void>;
+    recordPracticeTestResult(completion: CompletionPayload): Promise<void>;
     recordPracticeTestReviewed(): Promise<void>;
   };
 }
@@ -56,11 +79,19 @@ export function practiceTestApiPlugin(): Plugin {
         '/server/authority-api.ts',
       )) as unknown as AuthorityApiModule;
       const recorder: PracticeTestRecorder = {
-        recordCompleted: () => authority.client.recordPracticeTestCompleted(),
+        // Enforce §6 cadence at the serving boundary: consult the authority
+        // before a new sitting is created, and hand back the length tier.
+        gate: () => authority.client.practiceTestServeGate(),
+        // A completed sitting persists its SCORED result (dashboard summary +
+        // repair queue); without a result payload it degrades to counters only.
+        recordCompleted: (completion) =>
+          completion
+            ? authority.client.recordPracticeTestResult(completion)
+            : authority.client.recordPracticeTestCompleted(),
         recordReviewed: () => authority.client.recordPracticeTestReviewed(),
       };
       server.middlewares.use('/api/practice-test/next', (request, response) => {
-        mod.handlePracticeTestNextRequest(request, response);
+        mod.handlePracticeTestNextRequest(request, response, undefined, recorder);
       });
       server.middlewares.use('/api/practice-test/block', (request, response) => {
         mod.handlePracticeTestBlockRequest(request, response, undefined, recorder);

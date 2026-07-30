@@ -175,6 +175,11 @@ export async function handleAuthorityRequest(
           return sendJson(response, 200, await client.getCarsReasoningPatterns());
         case '/v1/skills':
           return sendJson(response, 200, await client.getSkills());
+        // Practice-test dashboard summary, now served from REAL sittings (WS5).
+        // Null until the learner has completed one, which the client's graceful
+        // path already renders as the card's empty/next-due state.
+        case '/v1/practice-test/summary':
+          return sendJson(response, 200, await client.getPracticeTestSummary());
         case '/v1/hooks/wrapped':
           return sendJson(response, 200, await client.getWrapped());
         case '/v1/diagnostic/next':
