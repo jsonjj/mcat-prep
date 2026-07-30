@@ -37,6 +37,22 @@ export interface LessonContentProvider {
   getAnswerKey(lessonId: string): ServerAnswerKey;
   /** `content_sha256` of the lesson script — the content revision to attribute evidence to. */
   getDefinitionHash(lessonId: string): string;
+  /**
+   * SERVER ONLY. The lesson's authored `question_evidence_plan` entries (raw and
+   * unparsed) plus the envelope `artifact_version`, for the seam adapter to feed
+   * to `parseAuthoredLessonBinding`. Not learner-safe: the QEP carries
+   * evidence-mode, scoring-authority, and reasoning-operation metadata.
+   */
+  getAuthoredBindings(lessonId: string): AuthoredLessonBindings;
+}
+
+/** SERVER-ONLY authored-binding source for one lesson: the raw QEP + envelope version. */
+export interface AuthoredLessonBindings {
+  readonly lessonId: string;
+  /** Lesson-script `artifact_version`; the envelope fallback when a binding omits its own version. */
+  readonly artifactVersion: string | undefined;
+  /** The raw `payload.question_evidence_plan` entries, in authored order. */
+  readonly entries: readonly Readonly<Record<string, unknown>>[];
 }
 
 /** SERVER-ONLY correct-answer record for one scored item. */
@@ -354,6 +370,7 @@ export function createRepoLessonContentProvider(contentRoot: string = DEFAULT_CO
   const ids = [...dirById.keys()].sort();
   const normalizedCache = new Map<string, NormalizedLesson>();
   const answerCache = new Map<string, ServerAnswerKey>();
+  const authoringCache = new Map<string, AuthoredLessonBindings>();
 
   const dirOf = (lessonId: string): string => {
     const dir = dirById.get(lessonId);
@@ -379,6 +396,22 @@ export function createRepoLessonContentProvider(contentRoot: string = DEFAULT_CO
       const key = buildAnswerKey(normalizedOf(lessonId), readArtifacts(dirOf(lessonId)));
       answerCache.set(lessonId, key);
       return key;
+    },
+    getAuthoredBindings: (lessonId) => {
+      const cached = authoringCache.get(lessonId);
+      if (cached !== undefined) return cached;
+      const script = asRecord(readJsonFile(join(dirOf(lessonId), 'lesson-script.json')));
+      const payload = asRecord(script?.payload);
+      const entries = asArray(payload?.question_evidence_plan)
+        .map(asRecord)
+        .filter((entry): entry is JsonRecord => entry !== undefined);
+      const value: AuthoredLessonBindings = {
+        lessonId,
+        artifactVersion: typeof script?.artifact_version === 'string' ? script.artifact_version : undefined,
+        entries,
+      };
+      authoringCache.set(lessonId, value);
+      return value;
     },
   };
 }

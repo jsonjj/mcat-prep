@@ -161,7 +161,18 @@ function itemOf(lesson: NormalizedLesson, itemId: string): NormalizedItem {
 
 const normalizeText = (value: string): string => value.trim().replace(/\s+/g, ' ');
 
-function scoreResponse(answer: ServerItemAnswer, response: EngineResponse): boolean {
+/**
+ * Whether a committed response supplied no answer at all. Exported so the seam
+ * adapter derives the `omitted`/`outcome` fact from the SAME rule the engine
+ * scored with, never a second copy that could drift.
+ */
+export function isEngineResponseOmitted(response: EngineResponse): boolean {
+  if (response.kind === 'MULTIPLE_CHOICE') return response.choiceId === null;
+  if (response.kind === 'SHORT') return response.text === null || response.text.trim() === '';
+  return Object.values(response.fields).every((value) => value === null || value.trim() === '');
+}
+
+export function scoreEngineResponse(answer: ServerItemAnswer, response: EngineResponse): boolean {
   // Multiple choice: the key names the winning choiceId directly.
   if (answer.correctChoiceId !== null) {
     return response.kind === 'MULTIPLE_CHOICE' && response.choiceId === answer.correctChoiceId;
@@ -397,7 +408,7 @@ export function applyNormalizedLessonAction(
         itemId: item.itemId,
       });
     }
-    const correct = scoreResponse(answer, action.response);
+    const correct = scoreEngineResponse(answer, action.response);
     const record: NormalizedResponseRecord = {
       itemId: item.itemId,
       primaryKcId: item.primaryKcId,
