@@ -99,22 +99,36 @@ export interface PracticeTestBlueprint {
  *
  * A scored MCAT is 230 questions — 59 C/P, 53 CARS, 59 B/B, 59 P/S — so a
  * half-length test is ~115. The section floors hold each section's share and sum
- * to 110, leaving 5 items of slack for balance top-up. The skill floors ask for
- * broad reasoning coverage in the sciences and all three CARS sub-skills; the
- * format floors ask only for the passage/discrete split the bank actually
- * distinguishes.
+ * to 110, leaving 5 items of slack for balance top-up.
+ *
+ * The science skill floors are keyed to the reasoning operations a REAL pull can
+ * actually resolve. The corpus tags `primary_skill` (SIRS1-4) and the server
+ * bank resolves it WITHOUT construct text (`practice-test-bank.ts` passes
+ * `{primary_skill}` only), so SIRS1→IDENTIFY, SIRS3→DESIGN, SIRS4→EVIDENCE, and
+ * the whole SIRS2 mass collapses to EXPLAIN — QUANTIFY/PREDICT/RELATE never
+ * appear from such a pull. Flooring those three (as an earlier draft did) made
+ * this default blueprint infeasible against the entire ~2k-item corpus, so their
+ * coverage is folded into the EXPLAIN anchor (where SIRS2's quantitative /
+ * predictive / relational reasoning already lands). CARS keeps all three AAMC
+ * sub-skills, its defining difference from the diagnostic.
+ *
+ * The format floors ask only for passage items: the pull carries no reliable
+ * format column, so `formatOf` treats a passage as the one signal and every
+ * pulled row resolves to `passage_mcq` (zero discrete). `discrete_mcq` is left
+ * unconstrained rather than floored at a level the corpus cannot supply.
  */
 export const HALF_LENGTH_BLUEPRINT: PracticeTestBlueprint = {
   totalItems: 115,
   sectionFloors: { cp: 29, cars: 26, bb: 29, ps: 26 },
   skillFloors: {
-    // Sciences: keep every reasoning operation on the form so the read is not
-    // dominated by recall. Modest floors that a 2k-item bank clears with room.
+    // Sciences: only the operations a construct-text-free pull resolves, so the
+    // read is not dominated by recall. EXPLAIN is the anchor (all of SIRS2
+    // collapses here) and absorbs the coverage the unsatisfiable
+    // QUANTIFY/PREDICT/RELATE floors used to ask for; the total science floor
+    // (21) is unchanged from the pre-fix blueprint, just concentrated on the ops
+    // the corpus actually populates.
     IDENTIFY: 4,
-    PREDICT: 3,
-    EXPLAIN: 3,
-    RELATE: 2,
-    QUANTIFY: 4,
+    EXPLAIN: 12,
     DESIGN: 2,
     EVIDENCE: 3,
     // CARS: all three AAMC sub-skills present, weighted toward within/beyond text.
@@ -123,8 +137,11 @@ export const HALF_LENGTH_BLUEPRINT: PracticeTestBlueprint = {
     RBT: 8,
   },
   formatFloors: {
+    // Every pulled item has a passage → passage_mcq; discrete is left
+    // unconstrained (the pull has no reliable format column, so the corpus
+    // supplies zero discrete items).
     passage_mcq: 40,
-    discrete_mcq: 20,
+    discrete_mcq: 0,
   },
 };
 

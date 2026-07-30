@@ -7,6 +7,7 @@ import {
   type SessionRecord,
 } from './diagnostic-session-store';
 import {
+  bankSupportsPracticeTest,
   recordPracticeTestBlock,
   resolvePracticeTestBlock,
   type PracticeTestBlockView,
@@ -179,6 +180,29 @@ function bankOr503(response: ServerResponse, bank: PracticeTestBank | null): ban
   return true;
 }
 
+/**
+ * Infeasibility → 503, the analogue of {@link bankOr503} for a bank that EXISTS
+ * but is too thin to fill the blueprint from this learner's remaining fresh
+ * items. A practice test is validate-before-serve, so `assemblePracticeTest`
+ * throws {@link PracticeTestAssemblyError} rather than deal a short form; without
+ * this guard that throw surfaces through `handleError` as a generic 500. Checking
+ * feasibility BEFORE assembling turns it into the same graceful 503 as a missing
+ * bank. A completed sitting serves its done view from the response log without
+ * re-assembling, so it never needs (and must not fail) this check.
+ */
+function servableOr503(
+  response: ServerResponse,
+  bank: PracticeTestBank,
+  record: SessionRecord,
+  learnerId: string,
+): boolean {
+  if (record.completed || bankSupportsPracticeTest(bank, learnerId)) return true;
+  writeJson(response, 503, {
+    error: 'The practice-test question bank is not available in this environment.',
+  });
+  return false;
+}
+
 /** POST /api/practice-test/next — start/resume a sitting and serve the current block. */
 export function handlePracticeTestNextRequest(
   request: IncomingMessage,
@@ -202,6 +226,9 @@ export function handlePracticeTestNextRequest(
       const { record, sessionToken } = token
         ? { record: practiceTestSessionStore.get(token), sessionToken: token }
         : practiceTestSessionStore.create(learnerId);
+      // Validate-before-serve: an infeasible fresh pool is a graceful 503, not a
+      // 500 thrown out of the assembler inside `serveBlock`.
+      if (!servableOr503(response, bank, record, learnerId)) return;
       writeJson(response, 200, serveBlock(bank, record, sessionToken, learnerId));
     })
     .catch((error: unknown) => handleError(response, error));
@@ -239,6 +266,9 @@ export function handlePracticeTestBlockRequest(
       // Capture completion BEFORE serving: `serveBlock` (→ resolvePracticeTestBlock)
       // is what flips `record.completed` once the last block is committed.
       const wasCompleted = record.completed;
+      // Same validate-before-serve guard as `/next`: serving the next block
+      // re-assembles, so an infeasible pool is a 503 rather than a generic 500.
+      if (!servableOr503(response, bank, record, learnerId)) return;
       const payload = serveBlock(bank, record, sessionToken, learnerId);
       // The sitting just finished on THIS commit → report the completion so the
       // authority's cadence state (last-test date, count, review-gate) moves. The

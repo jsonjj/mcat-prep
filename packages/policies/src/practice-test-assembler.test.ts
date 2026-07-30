@@ -188,6 +188,125 @@ describe('practice test assembler — validate before serve', () => {
   });
 });
 
+/**
+ * The DEFAULT blueprint against a pool shaped like the REAL ~2,108-item pull, AS
+ * THE SERVER BANK RESOLVES IT. `practice-test-bank.ts` calls
+ * `resolveReasoningOperation` with `primary_skill` ONLY (no construct text), so
+ * the whole SIRS2 mass collapses to EXPLAIN and QUANTIFY/PREDICT/RELATE never
+ * appear; every pulled row has a passage, so all items are `passage_mcq` and
+ * there are zero discrete. These are the verified counts the assembler must
+ * survive — testing the SHIPPED blueprint, not a bespoke feasible one.
+ */
+const CORPUS_SCIENCE_OPS: ReadonlyArray<readonly [ReasoningOperation, number]> = [
+  ['IDENTIFY', 379], // SIRS1
+  ['EXPLAIN', 1248], // SIRS2 → EXPLAIN (no construct text on the pull)
+  ['DESIGN', 235], // SIRS3
+  ['EVIDENCE', 86], // SIRS4
+];
+const CORPUS_CARS_SKILLS: ReadonlyArray<readonly [CarsSkill, number]> = [
+  ['FOC', 52],
+  ['RWT', 64],
+  ['RBT', 44],
+];
+
+/** A candidate pool shaped exactly like the resolved real corpus (2,108 items). */
+function makeCorpusShapedPool(): PracticeTestCandidate[] {
+  const out: PracticeTestCandidate[] = [];
+  let n = 0;
+  // Spread science items round-robin across the three science sections so each
+  // clears its section floor while the (global) reasoning-op counts stay the
+  // real histogram.
+  for (const [op, count] of CORPUS_SCIENCE_OPS) {
+    for (let i = 0; i < count; i += 1) {
+      const section = SCIENCE_SECTIONS[n % SCIENCE_SECTIONS.length]!;
+      n += 1;
+      out.push({
+        questionId: `sci-${op}-${i}`,
+        section,
+        cluster: CLUSTER_BY_SECTION[section],
+        skill: op,
+        carsSkill: null,
+        format: 'passage_mcq', // every pulled row carries a passage
+        dokLevel: (i % 3) + 1,
+        familyId: `fam-sci-${op}-${i}`,
+        eligible: true,
+      });
+    }
+  }
+  for (const [carsSkill, count] of CORPUS_CARS_SKILLS) {
+    for (let i = 0; i < count; i += 1) {
+      out.push({
+        questionId: `cars-${carsSkill}-${i}`,
+        section: 'cars',
+        cluster: CLUSTER_BY_SECTION.cars,
+        skill: null,
+        carsSkill,
+        format: 'passage_mcq',
+        dokLevel: (i % 3) + 1,
+        familyId: `fam-cars-${carsSkill}-${i}`,
+        eligible: true,
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * The pre-fix default blueprint (main @ beae3f5), kept literal so this test
+ * documents exactly which floors the real corpus could not supply.
+ */
+const PRE_FIX_BLUEPRINT: PracticeTestBlueprint = {
+  totalItems: 115,
+  sectionFloors: { cp: 29, cars: 26, bb: 29, ps: 26 },
+  skillFloors: {
+    IDENTIFY: 4,
+    PREDICT: 3,
+    EXPLAIN: 3,
+    RELATE: 2,
+    QUANTIFY: 4,
+    DESIGN: 2,
+    EVIDENCE: 3,
+    FOC: 6,
+    RWT: 8,
+    RBT: 8,
+  },
+  formatFloors: { passage_mcq: 40, discrete_mcq: 20 },
+};
+
+describe('practice test assembler — DEFAULT blueprint is feasible against the real corpus', () => {
+  it('the corpus-shaped pool has the resolved shape the bug hinged on', () => {
+    const pool = makeCorpusShapedPool();
+    expect(pool.length).toBe(2108);
+    // The operations a primary_skill-only pull cannot resolve are simply absent.
+    expect(pool.some((c) => c.skill === 'QUANTIFY')).toBe(false);
+    expect(pool.some((c) => c.skill === 'PREDICT')).toBe(false);
+    expect(pool.some((c) => c.skill === 'RELATE')).toBe(false);
+    // And not a single discrete item — every pull row has a passage.
+    expect(pool.some((c) => c.format === 'discrete_mcq')).toBe(false);
+  });
+
+  it('poolSupportsPracticeTest is TRUE for the shipped HALF_LENGTH_BLUEPRINT', () => {
+    // The regression guard: the exact pool shape the served default blueprint
+    // 500'd on must now assemble a blueprint-valid form.
+    const pool = makeCorpusShapedPool();
+    expect(poolSupportsPracticeTest(pool, { blueprint: HALF_LENGTH_BLUEPRINT })).toBe(true);
+
+    const { items } = assemblePracticeTest(pool, {
+      blueprint: HALF_LENGTH_BLUEPRINT,
+      seed: 'corpus-shaped',
+    });
+    expect(validatePracticeTestForm(items, HALF_LENGTH_BLUEPRINT)).toEqual([]);
+  });
+
+  it('would have CAUGHT the bug: the pre-fix blueprint is infeasible on the same pool', () => {
+    // QUANTIFY/PREDICT/RELATE (0 in the corpus) and discrete_mcq:20 (also 0) are
+    // unsatisfiable, so the pre-fix default blueprint cannot be served — this is
+    // the 500 the eval saw, reproduced as a feasibility failure.
+    const pool = makeCorpusShapedPool();
+    expect(poolSupportsPracticeTest(pool, { blueprint: PRE_FIX_BLUEPRINT })).toBe(false);
+  });
+});
+
 describe('practice test assembler — composition helpers', () => {
   it('candidateSkillKey uses cars sub-skill for CARS and reasoning op otherwise', () => {
     const cars = makePool().find((c) => c.section === 'cars')!;

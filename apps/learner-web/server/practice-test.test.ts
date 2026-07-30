@@ -5,6 +5,7 @@ import { validatePracticeTestForm } from '@mcat/policies';
 import { PracticeTestBank } from './practice-test-bank';
 import { DiagnosticSessionStore, type SessionRecord } from './diagnostic-session-store';
 import {
+  bankSupportsPracticeTest,
   recordPracticeTestBlock,
   resolvePracticeTestBlock,
   type PracticeTestBlockView,
@@ -113,6 +114,16 @@ describe('practice test bank includes CARS', () => {
     const bank = bankFor();
     expect(bank.stats.cars).toBeGreaterThan(0);
     expect(bank.candidates.some((c) => c.section === 'cars')).toBe(true);
+  });
+});
+
+describe('bankSupportsPracticeTest (the serve-path 503 guard predicate)', () => {
+  it('is TRUE for an ample bank and FALSE for one too thin for the blueprint', () => {
+    // Ample: 12 fresh items per section clears the BP section floors with room.
+    expect(bankSupportsPracticeTest(bankFor(12), 'learner-feasible', BP)).toBe(true);
+    // Thin: 2 per section cannot meet cp:4 / cars:4 / bb:4, so no valid form can
+    // be dealt — the exact condition the serve path now answers with a 503.
+    expect(bankSupportsPracticeTest(bankFor(2), 'learner-thin', BP)).toBe(false);
   });
 });
 
