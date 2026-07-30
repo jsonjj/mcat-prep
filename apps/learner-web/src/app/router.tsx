@@ -7,6 +7,7 @@ import { Home } from '../screens/Home';
 import { TodaysPath } from '../screens/today/TodaysPath';
 import { Curriculum } from '../screens/Curriculum';
 import { VectorLesson } from '../screens/VectorLesson';
+import { CatalogLesson } from '../screens/CatalogLesson';
 import { Lesson } from '../screens/Lesson';
 import { Study } from '../screens/Study';
 import { RecallHome } from '../screens/recall/RecallHome';
@@ -43,6 +44,11 @@ export const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'curriculum', element: <Curriculum /> },
       { path: 'lessons/vectors-and-trigonometry', element: <VectorLesson /> },
+      // The normalized-engine catalog (L2/L3) plays through the shared CatalogLesson
+      // player on real routes matching L1's shape. WHICH lesson runs is fixed by the
+      // slug; the registration manifest is the source of truth for these paths.
+      { path: 'lessons/v3-les-789208', element: <CatalogLesson lessonId="V3-LES-789208" /> },
+      { path: 'lessons/v3-les-844372', element: <CatalogLesson lessonId="V3-LES-844372" /> },
       // Today's Path — the daily learning-plan engine (guided one-at-a-time runner).
       { path: 'today', element: <TodaysPath /> },
       { path: 'learn', element: <Study /> },

@@ -1,5 +1,10 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CarsDuelRubric, MasterySeed, VectorLessonAction } from '@mcat/contracts';
+import type {
+  CarsDuelRubric,
+  MasterySeed,
+  NormalizedLessonAction,
+  VectorLessonAction,
+} from '@mcat/contracts';
 import type { GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
@@ -133,6 +138,46 @@ export function useSubmitVectorLessonAction() {
   return useMutation({
     mutationFn: (input: { runId: string; screenToken: string; action: VectorLessonAction }) =>
       authority.submitVectorLessonAction(input.runId, input.screenToken, input.action),
+    onSuccess: () => invalidateLearner(qc),
+  });
+}
+
+// Normalized-engine catalog hooks (L2/L3 and any future template lesson). Each is
+// slug-scoped so one player component serves the entire non-L1 catalog; L1 keeps its
+// four bespoke hooks above (per-grammar dispatch).
+
+export function useNormalizedLessonStatus(slug: string) {
+  return useQuery({
+    queryKey: ['normalized-lesson-status', slug],
+    queryFn: () => authority.getNormalizedLessonStatus(slug),
+  });
+}
+
+export function useStartNormalizedLesson(slug: string, lessonId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => authority.startNormalizedLesson(slug, lessonId),
+    onSuccess: () => {
+      void invalidateLearner(qc);
+    },
+  });
+}
+
+export function useNormalizedLessonRun(slug: string, enabled = true) {
+  return useQuery({
+    queryKey: ['normalized-lesson-run', slug],
+    queryFn: () => authority.getNormalizedLessonRun(slug),
+    // The run only exists after a start; the player enables this once status (or a
+    // fresh start) says the lesson is under way, so we never fetch a run that isn't there.
+    enabled: enabled && slug !== '',
+  });
+}
+
+export function useSubmitNormalizedLessonAction(slug: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (action: NormalizedLessonAction) =>
+      authority.submitNormalizedLessonAction(slug, action),
     onSuccess: () => invalidateLearner(qc),
   });
 }
