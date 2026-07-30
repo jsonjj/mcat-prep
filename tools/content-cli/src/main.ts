@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { dirname, isAbsolute, join } from 'node:path';
+import { basename, dirname, isAbsolute, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
@@ -24,7 +24,14 @@ import {
   canonicalVectorLessonArtifactJson,
   validateVectorLessonArtifacts,
 } from '@mcat/content/v3-vector-lesson';
-import { planLessonRehash, type RehashFile } from '@mcat/content/lesson-validator';
+import {
+  buildResolvableIds,
+  planLessonRehash,
+  validateCatalog,
+  type LessonValidationInput,
+  type RehashFile,
+  type ResolvableIds,
+} from '@mcat/content/lesson-validator';
 
 /**
  * Default v7 corpus location. This lives in the LOCAL-ONLY archive OUTSIDE the
@@ -370,6 +377,111 @@ function cmdRehash(lessonDirArg: string | undefined): void {
   console.log('  verify: independent re-rehash is a no-op — hash chain self-consistent. OK');
 }
 
+/**
+ * Structural lesson-catalog merge gate (Real Lesson Catalog, Phase 3). Discovers
+ * every real lesson under content/lessons/ (a directory carrying lesson-script.json),
+ * builds the pure LessonValidationInput EXACTLY as the validator's own tests do —
+ * artifact files + artifact-manifest + the in-repo R14 curriculum catalog + L1
+ * browser evidence — runs the full R1–R15 rule set, prints a concise per-lesson
+ * report, and EXITS NON-ZERO on any failure so CI can block the merge. Pass a single
+ * lesson dir to scope it; pass `--json` for the machine-readable catalog report.
+ */
+function cmdLessonValidate(): void {
+  const lessonsRoot = join(REPO_ROOT, 'content', 'lessons');
+  const positional = args.slice(1).find((a) => !a.startsWith('--'));
+  const jsonOut = args.includes('--json');
+
+  let lessonDirs: string[];
+  if (positional !== undefined) {
+    lessonDirs = [isAbsolute(positional) ? positional : join(REPO_ROOT, positional)];
+  } else {
+    let entries: string[] = [];
+    try {
+      entries = readdirSync(lessonsRoot);
+    } catch {
+      console.error(`lesson-validate: cannot read ${lessonsRoot}`);
+      process.exit(1);
+      return;
+    }
+    lessonDirs = entries
+      .map((name) => join(lessonsRoot, name))
+      .filter((d) => {
+        try {
+          return statSync(d).isDirectory() && existsSync(join(d, 'lesson-script.json'));
+        } catch {
+          return false;
+        }
+      })
+      .sort();
+  }
+  if (lessonDirs.length === 0) {
+    console.error(
+      `lesson-validate: no lessons (directories with lesson-script.json) found under ${lessonsRoot}`,
+    );
+    process.exit(1);
+    return;
+  }
+
+  // Frozen in-repo id catalog R14 resolves against; null ⇒ R14 reports N/A (never a silent pass).
+  const curriculumPath = join(REPO_ROOT, 'curriculum', 'v3', 'v3-lesson-authoring-manifest.json');
+  const resolvableIds: ResolvableIds | null = existsSync(curriculumPath)
+    ? buildResolvableIds(JSON.parse(readFileSync(curriculumPath, 'utf8')) as unknown)
+    : null;
+  if (resolvableIds === null) {
+    console.error(
+      `lesson-validate: WARNING — curriculum catalog missing at ${curriculumPath}; R14 will be N/A`,
+    );
+  }
+
+  const inputs: LessonValidationInput[] = lessonDirs.map((dir) => {
+    const dirName = basename(dir);
+    const files = readdirSync(dir)
+      .filter((f) => f.endsWith('.json') && f !== 'artifact-manifest.json')
+      .sort()
+      .map((relPath) => {
+        const rawBytes = readFileSync(join(dir, relPath), 'utf8');
+        return { relPath, rawBytes, json: JSON.parse(rawBytes) as unknown };
+      });
+    const manifestPath = join(dir, 'artifact-manifest.json');
+    const manifest = existsSync(manifestPath)
+      ? (JSON.parse(readFileSync(manifestPath, 'utf8')) as unknown)
+      : null;
+    // Browser evidence lives outside the lesson dir (L1 only today); supply it for R7 when present.
+    const reportPath = join(REPO_ROOT, 'tests', 'browser', 'evidence', dirName, 'browser-report.json');
+    const browserEvidence = existsSync(reportPath)
+      ? {
+          reportRawText: readFileSync(reportPath, 'utf8'),
+          reportJson: JSON.parse(readFileSync(reportPath, 'utf8')) as unknown,
+        }
+      : null;
+    return { lessonId: dirName.toUpperCase(), files, manifest, resolvableIds, browserEvidence };
+  });
+
+  const report = validateCatalog(inputs);
+
+  if (jsonOut) {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    console.log(
+      `lesson-validate: ${inputs.length} lesson(s) under content/lessons/  (R14 catalog: ${resolvableIds ? 'loaded' : 'N/A'})`,
+    );
+    for (const lesson of report.lessons) {
+      const failing = lesson.results.filter((r) => !r.ok);
+      console.log(
+        `\n  ${lesson.ok ? 'PASS' : 'FAIL'}  ${lesson.lessonId}  —  ${lesson.results.length} rules, ${failing.length} failing`,
+      );
+      for (const r of failing) console.error(`      x ${r.rule} [${lesson.lessonId}]: ${r.detail}`);
+    }
+    console.log(
+      report.ok
+        ? `\nCATALOG OK — all ${report.lessons.length} lessons pass R1–R15.`
+        : `\nCATALOG FAILED — ${report.failures.length} failing rule(s) across ${report.lessons.filter((l) => !l.ok).length} lesson(s).`,
+    );
+  }
+
+  if (!report.ok) process.exit(1);
+}
+
 switch (command) {
   case 'manifest':
     cmdManifest();
@@ -395,6 +507,9 @@ switch (command) {
   case 'rehash':
     cmdRehash(arg);
     break;
+  case 'lesson-validate':
+    cmdLessonValidate();
+    break;
   default:
     console.log(
       'MCAT content CLI\n\nCommands:\n' +
@@ -405,6 +520,7 @@ switch (command) {
         '  load-v7 [path]      Validate + compile the v7 JSONL corpus (read-only) into a local bundle\n' +
         '  db-seed [path]      Emit a gitignored seed.sql (questions + protected answers) with derived cluster/section\n' +
         '  vector-lesson-artifacts  Generate exactly four V3-LES-130923 internal-draft artifacts\n' +
-        '  rehash <lessonDir>  Recompute a lesson content-hash chain (content_sha256 + file_sha256) after an authored edit\n',
+        '  rehash <lessonDir>  Recompute a lesson content-hash chain (content_sha256 + file_sha256) after an authored edit\n' +
+        '  lesson-validate [dir] [--json]  Structural R1–R15 gate over content/lessons/ (non-zero exit on failure; CI merge gate)\n',
     );
 }
