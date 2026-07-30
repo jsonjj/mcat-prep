@@ -10,6 +10,10 @@ import type {
   MasteryMapEntry,
   MasterySeed,
   MistakePatternView,
+  NormalizedLessonAction,
+  NormalizedLessonRunView,
+  NormalizedLessonStartResponse,
+  NormalizedLessonStatusView,
   PracticeAttemptCommand,
   PracticeAttemptResult,
   PracticeItemView,
@@ -103,6 +107,16 @@ export interface AuthorityPort {
     screenToken: string,
     action: VectorLessonAction,
   ): Promise<void>;
+  /**
+   * The shared normalized-engine catalog (L2/L3 today, any Phase-9 authoring-template
+   * lesson tomorrow). Every method is slug-routed — the route slug is the authority for
+   * WHICH lesson runs — so one client surface serves the entire non-L1 catalog. L1 keeps
+   * its bespoke four methods above (owner decision: per-grammar dispatch).
+   */
+  getNormalizedLessonStatus(slug: string): Promise<NormalizedLessonStatusView>;
+  startNormalizedLesson(slug: string, lessonId: string): Promise<NormalizedLessonStartResponse>;
+  getNormalizedLessonRun(slug: string): Promise<NormalizedLessonRunView>;
+  submitNormalizedLessonAction(slug: string, action: NormalizedLessonAction): Promise<void>;
 }
 
 /** Persistence boundary provided by the platform (browser IndexedDB/localStorage, etc.). */
