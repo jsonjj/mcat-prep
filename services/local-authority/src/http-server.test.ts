@@ -292,6 +292,8 @@ describe('local debug learner-state route', () => {
     ).json()) as DebugLearnerStateView;
     const beforeLesson = before.lessons.find((entry) => entry.lessonId === 'V3-LES-130923');
     expect(beforeLesson?.deliveredContentSha256).toBeNull();
+    // No delivery yet, so nothing can be superseded.
+    expect(beforeLesson?.revisionSuperseded).toBe(false);
 
     // After delivery the endpoint returns the EXACT content_sha256 the runtime
     // pinned onto the run and scored against — the attribution key for the
@@ -301,10 +303,13 @@ describe('local debug learner-state route', () => {
       await fetch(`${server.baseUrl}${DEBUG_LEARNER_STATE_PATH}`)
     ).json()) as DebugLearnerStateView;
     const afterLesson = after.lessons.find((entry) => entry.lessonId === 'V3-LES-130923');
+    const expectedSha = buildVectorLessonArtifacts().script.content_sha256;
     expect(afterLesson?.deliveredContentSha256).toMatch(/^[0-9a-f]{64}$/);
-    expect(afterLesson?.deliveredContentSha256).toBe(
-      buildVectorLessonArtifacts().script.content_sha256,
-    );
+    expect(afterLesson?.deliveredContentSha256).toBe(expectedSha);
+    // The harness serves the current revision, so a fresh delivery is never
+    // stale: current resolves to the same hash and the flag stays down.
+    expect(afterLesson?.currentContentSha256).toBe(expectedSha);
+    expect(afterLesson?.revisionSuperseded).toBe(false);
   });
 
   it('returns no protected material', async () => {

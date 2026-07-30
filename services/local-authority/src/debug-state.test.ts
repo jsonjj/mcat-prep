@@ -208,6 +208,7 @@ describe('buildDebugLearnerState', () => {
             lessonId: 'V3-LES-130923',
             requiredKcIds: ['V3-KC-866848', 'V3-KC-700208', 'V3-KC-159529'],
             deliveredContentSha256: SAMPLE_CONTENT_SHA,
+            currentContentSha256: SAMPLE_CONTENT_SHA,
           },
         ],
       }),
@@ -217,6 +218,8 @@ describe('buildDebugLearnerState', () => {
     expect(lesson.status).toBe('available');
     if (lesson.status !== 'available') throw new Error('unreachable');
     expect(lesson.deliveredContentSha256).toBe(SAMPLE_CONTENT_SHA);
+    // Delivered == current: not stale.
+    expect(lesson.revisionSuperseded).toBe(false);
     expect(lesson.requiredKcCount).toBe(3);
     expect(lesson.members.map((m) => m.kcId)).toEqual([
       'V3-KC-866848',
@@ -244,8 +247,14 @@ describe('buildDebugLearnerState', () => {
             lessonId: 'lesson-enz-inhibition',
             requiredKcIds: null,
             deliveredContentSha256: OTHER_CONTENT_SHA,
+            currentContentSha256: OTHER_CONTENT_SHA,
           },
-          { lessonId: 'V3-LES-EMPTY', requiredKcIds: [], deliveredContentSha256: null },
+          {
+            lessonId: 'V3-LES-EMPTY',
+            requiredKcIds: [],
+            deliveredContentSha256: null,
+            currentContentSha256: null,
+          },
         ],
       }),
     );
@@ -255,6 +264,8 @@ describe('buildDebugLearnerState', () => {
         lessonId: 'lesson-enz-inhibition',
         status: 'unavailable',
         deliveredContentSha256: OTHER_CONTENT_SHA,
+        currentContentSha256: OTHER_CONTENT_SHA,
+        revisionSuperseded: false,
         rejectionCodes: ['LESSON_KC_MAP_MISSING'],
         missingKcIds: [],
       },
@@ -262,6 +273,8 @@ describe('buildDebugLearnerState', () => {
         lessonId: 'V3-LES-EMPTY',
         status: 'unavailable',
         deliveredContentSha256: null,
+        currentContentSha256: null,
+        revisionSuperseded: false,
         rejectionCodes: ['LESSON_KC_MAP_EMPTY'],
         missingKcIds: [],
       },
@@ -276,11 +289,13 @@ describe('buildDebugLearnerState', () => {
             lessonId: 'V3-LES-130923',
             requiredKcIds: ['V3-KC-866848'],
             deliveredContentSha256: SAMPLE_CONTENT_SHA,
+            currentContentSha256: SAMPLE_CONTENT_SHA,
           },
           {
             lessonId: 'V3-LES-130923',
             requiredKcIds: ['V3-KC-866848'],
             deliveredContentSha256: SAMPLE_CONTENT_SHA,
+            currentContentSha256: SAMPLE_CONTENT_SHA,
           },
         ],
       }),
@@ -298,18 +313,21 @@ describe('buildDebugLearnerState', () => {
             lessonId: 'V3-LES-130923',
             requiredKcIds: ['V3-KC-866848'],
             deliveredContentSha256: SAMPLE_CONTENT_SHA,
+            currentContentSha256: SAMPLE_CONTENT_SHA,
           },
           // Available membership, but never started: revision is null, not a hash.
           {
             lessonId: 'V3-LES-789208',
             requiredKcIds: ['V3-KC-866848'],
             deliveredContentSha256: null,
+            currentContentSha256: SAMPLE_CONTENT_SHA,
           },
           // Unavailable rollup, yet the served revision is still attributed.
           {
             lessonId: 'lesson-enz-inhibition',
             requiredKcIds: null,
             deliveredContentSha256: OTHER_CONTENT_SHA,
+            currentContentSha256: OTHER_CONTENT_SHA,
           },
         ],
       }),
@@ -331,6 +349,49 @@ describe('buildDebugLearnerState', () => {
       status: 'unavailable',
       deliveredContentSha256: OTHER_CONTENT_SHA,
     });
+  });
+
+  it('flags a superseded delivery revision but still counts its evidence', () => {
+    const state = mastery({ kc: { 'V3-KC-866848': practiced(0.9) } });
+    const roll = (
+      deliveredContentSha256: string | null,
+      currentContentSha256: string | null,
+    ) =>
+      buildDebugLearnerState(
+        baseInput({
+          mastery: state,
+          lessons: [
+            {
+              lessonId: 'V3-LES-130923',
+              requiredKcIds: ['V3-KC-866848'],
+              deliveredContentSha256,
+              currentContentSha256,
+            },
+          ],
+        }),
+      ).lessons[0]!;
+
+    const stale = roll(OTHER_CONTENT_SHA, SAMPLE_CONTENT_SHA);
+    const fresh = roll(SAMPLE_CONTENT_SHA, SAMPLE_CONTENT_SHA);
+    const unknownCurrent = roll(OTHER_CONTENT_SHA, null);
+    const neverDelivered = roll(null, SAMPLE_CONTENT_SHA);
+
+    // Only a delivered-and-differing revision is superseded.
+    expect(stale.revisionSuperseded).toBe(true);
+    expect(fresh.revisionSuperseded).toBe(false);
+    // A missing fact is not a mismatch.
+    expect(unknownCurrent.revisionSuperseded).toBe(false);
+    expect(neverDelivered.revisionSuperseded).toBe(false);
+
+    // The flag is pure metadata: the superseded run's evidence rolls up EXACTLY
+    // as the current-revision run's does. Revising a lesson never discards or
+    // silently reinterprets the mastery already earned against the old revision.
+    if (stale.status !== 'available' || fresh.status !== 'available') {
+      throw new Error('unreachable');
+    }
+    expect(stale.pL).toBe(fresh.pL);
+    expect(stale.pL).toBeCloseTo(0.9, 10);
+    expect(stale.members).toEqual(fresh.members);
   });
 
   it('copies only allowlisted evidence fields', () => {
@@ -395,6 +456,7 @@ describe('buildDebugLearnerState', () => {
           lessonId: 'V3-LES-130923',
           requiredKcIds: ['V3-KC-866848'],
           deliveredContentSha256: SAMPLE_CONTENT_SHA,
+          currentContentSha256: SAMPLE_CONTENT_SHA,
         },
       ],
     });

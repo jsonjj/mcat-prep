@@ -20,6 +20,7 @@ import {
   systemClock,
 } from '@mcat/contracts';
 import { orderedKcsForLesson } from '@mcat/content';
+import { buildVectorLessonArtifacts } from '@mcat/content/v3-vector-lesson';
 import { RepositoryLearnerKernel } from '@mcat/learner-api';
 import {
   buildDebugLearnerState,
@@ -126,6 +127,25 @@ function deliveredContentSha256For(state: PersistedLessonRuns, lessonId: string)
     if (typeof vector === 'string') return vector;
   }
   return null;
+}
+
+/**
+ * L1's CURRENT catalog revision, resolved once from the same artifact builder the
+ * runtime pins its `definitionHash` from — so a freshly delivered L1 is never
+ * falsely reported as superseded.
+ */
+const VECTOR_LESSON_CURRENT_SHA256 = buildVectorLessonArtifacts().script.content_sha256;
+
+/**
+ * The catalog's CURRENT `content_sha256` for `lessonId`, or null when this
+ * loopback harness cannot resolve it. The debug view compares this against the
+ * delivered revision to flag a run whose content has since moved on; a `null`
+ * here can never manufacture a false stale flag. This harness only ever delivers
+ * L1, so only L1 needs a real answer today — a normalized lesson that somehow
+ * appears is reported honestly as "current unknown" rather than guessed.
+ */
+function currentContentSha256For(lessonId: string): string | null {
+  return lessonId === HARNESS_LESSON_ID ? VECTOR_LESSON_CURRENT_SHA256 : null;
 }
 
 function statusFor(error: AuthorityKernelError): number {
@@ -339,6 +359,7 @@ export async function createLocalLessonHttpServer(
                 lessonId,
                 requiredKcIds: orderedKcsForLesson(lessonId),
                 deliveredContentSha256: deliveredContentSha256For(runs, lessonId),
+                currentContentSha256: currentContentSha256For(lessonId),
               })),
             }),
             // Never CORS-shared. Unreachable with an `Origin`, and no response
