@@ -1073,38 +1073,6 @@ body {
   background: color-mix(in srgb, var(--mc-primary) 14%, transparent);
 }
 
-/* ---- Tests (checkpoint landing) ---- */
-.mc-test__covers {
-  display: flex;
-  flex-direction: column;
-  gap: var(--mc-space-3);
-}
-.mc-test__sections {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--mc-space-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.mc-test__section {
-  padding: var(--mc-space-3) var(--mc-space-4);
-  border: 1px solid color-mix(in srgb, var(--mc-border) 70%, transparent);
-  border-radius: var(--mc-radius-control);
-  background: color-mix(in srgb, var(--mc-surface-2) 55%, transparent);
-  color: var(--mc-ink);
-  font-size: var(--mc-text-15);
-}
-.mc-test__start {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--mc-space-3);
-}
-.mc-test__soon {
-  margin: 0;
-}
-
 /* ---- Study ---- */
 .mc-study {
   gap: var(--mc-space-4);
@@ -3119,6 +3087,44 @@ body {
   color: var(--mc-ink-muted);
   line-height: 1.55;
 }
+/* Two-column Practice: the live Practice-questions card (teal accent) beside the
+   presentational Practice-test dashboard (warm-amber accent). Cards are sized to
+   their own content (align-items: start) and stack into one column on narrow
+   screens. */
+.mc-practice__cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mc-space-4);
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .mc-practice__cols {
+    grid-template-columns: 1fr;
+  }
+}
+/* A rounded accent bar sits across the top of each column card: teal for the live
+   side, warm amber for the deferred test side. Inset from the corners so it reads
+   as an intentional bar, not a repainted border. */
+.mc-practice__card {
+  position: relative;
+}
+.mc-practice__card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--mc-radius-card);
+  right: var(--mc-radius-card);
+  height: 4px;
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-primary);
+}
+.mc-practice__card--test::before {
+  background: var(--mc-accent-warm);
+}
+/* The test card wears the warm accent through to its eyebrow (AA-contrast tone). */
+.mc-practice__card--test .mc-eyebrow {
+  color: var(--mc-accent-warm-text);
+}
 /* "How many questions?" — centered label + number input. */
 .mc-practice__count {
   display: flex;
@@ -3265,6 +3271,80 @@ body {
   font-weight: 600;
   text-align: center;
   line-height: 1.25;
+}
+/* Explicit per-lesson affordance under each ring. The whole ring is the link and
+   already carries the accessible name, so this label is decorative (aria-hidden). */
+.mc-weakest__review {
+  font-size: var(--mc-text-14);
+  font-weight: 700;
+  color: var(--mc-primary-text);
+}
+
+/* ---- Practice test dashboard (presentational, empty states only) ---- */
+.mc-testdash__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-testdash__start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-testdash__soon {
+  margin: 0;
+}
+.mc-testdash__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+/* Readiness + Estimated range sit side by side, collapsing to one column when the
+   card itself is narrow (stacked layout / small screens). */
+.mc-testdash__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mc-space-3);
+}
+@media (max-width: 480px) {
+  .mc-testdash__stats {
+    grid-template-columns: 1fr;
+  }
+}
+.mc-testdash__stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+  padding: var(--mc-space-3) var(--mc-space-4);
+  border: 1px solid color-mix(in srgb, var(--mc-border) 70%, transparent);
+  border-radius: var(--mc-radius-control);
+  background: color-mix(in srgb, var(--mc-surface-2) 45%, transparent);
+}
+.mc-testdash__empty {
+  margin: 0;
+  font-size: var(--mc-text-14);
+}
+/* A faint placeholder frame standing in for a region that has no data yet (the
+   trends chart, the past-tests strip). Deliberately just a dashed frame + centered
+   note — never a fabricated line, score, or trend. */
+.mc-emptyframe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mc-space-4);
+  border: 1px dashed color-mix(in srgb, var(--mc-border) 85%, transparent);
+  border-radius: var(--mc-radius-control);
+  background: color-mix(in srgb, var(--mc-surface-2) 35%, transparent);
+  text-align: center;
+}
+.mc-emptyframe--chart {
+  min-height: 148px;
+}
+.mc-emptyframe__note {
+  margin: 0;
+  max-width: 40ch;
+  font-size: var(--mc-text-14);
 }
 .mc-practice__options {
   display: flex;

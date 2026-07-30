@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, Card, Stack } from '@mcat/ui-web';
+import { Button, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { ATLAS_REGION_GROUPS, DEFAULT_MINUTES_PER_QUESTION } from '@mcat/contracts';
 import { CURRICULUM_PHASES } from '../../data/curriculum-v3.generated';
 import { useMasteryLessons } from '../../app/queries';
@@ -105,79 +105,152 @@ export function PracticeHome() {
     navigate('/app/practice/session', { state: { x } });
   };
 
+  // The disabled "Start test" note is associated with the button via aria-describedby.
+  const soonId = 'mc-test-soon';
+
   return (
     <div className="mc-screen mc-practice">
-      <h1 className="mc-h1">Practice</h1>
-      <p className="mc-practice__intro">
-        Practice pulls fresh questions from lessons you’ve already finished. Get it right on the first
-        try — no hints — and your mastery goes up. It’s untimed, so stop whenever you like.
-      </p>
+      <header className="mc-screen__head">
+        <h1 className="mc-h1">Practice</h1>
+        <p className="mc-practice__intro">
+          Practice pulls fresh questions from lessons you’ve already finished. Get it right on the
+          first try — no hints — and your mastery goes up. It’s untimed, so stop whenever you like.
+        </p>
+      </header>
 
-      <Card elevated>
-        <Stack gap={4}>
-          <div className="mc-practice__count">
-            <h2 className="mc-h3">How many questions?</h2>
-            <input
-              className="mc-timeinput__field mc-practice__countinput"
-              type="number"
-              inputMode="numeric"
-              min={MIN_QUESTIONS}
-              max={MAX_QUESTIONS}
-              value={countStr}
-              onChange={(e) => setCountStr(e.target.value)}
-              onBlur={() => setCountStr(String(clampCount(Number(countStr) || DEFAULT_QUESTIONS)))}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-              }}
-              aria-label="Number of questions"
-            />
-            <span className="mc-practice__esttime">≈ {estMinutes} min</span>
-          </div>
+      <div className="mc-practice__cols">
+        {/* LEFT — Practice questions. Fully functional: real mastery data + real
+            navigation (count control → session, weakest rings → curriculum). */}
+        <Card elevated className="mc-practice__card mc-practice__card--questions">
+          <Stack gap={5}>
+            <Eyebrow>Practice questions</Eyebrow>
 
-          <Button
-            variant="primary"
-            size="lg"
-            fullWidth
-            onClick={start}
-            className="mc-practice__start"
-          >
-            Start practice
-          </Button>
-        </Stack>
-      </Card>
+            <div className="mc-practice__count">
+              <h2 className="mc-h3">How many questions?</h2>
+              <input
+                className="mc-timeinput__field mc-practice__countinput"
+                type="number"
+                inputMode="numeric"
+                min={MIN_QUESTIONS}
+                max={MAX_QUESTIONS}
+                value={countStr}
+                onChange={(e) => setCountStr(e.target.value)}
+                onBlur={() => setCountStr(String(clampCount(Number(countStr) || DEFAULT_QUESTIONS)))}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                }}
+                aria-label="Number of questions"
+              />
+              <span className="mc-practice__esttime">≈ {estMinutes} min</span>
+            </div>
 
-      <section className="mc-weakest">
-        <div className="mc-practice__standhead">
-          <h2 className="mc-h3">Needs the most review</h2>
-          {weakest.length > 0 ? (
-            <p className="mc-muted mc-fineprint">
-              The lessons your mastery is lowest on — tap one to find it in the curriculum.
-            </p>
-          ) : null}
-        </div>
-        {weakest.length > 0 ? (
-          <div className="mc-weakest__rings">
-            {weakest.map((l) => {
-              const pct = Math.round(l.pL * 100);
-              return (
-                <Link
-                  key={l.lessonId}
-                  to={`/app/curriculum?lesson=${encodeURIComponent(l.lessonId)}`}
-                  className="mc-weakest__ring"
-                  aria-label={`${lessonTitle(l.lessonId)} — ${pct}% mastery. Open in curriculum.`}
-                >
-                  <MasteryRing pct={pct} tone="review" />
-                  <span className="mc-weakest__ringtitle">{lessonTitle(l.lessonId)}</span>
-                </Link>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="mc-muted">
-            Practice a few lessons and the ones you need to review most will show up here.
-          </p>
-        )}
-      </section>
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              onClick={start}
+              className="mc-practice__start"
+            >
+              Start practice
+            </Button>
+
+            <section className="mc-weakest">
+              <div className="mc-practice__standhead">
+                <h2 className="mc-h3">Your three weakest lessons</h2>
+                {weakest.length > 0 ? (
+                  <p className="mc-muted mc-fineprint">
+                    The lessons your mastery is lowest on — tap one to find it in the curriculum.
+                  </p>
+                ) : null}
+              </div>
+              {weakest.length > 0 ? (
+                <div className="mc-weakest__rings">
+                  {weakest.map((l) => {
+                    const pct = Math.round(l.pL * 100);
+                    return (
+                      <Link
+                        key={l.lessonId}
+                        to={`/app/curriculum?lesson=${encodeURIComponent(l.lessonId)}`}
+                        className="mc-weakest__ring"
+                        aria-label={`${lessonTitle(l.lessonId)} — ${pct}% mastery. Open in curriculum.`}
+                      >
+                        <MasteryRing pct={pct} tone="review" />
+                        <span className="mc-weakest__ringtitle">{lessonTitle(l.lessonId)}</span>
+                        <span className="mc-weakest__review" aria-hidden="true">
+                          Review →
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="mc-muted">
+                  Practice a few lessons and the ones you need to review most will show up here.
+                </p>
+              )}
+            </section>
+          </Stack>
+        </Card>
+
+        {/* RIGHT — Practice test. Presentational ONLY: the test engine is deferred,
+            so there is no data yet. Every region shows an honest empty state; no
+            scores, ranges, or trends are fabricated. */}
+        <Card elevated className="mc-practice__card mc-practice__card--test">
+          <Stack gap={5}>
+            <div className="mc-testdash__head">
+              <Eyebrow>Practice test</Eyebrow>
+              <h2 className="mc-h3">Practice Test</h2>
+              <p className="mc-muted">Half-length · about 90 min · scored</p>
+            </div>
+
+            <div className="mc-testdash__start">
+              <Button
+                variant="primary"
+                size="lg"
+                disabled
+                aria-label="Start test"
+                aria-describedby={soonId}
+              >
+                Start test
+              </Button>
+              <p className="mc-muted mc-fineprint mc-testdash__soon" id={soonId}>
+                Coming soon — the test itself is still in design.
+              </p>
+            </div>
+
+            <section className="mc-testdash__section">
+              <h3 className="mc-label">Improvement over time</h3>
+              <div
+                className="mc-emptyframe mc-emptyframe--chart"
+                role="img"
+                aria-label="No section trends yet"
+              >
+                <p className="mc-emptyframe__note mc-muted">
+                  Your section trends will appear here after your first checkpoint.
+                </p>
+              </div>
+            </section>
+
+            <div className="mc-testdash__stats">
+              <section className="mc-testdash__stat">
+                <h3 className="mc-label">Readiness</h3>
+                <p className="mc-testdash__empty mc-muted">Available after your first test.</p>
+              </section>
+              <section className="mc-testdash__stat">
+                <h3 className="mc-label">Estimated range</h3>
+                <p className="mc-testdash__empty mc-muted">Available after your first test.</p>
+              </section>
+            </div>
+
+            <section className="mc-testdash__section">
+              <h3 className="mc-label">Past tests</h3>
+              <div className="mc-emptyframe">
+                <p className="mc-emptyframe__note mc-muted">No tests yet.</p>
+              </div>
+            </section>
+          </Stack>
+        </Card>
+      </div>
     </div>
   );
 }
