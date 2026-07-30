@@ -17,7 +17,9 @@ import { ImportApkg } from '../screens/recall/ImportApkg';
 import { Mistakes } from '../screens/Mistakes';
 import { Progress } from '../screens/Progress';
 import { SkillDetail } from '../screens/SkillDetail';
-import { Profile } from '../screens/Profile';
+// Account/Profile screen is TEMPORARILY HIDDEN for now — import kept commented so the
+// route below is trivially restorable. Profile.tsx and the backend goal wiring stay intact.
+// import { Profile } from '../screens/Profile';
 import { PassageOfDay } from '../screens/PassageOfDay';
 import { PracticeHome } from '../screens/practice/PracticeHome';
 import { PracticeSession } from '../screens/practice/PracticeSession';
@@ -69,7 +71,9 @@ export const router = createBrowserRouter([
       // Adaptive Practice: the hub plus its in-place session.
       { path: 'practice', element: <PracticeHome /> },
       { path: 'practice/session', element: <PracticeSession /> },
-      { path: 'profile', element: <Profile /> },
+      // Account/Profile route TEMPORARILY DISABLED (see the commented import above).
+      // Re-enable this line and the import to restore /app/profile.
+      // { path: 'profile', element: <Profile /> },
     ],
   },
 ]);
