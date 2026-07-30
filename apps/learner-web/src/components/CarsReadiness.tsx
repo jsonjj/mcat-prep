@@ -1,6 +1,12 @@
-import { CARS_SKILL_INFO, type CarsReadinessLabel, type CarsSkill } from '@mcat/contracts';
+import {
+  CARS_SKILL_INFO,
+  type CarsReadinessLabel,
+  type CarsSkill,
+  type CarsSkillReadiness,
+} from '@mcat/contracts';
 import { Card, Eyebrow } from '@mcat/ui-web';
 import { useCarsReadiness } from '../app/queries';
+import { useCountUp } from '../app/use-count-up';
 
 /**
  * CARS reading-ability readout, shown as a card inside the Progress page (not a
@@ -47,6 +53,39 @@ const CARS_SKILL_BLURB: Record<CarsSkill, string> = {
   RWT: "Analyzing how the passage's ideas fit together.",
   RBT: "Applying the passage's ideas to new situations.",
 };
+
+/** On-open stagger between the three sub-skill bars — a gentle left-to-right cascade. */
+const BAR_STAGGER_MS = 80;
+
+/**
+ * One CARS sub-skill bar. On open it counts up from 0 → its real percent: the bar
+ * WIDTH and the `%` LABEL are both read from a single eased value (`useCountUp`),
+ * so they are always in lockstep (width = value, label = round(value)) and settle
+ * exactly on the real value. `prefers-reduced-motion` shows the final value at once.
+ */
+function CarsSubskillBar({ skill, delayMs }: { skill: CarsSkillReadiness; delayMs: number }) {
+  const target = Math.round(skill.pct * 100);
+  const value = useCountUp(target, { delayMs });
+  const full = CARS_SKILL_INFO[skill.skill].title;
+  const blurb = CARS_SKILL_BLURB[skill.skill];
+  return (
+    <li className="mc-skillbar mc-cars-subskill">
+      <span className="mc-skillbar__label">{full}</span>
+      <div className="mc-cars-subskill__barrow">
+        <div className="mc-skillbar__track">
+          {/* rAF owns the width frame-by-frame; the CSS width-transition would only
+              lag the fill behind the label, so it is switched off while we drive it. */}
+          <div
+            className="mc-skillbar__fill"
+            style={{ width: `${value.toFixed(2)}%`, transition: 'none' }}
+          />
+        </div>
+        <span className="mc-skillbar__pct">{Math.round(value)}%</span>
+      </div>
+      <p className="mc-cars-subskill__desc">{blurb}</p>
+    </li>
+  );
+}
 
 export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
   const cars = useCarsReadiness();
@@ -105,23 +144,9 @@ export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
       </div>
 
       <ul className="mc-skillbars mc-cars-subskills" aria-label="CARS sub-skills">
-        {d.skills.map((s) => {
-          const pct = Math.round(s.pct * 100);
-          const full = CARS_SKILL_INFO[s.skill].title;
-          const blurb = CARS_SKILL_BLURB[s.skill];
-          return (
-            <li key={s.skill} className="mc-skillbar mc-cars-subskill">
-              <span className="mc-skillbar__label">{full}</span>
-              <div className="mc-cars-subskill__barrow">
-                <div className="mc-skillbar__track">
-                  <div className="mc-skillbar__fill" style={{ width: `${pct}%` }} />
-                </div>
-                <span className="mc-skillbar__pct">{pct}%</span>
-              </div>
-              <p className="mc-cars-subskill__desc">{blurb}</p>
-            </li>
-          );
-        })}
+        {d.skills.map((s, index) => (
+          <CarsSubskillBar key={s.skill} skill={s} delayMs={index * BAR_STAGGER_MS} />
+        ))}
       </ul>
     </Card>
   );

@@ -9,6 +9,12 @@ import { useMasterySkills } from '../app/queries';
 const toPct = (p: number): number => Math.round(p * 100);
 
 /**
+ * On-open stagger between reasoning-skill rings — a gentle cascade that echoes the
+ * brain reveal without pushing the last ring past the ~1.6s count-up window.
+ */
+const RING_STAGGER_MS = 40;
+
+/**
  * Label for the CTA under the brain that opens the full curriculum. The final
  * wording is being decided separately — change THIS one constant to update it.
  */
@@ -65,7 +71,7 @@ function SkillRail() {
         </p>
       ) : (
         <ul className="mc-skillrings" aria-label="Reasoning skill mastery">
-          {data.map((skill) => {
+          {data.map((skill, index) => {
             const info = REASONING_OPERATION_INFO[skill.operation];
             const pct = toPct(skill.pL);
             const status = skill.reviewDue
@@ -83,6 +89,8 @@ function SkillRail() {
                   pct={pct}
                   atCapabilityCut={skill.atCapabilityCut}
                   reviewDue={skill.reviewDue}
+                  animateOnMount
+                  animationDelayMs={index * RING_STAGGER_MS}
                 />
                 <span className="mc-skillring__label" aria-hidden="true">
                   <span className="mc-skillring__head">

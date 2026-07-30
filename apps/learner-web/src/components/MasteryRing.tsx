@@ -21,7 +21,14 @@
  *
  * The ring is decorative (`aria-hidden`); the surrounding control/list item
  * carries the accessible name and value.
+ *
+ * `animateOnMount` (Progress rail only) counts the ring up from 0 → `pct` on each
+ * mount: the arc offset and the centre number are BOTH derived from one eased
+ * value (`useCountUp`), so they can never drift. The arc colour is taken from the
+ * final `pct`, not the animating value, so it never flickers class mid-ramp.
  */
+import { useCountUp } from '../app/use-count-up';
+
 const HIGH_MASTERY_PCT = 50;
 
 type RingTone = 'mastery' | 'review';
@@ -38,27 +45,40 @@ export function MasteryRing({
   atCapabilityCut = false,
   reviewDue = false,
   tone = 'mastery',
+  animateOnMount = false,
+  animationDelayMs = 0,
 }: {
   pct: number;
   atCapabilityCut?: boolean;
   reviewDue?: boolean;
   tone?: RingTone;
+  /** Count the ring up from 0 → `pct` on mount (Progress reasoning-skill rail). */
+  animateOnMount?: boolean;
+  /** Per-ring start delay so the rail cascades; ignored unless `animateOnMount`. */
+  animationDelayMs?: number;
 }) {
   const r = 42;
   const circumference = 2 * Math.PI * r;
-  const clamped = Math.max(0, Math.min(100, pct));
+  // Colour is decided by the FINAL value so the arc class is stable through the ramp.
+  const colorPct = Math.max(0, Math.min(100, pct));
+  // Both the arc offset and the centre number read this single eased value.
+  const shown = useCountUp(pct, { enabled: animateOnMount, delayMs: animationDelayMs });
+  const clamped = Math.max(0, Math.min(100, shown));
   const offset = circumference * (1 - clamped / 100);
   return (
     <svg className="mc-ring" viewBox="0 0 100 100" role="img" aria-hidden="true">
       <circle className="mc-ring__track" cx="50" cy="50" r={r} />
       <circle
-        className={arcClass(clamped, atCapabilityCut, reviewDue, tone)}
+        className={arcClass(colorPct, atCapabilityCut, reviewDue, tone)}
         cx="50"
         cy="50"
         r={r}
         strokeDasharray={circumference}
         strokeDashoffset={offset}
         transform="rotate(-90 50 50)"
+        // The rAF loop owns the offset frame-by-frame; the CSS ease would only lag
+        // the arc behind the number, so it is switched off while we drive it.
+        style={animateOnMount ? { transition: 'none' } : undefined}
       />
       <text className="mc-ring__pct" x="50" y="50" dominantBaseline="central" textAnchor="middle">
         {Math.round(clamped)}%
