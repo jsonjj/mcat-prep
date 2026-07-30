@@ -26,8 +26,11 @@ import {
 } from '@mcat/content/v3-vector-lesson';
 import {
   buildResolvableIds,
+  lessonOrderedKcIds,
   planLessonRehash,
+  planProposedKcs,
   validateCatalog,
+  type LessonKcRefs,
   type LessonValidationInput,
   type RehashFile,
   type ResolvableIds,
@@ -482,6 +485,63 @@ function cmdLessonValidate(): void {
   if (!report.ok) process.exit(1);
 }
 
+/**
+ * Proposed-KCs queue (Real Lesson Catalog, Phase 3). ADVISORY mirror of R14: surfaces every
+ * KC a lesson declares (payload.ordered_kc_ids) that is absent from the curriculum catalog, so
+ * an author of a genuinely-new lesson can propose the KCs it needs instead of being silently
+ * blocked. NEVER a gate — always exits 0. Default is a dry-run report; `--write` reconciles an
+ * idempotent managed block in key-docs/roadmap-todo.md. For today's three lessons the set is
+ * empty (every KC resolves — R14 is green), so this reports zero and writes nothing by default.
+ */
+function cmdProposedKcs(): void {
+  const write = args.includes('--write');
+  const lessonsRoot = join(REPO_ROOT, 'content', 'lessons');
+  const lessonDirs = readdirSync(lessonsRoot)
+    .map((name) => join(lessonsRoot, name))
+    .filter((d) => {
+      try {
+        return statSync(d).isDirectory() && existsSync(join(d, 'lesson-script.json'));
+      } catch {
+        return false;
+      }
+    })
+    .sort();
+  const lessons: LessonKcRefs[] = lessonDirs.map((dir) => ({
+    lessonId: basename(dir).toUpperCase(),
+    orderedKcIds: lessonOrderedKcIds(JSON.parse(readFileSync(join(dir, 'lesson-script.json'), 'utf8')) as unknown),
+  }));
+
+  const curriculumPath = join(REPO_ROOT, 'curriculum', 'v3', 'v3-lesson-authoring-manifest.json');
+  if (!existsSync(curriculumPath)) {
+    console.error(`proposed-kcs: curriculum catalog missing at ${curriculumPath} (cannot decide what is unknown)`);
+    process.exit(1);
+    return;
+  }
+  const catalogKcIds = buildResolvableIds(JSON.parse(readFileSync(curriculumPath, 'utf8')) as unknown).kcIds;
+  const roadmapPath = join(REPO_ROOT, 'key-docs', 'roadmap-todo.md');
+  const existing = existsSync(roadmapPath) ? readFileSync(roadmapPath, 'utf8') : '';
+  const plan = planProposedKcs(lessons, catalogKcIds, existing);
+
+  console.log(
+    `proposed-kcs: ${lessons.length} lesson(s), ${catalogKcIds.size} catalog KCs → ${plan.proposed.length} proposed (advisory; not a gate)`,
+  );
+  for (const p of plan.proposed) console.log(`  ${p.kcId}  (referenced by ${p.lessons.join(', ')})`);
+  if (plan.proposed.length === 0) {
+    console.log('  none — every declared KC resolves against the curriculum catalog.');
+  }
+
+  if (write) {
+    if (plan.changed) {
+      writeFileSync(roadmapPath, plan.newRoadmapText);
+      console.log(`  wrote managed block to ${roadmapPath}`);
+    } else {
+      console.log(`  ${roadmapPath} already current — no write.`);
+    }
+  } else if (plan.changed) {
+    console.log('  (dry-run) re-run with --write to reconcile key-docs/roadmap-todo.md');
+  }
+}
+
 switch (command) {
   case 'manifest':
     cmdManifest();
@@ -510,6 +570,9 @@ switch (command) {
   case 'lesson-validate':
     cmdLessonValidate();
     break;
+  case 'proposed-kcs':
+    cmdProposedKcs();
+    break;
   default:
     console.log(
       'MCAT content CLI\n\nCommands:\n' +
@@ -521,6 +584,7 @@ switch (command) {
         '  db-seed [path]      Emit a gitignored seed.sql (questions + protected answers) with derived cluster/section\n' +
         '  vector-lesson-artifacts  Generate exactly four V3-LES-130923 internal-draft artifacts\n' +
         '  rehash <lessonDir>  Recompute a lesson content-hash chain (content_sha256 + file_sha256) after an authored edit\n' +
-        '  lesson-validate [dir] [--json]  Structural R1–R15 gate over content/lessons/ (non-zero exit on failure; CI merge gate)\n',
+        '  lesson-validate [dir] [--json]  Structural R1–R15 gate over content/lessons/ (non-zero exit on failure; CI merge gate)\n' +
+        '  proposed-kcs [--write]  Advisory queue of lesson KCs absent from the curriculum catalog (mirrors R14; never gates)\n',
     );
 }

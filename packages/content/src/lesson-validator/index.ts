@@ -1,6 +1,13 @@
 export * from './types';
 export { canonicalize, contentSha256, fileSha256, sha256Hex } from './canonical';
 export { planLessonRehash, type RehashFile, type RehashPlan, type RehashChange } from './rehash';
+export {
+  planProposedKcs,
+  lessonOrderedKcIds,
+  type LessonKcRefs,
+  type ProposedKc,
+  type ProposedKcsPlan,
+} from './proposed-kcs';
 export { buildResolvableIds } from './resolvable';
 export {
   reconcileManifest,
