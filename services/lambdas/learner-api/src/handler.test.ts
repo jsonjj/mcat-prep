@@ -12,6 +12,7 @@ import { createRepositoryLearnerApi } from './handler';
 import { hashOpaqueToken, type GuestSessionService } from './session';
 import type { ApiGatewayV1Event, ApiGatewayV2Event, RateLimitInput, SafeLogEvent } from './http';
 import { allowedMethodsFor, routeFor } from './routes';
+import type { AiFetch, AiProxyConfig } from '@mcat/ai-gateway/server';
 
 const APP_ORIGIN = 'https://learner.example.test';
 const EVIL_ORIGIN = 'https://evil.example.test';
@@ -123,6 +124,7 @@ function harness(
     rateLimitPepper?: string;
     maxBodyBytes?: number;
     state?: 'diagnostic' | 'lesson' | 'question' | 'recall';
+    aiConfig?: AiProxyConfig;
   } = {},
 ) {
   const authority = new Authority(undefined, clock);
@@ -180,6 +182,7 @@ function harness(
     logger: { info: (event) => logs.push(event) },
     nowMs: () => Date.parse(NOW),
     ...(options.maxBodyBytes === undefined ? {} : { maxBodyBytes: options.maxBodyBytes }),
+    ...(options.aiConfig === undefined ? {} : { aiConfig: options.aiConfig }),
   });
   return {
     api,
@@ -1104,5 +1107,121 @@ describe('learner Lambda API security boundary', () => {
     });
     expect(missing.statusCode).toBe(404);
     expect(JSON.stringify({ unauthorized, missing })).not.toMatch(/stack|postgres|sql|secret/i);
+  });
+});
+
+describe('WS4 grounded rewrite route (POST /v1/ai/rewrite)', () => {
+  const source = { rationale: 'The net force is zero, so the acceleration is zero.' };
+
+  /** A stub provider that returns a clean, number-free (grounded) re-wording. */
+  const groundedFetch: AiFetch = async () => ({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      choices: [{ message: { content: 'Put another way: with no net force there is no acceleration.' } }],
+    }),
+    text: async () => 'ok',
+  });
+
+  function rewriteBody(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+    return { questionId: 'q-enz-passage-1', mode: 'example', source, ...overrides };
+  }
+
+  it('is registered as a session POST that does not mutate state', () => {
+    const route = routeFor('POST', '/v1/ai/rewrite');
+    expect(route?.id).toBe('aiRewrite');
+    expect(route?.auth).toBe('session');
+    expect(route?.stateChanging).toBe(false);
+    expect(allowedMethodsFor('/v1/ai/rewrite')).toEqual(['POST']);
+  });
+
+  it('requires a session (401 for an anonymous caller)', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: groundedFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/rewrite', rewriteBody(), { origin: APP_ORIGIN }),
+    );
+    expect(response.statusCode).toBe(401);
+  });
+
+  it('refuses a cross-origin authenticated caller (403)', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: groundedFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/rewrite', rewriteBody(), {
+        origin: EVIL_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(403);
+  });
+
+  it('serves a grounded rewrite to an authenticated learner (no CSRF required)', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: groundedFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/rewrite', rewriteBody(), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(200);
+    expect(response.headers?.['cache-control']).toBe('no-store');
+    const body = responseBody(response) as { text: string; fallback: boolean };
+    expect(body.fallback).toBe(false);
+    expect(body.text).toContain('no acceleration');
+    expect(JSON.stringify(body)).not.toMatch(/correct_choice_id|rationales/i);
+  });
+
+  it('is throttled by the per-session rate limiter like other authenticated routes', async () => {
+    const { api, rateInputs } = harness({
+      allowRate: false,
+      aiConfig: { apiKey: 'k', fetchImpl: groundedFetch },
+    });
+    const response = await api.handle(
+      request('POST', '/v1/ai/rewrite', rewriteBody(), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(429);
+    expect(rateInputs).toHaveLength(1);
+    expect(rateInputs[0]?.route).toBe('/v1/ai/rewrite');
+  });
+
+  it('returns 503 (client falls back) when no AI key is configured', async () => {
+    const { api } = harness();
+    const response = await api.handle(
+      request('POST', '/v1/ai/rewrite', rewriteBody(), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(503);
+  });
+
+  it('rejects a malformed rewrite body with 400', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: groundedFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/rewrite', rewriteBody({ mode: 'nope' }), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('rejects an oversize source with 400 before the provider is called', async () => {
+    let providerCalls = 0;
+    const countingFetch: AiFetch = async () => {
+      providerCalls += 1;
+      return { ok: true, status: 200, json: async () => ({ choices: [] }), text: async () => '' };
+    };
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: countingFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/rewrite', rewriteBody({ source: { rationale: 'x'.repeat(9_000) } }), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(400);
+    expect(providerCalls).toBe(0);
   });
 });

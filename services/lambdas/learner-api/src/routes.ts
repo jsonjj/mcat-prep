@@ -38,6 +38,7 @@ import {
   type MasterySeed,
   type PracticeAttemptCommand,
 } from '@mcat/contracts';
+import { parseRewriteRequest, type RewriteRequest } from '@mcat/ai-gateway';
 
 export type RouteId =
   | 'health'
@@ -55,6 +56,7 @@ export type RouteId =
   | 'practiceQueue'
   | 'practiceAdaptiveAttempt'
   | 'carsDuel'
+  | 'aiRewrite'
   | 'practiceTestCompleted'
   | 'practiceTestReviewed'
   | 'masterySeed'
@@ -232,6 +234,24 @@ const NullablePracticeItemViewSchema: RuntimeSchema = {
   },
 };
 
+/**
+ * Validates the "Explain it another way" body (WS4) by delegating to the
+ * ai-gateway parser — which also enforces the source size cap. Kept as a
+ * `RuntimeSchema` so the route flows through the handler's standard body parsing
+ * (JSON content-type + byte cap) and its uniform `validation_error` response.
+ */
+const AiRewriteRequestSchema: RuntimeSchema<RewriteRequest> = {
+  parse(value: unknown): RewriteRequest {
+    const parsed = parseRewriteRequest(value);
+    if (parsed === null) throw new TypeError('Invalid rewrite request.');
+    return parsed;
+  },
+  safeParse(value: unknown) {
+    const parsed = parseRewriteRequest(value);
+    return parsed === null ? { success: false } : { success: true, data: parsed };
+  },
+};
+
 export interface RouteDefinition {
   readonly id: RouteId;
   readonly method: 'DELETE' | 'GET' | 'POST' | 'PUT';
@@ -367,6 +387,22 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: true,
     bodySchema: CarsDuelCommandBodySchema,
+  },
+  {
+    // WS4 "Explain it another way": a grounded, post-reveal re-expression of an
+    // explanation the learner has ALREADY seen. It is a POST but mutates no
+    // learner state, so it is not `stateChanging` — no CSRF/Origin-required
+    // write gate. It still runs behind the same session authorizer,
+    // `x-mcat-origin-verify`, per-session rate limiter, and WAF as every other
+    // /v1 route, and a cross-origin browser call is still refused by the Origin
+    // check. handler.ts dispatches it to ai-gateway `groundedRewrite`; a missing
+    // key yields 503 and the client falls back deterministically.
+    id: 'aiRewrite',
+    method: 'POST',
+    path: '/v1/ai/rewrite',
+    auth: 'session',
+    stateChanging: false,
+    bodySchema: AiRewriteRequestSchema,
   },
   {
     // WS5: the learner reports a completed periodic test — envelope only, no

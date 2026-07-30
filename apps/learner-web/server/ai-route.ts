@@ -69,7 +69,7 @@ export async function handleAiChatRequest(
   await handle(req, res, config, proxyChat);
 }
 
-/** `POST /api/ai/rewrite` — grounded "Explain it another way". */
+/** `POST /v1/ai/rewrite` — grounded "Explain it another way". */
 export async function handleAiRewriteRequest(
   req: IncomingMessage,
   res: ServerResponse,

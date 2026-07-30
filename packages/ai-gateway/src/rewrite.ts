@@ -76,9 +76,36 @@ export function canStepByStep(gate: StepByStepGate): boolean {
   return gate.dok !== null && gate.dok >= 2;
 }
 
-/** Cache key per `(question_id, form)` — the two forms are cached separately. */
-export function rewriteCacheKey(questionId: string, mode: RewriteMode): string {
-  return `${questionId}::${mode}`;
+/**
+ * A tiny, dependency-free string hash (FNV-1a, 32-bit) used ONLY to
+ * disambiguate cache keys — it is not security-sensitive and deliberately uses
+ * no `node:crypto`, so `rewriteCacheKey` stays safe to call from the browser
+ * bundle. Returned as fixed-width lowercase hex.
+ */
+function shortSourceHash(text: string): string {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < text.length; index += 1) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
+/**
+ * Cache key per `(question_id, form, source-surface)`. The source surface is
+ * folded in as a short hash of {@link groundedText} so the SAME question and
+ * form re-expressed from DIFFERENT vetted material cache separately: Practice /
+ * Study pass the correct-answer rationale, while Mistakes passes the distractor
+ * refutation. Keying on `(question_id, form)` alone let whichever surface ran
+ * first serve its re-expression to the other — a Mistakes card could show a
+ * re-wording of the correct-answer rationale instead of the refutation.
+ */
+export function rewriteCacheKey(
+  questionId: string,
+  mode: RewriteMode,
+  source: GroundedRationale,
+): string {
+  return `${questionId}::${mode}::${shortSourceHash(groundedText(source))}`;
 }
 
 /** Everything the model (or the number-grounding check) is allowed to treat as source. */
@@ -209,10 +236,27 @@ function isRewriteMode(value: unknown): value is RewriteMode {
 }
 
 /**
+ * Upper bound on the client-supplied `source` (rationale + all refutations,
+ * combined). The source is already-vetted post-reveal material the client
+ * legitimately holds, not free-form input, so a few thousand characters is
+ * ample. Capping it here bounds the prompt the server will build — an oversize
+ * body is rejected outright rather than forwarded to the paid model — which
+ * closes a cheap way to inflate provider spend on the authenticated route.
+ */
+export const MAX_REWRITE_SOURCE_CHARS = 8_000;
+
+function totalSourceChars(rationale: string, choiceRationales: Record<string, string> | null): number {
+  let total = rationale.length;
+  for (const text of Object.values(choiceRationales ?? {})) total += text.length;
+  return total;
+}
+
+/**
  * Parse an untrusted wire body into a {@link RewriteRequest}, or null. Used by
  * the production route to validate what the client posts before it builds a
- * prompt. Only the shape is checked here; grounding is enforced by the prompt
- * and {@link sanitizeRewrite}.
+ * prompt. Only the shape and size are checked here; grounding is enforced by the
+ * prompt and {@link sanitizeRewrite}. A `source` larger than
+ * {@link MAX_REWRITE_SOURCE_CHARS} is rejected.
  */
 export function parseRewriteRequest(raw: unknown): RewriteRequest | null {
   if (raw === null || typeof raw !== 'object') return null;
@@ -234,5 +278,6 @@ export function parseRewriteRequest(raw: unknown): RewriteRequest | null {
       choiceRationales[choice] = text;
     }
   }
+  if (totalSourceChars(rationale, choiceRationales) > MAX_REWRITE_SOURCE_CHARS) return null;
   return { questionId, mode, source: { rationale, choiceRationales } };
 }

@@ -30,6 +30,48 @@ describe('requestRewrite', () => {
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 
+  it('caches separately by source surface for the same question + form', async () => {
+    // Practice/Study open with the correct-answer rationale; Mistakes opens the
+    // same question + form with the distractor refutation. They must not collide.
+    const correctSurface = { rationale: 'Correct: no net force means no acceleration.' };
+    const mistakeSurface = { rationale: 'Why B is wrong: it confuses velocity with acceleration.' };
+    const fetchImpl = vi.fn(async (_url: string, init: RequestInit) => {
+      const posted = JSON.parse(init.body as string) as { source: { rationale: string } };
+      return jsonResponse(200, { text: `Reworded: ${posted.source.rationale}`, fallback: false });
+    });
+
+    const fromCorrect = await requestRewrite({
+      questionId: 'q9',
+      mode: 'example',
+      source: correctSurface,
+      endpoint: '/x',
+      fetchImpl,
+    });
+    const fromMistake = await requestRewrite({
+      questionId: 'q9',
+      mode: 'example',
+      source: mistakeSurface,
+      endpoint: '/x',
+      fetchImpl,
+    });
+
+    // Two distinct fetches (no collision), and each reflects its own surface.
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(fromCorrect.text).toContain('no net force');
+    expect(fromMistake.text).toContain('B is wrong');
+    expect(fromMistake.text).not.toEqual(fromCorrect.text);
+
+    // A repeat of the first surface is still served from cache (no third fetch).
+    await requestRewrite({
+      questionId: 'q9',
+      mode: 'example',
+      source: correctSurface,
+      endpoint: '/x',
+      fetchImpl,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
   it('falls back deterministically on a 503 / missing key', async () => {
     const fetchImpl = vi.fn(async () => jsonResponse(503, { error: 'ai_not_configured' }));
     const result = await requestRewrite({ questionId: 'q2', mode: 'example', source, endpoint: '/x', fetchImpl });

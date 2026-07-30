@@ -11,6 +11,8 @@ import {
   createPostgresPracticeBankPort,
 } from '@mcat/persistence-postgres';
 
+import { aiConfigFromEnv } from '@mcat/ai-gateway/server';
+
 import { createRepositoryLearnerApi, type LearnerApi } from './handler';
 import type { LambdaApiGatewayEvent, LambdaApiGatewayResult, SafeLogger } from './http';
 
@@ -209,6 +211,13 @@ async function createRuntime(): Promise<LearnerApi> {
     originVerificationSecret,
     allowedOrigins: [environment.learnerWebOrigin],
     logger,
+    // WS4 "Explain it another way": grounded rewrite runs in-process behind the
+    // same auth as every other /v1 route. Optional by design — with no
+    // AI_API_KEY set the route returns 503 and the client falls back
+    // deterministically. NOTE: reaching an external provider also requires the
+    // Lambda to have public egress; provisioning the key + egress is an infra
+    // step outside this change.
+    aiConfig: aiConfigFromEnv(process.env),
   });
 }
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  MAX_REWRITE_SOURCE_CHARS,
   buildRewriteMessages,
   buildRewriteSystemPrompt,
   canStepByStep,
@@ -127,9 +128,23 @@ describe('grounding gate', () => {
 });
 
 describe('cache key + request parsing', () => {
-  it('keys the cache per (question_id, form)', () => {
-    expect(rewriteCacheKey('q-1', 'example')).toBe('q-1::example');
-    expect(rewriteCacheKey('q-1', 'steps')).not.toBe(rewriteCacheKey('q-1', 'example'));
+  it('keys the cache per (question_id, form, source surface)', () => {
+    expect(rewriteCacheKey('q-1', 'example', source)).toBe(rewriteCacheKey('q-1', 'example', source));
+    expect(rewriteCacheKey('q-1', 'steps', source)).not.toBe(
+      rewriteCacheKey('q-1', 'example', source),
+    );
+    expect(rewriteCacheKey('q-1', 'example', source)).toMatch(/^q-1::example::[0-9a-f]{8}$/);
+  });
+
+  it('separates surfaces: same question + form but a different source cache apart', () => {
+    // Practice/Study pass the correct-answer rationale; Mistakes passes the
+    // distractor refutation. Keyed on (question, form) alone these collided, so
+    // Mistakes could show a re-wording of the correct-answer rationale.
+    const correctSurface = { rationale: source.rationale };
+    const mistakeSurface = { rationale: source.choiceRationales.B };
+    expect(rewriteCacheKey('q-1', 'example', correctSurface)).not.toBe(
+      rewriteCacheKey('q-1', 'example', mistakeSurface),
+    );
   });
 
   it('accepts a well-formed request and rejects malformed ones', () => {
@@ -138,5 +153,20 @@ describe('cache key + request parsing', () => {
     expect(parseRewriteRequest({ questionId: '', mode: 'example', source })).toBeNull();
     expect(parseRewriteRequest({ questionId: 'q-1', mode: 'example', source: {} })).toBeNull();
     expect(parseRewriteRequest(null)).toBeNull();
+  });
+
+  it('rejects a source that exceeds the size cap', () => {
+    const atCap = { rationale: 'x'.repeat(MAX_REWRITE_SOURCE_CHARS) };
+    const overCap = { rationale: 'x'.repeat(MAX_REWRITE_SOURCE_CHARS + 1) };
+    expect(parseRewriteRequest({ questionId: 'q-1', mode: 'example', source: atCap })).not.toBeNull();
+    expect(parseRewriteRequest({ questionId: 'q-1', mode: 'example', source: overCap })).toBeNull();
+    // The cap counts the rationale plus every refutation together.
+    const splitOverCap = {
+      rationale: 'x'.repeat(MAX_REWRITE_SOURCE_CHARS - 5),
+      choiceRationales: { B: 'y'.repeat(10) },
+    };
+    expect(
+      parseRewriteRequest({ questionId: 'q-1', mode: 'example', source: splitOverCap }),
+    ).toBeNull();
   });
 });

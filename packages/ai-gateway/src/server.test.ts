@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   aiConfigFromEnv,
   groundedRewrite,
-  handleAiHttpEvent,
   proxyChat,
   type AiFetch,
   type AiHttpResponse,
@@ -114,27 +113,6 @@ describe('proxyChat (generic route, e.g. CARS Duel)', () => {
 
   it('rejects a non-message body', async () => {
     expect((await proxyChat({ messages: 'nope' }, { apiKey: 'k' })).status).toBe(400);
-  });
-});
-
-describe('handleAiHttpEvent (deployable adapter)', () => {
-  const config = { apiKey: 'k', fetchImpl: recordingFetch('ok text').fetchImpl };
-
-  it('routes /api/ai/rewrite to the grounded rewrite', async () => {
-    const res = await handleAiHttpEvent(
-      { rawPath: '/api/ai/rewrite', body: JSON.stringify({ questionId: 'q', mode: 'example', source }) },
-      config,
-    );
-    expect(res.statusCode).toBe(200);
-    expect((JSON.parse(res.body) as RewriteResponseBody).text).toContain('ok text');
-  });
-
-  it('rejects non-POST and bad JSON', async () => {
-    expect(
-      (await handleAiHttpEvent({ rawPath: '/api/ai/chat', requestContext: { http: { method: 'GET' } } }, config))
-        .statusCode,
-    ).toBe(405);
-    expect((await handleAiHttpEvent({ rawPath: '/api/ai/rewrite', body: '{' }, config)).statusCode).toBe(400);
   });
 });
 

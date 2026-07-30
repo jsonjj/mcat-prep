@@ -8,22 +8,26 @@ import {
 } from './rewrite';
 
 /**
- * The PRODUCTION AI route — the server-side seam the dev-only Vite proxy stood
- * in for (master-build-spec Phase 0: "prod route not built"). It holds the
- * provider key server-side and talks to any OpenAI-compatible
- * `/chat/completions` endpoint; the key never reaches the client.
+ * Server-side AI route primitives. They hold the provider key server-side and
+ * talk to any OpenAI-compatible `/chat/completions` endpoint; the key never
+ * reaches the client.
  *
- * It is deliberately framework-agnostic. The same functions back:
- *  - the dev Vite middleware (`apps/learner-web/server/ai-route.ts`), and
- *  - a deployable handler ({@link handleAiHttpEvent} / {@link handler}) for an
- *    API Gateway route or Lambda Function URL.
- *
- * `groundedRewrite` is the "Explain it another way" route: it builds the
+ * `groundedRewrite` is the "Explain it another way" route (WS4). It builds the
  * grounded prompt SERVER-SIDE (so grounding cannot be bypassed by the client),
  * calls the model, and runs the numeric grounding gate before returning — a
  * hallucinated quantity is dropped to the deterministic re-statement here,
  * before it ever leaves the server. A missing key returns 503, which the client
- * treats as its cue to fall back deterministically.
+ * treats as its cue to fall back deterministically. In production it is invoked
+ * IN-PROCESS by the learner-API (`POST /v1/ai/rewrite`), so it inherits that
+ * service's session authorizer, `x-mcat-origin-verify`, rate limiter, and WAF —
+ * there is no separate public AI Lambda or Function URL.
+ *
+ * `proxyChat` is a generic chat proxy retained ONLY for the local dev-server
+ * CARS Duel middleware (`/api/ai/chat`), which builds its own guarded prompts
+ * client-side. Because it accepts arbitrary messages it is deliberately NOT
+ * wrapped in any deployable/public handler, so it can never be reached as an
+ * open, unauthenticated arbitrary-message proxy (a denial-of-wallet vector).
+ * Grounded rewrite needs no arbitrary messages and never goes through it.
  *
  * This module is server-only. It is exported from `@mcat/ai-gateway/server`, not
  * the package root, so it is never pulled into the browser bundle.
@@ -114,9 +118,12 @@ function isAiMessageArray(value: unknown): value is AiMessage[] {
 }
 
 /**
- * Generic chat proxy (kept for the CARS Duel, which builds its own guarded
- * prompts client-side). 503 when unconfigured — the contract `HttpAiChat`
- * already understands as "unavailable".
+ * Generic chat proxy — DEV-ONLY. It backs the local dev-server CARS Duel
+ * middleware (`/api/ai/chat`), which builds its own guarded prompts client-side.
+ * Because it forwards arbitrary messages it must never be mounted behind a
+ * deployed/public route — doing so would re-open the arbitrary-message
+ * denial-of-wallet vector. 503 when unconfigured — the signal the `HttpAiChat`
+ * contract already treats as "unavailable".
  */
 export async function proxyChat(rawBody: unknown, config: AiProxyConfig): Promise<AiRouteResult> {
   if (config.apiKey === undefined || config.apiKey.length === 0) {
@@ -191,59 +198,10 @@ export function aiConfigFromEnv(env: Readonly<Record<string, string | undefined>
   return { apiKey: env.AI_API_KEY, baseUrl: env.AI_BASE_URL, model: env.AI_MODEL };
 }
 
-/** Minimal API Gateway v2 / Function URL event shape we consume. */
-export interface AiProxyHttpEvent {
-  readonly rawPath?: string;
-  readonly requestContext?: { readonly http?: { readonly method?: string; readonly path?: string } };
-  readonly body?: string | null;
-  readonly isBase64Encoded?: boolean;
-}
-
-export interface AiProxyHttpResult {
-  readonly statusCode: number;
-  readonly headers: Record<string, string>;
-  readonly body: string;
-}
-
-function httpResult(result: AiRouteResult): AiProxyHttpResult {
-  return {
-    statusCode: result.status,
-    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
-    body: JSON.stringify(result.json),
-  };
-}
-
-/**
- * Route a decoded HTTP event to the grounded rewrite (`…/rewrite`) or the
- * generic chat proxy. Config is injected so the same code runs in a Lambda and
- * in tests.
- */
-export async function handleAiHttpEvent(
-  event: AiProxyHttpEvent,
-  config: AiProxyConfig,
-): Promise<AiProxyHttpResult> {
-  const method = (event.requestContext?.http?.method ?? 'POST').toUpperCase();
-  if (method !== 'POST') return httpResult({ status: 405, json: { error: 'method_not_allowed' } });
-  const path = event.rawPath ?? event.requestContext?.http?.path ?? '';
-  let parsed: unknown;
-  try {
-    const raw = event.body ?? '';
-    const decoded = event.isBase64Encoded === true ? Buffer.from(raw, 'base64').toString('utf8') : raw;
-    parsed = JSON.parse(decoded.length > 0 ? decoded : '{}');
-  } catch {
-    return httpResult({ status: 400, json: { error: 'invalid_json' } });
-  }
-  const route = path.endsWith('/rewrite') ? groundedRewrite : proxyChat;
-  return httpResult(await route(parsed, config));
-}
-
-/**
- * Deployable Lambda entry. Point a NodejsFunction at
- * `packages/ai-gateway/src/server.ts` with `handler: 'handler'`, give it
- * `AI_API_KEY` (+ optional `AI_BASE_URL`/`AI_MODEL`), and expose it same-origin
- * (e.g. an API Gateway resource ahead of the greedy `/v1` proxy). Kept VPC-free
- * so it has the public egress the isolated learner-API subnet lacks.
- */
-export async function handler(event: AiProxyHttpEvent): Promise<AiProxyHttpResult> {
-  return handleAiHttpEvent(event, aiConfigFromEnv(process.env));
-}
+// NOTE: There is intentionally no deployable HTTP-event adapter / Lambda entry
+// here. The grounded rewrite is served in-process by the learner-API at
+// `POST /v1/ai/rewrite` (see services/lambdas/learner-api), behind its session
+// authorizer, `x-mcat-origin-verify`, rate limiter, and WAF. A standalone
+// public handler that routed everything-but-`/rewrite` to `proxyChat` would be
+// an unauthenticated, arbitrary-message open proxy (denial-of-wallet), so it was
+// removed. `proxyChat` remains only for the local dev CARS Duel middleware.

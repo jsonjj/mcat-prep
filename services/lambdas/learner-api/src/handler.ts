@@ -16,6 +16,7 @@ import {
   type VectorLessonStartCommand,
 } from '@mcat/contracts';
 import type { AuthorityRepository } from '@mcat/database';
+import { groundedRewrite, type AiProxyConfig } from '@mcat/ai-gateway/server';
 
 import {
   type ApiGatewayV1Event,
@@ -146,6 +147,13 @@ export interface LearnerApiDependencies {
   readonly logger: SafeLogger;
   readonly nowMs?: () => number;
   readonly maxBodyBytes?: number;
+  /**
+   * AI provider config for the grounded "Explain it another way" route
+   * (`POST /v1/ai/rewrite`). Optional: when absent (or with no `apiKey`), the
+   * route returns 503 and the client falls back to the deterministic
+   * re-statement. Injectable so tests can stub the transport.
+   */
+  readonly aiConfig?: AiProxyConfig;
 }
 
 export interface RepositoryLearnerApiDependencies extends Omit<LearnerApiDependencies, 'kernel'> {
@@ -677,6 +685,13 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             origin,
             requestIdValue,
           );
+        case 'aiRewrite': {
+          // Grounded rewrite is authored server-side from the posted vetted
+          // source only; ai-gateway enforces the numeric grounding gate before
+          // returning. No key configured -> 503 -> client falls back.
+          const rewrite = await groundedRewrite(parsed.data, dependencies.aiConfig ?? {});
+          return jsonResponse(rewrite.status, rewrite.json, origin, requestIdValue);
+        }
         case 'practiceTestCompleted':
           return jsonResponse(
             200,

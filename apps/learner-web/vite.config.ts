@@ -9,7 +9,7 @@ import { practiceTestApiPlugin } from './server/practice-test-api-plugin';
  * Dev-only AI proxy: `aiApiPlugin` (see ./server/ai-api-plugin.ts). It keeps the
  * provider key server-side and delegates to the SAME `@mcat/ai-gateway/server`
  * core the production route uses, so dev and prod cannot drift. Mounts
- * `/api/ai/chat` (CARS Duel) and `/api/ai/rewrite` (Explain another way).
+ * `/v1/ai/rewrite` (Explain another way) and `/api/ai/chat` (CARS Duel).
  */
 
 export default defineConfig(({ mode }) => {

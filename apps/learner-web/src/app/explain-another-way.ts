@@ -9,12 +9,14 @@ import {
 /**
  * Client seam for "Explain it another way" (WS4). It POSTs the (already
  * revealed) vetted source to the grounded rewrite route, caches the answer per
- * `(question_id, form)`, and degrades to the deterministic templated
- * re-statement whenever the route is unavailable — a 503 / missing key in dev,
- * or an unwired route in prod (which SPA-rewrites to HTML and fails to parse).
+ * `(question_id, form, source-surface)`, and degrades to the deterministic
+ * templated re-statement whenever the route is unavailable — a 503 / missing
+ * key, or an unwired route (which SPA-rewrites to HTML and fails to parse).
  *
- * The endpoint defaults to the dev proxy path and can be repointed at the
- * deployed route with `VITE_AI_REWRITE_URL`. The provider key is never here.
+ * The endpoint defaults to the same-origin `/v1/ai/rewrite` route, served by the
+ * learner-API in prod (behind its session auth + WAF) and by the dev-server AI
+ * middleware locally. It can be repointed with `VITE_AI_REWRITE_URL`. The
+ * provider key is never here.
  */
 
 export interface RewriteResult {
@@ -26,10 +28,12 @@ export interface RewriteResult {
 type FetchLike = (input: string, init: RequestInit) => Promise<Response>;
 
 const DEFAULT_ENDPOINT =
-  (import.meta.env.VITE_AI_REWRITE_URL as string | undefined) ?? '/api/ai/rewrite';
+  (import.meta.env.VITE_AI_REWRITE_URL as string | undefined) ?? '/v1/ai/rewrite';
 
-// Per-(question_id, form) cache. Module-level so re-opening the same question
-// and the same form is instant and never costs a second call.
+// Per-(question_id, form, source-surface) cache. Module-level so re-opening the
+// same question and the same form is instant and never costs a second call.
+// Folding the source surface into the key keeps Practice/Study (correct-answer
+// rationale) and Mistakes (distractor refutation) in separate slots.
 const cache = new Map<string, RewriteResult>();
 
 export interface RewriteInput {
@@ -43,7 +47,7 @@ export interface RewriteInput {
 }
 
 export async function requestRewrite(input: RewriteInput): Promise<RewriteResult> {
-  const key = rewriteCacheKey(input.questionId, input.mode);
+  const key = rewriteCacheKey(input.questionId, input.mode, input.source);
   const cached = cache.get(key);
   if (cached !== undefined) return cached;
   const result = await fetchRewrite(input);
