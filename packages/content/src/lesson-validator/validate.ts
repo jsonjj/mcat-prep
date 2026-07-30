@@ -6,26 +6,24 @@ import {
   ruleR4,
   ruleR5,
   ruleR6,
+  ruleR7,
   ruleR8,
   ruleR9,
   ruleR10,
   ruleR11,
   ruleR12,
   ruleR13,
+  ruleR14,
   ruleR15,
 } from './rules';
 import type { CatalogReport, LessonReport, LessonValidationInput } from './types';
 
 /**
- * Run the implemented structural rules over one lesson.
- *
- * Implemented: R1 (shape tolerance), R2 (manifest union), R3 (canonicalization
- * label vs reality), R4 (file_sha256 convention), R5 (dependency hash chain),
- * R6 (closed node records), R8 (15 required node kinds), R9 (route coverage),
- * R10 (transition referential integrity), R11 (family isolation + exit
- * coverage), R12 (release honesty), R13 (label vs structure), R15
- * (runtime-servability). R7 (browser evidence) and R14 (ontology id
- * resolution) require extra inputs and land in the closing validator wave.
+ * Run the full structural rule set (R1–R15) over one lesson. Every rule is
+ * data-driven and shape-tolerant: rules that need an input a given lesson does
+ * not carry (a manifest for R2/R4, browser evidence for R7) return N/A rather
+ * than red-gating. R14 is the in-repo KC-referential-integrity form (see rules.ts
+ * for why global-ontology resolution is a separate out-of-repo check).
  */
 export function validateLesson(input: LessonValidationInput): LessonReport {
   const recs = reconcileManifest(input.manifest);
@@ -36,12 +34,14 @@ export function validateLesson(input: LessonValidationInput): LessonReport {
     ...ruleR4(input, recs),
     ...ruleR5(input),
     ...ruleR6(input),
+    ...ruleR7(input),
     ...ruleR8(input),
     ...ruleR9(input),
     ...ruleR10(input),
     ...ruleR11(input),
     ...ruleR12(input),
     ...ruleR13(input),
+    ...ruleR14(input),
     ...ruleR15(input),
   ];
   return { lessonId: input.lessonId, ok: results.every((r) => r.ok), results };
