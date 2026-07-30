@@ -90,9 +90,14 @@ function CarsSubskillBar({ skill, delayMs }: { skill: CarsSkillReadiness; delayM
 export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
   const cars = useCarsReadiness();
   const d = cars.data;
+  // Sweep the ability fraction 0 → its value on open: the arc length and the marker
+  // position both read this single eased value, so they move in lockstep, and it shares
+  // the rings'/bars' rAF + easing + ~3s duration so the whole dashboard climbs together.
+  // Called unconditionally (hooks rule); `prefers-reduced-motion` lands on the final
+  // value immediately. Before data loads the target is 0 and the card renders nothing.
+  const f = useCountUp(d ? frac(d.overallV) : 0);
   if (!d) return null;
 
-  const f = frac(d.overallV);
   const targetF = frac(ON_TRACK_V);
   const marker = pointAt(f, R);
   const tickIn = pointAt(targetF, R - 9);

@@ -16,8 +16,12 @@
  */
 import { useEffect, useRef, useState } from 'react';
 
-/** Default ramp length — deliberate but not sluggish, in the brain reveal's register. */
-const DEFAULT_DURATION_MS = 1350;
+/**
+ * Default ramp length — a deliberate, brain-reveal-paced sweep (~3s). Every Progress
+ * count-up (the 7 reasoning rings, the 3 CARS sub-skill bars, and the CARS gauge) reads
+ * this same default with the same easing, so they climb in lockstep and settle together.
+ */
+const DEFAULT_DURATION_MS = 3000;
 
 /** Ease-out cubic: quick to move, gentle to settle. `eased(1) === 1`, so it lands exactly. */
 const easeOutCubic = (t: number): number => 1 - (1 - t) ** 3;
@@ -31,7 +35,7 @@ function prefersReducedMotion(): boolean {
 }
 
 export interface CountUpOptions {
-  /** Ramp length in ms (default ~1.35s). */
+  /** Ramp length in ms (default ~3s, the brain-reveal pace). */
   durationMs?: number;
   /** Per-item start delay in ms — a small stagger so a group cascades. */
   delayMs?: number;

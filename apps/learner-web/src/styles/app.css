@@ -1499,6 +1499,18 @@ body {
        clearance isn't needed — trim it back to buy vertical room for the CTA. */
     padding-bottom: var(--mc-space-5);
   }
+  /* Practice is the two-column Questions + Test-dashboard layout: it needs the
+     same escape from the 760px shell cap the Progress dashboard uses. The cap
+     lives on the PARENT (`.mc-shell__main`); a child `max-width` on `.mc-practice`
+     alone is moot, so widen the shell here and let the two equal cards breathe. */
+  .mc-shell__main:has(.mc-practice) {
+    max-width: 1280px;
+  }
+  /* CARS Duel setup: a wider, sectioned page (mode cards · intensity · topic),
+     matching the approved mockup — same PARENT-cap escape as above. */
+  .mc-shell__main:has(.mc-cars-setup) {
+    max-width: 1100px;
+  }
   /* Give the two side panels a little more width; the center keeps the brain at its
      rendered size (the canvas is height-driven, so a narrower column just trims the
      empty air beside it). Rows stretch so all three zones are equal height, which
@@ -1652,26 +1664,78 @@ body {
   white-space: pre-wrap;
 }
 
-/* ---- CARS Duel — setup screen (mode cards · intensity slider · topic card) ---- */
+/* ---- CARS Duel — setup screen (header · mode cards · intensity · topic · CTA) ---- */
+
+/* The setup is a wide, sectioned page (no outer card): eyebrow + big serif heading +
+   one-line intro, then Mode / Intensity / Topic sections, then the CTA. The width cap
+   lives on the PARENT (`.mc-shell__main:has(.mc-cars-setup)`, desktop media block). */
+.mc-cars-setup {
+  gap: var(--mc-space-5);
+}
+.mc-cars-setup__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-cars-setup__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: var(--mc-text-17);
+  font-weight: 700;
+  color: var(--mc-primary-text);
+}
+.mc-cars-setup__eyebrow-icon {
+  width: 22px;
+  height: 22px;
+}
+.mc-cars-setup__title {
+  margin: 0;
+  font-family: var(--mc-font-display);
+  font-size: clamp(2.25rem, 3.5vw, 3rem);
+  line-height: var(--mc-leading-tight);
+  color: var(--mc-ink);
+}
+.mc-cars-setup__intro {
+  margin: 0;
+  font-size: var(--mc-text-17);
+}
+/* Section = an uppercase teal label above its content block (Mode / Intensity / Topic). */
+.mc-cars-setup__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-cars-setup__seclabel {
+  display: block;
+  padding: 0;
+  margin: 0;
+  font-family: var(--mc-font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  color: var(--mc-primary-text);
+}
 
 /* Mode = two side-by-side selectable cards. A native radio drives selection and
-   keyboard (arrow keys) but is visually hidden; the <label> is the card. */
+   keyboard (arrow keys) but is visually hidden; the <label> is the card. Each card is
+   an icon disc + a title/description body, with a teal check disc when selected. */
 .mc-modecards {
   border: 0;
   margin: 0;
   padding: 0;
   min-inline-size: 0;
 }
-.mc-modecards > .mc-label {
-  padding: 0;
-  margin-bottom: var(--mc-space-2);
-}
 .mc-modecards__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--mc-space-3);
+  gap: var(--mc-space-4);
 }
-@media (max-width: 520px) {
+@media (max-width: 620px) {
   .mc-modecards__grid {
     grid-template-columns: 1fr;
   }
@@ -1679,9 +1743,9 @@ body {
 .mc-modecard {
   position: relative;
   display: flex;
-  flex-direction: column;
-  gap: var(--mc-space-1);
-  padding: var(--mc-space-4);
+  align-items: center;
+  gap: var(--mc-space-4);
+  padding: var(--mc-space-5);
   border: 1px solid var(--mc-border);
   border-radius: var(--mc-radius-card);
   background: color-mix(in srgb, var(--mc-surface) 70%, transparent);
@@ -1696,7 +1760,7 @@ body {
 }
 .mc-modecard.is-active {
   border-color: var(--mc-primary);
-  background: color-mix(in srgb, var(--mc-primary) 10%, var(--mc-surface));
+  background: color-mix(in srgb, var(--mc-primary) 8%, var(--mc-surface));
   box-shadow: inset 0 0 0 1px var(--mc-primary);
 }
 .mc-modecard__input {
@@ -1714,45 +1778,89 @@ body {
   outline: var(--mc-focus-width) solid var(--mc-focus);
   outline-offset: var(--mc-focus-offset);
 }
-.mc-modecard__title {
-  font-weight: 700;
-  font-size: var(--mc-text-17);
-  color: var(--mc-ink);
+.mc-modecard__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-surface-2);
+  color: var(--mc-ink-muted);
 }
-.mc-modecard.is-active .mc-modecard__title {
+.mc-modecard__icon svg {
+  width: 30px;
+  height: 30px;
+}
+.mc-modecard.is-active .mc-modecard__icon {
+  background: color-mix(in srgb, var(--mc-primary) 16%, var(--mc-surface));
   color: var(--mc-primary-text);
 }
+.mc-modecard__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+  min-width: 0;
+}
+.mc-modecard__title {
+  font-family: var(--mc-font-display);
+  font-weight: 700;
+  font-size: var(--mc-text-22);
+  color: var(--mc-ink);
+}
 .mc-modecard__desc {
-  font-size: var(--mc-text-14);
+  font-size: var(--mc-text-15);
   line-height: 1.45;
   color: var(--mc-ink-muted);
 }
+.mc-modecard__check {
+  position: absolute;
+  top: var(--mc-space-3);
+  right: var(--mc-space-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-primary);
+  color: var(--mc-on-primary);
+}
+.mc-modecard__check svg {
+  width: 18px;
+  height: 18px;
+}
 
-/* Intensity = a horizontal drag slider (native range) with a gradient teal track,
-   a live band + percent readout above, and three anchor labels beneath. */
+/* Intensity = a panel holding a prominent band + percent readout above a horizontal
+   drag slider (native range, gradient teal track) with three anchor labels beneath. */
 .mc-intensity {
   display: flex;
   flex-direction: column;
-  gap: var(--mc-space-2);
-}
-.mc-intensity__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
   gap: var(--mc-space-3);
+  padding: var(--mc-space-5);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-card);
+  background: color-mix(in srgb, var(--mc-surface) 60%, transparent);
 }
 .mc-intensity__readout {
-  margin: 0;
-  font-size: var(--mc-text-14);
-  color: var(--mc-ink-muted);
+  margin: 0 0 var(--mc-space-1);
+  text-align: center;
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-22);
+  color: var(--mc-primary-text);
 }
 .mc-intensity__readout strong {
-  color: var(--mc-primary-text);
+  font-weight: 700;
+}
+.mc-intensity__pct {
+  font-weight: 600;
 }
 .mc-intensity__anchors {
   display: flex;
   justify-content: space-between;
-  font-size: var(--mc-text-12);
+  font-size: var(--mc-text-14);
   color: var(--mc-ink-muted);
 }
 .mc-intensity__anchors span:nth-child(2) {
@@ -1798,8 +1906,8 @@ body {
   width: 24px;
   height: 24px;
   border-radius: var(--mc-radius-pill);
-  background: var(--mc-surface);
-  border: 3px solid var(--mc-primary);
+  background: var(--mc-primary);
+  border: 3px solid var(--mc-surface);
   box-shadow: var(--mc-shadow-card);
   transition: transform var(--mc-motion-fast) var(--mc-ease);
 }
@@ -1810,8 +1918,8 @@ body {
   width: 24px;
   height: 24px;
   border-radius: var(--mc-radius-pill);
-  background: var(--mc-surface);
-  border: 3px solid var(--mc-primary);
+  background: var(--mc-primary);
+  border: 3px solid var(--mc-surface);
   box-shadow: var(--mc-shadow-card);
 }
 .mc-range:focus-visible::-webkit-slider-thumb {
@@ -1823,16 +1931,37 @@ body {
   outline-offset: var(--mc-focus-offset);
 }
 
-/* Topic = a distinct, highlighted, read-only card with a quote/emphasis treatment. */
+/* Topic = a distinct, highlighted, read-only card: a book-icon disc beside the
+   "Today's topic" eyebrow + the system-chosen proposition (in quotes). */
 .mc-topiccard {
-  padding: var(--mc-space-4) var(--mc-space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-4);
+  padding: var(--mc-space-5);
   border-radius: var(--mc-radius-card);
   border: 1px solid color-mix(in srgb, var(--mc-primary) 22%, var(--mc-border));
-  border-left: 4px solid var(--mc-primary);
   background: color-mix(in srgb, var(--mc-primary) 7%, var(--mc-surface));
 }
+.mc-topiccard__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--mc-radius-pill);
+  background: color-mix(in srgb, var(--mc-primary) 14%, var(--mc-surface));
+  color: var(--mc-primary-text);
+}
+.mc-topiccard__icon svg {
+  width: 30px;
+  height: 30px;
+}
+.mc-topiccard__body {
+  min-width: 0;
+}
 .mc-topiccard__eyebrow {
-  margin: 0 0 var(--mc-space-2);
+  margin: 0 0 var(--mc-space-1);
   font-family: var(--mc-font-body);
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -1843,9 +1972,27 @@ body {
 .mc-topiccard__text {
   margin: 0;
   font-family: var(--mc-font-display);
-  font-size: var(--mc-text-22);
-  line-height: 1.4;
+  font-size: var(--mc-text-28);
+  line-height: 1.35;
   color: var(--mc-ink);
+}
+
+/* Full-width "Start the duel" CTA: bigger, with a leading crossed-swords icon. */
+.mc-cars-setup__start.mc-button {
+  min-height: 64px;
+  font-size: var(--mc-text-22);
+  font-weight: 700;
+  box-shadow: var(--mc-shadow-card);
+}
+.mc-cars-setup__start .mc-button__label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mc-space-2);
+}
+.mc-cars-setup__starticon {
+  width: 24px;
+  height: 24px;
 }
 
 /* ---- Curriculum (browse-only V3 path) ---- */
@@ -3275,38 +3422,39 @@ body {
 
 /* ---- Practice (adaptive test-out) ---- */
 .mc-practice {
-  gap: var(--mc-space-4);
-  /* Override the default 760px screen cap: the two-column layout (questions +
-     test dashboard) needs the extra width so each card and its rings/trends
-     don't feel narrow. Only widens the Practice screen, not every screen. */
-  max-width: 1200px;
+  gap: var(--mc-space-5);
+  /* The real width cap is on the PARENT `.mc-shell__main:has(.mc-practice)` (desktop
+     media block above); a child cap here would only re-narrow it, so this screen
+     fills the widened shell. */
+  max-width: none;
 }
-/* Practice intro: a touch bigger than fineprint, easy to read. */
-.mc-practice__intro {
-  font-size: var(--mc-text-15);
-  color: var(--mc-ink-muted);
-  line-height: 1.55;
-}
-/* Two-column Practice: the live Practice-questions card (teal accent) beside the
-   presentational Practice-test dashboard (warm-amber accent). Cards are sized to
-   their own content (align-items: start) and stack into one column on narrow
-   screens. */
+/* Two EQUAL-width Practice columns: the live Practice-questions card (teal accent)
+   beside the presentational Practice-test dashboard (warm-amber accent). They stretch
+   to a shared height (as in the mockup) and stack into one column on narrow screens. */
 .mc-practice__cols {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--mc-space-4);
-  align-items: start;
+  gap: var(--mc-space-5);
+  align-items: stretch;
 }
 @media (max-width: 900px) {
   .mc-practice__cols {
     grid-template-columns: 1fr;
+    align-items: start;
   }
 }
 /* A rounded accent bar sits across the top of each column card: teal for the live
    side, warm amber for the deferred test side. Inset from the corners so it reads
-   as an intentional bar, not a repainted border. */
+   as an intentional bar, not a repainted border. The card is a flex column so its
+   inner Stack fills the (stretched) height and the deferred CTA can sit at the base. */
 .mc-practice__card {
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.mc-practice__card > * {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 .mc-practice__card::before {
   content: '';
@@ -3314,7 +3462,7 @@ body {
   top: 0;
   left: var(--mc-radius-card);
   right: var(--mc-radius-card);
-  height: 4px;
+  height: 5px;
   border-radius: var(--mc-radius-pill);
   background: var(--mc-primary);
 }
@@ -3325,7 +3473,7 @@ body {
 .mc-practice__card--test .mc-eyebrow {
   color: var(--mc-accent-warm-text);
 }
-/* "How many questions?" — centered label + number input. */
+/* "How many questions?" — centered heading + stepper + estimate. */
 .mc-practice__count {
   display: flex;
   flex-direction: column;
@@ -3336,19 +3484,65 @@ body {
 .mc-practice__count .mc-h3 {
   font-size: var(--mc-text-28);
 }
-.mc-practice__countinput {
-  width: 120px;
-  min-height: 56px;
-  font-size: var(--mc-text-28);
-}
 .mc-practice__esttime {
   color: var(--mc-ink-muted);
   font-size: var(--mc-text-17);
 }
+/* −/+ question stepper: two round step buttons flank a large, boxed live count
+   (matches the mockup — never a bare number input). */
+.mc-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-stepper__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-surface);
+  color: var(--mc-ink);
+  font-size: var(--mc-text-28);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background var(--mc-motion-control) var(--mc-ease),
+    border-color var(--mc-motion-control) var(--mc-ease),
+    transform var(--mc-motion-control) var(--mc-ease);
+}
+.mc-stepper__btn:hover:not(:disabled) {
+  border-color: var(--mc-primary);
+  background: color-mix(in srgb, var(--mc-primary) 8%, var(--mc-surface));
+}
+.mc-stepper__btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.mc-stepper__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.mc-stepper__value {
+  min-width: 104px;
+  padding: var(--mc-space-2) var(--mc-space-4);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface);
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-36);
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
 /* Make the primary CTA bigger + a touch of lift so it draws the eye. */
 .mc-practice__start.mc-button {
-  min-height: 64px;
-  font-size: 1.5rem;
+  min-height: 60px;
+  font-size: var(--mc-text-22);
   font-weight: 700;
   box-shadow: var(--mc-shadow-card);
 }
@@ -3358,58 +3552,53 @@ body {
     0 2px 4px rgba(16, 34, 46, 0.1),
     0 14px 34px rgba(16, 34, 46, 0.16);
 }
-/* Read-only "Where you stand" — 7 reasoning-skill mastery bars (weakest first). */
-.mc-practice__stand {
-  display: flex;
-  flex-direction: column;
-  gap: var(--mc-space-3);
+/* Hairline divider (below the CTA on the left card; below the header on the test card). */
+.mc-practice__rule {
+  width: 100%;
+  height: 0;
+  margin: var(--mc-space-1) 0;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--mc-border) 80%, transparent);
 }
-.mc-practice__standhead {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--mc-space-2);
-}
-/* "Needs the most review" — the 3 weakest lessons as mastery rings, side by side.
-   Each ring links into the curriculum. Amber arc = low mastery / needs work. */
+/* "Your three weakest lessons" — the 3 weakest lessons as mastery rings in a row.
+   Each is a plain link (ring + name + Review →) sitting directly on the card, no
+   inner box, matching the mockup. */
 .mc-weakest {
   display: flex;
   flex-direction: column;
-  gap: var(--mc-space-3);
+  gap: var(--mc-space-4);
+}
+.mc-weakest__title {
+  text-align: left;
 }
 .mc-weakest__rings {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--mc-space-3);
-  flex-wrap: wrap;
-  justify-content: center;
+  align-items: start;
 }
 .mc-weakest__ring {
-  flex: 1 1 0;
-  min-width: 120px;
-  max-width: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--mc-space-2);
-  padding: var(--mc-space-4) var(--mc-space-3);
-  border-radius: var(--mc-radius-card);
-  background: var(--mc-surface);
-  border: 1px solid var(--mc-border);
-  box-shadow: var(--mc-shadow-card);
+  padding: var(--mc-space-2);
+  border-radius: var(--mc-radius-control);
   text-decoration: none;
   color: var(--mc-ink);
   transition:
     transform var(--mc-motion-control) var(--mc-ease),
-    box-shadow var(--mc-motion-control) var(--mc-ease),
-    border-color var(--mc-motion-control) var(--mc-ease);
+    background var(--mc-motion-control) var(--mc-ease);
 }
 .mc-weakest__ring:hover {
   transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--mc-primary) 45%, var(--mc-border));
-  box-shadow:
-    0 2px 4px rgba(16, 34, 46, 0.08),
-    0 12px 30px rgba(16, 34, 46, 0.1);
+  background: color-mix(in srgb, var(--mc-primary) 6%, transparent);
+}
+/* The three weakest rings render teal to match the approved mockup, not the amber
+   "needs-review" tone. Scoped here so the shared MasteryRing `tone="review"` default
+   (amber) is unchanged everywhere else it is used. */
+.mc-weakest .mc-ring__arc--review {
+  stroke: var(--mc-primary);
 }
 .mc-ring {
   width: 104px;
@@ -3467,7 +3656,7 @@ body {
   fill: var(--mc-ink);
 }
 .mc-weakest__ringtitle {
-  font-size: var(--mc-text-14);
+  font-size: var(--mc-text-15);
   font-weight: 600;
   text-align: center;
   line-height: 1.25;
@@ -3484,36 +3673,42 @@ body {
 .mc-testdash__head {
   display: flex;
   flex-direction: column;
-  gap: var(--mc-space-2);
+  gap: var(--mc-space-1);
 }
-.mc-testdash__start {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--mc-space-3);
-}
-.mc-testdash__soon {
+.mc-testdash__sub {
   margin: 0;
+  font-size: var(--mc-text-15);
+}
+/* Middle band: a wide "Improvement over time" region beside a stacked Readiness +
+   Estimated-range column, mirroring the mockup. Collapses to one column when the
+   card itself is narrow (stacked layout / small screens). */
+.mc-testdash__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: var(--mc-space-4);
+  align-items: stretch;
+}
+@media (max-width: 560px) {
+  .mc-testdash__grid {
+    grid-template-columns: 1fr;
+  }
+}
+.mc-testdash__trends {
+  min-width: 0;
+}
+.mc-testdash__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
 }
 .mc-testdash__section {
   display: flex;
   flex-direction: column;
   gap: var(--mc-space-2);
 }
-/* Readiness + Estimated range sit side by side, collapsing to one column when the
-   card itself is narrow (stacked layout / small screens). */
-.mc-testdash__stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--mc-space-3);
-}
-@media (max-width: 480px) {
-  .mc-testdash__stats {
-    grid-template-columns: 1fr;
-  }
-}
 .mc-testdash__stat {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: var(--mc-space-1);
   padding: var(--mc-space-3) var(--mc-space-4);
@@ -3539,12 +3734,56 @@ body {
   text-align: center;
 }
 .mc-emptyframe--chart {
-  min-height: 148px;
+  flex: 1;
+  min-height: 176px;
+}
+.mc-emptyframe--strip {
+  min-height: 96px;
 }
 .mc-emptyframe__note {
   margin: 0;
   max-width: 40ch;
   font-size: var(--mc-text-14);
+}
+/* Deferred "Start test": a full-width, warm-accented, disabled CTA that names the
+   coming action + its status (icon + label on one row, "coming soon" beneath),
+   matching the mockup's amber button. Not the teal primary — teal is the live
+   Questions CTA. `margin-top: auto` seats it at the base of the stretched card. */
+.mc-teststart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  min-height: 72px;
+  margin-top: auto;
+  padding: var(--mc-space-3) var(--mc-space-4);
+  border: 1px solid color-mix(in srgb, var(--mc-accent-warm) 50%, var(--mc-border));
+  border-radius: var(--mc-radius-control);
+  background: color-mix(in srgb, var(--mc-accent-warm) 12%, var(--mc-surface));
+  color: var(--mc-accent-warm-text);
+  cursor: not-allowed;
+  font: inherit;
+}
+.mc-teststart__main {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+}
+.mc-teststart__icon {
+  width: 22px;
+  height: 22px;
+}
+.mc-teststart__label {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-22);
+  font-weight: 700;
+}
+.mc-teststart__soon {
+  font-size: var(--mc-text-14);
+  font-weight: 600;
+  opacity: 0.85;
 }
 .mc-practice__options {
   display: flex;

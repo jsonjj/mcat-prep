@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type SVGProps } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import {
@@ -14,8 +14,9 @@ import {
   type DuelMode,
   type DuelSide,
 } from '@mcat/ai-gateway';
-import type { CarsDuelSelectionView } from '@mcat/contracts';
-import { useRecordCarsDuel } from '../app/queries';
+import type { CarsDuelSelectionView, CarsReadinessLabel } from '@mcat/contracts';
+import { useCarsReadiness, useRecordCarsDuel } from '../app/queries';
+import { IconBook, IconChat, IconCheck, IconShield, IconSwords } from '../components/icons';
 
 /**
  * CARS Duel — an AI debate that sharpens critical analysis and reasoning.
@@ -25,20 +26,45 @@ import { useRecordCarsDuel } from '../app/queries';
  */
 const MODES: DuelMode[] = ['rebut', 'defend'];
 
-/** Setup mode cards — a short "what you'll do" line for each side of the duel. */
-const MODE_CARDS: Record<DuelMode, { title: string; description: string }> = {
+/** Setup mode cards — an icon + a short "what you'll do" line for each side of the duel. */
+const MODE_CARDS: Record<DuelMode, { title: string; description: string; Icon: (p: SVGProps<SVGSVGElement>) => JSX.Element }> = {
   rebut: {
     title: 'Rebut the argument',
     description: "You dismantle the AI's case — closest to real CARS",
+    Icon: IconChat,
   },
   defend: {
     title: 'Defend a thesis',
-    description: 'You hold a position; the AI attacks it.',
+    description: 'You hold a position; the AI attacks it',
+    Icon: IconShield,
   },
 };
 
-/** The intensity handle defaults to the middle of the Standard band. */
+/**
+ * Fallback intensity while the learner's CARS ability is still loading — the middle
+ * of the Standard band (the engine's neutral starting intensity).
+ */
 const DEFAULT_INTENSITY_PCT = 50;
+
+/**
+ * Recommended STARTING intensity for the manual setup, derived from the learner's
+ * current CARS ability.
+ *
+ * The engine's system intensity (an Elo rating with hold-rate hysteresis,
+ * `nextCarsDuelIntensity`, targeting a 75–85% hold-rate) is resolved server-side and
+ * only reaches the client on a Today's-Path autostart (`CarsDuelSelectionView.intensity`).
+ * The manual setup has no such selection, so — following the engine's own philosophy
+ * (higher ability → higher intensity band) — we seed the slider from the learner's CARS
+ * readiness band, using the SAME `overallV` thresholds the Progress gauge uses for its
+ * label (≥1.7 on-track, ≥0.85 approaching, else building). Each band maps to the
+ * midpoint of the matching duel band, so `pctToDifficulty()` lands on
+ * Warm-up / Standard / Challenge respectively. The learner can still drag it anywhere.
+ */
+const RECOMMENDED_INTENSITY_PCT: Record<CarsReadinessLabel, number> = {
+  building: 17, // Warm-up band midpoint (0–33)
+  approaching: 50, // Standard band midpoint (34–66)
+  on_track: 83, // Challenge band midpoint (67–100)
+};
 
 /**
  * Map the continuous 0–100 intensity slider onto the engine's existing
@@ -80,14 +106,21 @@ export function CarsDuel() {
     else navigate('/app');
   };
   const recordDuel = useRecordCarsDuel();
+  const carsReadiness = useCarsReadiness();
   const ai = useMemo(() => new HttpAiChat({ endpoint: '/api/ai/chat' }), []);
 
   const [phase, setPhase] = useState<Phase>('setup');
   const [mode, setMode] = useState<DuelMode>('rebut');
   const [difficulty, setDifficulty] = useState<DuelDifficulty>('standard');
   // The intensity slider is the source of truth for the manual setup; its 0–100
-  // position is mapped onto `difficulty` (the engine enum) at start time.
-  const [intensityPct, setIntensityPct] = useState(DEFAULT_INTENSITY_PCT);
+  // position is mapped onto `difficulty` (the engine enum) at start time. `null` means
+  // "not touched yet" → follow the ability-derived recommendation (falling back to the
+  // neutral default until CARS readiness loads); any drag pins it to that value.
+  const [intensityPct, setIntensityPct] = useState<number | null>(null);
+  const recommendedIntensityPct = carsReadiness.data
+    ? RECOMMENDED_INTENSITY_PCT[carsReadiness.data.label]
+    : null;
+  const effectiveIntensityPct = intensityPct ?? recommendedIntensityPct ?? DEFAULT_INTENSITY_PCT;
   // The system picks the topic. On autostart it comes from the resolved selection;
   // the manual entry point falls back to a suggested prompt (shown read-only).
   const [topic, setTopic] = useState(SUGGESTED_TOPICS[0] ?? '');
@@ -268,83 +301,111 @@ export function CarsDuel() {
 
   if (phase === 'setup') {
     return (
-      <div className="mc-screen">
-        <h1 className="mc-h1">Debate to sharpen your reasoning</h1>
-        <p className="mc-muted mc-fineprint">
-          CARS Duel is a live, back-and-forth debate with an AI sparring partner — the fastest way to
-          train the exact skill CARS tests: reading an argument closely and pressure-testing it.
-          Choose how you want to spar, trade a few rounds on the topic below, and finish with a
-          constructive reflection. No winner or loser, and it never counts toward mastery.
-        </p>
+      <div className="mc-screen mc-cars-setup">
+        <header className="mc-cars-setup__head">
+          <p className="mc-eyebrow mc-cars-setup__eyebrow">
+            <IconSwords className="mc-cars-setup__eyebrow-icon" aria-hidden="true" />
+            CARS Duel
+          </p>
+          <h1 className="mc-cars-setup__title">Debate to sharpen your reasoning</h1>
+          <p className="mc-muted mc-cars-setup__intro">
+            Practice active reading by debating high-yield arguments with AI.
+          </p>
+        </header>
 
-        <Card elevated>
-          <Stack gap={5}>
-            {/* Mode = two side-by-side selectable cards (native radios styled as
-                cards → arrow-key navigation + aria-checked for free). */}
-            <fieldset className="mc-modecards">
-              <legend className="mc-label">Mode</legend>
-              <div className="mc-modecards__grid">
-                {MODES.map((m) => (
-                  <label key={m} className={`mc-modecard ${mode === m ? 'is-active' : ''}`}>
-                    <input
-                      type="radio"
-                      name="duel-mode"
-                      className="mc-modecard__input"
-                      value={m}
-                      checked={mode === m}
-                      onChange={() => setMode(m)}
-                    />
+        {/* Mode = two side-by-side selectable cards (native radios styled as cards →
+            arrow-key navigation + aria-checked for free). Each shows an icon, a title,
+            and a one-line description; the selected card gets a teal check. */}
+        <fieldset className="mc-modecards mc-cars-setup__section">
+          <legend className="mc-cars-setup__seclabel">Mode</legend>
+          <div className="mc-modecards__grid">
+            {MODES.map((m) => {
+              const { Icon } = MODE_CARDS[m];
+              return (
+                <label key={m} className={`mc-modecard ${mode === m ? 'is-active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="duel-mode"
+                    className="mc-modecard__input"
+                    value={m}
+                    checked={mode === m}
+                    onChange={() => setMode(m)}
+                  />
+                  <span className="mc-modecard__icon" aria-hidden="true">
+                    <Icon />
+                  </span>
+                  <span className="mc-modecard__body">
                     <span className="mc-modecard__title">{MODE_CARDS[m].title}</span>
                     <span className="mc-modecard__desc">{MODE_CARDS[m].description}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+                  </span>
+                  {mode === m ? (
+                    <span className="mc-modecard__check" aria-hidden="true">
+                      <IconCheck />
+                    </span>
+                  ) : null}
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
 
-            {/* Intensity = a continuous drag slider mapped onto the engine's
-                difficulty band at start time (Warm-up / Standard / Challenge). */}
-            <div className="mc-intensity">
-              <div className="mc-intensity__head">
-                <p className="mc-label">Intensity</p>
-                <p className="mc-intensity__readout" aria-hidden="true">
-                  <strong>{DUEL_DIFFICULTY_LABELS[pctToDifficulty(intensityPct)]}</strong> ·{' '}
-                  {intensityPct}%
-                </p>
-              </div>
-              <input
-                type="range"
-                className="mc-range"
-                min={0}
-                max={100}
-                step={1}
-                value={intensityPct}
-                onChange={(e) => setIntensityPct(Number(e.target.value))}
-                aria-label="Intensity"
-                aria-valuetext={`${DUEL_DIFFICULTY_LABELS[pctToDifficulty(intensityPct)]}, ${intensityPct}%`}
-              />
-              <div className="mc-intensity__anchors" aria-hidden="true">
-                <span>Warm-up</span>
-                <span>Standard</span>
-                <span>Challenge</span>
-              </div>
+        {/* Intensity = a continuous drag slider mapped onto the engine's difficulty
+            band at start time (Warm-up / Standard / Challenge), pre-set to the band
+            recommended for this learner's CARS ability. The readout is the prominent
+            element above the track. */}
+        <section className="mc-cars-setup__section">
+          <p className="mc-cars-setup__seclabel">Intensity</p>
+          <div className="mc-intensity">
+            <p className="mc-intensity__readout" aria-hidden="true">
+              <strong>{DUEL_DIFFICULTY_LABELS[pctToDifficulty(effectiveIntensityPct)]}</strong>
+              <span className="mc-intensity__pct"> &middot; {effectiveIntensityPct}%</span>
+            </p>
+            <input
+              type="range"
+              className="mc-range"
+              min={0}
+              max={100}
+              step={1}
+              value={effectiveIntensityPct}
+              onChange={(e) => setIntensityPct(Number(e.target.value))}
+              aria-label="Intensity"
+              aria-valuetext={`${DUEL_DIFFICULTY_LABELS[pctToDifficulty(effectiveIntensityPct)]}, ${effectiveIntensityPct}%`}
+            />
+            <div className="mc-intensity__anchors" aria-hidden="true">
+              <span>Warm-up</span>
+              <span>Standard</span>
+              <span>Challenge</span>
             </div>
+          </div>
+        </section>
 
-            {/* Topic = a distinct, read-only "today's topic" card (system-chosen). */}
-            <div className="mc-topiccard">
-              <p className="mc-topiccard__eyebrow">Today’s topic</p>
-              <p className="mc-topiccard__text">{topic}</p>
+        {/* Topic = a distinct, highlighted, read-only "today's topic" card (system-chosen). */}
+        <section className="mc-cars-setup__section">
+          <p className="mc-cars-setup__seclabel">Topic</p>
+          <div className="mc-topiccard">
+            <span className="mc-topiccard__icon" aria-hidden="true">
+              <IconBook />
+            </span>
+            <div className="mc-topiccard__body">
+              <p className="mc-topiccard__eyebrow">Today&rsquo;s topic</p>
+              <p className="mc-topiccard__text">&ldquo;{topic}&rdquo;</p>
             </div>
+          </div>
+        </section>
 
-            <Button
-              variant="primary"
-              size="lg"
-              disabled={topic.trim().length === 0 || busy}
-              onClick={() => void start({ mode, difficulty: pctToDifficulty(intensityPct), topic })}
-            >
-              {busy ? 'Setting up…' : 'Start the duel'}
-            </Button>
-          </Stack>
-        </Card>
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
+          className="mc-cars-setup__start"
+          disabled={topic.trim().length === 0 || busy}
+          onClick={() =>
+            void start({ mode, difficulty: pctToDifficulty(effectiveIntensityPct), topic })
+          }
+        >
+          <IconSwords className="mc-cars-setup__starticon" aria-hidden="true" />
+          {busy ? 'Setting up…' : 'Start the duel'}
+        </Button>
       </div>
     );
   }

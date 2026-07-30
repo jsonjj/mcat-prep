@@ -10,7 +10,7 @@ const toPct = (p: number): number => Math.round(p * 100);
 
 /**
  * On-open stagger between reasoning-skill rings — a gentle cascade that echoes the
- * brain reveal without pushing the last ring past the ~1.6s count-up window.
+ * brain reveal; kept small so the last ring still lands within the ~3s count-up window.
  */
 const RING_STAGGER_MS = 40;
 

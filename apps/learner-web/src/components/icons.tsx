@@ -86,6 +86,52 @@ export const IconUser = (p: SVGProps<SVGSVGElement>) => (
     <path d="M5 20a7 7 0 0 1 14 0" />
   </svg>
 );
+/** Two crossed swords — the CARS Duel eyebrow glyph + the "Start the duel" CTA. */
+export const IconSwords = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}>
+    <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+    <line x1="13" y1="19" x2="19" y2="13" />
+    <line x1="16" y1="16" x2="20" y2="20" />
+    <line x1="19" y1="21" x2="21" y2="19" />
+    <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" />
+    <line x1="5" y1="14" x2="9" y2="18" />
+    <line x1="7" y1="17" x2="4" y2="20" />
+    <line x1="3" y1="19" x2="5" y2="21" />
+  </svg>
+);
+/** Two speech bubbles — the "Rebut the argument" duel-mode glyph. */
+export const IconChat = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}>
+    <path d="M2.5 6A2 2 0 0 1 4.5 4h8A2 2 0 0 1 14.5 6v3A2 2 0 0 1 12.5 11H6.5l-4 3V6Z" />
+    <path d="M9.5 13.5v.5A2 2 0 0 0 11.5 16h6l4 3v-8a2 2 0 0 0-2-2h-1" />
+  </svg>
+);
+/** A shield — the "Defend a thesis" duel-mode glyph. */
+export const IconShield = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}>
+    <path d="M12 3l7 3v5c0 4.6-3.1 7.7-7 9-3.9-1.3-7-4.4-7-9V6l7-3Z" />
+  </svg>
+);
+/** An open book — the "Today's topic" card glyph. */
+export const IconBook = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}>
+    <path d="M12 6.5C10.5 5 8 4.5 4 4.5V18c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2V4.5c-4 0-6.5.5-8 2Z" />
+    <path d="M12 6.5V20" />
+  </svg>
+);
+/** A clock — the deferred "Start test" (coming soon) glyph. */
+export const IconClock = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 7.5V12l3 2" />
+  </svg>
+);
+/** A checkmark — the selected duel-mode badge (rendered inside a filled disc). */
+export const IconCheck = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}>
+    <path d="M5 12.5l4.5 4.5L19 7" />
+  </svg>
+);
 export const IconSun = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}>
     <circle cx="12" cy="12" r="4" />
