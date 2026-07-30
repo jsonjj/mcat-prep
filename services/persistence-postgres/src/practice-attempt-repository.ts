@@ -24,6 +24,41 @@ import type { Queryable } from './mastery-repository';
 /** Activity types the Mistakes surfaces display; see §6.5. */
 export const DISPLAYED_ACTIVITY_TYPES = ['practice', 'study'] as const;
 
+interface RawItemMedianRow extends Record<string, unknown> {
+  question_id: string;
+  median_ms: number | string | null;
+  sample_size: number | string;
+}
+
+/**
+ * Per-item population median `elapsed_ms` (and its sample size) across ALL
+ * learners' captured attempts, for the given items. `percentile_cont(0.5)` is
+ * the continuous median over the non-null timings, and `count(elapsed_ms)`
+ * counts only the captured ones — a row written with NULL timing ("not
+ * captured") never enters either, so it cannot be mistaken for an instant `0`.
+ * Only the displayed activity types (practice/study) contribute, matching the
+ * attempt-log read. WS1 calibration bands speed against this median once it
+ * clears the sample floor.
+ */
+export async function itemResponseMedians(
+  q: Queryable,
+  questionIds: readonly string[],
+): Promise<RawItemMedianRow[]> {
+  if (questionIds.length === 0) return [];
+  const { rows } = await q.query<RawItemMedianRow>(
+    `select question_id,
+            percentile_cont(0.5) within group (order by elapsed_ms) as median_ms,
+            count(elapsed_ms)::int as sample_size
+       from attempt_results
+      where question_id = any($1)
+        and elapsed_ms is not null
+        and activity_type = any($2)
+      group by question_id`,
+    [[...new Set(questionIds)], [...DISPLAYED_ACTIVITY_TYPES]],
+  );
+  return rows;
+}
+
 /** One first-attempt row. `activityType` is the recording scope, not the display scope. */
 export interface PracticeAttemptLogRow {
   readonly learnerId: string;

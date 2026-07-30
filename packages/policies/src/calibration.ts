@@ -17,7 +17,8 @@
  *   timing samples; below that, or when no median is known at all, speed falls
  *   back to FIXED thresholds (`fastFallbackMs`, `slowFallbackMs`). The slow
  *   fallback mirrors the diagnostic's `SLOW_MS` (90 s).
- * - "weak KC" = the KC's current mastery below `weakKcLine` (the BKT review line).
+ * - "weak KC" = the KC's current mastery below `weakKcLine`, a DEDICATED low cut
+ *   (`WEAK_KC_LINE`), NOT the 0.9 BKT review line — see that constant for why.
  *
  * BANDS (spec §11.2):
  * - `confidently_wrong` = wrong AND fast. The two WS0 confidence proxies are read
@@ -27,8 +28,8 @@
  *   slow miss to confident.
  * - `shaky_win` = correct AND (slow OR weak KC). The spec also lists "a still-open
  *   miss in that KC" as an equivalent weakness signal; v1 represents weakness by
- *   the KC's P(L) against the review line (a KC with an open miss is below it in
- *   practice), and the normalized still-open-miss axis is deferred.
+ *   the KC's P(L) against the dedicated weak-KC line (a KC with an open miss is
+ *   below it in practice), and the normalized still-open-miss axis is deferred.
  * - `normal` otherwise.
  *
  * A `null` input means "not captured" and is treated as no signal, NOT as zero:
@@ -36,9 +37,33 @@
  * This is the distinction WS0 preserved by storing timing NULL rather than 0.
  */
 import type { CalibrationBand } from '@mcat/contracts';
-import { REVIEW_LINE } from './forgetting';
 
 export type { CalibrationBand };
+
+/**
+ * KC mastery below this counts as "genuinely weak" for the shaky-win arm.
+ *
+ * DELIBERATELY DECOUPLED from the 0.9 BKT review/decay line (`REVIEW_LINE`). The
+ * review line marks where an already-MASTERED unit has decayed far enough to be
+ * worth a spaced rep; borrowing it here as the weakness cut was a category error.
+ * A KC climbs from the `0.2` cold-start prior (`PRIOR_PL0`) and stays below `0.9`
+ * for essentially its whole learning curve, so `kcMastery < 0.9` held for almost
+ * every pre-mastery correct answer — nearly every early science win banded
+ * `shaky_win`, drowning the worst-first signal the Mistakes surface ranks by.
+ *
+ * `0.35` sits just above the `0.2` prior and far below the `0.95` mastery cut: a
+ * single clean correct answer lifts a fresh KC's P(L) past it (~0.55 after one
+ * correct from the prior), so an unaided win no longer reads as shaky, while a KC
+ * still dragging below `0.35` after real practice — the genuinely weak case —
+ * still does. It is an A/B knob on `CALIBRATION_CONFIG`, and it must never be
+ * re-coupled to `REVIEW_LINE`.
+ *
+ * A fresh KC with NO recorded observations is weak on nothing — the prior is not
+ * evidence — so its weakness is expressed to the classifier as a `null` mastery
+ * input (no signal), not as a value below this line. See the null-handling
+ * contract below and `Authority.calibrationFor`.
+ */
+export const WEAK_KC_LINE = 0.35;
 
 /**
  * The item's population response-time summary, or null when none is available.
@@ -62,7 +87,8 @@ export interface CalibrationConfig {
   readonly fastFallbackMs: number;
   /** Fixed "slow" cutoff (ms) when no trusted median exists (default 90 s). */
   readonly slowFallbackMs: number;
-  /** KC mastery below this counts as "weak" (default: the BKT review line). */
+  /** KC mastery below this counts as "weak" (default `WEAK_KC_LINE`, a dedicated
+   * low cut — NOT the BKT review line). */
   readonly weakKcLine: number;
   /** Above this many pre-commit selection changes, a fast miss is not "confident". */
   readonly maxConfidentAnswerChanges: number;
@@ -78,7 +104,7 @@ export const CALIBRATION_CONFIG: CalibrationConfig = {
   minMedianSamples: 20,
   fastFallbackMs: 15_000,
   slowFallbackMs: 90_000,
-  weakKcLine: REVIEW_LINE,
+  weakKcLine: WEAK_KC_LINE,
   maxConfidentAnswerChanges: 2,
 };
 

@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { UtcTimestampSchema, type Clock } from '@mcat/contracts';
 import { loadSyntheticBank, type LoadedBank } from '@mcat/content';
 import { Authority } from './authority';
-import { SyntheticPracticeBankPort, type PracticeAnswer, type PracticeAttemptLogEntry } from './practice';
+import {
+  SyntheticPracticeBankPort,
+  type ItemResponseTime,
+  type PracticeAnswer,
+  type PracticeAttemptLogEntry,
+} from './practice';
 import type { LearnerState } from './types';
 
 /**
@@ -16,6 +21,7 @@ import type { LearnerState } from './types';
 const KC_INHIBITION = 'V3-KC-525816';
 const CORRECT = 'A';
 const WRONG = 'B';
+const NOW = UtcTimestampSchema.parse('2026-07-27T12:00:00.000Z');
 
 /** Enzyme items that resolve in the synthetic bank, all in one KC. */
 const ITEMS = [
@@ -48,20 +54,60 @@ const ERROR_MODELS: Record<string, Record<string, string>> = {
   },
 };
 
-/** SyntheticPracticeBankPort that also serves authored error models per item. */
+/**
+ * SyntheticPracticeBankPort that also serves authored error models per item AND
+ * lets a test control the population median RT per item — the seam WS1's
+ * trusted-median speed branch reads (FIX A). Unset items return no median, so
+ * speed falls back to the fixed cutoffs exactly as the base port does.
+ */
 class ErrorModelBankPort extends SyntheticPracticeBankPort {
+  readonly medians = new Map<string, ItemResponseTime>();
+
   override async getAnswer(questionId: string): Promise<PracticeAnswer | null> {
     const base = await super.getAnswer(questionId);
     if (base === null) return null;
     return { ...base, errorModels: ERROR_MODELS[questionId] ?? null };
   }
+
+  override async itemResponseTimes(
+    questionIds: readonly string[],
+  ): Promise<ReadonlyMap<string, ItemResponseTime>> {
+    const out = new Map<string, ItemResponseTime>();
+    for (const id of questionIds) {
+      const m = this.medians.get(id);
+      if (m) out.set(id, m);
+    }
+    return out;
+  }
 }
 
-function learner(): { authority: Authority; state: LearnerState; bank: LoadedBank } {
+function learner(): {
+  authority: Authority;
+  state: LearnerState;
+  bank: LoadedBank;
+  port: ErrorModelBankPort;
+} {
   const bank = loadSyntheticBank();
-  const clock: Clock = { now: () => UtcTimestampSchema.parse('2026-07-27T12:00:00.000Z') };
-  const authority = new Authority(bank, clock, new ErrorModelBankPort(bank));
-  return { authority, state: authority.createGuest(), bank };
+  const clock: Clock = { now: () => NOW };
+  const port = new ErrorModelBankPort(bank);
+  const authority = new Authority(bank, clock, port);
+  return { authority, state: authority.createGuest(), bank, port };
+}
+
+/**
+ * Seed one KC with a real, low P(L) as-of NOW (no decay), so the KC is weak on
+ * EVIDENCE (recorded state) rather than on the cold-start prior — the distinction
+ * FIX B draws. A KC with no state reads as "no signal", never as weak.
+ */
+function seedKcMastery(state: LearnerState, kcId: string, pL: number): void {
+  state.mastery = {
+    kc: { [kcId]: { pL, halfLifeDays: 7, lastPracticedAt: NOW, lastDueReviewAt: null } },
+    skill: {},
+    cars: {},
+    practicedLessonIds: [],
+    appliedObservationIds: [],
+    highestAppliedObservationSequence: null,
+  };
 }
 
 /** Append one first-attempt row directly (stands in for a scored serve). */
@@ -149,13 +195,75 @@ describe('WS3 — shaky wins are a separate read, never in the error log', () =>
     expect(await authority.getErrorLog(state)).toEqual([]);
   });
 
-  it('surfaces a normal-speed correct answer in a still-weak KC as a shaky win', async () => {
+  it('does NOT auto-flag a fresh-KC normal-speed win as shaky (the prior is not evidence)', async () => {
+    // FIX B: a KC with no recorded state has only the 0.2 cold-start prior, which
+    // is not evidence of weakness. A clean, normal-speed win on it is not shaky —
+    // this is the pre-mastery-win dilution the old 0.9 review-line cut caused.
     const { authority, state } = learner();
     await record(authority, state, {
       questionId: 'q-enz-indep-competitive',
       chosenChoiceId: CORRECT,
       correct: true,
-      elapsedMs: 40_000, // normal speed, but the KC has no mastery yet (prior < review line)
+      elapsedMs: 40_000, // normal speed; KC has no state → not weak
+    });
+    expect(await authority.getShakyWins(state)).toEqual([]);
+  });
+
+  it('surfaces a normal-speed win in a genuinely weak KC (low recorded mastery) as shaky', async () => {
+    // FIX B: below WEAK_KC_LINE (0.35) AND backed by real state → genuinely weak.
+    const { authority, state } = learner();
+    seedKcMastery(state, KC_INHIBITION, 0.3);
+    await record(authority, state, {
+      questionId: 'q-enz-indep-competitive',
+      chosenChoiceId: CORRECT,
+      correct: true,
+      elapsedMs: 40_000, // normal speed → only the weak-KC arm can make it shaky
+    });
+    const wins = await authority.getShakyWins(state);
+    expect(wins.map((w) => w.questionId)).toEqual(['q-enz-indep-competitive']);
+  });
+});
+
+describe('WS1 — per-item median RT threads into calibration (FIX A)', () => {
+  it('bands a miss fast against a TRUSTED item median where the fixed cutoff would not', async () => {
+    // 40s item median (>= the 20-sample floor) puts the fast cut at 20s, so an 18s
+    // miss is fast. The fixed fallback fast cut is 15s, so WITHOUT a trusted median
+    // this same 18s miss bands `normal` — proof the median branch is doing work.
+    const { authority, state, port } = learner();
+    port.medians.set('q-enz-indep-competitive', { medianMs: 40_000, sampleSize: 20 });
+    await record(authority, state, {
+      questionId: 'q-enz-indep-competitive',
+      elapsedMs: 18_000,
+      answerChanges: 0,
+    });
+    expect((await authority.getErrorLog(state))[0]!.calibration).toBe('confidently_wrong');
+  });
+
+  it('falls back to the fixed cutoff when the item median is below the sample floor', async () => {
+    // Same 40s median but only 19 samples → not trusted → the 15s fixed fast cut
+    // applies, and 18s is over it → a normal miss, not confidently wrong.
+    const { authority, state, port } = learner();
+    port.medians.set('q-enz-indep-competitive', { medianMs: 40_000, sampleSize: 19 });
+    await record(authority, state, {
+      questionId: 'q-enz-indep-competitive',
+      elapsedMs: 18_000,
+      answerChanges: 0,
+    });
+    expect((await authority.getErrorLog(state))[0]!.calibration).toBe('normal');
+  });
+
+  it('bands a win slow against a trusted item median (item-relative, not the fixed 90s)', async () => {
+    // 30s median → slow cut 45s; a 60s win is over it, yet under the 90s fixed slow
+    // cut, so only the item median can call it slow. A solid KC isolates the speed
+    // axis from the weak-KC arm.
+    const { authority, state, port } = learner();
+    port.medians.set('q-enz-indep-competitive', { medianMs: 30_000, sampleSize: 40 });
+    seedKcMastery(state, KC_INHIBITION, 0.99);
+    await record(authority, state, {
+      questionId: 'q-enz-indep-competitive',
+      chosenChoiceId: CORRECT,
+      correct: true,
+      elapsedMs: 60_000,
     });
     const wins = await authority.getShakyWins(state);
     expect(wins.map((w) => w.questionId)).toEqual(['q-enz-indep-competitive']);

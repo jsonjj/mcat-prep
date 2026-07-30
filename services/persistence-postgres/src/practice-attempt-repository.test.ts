@@ -308,3 +308,56 @@ describe('PostgresPracticeBankPort attempt log', () => {
     expect(entries.map((e) => e.activityType).sort()).toEqual(['practice', 'study']);
   });
 });
+
+describe('PostgresPracticeBankPort item response times (WS1 FIX A)', () => {
+  it('medians elapsed_ms per item across the population and shapes the result', async () => {
+    // pg returns numeric aggregates as strings; the port must coerce them.
+    const { pool, calls } = fakePool([{ question_id: 'q1', median_ms: '42000', sample_size: '25' }]);
+    const port = new PostgresPracticeBankPort(pool);
+    const medians = await port.itemResponseTimes(['q1', 'q1']);
+    const query = calls.find((c) => c.sql.includes('percentile_cont'));
+    expect(query).toBeDefined();
+    // Continuous median over the captured timings, counted over the non-null ones,
+    // scoped to the displayed activity types and the de-duplicated ids.
+    expect(query!.sql).toContain('percentile_cont(0.5) within group (order by elapsed_ms)');
+    expect(query!.sql).toContain('count(elapsed_ms)');
+    expect(query!.sql).toContain('elapsed_ms is not null');
+    expect(query!.params?.[0]).toEqual(['q1']);
+    expect(query!.params?.[1]).toEqual(['practice', 'study']);
+    expect(medians.get('q1')).toEqual({ medianMs: 42_000, sampleSize: 25 });
+  });
+
+  it('makes no query at all for an empty id list', async () => {
+    const { pool, calls } = fakePool([]);
+    const port = new PostgresPracticeBankPort(pool);
+    expect((await port.itemResponseTimes([])).size).toBe(0);
+    expect(calls).toHaveLength(0);
+  });
+
+  it('falls back to the in-memory log when the attempt-log migrations are absent', async () => {
+    const { pool, calls } = fakePool([], { attemptLog: 'none' });
+    const port = new PostgresPracticeBankPort(pool);
+    // Two learners, one timed attempt each on the same item → a 2-sample median.
+    for (const [learnerId, elapsedMs] of [
+      ['learner-a', 10_000],
+      ['learner-b', 30_000],
+    ] as const) {
+      await port.recordPracticeAttempt(learnerId, {
+        questionId: 'q1',
+        kcId: 'V3-KC-1',
+        skill: 'EXPLAIN',
+        cluster: 'BB1',
+        familyId: null,
+        chosenChoiceId: 'B',
+        correct: false,
+        firstAttempt: true,
+        activityType: 'practice',
+        occurredAt: '2026-07-27T12:00:00.000Z' as never,
+        elapsedMs,
+      });
+    }
+    const medians = await port.itemResponseTimes(['q1']);
+    expect(calls.some((c) => c.sql.includes('percentile_cont'))).toBe(false);
+    expect(medians.get('q1')).toEqual({ medianMs: 20_000, sampleSize: 2 });
+  });
+});

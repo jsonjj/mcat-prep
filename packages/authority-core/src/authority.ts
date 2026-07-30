@@ -106,6 +106,7 @@ import {
   weakestCarsSkill,
   type CarriedActivity,
   type GhostView,
+  type ItemResponseTime,
   type LessonRollupResult,
   type MemoryState,
   type PracticeCarsUnit,
@@ -3676,24 +3677,32 @@ export class Authority {
 
   /**
    * The calibration band for one logged attempt (WS1). A READ: it reads the KC's
-   * current P(L) and the attempt's WS0 timing and moves NO mastery. The per-item
-   * median RT is not yet aggregated, so speed uses the fixed fallback thresholds
-   * (passed as a null median); when that store lands it is the only change here.
+   * current P(L), the attempt's WS0 timing, and the item's POPULATION median RT,
+   * and moves NO mastery. Speed is banded against the item median once it clears
+   * the classifier's sample floor (`itemMedianTime`, fetched in batch by the
+   * caller), falling back to the fixed cutoffs when no trusted median exists.
    *
-   * `kcMastery` is null for a KC-less item (CARS) so "weak KC" cannot fire on it,
-   * the diagnostic prior for a KC with no state yet, else the decayed P(L).
+   * `kcMastery` is null for a KC-less item (CARS) AND for a KC the learner has no
+   * recorded state in. The cold-start prior is NOT evidence of weakness — reading
+   * a never-observed KC as `PRIOR_PL0` (0.2) is what made almost every early
+   * science win band `shaky_win` and diluted the worst-first signal — so a fresh
+   * KC reads as "no signal" (null) here and the weak-KC arm needs at least one
+   * real observation to fire. A KC with state reads its decayed P(L).
    */
-  private calibrationFor(state: LearnerState, attempt: PracticeAttemptLogEntry): CalibrationBand {
+  private calibrationFor(
+    state: LearnerState,
+    attempt: PracticeAttemptLogEntry,
+    itemMedianTime: ItemResponseTime | null,
+  ): CalibrationBand {
     const now = this.clock.now();
     const kcState = attempt.kcId === null ? undefined : state.mastery?.kc[attempt.kcId];
-    const kcMastery =
-      attempt.kcId === null ? null : kcState ? currentPL(kcState, now) : PRIOR_PL0;
+    const kcMastery = kcState ? currentPL(kcState, now) : null;
     return classifyCalibration(
       attempt.correct,
       attempt.elapsedMs ?? null,
       attempt.answerChanges ?? null,
       kcMastery,
-      null,
+      itemMedianTime,
     );
   }
 
@@ -3744,6 +3753,11 @@ export class Authority {
       limit: Authority.ATTEMPT_LOG_LIMIT,
     });
     const misses = attempts.filter((a) => !a.correct && a.firstAttempt);
+    // One batched read of the population median RT per missed item, so speed is
+    // banded against the item (spec §11.2) rather than a one-size cutoff.
+    const itemMedians = await this.practiceBank.itemResponseTimes(
+      misses.map((m) => m.questionId),
+    );
     const hydrated = await Promise.all(
       misses.map(async (miss) => {
         const content = await this.hydrateAttempt(miss);
@@ -3772,7 +3786,7 @@ export class Authority {
               : (answer.choiceRationales[miss.chosenChoiceId] ?? null),
           // WS1 band (a miss is confidently_wrong or normal) + WS2/WS3 join: the
           // picked distractor's authored misconception, post-answer, one string.
-          calibration: this.calibrationFor(state, miss),
+          calibration: this.calibrationFor(state, miss, itemMedians.get(miss.questionId) ?? null),
           chosenMisconception: Authority.pickedMisconception(answer.errorModels, miss.chosenChoiceId),
           resolved: Authority.resolved(attempts, miss),
           focus: focusFor(miss.cluster, miss.skill),
@@ -3798,8 +3812,14 @@ export class Authority {
     const attempts = await this.practiceBank.listPracticeAttempts(state.learnerId, {
       limit: Authority.ATTEMPT_LOG_LIMIT,
     });
-    const wins = attempts.filter(
-      (a) => a.correct && a.firstAttempt && this.calibrationFor(state, a) === 'shaky_win',
+    const firstWins = attempts.filter((a) => a.correct && a.firstAttempt);
+    // Batch the population median RT for the candidate wins before banding, so a
+    // slow win is judged against the item median, not a fixed cutoff.
+    const itemMedians = await this.practiceBank.itemResponseTimes(
+      firstWins.map((w) => w.questionId),
+    );
+    const wins = firstWins.filter(
+      (a) => this.calibrationFor(state, a, itemMedians.get(a.questionId) ?? null) === 'shaky_win',
     );
     const hydrated = await Promise.all(
       wins.map(async (win) => {

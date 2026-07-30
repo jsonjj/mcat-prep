@@ -1,4 +1,5 @@
 import type {
+  ItemResponseTime,
   PracticeAnswer,
   PracticeAttemptAuthorization,
   PracticeAttemptGrant,
@@ -12,7 +13,7 @@ import type {
   PracticeRepairTarget,
   StoredPracticeAttemptGrant,
 } from '@mcat/authority-core';
-import { adjudicateAttemptGrant } from '@mcat/authority-core';
+import { adjudicateAttemptGrant, itemResponseTimesFromLog } from '@mcat/authority-core';
 import {
   SKILL_CLUSTERS,
   type CarsSkill,
@@ -439,6 +440,17 @@ export class FilePracticeBankPort implements PracticeBankPort {
     return [...(this.attemptLog.get(learnerId) ?? [])]
       .sort((a, b) => Date.parse(b.occurredAt) - Date.parse(a.occurredAt))
       .slice(0, Math.max(0, limit));
+  }
+
+  /**
+   * Medians across the in-memory attempt log (per-instance, offline). Like the
+   * synthetic bank it holds one row per learner × item, so a question seldom
+   * clears the classifier's sample floor and speed falls back to fixed cutoffs.
+   */
+  async itemResponseTimes(
+    questionIds: readonly string[],
+  ): Promise<ReadonlyMap<string, ItemResponseTime>> {
+    return itemResponseTimesFromLog(this.attemptLog.values(), questionIds);
   }
 }
 

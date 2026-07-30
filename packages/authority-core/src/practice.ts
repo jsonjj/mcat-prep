@@ -23,7 +23,12 @@ import type {
   UtcTimestamp,
 } from '@mcat/contracts';
 import { coldStartB } from '@mcat/policies';
+import type { ItemResponseTime } from '@mcat/policies';
 import type { CompiledQuestion, EngineQuestion, LoadedBank } from '@mcat/content';
+
+// Re-exported so the concrete ports (Postgres, dev-file) can name the WS1 timing
+// summary they return without taking a direct dependency on @mcat/policies.
+export type { ItemResponseTime };
 
 /**
  * A single spec resolved to a concrete bank query. Uses only contracts types so
@@ -280,6 +285,67 @@ export interface PracticeBankPort {
     learnerId: string,
     input: { limit: number },
   ): Promise<PracticeAttemptLogEntry[]>;
+  /**
+   * Population deliberation-time summary for the given items — the median
+   * CAPTURED `elapsed_ms` across ALL learners' recorded attempts on each item,
+   * and how many timed samples that median rests on.
+   *
+   * WS1 calibration reads it to band speed RELATIVE TO THE ITEM ("fast" below
+   * `fastMedianFraction` of the median, "slow" above `slowMedianFraction`)
+   * instead of against one fixed cutoff for every item. The classifier only
+   * trusts a median once it clears the sample floor, so a port with no
+   * population timing (the synthetic/dev banks) may return an empty map and
+   * speed falls back to the fixed thresholds — the same "not captured, not zero"
+   * discipline the WS0 NULL timing columns preserve. Only requested ids with at
+   * least one captured sample appear in the result.
+   */
+  itemResponseTimes(
+    questionIds: readonly string[],
+  ): Promise<ReadonlyMap<string, ItemResponseTime>>;
+}
+
+/** Median (p50) of a sample, or null when empty; mean of the middle two on an even count. */
+export function medianOf(values: readonly number[]): number | null {
+  if (values.length === 0) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = sorted.length >> 1;
+  return sorted.length % 2 === 0 ? (sorted[mid - 1]! + sorted[mid]!) / 2 : sorted[mid]!;
+}
+
+/**
+ * Per-item population response-time summary computed from an in-memory attempt
+ * log that spans learners (the synthetic, dev-file, and Postgres schema-absent
+ * fallbacks each hold one). Groups every recorded attempt by question, medians
+ * the CAPTURED `elapsedMs` (a null/negative time is "not captured" and skipped —
+ * never counted as an instant `0`), and reports the sample size. Returns one
+ * entry per requested id with >= 1 captured sample; the classifier, not this
+ * helper, decides whether that sample size is large enough to trust.
+ *
+ * Shared so the three ports cannot drift on how a median is taken. O(total
+ * recorded attempts) with a single pass, which the callers already bound by the
+ * attempt-log read limit.
+ */
+export function itemResponseTimesFromLog(
+  attemptsByLearner: Iterable<readonly PracticeAttemptLogEntry[]>,
+  questionIds: readonly string[],
+): Map<string, ItemResponseTime> {
+  const wanted = new Set(questionIds);
+  const samples = new Map<string, number[]>();
+  for (const list of attemptsByLearner) {
+    for (const attempt of list) {
+      if (!wanted.has(attempt.questionId)) continue;
+      const ms = attempt.elapsedMs ?? null;
+      if (ms === null || ms < 0) continue;
+      const arr = samples.get(attempt.questionId);
+      if (arr) arr.push(ms);
+      else samples.set(attempt.questionId, [ms]);
+    }
+  }
+  const out = new Map<string, ItemResponseTime>();
+  for (const [questionId, values] of samples) {
+    out.set(questionId, { medianMs: medianOf(values), sampleSize: values.length });
+  }
+  return out;
 }
 
 /**
@@ -592,5 +658,17 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
     return [...(this.attempts.get(learnerId) ?? [])]
       .sort((a, b) => Date.parse(b.occurredAt) - Date.parse(a.occurredAt))
       .slice(0, Math.max(0, limit));
+  }
+
+  /**
+   * Population medians across every learner's in-memory attempts. The synthetic
+   * bank records one row per learner × item, so a single question rarely reaches
+   * the classifier's sample floor here — calibration then falls back to the fixed
+   * cutoffs, which is the correct behaviour for a bank with no population timing.
+   */
+  async itemResponseTimes(
+    questionIds: readonly string[],
+  ): Promise<ReadonlyMap<string, ItemResponseTime>> {
+    return itemResponseTimesFromLog(this.attempts.values(), questionIds);
   }
 }

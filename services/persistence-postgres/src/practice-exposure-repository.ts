@@ -23,6 +23,7 @@ import type { Pool } from 'pg';
 import { randomUUID } from 'node:crypto';
 import type {
   AttemptActivityType,
+  ItemResponseTime,
   PracticeAnswer,
   PracticeAttemptAuthorization,
   PracticeAttemptGrant,
@@ -36,7 +37,7 @@ import type {
   PracticeRepairTarget,
   StoredPracticeAttemptGrant,
 } from '@mcat/authority-core';
-import { adjudicateAttemptGrant } from '@mcat/authority-core';
+import { adjudicateAttemptGrant, itemResponseTimesFromLog } from '@mcat/authority-core';
 import type {
   CarsSkill,
   PracticeDomain,
@@ -55,6 +56,7 @@ import {
 import { getQuestionStat, recordQuestionAttempt } from './question-stats-repository';
 import {
   hasPracticeAttemptLog,
+  itemResponseMedians,
   listPracticeAttempts,
   recordPracticeAttempt,
 } from './practice-attempt-repository';
@@ -643,6 +645,27 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
       elapsedMs: row.elapsedMs ?? null,
       answerChanges: row.answerChanges ?? null,
     }));
+  }
+
+  async itemResponseTimes(
+    questionIds: readonly string[],
+  ): Promise<ReadonlyMap<string, ItemResponseTime>> {
+    if (questionIds.length === 0) return new Map();
+    const schema = await this.schema();
+    // Without the attempt log (a content-only dev database) the same in-memory
+    // fallback the log read uses supplies the population — one shared median.
+    if (!schema.hasAttemptLog) {
+      return itemResponseTimesFromLog(this.memAttempts.values(), questionIds);
+    }
+    const rows = await itemResponseMedians(this.pool, questionIds);
+    const out = new Map<string, ItemResponseTime>();
+    for (const row of rows) {
+      out.set(row.question_id, {
+        medianMs: row.median_ms === null ? null : Number(row.median_ms),
+        sampleSize: Number(row.sample_size),
+      });
+    }
+    return out;
   }
 }
 

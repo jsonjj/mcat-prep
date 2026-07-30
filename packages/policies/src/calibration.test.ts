@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { REVIEW_LINE } from './forgetting';
 import {
   CALIBRATION_CONFIG,
+  WEAK_KC_LINE,
   classifyCalibration,
   classifyResponseSpeed,
   type ItemResponseTime,
@@ -56,14 +56,23 @@ describe('classifyCalibration — shaky_win (correct + slow or weak KC)', () => 
     expect(classifyCalibration(true, 95_000, 0, 0.99, null)).toBe('shaky_win');
   });
 
-  it('flags a normal-speed win when the KC is still below the review line', () => {
-    const weak = REVIEW_LINE - 0.2;
+  it('flags a normal-speed win when the KC is still below the weak-KC line', () => {
+    const weak = WEAK_KC_LINE - 0.05;
     expect(classifyCalibration(true, 40_000, 0, weak, median(40_000))).toBe('shaky_win');
   });
 
-  it('does not flag a normal-speed win in a solid KC', () => {
-    expect(classifyCalibration(true, 40_000, 0, REVIEW_LINE, median(40_000))).toBe('normal');
+  it('does not flag a normal-speed win once the KC clears the weak-KC line', () => {
+    // At the line is not below it, so not weak.
+    expect(classifyCalibration(true, 40_000, 0, WEAK_KC_LINE, median(40_000))).toBe('normal');
     expect(classifyCalibration(true, 40_000, 0, 0.99, median(40_000))).toBe('normal');
+  });
+
+  it('no longer flags a mid-mastery win that only the old 0.9 review line would catch', () => {
+    // 0.6 is below the 0.9 BKT review line the weak cut used to borrow, but well
+    // above WEAK_KC_LINE: a pre-mastery win that used to band shaky and now, by
+    // design, does not — this is the dilution FIX B removes.
+    expect(WEAK_KC_LINE).toBeLessThan(0.9);
+    expect(classifyCalibration(true, 40_000, 0, 0.6, median(40_000))).toBe('normal');
   });
 });
 
@@ -83,8 +92,8 @@ describe('classifyCalibration — "not captured" nulls are no signal, never zero
     expect(classifyCalibration(false, null, 0, null, null)).toBe('normal');
     // Correct + no timing + solid KC → nothing shaky about it.
     expect(classifyCalibration(true, null, 0, 0.99, null)).toBe('normal');
-    // Correct + no timing but a weak KC → still shaky (the KC signal stands alone).
-    expect(classifyCalibration(true, null, 0, REVIEW_LINE - 0.1, null)).toBe('shaky_win');
+    // Correct + no timing but a genuinely weak KC → still shaky (KC signal alone).
+    expect(classifyCalibration(true, null, 0, WEAK_KC_LINE - 0.1, null)).toBe('shaky_win');
   });
 
   it('treats a null kcMastery as not-weak', () => {
