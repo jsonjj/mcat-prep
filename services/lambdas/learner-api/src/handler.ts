@@ -11,7 +11,9 @@ import {
   GuestBootstrapResponseSchema,
   HttpApiErrorSchema,
   type Clock,
+  type CommandEnvelope,
   type HttpErrorCode,
+  type NormalizedLessonStartCommand,
   type VectorLessonCommand,
   type VectorLessonStartCommand,
 } from '@mcat/contracts';
@@ -32,6 +34,7 @@ import {
 import {
   ROUTES,
   allowedMethodsFor,
+  normalizedLessonIdFor,
   practiceQueueParams,
   practiceQuestionId,
   routeFor,
@@ -53,7 +56,7 @@ import {
   type GuestSessionService,
   type ResolvedGuestSession,
 } from './session';
-import { RepositoryLearnerKernel } from './workflow';
+import { RepositoryLearnerKernel, type NormalizedLessonCommandInput } from './workflow';
 
 interface KernelPort {
   handle(input: unknown, principal: Principal): ReturnType<AuthorityKernel['handle']>;
@@ -122,6 +125,24 @@ interface KernelPort {
     input: VectorLessonCommand,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handleVectorLessonCommand']>;
+  normalizedLessonStatus(
+    lessonId: string,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['normalizedLessonStatus']>;
+  normalizedLessonRun(
+    lessonId: string,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['normalizedLessonRun']>;
+  handleNormalizedLessonStart(
+    lessonId: string,
+    input: { readonly envelope: CommandEnvelope },
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleNormalizedLessonStart']>;
+  handleNormalizedLessonCommand(
+    lessonId: string,
+    input: NormalizedLessonCommandInput,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['handleNormalizedLessonCommand']>;
 }
 
 export interface LearnerApiDependencies {
@@ -706,6 +727,51 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             origin,
             requestIdValue,
           );
+        case 'normalizedLessonStart': {
+          const lessonId = normalizedLessonIdFor(event.rawPath);
+          const command = parsed.data as NormalizedLessonStartCommand;
+          // The slug is the authority for which lesson runs; a body id that names
+          // a different lesson is rejected, exactly as L1's `z.literal` rejects a
+          // foreign id on its own route.
+          if (lessonId === null || command.lessonId !== lessonId) {
+            return errorResponse(
+              'validation_error',
+              'The lesson identity does not match this route.',
+              origin,
+              requestIdValue,
+            );
+          }
+          return jsonResponse(
+            200,
+            route.responseSchema?.parse(
+              await dependencies.kernel.handleNormalizedLessonStart(
+                lessonId,
+                { envelope: command.envelope },
+                principal,
+              ),
+            ),
+            origin,
+            requestIdValue,
+          );
+        }
+        case 'normalizedLessonCommand': {
+          const lessonId = normalizedLessonIdFor(event.rawPath);
+          if (lessonId === null) {
+            return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
+          }
+          return jsonResponse(
+            200,
+            AcceptedCommandResponseSchema.parse(
+              await dependencies.kernel.handleNormalizedLessonCommand(
+                lessonId,
+                parsed.data as NormalizedLessonCommandInput,
+                principal,
+              ),
+            ),
+            origin,
+            requestIdValue,
+          );
+        }
         default:
           return jsonResponse(
             200,
@@ -822,6 +888,36 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       return jsonResponse(
         200,
         route.responseSchema?.parse(await dependencies.kernel.vectorLessonRun(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'normalizedLessonStatus') {
+      const lessonId = normalizedLessonIdFor(event.rawPath);
+      if (lessonId === null) {
+        return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
+      }
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(
+          await dependencies.kernel.normalizedLessonStatus(lessonId, principal),
+        ),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'normalizedLessonRun') {
+      const lessonId = normalizedLessonIdFor(event.rawPath);
+      if (lessonId === null) {
+        return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
+      }
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(
+          await dependencies.kernel.normalizedLessonRun(lessonId, principal),
+        ),
         origin,
         requestIdValue,
       );

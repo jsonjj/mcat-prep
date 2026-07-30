@@ -15,3 +15,4 @@ export * from './todays-path';
 export * from './api';
 export * from './http';
 export * from './v3-vector-lesson';
+export * from './lesson-delivery';
