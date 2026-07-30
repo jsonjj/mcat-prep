@@ -518,6 +518,9 @@ importers:
       '@mcat/persistence-postgres':
         specifier: workspace:*
         version: link:../../persistence-postgres
+      '@mcat/policies':
+        specifier: workspace:*
+        version: link:../../../packages/policies
     devDependencies:
       '@types/pg':
         specifier: 8.20.0
