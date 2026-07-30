@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import {
   DUEL_DIFFICULTY_LABELS,
-  DUEL_MODE_LABELS,
   HttpAiChat,
   MAX_ROUNDS,
   buildCarsSystemPrompt,
@@ -25,7 +24,32 @@ import { useRecordCarsDuel } from '../app/queries';
  * The provider key stays server-side behind /api/ai/chat.
  */
 const MODES: DuelMode[] = ['rebut', 'defend'];
-const DIFFICULTIES: DuelDifficulty[] = ['warmup', 'standard', 'challenge'];
+
+/** Setup mode cards — a short "what you'll do" line for each side of the duel. */
+const MODE_CARDS: Record<DuelMode, { title: string; description: string }> = {
+  rebut: {
+    title: 'Rebut the argument',
+    description: "You dismantle the AI's case — closest to real CARS",
+  },
+  defend: {
+    title: 'Defend a thesis',
+    description: 'You hold a position; the AI attacks it.',
+  },
+};
+
+/** The intensity handle defaults to the middle of the Standard band. */
+const DEFAULT_INTENSITY_PCT = 50;
+
+/**
+ * Map the continuous 0–100 intensity slider onto the engine's existing
+ * DuelDifficulty enum at start time: Warm-up 0–33, Standard 34–66, Challenge 67–100.
+ */
+function pctToDifficulty(pct: number): DuelDifficulty {
+  if (pct <= 33) return 'warmup';
+  if (pct <= 66) return 'standard';
+  return 'challenge';
+}
+
 const SUGGESTED_TOPICS = [
   'Whether anonymous authorship strengthens or weakens a public argument',
   'Whether a community is better served by preserving monuments or reinventing them',
@@ -61,6 +85,9 @@ export function CarsDuel() {
   const [phase, setPhase] = useState<Phase>('setup');
   const [mode, setMode] = useState<DuelMode>('rebut');
   const [difficulty, setDifficulty] = useState<DuelDifficulty>('standard');
+  // The intensity slider is the source of truth for the manual setup; its 0–100
+  // position is mapped onto `difficulty` (the engine enum) at start time.
+  const [intensityPct, setIntensityPct] = useState(DEFAULT_INTENSITY_PCT);
   // The system picks the topic. On autostart it comes from the resolved selection;
   // the manual entry point falls back to a suggested prompt (shown read-only).
   const [topic, setTopic] = useState(SUGGESTED_TOPICS[0] ?? '');
@@ -251,55 +278,68 @@ export function CarsDuel() {
         </p>
 
         <Card elevated>
-          <Stack gap={4}>
-            <div>
-              <p className="mc-label">Mode</p>
-              <div className="mc-segmented" role="radiogroup" aria-label="Debate mode">
+          <Stack gap={5}>
+            {/* Mode = two side-by-side selectable cards (native radios styled as
+                cards → arrow-key navigation + aria-checked for free). */}
+            <fieldset className="mc-modecards">
+              <legend className="mc-label">Mode</legend>
+              <div className="mc-modecards__grid">
                 {MODES.map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    role="radio"
-                    aria-checked={mode === m}
-                    className={`mc-segmented__opt ${mode === m ? 'is-active' : ''}`}
-                    onClick={() => setMode(m)}
-                  >
-                    {DUEL_MODE_LABELS[m]}
-                  </button>
+                  <label key={m} className={`mc-modecard ${mode === m ? 'is-active' : ''}`}>
+                    <input
+                      type="radio"
+                      name="duel-mode"
+                      className="mc-modecard__input"
+                      value={m}
+                      checked={mode === m}
+                      onChange={() => setMode(m)}
+                    />
+                    <span className="mc-modecard__title">{MODE_CARDS[m].title}</span>
+                    <span className="mc-modecard__desc">{MODE_CARDS[m].description}</span>
+                  </label>
                 ))}
+              </div>
+            </fieldset>
+
+            {/* Intensity = a continuous drag slider mapped onto the engine's
+                difficulty band at start time (Warm-up / Standard / Challenge). */}
+            <div className="mc-intensity">
+              <div className="mc-intensity__head">
+                <p className="mc-label">Intensity</p>
+                <p className="mc-intensity__readout" aria-hidden="true">
+                  <strong>{DUEL_DIFFICULTY_LABELS[pctToDifficulty(intensityPct)]}</strong> ·{' '}
+                  {intensityPct}%
+                </p>
+              </div>
+              <input
+                type="range"
+                className="mc-range"
+                min={0}
+                max={100}
+                step={1}
+                value={intensityPct}
+                onChange={(e) => setIntensityPct(Number(e.target.value))}
+                aria-label="Intensity"
+                aria-valuetext={`${DUEL_DIFFICULTY_LABELS[pctToDifficulty(intensityPct)]}, ${intensityPct}%`}
+              />
+              <div className="mc-intensity__anchors" aria-hidden="true">
+                <span>Warm-up</span>
+                <span>Standard</span>
+                <span>Challenge</span>
               </div>
             </div>
 
-            <div>
-              <p className="mc-label">Intensity</p>
-              <div className="mc-segmented" role="radiogroup" aria-label="Difficulty">
-                {DIFFICULTIES.map((d) => (
-                  <button
-                    key={d}
-                    type="button"
-                    role="radio"
-                    aria-checked={difficulty === d}
-                    className={`mc-segmented__opt ${difficulty === d ? 'is-active' : ''}`}
-                    onClick={() => setDifficulty(d)}
-                  >
-                    {DUEL_DIFFICULTY_LABELS[d]}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <p className="mc-label">Topic</p>
-              <p style={{ margin: '6px 0 0', fontSize: '1.25rem', lineHeight: 1.5, fontWeight: 600 }}>
-                {topic}
-              </p>
+            {/* Topic = a distinct, read-only "today's topic" card (system-chosen). */}
+            <div className="mc-topiccard">
+              <p className="mc-topiccard__eyebrow">Today’s topic</p>
+              <p className="mc-topiccard__text">{topic}</p>
             </div>
 
             <Button
               variant="primary"
               size="lg"
               disabled={topic.trim().length === 0 || busy}
-              onClick={() => void start()}
+              onClick={() => void start({ mode, difficulty: pctToDifficulty(intensityPct), topic })}
             >
               {busy ? 'Setting up…' : 'Start the duel'}
             </Button>

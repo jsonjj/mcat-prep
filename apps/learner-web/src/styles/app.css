@@ -1652,6 +1652,202 @@ body {
   white-space: pre-wrap;
 }
 
+/* ---- CARS Duel — setup screen (mode cards · intensity slider · topic card) ---- */
+
+/* Mode = two side-by-side selectable cards. A native radio drives selection and
+   keyboard (arrow keys) but is visually hidden; the <label> is the card. */
+.mc-modecards {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+.mc-modecards > .mc-label {
+  padding: 0;
+  margin-bottom: var(--mc-space-2);
+}
+.mc-modecards__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mc-space-3);
+}
+@media (max-width: 520px) {
+  .mc-modecards__grid {
+    grid-template-columns: 1fr;
+  }
+}
+.mc-modecard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+  padding: var(--mc-space-4);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-card);
+  background: color-mix(in srgb, var(--mc-surface) 70%, transparent);
+  cursor: pointer;
+  transition:
+    border-color var(--mc-motion-control) var(--mc-ease),
+    background var(--mc-motion-control) var(--mc-ease),
+    box-shadow var(--mc-motion-control) var(--mc-ease);
+}
+.mc-modecard:hover {
+  border-color: color-mix(in srgb, var(--mc-primary) 40%, var(--mc-border));
+}
+.mc-modecard.is-active {
+  border-color: var(--mc-primary);
+  background: color-mix(in srgb, var(--mc-primary) 10%, var(--mc-surface));
+  box-shadow: inset 0 0 0 1px var(--mc-primary);
+}
+.mc-modecard__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.mc-modecard:has(.mc-modecard__input:focus-visible) {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+}
+.mc-modecard__title {
+  font-weight: 700;
+  font-size: var(--mc-text-17);
+  color: var(--mc-ink);
+}
+.mc-modecard.is-active .mc-modecard__title {
+  color: var(--mc-primary-text);
+}
+.mc-modecard__desc {
+  font-size: var(--mc-text-14);
+  line-height: 1.45;
+  color: var(--mc-ink-muted);
+}
+
+/* Intensity = a horizontal drag slider (native range) with a gradient teal track,
+   a live band + percent readout above, and three anchor labels beneath. */
+.mc-intensity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-intensity__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+}
+.mc-intensity__readout {
+  margin: 0;
+  font-size: var(--mc-text-14);
+  color: var(--mc-ink-muted);
+}
+.mc-intensity__readout strong {
+  color: var(--mc-primary-text);
+}
+.mc-intensity__anchors {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--mc-text-12);
+  color: var(--mc-ink-muted);
+}
+.mc-intensity__anchors span:nth-child(2) {
+  text-align: center;
+}
+.mc-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: var(--mc-touch);
+  background: transparent;
+  cursor: pointer;
+}
+.mc-range:focus {
+  outline: none;
+}
+.mc-range::-webkit-slider-runnable-track {
+  height: 10px;
+  border-radius: var(--mc-radius-pill);
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 22%, var(--mc-border));
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--mc-primary) 18%, var(--mc-surface)),
+    color-mix(in srgb, var(--mc-primary) 52%, var(--mc-surface)) 55%,
+    var(--mc-primary)
+  );
+}
+.mc-range::-moz-range-track {
+  height: 10px;
+  border-radius: var(--mc-radius-pill);
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 22%, var(--mc-border));
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--mc-primary) 18%, var(--mc-surface)),
+    color-mix(in srgb, var(--mc-primary) 52%, var(--mc-surface)) 55%,
+    var(--mc-primary)
+  );
+}
+.mc-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -8px; /* center the 24px thumb on the 10px + 1px border track */
+  width: 24px;
+  height: 24px;
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-surface);
+  border: 3px solid var(--mc-primary);
+  box-shadow: var(--mc-shadow-card);
+  transition: transform var(--mc-motion-fast) var(--mc-ease);
+}
+.mc-range::-webkit-slider-thumb:hover {
+  transform: scale(1.06);
+}
+.mc-range::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--mc-radius-pill);
+  background: var(--mc-surface);
+  border: 3px solid var(--mc-primary);
+  box-shadow: var(--mc-shadow-card);
+}
+.mc-range:focus-visible::-webkit-slider-thumb {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+}
+.mc-range:focus-visible::-moz-range-thumb {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+}
+
+/* Topic = a distinct, highlighted, read-only card with a quote/emphasis treatment. */
+.mc-topiccard {
+  padding: var(--mc-space-4) var(--mc-space-5);
+  border-radius: var(--mc-radius-card);
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 22%, var(--mc-border));
+  border-left: 4px solid var(--mc-primary);
+  background: color-mix(in srgb, var(--mc-primary) 7%, var(--mc-surface));
+}
+.mc-topiccard__eyebrow {
+  margin: 0 0 var(--mc-space-2);
+  font-family: var(--mc-font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  color: var(--mc-primary-text);
+}
+.mc-topiccard__text {
+  margin: 0;
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-22);
+  line-height: 1.4;
+  color: var(--mc-ink);
+}
+
 /* ---- Curriculum (browse-only V3 path) ---- */
 .mc-curriculum {
   --mc-curr-node: 40px;
