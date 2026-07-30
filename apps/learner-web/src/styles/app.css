@@ -4222,3 +4222,256 @@ body {
   font-weight: 700;
   color: var(--mc-ink);
 }
+
+/* ---- Mistakes (tabbed master–detail, "Hybrid C") ----
+   A GROUP TABLIST + a compact scannable list on the left, and a FOCUSED action card
+   for the selected row on the right. The list scrolls internally so the page stays
+   low-scroll; on narrow screens the panes stack (list, then tap a row for the detail
+   with a way back). */
+
+/* Status/type pills used by the master-list tags. The base `.mc-pill` (grey) and
+   `.mc-pill--ok` (teal "Cleared") already exist; these add the warm, teal and purple
+   variants the four groups read by at a glance. All meet AA on their tint. */
+.mc-pill--warn {
+  color: var(--mc-accent-warm-text);
+  background: color-mix(in srgb, var(--mc-accent-warm) 22%, transparent);
+}
+.mc-pill--pattern {
+  color: var(--mc-primary-text);
+  background: color-mix(in srgb, var(--mc-primary) 14%, transparent);
+}
+.mc-pill--cars {
+  color: var(--mc-retained);
+  background: color-mix(in srgb, var(--mc-retained) 16%, transparent);
+}
+
+.mc-mistakes {
+  gap: var(--mc-space-4);
+}
+.mc-mistakes__panes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--mc-space-4);
+  align-items: start;
+}
+
+/* Master pane: tabs + the compact list card. */
+.mc-mistakes__master {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+  min-width: 0;
+}
+.mc-mistakes__tabsrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mc-space-2);
+  flex-wrap: wrap;
+}
+.mc-mistakes__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mc-space-1);
+}
+.mc-mistakes__tab {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--mc-ink-muted);
+  font-family: var(--mc-font-body);
+  font-weight: 700;
+  font-size: var(--mc-text-14);
+  min-height: 40px;
+  padding: var(--mc-space-2) var(--mc-space-3);
+  border-radius: var(--mc-radius-pill);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color var(--mc-motion-control) var(--mc-ease),
+    color var(--mc-motion-control) var(--mc-ease);
+}
+.mc-mistakes__tab:hover:not([aria-selected='true']) {
+  color: var(--mc-ink);
+  background: var(--mc-surface-2);
+}
+.mc-mistakes__tab[aria-selected='true'] {
+  background: var(--mc-primary);
+  color: var(--mc-on-primary);
+  box-shadow: var(--mc-shadow-card);
+}
+.mc-mistakes__caption {
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-14);
+  margin: 0 0 var(--mc-space-2);
+}
+
+/* The compact list. It scrolls internally to keep the page low-scroll. */
+.mc-mistakes__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--mc-space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-card);
+  background: var(--mc-surface);
+  max-height: min(58dvh, 520px);
+  overflow-y: auto;
+}
+.mc-mrow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--mc-space-3);
+  min-height: var(--mc-touch);
+  padding: var(--mc-space-2) var(--mc-space-3);
+  border: 1px solid transparent;
+  border-radius: var(--mc-radius-control);
+  cursor: pointer;
+  transition: background-color var(--mc-motion-fast) var(--mc-ease);
+}
+.mc-mrow:hover {
+  background: var(--mc-surface-2);
+}
+.mc-mrow[aria-selected='true'] {
+  background: color-mix(in srgb, var(--mc-primary) 8%, var(--mc-surface));
+  border-color: color-mix(in srgb, var(--mc-primary) 32%, var(--mc-border));
+}
+.mc-mrow__tag {
+  justify-self: start;
+}
+.mc-mrow__title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: var(--mc-text-15);
+}
+.mc-mrow__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-1);
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-14);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.mc-mrow__chev {
+  flex: none;
+  color: var(--mc-ink-muted);
+}
+
+/* Detail pane: a focused card for the selected row. Hidden on narrow screens until a
+   row is opened (see the desktop media block for the side-by-side reveal). */
+.mc-mistakes__detail {
+  display: none;
+  min-width: 0;
+}
+.mc-mistakes__detail:focus {
+  outline: none;
+}
+.mc-mistakes--detailopen .mc-mistakes__master {
+  display: none;
+}
+.mc-mistakes--detailopen .mc-mistakes__detail {
+  display: block;
+}
+.mc-mistakes__back {
+  margin-bottom: var(--mc-space-3);
+}
+.mc-mdetail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-mdetail__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+}
+.mc-mdetail__stem {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-22);
+  line-height: var(--mc-leading-tight);
+}
+.mc-mdetail__answers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-answerline {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mc-space-2);
+  font-weight: 700;
+  margin: 0;
+}
+.mc-answerline__icon {
+  flex: none;
+  margin-top: 1px;
+}
+.mc-answerline__lead {
+  font-weight: 700;
+}
+.mc-answerline--wrong {
+  color: var(--mc-danger);
+}
+.mc-answerline--right {
+  color: var(--mc-primary-text);
+}
+/* The trap sits under a hairline, mirroring the mockup's divider before it. */
+.mc-mdetail__trap {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mc-space-2);
+  margin: 0;
+  padding-top: var(--mc-space-3);
+  border-top: 1px solid var(--mc-border);
+}
+.mc-mdetail__trapicon {
+  flex: none;
+  color: var(--mc-accent-warm-text);
+}
+.mc-mdetail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mc-space-3);
+  margin-top: var(--mc-space-1);
+}
+.mc-mistakes__empty {
+  padding: var(--mc-space-5) var(--mc-space-3);
+  text-align: center;
+  color: var(--mc-ink-muted);
+}
+
+/* Laptop and up: escape the 760px shell cap (same `:has()` pattern as Practice /
+   Progress) and lay the two panes side by side. The list keeps a fixed-height internal
+   scroll and the detail fills the rest, so the whole surface fits one screen. */
+@media (min-width: 980px) {
+  .mc-shell__main:has(.mc-mistakes) {
+    max-width: 1120px;
+    padding-top: var(--mc-space-3);
+  }
+  .mc-mistakes__panes {
+    grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+    gap: var(--mc-space-5);
+  }
+  .mc-mistakes__master,
+  .mc-mistakes--detailopen .mc-mistakes__master {
+    display: flex;
+  }
+  .mc-mistakes__detail {
+    display: block;
+  }
+  .mc-mistakes__back {
+    display: none;
+  }
+  .mc-mistakes__list {
+    max-height: min(64dvh, 620px);
+  }
+}
