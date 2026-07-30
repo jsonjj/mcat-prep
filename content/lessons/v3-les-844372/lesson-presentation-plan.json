@@ -1,0 +1,2097 @@
+{
+  "artifact_type": "LESSON_PRESENTATION_PLAN",
+  "artifact_id": "V3-LPPL-844372",
+  "artifact_version": "0.2.5-internal-draft",
+  "artifact_status": "DRAFT",
+  "schema_binding": {
+    "schema_id": "mcat-spec04-presentation-internal-draft",
+    "schema_version": "0.1-candidate-local-1",
+    "schema_sha256": "bb55c14a955b3280944d2835576e749ed66ada4970e1187515e2f0f824598566",
+    "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
+  },
+  "content_sha256": "acd5d85584125c6ae9c0e1ac03763f20efa944455ee0b4de702adee82a61c743",
+  "registry_binding": {
+    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+    "phase_0_freeze_id": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
+    "canonical_freeze_id": "MCAT-V3-CANONICAL-FRZ-2026-07-22-01",
+    "graph_freeze_id": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
+    "sequence_freeze_id": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01",
+    "manifest_schema_id": "mcat-v3-lessons-public",
+    "manifest_schema_version": "1",
+    "manifest_sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+    "lesson_id": "V3-LES-844372",
+    "grouping_id": "V3-CL-844372",
+    "ordered_kc_ids": [
+      "V3-KC-452593",
+      "V3-KC-008681",
+      "V3-KC-238607"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-452593",
+      "V3-KC-008681",
+      "V3-KC-238607"
+    ]
+  },
+  "authors": [
+    {
+      "identity": "gpt-5.6-terra",
+      "role": "PRIMARY_CONTENT_AUTHOR",
+      "run_id": "V3-LES-844372-CONSTRUCTED-CONTEXT-FIX-2026-07-23",
+      "contribution": "Corrected constructed-response learner prompts and protected authority context alignment."
+    }
+  ],
+  "reviewers": [],
+  "input_bindings": [
+    {
+      "input_id": "V3-SCLD-844372",
+      "version": "0.1.0-draft.1",
+      "sha256": "c320dec45739269a0ba4b5ecbd201ce7295f2baec53030c43f97392f57194c03",
+      "kind": "SOURCE_CLAIM_LEDGER",
+      "use": "Original scope trace, source-occurrence governance, and rights boundary."
+    },
+    {
+      "input_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "version": "mcat-v3-authoritative-registry-1",
+      "sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+      "kind": "CURRICULUM_REGISTRY",
+      "use": "Canonical identity, scope, order, attachments, holds, and placement."
+    },
+    {
+      "input_id": "MCAT-V3-LEARNER-FACING-LESSONS",
+      "version": "mcat-v3-lessons-public-1",
+      "sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+      "kind": "GENERATED_MANIFEST",
+      "use": "Learner title and catalog cross-check only."
+    },
+    {
+      "input_id": "MCAT-V3-CANONICAL-KCS",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "31d304a7f6ea51ac4847ede01824bb14cd8b98ed7a6bc61bb05617d53f9860fd",
+      "kind": "CANONICAL_KC_LEDGER",
+      "use": "Competency statements, scope bounds, representations, and source anchors."
+    },
+    {
+      "input_id": "MCAT-V3-TEACHING-SEQUENCES",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "b2bbd9f8a14cbff1250013e8d717eb1c8195ccbf6335e605c64f1469a94246aa",
+      "kind": "CANONICAL_SEQUENCE",
+      "use": "First-delivery position, ordered KC relation, revisit, and no-bypass context."
+    },
+    {
+      "input_id": "MCAT-V3-PREREQUISITE-GRAPH",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "fe0fffdd16bd10d3f7c046951cbe642add8ef2639f5b3f68a3224d9648f59e10",
+      "kind": "CANONICAL_GRAPH",
+      "use": "Hard/helpful prerequisite state and successor context."
+    },
+    {
+      "input_id": "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "23bbea9e358c4aa0ff255964d203c0081b4ff3ba28e4e123eed0cfc0b7a54831",
+      "kind": "ATTACHMENT_LEDGER",
+      "use": "Extension and bounded conditional support context."
+    },
+    {
+      "input_id": "MCAT-V3-SOURCE-CROSSWALK",
+      "version": "mcat-v3-source-crosswalk-1",
+      "sha256": "a87fd1634a5a9e9dd522293ef98db10b783971f02e0bdfbf558b276cc0b9cea3",
+      "kind": "SOURCE_LEDGER",
+      "use": "Direct-scope and source-anchor trace; no expressive source prose is copied."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-03",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "d3d3cfb3cc0e2314dc7f01bc9d1cc9c68049527f317e2ad2cb270a7b43fff598",
+      "kind": "INSTRUCTIONAL_RUNTIME_SPECIFICATION",
+      "use": "Microcycle, freshness, assistance, repair, and route constraints."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-04",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "4fc88c3001bae4d8d1c843020106b6ba30059b243ea0d993a6d87ff009099761",
+      "kind": "AUTHORING_SPECIFICATION",
+      "use": "Artifact structure, coverage, learner/reviewer separation, and accessibility requirements."
+    },
+    {
+      "input_id": "AAMC-2020-SUPPLIED-CEILING",
+      "version": "2020-supplied",
+      "sha256": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
+      "kind": "SOURCE_CEILING",
+      "use": "Scope ceiling only; no expressive source wording or source questions are reused."
+    }
+  ],
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-844372",
+    "lesson_script_sha256": "25f923d2d2f34d20dec498ff2f5e14a089fe616c4111a2f0e14119ff2954a1ec",
+    "kc_coverage_matrix_id": "V3-KCOV-844372",
+    "kc_coverage_matrix_sha256": "98321c7a34b3636f3e7e7f4cc3a17ea09343bc977c20fd86d5346909293b71f8"
+  },
+  "lineage": {
+    "supersedes": {
+      "artifact_id": "V3-LPPL-844372",
+      "content_sha256": "5dd9a105bc421f340aa13d1c17ba01f83a7ceb1f5f77b61755739c81cce964e6"
+    },
+    "change_reason": "ALIGN_CONSTRUCTED_LEARNER_PROMPTS_WITH_PROTECTED_AUTHORITY",
+    "authoring_run_id": "V3-LES-844372-CONSTRUCTED-CONTEXT-FIX-2026-07-23",
+    "derived_input_ids": [
+      "V3-SCLD-844372",
+      "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "MCAT-V3-LEARNER-FACING-LESSONS",
+      "MCAT-V3-CANONICAL-KCS",
+      "MCAT-V3-TEACHING-SEQUENCES",
+      "MCAT-V3-PREREQUISITE-GRAPH",
+      "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "MCAT-V3-SOURCE-CROSSWALK",
+      "MCAT-V3-SPEC-03",
+      "MCAT-V3-SPEC-04",
+      "AAMC-2020-SUPPLIED-CEILING"
+    ]
+  },
+  "payload": {
+    "lesson_id": "V3-LES-844372",
+    "lesson_script_id": "V3-LSCR-844372",
+    "lesson_script_sha256": "25f923d2d2f34d20dec498ff2f5e14a089fe616c4111a2f0e14119ff2954a1ec",
+    "kc_coverage_matrix_id": "V3-KCOV-844372",
+    "kc_coverage_matrix_sha256": "98321c7a34b3636f3e7e7f4cc3a17ea09343bc977c20fd86d5346909293b71f8",
+    "learner_rhythm": [
+      "STARTING_CHECK",
+      "FOCUS_NOW",
+      "EXPLAIN",
+      "WORKED_VISUAL",
+      "GUIDED_PRACTICE",
+      "LESS_HELP",
+      "ON_YOUR_OWN",
+      "FINAL_NEAR_CHECK",
+      "FINAL_CHANGED_CHECK",
+      "TARGETED_REPAIR",
+      "EXACT_RETURN",
+      "RECAP"
+    ],
+    "screens": [
+      {
+        "screen_id": "GRAPH-SCREEN-ENTRY",
+        "screen_kind": "STARTING_CHECK",
+        "script_node_ids": [
+          "ALG-GRAPH-ENTRY-BOUNDARY-01"
+        ],
+        "primary_job": "STATE_HOW_LABELLED_TICKS_CHANGE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Starting check: read the labels",
+        "progress_label": "Starting check",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "SINGLE_CENTERED_COLUMN_WITH_TEXT_EQUIVALENT_LINK",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-FOCUS",
+        "screen_kind": "FOCUS_NOW",
+        "script_node_ids": [
+          "ALG-GRAPH-ORIENT-01",
+          "ALG-GRAPH-EXPLAIN-01",
+          "ALG-GRAPH-MODEL-01"
+        ],
+        "primary_job": "DECODE_A_GRAPH_BEFORE_CALCULATING",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Read the scale before the relationship",
+        "progress_label": "Focus now",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [
+          "GRAPH-OPTIONAL-SLOPE-VOCABULARY"
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "OPTIONAL_DETAILS",
+          "CONTINUE"
+        ],
+        "responsive_behavior": "SINGLE_CENTERED_COLUMN; AXIS_LEGEND_STACKS_BELOW_PRIMARY_TEXT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-WORKED",
+        "screen_kind": "WORKED_VISUAL",
+        "script_node_ids": [
+          "ALG-GRAPH-THINK-01",
+          "ALG-GRAPH-WORKED-01"
+        ],
+        "primary_job": "FOLLOW_DECODE_THEN_SLOPE_REASONING",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Watch the labels drive the calculation",
+        "progress_label": "Worked visual",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01",
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "CONTINUE"
+        ],
+        "responsive_behavior": "GRAPH_REPLACES_WITH_ORDERED_POINT_TABLE_BELOW_375PX",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "ALG-GRAPH-GUIDED-01"
+        ],
+        "primary_job": "USE_MARKED_POINTS_TO_CALCULATE_SLOPE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Use the marked points",
+        "progress_label": "Guided practice",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "POINT_TABLE_AND_OPTIONS_STACK_ON_NARROW_VIEWPORTS",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-LIGHT",
+        "screen_kind": "LESS_HELP",
+        "script_node_ids": [
+          "ALG-GRAPH-LIGHT-01"
+        ],
+        "primary_job": "INTERPRET_A_LOGLOG_SLOPE_AS_A_MULTIPLICATIVE_RELATIONSHIP",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Use the log-log slope",
+        "progress_label": "Less help",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [
+          "GRAPH-DECODE-CHECKLIST"
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "OPTIONAL_DETAILS",
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "AXIS_DESCRIPTION_PRECEDES_OPTIONS_ON_NARROW_VIEWPORTS",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-SOLO",
+        "screen_kind": "ON_YOUR_OWN",
+        "script_node_ids": [
+          "ALG-GRAPH-SOLO-01"
+        ],
+        "primary_job": "CALCULATE_A_NEW_SLOPE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Calculate the slope",
+        "progress_label": "On your own",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "COORDINATE_TABLE_REMAINS_ADJACENT_TO_ACTION",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-BOUNDARY",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "ALG-GRAPH-BOUNDARY-01"
+        ],
+        "primary_job": "DISTINGUISH_ADDITIVE_AND_MULTIPLICATIVE_TICKS",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Same spacing, different meanings",
+        "progress_label": "Contrast",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "CONTINUE"
+        ],
+        "responsive_behavior": "TWO_SCALE_CARDS_STACK_WITH_EXPLICIT_HEADINGS",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-NEAR",
+        "screen_kind": "FINAL_NEAR_CHECK",
+        "script_node_ids": [
+          "ALG-GRAPH-NEAR-EXIT-01"
+        ],
+        "primary_job": "INTERPRET_A_SIGNED_SLOPE_WITH_UNITS",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Interpret the linear slope",
+        "progress_label": "Final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "PRIMARY_TASK_REMAINS_SINGLE_COLUMN",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-CHANGED",
+        "screen_kind": "FINAL_CHANGED_CHECK",
+        "script_node_ids": [
+          "ALG-GRAPH-CHANGED-EXIT-01"
+        ],
+        "primary_job": "PREDICT_FROM_A_SEMILOG_MULTIPLICATIVE_PATTERN",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Predict from the semilog graph",
+        "progress_label": "Changed final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "TEXT_DESCRIPTION_AND_OPTIONS_STACK_WITHOUT_HORIZONTAL_SCROLL",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-REPAIR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ALG-GRAPH-REPAIR-SCALE-01"
+        ],
+        "primary_job": "REBUILD_THE_SCALE_RULE_FROM_LABELS",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Try the scale rule from the labels",
+        "progress_label": "Repair",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "focus_target": "FEEDBACK_OR_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "SINGLE_CENTERED_COLUMN_WITH_STATIC_SCALE_DESCRIPTION",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_RETURN",
+        "script_node_ids": [
+          "ALG-GRAPH-REENTRY-NEAR-01"
+        ],
+        "primary_job": "RETRY_ONLY_THE_LINEAR_FUNCTION_WITH_FRESH_DATA",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Return to the linear check",
+        "progress_label": "Return to check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "PRIMARY_TASK_REMAINS_SINGLE_COLUMN",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_RETURN",
+        "script_node_ids": [
+          "ALG-GRAPH-REENTRY-CHANGED-01"
+        ],
+        "primary_job": "RETRY_ONLY_THE_SEMILOG_FUNCTION_WITH_FRESH_DATA",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Return to the semilog check",
+        "progress_label": "Return to check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "TEXT_DESCRIPTION_AND_OPTIONS_STACK_WITHOUT_HORIZONTAL_SCROLL",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "ALG-GRAPH-RECAP-01"
+        ],
+        "primary_job": "STATE_THE_DECODE_FIRST_RULE",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Keep the encoding visible",
+        "progress_label": "Recap",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "CONTINUE"
+        ],
+        "responsive_behavior": "SINGLE_CENTERED_COLUMN",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-ENTRY",
+        "screen_kind": "STARTING_CHECK",
+        "script_node_ids": [
+          "ALG-SYS-ENTRY-BOUNDARY-01"
+        ],
+        "primary_job": "SOLVE_A_FAMILIAR_EQUALITY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Starting check: keep equality balanced",
+        "progress_label": "Starting check",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-EQUATIONS-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "EQUATION_REMAINS_TEXT_SELECTABLE_AND_REWRAPS",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-FOCUS",
+        "screen_kind": "FOCUS_NOW",
+        "script_node_ids": [
+          "ALG-SYS-ORIENT-01",
+          "ALG-SYS-EXPLAIN-01",
+          "ALG-SYS-MODEL-01"
+        ],
+        "primary_job": "PRESERVE_EQUALITY_AND_BOTH_RELATIONSHIPS",
+        "primary_action": "CONTINUE",
+        "learner_heading": "One pair must fit both equations",
+        "progress_label": "Focus now",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [
+          "SYS-OPTIONAL-ELIMINATION-NOTE"
+        ],
+        "representation_ids": [
+          "ALG-SYS-REP-EQUATIONS-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "OPTIONAL_DETAILS",
+          "CONTINUE"
+        ],
+        "responsive_behavior": "EQUATIONS_STACK_WITH_CLEAR_RELATION_LABELS",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-WORKED",
+        "screen_kind": "WORKED_VISUAL",
+        "script_node_ids": [
+          "ALG-SYS-THINK-01",
+          "ALG-SYS-WORKED-01"
+        ],
+        "primary_job": "FOLLOW_SUBSTITUTION_AND_TWO_EQUATION_CHECK",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Substitute, solve, then verify both",
+        "progress_label": "Worked example",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-EQUATIONS-01",
+          "ALG-SYS-REP-VERIFY-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "CONTINUE"
+        ],
+        "responsive_behavior": "EQUATION_STEPS_USE_VERTICAL_READING_ORDER",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "ALG-SYS-GUIDED-01"
+        ],
+        "primary_job": "SUBSTITUTE_A_PROVIDED_EXPRESSION",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Use the substitution step",
+        "progress_label": "Guided practice",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-EQUATIONS-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "EQUATIONS_AND_OPTIONS_STACK",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-LIGHT",
+        "screen_kind": "LESS_HELP",
+        "script_node_ids": [
+          "ALG-SYS-LIGHT-01"
+        ],
+        "primary_job": "CHOOSE_A_SUBSTITUTION_PATH",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Choose the path, then check",
+        "progress_label": "Less help",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [
+          "SYS-VERIFY-REMINDER"
+        ],
+        "representation_ids": [
+          "ALG-SYS-REP-EQUATIONS-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "OPTIONAL_DETAILS",
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_EQUATION_LAYOUT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-SOLO",
+        "screen_kind": "ON_YOUR_OWN",
+        "script_node_ids": [
+          "ALG-SYS-SOLO-01"
+        ],
+        "primary_job": "SOLVE_A_NEW_SYSTEM",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Solve and verify",
+        "progress_label": "On your own",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-EQUATIONS-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "EQUATIONS_REWRAP_WITHOUT_HORIZONTAL_SCROLL",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-BOUNDARY",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "ALG-SYS-BOUNDARY-01"
+        ],
+        "primary_job": "DISTINGUISH_ONE_EQUATION_FROM_BOTH",
+        "primary_action": "CONTINUE",
+        "learner_heading": "A pair must pass two checks",
+        "progress_label": "Contrast",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-VERIFY-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "CONTINUE"
+        ],
+        "responsive_behavior": "TWO_VERIFICATION_ROWS_STACK",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-NEAR",
+        "screen_kind": "FINAL_NEAR_CHECK",
+        "script_node_ids": [
+          "ALG-SYS-NEAR-EXIT-01"
+        ],
+        "primary_job": "SOLVE_A_NEW_STANDARD_SYSTEM",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Final check: equation pair",
+        "progress_label": "Final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-EQUATIONS-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_EQUATION_LAYOUT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-CHANGED",
+        "screen_kind": "FINAL_CHANGED_CHECK",
+        "script_node_ids": [
+          "ALG-SYS-CHANGED-EXIT-01"
+        ],
+        "primary_job": "CONSTRUCT_AND_SOLVE_A_FORMULA_BASED_SYSTEM",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Construct the system, then solve",
+        "progress_label": "Changed final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-FORMULA-SYSTEM-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "FORMULA_AND_CONDITION_APPEAR_IN_SEPARATE_LABELED_BLOCKS",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-REPAIR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ALG-SYS-REPAIR-VERIFY-01"
+        ],
+        "primary_job": "VERIFY_A_PAIR_IN_EACH_ORIGINAL_EQUATION",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Check both original equations",
+        "progress_label": "Repair",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-VERIFY-01"
+        ],
+        "focus_target": "FEEDBACK_OR_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "VERIFICATION_TABLE_BECOMES_TWO_LABELED_TEXT_ROWS",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_RETURN",
+        "script_node_ids": [
+          "ALG-SYS-REENTRY-NEAR-01"
+        ],
+        "primary_job": "RETRY_ONLY_THE_STANDARD_SYSTEM_FUNCTION",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Return to the equation-pair check",
+        "progress_label": "Return to check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-EQUATIONS-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_EQUATION_LAYOUT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_RETURN",
+        "script_node_ids": [
+          "ALG-SYS-REENTRY-CHANGED-01"
+        ],
+        "primary_job": "CONSTRUCT_AND_SOLVE_THE_FRESH_FORMULA_SYSTEM",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Return to the formula-to-system function",
+        "progress_label": "Return to check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-FORMULA-SYSTEM-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "FORMULA_AND_CONDITION_APPEAR_IN_SEPARATE_LABELED_BLOCKS",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "ALG-SYS-RECAP-01"
+        ],
+        "primary_job": "STATE_THE_TWO_EQUATION_CHECK",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Preserve both relationships",
+        "progress_label": "Recap",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-VERIFY-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "CONTINUE"
+        ],
+        "responsive_behavior": "SINGLE_CENTERED_COLUMN",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-ENTRY",
+        "screen_kind": "STARTING_CHECK",
+        "script_node_ids": [
+          "ALG-LOG-ENTRY-BOUNDARY-01"
+        ],
+        "primary_job": "RECOGNIZE_A_FAMILIAR_POWER_OF_TEN",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Starting check: powers of ten",
+        "progress_label": "Starting check",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "EQUATIONS_REMAIN_TEXT_SELECTABLE_AND_REWRAP",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-FOCUS",
+        "screen_kind": "FOCUS_NOW",
+        "script_node_ids": [
+          "ALG-LOG-ORIENT-01",
+          "ALG-LOG-EXPLAIN-01",
+          "ALG-LOG-MODEL-01"
+        ],
+        "primary_job": "TREAT_LOGARITHMS_AS_EXPONENT_QUESTIONS",
+        "primary_action": "CONTINUE",
+        "learner_heading": "A logarithm names an exponent",
+        "progress_label": "Focus now",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [
+          "LOG-OPTIONAL-BASE-NOTATION"
+        ],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "OPTIONAL_DETAILS",
+          "CONTINUE"
+        ],
+        "responsive_behavior": "EQUIVALENCE_ROWS_STACK_WITH_PLAIN_TEXT_READOUT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-WORKED",
+        "screen_kind": "WORKED_VISUAL",
+        "script_node_ids": [
+          "ALG-LOG-THINK-01",
+          "ALG-LOG-WORKED-01"
+        ],
+        "primary_job": "FOLLOW_INVERSE_CONVERSION_REASONING",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Write the same relationship two ways",
+        "progress_label": "Worked example",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "CONTINUE"
+        ],
+        "responsive_behavior": "LEFT_RIGHT_PAIRS_STACK_AS_ORDERED_STATEMENTS",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "ALG-LOG-GUIDED-01"
+        ],
+        "primary_job": "CONVERT_A_LOG_STATEMENT_TO_EXPONENTIAL_FORM",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Write the matching exponential form",
+        "progress_label": "Guided practice",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "EQUATION_AND_OPTIONS_STACK",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-LIGHT",
+        "screen_kind": "LESS_HELP",
+        "script_node_ids": [
+          "ALG-LOG-LIGHT-01"
+        ],
+        "primary_job": "CHOOSE_THE_MATCHING_LOGARITHM",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Choose the inverse operation",
+        "progress_label": "Less help",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [
+          "LOG-INVERSE-REMINDER"
+        ],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "OPTIONAL_DETAILS",
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_EQUATION_LAYOUT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-SOLO",
+        "screen_kind": "ON_YOUR_OWN",
+        "script_node_ids": [
+          "ALG-LOG-SOLO-01"
+        ],
+        "primary_job": "ISOLATE_AN_EXPONENT",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Name the exponent",
+        "progress_label": "On your own",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_EQUATION_LAYOUT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-BOUNDARY",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "ALG-LOG-BOUNDARY-01"
+        ],
+        "primary_job": "DISTINGUISH_INPUT_FROM_EXPONENT",
+        "primary_action": "CONTINUE",
+        "learner_heading": "The log is the exponent",
+        "progress_label": "Contrast",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "CONTINUE"
+        ],
+        "responsive_behavior": "EQUIVALENCE_ROWS_STACK_AS_ORDERED_TEXT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-NEAR",
+        "screen_kind": "FINAL_NEAR_CHECK",
+        "script_node_ids": [
+          "ALG-LOG-NEAR-EXIT-01"
+        ],
+        "primary_job": "SOLVE_A_NEW_EXPONENTIAL_EQUATION",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Final check: exponential form",
+        "progress_label": "Final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_EQUATION_LAYOUT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-CHANGED",
+        "screen_kind": "FINAL_CHANGED_CHECK",
+        "script_node_ids": [
+          "ALG-LOG-CHANGED-EXIT-01"
+        ],
+        "primary_job": "CONVERT_A_NEW_LOGARITHMIC_EQUATION",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Changed final check: logarithmic form",
+        "progress_label": "Changed final check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_EQUATION_LAYOUT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-REPAIR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ALG-LOG-REPAIR-INVERSE-01"
+        ],
+        "primary_job": "MATCH_LOG_AND_EXPONENTIAL_FORMS",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Match the two equivalent forms",
+        "progress_label": "Repair",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "FEEDBACK_OR_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "TWO_COLUMN_MATCH_BECOMES_ORDERED_STATEMENTS",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_RETURN",
+        "script_node_ids": [
+          "ALG-LOG-REENTRY-NEAR-01"
+        ],
+        "primary_job": "RETRY_ONLY_THE_EXPONENTIAL_TO_LOG_FUNCTION",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Return to the exponential check",
+        "progress_label": "Return to check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_EQUATION_LAYOUT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_RETURN",
+        "script_node_ids": [
+          "ALG-LOG-REENTRY-CHANGED-01"
+        ],
+        "primary_job": "RETRY_ONLY_THE_LOG_TO_EXPONENTIAL_FUNCTION",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Return to the logarithmic check",
+        "progress_label": "Return to check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "TEXT_EQUIVALENT",
+          "RESPONSE_OPTIONS",
+          "SUBMIT_RESPONSE"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_EQUATION_LAYOUT",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "ALG-LOG-RECAP-01"
+        ],
+        "primary_job": "STATE_THE_INVERSE_RELATIONSHIP",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Use the form that shows the exponent",
+        "progress_label": "Recap",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "CONTINUE"
+        ],
+        "responsive_behavior": "SINGLE_CENTERED_COLUMN",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-REPAIR-SLOPE",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ALG-GRAPH-REPAIR-SLOPE-01"
+        ],
+        "primary_job": "REBUILD_RISE_OVER_RUN",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Rebuild the slope rule",
+        "progress_label": "Repair: slope",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "focus_target": "LEARNER_CONTENT",
+        "keyboard_order": [
+          "LEARNER_CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "REFLOW_TO_SINGLE_COLUMN_WITH_VISIBLE_PRIMARY_ACTION",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "GRAPH-SCREEN-PLANNER-HANDOFF",
+        "screen_kind": "TRANSITION",
+        "script_node_ids": [
+          "ALG-GRAPH-PLANNER-HANDOFF-01"
+        ],
+        "primary_job": "PRESERVE_THE_EXACT_OPEN_GRAPH_FUNCTION",
+        "primary_action": "CONTINUE_TO_PLANNER",
+        "learner_heading": "Keep the exact graph function open",
+        "progress_label": "Next support",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "LEARNER_CONTENT",
+        "keyboard_order": [
+          "LEARNER_CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "REFLOW_TO_SINGLE_COLUMN_WITH_VISIBLE_PRIMARY_ACTION",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-REPAIR-TRANSLATE",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ALG-SYS-REPAIR-TRANSLATE-01"
+        ],
+        "primary_job": "REBUILD_PERIMETER_FORMULA_TRANSLATION",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Rebuild the formula translation",
+        "progress_label": "Repair: formula translation",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-SYS-REP-FORMULA-SYSTEM-01"
+        ],
+        "focus_target": "LEARNER_CONTENT",
+        "keyboard_order": [
+          "LEARNER_CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "REFLOW_TO_SINGLE_COLUMN_WITH_VISIBLE_PRIMARY_ACTION",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SYS-SCREEN-PLANNER-HANDOFF",
+        "screen_kind": "TRANSITION",
+        "script_node_ids": [
+          "ALG-SYS-PLANNER-HANDOFF-01"
+        ],
+        "primary_job": "PRESERVE_THE_EXACT_OPEN_SYSTEM_FUNCTION",
+        "primary_action": "CONTINUE_TO_PLANNER",
+        "learner_heading": "Keep the exact system function open",
+        "progress_label": "Next support",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "LEARNER_CONTENT",
+        "keyboard_order": [
+          "LEARNER_CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "REFLOW_TO_SINGLE_COLUMN_WITH_VISIBLE_PRIMARY_ACTION",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-REPAIR-RATIO",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ALG-LOG-REPAIR-RATIO-01"
+        ],
+        "primary_job": "REBUILD_LOGARITHMIC_RATIO_CONVERSION",
+        "primary_action": "SUBMIT_RESPONSE",
+        "learner_heading": "Rebuild the logarithmic ratio",
+        "progress_label": "Repair: logarithmic ratio",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ALG-LOG-REP-INVERSE-01"
+        ],
+        "focus_target": "LEARNER_CONTENT",
+        "keyboard_order": [
+          "LEARNER_CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "REFLOW_TO_SINGLE_COLUMN_WITH_VISIBLE_PRIMARY_ACTION",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LOG-SCREEN-PLANNER-HANDOFF",
+        "screen_kind": "TRANSITION",
+        "script_node_ids": [
+          "ALG-LOG-PLANNER-HANDOFF-01"
+        ],
+        "primary_job": "PRESERVE_THE_EXACT_OPEN_LOGARITHM_FUNCTION",
+        "primary_action": "CONTINUE_TO_PLANNER",
+        "learner_heading": "Keep the exact logarithm function open",
+        "progress_label": "Next support",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "LEARNER_CONTENT",
+        "keyboard_order": [
+          "LEARNER_CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "REFLOW_TO_SINGLE_COLUMN_WITH_VISIBLE_PRIMARY_ACTION",
+        "reviewer_only_refs": []
+      }
+    ],
+    "node_to_screen_map": [
+      {
+        "script_node_id": "ALG-GRAPH-ENTRY-BOUNDARY-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-ENTRY"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-ORIENT-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-FOCUS"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-EXPLAIN-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-FOCUS"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-MODEL-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-FOCUS"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-THINK-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-WORKED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-WORKED-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-WORKED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-GUIDED-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-GUIDED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-LIGHT-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-LIGHT"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-SOLO-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-SOLO"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-BOUNDARY-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-BOUNDARY"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-NEAR-EXIT-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-NEAR"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-CHANGED-EXIT-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-CHANGED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-REPAIR-SCALE-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-REPAIR"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-REENTRY-NEAR-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-REENTRY-NEAR"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-REENTRY-CHANGED-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-REENTRY-CHANGED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-RECAP-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-RECAP"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-ENTRY-BOUNDARY-01",
+        "screen_ids": [
+          "SYS-SCREEN-ENTRY"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-ORIENT-01",
+        "screen_ids": [
+          "SYS-SCREEN-FOCUS"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-EXPLAIN-01",
+        "screen_ids": [
+          "SYS-SCREEN-FOCUS"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-MODEL-01",
+        "screen_ids": [
+          "SYS-SCREEN-FOCUS"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-THINK-01",
+        "screen_ids": [
+          "SYS-SCREEN-WORKED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-WORKED-01",
+        "screen_ids": [
+          "SYS-SCREEN-WORKED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-GUIDED-01",
+        "screen_ids": [
+          "SYS-SCREEN-GUIDED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-LIGHT-01",
+        "screen_ids": [
+          "SYS-SCREEN-LIGHT"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-SOLO-01",
+        "screen_ids": [
+          "SYS-SCREEN-SOLO"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-BOUNDARY-01",
+        "screen_ids": [
+          "SYS-SCREEN-BOUNDARY"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-NEAR-EXIT-01",
+        "screen_ids": [
+          "SYS-SCREEN-NEAR"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-CHANGED-EXIT-01",
+        "screen_ids": [
+          "SYS-SCREEN-CHANGED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-REPAIR-VERIFY-01",
+        "screen_ids": [
+          "SYS-SCREEN-REPAIR"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-REENTRY-NEAR-01",
+        "screen_ids": [
+          "SYS-SCREEN-REENTRY-NEAR"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-REENTRY-CHANGED-01",
+        "screen_ids": [
+          "SYS-SCREEN-REENTRY-CHANGED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-RECAP-01",
+        "screen_ids": [
+          "SYS-SCREEN-RECAP"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-ENTRY-BOUNDARY-01",
+        "screen_ids": [
+          "LOG-SCREEN-ENTRY"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-ORIENT-01",
+        "screen_ids": [
+          "LOG-SCREEN-FOCUS"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-EXPLAIN-01",
+        "screen_ids": [
+          "LOG-SCREEN-FOCUS"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-MODEL-01",
+        "screen_ids": [
+          "LOG-SCREEN-FOCUS"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-THINK-01",
+        "screen_ids": [
+          "LOG-SCREEN-WORKED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-WORKED-01",
+        "screen_ids": [
+          "LOG-SCREEN-WORKED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-GUIDED-01",
+        "screen_ids": [
+          "LOG-SCREEN-GUIDED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-LIGHT-01",
+        "screen_ids": [
+          "LOG-SCREEN-LIGHT"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-SOLO-01",
+        "screen_ids": [
+          "LOG-SCREEN-SOLO"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-BOUNDARY-01",
+        "screen_ids": [
+          "LOG-SCREEN-BOUNDARY"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-NEAR-EXIT-01",
+        "screen_ids": [
+          "LOG-SCREEN-NEAR"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-CHANGED-EXIT-01",
+        "screen_ids": [
+          "LOG-SCREEN-CHANGED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-REPAIR-INVERSE-01",
+        "screen_ids": [
+          "LOG-SCREEN-REPAIR"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-REENTRY-NEAR-01",
+        "screen_ids": [
+          "LOG-SCREEN-REENTRY-NEAR"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-REENTRY-CHANGED-01",
+        "screen_ids": [
+          "LOG-SCREEN-REENTRY-CHANGED"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-RECAP-01",
+        "screen_ids": [
+          "LOG-SCREEN-RECAP"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-REPAIR-SLOPE-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-REPAIR-SLOPE"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-GRAPH-PLANNER-HANDOFF-01",
+        "screen_ids": [
+          "GRAPH-SCREEN-PLANNER-HANDOFF"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-REPAIR-TRANSLATE-01",
+        "screen_ids": [
+          "SYS-SCREEN-REPAIR-TRANSLATE"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-SYS-PLANNER-HANDOFF-01",
+        "screen_ids": [
+          "SYS-SCREEN-PLANNER-HANDOFF"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-REPAIR-RATIO-01",
+        "screen_ids": [
+          "LOG-SCREEN-REPAIR-RATIO"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      },
+      {
+        "script_node_id": "ALG-LOG-PLANNER-HANDOFF-01",
+        "screen_ids": [
+          "LOG-SCREEN-PLANNER-HANDOFF"
+        ],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ]
+      }
+    ],
+    "representation_plans": [
+      {
+        "representation_id": "ALG-GRAPH-REP-SCALE-01",
+        "target_kc_id": "V3-KC-452593",
+        "script_node_id": "ALG-GRAPH-MODEL-01",
+        "representation_type": "LABELED_LINEAR_SEMILOG_LOGLOG_AXIS_COMPARISON",
+        "encoded_information": [
+          "axis_title",
+          "unit",
+          "labelled_tick_sequence",
+          "equal_display_spacing"
+        ],
+        "decisive_feature": "The numerical sequence on consecutive labelled ticks determines whether equal spacing is additive or multiplicative.",
+        "learner_operation": "Read two consecutive labels, name the scale rule, then interpret the displayed change.",
+        "prose_only_limitation": "A paragraph cannot show that identical visual spacing can encode different numerical changes.",
+        "signaling_plan": "Use axis labels, tick marks, and a text label such as ‘factor of 10’; do not rely on color, position, animation, or a marked correct option.",
+        "interaction_warrant": "STATIC_VISUAL_IS_SUFFICIENT; no drag or animation is needed for the target operation.",
+        "text_equivalent_id": "ALG-GRAPH-REP-TEXT-01",
+        "text_nonvisual_equivalent": "State the axis title, unit, scale type only when already labelled, ordered tick labels, and the two marked coordinates or interval. Do not state the requested answer.",
+        "construct_preservation_judgment": "DRAFT_PRESERVED_FOR_SCALE_DECODING_PENDING_ACCESSIBILITY_REVIEW",
+        "construct_reviewer_id": null,
+        "reduced_motion_fallback": "STATIC_IDENTICAL_VIEW",
+        "small_screen_behavior": "Stack axis description above the response controls; never require horizontal panning."
+      },
+      {
+        "representation_id": "ALG-GRAPH-REP-LINEAR-SLOPE-01",
+        "target_kc_id": "V3-KC-452593",
+        "script_node_id": "ALG-GRAPH-THINK-01",
+        "representation_type": "LINEAR_COORDINATE_GRAPH_WITH_TWO_LABELED_POINTS",
+        "encoded_information": [
+          "horizontal_quantity",
+          "vertical_quantity",
+          "units",
+          "two_coordinate_pairs",
+          "change_in_each_quantity"
+        ],
+        "decisive_feature": "The two labelled coordinate pairs provide the numerator and denominator for the slope relationship.",
+        "learner_operation": "Choose the two labelled points, subtract vertical values, subtract horizontal values, and divide in that order.",
+        "prose_only_limitation": "The point-to-coordinate correspondence is easier to misread in prose than in an aligned display.",
+        "signaling_plan": "Use matching point labels and a non-color marker shape; do not prefill the subtraction or highlight a response option.",
+        "interaction_warrant": "STATIC_VISUAL_WITH_KEYBOARD_READABLE_TABLE; an interactive graph is not required.",
+        "text_equivalent_id": "ALG-GRAPH-REP-TEXT-01",
+        "text_nonvisual_equivalent": "Provide an ordered table of the two labelled points, axis titles, and units. The table contains the same coordinate data but no computed slope.",
+        "construct_preservation_judgment": "DRAFT_PRESERVED_FOR_SLOPE_CALCULATION_PENDING_ACCESSIBILITY_REVIEW",
+        "construct_reviewer_id": null,
+        "reduced_motion_fallback": "STATIC_IDENTICAL_VIEW",
+        "small_screen_behavior": "Show the coordinate table before the response controls; preserve the same task data at 320 px."
+      },
+      {
+        "representation_id": "ALG-SYS-REP-EQUATIONS-01",
+        "target_kc_id": "V3-KC-008681",
+        "script_node_id": "ALG-SYS-MODEL-01",
+        "representation_type": "ALIGNED_TWO_EQUATION_WORKBOARD",
+        "encoded_information": [
+          "first_equation",
+          "second_equation",
+          "isolated_expression",
+          "substitution_step",
+          "verification_placeholders"
+        ],
+        "decisive_feature": "Both original equations remain visible so the learner can preserve equality and verify the final ordered pair twice.",
+        "learner_operation": "Isolate or select an expression, substitute it, solve, recover the second variable, and check both originals.",
+        "prose_only_limitation": "A prose-only sequence hides the relationship between the substituted expression and the original pair of equations.",
+        "signaling_plan": "Align equivalent variables and use row labels; no color-only grouping and no displayed answer before commitment.",
+        "interaction_warrant": "STATIC_EQUATION_LAYOUT_IS_SUFFICIENT",
+        "text_equivalent_id": "ALG-SYS-REP-TEXT-01",
+        "text_nonvisual_equivalent": "Read the first and second equation in a fixed order, followed by any substituted expression and blank verification prompts. No solution is supplied in an assessment screen.",
+        "construct_preservation_judgment": "DRAFT_PRESERVED_FOR_SYMBOLIC_SYSTEM_WORK_PENDING_ACCESSIBILITY_REVIEW",
+        "construct_reviewer_id": null,
+        "reduced_motion_fallback": "STATIC_IDENTICAL_VIEW",
+        "small_screen_behavior": "Stack equations vertically with semantic equation text and no clipped operators."
+      },
+      {
+        "representation_id": "ALG-SYS-REP-FORMULA-SYSTEM-01",
+        "target_kc_id": "V3-KC-008681",
+        "script_node_id": "ALG-SYS-CHANGED-EXIT-01",
+        "representation_type": "FORMULA_AND_CONDITION_TRANSLATION_CARD",
+        "encoded_information": [
+          "formula_relationship",
+          "second_condition",
+          "variable_labels",
+          "requested_pair"
+        ],
+        "decisive_feature": "Two differently phrased relationships must be retained simultaneously before solving.",
+        "learner_operation": "Translate each stated relationship into a usable equation, then solve the resulting system.",
+        "prose_only_limitation": "Separate wording can obscure that the formula and condition constrain the same pair of variables.",
+        "signaling_plan": "Give each relationship a visible heading and preserve matching variable names; do not cue the translation or answer.",
+        "interaction_warrant": "STATIC_CARD_IS_SUFFICIENT",
+        "text_equivalent_id": "ALG-SYS-REP-TEXT-01",
+        "text_nonvisual_equivalent": "State the formula and condition as separate labelled text blocks with the same variable labels and no prewritten solution system.",
+        "construct_preservation_judgment": "DRAFT_PRESERVED_FOR_TRANSLATION_OPERATION_PENDING_ACCESSIBILITY_REVIEW",
+        "construct_reviewer_id": null,
+        "reduced_motion_fallback": "STATIC_IDENTICAL_VIEW",
+        "small_screen_behavior": "Stack formula and condition in source order before response options."
+      },
+      {
+        "representation_id": "ALG-SYS-REP-VERIFY-01",
+        "target_kc_id": "V3-KC-008681",
+        "script_node_id": "ALG-SYS-REPAIR-VERIFY-01",
+        "representation_type": "TWO_ROW_ORIGINAL_EQUATION_VERIFICATION_TABLE",
+        "encoded_information": [
+          "proposed_pair",
+          "first_original_equation",
+          "second_original_equation",
+          "substitution_result"
+        ],
+        "decisive_feature": "A pair needs a separate check against each original equation.",
+        "learner_operation": "Substitute the proposed values into the first original equation, then the second, and compare each resulting equality.",
+        "prose_only_limitation": "A single verbal check can hide the missing second equation.",
+        "signaling_plan": "Number the two rows and label them by equation; no row uses color as its only identifier.",
+        "interaction_warrant": "STATIC_TABLE_IS_SUFFICIENT",
+        "text_equivalent_id": "ALG-SYS-REP-TEXT-01",
+        "text_nonvisual_equivalent": "Read two labelled verification rows in order, each with the original equation and an unfilled substitution prompt.",
+        "construct_preservation_judgment": "DRAFT_PRESERVED_FOR_DOUBLE_VERIFICATION_PENDING_ACCESSIBILITY_REVIEW",
+        "construct_reviewer_id": null,
+        "reduced_motion_fallback": "STATIC_IDENTICAL_VIEW",
+        "small_screen_behavior": "Transform rows into two headed blocks with no horizontal table scroll."
+      },
+      {
+        "representation_id": "ALG-LOG-REP-INVERSE-01",
+        "target_kc_id": "V3-KC-238607",
+        "script_node_id": "ALG-LOG-MODEL-01",
+        "representation_type": "LOGARITHMIC_AND_EXPONENTIAL_EQUIVALENCE_PAIR",
+        "encoded_information": [
+          "base",
+          "exponent",
+          "result",
+          "logarithmic_form",
+          "exponential_form"
+        ],
+        "decisive_feature": "The logarithm occupies the exponent role in the equivalent exponential statement.",
+        "learner_operation": "Identify the base, exponent, and result; rewrite the relationship in the inverse form that exposes the requested unknown.",
+        "prose_only_limitation": "A linear sentence can hide which symbol is the exponent and which symbol is the result.",
+        "signaling_plan": "Align corresponding base, exponent, and result with text labels and spacing; no color-only correspondence and no answer cue.",
+        "interaction_warrant": "STATIC_EQUIVALENCE_PAIR_IS_SUFFICIENT",
+        "text_equivalent_id": "ALG-LOG-REP-TEXT-01",
+        "text_nonvisual_equivalent": "State each equivalent expression in order and identify the role of base, exponent, and result without stating the requested response.",
+        "construct_preservation_judgment": "DRAFT_PRESERVED_FOR_INVERSE_CONVERSION_PENDING_ACCESSIBILITY_REVIEW",
+        "construct_reviewer_id": null,
+        "reduced_motion_fallback": "STATIC_IDENTICAL_VIEW",
+        "small_screen_behavior": "Place equivalent forms in a vertical ordered pair at narrow widths."
+      }
+    ],
+    "progressive_disclosure_rules": {
+      "optional_detail_default": "COLLAPSED",
+      "required_teaching_may_be_collapsed": false,
+      "maximum_important_callouts_per_screen": 1,
+      "no_screen_stacks_multiple_fading_levels": true
+    },
+    "learner_reviewer_separation": {
+      "learner_projection": "LEARNER_SAFE_ITEMS_ONLY",
+      "reviewer_projection": "SEPARATE_ACCESS_CONTROLLED_PROJECTION_REQUIRED",
+      "prohibited_learner_fields": [
+        "ANSWER_KEY",
+        "PRE_RELEASE_RATIONALE",
+        "INTERNAL_ID",
+        "HASH",
+        "GATE_STATUS",
+        "ROUTE_METADATA",
+        "EXPOSURE_METADATA"
+      ],
+      "runtime_enforcement_status": "BLOCKED_SHARED_RUNTIME"
+    },
+    "responsive_acceptance": {
+      "desktop_profile_status": "BLOCKED_SHARED_RUNTIME",
+      "mobile_widths_px": [
+        375
+      ],
+      "critical_fit_widths_px": [
+        320
+      ],
+      "primary_horizontal_scroll_allowed": false,
+      "zoom_reflow_required": true
+    },
+    "accessibility_acceptance": {
+      "keyboard_required": true,
+      "visible_focus_required": true,
+      "reduced_motion_required": true,
+      "text_equivalent_required": true,
+      "construct_equivalence_review_required": true,
+      "contrast_policy": "WCAG_2_2_AA_TARGET_PENDING_IMPLEMENTATION",
+      "human_accessibility_review_status": "BLOCKED"
+    },
+    "browser_evidence_plan": {
+      "required_checks": [
+        "375px_primary_screens",
+        "320px_critical_fit",
+        "keyboard_only_navigation_and_feedback",
+        "focus_movement",
+        "reduced_motion",
+        "screen_reader_semantics",
+        "200_percent_zoom_reflow",
+        "learner_safe_projection_no_leakage"
+      ],
+      "execution_status": "BLOCKED_SHARED_RUNTIME"
+    },
+    "presentation_status": "CONTENT_PLAN_COMPLETE_BROWSER_AND_RUNTIME_QA_BLOCKED_SHARED_RUNTIME"
+  }
+}

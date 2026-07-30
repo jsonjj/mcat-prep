@@ -1,0 +1,226 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-draft.1",
+  "access_policy": "SERVER_ONLY_FUTURE_RUNTIME",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "ALG-GRAPH-ENTRY-01",
+      "learner_prompt_key": "GRAPH_SCALE_START",
+      "correct_option_index": 2,
+      "rationale": "Equal spacing between 1, 10, and 100 represents repeated multiplication by 10."
+    },
+    {
+      "answer_record_id": "ALG-GRAPH-GUIDED-01",
+      "learner_prompt_key": "GRAPH_SLOPE_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "Slope is vertical change divided by horizontal change: (16 − 4) / (5 − 2) = 4."
+    },
+    {
+      "answer_record_id": "ALG-GRAPH-LIGHT-01",
+      "learner_prompt_key": "GRAPH_SCALE_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "A log-log slope of 2 means a tenfold increase in x corresponds to a hundredfold increase in y."
+    },
+    {
+      "answer_record_id": "ALG-GRAPH-SOLO-01",
+      "learner_prompt_key": "GRAPH_SLOPE_SOLO",
+      "correct_option_index": 2,
+      "rationale": "The vertical change is 12 and the horizontal change is 4, giving a slope of 3."
+    },
+    {
+      "answer_record_id": "ALG-GRAPH-NEAR-01",
+      "learner_prompt_key": "GRAPH_LINEAR_FINAL",
+      "correct_option_index": 1,
+      "rationale": "The position changes by 12 meters in 4 seconds, so the graph's slope is 3 meters per second."
+    },
+    {
+      "answer_record_id": "ALG-GRAPH-CHANGED-01",
+      "learner_prompt_key": "GRAPH_SEMILOG_FINAL",
+      "correct_option_index": 0,
+      "rationale": "Each equal step on the vertical logarithmic axis multiplies the value by 10, so 200 becomes 2000."
+    },
+    {
+      "answer_record_id": "ALG-GRAPH-REPAIR-CONFIRM-01",
+      "learner_prompt_key": "GRAPH_REPAIR_SCALE",
+      "correct_option_index": 2,
+      "rationale": "The sequence 5, 50, 500 changes by a factor of 10 at each equal interval."
+    },
+    {
+      "answer_record_id": "ALG-GRAPH-REPAIR-SLOPE-CONFIRM-01",
+      "learner_prompt_key": "GRAPH_REPAIR_SLOPE",
+      "correct_option_index": 1,
+      "rationale": "The rise is 19 − 7 = 12 and the run is 5 − 2 = 3, so the slope is 12 / 3 = 4."
+    },
+    {
+      "answer_record_id": "ALG-GRAPH-REENTRY-NEAR-01",
+      "learner_prompt_key": "GRAPH_REENTRY_LINEAR",
+      "correct_option_index": 0,
+      "rationale": "The volume changes by −24 liters in 6 minutes, so the slope is −4 liters per minute."
+    },
+    {
+      "answer_record_id": "ALG-GRAPH-REENTRY-CHANGED-01",
+      "learner_prompt_key": "GRAPH_REENTRY_SEMILOG",
+      "correct_option_index": 1,
+      "rationale": "On a base-10 semilog graph, each equal display step multiplies the vertical value by 10. Starting at 5 when x = 0 gives y = 5 × 10^x."
+    },
+    {
+      "answer_record_id": "ALG-SYS-ENTRY-01",
+      "learner_prompt_key": "SYSTEM_BALANCE_START",
+      "correct_option_index": 1,
+      "rationale": "Dividing both sides of 4x = 20 by 4 gives x = 5."
+    },
+    {
+      "answer_record_id": "ALG-SYS-GUIDED-01",
+      "learner_prompt_key": "SYSTEM_SUB_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "Substitution gives p = 4 and q = 1; the pair satisfies both equations."
+    },
+    {
+      "answer_record_id": "ALG-SYS-LIGHT-01",
+      "learner_prompt_key": "SYSTEM_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "From m − n = 3, n = m − 3. Substitution gives m = 5 and n = 2."
+    },
+    {
+      "answer_record_id": "ALG-SYS-SOLO-01",
+      "learner_prompt_key": "SYSTEM_SOLO",
+      "correct_option_index": 0,
+      "rationale": "Subtracting r + s = 6 from 4r + s = 18 gives 3r = 12, so r = 4 and s = 2."
+    },
+    {
+      "answer_record_id": "ALG-SYS-NEAR-01",
+      "learner_prompt_key": "SYSTEM_FINAL_PAIR",
+      "correct_option_index": 2,
+      "rationale": "With a = s + 1 and 2a + s = 17, substitution gives 3s = 15, so s = 5 and a = 6."
+    },
+    {
+      "answer_record_id": "ALG-SYS-CHANGED-01",
+      "learner_prompt_key": "SYSTEM_FORMULA_FINAL",
+      "rationale": "The learner must construct both relationships from the formula and condition, then solve the resulting system.",
+      "response_authority": {
+        "scoring_mode": "STRUCTURED_CONSTRUCTION_AND_SOLUTION",
+        "required_fields": [
+          "equation_1",
+          "equation_2",
+          "solution_pair"
+        ],
+        "expected_equation_forms": [
+          "2L + 2W = 22",
+          "L - W = 3"
+        ],
+        "expected_solution_pair": [
+          "L = 7",
+          "W = 4"
+        ],
+        "context_variable_ids": [
+          "L",
+          "W"
+        ]
+      }
+    },
+    {
+      "answer_record_id": "ALG-SYS-REPAIR-CONFIRM-01",
+      "learner_prompt_key": "SYSTEM_REPAIR_CHECK",
+      "correct_option_index": 0,
+      "rationale": "The pair gives 5 + 3 = 8 and 5 − 3 = 2, so it satisfies both original equations."
+    },
+    {
+      "answer_record_id": "ALG-SYS-REPAIR-TRANSLATE-CONFIRM-01",
+      "learner_prompt_key": "SYSTEM_REPAIR_TRANSLATE",
+      "correct_option_index": 1,
+      "rationale": "Dividing the perimeter equation 2L + 2W = 18 by 2 gives L + W = 9."
+    },
+    {
+      "answer_record_id": "ALG-SYS-REENTRY-NEAR-01",
+      "learner_prompt_key": "SYSTEM_REENTRY_PAIR",
+      "correct_option_index": 2,
+      "rationale": "Adding the equations gives 3x = 18, so x = 6 and y = 5."
+    },
+    {
+      "answer_record_id": "ALG-SYS-REENTRY-CHANGED-01",
+      "learner_prompt_key": "SYSTEM_REENTRY_FORMULA",
+      "rationale": "The learner must construct both relationships from the formula and condition, then solve the resulting system.",
+      "response_authority": {
+        "scoring_mode": "STRUCTURED_CONSTRUCTION_AND_SOLUTION",
+        "required_fields": [
+          "equation_1",
+          "equation_2",
+          "solution_pair"
+        ],
+        "expected_equation_forms": [
+          "3a + 2b = 26",
+          "a - b = 2"
+        ],
+        "expected_solution_pair": [
+          "a = 6",
+          "b = 4"
+        ],
+        "context_variable_ids": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    {
+      "answer_record_id": "ALG-LOG-ENTRY-01",
+      "learner_prompt_key": "LOG_POWER_START",
+      "correct_option_index": 2,
+      "rationale": "10 raised to the third power is 10 × 10 × 10, which is 1000."
+    },
+    {
+      "answer_record_id": "ALG-LOG-GUIDED-01",
+      "learner_prompt_key": "LOG_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "A base-10 logarithm names the exponent, so log base 10 of n = −1 means n = 10 raised to −1."
+    },
+    {
+      "answer_record_id": "ALG-LOG-LIGHT-01",
+      "learner_prompt_key": "LOG_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "Taking the natural logarithm of both sides of e raised to q = 12 isolates q as ln(12)."
+    },
+    {
+      "answer_record_id": "ALG-LOG-SOLO-01",
+      "learner_prompt_key": "LOG_SOLO",
+      "correct_option_index": 2,
+      "rationale": "The base-10 logarithm returns the exponent that produces 45, so r = log base 10 of 45."
+    },
+    {
+      "answer_record_id": "ALG-LOG-NEAR-01",
+      "learner_prompt_key": "LOG_EXP_FINAL",
+      "correct_option_index": 1,
+      "rationale": "Divide by 3 to get e raised to 0.5t = 6, then take ln and multiply by 2."
+    },
+    {
+      "answer_record_id": "ALG-LOG-CHANGED-01",
+      "learner_prompt_key": "LOG_LOGFORM_FINAL",
+      "correct_option_index": 0,
+      "rationale": "log base 10 of n/5 = 2 means n/5 = 100, so n = 500."
+    },
+    {
+      "answer_record_id": "ALG-LOG-REPAIR-CONFIRM-01",
+      "learner_prompt_key": "LOG_REPAIR_EQUIV",
+      "correct_option_index": 1,
+      "rationale": "Dividing by 2 gives e raised to u = 8, so taking ln gives u = ln(8)."
+    },
+    {
+      "answer_record_id": "ALG-LOG-REPAIR-RATIO-CONFIRM-01",
+      "learner_prompt_key": "LOG_REPAIR_RATIO",
+      "correct_option_index": 0,
+      "rationale": "log base 10 of r/4 = 1 means r/4 = 10, so r = 40."
+    },
+    {
+      "answer_record_id": "ALG-LOG-REENTRY-NEAR-01",
+      "learner_prompt_key": "LOG_REENTRY_EXP",
+      "correct_option_index": 1,
+      "rationale": "Divide by 4 to get e raised to 3z = 5, then take ln and divide by 3."
+    },
+    {
+      "answer_record_id": "ALG-LOG-REENTRY-CHANGED-01",
+      "learner_prompt_key": "LOG_REENTRY_LOGFORM",
+      "correct_option_index": 1,
+      "rationale": "Subtract 1 to get log base 10 of m = 2, then rewrite as m = 10 squared = 100."
+    }
+  ]
+}

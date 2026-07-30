@@ -1,0 +1,393 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-draft.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Choose an answer, then submit to see feedback.",
+  "items": [
+    {
+      "prompt_key": "GRAPH_SCALE_START",
+      "title": "Starting check",
+      "prompt": "A vertical axis has equally spaced labels 1, 10, and 100. Moving one labelled major step changes the value how?",
+      "response_type": "single_select",
+      "options": [
+        "It adds 9.",
+        "It divides the value by 10.",
+        "It multiplies the value by 10.",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "GRAPH_SLOPE_GUIDED",
+      "title": "Guided practice",
+      "prompt": "A linear output-versus-trial display moves from 4 units at trial 2 to 16 units at trial 5. Which calculation finds the slope?",
+      "response_type": "single_select",
+      "options": [
+        "(16 − 4) / (5 − 2) = 4",
+        "(5 − 2) / (16 − 4) = 1/4",
+        "(16 + 4) / (5 + 2)",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "GRAPH_SCALE_LIGHT",
+      "title": "Less help",
+      "prompt": "On a log-log graph, a straight trend has plotted slope 2. When x increases by a factor of 10, what change in y does that trend predict?",
+      "response_type": "single_select",
+      "options": [
+        "y increases by a factor of 10.",
+        "y increases by a factor of 100.",
+        "y increases by 2 units.",
+        "Not sure"
+      ],
+      "text_description": "Both axes are base-10 logarithmic axes with equally spaced labels 0.1, 1, and 10."
+    },
+    {
+      "prompt_key": "GRAPH_SLOPE_SOLO",
+      "title": "On your own",
+      "prompt": "A linear graph includes the labelled points (3, 8) and (7, 20). What is the slope?",
+      "response_type": "single_select",
+      "options": [
+        "4",
+        "12",
+        "3",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "GRAPH_LINEAR_FINAL",
+      "title": "Final check",
+      "prompt": "A linear position-versus-time graph shows 18 meters at 6 seconds and 30 meters at 10 seconds. What does its slope represent?",
+      "response_type": "single_select",
+      "options": [
+        "12 meters per second",
+        "3 meters per second",
+        "4 seconds per meter",
+        "Not sure"
+      ],
+      "text_description": "The horizontal axis is time in seconds and the vertical axis is position in meters."
+    },
+    {
+      "prompt_key": "GRAPH_SEMILOG_FINAL",
+      "title": "Changed final check",
+      "prompt": "A semilog graph shows values of 2, 20, and 200 at x = 0, 1, and 2. If the same straight pattern continues, what value is predicted at x = 3?",
+      "response_type": "single_select",
+      "options": [
+        "2000",
+        "202",
+        "800",
+        "Not sure"
+      ],
+      "text_description": "The vertical axis is base-10 logarithmic; equal vertical display steps represent equal factors of 10."
+    },
+    {
+      "prompt_key": "GRAPH_REPAIR_SCALE",
+      "title": "Try the scale rule",
+      "prompt": "A logarithmic vertical axis has equally spaced labels 5, 50, and 500. Which operation carries a value one labelled step upward?",
+      "response_type": "single_select",
+      "options": [
+        "Add 45.",
+        "Divide by 10.",
+        "Multiply by 10.",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "GRAPH_REPAIR_SLOPE",
+      "title": "Rebuild the slope rule",
+      "prompt": "A line moves from (2 seconds, 7 meters) to (5 seconds, 19 meters). What slope do you obtain?",
+      "response_type": "single_select",
+      "options": [
+        "3 meters per second",
+        "4 meters per second",
+        "12 meters per second",
+        "Not sure"
+      ],
+      "text_description": "The horizontal axis is time in seconds and the vertical axis is position in meters."
+    },
+    {
+      "prompt_key": "GRAPH_REENTRY_LINEAR",
+      "title": "Return to the linear check",
+      "prompt": "A linear drainage graph shows 56 liters at 2 minutes and 32 liters at 8 minutes. What is the slope?",
+      "response_type": "single_select",
+      "options": [
+        "−4 liters per minute",
+        "4 liters per minute",
+        "−6 liters per minute",
+        "Not sure"
+      ],
+      "text_description": "The horizontal axis is time in minutes and the vertical axis is volume in liters."
+    },
+    {
+      "prompt_key": "GRAPH_REENTRY_SEMILOG",
+      "title": "Return to the semilog check",
+      "prompt": "A straight pattern on a semilog graph has value 5 at x = 0 and value 50 at x = 1. Which equation represents that same multiplicative pattern?",
+      "response_type": "single_select",
+      "options": [
+        "y = 5 + 45x",
+        "y = 5 × 10^x",
+        "y = 50x",
+        "Not sure"
+      ],
+      "text_description": "The vertical axis is base-10 logarithmic. Moving one equal vertical display interval multiplies the value by 10."
+    },
+    {
+      "prompt_key": "SYSTEM_BALANCE_START",
+      "title": "Starting check",
+      "prompt": "Solve the familiar equality: 4x = 20.",
+      "response_type": "single_select",
+      "options": [
+        "x = 4",
+        "x = 5",
+        "x = 16",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "SYSTEM_SUB_GUIDED",
+      "title": "Guided practice",
+      "prompt": "Solve the system 3p + q = 13 and p − q = 3. Which ordered pair fits both equations?",
+      "response_type": "single_select",
+      "options": [
+        "(3, 4)",
+        "(5, −2)",
+        "(4, 1)",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "SYSTEM_LIGHT",
+      "title": "Less help",
+      "prompt": "Solve the system 2m + n = 12 and m − n = 3. Which ordered pair fits both equations?",
+      "response_type": "single_select",
+      "options": [
+        "(5, 2)",
+        "(4, 4)",
+        "(3, 6)",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "SYSTEM_SOLO",
+      "title": "On your own",
+      "prompt": "Solve the system 4r + s = 18 and r + s = 6. Which ordered pair fits both equations?",
+      "response_type": "single_select",
+      "options": [
+        "(4, 2)",
+        "(3, 3)",
+        "(6, 0)",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "SYSTEM_FINAL_PAIR",
+      "title": "Final check",
+      "prompt": "Two adult tickets and one student ticket cost $17. An adult ticket costs $1 more than a student ticket. What are the two ticket prices?",
+      "response_type": "single_select",
+      "options": [
+        "Adult $7; student $3",
+        "Adult $5; student $6",
+        "Adult $6; student $5",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "SYSTEM_FORMULA_FINAL",
+      "title": "Changed final check",
+      "prompt": "A rectangle has perimeter 22 centimeters. Its length is 3 centimeters greater than its width. Enter the perimeter equation, the difference equation, and the ordered pair (L, W) that solves them.",
+      "response_type": "constructed_system_and_solution",
+      "response_schema": {
+        "required_fields": [
+          "equation_1",
+          "equation_2",
+          "solution_pair"
+        ],
+        "context_variable_ids": [
+          "L",
+          "W"
+        ],
+        "field_labels": [
+          "Perimeter equation",
+          "Difference equation",
+          "Ordered pair (L, W)"
+        ]
+      }
+    },
+    {
+      "prompt_key": "SYSTEM_REPAIR_CHECK",
+      "title": "Check both relationships",
+      "prompt": "For x + y = 8 and x − y = 2, does the proposed pair (5, 3) fit both original equations?",
+      "response_type": "single_select",
+      "options": [
+        "Yes",
+        "No",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "SYSTEM_REPAIR_TRANSLATE",
+      "title": "Rebuild the formula translation",
+      "prompt": "A rectangle has perimeter 18 centimeters. After writing 2L + 2W = 18, which equation follows after dividing both sides by 2?",
+      "response_type": "single_select",
+      "options": [
+        "L + W = 18",
+        "L + W = 9",
+        "L − W = 9",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "SYSTEM_REENTRY_PAIR",
+      "title": "Return to the system check",
+      "prompt": "The lines x + y = 11 and 2x − y = 7 meet at one point. What is that point?",
+      "response_type": "single_select",
+      "options": [
+        "(5, 6)",
+        "(7, 4)",
+        "(6, 5)",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "SYSTEM_REENTRY_FORMULA",
+      "title": "Return to the formula check",
+      "prompt": "A workshop total follows T = 3a + 2b = 26, and a is 2 greater than b. Enter the total equation, the difference equation, and the ordered pair (a, b) that solves them.",
+      "response_type": "constructed_system_and_solution",
+      "response_schema": {
+        "required_fields": [
+          "equation_1",
+          "equation_2",
+          "solution_pair"
+        ],
+        "context_variable_ids": [
+          "a",
+          "b"
+        ],
+        "field_labels": [
+          "Total equation",
+          "Difference equation",
+          "Ordered pair (a, b)"
+        ]
+      }
+    },
+    {
+      "prompt_key": "LOG_POWER_START",
+      "title": "Starting check",
+      "prompt": "What value is 10 raised to the third power?",
+      "response_type": "single_select",
+      "options": [
+        "30",
+        "300",
+        "1000",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "LOG_GUIDED",
+      "title": "Guided practice",
+      "prompt": "If log base 10 of n equals −1, which exponential statement gives n?",
+      "response_type": "single_select",
+      "options": [
+        "n = 10^−1",
+        "n = −10",
+        "n = 10",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "LOG_LIGHT",
+      "title": "Less help",
+      "prompt": "If e raised to q equals 12, which expression isolates q?",
+      "response_type": "single_select",
+      "options": [
+        "q = e × 12",
+        "q = ln(12)",
+        "q = 12/e",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "LOG_SOLO",
+      "title": "On your own",
+      "prompt": "If 10 raised to r equals 45, which expression isolates r?",
+      "response_type": "single_select",
+      "options": [
+        "r = 10 × 45",
+        "r = 45/10",
+        "r = log base 10 of 45",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "LOG_EXP_FINAL",
+      "title": "Final check",
+      "prompt": "If 3e raised to the power 0.5t equals 18, which expression isolates t?",
+      "response_type": "single_select",
+      "options": [
+        "t = ln(6)/2",
+        "t = 2 ln(6)",
+        "t = 6/e",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "LOG_LOGFORM_FINAL",
+      "title": "Changed final check",
+      "prompt": "If log base 10 of (n / 5) equals 2, what is n?",
+      "response_type": "single_select",
+      "options": [
+        "500",
+        "100",
+        "10",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "LOG_REPAIR_EQUIV",
+      "title": "Match the inverse form",
+      "prompt": "If 2e raised to the power u equals 16, which expression isolates u?",
+      "response_type": "single_select",
+      "options": [
+        "u = 8",
+        "u = ln(8)",
+        "u = ln(16)",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "LOG_REPAIR_RATIO",
+      "title": "Rebuild the logarithmic ratio",
+      "prompt": "If log base 10 of (r / 4) equals 1, what is r?",
+      "response_type": "single_select",
+      "options": [
+        "40",
+        "10",
+        "4",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "LOG_REENTRY_EXP",
+      "title": "Return to the exponential check",
+      "prompt": "If 4e raised to the power 3z equals 20, which expression isolates z?",
+      "response_type": "single_select",
+      "options": [
+        "z = ln(5)",
+        "z = ln(5)/3",
+        "z = 3 ln(5)",
+        "Not sure"
+      ]
+    },
+    {
+      "prompt_key": "LOG_REENTRY_LOGFORM",
+      "title": "Return to the logarithmic check",
+      "prompt": "If 1 + log base 10 of m equals 3, what is m?",
+      "response_type": "single_select",
+      "options": [
+        "10",
+        "100",
+        "1000",
+        "Not sure"
+      ]
+    }
+  ]
+}
