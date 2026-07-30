@@ -2,21 +2,23 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  ATLAS_LESSON_CLUSTER,
   type CandidateLessonInput,
   type PlanActivityView,
   type RecallLoadInput,
 } from '@mcat/contracts';
 import { authority } from './authority';
+import { REGISTERED_LESSONS, lessonBySlug } from './lesson-catalog';
 import { useRecallLoad, useRecallService } from './recall-queries';
 import { PLAN_ACTIVITY_COMPLETE_INVALIDATE, TODAYS_PATH_INVALIDATE } from './invalidation-keys';
-import { APP_NATIVE_LESSONS } from '../app-native';
 
 /**
  * Today's Path client hooks. The plan is built SERVER-SIDE, but Recall (fact
- * flashcards) and the app-native lesson catalog live on the client — so the
- * client feeds a recall-load summary + candidate lessons into the build command
- * and the authority does the scoring/sizing/ordering + persistence.
+ * flashcards) and the servable lesson catalog live on the client — so the client
+ * feeds a recall-load summary + candidate lessons into the build command and the
+ * authority does the scoring/sizing/ordering + persistence. The lesson candidates
+ * come from the registration manifest (`./lesson-catalog`), the app's single
+ * servability source, so the planner can only ever schedule a lesson the app can
+ * actually serve.
  */
 
 const EMPTY_RECALL_LOAD: RecallLoadInput = {
@@ -27,42 +29,25 @@ const EMPTY_RECALL_LOAD: RecallLoadInput = {
   estimatedMinutesForDue: 0,
 };
 
-/** MCAT section code for a lesson subject (provisional exam-weight bucket). */
-function sectionForSubject(subject: string): string | null {
-  const s = subject.toLowerCase();
-  if (/cars|critical analysis|reasoning skills/.test(s)) return 'cars';
-  if (/biochem|biology|bio\b/.test(s)) return 'bb';
-  if (/chem|physics|phys/.test(s)) return 'cp';
-  if (/psych|socio|behav/.test(s)) return 'ps';
-  return null;
-}
-
 /**
- * Reachable hard prerequisite edges from
- * `curriculum/v3/v3-lesson-authoring-manifest.json`.
- *
- * This is intentionally the app-native projection: raw manifest edges whose
- * prerequisite has no app-native candidate cannot be completed through Today's
- * Path, so sending them would permanently lock the dependent lesson. Add an
- * external completion writer before expanding this table beyond catalog-resolved
- * edges.
+ * The servable lessons offered as Today's Path candidates, straight from the
+ * registration manifest. Every field the planner scores on — section, cluster,
+ * required KCs, prerequisites, estimated minutes — is threaded from the manifest,
+ * which the boot guard has already reconciled against the checked-in curriculum
+ * and cluster atlas. Prerequisites are a closed set of registered lessons, so a
+ * candidate can never depend on a lesson Today's Path cannot itself complete.
  */
-const APP_NATIVE_HARD_PREREQUISITES: Readonly<Partial<Record<string, readonly string[]>>> = {
-  'V3-LES-128144': ['V3-LES-765609'],
-};
-
-/** The app-native lessons offered as Today's Path candidates (client-owned catalog). */
 export function buildCandidateLessons(): CandidateLessonInput[] {
-  return APP_NATIVE_LESSONS.map(({ script }) => ({
-    lessonId: script.id,
-    slug: script.slug,
-    title: script.title,
-    section: sectionForSubject(script.subject),
-    cluster: ATLAS_LESSON_CLUSTER[script.id] ?? null,
-    kcCount: script.requiredKcs.length,
-    kcIds: script.requiredKcs.map((kc) => kc.id),
-    prerequisiteLessonIds: [...(APP_NATIVE_HARD_PREREQUISITES[script.id] ?? [])],
-    estimatedMinutes: script.estimatedMinutes,
+  return REGISTERED_LESSONS.map((lesson) => ({
+    lessonId: lesson.lessonId,
+    slug: lesson.slug,
+    title: lesson.title,
+    section: lesson.section,
+    cluster: lesson.cluster,
+    kcCount: lesson.kcIds.length,
+    kcIds: [...lesson.kcIds],
+    prerequisiteLessonIds: [...lesson.prerequisiteLessonIds],
+    estimatedMinutes: lesson.estimatedMinutes,
   }));
 }
 
@@ -179,9 +164,15 @@ export function useLaunchPlanActivity() {
             },
           });
           break;
-        case 'lesson':
-          if (a.lessonSlug) navigate(`/app/lesson/${a.lessonSlug}`, { state });
+        case 'lesson': {
+          // A scheduled lesson launches on its real manifest route (the same route
+          // the Curriculum uses). Candidates only ever come from the manifest, so
+          // the slug resolves; the preview-route fallback is a defensive no-op.
+          const registered = a.lessonSlug ? lessonBySlug(a.lessonSlug) : undefined;
+          if (registered) navigate(registered.routePath, { state });
+          else if (a.lessonSlug) navigate(`/app/lesson/${a.lessonSlug}`, { state });
           break;
+        }
         case 'practice':
           navigate('/app/practice/session', {
             state: { ...state, x: a.count ?? 8, focus: a.focus ?? undefined },
