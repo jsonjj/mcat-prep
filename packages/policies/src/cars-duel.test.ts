@@ -1,3 +1,7 @@
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { CarsDuelTopicSchema } from '@mcat/contracts';
 import type { CarsDuelIntensity, CarsDuelMode, CarsDuelTopic } from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 import {
@@ -81,6 +85,58 @@ function record(over: Partial<CarsDuelRecord> = {}): CarsDuelRecord {
 
 function stateWith(over: Partial<CarsDuelEngineState> = {}): CarsDuelEngineState {
   return { ...initialCarsDuelState(), ...over };
+}
+
+/**
+ * The REAL vetted 150-topic pool, read from the canonical source the seed + content
+ * embed both derive from (snake_case → the camelCase runtime shape). Loaded here so
+ * the reachability guarantee is asserted against the ACTUAL content the eval flagged,
+ * not a synthetic stand-in — without taking a package dependency on @mcat/content.
+ */
+function loadVettedPool(): CarsDuelTopic[] {
+  const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+  const rows = JSON.parse(
+    readFileSync(join(repoRoot, 'content/cars-duel/topics.json'), 'utf8'),
+  ) as ReadonlyArray<Record<string, unknown>>;
+  return rows.map((r) =>
+    CarsDuelTopicSchema.parse({
+      id: r.id,
+      proposition: r.proposition,
+      theme: r.theme,
+      argumentStructure: r.argument_structure,
+      difficulty: r.difficulty,
+      charge: r.charge,
+    }),
+  );
+}
+
+/**
+ * Simulate many consecutive daily selections at a FIXED rating: each drawn topic is
+ * folded back into history with a null hold-rate so the rating — and therefore the
+ * difficulty band — never moves, while novelty cooldown + theme/structure spread
+ * rotate exactly as they would across many days. Returns every topic drawn.
+ */
+function drawMany(
+  pool: readonly CarsDuelTopic[],
+  rating: number,
+  draws: number,
+  seed: number,
+): CarsDuelTopic[] {
+  const rng = mulberry32(seed);
+  let state = stateWith({ rating });
+  const picked: CarsDuelTopic[] = [];
+  for (let i = 0; i < draws; i += 1) {
+    const chosen = selectCarsDuelTopic({ topics: pool, state, rng });
+    picked.push(chosen);
+    state = recordCarsDuelOutcome(state, {
+      topic: chosen,
+      mode: 'rebut',
+      intensity: state.intensity,
+      holdRate: null, // keep the rating (hence the difficulty band) fixed across the run
+      at: '2026-01-01T00:00:00.000Z',
+    });
+  }
+  return picked;
 }
 
 describe('CARS Duel — intensity (Elo-ish with hysteresis)', () => {
@@ -366,6 +422,87 @@ describe('CARS Duel — topic selector (cooldown, spread, difficulty band)', () 
       themes.add(picked.theme);
     }
     expect(themes.size).toBe(THEMES.length);
+  });
+});
+
+describe('CARS Duel — topic selector theme reachability across ability bands', () => {
+  it('keeps EVERY vetted theme reachable for a struggling learner (targetDifficulty 1)', () => {
+    // rating ≲ -1.5 ⇒ targetDifficulty 1 ⇒ band {1,2}. In the vetted pool philosophy is
+    // authored only at difficulty 3 & 5, so a band-first selector permanently starves it
+    // (and ethics has no difficulty-1 items). Every theme must still surface over draws.
+    const pool = loadVettedPool();
+    expect(targetDifficulty(-2)).toBe(1);
+    const allThemes = new Set(pool.map((t) => t.theme));
+    const seenThemes = new Set(drawMany(pool, -2, 600, 12345).map((t) => t.theme));
+    expect(seenThemes).toEqual(allThemes);
+    // The two themes the read-only eval flagged, named explicitly (regression guard).
+    expect(seenThemes.has('philosophy')).toBe(true);
+    expect(seenThemes.has('ethics')).toBe(true);
+  });
+
+  it('keeps in-band difficulty the default bias, using out-of-band only at a theme’s nearest tier', () => {
+    const pool = loadVettedPool();
+    const target = targetDifficulty(-2); // 1 ⇒ band {1,2}
+    const picks = drawMany(pool, -2, 600, 2024);
+    // "Difficulty near the band" stays the default: the large majority of draws are in-band
+    // (reachability re-admits an out-of-band theme, it does not flood the learner with them).
+    const inBand = picks.filter((t) => Math.abs(t.difficulty - target) <= CARS_DUEL_CONFIG.difficultyRadius);
+    expect(inBand.length / picks.length).toBeGreaterThan(0.8);
+    // Philosophy has NO in-band item, so it surfaces out-of-band — but only at its NEAREST
+    // tier (difficulty 3), never the far difficulty-5 items: nearest-difficulty re-admission,
+    // not arbitrary out-of-band noise.
+    const philDiffs = new Set(picks.filter((t) => t.theme === 'philosophy').map((t) => t.difficulty));
+    expect(philDiffs).toEqual(new Set([3]));
+  });
+
+  it('preserves reachability and the in-band bias for a high-ability learner too', () => {
+    const pool = loadVettedPool();
+    const target = targetDifficulty(2); // 5 ⇒ band {4,5}
+    expect(target).toBe(5);
+    const picks = drawMany(pool, 2, 400, 777);
+    // Every theme still reachable at the top band…
+    expect(new Set(picks.map((t) => t.theme))).toEqual(new Set(pool.map((t) => t.theme)));
+    // …and in-band difficulty dominates even harder here: every theme has an in-band item,
+    // so out-of-band only occurs on rare novelty-cooldown overflow of a thin theme.
+    const inBand = picks.filter((t) => Math.abs(t.difficulty - target) <= CARS_DUEL_CONFIG.difficultyRadius);
+    expect(inBand.length / picks.length).toBeGreaterThan(0.95);
+  });
+
+  it('re-admits a band-missing theme at its nearest difficulty while keeping in-band themes in-band (synthetic)', () => {
+    // Reproduce the vetted gap in miniature, but with a deep enough in-band set (> the
+    // novelty window) that the pre-fix band-first filter never runs dry — so pre-fix the
+    // stranded theme is cleanly starved, not accidentally rescued by radius-widening.
+    const inBandThemes = ['aesthetics', 'ethics', 'economics', 'psychology', 'sociology'] as const;
+    const pool: CarsDuelTopic[] = [];
+    inBandThemes.forEach((theme, ti) => {
+      for (let k = 0; k < 5; k += 1) {
+        pool.push(
+          topic(`${theme}-in-${k}`, {
+            theme,
+            argumentStructure: STRUCTURES[(ti + k) % STRUCTURES.length]!,
+            difficulty: (k % 2 === 0 ? 1 : 2) as 1,
+          }),
+        );
+      }
+    });
+    // economics ALSO has an out-of-band item — it must NEVER be pulled out of band, since
+    // economics is already reachable in-band.
+    pool.push(topic('economics-out', { theme: 'economics', argumentStructure: 'analogy', difficulty: 4 }));
+    // philosophy exists ONLY outside a struggling learner's band → it must be re-admitted
+    // at its nearest tier (4): the reachability guarantee.
+    pool.push(topic('philosophy-a', { theme: 'philosophy', argumentStructure: 'normative', difficulty: 4 }));
+    pool.push(topic('philosophy-b', { theme: 'philosophy', argumentStructure: 'causal', difficulty: 4 }));
+
+    const picks = drawMany(pool, -2, 300, 42); // targetDifficulty 1 ⇒ band {1,2}
+    const seenThemes = new Set(picks.map((t) => t.theme));
+    // Reachability: every theme surfaces, including the otherwise band-missing one.
+    expect(seenThemes).toEqual(new Set([...inBandThemes, 'philosophy']));
+    for (const t of picks) {
+      // philosophy (no in-band item) surfaces only at its NEAREST tier (4)…
+      if (t.theme === 'philosophy') expect(t.difficulty).toBe(4);
+      // …and economics, already reachable in-band, is never pulled out of band.
+      if (t.theme === 'economics') expect(t.difficulty).toBeLessThanOrEqual(2);
+    }
   });
 });
 

@@ -276,9 +276,11 @@ export function decideCarsDuelMode(
 
 /**
  * Pick one topic: exclude novelty-cooldown (and caller-excluded) topics, restrict
- * to difficulty near the learner's band (widening only if that band is empty),
- * then favor the least-recently-seen theme/structure strata and randomize within
- * the best-spread bucket.
+ * to difficulty near the learner's band (widening only if that band is empty), then
+ * guarantee theme reachability by re-admitting any band-missing theme at its nearest
+ * difficulty (so no theme is permanently starved for an ability band), then favor the
+ * least-recently-seen theme/structure strata and randomize within the best-spread
+ * bucket.
  */
 export function selectCarsDuelTopic(
   input: Pick<CarsDuelSelectionInput, 'topics' | 'state' | 'rng' | 'excludeTopicIds'>,
@@ -306,6 +308,26 @@ export function selectCarsDuelTopic(
     }
   }
 
+  // Theme reachability: coverage is uneven across (theme × difficulty) — some themes
+  // exist ONLY outside a given band (e.g. philosophy is authored only at difficulty 3
+  // & 5), so applying the difficulty band BEFORE theme-spread would permanently strand
+  // a whole theme for an ability band (a struggling learner's band {1,2} could never be
+  // shown philosophy). Re-admit each band-missing theme at its item(s) nearest the
+  // target difficulty so every theme in the pool stays reachable. In-band difficulty
+  // remains the default bias: themes already represented in the band keep ONLY their
+  // in-band items, so out-of-band items surface solely for otherwise-unreachable themes,
+  // and the spread stage below still steers the common case to in-band strata.
+  const bandedThemes = new Set(banded.map((t) => t.theme));
+  const candidates = [...banded];
+  for (const theme of new Set(pool.map((t) => t.theme))) {
+    if (bandedThemes.has(theme)) continue;
+    const themeTopics = pool.filter((t) => t.theme === theme);
+    const nearest = Math.min(...themeTopics.map((t) => Math.abs(t.difficulty - target)));
+    for (const t of themeTopics) {
+      if (Math.abs(t.difficulty - target) === nearest) candidates.push(t);
+    }
+  }
+
   // Spread: penalize themes/structures seen in the recent window; keep the minimum.
   const recent = state.history.slice(-cfg.spreadWindow);
   const themeCount = new Map<string, number>();
@@ -316,8 +338,8 @@ export function selectCarsDuelTopic(
   }
   const penalty = (t: CarsDuelTopic): number =>
     (themeCount.get(t.theme) ?? 0) + (structureCount.get(t.argumentStructure) ?? 0);
-  const minPenalty = Math.min(...banded.map(penalty));
-  const best = banded.filter((t) => penalty(t) === minPenalty);
+  const minPenalty = Math.min(...candidates.map(penalty));
+  const best = candidates.filter((t) => penalty(t) === minPenalty);
 
   // Stratified randomization within the best-spread bucket.
   const index = Math.min(best.length - 1, Math.floor(clamp(rng(), 0, 0.999999) * best.length));
