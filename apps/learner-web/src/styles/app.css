@@ -4530,6 +4530,26 @@ body {
   gap: var(--mc-space-3);
   margin-top: var(--mc-space-1);
 }
+/* The detail card's single primary CTA ("Try a fresh one" / "Practice this" /
+   "Practice this passage") is the whole point of the card, so it reads as a big,
+   full-width, tappable bar rather than a small inline pill: a taller hit area,
+   bigger padding, a heavier label, and a soft lift on hover pull the eye and the
+   click. Scoped to the mistakes detail actions — the sibling "Example / another
+   way" secondary button lives in `.mc-explain`, and the global Button is untouched. */
+.mc-mdetail__actions .mc-button {
+  flex: 1 1 100%;
+  min-height: 56px;
+  padding: var(--mc-space-3) var(--mc-space-6);
+  font-size: var(--mc-text-17);
+  font-weight: 700;
+  box-shadow: var(--mc-shadow-card);
+}
+.mc-mdetail__actions .mc-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(16, 34, 46, 0.1),
+    0 14px 34px rgba(16, 34, 46, 0.16);
+}
 .mc-mistakes__empty {
   padding: var(--mc-space-5) var(--mc-space-3);
   text-align: center;
