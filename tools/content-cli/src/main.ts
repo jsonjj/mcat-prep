@@ -1,5 +1,5 @@
-import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { dirname, isAbsolute, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
@@ -24,6 +24,7 @@ import {
   canonicalVectorLessonArtifactJson,
   validateVectorLessonArtifacts,
 } from '@mcat/content/v3-vector-lesson';
+import { planLessonRehash, type RehashFile } from '@mcat/content/lesson-validator';
 
 /**
  * Default v7 corpus location. This lives in the LOCAL-ONLY archive OUTSIDE the
@@ -325,6 +326,50 @@ function cmdVectorLessonArtifacts(): void {
   console.log(`Wrote four validated V3-LES-130923 internal-draft artifacts to ${outDir}`);
 }
 
+/**
+ * Recompute a lesson's content-hash chain after an authored edit (Real Lesson
+ * Catalog, Phase 3/4). Byte-faithful for the four primary artifacts (only hash
+ * substrings change; historical `lineage.*` hashes are preserved); refreshes the
+ * manifest + `file_sha256`. Reuses the validator's canonical primitives, then
+ * INDEPENDENTLY re-rehashes the written files to prove the chain is self-consistent.
+ */
+function cmdRehash(lessonDirArg: string | undefined): void {
+  if (!lessonDirArg) {
+    console.error('rehash: expected a lesson directory, e.g. content/lessons/v3-les-844372');
+    process.exit(1);
+    return;
+  }
+  const dir = isAbsolute(lessonDirArg) ? lessonDirArg : join(REPO_ROOT, lessonDirArg);
+  const readFiles = (): RehashFile[] =>
+    readdirSync(dir)
+      .filter((f) => f.endsWith('.json') && f !== 'artifact-manifest.json')
+      .map((relPath) => ({ relPath, rawText: readFileSync(join(dir, relPath), 'utf8') }));
+  const manifestPath = join(dir, 'artifact-manifest.json');
+  const readManifest = (): string | null => (existsSync(manifestPath) ? readFileSync(manifestPath, 'utf8') : null);
+
+  const plan = planLessonRehash(readFiles(), readManifest());
+  console.log(`rehash: ${dir}`);
+  for (const c of plan.primaryContentSha) {
+    const arrow = c.oldContentSha256 === c.newContentSha256 ? '==' : '->';
+    console.log(`  ${c.relPath.padEnd(28)} ${String(c.oldContentSha256).slice(0, 12)} ${arrow} ${c.newContentSha256.slice(0, 12)}`);
+  }
+  if (!plan.changed) {
+    console.log('  already consistent — no files written.');
+    return;
+  }
+  for (const w of plan.writes) writeFileSync(join(dir, w.relPath), w.newText);
+  console.log(`  wrote ${plan.writes.length} file(s): ${plan.writes.map((w) => w.relPath).join(', ')}`);
+
+  // Independent verification: a fresh read + rehash of what we just wrote must be a no-op.
+  const verify = planLessonRehash(readFiles(), readManifest());
+  if (verify.changed) {
+    console.error(`  VERIFY FAILED: re-rehash still reports changes to ${verify.writes.map((w) => w.relPath).join(', ')}`);
+    process.exit(1);
+    return;
+  }
+  console.log('  verify: independent re-rehash is a no-op — hash chain self-consistent. OK');
+}
+
 switch (command) {
   case 'manifest':
     cmdManifest();
@@ -347,6 +392,9 @@ switch (command) {
   case 'vector-lesson-artifacts':
     cmdVectorLessonArtifacts();
     break;
+  case 'rehash':
+    cmdRehash(arg);
+    break;
   default:
     console.log(
       'MCAT content CLI\n\nCommands:\n' +
@@ -356,6 +404,7 @@ switch (command) {
         '  schemas             Generate JSON Schemas into content/question-bank/schema/\n' +
         '  load-v7 [path]      Validate + compile the v7 JSONL corpus (read-only) into a local bundle\n' +
         '  db-seed [path]      Emit a gitignored seed.sql (questions + protected answers) with derived cluster/section\n' +
-        '  vector-lesson-artifacts  Generate exactly four V3-LES-130923 internal-draft artifacts\n',
+        '  vector-lesson-artifacts  Generate exactly four V3-LES-130923 internal-draft artifacts\n' +
+        '  rehash <lessonDir>  Recompute a lesson content-hash chain (content_sha256 + file_sha256) after an authored edit\n',
     );
 }

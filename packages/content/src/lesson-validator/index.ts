@@ -1,5 +1,6 @@
 export * from './types';
 export { canonicalize, contentSha256, fileSha256, sha256Hex } from './canonical';
+export { planLessonRehash, type RehashFile, type RehashPlan, type RehashChange } from './rehash';
 export { buildResolvableIds } from './resolvable';
 export {
   reconcileManifest,
