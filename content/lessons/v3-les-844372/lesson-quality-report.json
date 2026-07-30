@@ -9,7 +9,7 @@
     "schema_sha256": "ea5ff6577152fff18d0cb4a0a398ef57e789828a42788768fb3ab3ca4f0be990",
     "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
   },
-  "content_sha256": "a5086135f47fdb3dbdd641f5fdf0b9dd710ace6b2096d035dc30ed5f88e7a12b",
+  "content_sha256": "78f3900aa4b18a17a570103996a122dc9a5bb407c5f3699be610f12dc0448605",
   "registry_binding": {
     "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
     "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
@@ -123,11 +123,11 @@
   ],
   "dependency_bindings": {
     "lesson_script_id": "V3-LSCR-844372",
-    "lesson_script_sha256": "25f923d2d2f34d20dec498ff2f5e14a089fe616c4111a2f0e14119ff2954a1ec",
+    "lesson_script_sha256": "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
     "kc_coverage_matrix_id": "V3-KCOV-844372",
-    "kc_coverage_matrix_sha256": "98321c7a34b3636f3e7e7f4cc3a17ea09343bc977c20fd86d5346909293b71f8",
+    "kc_coverage_matrix_sha256": "881d4d56e2120fe1587edf7acf1388608a4790c471f4882bd08cb786f453bfef",
     "lesson_presentation_plan_id": "V3-LPPL-844372",
-    "lesson_presentation_plan_sha256": "acd5d85584125c6ae9c0e1ac03763f20efa944455ee0b4de702adee82a61c743"
+    "lesson_presentation_plan_sha256": "877aff28e57a9241e9845ee3e442bcdb2c1fc85e0b88e3f3ee2c2aa66e3640d2"
   },
   "lineage": {
     "supersedes": {
@@ -294,8 +294,8 @@
       ],
       "reviewer_identity_ids": [],
       "reviewed_dependency_hashes": [
-        "25f923d2d2f34d20dec498ff2f5e14a089fe616c4111a2f0e14119ff2954a1ec",
-        "98321c7a34b3636f3e7e7f4cc3a17ea09343bc977c20fd86d5346909293b71f8"
+        "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
+        "881d4d56e2120fe1587edf7acf1388608a4790c471f4882bd08cb786f453bfef"
       ]
     },
     "presentation_gate": {
@@ -331,7 +331,7 @@
       ],
       "reviewer_identity_ids": [],
       "reviewed_dependency_hashes": [
-        "acd5d85584125c6ae9c0e1ac03763f20efa944455ee0b4de702adee82a61c743"
+        "877aff28e57a9241e9845ee3e442bcdb2c1fc85e0b88e3f3ee2c2aa66e3640d2"
       ],
       "blocker_code": "BLOCKED_SHARED_RUNTIME"
     },
@@ -383,9 +383,9 @@
       ],
       "reviewer_identity_ids": [],
       "reviewed_dependency_hashes": [
-        "25f923d2d2f34d20dec498ff2f5e14a089fe616c4111a2f0e14119ff2954a1ec",
-        "98321c7a34b3636f3e7e7f4cc3a17ea09343bc977c20fd86d5346909293b71f8",
-        "acd5d85584125c6ae9c0e1ac03763f20efa944455ee0b4de702adee82a61c743"
+        "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
+        "881d4d56e2120fe1587edf7acf1388608a4790c471f4882bd08cb786f453bfef",
+        "877aff28e57a9241e9845ee3e442bcdb2c1fc85e0b88e3f3ee2c2aa66e3640d2"
       ],
       "blocker_code": "BLOCKED_SHARED_RUNTIME"
     },
@@ -394,7 +394,7 @@
         "finding_id": "LQRP-844372-001",
         "severity": "P1",
         "artifact_id": "V3-LPPL-844372",
-        "artifact_sha256": "acd5d85584125c6ae9c0e1ac03763f20efa944455ee0b4de702adee82a61c743",
+        "artifact_sha256": "877aff28e57a9241e9845ee3e442bcdb2c1fc85e0b88e3f3ee2c2aa66e3640d2",
         "artifact_path": "payload.browser_evidence_plan",
         "evidence_refs": [],
         "required_correction": "Integrate and exercise the shared runtime, API, persistence, learner-safe DTO projection, Start-button path, and exact re-entry branches.",
@@ -406,7 +406,7 @@
         "finding_id": "LQRP-844372-002",
         "severity": "P1",
         "artifact_id": "V3-LSCR-844372",
-        "artifact_sha256": "25f923d2d2f34d20dec498ff2f5e14a089fe616c4111a2f0e14119ff2954a1ec",
+        "artifact_sha256": "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
         "artifact_path": "payload.question_evidence_plan",
         "evidence_refs": [],
         "required_correction": "Obtain independent curriculum, domain, instructional-design, question-evidence, source-rights, and blind-solve review receipts.",
@@ -418,7 +418,7 @@
         "finding_id": "LQRP-844372-003",
         "severity": "P2",
         "artifact_id": "V3-LSCR-844372",
-        "artifact_sha256": "25f923d2d2f34d20dec498ff2f5e14a089fe616c4111a2f0e14119ff2954a1ec",
+        "artifact_sha256": "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
         "artifact_path": "payload.attachment_bindings",
         "evidence_refs": [
           "V3-HOLD-110006"
@@ -432,7 +432,7 @@
         "finding_id": "LQRP-844372-004",
         "severity": "P1",
         "artifact_id": "V3-LSCR-844372",
-        "artifact_sha256": "25f923d2d2f34d20dec498ff2f5e14a089fe616c4111a2f0e14119ff2954a1ec",
+        "artifact_sha256": "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
         "artifact_path": "schema_binding",
         "evidence_refs": [],
         "required_correction": "Bind the lesson to the final shared Spec 04 schema package and compile the canonical wire form.",
@@ -459,7 +459,7 @@
         "finding_id": "LQRP-844372-006",
         "severity": "P2",
         "artifact_id": "V3-LPPL-844372",
-        "artifact_sha256": "acd5d85584125c6ae9c0e1ac03763f20efa944455ee0b4de702adee82a61c743",
+        "artifact_sha256": "877aff28e57a9241e9845ee3e442bcdb2c1fc85e0b88e3f3ee2c2aa66e3640d2",
         "artifact_path": "representation_plans",
         "evidence_refs": [],
         "required_correction": "Obtain independent novice-clarity and construct-equivalence review for every representation.",

@@ -50,17 +50,29 @@ import {
  * normalizes to instructional-only, the fail-closed default.
  *
  * `V3-LES-130923` carries 6 — its `CHANGED_EXIT` terminal checks (one initial
- * plus one re-entry per KC, across 3 KCs) now declare `candidate_evidence_modes:
+ * plus one re-entry per KC, across 3 KCs) declare `candidate_evidence_modes:
  * ['TRANSFER']` and a `reasoning_operation`, per `changed-task-license`.
  * `NEAR_EXIT` was deliberately left instructional, so it contributes 0.
- * `V3-LES-789208` and `V3-LES-844372` are unlicensed here: both live outside
- * this repository (`MCAT_LESSON_DRAFTS_DIR`/the workspace-sibling drafts
- * tree), so an edit to either cannot be committed, reviewed, or pushed from
- * this branch.
+ * `V3-LES-844372` carries 6 by the identical rule: its three changed-task KCs
+ * (GRAPH/SYS/LOG) each license one initial `CHANGED_EXIT` plus its `CHANGED`
+ * re-entry — the latter authored as a `REPAIR_CONFIRMATION` role with a
+ * `CHANGED_TASK` exit function, which the production adapter qualifies on
+ * `candidate_evidence_modes` + `reasoning_operation`, never on the role label.
+ * `NEAR_EXIT` and every instructional stage stay ineligible, contributing 0.
+ * `V3-LES-789208` is still unlicensed here (contributes 0) pending its own
+ * changed-task pass. All three lessons are vendored in-repo under
+ * `content/lessons/` since Phase 2 — none live outside the repository.
  */
 const EXPECTED_QUALIFIED_BKT_OBSERVATIONS: Readonly<Record<string, number>> = {
   'V3-LES-130923': 6,
+  'V3-LES-844372': 6,
 };
+
+// The whole catalog is expected to move exactly this many qualified BKT
+// observations. Pinned as an explicit literal (not derived from the map above)
+// so licensing a lesson — or a per-lesson pin drifting — forces a conscious
+// edit to this catalog-wide total as well.
+const EXPECTED_CATALOG_TOTAL = 12;
 
 const OBSERVATION_ID = '9c0ffee0-0000-4000-8000-000000000001';
 const EVIDENCE_ID = '9c0ffee0-0000-4000-8000-000000000002';
@@ -346,4 +358,16 @@ describe('V3 lesson binding conformance', () => {
       expect(qualifiedBktObservations).toBe(EXPECTED_QUALIFIED_BKT_OBSERVATIONS[lessonId] ?? 0);
     });
   }
+
+  it('pins the catalog-wide qualified-observation total, and only for real lessons', () => {
+    const pinnedTotal = Object.values(EXPECTED_QUALIFIED_BKT_OBSERVATIONS).reduce((a, b) => a + b, 0);
+    expect(pinnedTotal, 'sum of per-lesson pins must match the reviewed catalog total').toBe(
+      EXPECTED_CATALOG_TOTAL,
+    );
+    // A pin may only name a lesson the corpus actually discovers, so a renamed
+    // or retired lesson can never leave a silently-satisfied entry behind.
+    for (const pinnedId of Object.keys(EXPECTED_QUALIFIED_BKT_OBSERVATIONS)) {
+      expect(CONFORMANCE_LESSON_IDS, `${pinnedId} must be a discovered lesson`).toContain(pinnedId);
+    }
+  });
 });
