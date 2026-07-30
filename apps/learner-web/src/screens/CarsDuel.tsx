@@ -303,11 +303,7 @@ export function CarsDuel() {
     return (
       <div className="mc-screen mc-cars-setup">
         <header className="mc-cars-setup__head">
-          <p className="mc-eyebrow mc-cars-setup__eyebrow">
-            <IconSwords className="mc-cars-setup__eyebrow-icon" aria-hidden="true" />
-            CARS Duel
-          </p>
-          <h1 className="mc-cars-setup__title">Debate to sharpen your reasoning</h1>
+          <h1 className="mc-cars-setup__title">CARS Duel</h1>
           <p className="mc-muted mc-cars-setup__intro">
             Practice active reading by debating high-yield arguments with AI.
           </p>

@@ -1507,9 +1507,13 @@ body {
     max-width: 1280px;
   }
   /* CARS Duel setup: a wider, sectioned page (mode cards · intensity · topic),
-     matching the approved mockup — same PARENT-cap escape as above. */
+     matching the approved mockup — same PARENT-cap escape as above. The top/bottom
+     padding is trimmed here (vs the default main padding) so the sectioned setup
+     clears a laptop viewport without vertical scroll. */
   .mc-shell__main:has(.mc-cars-setup) {
     max-width: 1100px;
+    padding-top: var(--mc-space-3);
+    padding-bottom: var(--mc-space-5);
   }
   /* Give the two side panels a little more width; the center keeps the brain at its
      rendered size (the canvas is height-driven, so a narrower column just trims the
@@ -1666,36 +1670,24 @@ body {
 
 /* ---- CARS Duel — setup screen (header · mode cards · intensity · topic · CTA) ---- */
 
-/* The setup is a wide, sectioned page (no outer card): eyebrow + big serif heading +
+/* The setup is a wide, sectioned page (no outer card): a big serif heading +
    one-line intro, then Mode / Intensity / Topic sections, then the CTA. The width cap
-   lives on the PARENT (`.mc-shell__main:has(.mc-cars-setup)`, desktop media block). */
+   lives on the PARENT (`.mc-shell__main:has(.mc-cars-setup)`, desktop media block).
+   The vertical rhythm is tightened so the whole setup fits a laptop viewport without
+   scrolling (heading → intro → mode → intensity → topic → CTA) — verified down to a
+   1024×768 content area. */
 .mc-cars-setup {
-  gap: var(--mc-space-5);
+  gap: var(--mc-space-3);
 }
 .mc-cars-setup__head {
   display: flex;
   flex-direction: column;
   gap: var(--mc-space-2);
 }
-.mc-cars-setup__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--mc-space-2);
-  margin: 0;
-  text-transform: none;
-  letter-spacing: 0.02em;
-  font-size: var(--mc-text-17);
-  font-weight: 700;
-  color: var(--mc-primary-text);
-}
-.mc-cars-setup__eyebrow-icon {
-  width: 22px;
-  height: 22px;
-}
 .mc-cars-setup__title {
   margin: 0;
   font-family: var(--mc-font-display);
-  font-size: clamp(2.25rem, 3.5vw, 3rem);
+  font-size: clamp(2rem, 3vw, 2.5rem);
   line-height: var(--mc-leading-tight);
   color: var(--mc-ink);
 }
@@ -1745,7 +1737,7 @@ body {
   display: flex;
   align-items: center;
   gap: var(--mc-space-4);
-  padding: var(--mc-space-5);
+  padding: var(--mc-space-3) var(--mc-space-4);
   border: 1px solid var(--mc-border);
   border-radius: var(--mc-radius-card);
   background: color-mix(in srgb, var(--mc-surface) 70%, transparent);
@@ -1783,15 +1775,15 @@ body {
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--mc-radius-pill);
   background: var(--mc-surface-2);
   color: var(--mc-ink-muted);
 }
 .mc-modecard__icon svg {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
 }
 .mc-modecard.is-active .mc-modecard__icon {
   background: color-mix(in srgb, var(--mc-primary) 16%, var(--mc-surface));
@@ -1838,8 +1830,8 @@ body {
 .mc-intensity {
   display: flex;
   flex-direction: column;
-  gap: var(--mc-space-3);
-  padding: var(--mc-space-5);
+  gap: var(--mc-space-2);
+  padding: var(--mc-space-3) var(--mc-space-4);
   border: 1px solid var(--mc-border);
   border-radius: var(--mc-radius-card);
   background: color-mix(in srgb, var(--mc-surface) 60%, transparent);
@@ -1870,7 +1862,10 @@ body {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: var(--mc-touch);
+  /* Trimmed from the 48px touch token to tighten the setup's vertical rhythm; the
+     10px track + 24px thumb (the actual target) are unchanged, so drag behavior and
+     the ≥24px target size are preserved. */
+  height: 40px;
   background: transparent;
   cursor: pointer;
 }
@@ -1937,7 +1932,7 @@ body {
   display: flex;
   align-items: center;
   gap: var(--mc-space-4);
-  padding: var(--mc-space-5);
+  padding: var(--mc-space-3) var(--mc-space-4);
   border-radius: var(--mc-radius-card);
   border: 1px solid color-mix(in srgb, var(--mc-primary) 22%, var(--mc-border));
   background: color-mix(in srgb, var(--mc-primary) 7%, var(--mc-surface));
@@ -1947,15 +1942,15 @@ body {
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--mc-radius-pill);
   background: color-mix(in srgb, var(--mc-primary) 14%, var(--mc-surface));
   color: var(--mc-primary-text);
 }
 .mc-topiccard__icon svg {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
 }
 .mc-topiccard__body {
   min-width: 0;
@@ -1972,14 +1967,14 @@ body {
 .mc-topiccard__text {
   margin: 0;
   font-family: var(--mc-font-display);
-  font-size: var(--mc-text-28);
-  line-height: 1.35;
+  font-size: var(--mc-text-22);
+  line-height: 1.3;
   color: var(--mc-ink);
 }
 
 /* Full-width "Start the duel" CTA: bigger, with a leading crossed-swords icon. */
 .mc-cars-setup__start.mc-button {
-  min-height: 64px;
+  min-height: 56px;
   font-size: var(--mc-text-22);
   font-weight: 700;
   box-shadow: var(--mc-shadow-card);
