@@ -85,6 +85,16 @@ import {
   type VectorLessonRun,
 } from './vector-lesson-runtime';
 import { vectorLessonResponseSubmissions } from './vector-lesson-response-source';
+import {
+  applyNormalizedLessonAction,
+  createNormalizedLessonRun,
+  renderNormalizedLessonRun,
+  restoreNormalizedLessonRun,
+  resumeNormalizedLessonRun,
+  type NormalizedLessonAction,
+  type NormalizedLessonRun,
+} from './normalized-lesson-runtime';
+import { normalizedLessonResponseSubmissions } from './normalized-lesson-response-source';
 import type { LessonResponseSubmission } from './lesson-response-seam';
 
 /**
@@ -129,6 +139,27 @@ type VectorLessonLearnerState = LearnerState & {
 
 function withVectorLesson(state: LearnerState): VectorLessonLearnerState {
   return state as VectorLessonLearnerState;
+}
+
+/**
+ * The persisted delivery slot for every NORMALIZED-engine lesson (L2/L3 and
+ * future lessons), keyed by lessonId. L1 keeps its own bespoke `vectorLessonRun`
+ * slot untouched; the two never collide, so the per-grammar dispatch is a slot
+ * choice rather than a rewrite. A `NormalizedLessonRun` is a small plain object,
+ * so it serializes onto the learner projection exactly like `vectorLessonRun`.
+ */
+type NormalizedLessonsLearnerState = LearnerState & {
+  normalizedLessonRuns?: Record<string, NormalizedLessonRun>;
+};
+
+function withNormalizedLessons(state: LearnerState): NormalizedLessonsLearnerState {
+  return state as NormalizedLessonsLearnerState;
+}
+
+/** One command for a normalized-engine lesson: an envelope plus an engine action. */
+export interface NormalizedLessonCommandInput {
+  readonly envelope: CommandEnvelope;
+  readonly action: NormalizedLessonAction;
 }
 
 function policyVersions(state: LearnerState): Readonly<Record<string, string>> {
@@ -402,6 +433,119 @@ export class RepositoryLearnerKernel {
         };
       }),
     );
+  }
+
+  // -------------------------------------------------------------------------
+  // Normalized-engine lesson transport (L2/L3, and future lessons).
+  //
+  // Deliberately PARALLEL to the vector-lesson methods above rather than a
+  // rewrite of them: L1's bespoke machine keeps its own slot and handlers
+  // (owner decision — per-grammar dispatch), and these serve every other
+  // catalog lesson off the shared `NormalizedLesson` engine + the SAME generic
+  // `recordLessonResponse`. The HTTP layer maps each lesson's route to the
+  // right family; nothing here decides correctness, evidence kind, or P(L).
+  // -------------------------------------------------------------------------
+
+  async normalizedLessonStatus(lessonId: string, principal: Principal) {
+    const state = withNormalizedLessons(await this.loadState(principal));
+    const persisted = state.normalizedLessonRuns?.[lessonId];
+    const run = persisted === undefined ? undefined : restoreNormalizedLessonRun(persisted);
+    return {
+      availability: 'AVAILABLE' as const,
+      runState: run?.paused ? 'PAUSED' : (run?.status ?? 'NOT_STARTED'),
+      actionLabel: run === undefined ? 'Start' : run.status === 'BLOCKED' ? null : 'Continue',
+    };
+  }
+
+  async normalizedLessonRun(lessonId: string, principal: Principal) {
+    const state = withNormalizedLessons(await this.loadState(principal));
+    const persisted = state.normalizedLessonRuns?.[lessonId];
+    if (persisted === undefined) {
+      throw validationError('Start this lesson before requesting its current screen.');
+    }
+    return renderNormalizedLessonRun(restoreNormalizedLessonRun(persisted));
+  }
+
+  async handleNormalizedLessonStart(
+    lessonId: string,
+    command: { readonly envelope: CommandEnvelope },
+    principal: Principal,
+  ) {
+    return this.mutate(command.envelope, principal, (_authority, baseState) => {
+      const state = withNormalizedLessons(baseState);
+      const runs = (state.normalizedLessonRuns ??= {});
+      const persisted = runs[lessonId];
+      const existing = persisted === undefined ? undefined : restoreNormalizedLessonRun(persisted);
+      const disposition =
+        existing === undefined
+          ? 'STARTED'
+          : existing.status === 'DELIVERY_COMPLETE'
+            ? 'ALREADY_COMPLETE'
+            : 'RESUMED';
+      runs[lessonId] =
+        existing === undefined
+          ? createNormalizedLessonRun({ lessonId, now: command.envelope.occurredAt })
+          : existing.status === 'DELIVERY_COMPLETE'
+            ? existing
+            : resumeNormalizedLessonRun(existing, command.envelope.occurredAt);
+      return {
+        eventType:
+          disposition === 'STARTED'
+            ? 'lesson_shell_started'
+            : disposition === 'RESUMED'
+              ? 'lesson_shell_resumed'
+              : 'lesson_delivery_already_complete',
+        payload: toJsonObject({ envelope: command.envelope, lessonId }),
+        result: toJsonObject({
+          runId: runs[lessonId].runId,
+          disposition,
+          streamVersion: baseState.nextSequence + 1,
+        }),
+      };
+    });
+  }
+
+  async handleNormalizedLessonCommand(
+    lessonId: string,
+    command: NormalizedLessonCommandInput,
+    principal: Principal,
+  ) {
+    return this.mutate(command.envelope, principal, (authority, baseState) => {
+      const state = withNormalizedLessons(baseState);
+      const runs = state.normalizedLessonRuns;
+      const persisted = runs?.[lessonId];
+      if (runs === undefined || persisted === undefined) {
+        throw validationError('Start this lesson before sending a lesson command.');
+      }
+      const previousRun = restoreNormalizedLessonRun(persisted);
+      let nextRun: NormalizedLessonRun;
+      try {
+        nextRun = applyNormalizedLessonAction(previousRun, command.action, command.envelope.occurredAt);
+      } catch (error) {
+        if (error instanceof AuthorityKernelError) throw error;
+        throw validationError(
+          error instanceof Error
+            ? error.message
+            : 'The lesson command does not match the authoritative checkpoint.',
+        );
+      }
+      runs[lessonId] = nextRun;
+      const lessonResponse = this.recordLessonResponse(
+        authority,
+        baseState,
+        command.envelope,
+        normalizedLessonResponseSubmissions(previousRun, nextRun),
+      );
+      return {
+        eventType: 'lesson_command_accepted',
+        payload: toJsonObject({
+          envelope: command.envelope,
+          lessonId,
+          action: command.action,
+          ...(lessonResponse === null ? {} : { lessonResponse }),
+        }),
+      };
+    });
   }
 
   /**
