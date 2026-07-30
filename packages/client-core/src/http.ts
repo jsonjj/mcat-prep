@@ -19,6 +19,7 @@ import {
   PracticeAttemptResultSchema,
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
+  PracticeTestSummaryViewSchema,
   SkillMasteryViewSchema,
   PracticeResultSchema,
   SkillSummarySchema,
@@ -466,6 +467,27 @@ export class HttpAuthorityClient implements AuthorityPort {
     // AcceptedCommandResponse), so resync the stream version like PotD does.
     await this.bootstrap();
     return response;
+  }
+
+  async getPracticeTestSummary() {
+    await this.ensureBootstrap();
+    try {
+      // `nullable` here keeps DTO drift LOUD: a served-but-malformed summary
+      // throws in `.parse`, exactly like every other read. Only the "route not
+      // served yet" signal below is swallowed into the graceful `null`.
+      return await this.request(
+        HTTP_API.practiceTestSummary.path,
+        nullable(PracticeTestSummaryViewSchema),
+      );
+    } catch (error) {
+      // GRACEFUL DATA PATH: the scored practice-test engine is deferred, so the
+      // deployed backend has no route for this and answers `not_found`. Treat
+      // that as "no summary yet" so the Practice card renders its existing
+      // coming-soon states. Any other failure still propagates (and the card
+      // falls back to coming-soon on an errored query regardless).
+      if (error instanceof ApiClientError && error.code === 'not_found') return null;
+      throw error;
+    }
   }
 
   async recordCarsDuel(outcome?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {

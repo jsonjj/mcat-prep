@@ -3780,6 +3780,241 @@ body {
   font-weight: 600;
   opacity: 0.85;
 }
+
+/* ---- Practice test dashboard (POPULATED states) ----
+   Dormant on the real app (no summary is ever served there), so these classes
+   never render at :5173 and the deferred card stays byte-for-byte its empty
+   self. They light up only when a summary is present (the local mastery
+   simulator), filling the same regions the empty states occupy. */
+
+/* "Improvement over time": a dependency-free multi-line SVG chart + a legend. */
+.mc-trend {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-trend__svg {
+  width: 100%;
+  height: auto;
+}
+.mc-trend__grid {
+  stroke: color-mix(in srgb, var(--mc-border) 70%, transparent);
+  stroke-width: 1;
+}
+.mc-trend__axis {
+  fill: var(--mc-ink-muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+/* One colour per section, applied to the line + dots via currentColor. */
+.mc-trend__series--cp {
+  color: var(--mc-primary);
+}
+.mc-trend__series--cars {
+  color: var(--mc-accent-warm);
+}
+.mc-trend__series--bb {
+  color: var(--mc-retained);
+}
+.mc-trend__series--ps {
+  color: #2e9e5b;
+}
+.mc-trend__line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mc-trend__dot {
+  fill: currentColor;
+  stroke: var(--mc-surface);
+  stroke-width: 1.5;
+}
+.mc-trend__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mc-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--mc-text-14);
+}
+.mc-trend__key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--mc-ink);
+}
+.mc-trend__key--cp {
+  --swatch: var(--mc-primary);
+}
+.mc-trend__key--cars {
+  --swatch: var(--mc-accent-warm);
+}
+.mc-trend__key--bb {
+  --swatch: var(--mc-retained);
+}
+.mc-trend__key--ps {
+  --swatch: #2e9e5b;
+}
+.mc-trend__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--swatch, currentColor);
+}
+
+/* Readiness band as a pill (warm accent to match the test card). */
+.mc-readypill {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--mc-space-2);
+  padding: 6px 12px;
+  border: 1px solid;
+  border-radius: var(--mc-radius-pill);
+  font-size: var(--mc-text-15);
+  font-weight: 700;
+}
+.mc-readypill--on_track {
+  background: color-mix(in srgb, var(--mc-accent-warm) 14%, var(--mc-surface));
+  border-color: color-mix(in srgb, var(--mc-accent-warm) 45%, var(--mc-border));
+  color: var(--mc-ink);
+}
+.mc-readypill--approaching {
+  background: color-mix(in srgb, var(--mc-accent-warm) 9%, var(--mc-surface));
+  border-color: color-mix(in srgb, var(--mc-accent-warm) 30%, var(--mc-border));
+  color: var(--mc-ink);
+}
+.mc-readypill--building {
+  background: var(--mc-surface-2);
+  border-color: var(--mc-border);
+  color: var(--mc-ink-muted);
+}
+.mc-readypill__icon {
+  width: 18px;
+  height: 18px;
+  color: var(--mc-primary);
+}
+.mc-readypill__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+/* Estimated scaled-score range: a semicircular gauge with the band in the middle. */
+.mc-estrange {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.mc-estrange__svg {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+}
+.mc-estrange__track {
+  fill: none;
+  stroke: var(--mc-surface-2);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+.mc-estrange__fill {
+  fill: none;
+  stroke: var(--mc-accent-warm);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+.mc-estrange__value {
+  fill: var(--mc-ink);
+  font-family: var(--mc-font-display);
+  font-size: 30px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.mc-estrange__note {
+  margin: 0;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Past-tests strip: small horizontally-scrolling cards + a deferred next slot. */
+.mc-pasttests {
+  display: flex;
+  gap: var(--mc-space-3);
+  overflow-x: auto;
+  padding-bottom: var(--mc-space-1);
+}
+.mc-pasttest {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 96px;
+  padding: var(--mc-space-3);
+  border: 1px solid color-mix(in srgb, var(--mc-border) 70%, transparent);
+  border-radius: var(--mc-radius-control);
+  background: color-mix(in srgb, var(--mc-surface-2) 45%, transparent);
+}
+.mc-pasttest__name {
+  font-weight: 700;
+  font-size: var(--mc-text-15);
+}
+.mc-pasttest__date {
+  font-size: var(--mc-text-14);
+  color: var(--mc-ink-muted);
+}
+.mc-pasttest__score {
+  display: flex;
+  align-items: baseline;
+  gap: var(--mc-space-2);
+  margin-top: 2px;
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-22);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.mc-pasttest__pct {
+  font-family: inherit;
+  font-size: var(--mc-text-14);
+  font-weight: 600;
+  color: var(--mc-primary-text);
+}
+.mc-pasttest__reviewed {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--mc-text-14);
+  font-weight: 600;
+  color: #2e9e5b;
+}
+.mc-pasttest__reviewedicon {
+  width: 15px;
+  height: 15px;
+}
+.mc-pasttest__pending {
+  font-size: var(--mc-text-14);
+  font-weight: 600;
+  color: var(--mc-accent-warm-text);
+}
+.mc-pasttest--next {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-style: dashed;
+  background: transparent;
+  color: var(--mc-ink-muted);
+}
+.mc-pasttest__nexticon {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 2px;
+}
 .mc-practice__options {
   display: flex;
   flex-wrap: wrap;

@@ -1,11 +1,18 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Card, Eyebrow, Stack } from '@mcat/ui-web';
-import { ATLAS_REGION_GROUPS, DEFAULT_MINUTES_PER_QUESTION } from '@mcat/contracts';
+import {
+  ATLAS_REGION_GROUPS,
+  DEFAULT_MINUTES_PER_QUESTION,
+  type EstimatedScoreRange,
+  type PastPracticeTest,
+  type PracticeReadinessLabel,
+  type Section,
+} from '@mcat/contracts';
 import { CURRICULUM_PHASES } from '../../data/curriculum-v3.generated';
-import { useMasteryLessons } from '../../app/queries';
+import { useMasteryLessons, usePracticeTestSummary } from '../../app/queries';
 import { MasteryRing } from '../../components/MasteryRing';
-import { IconClock } from '../../components/icons';
+import { IconCheck, IconClock } from '../../components/icons';
 
 const MIN_QUESTIONS = 1;
 const MAX_QUESTIONS = 30;
@@ -101,6 +108,16 @@ export function PracticeHome() {
       .slice(0, WEAKEST_ROWS);
   }, [lessons.data]);
 
+  // Practice-TEST dashboard summary. The scored-test engine is deferred, so the
+  // real backend serves no summary and this resolves to null → the card keeps its
+  // existing "coming soon" / empty states (verified unchanged on the real app).
+  // Only the local mastery simulator fills it, which flips each region to its
+  // populated view below. A present-but-empty summary reads the same as a missing
+  // one; `dashboard` is the non-null value the regions render from.
+  const testSummary = usePracticeTestSummary();
+  const summary = testSummary.data ?? null;
+  const dashboard = summary !== null && summary.pastTests.length > 0 ? summary : null;
+
   const start = () => {
     navigate('/app/practice/session', { state: { x: count } });
   };
@@ -195,9 +212,11 @@ export function PracticeHome() {
           </Stack>
         </Card>
 
-        {/* RIGHT — Practice test. Presentational ONLY: the test engine is deferred,
-            so there is no data yet. Every region shows an honest empty state laid
-            out where its real content will live; no scores/ranges/trends are faked. */}
+        {/* RIGHT — Practice test. The scored-test engine is deferred, so the real
+            backend serves no summary and `dashboard` is null: every region shows the
+            same honest empty state laid out where its real content will live, and
+            nothing is faked. When a summary IS present (today, only the local mastery
+            simulator), each region fills in from it — no other visual change. */}
         <Card elevated className="mc-practice__card mc-practice__card--test">
           <Stack gap={4}>
             <div className="mc-testdash__head">
@@ -211,45 +230,257 @@ export function PracticeHome() {
             <div className="mc-testdash__grid">
               <section className="mc-testdash__section mc-testdash__trends">
                 <h3 className="mc-label">Improvement over time</h3>
-                <div
-                  className="mc-emptyframe mc-emptyframe--chart"
-                  role="img"
-                  aria-label="No section trends yet"
-                >
-                  <p className="mc-emptyframe__note mc-muted">
-                    Your section trends will appear here after your first checkpoint.
-                  </p>
-                </div>
+                {dashboard ? (
+                  <TrendChart pastTests={dashboard.pastTests} />
+                ) : (
+                  <div
+                    className="mc-emptyframe mc-emptyframe--chart"
+                    role="img"
+                    aria-label="No section trends yet"
+                  >
+                    <p className="mc-emptyframe__note mc-muted">
+                      Your section trends will appear here after your first checkpoint.
+                    </p>
+                  </div>
+                )}
               </section>
 
               <div className="mc-testdash__side">
                 <section className="mc-testdash__stat">
                   <h3 className="mc-label">Readiness</h3>
-                  <p className="mc-testdash__empty mc-muted">Available after your first test.</p>
+                  {dashboard ? (
+                    <ReadinessPill label={dashboard.readinessLabel} />
+                  ) : (
+                    <p className="mc-testdash__empty mc-muted">Available after your first test.</p>
+                  )}
                 </section>
                 <section className="mc-testdash__stat">
                   <h3 className="mc-label">Estimated range</h3>
-                  <p className="mc-testdash__empty mc-muted">Available after your first test.</p>
+                  {dashboard ? (
+                    <EstimatedRange range={dashboard.estimatedScore} />
+                  ) : (
+                    <p className="mc-testdash__empty mc-muted">Available after your first test.</p>
+                  )}
                 </section>
               </div>
             </div>
 
             <section className="mc-testdash__section">
               <h3 className="mc-label">Past tests</h3>
-              <div className="mc-emptyframe mc-emptyframe--strip">
-                <p className="mc-emptyframe__note mc-muted">No tests yet.</p>
-              </div>
+              {dashboard ? (
+                <PastTestsStrip pastTests={dashboard.pastTests} />
+              ) : (
+                <div className="mc-emptyframe mc-emptyframe--strip">
+                  <p className="mc-emptyframe__note mc-muted">No tests yet.</p>
+                </div>
+              )}
             </section>
 
             <button type="button" className="mc-teststart" disabled aria-label="Start test — coming soon">
               <span className="mc-teststart__main">
                 <IconClock className="mc-teststart__icon" />
-                <span className="mc-teststart__label">Start test</span>
-              </span>
+              <span className="mc-teststart__label">Start test</span>
+            </span>
               <span className="mc-teststart__soon">coming soon</span>
             </button>
           </Stack>
         </Card>
+      </div>
+    </div>
+  );
+}
+
+// --- Practice-test dashboard (populated states) --------------------------------
+// Rendered ONLY when a summary is present (today, only from the local mastery
+// simulator). Pure presentation of the DTO — a dependency-free SVG line chart, a
+// readiness pill, a semicircular estimated-range gauge, and a past-tests strip —
+// laid out in the same regions the empty states occupy.
+
+/** The four MCAT sections, in chart order, with their short labels + colour class. */
+const TREND_SECTIONS: ReadonlyArray<{ section: Section; label: string; cls: string }> = [
+  { section: 'cp', label: 'C/P', cls: 'cp' },
+  { section: 'cars', label: 'CARS', cls: 'cars' },
+  { section: 'bb', label: 'B/B', cls: 'bb' },
+  { section: 'ps', label: 'P/S', cls: 'ps' },
+];
+
+const READINESS_TEXT: Record<PracticeReadinessLabel, string> = {
+  building: 'Building',
+  approaching: 'Approaching',
+  on_track: 'On track',
+};
+
+/** UTC month/day, so a fixed timestamp renders the same date in every timezone. */
+const testDateLabel = (iso: string): string =>
+  new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+
+const round1 = (v: number): number => Math.round(v * 10) / 10;
+
+/**
+ * "Improvement over time": one line per section, plotting each past test's
+ * %-correct in chronological order. Dependency-free SVG; a single point renders
+ * as a dot (no line). The section %s ARE the trend — there is no separate series.
+ */
+function TrendChart({ pastTests }: { pastTests: readonly PastPracticeTest[] }) {
+  const W = 320;
+  const H = 190;
+  const ml = 30;
+  const mr = 10;
+  const mt = 12;
+  const mb = 40;
+  const plotW = W - ml - mr;
+  const plotH = H - mt - mb;
+  const n = pastTests.length;
+  const xAt = (i: number): number => ml + (n <= 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+  const yAt = (pct: number): number => mt + (1 - Math.max(0, Math.min(100, pct)) / 100) * plotH;
+  const gridlines = [0, 25, 50, 75, 100];
+  const series = TREND_SECTIONS.map((s) => {
+    const pts = pastTests
+      .map((t, i) => {
+        const score = t.sections.find((x) => x.section === s.section);
+        return score ? { x: xAt(i), y: yAt(score.pctCorrect) } : null;
+      })
+      .filter((p): p is { x: number; y: number } => p !== null);
+    return { ...s, pts };
+  });
+  return (
+    <div className="mc-trend">
+      <svg
+        className="mc-trend__svg"
+        viewBox={`0 0 ${W} ${H}`}
+        role="img"
+        aria-label={`Section percent-correct across ${n} past test${n === 1 ? '' : 's'}`}
+      >
+        {gridlines.map((g) => (
+          <g key={g}>
+            <line
+              className="mc-trend__grid"
+              x1={ml}
+              y1={round1(yAt(g))}
+              x2={W - mr}
+              y2={round1(yAt(g))}
+            />
+            <text className="mc-trend__axis" x={ml - 6} y={round1(yAt(g)) + 3} textAnchor="end">
+              {g}%
+            </text>
+          </g>
+        ))}
+        {pastTests.map((t, i) => (
+          <text
+            key={t.testId}
+            className="mc-trend__axis"
+            x={round1(xAt(i))}
+            y={H - mb + 18}
+            textAnchor="middle"
+          >
+            {testDateLabel(t.takenOn)}
+          </text>
+        ))}
+        {series.map((l) => (
+          <g key={l.section} className={`mc-trend__series mc-trend__series--${l.cls}`}>
+            {l.pts.length > 1 ? (
+              <polyline
+                className="mc-trend__line"
+                points={l.pts.map((p) => `${round1(p.x)},${round1(p.y)}`).join(' ')}
+              />
+            ) : null}
+            {l.pts.map((p, i) => (
+              <circle key={i} className="mc-trend__dot" cx={round1(p.x)} cy={round1(p.y)} r={3} />
+            ))}
+          </g>
+        ))}
+      </svg>
+      <ul className="mc-trend__legend">
+        {TREND_SECTIONS.map((s) => (
+          <li key={s.section} className={`mc-trend__key mc-trend__key--${s.cls}`}>
+            <span className="mc-trend__swatch" aria-hidden="true" />
+            {s.label}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Readiness band as a pill: a check for on-track, a status dot otherwise. */
+function ReadinessPill({ label }: { label: PracticeReadinessLabel }) {
+  return (
+    <span className={`mc-readypill mc-readypill--${label}`}>
+      {label === 'on_track' ? (
+        <IconCheck className="mc-readypill__icon" />
+      ) : (
+        <span className="mc-readypill__dot" aria-hidden="true" />
+      )}
+      {READINESS_TEXT[label]}
+    </span>
+  );
+}
+
+/** Estimated scaled-score RANGE as a semicircular gauge — a band, never a point. */
+function EstimatedRange({ range }: { range: EstimatedScoreRange }) {
+  const MIN = 472;
+  const MAX = 528;
+  const center = (range.low + range.high) / 2;
+  const frac = Math.max(0, Math.min(1, (center - MIN) / (MAX - MIN)));
+  const R = 80;
+  const cx = 100;
+  const cy = 92;
+  const arcLen = Math.PI * R;
+  const arc = `M${cx - R},${cy} A${R},${R} 0 0 1 ${cx + R},${cy}`;
+  return (
+    <div className="mc-estrange">
+      <svg
+        className="mc-estrange__svg"
+        viewBox="0 0 200 108"
+        role="img"
+        aria-label={`Estimated scaled score ${range.low} to ${range.high}`}
+      >
+        <path className="mc-estrange__track" d={arc} />
+        <path
+          className="mc-estrange__fill"
+          d={arc}
+          strokeDasharray={`${round1(frac * arcLen)} ${round1(arcLen)}`}
+        />
+        <text className="mc-estrange__value" x={cx} y={cy - 16} textAnchor="middle">
+          {range.low}&ndash;{range.high}
+        </text>
+      </svg>
+      <p className="mc-estrange__note mc-muted">estimate, not a single score</p>
+    </div>
+  );
+}
+
+/** Horizontal strip of past tests + a deferred "next test" placeholder. */
+function PastTestsStrip({ pastTests }: { pastTests: readonly PastPracticeTest[] }) {
+  return (
+    <div className="mc-pasttests">
+      {pastTests.map((t) => {
+        const overall = Math.round(
+          t.sections.reduce((sum, s) => sum + s.pctCorrect, 0) / Math.max(1, t.sections.length),
+        );
+        return (
+          <div key={t.testId} className="mc-pasttest">
+            <div className="mc-pasttest__name">{t.label}</div>
+            <div className="mc-pasttest__date">{testDateLabel(t.takenOn)}</div>
+            <div className="mc-pasttest__score">
+              {t.scaledScore}
+              <span className="mc-pasttest__pct">{overall}%</span>
+            </div>
+            {t.reviewed ? (
+              <span className="mc-pasttest__reviewed">
+                <IconCheck className="mc-pasttest__reviewedicon" />
+                Reviewed
+              </span>
+            ) : (
+              <span className="mc-pasttest__pending">Review due</span>
+            )}
+          </div>
+        );
+      })}
+      <div className="mc-pasttest mc-pasttest--next" aria-hidden="true">
+        <IconClock className="mc-pasttest__nexticon" />
+        <div className="mc-pasttest__name">Next test</div>
+        <div className="mc-pasttest__date mc-muted">Coming soon</div>
       </div>
     </div>
   );

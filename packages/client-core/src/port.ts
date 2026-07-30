@@ -17,6 +17,7 @@ import type {
   PracticeItemView,
   PracticeQueueView,
   PracticeResult,
+  PracticeTestSummaryView,
   SkillMasteryView,
   SkillSummary,
   StudyStepView,
@@ -108,6 +109,15 @@ export interface AuthorityPort {
   getPracticeQueue(x: number, focus?: string): Promise<PracticeQueueView>;
   /** Adaptive Practice: score one answer (a first, unassisted attempt moves mastery). */
   submitPracticeAttempt(command: PracticeAttemptCommand): Promise<PracticeAttemptResult>;
+  /**
+   * Practice-TEST dashboard summary (the amber card on Practice). Resolves to
+   * `null` when no summary is available — the scored-test engine is deferred, so
+   * the deployed backend does not serve this route yet, and the card falls back
+   * to its existing "coming soon" states. `null` is also the honest response once
+   * the engine ships but the learner has taken no test. A served-but-malformed
+   * payload still throws, so DTO drift fails loudly rather than silently emptying.
+   */
+  getPracticeTestSummary(): Promise<PracticeTestSummaryView | null>;
   /**
    * Record a CARS Duel. The optional rubric feeds a low-weight CARS ability nudge;
    * the optional {mode, topicId, intensity} let the formative engine update its

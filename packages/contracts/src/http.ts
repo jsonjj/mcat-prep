@@ -22,6 +22,7 @@ import {
   PracticeAttemptResultSchema,
   PracticeQueueViewSchema,
 } from './practice';
+import { PracticeTestSummaryViewSchema } from './practice-test';
 import {
   BuildTodaysPathCommandSchema,
   DailyBudgetCommandSchema,
@@ -173,6 +174,18 @@ export const HTTP_API = {
     path: '/v1/practice/attempts/adaptive',
     body: PracticeAttemptCommandSchema,
     response: PracticeAttemptResultSchema,
+  },
+  /**
+   * Practice-TEST dashboard summary (the amber card on Practice). The scored
+   * full/half-length engine is deferred, so the deployed backend does not serve
+   * this yet: a client treats the missing route as `null` (graceful data path),
+   * and the card shows its existing "coming soon" states. `null` is also the
+   * honest response once the engine ships but the learner has taken no test.
+   */
+  practiceTestSummary: {
+    method: 'GET',
+    path: '/v1/practice-test/summary',
+    response: PracticeTestSummaryViewSchema.nullable(),
   },
   vectorLessonStatus: {
     method: 'GET',

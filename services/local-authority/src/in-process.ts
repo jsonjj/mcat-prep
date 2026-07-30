@@ -15,6 +15,7 @@ import {
   PracticeQueueViewSchema,
   PracticeResultSchema,
   SkillMasteryViewSchema,
+  type PracticeTestSummaryView,
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
@@ -216,6 +217,18 @@ export class InProcessAuthorityClient implements AuthorityPort {
     return PracticeAttemptResultSchema.parse(
       await this.mutateAsync((state) => this.authority.submitPracticeAttempt(state, command)),
     );
+  }
+
+  /**
+   * The scored practice-TEST engine is deferred, so the synthetic authority holds
+   * no test history: it reports `null`, the same "no summary yet" answer the
+   * deployed backend gives, and the Practice card renders its coming-soon states.
+   * Wired here to satisfy the port; the local `/v1` dev surface intentionally has
+   * no route for it, so a browser read falls through to the client's graceful
+   * `not_found → null` path.
+   */
+  async getPracticeTestSummary(): Promise<PracticeTestSummaryView | null> {
+    return null;
   }
 
   async recordCarsDuel(outcome?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {

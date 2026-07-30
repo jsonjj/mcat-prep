@@ -60,6 +60,18 @@ export const useCarsReasoningPatterns = () =>
 export const useSkills = () =>
   useQuery({ queryKey: ['skills'], queryFn: () => authority.getSkills() });
 /**
+ * Practice-TEST dashboard summary (the amber card on Practice). The scored-test
+ * engine is deferred, so the deployed backend does not serve this yet and the
+ * query resolves to `null` — the card then renders its existing "coming soon" /
+ * empty states unchanged. When the engine ships (or the local mastery simulator
+ * fills it in), the same query returns the summary and the card populates.
+ */
+export const usePracticeTestSummary = () =>
+  useQuery({
+    queryKey: ['practice-test-summary'],
+    queryFn: () => authority.getPracticeTestSummary(),
+  });
+/**
  * The diagnostic is served by the real multistage engine over the v7
  * learner-safe bank (dev/preview Vite plugin; API Gateway in prod), a whole
  * block at a time. It is wired through the dedicated {@link diagnosticClient}

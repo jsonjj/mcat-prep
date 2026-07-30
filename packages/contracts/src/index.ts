@@ -12,6 +12,7 @@ export * from './cars-duel';
 export * from './learner-views';
 export * from './mastery';
 export * from './practice';
+export * from './practice-test';
 export * from './todays-path';
 export * from './api';
 export * from './http';
