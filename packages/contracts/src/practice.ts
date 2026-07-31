@@ -174,3 +174,48 @@ export const PracticeAttemptResultSchema = z
   })
   .strict();
 export type PracticeAttemptResult = z.infer<typeof PracticeAttemptResultSchema>;
+
+/**
+ * Why the server refused to START a periodic practice test (WS5, §6).
+ *
+ * The §6 cadence is enforced at the SERVING boundary, not only in Today's Path:
+ * `POST /api/practice-test/next` consults the authority's serve gate before it
+ * will create a new sitting, so a test cannot be started off-cadence even by
+ * calling the API directly. The refusal is a NAMED reason, never a bare 409, so
+ * the client can render the honest sentence rather than guess at "not now":
+ *
+ *  - `not_due_recent`       — the phase cadence interval has not elapsed yet.
+ *  - `blocked_unreviewed`   — the prior test's review is still open (the loop's
+ *                             whole point: work the misses before the next test).
+ *  - `blackout_before_exam` — inside the pre-exam blackout window (rest, not a
+ *                             long sitting).
+ *  - `capped_today`         — one-per-day hard cap already spent.
+ *  - `not_unlocked`         — practice is not unlocked yet (teach-before-test).
+ */
+export const PracticeTestServeRefusalReasonSchema = z.enum([
+  'not_due_recent',
+  'blocked_unreviewed',
+  'blackout_before_exam',
+  'capped_today',
+  'not_unlocked',
+]);
+export type PracticeTestServeRefusalReason = z.infer<typeof PracticeTestServeRefusalReasonSchema>;
+
+/**
+ * The typed 409 body the serve boundary returns when it refuses to start a
+ * sitting (WS5, §6). `due` is always `false` (a refusal), `reason` is the named
+ * cause above, `message` is the learner-facing sentence, and `nextEligibleDate`
+ * is the earliest `YYYY-MM-DD` a test could next be served (null when it cannot
+ * be computed — blocked on review, blackout, or not unlocked). Strict so a new
+ * field cannot silently ride along untyped.
+ */
+export const PracticeTestServeRefusalSchema = z
+  .object({
+    error: z.string().min(1),
+    due: z.literal(false),
+    reason: PracticeTestServeRefusalReasonSchema,
+    message: z.string().min(1),
+    nextEligibleDate: z.string().nullable(),
+  })
+  .strict();
+export type PracticeTestServeRefusal = z.infer<typeof PracticeTestServeRefusalSchema>;

@@ -3,11 +3,13 @@ import type {
   CalibrationBand,
   CarsDuelSelectionView,
   CarsSkill,
+  ChoiceId,
   LearnerEvent,
   LearnerId,
   PlanActivityStatus,
   ReasoningOperation,
   Section,
+  SkillCluster,
   UtcTimestamp,
 } from '@mcat/contracts';
 import type {
@@ -20,6 +22,7 @@ import type {
 import type { LearnerSafeQuestion } from '@mcat/content';
 import type {
   CarsDuelEngineState,
+  DatedUnitObservation,
   GhostView,
   MemoryState,
   PlannedActivity,
@@ -105,6 +108,38 @@ export interface LearnerState {
      * needed for the running app — and mirrors `practice_test_sitting` (0016).
      */
     sittings?: PracticeTestSittingRecord[];
+    /**
+     * Every item the learner has been SCORED on across all completed sittings —
+     * the DURABLE never-reuse (freshness) set the assembler excludes (WS5, §6).
+     * This used to live only in the in-memory server bank
+     * (`apps/learner-web/server/practice-test-bank.ts`), so a restart lost it and
+     * a prior item could be re-dealt; moving it onto the event-sourced
+     * `state_json` blob makes freshness survive a restart with no migration
+     * (mirrors `practice_test_scored_item`, 0016). Absent on older projections
+     * and before the first completed sitting.
+     */
+    scoredItemIds?: string[];
+    /**
+     * Per-unit observation history across every sitting — the DURABLE input the
+     * decay-weighted re-measure averages over (WS5, §6). The re-measure is a
+     * function of `now`, so what must persist is the dated history, not a
+     * materialised read; each completed sitting appends its per-cluster
+     * correct/total here. Also previously in-memory-only (the bank's
+     * `unitHistory`); rides the same blob so it survives a restart with no
+     * migration (mirrors `practice_test_unit_observation`, 0017).
+     */
+    unitHistory?: DatedUnitObservation[];
+    /**
+     * The single still-open (started-but-not-completed) sitting, or null/absent
+     * when none (WS5, §6, Task 4). Recording a START stamps it; recording the
+     * scored result clears it; a fresh START while one is already open supersedes
+     * (ABANDONS) it, so an incomplete sitting never lingers as "in progress" and
+     * at most one is ever open — the JSON-blob equivalent of the
+     * `practice_test_sitting_one_open_uidx` invariant in 0016. Abandoned sittings
+     * were never completed, so they never touch `lastTestDate`/`testsCompleted`
+     * and cadence math stays correct.
+     */
+    openSitting?: OpenPracticeTestSitting | null;
   };
   /**
    * CARS reasoning-pattern repairs (WS7): a weak CARS Duel maps its weakest
@@ -164,6 +199,56 @@ export interface PracticeTestCompletion {
   readonly scaledScore: number;
   /** Science misses as review-queue targets (CARS misses excluded — no per-KC repair). */
   readonly reviewTargets: ReadonlyArray<{ kcId: string; skill?: ReasoningOperation }>;
+  /**
+   * Every item scored on this sitting, merged into the durable never-reuse set
+   * (`practiceTests.scoredItemIds`) so the NEXT test stays fresh across a restart
+   * (WS5, §6, Task 1). Optional so the counters-only completion path and older
+   * callers still type-check; absent = nothing to merge.
+   */
+  readonly scoredItemIds?: readonly string[];
+  /**
+   * This sitting's per-unit observations, appended to the durable re-measure
+   * history (`practiceTests.unitHistory`) so the decay-weighted read survives a
+   * restart (WS5, §6, Task 1). Optional for the same reason as `scoredItemIds`.
+   */
+  readonly unitObservations?: readonly DatedUnitObservation[];
+  /**
+   * Per-item attempt rows for THIS sitting, recorded through the SAME attempt-log
+   * seam adaptive practice uses (`recordPracticeAttempt`) so a finished test's
+   * misses surface in `/app/mistakes` "To fix" and its items feed the pattern
+   * denominators (WS5, Task 2). Optional; absent = nothing to log.
+   */
+  readonly attempts?: readonly PracticeTestAttempt[];
+}
+
+/**
+ * One in-progress practice-test sitting, tracked so an abandoned one can be
+ * closed and the one-open invariant held (WS5, §6, Task 4). Carries only
+ * scheduling facts — never any answer material.
+ */
+export interface OpenPracticeTestSitting {
+  readonly sittingId: string;
+  readonly startedAt: UtcTimestamp;
+  readonly tier: 'short' | 'standard' | 'long';
+}
+
+/**
+ * One per-item attempt from a completed practice test, shaped for the attempt
+ * log (`PracticeAttemptLogEntry`) the Mistakes/error-log read consumes (Task 2).
+ * The authority stamps `firstAttempt`, `activityType`, and `occurredAt` when it
+ * records these, so this carries only what the server scored from the key: which
+ * item, its grain, the chosen distractor, and correctness.
+ */
+export interface PracticeTestAttempt {
+  readonly questionId: string;
+  readonly kcId: string | null;
+  readonly skill: ReasoningOperation | null;
+  readonly cluster: SkillCluster | null;
+  readonly familyId: string | null;
+  readonly chosenChoiceId: ChoiceId | null;
+  readonly correct: boolean;
+  /** Deliberation time in ms, or null when the sitting captured none ("not captured"). */
+  readonly elapsedMs: number | null;
 }
 
 /**

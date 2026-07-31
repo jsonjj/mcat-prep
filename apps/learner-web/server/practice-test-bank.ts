@@ -9,7 +9,7 @@ import {
   type SkillCluster,
 } from '@mcat/contracts';
 import { resolveCarsSkill, resolveReasoningOperation } from '@mcat/content';
-import type { DatedUnitObservation, PracticeTestCandidate } from '@mcat/policies';
+import type { PracticeTestCandidate } from '@mcat/policies';
 import { loadPulledCorpus, type PulledCorpus, type PulledQuestion } from './db-pull';
 
 /**
@@ -23,11 +23,16 @@ import { loadPulledCorpus, type PulledCorpus, type PulledQuestion } from './db-p
  * blueprint is a quarter CARS, so every eligible item with a real cluster is a
  * candidate here, CARS included.
  *
- * The per-learner "already scored" set lives here too, in memory, exactly as the
- * file practice bank keeps exposure/repair state: it is what makes a periodic
- * test FRESH — an item scored on any prior sitting is never dealt again. The
- * durable equivalents are `database/migrations/0016_practice_test.sql`; the dev
- * server keeps them in memory, as the diagnostic and the file bank do.
+ * This bank is now a PURE CORPUS: it holds no per-learner state. The "already
+ * scored" freshness set and the decay-weighted re-measure history used to live
+ * here in memory, which meant a server restart lost them and a prior item could
+ * be re-dealt. They now ride the persisted `LearnerState.practiceTests` slice
+ * (via `@mcat/authority-core`) and are passed INTO the engine per request
+ * (`PracticeTestFreshness`), so freshness + the re-measure survive a restart
+ * (WS5, §6, Task 1). Migrations 0016/0017 remain the deployed Postgres shape for
+ * the same facts, but the running app persists them on the event-sourced
+ * `state_json` blob like `goal`/`mastery`/`sittings` — so no separate table is
+ * wired, and 0016/0017 can be dropped if the team commits to the JSON-blob home.
  *
  * Node-only: `grade`/`score` read the protected key material.
  */
@@ -158,10 +163,6 @@ export class PracticeTestBank {
   private readonly byId = new Map<string, BankItem>();
   readonly candidates: PracticeTestCandidate[];
   readonly stats: PracticeTestBankStats;
-  /** Per-learner ids scored on a COMPLETED prior sitting; never re-dealt. */
-  private readonly scored = new Map<string, Set<string>>();
-  /** Per-learner per-unit observation history across sittings, for the decay-weighted re-measure. */
-  private readonly history = new Map<string, DatedUnitObservation[]>();
 
   constructor(corpus: PulledCorpus) {
     const candidates: PracticeTestCandidate[] = [];
@@ -247,30 +248,6 @@ export class PracticeTestBank {
       correctChoiceId: item.correctAnswer,
       explanation,
     };
-  }
-
-  /** The learner's already-scored item ids (from completed prior sittings). */
-  scoredIds(learnerId: string): ReadonlySet<string> {
-    return this.scored.get(learnerId) ?? new Set<string>();
-  }
-
-  /** Mark a completed sitting's items scored, so no future test can re-serve them. */
-  markScored(learnerId: string, questionIds: readonly string[]): void {
-    const set = this.scored.get(learnerId) ?? new Set<string>();
-    for (const id of questionIds) set.add(id);
-    this.scored.set(learnerId, set);
-  }
-
-  /** The learner's per-unit observation history from prior completed sittings. */
-  unitHistory(learnerId: string): readonly DatedUnitObservation[] {
-    return this.history.get(learnerId) ?? [];
-  }
-
-  /** Append one completed sitting's per-unit observations to the learner's history. */
-  appendUnitHistory(learnerId: string, observations: readonly DatedUnitObservation[]): void {
-    const list = this.history.get(learnerId) ?? [];
-    list.push(...observations);
-    this.history.set(learnerId, list);
   }
 }
 

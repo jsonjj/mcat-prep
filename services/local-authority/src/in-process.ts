@@ -32,6 +32,7 @@ import {
 import {
   Authority,
   type LearnerState,
+  type OpenPracticeTestSitting,
   type PracticeBankPort,
   type PracticeTestCompletion,
   type PracticeTestServeGate,
@@ -257,12 +258,31 @@ export class InProcessAuthorityClient implements AuthorityPort {
 
   /**
    * The serve-boundary gate the dev practice-test API consults before STARTING a
-   * sitting: whether a test is due right now and the length tier to deal it at
-   * (WS5, §6). Not part of `AuthorityPort` — the practice-test flow is a dev-only
-   * server seam (the browser never sees the answer key), like the recorder.
+   * sitting: whether a test is due right now, the length tier to deal it at, and
+   * the next-eligible day for a typed refusal (WS5, §6). Not part of
+   * `AuthorityPort` — the practice-test flow is a dev-only server seam (the
+   * browser never sees the answer key), like the recorder.
    */
   practiceTestServeGate(): PracticeTestServeGate {
     return this.authority.practiceTestServeGate(this.state());
+  }
+
+  /**
+   * The DURABLE freshness the dev practice-test engine assembles + re-measures
+   * against — the never-reuse item set and the dated per-unit history, read off
+   * the persisted learner state so they survive a restart (WS5, §6, Task 1).
+   * Read-only; a dev-only seam like the gate/recorder.
+   */
+  practiceTestFreshness(): ReturnType<Authority['practiceTestFreshness']> {
+    return this.authority.practiceTestFreshness(this.state());
+  }
+
+  /**
+   * Mark a sitting STARTED so an abandoned one is closed and the one-open
+   * invariant holds (WS5, §6, Task 4). A dev-only seam like the recorder.
+   */
+  async recordPracticeTestStarted(started: OpenPracticeTestSitting): Promise<void> {
+    this.mutate((state) => this.authority.recordPracticeTestStarted(state, started));
   }
 
   async recordPracticeTestReviewed(): Promise<void> {

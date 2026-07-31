@@ -109,6 +109,7 @@ import {
   isWeakCarsDuel,
   weakestCarsSkill,
   type CarriedActivity,
+  type DatedUnitObservation,
   type GhostView,
   type ItemResponseTime,
   type LessonRollupResult,
@@ -151,6 +152,7 @@ import type {
   LessonWarrantView,
   MasteryEngineState,
   MasteryMapEntry,
+  OpenPracticeTestSitting,
   PracticeItemView,
   PracticeResult,
   PracticeTestCompletion,
@@ -637,6 +639,13 @@ export interface PracticeTestServeGate {
   readonly due: boolean;
   readonly reason: string;
   readonly tier: PracticeTestLengthTier;
+  /**
+   * When NOT due, the earliest `YYYY-MM-DD` a test could next be served (or null
+   * when it cannot be computed — blocked on review, blackout, or not unlocked).
+   * Carried so a refused start can tell the learner WHEN, not just that it was
+   * refused. Null when `due` (there is no "next" — it is now).
+   */
+  readonly nextEligibleDate: string | null;
 }
 
 /** Reverse of {@link PRACTICE_TEST_TIER_MINUTES}: a reserved duration → its tier. */
@@ -3582,6 +3591,24 @@ export class Authority {
   }
 
   /**
+   * Record that a sitting has STARTED (WS5, §6, Task 4). Stamps the open sitting
+   * so an incomplete one is durably tracked rather than left to linger only in
+   * the in-memory session store. A fresh start while one is already open
+   * SUPERSEDES it — the prior sitting was abandoned (never completed, so it never
+   * touched `lastTestDate`/`testsCompleted` and cadence math is unaffected) — so
+   * at most one sitting is ever open, the JSON-blob equivalent of 0016's
+   * one-open unique index. Writes NO mastery.
+   */
+  recordPracticeTestStarted(state: LearnerState, started: OpenPracticeTestSitting): void {
+    const tests = this.ensurePracticeTests(state);
+    tests.openSitting = {
+      sittingId: started.sittingId,
+      startedAt: started.startedAt,
+      tier: started.tier,
+    };
+  }
+
+  /**
    * Record that a periodic half-length practice test was COMPLETED (WS5, §6).
    *
    * This is the first half of the completion→state loop the Today's-Path
@@ -3627,6 +3654,43 @@ export class Authority {
       reviewed: false,
     };
     tests.sittings = [...(tests.sittings ?? []), sitting];
+
+    // DURABLE FRESHNESS (Task 1): merge this sitting's scored items into the
+    // never-reuse set and append its per-unit observations to the re-measure
+    // history — both on the persisted state now, not the in-memory server bank,
+    // so a restart cannot re-deal a scored item or forget the decay-weighted
+    // history. Deduped; order-preserving so the history stays chronological.
+    if (completion.scoredItemIds && completion.scoredItemIds.length > 0) {
+      const scored = new Set(tests.scoredItemIds ?? []);
+      for (const id of completion.scoredItemIds) scored.add(id);
+      tests.scoredItemIds = [...scored];
+    }
+    if (completion.unitObservations && completion.unitObservations.length > 0) {
+      tests.unitHistory = [...(tests.unitHistory ?? []), ...completion.unitObservations];
+    }
+    // The sitting completed → it is no longer open (Task 4).
+    tests.openSitting = null;
+
+    // Misses → the SAME attempt log adaptive practice writes (Task 2), so a
+    // finished test's misses surface in `/app/mistakes` "To fix" (getErrorLog
+    // reads this log) and its items feed the pattern denominators. The authority
+    // stamps the log-only fields (first attempt, activity, when) so the caller
+    // ships only what it scored from the key. Idempotent per item × activity.
+    for (const attempt of completion.attempts ?? []) {
+      await this.practiceBank.recordPracticeAttempt(state.learnerId, {
+        questionId: attempt.questionId,
+        kcId: attempt.kcId,
+        skill: attempt.skill,
+        cluster: attempt.cluster,
+        familyId: attempt.familyId,
+        chosenChoiceId: attempt.chosenChoiceId,
+        correct: attempt.correct,
+        firstAttempt: true,
+        activityType: 'practice',
+        occurredAt: completion.takenOn,
+        elapsedMs: attempt.elapsedMs,
+      });
+    }
 
     // Misses → repair queue, deduplicated by KC (a test that missed the same KC
     // twice queues it once). CARS misses carry no KC and are not per-KC repairs,
@@ -3701,10 +3765,32 @@ export class Authority {
     const tier = plannedTest
       ? tierFromReservedMinutes(plannedTest.estimatedMinutes)
       : decision.tier;
+    const due = practiceUnlocked && decision.due;
     return {
-      due: practiceUnlocked && decision.due,
+      due,
       reason: practiceUnlocked ? decision.reason : 'not_unlocked',
       tier,
+      // Carry the cadence's next-eligible day on a refusal so the client can say
+      // WHEN, not just that it refused; null when due or not computable.
+      nextEligibleDate: due ? null : decision.nextEligibleDate,
+    };
+  }
+
+  /**
+   * The DURABLE freshness the server engine needs to assemble the next sitting
+   * and re-measure across history (WS5, §6, Task 1): the never-reuse item set and
+   * the dated per-unit observation history, both read straight off the persisted
+   * `practiceTests` slice. This is what makes freshness + the decay-weighted
+   * re-measure survive a restart — the server bank no longer holds them. Reads
+   * only; returns fresh copies so a caller cannot mutate the stored arrays.
+   */
+  practiceTestFreshness(state: LearnerState): {
+    scoredItemIds: string[];
+    unitHistory: DatedUnitObservation[];
+  } {
+    return {
+      scoredItemIds: [...(state.practiceTests?.scoredItemIds ?? [])],
+      unitHistory: [...(state.practiceTests?.unitHistory ?? [])],
     };
   }
 

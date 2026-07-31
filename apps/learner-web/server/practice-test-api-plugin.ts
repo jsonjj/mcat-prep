@@ -19,6 +19,26 @@ interface ServeGate {
   due: boolean;
   reason: string;
   tier: 'short' | 'standard' | 'long';
+  nextEligibleDate: string | null;
+}
+/** Structural mirror of `DatedUnitObservation` (the durable re-measure grain). */
+interface UnitObservation {
+  unitId: string;
+  grain: 'kc' | 'skill' | 'cars' | 'cluster' | 'section';
+  correct: number;
+  total: number;
+  at: string;
+}
+/** Structural mirror of one per-item attempt row (the Mistakes/error-log seam). */
+interface AttemptRow {
+  questionId: string;
+  kcId: string | null;
+  skill: string | null;
+  cluster: string | null;
+  familyId: string | null;
+  chosenChoiceId: 'A' | 'B' | 'C' | 'D' | null;
+  correct: boolean;
+  elapsedMs: number | null;
 }
 interface CompletionPayload {
   sittingId: string;
@@ -29,10 +49,25 @@ interface CompletionPayload {
   sections: { section: string; pctCorrect: number }[];
   scaledScore: number;
   reviewTargets: { kcId: string; skill?: string }[];
+  scoredItemIds: readonly string[];
+  unitObservations: readonly UnitObservation[];
+  attempts: readonly AttemptRow[];
+}
+/** The durable freshness the engine reads (never-reuse set + dated re-measure history). */
+interface Freshness {
+  scoredItemIds: readonly string[];
+  unitHistory: readonly UnitObservation[];
+}
+interface StartedSitting {
+  sittingId: string;
+  startedAt: string;
+  tier: 'short' | 'standard' | 'long';
 }
 
 interface PracticeTestRecorder {
   gate(): Promise<ServeGate> | ServeGate;
+  loadFreshness(): Promise<Freshness> | Freshness;
+  recordStarted(started: StartedSitting): Promise<void> | void;
   recordCompleted(completion?: CompletionPayload): Promise<void> | void;
   recordReviewed(): Promise<void> | void;
 }
@@ -60,6 +95,8 @@ interface PracticeTestApiModule {
 interface AuthorityApiModule {
   client: {
     practiceTestServeGate(): ServeGate;
+    practiceTestFreshness(): Freshness;
+    recordPracticeTestStarted(started: StartedSitting): Promise<void> | void;
     recordPracticeTestCompleted(): Promise<void>;
     recordPracticeTestResult(completion: CompletionPayload): Promise<void>;
     recordPracticeTestReviewed(): Promise<void>;
@@ -80,10 +117,17 @@ export function practiceTestApiPlugin(): Plugin {
       )) as unknown as AuthorityApiModule;
       const recorder: PracticeTestRecorder = {
         // Enforce §6 cadence at the serving boundary: consult the authority
-        // before a new sitting is created, and hand back the length tier.
+        // before a new sitting is created, and hand back the length tier + the
+        // next-eligible day for a typed refusal (Task 3).
         gate: () => authority.client.practiceTestServeGate(),
+        // The DURABLE freshness the engine assembles + re-measures against, read
+        // from the persisted learner state so it survives a restart (Task 1).
+        loadFreshness: () => authority.client.practiceTestFreshness(),
+        // Mark the sitting started so an abandoned one is closed (Task 4).
+        recordStarted: (started) => authority.client.recordPracticeTestStarted(started),
         // A completed sitting persists its SCORED result (dashboard summary +
-        // repair queue); without a result payload it degrades to counters only.
+        // durable freshness + Mistakes/repair queue); without a result payload it
+        // degrades to counters only.
         recordCompleted: (completion) =>
           completion
             ? authority.client.recordPracticeTestResult(completion)

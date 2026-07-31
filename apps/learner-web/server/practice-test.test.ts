@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { UtcTimestamp } from '@mcat/contracts';
-import type { PracticeTestBlueprint } from '@mcat/policies';
+import type { DatedUnitObservation, PracticeTestBlueprint } from '@mcat/policies';
 import { validatePracticeTestForm } from '@mcat/policies';
 import { PracticeTestBank } from './practice-test-bank';
 import { DiagnosticSessionStore, type SessionRecord } from './diagnostic-session-store';
@@ -9,6 +9,7 @@ import {
   recordPracticeTestBlock,
   resolvePracticeTestBlock,
   type PracticeTestBlockView,
+  type PracticeTestFreshness,
 } from './practice-test-engine';
 import type { PulledCorpus, PulledProtected, PulledQuestion } from './db-pull';
 
@@ -77,6 +78,19 @@ const bankFor = (perSection = 12): PracticeTestBank => new PracticeTestBank(make
 const NOW = '2026-03-01T00:00:00.000Z' as UtcTimestamp;
 const PROTECTED_FIELDS = ['correct_answer', 'explanations', 'correctChoiceId'];
 
+/**
+ * A mutable stand-in for the DURABLE freshness the authority persists in
+ * `LearnerState.practiceTests` (Task 1): the never-reuse set and the re-measure
+ * history. The engine reads it and hands back what to persist; the harness
+ * applies that to this holder, exactly as the authority applies it to state —
+ * so a "second sitting" here reads the SAME freshness a restart would replay.
+ */
+interface FreshnessHolder {
+  scoredIds: Set<string>;
+  unitHistory: DatedUnitObservation[];
+}
+const emptyFreshness = (): FreshnessHolder => ({ scoredIds: new Set<string>(), unitHistory: [] });
+
 function assertNoLeak(payload: unknown, hint: string): void {
   const json = JSON.stringify(payload);
   for (const field of PROTECTED_FIELDS) {
@@ -84,20 +98,43 @@ function assertNoLeak(payload: unknown, hint: string): void {
   }
 }
 
-/** Drive a whole sitting to completion one section-block at a time, via the store. */
+/**
+ * Drive a whole sitting to completion one section-block at a time, via the store.
+ * `freshness` is read while assembling and, on completion, UPDATED with the
+ * mutations the engine hands back (the never-reuse ids + this sitting's
+ * observations) — mirroring how the authority persists them, so a subsequent
+ * `runSitting` sharing the holder behaves like the next sitting after a restart.
+ */
 function runSitting(
   bank: PracticeTestBank,
   store: DiagnosticSessionStore,
   learnerId: string,
   choose: (questionId: string) => 'A' | 'B' | 'C' | 'D' | null = () => 'A',
-): { record: SessionRecord; view: PracticeTestBlockView; served: string[]; blockSections: string[] } {
+  freshness: FreshnessHolder = emptyFreshness(),
+): {
+  record: SessionRecord;
+  view: PracticeTestBlockView;
+  served: string[];
+  blockSections: string[];
+  freshness: FreshnessHolder;
+} {
   const { record } = store.create(learnerId);
   const served: string[] = [];
   const blockSections: string[] = [];
   for (let guard = 0; guard < 12; guard += 1) {
-    const { view, block } = resolvePracticeTestBlock(bank, record, learnerId, { now: NOW, blueprint: BP });
+    const { view, block, finalize } = resolvePracticeTestBlock(bank, record, freshness, {
+      now: NOW,
+      blueprint: BP,
+    });
     assertNoLeak(view, 'served view');
-    if (view.done) return { record, view, served, blockSections };
+    if (view.done) {
+      // Persist the freshness the engine handed back, as the authority would.
+      if (finalize) {
+        for (const id of finalize.scoredItemIds) freshness.scoredIds.add(id);
+        freshness.unitHistory.push(...finalize.unitObservations);
+      }
+      return { record, view, served, blockSections, freshness };
+    }
     const ids = block!.questionIds;
     served.push(...ids);
     blockSections.push(view.section!);
@@ -120,10 +157,10 @@ describe('practice test bank includes CARS', () => {
 describe('bankSupportsPracticeTest (the serve-path 503 guard predicate)', () => {
   it('is TRUE for an ample bank and FALSE for one too thin for the blueprint', () => {
     // Ample: 12 fresh items per section clears the BP section floors with room.
-    expect(bankSupportsPracticeTest(bankFor(12), 'learner-feasible', BP)).toBe(true);
+    expect(bankSupportsPracticeTest(bankFor(12), new Set<string>(), BP)).toBe(true);
     // Thin: 2 per section cannot meet cp:4 / cars:4 / bb:4, so no valid form can
     // be dealt — the exact condition the serve path now answers with a 503.
-    expect(bankSupportsPracticeTest(bankFor(2), 'learner-thin', BP)).toBe(false);
+    expect(bankSupportsPracticeTest(bankFor(2), new Set<string>(), BP)).toBe(false);
   });
 });
 
@@ -153,8 +190,9 @@ describe('practice test fixed-form delivery (reuses the diagnostic session store
     const bank = bankFor();
     const store = new DiagnosticSessionStore();
     const { record } = store.create('learner-x');
-    const first = resolvePracticeTestBlock(bank, record, 'learner-x', { now: NOW, blueprint: BP });
-    const again = resolvePracticeTestBlock(bank, record, 'learner-x', { now: NOW, blueprint: BP });
+    const freshness: PracticeTestFreshness = { scoredIds: new Set<string>(), unitHistory: [] };
+    const first = resolvePracticeTestBlock(bank, record, freshness, { now: NOW, blueprint: BP });
+    const again = resolvePracticeTestBlock(bank, record, freshness, { now: NOW, blueprint: BP });
     expect(again.block!.questionIds).toEqual(first.block!.questionIds);
     expect(again.view.section).toBe(first.view.section);
   });
@@ -171,17 +209,40 @@ describe('practice test assembled form meets the blueprint (validate before serv
 });
 
 describe('practice test never reuses a previously-scored item', () => {
-  it('a second sitting shares no item with the first', () => {
+  it('a second sitting shares no item with the first (from DURABLE freshness)', () => {
     const bank = bankFor();
     const store = new DiagnosticSessionStore();
-    const first = runSitting(bank, store, 'learner-3');
-    const second = runSitting(bank, store, 'learner-3');
+    // One shared freshness holder threads the first sitting's scored set into the
+    // second — the durable, restart-surviving path (Task 1), not a bank field.
+    const freshness = emptyFreshness();
+    const first = runSitting(bank, store, 'learner-3', () => 'A', freshness);
+    const second = runSitting(bank, store, 'learner-3', () => 'A', freshness);
 
     const firstSet = new Set(first.served);
     expect(second.served.some((id) => firstSet.has(id))).toBe(false);
-    // The bank now records every item from BOTH sittings as scored.
-    const scored = bank.scoredIds('learner-3');
-    for (const id of [...first.served, ...second.served]) expect(scored.has(id)).toBe(true);
+    // The durable freshness set now records every item from BOTH sittings.
+    for (const id of [...first.served, ...second.served]) {
+      expect(freshness.scoredIds.has(id)).toBe(true);
+    }
+  });
+
+  it('freshness read fresh each sitting behaves like a restart between them', () => {
+    // Simulate a restart: capture the first sitting's persisted freshness, then
+    // build a BRAND-NEW freshness holder from ONLY that persisted data (as the
+    // authority would rehydrate from LearnerState after a restart) and run the
+    // second sitting against it. The never-reuse guarantee must still hold.
+    const bank = bankFor();
+    const store = new DiagnosticSessionStore();
+    const persisted = emptyFreshness();
+    const first = runSitting(bank, store, 'learner-restart', () => 'A', persisted);
+
+    const rehydrated: FreshnessHolder = {
+      scoredIds: new Set(persisted.scoredIds),
+      unitHistory: [...persisted.unitHistory],
+    };
+    const second = runSitting(bank, store, 'learner-restart', () => 'A', rehydrated);
+    const firstSet = new Set(first.served);
+    expect(second.served.some((id) => firstSet.has(id))).toBe(false);
   });
 });
 
@@ -209,21 +270,29 @@ describe('practice test result envelope (fixed-form scorer)', () => {
     expect(result.blueprintMet).toBe(true);
   });
 
-  it('re-measure blends across sittings, weighting the most recent most heavily', () => {
+  it('re-measure blends across sittings from the DURABLE history', () => {
     const bank = bankFor(24);
     const store = new DiagnosticSessionStore();
-    // First sitting long ago, all wrong; the bank stamps it at `NOW` here, so to
-    // exercise recency we read the re-measure after a second, all-correct sitting.
-    runSitting(bank, store, 'learner-5', () => null); // all blank → wrong
-    const second = runSitting(bank, store, 'learner-5', (id) => {
-      // Answer from the key for a perfect second sitting.
-      for (const c of ['A', 'B', 'C', 'D'] as const) if (bank.score(id, c)) return c;
-      return null;
-    });
+    // A shared freshness holder carries the first sitting's per-unit observations
+    // forward — the durable re-measure history (Task 1), not a bank field.
+    const freshness = emptyFreshness();
+    runSitting(bank, store, 'learner-5', () => null, freshness); // all blank → wrong
+    const second = runSitting(
+      bank,
+      store,
+      'learner-5',
+      (id) => {
+        // Answer from the key for a perfect second sitting.
+        for (const c of ['A', 'B', 'C', 'D'] as const) if (bank.score(id, c)) return c;
+        return null;
+      },
+      freshness,
+    );
     // Both sittings are stamped at NOW in this harness, so the re-measure is the
-    // pooled decay-weighted accuracy across both — strictly between the two.
+    // pooled decay-weighted accuracy across both — a cluster touched by BOTH
+    // reports two sittings, proving the history came from the durable holder.
     const reads = second.view.result!.remeasure;
     expect(reads.length).toBeGreaterThan(0);
-    for (const r of reads) expect(r.sittings).toBeGreaterThanOrEqual(1);
+    expect(reads.some((r) => r.sittings >= 2)).toBe(true);
   });
 });

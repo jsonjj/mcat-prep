@@ -104,17 +104,55 @@ const gateRecorder = (
 });
 
 describe('practice-test serve boundary — cadence gate on /next', () => {
-  it('refuses to START a new sitting when the gate says none is due (409 + reason)', async () => {
+  it('refuses to START a new sitting when the gate says none is due (409 + typed refusal)', async () => {
     const { res, done } = makeRes();
     handlePracticeTestNextRequest(
       makeReq({}),
       res,
       bank,
-      gateRecorder(() => ({ due: false, reason: 'not_due_recent', tier: 'standard' })),
+      gateRecorder(() => ({
+        due: false,
+        reason: 'not_due_recent',
+        tier: 'standard',
+        nextEligibleDate: '2026-03-08',
+      })),
     );
     const out = await done;
     expect(out.statusCode).toBe(409);
-    expect((out.body as { reason: string }).reason).toBe('not_due_recent');
+    // A clean, typed refusal the client can render: named reason, a message, and
+    // the next-eligible day — never a bare error string (Task 3).
+    const body = out.body as {
+      error: string;
+      due: boolean;
+      reason: string;
+      message: string;
+      nextEligibleDate: string | null;
+    };
+    expect(body.error).toBe('practice_test_not_due');
+    expect(body.due).toBe(false);
+    expect(body.reason).toBe('not_due_recent');
+    expect(typeof body.message).toBe('string');
+    expect(body.message.length).toBeGreaterThan(0);
+    expect(body.nextEligibleDate).toBe('2026-03-08');
+  });
+
+  it('maps the review-gate refusal to its named reason (blocked_unreviewed)', async () => {
+    const { res, done } = makeRes();
+    handlePracticeTestNextRequest(
+      makeReq({}),
+      res,
+      bank,
+      gateRecorder(() => ({
+        due: false,
+        reason: 'blocked_unreviewed',
+        tier: 'standard',
+        nextEligibleDate: null,
+      })),
+    );
+    const out = await done;
+    expect(out.statusCode).toBe(409);
+    expect((out.body as { reason: string }).reason).toBe('blocked_unreviewed');
+    expect((out.body as { nextEligibleDate: string | null }).nextEligibleDate).toBeNull();
   });
 
   it('starts a new sitting when the gate says one is due, sized to the gate tier', async () => {
@@ -123,7 +161,7 @@ describe('practice-test serve boundary — cadence gate on /next', () => {
       makeReq({}),
       res,
       bank,
-      gateRecorder(() => ({ due: true, reason: 'baseline', tier: 'short' })),
+      gateRecorder(() => ({ due: true, reason: 'baseline', tier: 'short', nextEligibleDate: null })),
     );
     const out = await done;
     expect(out.statusCode).toBe(200);
@@ -143,10 +181,33 @@ describe('practice-test serve boundary — cadence gate on /next', () => {
       makeReq({ sessionToken }),
       res,
       bank,
-      gateRecorder(() => ({ due: false, reason: 'capped_today', tier: 'standard' })),
+      gateRecorder(() => ({
+        due: false,
+        reason: 'capped_today',
+        tier: 'standard',
+        nextEligibleDate: '2026-03-02',
+      })),
     );
     const out = await done;
     expect(out.statusCode).toBe(200);
     expect((out.body as { questions: unknown[] }).questions.length).toBeGreaterThan(0);
+  });
+
+  it('records the sitting as STARTED when a due test is served (Task 4 abandonment tracking)', async () => {
+    const started: { sittingId: string; tier: string }[] = [];
+    const recorder: PracticeTestAuthorityRecorder = {
+      gate: () => ({ due: true, reason: 'baseline', tier: 'short', nextEligibleDate: null }),
+      recordStarted: (s) => {
+        started.push({ sittingId: s.sittingId, tier: s.tier });
+      },
+      recordCompleted: () => {},
+      recordReviewed: () => {},
+    };
+    const { res, done } = makeRes();
+    handlePracticeTestNextRequest(makeReq({}), res, bank, recorder);
+    await done;
+    expect(started).toHaveLength(1);
+    expect(started[0]!.tier).toBe('short');
+    expect(started[0]!.sittingId.length).toBeGreaterThan(0);
   });
 });

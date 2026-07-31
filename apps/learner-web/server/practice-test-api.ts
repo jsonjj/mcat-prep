@@ -1,9 +1,18 @@
 import { randomUUID } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import type { ReasoningOperation, Section, UtcTimestamp } from '@mcat/contracts';
+import type {
+  ChoiceId,
+  PracticeTestServeRefusal,
+  PracticeTestServeRefusalReason,
+  ReasoningOperation,
+  Section,
+  SkillCluster,
+  UtcTimestamp,
+} from '@mcat/contracts';
 import {
   estimatePracticeTestScaled,
   practiceTestBlueprintFor,
+  type DatedUnitObservation,
   type PracticeTestLengthTier,
 } from '@mcat/policies';
 import { createPracticeTestBank, type PracticeTestBank } from './practice-test-bank';
@@ -17,6 +26,8 @@ import {
   recordPracticeTestBlock,
   resolvePracticeTestBlock,
   type PracticeTestBlockView,
+  type PracticeTestFinalize,
+  type PracticeTestFreshness,
 } from './practice-test-engine';
 
 /**
@@ -54,6 +65,42 @@ const sessionTier = new WeakMap<SessionRecord, PracticeTestLengthTier>();
 const tierOf = (record: SessionRecord): PracticeTestLengthTier =>
   sessionTier.get(record) ?? 'standard';
 
+/**
+ * The sitting id minted at START, reused at completion so the persisted sitting
+ * (and its abandoned/open bookkeeping, Task 4) carry the SAME id end to end
+ * rather than a fresh one generated only at finish. Lost on restart, like the
+ * session store itself; a resumed-then-completed sitting keeps one id.
+ */
+const sessionSittingId = new WeakMap<SessionRecord, string>();
+const sittingIdOf = (record: SessionRecord): string => {
+  const existing = sessionSittingId.get(record);
+  if (existing !== undefined) return existing;
+  const id = randomUUID();
+  sessionSittingId.set(record, id);
+  return id;
+};
+
+/**
+ * The learner's chosen option per item, accumulated across the sitting's blocks
+ * so the completion can carry the picked distractor into the attempt log (Task 2
+ * — a Mistakes row shows "you picked B"). Per-record, in-memory for the sitting;
+ * lost on restart with the session, which is fine (an interrupted sitting cannot
+ * complete anyway).
+ */
+const sessionAnswers = new WeakMap<SessionRecord, Map<string, ChoiceId | null>>();
+
+/** One per-item attempt the completion carries into the authority's attempt log (Task 2). */
+export interface PracticeTestAttemptPayload {
+  readonly questionId: string;
+  readonly kcId: string | null;
+  readonly skill: ReasoningOperation | null;
+  readonly cluster: SkillCluster | null;
+  readonly familyId: string | null;
+  readonly chosenChoiceId: ChoiceId | null;
+  readonly correct: boolean;
+  readonly elapsedMs: number | null;
+}
+
 /** The scored-result payload the completion recorder persists (WS5, §6). */
 export interface PracticeTestCompletionPayload {
   readonly sittingId: string;
@@ -64,6 +111,12 @@ export interface PracticeTestCompletionPayload {
   readonly sections: ReadonlyArray<{ section: Section; pctCorrect: number }>;
   readonly scaledScore: number;
   readonly reviewTargets: ReadonlyArray<{ kcId: string; skill?: ReasoningOperation }>;
+  /** Every item scored this sitting → the durable never-reuse set (Task 1). */
+  readonly scoredItemIds: readonly string[];
+  /** This sitting's per-unit observations → the durable re-measure history (Task 1). */
+  readonly unitObservations: readonly DatedUnitObservation[];
+  /** Per-item attempts → the Mistakes/error-log + pattern queue (Task 2). */
+  readonly attempts: readonly PracticeTestAttemptPayload[];
 }
 
 /** What the serve boundary needs to know before it will START a new sitting (WS5, §6). */
@@ -71,6 +124,8 @@ export interface PracticeTestServeGate {
   readonly due: boolean;
   readonly reason: string;
   readonly tier: PracticeTestLengthTier;
+  /** Earliest `YYYY-MM-DD` a test could next be served on a refusal; null when due/uncomputable. */
+  readonly nextEligibleDate: string | null;
 }
 
 /**
@@ -88,8 +143,42 @@ export interface PracticeTestServeGate {
  */
 export interface PracticeTestAuthorityRecorder {
   gate?(): Promise<PracticeTestServeGate> | PracticeTestServeGate;
+  /**
+   * The DURABLE freshness the engine assembles + re-measures against (Task 1):
+   * the never-reuse item set and the dated per-unit history, read straight off
+   * the persisted learner state. Optional — a recorder that does not provide it
+   * (a test stub) degrades to empty freshness (a first, all-fresh sitting).
+   */
+  loadFreshness?(): Promise<{
+    scoredItemIds: readonly string[];
+    unitHistory: readonly DatedUnitObservation[];
+  }> | {
+    scoredItemIds: readonly string[];
+    unitHistory: readonly DatedUnitObservation[];
+  };
+  /**
+   * Mark a sitting STARTED so an incomplete one can be closed and the one-open
+   * invariant held (Task 4). Optional; a recorder without it simply does not
+   * track abandonment.
+   */
+  recordStarted?(started: {
+    sittingId: string;
+    startedAt: UtcTimestamp;
+    tier: PracticeTestLengthTier;
+  }): Promise<void> | void;
   recordCompleted(completion?: PracticeTestCompletionPayload): Promise<void> | void;
   recordReviewed(): Promise<void> | void;
+}
+
+/** Read the durable freshness through the recorder, or empty when none is wired. */
+async function loadFreshness(
+  recorder: PracticeTestAuthorityRecorder | undefined,
+): Promise<PracticeTestFreshness> {
+  if (recorder?.loadFreshness === undefined) {
+    return { scoredIds: new Set<string>(), unitHistory: [] };
+  }
+  const f = await recorder.loadFreshness();
+  return { scoredIds: new Set(f.scoredItemIds), unitHistory: [...f.unitHistory] };
 }
 
 function trustsProxyHeaders(): boolean {
@@ -163,17 +252,20 @@ function serveBlock(
   bank: PracticeTestBank,
   record: SessionRecord,
   sessionToken: string,
-  learnerId: string,
+  freshness: PracticeTestFreshness,
   now: UtcTimestamp,
-): BlockResponsePayload {
-  const { view, block } = resolvePracticeTestBlock(bank, record, learnerId, {
+): { payload: BlockResponsePayload; finalize: PracticeTestFinalize | undefined } {
+  const { view, block, finalize } = resolvePracticeTestBlock(bank, record, freshness, {
     now,
     blueprint: practiceTestBlueprintFor(tierOf(record)),
   });
   const blockToken = block
     ? practiceTestSessionStore.issueBlockToken(record, block.blockId, block.questionIds)
     : null;
-  return { sessionToken, blockToken, blockId: block?.blockId ?? null, ...view };
+  return {
+    payload: { sessionToken, blockToken, blockId: block?.blockId ?? null, ...view },
+    finalize,
+  };
 }
 
 /**
@@ -182,17 +274,42 @@ function serveBlock(
  * the caller degrades to a counters-only completion. The per-section %-correct
  * are the dashboard's trend points; the scaled score is the conservative
  * estimate midpoint (the range is re-derived on read).
+ *
+ * It also carries the DURABLE freshness (`finalize`, Task 1) and the per-item
+ * ATTEMPTS (Task 2) so the authority can persist the never-reuse set + re-measure
+ * history and feed the same Mistakes/error-log queue adaptive practice uses. The
+ * attempts are built from the response log joined to the bank classification and
+ * the picked options accumulated across the sitting's blocks.
  */
 function completionFrom(
+  bank: PracticeTestBank,
+  record: SessionRecord,
   payload: BlockResponsePayload,
+  finalize: PracticeTestFinalize,
   tier: PracticeTestLengthTier,
   now: UtcTimestamp,
 ): PracticeTestCompletionPayload | undefined {
   const result = payload.result;
   if (result === null) return undefined;
   const overallPct = result.itemsScored > 0 ? (result.correct / result.itemsScored) * 100 : 0;
+  const picked = sessionAnswers.get(record) ?? new Map<string, ChoiceId | null>();
+  const attempts: PracticeTestAttemptPayload[] = record.responses.map((r) => {
+    const c = bank.classify(r.questionId);
+    return {
+      questionId: r.questionId,
+      kcId: c?.kcId ?? null,
+      skill: c?.skill ?? null,
+      cluster: c?.cluster ?? null,
+      familyId: c?.familyId ?? r.familyId ?? null,
+      chosenChoiceId: picked.get(r.questionId) ?? null,
+      correct: r.correct,
+      // The engine stores 0 for an uncaptured time; the log wants NULL ("not
+      // captured") to keep it apart from a real instant 0 (WS0).
+      elapsedMs: r.elapsedMs > 0 ? r.elapsedMs : null,
+    };
+  });
   return {
-    sittingId: randomUUID(),
+    sittingId: sittingIdOf(record),
     takenOn: now,
     tier,
     itemsScored: result.itemsScored,
@@ -205,6 +322,9 @@ function completionFrom(
     reviewTargets: result.reviewTargets.map((t) =>
       t.skill !== undefined ? { kcId: t.kcId, skill: t.skill } : { kcId: t.kcId },
     ),
+    scoredItemIds: finalize.scoredItemIds,
+    unitObservations: finalize.unitObservations,
+    attempts,
   };
 }
 
@@ -257,6 +377,38 @@ function bankOr503(response: ServerResponse, bank: PracticeTestBank | null): ban
   return true;
 }
 
+const REFUSAL_MESSAGE: Readonly<Record<PracticeTestServeRefusalReason, string>> = {
+  not_due_recent: 'Your next practice test is not due yet — keep studying and it will unlock on cadence.',
+  blocked_unreviewed: 'Review your last practice test before starting a new one.',
+  blackout_before_exam: 'No practice test in the final days before your exam — rest and light review only.',
+  capped_today: 'You have already taken a practice test today. The next one is available tomorrow.',
+  not_unlocked: 'Finish a few more lessons to unlock practice tests.',
+};
+
+/**
+ * The typed 409 body for an out-of-cadence / review-gated / locked start (WS5,
+ * §6, Task 3). The serve gate's reason narrows to a {@link
+ * PracticeTestServeRefusalReason}; anything unexpected degrades to
+ * `not_due_recent` so the body always matches {@link PracticeTestServeRefusal}
+ * and the client can render it without guessing.
+ */
+function refusalFrom(gate: PracticeTestServeGate): PracticeTestServeRefusal {
+  const reason: PracticeTestServeRefusalReason =
+    gate.reason === 'blocked_unreviewed' ||
+    gate.reason === 'blackout_before_exam' ||
+    gate.reason === 'capped_today' ||
+    gate.reason === 'not_unlocked'
+      ? gate.reason
+      : 'not_due_recent';
+  return {
+    error: 'practice_test_not_due',
+    due: false,
+    reason,
+    message: REFUSAL_MESSAGE[reason],
+    nextEligibleDate: gate.nextEligibleDate,
+  };
+}
+
 /**
  * Infeasibility → 503, the analogue of {@link bankOr503} for a bank that EXISTS
  * but is too thin to fill the blueprint from this learner's remaining fresh
@@ -271,9 +423,9 @@ function servableOr503(
   response: ServerResponse,
   bank: PracticeTestBank,
   record: SessionRecord,
-  learnerId: string,
+  excludeIds: ReadonlySet<string>,
 ): boolean {
-  if (record.completed || bankSupportsPracticeTest(bank, learnerId, practiceTestBlueprintFor(tierOf(record))))
+  if (record.completed || bankSupportsPracticeTest(bank, excludeIds, practiceTestBlueprintFor(tierOf(record))))
     return true;
   writeJson(response, 503, {
     error: 'The practice-test question bank is not available in this environment.',
@@ -303,22 +455,28 @@ export function handlePracticeTestNextRequest(
       const learnerId = clientId(request);
       const now = new Date().toISOString() as UtcTimestamp;
       const token = typeof body.sessionToken === 'string' ? body.sessionToken : null;
+      const freshness = await loadFreshness(recorder);
       // Resuming an existing sitting is never re-gated (you are mid-test); only
       // STARTING a new one consults the §6 cadence at the serving boundary, so a
-      // test cannot be started off-cadence even by calling the API directly.
+      // test cannot be started off-cadence even by calling the API directly. A
+      // refusal is a typed, named body the client can render (Task 3).
       if (token === null && recorder?.gate !== undefined) {
         const gate = await recorder.gate();
         if (!gate.due) {
-          writeJson(response, 409, {
-            error: 'No practice test is due right now.',
-            reason: gate.reason,
-          });
+          writeJson(response, 409, refusalFrom(gate));
           return;
         }
         const { record, sessionToken } = practiceTestSessionStore.create(learnerId);
         sessionTier.set(record, gate.tier);
-        if (!servableOr503(response, bank, record, learnerId)) return;
-        writeJson(response, 200, serveBlock(bank, record, sessionToken, learnerId, now));
+        if (!servableOr503(response, bank, record, freshness.scoredIds)) return;
+        // Mark the sitting STARTED so an abandoned one is closed + the one-open
+        // invariant holds (Task 4). Best-effort: a hiccup must not fail the serve.
+        try {
+          await recorder.recordStarted?.({ sittingId: sittingIdOf(record), startedAt: now, tier: gate.tier });
+        } catch {
+          // A dev-authority hiccup must not block a due sitting from starting.
+        }
+        writeJson(response, 200, serveBlock(bank, record, sessionToken, freshness, now).payload);
         return;
       }
       const { record, sessionToken } = token
@@ -326,8 +484,8 @@ export function handlePracticeTestNextRequest(
         : practiceTestSessionStore.create(learnerId);
       // Validate-before-serve: an infeasible fresh pool is a graceful 503, not a
       // 500 thrown out of the assembler inside `serveBlock`.
-      if (!servableOr503(response, bank, record, learnerId)) return;
-      writeJson(response, 200, serveBlock(bank, record, sessionToken, learnerId, now));
+      if (!servableOr503(response, bank, record, freshness.scoredIds)) return;
+      writeJson(response, 200, serveBlock(bank, record, sessionToken, freshness, now).payload);
     })
     .catch((error: unknown) => handleError(response, error));
 }
@@ -351,7 +509,6 @@ export function handlePracticeTestBlockRequest(
   if (!bankOr503(response, bank)) return;
   void readJsonBody(request)
     .then(async (body) => {
-      const learnerId = clientId(request);
       const sessionToken = typeof body.sessionToken === 'string' ? body.sessionToken : '';
       const blockToken = typeof body.blockToken === 'string' ? body.blockToken : '';
       const blockId = typeof body.blockId === 'string' ? body.blockId : '';
@@ -360,22 +517,31 @@ export function handlePracticeTestBlockRequest(
 
       const record = practiceTestSessionStore.get(sessionToken);
       const now = new Date().toISOString() as UtcTimestamp;
+      const freshness = await loadFreshness(recorder);
       const questionIds = practiceTestSessionStore.consumeBlockToken(record, blockId, blockToken);
       recordPracticeTestBlock(bank, record, questionIds, answers, elapsedMs);
+      // Accumulate the picked options across the sitting's blocks so the
+      // completion can carry the chosen distractor into the attempt log (Task 2).
+      const picked = sessionAnswers.get(record) ?? new Map<string, ChoiceId | null>();
+      for (const id of questionIds) picked.set(id, (answers[id] ?? null) as ChoiceId | null);
+      sessionAnswers.set(record, picked);
       // Capture completion BEFORE serving: `serveBlock` (→ resolvePracticeTestBlock)
       // is what flips `record.completed` once the last block is committed.
       const wasCompleted = record.completed;
       // Same validate-before-serve guard as `/next`: serving the next block
       // re-assembles, so an infeasible pool is a 503 rather than a generic 500.
-      if (!servableOr503(response, bank, record, learnerId)) return;
-      const payload = serveBlock(bank, record, sessionToken, learnerId, now);
+      if (!servableOr503(response, bank, record, freshness.scoredIds)) return;
+      const { payload, finalize } = serveBlock(bank, record, sessionToken, freshness, now);
       // The sitting just finished on THIS commit → report the SCORED result so
-      // the authority persists the sitting (dashboard summary), enqueues its
-      // misses into the repair queue, and re-opens the review gate. The block
-      // still succeeds even if the best-effort record hiccups.
-      if (!wasCompleted && record.completed && recorder !== undefined) {
+      // the authority persists the sitting (dashboard summary) + the durable
+      // freshness (Task 1), enqueues its misses into the Mistakes/repair queue
+      // (Task 2), closes the open sitting (Task 4), and re-opens the review gate.
+      // The block still succeeds even if the best-effort record hiccups.
+      if (!wasCompleted && record.completed && recorder !== undefined && finalize !== undefined) {
         try {
-          await recorder.recordCompleted(completionFrom(payload, tierOf(record), now));
+          await recorder.recordCompleted(
+            completionFrom(bank, record, payload, finalize, tierOf(record), now),
+          );
         } catch {
           // Best-effort: a dev-authority hiccup must not fail a committed block.
         }
