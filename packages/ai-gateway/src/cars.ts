@@ -71,8 +71,13 @@ export function buildReflectionPrompt(): AiMessage {
   return {
     role: 'user',
     content:
-      'End the debate now; do not argue further. Give constructive reflection in three short labeled parts: ' +
-      '"Strongest point you made:", "Counter you left unanswered:", and "CARS transfer tip:". ' +
+      'End the debate now; do not argue further. Reflect on how the STUDENT argued, grounded in what ' +
+      'they actually said in this debate, using exactly three markdown sections. Begin each section with ' +
+      'its heading in bold on its own line — "**Strongest point you made:**", then ' +
+      '"**Counter you left unanswered:**", then "**CARS transfer tip:**" — and under each heading give ' +
+      'about three short bullet points, one per line, each starting with "- " (a hyphen and a space). ' +
+      'Keep every bullet to a single concise, plain-language sentence (roughly 12-18 words). Use bold ' +
+      '(**) only around those three headings, and use only "- " bullets (no numbered lists or sub-bullets). ' +
       'Be encouraging and specific. Do not declare a winner or loser, and do not mention scores.',
   };
 }

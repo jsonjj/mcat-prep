@@ -18,6 +18,7 @@ import type { CarsDuelSelectionView, CarsReadinessLabel } from '@mcat/contracts'
 import { useCarsReadiness, useRecordCarsDuel } from '../app/queries';
 import { useRecordPlanActivity } from '../app/today-queries';
 import { IconBook, IconChat, IconCheck, IconShield, IconSwords } from '../components/icons';
+import { Markdown } from '../components/Markdown';
 
 /**
  * CARS Duel — an AI debate that sharpens critical analysis and reasoning.
@@ -430,21 +431,10 @@ export function CarsDuel() {
         <Eyebrow>Duel reflection</Eyebrow>
         <h1 className="mc-h1">Nice sparring.</h1>
         <Card elevated>
-          <p className="mc-duel__reflection">{reflection}</p>
+          <Markdown content={reflection ?? ''} className="mc-duel__reflection" />
         </Card>
         <Stack gap={2}>
-          <Button
-            variant="primary"
-            onClick={() => {
-              sent.current = [];
-              setShown([]);
-              setReflection(null);
-              setPhase('setup');
-            }}
-          >
-            New duel
-          </Button>
-          <Button variant="secondary" onClick={() => finish(true)}>
+          <Button variant="primary" onClick={() => finish(true)}>
             {returnTo ? 'Back to plan' : 'Back to Home'}
           </Button>
         </Stack>
@@ -453,13 +443,22 @@ export function CarsDuel() {
   }
 
   // debating
+  const atRoundLimit = rounds >= MAX_ROUNDS;
   return (
     <div className="mc-screen mc-study">
-      <Eyebrow>
-        CARS Duel · {DUEL_DIFFICULTY_LABELS[difficulty]} · round {Math.min(rounds + 1, MAX_ROUNDS)} of{' '}
-        {MAX_ROUNDS}
-      </Eyebrow>
-      <p className="mc-muted mc-fineprint">{topic}</p>
+      {/* Sticky context bar: round · topic · intensity stay pinned while the debate
+          scrolls (they used to scroll away). Sits just under the transparent
+          app-shell header via `top`; a blurred solid background keeps debate text
+          from showing through. */}
+      <header className="mc-duel__bar">
+        <p className="mc-duel__bar-eyebrow">
+          CARS Duel · {DUEL_DIFFICULTY_LABELS[difficulty]} · Round{' '}
+          {Math.min(rounds + 1, MAX_ROUNDS)} of {MAX_ROUNDS}
+        </p>
+        <p className="mc-duel__bar-topic" title={topic}>
+          {topic}
+        </p>
+      </header>
 
       <div className="mc-duel__log" aria-live="polite">
         {mode === 'defend' && shown.length === 0 ? (
@@ -474,38 +473,49 @@ export function CarsDuel() {
         {busy ? <p className="mc-muted mc-fineprint">Opponent is thinking…</p> : null}
       </div>
 
-      <textarea
-        className="mc-input"
-        rows={3}
-        aria-label="Your argument"
-        placeholder={mode === 'defend' && shown.length === 0 ? 'Your thesis…' : 'Your rebuttal…'}
-        value={draft}
-        onChange={(e) => setDraft(e.target.value)}
-        disabled={busy || rounds >= MAX_ROUNDS}
-      />
-
-      <Stack gap={2}>
-        {rounds >= MAX_ROUNDS ? (
-          <Callout tone="info">You&apos;ve hit the round limit — wrap up with a reflection.</Callout>
-        ) : (
-          <Button
-            variant="primary"
-            size="lg"
-            disabled={draft.trim().length === 0 || busy}
-            onClick={sendTurn}
-          >
-            Send argument
+      {atRoundLimit ? (
+        // Round limit reached: the only action is to wrap up. No rebuttal box and no
+        // small text link — a single prominent button, sized like the per-round submit
+        // so it reads as the one obvious next step.
+        <Stack gap={2}>
+          <p className="mc-muted mc-fineprint">
+            You&apos;ve hit the round limit — wrap up with a reflection.
+          </p>
+          <Button variant="primary" size="lg" disabled={!canReflect || busy} onClick={reflect}>
+            End &amp; get feedback
           </Button>
-        )}
-        <button
-          type="button"
-          className="mc-textbtn"
-          disabled={!canReflect || busy}
-          onClick={reflect}
-        >
-          End &amp; get feedback
-        </button>
-      </Stack>
+        </Stack>
+      ) : (
+        <>
+          <textarea
+            className="mc-input"
+            rows={3}
+            aria-label="Your argument"
+            placeholder={mode === 'defend' && shown.length === 0 ? 'Your thesis…' : 'Your rebuttal…'}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            disabled={busy}
+          />
+          <Stack gap={2}>
+            <Button
+              variant="primary"
+              size="lg"
+              disabled={draft.trim().length === 0 || busy}
+              onClick={sendTurn}
+            >
+              Send argument
+            </Button>
+            <button
+              type="button"
+              className="mc-textbtn"
+              disabled={!canReflect || busy}
+              onClick={reflect}
+            >
+              End &amp; get feedback
+            </button>
+          </Stack>
+        </>
+      )}
     </div>
   );
 }

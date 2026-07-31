@@ -23,6 +23,17 @@ describe('CARS Duel prompts', () => {
     expect(r.content.toLowerCase()).toContain('strongest point');
   });
 
+  it('reflection prompt asks for short markdown bullets under each bold heading', () => {
+    const r = buildReflectionPrompt();
+    // Bulleted, markdown-formatted output (rendered by <Markdown>), not prose.
+    expect(r.content.toLowerCase()).toContain('bullet');
+    expect(r.content).toContain('- ');
+    // All three sections, as bold markdown headings.
+    expect(r.content).toContain('**Strongest point you made:**');
+    expect(r.content).toContain('**Counter you left unanswered:**');
+    expect(r.content).toContain('**CARS transfer tip:**');
+  });
+
   it('rubric prompt asks for a single machine-readable SCORES line', () => {
     const p = buildDuelRubricPrompt();
     expect(p.content).toContain('SCORES position=');

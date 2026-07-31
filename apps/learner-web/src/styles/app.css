@@ -1655,6 +1655,44 @@ body {
 }
 
 /* ---- CARS Duel (AI debate) ---- */
+
+/* Sticky debate context bar (round · topic · intensity). Pinned just below the
+   transparent app-shell header (~60px = a 44px icon target + 8px×2 padding) so the
+   round/topic/intensity stay visible while the debate scrolls beneath it. A blurred,
+   near-opaque surface keeps message text from bleeding through; z-index sits under
+   the app header (10) but above the debate bubbles. */
+.mc-duel__bar {
+  position: sticky;
+  top: 60px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--mc-space-2) var(--mc-space-4);
+  border-radius: var(--mc-radius-control);
+  background: color-mix(in srgb, var(--mc-surface) 92%, transparent);
+  border: 1px solid color-mix(in srgb, #ffffff 35%, var(--mc-border));
+  backdrop-filter: blur(10px);
+}
+.mc-duel__bar-eyebrow {
+  margin: 0;
+  font-family: var(--mc-font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  color: var(--mc-primary-text);
+}
+.mc-duel__bar-topic {
+  margin: 0;
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-14);
+  /* Keep the bar compact: one line, ellipsis when long (full text via title attr). */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .mc-duel__log {
   display: flex;
   flex-direction: column;
@@ -1687,8 +1725,25 @@ body {
   color: var(--mc-ink-muted);
   margin-bottom: 2px;
 }
+/* Rendered feedback: the reflection is now markdown (bold headings + short bullet
+   lists) turned into real elements by <Markdown>, not a raw pre-wrapped string. */
 .mc-duel__reflection {
-  white-space: pre-wrap;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-3);
+}
+.mc-duel__reflection p {
+  margin: 0;
+}
+.mc-duel__reflection ul {
+  margin: 0;
+  padding-left: var(--mc-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-1);
+}
+.mc-duel__reflection li {
+  margin: 0;
 }
 
 /* ---- CARS Duel — setup screen (header · mode cards · intensity · topic · CTA) ---- */
