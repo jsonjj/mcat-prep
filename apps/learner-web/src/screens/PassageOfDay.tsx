@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
+import { Button, Callout, Card, Eyebrow, Inline, Stack } from '@mcat/ui-web';
 import { fetchTodaysPassage, gradePassage } from './passage/passage-client';
-import type { PassageChoiceId, PassageGrade, PassageQuestionView } from './passage/passage-client';
+import type {
+  PassageChoiceId,
+  PassageGrade,
+  PassageQuestionView,
+  PassageTodayView,
+} from './passage/passage-client';
 
 /**
  * Passage of the Day — a formative CARS-style reading rep.
@@ -12,6 +17,11 @@ import type { PassageChoiceId, PassageGrade, PassageQuestionView } from './passa
  * local day) and is scored server-side with an explanation reveal. It is
  * display + score ONLY: it writes no mastery, logs no mistake, and never routes
  * through the authority kernel — a low-stakes rep to keep reading stamina warm.
+ *
+ * Like a diagnostic/practice block, the passage stays on screen while its
+ * questions are worked ONE AT A TIME, with Back/Next moving between them. Each
+ * question keeps its own answer and its revealed explanation, so navigating away
+ * and back shows the earlier result rather than resetting it.
  */
 
 function revealClass(
@@ -25,44 +35,56 @@ function revealClass(
   return '';
 }
 
+/**
+ * One question, driven entirely by props: the runner owns the answer and grade
+ * so they survive Back/Next. Presentational only — it selects and checks through
+ * callbacks and never fetches.
+ */
 function PassageQuestionCard({
   question,
   index,
   total,
+  picked,
+  grade,
+  isChecking,
+  checkFailed,
+  headingRef,
+  onSelect,
+  onCheck,
 }: {
   question: PassageQuestionView;
   index: number;
   total: number;
+  picked: PassageChoiceId | null;
+  grade: PassageGrade | null;
+  isChecking: boolean;
+  checkFailed: boolean;
+  headingRef: RefObject<HTMLHeadingElement>;
+  onSelect: (choiceId: PassageChoiceId) => void;
+  onCheck: () => void;
 }) {
-  const [choice, setChoice] = useState<PassageChoiceId | null>(null);
-  const [grade, setGrade] = useState<PassageGrade | null>(null);
-  const check = useMutation({
-    mutationFn: () => gradePassage(question.id, choice),
-    onSuccess: (g) => setGrade(g),
-  });
-
   const locked = grade !== null;
 
   return (
     <Card elevated as="section" className="mc-potd__q">
       <Stack gap={3}>
-        {total > 1 ? (
-          <p className="mc-potd__qcount">
-            Question {index + 1} of {total}
-          </p>
-        ) : null}
-        <h2 className="mc-h3">{question.stem}</h2>
+        <p className="mc-potd__qcount" aria-live="polite">
+          Question {index + 1} of {total}
+        </p>
+        <h2 className="mc-h3" tabIndex={-1} ref={headingRef}>
+          {question.stem}
+        </h2>
 
-        <fieldset className="mc-choices" disabled={locked || check.isPending}>
+        <fieldset className="mc-choices" disabled={locked || isChecking}>
           <legend className="mc-visually-hidden">Answer choices</legend>
           {question.choices.map((c) => (
-            <label key={c.id} className={`mc-choice ${revealClass(c.id, choice, grade)}`}>
+            <label key={c.id} className={`mc-choice ${revealClass(c.id, picked, grade)}`}>
               <input
                 type="radio"
                 name={`answer-${question.id}`}
                 value={c.id}
-                checked={choice === c.id}
-                onChange={() => setChoice(c.id)}
+                checked={picked === c.id}
+                onChange={() => onSelect(c.id)}
               />
               <span className="mc-choice__key">{c.id}</span>
               <span className="mc-choice__text">{c.text}</span>
@@ -79,7 +101,7 @@ function PassageQuestionCard({
             </div>
             <p>{grade.rationale}</p>
             {!grade.correct && grade.choiceRationale ? (
-              <Callout tone="info" title={`Why ${choice} misses`}>
+              <Callout tone="info" title={`Why ${picked} misses`}>
                 {grade.choiceRationale}
               </Callout>
             ) : null}
@@ -88,21 +110,126 @@ function PassageQuestionCard({
           <Button
             variant="primary"
             size="lg"
-            disabled={choice === null || check.isPending}
-            loading={check.isPending}
-            onClick={() => check.mutate()}
+            disabled={picked === null || isChecking}
+            loading={isChecking}
+            onClick={onCheck}
           >
             Check my answer
           </Button>
         )}
 
-        {check.isError ? (
+        {checkFailed ? (
           <Callout tone="warning" title="Couldn’t score that">
             Something went wrong scoring your answer. Please try again.
           </Callout>
         ) : null}
       </Stack>
     </Card>
+  );
+}
+
+/**
+ * The runner for a loaded passage. Holds the per-question answer and grade maps
+ * and the current index, so the whole passage's questions are navigable while
+ * only one shows at a time. Keyed by passage id upstream, so a new day's passage
+ * mounts fresh rather than inheriting yesterday's answers.
+ */
+function PassageRunner({ passage }: { passage: PassageTodayView }) {
+  const navigate = useNavigate();
+  const total = passage.questions.length;
+
+  const [index, setIndex] = useState(0);
+  const [choices, setChoices] = useState<Record<string, PassageChoiceId>>({});
+  const [grades, setGrades] = useState<Record<string, PassageGrade>>({});
+
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  // Move focus to the new stem on Back/Next (so keyboard and screen-reader users
+  // land on the question they navigated to), but not on first render — the
+  // learner should meet the passage first, not be yanked down to question one.
+  const hasNavigatedRef = useRef(false);
+
+  const check = useMutation({
+    mutationFn: (vars: { questionId: string; choiceId: PassageChoiceId }) =>
+      gradePassage(vars.questionId, vars.choiceId),
+    onSuccess: (grade, vars) => {
+      setGrades((prev) => ({ ...prev, [vars.questionId]: grade }));
+    },
+  });
+
+  useEffect(() => {
+    if (!hasNavigatedRef.current) return;
+    headingRef.current?.focus();
+  }, [index]);
+
+  const question = passage.questions[index];
+  // A served passage always has at least one question, but guard so a bad index
+  // can never throw in the runner.
+  if (!question) return null;
+
+  const picked = choices[question.id] ?? null;
+  const grade = grades[question.id] ?? null;
+  // Pending/failed state is scoped to the question it belongs to, so a failure on
+  // one question never bleeds a warning onto another as you navigate.
+  const isCheckingThis = check.isPending && check.variables?.questionId === question.id;
+  const checkFailedThis = check.isError && check.variables?.questionId === question.id;
+
+  const goTo = (next: number) => {
+    if (next < 0 || next >= total) return;
+    hasNavigatedRef.current = true;
+    setIndex(next);
+  };
+
+  return (
+    <div className="mc-screen mc-study mc-potd">
+      <header className="mc-potd__head">
+        <Eyebrow>Passage of the day · {passage.discipline}</Eyebrow>
+        <h1 className="mc-h1">{passage.title}</h1>
+        <p className="mc-muted mc-fineprint">
+          A short CARS-style reading rep — everything you need is in the passage. It’s formative
+          only: read closely, reason it through, and check your thinking. It never counts toward
+          mastery.
+        </p>
+      </header>
+
+      <Card elevated className="mc-stimulus mc-potd__passage">
+        <p className="mc-potd__passagelabel">Passage</p>
+        <Stack gap={2}>
+          {passage.body.map((paragraph, i) => (
+            <p key={i}>{paragraph}</p>
+          ))}
+        </Stack>
+      </Card>
+
+      <PassageQuestionCard
+        question={question}
+        index={index}
+        total={total}
+        picked={picked}
+        grade={grade}
+        isChecking={isCheckingThis}
+        checkFailed={checkFailedThis}
+        headingRef={headingRef}
+        onSelect={(choiceId) => setChoices((prev) => ({ ...prev, [question.id]: choiceId }))}
+        onCheck={() => {
+          if (picked !== null) check.mutate({ questionId: question.id, choiceId: picked });
+        }}
+      />
+
+      <Inline className="mc-potd__nav" style={{ justifyContent: 'space-between' }}>
+        <Button variant="secondary" disabled={index === 0} onClick={() => goTo(index - 1)}>
+          Back
+        </Button>
+        <Button variant="secondary" disabled={index >= total - 1} onClick={() => goTo(index + 1)}>
+          Next
+        </Button>
+      </Inline>
+
+      <div className="mc-potd__foot">
+        <Button variant="secondary" onClick={() => navigate('/app')}>
+          Back to Home
+        </Button>
+      </div>
+    </div>
   );
 }
 
@@ -157,41 +284,7 @@ export function PassageOfDay() {
     );
   }
 
-  return (
-    <div className="mc-screen mc-study mc-potd">
-      <header className="mc-potd__head">
-        <Eyebrow>Passage of the day · {passage.discipline}</Eyebrow>
-        <h1 className="mc-h1">{passage.title}</h1>
-        <p className="mc-muted mc-fineprint">
-          A short CARS-style reading rep — everything you need is in the passage. It’s formative
-          only: read closely, reason it through, and check your thinking. It never counts toward
-          mastery.
-        </p>
-      </header>
-
-      <Card elevated className="mc-stimulus mc-potd__passage">
-        <p className="mc-potd__passagelabel">Passage</p>
-        <Stack gap={2}>
-          {passage.body.map((paragraph, i) => (
-            <p key={i}>{paragraph}</p>
-          ))}
-        </Stack>
-      </Card>
-
-      {passage.questions.map((question, i) => (
-        <PassageQuestionCard
-          key={question.id}
-          question={question}
-          index={i}
-          total={passage.questions.length}
-        />
-      ))}
-
-      <div className="mc-potd__foot">
-        <Button variant="secondary" onClick={() => navigate('/app')}>
-          Back to Home
-        </Button>
-      </div>
-    </div>
-  );
+  // Keyed by passage id so the runner's per-question state resets cleanly when
+  // the day (and passage) changes.
+  return <PassageRunner key={passage.id} passage={passage} />;
 }

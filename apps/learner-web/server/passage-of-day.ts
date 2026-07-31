@@ -1,5 +1,5 @@
 import {
-  PASSAGE_OF_THE_DAY_POOL,
+  loadPassagePool,
   type PassageChoiceId,
   type PassageOfTheDayEntry,
   type PassageQuestion,
@@ -107,7 +107,7 @@ export class PassageOfDayService {
   private readonly pool: readonly PassageOfTheDayEntry[];
   private readonly questionsById: ReadonlyMap<string, PassageQuestion>;
 
-  constructor(pool: readonly PassageOfTheDayEntry[] = PASSAGE_OF_THE_DAY_POOL) {
+  constructor(pool: readonly PassageOfTheDayEntry[] = loadPassagePool()) {
     this.pool = pool;
     const byId = new Map<string, PassageQuestion>();
     for (const entry of pool) {

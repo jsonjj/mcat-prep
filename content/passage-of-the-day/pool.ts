@@ -47,17 +47,20 @@ export interface PassageOfTheDayEntry {
   readonly discipline: string;
   /** The passage text, one string per paragraph. */
   readonly body: readonly string[];
-  /** One or two MCQs assessing the passage. */
+  /** The passage's CARS-style MCQs (about five per passage, as on the real exam). */
   readonly questions: readonly PassageQuestion[];
 }
 
 /**
- * The pool. Rotation cycles through it in array order (see the server module),
- * so the order here is the order learners meet the passages. Keep entries
- * roughly even in difficulty; add to the end rather than reordering, so a given
- * day does not silently change passages for everyone.
+ * The pool — the hardcoded content source. Rotation cycles through it in array
+ * order (see the server module), so the order here is the order learners meet
+ * the passages. Keep entries roughly even in difficulty; add to the end rather
+ * than reordering, so a given day does not silently change passages for everyone.
+ *
+ * Deliberately NOT exported: every reader goes through `loadPassagePool()` below,
+ * the single seam where this hardcoded source could later become a DB read.
  */
-export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
+const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
   {
     id: 'potd-aesthetics-difficulty',
     title: 'The Uses of Difficulty',
@@ -77,8 +80,14 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
             id: 'B',
             text: 'the difficulty of a work should be judged by whether the effort it demands is rewarded',
           },
-          { id: 'C', text: 'obscurity in art is generally a sign of the creator\u2019s carelessness' },
-          { id: 'D', text: 'demanding works are usually recognized as indispensable by later critics' },
+          {
+            id: 'C',
+            text: 'obscurity in art is generally a sign of the creator\u2019s carelessness',
+          },
+          {
+            id: 'D',
+            text: 'demanding works are usually recognized as indispensable by later critics',
+          },
         ],
         correctChoiceId: 'B',
         rationale:
@@ -109,6 +118,66 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           D: 'This contradicts a critic who prizes obscurity; it is closer to the easy-pleasure view the author rejects.',
         },
       },
+      {
+        id: 'potd-aesthetics-difficulty-q3',
+        stem: 'The example of a "poem about the limits of understanding that could be understood at a glance" is used to illustrate:',
+        choices: [
+          { id: 'A', text: 'accidental difficulty, which rewards no effort' },
+          { id: 'B', text: 'difficulty that is inseparable from a work’s meaning' },
+          { id: 'C', text: 'a critic who praises obscurity for its own sake' },
+          { id: 'D', text: 'the easy pleasure that a familiar scene provides' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The poem is the author’s case of "constitutive" difficulty: a work about the limits of understanding that was instantly clear "would refute itself," because removing the difficulty would remove its meaning.',
+        choiceRationales: {
+          A: 'Accidental difficulty "rewards no effort because there is nothing behind it"; this example has meaning behind it.',
+          B: 'Correct: the difficulty cannot be removed without removing the very experience the work exists to produce.',
+          C: 'The example concerns a kind of difficulty, not a type of reader or critic.',
+          D: 'The example is precisely not about easy or familiar pleasure.',
+        },
+      },
+      {
+        id: 'potd-aesthetics-difficulty-q4',
+        stem: 'According to the passage, the two errors a reader may make share which underlying premise?',
+        choices: [
+          { id: 'A', text: 'that difficulty always springs from the artist’s carelessness' },
+          { id: 'B', text: 'that difficulty is a single thing, to be either avoided or admired' },
+          { id: 'C', text: 'that pleasure is the only legitimate purpose of art' },
+          { id: 'D', text: 'that demanding works are always vindicated by later critics' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The passage states the two errors "share a premise: that difficulty is a single thing, to be either avoided or admired."',
+        choiceRationales: {
+          A: 'Carelessness describes only accidental difficulty, not the premise common to both errors.',
+          B: 'Correct: both errors treat difficulty as one undifferentiated thing.',
+          C: 'The easy-pleasure view is the opening position the author rejects, not the shared premise.',
+          D: 'This is an observation about the history of criticism, not the premise the errors share.',
+        },
+      },
+      {
+        id: 'potd-aesthetics-difficulty-q5',
+        stem: 'The author calls the critic’s task "harder and less comfortable" than the two errors because it requires:',
+        choices: [
+          { id: 'A', text: 'rejecting every work that cannot be grasped at once' },
+          {
+            id: 'B',
+            text: 'judging each work by whether its difficulty is repaid, rather than applying one rule',
+          },
+          { id: 'C', text: 'treating unintelligibility as a reliable sign of depth' },
+          { id: 'D', text: 'giving up the attempt to evaluate art at all' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'Unlike the two errors, which apply a single attitude to all difficulty, the critic must ask "in each case" whether the effort a work demands is repaid by what it discloses.',
+        choiceRationales: {
+          A: 'Rejecting all demanding works is one of the errors the author criticizes.',
+          B: 'Correct: the discomfort lies in forgoing a blanket rule for a case-by-case judgment.',
+          C: 'Prizing unintelligibility is the second error, not the disciplined task.',
+          D: 'The task is a form of evaluation, not its abandonment.',
+        },
+      },
     ],
   },
   {
@@ -127,7 +196,10 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
         choices: [
           { id: 'A', text: 'demonstrate that microhistory has been thoroughly discredited' },
           { id: 'B', text: 'show that microhistorians chose atypical cases in order to mislead' },
-          { id: 'C', text: 'introduce the microhistorians\u2019 reframing of what a single case is meant to do' },
+          {
+            id: 'C',
+            text: 'introduce the microhistorians\u2019 reframing of what a single case is meant to do',
+          },
           { id: 'D', text: 'establish that richly documented cases are always unusual' },
         ],
         correctChoiceId: 'C',
@@ -144,7 +216,10 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
         id: 'potd-history-microhistory-q2',
         stem: 'The passage suggests that an "average" drawn from a provincial tax record:',
         choices: [
-          { id: 'A', text: 'is inherently more accurate than any single household\u2019s testimony' },
+          {
+            id: 'A',
+            text: 'is inherently more accurate than any single household\u2019s testimony',
+          },
           { id: 'B', text: 'can conceal the particular negotiations that lie behind the numbers' },
           { id: 'C', text: 'is dismissed by microhistorians as essentially worthless' },
           { id: 'D', text: 'reveals structures that a reduction in scale would flatten' },
@@ -157,6 +232,69 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           B: 'Correct: the average "conceals" the negotiations and evasions that the smaller scale can expose.',
           C: 'Microhistorians "did not deny that large forces exist," so they do not treat aggregate data as worthless.',
           D: 'This reverses the passage: the wide view flattens structure, while the reduction in scale reveals it.',
+        },
+      },
+      {
+        id: 'potd-history-microhistory-q3',
+        stem: 'The phrase "epistemological rather than metaphysical" indicates that the microhistorians’ wager concerned:',
+        choices: [
+          { id: 'A', text: 'whether large historical forces exist at all' },
+          { id: 'B', text: 'what a change of scale allows a historian to know, not what exists' },
+          { id: 'C', text: 'whether individual lives are worth recording' },
+          { id: 'D', text: 'which century first produced serious history' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The wager is glossed as "epistemological rather than metaphysical," and the passage adds that they "did not deny that large forces exist" — the claim is about knowledge (what a smaller scale reveals), not existence.',
+        choiceRationales: {
+          A: 'That would be the metaphysical claim they explicitly avoided; they "did not deny that large forces exist."',
+          B: 'Correct: the wager is about what reducing the scale lets a historian see and know.',
+          C: 'The passage never doubts that individual lives are worth recording; that is not the wager.',
+          D: 'The chronology of the discipline is not what the phrase refers to.',
+        },
+      },
+      {
+        id: 'potd-history-microhistory-q4',
+        stem: 'The passage as a whole is best described as:',
+        choices: [
+          { id: 'A', text: 'tracing the twentieth-century decline of large-scale history' },
+          {
+            id: 'B',
+            text: 'presenting microhistory’s rationale and its reply to the charge of unrepresentativeness',
+          },
+          { id: 'C', text: 'proving that averages always conceal more than they reveal' },
+          { id: 'D', text: 'arguing that only richly documented cases deserve study' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The passage introduces microhistory, states its epistemological wager, raises the representativeness objection, and gives the microhistorians’ reply — an exposition and defense.',
+        choiceRationales: {
+          A: 'Large-scale history is the backdrop, not the subject; its "decline" is never asserted.',
+          B: 'Correct: the passage lays out the rationale and answers the objection about atypical cases.',
+          C: 'The average’s concealment is one supporting point, not the passage’s overall aim.',
+          D: 'The author values well-chosen cases as tests, not as the only worthwhile objects of study.',
+        },
+      },
+      {
+        id: 'potd-history-microhistory-q5',
+        stem: 'Based on the microhistorians’ reply, a single case succeeds when it:',
+        choices: [
+          { id: 'A', text: 'proves statistically representative of the wider population' },
+          {
+            id: 'B',
+            text: 'tests whether a general explanation survives contact with a particular life',
+          },
+          { id: 'C', text: 'avoids any reference to large-scale generalizations' },
+          { id: 'D', text: 'is chosen precisely because it is ordinary and thinly documented' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The reply redefines a case as one that "tests whether our general explanations can survive contact with a life actually lived," not as a representative sample.',
+        choiceRationales: {
+          A: 'The reply explicitly gives up the claim that the chosen case is typical or representative.',
+          B: 'Correct: a case earns its worth by testing general explanations against an actual life.',
+          C: 'A case is meant to test general explanations, so it engages them rather than avoiding them.',
+          D: 'A case is valued for what it can test, not for being ordinary or poorly documented.',
         },
       },
     ],
@@ -175,7 +313,10 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
         id: 'potd-philsci-anomalies-q1',
         stem: 'Which of the following best captures the main idea of the passage?',
         choices: [
-          { id: 'A', text: 'An anomaly should always be treated as a decisive refutation of a theory.' },
+          {
+            id: 'A',
+            text: 'An anomaly should always be treated as a decisive refutation of a theory.',
+          },
           {
             id: 'B',
             text: 'Whether an anomaly refutes a theory cannot be settled by logic alone and must be judged by later predictions.',
@@ -184,7 +325,10 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
             id: 'C',
             text: 'Blaming auxiliary assumptions to protect a theory is always an illegitimate maneuver.',
           },
-          { id: 'D', text: 'Theories are confirmed only by the steady accumulation of favorable evidence.' },
+          {
+            id: 'D',
+            text: 'Theories are confirmed only by the steady accumulation of favorable evidence.',
+          },
         ],
         correctChoiceId: 'B',
         rationale:
@@ -200,7 +344,10 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
         id: 'potd-philsci-anomalies-q2',
         stem: 'The author would most likely regard which situation as a failure of a healthy science?',
         choices: [
-          { id: 'A', text: 'Setting an anomaly aside while re-checking whether an instrument was calibrated' },
+          {
+            id: 'A',
+            text: 'Setting an anomaly aside while re-checking whether an instrument was calibrated',
+          },
           { id: 'B', text: 'Abandoning a theory after a run of failed predictions' },
           {
             id: 'C',
@@ -216,6 +363,66 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           B: 'Abandoning a theory after repeated failures is paying the predictive debt, not failing.',
           C: 'Correct: perpetual protection that never risks a new prediction is the maneuver the author condemns.',
           D: 'Treating a discrepancy as an occasion for inquiry is precisely what the author recommends.',
+        },
+      },
+      {
+        id: 'potd-philsci-anomalies-q3',
+        stem: 'The author mentions calibration, sample purity, and unnoticed factors primarily in order to:',
+        choices: [
+          { id: 'A', text: 'list the standard steps of a rigorous experiment' },
+          { id: 'B', text: 'explain why a failed prediction cannot, by itself, locate the fault' },
+          { id: 'C', text: 'prove that instruments are usually miscalibrated' },
+          { id: 'D', text: 'argue that auxiliary assumptions are never worth checking' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'These auxiliaries are introduced because "no theory confronts the world alone"; when a prediction fails, "logic alone cannot say whether the fault lies in the theory or in one of these assumptions."',
+        choiceRationales: {
+          A: 'They are offered not as a procedure but as sources of possible error besides the theory.',
+          B: 'Correct: the fault may lie in an assumption rather than the theory, so failure is not decisive.',
+          C: 'The author says these assumptions may fail, not that they usually do.',
+          D: 'The passage treats checking auxiliaries as legitimate inquiry, the opposite of never worth it.',
+        },
+      },
+      {
+        id: 'potd-philsci-anomalies-q4',
+        stem: 'The phrase "an occasion for inquiry, not an automatic verdict" most nearly means that a discrepancy should:',
+        choices: [
+          { id: 'A', text: 'prove the theory false the moment it appears' },
+          { id: 'B', text: 'prompt investigation rather than an automatic rejection' },
+          { id: 'C', text: 'be ignored by working scientists forever' },
+          { id: 'D', text: 'confirm the theory’s central assumptions' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The phrase contrasts investigating where a discrepancy comes from with treating it as an immediate refutation of the theory.',
+        choiceRationales: {
+          A: 'An "automatic verdict" is exactly what the author denies a discrepancy delivers.',
+          B: 'Correct: it calls for inquiry into where the fault lies, not a snap rejection.',
+          C: 'The author warns against tolerating anomalies "forever," so indefinite ignoring is not endorsed.',
+          D: 'A discrepancy is a problem to investigate, not a confirmation of assumptions.',
+        },
+      },
+      {
+        id: 'potd-philsci-anomalies-q5',
+        stem: 'The author’s view of the freedom to set anomalies aside is best described as holding that it is:',
+        choices: [
+          { id: 'A', text: 'always illegitimate, since anomalies must be decisive' },
+          {
+            id: 'B',
+            text: 'legitimate until it permanently shields a theory from any new test',
+          },
+          { id: 'C', text: 'harmless, because a theory may be protected indefinitely' },
+          { id: 'D', text: 'irrelevant, because auxiliary assumptions never fail' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The latitude is "easily abused" yet "often" right; it fails only when a theory is "kept alive long past its usefulness" by never risking a prediction that could come true or not.',
+        choiceRationales: {
+          A: 'The author says scientists are "often right" to set anomalies aside, so it is not always illegitimate.',
+          B: 'Correct: the freedom is legitimate until it becomes a way to avoid ever paying in predictions.',
+          C: 'Indefinite protection is precisely the abuse the author condemns, not a harmless option.',
+          D: 'The whole argument rests on auxiliaries sometimes being the true source of a failure.',
         },
       },
     ],
@@ -240,7 +447,10 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
             id: 'C',
             text: 'partial agreement \u2014 granting that intention does not exhaust meaning, but denying that it is therefore irrelevant',
           },
-          { id: 'D', text: 'insistence that the author\u2019s intention is the sole authority over meaning' },
+          {
+            id: 'D',
+            text: 'insistence that the author\u2019s intention is the sole authority over meaning',
+          },
         ],
         correctChoiceId: 'C',
         rationale:
@@ -271,6 +481,66 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           D: 'If they meant the same thing there would be no "leap" between them; the author distinguishes them.',
         },
       },
+      {
+        id: 'potd-litcrit-author-q3',
+        stem: 'The author’s appeal to how "we treat the sentences of others" in ordinary life functions to:',
+        choices: [
+          { id: 'A', text: 'concede that authorial intention is finally unknowable' },
+          { id: 'B', text: 'support the claim that intention remains relevant to meaning' },
+          { id: 'C', text: 'prove that readers always recover an author’s exact intention' },
+          { id: 'D', text: 'show that everyday speech has no bearing on literary texts' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The author notes that we "treat them as the acts of persons trying to say something, and we are usually right to" — everyday practice offered as evidence that intention still matters.',
+        choiceRationales: {
+          A: 'The example argues that intention matters, not that it is unknowable.',
+          B: 'Correct: ordinary interpretation shows we rightly treat utterances as intended acts.',
+          C: '"Usually right" is a modest claim, not a guarantee of recovering exact intention.',
+          D: 'The author draws on ordinary speech precisely because it does bear on how we read.',
+        },
+      },
+      {
+        id: 'potd-litcrit-author-q4',
+        stem: 'The distinction the author says the "strong view erases" is the one between:',
+        choices: [
+          { id: 'A', text: 'what a competent reader and an incompetent reader notice' },
+          { id: 'B', text: 'what a text can be made to mean and what it was meant to mean' },
+          { id: 'C', text: 'classroom opinion and genuine scholarship' },
+          { id: 'D', text: 'a poem’s words and its punctuation' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The closing sentence names this exact distinction — "between what a text can be made to mean and what it was meant to mean" — as what honesty requires and the strong view erases.',
+        choiceRationales: {
+          A: 'Competence is not the axis of the distinction the author draws.',
+          B: 'Correct: this is precisely the distinction the passage says the strong view erases.',
+          C: 'The author does not frame the issue as classroom opinion versus scholarship.',
+          D: 'The distinction concerns meaning and intention, not textual mechanics.',
+        },
+      },
+      {
+        id: 'potd-litcrit-author-q5',
+        stem: 'On the author’s view, a reader who finds in a poem an implication its author would have disowned has:',
+        choices: [
+          { id: 'A', text: 'proven that the author is the sole authority over meaning' },
+          {
+            id: 'B',
+            text: 'discovered something the words permit though the writer did not intend it',
+          },
+          { id: 'C', text: 'shown that the author’s intention fully determines the text' },
+          { id: 'D', text: 'demonstrated that intention and meaning are identical' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The author offers exactly this middle description: the reader "has found something the words permit but the writer did not intend — a discovery about the text, honestly reported."',
+        choiceRationales: {
+          A: 'The author rejects "the author is the sole authority" as one of the extremes to avoid.',
+          B: 'Correct: it is a discovery the words allow, unintended by the writer and not a decreed meaning.',
+          C: 'If intention fully determined the text, no unintended-but-permitted reading could exist.',
+          D: 'The example depends on meaning and intention coming apart, not being identical.',
+        },
+      },
     ],
   },
   {
@@ -287,7 +557,10 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
         id: 'potd-poli-deliberation-q1',
         stem: 'The main point of the passage is that deliberative democracy:',
         choices: [
-          { id: 'A', text: 'is best justified, like all democracy, by the peaceful counting of votes' },
+          {
+            id: 'A',
+            text: 'is best justified, like all democracy, by the peaceful counting of votes',
+          },
           {
             id: 'B',
             text: 'locates legitimacy in reasoned discussion, though its promise depends on equality among speakers',
@@ -324,6 +597,69 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           D: 'Even distribution of talk is what skeptics deny; it is not part of the reason/preference contrast.',
         },
       },
+      {
+        id: 'potd-poli-deliberation-q3',
+        stem: 'The skeptics’ objection in the third paragraph is that deliberation:',
+        choices: [
+          { id: 'A', text: 'always produces decisions defensible to everyone' },
+          { id: 'B', text: 'can reproduce power imbalances behind an appearance of reason' },
+          { id: 'C', text: 'relies too heavily on the counting of votes' },
+          { id: 'D', text: 'eliminates the need for reasons altogether' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'Skeptics note that talk is "not evenly distributed," so "a forum meant to neutralize power may quietly reproduce it under the appearance of reason."',
+        choiceRationales: {
+          A: 'That is the deliberative hope the skeptics are challenging, not their objection.',
+          B: 'Correct: unequal capacity to speak lets power persist under a veneer of reasoned discussion.',
+          C: 'Vote-counting is the rival tradition, not the target of the skeptics’ worry here.',
+          D: 'Deliberation centers on reasons; the skeptics question its fairness, not its use of reasons.',
+        },
+      },
+      {
+        id: 'potd-poli-deliberation-q4',
+        stem: 'The deliberative theorist’s reply to the skeptics is to:',
+        choices: [
+          { id: 'A', text: 'deny that talk is ever unequally distributed' },
+          {
+            id: 'B',
+            text: 'grant the worry and recast the promise as conditional on equal standing',
+          },
+          { id: 'C', text: 'abandon deliberation in favor of majority voting' },
+          { id: 'D', text: 'claim the objection shows deliberation is worthless' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The theorist "cannot dismiss this worry, but can reframe it": the promise is "realized where the conditions of genuine equality among speakers are met, and betrayed wherever they are not."',
+        choiceRationales: {
+          A: 'The reply concedes rather than denies the inequality of talk.',
+          B: 'Correct: the worry is granted and the promise made conditional on genuine equality.',
+          C: 'The passage does not have the theorist retreat to majority voting.',
+          D: 'The author explicitly says the objection is "not that deliberation is worthless."',
+        },
+      },
+      {
+        id: 'potd-poli-deliberation-q5',
+        stem: 'The contrast between decisions "defensible to all" and those "merely satisfactory to most" highlights that deliberation aims at decisions:',
+        choices: [
+          { id: 'A', text: 'that please the greatest number of people' },
+          {
+            id: 'B',
+            text: 'whose supporting reasons could be accepted by all, not merely preferred by a majority',
+          },
+          { id: 'C', text: 'reached fastest by the most fluent speakers' },
+          { id: 'D', text: 'that avoid offering any reasons at all' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The phrase distinguishes decisions "defensible to all" — justifiable by reasons others could accept — from those "merely satisfactory to most," which register mere majority preference.',
+        choiceRationales: {
+          A: '"Satisfactory to most" is exactly the numbers-based aim the contrast sets against deliberation.',
+          B: 'Correct: the deliberative aim is justifiability to all, not mere majority preference.',
+          C: 'Speed and fluency describe the skeptics’ worry, not deliberation’s aim.',
+          D: 'Deliberation is defined by offering reasons, not by avoiding them.',
+        },
+      },
     ],
   },
   {
@@ -340,8 +676,14 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
         id: 'potd-anthro-ethnography-q1',
         stem: 'The passage as a whole is best understood as arguing that:',
         choices: [
-          { id: 'A', text: 'ethnographers should return to the confident voice of the classic account' },
-          { id: 'B', text: 'reflection on the observer\u2019s role should replace description altogether' },
+          {
+            id: 'A',
+            text: 'ethnographers should return to the confident voice of the classic account',
+          },
+          {
+            id: 'B',
+            text: 'reflection on the observer\u2019s role should replace description altogether',
+          },
           {
             id: 'C',
             text: 'acknowledging the observer\u2019s role is necessary but should not displace the description it was meant to make honest',
@@ -377,6 +719,63 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           D: 'The reflexive turn is the response to the pane-of-glass assumption, not the assumption itself.',
         },
       },
+      {
+        id: 'potd-anthro-ethnography-q3',
+        stem: 'The sentence "I was among them, therefore I know" captures the classic ethnographer’s assumption that:',
+        choices: [
+          { id: 'A', text: 'firsthand presence alone guaranteed objective knowledge' },
+          { id: 'B', text: 'informants always tell an outsider the truth' },
+          { id: 'C', text: 'reflexivity is essential to a trustworthy account' },
+          { id: 'D', text: 'no account of another culture can ever be trusted' },
+        ],
+        correctChoiceId: 'A',
+        rationale:
+          'The passage says "the authority of the account rested on presence," a confidence later "mistaken for the sound of objectivity itself."',
+        choiceRationales: {
+          A: 'Correct: the classic voice took being there as enough to know objectively.',
+          B: 'The passage later notes informants shape what they tell a stranger — the opposite of this assumption.',
+          C: 'Reflexivity is the later corrective, not the classic assumption expressed here.',
+          D: 'The sentence expresses over-confidence, not blanket distrust of accounts.',
+        },
+      },
+      {
+        id: 'potd-anthro-ethnography-q4',
+        stem: 'The author raises the danger of an ethnography that "dwells too long on the anthropologist’s doubts" in order to:',
+        choices: [
+          { id: 'A', text: 'recommend returning to the classic confident voice' },
+          { id: 'B', text: 'temper the reflexive turn without abandoning it' },
+          { id: 'C', text: 'prove that self-examination has no value' },
+          { id: 'D', text: 'show that describing other cultures is impossible' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The author endorses acknowledging the observer but warns it can go too far, arriving at a "disciplined modesty" — a qualification of reflexivity, not its rejection.',
+        choiceRationales: {
+          A: 'The confident voice is treated as the original error, not the remedy.',
+          B: 'Correct: the danger is raised to bound reflexivity while keeping its honesty.',
+          C: 'The author values honest self-account; only its excess is criticized.',
+          D: 'The aim is honest description, not the claim that description is impossible.',
+        },
+      },
+      {
+        id: 'potd-anthro-ethnography-q5',
+        stem: 'Describing the anthropologist as "one of its instruments" suggests that the observer should be treated as:',
+        choices: [
+          { id: 'A', text: 'the central character whose story the account tells' },
+          { id: 'B', text: 'a condition shaping the knowledge that ought to be disclosed' },
+          { id: 'C', text: 'an obstacle that makes real knowledge impossible' },
+          { id: 'D', text: 'an invisible, perfectly neutral recorder' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'An instrument (not a "hero") is part of how the knowledge was produced, to be stated plainly rather than concealed or made the story’s subject.',
+        choiceRationales: {
+          A: '"Not as its hero" explicitly rejects making the anthropologist the central character.',
+          B: 'Correct: an instrument is part of the knowledge-making apparatus, to be acknowledged openly.',
+          C: 'The observer shapes the knowledge but does not make it impossible; honesty manages the effect.',
+          D: 'The "invisible neutral recorder" is the pane-of-glass illusion the author rejects.',
+        },
+      },
     ],
   },
   {
@@ -401,7 +800,10 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
             id: 'B',
             text: 'two ordinary moral beliefs \u2014 that we are assessable only for what we control, and that outcomes matter \u2014 conflict, and relieving the conflict has a cost either way',
           },
-          { id: 'C', text: 'moral responsibility requires that outcomes never influence our judgments' },
+          {
+            id: 'C',
+            text: 'moral responsibility requires that outcomes never influence our judgments',
+          },
           { id: 'D', text: 'the paradox of moral luck admits of a clear and satisfying solution' },
         ],
         correctChoiceId: 'B',
@@ -433,6 +835,69 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           D: 'Admitting luck into the ledger is described as a reluctant concession, not a plain, uncontroversial truth.',
         },
       },
+      {
+        id: 'potd-ethics-moral-luck-q3',
+        stem: 'The example of the two reckless drivers is used to:',
+        choices: [
+          { id: 'A', text: 'prove that reckless driving is morally acceptable' },
+          {
+            id: 'B',
+            text: 'bring out the conflict between judging by control and judging by outcomes',
+          },
+          { id: 'C', text: 'show that luck plays no role in our moral judgments' },
+          { id: 'D', text: 'establish that the two drivers deserve identical praise' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The drivers are "identical in every respect they can govern," so the harsher judgment of the one who kills "tracks something neither of them chose" — staging the collision of the two beliefs.',
+        choiceRationales: {
+          A: 'The example assumes both are reckless; it is not a defense of recklessness.',
+          B: 'Correct: equal control but different outcomes dramatizes the conflict between the two beliefs.',
+          C: 'The example is designed to show that luck does seem to affect our judgments.',
+          D: 'The point is that we judge them differently despite equal control, not that we judge them alike.',
+        },
+      },
+      {
+        id: 'potd-ethics-moral-luck-q4',
+        stem: 'To say that luck "enters the moral ledger" means that:',
+        choices: [
+          { id: 'A', text: 'moral judgments ought to be recorded in writing' },
+          { id: 'B', text: 'outcomes beyond a person’s control affect how blameworthy they seem' },
+          { id: 'C', text: 'responsibility depends only on a person’s intentions' },
+          { id: 'D', text: 'luck can be eliminated from moral life entirely' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The "ledger" is a metaphor for what counts toward blame; letting luck in means uncontrolled outcomes change the verdict — "which the whole idea of responsibility seemed designed to keep out."',
+        choiceRationales: {
+          A: 'The ledger is a metaphor for moral accounting, not literal record-keeping.',
+          B: 'Correct: luck in the ledger means uncontrolled factors move the needle on blame.',
+          C: 'That describes the control condition, which admitting luck actually strains.',
+          D: 'The passage treats luck as hard to keep out, not as something eliminable.',
+        },
+      },
+      {
+        id: 'potd-ethics-moral-luck-q5',
+        stem: 'The author suggests the puzzle’s chief value is that it:',
+        choices: [
+          { id: 'A', text: 'supplies a clear rule for assigning blame' },
+          {
+            id: 'B',
+            text: 'exposes a conflict among moral commitments we are unwilling to abandon',
+          },
+          { id: 'C', text: 'proves that outcomes are morally irrelevant' },
+          { id: 'D', text: 'settles whether control is required for responsibility' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The closing lines say the puzzle’s value "is less that it has a solution than that it shows how much of our moral thinking rests on commitments that pull in opposite directions."',
+        choiceRationales: {
+          A: 'The author denies a clean solution, so no tidy rule is offered.',
+          B: 'Correct: its worth lies in exposing the tension between commitments we will not surrender.',
+          C: 'The significance of outcomes is treated as a genuine intuition, not shown irrelevant.',
+          D: 'The passage leaves the control question unresolved rather than settling it.',
+        },
+      },
     ],
   },
   {
@@ -454,7 +919,10 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
             id: 'B',
             text: 'walkability is desirable, but without a matching housing policy it can displace the residents who made a place valuable',
           },
-          { id: 'C', text: 'increasing density has no meaningful effect on the value of urban land' },
+          {
+            id: 'C',
+            text: 'increasing density has no meaningful effect on the value of urban land',
+          },
           { id: 'D', text: 'a neighborhood and a street are essentially the same kind of thing' },
         ],
         correctChoiceId: 'B',
@@ -489,6 +957,66 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           D: 'The author affirms walkability\u2019s real advantages; the concern is its costs, not its feasibility.',
         },
       },
+      {
+        id: 'potd-urban-walkability-q3',
+        stem: 'The phrase "displacement wearing the costume of community" suggests that walkability pursued without a housing policy can:',
+        choices: [
+          { id: 'A', text: 'strengthen community by keeping longtime residents in place' },
+          { id: 'B', text: 'push out residents even as it looks like community-building' },
+          { id: 'C', text: 'eliminate the need for any housing policy' },
+          { id: 'D', text: 'lower land values across the district' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The metaphor warns that displacement can disguise itself as community — the desirable, "lively" district that in fact prices out the people who made it.',
+        choiceRationales: {
+          A: 'The passage says the longtime tenant is "priced out," the opposite of being kept in place.',
+          B: 'Correct: the "costume of community" hides displacement beneath an appealing surface.',
+          C: 'The author argues walkability needs a matching housing policy, not that it removes the need.',
+          D: 'Density "makes land valuable," so values rise rather than fall.',
+        },
+      },
+      {
+        id: 'potd-urban-walkability-q4',
+        stem: 'The corner store that "pays the rent of the district it advertises" is used to illustrate how:',
+        choices: [
+          { id: 'A', text: 'small businesses are exempt from rising rents' },
+          {
+            id: 'B',
+            text: 'a place’s new desirability can price out the very things that made it desirable',
+          },
+          { id: 'C', text: 'advertising is the main cause of displacement' },
+          { id: 'D', text: 'walkability has no effect on local businesses' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The store "pays the rent of the district it advertises": its success raises the rents that then displace it, embodying walkability’s self-undermining cost.',
+        choiceRationales: {
+          A: 'The example shows the store subject to rising rents, not exempt from them.',
+          B: 'Correct: the desirability the store helps create raises rents that price it (and tenants) out.',
+          C: 'Advertising is a figure of speech here; the cause is rising land value, not marketing.',
+          D: 'The example exists precisely to show a strong effect on local businesses.',
+        },
+      },
+      {
+        id: 'potd-urban-walkability-q5',
+        stem: 'The author would most likely agree that walkable design is:',
+        choices: [
+          { id: 'A', text: 'best abandoned, because it always harms communities' },
+          { id: 'B', text: 'worthwhile yet insufficient on its own to protect a community' },
+          { id: 'C', text: 'a complete social program in its own right' },
+          { id: 'D', text: 'less important than the physical engineering of streets' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          '"None of this is an argument against walkable cities; it is an argument against treating a design pattern as if it were a social program" — good, but not sufficient by itself.',
+        choiceRationales: {
+          A: 'The author states plainly that this is "not an argument against walkable cities."',
+          B: 'Correct: walkability is desirable but must be paired with housing policy to protect residents.',
+          C: 'The core warning is precisely against mistaking a design pattern for a social program.',
+          D: 'The street/neighborhood contrast raises the human stakes; it does not rank engineering above them.',
+        },
+      },
     ],
   },
   {
@@ -505,13 +1033,19 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
         id: 'potd-music-improvisation-q1',
         stem: 'The main idea of the passage is that:',
         choices: [
-          { id: 'A', text: 'improvisation is a hurried and ultimately inferior form of composition' },
+          {
+            id: 'A',
+            text: 'improvisation is a hurried and ultimately inferior form of composition',
+          },
           { id: 'B', text: 'improvisation is superior to composition because it is spontaneous' },
           {
             id: 'C',
             text: 'improvisation and composition secure different virtues at each other\u2019s cost and should not be ranked against each other',
           },
-          { id: 'D', text: 'the composer and the improviser are pursuing the very same goal by different means' },
+          {
+            id: 'D',
+            text: 'the composer and the improviser are pursuing the very same goal by different means',
+          },
         ],
         correctChoiceId: 'C',
         rationale:
@@ -542,6 +1076,63 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           D: 'The passage draws no general verdict about technology versus handwork.',
         },
       },
+      {
+        id: 'potd-music-improvisation-q3',
+        stem: 'The remark that the improviser "is not a composer denied a desk" means that improvisation is:',
+        choices: [
+          { id: 'A', text: 'composition carried out under an unfortunate handicap' },
+          { id: 'B', text: 'a different kind of practice rather than deficient composition' },
+          { id: 'C', text: 'always superior to written composition' },
+          { id: 'D', text: 'an activity requiring no skill a composer would recognize' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          '"Not a composer denied a desk" rejects seeing the improviser as a hampered composer; the point is a "difference in kind," a distinct medium of real time.',
+        choiceRationales: {
+          A: 'This is precisely the "hurried cousin" view the sentence is written to deny.',
+          B: 'Correct: the improviser works in a different medium, not a diminished version of composition.',
+          C: 'The author explicitly declines to crown the improviser superior.',
+          D: 'The passage credits the improviser with real, audible skill; it does not deny craft.',
+        },
+      },
+      {
+        id: 'potd-music-improvisation-q4',
+        stem: 'According to the passage, the improviser’s inability to revise makes possible:',
+        choices: [
+          { id: 'A', text: 'a flawless, fully polished final product' },
+          { id: 'B', text: 'a line of thought heard taking shape, with its risks audible' },
+          { id: 'C', text: 'complete independence from any audience' },
+          { id: 'D', text: 'the elimination of all risk from performance' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          '"What is lost — the power to revise — is the condition of what is gained: a line of thought we hear being formed, its risks and recoveries audible."',
+        choiceRationales: {
+          A: 'Polished perfection is the composer’s gain, bought at the price of the living moment.',
+          B: 'Correct: forgoing revision is what lets us hear thought being formed, risks and all.',
+          C: 'The improviser works in real time "shared with an audience," not independent of it.',
+          D: 'Risk is precisely what becomes audible; it is not eliminated.',
+        },
+      },
+      {
+        id: 'potd-music-improvisation-q5',
+        stem: 'The author’s overall purpose is to:',
+        choices: [
+          { id: 'A', text: 'defend the traditional ranking of composer over improviser' },
+          { id: 'B', text: 'replace a ranking by quality with an account of a difference in kind' },
+          { id: 'C', text: 'rank the improviser above the composer' },
+          { id: 'D', text: 'argue that both practices pursue an identical goal' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The passage rejects both the original ranking and its reversal, concluding that the two "were never trying to do the same thing" — a difference in kind, not degree.',
+        choiceRationales: {
+          A: 'The author sets up that ranking specifically to dismantle it.',
+          B: 'Correct: the essay trades a quality ranking for a difference in kind and aim.',
+          C: 'The author explicitly refuses to crown the improviser instead.',
+          D: 'The photograph/portrait analogy denies that they pursue the same goal.',
+        },
+      },
     ],
   },
   {
@@ -563,8 +1154,14 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
             id: 'B',
             text: 'Translation requires managing an unavoidable tension between fidelity and readability through case-by-case judgment.',
           },
-          { id: 'C', text: 'Translators should consistently favor the reader over the original text.' },
-          { id: 'D', text: 'A single governing rule can be found to guide every act of translation.' },
+          {
+            id: 'C',
+            text: 'Translators should consistently favor the reader over the original text.',
+          },
+          {
+            id: 'D',
+            text: 'A single governing rule can be found to guide every act of translation.',
+          },
         ],
         correctChoiceId: 'B',
         rationale:
@@ -595,6 +1192,63 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           D: 'The passage denies that any single rule can secure both aims at once.',
         },
       },
+      {
+        id: 'potd-translation-fidelity-q3',
+        stem: 'The "two masters who rarely agree" that a translator serves are:',
+        choices: [
+          { id: 'A', text: 'the author and the publisher' },
+          { id: 'B', text: 'the source text and the reader' },
+          { id: 'C', text: 'accuracy and profit' },
+          { id: 'D', text: 'the past and the future' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The passage names them directly: "One is the original... The other is the reader," whose demands (fidelity and fluency) pull in opposite directions.',
+        choiceRationales: {
+          A: 'The publisher is never mentioned; the demands are the text’s and the reader’s.',
+          B: 'Correct: fidelity to the original and readability for the reader are the two masters.',
+          C: 'Profit plays no part; the tension is between fidelity and fluency.',
+          D: 'The masters are the text and its reader, not two moments in time.',
+        },
+      },
+      {
+        id: 'potd-translation-fidelity-q4',
+        stem: 'A translation that is "smooth, idiomatic" yet a "betrayal" fails, the author says, because it:',
+        choices: [
+          { id: 'A', text: 'preserves every foreign construction literally' },
+          { id: 'B', text: 'replaces the author’s sensibility with the translator’s' },
+          { id: 'C', text: 'is too difficult for any reader to follow' },
+          { id: 'D', text: 'refuses to make any choices at all' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'Leaning entirely toward the reader is "a betrayal — smooth, idiomatic, and quietly substituting the translator’s sensibility for the author’s"; it "forgets whose text it is."',
+        choiceRationales: {
+          A: 'Preserving every construction literally is the opposite failure — the unreadable, source-bound one.',
+          B: 'Correct: the fluent betrayal smuggles in the translator’s voice at the author’s expense.',
+          C: 'That describes the over-literal failure, not the smooth, readable one.',
+          D: 'The betrayal comes from making the wrong choices, not from making none.',
+        },
+      },
+      {
+        id: 'potd-translation-fidelity-q5',
+        stem: 'The author would most likely regard a single rule that fixed every translation choice in advance as:',
+        choices: [
+          { id: 'A', text: 'desirable, since it would guarantee fidelity' },
+          { id: 'B', text: 'impossible, because translation requires judgment case by case' },
+          { id: 'C', text: 'the actual method of the most skilled translators' },
+          { id: 'D', text: 'the only way to serve both masters at once' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          '"What cannot be had is a rule that decides in advance"; the good translator "manages" the tension "case by case," so no fixed rule can replace judgment.',
+        choiceRationales: {
+          A: 'The author treats the wish for such a rule as an evasion, not a desirable guarantee.',
+          B: 'Correct: the tension is managed by judgment in each case, which no advance rule can supply.',
+          C: 'Skilled translators are described as exercising judgment, the opposite of a fixed rule.',
+          D: 'The passage denies that any single rule can secure both fidelity and fluency.',
+        },
+      },
     ],
   },
   {
@@ -611,12 +1265,18 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
         id: 'potd-econ-rational-choice-q1',
         stem: 'The main idea of the passage is that the rational-chooser model:',
         choices: [
-          { id: 'A', text: 'should be discarded by economists because its central premise is false' },
+          {
+            id: 'A',
+            text: 'should be discarded by economists because its central premise is false',
+          },
           {
             id: 'B',
             text: 'is a useful abstraction whose danger lies in applying it where its "as if" no longer holds',
           },
-          { id: 'C', text: 'gives an accurate description of how individuals actually make decisions' },
+          {
+            id: 'C',
+            text: 'gives an accurate description of how individuals actually make decisions',
+          },
           { id: 'D', text: 'shows that a model must be literally true in order to be useful' },
         ],
         correctChoiceId: 'B',
@@ -646,6 +1306,66 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           B: 'Correct: these are the edge cases the author flags as where the model may not fit.',
           C: 'Aggregation is part of the model\u2019s defense, not a case the author warns against.',
           D: 'Testing against behavior is the standard the author accepts, not a misuse.',
+        },
+      },
+      {
+        id: 'potd-econ-rational-choice-q3',
+        stem: 'The analogy of a map that "marked every tree" is used to argue that:',
+        choices: [
+          { id: 'A', text: 'a model should include every available detail' },
+          { id: 'B', text: 'leaving out detail is the point of a model, not a flaw' },
+          { id: 'C', text: 'maps are inherently more accurate than models' },
+          { id: 'D', text: 'prediction is irrelevant to a model’s value' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          '"A map that marked every tree would be no map at all; abstraction is not a flaw but the point" — simplification is what makes a model useful.',
+        choiceRationales: {
+          A: 'The analogy says the opposite: a map with every detail "would be no map at all."',
+          B: 'Correct: omitting detail is precisely what makes a map — or a model — useful.',
+          C: 'The map is an analogy for models, not a claim that maps outrank them.',
+          D: 'The passage treats prediction as the very test of a useful model.',
+        },
+      },
+      {
+        id: 'potd-econ-rational-choice-q4',
+        stem: 'The phrase "as if they were the calculating figure" indicates that the model works when people:',
+        choices: [
+          { id: 'A', text: 'actually are perfectly rational calculators' },
+          { id: 'B', text: 'behave, on average, close enough to the idealized chooser' },
+          { id: 'C', text: 'never change their minds or their wants' },
+          { id: 'D', text: 'consciously perform the model’s calculations' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          '"As long as people behave, on average and in the aggregate, roughly as if they were the calculating figure, the fiction earns its keep whether or not any individual fits it."',
+        choiceRationales: {
+          A: 'The author insists the calculating figure "does not exist"; no one actually is one.',
+          B: 'Correct: the "as if" holds when aggregate behavior approximates the ideal, not when anyone truly is it.',
+          C: 'Real people do "change their minds"; the model tolerates this at the aggregate level.',
+          D: '"As if" explicitly does not require anyone to perform the calculation consciously.',
+        },
+      },
+      {
+        id: 'potd-econ-rational-choice-q5',
+        stem: 'According to the author, the discipline’s recurring error is:',
+        choices: [
+          { id: 'A', text: 'using a model whose central premise is unrealistic' },
+          {
+            id: 'B',
+            text: 'forgetting, at the margins, that the model was only ever a convenience',
+          },
+          { id: 'C', text: 'testing its predictions against actual behavior' },
+          { id: 'D', text: 'applying the model to competitive markets for ordinary goods' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          '"The discipline’s recurring error is not that it uses an unrealistic model but that it forgets, at the edges, that the model was only ever a convenience."',
+        choiceRationales: {
+          A: 'The author explicitly says the error is "not that it uses an unrealistic model."',
+          B: 'Correct: the fault is forgetting the model’s status as a convenience when stretching it to the edges.',
+          C: 'Testing predictions against behavior is the standard the author endorses, not the error.',
+          D: 'Ordinary competitive markets are where the "as if" plausibly holds — the safe case, not the error.',
         },
       },
     ],
@@ -692,7 +1412,10 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
             text: 'separate what the recollection may get wrong from the meaning it reliably records',
           },
           { id: 'C', text: 'show that memory and documents answer the same underlying question' },
-          { id: 'D', text: 'prove that recollections are generally accurate about details such as dates' },
+          {
+            id: 'D',
+            text: 'prove that recollections are generally accurate about details such as dates',
+          },
         ],
         correctChoiceId: 'B',
         rationale:
@@ -704,6 +1427,87 @@ export const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
           D: 'The example of the misremembered date shows the author does not claim reliability about such details.',
         },
       },
+      {
+        id: 'potd-memory-oral-history-q3',
+        stem: 'The example of the veteran who misremembers a battle’s date but recalls it as "the moment everything changed" illustrates that:',
+        choices: [
+          { id: 'A', text: 'veterans are unreliable witnesses to their own lives' },
+          {
+            id: 'B',
+            text: 'a recollection can be factually wrong yet still record what an event meant',
+          },
+          { id: 'C', text: 'documents are unnecessary for writing history' },
+          { id: 'D', text: 'dates are the most important facts a historian collects' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The wrong date "tells us little," but remembering it as when "everything changed tells us how the war lodged in a life" — error notwithstanding, the meaning is preserved.',
+        choiceRationales: {
+          A: 'The point is that the testimony is valuable, not that the veteran is simply unreliable.',
+          B: 'Correct: the mistaken date coexists with a reliable record of the event’s significance.',
+          C: 'The passage says documents remain indispensable, answering different questions.',
+          D: 'The example downplays the date’s importance relative to the event’s meaning.',
+        },
+      },
+      {
+        id: 'potd-memory-oral-history-q4',
+        stem: 'To use a recollection "as if it were a police report" is to:',
+        choices: [
+          { id: 'A', text: 'read it carefully for the meaning it records' },
+          {
+            id: 'B',
+            text: 'treat it purely as a factual account, missing what it uniquely offers',
+          },
+          { id: 'C', text: 'dismiss it entirely as unreliable' },
+          { id: 'D', text: 'read it twice, once for fact and once for meaning' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          '"To use a recollection as if it were a police report is to miss its value and court its unreliability at the same time" — reading it only for facts.',
+        choiceRationales: {
+          A: 'A police report is read for facts, not for the meaning the passage says testimony records.',
+          B: 'Correct: treating testimony as a mere fact-record forfeits the significance that is its real value.',
+          C: 'The error is over-reliance on its facts, not outright dismissal.',
+          D: 'Reading twice is the author’s recommended corrective, the opposite of the police-report mistake.',
+        },
+      },
+      {
+        id: 'potd-memory-oral-history-q5',
+        stem: 'The passage suggests that memory and documents are best understood as:',
+        choices: [
+          { id: 'A', text: 'interchangeable sources that answer the same question' },
+          { id: 'B', text: 'sources that answer different questions and so complement each other' },
+          { id: 'C', text: 'rivals in which the document must always win' },
+          { id: 'D', text: 'equally unreliable and therefore of little use' },
+        ],
+        correctChoiceId: 'B',
+        rationale:
+          'The author says memory and documents are not ranked but "answer different questions" — one for meaning, one for verifiable fact.',
+        choiceRationales: {
+          A: 'The passage stresses they answer different questions, so they are not interchangeable.',
+          B: 'Correct: each addresses a distinct question, making them complementary rather than competing.',
+          C: '"The document won" is the older view the passage sets out to complicate.',
+          D: 'The author finds both valuable, not uniformly unreliable.',
+        },
+      },
     ],
   },
 ];
+
+/**
+ * The single seam through which server code reads the pool.
+ *
+ * Every consumer — the `PassageOfDayService` singleton and its tests — obtains
+ * passages here and nowhere else, so the content source lives behind exactly one
+ * boundary.
+ *
+ * FUTURE DB READ: to serve passages from a database instead of this hardcoded
+ * file, replace the body of this function (and only this function) with the query
+ * that returns the entries. Nothing else reaches into the pool, so no other file
+ * changes. If the read must become asynchronous, this is the one signature to
+ * widen to `Promise<readonly PassageOfTheDayEntry[]>`, updating its handful of
+ * callers' construction to await it.
+ */
+export function loadPassagePool(): readonly PassageOfTheDayEntry[] {
+  return PASSAGE_OF_THE_DAY_POOL;
+}

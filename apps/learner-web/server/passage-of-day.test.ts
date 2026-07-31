@@ -1,14 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
-  PASSAGE_OF_THE_DAY_POOL,
+  loadPassagePool,
   type PassageChoiceId,
   type PassageOfTheDayEntry,
 } from '../../../content/passage-of-the-day/pool';
-import {
-  learnerLocalDayIndex,
-  PassageOfDayService,
-  passageOfDayService,
-} from './passage-of-day';
+import { learnerLocalDayIndex, PassageOfDayService, passageOfDayService } from './passage-of-day';
+
+/** All pool reads in this suite go through the seam, exactly as the server does. */
+const POOL = loadPassagePool();
 
 const CHOICE_IDS: readonly PassageChoiceId[] = ['A', 'B', 'C', 'D'];
 const DAY_MS = 86_400_000;
@@ -122,7 +121,7 @@ describe('PassageOfDayService selection', () => {
 
 describe('PassageOfDayService grading', () => {
   const service = passageOfDayService;
-  const firstQuestion = PASSAGE_OF_THE_DAY_POOL[0]!.questions[0]!;
+  const firstQuestion = POOL[0]!.questions[0]!;
 
   it('marks a correct answer and returns the explanation', () => {
     const grade = service.grade(firstQuestion.id, firstQuestion.correctChoiceId);
@@ -150,18 +149,18 @@ describe('PassageOfDayService grading', () => {
 });
 
 describe('the shipped pool', () => {
-  it('is well-formed: 10+ unique passages, each with 1\u20132 four-option questions', () => {
-    expect(PASSAGE_OF_THE_DAY_POOL.length).toBeGreaterThanOrEqual(10);
+  it('is well-formed: 10+ unique passages, each with 5\u20137 four-option questions', () => {
+    expect(POOL.length).toBeGreaterThanOrEqual(10);
     const passageIds = new Set<string>();
     const questionIds = new Set<string>();
-    for (const entry of PASSAGE_OF_THE_DAY_POOL) {
+    for (const entry of POOL) {
       expect(passageIds.has(entry.id)).toBe(false);
       passageIds.add(entry.id);
       expect(entry.title.length).toBeGreaterThan(0);
       expect(entry.discipline.length).toBeGreaterThan(0);
       expect(entry.body.length).toBeGreaterThan(0);
-      expect(entry.questions.length).toBeGreaterThanOrEqual(1);
-      expect(entry.questions.length).toBeLessThanOrEqual(2);
+      expect(entry.questions.length).toBeGreaterThanOrEqual(5);
+      expect(entry.questions.length).toBeLessThanOrEqual(7);
       for (const question of entry.questions) {
         expect(questionIds.has(question.id)).toBe(false);
         questionIds.add(question.id);
