@@ -43,8 +43,26 @@ export function RecallHome() {
 
       <Card elevated>
         <Stack gap={4}>
-          {load.isLoading ? (
-            <p className="mc-muted">Checking your deck…</p>
+          {load.isError ? (
+            <Stack gap={3}>
+              <Eyebrow>Couldn’t load your deck</Eyebrow>
+              <p className="mc-muted">
+                Something went wrong reading your cards. They’re stored on this device — please try
+                again.
+              </p>
+              <Button
+                variant="primary"
+                size="lg"
+                className="mc-recall__cta"
+                onClick={() => void load.refetch()}
+              >
+                Try again
+              </Button>
+            </Stack>
+          ) : load.isLoading ? (
+            <p className="mc-muted" role="status">
+              Checking your deck…
+            </p>
           ) : nothing ? (
             <div className="mc-recall__empty">
               <Eyebrow>Your deck is empty</Eyebrow>

@@ -872,6 +872,12 @@ body {
 .mc-choice:hover {
   background: var(--mc-surface-2);
 }
+/* Ring the WHOLE choice card when its native radio takes keyboard focus, so the
+   focus indicator matches the clickable target (the label), not just the 20px input. */
+.mc-choice:has(input:focus-visible) {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+}
 .mc-choice--selected {
   border-color: var(--mc-primary);
   box-shadow: inset 0 0 0 1px var(--mc-primary);
@@ -1227,6 +1233,17 @@ body {
 }
 
 /* ---- CARS reading-ability gauge (Progress card) ---- */
+/* Loading / unavailable / empty placeholder inside the CARS card. A min-height keeps
+   the Progress dashboard's right zone roughly the height of the real gauge so the
+   grid does not reflow when the readout resolves. */
+.mc-cars__state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--mc-space-2);
+  min-height: 160px;
+  margin-top: var(--mc-space-3);
+}
 .mc-cars-gauge {
   display: flex;
   flex-direction: column;

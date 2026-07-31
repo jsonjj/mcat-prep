@@ -1015,10 +1015,18 @@ export default function BrainScene({
   regions,
   reducedMotion,
   interactive = true,
+  label = 'Interactive 3D brain map of your lesson mastery. Drag to rotate.',
 }: {
   regions: AtlasRegion[];
   reducedMotion: boolean;
   interactive?: boolean;
+  /**
+   * Accessible name for the WebGL canvas, which is otherwise opaque to assistive
+   * tech. The equivalent meaning is available in text (the Progress skill rail, the
+   * mastery key, and the browsable Curriculum), so this is a concise summary, not the
+   * whole readout. `role="img"` on the wrapper (the canvas itself carries no text).
+   */
+  label?: string;
 }) {
   // Default to the recognizable side profile (front of the brain to the right).
   const drag = useRef<DragState>({ dragging: false, lastX: 0, lastY: 0, x: 0.12, y: Math.PI / 2 });
@@ -1026,6 +1034,8 @@ export default function BrainScene({
   return (
     <div
       className="mc-atlas__canvas"
+      role="img"
+      aria-label={label}
       onPointerDown={(e) => {
         drag.current.dragging = true;
         drag.current.lastX = e.clientX;

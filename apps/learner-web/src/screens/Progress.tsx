@@ -63,8 +63,18 @@ function SkillRail() {
   return (
     <Card elevated className="mc-progressboard__rail mc-progressboard__rail--skills">
       <Eyebrow>Reasoning skills</Eyebrow>
-      {skills.isLoading ? (
-        <p className="mc-muted mc-fineprint">Loading your skills…</p>
+      {skills.isError ? (
+        // A failed read must not read as "you haven't started" (the empty copy below).
+        <p className="mc-muted mc-fineprint">
+          We couldn’t load your skills just now.{' '}
+          <button type="button" className="mc-textbtn" onClick={() => void skills.refetch()}>
+            Try again
+          </button>
+        </p>
+      ) : skills.isLoading ? (
+        <p className="mc-muted mc-fineprint" role="status">
+          Loading your skills…
+        </p>
       ) : data.length === 0 ? (
         <p className="mc-muted mc-fineprint">
           Answer questions on your own to start building skill mastery.

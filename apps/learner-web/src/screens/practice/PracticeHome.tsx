@@ -238,9 +238,12 @@ export function PracticeHome() {
                       </div>
                     ))}
                   </div>
-                  <p className="mc-muted">
-                    Finish a lesson to see your weakest spots here — Practice pulls fresh questions
-                    from lessons you&rsquo;ve already finished.
+                  <p className="mc-muted" role={lessons.isLoading ? 'status' : undefined}>
+                    {lessons.isError
+                      ? 'We couldn’t load your weakest lessons just now — you can still start a practice set above.'
+                      : lessons.isLoading
+                        ? 'Finding your weakest lessons…'
+                        : 'Finish a lesson to see your weakest spots here — Practice pulls fresh questions from lessons you’ve already finished.'}
                   </p>
                 </div>
               )}

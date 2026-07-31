@@ -83,6 +83,31 @@ export function TodaysPath() {
     if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
   };
 
+  // A failed load must not fall through to the "Nothing to schedule yet" empty state
+  // below (which reads as "you have no work", not "we couldn't reach the server").
+  // Gated on having no plan in hand, so a failed background refresh keeps the last one.
+  if (path.isError && !view) {
+    return (
+      <div className="mc-screen mc-plan">
+        <header className="mc-screen__head">
+          <Eyebrow>Today’s Path</Eyebrow>
+          <h1 className="mc-h1">Today</h1>
+        </header>
+        <Callout tone="warning" title="Couldn’t build today’s path">
+          <Stack gap={3}>
+            <p className="mc-fineprint">
+              We couldn’t load your plan just now. Your progress is safe — please try again in a
+              moment.
+            </p>
+            <Button variant="primary" onClick={() => void path.refetch()}>
+              Try again
+            </Button>
+          </Stack>
+        </Callout>
+      </div>
+    );
+  }
+
   if (path.isLoading || (path.isSuccess && !built)) {
     return <div className="mc-center mc-muted">Building today’s path…</div>;
   }

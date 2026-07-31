@@ -345,6 +345,58 @@ export function Mistakes() {
     </div>
   );
 
+  // Loading / error must not masquerade as the "all caught up" empty state: with all
+  // four reads unresolved, every `?? []` above is empty and `nothingToShow` is true, so
+  // a still-loading tab and a failed fetch would both render the calm launchpad. Split
+  // them out first — only a genuinely empty (resolved, no rows) read reaches it below.
+  const anyLoading =
+    errors.isLoading || shakyWins.isLoading || patterns.isLoading || carsPatterns.isLoading;
+  const anyError = errors.isError || shakyWins.isError || patterns.isError || carsPatterns.isError;
+  const hasAnyRows =
+    all.length > 0 || shaky.length > 0 || patternRows.length > 0 || carsAll.length > 0;
+
+  if (anyError && !hasAnyRows) {
+    return (
+      <div className="mc-screen mc-mistakes">
+        <header className="mc-screen__head">
+          <h1 className="mc-h1">Mistakes</h1>
+        </header>
+        <Callout tone="warning" title="Couldn’t load your mistakes">
+          <Stack gap={3}>
+            <p className="mc-fineprint">
+              Something went wrong fetching your mistakes. Your work is safe — please try again in a
+              moment.
+            </p>
+            <Button
+              variant="primary"
+              onClick={() => {
+                void errors.refetch();
+                void shakyWins.refetch();
+                void patterns.refetch();
+                void carsPatterns.refetch();
+              }}
+            >
+              Try again
+            </Button>
+          </Stack>
+        </Callout>
+      </div>
+    );
+  }
+
+  if (anyLoading && !hasAnyRows) {
+    return (
+      <div className="mc-screen mc-mistakes">
+        <header className="mc-screen__head">
+          <h1 className="mc-h1">Mistakes</h1>
+        </header>
+        <div className="mc-center mc-muted" role="status">
+          Loading your mistakes…
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`mc-screen mc-mistakes${detailOpen ? ' mc-mistakes--detailopen' : ''}`}>
       <header className="mc-screen__head">

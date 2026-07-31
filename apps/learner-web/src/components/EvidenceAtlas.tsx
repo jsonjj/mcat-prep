@@ -153,10 +153,23 @@ export function EvidenceAtlas({ variant = 'progress' }: { variant?: 'home' | 'pr
     );
   }
 
+  // Accessible name for the WebGL canvas (opaque to assistive tech). The Home hero is
+  // decorative; the Progress atlas summarizes real mastery — the same numbers the skill
+  // rail and mastery key spell out in text, so this stays a short summary, not a readout.
+  const totalLessonCount = regions.reduce((sum, region) => sum + region.lessons.length, 0);
+  const canvasLabel = isHome
+    ? 'A luminous 3D brain — the Evidence Atlas. Decorative.'
+    : `Brain map of your lesson mastery: ${masteredLessonCount} of ${totalLessonCount} lessons mastered across ${regions.length} brain regions. Drag to rotate; the full breakdown is in the skills list and Curriculum.`;
+
   return (
     <div className={`mc-atlas mc-atlas--${variant}`}>
       <Suspense fallback={<BrainAtlas glowing={isHome ? 6 : masteredLessonCount} />}>
-        <BrainScene regions={regions} reducedMotion={caps.reducedMotion} interactive={!isHome} />
+        <BrainScene
+          regions={regions}
+          reducedMotion={caps.reducedMotion}
+          interactive={!isHome}
+          label={canvasLabel}
+        />
       </Suspense>
       <p className="mc-atlas__hint mc-muted mc-fineprint" aria-hidden="true">
         {isHome ? 'Drag to spin' : 'Drag to rotate'}

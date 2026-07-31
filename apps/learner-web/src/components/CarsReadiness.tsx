@@ -4,7 +4,7 @@ import {
   type CarsSkill,
   type CarsSkillReadiness,
 } from '@mcat/contracts';
-import { Card, Eyebrow } from '@mcat/ui-web';
+import { Button, Card, Eyebrow } from '@mcat/ui-web';
 import { useCarsReadiness } from '../app/queries';
 import { useCountUp } from '../app/use-count-up';
 
@@ -94,9 +94,41 @@ export function CarsReadiness({ compact = false }: { compact?: boolean } = {}) {
   // position both read this single eased value, so they move in lockstep, and it shares
   // the rings'/bars' rAF + easing + ~3s duration so the whole dashboard climbs together.
   // Called unconditionally (hooks rule); `prefers-reduced-motion` lands on the final
-  // value immediately. Before data loads the target is 0 and the card renders nothing.
+  // value immediately. Before data loads the target is 0.
   const f = useCountUp(d ? frac(d.overallV) : 0);
-  if (!d) return null;
+
+  // The card frame (eyebrow + a min-height so the Progress column keeps its footprint)
+  // always renders, so the CARS zone never blinks out of the dashboard grid or shifts
+  // the layout while its readout is loading, unavailable, or genuinely empty.
+  const wrapClass = compact ? 'mc-cars mc-cars--compact' : 'mc-cars';
+  if (!d) {
+    return (
+      <Card elevated className={wrapClass}>
+        <Eyebrow>CARS Readiness</Eyebrow>
+        <div className="mc-cars__state">
+          {cars.isLoading ? (
+            <p className="mc-muted mc-fineprint" role="status">
+              Measuring your reading ability…
+            </p>
+          ) : cars.isError ? (
+            <>
+              <p className="mc-muted mc-fineprint">
+                We couldn’t load your CARS readiness just now.
+              </p>
+              <Button variant="text" onClick={() => void cars.refetch()}>
+                Try again
+              </Button>
+            </>
+          ) : (
+            <p className="mc-muted mc-fineprint">
+              Read a Passage of the Day or spar in a CARS Duel and your reading-ability gauge will
+              appear here.
+            </p>
+          )}
+        </div>
+      </Card>
+    );
+  }
 
   const targetF = frac(ON_TRACK_V);
   const marker = pointAt(f, R);

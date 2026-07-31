@@ -48,19 +48,30 @@ export function RecallReview() {
   const startRef = useRef<number>(Date.now());
   const undoRef = useRef<{ card: RecallCard; reviewId: string } | null>(null);
   const advancedEmptyRef = useRef(false);
+  // A rejected getQueue used to leave `queue` null forever → a permanent "Loading your
+  // cards…" spinner. Track the failure and let the learner retry (bumping `retryKey`
+  // re-runs the effect) instead of dead-ending.
+  const [loadError, setLoadError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     if (!service) return;
     let active = true;
-    void service.getQueue({ minutesBudget, maxCards }).then((cards) => {
-      if (!active) return;
-      setQueue(cards);
-      startRef.current = Date.now();
-    });
+    setLoadError(false);
+    void service
+      .getQueue({ minutesBudget, maxCards })
+      .then((cards) => {
+        if (!active) return;
+        setQueue(cards);
+        startRef.current = Date.now();
+      })
+      .catch(() => {
+        if (active) setLoadError(true);
+      });
     return () => {
       active = false;
     };
-  }, [service, minutesBudget, maxCards]);
+  }, [service, minutesBudget, maxCards, retryKey]);
 
   // Safety net for the strictly in-order plan: when this step was launched from
   // Today's Path but its queue comes back empty (a Recall reserved as "N due" against
@@ -140,6 +151,33 @@ export function RecallReview() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [current, revealed, rate]);
+
+  if (loadError) {
+    return (
+      <div className="mc-screen">
+        <header className="mc-screen__head">
+          <h1 className="mc-h1">Recall</h1>
+        </header>
+        <Card elevated>
+          <Stack gap={3}>
+            <Eyebrow>Couldn’t load your cards</Eyebrow>
+            <p className="mc-muted">
+              Something went wrong loading this review. Your cards are safe on this device — please
+              try again.
+            </p>
+            <div className="mc-inline">
+              <Button variant="primary" size="lg" onClick={() => setRetryKey((n) => n + 1)}>
+                Try again
+              </Button>
+              <Button variant="secondary" size="lg" onClick={finish}>
+                {returnTo ? 'Back to plan' : 'Back to Recall'}
+              </Button>
+            </div>
+          </Stack>
+        </Card>
+      </div>
+    );
+  }
 
   if (!service || !queue) {
     return <div className="mc-center mc-muted">Loading your cards…</div>;
