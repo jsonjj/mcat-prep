@@ -8,7 +8,6 @@ import {
   type Principal,
 } from '@mcat/authority-kernel';
 import { clusterForLesson } from '@mcat/content';
-import { buildVectorLessonArtifacts } from '@mcat/content/v3-vector-lesson';
 import {
   BKT_ELIGIBLE_EVIDENCE_MODES,
   LessonRuntimeResponseFactsSchema,
@@ -109,8 +108,14 @@ function loadSecondLesson(): LoadedLesson {
 
 const SECOND_LESSON = loadSecondLesson();
 
-/** The lesson the seam WAS wired against — read from its own artifact, not typed in. */
-const WIRED_LESSON_SCRIPT = buildVectorLessonArtifacts().script;
+/** The lesson the seam WAS wired against — read from its own VENDORED artifact
+ * (Phase 7-4), not built by a generator and not typed in. */
+const WIRED_LESSON_SCRIPT = JSON.parse(
+  readFileSync(join(repoRoot, 'content', 'lessons', 'v3-les-130923', 'lesson-script.json'), 'utf8'),
+) as {
+  readonly artifact_version: string;
+  readonly payload: { readonly lesson_id: string; readonly question_evidence_plan: readonly Authored[] };
+};
 const WIRED_LESSON_ID = WIRED_LESSON_SCRIPT.payload.lesson_id;
 
 const SECOND_LESSON_ENVELOPE = {

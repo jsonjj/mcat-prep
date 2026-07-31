@@ -4,7 +4,6 @@ import {
   TARGET_ORDERED_KC_IDS,
   VECTOR_LESSON_KCS,
   VECTOR_LESSON_ROUTES,
-  buildVectorLessonArtifacts,
   type VectorLessonActivityRole,
   type VectorLessonChoiceId,
   type VectorLessonKcAuthoring,
@@ -18,9 +17,13 @@ import {
   type VectorLessonRunView,
 } from '@mcat/contracts';
 import { VECTOR_LESSON_PROTECTED_ANSWERS } from './vector-lesson-protected';
+import { lessonContentProvider } from './lesson-content-provider';
 
 const REGISTRY_SHA256 = '635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a';
-const DEFINITION_HASH = buildVectorLessonArtifacts().script.content_sha256;
+// L1's content revision, read from the vendored lesson-script.json through the
+// one content seam (Phase 7-4). Byte-identical to the retired generator's
+// `buildVectorLessonArtifacts().script.content_sha256` (validator rules R3/R5).
+const DEFINITION_HASH = lessonContentProvider.getDefinitionHash(TARGET_LESSON_ID);
 const ROUTING_POLICY_VERSION = 'v3-les-130923-internal-pilot-route-v1';
 const PLANNER_POLICY_VERSION = 'v3-les-130923-server-standard-pilot-v1';
 const EXIT_POLICY_VERSION = 'v3-les-130923-uncalibrated-instructional-exit-v1';

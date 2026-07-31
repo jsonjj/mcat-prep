@@ -20,8 +20,7 @@ import {
   systemClock,
 } from '@mcat/contracts';
 import { orderedKcsForLesson } from '@mcat/content';
-import { buildVectorLessonArtifacts } from '@mcat/content/v3-vector-lesson';
-import { RepositoryLearnerKernel } from '@mcat/learner-api';
+import { RepositoryLearnerKernel, lessonContentProvider } from '@mcat/learner-api';
 import {
   buildDebugLearnerState,
   isDebugStateOptedIn,
@@ -134,7 +133,7 @@ function deliveredContentSha256For(state: PersistedLessonRuns, lessonId: string)
  * runtime pins its `definitionHash` from — so a freshly delivered L1 is never
  * falsely reported as superseded.
  */
-const VECTOR_LESSON_CURRENT_SHA256 = buildVectorLessonArtifacts().script.content_sha256;
+const VECTOR_LESSON_CURRENT_SHA256 = lessonContentProvider.getDefinitionHash(HARNESS_LESSON_ID);
 
 /**
  * The catalog's CURRENT `content_sha256` for `lessonId`, or null when this

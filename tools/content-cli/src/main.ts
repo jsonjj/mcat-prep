@@ -20,11 +20,6 @@ import {
   type ValidationIssue,
 } from '@mcat/content';
 import {
-  buildVectorLessonArtifacts,
-  canonicalVectorLessonArtifactJson,
-  validateVectorLessonArtifacts,
-} from '@mcat/content/v3-vector-lesson';
-import {
   buildResolvableIds,
   computeQuality,
   lessonOrderedKcIds,
@@ -316,27 +311,6 @@ function cmdDbSeed(path: string): void {
   );
 }
 
-function cmdVectorLessonArtifacts(): void {
-  const artifacts = buildVectorLessonArtifacts();
-  const issues = validateVectorLessonArtifacts(artifacts);
-  if (issues.length > 0) {
-    for (const issue of issues) console.error(`FAIL ${issue}`);
-    process.exit(1);
-  }
-
-  const outDir = join(REPO_ROOT, 'content', 'lessons', 'v3-les-130923');
-  mkdirSync(outDir, { recursive: true });
-  for (const [filename, artifact] of [
-    ['lesson-script.json', artifacts.script],
-    ['kc-coverage-matrix.json', artifacts.coverage],
-    ['lesson-presentation-plan.json', artifacts.presentation],
-    ['lesson-quality-report.json', artifacts.quality],
-  ] as const) {
-    writeFileSync(join(outDir, filename), canonicalVectorLessonArtifactJson(artifact));
-  }
-  console.log(`Wrote four validated V3-LES-130923 internal-draft artifacts to ${outDir}`);
-}
-
 /**
  * Recompute a lesson's content-hash chain after an authored edit (Real Lesson
  * Catalog, Phase 3/4). Byte-faithful for the four primary artifacts (only hash
@@ -602,9 +576,6 @@ switch (command) {
   case 'db-seed':
     cmdDbSeed(arg ?? DEFAULT_V7_PATH);
     break;
-  case 'vector-lesson-artifacts':
-    cmdVectorLessonArtifacts();
-    break;
   case 'rehash':
     cmdRehash(arg);
     break;
@@ -626,7 +597,6 @@ switch (command) {
         '  schemas             Generate JSON Schemas into content/question-bank/schema/\n' +
         '  load-v7 [path]      Validate + compile the v7 JSONL corpus (read-only) into a local bundle\n' +
         '  db-seed [path]      Emit a gitignored seed.sql (questions + protected answers) with derived cluster/section\n' +
-        '  vector-lesson-artifacts  Generate exactly four V3-LES-130923 internal-draft artifacts\n' +
         '  rehash <lessonDir>  Recompute a lesson content-hash chain (content_sha256 + file_sha256) after an authored edit\n' +
         '  lesson-validate [dir] [--json]  Structural R1–R15 gate over content/lessons/ (non-zero exit on failure; CI merge gate)\n' +
         '  proposed-kcs [--write]  Advisory queue of lesson KCs absent from the curriculum catalog (mirrors R14; never gates)\n' +

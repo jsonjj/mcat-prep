@@ -1,6 +1,6 @@
 import { Authority } from '@mcat/authority-core';
 import { InMemoryAuthorityRepository, toProjectionRecord, type Principal } from '@mcat/authority-kernel';
-import { buildVectorLessonArtifacts } from '@mcat/content/v3-vector-lesson';
+import { TARGET_LESSON_ID } from '@mcat/content/v3-vector-lesson';
 import {
   VectorLessonCommandSchema,
   VectorLessonStartCommandSchema,
@@ -146,7 +146,7 @@ describe('normalized-lesson-response-source — every committed response becomes
 // B — the whole chain: engine → seam → REAL kernel → BKT + evidence
 // ---------------------------------------------------------------------------
 
-const WIRED_LESSON_ID = buildVectorLessonArtifacts().script.payload.lesson_id;
+const WIRED_LESSON_ID = TARGET_LESSON_ID;
 const clock = fixedClock(NOW);
 
 function envelope(expectedStreamVersion: number) {

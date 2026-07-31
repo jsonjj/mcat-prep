@@ -1,6 +1,6 @@
+import { readFileSync } from 'node:fs';
 import { request as httpRequest } from 'node:http';
 import { assertNoProtectedFields } from '@mcat/content';
-import { buildVectorLessonArtifacts } from '@mcat/content/v3-vector-lesson';
 import {
   VectorLessonRunViewSchema,
   VectorLessonStartResponseSchema,
@@ -303,7 +303,14 @@ describe('local debug learner-state route', () => {
       await fetch(`${server.baseUrl}${DEBUG_LEARNER_STATE_PATH}`)
     ).json()) as DebugLearnerStateView;
     const afterLesson = after.lessons.find((entry) => entry.lessonId === 'V3-LES-130923');
-    const expectedSha = buildVectorLessonArtifacts().script.content_sha256;
+    const expectedSha = (
+      JSON.parse(
+        readFileSync(
+          new URL('../../../content/lessons/v3-les-130923/lesson-script.json', import.meta.url),
+          'utf8',
+        ),
+      ) as { content_sha256: string }
+    ).content_sha256;
     expect(afterLesson?.deliveredContentSha256).toMatch(/^[0-9a-f]{64}$/);
     expect(afterLesson?.deliveredContentSha256).toBe(expectedSha);
     // The harness serves the current revision, so a fresh delivery is never

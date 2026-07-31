@@ -1,4 +1,4 @@
-import { buildVectorLessonArtifacts } from '@mcat/content/v3-vector-lesson';
+import { TARGET_LESSON_ID } from '@mcat/content/v3-vector-lesson';
 import {
   LessonRuntimeResponseFactsSchema,
   type AssistanceLevel,
@@ -11,6 +11,7 @@ import {
   VECTOR_LESSON_PROTECTED_ANSWERS,
   type VectorLessonProtectedAnswer,
 } from './vector-lesson-protected';
+import { lessonContentProvider } from './lesson-content-provider';
 import type { VectorLessonResponseRecord, VectorLessonRun } from './vector-lesson-runtime';
 
 /**
@@ -37,11 +38,18 @@ import type { VectorLessonResponseRecord, VectorLessonRun } from './vector-lesso
  *   record carries no authored assistance field for this module to read.
  */
 
-const LESSON_SCRIPT = buildVectorLessonArtifacts().script;
+// The lesson's authored bindings, read from the vendored lesson-script.json
+// through the one content seam (Phase 7-4) rather than a code generator. The
+// seam hands back the raw `question_evidence_plan` entries plus the envelope
+// version — exactly what this module feeds to `parseAuthoredLessonBinding`.
+const AUTHORED_SOURCE = lessonContentProvider.getAuthoredBindings(TARGET_LESSON_ID);
+if (AUTHORED_SOURCE.artifactVersion === undefined) {
+  throw new Error(`${TARGET_LESSON_ID}: vendored lesson-script.json is missing artifact_version`);
+}
 
 const AUTHORED_ENVELOPE = {
-  lessonId: LESSON_SCRIPT.payload.lesson_id,
-  artifactVersion: LESSON_SCRIPT.artifact_version,
+  lessonId: AUTHORED_SOURCE.lessonId,
+  artifactVersion: AUTHORED_SOURCE.artifactVersion,
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -115,12 +123,7 @@ export function loadAuthoredLessonBindings(
   return { bindings, issues, resolutionByItemBindingId };
 }
 
-const AUTHORED_BINDINGS = loadAuthoredLessonBindings(
-  AUTHORED_ENVELOPE,
-  LESSON_SCRIPT.payload.question_evidence_plan as unknown as readonly Readonly<
-    Record<string, unknown>
-  >[],
-);
+const AUTHORED_BINDINGS = loadAuthoredLessonBindings(AUTHORED_ENVELOPE, AUTHORED_SOURCE.entries);
 
 /** Binding-load problems for this lesson. Empty in a healthy build. */
 export const VECTOR_LESSON_BINDING_LOAD_ISSUES = AUTHORED_BINDINGS.issues;
@@ -156,9 +159,12 @@ const SCORED_BINDING_VERSION = '0.1.0-internal-draft';
 const SCORED_SERVER_ITEM_VERSION = 1;
 
 const SCORING_AUTHORITY_BY_REF: ReadonlyMap<string, VectorLessonProtectedAnswer> = new Map(
-  LESSON_SCRIPT.payload.question_evidence_plan.flatMap((authored) => {
-    const answer = VECTOR_LESSON_PROTECTED_ANSWERS[authored.item_binding_id];
-    return answer === undefined ? [] : ([[authored.server_answer_authority_ref, answer]] as const);
+  AUTHORED_SOURCE.entries.flatMap((authored) => {
+    const itemBindingId = authored.item_binding_id;
+    const ref = authored.server_answer_authority_ref;
+    if (typeof itemBindingId !== 'string' || typeof ref !== 'string') return [];
+    const answer = VECTOR_LESSON_PROTECTED_ANSWERS[itemBindingId];
+    return answer === undefined ? [] : ([[ref, answer]] as const);
   }),
 );
 
