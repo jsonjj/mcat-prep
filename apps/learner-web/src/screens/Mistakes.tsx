@@ -46,6 +46,9 @@ import {
 /** How many questions a "try again" session serves. */
 const RETRY_SET_SIZE = 5;
 
+/** Shaky-wins are shown this many at a time, growing on demand, never unbounded. */
+const SHAKY_WINS_PAGE = 8;
+
 const dateLabel = (iso: string): string =>
   new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 
@@ -154,7 +157,14 @@ export function Mistakes() {
   const carsPatterns = useCarsReasoningPatterns();
   const location = useLocation();
   const navigate = useNavigate();
-  const [showResolved, setShowResolved] = useState(false);
+  // Each section that can hold cleared items owns its OWN "show cleared" state, so
+  // revealing cleared misses no longer also reveals cleared CARS repairs (and vice
+  // versa) — the two lists were previously driven by one shared toggle.
+  const [showResolvedMisses, setShowResolvedMisses] = useState(false);
+  const [showResolvedCars, setShowResolvedCars] = useState(false);
+  // The shaky-wins list is capped and grows on demand so it can never render
+  // unbounded (it had no cap before).
+  const [winsShown, setWinsShown] = useState(SHAKY_WINS_PAGE);
   // `picked`/`pickedRowId` are null until the learner interacts, so the view lands on
   // the first non-empty group with its first row auto-selected.
   const [picked, setPicked] = useState<TabKey | null>(null);
@@ -174,25 +184,44 @@ export function Mistakes() {
   const all = errors.data ?? [];
   const open = all.filter((e) => !e.resolved);
   const resolvedCount = all.length - open.length;
-  const misses = [...(showResolved ? all : open)].sort(missOrder);
+  const misses = [...(showResolvedMisses ? all : open)].sort(missOrder);
   const shaky = shakyWins.data ?? [];
   const patternRows = patterns.data ?? [];
   // WS7: CARS reasoning-pattern repairs. Open ones show always; cleared ones join
-  // behind the same "show cleared" filter as the miss list.
+  // behind the CARS section's OWN "show cleared" filter (independent of the misses').
   const carsAll = carsPatterns.data ?? [];
   const carsCleared = carsAll.filter((p) => p.resolved).length;
-  const carsRows = showResolved ? carsAll : carsAll.filter((p) => !p.resolved);
+  const carsRows = showResolvedCars ? carsAll : carsAll.filter((p) => !p.resolved);
+  // Every shaky win as a row; the visible list is capped below to `winsShown`.
+  const winRows: Row[] = shaky.map((e) => ({
+    kind: 'win',
+    id: `win:${e.source}:${e.questionId}`,
+    entry: e,
+  }));
 
   const rowsByTab: Record<TabKey, Row[]> = {
-    tofix: misses.map((e) => ({ kind: 'miss', id: `miss:${e.questionId}`, entry: e })),
+    // The row id folds in `source` (practice/study) so the same question missed on
+    // both surfaces yields two UNIQUE keys instead of colliding.
+    tofix: misses.map((e) => ({ kind: 'miss', id: `miss:${e.source}:${e.questionId}`, entry: e })),
     patterns: patternRows.map((p) => ({ kind: 'pattern', id: `pattern:${p.grain}:${p.key}`, pattern: p })),
-    wins: shaky.map((e) => ({ kind: 'win', id: `win:${e.questionId}`, entry: e })),
+    // Capped and grown by the "show more" control below, so a long shaky-wins list
+    // can never render unbounded. The tab count keeps the full total.
+    wins: winRows.slice(0, winsShown),
     cars: carsRows.map((p) => ({ kind: 'cars', id: `cars:${p.skill}:${p.questionId}`, pattern: p })),
   };
+  // Tab badges report how many rows a group HAS, not how many are currently rendered
+  // (the wins list is capped), so the "Wins (N)" count stays honest.
+  const tabCounts: Record<TabKey, number> = {
+    tofix: rowsByTab.tofix.length,
+    patterns: rowsByTab.patterns.length,
+    wins: shaky.length,
+    cars: rowsByTab.cars.length,
+  };
 
-  const totalRows = TAB_ORDER.reduce((n, k) => n + rowsByTab[k].length, 0);
+  const totalRows = tabCounts.tofix + tabCounts.patterns + tabCounts.wins + tabCounts.cars;
   const nothingToShow = totalRows === 0;
-  const hiddenCleared = showResolved ? 0 : resolvedCount + carsCleared;
+  const hiddenCleared =
+    (showResolvedMisses ? 0 : resolvedCount) + (showResolvedCars ? 0 : carsCleared);
 
   const firstNonEmpty = TAB_ORDER.find((k) => rowsByTab[k].length > 0) ?? 'tofix';
   const activeTab = picked ?? firstNonEmpty;
@@ -275,10 +304,13 @@ export function Mistakes() {
 
   const clearedCount = activeTab === 'cars' ? carsCleared : resolvedCount;
   const showClearedToggle = (activeTab === 'tofix' || activeTab === 'cars') && clearedCount > 0;
+  // The active tab drives ITS OWN cleared-filter state (misses vs CARS repairs).
+  const showResolvedActive = activeTab === 'cars' ? showResolvedCars : showResolvedMisses;
+  const setShowResolvedActive = activeTab === 'cars' ? setShowResolvedCars : setShowResolvedMisses;
 
   const panelHeading =
     activeTab === 'tofix'
-      ? showResolved
+      ? showResolvedMisses
         ? 'All misses'
         : 'Still open'
       : activeTab === 'patterns'
@@ -307,7 +339,7 @@ export function Mistakes() {
           onClick={() => selectTab(k)}
           onKeyDown={(e) => onTabKeyDown(e, i)}
         >
-          {TAB_LABEL[k]} ({rowsByTab[k].length})
+          {TAB_LABEL[k]} ({tabCounts[k]})
         </button>
       ))}
     </div>
@@ -370,7 +402,13 @@ export function Mistakes() {
               </Button>
             </div>
             {hiddenCleared > 0 ? (
-              <Button variant="text" onClick={() => setShowResolved(true)}>
+              <Button
+                variant="text"
+                onClick={() => {
+                  setShowResolvedMisses(true);
+                  setShowResolvedCars(true);
+                }}
+              >
                 Show {hiddenCleared} cleared
               </Button>
             ) : null}
@@ -382,8 +420,8 @@ export function Mistakes() {
             <div className="mc-mistakes__tabsrow">
               {tabList}
               {showClearedToggle ? (
-                <Button variant="text" onClick={() => setShowResolved(!showResolved)}>
-                  {showResolved ? 'Hide cleared' : `Show ${clearedCount} cleared`}
+                <Button variant="text" onClick={() => setShowResolvedActive(!showResolvedActive)}>
+                  {showResolvedActive ? 'Hide cleared' : `Show ${clearedCount} cleared`}
                 </Button>
               ) : null}
             </div>
@@ -424,6 +462,15 @@ export function Mistakes() {
                   ))}
                 </ul>
               )}
+              {activeTab === 'wins' && tabCounts.wins > winsShown ? (
+                <Button
+                  variant="text"
+                  className="mc-mistakes__more"
+                  onClick={() => setWinsShown((n) => n + SHAKY_WINS_PAGE)}
+                >
+                  Show more ({tabCounts.wins - winsShown} left)
+                </Button>
+              ) : null}
             </div>
           </div>
 

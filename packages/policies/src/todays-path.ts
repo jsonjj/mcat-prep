@@ -348,9 +348,13 @@ function newLessonCapFor(
 ): number {
   if (band === 'pause_new') return 0; // debt recovery: no new lessons today
   if (band === 'reduce_new') return cfg.newLessonCap; // throttle to the base cap
-  // Normal: FILL the whole budget with new lessons when they're available (bounded
-  // only by the candidate list). Practice then fills any remainder once unlocked.
-  return Math.ceil(budgetMinutes / cfg.costs.lesson);
+  // Normal: admit new lessons up to what the budget fits, but never more than
+  // `newLessonCapMax`. Filling the ENTIRE budget with new lessons turned a fresh
+  // Day-1 (nothing else due, Practice still locked) into a wall of back-to-back
+  // lessons that the orderer could only break with the day's single CARS Duel.
+  // Capping the count keeps the day varied (Practice/Recall take over the remainder
+  // on later days), which shortens the same-kind lesson runs on a lesson-only day.
+  return Math.min(cfg.newLessonCapMax, Math.ceil(budgetMinutes / cfg.costs.lesson));
 }
 
 // ---- Step: core sizing (by due-volume / debt) --------------------------------

@@ -160,9 +160,6 @@ export function PracticeTest() {
   }
 
   const progressPct = Math.round(next.data.progress * 100);
-  const startNumber = next.data.itemsCommitted + 1;
-  const questionNumber = startNumber + nav.currentIndex;
-  const totalItems = next.data.totalItems ?? 0;
   const unanswered = questions.length - answeredCount;
   const seenWholeBlock = questions.every((q) => visited.has(q.id) || answers[q.id] !== undefined);
   const isFlagged = nav.flagged.has(question.id);
@@ -180,10 +177,11 @@ export function PracticeTest() {
     <div className="mc-screen mc-practice">
       <Card elevated>
         <Stack gap={4}>
+          {/* Per-section framing so the count matches the section navigator below
+              (which shows only this section's items), not the whole fixed form. */}
           <Eyebrow>
-            Practice test · section {next.data.blockNumber} of {next.data.blockCount} · question{' '}
-            {questionNumber}
-            {totalItems > 0 ? ` of ${totalItems}` : ''}
+            Practice test · Question {nav.currentIndex + 1} of {questions.length} (Section{' '}
+            {next.data.blockNumber} of {next.data.blockCount})
           </Eyebrow>
 
           <div
@@ -271,7 +269,8 @@ export function PracticeTest() {
             answers={answers}
             flagged={nav.flagged}
             onSelect={goTo}
-            startNumber={startNumber}
+            // Per-section numbering (1..N within this section), matching the header.
+            startNumber={1}
             label="Jump to a question in this section"
           />
 

@@ -483,6 +483,13 @@ export const ErrorEntryViewSchema = z
   .object({
     /** Practice ids come from the v7 corpus, which is looser than `ContentId`. */
     questionId: z.string().min(1),
+    /**
+     * Which attempt log this row came from. The SAME item can be missed once in
+     * adaptive Practice and once in the Study loop (the log is unique per learner ×
+     * activity_type × item, not per item), so a consumer keying a list purely on
+     * `questionId` collides on those two rows; `source` disambiguates them.
+     */
+    source: z.enum(['practice', 'study']),
     kcId: z.string().min(1).nullable(),
     /** The 7-op reasoning operation the item exercises. */
     skillId: z.string().min(1).nullable(),

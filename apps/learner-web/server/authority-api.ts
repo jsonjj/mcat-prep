@@ -236,10 +236,18 @@ export async function handleAuthorityRequest(
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/attempts' && method === 'POST') {
-      await client.submitAttempt((body.choiceId ?? null) as string | null, {
-        elapsedMs: Number(body.elapsedMs ?? 0),
-        answerChanges: Number(body.answerChanges ?? 0),
-      });
+      // Diagnose-before-reveal timing (WS0). Forward it ONLY when the client actually
+      // captured it; a missing value must stay "not captured" (logged NULL), never
+      // coerced to a real `0` that would pollute the per-item median RT the WS1
+      // calibrator bands speed against. Mirrors the adaptive-practice wire below.
+      const hasTiming =
+        typeof body.elapsedMs === 'number' && typeof body.answerChanges === 'number';
+      await client.submitAttempt(
+        (body.choiceId ?? null) as string | null,
+        hasTiming
+          ? { elapsedMs: Number(body.elapsedMs), answerChanges: Number(body.answerChanges) }
+          : undefined,
+      );
       return sendJson(response, 200, accepted());
     }
     if (path === '/v1/attempts/reveal' && method === 'POST') {

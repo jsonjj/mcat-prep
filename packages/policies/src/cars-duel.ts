@@ -49,9 +49,16 @@ export interface CarsDuelConfig {
     readonly holdRate: number;
     readonly rollingWindow: number;
   };
-  /** Defend substitution probability by ability band (before taper). */
-  readonly defendSubstitution: { readonly mid: number; readonly high: number };
-  /** Ability-band thresholds on the rating (Defend is only offered at mid+). */
+  /**
+   * Defend substitution probability by ability band (before taper). `low` is a
+   * non-zero FLOOR: once Defend has unlocked, a rating that has drifted into the
+   * low band still substitutes occasionally rather than showing a misleading 0%.
+   * The unlock gate (a rolling Standard-Rebut hold-rate) and the mid ability cut
+   * read different signals, so a learner CAN be unlocked yet sit just below the
+   * mid rating — the dead zone this floor closes.
+   */
+  readonly defendSubstitution: { readonly low: number; readonly mid: number; readonly high: number };
+  /** Ability-band thresholds on the rating (scale the Defend substitution rate). */
   readonly abilityBand: { readonly mid: number; readonly high: number };
   /** Defend tapers to 0 across this many days before the exam (the "final ~3 weeks"). */
   readonly defendTaperDays: number;
@@ -73,7 +80,7 @@ export const CARS_DUEL_CONFIG: CarsDuelConfig = {
     standardExit: 0.8,
   },
   defendUnlock: { standardRebuts: 12, holdRate: 0.75, rollingWindow: 12 },
-  defendSubstitution: { mid: 0.12, high: 0.22 },
+  defendSubstitution: { low: 0.06, mid: 0.12, high: 0.22 },
   abilityBand: { mid: 0.4, high: 1.2 },
   defendTaperDays: 21,
   difficultyCenter: 3,
@@ -169,7 +176,7 @@ export function nextCarsDuelIntensity(
   return 'standard';
 }
 
-/** Ability band from the rating (Defend substitution is only offered at mid+). */
+/** Ability band from the rating (scales the Defend substitution rate). */
 export function carsDuelAbilityBand(
   rating: number,
   cfg: CarsDuelConfig = CARS_DUEL_CONFIG,
@@ -211,14 +218,28 @@ export function defendTaperFactor(
   return daysUntilTest / cfg.defendTaperDays;
 }
 
-/** Defend substitution probability for the second CARS, ability-scaled then tapered. */
+/**
+ * Defend substitution probability for the second CARS, ability-scaled then tapered.
+ *
+ * The low band is a small non-zero FLOOR, not 0. This function is only ever consulted
+ * for a learner who has ALREADY unlocked Defend (`decideCarsDuelMode` checks the latch
+ * first), and the unlock gate — a rolling Standard-Rebut hold-rate — can be met at a
+ * rating that has since drifted below the mid ability cut. Returning 0 there meant
+ * "Defend unlocked" could still offer it 0% of the time indefinitely (the dead zone),
+ * so the low band keeps a floor. The taper still drives every band to 0 near the exam.
+ */
 export function defendSubstitutionProbability(
   rating: number,
   daysUntilTest: number | null,
   cfg: CarsDuelConfig = CARS_DUEL_CONFIG,
 ): number {
   const band = carsDuelAbilityBand(rating, cfg);
-  const base = band === 'high' ? cfg.defendSubstitution.high : band === 'mid' ? cfg.defendSubstitution.mid : 0;
+  const base =
+    band === 'high'
+      ? cfg.defendSubstitution.high
+      : band === 'mid'
+        ? cfg.defendSubstitution.mid
+        : cfg.defendSubstitution.low;
   return base * defendTaperFactor(daysUntilTest, cfg);
 }
 

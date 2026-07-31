@@ -50,6 +50,12 @@ export interface RewriteRequest {
   readonly questionId: string;
   readonly mode: RewriteMode;
   readonly source: GroundedRationale;
+  /**
+   * The learner-safe "Step by step" gate. Carried so the route can enforce the gate
+   * SERVER-SIDE (not just via the client hiding the button): a `steps` rewrite is
+   * only produced where a worked walk pays off. Null when the client sent none.
+   */
+  readonly gate: StepByStepGate | null;
 }
 
 /**
@@ -279,5 +285,24 @@ export function parseRewriteRequest(raw: unknown): RewriteRequest | null {
     }
   }
   if (totalSourceChars(rationale, choiceRationales) > MAX_REWRITE_SOURCE_CHARS) return null;
-  return { questionId, mode, source: { rationale, choiceRationales } };
+  const gate = parseGate(body.gate);
+  if (gate === INVALID_GATE) return null;
+  return { questionId, mode, source: { rationale, choiceRationales }, gate };
+}
+
+/** Sentinel distinguishing "malformed gate" (reject) from "no gate" (null, allowed). */
+const INVALID_GATE = Symbol('invalid-gate');
+
+/** Parse an optional, learner-safe gate. Absent → null; wrong shape → INVALID_GATE. */
+function parseGate(raw: unknown): StepByStepGate | null | typeof INVALID_GATE {
+  if (raw === undefined || raw === null) return null;
+  if (typeof raw !== 'object' || Array.isArray(raw)) return INVALID_GATE;
+  const g = raw as Record<string, unknown>;
+  const skill = g.skill === undefined || g.skill === null ? null : g.skill;
+  const section = g.section === undefined || g.section === null ? null : g.section;
+  const dok = g.dok === undefined || g.dok === null ? null : g.dok;
+  if (skill !== null && typeof skill !== 'string') return INVALID_GATE;
+  if (section !== null && typeof section !== 'string') return INVALID_GATE;
+  if (dok !== null && typeof dok !== 'number') return INVALID_GATE;
+  return { skill, section, dok };
 }

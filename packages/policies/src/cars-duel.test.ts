@@ -278,7 +278,12 @@ describe('CARS Duel — Defend substitution rate by ability + taper (reads test 
     expect(mid).toBeLessThanOrEqual(0.15);
     expect(high).toBeGreaterThanOrEqual(0.2);
     expect(high).toBeLessThanOrEqual(0.25);
-    expect(defendSubstitutionProbability(0.1, null)).toBe(0);
+    // Dead-zone fix: an unlocked learner whose rating has drifted into the low band
+    // still substitutes at a small NON-ZERO floor (never a misleading 0%), and that
+    // floor stays below the mid rate.
+    const low = defendSubstitutionProbability(0.1, null);
+    expect(low).toBeGreaterThan(0);
+    expect(low).toBeLessThan(mid);
   });
 
   it('tapers Defend to zero across the final ~3 weeks before the exam', () => {
@@ -334,6 +339,25 @@ describe('CARS Duel — mode decision (Rebut anchor, Defend second slot)', () =>
     const high = defendSubstitutionProbability(1.5, null);
     const mid = defendSubstitutionProbability(0.5, null);
     expect(high).toBeGreaterThan(mid);
+  });
+
+  it('still offers Defend to an unlocked learner whose rating drifted into the low band (no dead zone)', () => {
+    // Unlocked (latched) but rating below the mid ability cut — the exact state the
+    // old `0` low band stranded, where Defend was "unlocked" yet never offered.
+    const unlockedLow = stateWith({ defendUnlocked: true, rating: 0.1, intensity: 'standard' });
+    expect(carsDuelAbilityBand(unlockedLow.rating)).toBe('low');
+    // A draw under the (non-zero) floor now yields a Defend rather than always Rebut.
+    expect(
+      decideCarsDuelMode({ state: unlockedLow, slotIndex: 1, daysUntilTest: null, rng: () => 0 }),
+    ).toBe<CarsDuelMode>('defend');
+    // The floor is still small: a mid-range draw falls back to Rebut.
+    expect(
+      decideCarsDuelMode({ state: unlockedLow, slotIndex: 1, daysUntilTest: null, rng: () => 0.5 }),
+    ).toBe<CarsDuelMode>('rebut');
+    // And the taper still suppresses it entirely on exam day.
+    expect(
+      decideCarsDuelMode({ state: unlockedLow, slotIndex: 1, daysUntilTest: 0, rng: () => 0 }),
+    ).toBe<CarsDuelMode>('rebut');
   });
 });
 

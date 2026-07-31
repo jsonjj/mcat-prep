@@ -462,6 +462,28 @@ describe('Today\u2019s Path engine', () => {
     });
   });
 
+  it('caps a fresh Day-1 lesson wall and keeps the same-kind run short', () => {
+    // Fresh Day 1: Practice locked, nothing due, no open mistakes — only new lessons
+    // plus the daily CARS. Filling the whole budget with lessons made a long
+    // back-to-back lesson run the orderer could only break with the single CARS; the
+    // new-lesson cap keeps the day varied instead.
+    const r = buildTodaysPath(
+      snap({
+        dailyBudgetMinutes: 360,
+        practiceUnlocked: false,
+        recall: { dueLearning: 0, dueReviews: 0, newAvailable: 0, due: 0, estimatedMinutesForDue: 0 },
+        mistakesOpen: 0,
+        candidateLessons: manyLessons(20),
+      }),
+    );
+    const lessons = r.activities.filter((a) => a.kind === 'lesson');
+    expect(lessons.length).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.newLessonCapMax);
+    // No long lesson wall, and still exactly at the provable floor for its own set
+    // (the max-spread rule that holds on later days is untouched).
+    expect(maxSameKindRun(r.activities)).toBeLessThanOrEqual(3);
+    expect(maxSameKindRun(r.activities)).toBe(sameKindRunFloor(r.activities));
+  });
+
   it('admits more new lessons on a larger budget', () => {
     const count = (b: number) =>
       buildTodaysPath(

@@ -79,6 +79,24 @@ describe('requestRewrite', () => {
     expect(result.text).toContain(source.rationale);
   });
 
+  it('does NOT cache a transient failure: a later call can still succeed', async () => {
+    // A transient error must not pin the fallback for the rest of the session. The
+    // first call 503s → fallback; the second call, once the route recovers, must
+    // re-request and return the real grounded rewrite rather than a cached fallback.
+    const fetchImpl = vi
+      .fn<(url: string, init: RequestInit) => Promise<Response>>()
+      .mockResolvedValueOnce(jsonResponse(503, { error: 'ai_not_configured' }))
+      .mockResolvedValueOnce(jsonResponse(200, { text: 'Put simply: no acceleration.', fallback: false }));
+
+    const first = await requestRewrite({ questionId: 'q5', mode: 'example', source, endpoint: '/x', fetchImpl });
+    expect(first.fallback).toBe(true);
+
+    const second = await requestRewrite({ questionId: 'q5', mode: 'example', source, endpoint: '/x', fetchImpl });
+    expect(second.fallback).toBe(false);
+    expect(second.text).toContain('no acceleration');
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
   it('falls back when the route is unreachable (network error / prod SPA HTML)', async () => {
     const fetchImpl = vi.fn(async () => {
       throw new Error('network');

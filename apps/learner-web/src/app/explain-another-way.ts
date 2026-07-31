@@ -4,6 +4,7 @@ import {
   sanitizeRewrite,
   type GroundedRationale,
   type RewriteMode,
+  type StepByStepGate,
 } from '@mcat/ai-gateway';
 
 /**
@@ -40,6 +41,11 @@ export interface RewriteInput {
   questionId: string;
   mode: RewriteMode;
   source: GroundedRationale;
+  /**
+   * The learner-safe "Step by step" gate (skill / section / DOK). Sent so the route
+   * can enforce the gate SERVER-SIDE too, not just by the client hiding the button.
+   */
+  gate?: StepByStepGate;
   /** Override the route (defaults to VITE_AI_REWRITE_URL or /api/ai/rewrite). */
   endpoint?: string;
   /** Override the transport in tests. */
@@ -51,7 +57,12 @@ export async function requestRewrite(input: RewriteInput): Promise<RewriteResult
   const cached = cache.get(key);
   if (cached !== undefined) return cached;
   const result = await fetchRewrite(input);
-  cache.set(key, result);
+  // Only cache a SUCCESSFUL grounded rewrite. A `fallback` result means either a
+  // transient route failure (503 / network / non-2xx) or the grounding gate firing;
+  // caching it would PIN the deterministic re-statement for the rest of the session
+  // so a later successful call could never replace it. Leaving it uncached lets the
+  // next open retry the route.
+  if (!result.fallback) cache.set(key, result);
   return result;
 }
 
@@ -66,6 +77,8 @@ async function fetchRewrite(input: RewriteInput): Promise<RewriteResult> {
         questionId: input.questionId,
         mode: input.mode,
         source: input.source,
+        // Forwarded so the route can enforce the step gate server-side.
+        gate: input.gate ?? null,
       }),
     });
     if (!response.ok) throw new Error(`rewrite_unavailable_${response.status}`);

@@ -126,6 +126,27 @@ describe('practice test assembler — blueprint floors', () => {
     expect(validatePracticeTestForm(second.items, BP)).toEqual([]);
   });
 
+  it('lifts the lifetime-freshness cap: reuses scored items (fresh-first) instead of throwing', () => {
+    const pool = makePool();
+    // Exclude nearly the whole pool, leaving too few fresh items to fill the
+    // blueprint. This used to throw — the ~5–6 lifetime-test cap. It must now degrade
+    // to a fresh-first reuse and still produce a blueprint-valid form.
+    const freshTail = pool.slice(pool.length - 4);
+    const excludeIds = new Set(pool.slice(0, pool.length - 4).map((c) => c.questionId));
+
+    expect(poolSupportsPracticeTest(pool, { blueprint: BP, excludeIds })).toBe(true);
+    const assembled = assemblePracticeTest(pool, { blueprint: BP, seed: 's', excludeIds });
+    expect(validatePracticeTestForm(assembled.items, BP)).toEqual([]);
+
+    // Some scored items had to be re-admitted (only 4 were fresh)...
+    const reusedUsed = assembled.items.filter((i) => excludeIds.has(i.questionId));
+    expect(reusedUsed.length).toBeGreaterThan(0);
+    // ...but every fresh item is preferred, so all 4 fresh items appear in the form.
+    const freshIds = new Set(freshTail.map((c) => c.questionId));
+    const freshUsed = assembled.items.filter((i) => freshIds.has(i.questionId));
+    expect(freshUsed.length).toBe(freshTail.length);
+  });
+
   it('produces a deterministic form for a given seed and a different one for another', () => {
     const pool = makePool();
     const a = assemblePracticeTest(pool, { blueprint: BP, seed: 'seed-A' });

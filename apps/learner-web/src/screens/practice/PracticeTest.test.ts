@@ -138,8 +138,10 @@ describe('practice-test runner — delivering a block', () => {
     const rendered = text(await render());
     expect(rendered).toContain('Stem for q-1');
     expect(rendered).toContain('first');
-    // Section-block progress framing, not a routed adaptive stage.
-    expect(rendered).toContain('section 1 of 4');
+    // Per-section progress framing: the question count is this section's (1 of 1 in
+    // this single-question mock), with the section indicated — not "of 30/59".
+    expect(rendered).toContain('Question 1 of 1');
+    expect(rendered).toContain('Section 1 of 4');
   });
 
   it('submits the block once the whole block has been seen', async () => {

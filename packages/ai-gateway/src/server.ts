@@ -2,6 +2,7 @@ import type { AiMessage } from './port';
 import { MAX_OUTPUT_TOKENS } from './cars';
 import {
   buildRewriteMessages,
+  canStepByStep,
   parseRewriteRequest,
   sanitizeRewrite,
   type RewriteMode,
@@ -174,11 +175,18 @@ export async function groundedRewrite(
   if (request === null) {
     return { status: 400, json: { error: 'invalid_rewrite_request' } };
   }
+  const mode: RewriteMode = request.mode;
+  // Enforce the "Step by step" gate SERVER-SIDE, not only by the client hiding the
+  // button: a worked, segmented walk is offered only where it pays off (QUANTIFY /
+  // C-P / DOK >= 2). A client that requests `steps` for an ineligible item — or omits
+  // the gate entirely — is refused here rather than trusted. `example` has no gate.
+  if (mode === 'steps' && !canStepByStep(request.gate ?? { skill: null, section: null, dok: null })) {
+    return { status: 400, json: { error: 'steps_not_available' } };
+  }
   // No key: let the client fall back deterministically (it holds the same source).
   if (config.apiKey === undefined || config.apiKey.length === 0) {
     return { status: 503, json: { error: 'ai_not_configured' } };
   }
-  const mode: RewriteMode = request.mode;
   const messages = buildRewriteMessages(mode, request.source);
   try {
     const upstream = await callCompletions(messages, MAX_OUTPUT_TOKENS, config);

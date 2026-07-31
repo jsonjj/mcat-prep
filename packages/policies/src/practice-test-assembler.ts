@@ -262,6 +262,13 @@ const hash = (s: string): number => {
   return h >>> 0;
 };
 
+const EMPTY_IDS: ReadonlySet<string> = new Set<string>();
+
+// Added to a REUSED item's tie value so it always sorts behind every fresh item:
+// `hash` is a uint32 (< 2^32), so a reused item's tie lands above any fresh one and
+// `t < bestTie` prefers fresh at equal coverage. Well under 2^53, so still exact.
+const REUSED_TIE_PENALTY = 0x1_0000_0000;
+
 /** Count an assembled form along every floored dimension. */
 export function composeForm(items: readonly PracticeTestCandidate[]): FormComposition {
   const bySection: Record<string, number> = {};
@@ -358,6 +365,7 @@ function assembleOnce(
   pool: readonly PracticeTestCandidate[],
   blueprint: PracticeTestBlueprint,
   seed: string,
+  reusedIds: ReadonlySet<string> = EMPTY_IDS,
 ): PracticeTestCandidate[] {
   const state: AssemblyState = {
     picked: [],
@@ -366,7 +374,11 @@ function assembleOnce(
     bySkill: {},
     byFormat: {},
   };
-  const tie = (c: PracticeTestCandidate): number => hash(`${seed}:${c.questionId}`);
+  // Fresh items outrank reused ones at equal coverage, so the reuse fallback only
+  // fills gaps the fresh pool cannot (see `assemblePracticeTest`). `reusedIds` is
+  // empty on the fresh pass, so this is a no-op there.
+  const tie = (c: PracticeTestCandidate): number =>
+    hash(`${seed}:${c.questionId}`) + (reusedIds.has(c.questionId) ? REUSED_TIE_PENALTY : 0);
 
   // --- Phase 1: cover every floor, scarcest-first. ---
   // Guarded by the pool size: each iteration adds one item, so it cannot run
@@ -445,38 +457,55 @@ export interface AssembledPracticeTest {
 /**
  * Assemble a half-length practice test, or throw {@link PracticeTestAssemblyError}.
  *
- *  1. Drop everything that is not eligible or has already been scored (fresh
- *     items only — a periodic test never re-serves an item the learner has been
- *     scored on).
- *  2. Assemble a form that covers every floor and hits the exact length.
- *  3. VALIDATE it against every floor. If it fails, REBUILD with a fresh
- *     tie-break seed, up to `maxRebuilds` times. Only a form that passes step 3
- *     is returned; if none does, the last attempt's violations are thrown.
+ *  1. Keep only eligible items. Split them into FRESH (never scored) and, as a
+ *     fallback, the full eligible set.
+ *  2. FRESH PASS: assemble + validate a fully-fresh form (rebuilding on a new
+ *     tie-break seed up to `maxRebuilds`). A first-time or well-stocked learner
+ *     always resolves here, so the fresh guarantee is unchanged for them.
+ *  3. REUSE FALLBACK: only when the fresh pool is too thin to satisfy the
+ *     blueprint, re-admit already-scored items — biased so any fresh item still
+ *     outranks a reused one — and assemble + validate against the full eligible
+ *     pool. This LIFTS the lifetime-freshness cap that used to throw (and hard-
+ *     limit a learner to ~5–6 tests) once fresh items ran low, while keeping each
+ *     form as fresh as the pool allows. When nothing is excluded the two passes
+ *     are identical and the fallback never runs.
+ *  4. If neither pass validates, the last attempt's violations are thrown.
  */
 export function assemblePracticeTest(
   candidates: readonly PracticeTestCandidate[],
   options: AssembleOptions = {},
 ): AssembledPracticeTest {
   const blueprint = options.blueprint ?? HALF_LENGTH_BLUEPRINT;
-  const excludeIds = options.excludeIds ?? new Set<string>();
+  const excludeIds = options.excludeIds ?? EMPTY_IDS;
   const baseSeed = options.seed ?? 'practice-test';
   const maxRebuilds = options.maxRebuilds ?? 3;
 
-  const pool = candidates.filter((c) => c.eligible && !excludeIds.has(c.questionId));
+  const eligible = candidates.filter((c) => c.eligible);
+  const fresh = eligible.filter((c) => !excludeIds.has(c.questionId));
+
+  const passes: { pool: readonly PracticeTestCandidate[]; reused: ReadonlySet<string> }[] =
+    fresh.length === eligible.length
+      ? [{ pool: fresh, reused: EMPTY_IDS }]
+      : [
+          { pool: fresh, reused: EMPTY_IDS },
+          { pool: eligible, reused: excludeIds },
+        ];
 
   let lastViolations: FloorViolation[] = [];
-  for (let attempt = 0; attempt <= maxRebuilds; attempt += 1) {
-    const items = assembleOnce(pool, blueprint, `${baseSeed}#${attempt}`);
-    const violations = validatePracticeTestForm(items, blueprint);
-    if (violations.length === 0) {
-      return { items, blueprint, composition: composeForm(items), rebuilds: attempt };
+  for (const { pool, reused } of passes) {
+    for (let attempt = 0; attempt <= maxRebuilds; attempt += 1) {
+      const items = assembleOnce(pool, blueprint, `${baseSeed}#${attempt}`, reused);
+      const violations = validatePracticeTestForm(items, blueprint);
+      if (violations.length === 0) {
+        return { items, blueprint, composition: composeForm(items), rebuilds: attempt };
+      }
+      lastViolations = violations;
     }
-    lastViolations = violations;
   }
 
   throw new PracticeTestAssemblyError(
-    `Could not assemble a blueprint-valid practice test from ${pool.length} fresh items after ` +
-      `${maxRebuilds + 1} attempts. Unmet floors: ` +
+    `Could not assemble a blueprint-valid practice test from ${eligible.length} eligible items ` +
+      `(${fresh.length} fresh) after ${(maxRebuilds + 1) * passes.length} attempts. Unmet floors: ` +
       lastViolations.map((v) => `${v.dimension}:${v.key} ${v.actual}/${v.required}`).join(', '),
     lastViolations,
   );

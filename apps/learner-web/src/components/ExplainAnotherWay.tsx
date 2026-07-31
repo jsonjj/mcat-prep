@@ -35,7 +35,7 @@ export function ExplainAnotherWay({ questionId, source, gate }: Props) {
     setActiveMode(mode);
     setResult(null);
     setLoading(true);
-    void requestRewrite({ questionId, mode, source })
+    void requestRewrite({ questionId, mode, source, gate })
       .then((rewrite) => setResult(rewrite))
       .finally(() => setLoading(false));
   };

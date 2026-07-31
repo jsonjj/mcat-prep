@@ -82,7 +82,8 @@ describe('groundedRewrite (production route)', () => {
       text: async () => 'boom',
     });
     const result = await groundedRewrite(
-      { questionId: 'q-1', mode: 'steps', source },
+      // A valid step gate so this reaches the upstream path (steps is gated below).
+      { questionId: 'q-1', mode: 'steps', source, gate: { skill: 'QUANTIFY', section: null, dok: null } },
       { apiKey: 'k', fetchImpl },
     );
     expect(result.status).toBe(502);
@@ -93,6 +94,38 @@ describe('groundedRewrite (production route)', () => {
     const result = await groundedRewrite({ questionId: 'q-1', mode: 'bogus' }, { apiKey: 'k', fetchImpl });
     expect(result.status).toBe(400);
     expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('enforces the step gate server-side: refuses steps for an ineligible item', async () => {
+    const fetchImpl = vi.fn<AiFetch>();
+    const result = await groundedRewrite(
+      // Low-DOK, non-QUANTIFY, non-C/P: the client hides the button, and the route
+      // refuses it too rather than trusting a client that asks for steps anyway.
+      { questionId: 'q-1', mode: 'steps', source, gate: { skill: 'IDENTIFY', section: 'bb', dok: 1 } },
+      { apiKey: 'k', fetchImpl },
+    );
+    expect(result.status).toBe(400);
+    expect((result.json as { error: string }).error).toBe('steps_not_available');
+    // The gate check runs before the model call, so no provider spend is incurred.
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('refuses steps when the gate is omitted, but example needs no gate', async () => {
+    const noGate = vi.fn<AiFetch>();
+    const steps = await groundedRewrite(
+      { questionId: 'q-1', mode: 'steps', source },
+      { apiKey: 'k', fetchImpl: noGate },
+    );
+    expect(steps.status).toBe(400);
+    expect(noGate).not.toHaveBeenCalled();
+
+    // Example is always allowed — an omitted gate still reaches the model.
+    const { fetchImpl } = recordingFetch('Put another way: the buffer soaks up acid.');
+    const example = await groundedRewrite(
+      { questionId: 'q-1', mode: 'example', source },
+      { apiKey: 'k', fetchImpl },
+    );
+    expect(example.status).toBe(200);
   });
 });
 

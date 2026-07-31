@@ -155,6 +155,24 @@ describe('cache key + request parsing', () => {
     expect(parseRewriteRequest(null)).toBeNull();
   });
 
+  it('parses an optional step gate and rejects a malformed one', () => {
+    // A well-formed gate round-trips so the route can enforce it server-side.
+    const withGate = parseRewriteRequest({
+      questionId: 'q-1',
+      mode: 'steps',
+      source,
+      gate: { skill: 'QUANTIFY', section: 'cp', dok: 2 },
+    });
+    expect(withGate?.gate).toEqual({ skill: 'QUANTIFY', section: 'cp', dok: 2 });
+    // An omitted gate is allowed and normalises to null (the route treats it as
+    // "no gate" → steps refused, example allowed).
+    expect(parseRewriteRequest({ questionId: 'q-1', mode: 'example', source })?.gate).toBeNull();
+    // A wrong-typed gate field rejects the whole request.
+    expect(
+      parseRewriteRequest({ questionId: 'q-1', mode: 'steps', source, gate: { dok: 'high' } }),
+    ).toBeNull();
+  });
+
   it('rejects a source that exceeds the size cap', () => {
     const atCap = { rationale: 'x'.repeat(MAX_REWRITE_SOURCE_CHARS) };
     const overCap = { rationale: 'x'.repeat(MAX_REWRITE_SOURCE_CHARS + 1) };

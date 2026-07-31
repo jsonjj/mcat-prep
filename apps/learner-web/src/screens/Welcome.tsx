@@ -39,16 +39,19 @@ export function Welcome() {
             </Button>
           ) : (
             <>
+              {/* One placement CTA, worded the same first-time and when re-offered:
+                  the copy used to swap on `onboardingComplete`, so the two entry
+                  contexts showed different labels for the identical action. */}
               <Button
                 variant="primary"
                 size="lg"
                 fullWidth
                 onClick={() => navigate('/onboarding/diagnostic')}
               >
-                {onboardingComplete ? 'Take the placement' : 'Begin placement'}
+                Take the placement
               </Button>
               <Button variant="secondary" size="lg" fullWidth onClick={onSkip}>
-                {onboardingComplete ? 'Continue without it' : 'Skip for now'}
+                Skip for now
               </Button>
             </>
           )}

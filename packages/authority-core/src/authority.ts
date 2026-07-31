@@ -564,9 +564,11 @@ const humanize = (id: string): string => id.replace(/[-_]+/g, ' ').trim();
 /**
  * The misconception a learner leaned toward across a KC group's missed items: the
  * mode of the picked misconceptions over the DISTINCT missed items. Null when no
- * missed item carried one. A tie resolves to the first reached (insertion order),
- * which is the earliest-missed item — a stable, defensible pick, not a claim of
- * strict dominance.
+ * missed item carried one. A tie resolves to the first reached in insertion order
+ * (the strict `>` below never lets a later equal count overtake the incumbent); the
+ * group's items are inserted in `listPracticeAttempts` order, which is newest-first,
+ * so a tie resolves to the MOST-RECENTLY-missed item's misconception — a stable,
+ * defensible pick, not a claim of strict dominance.
  */
 const leaningMisconceptionOf = (
   missedItems: ReadonlySet<string>,
@@ -4020,6 +4022,9 @@ export class Authority {
           id === null ? '' : (question.choices.find((c) => c.id === id)?.text ?? '');
         const entry: ErrorEntryView = {
           questionId: miss.questionId,
+          // The log this row was read from (practice vs study), so a consumer can
+          // tell apart the same item missed on both surfaces (unique per activity).
+          source: miss.activityType,
           kcId: miss.kcId,
           skillId: miss.skill,
           cluster: miss.cluster,
@@ -4081,6 +4086,7 @@ export class Authority {
           id === null ? '' : (question.choices.find((c) => c.id === id)?.text ?? '');
         const entry: ErrorEntryView = {
           questionId: win.questionId,
+          source: win.activityType,
           kcId: win.kcId,
           skillId: win.skill,
           cluster: win.cluster,
@@ -4226,16 +4232,29 @@ export class Authority {
     // The CARS sub-skill of each distinct correctly-answered item, resolved once
     // through the port (a CARS item carries no sub-skill on the attempt log, so it
     // is read back from the corpus). Only correct answers can resolve a repair.
+    //
+    // Dedup is done in TWO deterministic passes rather than a check-then-set inside
+    // one `Promise.all`. The previous shape read `correctByItem.get`, then `await`ed
+    // `classify`, then `set` — so two correct attempts on the SAME item could both
+    // pass the staleness check before either wrote, and whichever `set` happened to
+    // settle last (order not guaranteed) decided the stored timestamp. Here the
+    // latest timestamp per item is chosen by a pure synchronous reduce first, then
+    // each DISTINCT item is classified exactly once, so no two promises touch the
+    // same key and the result cannot depend on settle order.
+    const latestCorrectAt = new Map<string, string>();
+    for (const a of attempts) {
+      if (!a.correct) continue;
+      const seen = latestCorrectAt.get(a.questionId);
+      if (seen === undefined || Date.parse(a.occurredAt) > Date.parse(seen)) {
+        latestCorrectAt.set(a.questionId, a.occurredAt);
+      }
+    }
     const correctByItem = new Map<string, { at: string; skill: CarsSkill | null }>();
     await Promise.all(
-      attempts
-        .filter((a) => a.correct)
-        .map(async (a) => {
-          const existing = correctByItem.get(a.questionId);
-          if (existing !== undefined && Date.parse(existing.at) >= Date.parse(a.occurredAt)) return;
-          const classification = await this.practiceBank.classify(a.questionId);
-          correctByItem.set(a.questionId, { at: a.occurredAt, skill: classification?.carsSkill ?? null });
-        }),
+      [...latestCorrectAt].map(async ([questionId, at]) => {
+        const classification = await this.practiceBank.classify(questionId);
+        correctByItem.set(questionId, { at, skill: classification?.carsSkill ?? null });
+      }),
     );
     const resolvedFor = (repair: CarsReasoningRepair): boolean => {
       const createdMs = Date.parse(repair.createdAt);

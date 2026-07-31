@@ -437,6 +437,8 @@ export interface SessionSummary {
  */
 export interface ErrorEntryView {
   questionId: string;
+  /** Which attempt log the row came from; disambiguates the same item missed on both. */
+  source: 'practice' | 'study';
   kcId: string | null;
   skillId: string | null;
   cluster: string | null;
