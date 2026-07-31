@@ -4641,3 +4641,77 @@ body {
     max-height: min(64dvh, 620px);
   }
 }
+
+/* ---- Passage of the Day (formative CARS-style reading rep) ----
+   Home hero card + the runner. Warm "reading" accent, tied to the existing
+   .mc-passage colors, so the daily passage reads as its own inviting thing. */
+.mc-passage--hero {
+  padding: var(--mc-space-5) var(--mc-space-5) var(--mc-space-5) var(--mc-space-6);
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, #ffd98a 34%, transparent), transparent 58%),
+    color-mix(in srgb, #ffd98a 22%, var(--mc-surface));
+  border-color: color-mix(in srgb, #f0b95a 40%, var(--mc-border));
+}
+.mc-passage--hero::before {
+  /* A slim warm spine down the left edge — an "open book" cue, decorative only. */
+  content: '';
+  position: absolute;
+  left: var(--mc-space-4);
+  top: var(--mc-space-4);
+  bottom: var(--mc-space-4);
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffcf6b, #f59e3c);
+  opacity: 0.85;
+}
+.mc-passage--hero {
+  position: relative;
+}
+.mc-passage--hero .mc-upnext__eyebrow {
+  color: color-mix(in srgb, #9a6a1e 82%, var(--mc-ink));
+}
+.mc-passage--hero .mc-upnext__title {
+  font-size: var(--mc-text-24, var(--mc-text-22));
+}
+
+/* Runner */
+.mc-potd__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-2);
+}
+.mc-potd__passage {
+  position: relative;
+  border-left: 4px solid color-mix(in srgb, #f0b95a 55%, var(--mc-border));
+  background: color-mix(in srgb, #ffd98a 10%, var(--mc-surface-2));
+}
+.mc-potd__passagelabel {
+  margin: 0 0 var(--mc-space-1);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  color: color-mix(in srgb, #9a6a1e 78%, var(--mc-ink-muted));
+}
+/* Reading measure + rhythm: keep lines short enough to scan, generous leading. */
+.mc-potd__passage p {
+  max-width: 68ch;
+  line-height: 1.72;
+}
+.mc-potd__q {
+  gap: var(--mc-space-3);
+}
+.mc-potd__qcount {
+  margin: 0;
+  font-size: var(--mc-text-13, var(--mc-text-14));
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--mc-ink-muted);
+}
+.mc-potd__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mc-space-3);
+  margin-top: var(--mc-space-2);
+}

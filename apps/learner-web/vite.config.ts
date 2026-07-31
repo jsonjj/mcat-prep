@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import { aiApiPlugin } from './server/ai-api-plugin';
 import { authorityApiPlugin } from './server/authority-api-plugin';
 import { diagnosticApiPlugin } from './server/diagnostic-api-plugin';
+import { passageApiPlugin } from './server/passage-api-plugin';
 import { practiceTestApiPlugin } from './server/practice-test-api-plugin';
 
 /**
@@ -40,7 +41,7 @@ export default defineConfig(({ mode }) => {
 
   if (authorityProxyTarget) {
     return {
-      plugins: [react(), aiApiPlugin(env), diagnosticApiPlugin()],
+      plugins: [react(), aiApiPlugin(env), diagnosticApiPlugin(), passageApiPlugin()],
       server: {
         port: 5173,
         proxy: {
@@ -71,6 +72,7 @@ export default defineConfig(({ mode }) => {
       aiApiPlugin(env),
       authorityApiPlugin(),
       diagnosticApiPlugin(),
+      passageApiPlugin(),
       practiceTestApiPlugin(),
     ],
     server: { port: 5173 },

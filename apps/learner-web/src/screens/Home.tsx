@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useMasterySkills, useToday } from '../app/queries';
 import {
   useConsumeCompletedActivity,
@@ -8,6 +9,7 @@ import {
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
 import { WrappedCard } from '../components/WrappedCard';
 import { IconPlay } from '../components/icons';
+import { fetchTodaysPassage } from './passage/passage-client';
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -38,6 +40,13 @@ export function Home() {
   // deliberately not a mastery claim: this view carries no evidence warrant.
   const skills = useMasterySkills();
   const glowing = (skills.data ?? []).filter((s) => s.atCapabilityCut).length;
+
+  // Today's rotating passage, so the Home card previews the real reading rep. It
+  // shares the runner's query key (one fetch, warm cache on navigation) and is
+  // purely decorative here: any loading/error/empty state falls back to the
+  // generic copy so Home never surfaces a failure of this optional feature.
+  const passage = useQuery({ queryKey: ['passage-today'], queryFn: fetchTodaysPassage });
+  const potd = passage.data ?? null;
 
   const dayLabel = today.data
     ? `Day ${today.data.dayNumber}${today.data.totalDays ? ` of ${today.data.totalDays}` : ''}`
@@ -96,11 +105,23 @@ export function Home() {
         </Link>
       )}
 
-      <Link to="/app/passage" className="mc-upnext mc-passage" aria-label="Passage of the Day">
+      <Link
+        to="/app/passage"
+        className="mc-upnext mc-passage mc-passage--hero"
+        aria-label={
+          potd ? `Passage of the Day: ${potd.title}` : 'Passage of the Day'
+        }
+      >
         <div className="mc-upnext__text">
-          <span className="mc-upnext__eyebrow">Daily reading rep · optional</span>
-          <span className="mc-upnext__title">Passage of the Day</span>
-          <span className="mc-upnext__meta">A short reading rep to keep your stamina warm.</span>
+          <span className="mc-upnext__eyebrow">
+            Passage of the Day{potd ? ` · ${potd.discipline}` : ''}
+          </span>
+          <span className="mc-upnext__title">{potd ? potd.title : 'Read, reason, decide'}</span>
+          <span className="mc-upnext__meta">
+            {potd
+              ? 'A short CARS-style reading rep · formative, never counts toward mastery'
+              : 'A short CARS-style reading rep to keep your stamina warm.'}
+          </span>
         </div>
         <span className="mc-upnext__play mc-passage__play" aria-hidden="true">
           <IconPlay />
