@@ -432,6 +432,9 @@ export function CarsDuel() {
         <h1 className="mc-h1">Nice sparring.</h1>
         <Card elevated>
           <Markdown content={reflection ?? ''} className="mc-duel__reflection" />
+          <p className="mc-duel__ainote mc-muted mc-fineprint">
+            AI coach — formative feedback on how you argued, not a graded score.
+          </p>
         </Card>
         <Stack gap={2}>
           <Button variant="primary" onClick={() => finish(true)}>

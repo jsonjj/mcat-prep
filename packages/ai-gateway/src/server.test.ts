@@ -69,6 +69,21 @@ describe('groundedRewrite (production route)', () => {
     expect(body.text).toContain('Doubling the substrate doubles the rate');
   });
 
+  it('drops a fabricated named entity back to the deterministic re-statement', async () => {
+    // The model invents a law/entity the source never mentioned; the route must
+    // strip it to the grounded re-statement rather than surface the fabrication.
+    const { fetchImpl } = recordingFetch('This is really just the Krebs Cycle in disguise.');
+    const result = await groundedRewrite(
+      { questionId: 'q-3', mode: 'example', source },
+      { apiKey: 'k', fetchImpl },
+    );
+    const body = result.json as RewriteResponseBody;
+    expect(result.status).toBe(200);
+    expect(body.fallback).toBe(true);
+    expect(body.text).not.toContain('Krebs');
+    expect(body.text).toContain(source.rationale);
+  });
+
   it('returns 503 when no key is configured (client falls back)', async () => {
     const result = await groundedRewrite({ questionId: 'q-1', mode: 'example', source }, { apiKey: '' });
     expect(result.status).toBe(503);

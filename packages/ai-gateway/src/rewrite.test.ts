@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
   MAX_REWRITE_SOURCE_CHARS,
+  STEPS_MIN_GROUNDING_OVERLAP,
   buildRewriteMessages,
   buildRewriteSystemPrompt,
   canStepByStep,
   fallbackRewrite,
+  findUngroundedNamedEntities,
   findUngroundedNumbers,
+  groundingOverlap,
   parseRewriteRequest,
   rewriteCacheKey,
   sanitizeRewrite,
@@ -124,6 +127,129 @@ describe('grounding gate', () => {
 
   it('sanitizeRewrite falls back on empty output', () => {
     expect(sanitizeRewrite('   ', 'example', source).fallback).toBe(true);
+  });
+});
+
+describe('invented-specifics grounding (named entities / acronyms)', () => {
+  const src = {
+    rationale:
+      'At equilibrium the forward and reverse rates are equal, so the ratio stays fixed.',
+  };
+
+  it('OVER-REJECT GUARD: passes ordinary synonyms, rephrasing, and analogies', () => {
+    // A plain synonym-heavy re-wording — lowercase content words are fine.
+    expect(
+      findUngroundedNamedEntities(
+        'Put simply, the forward and backward speeds match, so the balance holds steady.',
+        src,
+      ),
+    ).toEqual([]);
+    // An everyday analogy that reinvents wording — the whole point of the feature.
+    expect(
+      findUngroundedNamedEntities(
+        'Think of a crowded room where people enter and leave at the same pace.',
+        src,
+      ),
+    ).toEqual([]);
+    // A lowercase analogy term in quotes is NOT a named entity.
+    expect(findUngroundedNamedEntities('Imagine a "balanced seesaw" that never tips.', src)).toEqual(
+      [],
+    );
+    // Sentence-initial capitals, Roman numerals, and shouted common words are not specifics.
+    expect(
+      findUngroundedNamedEntities('Equilibrium holds. Both sides balance out evenly.', src),
+    ).toEqual([]);
+    expect(findUngroundedNamedEntities('Group II elements behave similarly here.', src)).toEqual([]);
+    expect(findUngroundedNamedEntities('This is NOT the reaction stopping.', src)).toEqual([]);
+    // Stock discourse phrases in title case are not entities.
+    expect(
+      findUngroundedNamedEntities('In Summary, the forward and reverse rates are equal.', src),
+    ).toEqual([]);
+  });
+
+  it('flags a fabricated named entity / law the source never mentioned', () => {
+    expect(findUngroundedNamedEntities('This is just Le Chatelier at work.', src)).toContain(
+      'Le Chatelier',
+    );
+    expect(
+      findUngroundedNamedEntities("It follows from Newton's Law of Cooling.", src).length,
+    ).toBeGreaterThan(0);
+    // A fabricated proper-noun term is caught even when wrapped in quotes.
+    expect(
+      findUngroundedNamedEntities('The idea is called the "Krebs Cycle" here.', src).length,
+    ).toBeGreaterThan(0);
+  });
+
+  it('flags a fabricated acronym but passes one echoed from the source', () => {
+    expect(findUngroundedNamedEntities('The rate depends on ATP levels.', src)).toContain('ATP');
+    const withAcronym = { rationale: 'ATP hydrolysis releases the energy that drives the pump.' };
+    expect(
+      findUngroundedNamedEntities('Put simply, ATP breakdown powers the pump.', withAcronym),
+    ).toEqual([]);
+  });
+});
+
+describe('grounding gate — invented specifics + steps floor', () => {
+  const src = {
+    rationale:
+      'At equilibrium the forward and reverse rates are equal, so the ratio stays fixed.',
+  };
+
+  it('OVER-REJECT GUARD: a normal paraphrase passes through untouched', () => {
+    const paraphrase =
+      'Put simply, the forward and reverse rates match, so nothing shifts overall.';
+    expect(sanitizeRewrite(paraphrase, 'example', src)).toEqual({
+      text: paraphrase,
+      fallback: false,
+    });
+    // An analogy that shares little source vocabulary is still a valid example rewrite.
+    const analogy =
+      'Think of a crowded room where people enter and leave at the same pace, so the count holds.';
+    expect(sanitizeRewrite(analogy, 'example', src).fallback).toBe(false);
+  });
+
+  it('falls back on a fabricated named entity, acronym, or new number', () => {
+    const entity = sanitizeRewrite('By Le Chatelier, adding reactant just shifts things.', 'example', src);
+    expect(entity.fallback).toBe(true);
+    expect(entity.text).toContain(src.rationale);
+    expect(sanitizeRewrite('The ratio is fixed by ATP.', 'example', src).fallback).toBe(true);
+    expect(sanitizeRewrite('The ratio changes by 42 percent.', 'example', src).fallback).toBe(true);
+  });
+
+  it('steps floor: faithful steps pass; an off-source steps answer falls back', () => {
+    const faithful =
+      '1. The forward and reverse rates become equal.\n2. So the ratio stays fixed at equilibrium.';
+    expect(sanitizeRewrite(faithful, 'steps', src).fallback).toBe(false);
+    const offSource =
+      '1. Mitochondria generate chemical fuel.\n2. Electrons travel down the transport chain.';
+    expect(sanitizeRewrite(offSource, 'steps', src).fallback).toBe(true);
+  });
+
+  it('the steps floor never touches example-mode analogies (no false reject)', () => {
+    // The same low-overlap wording a steps answer would be failed on stays valid in
+    // example mode, because analogies legitimately reinvent vocabulary.
+    const analogy =
+      'Picture a busy doorway where arrivals and departures happen at the same speed.';
+    expect(sanitizeRewrite(analogy, 'example', src).fallback).toBe(false);
+  });
+});
+
+describe('groundingOverlap', () => {
+  const src = {
+    rationale:
+      'The buffer resists pH change because the weak acid and conjugate base absorb protons.',
+  };
+
+  it('is high for a faithful re-wording and near zero for off-source text', () => {
+    expect(
+      groundingOverlap(
+        'The buffer resists change; the weak acid and conjugate base absorb protons.',
+        src,
+      ),
+    ).toBeGreaterThan(0.6);
+    expect(
+      groundingOverlap('Mitochondria generate cellular fuel through oxidative processes.', src),
+    ).toBeLessThan(STEPS_MIN_GROUNDING_OVERLAP);
   });
 });
 

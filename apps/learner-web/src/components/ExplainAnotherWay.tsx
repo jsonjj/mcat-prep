@@ -72,6 +72,14 @@ export function ExplainAnotherWay({ questionId, source, gate }: Props) {
               <p key={index}>{line}</p>
             ))}
           </div>
+          {/* Only the REAL model rewrite is labelled as AI-generated. The deterministic
+              fallback (result.fallback) is a verbatim re-statement of the vetted
+              explanation, so it needs no such caveat. */}
+          {!result.fallback ? (
+            <p className="mc-explain__ainote mc-muted mc-fineprint">
+              AI-generated re-explanation — double-check it against the official explanation above.
+            </p>
+          ) : null}
         </Callout>
       ) : null}
     </div>

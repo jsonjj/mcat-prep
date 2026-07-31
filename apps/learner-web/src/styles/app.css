@@ -1122,6 +1122,12 @@ body {
 .mc-explain__body p {
   margin: 0;
 }
+/* AI-aid caveat under a real model rewrite: subtle, set off from the body above. */
+.mc-explain__ainote {
+  margin: var(--mc-space-2) 0 0;
+  font-style: italic;
+  opacity: 0.85;
+}
 
 .mc-evidence {
   list-style: none;
@@ -1744,6 +1750,12 @@ body {
 }
 .mc-duel__reflection li {
   margin: 0;
+}
+/* Subtle "this is AI coaching" caveat under the duel reflection. */
+.mc-duel__ainote {
+  margin: var(--mc-space-3) 0 0;
+  font-style: italic;
+  opacity: 0.85;
 }
 
 /* ---- CARS Duel — setup screen (header · mode cards · intensity · topic · CTA) ---- */
