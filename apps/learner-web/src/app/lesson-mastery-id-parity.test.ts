@@ -2,29 +2,34 @@ import { describe, expect, it, vi } from 'vitest';
 import { ATLAS_LESSON_CLUSTER, fixedClock } from '@mcat/contracts';
 import { Authority } from '@mcat/authority-core';
 import { loadSyntheticBank } from '@mcat/content';
-import { APP_NATIVE_LESSONS } from '../app-native';
+import { REGISTERED_LESSONS } from './lesson-catalog';
 
 /**
  * This is a Node-only test file, never reachable from `src/main.tsx`, so it is
  * exempt from the browser-bundle boundary (tests/architecture/browser-boundaries.test.ts,
  * ALLOWED_SERVER_PACKAGE_REFERENCES) to import `@mcat/authority-core` and
- * `@mcat/content` directly. It needs them to resolve `APP_NATIVE_LESSONS`
- * against the real authority rather than a copy of either id list — the
- * whole point is to catch the two drifting apart.
+ * `@mcat/content` directly. It needs them to resolve the registration manifest's
+ * ids against the real authority rather than a copy of either id list — the
+ * whole point is to catch the servable catalog and the authority drifting apart.
  */
-describe('app-native lesson mastery ids', () => {
+describe('registered lesson mastery ids', () => {
   it('match the LessonMasteryView keys the authority resolves', () => {
-    const appNativeLessonIds = APP_NATIVE_LESSONS.map(({ script }) => script.id);
+    // The servable catalog is now exactly the registration manifest (the three
+    // real lessons), not the retired app-native previews. Sourcing the ids by
+    // NAME from REGISTERED_LESSONS means a lesson added to the manifest that the
+    // authority cannot resolve trips this immediately.
+    const registeredLessonIds = REGISTERED_LESSONS.map((lesson) => lesson.lessonId);
     const authority = new Authority(loadSyntheticBank(), fixedClock('2026-07-20T12:00:00.000Z'));
     const state = authority.createGuest();
 
     const masteryLessonIds = authority
-      .getMasteryLessons(state, appNativeLessonIds)
+      .getMasteryLessons(state, registeredLessonIds)
       .map(({ lessonId }) => lessonId);
 
     // `getMasteryLessons` deduplicates and omits unknown ids, so equality catches
-    // both duplicate client entries and an app-native/registry drift.
-    expect(masteryLessonIds).toEqual(appNativeLessonIds);
+    // both a duplicate manifest entry and a manifest/authority drift: every
+    // registered (servable) lesson must be an id the authority actually resolves.
+    expect(masteryLessonIds).toEqual(registeredLessonIds);
   });
 
   it('feeds Today’s Path from the registration manifest — clusters, KCs, durations threaded', async () => {

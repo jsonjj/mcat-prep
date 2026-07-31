@@ -8,9 +8,13 @@
     "composite": false,
     "declaration": false,
     "declarationMap": false,
-    // Relaxed to host the vendored app-native pilot lessons (src/app-native/*),
-    // which were authored under the lesson-viewer config (these two flags off).
-    // TODO: re-tighten once app-native is extracted into its own package.
+    // Two base strictness flags stay off for this app. They were first relaxed to
+    // host the (now-retired) app-native pilot lessons, but re-tightening after that
+    // deletion still surfaces ~14 pre-existing errors in unrelated code — the recall
+    // adapters (apkg-importer, media-store, recall-service) and a few screens
+    // (AppShell, RecallHome, RecallReview) — that predate this work. Kept off here so
+    // the removal stays a clean deletion; re-tightening + fixing those is deferred
+    // roadmap work, not part of retiring the previews.
     "exactOptionalPropertyTypes": false,
     "noUncheckedIndexedAccess": false
   },
