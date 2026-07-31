@@ -374,8 +374,16 @@ function PracticeTestComplete({
   const est = summary.data?.estimatedScore ?? null;
 
   const finish = () => {
-    markReviewed.mutate();
-    navigate(returnTo, { state: activityId ? { completedActivityId: activityId } : null });
+    // Navigate only AFTER the review POST settles. Navigating synchronously
+    // unmounted this screen and aborted the in-flight /practice-test/review request
+    // (ERR_ABORTED log noise; the write still landed). `onSettled` fires on success
+    // or failure, so a failed write still returns the learner to their plan. The
+    // CTA already shows a "Saving…" pending state while this is in flight.
+    markReviewed.mutate(undefined, {
+      onSettled: () => {
+        navigate(returnTo, { state: activityId ? { completedActivityId: activityId } : null });
+      },
+    });
   };
 
   return (

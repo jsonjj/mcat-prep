@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useMasterySkills, useToday } from '../app/queries';
+import { useMasterySkills } from '../app/queries';
 import {
   useConsumeCompletedActivity,
   useEnsureTodaysPath,
@@ -22,7 +22,6 @@ function greeting(): string {
 const PLAN_LABEL = 'View plan';
 
 export function Home() {
-  const today = useToday();
   const path = useEnsureTodaysPath();
   const launch = useLaunchPlanActivity();
   // Activities launched from the plan return to the plan (/app/today); this consumer
@@ -48,8 +47,12 @@ export function Home() {
   const passage = useQuery({ queryKey: ['passage-today'], queryFn: fetchTodaysPassage });
   const potd = passage.data ?? null;
 
-  const dayLabel = today.data
-    ? `Day ${today.data.dayNumber}${today.data.totalDays ? ` of ${today.data.totalDays}` : ''}`
+  // Read the "Day N of M" straight from the plan (getTodaysPath) — the SAME source
+  // the Today's Path screen shows — so Home and Today can never disagree on the day.
+  // Home previously read `useToday` (getToday), which surfaced its own day count and
+  // drifted from the plan (Home "Day 1" vs Today "Day 56 of 90" for one learner).
+  const dayLabel = plan
+    ? `Day ${plan.dayNumber}${plan.totalDays ? ` of ${plan.totalDays}` : ''}`
     : 'Welcome back';
 
   return (

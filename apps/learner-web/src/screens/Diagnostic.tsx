@@ -319,7 +319,7 @@ export function Diagnostic() {
           </p>
 
           <button type="button" className="mc-textbtn mc-diag-skip" onClick={onSkip}>
-            Skip the diagnostic for now
+            Skip for now
           </button>
         </Stack>
       </Card>

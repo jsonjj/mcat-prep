@@ -3460,7 +3460,10 @@ body {
 }
 @media (max-width: 900px) {
   .mc-practice__cols {
-    grid-template-columns: 1fr;
+    /* `minmax(0, 1fr)`, not a bare `1fr` (which floors at the item's min-content):
+       the single stacked column must be free to shrink to the viewport so a
+       populated test dashboard can't push the screen wider than the phone. */
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
   }
 }
@@ -3472,10 +3475,20 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
+  /* Grid item of `.mc-practice__cols`: without this it keeps its default
+     `min-width: auto` (min-content) floor, so in the stacked single-column layout
+     the track grows to the card's intrinsic content width (the horizontal "Past
+     tests" strip + the trend chart) and the whole Practice screen scrolls
+     horizontally on a phone once the test dashboard has data. Let it shrink below
+     content width so those regions scroll/scale WITHIN the card instead. */
+  min-width: 0;
 }
 .mc-practice__card > * {
   flex: 1 1 auto;
   min-height: 0;
+  /* Same reasoning one level in: let the inner Stack shrink below its own
+     min-content so nested grids/SVGs size to the (now shrinkable) card. */
+  min-width: 0;
 }
 .mc-practice__card::before {
   content: '';
@@ -3760,6 +3773,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--mc-space-3);
+  /* Grid item of `.mc-testdash__grid` (the Readiness + Estimated-range column):
+     allow it to shrink so its gauge SVG scales down rather than holding the card
+     open in the two-column band between the phone and desktop breakpoints. */
+  min-width: 0;
 }
 .mc-testdash__section {
   display: flex;

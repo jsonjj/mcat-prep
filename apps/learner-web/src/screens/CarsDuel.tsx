@@ -16,6 +16,7 @@ import {
 } from '@mcat/ai-gateway';
 import type { CarsDuelSelectionView, CarsReadinessLabel } from '@mcat/contracts';
 import { useCarsReadiness, useRecordCarsDuel } from '../app/queries';
+import { useRecordPlanActivity } from '../app/today-queries';
 import { IconBook, IconChat, IconCheck, IconShield, IconSwords } from '../components/icons';
 
 /**
@@ -106,6 +107,7 @@ export function CarsDuel() {
     else navigate('/app');
   };
   const recordDuel = useRecordCarsDuel();
+  const recordPlan = useRecordPlanActivity();
   const carsReadiness = useCarsReadiness();
   const ai = useMemo(() => new HttpAiChat({ endpoint: '/api/ai/chat' }), []);
 
@@ -265,6 +267,22 @@ export function CarsDuel() {
     }
     // start reads the selection/defaults directly; run once on autostart.
   }, [navState?.autostart, phase]);
+
+  // Safety net for the strictly in-order plan: when this duel was launched from
+  // Today's Path but the AI opponent is unavailable (no key → "Your sparring
+  // partner is offline"), mark the launched step complete so the plan advances.
+  // Otherwise the offline runner pins `currentActivityId` to itself and every
+  // later step stays Locked — a dead end the learner can't escape, since the
+  // offline "Back to plan" returns without a completedActivityId. Mirrors
+  // RecallReview's empty-runner safety net. A no-key duel records no CARS
+  // evidence (`reflect` never runs), so completing the step mints nothing.
+  const advancedOfflineRef = useRef(false);
+  useEffect(() => {
+    if (advancedOfflineRef.current) return;
+    if (!unavailable || !returnTo || !activityId) return;
+    advancedOfflineRef.current = true;
+    recordPlan.mutate({ activityId, status: 'complete' });
+  }, [unavailable, returnTo, activityId, recordPlan]);
 
   if (unavailable) {
     return (
