@@ -17,6 +17,7 @@ function snap(over: Partial<TodaysPathSnapshot> = {}): TodaysPathSnapshot {
     coveragePct: 0.5,
     recall: { dueLearning: 0, dueReviews: 0, newAvailable: 0, due: 0, estimatedMinutesForDue: 0 },
     mistakesOpen: 0,
+    mistakesRepairable: 0,
     practiceUnlocked: true,
     practiceReviewNeed: 4,
     candidateLessons: [],

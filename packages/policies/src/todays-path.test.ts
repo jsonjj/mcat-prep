@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildTodaysPath,
   orderActivities,
+  repairItemCap,
   reviewDebtBand,
   scoreLesson,
   sizeRecall,
@@ -22,6 +23,7 @@ function snap(overrides: Partial<TodaysPathSnapshot> = {}): TodaysPathSnapshot {
     coveragePct: 0,
     recall: { dueLearning: 0, dueReviews: 0, newAvailable: 0, due: 0, estimatedMinutesForDue: 0 },
     mistakesOpen: 0,
+    mistakesRepairable: 0,
     practiceUnlocked: true,
     practiceReviewNeed: 10,
     candidateLessons: [],
@@ -278,64 +280,87 @@ describe('Today\u2019s Path engine', () => {
     );
   });
 
-  it('reserves short Review-Mistakes spacer sessions (2/day, 3 on longer budgets) once misses are open', () => {
-    const open = 6;
-    const short = buildTodaysPath(snap({ mistakesOpen: open, dailyBudgetMinutes: 180 }));
+  it('scales the repair-item cap from ~3 at 2 hr to ~5 at 6 hr', () => {
+    expect(repairItemCap(120)).toBe(3); // 2 hr floor
+    expect(repairItemCap(240)).toBe(4); // 4 hr
+    expect(repairItemCap(360)).toBe(5); // 6 hr ceiling
+    // Clamped both ways: below the floor stays 3, above the ceiling stays 5.
+    expect(repairItemCap(60)).toBe(TODAYS_PATH_CONFIG.mistakesReserved.capBase);
+    expect(repairItemCap(600)).toBe(TODAYS_PATH_CONFIG.mistakesReserved.capMax);
+  });
+
+  it('reserves ONE Review-Mistakes repair slot, sized 3→5 by budget from repairable', () => {
+    // Plenty repairable so the budget cap, not the supply, is what binds.
+    const repairable = 5;
+    const short = buildTodaysPath(snap({ mistakesRepairable: repairable, dailyBudgetMinutes: 120 }));
     const shortSessions = short.activities.filter((a) => a.kind === 'review_mistakes');
-    expect(shortSessions.length).toBe(TODAYS_PATH_CONFIG.mistakesReserved.perDay);
+    // A SINGLE slot (the guided runner feeds every mistake one at a time), never a
+    // fan-out of short spacers.
+    expect(shortSessions).toHaveLength(1);
+    expect(shortSessions[0]!.count).toBe(TODAYS_PATH_CONFIG.mistakesReserved.capBase); // ~3 at 2 hr
 
-    const long = buildTodaysPath(snap({ mistakesOpen: open, dailyBudgetMinutes: 360 }));
+    const long = buildTodaysPath(snap({ mistakesRepairable: repairable, dailyBudgetMinutes: 360 }));
     const longSessions = long.activities.filter((a) => a.kind === 'review_mistakes');
-    expect(longSessions.length).toBe(TODAYS_PATH_CONFIG.mistakesReserved.perDayLongBudget);
+    expect(longSessions).toHaveLength(1);
+    expect(longSessions[0]!.count).toBe(TODAYS_PATH_CONFIG.mistakesReserved.capMax); // ~5 at 6 hr
 
-    // Every reserved session stays short (bounded by the max-items ceiling) with a floor.
-    const shortCap =
-      TODAYS_PATH_CONFIG.mistakesReserved.maxItems * TODAYS_PATH_CONFIG.costs.mistakePerItem;
+    // ~3 minutes per repair sizes the section (count × mistakePerItem), never above repairable.
     for (const s of [...shortSessions, ...longSessions]) {
-      expect(s.estimatedMinutes).toBeLessThanOrEqual(shortCap);
-      expect(s.count!).toBeGreaterThanOrEqual(TODAYS_PATH_CONFIG.mistakesReserved.minItems);
+      expect(s.estimatedMinutes).toBe(s.count! * TODAYS_PATH_CONFIG.costs.mistakePerItem);
+      expect(s.count!).toBeLessThanOrEqual(repairable);
     }
   });
 
+  it('never sizes the slot above what is repairable, even on a long budget', () => {
+    // Only 3 repairable on a 6 hr day whose cap is 5 → the slot is 3, not 5.
+    const r = buildTodaysPath(snap({ mistakesRepairable: 3, dailyBudgetMinutes: 360 }));
+    const session = r.activities.find((a) => a.kind === 'review_mistakes');
+    expect(session).toBeDefined();
+    expect(session!.count).toBe(3);
+    expect(session!.estimatedMinutes).toBe(3 * TODAYS_PATH_CONFIG.costs.mistakePerItem);
+  });
+
   /**
-   * The slot must not promise work that the Mistakes tab cannot show. A reserved
-   * session against zero open misses is exactly the dead end that shipped: the
-   * learner is told mistakes piled up and lands on an empty page.
+   * The slot must not promise work the runner cannot serve. Reserving against
+   * unservable misses is exactly the dead end that shipped: the learner is told
+   * mistakes piled up and lands on an empty page. The gate is now REPAIRABLE
+   * (servable + prioritized), not the raw open count.
    */
-  it('reserves no Mistakes session below the declared open-mistake eligibility', () => {
-    for (const openCount of [0, TODAYS_PATH_CONFIG.eligibility.mistakesMinOpen - 1]) {
-      const r = buildTodaysPath(snap({ mistakesOpen: openCount, dailyBudgetMinutes: 360 }));
+  it('reserves no Mistakes slot below the declared repairable eligibility', () => {
+    for (const repairable of [0, TODAYS_PATH_CONFIG.eligibility.mistakesMinOpen - 1]) {
+      const r = buildTodaysPath(snap({ mistakesRepairable: repairable, dailyBudgetMinutes: 360 }));
       expect(r.activities.some((a) => a.kind === 'review_mistakes')).toBe(false);
     }
+    // A large raw open count that is not REPAIRABLE (untaught KCs, etc.) still schedules nothing.
+    const openButUnservable = buildTodaysPath(
+      snap({ mistakesOpen: 20, mistakesRepairable: 0, dailyBudgetMinutes: 360 }),
+    );
+    expect(openButUnservable.activities.some((a) => a.kind === 'review_mistakes')).toBe(false);
+
     const eligible = buildTodaysPath(
       snap({
-        mistakesOpen: TODAYS_PATH_CONFIG.eligibility.mistakesMinOpen,
+        mistakesRepairable: TODAYS_PATH_CONFIG.eligibility.mistakesMinOpen,
         dailyBudgetMinutes: 360,
       }),
     );
     const sessions = eligible.activities.filter((a) => a.kind === 'review_mistakes');
-    expect(sessions.length).toBeGreaterThan(0);
-    // And never sized above what is actually open.
-    for (const s of sessions) {
-      expect(s.count!).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.eligibility.mistakesMinOpen);
-    }
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0]!.count!).toBeLessThanOrEqual(TODAYS_PATH_CONFIG.eligibility.mistakesMinOpen);
   });
 
-  it('spreads the reserved Mistakes sessions through long practice runs', () => {
+  it('keeps long practice runs spread even with the single Mistakes slot', () => {
     const r = buildTodaysPath(
       snap({
         dailyBudgetMinutes: 360,
         practiceUnlocked: true,
         candidateLessons: manyLessons(2),
-        mistakesOpen: 6,
+        mistakesRepairable: 5,
       }),
     );
-    // Several practice blocks + reserved mistakes sessions: the extra kinds give the
-    // orderer more gaps to work with, so back-to-back practice shrinks further.
+    // Spreading no longer DEPENDS on multiple mistakes sessions — the orderer owns it —
+    // but the one slot is still present, and practice never runs more than 2 deep.
     expect(r.activities.filter((a) => a.kind === 'practice').length).toBeGreaterThan(1);
-    expect(r.activities.filter((a) => a.kind === 'review_mistakes').length).toBeGreaterThanOrEqual(
-      2,
-    );
+    expect(r.activities.filter((a) => a.kind === 'review_mistakes')).toHaveLength(1);
     expect(maxSameKindRun(r.activities)).toBeLessThanOrEqual(2);
   });
 

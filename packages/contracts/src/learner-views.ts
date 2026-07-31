@@ -612,6 +612,87 @@ export const CarsReasoningPatternViewSchema = z
   .strict();
 export type CarsReasoningPatternView = z.infer<typeof CarsReasoningPatternViewSchema>;
 
+/**
+ * The four Mistakes buckets, in the priority order the guided repair runner feeds
+ * them: the open misses themselves ("To fix"), the recurring-miss patterns, the
+ * CARS reasoning-pattern repairs, then the shaky wins. The same four the Mistakes
+ * dashboard tabs, deliberately — a repair item is one row of one of them.
+ */
+export const RepairBucketSchema = z.enum(['tofix', 'patterns', 'wins', 'cars']);
+export type RepairBucket = z.infer<typeof RepairBucketSchema>;
+
+/**
+ * One mistake the guided repair runner walks the learner through: the REVIEW
+ * content (what to see before the fresh one) plus the focus the mandatory fresh
+ * question is served with. It is a SUPERSET of the four bucket views' fields, so
+ * every field a bucket does not carry is null — the runner switches on `bucket`
+ * to render the matching Mistakes detail visual:
+ *
+ * - `tofix` / `wins` — a concrete question: `stem`, `chosenChoice*` vs
+ *   `correctChoice*`, the `choiceRationale` refutation, the `chosenMisconception`
+ *   trap line, and the WS1 `calibration` band (a win is always `shaky_win`, with
+ *   no trap or refutation because the pick was the key).
+ * - `patterns` — an AGGREGATE, so it carries no question: `label` +
+ *   `missedItems`/`attemptedItems` denominator + `assertable` + the
+ *   `leaningMisconception` (all `question*` fields null).
+ * - `cars` — the pinned CARS passage `stem` (nullable if the item retired), the
+ *   sub-skill `label` (title) and the duel `holdRatePct` (no pick/key).
+ *
+ * `freshFocus` is what the runner passes to `getPracticeQueue` for the mandatory
+ * fresh question; it equals `focus` today but is named separately so the two can
+ * diverge. Carries NO answer key beyond what the Mistakes dashboard already
+ * re-shows (the learner already answered these), and moves no mastery — the fresh
+ * attempt is scored through the ordinary practice path.
+ */
+export const RepairItemViewSchema = z
+  .object({
+    bucket: RepairBucketSchema,
+    /** The mistake's own focus token (kept for labeling/debug). */
+    focus: PracticeFocusSchema.nullable(),
+    /** Focus the mandatory fresh question is served with (never a re-serve). */
+    freshFocus: PracticeFocusSchema.nullable(),
+    /** ~3 minutes per repair — the engine sizes the section from `count × this`. */
+    estMinutes: z.number().int().positive(),
+    /** A human name: the pattern/KC label or the CARS sub-skill title; null when the stem is the content. */
+    label: z.string().min(1).nullable(),
+    // --- Question-level review (tofix / wins / cars); null on an aggregate pattern. ---
+    questionId: z.string().min(1).nullable(),
+    stem: z.string().min(1).nullable(),
+    chosenChoiceId: ChoiceIdSchema.nullable(),
+    chosenChoiceText: z.string(),
+    correctChoiceId: ChoiceIdSchema.nullable(),
+    correctChoiceText: z.string(),
+    /** The picked distractor's authored misconception (the "trap"); null for wins/cars/patterns w/o one. */
+    chosenMisconception: z.string().min(1).nullable(),
+    /** The refutation of the picked choice; null when there is nothing to refute. */
+    choiceRationale: z.string().min(1).nullable(),
+    /** WS1 behavioural band; null on an aggregate pattern (no single attempt to band). */
+    calibration: CalibrationBandSchema.nullable(),
+    // --- Pattern-level (patterns bucket); null elsewhere. ---
+    missedItems: z.number().int().nonnegative().nullable(),
+    attemptedItems: z.number().int().positive().nullable(),
+    assertable: z.boolean(),
+    leaningMisconception: z.string().min(1).nullable(),
+    // --- CARS-level (cars bucket); null elsewhere. ---
+    holdRatePct: z.number().int().min(0).max(100).nullable(),
+  })
+  .strict();
+export type RepairItemView = z.infer<typeof RepairItemViewSchema>;
+
+/**
+ * The guided repair queue: an ordered, servability-filtered, capped subset of the
+ * four Mistakes buckets, priority `tofix → patterns → cars → wins`. `requested`
+ * echoes the cap the caller asked for; `items.length` may be smaller once
+ * unservable mistakes (science whose KC is untaught, or `kcId: null`) are dropped.
+ */
+export const RepairQueueViewSchema = z
+  .object({
+    requested: z.number().int().nonnegative(),
+    items: z.array(RepairItemViewSchema),
+  })
+  .strict();
+export type RepairQueueView = z.infer<typeof RepairQueueViewSchema>;
+
 export const SkillSummarySchema = z
   .object({
     skillId: z.string().min(1),

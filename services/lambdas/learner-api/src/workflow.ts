@@ -34,6 +34,7 @@ import {
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
   PracticeResultSchema,
+  RepairQueueViewSchema,
   SkillMasteryViewSchema,
   SkillSummarySchema,
   VectorLessonRunViewSchema,
@@ -52,6 +53,7 @@ import {
   type PracticeAttemptResult,
   type PracticeItemView,
   type PracticeQueueView,
+  type RepairQueueView,
   type SkillMasteryView,
   type SkillSummary,
   type VectorLessonCommand,
@@ -312,6 +314,17 @@ export class RepositoryLearnerKernel {
     return CarsReasoningPatternViewSchema.array().parse(
       await this.authority().getCarsReasoningPatterns(state),
     );
+  }
+
+  /**
+   * The guided repair queue for the Review-Mistakes runner: a prioritized,
+   * servability-filtered, capped subset of the four Mistakes buckets. Uses the
+   * bank-backed authority because it hydrates the buckets' content and reads back
+   * the CARS corpus for resolution. A read — moves no mastery.
+   */
+  async getRepairQueue(limit: number, principal: Principal): Promise<RepairQueueView> {
+    const state = await this.loadState(principal);
+    return RepairQueueViewSchema.parse(await this.authority().getRepairQueue(state, limit));
   }
 
   /** Read-only goal projection for the Account/Profile editor prefill (WS8). */

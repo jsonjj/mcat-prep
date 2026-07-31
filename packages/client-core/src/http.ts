@@ -20,6 +20,7 @@ import {
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
   PracticeTestSummaryViewSchema,
+  RepairQueueViewSchema,
   SkillMasteryViewSchema,
   PracticeResultSchema,
   SkillSummarySchema,
@@ -420,6 +421,14 @@ export class HttpAuthorityClient implements AuthorityPort {
       HTTP_API.carsReasoningPatterns.path,
       arrayOf(CarsReasoningPatternViewSchema),
     );
+  }
+
+  async getRepairQueue(limit: number) {
+    await this.ensureBootstrap();
+    // Path-parameterized like the practice queue (the edge rejects query strings),
+    // so the limit rides as a segment the authority reads back.
+    const count = encodeURIComponent(String(Math.max(1, Math.floor(limit))));
+    return this.request(`${HTTP_API.mistakesRepair.path}/${count}`, RepairQueueViewSchema);
   }
 
   async getSkills() {

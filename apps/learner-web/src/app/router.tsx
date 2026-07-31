@@ -15,6 +15,7 @@ import { CardBrowser } from '../screens/recall/CardBrowser';
 import { CardEditor } from '../screens/recall/CardEditor';
 import { ImportApkg } from '../screens/recall/ImportApkg';
 import { Mistakes } from '../screens/Mistakes';
+import { MistakesRepair } from '../screens/mistakes/MistakesRepair';
 import { Progress } from '../screens/Progress';
 import { SkillDetail } from '../screens/SkillDetail';
 // Account/Profile screen is TEMPORARILY HIDDEN for now — import kept commented so the
@@ -57,6 +58,8 @@ export const router = createBrowserRouter([
       { path: 'recall/edit/:cardId', element: <CardEditor /> },
       { path: 'recall/import', element: <ImportApkg /> },
       { path: 'mistakes', element: <Mistakes /> },
+      // The guided Review-Mistakes repair runner (one mistake at a time + a fresh one).
+      { path: 'mistakes/repair', element: <MistakesRepair /> },
       { path: 'progress', element: <Progress /> },
       // The standalone Skills page is merged into Progress (Concept B): its seven
       // reasoning-skill readouts now render as the Progress dashboard's left rail.

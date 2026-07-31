@@ -14,6 +14,7 @@ import {
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
   PracticeResultSchema,
+  RepairQueueViewSchema,
   PracticeTestSummaryViewSchema,
   SkillMasteryViewSchema,
   SkillSummarySchema,
@@ -200,6 +201,12 @@ export class InProcessAuthorityClient implements AuthorityPort {
   async getCarsReasoningPatterns() {
     return CarsReasoningPatternViewSchema.array().parse(
       await this.mutateAsync((state) => this.authority.getCarsReasoningPatterns(state)),
+    );
+  }
+
+  async getRepairQueue(limit: number) {
+    return RepairQueueViewSchema.parse(
+      await this.mutateAsync((state) => this.authority.getRepairQueue(state, limit)),
     );
   }
 

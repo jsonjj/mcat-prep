@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { PracticeAttemptCommand } from '@mcat/contracts';
 import { authority } from './authority';
+import { REPAIR_FRESH_SET_SIZE } from '../screens/mistakes/repair-flow';
 import { PRACTICE_INVALIDATE_KEYS } from './invalidation-keys';
 
 /**
@@ -19,6 +20,35 @@ export function usePracticeQueue(x: number, focus: string | undefined, enabled: 
     queryFn: () => authority.getPracticeQueue(x, focus),
     enabled,
     // Each start should pull a fresh set; never reuse a stale queue.
+    staleTime: 0,
+    gcTime: 0,
+  });
+}
+
+/**
+ * The guided repair queue for the Review-Mistakes runner: the engine-sized subset
+ * of `count` prioritized, servable mistakes. Fetched fresh at the start of a run.
+ */
+export function useRepairQueue(count: number) {
+  return useQuery({
+    queryKey: ['repair-queue', count],
+    queryFn: () => authority.getRepairQueue(count),
+    staleTime: 0,
+    gcTime: 0,
+  });
+}
+
+/**
+ * The mandatory fresh questions for one repair mistake, served from the ordinary
+ * practice queue at the mistake's focus. Keyed by the mistake's `index` (not just
+ * the focus) so consecutive mistakes sharing a focus each pull their OWN set rather
+ * than reading a cached one; `enabled` gates it to the "fresh" phase.
+ */
+export function useRepairFresh(index: number, focus: string | undefined, enabled: boolean) {
+  return useQuery({
+    queryKey: ['repair-fresh', index, focus ?? null],
+    queryFn: () => authority.getPracticeQueue(REPAIR_FRESH_SET_SIZE, focus),
+    enabled,
     staleTime: 0,
     gcTime: 0,
   });

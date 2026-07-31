@@ -9,6 +9,7 @@ import {
   LessonWarrantViewSchema,
   MasteryMapEntrySchema,
   MistakePatternViewSchema,
+  RepairQueueViewSchema,
   StudyStepViewSchema,
   TodayViewSchema,
 } from './learner-views';
@@ -135,6 +136,18 @@ export const HTTP_API = {
     method: 'GET',
     path: '/v1/errors/cars-reasoning',
     response: z.array(CarsReasoningPatternViewSchema),
+  },
+  /**
+   * The guided repair queue for the Review-Mistakes runner — a prioritized,
+   * servability-filtered, capped subset of the four Mistakes buckets. Path-
+   * parameterized (`/v1/mistakes/repair/{limit}`) for the same reason the practice
+   * queue is (the authority edge rejects query strings; the client appends the
+   * segment).
+   */
+  mistakesRepair: {
+    method: 'GET',
+    path: '/v1/mistakes/repair',
+    response: RepairQueueViewSchema,
   },
   progressSkills: {
     method: 'GET',

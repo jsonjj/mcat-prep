@@ -194,7 +194,12 @@ export function useLaunchPlanActivity() {
           });
           break;
         case 'review_mistakes':
-          navigate('/app/mistakes', { state });
+          // The guided repair runner (one mistake at a time + a mandatory fresh one),
+          // sized to the engine's count. The standalone /app/mistakes dashboard stays
+          // reachable from the nav and unchanged.
+          navigate('/app/mistakes/repair', {
+            state: { ...state, count: a.count ?? undefined },
+          });
           break;
         case 'practice_test':
           // Launch the fixed-form runner, which takes the test block-by-block and

@@ -41,6 +41,8 @@ import {
   type PracticeQuestion,
   type PracticeQueueItem,
   type PracticeQueueView,
+  type RepairItemView,
+  type RepairQueueView,
   type PastPracticeTest,
   type PracticeTestSummaryView,
   type PolicyVersion,
@@ -591,6 +593,93 @@ const leaningMisconceptionOf = (
   return best;
 };
 
+/**
+ * A repair item built from an `ErrorEntryView` — a "To fix" open miss or a shaky
+ * "Win". The runner re-shows exactly what the Mistakes dashboard does (stem, the
+ * pick vs the key, the trap, the refutation) before the mandatory fresh one. A win
+ * carries the key as its pick and no trap/refutation, which its `calibration`
+ * (`shaky_win`) and null `chosenMisconception`/`choiceRationale` already encode.
+ */
+const repairItemFromEntry = (
+  bucket: 'tofix' | 'wins',
+  e: ErrorEntryView,
+  estMinutes: number,
+): RepairItemView => ({
+  bucket,
+  focus: e.focus,
+  freshFocus: e.focus,
+  estMinutes,
+  label: null,
+  questionId: e.questionId,
+  stem: e.stem,
+  chosenChoiceId: e.chosenChoiceId,
+  chosenChoiceText: e.chosenChoiceText,
+  correctChoiceId: e.correctChoiceId,
+  correctChoiceText: e.correctChoiceText,
+  chosenMisconception: e.chosenMisconception,
+  choiceRationale: e.choiceRationale,
+  calibration: e.calibration,
+  missedItems: null,
+  attemptedItems: null,
+  assertable: false,
+  leaningMisconception: null,
+  holdRatePct: null,
+});
+
+/**
+ * A repair item for a recurring-miss pattern — an AGGREGATE, so it carries no
+ * single question: the runner shows the KC/cluster label, the honest denominator,
+ * and the leaned-toward misconception, then serves a fresh one in the pattern's focus.
+ */
+const repairItemFromPattern = (p: MistakePatternView, estMinutes: number): RepairItemView => ({
+  bucket: 'patterns',
+  focus: p.focus,
+  freshFocus: p.focus,
+  estMinutes,
+  label: p.label,
+  questionId: null,
+  stem: null,
+  chosenChoiceId: null,
+  chosenChoiceText: '',
+  correctChoiceId: null,
+  correctChoiceText: '',
+  chosenMisconception: null,
+  choiceRationale: null,
+  calibration: null,
+  missedItems: p.missedItems,
+  attemptedItems: p.attemptedItems,
+  assertable: p.assertable,
+  leaningMisconception: p.leaningMisconception,
+  holdRatePct: null,
+});
+
+/**
+ * A repair item for a CARS reasoning-pattern repair: the sub-skill title, the duel
+ * hold-rate, and the pinned passage stem (nullable if the item retired — the
+ * sub-skill focus still launches a fresh CARS passage).
+ */
+const repairItemFromCars = (c: CarsReasoningPatternView, estMinutes: number): RepairItemView => ({
+  bucket: 'cars',
+  focus: c.focus,
+  freshFocus: c.focus,
+  estMinutes,
+  label: c.title,
+  questionId: c.questionId,
+  stem: c.passageStem,
+  chosenChoiceId: null,
+  chosenChoiceText: '',
+  correctChoiceId: null,
+  correctChoiceText: '',
+  chosenMisconception: null,
+  choiceRationale: null,
+  calibration: null,
+  missedItems: null,
+  attemptedItems: null,
+  assertable: false,
+  leaningMisconception: null,
+  holdRatePct: c.holdRatePct,
+});
+
 /** Narrow a loose choice id to the four deliverable options (null when skipped). */
 const asChoiceId = (value: string | null): 'A' | 'B' | 'C' | 'D' | null =>
   value === 'A' || value === 'B' || value === 'C' || value === 'D' ? value : null;
@@ -956,6 +1045,104 @@ export class Authority {
     );
   }
 
+  /**
+   * The per-day cap on repair items. The engine scales the actual slot from ~3 to
+   * this by the daily budget; the snapshot's `mistakesRepairable` is this list
+   * capped here, so the two never disagree on the ceiling.
+   */
+  private static readonly REPAIR_MAX_ITEMS = TODAYS_PATH_CONFIG.mistakesReserved.capMax;
+
+  /**
+   * The guided repair queue for the Review-Mistakes runner
+   * (docs/mistakes-repair-plan.md).
+   *
+   * A prioritized, SERVABILITY-FILTERED, capped subset of the four Mistakes buckets
+   * — the same four the tab renders — in the fixed order the runner feeds them:
+   * `To fix → Patterns → CARS → Wins`. A repair is included only when its mandatory
+   * "try a fresh one" is actually SERVABLE:
+   *  - science (tofix / wins / kc-grain patterns): the miss's KC must be non-null
+   *    AND taught — the practice queue is taught-gated per-KC, and a `kcId: null`
+   *    miss can never be flipped by `Authority.resolved` — and it must carry a focus;
+   *  - CARS reasoning-pattern repairs: always kept — the CARS queue bypasses the
+   *    taught gate, and a retired pinned passage still launches the sub-skill focus.
+   *
+   * A READ composed of four reads, none of which moves mastery; the fresh attempt
+   * the runner then serves is scored through the ordinary practice path, so
+   * resolution stays COMPUTED (a later correct fresh attempt flips `resolved` on the
+   * next read). Nothing is written here.
+   */
+  async getRepairQueue(state: LearnerState, limit: number): Promise<RepairQueueView> {
+    const requested = Math.max(0, Math.min(Math.floor(limit), Authority.REPAIR_MAX_ITEMS));
+    return { requested, items: await this.buildRepairItems(state, requested) };
+  }
+
+  /**
+   * The ordered, servable, capped repair items — shared by `getRepairQueue` and the
+   * snapshot's `mistakesRepairable` count so the slot the engine sizes and the queue
+   * the runner reads are one derivation.
+   */
+  private async buildRepairItems(state: LearnerState, limit: number): Promise<RepairItemView[]> {
+    const cap = Math.max(0, Math.min(Math.floor(limit), Authority.REPAIR_MAX_ITEMS));
+    if (cap === 0) return [];
+    const taught = taughtKcSet(state);
+    const estMinutes = TODAYS_PATH_CONFIG.costs.mistakePerItem;
+
+    // The four buckets. `openMistakes` filters the same `getErrorLog` read used for
+    // patterns, so read the log ONCE and filter locally rather than reading twice.
+    const [errorLog, patterns, cars, shakyWins] = await Promise.all([
+      this.getErrorLog(state),
+      this.getMistakePatterns(state),
+      this.getCarsReasoningPatterns(state),
+      this.getShakyWins(state),
+    ]);
+    const clearedThrough = state.mistakesReviewedThrough ?? null;
+    const openLog = errorLog.filter(
+      (e) => !e.resolved && (clearedThrough === null || e.occurredAt > clearedThrough),
+    );
+
+    // Servable iff a fresh one can be served: taught KC (the per-KC gate) + a focus.
+    const servableScience = (kcId: string | null, focus: PracticeFocus | null): boolean =>
+      kcId !== null && focus !== null && taught.has(kcId);
+
+    const items: RepairItemView[] = [];
+
+    // 1) To fix — open science misses, confidently-wrong first (hypercorrection),
+    //    most-recent within each band. `kcId: null` (CARS) misses are dropped here;
+    //    the CARS bucket owns reasoning repairs.
+    const tofix = openLog
+      .filter((e) => servableScience(e.kcId, e.focus))
+      .sort(
+        (a, b) =>
+          (a.calibration === 'confidently_wrong' ? 0 : 1) -
+            (b.calibration === 'confidently_wrong' ? 0 : 1) ||
+          Date.parse(b.occurredAt) - Date.parse(a.occurredAt),
+      );
+    for (const e of tofix) items.push(repairItemFromEntry('tofix', e, estMinutes));
+
+    // 2) Patterns — recurring misses at KC grain whose KC is taught (already
+    //    worst-first from `getMistakePatterns`). A cluster-grain pattern is a
+    //    `kcId: null` aggregate that can never resolve, so it is dropped.
+    for (const p of patterns) {
+      if (p.grain !== 'kc' || p.focus === null || !taught.has(p.key)) continue;
+      items.push(repairItemFromPattern(p, estMinutes));
+    }
+
+    // 3) CARS — the OPEN reasoning-pattern repairs (already open-first, recent-first),
+    //    always servable because the CARS queue bypasses the taught gate.
+    for (const c of cars) {
+      if (c.resolved) continue;
+      items.push(repairItemFromCars(c, estMinutes));
+    }
+
+    // 4) Wins — shaky wins worth another rep, servable science only.
+    for (const w of shakyWins) {
+      if (!servableScience(w.kcId, w.focus)) continue;
+      items.push(repairItemFromEntry('wins', w, estMinutes));
+    }
+
+    return items.slice(0, cap);
+  }
+
   /** Read the current day's plan (built:false when none exists for today yet). */
   getTodaysPath(state: LearnerState): TodaysPathView {
     return this.todaysPathView(state);
@@ -1077,7 +1264,14 @@ export class Authority {
     }
     // Dynamic: if independent misses have piled up during the day, inject a Mistakes
     // session as the next step and push the last still-ready activity to tomorrow.
-    this.maybeInjectMistakesSession(plan, (await this.openMistakes(state)).length);
+    // The TRIGGER is the pile-up (open misses since the last review); the SIZE is
+    // what the runner can actually repair (servable + capped), so a pile-up of
+    // untaught misses never injects a session that would dead-end on an empty queue.
+    this.maybeInjectMistakesSession(
+      plan,
+      (await this.openMistakes(state)).length,
+      (await this.buildRepairItems(state, Authority.REPAIR_MAX_ITEMS)).length,
+    );
     const next = plan.activities.find((a) => a.status === 'ready' || a.status === 'in_progress');
     plan.currentActivityId = next?.activityId ?? null;
   }
@@ -1085,8 +1279,14 @@ export class Authority {
   private static readonly MISTAKES_SESSION_THRESHOLD = 5;
 
   /** Inject a Mistakes session mid-day when enough misses pile up (bumps the last item to tomorrow). */
-  private maybeInjectMistakesSession(plan: TodaysPathState, openMistakes: number): void {
+  private maybeInjectMistakesSession(
+    plan: TodaysPathState,
+    openMistakes: number,
+    repairable: number,
+  ): void {
     if (openMistakes < Authority.MISTAKES_SESSION_THRESHOLD) return;
+    // Nothing servable to repair → injecting would open an empty runner. Skip.
+    if (repairable <= 0) return;
     const cap = plan.dailyBudgetMinutes >= TODAYS_PATH_CONFIG.carsSecondAtBudget ? 3 : 2;
     if (plan.mistakesSessions >= cap) return;
     // Don't stack a second while one is still pending.
@@ -1097,7 +1297,8 @@ export class Authority {
     ) {
       return;
     }
-    const count = Math.min(openMistakes, TODAYS_PATH_CONFIG.blocks.mistakesMax);
+    // Size to what the runner can serve (repairable is already capped), ~3 min each.
+    const count = repairable;
     const minutes = Math.min(
       count * TODAYS_PATH_CONFIG.costs.mistakePerItem,
       TODAYS_PATH_CONFIG.maxActivityMinutes,
@@ -1377,6 +1578,9 @@ export class Authority {
       coveragePct: ctx.coveragePct,
       recall: input.recallLoad,
       mistakesOpen: (await this.openMistakes(state)).length,
+      // Servable, prioritized, capped — what the runner can ACTUALLY repair today,
+      // which is what the engine sizes the slot from (never the raw open count).
+      mistakesRepairable: (await this.buildRepairItems(state, Authority.REPAIR_MAX_ITEMS)).length,
       practiceUnlocked,
       practiceReviewNeed,
       candidateLessons,

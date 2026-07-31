@@ -227,11 +227,15 @@ describe('Mistakes — Today’s Path counts what the tab shows', () => {
     expect(open.length).toBe(tab.length);
     expect(open.length).toBe(5);
 
+    // The repair runner's fresh one is taught-gated, so a miss is only schedulable
+    // once its KC is taught. Mark the inhibition KC taught so these five are repairable.
+    state.taughtKcIds = [KC_INHIBITION];
     const first = state.plan!.activities[0]!;
     await authority.recordPlanActivity(state, first.activityId, 'complete');
     const session = state.plan!.activities.find((a) => a.kind === 'review_mistakes');
     expect(session).toBeDefined();
-    // The slot's promise is the tab's content, not a free-floating tally.
+    // The slot's promise is the servable, capped repair queue — here all five misses
+    // are repairable and sit under the per-day cap, so it is sized to the open count.
     expect(session!.count).toBe(open.length);
   });
 
@@ -246,6 +250,8 @@ describe('Mistakes — Today’s Path counts what the tab shows', () => {
     for (const questionId of INHIBITION_ITEMS.slice(0, 5)) {
       await answer(authority, state, questionId, WRONG);
     }
+    // Taught KC → the five misses are repairable, so the mid-day session injects.
+    state.taughtKcIds = [KC_INHIBITION];
     const first = state.plan!.activities[0]!;
     await authority.recordPlanActivity(state, first.activityId, 'complete');
     const session = state.plan!.activities.find((a) => a.kind === 'review_mistakes')!;

@@ -33,6 +33,7 @@ import {
 import {
   ROUTES,
   allowedMethodsFor,
+  mistakesRepairLimit,
   practiceQueueParams,
   practiceQuestionId,
   routeFor,
@@ -99,6 +100,10 @@ interface KernelPort {
     focus: string | null,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['getPracticeQueueAdaptive']>;
+  getRepairQueue(
+    limit: number,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['getRepairQueue']>;
   handlePracticeAdaptive(
     input: PracticeAdaptiveAttemptCommandBody,
     principal: Principal,
@@ -860,6 +865,19 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       return jsonResponse(
         200,
         route.responseSchema?.parse(await dependencies.kernel.carsReasoningPatterns(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'mistakesRepair') {
+      const limit = mistakesRepairLimit(event.rawPath);
+      if (limit === null) {
+        return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
+      }
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.getRepairQueue(limit, principal)),
         origin,
         requestIdValue,
       );

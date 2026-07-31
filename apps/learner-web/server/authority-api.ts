@@ -209,6 +209,11 @@ export async function handleAuthorityRequest(
         const focus = queueMatch[2];
         return sendJson(response, 200, await client.getPracticeQueue(x, focus));
       }
+      const repairMatch = /^\/v1\/mistakes\/repair\/(\d{1,2})$/.exec(path);
+      if (repairMatch) {
+        const limit = Number.parseInt(repairMatch[1]!, 10);
+        return sendJson(response, 200, await client.getRepairQueue(limit));
+      }
     }
 
     // ---- commands -----------------------------------------------------------

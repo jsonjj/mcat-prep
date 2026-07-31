@@ -125,7 +125,8 @@ a {
 .mc-button:active {
   transform: translateY(1px);
 }
-.mc-button:disabled {
+.mc-button:disabled,
+.mc-button[aria-disabled='true'] {
   cursor: not-allowed;
   opacity: 0.55;
 }

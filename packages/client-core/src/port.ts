@@ -18,6 +18,7 @@ import type {
   PracticeQueueView,
   PracticeResult,
   PracticeTestSummaryView,
+  RepairQueueView,
   SkillMasteryView,
   SkillSummary,
   StudyStepView,
@@ -102,6 +103,12 @@ export interface AuthorityPort {
   getMistakePatterns(): Promise<MistakePatternView[]>;
   /** Mistakes tab, Surface C (WS7): CARS reasoning-pattern repairs from weak duels. */
   getCarsReasoningPatterns(): Promise<CarsReasoningPatternView[]>;
+  /**
+   * The guided repair queue for the Review-Mistakes runner: a prioritized,
+   * servability-filtered, capped subset of the four Mistakes buckets. `limit` is
+   * the per-day cap the engine sized the slot to.
+   */
+  getRepairQueue(limit: number): Promise<RepairQueueView>;
   getSkills(): Promise<SkillSummary[]>;
   getPracticeItem(questionId: string): Promise<PracticeItemView | null>;
   checkPractice(questionId: string, choiceId: string | null): Promise<PracticeResult>;

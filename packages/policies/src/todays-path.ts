@@ -36,7 +36,7 @@ export interface TodaysPathConfig {
     readonly lesson: number; // 20
     readonly practicePerQuestion: number; // 2 / question
     readonly recallPerCard: number; // 0.33 (20s) / card
-    readonly mistakePerItem: number; // 2 / mistake
+    readonly mistakePerItem: number; // 3 / mistake (review + a mandatory fresh one)
   };
   /** Block floor–ceilings. */
   readonly blocks: {
@@ -101,20 +101,20 @@ export interface TodaysPathConfig {
   /** A 2nd CARS Duel is added on presets at/above this many minutes. */
   readonly carsSecondAtBudget: number; // 240 (4 hr)
   /**
-   * Reserved short Review-Mistakes sessions, planned only once
-   * `eligibility.mistakesMinOpen` misses are actually open (a session reserved
-   * against nothing promised "clear what piled up" and opened an empty Mistakes
-   * page). 2/day normally, 3 on longer budgets; each session is kept short
-   * (min–max items, never above the open count) — real pile-ups later in the day
-   * still trigger the authority's mid-day injector on top of these. Variety in the
-   * day's ordering does NOT depend on these sessions: `orderActivities` spreads
-   * same-kind runs on its own.
+   * The ONE reserved Review-Mistakes slot's per-day item cap, scaling with the daily
+   * budget (~3 at 2 hr up to ~5 at 6 hr). The guided repair runner feeds one mistake
+   * at a time across the four buckets, so the day reserves a SINGLE slot sized to a
+   * prioritized subset — never several short spacer sessions (which would each re-read
+   * the same deterministic repair queue and repeat mistakes). It is planned only once
+   * `eligibility.mistakesMinOpen` SERVABLE mistakes are repairable (a slot reserved
+   * against nothing promised "clear what piled up" and opened an empty page); real
+   * pile-ups later in the day still trigger the authority's mid-day injector on top.
+   * Variety in the day's ordering does NOT depend on this slot: `orderActivities`
+   * spreads same-kind runs on its own.
    */
   readonly mistakesReserved: {
-    readonly perDay: number; // 2
-    readonly perDayLongBudget: number; // 3 (>= carsSecondAtBudget)
-    readonly minItems: number; // 3 (short floor)
-    readonly maxItems: number; // 8 (short ceiling — keep each session short)
+    readonly capBase: number; // 3 (~2 hr budget)
+    readonly capMax: number; // 5 (~6 hr budget)
   };
 }
 
@@ -124,7 +124,7 @@ export const TODAYS_PATH_CONFIG: TodaysPathConfig = {
     lesson: 20,
     practicePerQuestion: 2,
     recallPerCard: 1 / 3,
-    mistakePerItem: 2,
+    mistakePerItem: 3,
   },
   blocks: {
     practiceMinQ: 6,
@@ -151,7 +151,7 @@ export const TODAYS_PATH_CONFIG: TodaysPathConfig = {
   practiceUnlockLessons: 3,
   questionsPerReviewKc: 2,
   carsSecondAtBudget: 240,
-  mistakesReserved: { perDay: 2, perDayLongBudget: 3, minItems: 3, maxItems: 8 },
+  mistakesReserved: { capBase: 3, capMax: 5 },
 };
 
 export type TodaysPathActivityKind =
@@ -269,6 +269,14 @@ export interface TodaysPathSnapshot {
   readonly recall: TodaysPathRecallLoad;
   /** Count-only open mistakes (past days); the mistakes section owns the actual items. */
   readonly mistakesOpen: number;
+  /**
+   * How many mistakes the guided repair runner can ACTUALLY serve today: the
+   * servable (taught-KC or CARS), prioritized, capped subset of the four Mistakes
+   * buckets (`Authority.getRepairQueue`). The Review-Mistakes slot is sized from
+   * THIS, never the raw `mistakesOpen` — an open miss whose fresh one can't be
+   * served (untaught KC, `kcId: null`) is not repairable and must not be promised.
+   */
+  readonly mistakesRepairable: number;
   /** Practice is unlocked once enough lessons are completed (teach-before-test gate). */
   readonly practiceUnlocked: boolean;
   /** Number of already-taught KCs that are weak/overdue — Practice is sized to this, not the budget. */
@@ -309,6 +317,23 @@ export interface TodaysPathResult {
 
 const clamp01 = (x: number): number => Math.max(0, Math.min(1, x));
 const clamp = (x: number, lo: number, hi: number): number => Math.max(lo, Math.min(hi, x));
+
+/**
+ * The per-day Review-Mistakes item cap, scaling with the daily budget: `capBase`
+ * (~3) at the 2 hr floor, +1 per additional 2 hr, clamped to [`capBase`, `capMax`]
+ * (~5 at 6 hr). The reserved slot is `min(mistakesRepairable, this)`.
+ */
+export function repairItemCap(
+  budgetMinutes: number,
+  cfg: TodaysPathConfig = TODAYS_PATH_CONFIG,
+): number {
+  const steps = Math.floor((budgetMinutes - 120) / 120);
+  return clamp(
+    cfg.mistakesReserved.capBase + steps,
+    cfg.mistakesReserved.capBase,
+    cfg.mistakesReserved.capMax,
+  );
+}
 
 // ---- Step: review-debt band --------------------------------------------------
 
@@ -539,39 +564,35 @@ export function buildTodaysPath(
     spent += Math.max(1, core.recallMinutes);
   }
 
-  // Review Mistakes — RESERVED as short sessions (2–3/day), only once
-  // `eligibility.mistakesMinOpen` misses are actually open: reserving one against
-  // nothing is how a shipped slot came to promise "clear what piled up" and open an
-  // empty Mistakes page. Pile-ups later in the day are caught by the authority's
-  // mid-day injector. Their old second job — breaking up same-kind runs — belongs to
-  // orderActivities, which enforces it whether or not any of these exist.
-  const mistakesWanted =
-    snap.dailyBudgetMinutes >= cfg.carsSecondAtBudget
-      ? cfg.mistakesReserved.perDayLongBudget
-      : cfg.mistakesReserved.perDay;
+  // Review Mistakes — ONE reserved slot for the guided repair runner, sized to the
+  // servable, prioritized, capped subset of the four Mistakes buckets
+  // (`snap.mistakesRepairable`) scaled by the daily budget (~3 items at 2 hr up to
+  // ~5 at 6 hr), NEVER above what is repairable, ~3 min each. A single slot, not
+  // several short spacers: the runner feeds every mistake one at a time in one
+  // sitting, and two slots would each re-read the same deterministic repair queue
+  // and repeat mistakes. Reserved only once `eligibility.mistakesMinOpen` mistakes
+  // are actually REPAIRABLE — reserving against unservable misses is how a slot came
+  // to promise "clear what piled up" and open an empty page. Pile-ups later in the
+  // day are still caught by the authority's mid-day injector; breaking up same-kind
+  // runs belongs to orderActivities, which does it whether or not this slot exists.
   const carriedMistakes = carried.filter((c) => c.kind === 'review_mistakes').length;
-  const mistakesEligible = snap.mistakesOpen >= cfg.eligibility.mistakesMinOpen;
-  const mistakesToReserve = mistakesEligible ? Math.max(0, mistakesWanted - carriedMistakes) : 0;
-  // Never promise more items than the Mistakes tab can show.
-  const mistakesPerSession = Math.min(
-    clamp(
-      Math.ceil(snap.mistakesOpen / Math.max(1, mistakesWanted)),
-      cfg.mistakesReserved.minItems,
-      cfg.mistakesReserved.maxItems,
-    ),
-    Math.max(1, snap.mistakesOpen),
-  );
-  const mistakesSessionMinutes = mistakesPerSession * cfg.costs.mistakePerItem;
-  for (let m = 0; m < mistakesToReserve; m += 1) {
-    if (spent + mistakesSessionMinutes > budgetForNew) break;
-    const ordinal = carriedMistakes + m;
+  const mistakesEligible = snap.mistakesRepairable >= cfg.eligibility.mistakesMinOpen;
+  const repairCap = repairItemCap(snap.dailyBudgetMinutes, cfg);
+  const mistakesCount = Math.min(snap.mistakesRepairable, repairCap);
+  const mistakesSessionMinutes = mistakesCount * cfg.costs.mistakePerItem;
+  if (
+    mistakesEligible &&
+    carriedMistakes === 0 &&
+    mistakesCount > 0 &&
+    spent + mistakesSessionMinutes <= budgetForNew
+  ) {
     coreActivities.push({
-      activityId: ordinal === 0 ? 'review-mistakes' : `review-mistakes:${ordinal + 1}`,
+      activityId: 'review-mistakes',
       kind: 'review_mistakes',
       title: 'Review Mistakes',
-      detail: 'Quick error check-in — clear anything that piled up (formative — never mastery).',
+      detail: 'Repair what tripped you up — each hands you a fresh question (formative — never mastery).',
       estimatedMinutes: mistakesSessionMinutes,
-      count: mistakesPerSession,
+      count: mistakesCount,
       minutesBudget: null,
       focus: null,
       lessonSlug: null,

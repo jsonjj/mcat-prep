@@ -21,6 +21,7 @@ import {
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
   PracticeResultSchema,
+  RepairQueueViewSchema,
   SkillMasteryViewSchema,
   SkillSummarySchema,
   StudyStepViewSchema,
@@ -73,6 +74,7 @@ export type RouteId =
   | 'shakyWins'
   | 'errorPatterns'
   | 'carsReasoningPatterns'
+  | 'mistakesRepair'
   | 'vectorLessonStatus'
   | 'vectorLessonStart'
   | 'vectorLessonRun'
@@ -537,6 +539,16 @@ export const ROUTES: readonly RouteDefinition[] = [
     responseSchema: CarsReasoningPatternViewSchema.array(),
   },
   {
+    id: 'mistakesRepair',
+    method: 'GET',
+    // Path-parameterized (`/v1/mistakes/repair/{limit}`); the edge rejects query
+    // strings, so the cap rides in the path like the practice queue's count.
+    path: '/v1/mistakes/repair',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: RepairQueueViewSchema,
+  },
+  {
     id: 'vectorLessonStatus',
     method: 'GET',
     path: '/v1/lessons/vectors-and-trigonometry/status',
@@ -581,11 +593,21 @@ export function allowedMethodsFor(path: string): readonly string[] {
 
 const PRACTICE_ITEM_PATH = /^\/v1\/practice\/items\/([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 const PRACTICE_QUEUE_PATH = /^\/v1\/practice\/queue\/(\d{1,2})(?:\/([a-z0-9-]{1,32}))?$/;
+const MISTAKES_REPAIR_PATH = /^\/v1\/mistakes\/repair\/(\d{1,2})$/;
 
 function routeMatches(route: RouteDefinition, path: string): boolean {
   if (route.id === 'practiceItem') return PRACTICE_ITEM_PATH.test(path);
   if (route.id === 'practiceQueue') return PRACTICE_QUEUE_PATH.test(path);
+  if (route.id === 'mistakesRepair') return MISTAKES_REPAIR_PATH.test(path);
   return route.path === path;
+}
+
+/** Extract the requested repair-item cap from the repair-queue path (null when absent/invalid). */
+export function mistakesRepairLimit(path: string): number | null {
+  const match = MISTAKES_REPAIR_PATH.exec(path);
+  if (match === null) return null;
+  const limit = Number.parseInt(match[1]!, 10);
+  return Number.isInteger(limit) && limit >= 1 ? limit : null;
 }
 
 export function practiceQuestionId(path: string): ContentId | null {
