@@ -5,10 +5,13 @@ import { fileURLToPath } from 'node:url';
 /**
  * The ONE way the architecture suite finds V3 lesson artifacts.
  *
- * TWO OF THE THREE LESSONS LIVE OUTSIDE THIS REPOSITORY. `V3-LES-789208` and
- * `V3-LES-844372` are authoring drafts under the workspace's sibling `research/`
- * tree, which is not part of `mcat-prep` and is absent from a clean checkout of
- * it. Only `V3-LES-130923` is vendored into `content/lessons/`.
+ * ALL THREE LESSONS ARE VENDORED IN-REPO under `content/lessons/` (Phase 2 —
+ * `V3-LES-130923`, `V3-LES-789208`, `V3-LES-844372`), which is the FIRST search
+ * root and wins by id. The workspace-sibling `research/.../lesson-authoring-drafts/`
+ * tree and the `MCAT_LESSON_DRAFTS_DIR` override are retained only as a defensive
+ * fallback for a checkout that somehow lacks a vendored copy; on a normal checkout
+ * they are never the source of any lesson. (Before Phase 2, only V3-LES-130923 was
+ * in-repo and the other two were reached in that sibling tree — hence this history.)
  *
  * Two suites read the same artifacts — `v3-lesson-binding-conformance.test.ts`
  * and `lesson-mastery-integration.test.ts` — and each used to walk the tree

@@ -40,21 +40,24 @@ import { RepositoryLearnerKernel, type LessonResponseSubmission } from './workfl
  *
  * Two halves, and both are load-bearing:
  *
- * 1. The real artifact, exactly as authored. Every one of its bindings takes the
- *    fail-closed `['INSTRUCTIONAL']` default (contract §3.5/§11), and this lesson
- *    has no delivery runtime, so nothing can observe the assistance its screens
- *    would carry and its responses stay unobserved (§3.3, and the defect commit
- *    `9fcaea3`). The correct outcome is therefore evidence recorded, `mastery`
- *    untouched, zero BKT observations — asserted here as the RIGHT answer, not as
- *    a shortfall.
+ * 1. The real artifact, exactly as authored — and LICENSED (Phase 4): its six
+ *    changed-task exits carry `['TRANSFER']`, the other 27 bindings take the
+ *    fail-closed `['INSTRUCTIONAL']` default (contract §3.5/§11). Submitted here
+ *    under unobserved `A3` assistance because this test drives no delivery runtime,
+ *    so the 27 are ineligible by mode AND all 33 fail closed on assistance (§3.3,
+ *    and the defect commit `9fcaea3`). The correct outcome is therefore evidence
+ *    recorded, `mastery` untouched, zero BKT observations — asserted here as the
+ *    RIGHT answer, not as a shortfall.
  * 2. The same real artifact with one binding deliberately declared BKT-eligible
  *    by an author, answered cleanly. `P(L)` must move, for every member of the
  *    seven-mode allowlist. Without this half, half 1 would pass just as well
  *    against a seam that was inert.
  *
- * NOT wired here, and deliberately: `V3-LES-844372` has no delivery runtime and
- * no route of its own. The vector lesson's command endpoint is used only as the
- * TRANSPORT that opens a transaction; the submission it records comes from this
+ * NOT wired here, and deliberately. `V3-LES-844372` gained its own normalized
+ * engine and route in Phase 5C; this test does not use them — it proves the
+ * recording path is lesson-agnostic by driving the raw seam directly. The vector
+ * lesson's command endpoint is used only as the TRANSPORT that opens a
+ * transaction; the submission it records comes from this
  * lesson's own bindings via `dependencies.lessonResponseSubmissions`, which is
  * exactly the seam a second lesson's runtime plugs into (`workflow.ts`,
  * `LessonResponseSubmissionSource`). Everything between that seam and the
@@ -67,15 +70,21 @@ import { RepositoryLearnerKernel, type LessonResponseSubmission } from './workfl
 
 const SECOND_LESSON_ID = 'V3-LES-844372';
 
-/** Repo root, then the workspace root the draft artifacts sit beside. */
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
+/**
+ * Read from this lesson's own VENDORED artifact. Phase 2 vendored all three real
+ * lessons into `content/lessons/` byte-faithfully, and Phase 7-5 repointed this
+ * seam off the workspace-sibling `research/.../lesson-authoring-drafts/` draft it
+ * used to reach outside the repo for. The vendored copy is content-identical
+ * (same `lesson_id`, `artifact_version` `0.2.5-internal-draft`, and 33-item
+ * `question_evidence_plan`), so every assertion below is unchanged — it just no
+ * longer depends on a tree that is absent from a clean checkout of this repo.
+ */
 const SECOND_LESSON_SCRIPT = join(
   repoRoot,
-  '..',
-  'research',
-  'mcat-curriculum-architecture-v3',
-  'lesson-authoring-drafts',
-  SECOND_LESSON_ID,
+  'content',
+  'lessons',
+  'v3-les-844372',
   'lesson-script.json',
 );
 
@@ -196,10 +205,10 @@ const clock = fixedClock(NOW);
  * One committed response, expressed only in seam vocabulary.
  *
  * `assistanceLevel` defaults to `A3` with `assistanceObserved: false`, and for
- * this lesson that is the honest report rather than a placeholder: `V3-LES-844372`
- * **has no delivery runtime at all**, so there is no screen whose support could
- * be observed. The vector lesson now measures its own delivery and emits `A0`
- * through `A2` accordingly; a lesson with no runtime cannot, and its responses
+ * this lesson that is the honest report rather than a placeholder: this test drives
+ * `V3-LES-844372` through **no delivery runtime**, so there is no screen whose
+ * support could be observed. The vector lesson measures its own delivery and emits
+ * `A0` through `A2`; a hand-built submission that drives no delivery cannot, and its responses
  * stay unobserved and therefore fail closed. Hint and reveal are left `false` so
  * the assistance fail-close is isolated as the single runtime reason `P(L)` does
  * not move.
@@ -434,10 +443,30 @@ describe('the second lesson is genuinely not the lesson the seam was wired again
     // for it (§7.3 — `cluster` is caller-resolved and never lesson-specific).
     expect(clusterForLesson(SECOND_LESSON.lessonId)).toBe('R1');
 
-    // Every binding takes the fail-closed default and none is BKT-eligible.
+    // The lesson is LICENSED (Phase 4, commit a2ac72a): exactly its six changed-
+    // task exits — the initial CHANGED_EXIT and the CHANGED re-entry for each of
+    // the three KCs — carry ['TRANSFER'] and are BKT-eligible; every other binding
+    // takes the fail-closed ['INSTRUCTIONAL'] default. Pinned as the EXACT eligible
+    // set (not a floor) so a lesson that silently licensed a seventh item, or
+    // dropped one, is a named failure rather than an absorbed drift.
+    const LICENSED_TRANSFER_ITEMS = [
+      'ALG-GRAPH-CHANGED-01',
+      'ALG-GRAPH-REENTRY-CHANGED-01',
+      'ALG-SYS-CHANGED-01',
+      'ALG-SYS-REENTRY-CHANGED-01',
+      'ALG-LOG-CHANGED-01',
+      'ALG-LOG-REENTRY-CHANGED-01',
+    ];
+    const eligibleItemIds = [...SECOND_LESSON_BINDINGS.bindings.values()]
+      .filter((binding) => hasEligibleEvidenceMode(binding))
+      .map((binding) => binding.itemBindingId)
+      .sort();
+    expect(eligibleItemIds).toEqual([...LICENSED_TRANSFER_ITEMS].sort());
+    const licensed = new Set(LICENSED_TRANSFER_ITEMS);
     for (const binding of SECOND_LESSON_BINDINGS.bindings.values()) {
-      expect(binding.candidateEvidenceModes, binding.itemBindingId).toEqual(['INSTRUCTIONAL']);
-      expect(hasEligibleEvidenceMode(binding), binding.itemBindingId).toBe(false);
+      expect(binding.candidateEvidenceModes, binding.itemBindingId).toEqual(
+        licensed.has(binding.itemBindingId) ? ['TRANSFER'] : ['INSTRUCTIONAL'],
+      );
     }
   });
 });
