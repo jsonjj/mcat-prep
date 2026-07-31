@@ -220,10 +220,10 @@ export function useLaunchPlanActivity() {
         case 'lesson': {
           // A scheduled lesson launches on its real manifest route (the same route
           // the Curriculum uses). Candidates only ever come from the manifest, so
-          // the slug resolves; the preview-route fallback is a defensive no-op.
+          // the slug always resolves; an unresolvable slug is simply not launched
+          // (the retired `/app/lesson/:slug` preview route no longer exists).
           const registered = a.lessonSlug ? lessonBySlug(a.lessonSlug) : undefined;
           if (registered) navigate(registered.routePath, { state });
-          else if (a.lessonSlug) navigate(`/app/lesson/${a.lessonSlug}`, { state });
           break;
         }
         case 'practice':

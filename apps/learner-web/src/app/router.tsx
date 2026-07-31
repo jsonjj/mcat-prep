@@ -8,7 +8,6 @@ import { TodaysPath } from '../screens/today/TodaysPath';
 import { Curriculum } from '../screens/Curriculum';
 import { VectorLesson } from '../screens/VectorLesson';
 import { CatalogLesson } from '../screens/CatalogLesson';
-import { Lesson } from '../screens/Lesson';
 import { Study } from '../screens/Study';
 import { RecallHome } from '../screens/recall/RecallHome';
 import { RecallReview } from '../screens/recall/RecallReview';
@@ -30,10 +29,6 @@ export const router = createBrowserRouter([
   { path: '/', element: <Welcome /> },
   { path: '/onboarding/diagnostic', element: <Diagnostic /> },
   { path: '/onboarding/plan', element: <PlanSetup /> },
-  // App-native lessons are a full-page, immersive experience: they render their
-  // own shell/header, so they live *outside* AppShell to avoid a duplicate
-  // top bar. Curriculum still links to `/app/lesson/:slug`.
-  { path: '/app/lesson/:slug', element: <Lesson /> },
   // Generator review surface. Outside AppShell on purpose: it sits on fixtures and mints
   // no evidence, so it must not appear as a learner tab or touch the authority kernel.
   { path: '/cars-preview', element: <CarsPreview /> },
