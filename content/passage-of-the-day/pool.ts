@@ -27,14 +27,16 @@
 type PassageChoiceId = 'A' | 'B' | 'C' | 'D';
 /** The coarse AAMC content grouping (mirrors contracts PassageThemeSchema). */
 type PassageTheme = 'humanities' | 'social_science';
-/** Ordinal difficulty (mirrors contracts PassageDifficultySchema). */
-type PassageDifficulty = 'accessible' | 'moderate' | 'demanding';
 /** The three AAMC CARS skills (mirrors contracts CarsSkillSchema). */
 type CarsSkill = 'FOC' | 'RWT' | 'RBT';
 
+/** Mirrors `@mcat/contracts` PassageChoice — the option itself carries the key. */
 interface PassageChoice {
   id: PassageChoiceId;
   text: string;
+  correct: boolean;
+  misconception: string | null;
+  rationale: string;
 }
 
 /** Mirrors `@mcat/contracts` PassageQuestion (mutable arrays for structural parity). */
@@ -42,12 +44,9 @@ interface PassageQuestion {
   id: string;
   stem: string;
   choices: PassageChoice[];
-  correctChoiceId: PassageChoiceId;
-  rationale: string;
-  choiceRationales?: Record<PassageChoiceId, string>;
+  explanation: string;
   carsSkill: CarsSkill;
   dok: number;
-  difficulty: PassageDifficulty;
 }
 
 /** Mirrors `@mcat/contracts` PassageOfTheDayEntry. */
@@ -64,13 +63,27 @@ interface PassageOfTheDayEntry {
 }
 
 /**
- * The raw entries below carry the passage text, answer key, and rationales only.
- * The CARS labels (`theme`, and per-question `carsSkill`/`dok`/`difficulty`) are
- * layered on deterministically by `hardcodedPassagePool()` — see PASSAGE_THEMES /
- * SKILL_ROTATION — so the ~1,400 lines of vetted prose below never had to be
- * hand-annotated field-by-field.
+ * The raw entries below carry the passage text plus a COMPACT answer key: each
+ * question lists its four `{ id, text }` options, the `correctChoiceId`, the
+ * question-level `rationale` (which becomes the canonical `explanation`), and a
+ * `choiceRationales` map (why each option is right/wrong). The CARS labels
+ * (`theme`, per-question `carsSkill`/`dok`) and the per-choice `correct` /
+ * `misconception` fields are layered on deterministically by
+ * `hardcodedPassagePool()` — see PASSAGE_THEMES / SKILL_ROTATION / MISCONCEPTIONS —
+ * so the ~1,400 lines of vetted prose below stay untouched by the shape change.
  */
-type RawPassageQuestion = Omit<PassageQuestion, 'carsSkill' | 'dok' | 'difficulty'>;
+interface RawPassageChoice {
+  id: PassageChoiceId;
+  text: string;
+}
+interface RawPassageQuestion {
+  id: string;
+  stem: string;
+  choices: RawPassageChoice[];
+  correctChoiceId: PassageChoiceId;
+  rationale: string;
+  choiceRationales: Record<PassageChoiceId, string>;
+}
 type RawPassageEntry = Omit<
   PassageOfTheDayEntry,
   'slug' | 'theme' | 'source' | 'attribution' | 'questions'
@@ -1526,9 +1539,9 @@ const PASSAGE_OF_THE_DAY_POOL: readonly RawPassageEntry[] = [
  * science. `SKILL_ROTATION` gives each passage's five questions a 2-2-1 split of
  * the three CARS skills, rotating which skill takes the single slot so every three
  * passages sum to an even 5/5/5 — the pool-level balance the authoring spec
- * requires (verified in the pool test). `dok`/`difficulty` follow the skill.
- * Only these hardcoded seeds derive their labels; an authored passage sets all of
- * them explicitly.
+ * requires (verified in the pool test). `dok` follows the skill, and MISCONCEPTIONS
+ * supplies the per-choice misconception for each wrong option. Only these hardcoded
+ * seeds derive their labels; an authored passage sets all of them explicitly.
  */
 const PASSAGE_THEMES: readonly PassageTheme[] = [
   'humanities', // 0  Aesthetics
@@ -1551,19 +1564,332 @@ const SKILL_ROTATION: readonly (readonly CarsSkill[])[] = [
   ['FOC', 'RWT', 'FOC', 'RBT', 'RBT'], // minority skill: RWT (FOC×2, RWT×1, RBT×2)
 ];
 
-const LABELS_BY_SKILL: Readonly<
-  Record<CarsSkill, { readonly dok: number; readonly difficulty: PassageDifficulty }>
-> = {
-  FOC: { dok: 2, difficulty: 'accessible' },
-  RWT: { dok: 3, difficulty: 'moderate' },
-  RBT: { dok: 3, difficulty: 'demanding' },
+const DOK_BY_SKILL: Readonly<Record<CarsSkill, number>> = {
+  FOC: 2,
+  RWT: 3,
+  RBT: 3,
 };
 
 /**
- * The hardcoded pool, fully CARS-labelled — the LAST-RESORT fallback source when
- * neither Postgres nor a local dev store is present. Every reader in the app goes
- * through the async loader in `apps/learner-web/server/passage-pool-source.ts`;
- * this is only its final branch.
+ * The per-choice misconception layered onto every WRONG option of the seed pool,
+ * keyed by question id then choice id — the reasoning trap that option rewards. The
+ * correct option always takes a null misconception. Every incorrect option MUST
+ * have a non-empty entry here or `hardcodedPassagePool()` throws, so a seed can
+ * never ship a wrong choice without the misconception the contract now requires.
+ * Authored passages carry their own per-choice misconceptions and never consult
+ * this table.
+ */
+const MISCONCEPTIONS: Readonly<Record<string, Partial<Record<PassageChoiceId, string>>>> = {
+  'potd-aesthetics-difficulty-q1': {
+    A: 'Treats the easy-pleasure view, which the author introduces only to reject, as the thesis.',
+    C: 'Generalizes accidental difficulty to all obscurity, ignoring the constitutive kind.',
+    D: 'Mistakes a supporting historical observation for the central evaluative claim.',
+  },
+  'potd-aesthetics-difficulty-q2': {
+    B: 'Confuses the impatient reader with the opposite error of prizing obscurity.',
+    C: 'Mistakes the disciplined judgment the author endorses for the error being described.',
+    D: 'Assigns the easy-pleasure view to a critic who actually prizes obscurity.',
+  },
+  'potd-aesthetics-difficulty-q3': {
+    A: 'Assumes any difficulty about understanding must be empty, overlooking the meaning behind it.',
+    C: 'Reads an example about a kind of difficulty as being about a type of reader.',
+    D: 'Takes an example of constitutive difficulty to be about easy, familiar pleasure.',
+  },
+  'potd-aesthetics-difficulty-q4': {
+    A: 'Elevates one description of accidental difficulty into the premise shared by both errors.',
+    C: 'Confuses the opening view the author rejects with the premise common to both errors.',
+    D: 'Turns a historical observation into the shared premise of the two errors.',
+  },
+  'potd-aesthetics-difficulty-q5': {
+    A: 'Mistakes one of the criticized errors for the demanding task the author praises.',
+    C: 'Mistakes the second criticized error for the disciplined critical task.',
+    D: 'Reads case-by-case judgment as the abandonment of evaluation.',
+  },
+  'potd-history-microhistory-q1': {
+    A: 'Reads the objection as the conclusion of the passage, ignoring the reply that follows.',
+    B: 'Reads a worry about representativeness as an accusation of deliberate deception.',
+    D: 'Hardens the tentative may-be-unusual into an absolute rule.',
+  },
+  'potd-history-microhistory-q2': {
+    A: 'Ranks the aggregate as simply more accurate, though each scale shows different things.',
+    C: 'Forgets that microhistorians grant that large forces and aggregate data exist.',
+    D: 'Reverses the passage: the wide view flattens, while the small scale reveals.',
+  },
+  'potd-history-microhistory-q3': {
+    A: 'Takes the wager to be the metaphysical claim the microhistorians explicitly avoided.',
+    C: 'Substitutes a question of worth for the question about knowledge the wager raises.',
+    D: 'Reads a claim about knowledge as one about the chronology of the discipline.',
+  },
+  'potd-history-microhistory-q4': {
+    A: 'Mistakes the backdrop for the subject and asserts a decline the passage never claims.',
+    C: 'Inflates one supporting point into the overall aim of the passage.',
+    D: 'Overstates the value of well-chosen cases into an exclusive rule.',
+  },
+  'potd-history-microhistory-q5': {
+    A: 'Keeps the representativeness standard the reply explicitly gives up.',
+    C: 'Assumes a case must avoid generalizations rather than test them.',
+    D: 'Values a case for being ordinary rather than for what it can test.',
+  },
+  'potd-philsci-anomalies-q1': {
+    A: 'Adopts the common picture the passage sets out to complicate.',
+    C: 'Turns a warning about indefinite abuse into a blanket prohibition.',
+    D: 'Restates the simplified picture the passage qualifies.',
+  },
+  'potd-philsci-anomalies-q2': {
+    A: 'Mistakes the legitimate inquiry the author defends for a failure.',
+    B: 'Reads paying the predictive debt as a scientific failure.',
+    D: 'Labels the response the author recommends a failure.',
+  },
+  'potd-philsci-anomalies-q3': {
+    A: 'Reads examples of possible error sources as a procedure to follow.',
+    C: 'Turns may-fail into usually-fail.',
+    D: 'Reverses the point: checking auxiliaries is the legitimate inquiry.',
+  },
+  'potd-philsci-anomalies-q4': {
+    A: 'Reads the phrase as endorsing the automatic verdict it denies.',
+    C: 'Confuses inquiry with the indefinite ignoring the author warns against.',
+    D: 'Treats a problem to investigate as a confirmation.',
+  },
+  'potd-philsci-anomalies-q5': {
+    A: 'Ignores that scientists are often right to set anomalies aside.',
+    C: 'Treats the very abuse the author condemns as harmless.',
+    D: 'Denies the fallible auxiliaries the whole argument depends on.',
+  },
+  'potd-litcrit-author-q1': {
+    A: 'Overlooks that the author calls the strong view evasive.',
+    B: 'Ignores that the author lets readers find implications a text permits.',
+    D: 'Assigns the author the sole-authority extreme he explicitly rejects.',
+  },
+  'potd-litcrit-author-q2': {
+    B: 'Confuses rejecting an inference with rejecting the premise the author accepts.',
+    C: 'Contradicts the claim that readers can find permitted implications.',
+    D: 'Misses that a leap presupposes the two claims differ.',
+  },
+  'potd-litcrit-author-q3': {
+    A: 'Reads an argument for the relevance of intention as a concession of its unknowability.',
+    C: 'Hardens the modest usually-right into a guarantee.',
+    D: 'Reverses the example, which uses ordinary speech because it bears on reading.',
+  },
+  'potd-litcrit-author-q4': {
+    A: 'Substitutes reader competence for the meaning-versus-intention distinction.',
+    C: 'Invents a distinction between opinion and scholarship the author never draws.',
+    D: 'Reduces a distinction about meaning to one about textual mechanics.',
+  },
+  'potd-litcrit-author-q5': {
+    A: 'Assigns the sole-authority extreme to a middle-ground case.',
+    C: 'Denies the unintended-but-permitted reading the example depends on.',
+    D: 'Collapses the gap between intention and meaning the example opens.',
+  },
+  'potd-poli-deliberation-q1': {
+    A: 'Assigns deliberation the numbers-based justification it is contrasted against.',
+    C: 'Ignores the concession that unequal talk can reproduce power.',
+    D: 'Contradicts the statement that the objection is not that deliberation is worthless.',
+  },
+  'potd-poli-deliberation-q2': {
+    A: 'Confuses a matter of numbers with what distinguishes a reason from a preference.',
+    C: 'Applies the description of a preference to a reason.',
+    D: 'Borrows the denied premise of the skeptics as if it defined a reason.',
+  },
+  'potd-poli-deliberation-q3': {
+    A: 'Mistakes the deliberative hope under challenge for the objection itself.',
+    C: 'Attributes the rival vote-counting tradition to the worry of the skeptics.',
+    D: 'Overlooks that deliberation is defined by offering reasons.',
+  },
+  'potd-poli-deliberation-q4': {
+    A: 'Has the theorist deny the inequality the reply actually concedes.',
+    C: 'Reads the reframing as a retreat to majority voting.',
+    D: 'Contradicts the explicit denial that deliberation is worthless.',
+  },
+  'potd-poli-deliberation-q5': {
+    A: 'Reads the aim as the majority satisfaction the contrast sets against it.',
+    C: 'Borrows the worry of the skeptics as the aim of deliberation.',
+    D: 'Ignores that deliberation is defined by offering reasons.',
+  },
+  'potd-anthro-ethnography-q1': {
+    A: 'Reads the corrected error as the model to return to.',
+    B: 'Ignores the warning against reflexivity that becomes a study of the anthropologist.',
+    D: 'Turns a call for honest method into a denial that knowledge is possible.',
+  },
+  'potd-anthro-ethnography-q2': {
+    A: 'Takes one reason the glass is not clear for what the glass itself represents.',
+    C: 'Assigns the pane-of-glass image to the later reflexive practitioners.',
+    D: 'Confuses the reflexive response with the assumption it responds to.',
+  },
+  'potd-anthro-ethnography-q3': {
+    B: 'Substitutes a claim about informants for one about presence guaranteeing knowledge.',
+    C: 'Assigns the later corrective to the classic assumption being expressed.',
+    D: 'Reads over-confidence as blanket distrust.',
+  },
+  'potd-anthro-ethnography-q4': {
+    A: 'Treats the original error as the remedy.',
+    C: 'Overstates a warning about excess into a denial of all value.',
+    D: 'Turns a caution about reflexivity into a denial that description is possible.',
+  },
+  'potd-anthro-ethnography-q5': {
+    A: 'Ignores not-as-its-hero, which rejects making the observer central.',
+    C: 'Treats an acknowledged influence as something that voids knowledge.',
+    D: 'Revives the pane-of-glass illusion the author rejects.',
+  },
+  'potd-ethics-moral-luck-q1': {
+    A: 'Adopts one horn of the dilemma as the settled conclusion.',
+    C: 'Denies the outcome intuition the author treats as genuine.',
+    D: 'Ignores that the author finds the value of the puzzle is not a solution.',
+  },
+  'potd-ethics-moral-luck-q2': {
+    A: 'Contradicts the whole point about a conflict among intuitions.',
+    C: 'Dismisses the control condition the author treats as compelling.',
+    D: 'Reads a reluctant concession as a plain, uncontroversial truth.',
+  },
+  'potd-ethics-moral-luck-q3': {
+    A: 'Misreads an example that assumes recklessness as a defense of it.',
+    C: 'Reverses the example, which shows luck does seem to affect judgment.',
+    D: 'Ignores that we judge the two differently despite equal control.',
+  },
+  'potd-ethics-moral-luck-q4': {
+    A: 'Reads a metaphor for moral accounting literally.',
+    C: 'Describes the control condition that admitting luck actually strains.',
+    D: 'Treats luck as eliminable, though the passage finds it hard to keep out.',
+  },
+  'potd-ethics-moral-luck-q5': {
+    A: 'Expects a tidy rule the author denies the puzzle provides.',
+    C: 'Denies the outcome intuition the author treats as genuine.',
+    D: 'Reads an unresolved tension as a settled question.',
+  },
+  'potd-urban-walkability-q1': {
+    A: 'Ignores the plain statement that this is not an argument against walkable cities.',
+    C: 'Contradicts the claim that density makes land valuable.',
+    D: 'Erases the sharp street-versus-neighborhood distinction the author draws.',
+  },
+  'potd-urban-walkability-q2': {
+    A: 'Reads a distinction as a ranking of streets over neighborhoods.',
+    C: 'Denies the very effect the author warns about.',
+    D: 'Turns a warning about costs into a claim about feasibility.',
+  },
+  'potd-urban-walkability-q3': {
+    A: 'Reverses the passage: the longtime tenant is priced out.',
+    C: 'Contradicts the call for a matching housing policy.',
+    D: 'Ignores that density makes land valuable, raising values.',
+  },
+  'potd-urban-walkability-q4': {
+    A: 'Reverses the example, which shows the store subject to rising rents.',
+    C: 'Reads a figure of speech literally, blaming marketing for displacement.',
+    D: 'Contradicts an example built to show a strong effect.',
+  },
+  'potd-urban-walkability-q5': {
+    A: 'Ignores the statement that this is not an argument against walkable cities.',
+    C: 'Commits the exact error the author warns against.',
+    D: 'Reads the street-versus-neighborhood contrast as ranking engineering above people.',
+  },
+  'potd-music-improvisation-q1': {
+    A: 'Adopts the ranking the author sets up in order to reject.',
+    B: 'Ignores the refusal to crown the improviser instead.',
+    D: 'Contradicts the analogy showing they never aimed at the same thing.',
+  },
+  'potd-music-improvisation-q2': {
+    A: 'Reads incommensurability as a claim about which practice is harder.',
+    C: 'Introduces recording, which the analogy is not about.',
+    D: 'Draws a general verdict on technology the passage never makes.',
+  },
+  'potd-music-improvisation-q3': {
+    A: 'Restates the hurried-cousin view the sentence denies.',
+    C: 'Assigns the improviser a superiority the author refuses to grant.',
+    D: 'Denies the audible craft the passage credits to the improviser.',
+  },
+  'potd-music-improvisation-q4': {
+    A: 'Assigns the improviser the polish that belongs to the composer.',
+    C: 'Ignores that the improviser works in real time shared with an audience.',
+    D: 'Reverses the point: risk is what becomes audible.',
+  },
+  'potd-music-improvisation-q5': {
+    A: 'Mistakes the ranking the author dismantles for the purpose of the passage.',
+    C: 'Ignores the explicit refusal to crown the improviser.',
+    D: 'Contradicts the analogy denying a shared goal.',
+  },
+  'potd-translation-fidelity-q1': {
+    A: 'Turns one extreme case into a rule about all accurate translation.',
+    C: 'Endorses the reader-favoring betrayal the author criticizes.',
+    D: 'Contradicts the denial that any rule can decide in advance.',
+  },
+  'potd-translation-fidelity-q2': {
+    A: 'Treats an evasion as a goal worth pursuing.',
+    C: 'Assigns skilled translators a judgment-free rule they actually reject.',
+    D: 'Ignores the denial that one rule can secure both aims.',
+  },
+  'potd-translation-fidelity-q3': {
+    A: 'Introduces a publisher the passage never mentions.',
+    C: 'Substitutes profit for the fidelity-versus-fluency tension.',
+    D: 'Reads two masters as two moments in time rather than text and reader.',
+  },
+  'potd-translation-fidelity-q4': {
+    A: 'Attributes the opposite, source-bound failure to the fluent one.',
+    C: 'Describes the over-literal failure, not the smooth betrayal.',
+    D: 'Locates the betrayal in making no choices rather than the wrong ones.',
+  },
+  'potd-translation-fidelity-q5': {
+    A: 'Treats the wish for a fixed rule as a desirable guarantee.',
+    C: 'Assigns a fixed rule to translators the passage says exercise judgment.',
+    D: 'Ignores the denial that any rule can serve both aims.',
+  },
+  'potd-econ-rational-choice-q1': {
+    A: 'Ignores the praise of the model as remarkably productive.',
+    C: 'Contradicts the insistence that the calculating chooser does not exist.',
+    D: 'Reverses the argument that a false premise can still be useful.',
+  },
+  'potd-econ-rational-choice-q2': {
+    A: 'Names the safe case where the as-if plausibly holds.',
+    C: 'Targets aggregation, which is part of the defense of the model.',
+    D: 'Flags the very standard the author accepts.',
+  },
+  'potd-econ-rational-choice-q3': {
+    A: 'Reads the analogy backwards; a map with every tree would be no map at all.',
+    C: 'Takes an analogy for models as a claim ranking maps above them.',
+    D: 'Denies the prediction test the passage treats as central.',
+  },
+  'potd-econ-rational-choice-q4': {
+    A: 'Ignores that the calculating figure does not exist.',
+    C: 'Denies the changeability the model tolerates at the aggregate level.',
+    D: 'Reads as-if as requiring conscious calculation.',
+  },
+  'potd-econ-rational-choice-q5': {
+    A: 'Contradicts the statement that the error is not the use of an unrealistic model.',
+    C: 'Labels the endorsed standard the recurring error.',
+    D: 'Names the safe case rather than the edge-case error.',
+  },
+  'potd-memory-oral-history-q1': {
+    A: 'Overstates the case; memory answers different questions, not simply more reliable.',
+    C: 'Restates the older view the passage complicates.',
+    D: 'Ignores the reframing of error as data of another kind.',
+  },
+  'potd-memory-oral-history-q2': {
+    A: 'Treats testimony as a police report, the approach the author warns against.',
+    C: 'Contradicts the claim that memory and documents answer different questions.',
+    D: 'Ignores the misremembered-date example that denies such reliability.',
+  },
+  'potd-memory-oral-history-q3': {
+    A: 'Reads a point about value as one about simple unreliability.',
+    C: 'Overlooks that documents remain indispensable for other questions.',
+    D: 'Reverses the example, which downplays the importance of the date.',
+  },
+  'potd-memory-oral-history-q4': {
+    A: 'Assigns the police-report metaphor to the meaning-reading the author recommends.',
+    C: 'Reads over-reliance on facts as outright dismissal.',
+    D: 'Confuses the corrective with the mistake it corrects.',
+  },
+  'potd-memory-oral-history-q5': {
+    A: 'Ignores that the two answer different questions.',
+    C: 'Restates the older view the passage sets out to complicate.',
+    D: 'Dismisses both, though the author finds each valuable.',
+  },
+};
+
+/**
+ * The hardcoded pool, fully CARS-labelled and in the per-choice shape — the
+ * LAST-RESORT fallback source when neither Postgres nor a local dev store is
+ * present. Every reader in the app goes through the async loader in
+ * `apps/learner-web/server/passage-pool-source.ts`; this is only its final branch.
+ * Each raw question is expanded into canonical choices that carry `correct`, the
+ * matching `misconception` (null on the key, from MISCONCEPTIONS otherwise), and
+ * the per-choice `rationale`; the question-level `rationale` becomes `explanation`.
  */
 export function hardcodedPassagePool(): readonly PassageOfTheDayEntry[] {
   return PASSAGE_OF_THE_DAY_POOL.map((entry, passageIndex) => {
@@ -1575,8 +1901,28 @@ export function hardcodedPassagePool(): readonly PassageOfTheDayEntry[] {
       theme,
       questions: entry.questions.map((question, questionIndex) => {
         const carsSkill = pattern[questionIndex % pattern.length]!;
-        const { dok, difficulty } = LABELS_BY_SKILL[carsSkill];
-        return { ...question, carsSkill, dok, difficulty };
+        const misconceptions = MISCONCEPTIONS[question.id] ?? {};
+        const choices: PassageChoice[] = question.choices.map((choice) => {
+          const rationale = question.choiceRationales[choice.id];
+          if (choice.id === question.correctChoiceId) {
+            return { id: choice.id, text: choice.text, correct: true, misconception: null, rationale };
+          }
+          const misconception = misconceptions[choice.id] ?? '';
+          if (misconception.length === 0) {
+            throw new Error(
+              `Seed pool: missing misconception for ${question.id} choice ${choice.id}`,
+            );
+          }
+          return { id: choice.id, text: choice.text, correct: false, misconception, rationale };
+        });
+        return {
+          id: question.id,
+          stem: question.stem,
+          choices,
+          explanation: question.rationale,
+          carsSkill,
+          dok: DOK_BY_SKILL[carsSkill],
+        };
       }),
     };
   });

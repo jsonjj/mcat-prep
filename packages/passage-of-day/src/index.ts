@@ -130,16 +130,22 @@ export class PassageOfDayService {
   /**
    * SERVER-ONLY scoring. Looks the question up by id (across the whole pool, so a
    * day-boundary flip between serve and submit still scores correctly) and
-   * compares the choice with the key. Returns null for an unknown question id.
+   * compares the choice with the key carried on each option. Returns null for an
+   * unknown question id. The revealed `rationale` is the question's overall
+   * explanation; `choiceRationale` is the chosen option's own rationale (why it is
+   * right or wrong), or null when the learner submitted no answer.
    */
   grade(questionId: string, choiceId: PassageChoiceId | null): PassageGrade | null {
     const question = this.questionsById.get(questionId);
     if (question === undefined) return null;
+    const correctChoice = question.choices.find((choice) => choice.correct);
+    if (correctChoice === undefined) return null;
+    const chosen = choiceId === null ? undefined : question.choices.find((c) => c.id === choiceId);
     return {
-      correct: choiceId !== null && choiceId === question.correctChoiceId,
-      correctChoiceId: question.correctChoiceId,
-      rationale: question.rationale,
-      choiceRationale: choiceId !== null ? (question.choiceRationales?.[choiceId] ?? null) : null,
+      correct: chosen !== undefined && chosen.correct,
+      correctChoiceId: correctChoice.id,
+      rationale: question.explanation,
+      choiceRationale: chosen === undefined ? null : chosen.rationale,
     };
   }
 }

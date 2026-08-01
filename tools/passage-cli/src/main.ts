@@ -3,7 +3,9 @@ import { dirname, isAbsolute, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 import {
+  AuthoredPassageSchema,
   PassageOfTheDayEntrySchema,
+  authoredPassageToEntry,
   parseAuthoredPassages,
   type PassageOfTheDayEntry,
 } from '@mcat/contracts';
@@ -13,8 +15,10 @@ import { hardcodedPassagePool } from '../../../content/passage-of-the-day/pool';
 /**
  * Passage of the Day ingest/seed CLI.
  *
- *   ingest <file>   Validate a JSON file of user-authored CARS passages (the
- *                   AUTHORING FORMAT) with the Zod schema and ADD them to the pool.
+ *   ingest <file>   Validate a JSON or JSONL file of user-authored CARS passages
+ *                   (the AUTHORING FORMAT) with the Zod schema and ADD them to the
+ *                   pool. Accepts a single object, a JSON array, or JSONL (one
+ *                   passage object per line).
  *   seed            Load/refresh the canonical hardcoded 12-passage pool.
  *
  * Target is chosen from the environment, mirroring the runtime loader:
@@ -36,32 +40,92 @@ function databaseUrl(): string | undefined {
   return url !== undefined && url.trim() !== '' ? url : undefined;
 }
 
-/** Read + validate an authoring file, exiting with clear per-field errors on failure. */
+function zodIssueLines(prefix: string, error: z.ZodError): string[] {
+  return error.issues.map(
+    (issue) => `${prefix}/${issue.path.join('/')} [${issue.code}] ${issue.message}`,
+  );
+}
+
+/**
+ * Read + validate an authoring file, exiting with clear per-record errors on
+ * failure. Three on-disk shapes are accepted:
+ *   • a single authored-passage JSON object,
+ *   • a JSON array of authored passages, or
+ *   • JSONL — one authored-passage object per line (the corpus convention used by
+ *     packages/content/src/load-v7.ts).
+ * The whole file is tried as JSON (object/array) first; if that fails it is parsed
+ * line-by-line as JSONL, so a malformed record is reported with its line number.
+ */
 function readAuthoredFile(file: string): PassageOfTheDayEntry[] {
   // `pnpm --filter` runs in the package dir, so resolve a relative path against
   // the directory the command was invoked from (pnpm sets INIT_CWD).
   const resolved = isAbsolute(file) ? file : join(process.env.INIT_CWD ?? process.cwd(), file);
-  let raw: unknown;
+  let text: string;
   try {
-    raw = JSON.parse(readFileSync(resolved, 'utf8'));
+    text = readFileSync(resolved, 'utf8');
   } catch (error) {
-    console.error(
-      `Could not read/parse JSON at ${file}: ${error instanceof Error ? error.message : String(error)}`,
-    );
+    console.error(`Could not read ${file}: ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);
   }
-  try {
-    return parseAuthoredPassages(raw);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.error(`Validation failed for ${file}:`);
-      for (const issue of error.issues) {
-        console.error(`  /${issue.path.join('/')} [${issue.code}] ${issue.message}`);
-      }
-      process.exit(1);
-    }
-    throw error;
+  if (text.trim() === '') {
+    console.error(`No passages found in ${file} (the file is empty).`);
+    process.exit(1);
   }
+
+  const fail = (problems: readonly string[]): never => {
+    console.error(`Validation failed for ${file}:`);
+    for (const problem of problems) console.error(problem);
+    process.exit(1);
+  };
+
+  // Prefer a whole-file JSON parse (single object or array); JSONL is the fallback.
+  let whole: unknown;
+  let wholeIsJson = true;
+  try {
+    whole = JSON.parse(text);
+  } catch {
+    wholeIsJson = false;
+  }
+  if (wholeIsJson) {
+    try {
+      return parseAuthoredPassages(whole);
+    } catch (error) {
+      if (error instanceof z.ZodError) fail(zodIssueLines('  ', error));
+      throw error;
+    }
+  }
+
+  // JSONL: one authored passage per non-empty line, validated independently so a
+  // single bad line is rejected with a precise, per-record message.
+  const entries: PassageOfTheDayEntry[] = [];
+  const problems: string[] = [];
+  text.split(/\r?\n/).forEach((line, index) => {
+    const trimmed = line.trim();
+    if (trimmed === '') return;
+    const where = `  line ${index + 1} `;
+    let raw: unknown;
+    try {
+      raw = JSON.parse(trimmed);
+    } catch (error) {
+      problems.push(
+        `${where}invalid JSON — ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return;
+    }
+    try {
+      entries.push(authoredPassageToEntry(AuthoredPassageSchema.parse(raw)));
+    } catch (error) {
+      if (error instanceof z.ZodError) problems.push(...zodIssueLines(where, error));
+      else problems.push(`${where}${error instanceof Error ? error.message : String(error)}`);
+    }
+  });
+
+  if (problems.length > 0) fail(problems);
+  if (entries.length === 0) {
+    console.error(`No passages found in ${file}.`);
+    process.exit(1);
+  }
+  return entries;
 }
 
 function loadExistingStore(): PassageOfTheDayEntry[] | null {
@@ -139,7 +203,7 @@ async function main(): Promise<void> {
   if (command === 'ingest') {
     const file = args[1];
     if (file === undefined) {
-      console.error('Usage: ingest <path-to-json>');
+      console.error('Usage: ingest <path-to-json-or-jsonl>');
       process.exit(1);
     }
     const entries = readAuthoredFile(file);
@@ -157,8 +221,9 @@ async function main(): Promise<void> {
 
   console.log(
     'MCAT Passage-of-the-Day CLI\n\nCommands:\n' +
-      '  ingest <file>   Validate a JSON file of authored CARS passages and ADD them\n' +
-      '                  (Postgres if DATABASE_URL is set, else the local dev store)\n' +
+      '  ingest <file>   Validate a JSON/JSONL file of authored CARS passages and ADD\n' +
+      '                  them (single object, JSON array, or one object per line).\n' +
+      '                  Postgres if DATABASE_URL is set, else the local dev store\n' +
       '  seed            Seed/refresh the canonical 12-passage pool into the same target\n',
   );
 }

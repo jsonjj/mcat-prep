@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import type { CarsSkill, PassageChoiceId, PassageOfTheDayEntry } from '@mcat/contracts';
+import type { CarsSkill, PassageOfTheDayEntry } from '@mcat/contracts';
 import { hardcodedPassagePool } from '../../../content/passage-of-the-day/pool';
 import { learnerLocalDayIndex, PassageOfDayService } from './passage-of-day';
 
 /** The hardcoded (fallback) pool — the deterministic content these tests assert on. */
 const POOL = hardcodedPassagePool();
 
-const CHOICE_IDS: readonly PassageChoiceId[] = ['A', 'B', 'C', 'D'];
 const DAY_MS = 86_400_000;
 const at = (iso: string): Date => new Date(iso);
 
@@ -23,17 +22,14 @@ function mkEntry(id: string): PassageOfTheDayEntry {
         id: `${id}-q1`,
         stem: `Stem ${id}?`,
         choices: [
-          { id: 'A', text: 'a' },
-          { id: 'B', text: 'b' },
-          { id: 'C', text: 'c' },
-          { id: 'D', text: 'd' },
+          { id: 'A', text: 'a', correct: true, misconception: null, rationale: `a is right (${id})` },
+          { id: 'B', text: 'b', correct: false, misconception: 'b trap', rationale: 'b misses' },
+          { id: 'C', text: 'c', correct: false, misconception: 'c trap', rationale: 'c misses' },
+          { id: 'D', text: 'd', correct: false, misconception: 'd trap', rationale: 'd misses' },
         ],
-        correctChoiceId: 'A',
-        rationale: `because a (${id})`,
-        choiceRationales: { A: 'a is right', B: 'b misses', C: 'c misses', D: 'd misses' },
+        explanation: `because a (${id})`,
         carsSkill: 'FOC',
         dok: 2,
-        difficulty: 'accessible',
       },
     ],
   };
@@ -98,9 +94,11 @@ describe('PassageOfDayService selection', () => {
     const view = service.todayView(at('2026-01-01T12:00:00Z'), 0);
     expect(view).not.toBeNull();
     const json = JSON.stringify(view);
+    expect(json).not.toContain('"correct"');
     expect(json).not.toContain('"correctChoiceId"');
+    expect(json).not.toContain('"misconception"');
     expect(json).not.toContain('"rationale"');
-    expect(json).not.toContain('"choiceRationales"');
+    expect(json).not.toContain('"explanation"');
     expect(json).not.toContain('"choiceRationale"');
   });
 
@@ -124,19 +122,20 @@ describe('PassageOfDayService selection', () => {
 describe('PassageOfDayService grading', () => {
   const service = new PassageOfDayService(POOL);
   const firstQuestion = POOL[0]!.questions[0]!;
+  const correctChoice = firstQuestion.choices.find((c) => c.correct)!;
 
   it('marks a correct answer and returns the explanation', () => {
-    const grade = service.grade(firstQuestion.id, firstQuestion.correctChoiceId);
+    const grade = service.grade(firstQuestion.id, correctChoice.id);
     expect(grade?.correct).toBe(true);
-    expect(grade?.correctChoiceId).toBe(firstQuestion.correctChoiceId);
+    expect(grade?.correctChoiceId).toBe(correctChoice.id);
     expect((grade?.rationale.length ?? 0) > 0).toBe(true);
   });
 
   it('marks a wrong answer and returns the chosen option\u2019s rationale', () => {
-    const wrong = CHOICE_IDS.find((c) => c !== firstQuestion.correctChoiceId)!;
-    const grade = service.grade(firstQuestion.id, wrong);
+    const wrong = firstQuestion.choices.find((c) => !c.correct)!;
+    const grade = service.grade(firstQuestion.id, wrong.id);
     expect(grade?.correct).toBe(false);
-    expect(grade?.choiceRationale).toBe(firstQuestion.choiceRationales?.[wrong]);
+    expect(grade?.choiceRationale).toBe(wrong.rationale);
   });
 
   it('treats a null (no) answer as incorrect with no per-choice rationale', () => {
@@ -153,7 +152,6 @@ describe('PassageOfDayService grading', () => {
 describe('the shipped pool', () => {
   const THEMES = new Set(['humanities', 'social_science']);
   const SKILLS: readonly CarsSkill[] = ['FOC', 'RWT', 'RBT'];
-  const DIFFICULTIES = new Set(['accessible', 'moderate', 'demanding']);
 
   it('is well-formed: 10+ unique passages, each with 5\u20137 four-option CARS questions', () => {
     expect(POOL.length).toBeGreaterThanOrEqual(10);
@@ -176,16 +174,20 @@ describe('the shipped pool', () => {
         expect(questionIds.has(question.id)).toBe(false);
         questionIds.add(question.id);
         expect(question.choices.map((c) => c.id)).toEqual(['A', 'B', 'C', 'D']);
-        expect(CHOICE_IDS).toContain(question.correctChoiceId);
-        expect(question.rationale.length).toBeGreaterThan(0);
+        // Exactly one correct option; the key carries a null misconception.
+        const correct = question.choices.filter((c) => c.correct);
+        expect(correct).toHaveLength(1);
+        expect(correct[0]!.misconception).toBeNull();
+        expect(question.explanation.length).toBeGreaterThan(0);
         expect(SKILLS).toContain(question.carsSkill);
         expect(question.dok).toBeGreaterThanOrEqual(1);
-        expect(question.dok).toBeLessThanOrEqual(4);
-        expect(DIFFICULTIES.has(question.difficulty)).toBe(true);
-        // The shipped seed carries per-choice rationales for every option.
-        expect(question.choiceRationales).toBeDefined();
-        for (const id of CHOICE_IDS) {
-          expect((question.choiceRationales?.[id] ?? '').length).toBeGreaterThan(0);
+        expect(question.dok).toBeLessThanOrEqual(3);
+        // Every option carries a rationale; every wrong option a non-empty misconception.
+        for (const choice of question.choices) {
+          expect(choice.rationale.length).toBeGreaterThan(0);
+          if (!choice.correct) {
+            expect((choice.misconception ?? '').length).toBeGreaterThan(0);
+          }
         }
       }
     }

@@ -1,4 +1,4 @@
-import type { PassageChoice, PassageOfTheDayEntry } from '@mcat/contracts';
+import type { PassageChoice, PassageChoiceId, PassageOfTheDayEntry } from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 import type { Queryable } from './mastery-repository';
 import { hasPassages, listPassages, seedPassages, upsertPassages } from './passages-repository';
@@ -25,12 +25,16 @@ function fakeQueryable(
   return { q, calls };
 }
 
-const CHOICES: PassageChoice[] = [
-  { id: 'A', text: 'a' },
-  { id: 'B', text: 'b' },
-  { id: 'C', text: 'c' },
-  { id: 'D', text: 'd' },
-];
+/** Four A–D options in order; `correctId` gets the key + null misconception. */
+function choices(correctId: PassageChoiceId): PassageChoice[] {
+  return (['A', 'B', 'C', 'D'] as const).map((id) => ({
+    id,
+    text: id.toLowerCase(),
+    correct: id === correctId,
+    misconception: id === correctId ? null : `${id} is a trap`,
+    rationale: `${id} rationale`,
+  }));
+}
 
 function entry(overrides: Partial<PassageOfTheDayEntry> = {}): PassageOfTheDayEntry {
   return {
@@ -44,23 +48,18 @@ function entry(overrides: Partial<PassageOfTheDayEntry> = {}): PassageOfTheDayEn
       {
         id: 'p-alpha-q1',
         stem: 'Stem one?',
-        choices: CHOICES,
-        correctChoiceId: 'A',
-        rationale: 'because a',
-        choiceRationales: { A: 'a', B: 'b', C: 'c', D: 'd' },
+        choices: choices('A'),
+        explanation: 'because a',
         carsSkill: 'FOC',
         dok: 2,
-        difficulty: 'accessible',
       },
       {
         id: 'p-alpha-q2',
         stem: 'Stem two?',
-        choices: CHOICES,
-        correctChoiceId: 'B',
-        rationale: 'because b',
+        choices: choices('B'),
+        explanation: 'because b',
         carsSkill: 'RWT',
         dok: 3,
-        difficulty: 'moderate',
       },
     ],
     ...overrides,
@@ -88,15 +87,19 @@ describe('upsertPassages / seedPassages', () => {
 
     expect(questionsInsert!.sql).toContain('insert into passage_questions');
     expect(questionsInsert!.sql).toContain('on conflict (question_id) do update set');
-    // Two questions × 11 columns.
-    expect(questionsInsert!.params).toHaveLength(22);
+    // Two questions × 8 columns (the answer key now rides inside `choices`).
+    expect(questionsInsert!.params).toHaveLength(16);
     expect(questionsInsert!.params?.[0]).toBe('p-alpha-q1');
     expect(questionsInsert!.params?.[2]).toBe(1); // position, 1-based
-    expect(questionsInsert!.params?.[7]).toContain('"id":"A"'); // choices serialized
-    // q1 has per-choice rationales (serialized); q2 has none (null).
-    expect(typeof questionsInsert!.params?.[10]).toBe('string');
-    expect(questionsInsert!.params?.[11]).toBe('p-alpha-q2');
-    expect(questionsInsert!.params?.[21]).toBeNull();
+    expect(questionsInsert!.params?.[3]).toBe('FOC'); // cars_skill
+    expect(questionsInsert!.params?.[4]).toBe(2); // dok
+    // choices serialized, carrying the per-choice key.
+    expect(questionsInsert!.params?.[6]).toContain('"id":"A"');
+    expect(questionsInsert!.params?.[6]).toContain('"correct":true');
+    expect(questionsInsert!.params?.[7]).toBe('because a'); // explanation
+    expect(questionsInsert!.params?.[8]).toBe('p-alpha-q2');
+    expect(questionsInsert!.params?.[10]).toBe(2); // q2 position
+    expect(questionsInsert!.params?.[15]).toBe('because b');
   });
 
   it('is a no-op on an empty set', async () => {
@@ -144,12 +147,9 @@ describe('hasPassages / listPassages', () => {
         position: 1,
         cars_skill: 'FOC',
         dok: 2,
-        difficulty: 'accessible',
         stem: 'Stem one?',
-        choices: CHOICES,
-        correct_choice_id: 'A',
+        choices: choices('A'),
         explanation: 'because a',
-        choice_rationales: { A: 'a', B: 'b', C: 'c', D: 'd' },
       },
       {
         ...base,
@@ -157,12 +157,9 @@ describe('hasPassages / listPassages', () => {
         position: 2,
         cars_skill: 'RWT',
         dok: 3,
-        difficulty: 'moderate',
         stem: 'Stem two?',
-        choices: CHOICES,
-        correct_choice_id: 'B',
+        choices: choices('B'),
         explanation: 'because b',
-        choice_rationales: null,
       },
     ]);
 
@@ -171,10 +168,12 @@ describe('hasPassages / listPassages', () => {
     const only = entries[0]!;
     expect(only.id).toBe('p-alpha');
     expect(only.questions).toHaveLength(2);
-    expect(only.questions[0]?.rationale).toBe('because a'); // explanation → rationale
-    expect(only.questions[0]?.choiceRationales).toEqual({ A: 'a', B: 'b', C: 'c', D: 'd' });
-    // A null per-choice map is omitted, not carried as null.
-    expect(only.questions[1]?.choiceRationales).toBeUndefined();
+    expect(only.questions[0]?.explanation).toBe('because a');
+    // The per-choice key survives the round-trip through the contract.
+    const key = only.questions[0]?.choices.find((c) => c.correct);
+    expect(key?.id).toBe('A');
+    expect(key?.misconception).toBeNull();
+    expect(only.questions[0]?.choices.find((c) => c.id === 'B')?.misconception).toBe('B is a trap');
     expect(only.source).toBeUndefined();
   });
 });

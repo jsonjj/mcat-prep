@@ -33,52 +33,47 @@ export const PassageThemeSchema = z.enum(['humanities', 'social_science']);
 export type PassageTheme = z.infer<typeof PassageThemeSchema>;
 export const PASSAGE_THEMES = PassageThemeSchema.options;
 
-/**
- * Ordinal item difficulty. Deliberately the CARS-generation vocabulary
- * (`@mcat/cars-generation` `DIFFICULTY_TARGETS`) rather than a numeric IRT `b`:
- * CARS cold-start difficulty prediction is weak enough that a number would be
- * unearned precision (see cars-generation `taxonomy.ts`). Mirrored here because
- * `@mcat/contracts` is a pure leaf and cannot depend on cars-generation;
- * `tests/architecture/passage-of-day-contract.test.ts` fails if the two drift.
- */
-export const PassageDifficultySchema = z.enum(['accessible', 'moderate', 'demanding']);
-export type PassageDifficulty = z.infer<typeof PassageDifficultySchema>;
-export const PASSAGE_DIFFICULTIES = PassageDifficultySchema.options;
+// Item difficulty is carried by `dok` (1–3) alone. The former ordinal
+// `PassageDifficultySchema` (accessible/moderate/demanding) has been removed so a
+// single difficulty axis is authored and stored; a coarse ordinal can be derived
+// from `dok` on the fly if the IRT layer ever wants one.
 
 /** A–D, the only option keys a CARS item uses. */
 export const PassageChoiceIdSchema = z.enum(['A', 'B', 'C', 'D']);
 export type PassageChoiceId = z.infer<typeof PassageChoiceIdSchema>;
 export const PASSAGE_CHOICE_IDS = PassageChoiceIdSchema.options;
 
+/**
+ * One option (A–D). Every choice is self-describing and carries the key:
+ *   • `correct` — exactly one choice per question is true.
+ *   • `misconception` — the reasoning trap a wrong option rewards. REQUIRED
+ *     (non-empty) on every incorrect choice and MUST be `null` on the correct one.
+ *   • `rationale` — why this option is right or wrong; required on all four.
+ * `correct` / `misconception` / `rationale` are SERVER-ONLY: the learner-safe view
+ * projects each choice down to `{ id, text }`.
+ */
 export const PassageChoiceSchema = z
   .object({
     id: PassageChoiceIdSchema,
     text: z.string().min(1),
+    correct: z.boolean(),
+    misconception: z.string().min(1).nullable(),
+    rationale: z.string().min(1),
   })
   .strict();
 export type PassageChoice = z.infer<typeof PassageChoiceSchema>;
 
-/**
- * Optional per-choice rationales ("why this option misses"), keyed A–D. The 12
- * seed passages carry these; a user-authored passage MAY omit them, in which case
- * only the single `rationale` is shown. SERVER-ONLY, like the key.
- */
-export const PassageChoiceRationalesSchema = z
-  .object({
-    A: z.string().min(1),
-    B: z.string().min(1),
-    C: z.string().min(1),
-    D: z.string().min(1),
-  })
-  .strict();
-export type PassageChoiceRationales = z.infer<typeof PassageChoiceRationalesSchema>;
-
 /** The four option ids, in the fixed A→D order the runner renders. */
 const EXPECTED_CHOICE_ORDER = ['A', 'B', 'C', 'D'] as const;
 
+/**
+ * Structural rules shared by the authoring and canonical question shapes (the two
+ * carry identical choices): the four options must be exactly A–D in order, exactly
+ * one must be `correct`, and `misconception` must be null on the correct choice and
+ * a non-empty string on each incorrect one.
+ */
 function refineChoices(
-  choices: readonly { id: PassageChoiceId }[],
-  correctChoiceId: PassageChoiceId,
+  choices: readonly { id: PassageChoiceId; correct: boolean; misconception: string | null }[],
   ctx: z.RefinementCtx,
 ): void {
   const ids = choices.map((choice) => choice.id);
@@ -89,38 +84,52 @@ function refineChoices(
       message: `choices must be exactly A, B, C, D in order (received ${ids.join(', ') || '(none)'})`,
     });
   }
-  if (!ids.includes(correctChoiceId)) {
+  const correctCount = choices.filter((choice) => choice.correct).length;
+  if (correctCount !== 1) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      path: ['correctChoiceId'],
-      message: `correctChoiceId ${correctChoiceId} is not one of the choices`,
+      path: ['choices'],
+      message: `exactly one choice must be correct (found ${correctCount})`,
     });
   }
+  choices.forEach((choice, index) => {
+    if (choice.correct && choice.misconception !== null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['choices', index, 'misconception'],
+        message: 'the correct choice must have a null misconception',
+      });
+    }
+    if (!choice.correct && (choice.misconception === null || choice.misconception.length === 0)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['choices', index, 'misconception'],
+        message: 'each incorrect choice must carry a non-empty misconception',
+      });
+    }
+  });
 }
 
 /**
- * The CANONICAL question shape (camelCase). Carries the key + rationales, so it is
- * SERVER-ONLY; the learner-safe projection (no key, no rationale) is produced by
- * the passage selector, not here.
+ * The CANONICAL question shape (camelCase). Carries the key (via each choice's
+ * `correct`) plus the per-choice rationales/misconceptions and the overall
+ * `explanation`, so it is SERVER-ONLY; the learner-safe projection (no key, no
+ * rationale) is produced by the passage selector, not here.
  */
 export const PassageQuestionSchema = z
   .object({
     id: z.string().min(1),
     stem: z.string().min(1),
     choices: z.array(PassageChoiceSchema).length(4),
-    correctChoiceId: PassageChoiceIdSchema,
     /** Why the correct answer is correct (shown once the learner commits). */
-    rationale: z.string().min(1),
-    /** Optional per-choice "why it misses" notes; absent → not shown. */
-    choiceRationales: PassageChoiceRationalesSchema.optional(),
+    explanation: z.string().min(1),
     /** The AAMC CARS skill the item exercises (FOC / RWT / RBT). */
     carsSkill: CarsSkillSchema,
-    /** Depth of knowledge, 1–4. */
-    dok: z.number().int().min(1).max(4),
-    difficulty: PassageDifficultySchema,
+    /** Depth of knowledge, 1–3 — the sole item-difficulty axis. */
+    dok: z.number().int().min(1).max(3),
   })
   .strict()
-  .superRefine((question, ctx) => refineChoices(question.choices, question.correctChoiceId, ctx));
+  .superRefine((question, ctx) => refineChoices(question.choices, ctx));
 export type PassageQuestion = z.infer<typeof PassageQuestionSchema>;
 
 /** A kebab-case slug: lowercase, digits, single hyphens between segments. */
@@ -158,27 +167,24 @@ export type PassageOfTheDayEntry = z.infer<typeof PassageOfTheDayEntrySchema>;
 // Authoring shape (snake_case) — what a human writes and the ingest validates.
 // ---------------------------------------------------------------------------
 
-export const AuthoredPassageChoiceSchema = z
-  .object({
-    id: PassageChoiceIdSchema,
-    text: z.string().min(1),
-  })
-  .strict();
+/**
+ * An authored choice is the SAME shape as the canonical one: `{ id, text, correct,
+ * misconception, rationale }`. The answer key lives inside the choices — there is
+ * no separate `correct_choice_id` or `choice_rationales` map to keep in sync.
+ */
+export const AuthoredPassageChoiceSchema = PassageChoiceSchema;
 
 export const AuthoredPassageQuestionSchema = z
   .object({
     cars_skill: CarsSkillSchema,
-    dok: z.number().int().min(1).max(4),
-    difficulty: PassageDifficultySchema,
+    /** Depth of knowledge, 1–3 — the single difficulty the author sets. */
+    dok: z.number().int().min(1).max(3),
     stem: z.string().min(1),
     choices: z.array(AuthoredPassageChoiceSchema).length(4),
-    correct_choice_id: PassageChoiceIdSchema,
     explanation: z.string().min(1),
-    /** Optional per-choice rationales; all four required if present. */
-    choice_rationales: PassageChoiceRationalesSchema.optional(),
   })
   .strict()
-  .superRefine((question, ctx) => refineChoices(question.choices, question.correct_choice_id, ctx));
+  .superRefine((question, ctx) => refineChoices(question.choices, ctx));
 export type AuthoredPassageQuestion = z.infer<typeof AuthoredPassageQuestionSchema>;
 
 /**
@@ -294,15 +300,12 @@ export function authoredPassageToEntry(authored: AuthoredPassage): PassageOfTheD
     questions: authored.questions.map((question, index) => ({
       id: `${authored.slug}-q${index + 1}`,
       stem: question.stem,
+      // The authored choice IS the canonical choice (id/text/correct/misconception/
+      // rationale), so it carries over unchanged — the key travels with the option.
       choices: question.choices,
-      correctChoiceId: question.correct_choice_id,
-      rationale: question.explanation,
-      ...(question.choice_rationales === undefined
-        ? {}
-        : { choiceRationales: question.choice_rationales }),
+      explanation: question.explanation,
       carsSkill: question.cars_skill,
       dok: question.dok,
-      difficulty: question.difficulty,
     })),
   };
   return PassageOfTheDayEntrySchema.parse(entry);

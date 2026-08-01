@@ -14,10 +14,11 @@
 --
 -- Split into two tables so a passage owns an ordered set of 1..7 questions with a foreign
 -- key + cascade. CHECK constraints pin the vetted enum sets (2 themes, the 3 AAMC CARS
--- skills, dok 1-4, ordinal difficulty) so a malformed seed/ingest row fails loudly at
--- write rather than silently skewing selection. The enums mirror @mcat/contracts
--- (PassageThemeSchema / CarsSkillSchema / PassageDifficultySchema); cross-package parity
--- is asserted in tests/architecture/passage-of-day-contract.test.ts.
+-- skills, dok 1-3) so a malformed seed/ingest row fails loudly at write rather than
+-- silently skewing selection. The per-choice answer key (correct / misconception /
+-- rationale) travels inside the `choices` JSONB rather than in separate columns. The
+-- enums mirror @mcat/contracts (PassageThemeSchema / CarsSkillSchema); cross-package
+-- parity is asserted in tests/architecture/passage-of-day-contract.test.ts.
 
 create table if not exists passages (
   passage_id text primary key,
@@ -43,16 +44,15 @@ create table if not exists passage_questions (
   position integer not null check (position between 1 and 7),
   -- The 3 AAMC CARS skills, matching @mcat/contracts CarsSkillSchema.
   cars_skill text not null check (cars_skill in ('FOC', 'RWT', 'RBT')),
-  dok integer not null check (dok between 1 and 4),
-  difficulty text not null check (difficulty in ('accessible', 'moderate', 'demanding')),
+  -- Depth of knowledge, the sole item-difficulty axis.
+  dok integer not null check (dok between 1 and 3),
   stem text not null check (length(stem) > 0),
-  -- JSON array of {id, text}, exactly the four options A-D in order.
+  -- JSON array of {id, text, correct, misconception, rationale}: the four options A-D
+  -- in order, each carrying the per-choice answer key (SERVER-ONLY). Exactly one has
+  -- correct=true; misconception is null on it and a non-empty string on the others.
   choices jsonb not null check (jsonb_typeof(choices) = 'array'),
-  correct_choice_id text not null check (correct_choice_id in ('A', 'B', 'C', 'D')),
-  -- Why the correct answer is correct (SERVER-ONLY).
+  -- Overall explanation of why the correct answer is correct (SERVER-ONLY).
   explanation text not null check (length(explanation) > 0),
-  -- Optional per-choice "why it misses" map keyed A-D (SERVER-ONLY); null when absent.
-  choice_rationales jsonb check (choice_rationales is null or jsonb_typeof(choice_rationales) = 'object'),
   created_at timestamptz not null default clock_timestamp(),
   unique (passage_id, position)
 );

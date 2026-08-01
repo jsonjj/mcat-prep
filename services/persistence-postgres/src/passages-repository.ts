@@ -19,7 +19,6 @@
 import {
   PassageOfTheDayEntrySchema,
   type PassageChoice,
-  type PassageChoiceRationales,
   type PassageOfTheDayEntry,
   type PassageQuestion,
 } from '@mcat/contracts';
@@ -38,27 +37,21 @@ interface RawPassageRow extends Record<string, unknown> {
   position: number;
   cars_skill: string;
   dok: number;
-  difficulty: string;
   stem: string;
   choices: unknown;
-  correct_choice_id: string;
   explanation: string;
-  choice_rationales: unknown;
 }
 
 function toQuestion(row: RawPassageRow): PassageQuestion {
   const question: PassageQuestion = {
     id: row.question_id,
     stem: row.stem,
+    // The per-choice answer key (correct / misconception / rationale) rides inside
+    // the choices JSONB; the contract re-validates it in listPassages.
     choices: row.choices as PassageChoice[],
-    correctChoiceId: row.correct_choice_id as PassageQuestion['correctChoiceId'],
-    rationale: row.explanation,
-    ...(row.choice_rationales === null || row.choice_rationales === undefined
-      ? {}
-      : { choiceRationales: row.choice_rationales as PassageChoiceRationales }),
+    explanation: row.explanation,
     carsSkill: row.cars_skill as PassageQuestion['carsSkill'],
     dok: Number(row.dok),
-    difficulty: row.difficulty as PassageQuestion['difficulty'],
   };
   return question;
 }
@@ -87,8 +80,7 @@ export async function listPassages(q: Queryable): Promise<PassageOfTheDayEntry[]
   const { rows } = await q.query<RawPassageRow>(
     `select
        p.passage_id, p.slug, p.title, p.discipline, p.theme, p.body, p.source, p.attribution,
-       q.question_id, q.position, q.cars_skill, q.dok, q.difficulty, q.stem, q.choices,
-       q.correct_choice_id, q.explanation, q.choice_rationales
+       q.question_id, q.position, q.cars_skill, q.dok, q.stem, q.choices, q.explanation
      from passages p
      join passage_questions q on q.passage_id = p.passage_id
      order by p.created_at, p.passage_id, q.position`,
@@ -192,38 +184,32 @@ export async function upsertPassages(
   for (const entry of validated) {
     entry.questions.forEach((question, index) => {
       questionCount += 1;
+      // The answer key + per-choice rationales/misconceptions ride inside `choices`.
       questionParams.push(
         question.id,
         entry.id,
         index + 1,
         question.carsSkill,
         question.dok,
-        question.difficulty,
         question.stem,
         JSON.stringify(question.choices),
-        question.correctChoiceId,
-        question.rationale,
-        question.choiceRationales === undefined ? null : JSON.stringify(question.choiceRationales),
+        question.explanation,
       );
     });
   }
   if (questionCount > 0) {
     await q.query(
       `insert into passage_questions
-         (question_id, passage_id, position, cars_skill, dok, difficulty, stem, choices,
-          correct_choice_id, explanation, choice_rationales)
-       values ${placeholders(questionCount, 11, ['', '', '', '', '', '', '', '::jsonb', '', '', '::jsonb'])}
+         (question_id, passage_id, position, cars_skill, dok, stem, choices, explanation)
+       values ${placeholders(questionCount, 8, ['', '', '', '', '', '', '::jsonb', ''])}
        on conflict (question_id) do update set
          passage_id = excluded.passage_id,
          position = excluded.position,
          cars_skill = excluded.cars_skill,
          dok = excluded.dok,
-         difficulty = excluded.difficulty,
          stem = excluded.stem,
          choices = excluded.choices,
-         correct_choice_id = excluded.correct_choice_id,
-         explanation = excluded.explanation,
-         choice_rationales = excluded.choice_rationales`,
+         explanation = excluded.explanation`,
       questionParams,
     );
   }
