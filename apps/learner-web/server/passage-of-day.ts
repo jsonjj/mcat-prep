@@ -1,9 +1,9 @@
-import {
-  loadPassagePool,
-  type PassageChoiceId,
-  type PassageOfTheDayEntry,
-  type PassageQuestion,
-} from '../../../content/passage-of-the-day/pool';
+import type {
+  PassageChoiceId,
+  PassageOfTheDayEntry,
+  PassageQuestion,
+} from '@mcat/contracts';
+import { passagePoolSourceLine, resolvePassagePool } from './passage-pool-source';
 
 /**
  * Passage of the Day — server-side selection, learner-safe views, and scoring.
@@ -107,7 +107,7 @@ export class PassageOfDayService {
   private readonly pool: readonly PassageOfTheDayEntry[];
   private readonly questionsById: ReadonlyMap<string, PassageQuestion>;
 
-  constructor(pool: readonly PassageOfTheDayEntry[] = loadPassagePool()) {
+  constructor(pool: readonly PassageOfTheDayEntry[]) {
     this.pool = pool;
     const byId = new Map<string, PassageQuestion>();
     for (const entry of pool) {
@@ -166,10 +166,30 @@ export class PassageOfDayService {
       correct: choiceId !== null && choiceId === question.correctChoiceId,
       correctChoiceId: question.correctChoiceId,
       rationale: question.rationale,
-      choiceRationale: choiceId !== null ? (question.choiceRationales[choiceId] ?? null) : null,
+      choiceRationale: choiceId !== null ? (question.choiceRationales?.[choiceId] ?? null) : null,
     };
   }
 }
 
-/** Process-wide singleton for the dev/preview server. */
-export const passageOfDayService = new PassageOfDayService();
+let servicePromise: Promise<PassageOfDayService> | undefined;
+
+/**
+ * The process-wide passage service, built once from the DB-first async loader
+ * (postgres → local store → hardcoded pool) and memoized. Every request handler
+ * awaits this. A failed build is NOT cached, so a transient DB error can be
+ * retried on the next request rather than wedging the feature for the process.
+ */
+export function getPassageOfDayService(): Promise<PassageOfDayService> {
+  if (servicePromise === undefined) {
+    servicePromise = resolvePassagePool()
+      .then((result) => {
+        console.info(passagePoolSourceLine(result));
+        return new PassageOfDayService(result.entries);
+      })
+      .catch((error: unknown) => {
+        servicePromise = undefined;
+        throw error;
+      });
+  }
+  return servicePromise;
+}

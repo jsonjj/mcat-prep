@@ -1,13 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import {
-  loadPassagePool,
-  type PassageChoiceId,
-  type PassageOfTheDayEntry,
-} from '../../../content/passage-of-the-day/pool';
-import { learnerLocalDayIndex, PassageOfDayService, passageOfDayService } from './passage-of-day';
+import type { CarsSkill, PassageChoiceId, PassageOfTheDayEntry } from '@mcat/contracts';
+import { hardcodedPassagePool } from '../../../content/passage-of-the-day/pool';
+import { learnerLocalDayIndex, PassageOfDayService } from './passage-of-day';
 
-/** All pool reads in this suite go through the seam, exactly as the server does. */
-const POOL = loadPassagePool();
+/** The hardcoded (fallback) pool — the deterministic content these tests assert on. */
+const POOL = hardcodedPassagePool();
 
 const CHOICE_IDS: readonly PassageChoiceId[] = ['A', 'B', 'C', 'D'];
 const DAY_MS = 86_400_000;
@@ -16,8 +13,10 @@ const at = (iso: string): Date => new Date(iso);
 function mkEntry(id: string): PassageOfTheDayEntry {
   return {
     id,
+    slug: id,
     title: `Title ${id}`,
     discipline: 'Test',
+    theme: 'humanities',
     body: [`Body of ${id}.`],
     questions: [
       {
@@ -32,6 +31,9 @@ function mkEntry(id: string): PassageOfTheDayEntry {
         correctChoiceId: 'A',
         rationale: `because a (${id})`,
         choiceRationales: { A: 'a is right', B: 'b misses', C: 'c misses', D: 'd misses' },
+        carsSkill: 'FOC',
+        dok: 2,
+        difficulty: 'accessible',
       },
     ],
   };
@@ -120,7 +122,7 @@ describe('PassageOfDayService selection', () => {
 });
 
 describe('PassageOfDayService grading', () => {
-  const service = passageOfDayService;
+  const service = new PassageOfDayService(POOL);
   const firstQuestion = POOL[0]!.questions[0]!;
 
   it('marks a correct answer and returns the explanation', () => {
@@ -134,7 +136,7 @@ describe('PassageOfDayService grading', () => {
     const wrong = CHOICE_IDS.find((c) => c !== firstQuestion.correctChoiceId)!;
     const grade = service.grade(firstQuestion.id, wrong);
     expect(grade?.correct).toBe(false);
-    expect(grade?.choiceRationale).toBe(firstQuestion.choiceRationales[wrong]);
+    expect(grade?.choiceRationale).toBe(firstQuestion.choiceRationales?.[wrong]);
   });
 
   it('treats a null (no) answer as incorrect with no per-choice rationale', () => {
@@ -149,15 +151,24 @@ describe('PassageOfDayService grading', () => {
 });
 
 describe('the shipped pool', () => {
-  it('is well-formed: 10+ unique passages, each with 5\u20137 four-option questions', () => {
+  const THEMES = new Set(['humanities', 'social_science']);
+  const SKILLS: readonly CarsSkill[] = ['FOC', 'RWT', 'RBT'];
+  const DIFFICULTIES = new Set(['accessible', 'moderate', 'demanding']);
+
+  it('is well-formed: 10+ unique passages, each with 5\u20137 four-option CARS questions', () => {
     expect(POOL.length).toBeGreaterThanOrEqual(10);
     const passageIds = new Set<string>();
+    const slugs = new Set<string>();
     const questionIds = new Set<string>();
     for (const entry of POOL) {
       expect(passageIds.has(entry.id)).toBe(false);
       passageIds.add(entry.id);
+      expect(slugs.has(entry.slug)).toBe(false);
+      slugs.add(entry.slug);
+      expect(entry.slug).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
       expect(entry.title.length).toBeGreaterThan(0);
       expect(entry.discipline.length).toBeGreaterThan(0);
+      expect(THEMES.has(entry.theme)).toBe(true);
       expect(entry.body.length).toBeGreaterThan(0);
       expect(entry.questions.length).toBeGreaterThanOrEqual(5);
       expect(entry.questions.length).toBeLessThanOrEqual(7);
@@ -167,10 +178,33 @@ describe('the shipped pool', () => {
         expect(question.choices.map((c) => c.id)).toEqual(['A', 'B', 'C', 'D']);
         expect(CHOICE_IDS).toContain(question.correctChoiceId);
         expect(question.rationale.length).toBeGreaterThan(0);
+        expect(SKILLS).toContain(question.carsSkill);
+        expect(question.dok).toBeGreaterThanOrEqual(1);
+        expect(question.dok).toBeLessThanOrEqual(4);
+        expect(DIFFICULTIES.has(question.difficulty)).toBe(true);
+        // The shipped seed carries per-choice rationales for every option.
+        expect(question.choiceRationales).toBeDefined();
         for (const id of CHOICE_IDS) {
-          expect(question.choiceRationales[id].length).toBeGreaterThan(0);
+          expect((question.choiceRationales?.[id] ?? '').length).toBeGreaterThan(0);
         }
       }
     }
+  });
+
+  it('splits CARS skills 2-2-1 per passage and evenly across the pool', () => {
+    // The pool-level even split needs a multiple of three passages (2-2-1 per
+    // passage rotates so every three passages sum to 5/5/5).
+    expect(POOL.length % 3).toBe(0);
+    const total: Record<CarsSkill, number> = { FOC: 0, RWT: 0, RBT: 0 };
+    for (const entry of POOL) {
+      expect(entry.questions.length).toBe(5);
+      const counts: Record<CarsSkill, number> = { FOC: 0, RWT: 0, RBT: 0 };
+      for (const question of entry.questions) counts[question.carsSkill] += 1;
+      // Two skills get two questions, one gets a single question.
+      expect(Object.values(counts).sort((a, b) => a - b)).toEqual([1, 2, 2]);
+      for (const skill of SKILLS) total[skill] += counts[skill];
+    }
+    const perSkill = (POOL.length * 5) / 3;
+    expect(total).toEqual({ FOC: perSkill, RWT: perSkill, RBT: perSkill });
   });
 });

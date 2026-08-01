@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { isPassageChoiceId, passageOfDayService } from './passage-of-day';
+import { getPassageOfDayService, isPassageChoiceId } from './passage-of-day';
 
 /**
  * Passage of the Day HTTP surface for the learner-web dev/preview server.
@@ -95,7 +95,10 @@ function timezoneOffsetFromUrl(request: IncomingMessage): number {
 }
 
 /** GET /api/passage/today?tz=<offsetMinutes> — the day's learner-safe passage. */
-export function handleTodayRequest(request: IncomingMessage, response: ServerResponse): void {
+export async function handleTodayRequest(
+  request: IncomingMessage,
+  response: ServerResponse,
+): Promise<void> {
   if (request.method !== 'GET') {
     response.setHeader('Allow', 'GET');
     writeJson(response, 405, { error: 'Use GET for the passage of the day.' });
@@ -106,7 +109,8 @@ export function handleTodayRequest(request: IncomingMessage, response: ServerRes
     return;
   }
   try {
-    const view = passageOfDayService.todayView(new Date(), timezoneOffsetFromUrl(request));
+    const service = await getPassageOfDayService();
+    const view = service.todayView(new Date(), timezoneOffsetFromUrl(request));
     // `passage: null` is the honest "pool is empty" response; the runner renders
     // an on-brand empty state for it rather than treating it as an error.
     writeJson(response, 200, { passage: view });
@@ -127,7 +131,7 @@ export function handleAttemptRequest(request: IncomingMessage, response: ServerR
     return;
   }
   void readJsonBody(request)
-    .then((body) => {
+    .then(async (body) => {
       const questionId = typeof body.questionId === 'string' ? body.questionId : '';
       if (questionId === '') {
         writeJson(response, 400, { error: 'A questionId is required.' });
@@ -138,7 +142,8 @@ export function handleAttemptRequest(request: IncomingMessage, response: ServerR
         writeJson(response, 400, { error: 'choiceId must be A, B, C, D, or null.' });
         return;
       }
-      const grade = passageOfDayService.grade(questionId, rawChoice);
+      const service = await getPassageOfDayService();
+      const grade = service.grade(questionId, rawChoice);
       if (grade === null) {
         writeJson(response, 404, { error: 'That passage question is not in the pool.' });
         return;

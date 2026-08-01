@@ -16,40 +16,65 @@
  * banks, the key never crosses the client boundary.
  *
  * The file is deliberately self-contained (no imports) so it type-checks under
- * any consumer's config and can never pull server-only or browser-only code into
- * the wrong graph.
+ * any consumer's config and, sitting at the top-level `content/` dir (outside any
+ * package), never needs to resolve a workspace module. Its shapes MIRROR the
+ * canonical Zod contract in `@mcat/contracts` (`PassageOfTheDayEntry` etc.); the
+ * DB-first loader assigns this pool to the contract type, so a drift between the
+ * two is a compile error there.
  */
 
-export type PassageChoiceId = 'A' | 'B' | 'C' | 'D';
+/** A–D. */
+type PassageChoiceId = 'A' | 'B' | 'C' | 'D';
+/** The coarse AAMC content grouping (mirrors contracts PassageThemeSchema). */
+type PassageTheme = 'humanities' | 'social_science';
+/** Ordinal difficulty (mirrors contracts PassageDifficultySchema). */
+type PassageDifficulty = 'accessible' | 'moderate' | 'demanding';
+/** The three AAMC CARS skills (mirrors contracts CarsSkillSchema). */
+type CarsSkill = 'FOC' | 'RWT' | 'RBT';
 
-export interface PassageChoice {
-  readonly id: PassageChoiceId;
-  readonly text: string;
+interface PassageChoice {
+  id: PassageChoiceId;
+  text: string;
 }
 
-export interface PassageQuestion {
-  readonly id: string;
-  readonly stem: string;
-  /** Exactly four options, A–D. */
-  readonly choices: readonly PassageChoice[];
-  readonly correctChoiceId: PassageChoiceId;
-  /** Why the correct answer is correct (shown after the learner commits). */
-  readonly rationale: string;
-  /** One short note per option, keyed A–D (the "why this misses" material). */
-  readonly choiceRationales: Readonly<Record<PassageChoiceId, string>>;
+/** Mirrors `@mcat/contracts` PassageQuestion (mutable arrays for structural parity). */
+interface PassageQuestion {
+  id: string;
+  stem: string;
+  choices: PassageChoice[];
+  correctChoiceId: PassageChoiceId;
+  rationale: string;
+  choiceRationales?: Record<PassageChoiceId, string>;
+  carsSkill: CarsSkill;
+  dok: number;
+  difficulty: PassageDifficulty;
 }
 
-export interface PassageOfTheDayEntry {
-  readonly id: string;
-  /** A short, evocative title for the passage (shown as the runner heading). */
-  readonly title: string;
-  /** The humanities / social-science field, shown as an eyebrow. */
-  readonly discipline: string;
-  /** The passage text, one string per paragraph. */
-  readonly body: readonly string[];
-  /** The passage's CARS-style MCQs (about five per passage, as on the real exam). */
-  readonly questions: readonly PassageQuestion[];
+/** Mirrors `@mcat/contracts` PassageOfTheDayEntry. */
+interface PassageOfTheDayEntry {
+  id: string;
+  slug: string;
+  title: string;
+  discipline: string;
+  theme: PassageTheme;
+  body: string[];
+  source?: string;
+  attribution?: string;
+  questions: PassageQuestion[];
 }
+
+/**
+ * The raw entries below carry the passage text, answer key, and rationales only.
+ * The CARS labels (`theme`, and per-question `carsSkill`/`dok`/`difficulty`) are
+ * layered on deterministically by `hardcodedPassagePool()` — see PASSAGE_THEMES /
+ * SKILL_ROTATION — so the ~1,400 lines of vetted prose below never had to be
+ * hand-annotated field-by-field.
+ */
+type RawPassageQuestion = Omit<PassageQuestion, 'carsSkill' | 'dok' | 'difficulty'>;
+type RawPassageEntry = Omit<
+  PassageOfTheDayEntry,
+  'slug' | 'theme' | 'source' | 'attribution' | 'questions'
+> & { questions: RawPassageQuestion[] };
 
 /**
  * The pool — the hardcoded content source. Rotation cycles through it in array
@@ -57,10 +82,10 @@ export interface PassageOfTheDayEntry {
  * the passages. Keep entries roughly even in difficulty; add to the end rather
  * than reordering, so a given day does not silently change passages for everyone.
  *
- * Deliberately NOT exported: every reader goes through `loadPassagePool()` below,
- * the single seam where this hardcoded source could later become a DB read.
+ * Deliberately NOT exported: every reader goes through `hardcodedPassagePool()`
+ * below (and, above it, the DB-first async loader in the server).
  */
-const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
+const PASSAGE_OF_THE_DAY_POOL: readonly RawPassageEntry[] = [
   {
     id: 'potd-aesthetics-difficulty',
     title: 'The Uses of Difficulty',
@@ -1495,19 +1520,64 @@ const PASSAGE_OF_THE_DAY_POOL: readonly PassageOfTheDayEntry[] = [
 ];
 
 /**
- * The single seam through which server code reads the pool.
+ * Deterministic CARS labels for the seed pool.
  *
- * Every consumer — the `PassageOfDayService` singleton and its tests — obtains
- * passages here and nowhere else, so the content source lives behind exactly one
- * boundary.
- *
- * FUTURE DB READ: to serve passages from a database instead of this hardcoded
- * file, replace the body of this function (and only this function) with the query
- * that returns the entries. Nothing else reaches into the pool, so no other file
- * changes. If the read must become asynchronous, this is the one signature to
- * widen to `Promise<readonly PassageOfTheDayEntry[]>`, updating its handful of
- * callers' construction to await it.
+ * `PASSAGE_THEMES` balances the 12 passages 6/6 across humanities / social
+ * science. `SKILL_ROTATION` gives each passage's five questions a 2-2-1 split of
+ * the three CARS skills, rotating which skill takes the single slot so every three
+ * passages sum to an even 5/5/5 — the pool-level balance the authoring spec
+ * requires (verified in the pool test). `dok`/`difficulty` follow the skill.
+ * Only these hardcoded seeds derive their labels; an authored passage sets all of
+ * them explicitly.
  */
-export function loadPassagePool(): readonly PassageOfTheDayEntry[] {
-  return PASSAGE_OF_THE_DAY_POOL;
+const PASSAGE_THEMES: readonly PassageTheme[] = [
+  'humanities', // 0  Aesthetics
+  'social_science', // 1  Historiography
+  'humanities', // 2  Philosophy of Science
+  'humanities', // 3  Literary Criticism
+  'social_science', // 4  Political Theory
+  'social_science', // 5  Anthropology
+  'humanities', // 6  Ethics
+  'social_science', // 7  Urban Studies
+  'humanities', // 8  Music Criticism
+  'humanities', // 9  Translation Studies
+  'social_science', // 10 Economics
+  'social_science', // 11 Oral History
+];
+
+const SKILL_ROTATION: readonly (readonly CarsSkill[])[] = [
+  ['FOC', 'RWT', 'FOC', 'RWT', 'RBT'], // minority skill: RBT (FOC×2, RWT×2, RBT×1)
+  ['FOC', 'RWT', 'RBT', 'RWT', 'RBT'], // minority skill: FOC (FOC×1, RWT×2, RBT×2)
+  ['FOC', 'RWT', 'FOC', 'RBT', 'RBT'], // minority skill: RWT (FOC×2, RWT×1, RBT×2)
+];
+
+const LABELS_BY_SKILL: Readonly<
+  Record<CarsSkill, { readonly dok: number; readonly difficulty: PassageDifficulty }>
+> = {
+  FOC: { dok: 2, difficulty: 'accessible' },
+  RWT: { dok: 3, difficulty: 'moderate' },
+  RBT: { dok: 3, difficulty: 'demanding' },
+};
+
+/**
+ * The hardcoded pool, fully CARS-labelled — the LAST-RESORT fallback source when
+ * neither Postgres nor a local dev store is present. Every reader in the app goes
+ * through the async loader in `apps/learner-web/server/passage-pool-source.ts`;
+ * this is only its final branch.
+ */
+export function hardcodedPassagePool(): readonly PassageOfTheDayEntry[] {
+  return PASSAGE_OF_THE_DAY_POOL.map((entry, passageIndex) => {
+    const theme = PASSAGE_THEMES[passageIndex] ?? 'humanities';
+    const pattern = SKILL_ROTATION[passageIndex % SKILL_ROTATION.length]!;
+    return {
+      ...entry,
+      slug: entry.id,
+      theme,
+      questions: entry.questions.map((question, questionIndex) => {
+        const carsSkill = pattern[questionIndex % pattern.length]!;
+        const { dok, difficulty } = LABELS_BY_SKILL[carsSkill];
+        return { ...question, carsSkill, dok, difficulty };
+      }),
+    };
+  });
 }

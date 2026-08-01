@@ -10,3 +10,4 @@ export * from './question-stats-repository';
 export * from './practice-exposure-repository';
 export * from './practice-attempt-repository';
 export * from './cars-duel-topics-repository';
+export * from './passages-repository';
