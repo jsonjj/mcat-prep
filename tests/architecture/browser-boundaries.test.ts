@@ -90,6 +90,29 @@ describe('learner browser authority boundary', () => {
     }
   });
 
+  it('never reaches protected answer material or the server-only answer-key provider', () => {
+    // The Phase 5 LessonContentProvider keeps correct answers behind
+    // `getAnswerKey` (server-only). Its module, L1's in-code answer authority,
+    // and the on-disk protected-items.json are all things the browser bundle
+    // must never import — a leak here re-opens the exact hole the remote
+    // authority boundary closed, via a different door than @mcat/content.
+    const ANSWER_KEY_REFERENCE =
+      /protected-items\.json|vector-lesson-protected|lesson-content-provider|ServerAnswerKey|getAnswerKey/;
+    const entries = readdirSync(join(learnerRoot, 'src'), { recursive: true })
+      .map(String)
+      .filter((entry) => /\.(?:ts|tsx)$/.test(entry));
+
+    const offenders = entries.filter((entry) =>
+      ANSWER_KEY_REFERENCE.test(readFileSync(join(learnerRoot, 'src', entry), 'utf8')),
+    );
+
+    expect(
+      offenders,
+      `${offenders.join(', ')} reference(s) server-only answer material from a bundle-reachable file. ` +
+        'Correct answers must be resolved on the server via LessonContentProvider.getAnswerKey and never bundled.',
+    ).toEqual([]);
+  });
+
   it('requires the configured HTTP authority and has no learner question preview', () => {
     const authority = read('apps/learner-web/src/app/authority.ts');
     const router = read('apps/learner-web/src/app/router.tsx');

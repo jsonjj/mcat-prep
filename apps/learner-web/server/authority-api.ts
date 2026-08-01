@@ -214,6 +214,22 @@ export async function handleAuthorityRequest(
         const limit = Number.parseInt(repairMatch[1]!, 10);
         return sendJson(response, 200, await client.getRepairQueue(limit));
       }
+      // Normalized-engine catalog (L2/L3 and any future template lesson). The
+      // synthetic dev authority does not persist lesson runs, so — exactly like L1
+      // above — status renders the lesson as unavailable and `run` reports the same
+      // limitation, letting the Curriculum surface it without erroring on a missing
+      // route. Real delivery is served by the persisted HTTP authority.
+      const normalizedStatus = /^\/v1\/lessons\/(v3-les-\d{6})\/status$/.exec(path);
+      if (normalizedStatus) {
+        return sendJson(response, 200, await client.getNormalizedLessonStatus(normalizedStatus[1]!));
+      }
+      if (/^\/v1\/lessons\/v3-les-\d{6}\/run$/.test(path)) {
+        return sendJson(response, 503, {
+          code: 'lesson_requires_http_authority',
+          message: 'This lesson requires the persisted HTTP authority.',
+          retryable: false,
+        });
+      }
     }
 
     // ---- commands -----------------------------------------------------------
@@ -275,6 +291,14 @@ export async function handleAuthorityRequest(
       return sendJson(response, 200, result);
     }
     if (path.startsWith('/v1/lessons/vectors-and-trigonometry/') && method === 'POST') {
+      return sendJson(response, 503, {
+        code: 'lesson_requires_http_authority',
+        message: 'This lesson requires the persisted HTTP authority.',
+        retryable: false,
+      });
+    }
+    // Normalized-catalog commands (start / commands) share L1's dev limitation.
+    if (/^\/v1\/lessons\/v3-les-\d{6}\/(?:start|commands)$/.test(path) && method === 'POST') {
       return sendJson(response, 503, {
         code: 'lesson_requires_http_authority',
         message: 'This lesson requires the persisted HTTP authority.',

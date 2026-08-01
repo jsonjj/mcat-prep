@@ -1,0 +1,15 @@
+IDENTIFY — recognize the concept a scenario shows. This is AAMC Skill 1 verbatim ("recognize/recall/define") and the single biggest slice (~35%). It's the floor: you can't reason about a thing you can't name. Distinct because it's pure recognition, no manipulation. Trained by retrieval + contrasting cases (its real difficulty is near-neighbor traps, not recall — 71% of these carry a look-alike lure).
+
+PREDICT — perturbation → what happens / direction. SIRS2 problem-solving, running forward (change X → what happens to Y). Distinct from EXPLAIN by direction — this is cause→effect. Trained by faded worked examples + "name the principle first."
+
+EXPLAIN — observation → the mechanism. SIRS2, running backward (given the outcome, pick the why). Distinct from PREDICT (opposite direction) and from IDENTIFY (needs the causal chain, not just the label). Trained by comparing two analogs before stating the rule.
+
+RELATE — map entity↔role, or compare two cases. SIRS2, but relational — it's about the mapping/comparison itself (structure↔function, case A vs B), not a causal step. Distinct enough that it has its own superior scaffold: structural diagrams shown up front (relational learning d≈1.10, the strongest single scaffold in the evidence).
+
+QUANTIFY — pick AND run the right relationship. SIRS2, and it sits exactly on AAMC's Skill 1/2 line: Skill 1 = use a given equation, Skill 2 = figure out which equation. QUANTIFY is the "select + compute" version. Distinct by its numeric answer space and two-part structure (choose the relation, then do the math) — and it splits: the selection half is IDENTIFY-gated, the math half isn't. Trained by worked examples → mixed sets that force strategy choice.
+
+DESIGN — judge/choose a method or study. AAMC Skill 3 (~10%). A genuinely separate construct: reasoning about the study itself (controls, confounds, variables, validity), not the science content. Distinct because it's meta-reasoning about research. Trained by the cleanest prescription in the whole evidence base — direct control-of-variables instruction via cognitive conflict + demonstrations (g≈0.61).
+
+EVIDENCE — decide what the data licenses. AAMC Skill 4 (~10%). Reasoning about what a result actually supports (significance, correlation≠causation, what it does/doesn't prove). Distinct from DESIGN — DESIGN is the study's structure, EVIDENCE is the data's interpretation. Trained by guided induction across several domains (one of the few real far-transfer wins).
+
+The reasoning behind the set: AAMC's four skills are the reporting frame, but SIRS2 alone is 45% of the exam — telling a learner "you're weak at SIRS2" is useless. So we split SIRS2 into its four real operations (PREDICT/EXPLAIN/RELATE/QUANTIFY), each with a different training method and a different failure mode, and kept SIRS1/3/4 as one skill each. All seven pass the two tests: distinct training method + independent of difficulty.

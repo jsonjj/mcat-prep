@@ -12,6 +12,11 @@ import {
 } from '@mcat/authority-kernel';
 import {
   GuestBootstrapResponseSchema,
+  NormalizedLessonCommandSchema,
+  NormalizedLessonRunViewSchema,
+  NormalizedLessonStartCommandSchema,
+  NormalizedLessonStartResponseSchema,
+  NormalizedLessonStatusViewSchema,
   VectorLessonCommandSchema,
   VectorLessonRunViewSchema,
   VectorLessonStartCommandSchema,
@@ -20,7 +25,13 @@ import {
   systemClock,
 } from '@mcat/contracts';
 import { orderedKcsForLesson } from '@mcat/content';
-import { RepositoryLearnerKernel } from '@mcat/learner-api';
+import {
+  NORMALIZED_LESSON_ROUTE_SLUGS,
+  RepositoryLearnerKernel,
+  lessonContentProvider,
+  normalizedLessonIdFor,
+  type NormalizedLessonCommandInput,
+} from '@mcat/learner-api';
 import {
   buildDebugLearnerState,
   isDebugStateOptedIn,
@@ -31,7 +42,13 @@ import {
 const DEFAULT_HOST = '127.0.0.1';
 const DEFAULT_PORT = 8787;
 const MAX_BODY_BYTES = 64 * 1024;
-/** The one lesson this harness serves; always reported so a rollup is visible before it starts. */
+/**
+ * L1's id — served by a bespoke (vector) runtime, and the anchor the debug rollup
+ * always reports so a rollup is visible before any run. The normalized catalog
+ * (L2, L3, and any future template lesson) is served ALONGSIDE it through the
+ * slug-parameterized routes below; those lessons surface in the debug view once
+ * practiced (via `practicedLessonIds`).
+ */
 const HARNESS_LESSON_ID = 'V3-LES-130923';
 
 /**
@@ -94,6 +111,61 @@ export function isLoopbackHostHeader(host: string | undefined, boundPort: number
 export interface RunningLocalLessonServer {
   readonly baseUrl: string;
   close(): Promise<void>;
+}
+
+/**
+ * The delivered-revision field the learner-api runtime pins onto each persisted
+ * run. Read STRUCTURALLY on purpose: local-authority owns neither run type, and
+ * a debug projection should not import a lesson-runtime internal just to name one
+ * string. L1 keeps a single bespoke `vectorLessonRun`; every normalized lesson
+ * (L2, L3, and whatever the authoring template yields next) is keyed by id under
+ * `normalizedLessonRuns`. Both carry `definitionHash` = the script `content_sha256`
+ * the runtime scored against.
+ */
+interface PersistedLessonRuns {
+  readonly vectorLessonRun?: { readonly definitionHash?: unknown };
+  readonly normalizedLessonRuns?: Readonly<
+    Record<string, { readonly definitionHash?: unknown } | undefined>
+  >;
+}
+
+/**
+ * The `content_sha256` this learner was delivered for `lessonId`, or `null` when
+ * no run exists yet. The normalized map is authoritative for every lesson it
+ * holds; the bespoke `vectorLessonRun` slot answers only for L1 (its sole
+ * occupant), so a normalized L1 would never be shadowed by it.
+ */
+function deliveredContentSha256For(state: PersistedLessonRuns, lessonId: string): string | null {
+  const normalized = state.normalizedLessonRuns?.[lessonId]?.definitionHash;
+  if (typeof normalized === 'string') return normalized;
+  if (lessonId === HARNESS_LESSON_ID) {
+    const vector = state.vectorLessonRun?.definitionHash;
+    if (typeof vector === 'string') return vector;
+  }
+  return null;
+}
+
+/**
+ * The CURRENT catalog revision of every lesson this harness serves — L1 plus the
+ * normalized catalog — resolved once from the same provider seam the runtime pins
+ * each run's `definitionHash` from, so a freshly delivered lesson is never falsely
+ * reported as superseded.
+ */
+const CURRENT_CONTENT_SHA256_BY_LESSON: ReadonlyMap<string, string> = new Map(
+  [HARNESS_LESSON_ID, ...Object.values(NORMALIZED_LESSON_ROUTE_SLUGS)].map((lessonId) => [
+    lessonId,
+    lessonContentProvider.getDefinitionHash(lessonId),
+  ]),
+);
+
+/**
+ * The catalog's CURRENT `content_sha256` for `lessonId`, or null when this
+ * loopback harness does not serve it. The debug view compares this against the
+ * delivered revision to flag a run whose content has since moved on; a `null`
+ * here can never manufacture a false stale flag.
+ */
+function currentContentSha256For(lessonId: string): string | null {
+  return CURRENT_CONTENT_SHA256_BY_LESSON.get(lessonId) ?? null;
 }
 
 function statusFor(error: AuthorityKernelError): number {
@@ -272,6 +344,80 @@ export async function createLocalLessonHttpServer(
         sendJson(response, 200, await kernel.handleVectorLessonCommand(command, principal), origin);
         return;
       }
+      // The normalized-engine catalog (L2, L3, and any future template lesson),
+      // slug-parameterized EXACTLY as the deployed learner API serves them
+      // (services/lambdas/learner-api). `normalizedLessonIdFor` returns null for
+      // any unregistered slug — including L1's own — so this never shadows the
+      // bespoke vector routes above, and an unknown lesson falls through to 404.
+      const normalizedLessonId = normalizedLessonIdFor(path);
+      if (normalizedLessonId !== null) {
+        if (method === 'GET' && path.endsWith('/status')) {
+          sendJson(
+            response,
+            200,
+            NormalizedLessonStatusViewSchema.parse(
+              await kernel.normalizedLessonStatus(normalizedLessonId, principal),
+            ),
+            origin,
+          );
+          return;
+        }
+        if (method === 'POST' && path.endsWith('/start')) {
+          const command = NormalizedLessonStartCommandSchema.parse(await readJson(request));
+          // The slug is the authority for which lesson runs; a body id naming a
+          // different lesson is rejected, exactly as L1's `z.literal` rejects a
+          // foreign id on its own route.
+          if (command.lessonId !== normalizedLessonId) {
+            sendJson(
+              response,
+              400,
+              {
+                code: 'validation_error',
+                message: 'The lesson identity does not match this route.',
+                retryable: false,
+              },
+              origin,
+            );
+            return;
+          }
+          sendJson(
+            response,
+            200,
+            NormalizedLessonStartResponseSchema.parse(
+              await kernel.handleNormalizedLessonStart(
+                normalizedLessonId,
+                { envelope: command.envelope },
+                principal,
+              ),
+            ),
+            origin,
+          );
+          return;
+        }
+        if (method === 'GET' && path.endsWith('/run')) {
+          sendJson(
+            response,
+            200,
+            NormalizedLessonRunViewSchema.parse(
+              await kernel.normalizedLessonRun(normalizedLessonId, principal),
+            ),
+            origin,
+          );
+          return;
+        }
+        if (method === 'POST' && path.endsWith('/commands')) {
+          const command = NormalizedLessonCommandSchema.parse(
+            await readJson(request),
+          ) as NormalizedLessonCommandInput;
+          sendJson(
+            response,
+            200,
+            await kernel.handleNormalizedLessonCommand(normalizedLessonId, command, principal),
+            origin,
+          );
+          return;
+        }
+      }
       // LOCAL-ONLY inspection route. Three independent guards, all required: an
       // explicit process opt-in, a loopback peer, and no `Origin` — a web page
       // never reads this, whatever the CORS allowlist says. Any one missing and
@@ -288,6 +434,7 @@ export async function createLocalLessonHttpServer(
           const projection = await repository.loadProjection(principal.learnerId);
           if (projection === null) throw notFound();
           const state = learnerStateFromProjection(projection);
+          const runs = state as unknown as PersistedLessonRuns;
           const lessonIds = new Set([
             HARNESS_LESSON_ID,
             ...(state.mastery?.practicedLessonIds ?? []),
@@ -305,6 +452,8 @@ export async function createLocalLessonHttpServer(
               lessons: [...lessonIds].map((lessonId) => ({
                 lessonId,
                 requiredKcIds: orderedKcsForLesson(lessonId),
+                deliveredContentSha256: deliveredContentSha256For(runs, lessonId),
+                currentContentSha256: currentContentSha256For(lessonId),
               })),
             }),
             // Never CORS-shared. Unreachable with an `Origin`, and no response

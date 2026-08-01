@@ -380,9 +380,15 @@ describe('V3-LES-130923 server-authoritative HTTP integration', () => {
     expect(learnerState(repository, principal).evidence).toEqual([]);
   });
 
-  it('rejects another lesson identity and leaves it unavailable', async () => {
+  it('serves Lesson 2 on its own route while the Lesson 1 route stays Lesson-1-only', async () => {
     const { makeApi } = harness();
-    const response = await makeApi().handle(
+    const api = makeApi();
+
+    // The Lesson 1 route still refuses a foreign lesson identity: its start body
+    // is a `z.literal('V3-LES-130923')`, so Lesson 2's id fails the contract
+    // before any state changes. Slug isolation is preserved — Lesson 2 does not
+    // ride in on Lesson 1's endpoint.
+    const crossed = await api.handle(
       request(
         'POST',
         '/v1/lessons/vectors-and-trigonometry/start',
@@ -390,7 +396,34 @@ describe('V3-LES-130923 server-authoritative HTTP integration', () => {
         { authenticated: true, csrf: true },
       ),
     );
-    expect(response.statusCode).toBe(400);
+    expect(crossed.statusCode).toBe(400);
+
+    // But Lesson 2 is now a first-class catalog lesson: it STARTS on its own
+    // normalized-engine route. This is the flip — `V3-LES-789208` used to be
+    // unservable and rejected everywhere; the same request now succeeds because
+    // the lesson has a real transport (Phase 5, wave 5C).
+    const started = await api.handle(
+      request(
+        'POST',
+        '/v1/lessons/v3-les-789208/start',
+        { envelope: envelope(0), lessonId: 'V3-LES-789208' },
+        { authenticated: true, csrf: true },
+      ),
+    );
+    expect(started.statusCode).toBe(200);
+    expect(body(started)).toMatchObject({ disposition: 'STARTED' });
+    expect(body(started).runId).toMatch(/[0-9a-f-]{36}/);
+
+    // ...and its status endpoint now reports it available and in progress.
+    const status = await api.handle(
+      request('GET', '/v1/lessons/v3-les-789208/status', undefined, { authenticated: true }),
+    );
+    expect(status.statusCode).toBe(200);
+    expect(body(status)).toEqual({
+      availability: 'AVAILABLE',
+      runState: 'IN_PROGRESS',
+      actionLabel: 'Continue',
+    });
   });
 
   it('persists trusted internal invalidation and an untouched replacement family', async () => {

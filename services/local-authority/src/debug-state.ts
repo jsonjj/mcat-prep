@@ -180,6 +180,24 @@ export type DebugLessonView =
   | {
       readonly lessonId: string;
       readonly status: 'available';
+      /**
+       * `content_sha256` of the revision this learner was actually delivered —
+       * the attribution key for every piece of evidence the run produced. On
+       * BOTH arms because delivery is independent of whether the lesson rolls
+       * up: an unavailable lesson can still have been served an old revision.
+       * `null` means no run yet, kept distinct from "served a stale revision".
+       */
+      readonly deliveredContentSha256: string | null;
+      /** The catalog's CURRENT revision, or null when it could not be resolved. */
+      readonly currentContentSha256: string | null;
+      /**
+       * The delivered revision is no longer the catalog's current one. The run's
+       * evidence STILL COUNTS — that is exactly what `pL`/`members` below report,
+       * unchanged — this flag only records that the evidence was earned against
+       * superseded content, so a revision never silently reinterprets it. False
+       * when never delivered or when the current revision is unknown.
+       */
+      readonly revisionSuperseded: boolean;
       readonly pL: number;
       readonly mastered: boolean;
       readonly reviewDue: boolean;
@@ -191,6 +209,9 @@ export type DebugLessonView =
   | {
       readonly lessonId: string;
       readonly status: 'unavailable';
+      readonly deliveredContentSha256: string | null;
+      readonly currentContentSha256: string | null;
+      readonly revisionSuperseded: boolean;
       readonly rejectionCodes: readonly LessonRollupRejectionCode[];
       readonly missingKcIds: readonly string[];
     };
@@ -245,6 +266,21 @@ export interface DebugLessonInput {
    * reported as `LESSON_KC_MAP_MISSING` rather than hidden.
    */
   readonly requiredKcIds: readonly string[] | null;
+  /**
+   * The `content_sha256` of the revision this learner was actually delivered —
+   * the `definitionHash` the runtime pins onto the persisted run (`VectorLessonRun`
+   * for L1, `NormalizedLessonRun` for every normalized lesson). The caller reads
+   * it off the run; this projection only forwards it. `null` when there is no run
+   * yet, so "never started" never looks like "served revision 000…0".
+   */
+  readonly deliveredContentSha256: string | null;
+  /**
+   * The catalog's CURRENT `content_sha256` for this lesson, or `null` when the
+   * caller cannot resolve it. Compared against the delivered revision to set
+   * `revisionSuperseded`; a `null` here can never flag staleness (an unknown
+   * current revision is not a superseded one).
+   */
+  readonly currentContentSha256: string | null;
 }
 
 export interface DebugLearnerStateInput {
@@ -354,6 +390,14 @@ function lessonViews(
     if (seen.has(lesson.lessonId)) continue;
     seen.add(lesson.lessonId);
 
+    // Superseded iff a revision was delivered, the current one is known, and the
+    // two differ. Unknown-current or never-delivered can never be "stale": a
+    // missing fact is not a mismatch.
+    const revisionSuperseded =
+      lesson.deliveredContentSha256 !== null &&
+      lesson.currentContentSha256 !== null &&
+      lesson.deliveredContentSha256 !== lesson.currentContentSha256;
+
     const kcStates: Record<string, MemoryState> = {};
     for (const kcId of lesson.requiredKcIds ?? []) {
       kcStates[kcId] = kc[kcId] ?? initialMemoryState();
@@ -369,6 +413,9 @@ function lessonViews(
       views.push({
         lessonId: result.lessonId,
         status: 'unavailable',
+        deliveredContentSha256: lesson.deliveredContentSha256,
+        currentContentSha256: lesson.currentContentSha256,
+        revisionSuperseded,
         rejectionCodes: result.rejectionCodes,
         missingKcIds: result.missingKcIds,
       });
@@ -378,6 +425,9 @@ function lessonViews(
     views.push({
       lessonId: view.lessonId,
       status: 'available',
+      deliveredContentSha256: lesson.deliveredContentSha256,
+      currentContentSha256: lesson.currentContentSha256,
+      revisionSuperseded,
       pL: view.pL,
       mastered: view.mastered,
       reviewDue: view.reviewDue,

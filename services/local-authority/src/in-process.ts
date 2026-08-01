@@ -10,6 +10,7 @@ import {
   MasteryMapEntrySchema,
   MasterySeedSchema,
   MistakePatternViewSchema,
+  NormalizedLessonStatusViewSchema,
   PracticeAttemptResultSchema,
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
@@ -27,6 +28,7 @@ import {
   type BuildTodaysPathInput,
   type Clock,
   type MasterySeed,
+  type NormalizedLessonAction,
   type PracticeAttemptCommand,
   type VectorLessonAction,
 } from '@mcat/contracts';
@@ -329,6 +331,34 @@ export class InProcessAuthorityClient implements AuthorityPort {
     _action: VectorLessonAction,
   ): Promise<never> {
     throw new Error('The target lesson requires the persisted HTTP authority.');
+  }
+
+  // Normalized-engine catalog (L2/L3, …): the synthetic in-process authority does
+  // not persist lesson runs, so — exactly like L1 above — status reports UNAVAILABLE
+  // and the run/command paths defer to the persisted HTTP authority. The Curriculum
+  // reads only the status here, so each catalog lesson renders as present-but-not-yet
+  // -runnable in local dev rather than erroring on a missing route.
+  async getNormalizedLessonStatus(_slug: string) {
+    return NormalizedLessonStatusViewSchema.parse({
+      availability: 'UNAVAILABLE',
+      runState: 'NOT_STARTED',
+      actionLabel: null,
+    });
+  }
+
+  async startNormalizedLesson(_slug: string, _lessonId: string): Promise<never> {
+    throw new Error('This lesson requires the persisted HTTP authority.');
+  }
+
+  async getNormalizedLessonRun(_slug: string): Promise<never> {
+    throw new Error('This lesson requires the persisted HTTP authority.');
+  }
+
+  async submitNormalizedLessonAction(
+    _slug: string,
+    _action: NormalizedLessonAction,
+  ): Promise<never> {
+    throw new Error('This lesson requires the persisted HTTP authority.');
   }
 
   async getSkills() {

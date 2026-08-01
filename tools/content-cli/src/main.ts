@@ -1,5 +1,5 @@
-import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { basename, dirname, isAbsolute, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
@@ -20,10 +20,17 @@ import {
   type ValidationIssue,
 } from '@mcat/content';
 import {
-  buildVectorLessonArtifacts,
-  canonicalVectorLessonArtifactJson,
-  validateVectorLessonArtifacts,
-} from '@mcat/content/v3-vector-lesson';
+  buildResolvableIds,
+  computeQuality,
+  lessonOrderedKcIds,
+  planLessonRehash,
+  planProposedKcs,
+  validateCatalog,
+  type LessonKcRefs,
+  type LessonValidationInput,
+  type RehashFile,
+  type ResolvableIds,
+} from '@mcat/content/lesson-validator';
 
 /**
  * Default v7 corpus location. This lives in the LOCAL-ONLY archive OUTSIDE the
@@ -314,25 +321,250 @@ function cmdDbSeed(path: string): void {
   );
 }
 
-function cmdVectorLessonArtifacts(): void {
-  const artifacts = buildVectorLessonArtifacts();
-  const issues = validateVectorLessonArtifacts(artifacts);
-  if (issues.length > 0) {
-    for (const issue of issues) console.error(`FAIL ${issue}`);
+/**
+ * Recompute a lesson's content-hash chain after an authored edit (Real Lesson
+ * Catalog, Phase 3/4). Byte-faithful for the four primary artifacts (only hash
+ * substrings change; historical `lineage.*` hashes are preserved); refreshes the
+ * manifest + `file_sha256`. Reuses the validator's canonical primitives, then
+ * INDEPENDENTLY re-rehashes the written files to prove the chain is self-consistent.
+ */
+function cmdRehash(lessonDirArg: string | undefined): void {
+  if (!lessonDirArg) {
+    console.error('rehash: expected a lesson directory, e.g. content/lessons/v3-les-844372');
     process.exit(1);
+    return;
+  }
+  const dir = isAbsolute(lessonDirArg) ? lessonDirArg : join(REPO_ROOT, lessonDirArg);
+  const readFiles = (): RehashFile[] =>
+    readdirSync(dir)
+      .filter((f) => f.endsWith('.json') && f !== 'artifact-manifest.json')
+      .map((relPath) => ({ relPath, rawText: readFileSync(join(dir, relPath), 'utf8') }));
+  const manifestPath = join(dir, 'artifact-manifest.json');
+  const readManifest = (): string | null => (existsSync(manifestPath) ? readFileSync(manifestPath, 'utf8') : null);
+
+  const plan = planLessonRehash(readFiles(), readManifest());
+  console.log(`rehash: ${dir}`);
+  for (const c of plan.primaryContentSha) {
+    const arrow = c.oldContentSha256 === c.newContentSha256 ? '==' : '->';
+    console.log(`  ${c.relPath.padEnd(28)} ${String(c.oldContentSha256).slice(0, 12)} ${arrow} ${c.newContentSha256.slice(0, 12)}`);
+  }
+  if (!plan.changed) {
+    console.log('  already consistent — no files written.');
+    return;
+  }
+  for (const w of plan.writes) writeFileSync(join(dir, w.relPath), w.newText);
+  console.log(`  wrote ${plan.writes.length} file(s): ${plan.writes.map((w) => w.relPath).join(', ')}`);
+
+  // Independent verification: a fresh read + rehash of what we just wrote must be a no-op.
+  const verify = planLessonRehash(readFiles(), readManifest());
+  if (verify.changed) {
+    console.error(`  VERIFY FAILED: re-rehash still reports changes to ${verify.writes.map((w) => w.relPath).join(', ')}`);
+    process.exit(1);
+    return;
+  }
+  console.log('  verify: independent re-rehash is a no-op — hash chain self-consistent. OK');
+}
+
+/**
+ * Structural lesson-catalog merge gate (Real Lesson Catalog, Phase 3). Discovers
+ * every real lesson under content/lessons/ (a directory carrying lesson-script.json),
+ * builds the pure LessonValidationInput EXACTLY as the validator's own tests do —
+ * artifact files + artifact-manifest + the in-repo R14 curriculum catalog + L1
+ * browser evidence — runs the full R1–R15 rule set, prints a concise per-lesson
+ * report, and EXITS NON-ZERO on any failure so CI can block the merge. Pass a single
+ * lesson dir to scope it; pass `--json` for the machine-readable catalog report.
+ */
+function cmdLessonValidate(): void {
+  const lessonsRoot = join(REPO_ROOT, 'content', 'lessons');
+  const positional = args.slice(1).find((a) => !a.startsWith('--'));
+  const jsonOut = args.includes('--json');
+
+  let lessonDirs: string[];
+  if (positional !== undefined) {
+    lessonDirs = [isAbsolute(positional) ? positional : join(REPO_ROOT, positional)];
+  } else {
+    let entries: string[] = [];
+    try {
+      entries = readdirSync(lessonsRoot);
+    } catch {
+      console.error(`lesson-validate: cannot read ${lessonsRoot}`);
+      process.exit(1);
+      return;
+    }
+    lessonDirs = entries
+      .map((name) => join(lessonsRoot, name))
+      .filter((d) => {
+        try {
+          return statSync(d).isDirectory() && existsSync(join(d, 'lesson-script.json'));
+        } catch {
+          return false;
+        }
+      })
+      .sort();
+  }
+  if (lessonDirs.length === 0) {
+    console.error(
+      `lesson-validate: no lessons (directories with lesson-script.json) found under ${lessonsRoot}`,
+    );
+    process.exit(1);
+    return;
   }
 
-  const outDir = join(REPO_ROOT, 'content', 'lessons', 'v3-les-130923');
-  mkdirSync(outDir, { recursive: true });
-  for (const [filename, artifact] of [
-    ['lesson-script.json', artifacts.script],
-    ['kc-coverage-matrix.json', artifacts.coverage],
-    ['lesson-presentation-plan.json', artifacts.presentation],
-    ['lesson-quality-report.json', artifacts.quality],
-  ] as const) {
-    writeFileSync(join(outDir, filename), canonicalVectorLessonArtifactJson(artifact));
+  // Frozen in-repo id catalog R14 resolves against; null ⇒ R14 reports N/A (never a silent pass).
+  const curriculumPath = join(REPO_ROOT, 'curriculum', 'v3', 'v3-lesson-authoring-manifest.json');
+  const resolvableIds: ResolvableIds | null = existsSync(curriculumPath)
+    ? buildResolvableIds(JSON.parse(readFileSync(curriculumPath, 'utf8')) as unknown)
+    : null;
+  if (resolvableIds === null) {
+    console.error(
+      `lesson-validate: WARNING — curriculum catalog missing at ${curriculumPath}; R14 will be N/A`,
+    );
   }
-  console.log(`Wrote four validated V3-LES-130923 internal-draft artifacts to ${outDir}`);
+
+  const inputs: LessonValidationInput[] = lessonDirs.map((dir) => {
+    const dirName = basename(dir);
+    const files = readdirSync(dir)
+      .filter((f) => f.endsWith('.json') && f !== 'artifact-manifest.json')
+      .sort()
+      .map((relPath) => {
+        const rawBytes = readFileSync(join(dir, relPath), 'utf8');
+        return { relPath, rawBytes, json: JSON.parse(rawBytes) as unknown };
+      });
+    const manifestPath = join(dir, 'artifact-manifest.json');
+    const manifest = existsSync(manifestPath)
+      ? (JSON.parse(readFileSync(manifestPath, 'utf8')) as unknown)
+      : null;
+    // Browser evidence lives outside the lesson dir (L1 only today); supply it for R7 when present.
+    const reportPath = join(REPO_ROOT, 'tests', 'browser', 'evidence', dirName, 'browser-report.json');
+    const browserEvidence = existsSync(reportPath)
+      ? {
+          reportRawText: readFileSync(reportPath, 'utf8'),
+          reportJson: JSON.parse(readFileSync(reportPath, 'utf8')) as unknown,
+        }
+      : null;
+    return { lessonId: dirName.toUpperCase(), files, manifest, resolvableIds, browserEvidence };
+  });
+
+  const report = validateCatalog(inputs);
+
+  if (jsonOut) {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    console.log(
+      `lesson-validate: ${inputs.length} lesson(s) under content/lessons/  (R14 catalog: ${resolvableIds ? 'loaded' : 'N/A'})`,
+    );
+    for (const lesson of report.lessons) {
+      const failing = lesson.results.filter((r) => !r.ok);
+      console.log(
+        `\n  ${lesson.ok ? 'PASS' : 'FAIL'}  ${lesson.lessonId}  —  ${lesson.results.length} rules, ${failing.length} failing`,
+      );
+      for (const r of failing) console.error(`      x ${r.rule} [${lesson.lessonId}]: ${r.detail}`);
+    }
+    console.log(
+      report.ok
+        ? `\nCATALOG OK — all ${report.lessons.length} lessons pass R1–R15.`
+        : `\nCATALOG FAILED — ${report.failures.length} failing rule(s) across ${report.lessons.filter((l) => !l.ok).length} lesson(s).`,
+    );
+  }
+
+  if (!report.ok) process.exit(1);
+}
+
+/**
+ * Proposed-KCs queue (Real Lesson Catalog, Phase 3). ADVISORY mirror of R14: surfaces every
+ * KC a lesson declares (payload.ordered_kc_ids) that is absent from the curriculum catalog, so
+ * an author of a genuinely-new lesson can propose the KCs it needs instead of being silently
+ * blocked. NEVER a gate — always exits 0. Default is a dry-run report; `--write` reconciles an
+ * idempotent managed block in key-docs/roadmap-todo.md. For today's three lessons the set is
+ * empty (every KC resolves — R14 is green), so this reports zero and writes nothing by default.
+ */
+function cmdProposedKcs(): void {
+  const write = args.includes('--write');
+  const lessonsRoot = join(REPO_ROOT, 'content', 'lessons');
+  const lessonDirs = readdirSync(lessonsRoot)
+    .map((name) => join(lessonsRoot, name))
+    .filter((d) => {
+      try {
+        return statSync(d).isDirectory() && existsSync(join(d, 'lesson-script.json'));
+      } catch {
+        return false;
+      }
+    })
+    .sort();
+  const lessons: LessonKcRefs[] = lessonDirs.map((dir) => ({
+    lessonId: basename(dir).toUpperCase(),
+    orderedKcIds: lessonOrderedKcIds(JSON.parse(readFileSync(join(dir, 'lesson-script.json'), 'utf8')) as unknown),
+  }));
+
+  const curriculumPath = join(REPO_ROOT, 'curriculum', 'v3', 'v3-lesson-authoring-manifest.json');
+  if (!existsSync(curriculumPath)) {
+    console.error(`proposed-kcs: curriculum catalog missing at ${curriculumPath} (cannot decide what is unknown)`);
+    process.exit(1);
+    return;
+  }
+  const catalogKcIds = buildResolvableIds(JSON.parse(readFileSync(curriculumPath, 'utf8')) as unknown).kcIds;
+  const roadmapPath = join(REPO_ROOT, 'key-docs', 'roadmap-todo.md');
+  const existing = existsSync(roadmapPath) ? readFileSync(roadmapPath, 'utf8') : '';
+  const plan = planProposedKcs(lessons, catalogKcIds, existing);
+
+  console.log(
+    `proposed-kcs: ${lessons.length} lesson(s), ${catalogKcIds.size} catalog KCs → ${plan.proposed.length} proposed (advisory; not a gate)`,
+  );
+  for (const p of plan.proposed) console.log(`  ${p.kcId}  (referenced by ${p.lessons.join(', ')})`);
+  if (plan.proposed.length === 0) {
+    console.log('  none — every declared KC resolves against the curriculum catalog.');
+  }
+
+  if (write) {
+    if (plan.changed) {
+      writeFileSync(roadmapPath, plan.newRoadmapText);
+      console.log(`  wrote managed block to ${roadmapPath}`);
+    } else {
+      console.log(`  ${roadmapPath} already current — no write.`);
+    }
+  } else if (plan.changed) {
+    console.log('  (dry-run) re-run with --write to reconcile key-docs/roadmap-todo.md');
+  }
+}
+
+/**
+ * Computed-quality checks (Real Lesson Catalog, Phase 3): estimatedMinutes plausibility and
+ * difficulty-label distribution — the two computed rubric dimensions not already in the gate
+ * (R11 = evidence independence, R14 = declared-vs-actual coverage). Detect-then-assert: N/A
+ * when a lesson carries no calibrated timing / no difficulty labels (today's catalog), FAIL
+ * (non-zero exit) only when a lesson populates them implausibly. `--json` for machine output.
+ */
+function cmdComputedQuality(): void {
+  const jsonOut = args.includes('--json');
+  const lessonsRoot = join(REPO_ROOT, 'content', 'lessons');
+  const reports = readdirSync(lessonsRoot)
+    .map((name) => join(lessonsRoot, name))
+    .filter((d) => {
+      try {
+        return statSync(d).isDirectory() && existsSync(join(d, 'lesson-script.json'));
+      } catch {
+        return false;
+      }
+    })
+    .sort()
+    .map((dir) =>
+      computeQuality(
+        basename(dir).toUpperCase(),
+        JSON.parse(readFileSync(join(dir, 'lesson-script.json'), 'utf8')) as unknown,
+      ),
+    );
+
+  if (jsonOut) {
+    console.log(JSON.stringify(reports, null, 2));
+  } else {
+    for (const r of reports) {
+      console.log(`\n  ${r.ok ? 'OK  ' : 'FAIL'} ${r.lessonId}`);
+      for (const c of r.checks) console.log(`     ${c.status.toUpperCase().padEnd(4)} ${c.check}: ${c.detail}`);
+    }
+    const failed = reports.filter((r) => !r.ok).length;
+    console.log(`\ncomputed-quality: ${reports.length} lesson(s), ${failed} with FAIL(s) (N/A never blocks).`);
+  }
+  if (reports.some((r) => !r.ok)) process.exit(1);
 }
 
 switch (command) {
@@ -354,8 +586,17 @@ switch (command) {
   case 'db-seed':
     cmdDbSeed(arg ?? DEFAULT_V7_PATH);
     break;
-  case 'vector-lesson-artifacts':
-    cmdVectorLessonArtifacts();
+  case 'rehash':
+    cmdRehash(arg);
+    break;
+  case 'lesson-validate':
+    cmdLessonValidate();
+    break;
+  case 'proposed-kcs':
+    cmdProposedKcs();
+    break;
+  case 'computed-quality':
+    cmdComputedQuality();
     break;
   default:
     console.log(
@@ -366,6 +607,9 @@ switch (command) {
         '  schemas             Generate JSON Schemas into content/question-bank/schema/\n' +
         '  load-v7 [path]      Validate + compile the v7 JSONL corpus (read-only) into a local bundle\n' +
         '  db-seed [path]      Emit a gitignored seed.sql (questions + protected answers) with derived cluster/section\n' +
-        '  vector-lesson-artifacts  Generate exactly four V3-LES-130923 internal-draft artifacts\n',
+        '  rehash <lessonDir>  Recompute a lesson content-hash chain (content_sha256 + file_sha256) after an authored edit\n' +
+        '  lesson-validate [dir] [--json]  Structural R1–R15 gate over content/lessons/ (non-zero exit on failure; CI merge gate)\n' +
+        '  proposed-kcs [--write]  Advisory queue of lesson KCs absent from the curriculum catalog (mirrors R14; never gates)\n' +
+        '  computed-quality [--json]  estimatedMinutes plausibility + difficulty distribution (N/A when uncalibrated; FAIL gates)\n',
     );
 }

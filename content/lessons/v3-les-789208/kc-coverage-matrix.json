@@ -1,0 +1,968 @@
+{
+  "artifact_type": "KC_COVERAGE_MATRIX",
+  "artifact_id": "V3-KCOV-789208",
+  "artifact_version": "0.1.1-internal-draft",
+  "artifact_status": "DRAFT",
+  "schema_binding": {
+    "schema_id": "mcat-spec04-kc-coverage-internal-draft",
+    "schema_version": "0.1-candidate-local-1",
+    "schema_sha256": "fe27d9b76c670d069a600f9ac5f50dc3272b69eb55acfe641b0e6b9d6d25c895",
+    "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
+  },
+  "content_sha256": "dedaaed3d4cb328f423bece53c39470e243ce76280f664e872e0aaf98f83297d",
+  "registry_binding": {
+    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+    "phase_0_freeze_id": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
+    "canonical_freeze_id": "MCAT-V3-CANONICAL-FRZ-2026-07-22-01",
+    "graph_freeze_id": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
+    "sequence_freeze_id": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01",
+    "manifest_schema_id": "mcat-v3-lessons-public",
+    "manifest_schema_version": "1",
+    "manifest_sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+    "lesson_id": "V3-LES-789208",
+    "grouping_id": "V3-CL-789208",
+    "ordered_kc_ids": [
+      "V3-KC-399019",
+      "V3-KC-799492",
+      "V3-KC-919842",
+      "V3-KC-981438"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-399019",
+      "V3-KC-799492",
+      "V3-KC-919842",
+      "V3-KC-981438"
+    ]
+  },
+  "authors": [
+    {
+      "identity": "gpt-5.6-terra",
+      "role": "PRIMARY_CONTENT_AUTHOR",
+      "run_id": "V3-LES-789208-CONTENT-DRAFT-2026-07-23",
+      "contribution": "Original target-lesson content, source trace, protected item material, and content-only validation."
+    }
+  ],
+  "reviewers": [],
+  "input_bindings": [
+    {
+      "input_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "version": "mcat-v3-authoritative-registry-1",
+      "sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+      "kind": "CURRICULUM_REGISTRY",
+      "use": "Canonical identity, scope, order, source lineage, attachments, holds, and placement."
+    },
+    {
+      "input_id": "MCAT-V3-LEARNER-FACING-LESSONS",
+      "version": "mcat-v3-lessons-public-1",
+      "sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+      "kind": "GENERATED_MANIFEST",
+      "use": "Learner title and catalog cross-check only; teaching order comes from the sequence artifact."
+    },
+    {
+      "input_id": "MCAT-V3-CANONICAL-KCS",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "31d304a7f6ea51ac4847ede01824bb14cd8b98ed7a6bc61bb05617d53f9860fd",
+      "kind": "CANONICAL_KC_LEDGER",
+      "use": "Competency statements, scope bounds, representations, and source anchors."
+    },
+    {
+      "input_id": "MCAT-V3-TEACHING-SEQUENCES",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "b2bbd9f8a14cbff1250013e8d717eb1c8195ccbf6335e605c64f1469a94246aa",
+      "kind": "CANONICAL_SEQUENCE",
+      "use": "First-delivery position, ordered KC relation, revisit, and no-bypass context."
+    },
+    {
+      "input_id": "MCAT-V3-PREREQUISITE-GRAPH",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "fe0fffdd16bd10d3f7c046951cbe642add8ef2639f5b3f68a3224d9648f59e10",
+      "kind": "CANONICAL_GRAPH",
+      "use": "Hard/helpful prerequisite state and successor context."
+    },
+    {
+      "input_id": "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "23bbea9e358c4aa0ff255964d203c0081b4ff3ba28e4e123eed0cfc0b7a54831",
+      "kind": "ATTACHMENT_LEDGER",
+      "use": "Bounded conditional entry support only."
+    },
+    {
+      "input_id": "MCAT-V3-SOURCE-CROSSWALK",
+      "version": "mcat-v3-source-crosswalk-1",
+      "sha256": "a87fd1634a5a9e9dd522293ef98db10b783971f02e0bdfbf558b276cc0b9cea3",
+      "kind": "SOURCE_LEDGER",
+      "use": "Direct-scope and source-anchor trace; no expressive source prose is copied."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-03",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "d3d3cfb3cc0e2314dc7f01bc9d1cc9c68049527f317e2ad2cb270a7b43fff598",
+      "kind": "INSTRUCTIONAL_RUNTIME_SPECIFICATION",
+      "use": "Microcycle, freshness, assistance, repair, and route constraints; implementation remains blocked."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-04",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "4fc88c3001bae4d8d1c843020106b6ba30059b243ea0d993a6d87ff009099761",
+      "kind": "AUTHORING_SPECIFICATION",
+      "use": "Artifact structure, coverage, learner/reviewer separation, and accessibility requirements."
+    },
+    {
+      "input_id": "AAMC-2020-SUPPLIED-CEILING",
+      "version": "2020-supplied",
+      "sha256": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
+      "kind": "SOURCE_CEILING",
+      "use": "Scope ceiling only; no expressive source wording or source questions are reused."
+    }
+  ],
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-789208",
+    "lesson_script_sha256": "bce8010490b939c606ef8057a8b1dcca40bdc00ed18288751d3cc51c301fb754"
+  },
+  "lineage": {
+    "supersedes": {
+      "artifact_id": "V3-KCOV-789208",
+      "content_sha256": "1ac356e01aa22757b515a1d0044a46ba85378da7ee51e08d78889607a83d219b"
+    },
+    "change_reason": "Refresh exact LessonScript dependency after source and no-bypass metadata reconciliation.",
+    "authoring_run_id": "V3-LES-789208-CONTENT-DRAFT-2026-07-23",
+    "derived_input_ids": [
+      "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "MCAT-V3-LEARNER-FACING-LESSONS",
+      "MCAT-V3-CANONICAL-KCS",
+      "MCAT-V3-TEACHING-SEQUENCES",
+      "MCAT-V3-PREREQUISITE-GRAPH",
+      "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "MCAT-V3-SOURCE-CROSSWALK",
+      "MCAT-V3-SPEC-03",
+      "MCAT-V3-SPEC-04",
+      "AAMC-2020-SUPPLIED-CEILING"
+    ]
+  },
+  "payload": {
+    "lesson_id": "V3-LES-789208",
+    "ordered_required_kc_ids": [
+      "V3-KC-399019",
+      "V3-KC-799492",
+      "V3-KC-919842",
+      "V3-KC-981438"
+    ],
+    "lesson_script_id": "V3-LSCR-789208",
+    "lesson_script_sha256": "bce8010490b939c606ef8057a8b1dcca40bdc00ed18288751d3cc51c301fb754",
+    "rows": [
+      {
+        "kc_id": "V3-KC-399019",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-399019",
+        "scope_in_refs": [
+          "scope-in:V3-KC-399019:1",
+          "scope-in:V3-KC-399019:2"
+        ],
+        "scope_out_refs": [
+          "scope-out:V3-KC-399019:1",
+          "scope-out:V3-KC-399019:2"
+        ],
+        "source_claim_refs": [
+          "BB-SA-0008",
+          "CP-SA-008",
+          "V3-SA-AAMC-MATH-P077"
+        ],
+        "prerequisite_point_refs": [
+          "nonblocking-entry-support:V3-SUP-900001:quantitative-point-of-use"
+        ],
+        "explanation_node_ids": [
+          "qms-units-node-explanation"
+        ],
+        "mental_model_node_ids": [
+          "qms-units-node-mental-model"
+        ],
+        "worked_example_node_ids": [
+          "qms-units-node-worked-example"
+        ],
+        "guided_activity_ids": [
+          "qms-units-activity-guided_practice-initial"
+        ],
+        "light_support_activity_ids": [
+          "qms-units-activity-light_support_practice-initial"
+        ],
+        "solo_activity_ids": [
+          "qms-units-activity-solo_practice-initial"
+        ],
+        "near_exit_item_ids": [
+          "prompt-qms-units-near",
+          "prompt-qms-units-reentryNear"
+        ],
+        "near_exit_family_ids": [
+          "fam-qms-units-near_exit-initial",
+          "fam-qms-units-near_exit-near_use"
+        ],
+        "changed_exit_item_ids": [
+          "prompt-qms-units-changed",
+          "prompt-qms-units-reentryChanged"
+        ],
+        "changed_exit_family_ids": [
+          "fam-qms-units-changed_exit-initial",
+          "fam-qms-units-changed_exit-changed_task"
+        ],
+        "misconception_feature_ids": [
+          "feature-qms-units-factor-orientation",
+          "feature-qms-units-cancellation-check"
+        ],
+        "repair_node_ids": [
+          "qms-units-node-repair-near",
+          "qms-units-node-repair-changed"
+        ],
+        "repair_family_ids": [
+          "fam-qms-units-repair_confirmation-near_use",
+          "fam-qms-units-repair_confirmation-changed_task"
+        ],
+        "exact_reentry_refs": [
+          "reentry:V3-KC-399019:NEAR_USE:qms-units-node-reentry-near",
+          "reentry:V3-KC-399019:CHANGED_TASK:qms-units-node-reentry-changed"
+        ],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "accessibility_equivalent_ids": [
+          "a11y-rep-qms-units-cancellation-ledger"
+        ],
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "qms-units-node-orientation",
+              "qms-units-node-explanation",
+              "qms-units-node-think-aloud",
+              "qms-units-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-units-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-units-activity-guided_practice-initial",
+              "qms-units-activity-light_support_practice-initial",
+              "qms-units-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-units-node-near-exit",
+              "qms-units-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-units-node-repair-near",
+              "qms-units-node-repair-changed",
+              "qms-units-node-reentry-near",
+              "qms-units-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-units-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "standard": {
+            "teaching_ids": [
+              "qms-units-node-orientation",
+              "qms-units-node-explanation",
+              "qms-units-node-think-aloud",
+              "qms-units-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-units-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-units-activity-guided_practice-initial",
+              "qms-units-activity-light_support_practice-initial",
+              "qms-units-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-units-node-near-exit",
+              "qms-units-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-units-node-repair-near",
+              "qms-units-node-repair-changed",
+              "qms-units-node-reentry-near",
+              "qms-units-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-units-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "qms-units-node-orientation",
+              "qms-units-node-explanation",
+              "qms-units-node-think-aloud",
+              "qms-units-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-units-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-units-activity-guided_practice-initial",
+              "qms-units-activity-light_support_practice-initial",
+              "qms-units-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-units-node-near-exit",
+              "qms-units-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-units-node-repair-near",
+              "qms-units-node-repair-changed",
+              "qms-units-node-reentry-near",
+              "qms-units-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-units-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "prerequisite_support": {
+            "teaching_ids": [
+              "qms-units-node-orientation",
+              "qms-units-node-explanation",
+              "qms-units-node-think-aloud",
+              "qms-units-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-units-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-units-activity-guided_practice-initial",
+              "qms-units-activity-light_support_practice-initial",
+              "qms-units-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-units-node-near-exit",
+              "qms-units-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-units-node-repair-near",
+              "qms-units-node-repair-changed",
+              "qms-units-node-reentry-near",
+              "qms-units-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-units-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          }
+        },
+        "compiled_node_evidence": "validate.mjs resolves all referenced target-lesson nodes and activities.",
+        "row_status": "CONTENT_AUTHORED"
+      },
+      {
+        "kc_id": "V3-KC-799492",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-799492",
+        "scope_in_refs": [
+          "scope-in:V3-KC-799492:1",
+          "scope-in:V3-KC-799492:2"
+        ],
+        "scope_out_refs": [
+          "scope-out:V3-KC-799492:1"
+        ],
+        "source_claim_refs": [
+          "BB-SA-0008",
+          "CP-SA-008",
+          "V3-SA-AAMC-MATH-P077"
+        ],
+        "prerequisite_point_refs": [
+          "nonblocking-entry-support:V3-SUP-900001:quantitative-point-of-use"
+        ],
+        "explanation_node_ids": [
+          "qms-precision-node-explanation"
+        ],
+        "mental_model_node_ids": [
+          "qms-precision-node-mental-model"
+        ],
+        "worked_example_node_ids": [
+          "qms-precision-node-worked-example"
+        ],
+        "guided_activity_ids": [
+          "qms-precision-activity-guided_practice-initial"
+        ],
+        "light_support_activity_ids": [
+          "qms-precision-activity-light_support_practice-initial"
+        ],
+        "solo_activity_ids": [
+          "qms-precision-activity-solo_practice-initial"
+        ],
+        "near_exit_item_ids": [
+          "prompt-qms-precision-near",
+          "prompt-qms-precision-reentryNear"
+        ],
+        "near_exit_family_ids": [
+          "fam-qms-precision-near_exit-initial",
+          "fam-qms-precision-near_exit-near_use"
+        ],
+        "changed_exit_item_ids": [
+          "prompt-qms-precision-changed",
+          "prompt-qms-precision-reentryChanged"
+        ],
+        "changed_exit_family_ids": [
+          "fam-qms-precision-changed_exit-initial",
+          "fam-qms-precision-changed_exit-changed_task"
+        ],
+        "misconception_feature_ids": [
+          "feature-qms-precision-round-final-result",
+          "feature-qms-precision-scale-check"
+        ],
+        "repair_node_ids": [
+          "qms-precision-node-repair-near",
+          "qms-precision-node-repair-changed"
+        ],
+        "repair_family_ids": [
+          "fam-qms-precision-repair_confirmation-near_use",
+          "fam-qms-precision-repair_confirmation-changed_task"
+        ],
+        "exact_reentry_refs": [
+          "reentry:V3-KC-799492:NEAR_USE:qms-precision-node-reentry-near",
+          "reentry:V3-KC-799492:CHANGED_TASK:qms-precision-node-reentry-changed"
+        ],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "accessibility_equivalent_ids": [
+          "a11y-rep-qms-precision-scale-and-digits"
+        ],
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "qms-precision-node-orientation",
+              "qms-precision-node-explanation",
+              "qms-precision-node-think-aloud",
+              "qms-precision-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-precision-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-precision-activity-guided_practice-initial",
+              "qms-precision-activity-light_support_practice-initial",
+              "qms-precision-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-precision-node-near-exit",
+              "qms-precision-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-precision-node-repair-near",
+              "qms-precision-node-repair-changed",
+              "qms-precision-node-reentry-near",
+              "qms-precision-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-precision-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "standard": {
+            "teaching_ids": [
+              "qms-precision-node-orientation",
+              "qms-precision-node-explanation",
+              "qms-precision-node-think-aloud",
+              "qms-precision-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-precision-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-precision-activity-guided_practice-initial",
+              "qms-precision-activity-light_support_practice-initial",
+              "qms-precision-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-precision-node-near-exit",
+              "qms-precision-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-precision-node-repair-near",
+              "qms-precision-node-repair-changed",
+              "qms-precision-node-reentry-near",
+              "qms-precision-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-precision-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "qms-precision-node-orientation",
+              "qms-precision-node-explanation",
+              "qms-precision-node-think-aloud",
+              "qms-precision-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-precision-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-precision-activity-guided_practice-initial",
+              "qms-precision-activity-light_support_practice-initial",
+              "qms-precision-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-precision-node-near-exit",
+              "qms-precision-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-precision-node-repair-near",
+              "qms-precision-node-repair-changed",
+              "qms-precision-node-reentry-near",
+              "qms-precision-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-precision-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "prerequisite_support": {
+            "teaching_ids": [
+              "qms-precision-node-orientation",
+              "qms-precision-node-explanation",
+              "qms-precision-node-think-aloud",
+              "qms-precision-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-precision-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-precision-activity-guided_practice-initial",
+              "qms-precision-activity-light_support_practice-initial",
+              "qms-precision-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-precision-node-near-exit",
+              "qms-precision-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-precision-node-repair-near",
+              "qms-precision-node-repair-changed",
+              "qms-precision-node-reentry-near",
+              "qms-precision-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-precision-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          }
+        },
+        "compiled_node_evidence": "validate.mjs resolves all referenced target-lesson nodes and activities.",
+        "row_status": "CONTENT_AUTHORED"
+      },
+      {
+        "kc_id": "V3-KC-919842",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-919842",
+        "scope_in_refs": [
+          "scope-in:V3-KC-919842:1",
+          "scope-in:V3-KC-919842:2",
+          "scope-in:V3-KC-919842:3",
+          "scope-in:V3-KC-919842:4",
+          "scope-in:V3-KC-919842:5"
+        ],
+        "scope_out_refs": [
+          "scope-out:V3-KC-919842:1",
+          "scope-out:V3-KC-919842:2"
+        ],
+        "source_claim_refs": [
+          "BB-SA-0008",
+          "CP-SA-008",
+          "V3-SA-AAMC-MATH-P077"
+        ],
+        "prerequisite_point_refs": [
+          "nonblocking-entry-support:V3-SUP-900001:quantitative-point-of-use"
+        ],
+        "explanation_node_ids": [
+          "qms-ratios-node-explanation"
+        ],
+        "mental_model_node_ids": [
+          "qms-ratios-node-mental-model"
+        ],
+        "worked_example_node_ids": [
+          "qms-ratios-node-worked-example"
+        ],
+        "guided_activity_ids": [
+          "qms-ratios-activity-guided_practice-initial"
+        ],
+        "light_support_activity_ids": [
+          "qms-ratios-activity-light_support_practice-initial"
+        ],
+        "solo_activity_ids": [
+          "qms-ratios-activity-solo_practice-initial"
+        ],
+        "near_exit_item_ids": [
+          "prompt-qms-ratios-near",
+          "prompt-qms-ratios-reentryNear"
+        ],
+        "near_exit_family_ids": [
+          "fam-qms-ratios-near_exit-initial",
+          "fam-qms-ratios-near_exit-near_use"
+        ],
+        "changed_exit_item_ids": [
+          "prompt-qms-ratios-changed",
+          "prompt-qms-ratios-reentryChanged"
+        ],
+        "changed_exit_family_ids": [
+          "fam-qms-ratios-changed_exit-initial",
+          "fam-qms-ratios-changed_exit-changed_task"
+        ],
+        "misconception_feature_ids": [
+          "feature-qms-ratios-denominator-selection",
+          "feature-qms-ratios-probability-to-expected-count"
+        ],
+        "repair_node_ids": [
+          "qms-ratios-node-repair-near",
+          "qms-ratios-node-repair-changed"
+        ],
+        "repair_family_ids": [
+          "fam-qms-ratios-repair_confirmation-near_use",
+          "fam-qms-ratios-repair_confirmation-changed_task"
+        ],
+        "exact_reentry_refs": [
+          "reentry:V3-KC-919842:NEAR_USE:qms-ratios-node-reentry-near",
+          "reentry:V3-KC-919842:CHANGED_TASK:qms-ratios-node-reentry-changed"
+        ],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "accessibility_equivalent_ids": [
+          "a11y-rep-qms-ratios-relationship-table"
+        ],
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "qms-ratios-node-orientation",
+              "qms-ratios-node-explanation",
+              "qms-ratios-node-think-aloud",
+              "qms-ratios-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-ratios-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-ratios-activity-guided_practice-initial",
+              "qms-ratios-activity-light_support_practice-initial",
+              "qms-ratios-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-ratios-node-near-exit",
+              "qms-ratios-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-ratios-node-repair-near",
+              "qms-ratios-node-repair-changed",
+              "qms-ratios-node-reentry-near",
+              "qms-ratios-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-ratios-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "standard": {
+            "teaching_ids": [
+              "qms-ratios-node-orientation",
+              "qms-ratios-node-explanation",
+              "qms-ratios-node-think-aloud",
+              "qms-ratios-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-ratios-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-ratios-activity-guided_practice-initial",
+              "qms-ratios-activity-light_support_practice-initial",
+              "qms-ratios-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-ratios-node-near-exit",
+              "qms-ratios-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-ratios-node-repair-near",
+              "qms-ratios-node-repair-changed",
+              "qms-ratios-node-reentry-near",
+              "qms-ratios-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-ratios-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "qms-ratios-node-orientation",
+              "qms-ratios-node-explanation",
+              "qms-ratios-node-think-aloud",
+              "qms-ratios-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-ratios-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-ratios-activity-guided_practice-initial",
+              "qms-ratios-activity-light_support_practice-initial",
+              "qms-ratios-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-ratios-node-near-exit",
+              "qms-ratios-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-ratios-node-repair-near",
+              "qms-ratios-node-repair-changed",
+              "qms-ratios-node-reentry-near",
+              "qms-ratios-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-ratios-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "prerequisite_support": {
+            "teaching_ids": [
+              "qms-ratios-node-orientation",
+              "qms-ratios-node-explanation",
+              "qms-ratios-node-think-aloud",
+              "qms-ratios-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-ratios-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-ratios-activity-guided_practice-initial",
+              "qms-ratios-activity-light_support_practice-initial",
+              "qms-ratios-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-ratios-node-near-exit",
+              "qms-ratios-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-ratios-node-repair-near",
+              "qms-ratios-node-repair-changed",
+              "qms-ratios-node-reentry-near",
+              "qms-ratios-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-ratios-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          }
+        },
+        "compiled_node_evidence": "validate.mjs resolves all referenced target-lesson nodes and activities.",
+        "row_status": "CONTENT_AUTHORED"
+      },
+      {
+        "kc_id": "V3-KC-981438",
+        "canonical_ordinal": 4,
+        "objective_ref": "objective:V3-KC-981438",
+        "scope_in_refs": [
+          "scope-in:V3-KC-981438:1",
+          "scope-in:V3-KC-981438:2"
+        ],
+        "scope_out_refs": [
+          "scope-out:V3-KC-981438:1"
+        ],
+        "source_claim_refs": [
+          "BB-SA-0008",
+          "CP-SA-008",
+          "V3-SA-AAMC-MATH-P077"
+        ],
+        "prerequisite_point_refs": [
+          "nonblocking-entry-support:V3-SUP-900001:quantitative-point-of-use"
+        ],
+        "explanation_node_ids": [
+          "qms-notation-node-explanation"
+        ],
+        "mental_model_node_ids": [
+          "qms-notation-node-mental-model"
+        ],
+        "worked_example_node_ids": [
+          "qms-notation-node-worked-example"
+        ],
+        "guided_activity_ids": [
+          "qms-notation-activity-guided_practice-initial"
+        ],
+        "light_support_activity_ids": [
+          "qms-notation-activity-light_support_practice-initial"
+        ],
+        "solo_activity_ids": [
+          "qms-notation-activity-solo_practice-initial"
+        ],
+        "near_exit_item_ids": [
+          "prompt-qms-notation-near",
+          "prompt-qms-notation-reentryNear"
+        ],
+        "near_exit_family_ids": [
+          "fam-qms-notation-near_exit-initial",
+          "fam-qms-notation-near_exit-near_use"
+        ],
+        "changed_exit_item_ids": [
+          "prompt-qms-notation-changed",
+          "prompt-qms-notation-reentryChanged"
+        ],
+        "changed_exit_family_ids": [
+          "fam-qms-notation-changed_exit-initial",
+          "fam-qms-notation-changed_exit-changed_task"
+        ],
+        "misconception_feature_ids": [
+          "feature-qms-notation-exponent-operation",
+          "feature-qms-notation-normalization-direction"
+        ],
+        "repair_node_ids": [
+          "qms-notation-node-repair-near",
+          "qms-notation-node-repair-changed"
+        ],
+        "repair_family_ids": [
+          "fam-qms-notation-repair_confirmation-near_use",
+          "fam-qms-notation-repair_confirmation-changed_task"
+        ],
+        "exact_reentry_refs": [
+          "reentry:V3-KC-981438:NEAR_USE:qms-notation-node-reentry-near",
+          "reentry:V3-KC-981438:CHANGED_TASK:qms-notation-node-reentry-changed"
+        ],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "accessibility_equivalent_ids": [
+          "a11y-rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "qms-notation-node-orientation",
+              "qms-notation-node-explanation",
+              "qms-notation-node-think-aloud",
+              "qms-notation-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-notation-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-notation-activity-guided_practice-initial",
+              "qms-notation-activity-light_support_practice-initial",
+              "qms-notation-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-notation-node-near-exit",
+              "qms-notation-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-notation-node-repair-near",
+              "qms-notation-node-repair-changed",
+              "qms-notation-node-reentry-near",
+              "qms-notation-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-notation-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "standard": {
+            "teaching_ids": [
+              "qms-notation-node-orientation",
+              "qms-notation-node-explanation",
+              "qms-notation-node-think-aloud",
+              "qms-notation-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-notation-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-notation-activity-guided_practice-initial",
+              "qms-notation-activity-light_support_practice-initial",
+              "qms-notation-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-notation-node-near-exit",
+              "qms-notation-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-notation-node-repair-near",
+              "qms-notation-node-repair-changed",
+              "qms-notation-node-reentry-near",
+              "qms-notation-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-notation-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "qms-notation-node-orientation",
+              "qms-notation-node-explanation",
+              "qms-notation-node-think-aloud",
+              "qms-notation-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-notation-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-notation-activity-guided_practice-initial",
+              "qms-notation-activity-light_support_practice-initial",
+              "qms-notation-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-notation-node-near-exit",
+              "qms-notation-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-notation-node-repair-near",
+              "qms-notation-node-repair-changed",
+              "qms-notation-node-reentry-near",
+              "qms-notation-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-notation-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "prerequisite_support": {
+            "teaching_ids": [
+              "qms-notation-node-orientation",
+              "qms-notation-node-explanation",
+              "qms-notation-node-think-aloud",
+              "qms-notation-node-worked-example"
+            ],
+            "model_ids": [
+              "qms-notation-node-mental-model"
+            ],
+            "practice_ids": [
+              "qms-notation-activity-guided_practice-initial",
+              "qms-notation-activity-light_support_practice-initial",
+              "qms-notation-activity-solo_practice-initial"
+            ],
+            "exit_ids": [
+              "qms-notation-node-near-exit",
+              "qms-notation-node-changed-exit"
+            ],
+            "repair_ids": [
+              "qms-notation-node-repair-near",
+              "qms-notation-node-repair-changed",
+              "qms-notation-node-reentry-near",
+              "qms-notation-node-reentry-changed"
+            ],
+            "recap_ids": [
+              "qms-notation-node-recap"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          }
+        },
+        "compiled_node_evidence": "validate.mjs resolves all referenced target-lesson nodes and activities.",
+        "row_status": "CONTENT_AUTHORED"
+      }
+    ],
+    "automated_questions": [
+      "Does every canonical KC have all required microcycle elements?",
+      "Are near-use and changed-task families distinct and unused before their exits?",
+      "Does each repair return to its exact failed function on a fresh family?",
+      "Do all four declared routes retain teaching, model, practice, exits, repair, and recap?"
+    ],
+    "matrix_status": "CONTENT_AUTHORED"
+  }
+}

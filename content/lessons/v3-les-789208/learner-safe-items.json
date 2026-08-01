@@ -1,0 +1,524 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_SET",
+  "artifact_version": "0.1.0-internal-draft",
+  "learner_title": "Quantitative Measurement and Scaling",
+  "protected_material_separate": true,
+  "content_notice": "This learner-safe projection contains prompts and response controls only. Scoring, rationales, and post-commitment feedback live outside the browser-facing projection.",
+  "items": [
+    {
+      "learner_token": "safe-6ddf9b573c708cb5",
+      "phase_label": "Starting check",
+      "prompt": "You have 2.4 km and are given 1 km = 1,000 m. Which setup is aimed at expressing the distance in meters?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "2.4 km × (1,000 m / 1 km)",
+        "2.4 km × (1 km / 1,000 m)",
+        "2.4 km + 1,000 m",
+        "Not sure"
+      ],
+      "directions": "Choose one response. You may choose Not sure. Feedback appears after you commit.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-77b0610b937345bc",
+      "phase_label": "Guided practice",
+      "prompt": "A ribbon is 1.7 m long. Given 1 m = 100 cm, choose the factor that should multiply 1.7 m to leave centimeters.",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "100 cm / 1 m",
+        "1 m / 100 cm",
+        "100 m / 1 cm",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-f00f8b32ca518f0f",
+      "phase_label": "Less help",
+      "prompt": "A specimen is 250 cm long. Given 100 cm = 1 m, enter its length in meters.",
+      "response_type": "SHORT_RESPONSE",
+      "options": [],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-41053c7bc23a85ae",
+      "phase_label": "On your own",
+      "prompt": "A tube contains 3.6 m of wire. Given 1 m = 1,000 mm, enter the length in millimeters.",
+      "response_type": "SHORT_RESPONSE",
+      "options": [],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-d6a0b0f73114d193",
+      "phase_label": "Final check",
+      "prompt": "A solution volume is 1.25 L. Given 1 L = 1,000 mL, which complete setup correctly expresses the volume in milliliters?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "1.25 L × (1,000 mL / 1 L) = 1,250 mL",
+        "1.25 L × (1 L / 1,000 mL) = 0.00125 L²/mL",
+        "1.25 L + 1,000 mL = 1,001.25 mL",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-be48fd7e9a27af41",
+      "phase_label": "Final check",
+      "prompt": "A sample has a volume of 240 mL. Given 1 L = 1,000 mL, which dimensional-analysis setup expresses that volume in liters?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "240 mL × (1 L / 1,000 mL)",
+        "240 mL × (1,000 mL / 1 L)",
+        "240 mL + (1 L / 1,000 mL)",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-5753ea00a08d6de9",
+      "phase_label": "Repair check",
+      "prompt": "A learner wrote 0.8 L × (1 L / 1,000 mL) while trying to get milliliters. Which adjustment makes the starting L cancel?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "Use 1,000 mL / 1 L",
+        "Remove all units before calculating",
+        "Multiply by 1 L / 1,000 mL again",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-d14cb938ce1d5298",
+      "phase_label": "Fresh final check",
+      "prompt": "A trail segment is 0.62 km. Given 1 km = 1,000 m, which complete setup correctly expresses the length in meters?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "0.62 km × (1,000 m / 1 km) = 620 m",
+        "0.62 km × (1 km / 1,000 m) = 0.00062 km²/m",
+        "0.62 km + 1,000 m = 1,000.62 m",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-af180f21ad9f33c2",
+      "phase_label": "Repair check",
+      "prompt": "To convert mL to L, why should the factor place L in its numerator?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "It leaves L after the starting mL cancels",
+        "It makes both units disappear",
+        "It always increases the numerical value",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-80d3d7784f87cc0f",
+      "phase_label": "Fresh final check",
+      "prompt": "A strip is 450 cm long. Given 100 cm = 1 m, which setup expresses the length in meters?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "450 cm × (1 m / 100 cm)",
+        "450 cm × (100 cm / 1 m)",
+        "450 × (100 m / 1 cm)",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-3d75d603ede25759",
+      "phase_label": "Starting check",
+      "prompt": "How many significant digits are in 0.0205?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "Not sure"
+      ],
+      "directions": "Choose one response. You may choose Not sure. Feedback appears after you commit.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-98d05e8877b6468c",
+      "phase_label": "Guided practice",
+      "prompt": "Compute 6.3 × 1.8 and report the product with two significant digits.",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "11",
+        "11.34",
+        "10",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-0fa9953430f525bc",
+      "phase_label": "Less help",
+      "prompt": "Round 0.00478 to two significant digits.",
+      "response_type": "SHORT_RESPONSE",
+      "options": [],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-487d223f5a2b352d",
+      "phase_label": "On your own",
+      "prompt": "Compute 7.6 × 2.1 and report the result with two significant digits.",
+      "response_type": "SHORT_RESPONSE",
+      "options": [],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-adb3ccd29c7ddb46",
+      "phase_label": "Final check",
+      "prompt": "A rough check gives 8 × 0.4 ≈ 3.2. Both measured inputs in 7.8 × 0.42 have two significant digits. Which report agrees with the rough scale and warranted precision?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "3.3",
+        "3.276",
+        "33",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-ccdd8ee01892b994",
+      "phase_label": "Final check",
+      "prompt": "A field card says a product lies between 2 and 3. The calculation is 4.1 × 0.62, and both inputs have two significant digits. Which report agrees with the range and warranted precision?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "2.5",
+        "2.542",
+        "25",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-7e98589f44406d75",
+      "phase_label": "Repair check",
+      "prompt": "Round 2.86 to two significant digits.",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "2.8",
+        "2.9",
+        "3.0",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-56a30d1f8e11265d",
+      "phase_label": "Fresh final check",
+      "prompt": "An estimate strip places the product of 5.4 and 0.31 between 1.4 and 1.8. Both inputs have two significant digits. Which report is warranted?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "1.7",
+        "1.674",
+        "17",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-8b4064ddececf733",
+      "phase_label": "Repair check",
+      "prompt": "A rough product of 3.9 and 0.71 must lie between 2 and 3. Both inputs have two significant digits. Which report is warranted?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "2.8",
+        "2.769",
+        "28",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-f6b6084aa1005a55",
+      "phase_label": "Fresh final check",
+      "prompt": "A measurement table lists 6.4 and 2.3, each with two significant digits; its estimate column says the product is between 10 and 20. Which reported product is warranted?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "15",
+        "14.72",
+        "150",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-1c2254d86a304ccb",
+      "phase_label": "Starting check",
+      "prompt": "A bin contains 8 blue tiles and 2 yellow tiles. What fraction of the tiles are blue?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "4/5",
+        "8/2",
+        "2/8",
+        "Not sure"
+      ],
+      "directions": "Choose one response. You may choose Not sure. Feedback appears after you commit.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-2451329472032e1e",
+      "phase_label": "Guided practice",
+      "prompt": "Three of 12 test tubes show a color change. Express that relationship as a decimal.",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "0.25",
+        "0.3",
+        "0.4",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-76a10fd6f3881137",
+      "phase_label": "Less help",
+      "prompt": "Five of 20 samples are labeled. Enter the corresponding percentage.",
+      "response_type": "SHORT_RESPONSE",
+      "options": [],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-7af20932be1271cb",
+      "phase_label": "On your own",
+      "prompt": "A square has an area of 50 mm². Between which two whole-number millimeter lengths must its side lie?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "Between 5 and 6",
+        "Between 7 and 8",
+        "Between 8 and 9",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-80007f96cd6a42a0",
+      "phase_label": "Final check",
+      "prompt": "Eighteen of 60 observations show a response. Which percentage preserves that part-whole relationship?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "30%",
+        "18%",
+        "42%",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-8bb8a3e8ea6162c0",
+      "phase_label": "Final check",
+      "prompt": "An event has probability 0.16 on each of 50 trials. Which expected count is reasonable?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "8",
+        "16",
+        "34",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-7adabf69ecd6decb",
+      "phase_label": "Repair check",
+      "prompt": "Six of 24 samples meet a condition. Which percentage preserves that part-whole relationship?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "25%",
+        "40%",
+        "75%",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-4678dd719260fbd3",
+      "phase_label": "Fresh final check",
+      "prompt": "A ratio table shows 3 successful trials out of 10 and asks for the equivalent count out of 100. Enter the corresponding percentage.",
+      "response_type": "SHORT_RESPONSE",
+      "options": [],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-71cd99cb20c05ede",
+      "phase_label": "Repair check",
+      "prompt": "An event has probability 0.30 on each of 40 trials. Which expected count is reasonable?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "12",
+        "30",
+        "40",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-0eec362fe339f22d",
+      "phase_label": "Fresh final check",
+      "prompt": "A forecast strip marks 1 of every 8 trials as expected to show an event. In 64 trials, which expected count is reasonable?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "8",
+        "16",
+        "56",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-bce8b825ddb0b5fb",
+      "phase_label": "Starting check",
+      "prompt": "Which ordinary number equals 10^3?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "100",
+        "1,000",
+        "10,000",
+        "Not sure"
+      ],
+      "directions": "Choose one response. You may choose Not sure. Feedback appears after you commit.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-182dccf24b98c588",
+      "phase_label": "Guided practice",
+      "prompt": "Compute (8 × 10^6) ÷ (2 × 10^2).",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "4 × 10^4",
+        "4 × 10^8",
+        "16 × 10^4",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-4e91d1b80096eb49",
+      "phase_label": "Less help",
+      "prompt": "Write 0.00072 in normalized scientific notation.",
+      "response_type": "SHORT_RESPONSE",
+      "options": [],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-0042039cf7378caf",
+      "phase_label": "On your own",
+      "prompt": "Compute (5 × 10^3)^2 and report normalized scientific notation.",
+      "response_type": "SHORT_RESPONSE",
+      "options": [],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-1664405e2159fbe6",
+      "phase_label": "Final check",
+      "prompt": "Compute (6 × 10^2)(4 × 10^-5) and choose the normalized scientific-notation result.",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "2.4 × 10^-2",
+        "2.4 × 10^7",
+        "24 × 10^-3",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-73a0551f40a2b79a",
+      "phase_label": "Final check",
+      "prompt": "Write 0.00000048 g in normalized scientific notation.",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "4.8 × 10^-7 g",
+        "4.8 × 10^7 g",
+        "48 × 10^-8 g",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-7da3278c2b9386ee",
+      "phase_label": "Repair check",
+      "prompt": "Compute 10^3 × 10^-5.",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "10^-2",
+        "10^8",
+        "10^-15",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-3ef8a9b79cd60883",
+      "phase_label": "Fresh final check",
+      "prompt": "Compute (9 × 10^5) ÷ (3 × 10^2) and report normalized scientific notation.",
+      "response_type": "SHORT_RESPONSE",
+      "options": [],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-584de22c81162e4f",
+      "phase_label": "Repair check",
+      "prompt": "Write 65,000 in normalized scientific notation.",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "6.5 × 10^4",
+        "6.5 × 10^-4",
+        "65 × 10^3",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    },
+    {
+      "learner_token": "safe-8c9169f42ca5d144",
+      "phase_label": "Fresh final check",
+      "prompt": "The expression 0.92 × 10^-2 is not normalized. Which normalized expression represents the same quantity?",
+      "response_type": "MULTIPLE_CHOICE",
+      "options": [
+        "9.2 × 10^-3",
+        "9.2 × 10^-2",
+        "0.92 × 10^-3",
+        "Not sure"
+      ],
+      "directions": "Commit one response before feedback appears.",
+      "accessibility_alternative": "The prompt and all response options are available as ordered text and may be completed with keyboard-only input."
+    }
+  ]
+}

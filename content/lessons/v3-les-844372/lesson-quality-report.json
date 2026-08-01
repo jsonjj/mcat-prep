@@ -1,0 +1,513 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-844372",
+  "artifact_version": "0.2.5-internal-draft",
+  "artifact_status": "DRAFT",
+  "schema_binding": {
+    "schema_id": "mcat-spec04-quality-report-internal-draft",
+    "schema_version": "0.1-candidate-local-1",
+    "schema_sha256": "ea5ff6577152fff18d0cb4a0a398ef57e789828a42788768fb3ab3ca4f0be990",
+    "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
+  },
+  "content_sha256": "78f3900aa4b18a17a570103996a122dc9a5bb407c5f3699be610f12dc0448605",
+  "registry_binding": {
+    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+    "phase_0_freeze_id": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
+    "canonical_freeze_id": "MCAT-V3-CANONICAL-FRZ-2026-07-22-01",
+    "graph_freeze_id": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
+    "sequence_freeze_id": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01",
+    "manifest_schema_id": "mcat-v3-lessons-public",
+    "manifest_schema_version": "1",
+    "manifest_sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+    "lesson_id": "V3-LES-844372",
+    "grouping_id": "V3-CL-844372",
+    "ordered_kc_ids": [
+      "V3-KC-452593",
+      "V3-KC-008681",
+      "V3-KC-238607"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-452593",
+      "V3-KC-008681",
+      "V3-KC-238607"
+    ]
+  },
+  "authors": [
+    {
+      "identity": "gpt-5.6-terra",
+      "role": "PRIMARY_CONTENT_AUTHOR",
+      "run_id": "V3-LES-844372-CONSTRUCTED-CONTEXT-FIX-2026-07-23",
+      "contribution": "Corrected constructed-response learner prompts and protected authority context alignment."
+    }
+  ],
+  "reviewers": [],
+  "input_bindings": [
+    {
+      "input_id": "V3-SCLD-844372",
+      "version": "0.1.0-draft.1",
+      "sha256": "c320dec45739269a0ba4b5ecbd201ce7295f2baec53030c43f97392f57194c03",
+      "kind": "SOURCE_CLAIM_LEDGER",
+      "use": "Original scope trace, source-occurrence governance, and rights boundary."
+    },
+    {
+      "input_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "version": "mcat-v3-authoritative-registry-1",
+      "sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+      "kind": "CURRICULUM_REGISTRY",
+      "use": "Canonical identity, scope, order, attachments, holds, and placement."
+    },
+    {
+      "input_id": "MCAT-V3-LEARNER-FACING-LESSONS",
+      "version": "mcat-v3-lessons-public-1",
+      "sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+      "kind": "GENERATED_MANIFEST",
+      "use": "Learner title and catalog cross-check only."
+    },
+    {
+      "input_id": "MCAT-V3-CANONICAL-KCS",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "31d304a7f6ea51ac4847ede01824bb14cd8b98ed7a6bc61bb05617d53f9860fd",
+      "kind": "CANONICAL_KC_LEDGER",
+      "use": "Competency statements, scope bounds, representations, and source anchors."
+    },
+    {
+      "input_id": "MCAT-V3-TEACHING-SEQUENCES",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "b2bbd9f8a14cbff1250013e8d717eb1c8195ccbf6335e605c64f1469a94246aa",
+      "kind": "CANONICAL_SEQUENCE",
+      "use": "First-delivery position, ordered KC relation, revisit, and no-bypass context."
+    },
+    {
+      "input_id": "MCAT-V3-PREREQUISITE-GRAPH",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "fe0fffdd16bd10d3f7c046951cbe642add8ef2639f5b3f68a3224d9648f59e10",
+      "kind": "CANONICAL_GRAPH",
+      "use": "Hard/helpful prerequisite state and successor context."
+    },
+    {
+      "input_id": "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "23bbea9e358c4aa0ff255964d203c0081b4ff3ba28e4e123eed0cfc0b7a54831",
+      "kind": "ATTACHMENT_LEDGER",
+      "use": "Extension and bounded conditional support context."
+    },
+    {
+      "input_id": "MCAT-V3-SOURCE-CROSSWALK",
+      "version": "mcat-v3-source-crosswalk-1",
+      "sha256": "a87fd1634a5a9e9dd522293ef98db10b783971f02e0bdfbf558b276cc0b9cea3",
+      "kind": "SOURCE_LEDGER",
+      "use": "Direct-scope and source-anchor trace; no expressive source prose is copied."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-03",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "d3d3cfb3cc0e2314dc7f01bc9d1cc9c68049527f317e2ad2cb270a7b43fff598",
+      "kind": "INSTRUCTIONAL_RUNTIME_SPECIFICATION",
+      "use": "Microcycle, freshness, assistance, repair, and route constraints."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-04",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "4fc88c3001bae4d8d1c843020106b6ba30059b243ea0d993a6d87ff009099761",
+      "kind": "AUTHORING_SPECIFICATION",
+      "use": "Artifact structure, coverage, learner/reviewer separation, and accessibility requirements."
+    },
+    {
+      "input_id": "AAMC-2020-SUPPLIED-CEILING",
+      "version": "2020-supplied",
+      "sha256": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
+      "kind": "SOURCE_CEILING",
+      "use": "Scope ceiling only; no expressive source wording or source questions are reused."
+    }
+  ],
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-844372",
+    "lesson_script_sha256": "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
+    "kc_coverage_matrix_id": "V3-KCOV-844372",
+    "kc_coverage_matrix_sha256": "881d4d56e2120fe1587edf7acf1388608a4790c471f4882bd08cb786f453bfef",
+    "lesson_presentation_plan_id": "V3-LPPL-844372",
+    "lesson_presentation_plan_sha256": "877aff28e57a9241e9845ee3e442bcdb2c1fc85e0b88e3f3ee2c2aa66e3640d2"
+  },
+  "lineage": {
+    "supersedes": {
+      "artifact_id": "V3-LQRP-844372",
+      "content_sha256": "c3f91de1f301b1ad5389f0d0ec111b0382d4e80838954d212d82d63c533d1d30"
+    },
+    "change_reason": "ALIGN_CONSTRUCTED_LEARNER_PROMPTS_WITH_PROTECTED_AUTHORITY",
+    "authoring_run_id": "V3-LES-844372-CONSTRUCTED-CONTEXT-FIX-2026-07-23",
+    "derived_input_ids": [
+      "V3-SCLD-844372",
+      "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "MCAT-V3-LEARNER-FACING-LESSONS",
+      "MCAT-V3-CANONICAL-KCS",
+      "MCAT-V3-TEACHING-SEQUENCES",
+      "MCAT-V3-PREREQUISITE-GRAPH",
+      "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "MCAT-V3-SOURCE-CROSSWALK",
+      "MCAT-V3-SPEC-03",
+      "MCAT-V3-SPEC-04",
+      "AAMC-2020-SUPPLIED-CEILING"
+    ]
+  },
+  "payload": {
+    "lesson_id": "V3-LES-844372",
+    "review_scope": "CONTENT_ONLY_INTERNAL_DRAFT",
+    "role_assignments": [
+      {
+        "role": "CURRICULUM_BINDING_REVIEWER",
+        "identity_id": null,
+        "status": "BLOCKED",
+        "reason": "Independent human review has not occurred."
+      },
+      {
+        "role": "DOMAIN_FACTUAL_REVIEWER",
+        "identity_id": null,
+        "status": "BLOCKED",
+        "reason": "Algebra/graph/logarithm SME review has not occurred."
+      },
+      {
+        "role": "INSTRUCTIONAL_DESIGN_REVIEWER",
+        "identity_id": null,
+        "status": "BLOCKED",
+        "reason": "Learning-science and novice-clarity review have not occurred."
+      },
+      {
+        "role": "QUESTION_EVIDENCE_REVIEWER",
+        "identity_id": null,
+        "status": "BLOCKED",
+        "reason": "Independent item and answer review has not occurred."
+      },
+      {
+        "role": "SOURCE_RIGHTS_REVIEWER",
+        "identity_id": null,
+        "status": "BLOCKED",
+        "reason": "Source-rights approval has not occurred."
+      },
+      {
+        "role": "NOVICE_CLARITY_REVIEWER",
+        "identity_id": null,
+        "status": "BLOCKED",
+        "reason": "Independent novice-clarity review has not occurred."
+      },
+      {
+        "role": "ACCESSIBILITY_CONSTRUCT_EQUIVALENCE_REVIEWER",
+        "identity_id": null,
+        "status": "BLOCKED",
+        "reason": "Construct-preservation judgments require independent accessibility review."
+      }
+    ],
+    "independence_checks": [
+      {
+        "check_id": "INDEPENDENCE-844372-AUTHOR-REVIEWER",
+        "status": "BLOCKED",
+        "evidence_refs": [],
+        "reason": "No independent reviewers or signed review receipts exist."
+      },
+      {
+        "check_id": "INDEPENDENCE-844372-ANSWER-BLIND-SOLVE",
+        "status": "BLOCKED",
+        "evidence_refs": [],
+        "reason": "Keyless blind solve has not occurred."
+      }
+    ],
+    "script_gate": {
+      "gate_status": "BLOCKED",
+      "check_results": [
+        {
+          "check_id": "CONTENT-CANONICAL-IDENTITY",
+          "status": "PASS",
+          "evidence_refs": [
+            "validate.mjs:CANONICAL_IDENTITY"
+          ]
+        },
+        {
+          "check_id": "CONTENT-KC-MICROCYCLE-COVERAGE",
+          "status": "REVISE",
+          "evidence_refs": [
+            "validate.mjs:STATIC_MICROCYCLE_AND_EXACT_REENTRY_CHECK"
+          ],
+          "reason": "Static references exist, but shared-runtime compilation and independent review are not available."
+        },
+        {
+          "check_id": "CONTENT-SEMANTIC-FAMILY-SEPARATION",
+          "status": "REVISE",
+          "evidence_refs": [
+            "validate.mjs:STATIC_FAMILY_METADATA_AND_CUE_SAFETY_CHECK"
+          ],
+          "reason": "Freshness metadata and cue checks are static only; independent family review remains required."
+        },
+        {
+          "check_id": "CONTENT-ANSWER-PROTECTION-SEPARATION",
+          "status": "REVISE",
+          "evidence_refs": [
+            "validate.mjs:LEARNER_SAFE_AND_PROTECTED_SEPARATION",
+            "validate.mjs:ANSWER_CUE_SAFETY"
+          ],
+          "reason": "Server-only separation and option-position checks are static only; item review remains required."
+        },
+        {
+          "check_id": "CONTENT-SOURCE-TRACE-AND-SCOPE",
+          "status": "BLOCKED",
+          "evidence_refs": [
+            "source-claim-ledger.json",
+            "validate.mjs:SOURCE_AND_SCOPE"
+          ],
+          "reason": "Source-rights and source-use approval remain human-only gates."
+        },
+        {
+          "check_id": "SME-FACTUAL-REVIEW",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "reason": "Human SME review is required."
+        },
+        {
+          "check_id": "SOURCE-RIGHTS-APPROVAL",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "reason": "Human source-rights approval is required."
+        },
+        {
+          "check_id": "KEYLESS-BLIND-SOLVE",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "reason": "Independent blind solve is required."
+        },
+        {
+          "check_id": "INDEPENDENT-APPROVAL",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "reason": "No independent approver is assigned."
+        },
+        {
+          "check_id": "CONTENT-WIRE-SCHEMA-VALIDATION",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "reason": "The candidate Spec 04 prose standard is not yet backed by a pinned shared schema compiler."
+        },
+        {
+          "check_id": "NOVICE-CLARITY-REVIEW",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "reason": "Independent novice-clarity review is required."
+        }
+      ],
+      "reviewer_identity_ids": [],
+      "reviewed_dependency_hashes": [
+        "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
+        "881d4d56e2120fe1587edf7acf1388608a4790c471f4882bd08cb786f453bfef"
+      ]
+    },
+    "presentation_gate": {
+      "gate_status": "BLOCKED",
+      "check_results": [
+        {
+          "check_id": "PRESENTATION-PLAN-STRUCTURE",
+          "status": "PASS",
+          "evidence_refs": [
+            "validate.mjs:PRESENTATION_REFERENCES"
+          ]
+        },
+        {
+          "check_id": "BROWSER-QA",
+          "status": "BLOCKED",
+          "blocker_code": "BLOCKED_SHARED_RUNTIME",
+          "evidence_refs": [],
+          "reason": "No shared learner runtime or browser route is available."
+        },
+        {
+          "check_id": "ACCESSIBILITY-IMPLEMENTATION-QA",
+          "status": "BLOCKED",
+          "blocker_code": "BLOCKED_SHARED_RUNTIME",
+          "evidence_refs": [],
+          "reason": "Keyboard, focus, responsive, screen-reader, and visual rendering checks require the shared runtime."
+        },
+        {
+          "check_id": "CONSTRUCT-EQUIVALENCE-REVIEW",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "reason": "Text/nonvisual equivalence judgments require an independent accessibility reviewer."
+        }
+      ],
+      "reviewer_identity_ids": [],
+      "reviewed_dependency_hashes": [
+        "877aff28e57a9241e9845ee3e442bcdb2c1fc85e0b88e3f3ee2c2aa66e3640d2"
+      ],
+      "blocker_code": "BLOCKED_SHARED_RUNTIME"
+    },
+    "integrated_gate": {
+      "gate_status": "BLOCKED",
+      "check_results": [
+        {
+          "check_id": "RUNTIME-LESSON-DEFINITION-COMPILE",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "blocker_code": "BLOCKED_SHARED_RUNTIME",
+          "reason": "The shared runtime is unavailable for this content-only draft."
+        },
+        {
+          "check_id": "API-AND-PERSISTENCE",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "blocker_code": "BLOCKED_SHARED_RUNTIME",
+          "reason": "The shared runtime is unavailable for this content-only draft."
+        },
+        {
+          "check_id": "CURRICULUM-START-BUTTON",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "blocker_code": "BLOCKED_SHARED_RUNTIME",
+          "reason": "The shared runtime is unavailable for this content-only draft."
+        },
+        {
+          "check_id": "LEARNER-SAFE-DTO-RUNTIME-PROJECTION",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "blocker_code": "BLOCKED_SHARED_RUNTIME",
+          "reason": "The shared runtime is unavailable for this content-only draft."
+        },
+        {
+          "check_id": "END-TO-END-ROUTE-SIMULATION",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "blocker_code": "BLOCKED_SHARED_RUNTIME",
+          "reason": "The shared runtime is unavailable for this content-only draft."
+        },
+        {
+          "check_id": "EXACT-REENTRY-RUNTIME-BRANCH",
+          "status": "BLOCKED",
+          "evidence_refs": [],
+          "blocker_code": "BLOCKED_SHARED_RUNTIME",
+          "reason": "The shared runtime is unavailable for this content-only draft."
+        }
+      ],
+      "reviewer_identity_ids": [],
+      "reviewed_dependency_hashes": [
+        "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
+        "881d4d56e2120fe1587edf7acf1388608a4790c471f4882bd08cb786f453bfef",
+        "877aff28e57a9241e9845ee3e442bcdb2c1fc85e0b88e3f3ee2c2aa66e3640d2"
+      ],
+      "blocker_code": "BLOCKED_SHARED_RUNTIME"
+    },
+    "findings": [
+      {
+        "finding_id": "LQRP-844372-001",
+        "severity": "P1",
+        "artifact_id": "V3-LPPL-844372",
+        "artifact_sha256": "877aff28e57a9241e9845ee3e442bcdb2c1fc85e0b88e3f3ee2c2aa66e3640d2",
+        "artifact_path": "payload.browser_evidence_plan",
+        "evidence_refs": [],
+        "required_correction": "Integrate and exercise the shared runtime, API, persistence, learner-safe DTO projection, Start-button path, and exact re-entry branches.",
+        "owner_role": "SHARED_RUNTIME_OWNER",
+        "status": "BLOCKED_SHARED_RUNTIME",
+        "retest_scope": "INTEGRATED_GATE_AND_BROWSER_QA"
+      },
+      {
+        "finding_id": "LQRP-844372-002",
+        "severity": "P1",
+        "artifact_id": "V3-LSCR-844372",
+        "artifact_sha256": "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
+        "artifact_path": "payload.question_evidence_plan",
+        "evidence_refs": [],
+        "required_correction": "Obtain independent curriculum, domain, instructional-design, question-evidence, source-rights, and blind-solve review receipts.",
+        "owner_role": "HUMAN_REVIEW_COORDINATOR",
+        "status": "BLOCKED",
+        "retest_scope": "SCRIPT_GATE"
+      },
+      {
+        "finding_id": "LQRP-844372-003",
+        "severity": "P2",
+        "artifact_id": "V3-LSCR-844372",
+        "artifact_sha256": "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
+        "artifact_path": "payload.attachment_bindings",
+        "evidence_refs": [
+          "V3-HOLD-110006"
+        ],
+        "required_correction": "Resolve the component-boundary and aggregate-diagnostic hold through its named human review and learner-evidence process; do not add aggregate state meanwhile.",
+        "owner_role": "V3_CURRICULUM_ARCHITECTURE_OWNER",
+        "status": "BLOCKED",
+        "retest_scope": "CURRICULUM_BINDING_REVIEW"
+      },
+      {
+        "finding_id": "LQRP-844372-004",
+        "severity": "P1",
+        "artifact_id": "V3-LSCR-844372",
+        "artifact_sha256": "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
+        "artifact_path": "schema_binding",
+        "evidence_refs": [],
+        "required_correction": "Bind the lesson to the final shared Spec 04 schema package and compile the canonical wire form.",
+        "owner_role": "SHARED_RUNTIME_OWNER",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKED_SHARED_RUNTIME",
+        "retest_scope": "WIRE_SCHEMA_AND_RUNTIME_COMPILE"
+      },
+      {
+        "finding_id": "LQRP-844372-005",
+        "severity": "P2",
+        "artifact_id": "V3-SCLD-844372",
+        "artifact_sha256": "c320dec45739269a0ba4b5ecbd201ce7295f2baec53030c43f97392f57194c03",
+        "artifact_path": "source_records",
+        "evidence_refs": [
+          "source-claim-ledger.json"
+        ],
+        "required_correction": "Complete source-rights review for every traced source occurrence before any publication use.",
+        "owner_role": "SOURCE_RIGHTS_REVIEWER",
+        "status": "BLOCKED",
+        "retest_scope": "SOURCE_RIGHTS_APPROVAL"
+      },
+      {
+        "finding_id": "LQRP-844372-006",
+        "severity": "P2",
+        "artifact_id": "V3-LPPL-844372",
+        "artifact_sha256": "877aff28e57a9241e9845ee3e442bcdb2c1fc85e0b88e3f3ee2c2aa66e3640d2",
+        "artifact_path": "representation_plans",
+        "evidence_refs": [],
+        "required_correction": "Obtain independent novice-clarity and construct-equivalence review for every representation.",
+        "owner_role": "ACCESSIBILITY_CONSTRUCT_EQUIVALENCE_REVIEWER",
+        "status": "BLOCKED",
+        "retest_scope": "NOVICE_CLARITY_AND_ACCESSIBILITY_REVIEW"
+      }
+    ],
+    "evidence_refs": [
+      "source-claim-ledger.json",
+      "validate.mjs",
+      "validation.test.mjs",
+      "artifact-manifest.json"
+    ],
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false,
+      "calibrated_thresholds_available": false
+    },
+    "open_decisions": [
+      {
+        "decision_id": "OPEN-844372-RUNTIME-CONTRACT",
+        "owner_role": "SHARED_RUNTIME_OWNER",
+        "question": "Which final shared runtime schema, learner-safe DTO, API, persistence, and route contract should bind this content draft?",
+        "status": "BLOCKED",
+        "blocking_scope": "RUNTIME_AND_PUBLICATION",
+        "blocker_code": "BLOCKED_SHARED_RUNTIME"
+      },
+      {
+        "decision_id": "OPEN-844372-HUMAN-GATES",
+        "owner_role": "HUMAN_REVIEW_COORDINATOR",
+        "question": "Who will complete independent SME, source-rights, learning-science, blind-solve, and final approval review for these exact hashes?",
+        "status": "BLOCKED",
+        "blocking_scope": "PUBLICATION"
+      },
+      {
+        "decision_id": "OPEN-844372-CALIBRATION",
+        "owner_role": "EVIDENCE_POLICY_OWNER",
+        "question": "What validated threshold and repair policy, if any, may qualify lesson observations?",
+        "status": "BLOCKED",
+        "blocking_scope": "MASTERY_OR_READINESS_CLAIMS"
+      }
+    ],
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY",
+    "production_golden_status": "BLOCKED"
+  }
+}

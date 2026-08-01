@@ -15,6 +15,11 @@ import {
   MasteryMapEntrySchema,
   MasterySeedSchema,
   MistakePatternViewSchema,
+  NormalizedLessonCommandSchema,
+  NormalizedLessonRunViewSchema,
+  NormalizedLessonStartCommandSchema,
+  NormalizedLessonStartResponseSchema,
+  NormalizedLessonStatusViewSchema,
   PassageAttemptRequestSchema,
   PassageAttemptResponseSchema,
   PassageTodayResponseSchema,
@@ -83,7 +88,11 @@ export type RouteId =
   | 'vectorLessonStatus'
   | 'vectorLessonStart'
   | 'vectorLessonRun'
-  | 'vectorLessonCommand';
+  | 'vectorLessonCommand'
+  | 'normalizedLessonStatus'
+  | 'normalizedLessonStart'
+  | 'normalizedLessonRun'
+  | 'normalizedLessonCommand';
 
 interface RuntimeSchema<T = unknown> {
   parse(value: unknown): T;
@@ -609,6 +618,43 @@ export const ROUTES: readonly RouteDefinition[] = [
     stateChanging: true,
     bodySchema: VectorLessonCommandSchema,
   },
+  // The normalized-engine catalog (L2/L3, and future lessons). One slug-
+  // parameterized family matching L1's four-route shape, so a new lesson needs
+  // no new route code — only a `NORMALIZED_LESSON_ROUTE_SLUGS` entry. `path` is
+  // a template; the real match is the closed-set regex in `routeMatches`.
+  {
+    id: 'normalizedLessonStatus',
+    method: 'GET',
+    path: '/v1/lessons/{lessonSlug}/status',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: NormalizedLessonStatusViewSchema,
+  },
+  {
+    id: 'normalizedLessonStart',
+    method: 'POST',
+    path: '/v1/lessons/{lessonSlug}/start',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: NormalizedLessonStartCommandSchema,
+    responseSchema: NormalizedLessonStartResponseSchema,
+  },
+  {
+    id: 'normalizedLessonRun',
+    method: 'GET',
+    path: '/v1/lessons/{lessonSlug}/run',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: NormalizedLessonRunViewSchema,
+  },
+  {
+    id: 'normalizedLessonCommand',
+    method: 'POST',
+    path: '/v1/lessons/{lessonSlug}/commands',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: NormalizedLessonCommandSchema,
+  },
 ] as const;
 
 export function routeFor(method: string, path: string): RouteDefinition | undefined {
@@ -625,11 +671,49 @@ const MISTAKES_REPAIR_PATH = /^\/v1\/mistakes\/repair\/(\d{1,2})$/;
 // `Date.getTimezoneOffset()` is UTC-minus-local in minutes; bounded to ±1440.
 const PASSAGE_TODAY_PATH = /^\/v1\/passage\/today\/(-?\d{1,4})$/;
 
+/**
+ * The normalized-engine catalog: every non-L1 lesson the shared runtime serves,
+ * keyed by URL slug. L1 keeps its own bespoke slug routes above (per-grammar
+ * dispatch). This closed set is the SOLE authority for which slugs route to the
+ * normalized family — an unregistered slug never matches (it 404s instead of
+ * reaching the engine), and the L1 slug can never collide with a normalized
+ * match. A new lesson joins the catalog by adding one entry here.
+ */
+export const NORMALIZED_LESSON_ROUTE_SLUGS: Readonly<Record<string, string>> = {
+  'v3-les-789208': 'V3-LES-789208',
+  'v3-les-844372': 'V3-LES-844372',
+};
+
+const NORMALIZED_LESSON_SLUG_GROUP = Object.keys(NORMALIZED_LESSON_ROUTE_SLUGS).join('|');
+const normalizedLessonPathFor = (verb: string): RegExp =>
+  new RegExp(`^/v1/lessons/(?:${NORMALIZED_LESSON_SLUG_GROUP})/${verb}$`);
+const NORMALIZED_LESSON_STATUS_PATH = normalizedLessonPathFor('status');
+const NORMALIZED_LESSON_START_PATH = normalizedLessonPathFor('start');
+const NORMALIZED_LESSON_RUN_PATH = normalizedLessonPathFor('run');
+const NORMALIZED_LESSON_COMMANDS_PATH = normalizedLessonPathFor('commands');
+const NORMALIZED_LESSON_SLUG_PATH = /^\/v1\/lessons\/([a-z0-9-]+)\/(?:status|start|run|commands)$/;
+
+/**
+ * The catalog lesson id a normalized-lesson request targets, or null when the
+ * slug is unregistered (including L1's own slug). The route match already
+ * guarantees a registered slug for a matched `normalizedLesson*` route; this is
+ * how the handler recovers the lesson id from the path to drive the engine.
+ */
+export function normalizedLessonIdFor(path: string): string | null {
+  const slug = NORMALIZED_LESSON_SLUG_PATH.exec(path)?.[1];
+  if (slug === undefined) return null;
+  return NORMALIZED_LESSON_ROUTE_SLUGS[slug] ?? null;
+}
+
 function routeMatches(route: RouteDefinition, path: string): boolean {
   if (route.id === 'practiceItem') return PRACTICE_ITEM_PATH.test(path);
   if (route.id === 'practiceQueue') return PRACTICE_QUEUE_PATH.test(path);
   if (route.id === 'mistakesRepair') return MISTAKES_REPAIR_PATH.test(path);
   if (route.id === 'passageToday') return PASSAGE_TODAY_PATH.test(path);
+  if (route.id === 'normalizedLessonStatus') return NORMALIZED_LESSON_STATUS_PATH.test(path);
+  if (route.id === 'normalizedLessonStart') return NORMALIZED_LESSON_START_PATH.test(path);
+  if (route.id === 'normalizedLessonRun') return NORMALIZED_LESSON_RUN_PATH.test(path);
+  if (route.id === 'normalizedLessonCommand') return NORMALIZED_LESSON_COMMANDS_PATH.test(path);
   return route.path === path;
 }
 

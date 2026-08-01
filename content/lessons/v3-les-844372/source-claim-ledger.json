@@ -1,0 +1,207 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-844372",
+  "artifact_version": "0.1.0-draft.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-844372",
+    "grouping_id": "V3-CL-844372",
+    "ordered_kc_ids": [
+      "V3-KC-452593",
+      "V3-KC-008681",
+      "V3-KC-238607"
+    ]
+  },
+  "authority_boundary": {
+    "source": "Supplied 2020 AAMC MCAT Content.pdf",
+    "source_sha256": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
+    "present_day_authority_refreshed": false,
+    "learner_validation_status": "unvalidated",
+    "rights_approval_status": "BLOCKED_SOURCE_RIGHTS_REVIEW"
+  },
+  "source_trace_governance": {
+    "retrieval_date": "2026-07-23",
+    "retrieval_record": "Local canonical source records V3-SRC-100005, V3-SRC-200008, V3-SRC-200057, and V3-SRC-200110",
+    "retrieval_hash": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
+    "authority_ceiling": "Supplied 2020 AAMC MCAT Content.pdf; no present-day authority refresh.",
+    "permitted_use": "Scope tracing and original explanatory paraphrase only; no expressive source wording is placed in learner-facing content.",
+    "model_processing_status": "No source excerpt is retained as learner content; protected answer material is authored separately.",
+    "rights_reviewer_id": null,
+    "rights_review_status": "BLOCKED_SOURCE_RIGHTS_REVIEW"
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100005",
+      "source_occurrence_id": "V3-SRC-100005",
+      "source_kind": "CANONICAL_SOURCE_OCCURRENCE",
+      "source_title": "Supplied 2020 AAMC MCAT Content.pdf",
+      "source_location": "Canonical registry occurrence mapped to AAMC page 19.",
+      "terms_status": "UNREVIEWED",
+      "processing_rights_basis": "UNCONFIRMED",
+      "model_receipt_status": "NO_EXPRESSIVE_COPY_RETAINED",
+      "prohibited_use": "NO_EXPRESSIVE_COPYING_OR_UNREVIEWED_PUBLICATION",
+      "review_reference": null,
+      "expressive_copy_flag": false
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200008",
+      "source_occurrence_id": "V3-SRC-200008",
+      "source_kind": "CANONICAL_SOURCE_OCCURRENCE",
+      "source_title": "Supplied 2020 AAMC MCAT Content.pdf",
+      "source_location": "Canonical registry occurrence mapped to AAMC page 52.",
+      "terms_status": "UNREVIEWED",
+      "processing_rights_basis": "UNCONFIRMED",
+      "model_receipt_status": "NO_EXPRESSIVE_COPY_RETAINED",
+      "prohibited_use": "NO_EXPRESSIVE_COPYING_OR_UNREVIEWED_PUBLICATION",
+      "review_reference": null,
+      "expressive_copy_flag": false
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200057",
+      "source_occurrence_id": "V3-SRC-200057",
+      "source_kind": "CANONICAL_SOURCE_OCCURRENCE",
+      "source_title": "Supplied 2020 AAMC MCAT Content.pdf",
+      "source_location": "Canonical registry occurrence used only for source-lineage trace; supplied-source page remains subject to rights review.",
+      "terms_status": "UNREVIEWED",
+      "processing_rights_basis": "UNCONFIRMED",
+      "model_receipt_status": "NO_EXPRESSIVE_COPY_RETAINED",
+      "prohibited_use": "NO_EXPRESSIVE_COPYING_OR_UNREVIEWED_PUBLICATION",
+      "review_reference": null,
+      "expressive_copy_flag": false
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200110",
+      "source_occurrence_id": "V3-SRC-200110",
+      "source_kind": "CANONICAL_SOURCE_OCCURRENCE",
+      "source_title": "Supplied 2020 AAMC MCAT Content.pdf",
+      "source_location": "Canonical registry direct-scope occurrence mapped to AAMC page 77.",
+      "terms_status": "UNREVIEWED",
+      "processing_rights_basis": "UNCONFIRMED",
+      "model_receipt_status": "NO_EXPRESSIVE_COPY_RETAINED",
+      "prohibited_use": "NO_EXPRESSIVE_COPYING_OR_UNREVIEWED_PUBLICATION",
+      "review_reference": null,
+      "expressive_copy_flag": false
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "ALG-GRAPH-CLAIM-01",
+      "target_kc_id": "V3-KC-452593",
+      "authorial_claim": "A learner may be taught to identify how a linear, semilog, or log-log display encodes values and to calculate or interpret slope from the stated display.",
+      "scope_in_refs": [
+        "V3-KC-452593:SCOPE_IN:0",
+        "V3-KC-452593:SCOPE_IN:1",
+        "V3-KC-452593:SCOPE_IN:2",
+        "V3-KC-452593:SCOPE_IN:3"
+      ],
+      "scope_out_refs": [
+        "V3-KC-452593:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0008",
+        "CP-SA-008",
+        "V3-SA-AAMC-MATH-P077"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100005",
+        "V3-SRC-200008",
+        "V3-SRC-200057",
+        "V3-SRC-200110"
+      ],
+      "aamc_pages": [
+        19,
+        52,
+        77
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600750",
+        "V3-MAP-600774",
+        "V3-MAP-600982",
+        "V3-MAP-601609"
+      ],
+      "source_wording_status": "PARAPHRASED_ORIGINAL_AUTHORING"
+    },
+    {
+      "claim_id": "ALG-SYSTEMS-CLAIM-01",
+      "target_kc_id": "V3-KC-008681",
+      "authorial_claim": "A learner may be taught equation rearrangement and substitution or elimination for a two-equation system at Algebra II depth.",
+      "scope_in_refs": [
+        "V3-KC-008681:SCOPE_IN:0",
+        "V3-KC-008681:SCOPE_IN:1"
+      ],
+      "scope_out_refs": [
+        "V3-KC-008681:SCOPE_OUT:0",
+        "V3-KC-008681:SCOPE_OUT:1"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0008",
+        "CP-SA-008",
+        "V3-SA-AAMC-MATH-P077"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100005",
+        "V3-SRC-200008",
+        "V3-SRC-200057",
+        "V3-SRC-200110"
+      ],
+      "aamc_pages": [
+        19,
+        52,
+        77
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600965",
+        "V3-MAP-601607"
+      ],
+      "source_wording_status": "PARAPHRASED_ORIGINAL_AUTHORING"
+    },
+    {
+      "claim_id": "ALG-LOGS-CLAIM-01",
+      "target_kc_id": "V3-KC-238607",
+      "authorial_claim": "A learner may be taught to move between exponential form and natural- or base-10-logarithmic form without using calculus.",
+      "scope_in_refs": [
+        "V3-KC-238607:SCOPE_IN:0",
+        "V3-KC-238607:SCOPE_IN:1",
+        "V3-KC-238607:SCOPE_IN:2"
+      ],
+      "scope_out_refs": [
+        "V3-KC-238607:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0008",
+        "CP-SA-008",
+        "V3-SA-AAMC-MATH-P077"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100005",
+        "V3-SRC-200008",
+        "V3-SRC-200057",
+        "V3-SRC-200110"
+      ],
+      "aamc_pages": [
+        19,
+        52,
+        77
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-601225",
+        "V3-MAP-601608"
+      ],
+      "source_wording_status": "PARAPHRASED_ORIGINAL_AUTHORING"
+    }
+  ],
+  "lineage_and_limits": {
+    "authoritative_registry_path": "../../work/v3-authoritative-registry.json",
+    "direct_scope_occurrence": "V3-SRC-200110",
+    "open_hold_ids": [
+      "V3-HOLD-110006"
+    ],
+    "prohibited_claims": [
+      "learner validation",
+      "efficacy",
+      "mastery calibration",
+      "readiness validation",
+      "production publication"
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-import { buildVectorLessonArtifacts } from '@mcat/content/v3-vector-lesson';
+import { readFileSync } from 'node:fs';
 import { clusterForLesson } from '@mcat/content';
 import {
   EventIdSchema,
@@ -35,7 +35,28 @@ const IDENTITY = {
   evidenceId: '9c0ffee0-0000-4000-8000-000000000005',
 };
 
-const SCRIPT = buildVectorLessonArtifacts().script;
+interface AuthoredBindingEntry {
+  readonly item_binding_id: string;
+  readonly server_answer_authority_ref: string;
+  readonly assistance_state: string;
+  readonly [key: string]: unknown;
+}
+interface VendoredLessonScript {
+  readonly artifact_version: string;
+  readonly content_sha256: string;
+  readonly payload: {
+    readonly lesson_id: string;
+    readonly question_evidence_plan: readonly AuthoredBindingEntry[];
+  };
+}
+// L1's authored script, read from the vendored copy (Phase 7-4) rather than a
+// generator — the same bytes the runtime now scores against.
+const SCRIPT = JSON.parse(
+  readFileSync(
+    new URL('../../../../content/lessons/v3-les-130923/lesson-script.json', import.meta.url),
+    'utf8',
+  ),
+) as VendoredLessonScript;
 const AUTHORED_BINDINGS = SCRIPT.payload.question_evidence_plan;
 
 /**

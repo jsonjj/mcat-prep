@@ -1,6 +1,10 @@
+import { readFileSync } from 'node:fs';
 import { request as httpRequest } from 'node:http';
 import { assertNoProtectedFields } from '@mcat/content';
 import {
+  NormalizedLessonRunViewSchema,
+  NormalizedLessonStartResponseSchema,
+  NormalizedLessonStatusViewSchema,
   VectorLessonRunViewSchema,
   VectorLessonStartResponseSchema,
   VectorLessonStatusViewSchema,
@@ -8,6 +12,7 @@ import {
   newIdempotencyKey,
   newTaskInstanceId,
 } from '@mcat/contracts';
+import { lessonContentProvider } from '@mcat/learner-api';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   DEBUG_LEARNER_STATE_PATH,
@@ -194,6 +199,128 @@ describe('local lesson HTTP authority', () => {
   });
 });
 
+const ANSWER_LEAK =
+  /correctChoiceId|correct_choice_id|correct_option_index|answerKey|accepted_responses|response_authority|rationale/i;
+
+/** The correct committed response for a scored item, from the SERVER-ONLY key. */
+function correctResponseFor(lessonId: string, itemId: string): Record<string, unknown> {
+  const answer = lessonContentProvider.getAnswerKey(lessonId).byItemId[itemId];
+  if (answer === undefined) throw new Error(`no answer for ${itemId}`);
+  if (answer.correctChoiceId !== null) {
+    return { kind: 'MULTIPLE_CHOICE', choiceId: answer.correctChoiceId };
+  }
+  if (answer.structuredAuthority !== undefined) {
+    return {
+      kind: 'CONSTRUCTED',
+      fields: Object.fromEntries(answer.acceptedResponses.map((part, index) => [`f${index}`, part])),
+    };
+  }
+  return { kind: 'SHORT', text: answer.acceptedResponses[0] ?? '' };
+}
+
+describe('local lesson HTTP authority: normalized catalog (L2/L3)', () => {
+  it('serves a normalized lesson status → start → run → command, never leaking an answer', async () => {
+    const server = await createLocalLessonHttpServer({ port: 0 });
+    running.push(server);
+
+    const bootstrap = (await (
+      await fetch(`${server.baseUrl}/v1/bootstrap`, { method: 'POST', headers: LOCAL_HEADERS })
+    ).json()) as { streamVersion: number; contentRelease: string };
+
+    // Before this route existed the GET 404'd, and the Curriculum rendered
+    // "Couldn't check this lesson." The normalized status is always AVAILABLE,
+    // exactly like the deployed learner API serves it.
+    const status = NormalizedLessonStatusViewSchema.parse(
+      await (
+        await fetch(`${server.baseUrl}/v1/lessons/v3-les-844372/status`, { headers: LOCAL_HEADERS })
+      ).json(),
+    );
+    expect(status).toEqual({
+      availability: 'AVAILABLE',
+      runState: 'NOT_STARTED',
+      actionLabel: 'Start',
+    });
+
+    const envelope = {
+      eventId: newEventId(),
+      idempotencyKey: newIdempotencyKey(),
+      occurredAt: new Date().toISOString(),
+      expectedStreamVersion: bootstrap.streamVersion,
+      contentRelease: bootstrap.contentRelease,
+      taskInstanceId: newTaskInstanceId(),
+    };
+    const started = NormalizedLessonStartResponseSchema.parse(
+      await (
+        await fetch(`${server.baseUrl}/v1/lessons/v3-les-844372/start`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', ...LOCAL_HEADERS },
+          body: JSON.stringify({ envelope, lessonId: 'V3-LES-844372' }),
+        })
+      ).json(),
+    );
+    expect(started.disposition).toBe('STARTED');
+
+    const view = NormalizedLessonRunViewSchema.parse(
+      await (
+        await fetch(`${server.baseUrl}/v1/lessons/v3-les-844372/run`, { headers: LOCAL_HEADERS })
+      ).json(),
+    );
+    expect(view.lessonId).toBe('V3-LES-844372');
+    expect(JSON.stringify(view)).not.toMatch(ANSWER_LEAK);
+
+    // Advance one screen through the commands route: a scored screen submits the
+    // server-derived correct response; any other screen continues.
+    const screen = view.screen as unknown as { kind: string; itemId?: string };
+    const action =
+      screen.kind === 'QUESTION'
+        ? { type: 'SUBMIT_RESPONSE', response: correctResponseFor('V3-LES-844372', screen.itemId!) }
+        : { type: 'CONTINUE' };
+    const command = await fetch(`${server.baseUrl}/v1/lessons/v3-les-844372/commands`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...LOCAL_HEADERS },
+      body: JSON.stringify({
+        envelope: {
+          ...envelope,
+          eventId: newEventId(),
+          idempotencyKey: newIdempotencyKey(),
+          expectedStreamVersion: started.streamVersion,
+        },
+        action,
+      }),
+    });
+    expect(command.status).toBe(200);
+    expect(JSON.stringify(await command.json())).not.toMatch(ANSWER_LEAK);
+  });
+
+  it('rejects a start whose body id does not match the route slug', async () => {
+    const server = await createLocalLessonHttpServer({ port: 0 });
+    running.push(server);
+
+    const bootstrap = (await (
+      await fetch(`${server.baseUrl}/v1/bootstrap`, { method: 'POST', headers: LOCAL_HEADERS })
+    ).json()) as { streamVersion: number; contentRelease: string };
+
+    // L2's route with L3's body id: the slug is the sole authority for which
+    // lesson runs, so this is refused rather than silently starting L3.
+    const denied = await fetch(`${server.baseUrl}/v1/lessons/v3-les-789208/start`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...LOCAL_HEADERS },
+      body: JSON.stringify({
+        envelope: {
+          eventId: newEventId(),
+          idempotencyKey: newIdempotencyKey(),
+          occurredAt: new Date().toISOString(),
+          expectedStreamVersion: bootstrap.streamVersion,
+          contentRelease: bootstrap.contentRelease,
+          taskInstanceId: newTaskInstanceId(),
+        },
+        lessonId: 'V3-LES-844372',
+      }),
+    });
+    expect(denied.status).toBe(400);
+  });
+});
+
 describe('local debug learner-state route', () => {
   it('does not exist without the explicit opt-in, even on loopback', async () => {
     vi.stubEnv(DEBUG_STATE_OPT_IN_ENV_VAR, undefined);
@@ -277,6 +404,45 @@ describe('local debug learner-state route', () => {
     expect(lesson.requiredKcCount).toBe(3);
     expect(lesson.members).toHaveLength(3);
     expect(lesson.members.every((member) => member.pL > 0)).toBe(true);
+  });
+
+  it('surfaces the delivered content revision the runtime pinned, null before a run', async () => {
+    vi.stubEnv(DEBUG_STATE_OPT_IN_ENV_VAR, '1');
+    const server = await createLocalLessonHttpServer({ port: 0 });
+    running.push(server);
+
+    // Before any run the harness lesson is still reported, but it carries no
+    // revision: "never delivered" must not read as "delivered revision 000…0".
+    const before = (await (
+      await fetch(`${server.baseUrl}${DEBUG_LEARNER_STATE_PATH}`)
+    ).json()) as DebugLearnerStateView;
+    const beforeLesson = before.lessons.find((entry) => entry.lessonId === 'V3-LES-130923');
+    expect(beforeLesson?.deliveredContentSha256).toBeNull();
+    // No delivery yet, so nothing can be superseded.
+    expect(beforeLesson?.revisionSuperseded).toBe(false);
+
+    // After delivery the endpoint returns the EXACT content_sha256 the runtime
+    // pinned onto the run and scored against — the attribution key for the
+    // evidence that same run just wrote.
+    await runOneLessonQuestion(server);
+    const after = (await (
+      await fetch(`${server.baseUrl}${DEBUG_LEARNER_STATE_PATH}`)
+    ).json()) as DebugLearnerStateView;
+    const afterLesson = after.lessons.find((entry) => entry.lessonId === 'V3-LES-130923');
+    const expectedSha = (
+      JSON.parse(
+        readFileSync(
+          new URL('../../../content/lessons/v3-les-130923/lesson-script.json', import.meta.url),
+          'utf8',
+        ),
+      ) as { content_sha256: string }
+    ).content_sha256;
+    expect(afterLesson?.deliveredContentSha256).toMatch(/^[0-9a-f]{64}$/);
+    expect(afterLesson?.deliveredContentSha256).toBe(expectedSha);
+    // The harness serves the current revision, so a fresh delivery is never
+    // stale: current resolves to the same hash and the flag stays down.
+    expect(afterLesson?.currentContentSha256).toBe(expectedSha);
+    expect(afterLesson?.revisionSuperseded).toBe(false);
   });
 
   it('returns no protected material', async () => {

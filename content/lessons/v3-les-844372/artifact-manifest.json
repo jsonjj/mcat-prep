@@ -1,0 +1,76 @@
+{
+  "artifact_type": "LESSON_ARTIFACT_MANIFEST",
+  "manifest_id": "V3-MANIFEST-844372",
+  "manifest_version": "0.2.5-internal-draft",
+  "lesson_binding": {
+    "lesson_id": "V3-LES-844372",
+    "grouping_id": "V3-CL-844372",
+    "ordered_kc_ids": [
+      "V3-KC-452593",
+      "V3-KC-008681",
+      "V3-KC-238607"
+    ]
+  },
+  "hash_algorithm": "SHA-256",
+  "hash_scope": "JCS-compatible canonical JSON serialization of each parsed named artifact, encoded as UTF-8 before SHA-256.",
+  "registry_binding": {
+    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+    "graph_freeze_id": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
+    "sequence_freeze_id": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01"
+  },
+  "primary_artifacts": [
+    {
+      "path": "lesson-script.json",
+      "artifact_type": "LESSON_SCRIPT",
+      "artifact_id": "V3-LSCR-844372",
+      "content_sha256": "9adea72c9298f38b0389329fb9e8a937ade357bbac8e83b3a84d4112765de12c",
+      "file_sha256": "1edd1fa36be30319651c1d76c3cc8cfc15edfe95f8ae51d5748b816baae17efb"
+    },
+    {
+      "path": "kc-coverage-matrix.json",
+      "artifact_type": "KC_COVERAGE_MATRIX",
+      "artifact_id": "V3-KCOV-844372",
+      "content_sha256": "881d4d56e2120fe1587edf7acf1388608a4790c471f4882bd08cb786f453bfef",
+      "file_sha256": "a984c44c633836d56e49608ba13330542671b7cc853db30c8de92d6a93826ca3"
+    },
+    {
+      "path": "lesson-presentation-plan.json",
+      "artifact_type": "LESSON_PRESENTATION_PLAN",
+      "artifact_id": "V3-LPPL-844372",
+      "content_sha256": "877aff28e57a9241e9845ee3e442bcdb2c1fc85e0b88e3f3ee2c2aa66e3640d2",
+      "file_sha256": "5c7a2ebe45ccd06cff57f8f42a0b5f7ac637be9eddf85166f13663bf7a7baec2"
+    },
+    {
+      "path": "lesson-quality-report.json",
+      "artifact_type": "LESSON_QUALITY_REPORT",
+      "artifact_id": "V3-LQRP-844372",
+      "content_sha256": "78f3900aa4b18a17a570103996a122dc9a5bb407c5f3699be610f12dc0448605",
+      "file_sha256": "ba05035e47856f932a574b5587a402181993ffae0f97558c3d4969f4be202997"
+    }
+  ],
+  "companion_artifacts": [
+    {
+      "artifact_type": "SOURCE_CLAIM_LEDGER",
+      "artifact_id": "V3-SCLD-844372",
+      "path": "source-claim-ledger.json",
+      "file_sha256": "74b7330efdd68c46bbf3aca7da6e059abb95f34cb1cd868c7f6e7fb88b07c703"
+    },
+    {
+      "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+      "path": "learner-safe-items.json",
+      "file_sha256": "17e7efafc35634f425062e003995b8333302bc64efdfb06efc0bc6e6863989ff",
+      "answer_material_policy": "NO_KEYS_RATIONALES_OR_INTERNAL_ROUTE_METADATA"
+    },
+    {
+      "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+      "path": "protected-items.json",
+      "file_sha256": "3217bd88730846e6deec7c565f35eba816756880aeaf565b93c9e68e57262bdb",
+      "access_policy": "SERVER_ONLY_FUTURE_RUNTIME",
+      "browser_import_prohibited": true
+    }
+  ],
+  "integration_status": "BLOCKED_SHARED_RUNTIME",
+  "publication_status": "INTERNAL_DRAFT_ONLY",
+  "d1_note": "file_sha256 refreshed to SHA-256 of vendored stored bytes (2026-07-30, D1). content_sha256 already repo-canonical (JCS) and left unchanged."
+}

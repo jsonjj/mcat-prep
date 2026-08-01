@@ -34,24 +34,34 @@ describe('V3-LES-130923 one-lesson UI integration', () => {
     ]);
   });
 
-  it('enables only the target card through a server-accepted Start or Continue mutation', () => {
+  it('drives playability from the registration manifest, keeping L1 on its bespoke vector seam', () => {
     const source = read(curriculumPath);
-    expect(source).toContain("const TARGET_LESSON_ID = 'V3-LES-130923'");
-    expect(source).toMatch(/lesson\.id\s*===\s*TARGET_LESSON_ID/);
+    // Servability is the manifest's call, not a hard-coded target id or a read of
+    // the preview list — the couplings Phase 6 replaced.
+    expect(source).not.toContain('const TARGET_LESSON_ID');
+    expect(source).not.toMatch(/APP_NATIVE_LESSONS|PLAYABLE_SLUG_BY_LESSON_ID/);
+    expect(source).toMatch(/lessonById\(lesson\.id\)/);
+    // Three-way dispatch: unregistered → disabled; the vector-runtime lesson (L1) →
+    // its bespoke Start/Continue seam; a normalized-runtime lesson (L2/L3) → the
+    // shared catalog-player launch.
+    expect(source).toMatch(/registered === undefined\s*\?\s*\(?\s*<UnavailableLessonAction/);
+    expect(source).toMatch(/registered\.runtime === 'vector'\s*\?\s*\(?\s*<TargetLessonAction/);
+    expect(source).toMatch(/:\s*\(?\s*<CatalogLessonAction/);
+    // L1's server-accepted Start/Continue mutation seam is preserved verbatim.
     expect(source).toMatch(/useVectorLessonStatus/);
     expect(source).toMatch(/useStartVectorLesson/);
     expect(source).toMatch(/startLesson\.mutateAsync/);
     expect(source).toMatch(/navigate\(accepted\.path\)/);
-    expect(source).toMatch(/isTarget\s*\?\s*\(?\s*<TargetLessonAction/);
-    expect(source).toMatch(/:\s*\(?\s*<UnavailableLessonAction/);
+    // Unregistered lessons stay visible but honestly disabled.
     expect(source).toContain('Coming soon');
     expect(source).toMatch(/function UnavailableLessonAction[\s\S]*?\bdisabled\b/);
   });
 
-  it('registers a dedicated friendly lesson route and target-specific query hooks', () => {
+  it('registers dedicated lesson routes and per-grammar query hooks', () => {
     const router = read(routerPath);
     const queries = read(queriesPath);
     expect(existsSync(lessonPath)).toBe(true);
+    // L1 keeps its bespoke route + vector hooks.
     expect(router).toMatch(/import\s*\{\s*VectorLesson\s*\}/);
     expect(router).toMatch(
       /path:\s*'lessons\/vectors-and-trigonometry'[\s\S]*?<VectorLesson\s*\/>/,
@@ -61,6 +71,23 @@ describe('V3-LES-130923 one-lesson UI integration', () => {
       'useStartVectorLesson',
       'useVectorLessonRun',
       'useSubmitVectorLessonAction',
+    ]) {
+      expect(queries).toContain(`function ${hook}`);
+    }
+    // L2/L3 register real routes of the SAME shape, played by the shared
+    // CatalogLesson through slug-scoped normalized hooks.
+    expect(router).toMatch(/import\s*\{\s*CatalogLesson\s*\}/);
+    expect(router).toMatch(
+      /path:\s*'lessons\/v3-les-789208'[\s\S]*?<CatalogLesson\s+lessonId="V3-LES-789208"/,
+    );
+    expect(router).toMatch(
+      /path:\s*'lessons\/v3-les-844372'[\s\S]*?<CatalogLesson\s+lessonId="V3-LES-844372"/,
+    );
+    for (const hook of [
+      'useNormalizedLessonStatus',
+      'useStartNormalizedLesson',
+      'useNormalizedLessonRun',
+      'useSubmitNormalizedLessonAction',
     ]) {
       expect(queries).toContain(`function ${hook}`);
     }

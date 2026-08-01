@@ -1,0 +1,2270 @@
+{
+  "artifact_type": "LESSON_PRESENTATION_PLAN",
+  "artifact_id": "V3-LPPL-789208",
+  "artifact_version": "0.1.1-internal-draft",
+  "artifact_status": "DRAFT",
+  "schema_binding": {
+    "schema_id": "mcat-spec04-presentation-internal-draft",
+    "schema_version": "0.1-candidate-local-1",
+    "schema_sha256": "bb55c14a955b3280944d2835576e749ed66ada4970e1187515e2f0f824598566",
+    "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
+  },
+  "content_sha256": "eec5d6a899d1cec1aa56640f4c86c3c5dbf845e3608e204316d31166037fc812",
+  "registry_binding": {
+    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+    "phase_0_freeze_id": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
+    "canonical_freeze_id": "MCAT-V3-CANONICAL-FRZ-2026-07-22-01",
+    "graph_freeze_id": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
+    "sequence_freeze_id": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01",
+    "manifest_schema_id": "mcat-v3-lessons-public",
+    "manifest_schema_version": "1",
+    "manifest_sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+    "lesson_id": "V3-LES-789208",
+    "grouping_id": "V3-CL-789208",
+    "ordered_kc_ids": [
+      "V3-KC-399019",
+      "V3-KC-799492",
+      "V3-KC-919842",
+      "V3-KC-981438"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-399019",
+      "V3-KC-799492",
+      "V3-KC-919842",
+      "V3-KC-981438"
+    ]
+  },
+  "authors": [
+    {
+      "identity": "gpt-5.6-terra",
+      "role": "PRIMARY_CONTENT_AUTHOR",
+      "run_id": "V3-LES-789208-CONTENT-DRAFT-2026-07-23",
+      "contribution": "Original target-lesson content, source trace, protected item material, and content-only validation."
+    }
+  ],
+  "reviewers": [],
+  "input_bindings": [
+    {
+      "input_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "version": "mcat-v3-authoritative-registry-1",
+      "sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+      "kind": "CURRICULUM_REGISTRY",
+      "use": "Canonical identity, scope, order, source lineage, attachments, holds, and placement."
+    },
+    {
+      "input_id": "MCAT-V3-LEARNER-FACING-LESSONS",
+      "version": "mcat-v3-lessons-public-1",
+      "sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+      "kind": "GENERATED_MANIFEST",
+      "use": "Learner title and catalog cross-check only; teaching order comes from the sequence artifact."
+    },
+    {
+      "input_id": "MCAT-V3-CANONICAL-KCS",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "31d304a7f6ea51ac4847ede01824bb14cd8b98ed7a6bc61bb05617d53f9860fd",
+      "kind": "CANONICAL_KC_LEDGER",
+      "use": "Competency statements, scope bounds, representations, and source anchors."
+    },
+    {
+      "input_id": "MCAT-V3-TEACHING-SEQUENCES",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "b2bbd9f8a14cbff1250013e8d717eb1c8195ccbf6335e605c64f1469a94246aa",
+      "kind": "CANONICAL_SEQUENCE",
+      "use": "First-delivery position, ordered KC relation, revisit, and no-bypass context."
+    },
+    {
+      "input_id": "MCAT-V3-PREREQUISITE-GRAPH",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "fe0fffdd16bd10d3f7c046951cbe642add8ef2639f5b3f68a3224d9648f59e10",
+      "kind": "CANONICAL_GRAPH",
+      "use": "Hard/helpful prerequisite state and successor context."
+    },
+    {
+      "input_id": "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "23bbea9e358c4aa0ff255964d203c0081b4ff3ba28e4e123eed0cfc0b7a54831",
+      "kind": "ATTACHMENT_LEDGER",
+      "use": "Bounded conditional entry support only."
+    },
+    {
+      "input_id": "MCAT-V3-SOURCE-CROSSWALK",
+      "version": "mcat-v3-source-crosswalk-1",
+      "sha256": "a87fd1634a5a9e9dd522293ef98db10b783971f02e0bdfbf558b276cc0b9cea3",
+      "kind": "SOURCE_LEDGER",
+      "use": "Direct-scope and source-anchor trace; no expressive source prose is copied."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-03",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "d3d3cfb3cc0e2314dc7f01bc9d1cc9c68049527f317e2ad2cb270a7b43fff598",
+      "kind": "INSTRUCTIONAL_RUNTIME_SPECIFICATION",
+      "use": "Microcycle, freshness, assistance, repair, and route constraints; implementation remains blocked."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-04",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "4fc88c3001bae4d8d1c843020106b6ba30059b243ea0d993a6d87ff009099761",
+      "kind": "AUTHORING_SPECIFICATION",
+      "use": "Artifact structure, coverage, learner/reviewer separation, and accessibility requirements."
+    },
+    {
+      "input_id": "AAMC-2020-SUPPLIED-CEILING",
+      "version": "2020-supplied",
+      "sha256": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
+      "kind": "SOURCE_CEILING",
+      "use": "Scope ceiling only; no expressive source wording or source questions are reused."
+    }
+  ],
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-789208",
+    "lesson_script_sha256": "bce8010490b939c606ef8057a8b1dcca40bdc00ed18288751d3cc51c301fb754",
+    "kc_coverage_matrix_id": "V3-KCOV-789208",
+    "kc_coverage_matrix_sha256": "dedaaed3d4cb328f423bece53c39470e243ce76280f664e872e0aaf98f83297d"
+  },
+  "lineage": {
+    "supersedes": {
+      "artifact_id": "V3-LPPL-789208",
+      "content_sha256": "7b61bc2a2ab627d99ff17edc5312951eed85b6963808a80b858a7d3631669119"
+    },
+    "change_reason": "Refresh exact LessonScript and coverage-matrix dependencies after metadata reconciliation.",
+    "authoring_run_id": "V3-LES-789208-CONTENT-DRAFT-2026-07-23",
+    "derived_input_ids": [
+      "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "MCAT-V3-LEARNER-FACING-LESSONS",
+      "MCAT-V3-CANONICAL-KCS",
+      "MCAT-V3-TEACHING-SEQUENCES",
+      "MCAT-V3-PREREQUISITE-GRAPH",
+      "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "MCAT-V3-SOURCE-CROSSWALK",
+      "MCAT-V3-SPEC-03",
+      "MCAT-V3-SPEC-04",
+      "AAMC-2020-SUPPLIED-CEILING"
+    ]
+  },
+  "payload": {
+    "lesson_id": "V3-LES-789208",
+    "lesson_script_id": "V3-LSCR-789208",
+    "lesson_script_sha256": "bce8010490b939c606ef8057a8b1dcca40bdc00ed18288751d3cc51c301fb754",
+    "kc_coverage_matrix_id": "V3-KCOV-789208",
+    "kc_coverage_matrix_sha256": "dedaaed3d4cb328f423bece53c39470e243ce76280f664e872e0aaf98f83297d",
+    "learner_rhythm": [
+      "Starting check",
+      "Focus now",
+      "Explain",
+      "Watch the reasoning",
+      "Guided practice",
+      "Less help",
+      "On your own",
+      "Final near check",
+      "Changed-task check",
+      "Repair and fresh re-entry when needed",
+      "Recap"
+    ],
+    "screens": [
+      {
+        "screen_id": "screen-qms-units-node-entry",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "qms-units-node-entry"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Starting check: Convert units and dimensions",
+        "progress_label": "Starting check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-orientation",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "qms-units-node-orientation"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Focus now: Convert units and dimensions",
+        "progress_label": "Focus now",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-explanation",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "qms-units-node-explanation"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Convert units and dimensions",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-mental-model",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "qms-units-node-mental-model"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Mental model: Convert units and dimensions",
+        "progress_label": "Mental model",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-think-aloud",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "qms-units-node-think-aloud"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Watch the reasoning: Convert units and dimensions",
+        "progress_label": "Watch the reasoning",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-worked-example",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "qms-units-node-worked-example"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Worked example: Convert units and dimensions",
+        "progress_label": "Worked example",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-guided",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "qms-units-node-guided"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Guided practice: Convert units and dimensions",
+        "progress_label": "Guided practice",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-light-support",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "qms-units-node-light-support"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Less help: Convert units and dimensions",
+        "progress_label": "Less help",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-solo",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "qms-units-node-solo"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "On your own: Convert units and dimensions",
+        "progress_label": "On your own",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-contrast",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "qms-units-node-contrast"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Compare: Convert units and dimensions",
+        "progress_label": "Compare",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-near-exit",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "qms-units-node-near-exit"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Final near check: Convert units and dimensions",
+        "progress_label": "Final near check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-changed-exit",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "qms-units-node-changed-exit"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Changed-task check: Convert units and dimensions",
+        "progress_label": "Changed-task check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-repair-near",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "qms-units-node-repair-near"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Repair: Convert units and dimensions",
+        "progress_label": "Repair",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-reentry-near",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "qms-units-node-reentry-near"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Fresh re-entry: Convert units and dimensions",
+        "progress_label": "Fresh re-entry",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-repair-changed",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "qms-units-node-repair-changed"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Repair: Convert units and dimensions",
+        "progress_label": "Repair",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-reentry-changed",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "qms-units-node-reentry-changed"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Fresh re-entry: Convert units and dimensions",
+        "progress_label": "Fresh re-entry",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-units-node-recap",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "qms-units-node-recap"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Recap: Convert units and dimensions",
+        "progress_label": "Recap",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-units-cancellation-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-entry",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "qms-precision-node-entry"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Starting check: Estimate with significant figures",
+        "progress_label": "Starting check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-orientation",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "qms-precision-node-orientation"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Focus now: Estimate with significant figures",
+        "progress_label": "Focus now",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-explanation",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "qms-precision-node-explanation"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Estimate with significant figures",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-mental-model",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "qms-precision-node-mental-model"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Mental model: Estimate with significant figures",
+        "progress_label": "Mental model",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-think-aloud",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "qms-precision-node-think-aloud"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Watch the reasoning: Estimate with significant figures",
+        "progress_label": "Watch the reasoning",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-worked-example",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "qms-precision-node-worked-example"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Worked example: Estimate with significant figures",
+        "progress_label": "Worked example",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-guided",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "qms-precision-node-guided"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Guided practice: Estimate with significant figures",
+        "progress_label": "Guided practice",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-light-support",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "qms-precision-node-light-support"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Less help: Estimate with significant figures",
+        "progress_label": "Less help",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-solo",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "qms-precision-node-solo"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "On your own: Estimate with significant figures",
+        "progress_label": "On your own",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-contrast",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "qms-precision-node-contrast"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Compare: Estimate with significant figures",
+        "progress_label": "Compare",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-near-exit",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "qms-precision-node-near-exit"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Final near check: Estimate with significant figures",
+        "progress_label": "Final near check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-changed-exit",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "qms-precision-node-changed-exit"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Changed-task check: Estimate with significant figures",
+        "progress_label": "Changed-task check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-repair-near",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "qms-precision-node-repair-near"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Repair: Estimate with significant figures",
+        "progress_label": "Repair",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-reentry-near",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "qms-precision-node-reentry-near"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Fresh re-entry: Estimate with significant figures",
+        "progress_label": "Fresh re-entry",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-repair-changed",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "qms-precision-node-repair-changed"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Repair: Estimate with significant figures",
+        "progress_label": "Repair",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-reentry-changed",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "qms-precision-node-reentry-changed"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Fresh re-entry: Estimate with significant figures",
+        "progress_label": "Fresh re-entry",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-precision-node-recap",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "qms-precision-node-recap"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Recap: Estimate with significant figures",
+        "progress_label": "Recap",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-precision-scale-and-digits"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-entry",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "qms-ratios-node-entry"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Starting check: Compute ratios and probabilities",
+        "progress_label": "Starting check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-orientation",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "qms-ratios-node-orientation"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Focus now: Compute ratios and probabilities",
+        "progress_label": "Focus now",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-explanation",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "qms-ratios-node-explanation"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Compute ratios and probabilities",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-mental-model",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "qms-ratios-node-mental-model"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Mental model: Compute ratios and probabilities",
+        "progress_label": "Mental model",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-think-aloud",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "qms-ratios-node-think-aloud"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Watch the reasoning: Compute ratios and probabilities",
+        "progress_label": "Watch the reasoning",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-worked-example",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "qms-ratios-node-worked-example"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Worked example: Compute ratios and probabilities",
+        "progress_label": "Worked example",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-guided",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "qms-ratios-node-guided"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Guided practice: Compute ratios and probabilities",
+        "progress_label": "Guided practice",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-light-support",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "qms-ratios-node-light-support"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Less help: Compute ratios and probabilities",
+        "progress_label": "Less help",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-solo",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "qms-ratios-node-solo"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "On your own: Compute ratios and probabilities",
+        "progress_label": "On your own",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-contrast",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "qms-ratios-node-contrast"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Compare: Compute ratios and probabilities",
+        "progress_label": "Compare",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-near-exit",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "qms-ratios-node-near-exit"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Final near check: Compute ratios and probabilities",
+        "progress_label": "Final near check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-changed-exit",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "qms-ratios-node-changed-exit"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Changed-task check: Compute ratios and probabilities",
+        "progress_label": "Changed-task check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-repair-near",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "qms-ratios-node-repair-near"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Repair: Compute ratios and probabilities",
+        "progress_label": "Repair",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-reentry-near",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "qms-ratios-node-reentry-near"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Fresh re-entry: Compute ratios and probabilities",
+        "progress_label": "Fresh re-entry",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-repair-changed",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "qms-ratios-node-repair-changed"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Repair: Compute ratios and probabilities",
+        "progress_label": "Repair",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-reentry-changed",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "qms-ratios-node-reentry-changed"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Fresh re-entry: Compute ratios and probabilities",
+        "progress_label": "Fresh re-entry",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-ratios-node-recap",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "qms-ratios-node-recap"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Recap: Compute ratios and probabilities",
+        "progress_label": "Recap",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-ratios-relationship-table"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-entry",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "qms-notation-node-entry"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Starting check: Use scientific notation and exponents",
+        "progress_label": "Starting check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-orientation",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "qms-notation-node-orientation"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Focus now: Use scientific notation and exponents",
+        "progress_label": "Focus now",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-explanation",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "qms-notation-node-explanation"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Explain: Use scientific notation and exponents",
+        "progress_label": "Explain",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-mental-model",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "qms-notation-node-mental-model"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Mental model: Use scientific notation and exponents",
+        "progress_label": "Mental model",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-think-aloud",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "qms-notation-node-think-aloud"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Watch the reasoning: Use scientific notation and exponents",
+        "progress_label": "Watch the reasoning",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-worked-example",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "qms-notation-node-worked-example"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Worked example: Use scientific notation and exponents",
+        "progress_label": "Worked example",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-guided",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "qms-notation-node-guided"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Guided practice: Use scientific notation and exponents",
+        "progress_label": "Guided practice",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-light-support",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "qms-notation-node-light-support"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Less help: Use scientific notation and exponents",
+        "progress_label": "Less help",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-solo",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "qms-notation-node-solo"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "On your own: Use scientific notation and exponents",
+        "progress_label": "On your own",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-contrast",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "qms-notation-node-contrast"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Compare: Use scientific notation and exponents",
+        "progress_label": "Compare",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-near-exit",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "qms-notation-node-near-exit"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Final near check: Use scientific notation and exponents",
+        "progress_label": "Final near check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-changed-exit",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "qms-notation-node-changed-exit"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Changed-task check: Use scientific notation and exponents",
+        "progress_label": "Changed-task check",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-repair-near",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "qms-notation-node-repair-near"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Repair: Use scientific notation and exponents",
+        "progress_label": "Repair",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-reentry-near",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "qms-notation-node-reentry-near"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Fresh re-entry: Use scientific notation and exponents",
+        "progress_label": "Fresh re-entry",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-repair-changed",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "qms-notation-node-repair-changed"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Repair: Use scientific notation and exponents",
+        "progress_label": "Repair",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-reentry-changed",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "qms-notation-node-reentry-changed"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "primary_action": "COMMIT_RESPONSE_OR_CONTINUE",
+        "learner_heading": "Fresh re-entry: Use scientific notation and exponents",
+        "progress_label": "Fresh re-entry",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "screen-qms-notation-node-recap",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "qms-notation-node-recap"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "primary_action": "CONTINUE",
+        "learner_heading": "Recap: Use scientific notation and exponents",
+        "progress_label": "Recap",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "rep-qms-notation-coefficient-exponent-ledger"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      }
+    ],
+    "node_to_screen_map": [
+      {
+        "node_id": "qms-units-node-entry",
+        "screen_id": "screen-qms-units-node-entry"
+      },
+      {
+        "node_id": "qms-units-node-orientation",
+        "screen_id": "screen-qms-units-node-orientation"
+      },
+      {
+        "node_id": "qms-units-node-explanation",
+        "screen_id": "screen-qms-units-node-explanation"
+      },
+      {
+        "node_id": "qms-units-node-mental-model",
+        "screen_id": "screen-qms-units-node-mental-model"
+      },
+      {
+        "node_id": "qms-units-node-think-aloud",
+        "screen_id": "screen-qms-units-node-think-aloud"
+      },
+      {
+        "node_id": "qms-units-node-worked-example",
+        "screen_id": "screen-qms-units-node-worked-example"
+      },
+      {
+        "node_id": "qms-units-node-guided",
+        "screen_id": "screen-qms-units-node-guided"
+      },
+      {
+        "node_id": "qms-units-node-light-support",
+        "screen_id": "screen-qms-units-node-light-support"
+      },
+      {
+        "node_id": "qms-units-node-solo",
+        "screen_id": "screen-qms-units-node-solo"
+      },
+      {
+        "node_id": "qms-units-node-contrast",
+        "screen_id": "screen-qms-units-node-contrast"
+      },
+      {
+        "node_id": "qms-units-node-near-exit",
+        "screen_id": "screen-qms-units-node-near-exit"
+      },
+      {
+        "node_id": "qms-units-node-changed-exit",
+        "screen_id": "screen-qms-units-node-changed-exit"
+      },
+      {
+        "node_id": "qms-units-node-repair-near",
+        "screen_id": "screen-qms-units-node-repair-near"
+      },
+      {
+        "node_id": "qms-units-node-reentry-near",
+        "screen_id": "screen-qms-units-node-reentry-near"
+      },
+      {
+        "node_id": "qms-units-node-repair-changed",
+        "screen_id": "screen-qms-units-node-repair-changed"
+      },
+      {
+        "node_id": "qms-units-node-reentry-changed",
+        "screen_id": "screen-qms-units-node-reentry-changed"
+      },
+      {
+        "node_id": "qms-units-node-recap",
+        "screen_id": "screen-qms-units-node-recap"
+      },
+      {
+        "node_id": "qms-precision-node-entry",
+        "screen_id": "screen-qms-precision-node-entry"
+      },
+      {
+        "node_id": "qms-precision-node-orientation",
+        "screen_id": "screen-qms-precision-node-orientation"
+      },
+      {
+        "node_id": "qms-precision-node-explanation",
+        "screen_id": "screen-qms-precision-node-explanation"
+      },
+      {
+        "node_id": "qms-precision-node-mental-model",
+        "screen_id": "screen-qms-precision-node-mental-model"
+      },
+      {
+        "node_id": "qms-precision-node-think-aloud",
+        "screen_id": "screen-qms-precision-node-think-aloud"
+      },
+      {
+        "node_id": "qms-precision-node-worked-example",
+        "screen_id": "screen-qms-precision-node-worked-example"
+      },
+      {
+        "node_id": "qms-precision-node-guided",
+        "screen_id": "screen-qms-precision-node-guided"
+      },
+      {
+        "node_id": "qms-precision-node-light-support",
+        "screen_id": "screen-qms-precision-node-light-support"
+      },
+      {
+        "node_id": "qms-precision-node-solo",
+        "screen_id": "screen-qms-precision-node-solo"
+      },
+      {
+        "node_id": "qms-precision-node-contrast",
+        "screen_id": "screen-qms-precision-node-contrast"
+      },
+      {
+        "node_id": "qms-precision-node-near-exit",
+        "screen_id": "screen-qms-precision-node-near-exit"
+      },
+      {
+        "node_id": "qms-precision-node-changed-exit",
+        "screen_id": "screen-qms-precision-node-changed-exit"
+      },
+      {
+        "node_id": "qms-precision-node-repair-near",
+        "screen_id": "screen-qms-precision-node-repair-near"
+      },
+      {
+        "node_id": "qms-precision-node-reentry-near",
+        "screen_id": "screen-qms-precision-node-reentry-near"
+      },
+      {
+        "node_id": "qms-precision-node-repair-changed",
+        "screen_id": "screen-qms-precision-node-repair-changed"
+      },
+      {
+        "node_id": "qms-precision-node-reentry-changed",
+        "screen_id": "screen-qms-precision-node-reentry-changed"
+      },
+      {
+        "node_id": "qms-precision-node-recap",
+        "screen_id": "screen-qms-precision-node-recap"
+      },
+      {
+        "node_id": "qms-ratios-node-entry",
+        "screen_id": "screen-qms-ratios-node-entry"
+      },
+      {
+        "node_id": "qms-ratios-node-orientation",
+        "screen_id": "screen-qms-ratios-node-orientation"
+      },
+      {
+        "node_id": "qms-ratios-node-explanation",
+        "screen_id": "screen-qms-ratios-node-explanation"
+      },
+      {
+        "node_id": "qms-ratios-node-mental-model",
+        "screen_id": "screen-qms-ratios-node-mental-model"
+      },
+      {
+        "node_id": "qms-ratios-node-think-aloud",
+        "screen_id": "screen-qms-ratios-node-think-aloud"
+      },
+      {
+        "node_id": "qms-ratios-node-worked-example",
+        "screen_id": "screen-qms-ratios-node-worked-example"
+      },
+      {
+        "node_id": "qms-ratios-node-guided",
+        "screen_id": "screen-qms-ratios-node-guided"
+      },
+      {
+        "node_id": "qms-ratios-node-light-support",
+        "screen_id": "screen-qms-ratios-node-light-support"
+      },
+      {
+        "node_id": "qms-ratios-node-solo",
+        "screen_id": "screen-qms-ratios-node-solo"
+      },
+      {
+        "node_id": "qms-ratios-node-contrast",
+        "screen_id": "screen-qms-ratios-node-contrast"
+      },
+      {
+        "node_id": "qms-ratios-node-near-exit",
+        "screen_id": "screen-qms-ratios-node-near-exit"
+      },
+      {
+        "node_id": "qms-ratios-node-changed-exit",
+        "screen_id": "screen-qms-ratios-node-changed-exit"
+      },
+      {
+        "node_id": "qms-ratios-node-repair-near",
+        "screen_id": "screen-qms-ratios-node-repair-near"
+      },
+      {
+        "node_id": "qms-ratios-node-reentry-near",
+        "screen_id": "screen-qms-ratios-node-reentry-near"
+      },
+      {
+        "node_id": "qms-ratios-node-repair-changed",
+        "screen_id": "screen-qms-ratios-node-repair-changed"
+      },
+      {
+        "node_id": "qms-ratios-node-reentry-changed",
+        "screen_id": "screen-qms-ratios-node-reentry-changed"
+      },
+      {
+        "node_id": "qms-ratios-node-recap",
+        "screen_id": "screen-qms-ratios-node-recap"
+      },
+      {
+        "node_id": "qms-notation-node-entry",
+        "screen_id": "screen-qms-notation-node-entry"
+      },
+      {
+        "node_id": "qms-notation-node-orientation",
+        "screen_id": "screen-qms-notation-node-orientation"
+      },
+      {
+        "node_id": "qms-notation-node-explanation",
+        "screen_id": "screen-qms-notation-node-explanation"
+      },
+      {
+        "node_id": "qms-notation-node-mental-model",
+        "screen_id": "screen-qms-notation-node-mental-model"
+      },
+      {
+        "node_id": "qms-notation-node-think-aloud",
+        "screen_id": "screen-qms-notation-node-think-aloud"
+      },
+      {
+        "node_id": "qms-notation-node-worked-example",
+        "screen_id": "screen-qms-notation-node-worked-example"
+      },
+      {
+        "node_id": "qms-notation-node-guided",
+        "screen_id": "screen-qms-notation-node-guided"
+      },
+      {
+        "node_id": "qms-notation-node-light-support",
+        "screen_id": "screen-qms-notation-node-light-support"
+      },
+      {
+        "node_id": "qms-notation-node-solo",
+        "screen_id": "screen-qms-notation-node-solo"
+      },
+      {
+        "node_id": "qms-notation-node-contrast",
+        "screen_id": "screen-qms-notation-node-contrast"
+      },
+      {
+        "node_id": "qms-notation-node-near-exit",
+        "screen_id": "screen-qms-notation-node-near-exit"
+      },
+      {
+        "node_id": "qms-notation-node-changed-exit",
+        "screen_id": "screen-qms-notation-node-changed-exit"
+      },
+      {
+        "node_id": "qms-notation-node-repair-near",
+        "screen_id": "screen-qms-notation-node-repair-near"
+      },
+      {
+        "node_id": "qms-notation-node-reentry-near",
+        "screen_id": "screen-qms-notation-node-reentry-near"
+      },
+      {
+        "node_id": "qms-notation-node-repair-changed",
+        "screen_id": "screen-qms-notation-node-repair-changed"
+      },
+      {
+        "node_id": "qms-notation-node-reentry-changed",
+        "screen_id": "screen-qms-notation-node-reentry-changed"
+      },
+      {
+        "node_id": "qms-notation-node-recap",
+        "screen_id": "screen-qms-notation-node-recap"
+      }
+    ],
+    "representation_plans": [
+      {
+        "target_kc_id": "V3-KC-399019",
+        "script_node_id": "qms-units-node-mental-model",
+        "accessibility_equivalent_id": "a11y-rep-qms-units-cancellation-ledger",
+        "representation_id": "rep-qms-units-cancellation-ledger",
+        "representation_type": "unit-labeled equation",
+        "encoded_information": "The starting quantity, a supplied conversion fraction, crossed-out matching units, and the requested surviving unit.",
+        "decisive_feature": "The same unit appears in opposite positions and therefore cancels.",
+        "learner_operation": "Choose the orientation of the supplied factor that cancels the starting unit, then read the surviving unit.",
+        "why_better_than_prose": "It makes the unit-level reason for the conversion visible beside the number calculation.",
+        "signaling_plan": "Use a text label and a noncolor strike-through marker for the matched units; do not pre-highlight an answer choice.",
+        "interaction_warrant": "None required; the learner can inspect or keyboard-navigate a static equation.",
+        "text_nonvisual_equivalent": "Read the starting quantity, then the numerator and denominator of the supplied factor; explicitly state which repeated unit cancels and which unit remains.",
+        "construct_preservation_judgment": "The ordered text ledger preserves the required operation: factor orientation and unit cancellation.",
+        "reviewer": "BLOCKED_EXTERNAL_ACCESSIBILITY_REVIEW",
+        "static_or_reduced_motion_fallback": "Static labeled equation; no motion communicates meaning.",
+        "small_screen_behavior": "Stack the starting quantity, factor, and result vertically while keeping each numerator directly above its denominator."
+      },
+      {
+        "target_kc_id": "V3-KC-799492",
+        "script_node_id": "qms-precision-node-mental-model",
+        "accessibility_equivalent_id": "a11y-rep-qms-precision-scale-and-digits",
+        "representation_id": "rep-qms-precision-scale-and-digits",
+        "representation_type": "measurement reading and scale comparison",
+        "encoded_information": "A rough-scale estimate alongside a computed value and marked meaningful digits.",
+        "decisive_feature": "The final marked digit is justified by the least precise provided measurement.",
+        "learner_operation": "Estimate the order of magnitude, compute the candidate result, and round the result to the supported number of significant digits.",
+        "why_better_than_prose": "It separates magnitude checking from precision reporting without conflating the two operations.",
+        "signaling_plan": "Use labels for estimate, computed value, and reported value; digit markers are textual as well as visual.",
+        "interaction_warrant": "None required; a static comparison supports the calculation decision.",
+        "text_nonvisual_equivalent": "State the rough estimate, the unrounded calculation, the number of significant digits in each input, and the resulting reported value in order.",
+        "construct_preservation_judgment": "The text sequence preserves estimation and precision selection without relying on position or color.",
+        "reviewer": "BLOCKED_EXTERNAL_ACCESSIBILITY_REVIEW",
+        "static_or_reduced_motion_fallback": "Static three-line scale-and-digits comparison; no animation is used.",
+        "small_screen_behavior": "Show the estimate, calculation, and report as three labeled vertical rows."
+      },
+      {
+        "target_kc_id": "V3-KC-919842",
+        "script_node_id": "qms-ratios-node-mental-model",
+        "accessibility_equivalent_id": "a11y-rep-qms-ratios-relationship-table",
+        "representation_id": "rep-qms-ratios-relationship-table",
+        "representation_type": "ratio table",
+        "encoded_information": "A labeled part, whole, fraction, decimal, percentage, expected-count calculation, and square-root bracketing row.",
+        "decisive_feature": "The same labeled part-to-whole relationship remains fixed while its numerical form changes.",
+        "learner_operation": "Identify the part and whole, construct the relationship, then convert only into the form requested.",
+        "why_better_than_prose": "It makes denominator choice and equivalent forms inspectable without hiding the reference group.",
+        "signaling_plan": "Repeat text labels for part and whole in every row; use no color-only distinction.",
+        "interaction_warrant": "A static table supports the target calculation; no drag interaction is necessary.",
+        "text_nonvisual_equivalent": "State the part, state the whole, read the fraction, then state the equivalent decimal or percent; for expected count, state probability per trial multiplied by the number of trials; for roots, state the two bounding squares.",
+        "construct_preservation_judgment": "The linear text version retains the relation-identification operation and does not supply a scored response.",
+        "reviewer": "BLOCKED_EXTERNAL_ACCESSIBILITY_REVIEW",
+        "static_or_reduced_motion_fallback": "Static labeled table with explicit row and column headers.",
+        "small_screen_behavior": "Convert each row into a labeled card; do not require horizontal scrolling."
+      },
+      {
+        "target_kc_id": "V3-KC-981438",
+        "script_node_id": "qms-notation-node-mental-model",
+        "accessibility_equivalent_id": "a11y-rep-qms-notation-coefficient-exponent-ledger",
+        "representation_id": "rep-qms-notation-coefficient-exponent-ledger",
+        "representation_type": "scientific notation equation",
+        "encoded_information": "Separate coefficient and exponent columns, the applied exponent operation, decimal-shift normalization, and final notation.",
+        "decisive_feature": "The coefficient remains in the normalized interval while the exponent accounts for the scale.",
+        "learner_operation": "Operate on coefficients and exponents separately, then move the decimal only with a compensating exponent adjustment.",
+        "why_better_than_prose": "It prevents the common error of treating the entire notation string as one undifferentiated number.",
+        "signaling_plan": "Use explicit column headers and written operation symbols; do not use color as the only distinction.",
+        "interaction_warrant": "None required; a static equation ledger supports the target calculation.",
+        "text_nonvisual_equivalent": "State coefficient operation, state exponent operation, state any normalization decimal move, then state the normalized expression.",
+        "construct_preservation_judgment": "The ordered text retains the required exponent-rule and normalization decisions.",
+        "reviewer": "BLOCKED_EXTERNAL_ACCESSIBILITY_REVIEW",
+        "static_or_reduced_motion_fallback": "Static two-column ledger; no animation is used.",
+        "small_screen_behavior": "Stack coefficient and exponent steps with their labels rather than compressing them into a wide table."
+      }
+    ],
+    "progressive_disclosure_rules": [
+      "One primary cognitive job and at most one primary learner action per screen.",
+      "Optional derivations and glossary detail remain collapsed and never hide required teaching.",
+      "Feedback is unavailable until the learner commits a response.",
+      "A repair screen names the next operation and returns to the exact failed function on a fresh family."
+    ],
+    "learner_reviewer_separation": {
+      "learner_projection_excludes": [
+        "answer keys",
+        "rationales before commitment",
+        "internal lesson/KC/node/item/family/source identifiers",
+        "hashes, gate status, route metadata, and reviewer controls"
+      ],
+      "protected_material_location": "protected-items.json",
+      "runtime_projection_status": "BLOCKED_SHARED_RUNTIME"
+    },
+    "responsive_acceptance": {
+      "content_plan": "All primary tasks use single-column reflow, text labels, and a 320 px critical-fit design requirement.",
+      "executed_browser_evidence": "BLOCKED_SHARED_RUNTIME"
+    },
+    "accessibility_acceptance": {
+      "content_plan": [
+        "Keyboard order and focus destinations are declared for every screen.",
+        "Every quantitative representation has a construct-preserving text/nonvisual equivalent.",
+        "No meaning depends only on color, hover, sound, position, or motion.",
+        "Static fallbacks are specified; no animation is required for the construct."
+      ],
+      "human_accessibility_review": "BLOCKED"
+    },
+    "browser_evidence_plan": {
+      "required_checks": [
+        "desktop viewport",
+        "375 px viewport",
+        "320 px critical fit",
+        "keyboard-only completion",
+        "visible focus and feedback focus movement",
+        "screen-reader semantics",
+        "200 percent zoom reflow",
+        "no learner exposure of protected metadata"
+      ],
+      "status": "BLOCKED_SHARED_RUNTIME"
+    },
+    "presentation_status": "CONTENT_DRAFT_NOT_RENDERED"
+  }
+}

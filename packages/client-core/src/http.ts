@@ -27,6 +27,11 @@ import {
   StudyStepViewSchema,
   TodayViewSchema,
   TodaysPathViewSchema,
+  NormalizedLessonCommandSchema,
+  NormalizedLessonRunViewSchema,
+  NormalizedLessonStartCommandSchema,
+  NormalizedLessonStartResponseSchema,
+  NormalizedLessonStatusViewSchema,
   VectorLessonCommandSchema,
   VectorLessonRunViewSchema,
   VectorLessonStartCommandSchema,
@@ -41,6 +46,7 @@ import {
   type HttpApiError,
   type HttpErrorCode,
   type MasterySeed,
+  type NormalizedLessonAction,
   type PracticeAttemptCommand,
   type VectorLessonAction,
 } from '@mcat/contracts';
@@ -103,6 +109,14 @@ export class MemorySession implements SessionPort {
     this.csrfToken = null;
   }
 }
+
+/**
+ * The slug-routed path for a normalized-catalog lesson endpoint. The slug is
+ * URL-encoded even though the registered slugs are already path-safe, so a future
+ * slug can never break out of its segment.
+ */
+const normalizedLessonPath = (slug: string, segment: 'status' | 'start' | 'run' | 'commands') =>
+  `/v1/lessons/${encodeURIComponent(slug)}/${segment}`;
 
 const arrayOf = <T>(itemSchema: RuntimeSchema<T>): RuntimeSchema<T[]> => ({
   parse(value: unknown): T[] {
@@ -571,6 +585,42 @@ export class HttpAuthorityClient implements AuthorityPort {
       action,
     });
     await this.acceptedCommand(HTTP_API.vectorLessonCommand.path, command);
+  }
+
+  // ---- normalized-engine catalog (L2/L3 and any future template lesson) --------
+  // Slug-routed mirrors of the four vector methods above. The slug names WHICH
+  // lesson runs; the server rejects a start whose body id contradicts the slug.
+
+  async getNormalizedLessonStatus(slug: string) {
+    await this.ensureBootstrap();
+    return this.request(normalizedLessonPath(slug, 'status'), NormalizedLessonStatusViewSchema);
+  }
+
+  async startNormalizedLesson(slug: string, lessonId: string) {
+    const command = NormalizedLessonStartCommandSchema.parse({
+      envelope: await this.commandEnvelope(),
+      lessonId,
+    });
+    const response = await this.request(
+      normalizedLessonPath(slug, 'start'),
+      NormalizedLessonStartResponseSchema,
+      { method: 'POST', body: JSON.stringify(command) },
+    );
+    this.accept(response);
+    return response;
+  }
+
+  async getNormalizedLessonRun(slug: string) {
+    await this.ensureBootstrap();
+    return this.request(normalizedLessonPath(slug, 'run'), NormalizedLessonRunViewSchema);
+  }
+
+  async submitNormalizedLessonAction(slug: string, action: NormalizedLessonAction): Promise<void> {
+    const command = NormalizedLessonCommandSchema.parse({
+      envelope: await this.commandEnvelope(),
+      action,
+    });
+    await this.acceptedCommand(normalizedLessonPath(slug, 'commands'), command);
   }
 
   async resetProgress(): Promise<void> {

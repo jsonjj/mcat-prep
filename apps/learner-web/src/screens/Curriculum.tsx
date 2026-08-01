@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@mcat/ui-web';
 import {
   CURRICULUM_PHASES,
@@ -7,30 +7,31 @@ import {
   type CurriculumModule,
   type CurriculumPhase,
 } from '../data/curriculum-v3.generated';
-import { useStartVectorLesson, useVectorLessonStatus } from '../app/queries';
-import { APP_NATIVE_LESSONS } from '../app-native';
-
-/** Lesson id → slug for the pilot lessons that are actually playable in-app. */
-const PLAYABLE_SLUG_BY_LESSON_ID: Readonly<Record<string, string>> = Object.fromEntries(
-  APP_NATIVE_LESSONS.map((entry) => [entry.script.id, entry.script.slug]),
-);
+import {
+  useNormalizedLessonStatus,
+  useStartVectorLesson,
+  useVectorLessonStatus,
+} from '../app/queries';
+import { lessonById, type RegisteredLesson } from '../app/lesson-catalog';
 
 /**
- * Curriculum — a calm map of the whole V3 path with one authorized launch.
+ * Curriculum — a calm map of the whole V3 path with the real catalog launchable.
  *
  * It renders straight from the checked-in learner-safe manifest
  * (`curriculum-v3.generated`): five ordered phases, their modules, the lessons
  * inside each module, and the knowledge components each lesson will teach.
- * V3-LES-130923 alone adds a server-authoritative Start/Continue seam; every
- * other unavailable lesson remains visibly disabled. Numbering is shown because
- * teaching order is real, not decorative. Every module uses the same disclosure,
- * including zero-lesson integration/revisit modules.
+ * WHICH lessons are actually servable is the registration manifest's call
+ * (`../app/lesson-catalog`), the app's single source of servability: a registered
+ * lesson gets a server-authoritative Start/Continue seam (L1 on its bespoke vector
+ * runtime, L2/L3 on the shared normalized engine); every other lesson remains
+ * visibly disabled. Numbering is shown because teaching order is real, not
+ * decorative. Every module uses the same disclosure, including zero-lesson
+ * integration/revisit modules.
  */
 
 const CARS_LANE = 'CARS_PARALLEL';
 const CARS_MARKER = 'CARS · parallel practice';
 const PANEL_ID = 'mc-curriculum-panel';
-const TARGET_LESSON_ID = 'V3-LES-130923';
 
 const tabId = (phaseId: string): string => `mc-curriculum-tab-${phaseId}`;
 
@@ -278,8 +279,7 @@ function LessonCard({ lesson, highlighted = false }: { lesson: CurriculumLesson;
   const ordinal = String(lesson.position).padStart(3, '0');
   const kcCount = lesson.kcs.length;
   const titleId = `mc-curriculum-lesson-${lesson.id}`;
-  const isTarget = lesson.id === TARGET_LESSON_ID;
-  const playableSlug = PLAYABLE_SLUG_BY_LESSON_ID[lesson.id];
+  const registered = lessonById(lesson.id);
   return (
     <article
       className={`mc-curriculum__lesson${highlighted ? ' mc-curriculum__lesson--highlight' : ''}`}
@@ -310,21 +310,12 @@ function LessonCard({ lesson, highlighted = false }: { lesson: CurriculumLesson;
         </div>
       </div>
       <div className="mc-curriculum__lesson-foot">
-        {isTarget ? (
-          <TargetLessonAction lesson={lesson} />
-        ) : playableSlug ? (
-          <>
-            <span className="mc-curriculum__ready">Ready to play</span>
-            <Link
-              to={`/app/lesson/${playableSlug}`}
-              className="mc-button mc-button--primary mc-button--lg"
-              aria-label={`Start ${lesson.shortTitle}`}
-            >
-              <span className="mc-button__label">Start</span>
-            </Link>
-          </>
-        ) : (
+        {registered === undefined ? (
           <UnavailableLessonAction lesson={lesson} />
+        ) : registered.runtime === 'vector' ? (
+          <TargetLessonAction lesson={lesson} />
+        ) : (
+          <CatalogLessonAction lesson={lesson} registered={registered} />
         )}
       </div>
     </article>
@@ -418,6 +409,78 @@ function TargetLessonAction({ lesson }: { lesson: CurriculumLesson }) {
           onClick={() => void startOrResume()}
         >
           {startLesson.isPending ? 'Opening…' : label}
+        </Button>
+      </div>
+    </>
+  );
+}
+
+/**
+ * The launch affordance for a normalized-engine catalog lesson (L2/L3). Like the
+ * vector target above it reads the server's honest availability, but WHICH lesson
+ * runs is fixed by the manifest route, and the shared player auto-starts/resumes on
+ * mount — so this navigates straight to the registered route rather than issuing a
+ * bespoke start command. In local dev the synthetic authority reports UNAVAILABLE
+ * (as it does for L1), so the button is truthfully disabled until the persisted
+ * authority serves the run.
+ */
+function CatalogLessonAction({
+  lesson,
+  registered,
+}: {
+  lesson: CurriculumLesson;
+  registered: RegisteredLesson;
+}) {
+  const navigate = useNavigate();
+  const status = useNormalizedLessonStatus(registered.slug);
+  const statusId = `mc-curriculum-status-${lesson.id}`;
+
+  const label = status.data?.actionLabel ?? 'Unavailable';
+  const badge =
+    status.data?.availability === 'UNAVAILABLE'
+      ? 'Unavailable'
+      : status.data?.runState === 'BLOCKED'
+        ? 'Needs support'
+        : status.data?.runState === 'PAUSED'
+          ? 'Paused'
+          : status.data?.runState === 'IN_PROGRESS'
+            ? 'In progress'
+            : status.data?.runState === 'DELIVERY_COMPLETE'
+              ? 'Lesson finished'
+              : 'Available now';
+
+  if (status.isError) {
+    return (
+      <>
+        <span className="mc-curriculum__launch-error" id={statusId} role="alert">
+          Couldn&apos;t check this lesson.
+        </span>
+        <Button variant="secondary" size="lg" onClick={() => void status.refetch()}>
+          Try again
+        </Button>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <span className="mc-curriculum__available" id={statusId}>
+        {status.isLoading ? 'Checking availability' : badge}
+      </span>
+      <div className="mc-curriculum__launch">
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={
+            status.isLoading ||
+            status.data?.availability === 'UNAVAILABLE' ||
+            status.data?.actionLabel === null
+          }
+          aria-label={`${label} ${lesson.shortTitle}`}
+          aria-describedby={statusId}
+          onClick={() => navigate(registered.routePath)}
+        >
+          {label}
         </Button>
       </div>
     </>

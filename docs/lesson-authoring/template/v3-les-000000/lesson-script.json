@@ -1,0 +1,1442 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-844372",
+  "artifact_version": "0.2.5-internal-draft",
+  "artifact_status": "DRAFT",
+  "schema_binding": {
+    "schema_id": "mcat-spec04-lesson-script-internal-draft",
+    "schema_version": "0.1-candidate-local-1",
+    "schema_sha256": "8759f753eeb8cbe6114c476608e713f20b257b1a6add73a96c14e7344536dac3",
+    "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
+  },
+  "content_sha256": "72e16e4d7a37bd1e8025bd373826b33e8a2e6a07b23b478af74e885f83c295eb",
+  "registry_binding": {
+    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+    "phase_0_freeze_id": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
+    "canonical_freeze_id": "MCAT-V3-CANONICAL-FRZ-2026-07-22-01",
+    "graph_freeze_id": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
+    "sequence_freeze_id": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01",
+    "manifest_schema_id": "mcat-v3-lessons-public",
+    "manifest_schema_version": "1",
+    "manifest_sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+    "lesson_id": "V3-LES-000000",
+    "grouping_id": "V3-CL-844372",
+    "ordered_kc_ids": [
+      "V3-KC-452593",
+      "V3-KC-008681",
+      "V3-KC-238607"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-452593",
+      "V3-KC-008681",
+      "V3-KC-238607"
+    ]
+  },
+  "authors": [
+    {
+      "identity": "gpt-5.6-terra",
+      "role": "PRIMARY_CONTENT_AUTHOR",
+      "run_id": "V3-LES-000000-CONSTRUCTED-CONTEXT-FIX-2026-07-23",
+      "contribution": "Corrected constructed-response learner prompts and protected authority context alignment."
+    }
+  ],
+  "reviewers": [],
+  "input_bindings": [
+    {
+      "input_id": "V3-SCLD-844372",
+      "version": "0.1.0-draft.1",
+      "sha256": "c320dec45739269a0ba4b5ecbd201ce7295f2baec53030c43f97392f57194c03",
+      "kind": "SOURCE_CLAIM_LEDGER",
+      "use": "Original scope trace, source-occurrence governance, and rights boundary."
+    },
+    {
+      "input_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "version": "mcat-v3-authoritative-registry-1",
+      "sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+      "kind": "CURRICULUM_REGISTRY",
+      "use": "Canonical identity, scope, order, attachments, holds, and placement."
+    },
+    {
+      "input_id": "MCAT-V3-LEARNER-FACING-LESSONS",
+      "version": "mcat-v3-lessons-public-1",
+      "sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+      "kind": "GENERATED_MANIFEST",
+      "use": "Learner title and catalog cross-check only."
+    },
+    {
+      "input_id": "MCAT-V3-CANONICAL-KCS",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "31d304a7f6ea51ac4847ede01824bb14cd8b98ed7a6bc61bb05617d53f9860fd",
+      "kind": "CANONICAL_KC_LEDGER",
+      "use": "Competency statements, scope bounds, representations, and source anchors."
+    },
+    {
+      "input_id": "MCAT-V3-TEACHING-SEQUENCES",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "b2bbd9f8a14cbff1250013e8d717eb1c8195ccbf6335e605c64f1469a94246aa",
+      "kind": "CANONICAL_SEQUENCE",
+      "use": "First-delivery position, ordered KC relation, revisit, and no-bypass context."
+    },
+    {
+      "input_id": "MCAT-V3-PREREQUISITE-GRAPH",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "fe0fffdd16bd10d3f7c046951cbe642add8ef2639f5b3f68a3224d9648f59e10",
+      "kind": "CANONICAL_GRAPH",
+      "use": "Hard/helpful prerequisite state and successor context."
+    },
+    {
+      "input_id": "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "23bbea9e358c4aa0ff255964d203c0081b4ff3ba28e4e123eed0cfc0b7a54831",
+      "kind": "ATTACHMENT_LEDGER",
+      "use": "Extension and bounded conditional support context."
+    },
+    {
+      "input_id": "MCAT-V3-SOURCE-CROSSWALK",
+      "version": "mcat-v3-source-crosswalk-1",
+      "sha256": "a87fd1634a5a9e9dd522293ef98db10b783971f02e0bdfbf558b276cc0b9cea3",
+      "kind": "SOURCE_LEDGER",
+      "use": "Direct-scope and source-anchor trace; no expressive source prose is copied."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-03",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "d3d3cfb3cc0e2314dc7f01bc9d1cc9c68049527f317e2ad2cb270a7b43fff598",
+      "kind": "INSTRUCTIONAL_RUNTIME_SPECIFICATION",
+      "use": "Microcycle, freshness, assistance, repair, and route constraints."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-04",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "4fc88c3001bae4d8d1c843020106b6ba30059b243ea0d993a6d87ff009099761",
+      "kind": "AUTHORING_SPECIFICATION",
+      "use": "Artifact structure, coverage, learner/reviewer separation, and accessibility requirements."
+    },
+    {
+      "input_id": "AAMC-2020-SUPPLIED-CEILING",
+      "version": "2020-supplied",
+      "sha256": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
+      "kind": "SOURCE_CEILING",
+      "use": "Scope ceiling only; no expressive source wording or source questions are reused."
+    }
+  ],
+  "dependency_bindings": {},
+  "lineage": {
+    "supersedes": {
+      "artifact_id": "V3-LSCR-844372",
+      "content_sha256": "8065a099ca1fc0940acbe4c0b2b53dcc31a64c98202a20a1fa6b3f01b46373cc"
+    },
+    "change_reason": "ALIGN_CONSTRUCTED_LEARNER_PROMPTS_WITH_PROTECTED_AUTHORITY",
+    "authoring_run_id": "V3-LES-000000-CONSTRUCTED-CONTEXT-FIX-2026-07-23",
+    "derived_input_ids": [
+      "V3-SCLD-844372",
+      "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "MCAT-V3-LEARNER-FACING-LESSONS",
+      "MCAT-V3-CANONICAL-KCS",
+      "MCAT-V3-TEACHING-SEQUENCES",
+      "MCAT-V3-PREREQUISITE-GRAPH",
+      "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "MCAT-V3-SOURCE-CROSSWALK",
+      "MCAT-V3-SPEC-03",
+      "MCAT-V3-SPEC-04",
+      "AAMC-2020-SUPPLIED-CEILING"
+    ]
+  },
+  "payload": {
+    "lesson_id": "V3-LES-000000",
+    "grouping_id": "V3-CL-844372",
+    "ordered_kc_ids": [
+      "V3-KC-452593"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-452593"
+    ],
+    "throughline": "A scientific display, a pair of equations, and a logarithmic expression all encode a relationship. Read the encoding first, choose the operation that preserves the relationship, and check the result against the original form.",
+    "scope_and_non_goals": {
+      "scope_in_refs": [
+        "V3-KC-452593:SCOPE_IN:0",
+        "V3-KC-452593:SCOPE_IN:1",
+        "V3-KC-452593:SCOPE_IN:2",
+        "V3-KC-452593:SCOPE_IN:3",
+        "V3-KC-008681:SCOPE_IN:0",
+        "V3-KC-008681:SCOPE_IN:1",
+        "V3-KC-238607:SCOPE_IN:0",
+        "V3-KC-238607:SCOPE_IN:1",
+        "V3-KC-238607:SCOPE_IN:2"
+      ],
+      "scope_out_refs": [
+        "V3-KC-452593:SCOPE_OUT:0",
+        "V3-KC-008681:SCOPE_OUT:0",
+        "V3-KC-008681:SCOPE_OUT:1",
+        "V3-KC-238607:SCOPE_OUT:0"
+      ],
+      "non_goals": [
+        "CALCULUS_DERIVATIVES",
+        "ADVANCED_LINEAR_ALGEBRA",
+        "NEW_SCIENCE_CONTENT_OBJECTIVES",
+        "LESSON_WIDE_MASTERY_OR_READINESS_LABEL"
+      ]
+    },
+    "source_ledger_ref": {
+      "input_id": "V3-SCLD-844372",
+      "input_version": "0.1.0-draft.1",
+      "input_sha256": "c320dec45739269a0ba4b5ecbd201ce7295f2baec53030c43f97392f57194c03"
+    },
+    "route_policy_ref": {
+      "spec_reference": "03-V3-LESSON-STRUCTURE-AND-LEARNER-FLOW.md §§9–10",
+      "content_constraint": "Each declared route retains all three KCs, both exits, and exact failed-function re-entry.",
+      "runtime_authority_status": "BLOCKED_SHARED_RUNTIME"
+    },
+    "nodes": [
+      {
+        "node_id": "ALG-GRAPH-ENTRY-BOUNDARY-01",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Starting check: this is a low-stakes look at labels and units that may be familiar from earlier measurement and scaling work. It is not a score, a final check, or a claim that you already know it. Choose Not sure if you cannot tell from the labels."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "activity_ids": [
+          "ALG-GRAPH-ENTRY-01"
+        ],
+        "checkpoint_ref": "ALG-GRAPH-CP-ENTRY",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-ORIENT-01",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Focus now: a graph is a compact way to show how two quantities relate. Before you calculate, read what each axis measures and how the tick labels change."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ALG-GRAPH-CP-ORIENT",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-EXPLAIN-01",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Use this order: name the horizontal quantity and its unit; name the vertical quantity and its unit; inspect consecutive labelled ticks; then select two stated points if a slope is needed.",
+          "Equal visual spacing on a linear scale means equal addition. Equal visual spacing on a logarithmic axis means equal multiplication by the displayed base step. The labels, not the grid-box count, decide which rule applies."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ALG-GRAPH-CP-EXPLAIN",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-MODEL-01",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Governing model: a graph has an encoding layer and a relationship layer. Decode the scale first; only then use the relationship, such as slope = change in vertical quantity divided by change in horizontal quantity."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ALG-GRAPH-CP-MODEL",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-THINK-01",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: the horizontal axis is time in minutes and the vertical axis is concentration units. I choose the labelled points (2, 5) and (6, 13), so the slope is (13 − 5) / (6 − 2) = 2 concentration units per minute. I used the labels at the points, not the number of grid squares between them."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ALG-GRAPH-CP-THINK",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-WORKED-01",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Worked visual: a vertical axis shows 1, 10, 100, and 1000 at equally spaced labelled positions. One major step is a tenfold change, so it is a logarithmic vertical scale. The visual distance from 1 to 10 does not represent an additive increase of 9 in the same way a linear axis would.",
+          "Log-log comparison: if both axes show 1, 10, 100, and 1000 at equal spacing, decode both axes as powers-of-ten scales. For labelled points (10, 100) and (100, 1000), each log-coordinate changes by one interval, so the plotted log-log slope is 1. This is a slope in the displayed log coordinates, not a calculus derivative."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ALG-GRAPH-CP-WORKED",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-GUIDED-01",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: first mark two labelled points. Then fill the numerator with the vertical change and the denominator with the horizontal change before simplifying."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "activity_ids": [
+          "ALG-GRAPH-GUIDED-01"
+        ],
+        "checkpoint_ref": "ALG-GRAPH-CP-GUIDED",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-LIGHT-01",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Less help: use the same decode-then-calculate order. The checklist is available, but no points are preselected."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "activity_ids": [
+          "ALG-GRAPH-LIGHT-01"
+        ],
+        "checkpoint_ref": "ALG-GRAPH-CP-LIGHT",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-SOLO-01",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "On your own: read the axis labels, choose the points, and state the slope with its relationship in words. Feedback waits until you submit."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "activity_ids": [
+          "ALG-GRAPH-SOLO-01"
+        ],
+        "checkpoint_ref": "ALG-GRAPH-CP-SOLO",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-BOUNDARY-01",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Boundary check: labels 0, 10, 20 at equal positions show equal additions. Labels 1, 10, 100 at equal positions show equal factors of ten. Never decide from the drawing alone."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ALG-GRAPH-CP-BOUNDARY",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-NEAR-EXIT-01",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Final near check: use a new linear display. Work independently; feedback appears only after your committed response."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "activity_ids": [
+          "ALG-GRAPH-NEAR-01"
+        ],
+        "checkpoint_ref": "ALG-GRAPH-CP-NEAR-EXIT",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-CHANGED-EXIT-01",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Changed final check: the relationship is still read from a graph, but the vertical axis uses semilog labels. Decode the scale before you infer the change."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "activity_ids": [
+          "ALG-GRAPH-CHANGED-01"
+        ],
+        "checkpoint_ref": "ALG-GRAPH-CP-CHANGED-EXIT",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-REPAIR-SCALE-01",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Use this targeted scale check: rebuild the display from two consecutive labelled ticks, say whether the step adds or multiplies, then use one fresh supported example. The route records only the observed response feature; it does not infer a learner trait."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "activity_ids": [
+          "ALG-GRAPH-REPAIR-CONFIRM-01"
+        ],
+        "checkpoint_ref": "ALG-GRAPH-CP-REPAIR",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-REENTRY-NEAR-01",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Return to the failed linear-graph function with a fresh independent check. This is not a restart of the lesson."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "activity_ids": [
+          "ALG-GRAPH-REENTRY-NEAR-01"
+        ],
+        "checkpoint_ref": "ALG-GRAPH-CP-NEAR-EXIT",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-REENTRY-CHANGED-01",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Return to the failed semilog-graph function with a fresh independent check. This is not a restart of the lesson."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "activity_ids": [
+          "ALG-GRAPH-REENTRY-CHANGED-01"
+        ],
+        "checkpoint_ref": "ALG-GRAPH-CP-CHANGED-EXIT",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-RECAP-01",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Recap: the display’s labels tell you how values are encoded. Decode that layer before using slope or any other relationship."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ALG-GRAPH-CP-RECAP",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-REPAIR-SLOPE-01",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "Rebuild the slope rule: choose two labelled points, subtract vertical values for the rise, subtract horizontal values for the run, then divide rise by run. Keep the units with the result."
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "activity_ids": [
+          "ALG-GRAPH-REPAIR-SLOPE-CONFIRM-01"
+        ],
+        "checkpoint_ref": "ALG-GRAPH-CP-REPAIR-SLOPE",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      },
+      {
+        "node_id": "ALG-GRAPH-PLANNER-HANDOFF-01",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "CONCISE",
+          "STANDARD",
+          "MISCONCEPTION",
+          "PREREQUISITE_SUPPORT"
+        ],
+        "learner_content_blocks": [
+          "This confirmation did not yet resolve the exact graph function. Record whether the open function is slope or logarithmic-scale interpretation, then request the bounded planner handoff for that function rather than restarting the lesson."
+        ],
+        "representation_ids": [],
+        "activity_ids": [],
+        "checkpoint_ref": "ALG-GRAPH-CP-PLANNER-HANDOFF",
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "ALG-GRAPH-ENTRY-01",
+        "primary_kc_id": "V3-KC-452593",
+        "learner_operation": "CLASSIFY_SCALE_FROM_LABELLED_TICKS",
+        "assistance_available": "NOT_SURE_ALLOWED",
+        "item_binding_id": "ALG-GRAPH-ENTRY-01",
+        "feedback_timing": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "first_attempt_policy": "IMMUTABLE",
+        "response_handling": "ENTRY_OBSERVATION_ONLY",
+        "authorized_next_node_ids": [
+          "ALG-GRAPH-ORIENT-01"
+        ]
+      },
+      {
+        "activity_id": "ALG-GRAPH-GUIDED-01",
+        "primary_kc_id": "V3-KC-452593",
+        "learner_operation": "CALCULATE_SLOPE_WITH_PROVIDED_POINT_MARKERS",
+        "assistance_available": "A2",
+        "item_binding_id": "ALG-GRAPH-GUIDED-01",
+        "feedback_timing": "AFTER_COMMIT",
+        "first_attempt_policy": "IMMUTABLE",
+        "response_handling": "GUIDED_PROCESS_FEEDBACK_NO_EXIT_CREDIT",
+        "authorized_next_node_ids": [
+          "ALG-GRAPH-LIGHT-01"
+        ]
+      },
+      {
+        "activity_id": "ALG-GRAPH-LIGHT-01",
+        "primary_kc_id": "V3-KC-452593",
+        "learner_operation": "DECODE_SCALE_THEN_INTERPRET_CHANGE",
+        "assistance_available": "A1",
+        "item_binding_id": "ALG-GRAPH-LIGHT-01",
+        "feedback_timing": "AFTER_COMMIT",
+        "first_attempt_policy": "IMMUTABLE",
+        "response_handling": "LIGHT_SCAFFOLD_PROCESS_FEEDBACK_NO_EXIT_CREDIT",
+        "authorized_next_node_ids": [
+          "ALG-GRAPH-SOLO-01"
+        ]
+      },
+      {
+        "activity_id": "ALG-GRAPH-SOLO-01",
+        "primary_kc_id": "V3-KC-452593",
+        "learner_operation": "CALCULATE_SLOPE_FROM_NEW_LINEAR_DISPLAY",
+        "assistance_available": "A0",
+        "item_binding_id": "ALG-GRAPH-SOLO-01",
+        "feedback_timing": "AFTER_COMMIT",
+        "first_attempt_policy": "IMMUTABLE",
+        "response_handling": "UNSUPPORTED_INSTRUCTIONAL_PRACTICE_NO_EXIT_CREDIT",
+        "authorized_next_node_ids": [
+          "ALG-GRAPH-BOUNDARY-01"
+        ]
+      },
+      {
+        "activity_id": "ALG-GRAPH-NEAR-01",
+        "primary_kc_id": "V3-KC-452593",
+        "learner_operation": "INTERPRET_SIGNED_SLOPE_AND_UNITS_FROM_UNTOUCHED_LINEAR_DISPLAY",
+        "assistance_available": "A0",
+        "item_binding_id": "ALG-GRAPH-NEAR-01",
+        "feedback_timing": "AFTER_EXIT_COMMIT",
+        "first_attempt_policy": "IMMUTABLE",
+        "response_handling": "NEAR_EXIT_ROUTE_OR_REPAIR",
+        "authorized_next_node_ids": [
+          "ALG-GRAPH-CHANGED-EXIT-01",
+          "ALG-GRAPH-REPAIR-SLOPE-01",
+          "ALG-GRAPH-PLANNER-HANDOFF-01"
+        ],
+        "response_feature_routing": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "TOTAL_VERTICAL_CHANGE_AS_SLOPE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ALG-GRAPH-FEATURE-RISE_RUN_ORDER"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "RECIPROCAL_RATE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ALG-GRAPH-FEATURE-RISE_RUN_ORDER"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "NOT_SURE_OR_UNRESOLVED",
+            "route_kind": "PLANNER_HANDOFF"
+          }
+        ]
+      },
+      {
+        "activity_id": "ALG-GRAPH-CHANGED-01",
+        "primary_kc_id": "V3-KC-452593",
+        "learner_operation": "PREDICT_FROM_UNTOUCHED_SEMILOG_MULTIPLICATIVE_PATTERN",
+        "assistance_available": "A0",
+        "item_binding_id": "ALG-GRAPH-CHANGED-01",
+        "feedback_timing": "AFTER_EXIT_COMMIT",
+        "first_attempt_policy": "IMMUTABLE",
+        "response_handling": "CHANGED_EXIT_ROUTE_OR_REPAIR",
+        "authorized_next_node_ids": [
+          "ALG-GRAPH-RECAP-01",
+          "ALG-GRAPH-REPAIR-SCALE-01",
+          "ALG-GRAPH-PLANNER-HANDOFF-01"
+        ],
+        "response_feature_routing": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ADDITIVE_OR_PARTIAL_SEMILOG_PATTERN",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ALG-GRAPH-FEATURE-ADDITIVE_LOG_SCALE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "INSUFFICIENT_MULTIPLICATIVE_STEP",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ALG-GRAPH-FEATURE-ADDITIVE_LOG_SCALE"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "NOT_SURE_OR_UNRESOLVED",
+            "route_kind": "PLANNER_HANDOFF"
+          }
+        ]
+      },
+      {
+        "activity_id": "ALG-GRAPH-REPAIR-CONFIRM-01",
+        "primary_kc_id": "V3-KC-452593",
+        "learner_operation": "SELECT_MULTIPLICATIVE_SCALE_STEP_FROM_FRESH_LABELS",
+        "assistance_available": "A1",
+        "item_binding_id": "ALG-GRAPH-REPAIR-CONFIRM-01",
+        "feedback_timing": "AFTER_COMMIT",
+        "first_attempt_policy": "IMMUTABLE",
+        "response_handling": "FRESH_SUPPORTED_REPAIR_CONFIRMATION_THEN_EXACT_REENTRY",
+        "authorized_next_node_ids": [
+          "ALG-GRAPH-REENTRY-CHANGED-01",
+          "ALG-GRAPH-PLANNER-HANDOFF-01"
+        ]
+      },
+      {
+        "activity_id": "ALG-GRAPH-REENTRY-NEAR-01",
+        "primary_kc_id": "V3-KC-452593",
+        "learner_operation": "CALCULATE_SIGNED_SLOPE_FROM_FRESH_LINEAR_DISPLAY",
+        "assistance_available": "A0",
+        "item_binding_id": "ALG-GRAPH-REENTRY-NEAR-01",
+        "feedback_timing": "AFTER_EXIT_COMMIT",
+        "first_attempt_policy": "IMMUTABLE",
+        "response_handling": "EXACT_NEAR_FUNCTION_REENTRY_THEN_PENDING_CHANGED_EXIT_OR_PLANNER_HANDOFF",
+        "authorized_next_node_ids": [
+          "ALG-GRAPH-CHANGED-EXIT-01",
+          "ALG-GRAPH-PLANNER-HANDOFF-01"
+        ]
+      },
+      {
+        "activity_id": "ALG-GRAPH-REENTRY-CHANGED-01",
+        "primary_kc_id": "V3-KC-452593",
+        "learner_operation": "IDENTIFY_EXPONENTIAL_MODEL_FROM_FRESH_SEMILOG_ENCODING",
+        "assistance_available": "A0",
+        "item_binding_id": "ALG-GRAPH-REENTRY-CHANGED-01",
+        "feedback_timing": "AFTER_EXIT_COMMIT",
+        "first_attempt_policy": "IMMUTABLE",
+        "response_handling": "EXACT_CHANGED_FUNCTION_REENTRY_OR_PLANNER_HANDOFF",
+        "authorized_next_node_ids": [
+          "ALG-GRAPH-RECAP-01",
+          "ALG-GRAPH-PLANNER-HANDOFF-01"
+        ]
+      },
+      {
+        "activity_id": "ALG-GRAPH-REPAIR-SLOPE-CONFIRM-01",
+        "primary_kc_id": "V3-KC-452593",
+        "learner_operation": "CALCULATE_RISE_OVER_RUN_FROM_FRESH_LABELLED_POINTS",
+        "assistance_available": "A1",
+        "item_binding_id": "ALG-GRAPH-REPAIR-SLOPE-CONFIRM-01",
+        "feedback_timing": "AFTER_COMMIT",
+        "first_attempt_policy": "IMMUTABLE",
+        "response_handling": "FRESH_SUPPORTED_SLOPE_REPAIR_CONFIRMATION_THEN_EXACT_NEAR_REENTRY",
+        "authorized_next_node_ids": [
+          "ALG-GRAPH-REENTRY-NEAR-01",
+          "ALG-GRAPH-PLANNER-HANDOFF-01"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-452593",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-452593",
+        "scope_in_refs": [
+          "V3-KC-452593:SCOPE_IN:0",
+          "V3-KC-452593:SCOPE_IN:1",
+          "V3-KC-452593:SCOPE_IN:2",
+          "V3-KC-452593:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-452593:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "ALG-GRAPH-CLAIM-01"
+        ],
+        "prerequisite_point_refs": [
+          "NO_CANONICAL_PREDECESSOR; BASELINE_ONLY",
+          "SEQUENCE_CONTEXT:V3-LES-789208:MEASUREMENT_LABELS_AND_UNITS:NONBLOCKING"
+        ],
+        "entry_check_boundary_id": "ALG-GRAPH-ENTRY-BOUNDARY-01",
+        "orientation_node_id": "ALG-GRAPH-ORIENT-01",
+        "explanation_node_ids": [
+          "ALG-GRAPH-EXPLAIN-01"
+        ],
+        "mental_model_node_ids": [
+          "ALG-GRAPH-MODEL-01"
+        ],
+        "expert_think_aloud_node_ids": [
+          "ALG-GRAPH-THINK-01"
+        ],
+        "worked_example_node_ids": [
+          "ALG-GRAPH-WORKED-01"
+        ],
+        "guided_activity_ids": [
+          "ALG-GRAPH-GUIDED-01"
+        ],
+        "light_support_activity_ids": [
+          "ALG-GRAPH-LIGHT-01"
+        ],
+        "solo_activity_ids": [
+          "ALG-GRAPH-SOLO-01"
+        ],
+        "contrast_boundary_node_ids": [
+          "ALG-GRAPH-BOUNDARY-01"
+        ],
+        "near_exit_binding": {
+          "item_binding_id": "ALG-GRAPH-NEAR-01",
+          "semantic_family_id": "ALG-GRAPH-FAM-NEAR-01"
+        },
+        "changed_exit_binding": {
+          "item_binding_id": "ALG-GRAPH-CHANGED-01",
+          "semantic_family_id": "ALG-GRAPH-FAM-CHANGED-01"
+        },
+        "misconception_feature_ids": [
+          "ALG-GRAPH-FEATURE-RISE_RUN_ORDER",
+          "ALG-GRAPH-FEATURE-ADDITIVE_LOG_SCALE"
+        ],
+        "repair_bindings": [
+          {
+            "feature_id": "ALG-GRAPH-FEATURE-RISE_RUN_ORDER",
+            "failed_function": "NEAR_EXIT",
+            "repair_node_id": "ALG-GRAPH-REPAIR-SLOPE-01",
+            "confirmation_family_id": "ALG-GRAPH-FAM-REPAIR-SLOPE-01",
+            "planner_handoff_node_id": "ALG-GRAPH-PLANNER-HANDOFF-01",
+            "finite_local_sequence": "SLOPE_REPAIR_THEN_ONE_FRESH_SUPPORTED_CONFIRMATION_THEN_EXACT_NEAR_REENTRY_OR_PLANNER"
+          },
+          {
+            "feature_id": "ALG-GRAPH-FEATURE-ADDITIVE_LOG_SCALE",
+            "failed_function": "CHANGED_EXIT",
+            "repair_node_id": "ALG-GRAPH-REPAIR-SCALE-01",
+            "confirmation_family_id": "ALG-GRAPH-FAM-REPAIR-01",
+            "planner_handoff_node_id": "ALG-GRAPH-PLANNER-HANDOFF-01",
+            "finite_local_sequence": "SCALE_REPAIR_THEN_ONE_FRESH_SUPPORTED_CONFIRMATION_THEN_EXACT_CHANGED_REENTRY_OR_PLANNER"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_EXIT",
+            "reentry_ref": "ALG-GRAPH-REENTRY-NEAR-01",
+            "fresh_confirmation_family_id": "ALG-GRAPH-FAM-REENTRY-NEAR-01",
+            "required_continuation_node_id": "ALG-GRAPH-CHANGED-EXIT-01",
+            "planner_handoff_node_id": "ALG-GRAPH-PLANNER-HANDOFF-01"
+          },
+          {
+            "failed_function": "CHANGED_EXIT",
+            "reentry_ref": "ALG-GRAPH-REENTRY-CHANGED-01",
+            "fresh_confirmation_family_id": "ALG-GRAPH-FAM-REENTRY-CHANGED-01",
+            "planner_handoff_node_id": "ALG-GRAPH-PLANNER-HANDOFF-01"
+          }
+        ],
+        "representation_ids": [
+          "ALG-GRAPH-REP-SCALE-01",
+          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
+        ],
+        "accessibility_equivalent_ids": [
+          "ALG-GRAPH-REP-TEXT-01"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "ALG-GRAPH-ENTRY-BOUNDARY-01",
+            "ALG-GRAPH-ORIENT-01",
+            "ALG-GRAPH-EXPLAIN-01",
+            "ALG-GRAPH-MODEL-01",
+            "ALG-GRAPH-THINK-01",
+            "ALG-GRAPH-WORKED-01",
+            "ALG-GRAPH-GUIDED-01",
+            "ALG-GRAPH-LIGHT-01",
+            "ALG-GRAPH-SOLO-01",
+            "ALG-GRAPH-BOUNDARY-01",
+            "ALG-GRAPH-NEAR-EXIT-01",
+            "ALG-GRAPH-CHANGED-EXIT-01",
+            "ALG-GRAPH-REPAIR-SCALE-01",
+            "ALG-GRAPH-REENTRY-NEAR-01",
+            "ALG-GRAPH-REENTRY-CHANGED-01",
+            "ALG-GRAPH-RECAP-01",
+            "ALG-GRAPH-REPAIR-SLOPE-01",
+            "ALG-GRAPH-PLANNER-HANDOFF-01"
+          ],
+          "standard": [
+            "ALG-GRAPH-ENTRY-BOUNDARY-01",
+            "ALG-GRAPH-ORIENT-01",
+            "ALG-GRAPH-EXPLAIN-01",
+            "ALG-GRAPH-MODEL-01",
+            "ALG-GRAPH-THINK-01",
+            "ALG-GRAPH-WORKED-01",
+            "ALG-GRAPH-GUIDED-01",
+            "ALG-GRAPH-LIGHT-01",
+            "ALG-GRAPH-SOLO-01",
+            "ALG-GRAPH-BOUNDARY-01",
+            "ALG-GRAPH-NEAR-EXIT-01",
+            "ALG-GRAPH-CHANGED-EXIT-01",
+            "ALG-GRAPH-REPAIR-SCALE-01",
+            "ALG-GRAPH-REENTRY-NEAR-01",
+            "ALG-GRAPH-REENTRY-CHANGED-01",
+            "ALG-GRAPH-RECAP-01",
+            "ALG-GRAPH-REPAIR-SLOPE-01",
+            "ALG-GRAPH-PLANNER-HANDOFF-01"
+          ],
+          "misconception": [
+            "ALG-GRAPH-ENTRY-BOUNDARY-01",
+            "ALG-GRAPH-ORIENT-01",
+            "ALG-GRAPH-EXPLAIN-01",
+            "ALG-GRAPH-MODEL-01",
+            "ALG-GRAPH-THINK-01",
+            "ALG-GRAPH-WORKED-01",
+            "ALG-GRAPH-GUIDED-01",
+            "ALG-GRAPH-LIGHT-01",
+            "ALG-GRAPH-SOLO-01",
+            "ALG-GRAPH-BOUNDARY-01",
+            "ALG-GRAPH-NEAR-EXIT-01",
+            "ALG-GRAPH-CHANGED-EXIT-01",
+            "ALG-GRAPH-REPAIR-SCALE-01",
+            "ALG-GRAPH-REENTRY-NEAR-01",
+            "ALG-GRAPH-REENTRY-CHANGED-01",
+            "ALG-GRAPH-RECAP-01",
+            "ALG-GRAPH-REPAIR-SLOPE-01",
+            "ALG-GRAPH-PLANNER-HANDOFF-01"
+          ],
+          "prerequisite_support": [
+            "ALG-GRAPH-ENTRY-BOUNDARY-01",
+            "ALG-GRAPH-ORIENT-01",
+            "ALG-GRAPH-EXPLAIN-01",
+            "ALG-GRAPH-MODEL-01",
+            "ALG-GRAPH-THINK-01",
+            "ALG-GRAPH-WORKED-01",
+            "ALG-GRAPH-GUIDED-01",
+            "ALG-GRAPH-LIGHT-01",
+            "ALG-GRAPH-SOLO-01",
+            "ALG-GRAPH-BOUNDARY-01",
+            "ALG-GRAPH-NEAR-EXIT-01",
+            "ALG-GRAPH-CHANGED-EXIT-01",
+            "ALG-GRAPH-REPAIR-SCALE-01",
+            "ALG-GRAPH-REENTRY-NEAR-01",
+            "ALG-GRAPH-REENTRY-CHANGED-01",
+            "ALG-GRAPH-RECAP-01",
+            "ALG-GRAPH-REPAIR-SLOPE-01",
+            "ALG-GRAPH-PLANNER-HANDOFF-01"
+          ]
+        },
+        "recap_node_id": "ALG-GRAPH-RECAP-01"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "ALG-GRAPH-ENTRY-01",
+        "activity_id": "ALG-GRAPH-ENTRY-01",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "ALG-GRAPH-FAM-ENTRY-01",
+        "stimulus_lineage_id": "GRAPH-ENTRY-SCALE-LABELS",
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": "NOT_SURE_ALLOWED",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "NO_REUSE_AS_EXIT_OR_FRESH_FAMILY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GRAPH_SCALE_START",
+        "answer_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-ENTRY-01",
+        "rationale_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-ENTRY-01",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GRAPH-ENTRY-DECODE-TICK-RATIO",
+        "decisive_cue_id": "GRAPH-ENTRY-EQUAL-SPACING-LABELS",
+        "distractor_lineage_id": "GRAPH-ENTRY-ADDITIVE-VS-MULTIPLICATIVE"
+      },
+      {
+        "item_binding_id": "ALG-GRAPH-WORKED-01",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "ALG-GRAPH-FAM-WORKED-01",
+        "stimulus_lineage_id": "GRAPH-WORKED-LINEAR-SEMILOG-LOGLOG",
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_REASONING",
+        "assistance_available": "VISIBLE_EXPLANATION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "FAMILY_NOT_ELIGIBLE_FOR_EXIT",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:ALG-GRAPH-WORKED-01",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GRAPH-WORKED-DECODE-BEFORE-SLOPE",
+        "decisive_cue_id": "GRAPH-WORKED-AXIS-ENCODING",
+        "distractor_lineage_id": "GRAPH-WORKED-GRID-SPACING-MISREAD"
+      },
+      {
+        "item_binding_id": "ALG-GRAPH-GUIDED-01",
+        "activity_id": "ALG-GRAPH-GUIDED-01",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "ALG-GRAPH-FAM-GUIDED-01",
+        "stimulus_lineage_id": "GRAPH-GUIDED-OUTPUT-TRIAL",
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": "A2",
+        "hint_policy": "POINT_MARKERS_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE_WITH_SUPPORT",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GRAPH_SLOPE_GUIDED",
+        "answer_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-GUIDED-01",
+        "rationale_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-GUIDED-01",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GRAPH-GUIDED-RISE-OVER-RUN-EXPRESSION",
+        "decisive_cue_id": "GRAPH-GUIDED-ORDERED-DIFFERENCES",
+        "distractor_lineage_id": "GRAPH-GUIDED-INVERTED-SLOPE"
+      },
+      {
+        "item_binding_id": "ALG-GRAPH-LIGHT-01",
+        "activity_id": "ALG-GRAPH-LIGHT-01",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "ALG-GRAPH-FAM-LIGHT-01",
+        "stimulus_lineage_id": "GRAPH-LIGHT-LOGLOG-POWER-LAW",
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": "A1",
+        "hint_policy": "DECODE_THEN_CALCULATE_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE_WITH_SUPPORT",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GRAPH_SCALE_LIGHT",
+        "answer_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-LIGHT-01",
+        "rationale_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-LIGHT-01",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GRAPH-LIGHT-INTERPRET-LOG-SLOPE-AS-FACTOR",
+        "decisive_cue_id": "GRAPH-LIGHT-TENFOLD-X-CHANGE",
+        "distractor_lineage_id": "GRAPH-LIGHT-ADDITIVE-SLOPE-INTERPRETATION",
+        "scope_operation_tags": [
+          "LOGLOG_SLOPE_INTERPRETATION"
+        ]
+      },
+      {
+        "item_binding_id": "ALG-GRAPH-SOLO-01",
+        "activity_id": "ALG-GRAPH-SOLO-01",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "ALG-GRAPH-FAM-SOLO-01",
+        "stimulus_lineage_id": "GRAPH-SOLO-CARTESIAN-POINTS",
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": "A0",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GRAPH_SLOPE_SOLO",
+        "answer_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-SOLO-01",
+        "rationale_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-SOLO-01",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GRAPH-SOLO-CALCULATE-NUMERIC-SLOPE",
+        "decisive_cue_id": "GRAPH-SOLO-COORDINATE-SUBTRACTION",
+        "distractor_lineage_id": "GRAPH-SOLO-Y-OR-X-VALUE"
+      },
+      {
+        "item_binding_id": "ALG-GRAPH-NEAR-01",
+        "activity_id": "ALG-GRAPH-NEAR-01",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "ALG-GRAPH-FAM-NEAR-01",
+        "stimulus_lineage_id": "GRAPH-NEAR-POSITION-TIME",
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": "A0",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GRAPH_LINEAR_FINAL",
+        "answer_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-NEAR-01",
+        "rationale_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-NEAR-01",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GRAPH-NEAR-INTERPRET-SIGNED-UNIT-RATE",
+        "decisive_cue_id": "GRAPH-NEAR-AXIS-UNIT-RATE",
+        "distractor_lineage_id": "GRAPH-NEAR-RECIPROCAL-OR-TOTAL-CHANGE",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "TOTAL_VERTICAL_CHANGE_AS_SLOPE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ALG-GRAPH-FEATURE-RISE_RUN_ORDER"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "RECIPROCAL_RATE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ALG-GRAPH-FEATURE-RISE_RUN_ORDER"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "NOT_SURE_OR_UNRESOLVED",
+            "route_kind": "PLANNER_HANDOFF"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ALG-GRAPH-CHANGED-01",
+        "activity_id": "ALG-GRAPH-CHANGED-01",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "ALG-GRAPH-FAM-CHANGED-01",
+        "stimulus_lineage_id": "GRAPH-CHANGED-SEMILOG-PREDICTION",
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": "A0",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "changed_dimension": "SCALE_TYPE_AND_GRAPHICAL_ENCODING",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GRAPH_SEMILOG_FINAL",
+        "answer_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-CHANGED-01",
+        "rationale_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-CHANGED-01",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "candidate_evidence_modes": [
+          "TRANSFER"
+        ],
+        "reasoning_operation": "PREDICT",
+        "solution_path_lineage_id": "GRAPH-CHANGED-EXTRAPOLATE-MULTIPLICATIVE-PATTERN",
+        "decisive_cue_id": "GRAPH-CHANGED-CONSECUTIVE-LOG-INTERVALS",
+        "distractor_lineage_id": "GRAPH-CHANGED-ADDITIVE-OR-PARTIAL-PATTERN",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ADDITIVE_OR_PARTIAL_SEMILOG_PATTERN",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ALG-GRAPH-FEATURE-ADDITIVE_LOG_SCALE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "INSUFFICIENT_MULTIPLICATIVE_STEP",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ALG-GRAPH-FEATURE-ADDITIVE_LOG_SCALE"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "NOT_SURE_OR_UNRESOLVED",
+            "route_kind": "PLANNER_HANDOFF"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ALG-GRAPH-REPAIR-CONFIRM-01",
+        "activity_id": "ALG-GRAPH-REPAIR-CONFIRM-01",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ALG-GRAPH-FAM-REPAIR-01",
+        "stimulus_lineage_id": "GRAPH-REPAIR-SCALE-STEP",
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": "A1",
+        "hint_policy": "CONSECUTIVE_TICK_COMPARISON",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GRAPH_REPAIR_SCALE",
+        "answer_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-REPAIR-CONFIRM-01",
+        "rationale_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-REPAIR-CONFIRM-01",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GRAPH-REPAIR-SELECT-MULTIPLICATIVE-OPERATION",
+        "decisive_cue_id": "GRAPH-REPAIR-CONSECUTIVE-LABEL-RATIO",
+        "distractor_lineage_id": "GRAPH-REPAIR-ADDITIVE-STEP"
+      },
+      {
+        "item_binding_id": "ALG-GRAPH-REPAIR-SLOPE-CONFIRM-01",
+        "activity_id": "ALG-GRAPH-REPAIR-SLOPE-CONFIRM-01",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ALG-GRAPH-FAM-REPAIR-SLOPE-01",
+        "stimulus_lineage_id": "GRAPH-REPAIR-SLOPE-SETUP",
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": "A1",
+        "hint_policy": "RISE_RUN_SETUP",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GRAPH_REPAIR_SLOPE",
+        "answer_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-REPAIR-SLOPE-CONFIRM-01",
+        "rationale_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-REPAIR-SLOPE-CONFIRM-01",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GRAPH-REPAIR-RISE-RUN-CALCULATION",
+        "decisive_cue_id": "GRAPH-REPAIR-CHANGE-OVER-CHANGE",
+        "distractor_lineage_id": "GRAPH-REPAIR-RECIPROCAL-OR-UNSIGNED-DIFFERENCE"
+      },
+      {
+        "item_binding_id": "ALG-GRAPH-REENTRY-NEAR-01",
+        "activity_id": "ALG-GRAPH-REENTRY-NEAR-01",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ALG-GRAPH-FAM-REENTRY-NEAR-01",
+        "stimulus_lineage_id": "GRAPH-REENTRY-NEAR-DRAINAGE",
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": "A0",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GRAPH_REENTRY_LINEAR",
+        "answer_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-REENTRY-NEAR-01",
+        "rationale_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-REENTRY-NEAR-01",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GRAPH-REENTRY-SIGNED-RATE-CALCULATION",
+        "decisive_cue_id": "GRAPH-REENTRY-DECREASING-QUANTITY",
+        "distractor_lineage_id": "GRAPH-REENTRY-POSITIVE-RATE-OR-RUN"
+      },
+      {
+        "item_binding_id": "ALG-GRAPH-REENTRY-CHANGED-01",
+        "activity_id": "ALG-GRAPH-REENTRY-CHANGED-01",
+        "primary_kc_id": "V3-KC-452593",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ALG-GRAPH-FAM-REENTRY-CHANGED-01",
+        "stimulus_lineage_id": "GRAPH-REENTRY-CHANGED-SEMILOG-MODEL-SELECTION",
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": "A0",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GRAPH_REENTRY_SEMILOG",
+        "answer_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-REENTRY-CHANGED-01",
+        "rationale_authority_ref": "PROTECTED_ITEMS:ALG-GRAPH-REENTRY-CHANGED-01",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "candidate_evidence_modes": [
+          "TRANSFER"
+        ],
+        "reasoning_operation": "PREDICT",
+        "solution_path_lineage_id": "GRAPH-REENTRY-CHANGED-IDENTIFY-EXPONENTIAL-MODEL",
+        "decisive_cue_id": "GRAPH-REENTRY-CHANGED-INTERCEPT-AND-TENFOLD-STEP",
+        "distractor_lineage_id": "GRAPH-REENTRY-CHANGED-ADDITIVE-AND-LINEAR-MODELS",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "ALG-GRAPH-CHANGED-01",
+          "stimulus_difference": "The original asks for an extrapolated plotted value; this re-entry supplies an intercept and one log interval, then asks for the governing model.",
+          "solution_path_difference": "The original continues a multiplicative sequence; this re-entry identifies an exponential equation from a semilog encoding.",
+          "distractor_difference": "The original distractors are incorrect next values; this re-entry contrasts additive and linear model equations."
+        }
+      }
+    ],
+    "transitions": [],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-EXT-971145",
+        "attachment_type": "REPRESENTATION_EXTENSION",
+        "host_kc_id": "V3-KC-452593",
+        "treatment": "REPRESENTATION_VARIATION_ONLY_NOT_NEW_KC",
+        "source_anchor_ids": [
+          "CP-SA-017"
+        ],
+        "status": "IN_SCOPE_ENABLING"
+      }
+    ],
+    "compilation_contract": {
+      "required_node_ids": [
+        "ALG-GRAPH-ENTRY-BOUNDARY-01",
+        "ALG-GRAPH-ORIENT-01",
+        "ALG-GRAPH-EXPLAIN-01",
+        "ALG-GRAPH-MODEL-01",
+        "ALG-GRAPH-THINK-01",
+        "ALG-GRAPH-WORKED-01",
+        "ALG-GRAPH-GUIDED-01",
+        "ALG-GRAPH-LIGHT-01",
+        "ALG-GRAPH-SOLO-01",
+        "ALG-GRAPH-BOUNDARY-01",
+        "ALG-GRAPH-NEAR-EXIT-01",
+        "ALG-GRAPH-CHANGED-EXIT-01",
+        "ALG-GRAPH-REPAIR-SCALE-01",
+        "ALG-GRAPH-REENTRY-NEAR-01",
+        "ALG-GRAPH-REENTRY-CHANGED-01",
+        "ALG-GRAPH-RECAP-01",
+        "ALG-SYS-ENTRY-BOUNDARY-01",
+        "ALG-SYS-ORIENT-01",
+        "ALG-SYS-EXPLAIN-01",
+        "ALG-SYS-MODEL-01",
+        "ALG-SYS-THINK-01",
+        "ALG-SYS-WORKED-01",
+        "ALG-SYS-GUIDED-01",
+        "ALG-SYS-LIGHT-01",
+        "ALG-SYS-SOLO-01",
+        "ALG-SYS-BOUNDARY-01",
+        "ALG-SYS-NEAR-EXIT-01",
+        "ALG-SYS-CHANGED-EXIT-01",
+        "ALG-SYS-REPAIR-VERIFY-01",
+        "ALG-SYS-REENTRY-NEAR-01",
+        "ALG-SYS-REENTRY-CHANGED-01",
+        "ALG-SYS-RECAP-01",
+        "ALG-LOG-ENTRY-BOUNDARY-01",
+        "ALG-LOG-ORIENT-01",
+        "ALG-LOG-EXPLAIN-01",
+        "ALG-LOG-MODEL-01",
+        "ALG-LOG-THINK-01",
+        "ALG-LOG-WORKED-01",
+        "ALG-LOG-GUIDED-01",
+        "ALG-LOG-LIGHT-01",
+        "ALG-LOG-SOLO-01",
+        "ALG-LOG-BOUNDARY-01",
+        "ALG-LOG-NEAR-EXIT-01",
+        "ALG-LOG-CHANGED-EXIT-01",
+        "ALG-LOG-REPAIR-INVERSE-01",
+        "ALG-LOG-REENTRY-NEAR-01",
+        "ALG-LOG-REENTRY-CHANGED-01",
+        "ALG-LOG-RECAP-01",
+        "ALG-GRAPH-REPAIR-SLOPE-01",
+        "ALG-GRAPH-PLANNER-HANDOFF-01",
+        "ALG-SYS-REPAIR-TRANSLATE-01",
+        "ALG-SYS-PLANNER-HANDOFF-01",
+        "ALG-LOG-REPAIR-RATIO-01",
+        "ALG-LOG-PLANNER-HANDOFF-01"
+      ],
+      "required_item_binding_ids": [
+        "ALG-GRAPH-ENTRY-01",
+        "ALG-GRAPH-WORKED-01",
+        "ALG-GRAPH-GUIDED-01",
+        "ALG-GRAPH-LIGHT-01",
+        "ALG-GRAPH-SOLO-01",
+        "ALG-GRAPH-NEAR-01",
+        "ALG-GRAPH-CHANGED-01",
+        "ALG-GRAPH-REPAIR-CONFIRM-01",
+        "ALG-GRAPH-REPAIR-SLOPE-CONFIRM-01",
+        "ALG-GRAPH-REENTRY-NEAR-01",
+        "ALG-GRAPH-REENTRY-CHANGED-01",
+        "ALG-SYS-ENTRY-01",
+        "ALG-SYS-WORKED-01",
+        "ALG-SYS-GUIDED-01",
+        "ALG-SYS-LIGHT-01",
+        "ALG-SYS-SOLO-01",
+        "ALG-SYS-NEAR-01",
+        "ALG-SYS-CHANGED-01",
+        "ALG-SYS-REPAIR-CONFIRM-01",
+        "ALG-SYS-REPAIR-TRANSLATE-CONFIRM-01",
+        "ALG-SYS-REENTRY-NEAR-01",
+        "ALG-SYS-REENTRY-CHANGED-01",
+        "ALG-LOG-ENTRY-01",
+        "ALG-LOG-WORKED-01",
+        "ALG-LOG-GUIDED-01",
+        "ALG-LOG-LIGHT-01",
+        "ALG-LOG-SOLO-01",
+        "ALG-LOG-NEAR-01",
+        "ALG-LOG-CHANGED-01",
+        "ALG-LOG-REPAIR-CONFIRM-01",
+        "ALG-LOG-REPAIR-RATIO-CONFIRM-01",
+        "ALG-LOG-REENTRY-NEAR-01",
+        "ALG-LOG-REENTRY-CHANGED-01"
+      ],
+      "required_checkpoint_refs": [
+        "ALG-GRAPH-CP-NEAR-EXIT",
+        "ALG-GRAPH-CP-CHANGED-EXIT",
+        "ALG-SYS-CP-NEAR-EXIT",
+        "ALG-SYS-CP-CHANGED-EXIT",
+        "ALG-LOG-CP-NEAR-EXIT",
+        "ALG-LOG-CP-CHANGED-EXIT"
+      ],
+      "protected_field_policy": "SEPARATE_PROTECTED_ITEMS_ARTIFACT_ONLY",
+      "learner_safe_output_status": "BLOCKED_SHARED_RUNTIME",
+      "no_lesson_mastery_state": true
+    }
+  }
+}

@@ -59,6 +59,9 @@ jobs:
       - name: Verify source and contracts
         run: env -u TEST_DATABASE_URL pnpm run verify
 
+      - name: Validate lesson catalog structure
+        run: env -u TEST_DATABASE_URL pnpm --filter @mcat/content-cli start lesson-validate
+
       - name: Verify migration runtime privileges
         run: >-
           pnpm exec vitest run

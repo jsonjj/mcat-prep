@@ -1,0 +1,417 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-789208",
+  "artifact_version": "0.1.2-internal-draft",
+  "artifact_status": "DRAFT",
+  "schema_binding": {
+    "schema_id": "mcat-spec04-quality-report-internal-draft",
+    "schema_version": "0.1-candidate-local-1",
+    "schema_sha256": "ea5ff6577152fff18d0cb4a0a398ef57e789828a42788768fb3ab3ca4f0be990",
+    "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
+  },
+  "content_sha256": "2f9ff0630a34ca7ba93dc5514aeb6b759e9ce54961b13a2bc117b59d7c57888a",
+  "registry_binding": {
+    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+    "phase_0_freeze_id": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
+    "canonical_freeze_id": "MCAT-V3-CANONICAL-FRZ-2026-07-22-01",
+    "graph_freeze_id": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
+    "sequence_freeze_id": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01",
+    "manifest_schema_id": "mcat-v3-lessons-public",
+    "manifest_schema_version": "1",
+    "manifest_sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+    "lesson_id": "V3-LES-789208",
+    "grouping_id": "V3-CL-789208",
+    "ordered_kc_ids": [
+      "V3-KC-399019",
+      "V3-KC-799492",
+      "V3-KC-919842",
+      "V3-KC-981438"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-399019",
+      "V3-KC-799492",
+      "V3-KC-919842",
+      "V3-KC-981438"
+    ]
+  },
+  "authors": [
+    {
+      "identity": "gpt-5.6-terra",
+      "role": "PRIMARY_CONTENT_AUTHOR",
+      "run_id": "V3-LES-789208-CONTENT-DRAFT-2026-07-23",
+      "contribution": "Original target-lesson content, source trace, protected item material, and content-only validation."
+    }
+  ],
+  "reviewers": [],
+  "input_bindings": [
+    {
+      "input_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "version": "mcat-v3-authoritative-registry-1",
+      "sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+      "kind": "CURRICULUM_REGISTRY",
+      "use": "Canonical identity, scope, order, source lineage, attachments, holds, and placement."
+    },
+    {
+      "input_id": "MCAT-V3-LEARNER-FACING-LESSONS",
+      "version": "mcat-v3-lessons-public-1",
+      "sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
+      "kind": "GENERATED_MANIFEST",
+      "use": "Learner title and catalog cross-check only; teaching order comes from the sequence artifact."
+    },
+    {
+      "input_id": "MCAT-V3-CANONICAL-KCS",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "31d304a7f6ea51ac4847ede01824bb14cd8b98ed7a6bc61bb05617d53f9860fd",
+      "kind": "CANONICAL_KC_LEDGER",
+      "use": "Competency statements, scope bounds, representations, and source anchors."
+    },
+    {
+      "input_id": "MCAT-V3-TEACHING-SEQUENCES",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "b2bbd9f8a14cbff1250013e8d717eb1c8195ccbf6335e605c64f1469a94246aa",
+      "kind": "CANONICAL_SEQUENCE",
+      "use": "First-delivery position, ordered KC relation, revisit, and no-bypass context."
+    },
+    {
+      "input_id": "MCAT-V3-PREREQUISITE-GRAPH",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "fe0fffdd16bd10d3f7c046951cbe642add8ef2639f5b3f68a3224d9648f59e10",
+      "kind": "CANONICAL_GRAPH",
+      "use": "Hard/helpful prerequisite state and successor context."
+    },
+    {
+      "input_id": "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "23bbea9e358c4aa0ff255964d203c0081b4ff3ba28e4e123eed0cfc0b7a54831",
+      "kind": "ATTACHMENT_LEDGER",
+      "use": "Bounded conditional entry support only."
+    },
+    {
+      "input_id": "MCAT-V3-SOURCE-CROSSWALK",
+      "version": "mcat-v3-source-crosswalk-1",
+      "sha256": "a87fd1634a5a9e9dd522293ef98db10b783971f02e0bdfbf558b276cc0b9cea3",
+      "kind": "SOURCE_LEDGER",
+      "use": "Direct-scope and source-anchor trace; no expressive source prose is copied."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-03",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "d3d3cfb3cc0e2314dc7f01bc9d1cc9c68049527f317e2ad2cb270a7b43fff598",
+      "kind": "INSTRUCTIONAL_RUNTIME_SPECIFICATION",
+      "use": "Microcycle, freshness, assistance, repair, and route constraints; implementation remains blocked."
+    },
+    {
+      "input_id": "MCAT-V3-SPEC-04",
+      "version": "2026-07-23-targeted-read",
+      "sha256": "4fc88c3001bae4d8d1c843020106b6ba30059b243ea0d993a6d87ff009099761",
+      "kind": "AUTHORING_SPECIFICATION",
+      "use": "Artifact structure, coverage, learner/reviewer separation, and accessibility requirements."
+    },
+    {
+      "input_id": "AAMC-2020-SUPPLIED-CEILING",
+      "version": "2020-supplied",
+      "sha256": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
+      "kind": "SOURCE_CEILING",
+      "use": "Scope ceiling only; no expressive source wording or source questions are reused."
+    }
+  ],
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-789208",
+    "lesson_script_sha256": "bce8010490b939c606ef8057a8b1dcca40bdc00ed18288751d3cc51c301fb754",
+    "kc_coverage_matrix_id": "V3-KCOV-789208",
+    "kc_coverage_matrix_sha256": "dedaaed3d4cb328f423bece53c39470e243ce76280f664e872e0aaf98f83297d",
+    "lesson_presentation_plan_id": "V3-LPPL-789208",
+    "lesson_presentation_plan_sha256": "eec5d6a899d1cec1aa56640f4c86c3c5dbf845e3608e204316d31166037fc812"
+  },
+  "lineage": {
+    "supersedes": {
+      "artifact_id": "V3-LQRP-789208",
+      "content_sha256": "d785f47b55e1235229acbb8d75315d5bdb154b1831608054db5e74915a6bc032"
+    },
+    "change_reason": "Record fresh successful content-only validation after source, hold, and gate-status reconciliation.",
+    "authoring_run_id": "V3-LES-789208-CONTENT-DRAFT-2026-07-23",
+    "derived_input_ids": [
+      "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
+      "MCAT-V3-LEARNER-FACING-LESSONS",
+      "MCAT-V3-CANONICAL-KCS",
+      "MCAT-V3-TEACHING-SEQUENCES",
+      "MCAT-V3-PREREQUISITE-GRAPH",
+      "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
+      "MCAT-V3-SOURCE-CROSSWALK",
+      "MCAT-V3-SPEC-03",
+      "MCAT-V3-SPEC-04",
+      "AAMC-2020-SUPPLIED-CEILING"
+    ]
+  },
+  "payload": {
+    "lesson_id": "V3-LES-789208",
+    "review_scope": "Spec 04 internal draft candidate for one canonical lesson. Shared runtime, API, persistence, routes, Curriculum UI, and Start-button integration are intentionally outside scope.",
+    "role_assignments": [
+      {
+        "role": "PRIMARY_CONTENT_AUTHOR",
+        "identity": "gpt-5.6-terra",
+        "independent": false,
+        "status": "CONTENT_DRAFT_AUTHORED"
+      },
+      {
+        "role": "CURRICULUM_BINDING_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "DOMAIN_FACTUAL_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "INSTRUCTIONAL_DESIGN_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "QUESTION_EVIDENCE_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "NOVICE_CLARITY_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "SOURCE_RIGHTS_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "INDEPENDENT_BLIND_SOLVER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "ACCESSIBILITY_REVIEWER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      },
+      {
+        "role": "FINAL_APPROVER",
+        "identity": null,
+        "independent": true,
+        "status": "BLOCKED_EXTERNAL_HUMAN_REQUIRED"
+      }
+    ],
+    "independence_checks": [
+      {
+        "check": "PRIMARY_AUTHOR_NOT_FINAL_APPROVER",
+        "status": "BLOCKED",
+        "reason": "No independent final approver is assigned."
+      },
+      {
+        "check": "QUESTION_AUTHOR_NOT_BLIND_SOLVER",
+        "status": "BLOCKED",
+        "reason": "No independent keyless blind solver is assigned."
+      },
+      {
+        "check": "PROSE_AUTHOR_NOT_RIGHTS_APPROVER",
+        "status": "BLOCKED",
+        "reason": "No source-rights approver is assigned."
+      }
+    ],
+    "script_gate": {
+      "gate_status": "BLOCKED",
+      "check_results": [
+        {
+          "check_id": "CONTENT_ONLY_VALIDATOR",
+          "status": "PASS"
+        },
+        {
+          "check_id": "CANONICAL_ID_SCOPE_SOURCE_TRACE",
+          "status": "PASS"
+        },
+        {
+          "check_id": "SEMANTIC_FAMILY_AND_PROTECTION_CHECK",
+          "status": "PASS"
+        },
+        {
+          "check_id": "SME_SOURCE_FACTUAL_REVIEW",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "LEARNING_SCIENCE_REVIEW",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "BLIND_SOLVE",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "SOURCE_RIGHTS_REVIEW",
+          "status": "BLOCKED"
+        }
+      ],
+      "evidence_refs": [
+        "validate.mjs",
+        "validation.test.mjs",
+        "artifact-manifest.json"
+      ],
+      "reviewer_identities": [],
+      "reviewed_dependency_hashes": [
+        "bce8010490b939c606ef8057a8b1dcca40bdc00ed18288751d3cc51c301fb754",
+        "dedaaed3d4cb328f423bece53c39470e243ce76280f664e872e0aaf98f83297d"
+      ]
+    },
+    "presentation_gate": {
+      "gate_status": "BLOCKED",
+      "check_results": [
+        {
+          "check_id": "PRESENTATION_CONTENT_PLAN",
+          "status": "PASS"
+        },
+        {
+          "check_id": "BROWSER_QA_SHARED_RUNTIME",
+          "status": "BLOCKED_SHARED_RUNTIME"
+        },
+        {
+          "check_id": "HUMAN_ACCESSIBILITY_REVIEW",
+          "status": "BLOCKED"
+        }
+      ],
+      "evidence_refs": [
+        "V3-LPPL-789208"
+      ],
+      "reviewer_identities": [],
+      "reviewed_dependency_hashes": [
+        "eec5d6a899d1cec1aa56640f4c86c3c5dbf845e3608e204316d31166037fc812"
+      ]
+    },
+    "integrated_gate": {
+      "gate_status": "BLOCKED",
+      "check_results": [
+        {
+          "check_id": "RUNTIME_INTEGRATION_SHARED_RUNTIME",
+          "status": "BLOCKED_SHARED_RUNTIME"
+        },
+        {
+          "check_id": "API_SHARED_RUNTIME",
+          "status": "BLOCKED_SHARED_RUNTIME"
+        },
+        {
+          "check_id": "PERSISTENCE_SHARED_RUNTIME",
+          "status": "BLOCKED_SHARED_RUNTIME"
+        },
+        {
+          "check_id": "START_BUTTON_SHARED_RUNTIME",
+          "status": "BLOCKED_SHARED_RUNTIME"
+        },
+        {
+          "check_id": "LEARNER_SAFE_DTO_RUNTIME_SHARED_RUNTIME",
+          "status": "BLOCKED_SHARED_RUNTIME"
+        },
+        {
+          "check_id": "END_TO_END_ROUTE_SIMULATION_SHARED_RUNTIME",
+          "status": "BLOCKED_SHARED_RUNTIME"
+        },
+        {
+          "check_id": "INDEPENDENT_APPROVAL",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "CALIBRATION",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "LEARNER_VALIDATION",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "EFFICACY_VALIDATION",
+          "status": "BLOCKED"
+        },
+        {
+          "check_id": "PRODUCTION_PUBLICATION",
+          "status": "BLOCKED"
+        }
+      ],
+      "evidence_refs": [],
+      "reviewer_identities": [],
+      "reviewed_dependency_hashes": [
+        "bce8010490b939c606ef8057a8b1dcca40bdc00ed18288751d3cc51c301fb754",
+        "dedaaed3d4cb328f423bece53c39470e243ce76280f664e872e0aaf98f83297d",
+        "eec5d6a899d1cec1aa56640f4c86c3c5dbf845e3608e204316d31166037fc812"
+      ]
+    },
+    "findings": [
+      {
+        "finding_id": "finding-qms-shared-runtime-blocked",
+        "severity": "BLOCKER",
+        "affected_artifact": "ALL_PRIMARY_ARTIFACTS",
+        "reproducible_evidence": "This run is expressly content-only; no shared runtime workspace is available in scope.",
+        "required_correction": "Complete shared runtime implementation and browser evidence in its authorized workspace.",
+        "owner": "SHARED_RUNTIME_TEAM",
+        "status": "BLOCKED_SHARED_RUNTIME",
+        "retest_scope": "API, persistence, learner-safe DTO, route, Start-button, browser, and end-to-end evidence."
+      },
+      {
+        "finding_id": "finding-qms-human-gates-blocked",
+        "severity": "BLOCKER",
+        "affected_artifact": "LESSON_QUALITY_REPORT",
+        "reproducible_evidence": "Independent review roles have no assigned human receipts.",
+        "required_correction": "Obtain independent curriculum, domain, learning-science, blind-solve, rights, accessibility, and final-approval evidence.",
+        "owner": "CONTENT_OPERATIONS",
+        "status": "BLOCKED",
+        "retest_scope": "Human-only review gates."
+      }
+    ],
+    "evidence_refs": [
+      "artifact-manifest.json",
+      "validate.mjs",
+      "validation.test.mjs"
+    ],
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false,
+      "claim_note": "Content structure and automated checks do not establish mastery, readiness, calibration, learner validation, efficacy, production approval, or publication."
+    },
+    "open_decisions": [
+      {
+        "decision_id": "open-qms-v3-hold-110006",
+        "status": "BLOCKED",
+        "description": "Component boundaries and aggregate diagnostic treatment remain learner-unvalidated under V3-HOLD-110006."
+      },
+      {
+        "decision_id": "open-qms-v3-hold-110009",
+        "status": "BLOCKED",
+        "description": "Adaptive bypass and numeric mastery or fluency thresholds are disabled and uncalibrated."
+      },
+      {
+        "decision_id": "open-qms-v3-hold-110001",
+        "status": "BLOCKED",
+        "description": "The supplied 2020 AAMC authority has not been refreshed against a current version."
+      },
+      {
+        "decision_id": "open-qms-v3-hold-110003",
+        "status": "BLOCKED",
+        "description": "Lesson boundaries, remediation, sequence, and aggregate behavior remain learner-unvalidated."
+      },
+      {
+        "decision_id": "open-qms-v3-hold-110005",
+        "status": "BLOCKED",
+        "description": "Hard-edge necessity, representation readiness, and instructional sequence remain provisional."
+      }
+    ],
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY"
+  }
+}

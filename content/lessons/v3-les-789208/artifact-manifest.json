@@ -1,0 +1,47 @@
+{
+  "manifest_type": "TARGET_LESSON_ARTIFACT_MANIFEST",
+  "manifest_version": "1.0.0-internal-draft",
+  "lesson_id": "V3-LES-789208",
+  "grouping_id": "V3-CL-789208",
+  "canonicalization_profile": "MCAT_REPO_CANONICAL_SORTED_JSON_SHA256_V1",
+  "primary_artifacts": [
+    {
+      "file": "lesson-script.json",
+      "artifact_id": "V3-LSCR-789208",
+      "artifact_type": "LESSON_SCRIPT",
+      "content_sha256": "bce8010490b939c606ef8057a8b1dcca40bdc00ed18288751d3cc51c301fb754",
+      "file_sha256": "c578eb2440695bbf3330f0b684e6ad40ce3d6fc171de12e170c3b5a263054fbc"
+    },
+    {
+      "file": "kc-coverage-matrix.json",
+      "artifact_id": "V3-KCOV-789208",
+      "artifact_type": "KC_COVERAGE_MATRIX",
+      "content_sha256": "dedaaed3d4cb328f423bece53c39470e243ce76280f664e872e0aaf98f83297d",
+      "file_sha256": "5419d8cfb06e4735658a212483bea634641402e761fcba92b62e3935ed2ff626"
+    },
+    {
+      "file": "lesson-presentation-plan.json",
+      "artifact_id": "V3-LPPL-789208",
+      "artifact_type": "LESSON_PRESENTATION_PLAN",
+      "content_sha256": "eec5d6a899d1cec1aa56640f4c86c3c5dbf845e3608e204316d31166037fc812",
+      "file_sha256": "185590097abeb749ee91f03a7818c84efe67e025d5b8b6965a1386167ab77190"
+    },
+    {
+      "file": "lesson-quality-report.json",
+      "artifact_id": "V3-LQRP-789208",
+      "artifact_type": "LESSON_QUALITY_REPORT",
+      "content_sha256": "2f9ff0630a34ca7ba93dc5514aeb6b759e9ce54961b13a2bc117b59d7c57888a",
+      "file_sha256": "4a2e7fc43e15d5144e816f98952bac0e14c26520828f14d1410a87e042b84445"
+    }
+  ],
+  "protected_material": {
+    "file": "protected-items.json",
+    "browser_import_prohibited": true,
+    "file_sha256": "d94d60b9fa3f64330fd28f6b470983dc1bc92e31c54351c9a804c5d9f955a3f1"
+  },
+  "learner_safe_projection": {
+    "file": "learner-safe-items.json",
+    "file_sha256": "5072377614e1823478b0dfc2625005c6264d96211b3b0788d2e49edd09e4e1aa"
+  },
+  "d1_note": "content_sha256 = repo canonicalize() (recursively key-sorted, whitespace-free, content_sha256 field omitted), matching L1/L3. file_sha256 = SHA-256 of stored file bytes. Re-hashed 2026-07-30 (D1); prior INTERNAL_DRAFT_SORTED_JSON_SHA256_V1 values retained in d1-fixture-old-hashes.json."
+}

@@ -21,4 +21,21 @@ describe('AWS backend CI database lifecycle', () => {
     expect(repositoryIntegrations).toBeGreaterThan(migrationVerification);
     expect(workflow).toContain('services/lambdas/migration/src/runtime.integration.test.ts');
   });
+
+  it('runs the structural lesson-catalog gate fail-fast and DB-independently, before the database integrations', () => {
+    const workflow = readFileSync(join(root, '.github/workflows/aws-backend-ci.yml'), 'utf8');
+    const sourceVerification = workflow.indexOf('- name: Verify source and contracts');
+    const lessonValidation = workflow.indexOf('- name: Validate lesson catalog structure');
+    const migrationVerification = workflow.indexOf('- name: Verify migration runtime privileges');
+
+    // The merge gate invokes the exact CLI that local `lesson-validate` uses, with
+    // TEST_DATABASE_URL stripped — structural validation never touches the database.
+    expect(workflow).toContain(
+      'env -u TEST_DATABASE_URL pnpm --filter @mcat/content-cli start lesson-validate',
+    );
+    // Fail fast on malformed content after the validator has compiled (source/contract
+    // verification) but before a Postgres service is spent on migration/repository work.
+    expect(lessonValidation).toBeGreaterThan(sourceVerification);
+    expect(migrationVerification).toBeGreaterThan(lessonValidation);
+  });
 });
