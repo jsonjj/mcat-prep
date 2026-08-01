@@ -38,6 +38,14 @@ import { MasteryRing } from '../components/MasteryRing';
  * ONLY for lessons that carry practice evidence: a lesson with no row (un-practiced,
  * or a "Coming soon" placeholder) shows a neutral "Not started" ring with no
  * percentage, never a fabricated 0%.
+ *
+ * Each module header rolls those per-lesson means up into the SECTION'S average
+ * mastery (`moduleAverageMasteryPct`), shown in the collapsible header so it is
+ * visible while the section is COLLAPSED. It is the mean of `pL` over only the
+ * lessons that carry evidence — un-practiced lessons are EXCLUDED from the mean,
+ * never counted as 0, so a section that is mostly placeholders is not dragged to
+ * near-zero — and a section with no evidence at all shows the same neutral "Not
+ * started" ring the lessons use, never a fabricated 0%.
  */
 
 const CARS_LANE = 'CARS_PARALLEL';
@@ -78,6 +86,31 @@ function moduleNote(module: CurriculumModule): string {
   return module.revisitCount > 0
     ? `Revisits ${module.revisitCount} earlier lessons for cumulative review — no new lesson is introduced here.`
     : 'An integration point that connects ideas from earlier modules — no new lesson is introduced here.';
+}
+
+/**
+ * A module's average mastery: the MEAN of `pL` over its lessons that carry a real
+ * mastery row, as a rounded percent. Lessons with no row (un-practiced, or a
+ * "Coming soon" placeholder) are EXCLUDED from the mean rather than folded in as
+ * 0 — averaging placeholders as zero would drag every mostly-unstarted section to
+ * near-zero. Returns null when NO lesson in the module carries a row, so the
+ * header shows a neutral "Not started" instead of a fabricated 0%. `pL` is a
+ * KC-rollup display mean, so the result is a mastery readout and is never compared
+ * to a threshold.
+ */
+function moduleAverageMasteryPct(
+  module: CurriculumModule,
+  masteryByLesson: ReadonlyMap<string, LessonMasteryView>,
+): number | null {
+  let sum = 0;
+  let scored = 0;
+  for (const lesson of module.lessons) {
+    const entry = masteryByLesson.get(lesson.id);
+    if (entry === undefined) continue;
+    sum += entry.pL;
+    scored += 1;
+  }
+  return scored > 0 ? Math.round((sum / scored) * 100) : null;
 }
 
 export function Curriculum() {
@@ -256,6 +289,10 @@ function ModuleSection({
   const hasLessons = module.lessons.length > 0;
   const regionId = `mc-curriculum-region-${module.id}`;
   const headingId = `mc-curriculum-modhead-${module.id}`;
+  // The section's average mastery, surfaced in the header so it reads while
+  // collapsed. Only lesson-bearing modules can carry a mean; a zero-lesson
+  // integration/revisit module already states "No new lessons" and gets none.
+  const avgMasteryPct = moduleAverageMasteryPct(module, masteryByLesson);
 
   return (
     <section className="mc-curriculum__module">
@@ -273,6 +310,7 @@ function ModuleSection({
             <span className="mc-curriculum__module-count">{moduleCountLabel(module)}</span>
           </span>
           {isCars ? <span className="mc-curriculum__lane">{CARS_MARKER}</span> : null}
+          {hasLessons ? <ModuleMasteryRing pct={avgMasteryPct} /> : null}
           <span className="mc-curriculum__chev" aria-hidden="true" />
         </button>
       </h3>
@@ -399,6 +437,44 @@ function LessonMasteryRing({ mastery }: { mastery?: LessonMasteryView }) {
       </span>
       <span className="mc-visually-hidden">{pct}% mastery</span>
     </div>
+  );
+}
+
+/**
+ * The module's average mastery, surfaced in the collapsible header so it stays
+ * visible while the section is COLLAPSED. It reuses the shared teal MasteryRing at
+ * a compact header size and captions it "avg mastery"; the value is a display mean
+ * (`moduleAverageMasteryPct`), so it is never compared to a threshold. When no
+ * lesson in the module carries evidence (`pct === null`) it shows the same neutral
+ * "Not started" ghost ring the lessons use, carrying no number — never a
+ * fabricated 0%. The ring is decorative (aria-hidden); the reading is exposed to
+ * assistive tech as text and rides the header button's accessible name.
+ */
+function ModuleMasteryRing({ pct }: { pct: number | null }) {
+  if (pct === null) {
+    return (
+      <span className="mc-curriculum__modmastery mc-curriculum__modmastery--empty">
+        <svg className="mc-ring mc-ring--ghost" viewBox="0 0 100 100" aria-hidden="true">
+          <circle className="mc-ring__track mc-ring__track--ghost" cx="50" cy="50" r="42" />
+          <circle className="mc-ring__arc mc-ring__arc--ghost" cx="50" cy="50" r="42" />
+        </svg>
+        <span className="mc-curriculum__modmastery-cap" aria-hidden="true">
+          Not started
+        </span>
+        <span className="mc-visually-hidden">Section not started</span>
+      </span>
+    );
+  }
+  return (
+    <span className="mc-curriculum__modmastery">
+      <span className="mc-curriculum__modmastery-ring" aria-hidden="true">
+        <MasteryRing pct={pct} />
+      </span>
+      <span className="mc-curriculum__modmastery-cap" aria-hidden="true">
+        avg mastery
+      </span>
+      <span className="mc-visually-hidden">Section average mastery {pct}%</span>
+    </span>
   );
 }
 

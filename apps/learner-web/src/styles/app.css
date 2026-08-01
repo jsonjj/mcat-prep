@@ -2289,6 +2289,44 @@ body {
 .mc-curriculum__module-toggle[aria-expanded='true'] .mc-curriculum__chev {
   transform: rotate(-135deg);
 }
+/* Section (module) average mastery — surfaced in the collapsible header so it is
+   visible while the section is COLLAPSED. Reuses the shared MasteryRing at a
+   compact header size, pinned teal like the per-lesson rings (a mean carries no
+   threshold, so it reads as one calm colour). It stays a fixed compact block
+   between the title cluster and the chevron; the title takes the free width. */
+.mc-curriculum__modmastery {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  line-height: 1.15;
+}
+.mc-curriculum__modmastery .mc-ring {
+  width: 40px;
+  height: 40px;
+  display: block;
+}
+.mc-curriculum__modmastery-ring .mc-ring__arc {
+  stroke: var(--mc-primary);
+}
+.mc-curriculum__modmastery-ring .mc-ring__pct {
+  font-size: 32px;
+}
+.mc-curriculum__modmastery-cap {
+  font-size: var(--mc-text-12);
+  font-weight: 600;
+  color: var(--mc-ink-muted);
+  white-space: nowrap;
+}
+/* Narrow headers: keep just the compact ring (its % rides inside) and drop the
+   caption, so the title, optional CARS lane, ring and chevron never crowd or
+   force horizontal overflow. The value stays available to assistive tech. */
+@media (max-width: 560px) {
+  .mc-curriculum__modmastery-cap {
+    display: none;
+  }
+}
 .mc-curriculum__region {
   padding: var(--mc-space-1) var(--mc-space-4) var(--mc-space-4);
 }
