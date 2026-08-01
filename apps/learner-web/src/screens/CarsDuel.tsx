@@ -508,14 +508,6 @@ export function CarsDuel() {
             >
               Send argument
             </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              disabled={!canReflect || busy}
-              onClick={reflect}
-            >
-              End &amp; get feedback
-            </Button>
           </Stack>
         </>
       )}
