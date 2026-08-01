@@ -27,6 +27,14 @@ export interface PulledQuestion {
   subject: string | null;
   /** v7 skill code: SIRS1-4 / MATH-ENABLING / CARS_FOC|RWT|RBT. */
   primary_skill: string | null;
+  /**
+   * The 7-op reasoning axis (IDENTIFY…EVIDENCE), when authored explicitly. The
+   * historical corpus pull has no such column, so this is OPTIONAL: absent → the
+   * reasoning op is derived from `primary_skill` (the SIRS→op seed), exactly as
+   * before. An authored-question ingest sets it so the science op is exact rather
+   * than seed-derived. SERVER-classification metadata, not answer material.
+   */
+  reasoning_operation?: string | null;
   dok_level: number | null;
   stem: string;
   passage: string | null;

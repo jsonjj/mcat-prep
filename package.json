@@ -25,6 +25,7 @@
     "cars:calibrate": "pnpm --filter @mcat/cars-generator-cli start calibrate",
     "passages:ingest": "pnpm --filter @mcat/passage-cli start ingest",
     "passages:seed": "pnpm --filter @mcat/passage-cli start seed",
+    "questions:ingest": "pnpm --filter @mcat/questions-cli start ingest",
     "scan:protected": "node tools/scanners/protected-field-scan.mjs",
     "scan:vector-lesson-bundle": "node tools/scanners/vector-lesson-bundle-scan.mjs",
     "verify": "pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run scan:protected"

@@ -128,12 +128,18 @@ function toItem(row: PulledQuestion): FileBankItem | null {
       choices: CHOICE_IDS.map((id) => ({ id, text: choices[id]! })),
     },
     kcId: row.kc_id,
-    // The pull has no authored `reasoning_operation` column and no construct
-    // text, so this resolves through the same SIRS→op seed the Postgres port
-    // falls back to on a content-only database (SIRS2 → EXPLAIN).
+    // Prefer an explicitly authored `reasoning_operation` (the authored-question
+    // ingest sets it); otherwise resolve through the same SIRS→op seed the
+    // Postgres port falls back to on a content-only database (SIRS2 → EXPLAIN).
+    // The historical corpus pull carries no such column, so it takes the seed
+    // path unchanged. Mirrors the Postgres port's `skillOf(reasoning_operation,
+    // primary_skill)`.
     skill:
       domain === 'science'
-        ? resolveReasoningOperation({ primary_skill: row.primary_skill ?? undefined })
+        ? resolveReasoningOperation({
+            primary_skill: row.primary_skill ?? undefined,
+            reasoning_operation: row.reasoning_operation ?? undefined,
+          })
         : null,
     carsSkill,
     cluster: clusterOf(row.cluster),

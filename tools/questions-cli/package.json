@@ -1,0 +1,20 @@
+{
+  "name": "@mcat/questions-cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --import tsx src/main.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mcat/content": "workspace:*",
+    "@mcat/persistence-postgres": "workspace:*",
+    "zod": "3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.5",
+    "tsx": "4.23.1",
+    "typescript": "5.7.3"
+  }
+}

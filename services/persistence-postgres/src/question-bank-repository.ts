@@ -1,4 +1,6 @@
 import type { Pool } from 'pg';
+import type { AuthoredQuestionBankRows } from '@mcat/content';
+import type { Queryable } from './mastery-repository';
 
 /**
  * Read seam for the v7 question bank (see database/migrations/0006_question_bank.sql).
@@ -258,4 +260,108 @@ export async function getQuestionAnswer(pool: Pool, questionId: string): Promise
     explanations: row.explanations,
     error_models: row.error_models ?? null,
   };
+}
+
+// ---- Write seam (authored-question ingest) --------------------------------
+
+/** `($1, $2, …)` value tuples, one per row, with optional per-column casts. */
+function valueTuples(rowCount: number, columnsPerRow: number, casts: readonly string[]): string {
+  const tuples: string[] = [];
+  let n = 0;
+  for (let r = 0; r < rowCount; r += 1) {
+    const cells: string[] = [];
+    for (let c = 0; c < columnsPerRow; c += 1) {
+      n += 1;
+      cells.push(`$${n}${casts[c] ?? ''}`);
+    }
+    tuples.push(`(${cells.join(', ')})`);
+  }
+  return tuples.join(', ');
+}
+
+/**
+ * Idempotently upsert authored questions into the split store, mirroring the
+ * compiler's learner-safe / protected split:
+ *   • `questions`          — learner-safe row (+ derived cluster/section, the
+ *                            reasoning-operation axis from migration 0008).
+ *   • `question_protected` — SERVER-ONLY key + explanations + `error_models`
+ *                            (migration 0015).
+ *
+ * ADDITIVE: on conflict (question_id) each row is updated in place; questions not
+ * named are untouched. `content_release` and `assets` keep their table defaults on
+ * insert and are left untouched on update. Runs two statements — pass a
+ * transaction client as `q` for atomicity (the ingest tool does). Returns the
+ * number of questions written.
+ *
+ * NOTE: naming `error_models` requires migration 0015 to have been applied (as the
+ * `content-cli db-seed` seed also assumes). Answer material is written ONLY to
+ * `question_protected` and is never selected onto a learner-safe surface.
+ */
+export async function upsertQuestions(
+  q: Queryable,
+  rows: readonly AuthoredQuestionBankRows[],
+): Promise<number> {
+  if (rows.length === 0) return 0;
+
+  const questionParams: unknown[] = [];
+  for (const { safe } of rows) {
+    questionParams.push(
+      safe.question_id,
+      safe.section,
+      safe.cluster,
+      safe.kc_id,
+      safe.lesson_id,
+      safe.family_id,
+      safe.subject,
+      safe.primary_skill,
+      safe.reasoning_operation,
+      safe.dok_level,
+      safe.stem,
+      safe.passage,
+      JSON.stringify(safe.choices),
+      safe.status,
+    );
+  }
+  await q.query(
+    `insert into questions
+       (question_id, section, cluster, kc_id, lesson_id, family_id, subject,
+        primary_skill, reasoning_operation, dok_level, stem, passage, choices, status)
+     values ${valueTuples(rows.length, 14, ['', '', '', '', '', '', '', '', '', '', '', '', '::jsonb', ''])}
+     on conflict (question_id) do update set
+       section = excluded.section,
+       cluster = excluded.cluster,
+       kc_id = excluded.kc_id,
+       lesson_id = excluded.lesson_id,
+       family_id = excluded.family_id,
+       subject = excluded.subject,
+       primary_skill = excluded.primary_skill,
+       reasoning_operation = excluded.reasoning_operation,
+       dok_level = excluded.dok_level,
+       stem = excluded.stem,
+       passage = excluded.passage,
+       choices = excluded.choices,
+       status = excluded.status`,
+    questionParams,
+  );
+
+  const protectedParams: unknown[] = [];
+  for (const { protected: prot } of rows) {
+    protectedParams.push(
+      prot.question_id,
+      prot.correct_answer,
+      JSON.stringify(prot.explanations),
+      prot.error_models === null ? null : JSON.stringify(prot.error_models),
+    );
+  }
+  await q.query(
+    `insert into question_protected (question_id, correct_answer, explanations, error_models)
+     values ${valueTuples(rows.length, 4, ['', '', '::jsonb', '::jsonb'])}
+     on conflict (question_id) do update set
+       correct_answer = excluded.correct_answer,
+       explanations = excluded.explanations,
+       error_models = excluded.error_models`,
+    protectedParams,
+  );
+
+  return rows.length;
 }
