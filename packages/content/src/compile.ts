@@ -47,6 +47,13 @@ export interface ProtectedQuestionPayload {
   version: number;
   correct_choice_id: 'A' | 'B' | 'C' | 'D';
   rationales: EngineQuestion['rationales'];
+  /**
+   * Per-choice authored misconceptions (WS2). Answer-revealing (the key is
+   * tagged `correct_model`), so it lives here and never on the safe payload.
+   * Optional: an engine question authored without error models omits it — the
+   * shape then stays identical to a pre-WS2 payload (e.g. the synthetic bank).
+   */
+  error_models?: V7ErrorModels;
 }
 
 export interface CompiledQuestion {
@@ -75,6 +82,10 @@ export function compileQuestion(q: EngineQuestion): CompiledQuestion {
     version: q.version,
     correct_choice_id: q.correct_choice_id,
     rationales: q.rationales,
+    // Server-only. Omitted (not null) when the item carries no error models, so
+    // the shape stays identical to a pre-WS2 payload for items without them —
+    // this is what closes the drop `compileQuestion` used to have.
+    ...(q.error_models === undefined ? {} : { error_models: q.error_models }),
   };
   return { safe, protected: protectedPayload };
 }

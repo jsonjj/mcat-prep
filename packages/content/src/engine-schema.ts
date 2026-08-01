@@ -7,6 +7,7 @@ import {
   SectionSchema,
   SkillClusterSchema,
 } from '@mcat/contracts';
+import { V7ErrorModelsSchema } from './schema';
 
 /**
  * ENGINE PROJECTION schema (the 15-cluster / 4-section model the study engine,
@@ -106,6 +107,14 @@ export const EngineQuestionSchema = z.object({
     correct: z.string().min(1),
     choices: z.record(z.enum(['A', 'B', 'C', 'D']), z.string().min(1)),
   }),
+  /**
+   * Per-choice authored misconceptions (WS2), letter→text with the key tagged
+   * `correct_model`. Answer-revealing → SERVER-ONLY, split into the protected
+   * payload by `compileQuestion` exactly as the canonical v7 path does. Optional:
+   * the synthetic engine fixture authors none (that path stays null), but an
+   * engine question that carries them no longer drops them at compile.
+   */
+  error_models: V7ErrorModelsSchema.optional(),
   prerequisite_ids: z.array(z.string()).default([]),
   content_tags: z.array(z.string()).default([]),
   estimated_seconds: z.number().int().positive(),

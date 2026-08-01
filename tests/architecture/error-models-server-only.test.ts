@@ -4,7 +4,10 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
   assertNoProtectedFields,
+  compileQuestion,
   compileV7Question,
+  EngineQuestionSchema,
+  loadSyntheticBank,
   QuestionSchema,
 } from '@mcat/content';
 
@@ -69,6 +72,35 @@ describe('error_models is carried into the protected payload', () => {
     });
     const { protected: prot } = compileV7Question(without);
     expect(prot.error_models).toBeUndefined();
+  });
+});
+
+describe('the engine projection no longer drops error_models', () => {
+  /** A valid engine question (reuse a synthetic fixture) that authors error models. */
+  const engineWithErrorModels = EngineQuestionSchema.parse({
+    ...loadSyntheticBank().questions[0]!,
+    error_models: {
+      A: 'correct_model',
+      B: 'misconception: applies a related but nonresponsive principle',
+      C: 'misconception: reverses the relationship',
+      D: 'misconception: over-generalizes the rule',
+    },
+  });
+
+  it('carries error_models into the engine protected payload, never onto the safe view', () => {
+    const { safe, protected: prot } = compileQuestion(engineWithErrorModels);
+    expect(prot.error_models).toEqual(engineWithErrorModels.error_models);
+    const safeJson = JSON.stringify(safe);
+    expect(safeJson).not.toContain('error_models');
+    expect(safeJson).not.toContain('misconception');
+    expect(safeJson).not.toContain('correct_model');
+    expect(() => assertNoProtectedFields(safe)).not.toThrow();
+  });
+
+  it('omits error_models on the engine payload when the item (synthetic fixture) authored none', () => {
+    for (const q of loadSyntheticBank().questions) {
+      expect(compileQuestion(q).protected.error_models).toBeUndefined();
+    }
   });
 });
 

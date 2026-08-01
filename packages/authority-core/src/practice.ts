@@ -551,8 +551,10 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
       correctChoiceId: compiled.protected.correct_choice_id,
       rationale: compiled.protected.rationales.correct,
       choiceRationales: compiled.protected.rationales.choices as Record<string, string>,
-      // The engine projection carries no error models; the real corpus paths do.
-      errorModels: null,
+      // Carry the engine projection's error models when the item authored them
+      // (compileQuestion no longer drops them); null for the synthetic enzyme
+      // fixture, which authors none — the real corpus paths carry the full map.
+      errorModels: compiled.protected.error_models ?? null,
     };
   }
 
