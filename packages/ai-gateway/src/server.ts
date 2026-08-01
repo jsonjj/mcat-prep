@@ -105,6 +105,20 @@ function extractText(data: unknown): string {
   return choice?.message?.content ?? '';
 }
 
+/**
+ * Log a thrown transport error (not an HTTP status) with its underlying cause.
+ * `fetch` rejections carry the real reason (e.g. `ECONNREFUSED` from a stale
+ * `HTTP(S)_PROXY`) on `err.cause`; without this the route only ever emits an
+ * opaque `proxy_failure`. Never logs the request body or the API key.
+ */
+function logTransportError(where: string, err: unknown): void {
+  const detail =
+    err instanceof Error
+      ? { name: err.name, message: err.message, cause: (err as { cause?: unknown }).cause }
+      : { value: String(err) };
+  console.error(`[ai-gateway] ${where} transport error`, detail);
+}
+
 function isAiMessageArray(value: unknown): value is AiMessage[] {
   return (
     Array.isArray(value) &&
@@ -149,7 +163,11 @@ export async function proxyChat(rawBody: unknown, config: AiProxyConfig): Promis
       return { status: 502, json: { error: 'upstream_error', status: upstream.status, detail } };
     }
     return { status: 200, json: { text: extractText(await upstream.json()) } };
-  } catch {
+  } catch (err) {
+    // The transport threw (DNS, TLS, a dead HTTP(S)_PROXY -> ECONNREFUSED, etc.),
+    // not an HTTP status. Surface it server-side so the opaque `proxy_failure`
+    // the client sees is diagnosable; the key is never part of the error.
+    logTransportError('proxyChat', err);
     return { status: 500, json: { error: 'proxy_failure' } };
   }
 }
@@ -196,7 +214,8 @@ export async function groundedRewrite(
     const sanitized = sanitizeRewrite(extractText(await upstream.json()), mode, request.source);
     const body: RewriteResponseBody = { text: sanitized.text, fallback: sanitized.fallback };
     return { status: 200, json: body };
-  } catch {
+  } catch (err) {
+    logTransportError('groundedRewrite', err);
     return { status: 502, json: { error: 'proxy_failure' } };
   }
 }
