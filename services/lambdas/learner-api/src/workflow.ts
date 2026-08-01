@@ -34,13 +34,16 @@ import {
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
   PracticeResultSchema,
+  PracticeTestSummaryViewSchema,
   RepairQueueViewSchema,
   SkillMasteryViewSchema,
   SkillSummarySchema,
+  TodaysPathViewSchema,
   VectorLessonRunViewSchema,
   VectorLessonStartResponseSchema,
   VectorLessonStatusViewSchema,
   WrappedViewSchema,
+  type BuildTodaysPathInput,
   type CarsReadinessView,
   type CarsReasoningPatternView,
   type Clock,
@@ -53,9 +56,11 @@ import {
   type PracticeAttemptResult,
   type PracticeItemView,
   type PracticeQueueView,
+  type PracticeTestSummaryView,
   type RepairQueueView,
   type SkillMasteryView,
   type SkillSummary,
+  type TodaysPathView,
   type VectorLessonCommand,
   type VectorLessonStartCommand,
   type WrappedView,
@@ -363,6 +368,76 @@ export class RepositoryLearnerKernel {
     const state = await this.loadState(principal);
     const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
     return GoalViewSchema.parse(authority.getGoal(state));
+  }
+
+  // -------------------------------------------------------------------------
+  // Today's Path + daily budget + practice-test summary.
+  //
+  // The daily-plan engine lives on the core `Authority`, so these delegate to
+  // it through the SAME `mutate`/`loadState` transaction, idempotency, and
+  // projection persistence every other command uses — no bespoke store. The
+  // deployed learner API does not route these yet; the local full-engine HTTP
+  // server (services/local-authority) routes to them so `dev:lesson` serves the
+  // whole app surface at dev parity with the light in-process authority.
+  // -------------------------------------------------------------------------
+
+  /** Read the current day's plan (built:false when none exists for today yet). */
+  async getTodaysPath(principal: Principal): Promise<TodaysPathView> {
+    const state = await this.loadState(principal);
+    return TodaysPathViewSchema.parse(this.authority().getTodaysPath(state));
+  }
+
+  /** Build (and persist) today's plan from the client-fed recall load + candidates. */
+  async buildTodaysPath(
+    command: { readonly envelope: CommandEnvelope; readonly input: BuildTodaysPathInput },
+    principal: Principal,
+  ): Promise<TodaysPathView> {
+    const view = await this.mutate(command.envelope, principal, async (authority, state) => {
+      const built = await authority.buildTodaysPath(state, command.input);
+      return {
+        eventType: 'todays_path_built',
+        payload: toJsonObject({ envelope: command.envelope, input: command.input }),
+        result: toJsonObject(TodaysPathViewSchema.parse(built)),
+      };
+    });
+    return TodaysPathViewSchema.parse(view);
+  }
+
+  /** Advance the guided runner: mark one activity in_progress / complete / skipped. */
+  async recordPlanActivity(
+    command: {
+      readonly envelope: CommandEnvelope;
+      readonly activityId: string;
+      readonly status: 'in_progress' | 'complete' | 'skipped';
+    },
+    principal: Principal,
+  ) {
+    return AcceptedCommandResponseSchema.parse(
+      await this.mutate(command.envelope, principal, async (authority, state) => {
+        await authority.recordPlanActivity(state, command.activityId, command.status);
+        return { eventType: 'plan_activity_recorded', payload: toJsonObject(command) };
+      }),
+    );
+  }
+
+  /** Set the daily time-budget preset (2–6 hr, in minutes; clamped by the engine). */
+  async setDailyBudget(
+    command: { readonly envelope: CommandEnvelope; readonly minutesPerDay: number },
+    principal: Principal,
+  ) {
+    return AcceptedCommandResponseSchema.parse(
+      await this.mutate(command.envelope, principal, (authority, state) => {
+        authority.setDailyBudget(state, command.minutesPerDay);
+        return { eventType: 'daily_budget_set', payload: toJsonObject(command) };
+      }),
+    );
+  }
+
+  /** Practice-TEST dashboard summary; null until the learner completes a sitting. */
+  async practiceTestSummary(principal: Principal): Promise<PracticeTestSummaryView | null> {
+    const state = await this.loadState(principal);
+    const view = this.authority().getPracticeTestSummary(state);
+    return view === null ? null : PracticeTestSummaryViewSchema.parse(view);
   }
 
   async vectorLessonStatus(principal: Principal) {
