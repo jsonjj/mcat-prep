@@ -10,8 +10,14 @@ import {
   AcceptedCommandResponseSchema,
   GuestBootstrapResponseSchema,
   HttpApiErrorSchema,
+  PassageAttemptResponseSchema,
+  PassageTodayResponseSchema,
   type Clock,
   type HttpErrorCode,
+  type PassageAttemptRequest,
+  type PassageChoiceId,
+  type PassageGrade,
+  type PassageTodayView,
   type VectorLessonCommand,
   type VectorLessonStartCommand,
 } from '@mcat/contracts';
@@ -34,6 +40,7 @@ import {
   ROUTES,
   allowedMethodsFor,
   mistakesRepairLimit,
+  passageTzFromPath,
   practiceQueueParams,
   practiceQuestionId,
   routeFor,
@@ -142,6 +149,18 @@ interface KernelPort {
   ): ReturnType<RepositoryLearnerKernel['handleVectorLessonCommand']>;
 }
 
+/**
+ * The formative Passage-of-the-Day capability. Kept OFF the authority kernel —
+ * like the feature itself, it writes no mastery and logs no attempt — and served
+ * by the same shared `@mcat/passage-of-day` service the dev server uses, so the
+ * daily rotation and grading cannot drift between dev and prod. Optional: a
+ * deployment without it degrades to "no passage today" / "not in the pool".
+ */
+export interface PassagePort {
+  today(tzMinutes: number): Promise<PassageTodayView | null>;
+  grade(questionId: string, choiceId: PassageChoiceId | null): Promise<PassageGrade | null>;
+}
+
 export interface LearnerApiDependencies {
   readonly kernel: KernelPort;
   readonly sessions: GuestSessionService;
@@ -159,6 +178,8 @@ export interface LearnerApiDependencies {
    * re-statement. Injectable so tests can stub the transport.
    */
   readonly aiConfig?: AiProxyConfig;
+  /** Formative Passage of the Day (see `PassagePort`). Optional. */
+  readonly passage?: PassagePort;
 }
 
 export interface RepositoryLearnerApiDependencies extends Omit<LearnerApiDependencies, 'kernel'> {
@@ -690,6 +711,28 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             origin,
             requestIdValue,
           );
+        case 'passageAttempt': {
+          // FORMATIVE: scores one answer and reveals its explanation; writes no
+          // mastery, appends no event. Returns 404 for an unknown question id (or
+          // when no passage source is configured), exactly like the dev API.
+          const attempt = parsed.data as PassageAttemptRequest;
+          const grade =
+            (await dependencies.passage?.grade(attempt.questionId, attempt.choiceId)) ?? null;
+          if (grade === null) {
+            return errorResponse(
+              'not_found',
+              'That passage question is not in the pool.',
+              origin,
+              requestIdValue,
+            );
+          }
+          return jsonResponse(
+            200,
+            PassageAttemptResponseSchema.parse({ grade }),
+            origin,
+            requestIdValue,
+          );
+        }
         case 'aiRewrite': {
           // Grounded rewrite is authored server-side from the posted vetted
           // source only; ai-gateway enforces the numeric grounding gate before
@@ -796,6 +839,22 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       return jsonResponse(
         200,
         route.responseSchema?.parse(await dependencies.kernel.practiceItem(questionId, principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'passageToday') {
+      // FORMATIVE, learner-safe view. The tz offset rides in the path; a `null`
+      // passage is the honest "pool is empty / no source configured" answer.
+      const tz = passageTzFromPath(event.rawPath);
+      if (tz === null) {
+        return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
+      }
+      const passage = (await dependencies.passage?.today(tz)) ?? null;
+      return jsonResponse(
+        200,
+        PassageTodayResponseSchema.parse({ passage }),
         origin,
         requestIdValue,
       );

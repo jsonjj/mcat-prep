@@ -8,7 +8,7 @@ import {
 import { fixedClock } from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 
-import { createRepositoryLearnerApi } from './handler';
+import { createRepositoryLearnerApi, type PassagePort } from './handler';
 import { hashOpaqueToken, type GuestSessionService } from './session';
 import type { ApiGatewayV1Event, ApiGatewayV2Event, RateLimitInput, SafeLogEvent } from './http';
 import { allowedMethodsFor, routeFor } from './routes';
@@ -125,6 +125,7 @@ function harness(
     maxBodyBytes?: number;
     state?: 'diagnostic' | 'lesson' | 'question' | 'recall';
     aiConfig?: AiProxyConfig;
+    passage?: PassagePort;
   } = {},
 ) {
   const authority = new Authority(undefined, clock);
@@ -183,6 +184,7 @@ function harness(
     nowMs: () => Date.parse(NOW),
     ...(options.maxBodyBytes === undefined ? {} : { maxBodyBytes: options.maxBodyBytes }),
     ...(options.aiConfig === undefined ? {} : { aiConfig: options.aiConfig }),
+    ...(options.passage === undefined ? {} : { passage: options.passage }),
   });
   return {
     api,
@@ -200,6 +202,99 @@ function harness(
 function responseBody(response: { body?: string }): unknown {
   return JSON.parse(response.body ?? 'null') as unknown;
 }
+
+describe('Passage of the Day route (formative, off the kernel)', () => {
+  let receivedTz: number | undefined;
+  const passage: PassagePort = {
+    today: async (tzMinutes) => {
+      receivedTz = tzMinutes;
+      return {
+        id: 'potd-x',
+        title: 'X',
+        discipline: 'Aesthetics',
+        body: ['para'],
+        questions: [
+          {
+            id: 'potd-x-q1',
+            stem: 'stem?',
+            choices: [
+              { id: 'A', text: 'a' },
+              { id: 'B', text: 'b' },
+              { id: 'C', text: 'c' },
+              { id: 'D', text: 'd' },
+            ],
+          },
+        ],
+        dayIndex: 0,
+        poolSize: 1,
+        localDate: '2026-07-22',
+      };
+    },
+    grade: async (questionId, choiceId) =>
+      questionId === 'potd-x-q1'
+        ? {
+            correct: choiceId === 'A',
+            correctChoiceId: 'A',
+            rationale: 'because a',
+            choiceRationale: choiceId !== null && choiceId !== 'A' ? 'why it misses' : null,
+          }
+        : null,
+  };
+  const authed = { origin: APP_ORIGIN, authenticated: true } as const;
+
+  it('serves today\u2019s learner-safe passage, passing the path tz through', async () => {
+    const { api } = harness({ passage });
+    const response = await api.handle(request('GET', '/v1/passage/today/300', undefined, authed));
+    expect(response.statusCode).toBe(200);
+    expect(responseBody(response)).toMatchObject({ passage: { id: 'potd-x', dayIndex: 0 } });
+    expect(receivedTz).toBe(300);
+    // Learner-safe: no key or rationale on the served view.
+    expect(JSON.stringify(responseBody(response))).not.toMatch(/correctChoiceId|rationale/i);
+  });
+
+  it('requires a session', async () => {
+    const { api } = harness({ passage });
+    const response = await api.handle(request('GET', '/v1/passage/today/300'));
+    expect(response.statusCode).toBe(401);
+  });
+
+  it('404s a malformed tz path', async () => {
+    const { api } = harness({ passage });
+    const response = await api.handle(request('GET', '/v1/passage/today/notanumber', undefined, authed));
+    expect(response.statusCode).toBe(404);
+  });
+
+  it('scores an answer and reveals its explanation', async () => {
+    const { api } = harness({ passage });
+    const response = await api.handle(
+      request('POST', '/v1/passage/attempts', { questionId: 'potd-x-q1', choiceId: 'B' }, authed),
+    );
+    expect(response.statusCode).toBe(200);
+    expect(responseBody(response)).toEqual({
+      grade: {
+        correct: false,
+        correctChoiceId: 'A',
+        rationale: 'because a',
+        choiceRationale: 'why it misses',
+      },
+    });
+  });
+
+  it('404s an unknown passage question', async () => {
+    const { api } = harness({ passage });
+    const response = await api.handle(
+      request('POST', '/v1/passage/attempts', { questionId: 'nope', choiceId: 'A' }, authed),
+    );
+    expect(response.statusCode).toBe(404);
+  });
+
+  it('degrades to no-passage when no source is configured', async () => {
+    const { api } = harness();
+    const response = await api.handle(request('GET', '/v1/passage/today/0', undefined, authed));
+    expect(response.statusCode).toBe(200);
+    expect(responseBody(response)).toEqual({ passage: null });
+  });
+});
 
 describe('learner Lambda API security boundary', () => {
   it('matches only valid dynamic practice-item paths and extracts the content id', () => {

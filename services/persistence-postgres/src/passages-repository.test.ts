@@ -1,4 +1,4 @@
-import type { PassageOfTheDayEntry } from '@mcat/contracts';
+import type { PassageChoice, PassageOfTheDayEntry } from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 import type { Queryable } from './mastery-repository';
 import { hasPassages, listPassages, seedPassages, upsertPassages } from './passages-repository';
@@ -25,7 +25,7 @@ function fakeQueryable(
   return { q, calls };
 }
 
-const CHOICES = [
+const CHOICES: PassageChoice[] = [
   { id: 'A', text: 'a' },
   { id: 'B', text: 'b' },
   { id: 'C', text: 'c' },

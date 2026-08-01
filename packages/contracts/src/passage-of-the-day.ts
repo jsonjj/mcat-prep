@@ -210,6 +210,67 @@ export const AuthoredPassageFileSchema = z.union([
   z.array(AuthoredPassageSchema),
 ]);
 
+// ---------------------------------------------------------------------------
+// Learner-safe wire DTOs — what crosses to the browser (dev Vite API and the
+// production /v1/passage/* route). No key, no rationale on the view; the grade
+// is returned only after the learner commits an answer.
+// ---------------------------------------------------------------------------
+
+export const PassageChoiceViewSchema = z
+  .object({ id: PassageChoiceIdSchema, text: z.string() })
+  .strict();
+export type PassageChoiceView = z.infer<typeof PassageChoiceViewSchema>;
+
+export const PassageQuestionViewSchema = z
+  .object({
+    id: z.string(),
+    stem: z.string(),
+    choices: z.array(PassageChoiceViewSchema),
+  })
+  .strict();
+export type PassageQuestionView = z.infer<typeof PassageQuestionViewSchema>;
+
+export const PassageTodayViewSchema = z
+  .object({
+    id: z.string(),
+    title: z.string(),
+    discipline: z.string(),
+    body: z.array(z.string()),
+    questions: z.array(PassageQuestionViewSchema),
+    dayIndex: z.number().int(),
+    poolSize: z.number().int(),
+    localDate: z.string(),
+  })
+  .strict();
+export type PassageTodayView = z.infer<typeof PassageTodayViewSchema>;
+
+/** The `GET /v1/passage/today` (and dev `/api/passage/today`) response body. */
+export const PassageTodayResponseSchema = z
+  .object({ passage: PassageTodayViewSchema.nullable() })
+  .strict();
+
+export const PassageGradeSchema = z
+  .object({
+    correct: z.boolean(),
+    correctChoiceId: PassageChoiceIdSchema,
+    rationale: z.string(),
+    choiceRationale: z.string().nullable(),
+  })
+  .strict();
+export type PassageGrade = z.infer<typeof PassageGradeSchema>;
+
+/** The `POST .../passage/attempts` request body. */
+export const PassageAttemptRequestSchema = z
+  .object({
+    questionId: z.string().min(1),
+    choiceId: PassageChoiceIdSchema.nullable(),
+  })
+  .strict();
+export type PassageAttemptRequest = z.infer<typeof PassageAttemptRequestSchema>;
+
+/** The `POST .../passage/attempts` response body. */
+export const PassageAttemptResponseSchema = z.object({ grade: PassageGradeSchema }).strict();
+
 /** Human label for the coarse theme, used when a passage omits `discipline`. */
 export function passageThemeLabel(theme: PassageTheme): string {
   return theme === 'humanities' ? 'Humanities' : 'Social Science';

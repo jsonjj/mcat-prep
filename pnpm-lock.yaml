@@ -200,6 +200,9 @@ importers:
       '@mcat/content':
         specifier: workspace:*
         version: link:../../packages/content
+      '@mcat/passage-of-day':
+        specifier: workspace:*
+        version: link:../../packages/passage-of-day
       '@mcat/persistence-postgres':
         specifier: workspace:*
         version: link:../../services/persistence-postgres
@@ -397,6 +400,19 @@ importers:
         specifier: 3.2.6
         version: 3.2.6(@types/node@22.10.5)(jsdom@30.0.1)(tsx@4.23.1)
 
+  packages/passage-of-day:
+    dependencies:
+      '@mcat/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+    devDependencies:
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
+      vitest:
+        specifier: 3.2.6
+        version: 3.2.6(@types/node@22.10.5)(jsdom@30.0.1)(tsx@4.23.1)
+
   packages/platform-web:
     dependencies:
       '@mcat/client-core':
@@ -518,6 +534,9 @@ importers:
       '@mcat/domain':
         specifier: workspace:*
         version: link:../../../packages/domain
+      '@mcat/passage-of-day':
+        specifier: workspace:*
+        version: link:../../../packages/passage-of-day
       '@mcat/persistence-postgres':
         specifier: workspace:*
         version: link:../../persistence-postgres

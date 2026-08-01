@@ -15,6 +15,9 @@ import {
   MasteryMapEntrySchema,
   MasterySeedSchema,
   MistakePatternViewSchema,
+  PassageAttemptRequestSchema,
+  PassageAttemptResponseSchema,
+  PassageTodayResponseSchema,
   PracticeAttemptCommandSchema,
   PracticeAttemptResultSchema,
   PracticeFocusSchema,
@@ -57,6 +60,8 @@ export type RouteId =
   | 'practiceQueue'
   | 'practiceAdaptiveAttempt'
   | 'carsDuel'
+  | 'passageToday'
+  | 'passageAttempt'
   | 'aiRewrite'
   | 'practiceTestCompleted'
   | 'practiceTestReviewed'
@@ -391,6 +396,29 @@ export const ROUTES: readonly RouteDefinition[] = [
     bodySchema: CarsDuelCommandBodySchema,
   },
   {
+    // Passage of the Day — FORMATIVE, writes no mastery. The learner's tz offset
+    // rides in the PATH (`/v1/passage/today/{tz}`) because the edge rejects query
+    // strings, exactly as the practice queue's count does.
+    id: 'passageToday',
+    method: 'GET',
+    path: '/v1/passage/today',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: PassageTodayResponseSchema,
+  },
+  {
+    // Scores one passage answer and reveals its explanation. A POST that mutates
+    // NO learner state (like aiRewrite), so it is not `stateChanging` — no CSRF
+    // write gate — but still session + origin-verify gated like every /v1 route.
+    id: 'passageAttempt',
+    method: 'POST',
+    path: '/v1/passage/attempts',
+    auth: 'session',
+    stateChanging: false,
+    bodySchema: PassageAttemptRequestSchema,
+    responseSchema: PassageAttemptResponseSchema,
+  },
+  {
     // WS4 "Explain it another way": a grounded, post-reveal re-expression of an
     // explanation the learner has ALREADY seen. It is a POST but mutates no
     // learner state, so it is not `stateChanging` — no CSRF/Origin-required
@@ -594,12 +622,23 @@ export function allowedMethodsFor(path: string): readonly string[] {
 const PRACTICE_ITEM_PATH = /^\/v1\/practice\/items\/([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 const PRACTICE_QUEUE_PATH = /^\/v1\/practice\/queue\/(\d{1,2})(?:\/([a-z0-9-]{1,32}))?$/;
 const MISTAKES_REPAIR_PATH = /^\/v1\/mistakes\/repair\/(\d{1,2})$/;
+// `Date.getTimezoneOffset()` is UTC-minus-local in minutes; bounded to ±1440.
+const PASSAGE_TODAY_PATH = /^\/v1\/passage\/today\/(-?\d{1,4})$/;
 
 function routeMatches(route: RouteDefinition, path: string): boolean {
   if (route.id === 'practiceItem') return PRACTICE_ITEM_PATH.test(path);
   if (route.id === 'practiceQueue') return PRACTICE_QUEUE_PATH.test(path);
   if (route.id === 'mistakesRepair') return MISTAKES_REPAIR_PATH.test(path);
+  if (route.id === 'passageToday') return PASSAGE_TODAY_PATH.test(path);
   return route.path === path;
+}
+
+/** The learner's timezone offset (minutes) from the passage-today path, or null. */
+export function passageTzFromPath(path: string): number | null {
+  const match = PASSAGE_TODAY_PATH.exec(path);
+  if (match === null) return null;
+  const tz = Number.parseInt(match[1]!, 10);
+  return Number.isFinite(tz) && Math.abs(tz) <= 1440 ? tz : null;
 }
 
 /** Extract the requested repair-item cap from the repair-queue path (null when absent/invalid). */

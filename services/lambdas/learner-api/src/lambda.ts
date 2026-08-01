@@ -1,19 +1,22 @@
 import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 import { Authority } from '@mcat/authority-core';
 import { toProjectionRecord } from '@mcat/authority-kernel';
-import { fixedClock, systemClock, type LearnerId } from '@mcat/contracts';
+import { fixedClock, systemClock, type LearnerId, type PassageOfTheDayEntry } from '@mcat/contracts';
 import type { LearnerProjectionRecord } from '@mcat/database';
+import { PassageOfDayService } from '@mcat/passage-of-day';
 import {
   PostgresAuthorityRepository,
   PostgresFixedWindowRateLimiter,
   PostgresGuestSessionService,
   createPgPool,
   createPostgresPracticeBankPort,
+  listPassages,
+  type PostgresPool,
 } from '@mcat/persistence-postgres';
 
 import { aiConfigFromEnv } from '@mcat/ai-gateway/server';
 
-import { createRepositoryLearnerApi, type LearnerApi } from './handler';
+import { createRepositoryLearnerApi, type LearnerApi, type PassagePort } from './handler';
 import type { LambdaApiGatewayEvent, LambdaApiGatewayResult, SafeLogger } from './http';
 
 interface DatabaseSecret {
@@ -181,6 +184,38 @@ const logger: SafeLogger = {
   },
 };
 
+/**
+ * The formative Passage-of-the-Day port, backed by the shared
+ * `@mcat/passage-of-day` service over the `passages` table. Built once per warm
+ * container and memoized. An empty/unreadable table serves "no passage today"
+ * until it is seeded (see tools/passage-cli / `pnpm passages:seed`). Reads only —
+ * mints no mastery.
+ */
+function createPassagePort(pool: PostgresPool): PassagePort {
+  let servicePromise: Promise<PassageOfDayService> | undefined;
+  const service = (): Promise<PassageOfDayService> => {
+    if (servicePromise === undefined) {
+      servicePromise = (async () => {
+        let entries: readonly PassageOfTheDayEntry[] = [];
+        try {
+          entries = await listPassages(pool);
+        } catch {
+          entries = [];
+        }
+        return new PassageOfDayService(entries);
+      })().catch((error: unknown) => {
+        servicePromise = undefined;
+        throw error;
+      });
+    }
+    return servicePromise;
+  };
+  return {
+    today: async (tzMinutes) => (await service()).todayView(new Date(), tzMinutes),
+    grade: async (questionId, choiceId) => (await service()).grade(questionId, choiceId),
+  };
+}
+
 async function createRuntime(): Promise<LearnerApi> {
   const environment = parseLearnerApiEnvironment(process.env);
   const secrets = new SecretsManagerClient({ region: environment.region });
@@ -218,6 +253,10 @@ async function createRuntime(): Promise<LearnerApi> {
     // Lambda to have public egress; provisioning the key + egress is an infra
     // step outside this change.
     aiConfig: aiConfigFromEnv(process.env),
+    // Formative Passage of the Day, served through the same session/origin-verify
+    // pipeline as every other /v1 route. Reads the passages table (hardcoded pool
+    // fallback); writes no mastery.
+    passage: createPassagePort(pool),
   });
 }
 
