@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@mcat/ui-web';
+import type { LessonMasteryView } from '@mcat/contracts';
 import {
   CURRICULUM_PHASES,
   type CurriculumLesson,
@@ -8,11 +9,13 @@ import {
   type CurriculumPhase,
 } from '../data/curriculum-v3.generated';
 import {
+  useMasteryLessons,
   useNormalizedLessonStatus,
   useStartVectorLesson,
   useVectorLessonStatus,
 } from '../app/queries';
 import { lessonById, type RegisteredLesson } from '../app/lesson-catalog';
+import { MasteryRing } from '../components/MasteryRing';
 
 /**
  * Curriculum — a calm map of the whole V3 path with the real catalog launchable.
@@ -27,6 +30,14 @@ import { lessonById, type RegisteredLesson } from '../app/lesson-catalog';
  * visibly disabled. Numbering is shown because teaching order is real, not
  * decorative. Every module uses the same disclosure, including zero-lesson
  * integration/revisit modules.
+ *
+ * Each lesson row carries a compact teal mastery ring, joined by lesson id to the
+ * real per-lesson readout (`useMasteryLessons` → `GET /v1/progress/lessons`). That
+ * readout is a KC-rollup DISPLAY MEAN, not a probability of mastery, so it is
+ * labelled "Mastery" and never compared to a threshold. The endpoint returns a row
+ * ONLY for lessons that carry practice evidence: a lesson with no row (un-practiced,
+ * or a "Coming soon" placeholder) shows a neutral "Not started" ring with no
+ * percentage, never a fabricated 0%.
  */
 
 const CARS_LANE = 'CARS_PARALLEL';
@@ -74,6 +85,16 @@ export function Curriculum() {
   const [activeIndex, setActiveIndex] = useState(0);
   const activePhase = CURRICULUM_PHASES[activeIndex] ?? CURRICULUM_PHASES[0];
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  // Real per-lesson mastery, keyed by lesson id. `getMasteryLessons` returns a row
+  // only for lessons with practice evidence, so a lesson absent from this map is
+  // un-practiced and its ring renders the neutral "Not started" state.
+  const masteryLessons = useMasteryLessons();
+  const masteryByLesson = useMemo(() => {
+    const map = new Map<string, LessonMasteryView>();
+    for (const entry of masteryLessons.data ?? []) map.set(entry.lessonId, entry);
+    return map;
+  }, [masteryLessons.data]);
   const [openModuleIds, setOpenModuleIds] = useState<ReadonlySet<string>>(
     () => new Set([firstModuleId(activePhase)]),
   );
@@ -209,6 +230,7 @@ export function Curriculum() {
               open={openModuleIds.has(module.id)}
               onToggle={toggleModule}
               highlightLessonId={targetLessonId}
+              masteryByLesson={masteryByLesson}
             />
           ))}
         </div>
@@ -222,11 +244,13 @@ function ModuleSection({
   open,
   onToggle,
   highlightLessonId,
+  masteryByLesson,
 }: {
   module: CurriculumModule;
   open: boolean;
   onToggle: (id: string) => void;
   highlightLessonId?: string | null;
+  masteryByLesson: ReadonlyMap<string, LessonMasteryView>;
 }) {
   const isCars = module.lane === CARS_LANE;
   const hasLessons = module.lessons.length > 0;
@@ -263,7 +287,11 @@ function ModuleSection({
           <ol className="mc-curriculum__lessons">
             {module.lessons.map((lesson) => (
               <li key={lesson.id}>
-                <LessonCard lesson={lesson} highlighted={lesson.id === highlightLessonId} />
+                <LessonCard
+                  lesson={lesson}
+                  highlighted={lesson.id === highlightLessonId}
+                  mastery={masteryByLesson.get(lesson.id)}
+                />
               </li>
             ))}
           </ol>
@@ -275,7 +303,15 @@ function ModuleSection({
   );
 }
 
-function LessonCard({ lesson, highlighted = false }: { lesson: CurriculumLesson; highlighted?: boolean }) {
+function LessonCard({
+  lesson,
+  mastery,
+  highlighted = false,
+}: {
+  lesson: CurriculumLesson;
+  mastery?: LessonMasteryView;
+  highlighted?: boolean;
+}) {
   const ordinal = String(lesson.position).padStart(3, '0');
   const kcCount = lesson.kcs.length;
   const titleId = `mc-curriculum-lesson-${lesson.id}`;
@@ -294,9 +330,14 @@ function LessonCard({ lesson, highlighted = false }: { lesson: CurriculumLesson;
             <span className="mc-visually-hidden">Lesson {lesson.position}: </span>
             {lesson.shortTitle}
           </h4>
+          {/* Collapsed by default so the row stays slim; the KC count rides the
+              accessible name while the visible link stays uncluttered. */}
           <details className="mc-curriculum__kc">
-            <summary className="mc-curriculum__kc-summary">
-              <span className="mc-curriculum__kc-label">What you'll learn ({kcCount})</span>
+            <summary
+              className="mc-curriculum__kc-summary"
+              aria-label={`What you'll learn (${kcCount})`}
+            >
+              <span className="mc-curriculum__kc-label">What you'll learn</span>
               <span className="mc-curriculum__kc-chev" aria-hidden="true" />
             </summary>
             <ol className="mc-curriculum__kc-list">
@@ -309,16 +350,55 @@ function LessonCard({ lesson, highlighted = false }: { lesson: CurriculumLesson;
           </details>
         </div>
       </div>
-      <div className="mc-curriculum__lesson-foot">
-        {registered === undefined ? (
-          <UnavailableLessonAction lesson={lesson} />
-        ) : registered.runtime === 'vector' ? (
-          <TargetLessonAction lesson={lesson} />
-        ) : (
-          <CatalogLessonAction lesson={lesson} registered={registered} />
-        )}
+      <div className="mc-curriculum__lesson-aside">
+        <LessonMasteryRing mastery={mastery} />
+        <div className="mc-curriculum__lesson-foot">
+          {registered === undefined ? (
+            <UnavailableLessonAction lesson={lesson} />
+          ) : registered.runtime === 'vector' ? (
+            <TargetLessonAction lesson={lesson} />
+          ) : (
+            <CatalogLessonAction lesson={lesson} registered={registered} />
+          )}
+        </div>
       </div>
     </article>
+  );
+}
+
+/**
+ * The lesson's mastery ring, joined by id to the real KC-rollup readout. A lesson
+ * WITH practice evidence shows the teal ring and its rounded percent under a
+ * "Mastery" caption (`pL` is a display mean, so it is never compared to a
+ * threshold); a lesson with no evidence — un-practiced, or a "Coming soon"
+ * placeholder — shows a muted, dashed "Not started" ring carrying no number, so an
+ * un-started lesson is never dressed up as a fabricated 0%. The ring itself is
+ * decorative (aria-hidden); the value is exposed to assistive tech as text beside
+ * it.
+ */
+function LessonMasteryRing({ mastery }: { mastery?: LessonMasteryView }) {
+  if (mastery === undefined) {
+    return (
+      <div className="mc-curriculum__mastery mc-curriculum__mastery--empty">
+        <svg className="mc-ring mc-ring--ghost" viewBox="0 0 100 100" aria-hidden="true">
+          <circle className="mc-ring__track mc-ring__track--ghost" cx="50" cy="50" r="42" />
+          <circle className="mc-ring__arc mc-ring__arc--ghost" cx="50" cy="50" r="42" />
+        </svg>
+        <span className="mc-curriculum__mastery-cap">Not started</span>
+      </div>
+    );
+  }
+  const pct = Math.round(mastery.pL * 100);
+  return (
+    <div className="mc-curriculum__mastery">
+      <div className="mc-curriculum__ring">
+        <MasteryRing pct={pct} />
+      </div>
+      <span className="mc-curriculum__mastery-cap" aria-hidden="true">
+        Mastery
+      </span>
+      <span className="mc-visually-hidden">{pct}% mastery</span>
+    </div>
   );
 }
 
@@ -331,7 +411,7 @@ function UnavailableLessonAction({ lesson }: { lesson: CurriculumLesson }) {
       </span>
       <Button
         variant="secondary"
-        size="lg"
+        size="md"
         disabled
         aria-label={`Start ${lesson.shortTitle}`}
         aria-describedby={soonId}
@@ -377,7 +457,7 @@ function TargetLessonAction({ lesson }: { lesson: CurriculumLesson }) {
         <span className="mc-curriculum__launch-error" id={statusId} role="alert">
           Couldn&apos;t check this lesson.
         </span>
-        <Button variant="secondary" size="lg" onClick={() => void status.refetch()}>
+        <Button variant="secondary" size="md" onClick={() => void status.refetch()}>
           Try again
         </Button>
       </>
@@ -386,7 +466,7 @@ function TargetLessonAction({ lesson }: { lesson: CurriculumLesson }) {
 
   return (
     <>
-      <span className="mc-curriculum__available" id={statusId}>
+      <span className="mc-visually-hidden" id={statusId}>
         {status.isLoading ? 'Checking availability' : badge}
       </span>
       <div className="mc-curriculum__launch">
@@ -397,7 +477,7 @@ function TargetLessonAction({ lesson }: { lesson: CurriculumLesson }) {
         ) : null}
         <Button
           variant="primary"
-          size="lg"
+          size="md"
           disabled={
             status.isLoading ||
             startLesson.isPending ||
@@ -455,7 +535,7 @@ function CatalogLessonAction({
         <span className="mc-curriculum__launch-error" id={statusId} role="alert">
           Couldn&apos;t check this lesson.
         </span>
-        <Button variant="secondary" size="lg" onClick={() => void status.refetch()}>
+        <Button variant="secondary" size="md" onClick={() => void status.refetch()}>
           Try again
         </Button>
       </>
@@ -464,13 +544,13 @@ function CatalogLessonAction({
 
   return (
     <>
-      <span className="mc-curriculum__available" id={statusId}>
+      <span className="mc-visually-hidden" id={statusId}>
         {status.isLoading ? 'Checking availability' : badge}
       </span>
       <div className="mc-curriculum__launch">
         <Button
           variant="primary"
-          size="lg"
+          size="md"
           disabled={
             status.isLoading ||
             status.data?.availability === 'UNAVAILABLE' ||
