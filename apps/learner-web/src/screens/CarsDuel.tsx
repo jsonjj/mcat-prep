@@ -508,14 +508,14 @@ export function CarsDuel() {
             >
               Send argument
             </Button>
-            <button
-              type="button"
-              className="mc-textbtn"
+            <Button
+              variant="secondary"
+              size="lg"
               disabled={!canReflect || busy}
               onClick={reflect}
             >
               End &amp; get feedback
-            </button>
+            </Button>
           </Stack>
         </>
       )}

@@ -1685,18 +1685,15 @@ body {
   font-family: var(--mc-font-body);
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: var(--mc-text-12);
+  font-size: var(--mc-text-15);
   font-weight: 700;
   color: var(--mc-primary-text);
 }
 .mc-duel__bar-topic {
   margin: 0;
   color: var(--mc-ink-muted);
-  font-size: var(--mc-text-14);
-  /* Keep the bar compact: one line, ellipsis when long (full text via title attr). */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: var(--mc-text-17);
+  font-weight: 600;
 }
 
 .mc-duel__log {
