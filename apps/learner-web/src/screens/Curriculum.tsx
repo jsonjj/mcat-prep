@@ -590,21 +590,19 @@ export function Curriculum() {
     <div className="mc-curriculum">
       <header className="mc-curriculum__head">
         <h1 className="mc-h1">Curriculum</h1>
-        <p className="mc-muted">
-          Zoom in from the whole path down to a single lesson’s skills — by phase, or by subject.
-          Every level is the same map, one step deeper.
-        </p>
       </header>
 
-      <div className="mc-curriculum__bar">
-        <Breadcrumb trail={trail} />
-        {parentHref !== null ? (
-          <Link className="mc-curriculum__zoomout" to={parentHref}>
-            <span className="mc-curriculum__zoomout-icon" aria-hidden="true" />
-            Zoom out
-          </Link>
-        ) : null}
-      </div>
+      {!isTopLevel ? (
+        <div className="mc-curriculum__bar">
+          <Breadcrumb trail={trail} />
+          {parentHref !== null ? (
+            <Link className="mc-curriculum__zoomout" to={parentHref}>
+              <span className="mc-curriculum__zoomout-icon" aria-hidden="true" />
+              Zoom out
+            </Link>
+          ) : null}
+        </div>
+      ) : null}
 
       {isTopLevel ? <LensToggle lens={lens} /> : null}
 
