@@ -589,7 +589,7 @@ export function Curriculum() {
   return (
     <div className="mc-curriculum">
       <header className="mc-curriculum__head">
-        <h1 className="mc-h1">Curriculum</h1>
+        <h1 className="mc-curriculum__kicker">Curriculum</h1>
       </header>
 
       {!isTopLevel ? (

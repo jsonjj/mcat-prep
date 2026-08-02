@@ -2110,6 +2110,16 @@ body {
   flex-direction: column;
   gap: var(--mc-space-2);
 }
+/* The page owns exactly one h1 ("Curriculum"), demoted to a small kicker so the
+   node header ("The full path" / "Foundations" / …) reads as the real title. */
+.mc-curriculum__kicker {
+  margin: 0;
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-12);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mc-primary-text);
+}
 
 /* Top bar: breadcrumb trail (a nav landmark) + a Zoom-out affordance. Wraps
    rather than overflowing on narrow screens. */
