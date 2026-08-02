@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --import tsx src/main.ts",
+    "//dev": "Drops inherited proxy variables for the same reason the root dev scripts do: this process talks to Supabase directly (JWKS at startup, Postgres for every request), and an editor-injected proxy that is no longer listening turns that into a startup failure that reads like Supabase is down.",
+    "dev": "env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY -u SOCKS_PROXY -u http_proxy -u https_proxy -u all_proxy -u socks_proxy node --import tsx src/main.ts",
     "ensure-env": "node --import tsx src/ensure-secrets.ts",
     "migrate": "node --import tsx src/migrate.ts",
     "typecheck": "tsc --noEmit"

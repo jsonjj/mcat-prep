@@ -12,11 +12,14 @@ import {
 } from '@mcat/authority-kernel';
 import {
   AuthenticatedBootstrapResponseSchema,
+  BuildTodaysPathCommandSchema,
+  DailyBudgetCommandSchema,
   NormalizedLessonCommandSchema,
   NormalizedLessonRunViewSchema,
   NormalizedLessonStartCommandSchema,
   NormalizedLessonStartResponseSchema,
   NormalizedLessonStatusViewSchema,
+  PlanActivityProgressCommandSchema,
   VectorLessonCommandSchema,
   VectorLessonRunViewSchema,
   VectorLessonStartCommandSchema,
@@ -29,8 +32,19 @@ import {
   NORMALIZED_LESSON_ROUTE_SLUGS,
   RepositoryLearnerKernel,
   lessonContentProvider,
+  mistakesRepairLimit,
   normalizedLessonIdFor,
+  practiceQueueParams,
+  practiceQuestionId,
+  routeFor,
+  type CarsDuelCommandBody,
+  type ContinueCommandBody,
+  type MasterySeedCommandBody,
   type NormalizedLessonCommandInput,
+  type PracticeAdaptiveAttemptCommandBody,
+  type PracticeAttemptCommandBody,
+  type RecallCommandBody,
+  type RevealCommandBody,
 } from '@mcat/learner-api';
 import {
   buildDebugLearnerState,
@@ -262,6 +276,214 @@ export async function createLocalLessonHttpServer(
   // before that resolves.
   let boundPort = port;
 
+  /**
+   * The rest of the app's `/v1` surface — everything the light in-process dev
+   * authority serves (Today's Path, Mistakes, Progress, Practice, Diagnostic,
+   * hooks, …). Routed through the SAME `services/lambdas/learner-api` route table
+   * (`routeFor`) and dispatched to the SAME `RepositoryLearnerKernel` methods the
+   * deployed handler calls, so the local full engine and the Lambda cannot drift.
+   *
+   * Returns the status + JSON payload, or `undefined` when the path is not one
+   * this dispatcher owns — bootstrap, the lesson routes, and the debug route are
+   * served by their bespoke blocks in the request handler below.
+   *
+   * A single fixed guest `principal` backs the whole process, exactly like the
+   * lesson routes: this is a single-learner dev server, so it does not run the
+   * deployed edge's session/CSRF/rate-limit ceremony (the request handler still
+   * enforces the loopback Host + CORS-origin guards).
+   */
+  async function dispatchAppApi(
+    method: string,
+    path: string,
+    body: unknown,
+  ): Promise<{ status: number; payload: unknown } | undefined> {
+    // ---- Today's Path + daily budget + practice-test summary --------------
+    // Dev-parity routes the deployed learner API does not route yet; served here
+    // by the same kernel transaction every other command uses.
+    if (method === 'GET' && path === '/v1/plan/today/path') {
+      return { status: 200, payload: await kernel.getTodaysPath(principal) };
+    }
+    if (method === 'POST' && path === '/v1/plan/today/build') {
+      const command = BuildTodaysPathCommandSchema.parse(body);
+      return { status: 200, payload: await kernel.buildTodaysPath(command, principal) };
+    }
+    if (method === 'POST' && path === '/v1/plan/today/activity') {
+      const command = PlanActivityProgressCommandSchema.parse(body);
+      return { status: 200, payload: await kernel.recordPlanActivity(command, principal) };
+    }
+    if (method === 'PUT' && path === '/v1/profile/daily-budget') {
+      const command = DailyBudgetCommandSchema.parse(body);
+      return { status: 200, payload: await kernel.setDailyBudget(command, principal) };
+    }
+    if (method === 'GET' && path === '/v1/practice-test/summary') {
+      return { status: 200, payload: await kernel.practiceTestSummary(principal) };
+    }
+
+    // ---- the deployed /v1 surface -----------------------------------------
+    const route = routeFor(method, path);
+    if (route === undefined) return undefined;
+
+    if (route.bodySchema !== undefined) {
+      const parsed = route.bodySchema.safeParse(body);
+      if (!parsed.success) {
+        return {
+          status: 400,
+          payload: {
+            code: 'validation_error',
+            message: 'The request body does not match the route contract.',
+            requestId: randomUUID(),
+            retryable: false,
+          },
+        };
+      }
+      switch (route.id) {
+        case 'goal':
+          return { status: 200, payload: await kernel.handle(parsed.data, principal) };
+        case 'attempt':
+          return { status: 200, payload: await kernel.handleAttempt(parsed.data, principal) };
+        case 'reveal':
+          return {
+            status: 200,
+            payload: await kernel.handleReveal(parsed.data as RevealCommandBody, principal),
+          };
+        case 'continue':
+          return {
+            status: 200,
+            payload: await kernel.handleContinue(parsed.data as ContinueCommandBody, principal),
+          };
+        case 'recall':
+          return {
+            status: 200,
+            payload: await kernel.handleRecall(parsed.data as RecallCommandBody, principal),
+          };
+        case 'practiceAttempt':
+          return {
+            status: 200,
+            payload: await kernel.handlePractice(
+              parsed.data as PracticeAttemptCommandBody,
+              principal,
+            ),
+          };
+        case 'practiceAdaptiveAttempt':
+          return {
+            status: 200,
+            payload: await kernel.handlePracticeAdaptive(
+              parsed.data as PracticeAdaptiveAttemptCommandBody,
+              principal,
+            ),
+          };
+        case 'carsDuel':
+          return {
+            status: 200,
+            payload: await kernel.handleCarsDuel(parsed.data as CarsDuelCommandBody, principal),
+          };
+        case 'practiceTestCompleted':
+          return {
+            status: 200,
+            payload: await kernel.handlePracticeTestCompleted(
+              parsed.data as ContinueCommandBody,
+              principal,
+            ),
+          };
+        case 'practiceTestReviewed':
+          return {
+            status: 200,
+            payload: await kernel.handlePracticeTestReviewed(
+              parsed.data as ContinueCommandBody,
+              principal,
+            ),
+          };
+        case 'masterySeed':
+          return {
+            status: 200,
+            payload: await kernel.handleMasterySeed(
+              parsed.data as MasterySeedCommandBody,
+              principal,
+            ),
+          };
+        case 'resetProgress':
+          return {
+            status: 200,
+            payload: await kernel.handleReset(parsed.data as ContinueCommandBody, principal),
+          };
+        default:
+          // Lesson command routes are served by the bespoke blocks; any other
+          // body-bearing route is not one this dev server owns.
+          return undefined;
+      }
+    }
+
+    switch (route.id) {
+      case 'diagnosticNext':
+        return { status: 200, payload: await kernel.diagnosticNext(principal) };
+      case 'goalView':
+        return { status: 200, payload: await kernel.goal(principal) };
+      case 'skills':
+        return { status: 200, payload: await kernel.skills(principal) };
+      case 'practiceItem': {
+        const questionId = practiceQuestionId(path);
+        if (questionId === null) return undefined;
+        return { status: 200, payload: await kernel.practiceItem(questionId, principal) };
+      }
+      case 'practiceQueue': {
+        const params = practiceQueueParams(path);
+        if (params === null) return undefined;
+        return {
+          status: 200,
+          payload: await kernel.getPracticeQueueAdaptive(params.x, params.focus, principal),
+        };
+      }
+      case 'wrapped':
+        return { status: 200, payload: await kernel.wrapped(principal) };
+      case 'progressSkills':
+        return { status: 200, payload: await kernel.masterySkills(principal) };
+      case 'progressLessons':
+        return { status: 200, payload: await kernel.masteryLessons(principal) };
+      case 'progressLessonWarrants':
+        return { status: 200, payload: await kernel.lessonWarrants(principal) };
+      case 'progressCars':
+        return { status: 200, payload: await kernel.carsReadiness(principal) };
+      case 'carsReasoningPatterns':
+        return { status: 200, payload: await kernel.carsReasoningPatterns(principal) };
+      case 'mistakesRepair': {
+        const limit = mistakesRepairLimit(path);
+        if (limit === null) return undefined;
+        return { status: 200, payload: await kernel.getRepairQueue(limit, principal) };
+      }
+      // Snapshot-backed reads — the exact fields the deployed handler selects.
+      case 'today':
+      case 'session':
+      case 'mastery':
+      case 'errors':
+      case 'shakyWins':
+      case 'errorPatterns': {
+        const snapshot = await kernel.snapshot(principal);
+        if (route.id === 'today') {
+          if (snapshot.today === null) {
+            return {
+              status: 409,
+              payload: {
+                code: 'conflict',
+                message: 'Complete onboarding before requesting Today.',
+                requestId: randomUUID(),
+                retryable: false,
+              },
+            };
+          }
+          return { status: 200, payload: snapshot.today };
+        }
+        if (route.id === 'session') return { status: 200, payload: snapshot.session };
+        if (route.id === 'mastery') return { status: 200, payload: snapshot.masteryMap };
+        if (route.id === 'errors') return { status: 200, payload: snapshot.errorLog };
+        if (route.id === 'shakyWins') return { status: 200, payload: snapshot.shakyWins };
+        return { status: 200, payload: snapshot.errorPatterns };
+      }
+      default:
+        // Lesson reads, health, passage, ai, and sync are not served here.
+        return undefined;
+    }
+  }
+
   const server = createServer(async (request, response) => {
     const origin = corsOrigin(request, origins);
     const method = request.method ?? 'GET';
@@ -280,7 +502,9 @@ export async function createLocalLessonHttpServer(
     if (method === 'OPTIONS') {
       response.writeHead(204, {
         ...responseHeaders(origin),
-        'access-control-allow-methods': 'GET, POST, OPTIONS',
+        // The full app surface includes PUT (daily budget) and DELETE (reset
+        // progress), so the credentialed preflight must advertise them too.
+        'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'access-control-allow-headers': 'content-type, authorization, cache-control, x-csrf-token',
         'access-control-max-age': '600',
       });
@@ -289,6 +513,10 @@ export async function createLocalLessonHttpServer(
     }
 
     try {
+      // Read the request body ONCE up front so every route below (the bespoke
+      // lesson handlers and the shared app-API dispatch) shares one parse — the
+      // body stream can only be consumed once. A GET has none, so this is `{}`.
+      const body = await readJson(request);
       if (method === 'POST' && path === '/v1/bootstrap') {
         const snapshot = await kernel.snapshot(principal);
         sendJson(
@@ -339,7 +567,7 @@ export async function createLocalLessonHttpServer(
         return;
       }
       if (method === 'POST' && path === '/v1/lessons/vectors-and-trigonometry/start') {
-        const command = VectorLessonStartCommandSchema.parse(await readJson(request));
+        const command = VectorLessonStartCommandSchema.parse(body);
         sendJson(
           response,
           200,
@@ -360,7 +588,7 @@ export async function createLocalLessonHttpServer(
         return;
       }
       if (method === 'POST' && path === '/v1/lessons/vectors-and-trigonometry/commands') {
-        const command = VectorLessonCommandSchema.parse(await readJson(request));
+        const command = VectorLessonCommandSchema.parse(body);
         sendJson(response, 200, await kernel.handleVectorLessonCommand(command, principal), origin);
         return;
       }
@@ -383,7 +611,7 @@ export async function createLocalLessonHttpServer(
           return;
         }
         if (method === 'POST' && path.endsWith('/start')) {
-          const command = NormalizedLessonStartCommandSchema.parse(await readJson(request));
+          const command = NormalizedLessonStartCommandSchema.parse(body);
           // The slug is the authority for which lesson runs; a body id naming a
           // different lesson is rejected, exactly as L1's `z.literal` rejects a
           // foreign id on its own route.
@@ -426,9 +654,7 @@ export async function createLocalLessonHttpServer(
           return;
         }
         if (method === 'POST' && path.endsWith('/commands')) {
-          const command = NormalizedLessonCommandSchema.parse(
-            await readJson(request),
-          ) as NormalizedLessonCommandInput;
+          const command = NormalizedLessonCommandSchema.parse(body) as NormalizedLessonCommandInput;
           sendJson(
             response,
             200,
@@ -438,6 +664,17 @@ export async function createLocalLessonHttpServer(
           return;
         }
       }
+
+      // The rest of the app's `/v1` surface (Today's Path, Progress, Mistakes,
+      // Practice, Diagnostic, hooks, …), routed through the deployed learner-api
+      // route table + kernel. Returns `undefined` only for a path this server
+      // does not own, which then falls through to the debug route / 404 below.
+      const dispatched = await dispatchAppApi(method, path, body);
+      if (dispatched !== undefined) {
+        sendJson(response, dispatched.status, dispatched.payload, origin);
+        return;
+      }
+
       // LOCAL-ONLY inspection route. Three independent guards, all required: an
       // explicit process opt-in, a loopback peer, and no `Origin` — a web page
       // never reads this, whatever the CORS allowlist says. Any one missing and
@@ -485,6 +722,9 @@ export async function createLocalLessonHttpServer(
       }
       sendJson(response, 404, { error: 'Route not found.' }, origin);
     } catch (error) {
+      // Include `requestId` so the client's `HttpApiErrorSchema` parses the body
+      // and surfaces the REAL code (e.g. `stream_conflict`) instead of collapsing
+      // every error to a generic `unavailable`.
       if (error instanceof AuthorityKernelError) {
         sendJson(
           response,
@@ -492,6 +732,7 @@ export async function createLocalLessonHttpServer(
           {
             code: error.code,
             message: error.message,
+            requestId: randomUUID(),
             retryable: error.retryable,
             ...(error.currentStreamVersion === undefined
               ? {}
@@ -507,6 +748,7 @@ export async function createLocalLessonHttpServer(
         {
           code: 'validation_error',
           message: error instanceof Error ? error.message : 'The request is invalid.',
+          requestId: randomUUID(),
           retryable: false,
         },
         origin,

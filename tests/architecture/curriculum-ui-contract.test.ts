@@ -5,14 +5,23 @@ import { CURRICULUM_PHASES } from '../../apps/learner-web/src/data/curriculum-v3
 import { describe, expect, it } from 'vitest';
 
 /**
- * Source contract for the browse-only learner Curriculum tab. This is a
- * node-environment architecture test (no DOM): it verifies the screen, route,
- * navigation, and icon exist, that the screen consumes the checked-in generated
- * manifest, and that it carries the exact calm learner language, disabled Start,
- * unified collapsible modules, responsive nav, and accessibility semantics the
- * feature requires — without dictating incidental markup, so it stays resilient
- * to reasonable design choices. These are stable acceptance contracts; they do
- * not replace browser/responsive QA.
+ * Source contract for the learner Curriculum tab, now a ZOOMABLE, self-similar
+ * DRILL-DOWN (Path → Phase → Module → Lesson → KC). This is a node-environment
+ * architecture test (no DOM): it verifies the screen, route, navigation, and
+ * icon exist, that the screen consumes the checked-in generated manifest, and
+ * that it carries the exact calm learner language, honest disabled Start,
+ * URL-driven drill state, accessible breadcrumb navigation, a responsive
+ * child-card grid, and warrant-derived KC status — without dictating incidental
+ * markup, so it stays resilient to reasonable design choices.
+ *
+ * The SEMANTIC invariants are unchanged from the previous browse-only design and
+ * are preserved verbatim (never claim mastery from a display mean, never
+ * fabricate 0% for un-practiced items, honest server-authoritative launch, calm
+ * source-backed language). Only the STRUCTURAL assertions moved: the phase
+ * tablist/stepper and the single-collapsible-module pattern were replaced by the
+ * breadcrumb drill-down and the card grid, so their DOM/class assertions were
+ * rewritten to the new structure. These are stable acceptance contracts; they
+ * do not replace browser/responsive QA.
  */
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -97,7 +106,7 @@ describe('Curriculum tab source contract', () => {
     for (const field of ['label', 'title', 'shortTitle', 'position', 'kcs', 'revisitCount']) {
       expect(src).toContain(`.${field}`);
     }
-    // Navigation data remains local and learner-safe. The one enabled target may
+    // Navigation data remains local and learner-safe. The launchable targets may
     // use the shared query/navigation seams, but this screen never performs raw
     // fetches, reads authority configuration, or imports server content.
     expect(src).not.toMatch(/\bfetch\(|VITE_AUTHORITY/);
@@ -120,7 +129,7 @@ describe('Curriculum tab source contract', () => {
     // Neutral, source-backed framing for cumulative review / integration.
     expect(src).toMatch(/cumulative review|integration/i);
     // No efficacy, readiness, or mastery claims. Honest target run status is
-    // allowed now that exactly one lesson is launchable.
+    // allowed now that lessons carry a launchable seam.
     expect(src).not.toMatch(
       /guarantee|boost your score|score prediction|readiness score|mastered|exam.ready/i,
     );
@@ -129,61 +138,79 @@ describe('Curriculum tab source contract', () => {
     expect(src).not.toMatch(/\b(?:written|authoring|authored)\b/i);
   });
 
-  it('implements an accessible five-phase path/stepper with wrapping keyboard support', () => {
+  it('implements an accessible breadcrumb drill-down driven by shareable URL params', () => {
     const src = read(CURRICULUM_SCREEN);
-    expect(src).toMatch(/role="tablist"/);
-    expect(src).toMatch(/role="tab"/);
-    expect(src).toMatch(/role="tabpanel"/);
-    expect(src).toMatch(/aria-selected/);
-    expect(src).toMatch(/aria-controls/);
-    // Roving tabindex.
-    expect(src).toMatch(/tabIndex/);
-    // Arrow/Home/End keyboard model.
-    for (const key of ['ArrowRight', 'ArrowLeft', 'Home', 'End']) {
-      expect(src).toContain(key);
+    // Drill state lives in the URL so a view is shareable + back-button friendly.
+    expect(src).toMatch(/useSearchParams/);
+    for (const param of ['phase', 'module', 'lesson']) {
+      expect(src).toContain(`searchParams.get('${param}')`);
     }
-    // ArrowRight wraps last -> first and ArrowLeft wraps first -> last (modulo).
-    expect(src).toMatch(/\+\s*1\)\s*%\s*phaseCount/);
-    expect(src).toMatch(/-\s*1\s*\+\s*phaseCount\)\s*%\s*phaseCount/);
-    // Home/End remain absolute (first / last), not wrapped.
-    expect(src).toMatch(/selectPhase\(0\)/);
-    expect(src).toMatch(/selectPhase\(phaseCount - 1\)/);
+    // The breadcrumb is a nav landmark with a marked current node, and a
+    // "Zoom out" affordance walks one level back up.
+    expect(src).toContain('aria-label="Breadcrumb"');
+    expect(src).toContain('aria-current="page"');
+    expect(src).toContain('Zoom out');
+    // The `?lesson=` deep-link (Practice → Curriculum) still resolves through the
+    // reverse index to that lesson, so it never dead-ends.
+    expect(src).toMatch(/LESSON_LOCATION/);
+    // Zooming moves focus to the new node's heading; the heading is
+    // programmatically focusable (roving-free managed focus).
+    expect(src).toMatch(/tabIndex=\{-1\}/);
+    expect(src).toMatch(/\.focus\(\)/);
+    // The retired phase tablist/stepper is gone.
+    expect(src).not.toContain('role="tablist"');
+    expect(src).not.toContain('role="tab"');
   });
 
-  it('unifies every module (incl. zero-lesson) into one collapsible pattern', () => {
+  it('renders a self-similar child-card grid, heat-strips, and warrant-derived KC status', () => {
     const src = read(CURRICULUM_SCREEN);
-    // Collapsible disclosure primitives.
-    expect(src).toMatch(/aria-expanded/);
-    expect(src).toMatch(/aria-controls=\{regionId\}/);
-    // The controlled panel is a nameable group (role="group") labelled by its
-    // module heading button (headingId): the button↔panel relationship is
-    // bidirectional and standards-valid, without adding region landmarks.
-    expect(src).toContain('aria-labelledby={headingId}');
-    expect(src).toContain('role="group"');
-    expect(src).toMatch(/id=\{regionId\}[\s\S]*?role="group"[\s\S]*?aria-labelledby=\{headingId\}/);
-    // A single module render path (no static/non-collapsible branch remains).
-    expect((src.match(/<section className="mc-curriculum__module/g) ?? []).length).toBe(1);
-    expect(src).not.toContain('mc-curriculum__module--static');
-    expect(src).not.toContain('mc-curriculum__module-head');
-    expect(src).not.toContain('mc-curriculum__checkpoint');
-    // Zero-lesson bodies live inside the collapsible region as truthful notes.
-    expect(src).toContain('mc-curriculum__region');
+    // A responsive grid of child cards is the repeating unit at every level.
+    expect(src).toContain('mc-curriculum__grid');
+    expect(src).toContain('mc-curriculum__card');
+    // Each card previews the level below it with a mini heat-strip.
+    expect(src).toContain('mc-curriculum__heat');
+    // The deepest level shows QUALITATIVE, warrant-derived KC status — never a
+    // per-KC number — with its provenance stated plainly.
+    expect(src).toContain('Due for review');
+    expect(src).toContain('Per-skill status comes from your practice evidence.');
+    // Freshness comes from the evidence warrant; capability stays a separate
+    // display mean, so the two signals are never conflated.
+    expect(src).toMatch(/useMasteryMap/);
+    expect(src).toMatch(/refreshNeeded/);
+    // Zero-lesson modules render as distinct dashed review cards (no Start),
+    // stated as truthful notes rather than a launchable lesson.
+    expect(src).toContain('mc-curriculum__card--review');
     expect(src).toContain('mc-curriculum__note');
-    // First module opens by default and stays user-closable across phase switch.
-    expect(src).toMatch(/setOpenModuleIds\(new Set\(\[firstModuleId/);
+    // The retired single-collapsible-module pattern is gone.
+    expect(src).not.toContain('mc-curriculum__module--static');
+    expect(src).not.toContain('mc-curriculum__checkpoint');
+  });
+
+  it('never fabricates 0% and rolls capability up as an evidenced mean only', () => {
+    const src = read(CURRICULUM_SCREEN);
+    // The per-node ring is the MEAN of evidenced lessons' `pL`; a node with no
+    // evidenced lesson returns null (a neutral "Not started" ring), never 0.
+    expect(src).toMatch(/lessonMeanPct/);
+    expect(src).toMatch(/return scored > 0 \? Math\.round\(\(sum \/ scored\) \* 100\) : null/);
+    // Phase and module rollups reuse that same evidenced-mean helper.
+    expect(src).toMatch(/phaseAverageMasteryPct/);
+    expect(src).toMatch(/moduleAverageMasteryPct/);
+    // The display mean (`pL`) is never compared to a threshold in this screen.
+    expect(src).not.toMatch(/pL\s*[<>]=?/);
+    expect(src).toContain('Not started');
   });
 
   it('gives each lesson a real name and wires Coming soon to the disabled Start', () => {
     const src = read(CURRICULUM_SCREEN);
     // Exactly one `<details>` render path in the source: the single KC
-    // disclosure inside LessonCard (rendered once per lesson at runtime).
+    // disclosure inside the lesson card (rendered once per lesson at runtime).
     expect((src.match(/<details\b/g) ?? []).length).toBe(1);
     expect(src).toMatch(/<summary\b/);
     // Zero-padded global lesson ordinal (1..114 -> 001..114).
     expect(src).toMatch(/padStart\(\s*3/);
-    // Lesson article is programmatically named by a real heading.
+    // A card is programmatically named by a real heading.
     expect(src).toMatch(/<article[^>]*aria-labelledby=\{titleId\}/);
-    expect(src).toMatch(/<h4[^>]*id=\{titleId\}/);
+    expect(src).toMatch(/<h3[^>]*id=\{titleId\}/);
     // Coming soon has an id, associated with the disabled Start via describedby,
     // and Start carries a lesson-specific accessible name.
     expect(src).toContain('id={soonId}');
@@ -200,11 +227,16 @@ describe('Curriculum tab source contract', () => {
 
     // Token-driven only: no hardcoded hex colors in the curriculum block.
     expect(block).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
-    // The phase path scrolls horizontally on narrow screens (no page overflow).
-    expect(block).toMatch(/\.mc-curriculum__path\s*\{[^}]*overflow-x:\s*auto/s);
-    // 48px touch targets via the shared token.
+    // The child grid is two-up and shrink-safe (min-width:0 via minmax), and
+    // collapses to a single column on mobile — no page overflow.
+    expect(block).toContain('repeat(2, minmax(0, 1fr))');
+    expect(block).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/,
+    );
+    // 48px touch targets via the shared token (Zoom out, lens toggle).
     expect(block).toContain('var(--mc-touch)');
-    // Obsolete static-only styles are gone.
+    // Obsolete stepper / static-only styles are gone.
+    expect(block).not.toContain('mc-curriculum__step');
     expect(block).not.toContain('mc-curriculum__module--static');
     expect(block).not.toContain('mc-curriculum__checkpoint');
 

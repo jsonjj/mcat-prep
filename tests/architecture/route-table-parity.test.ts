@@ -20,21 +20,26 @@ const signature = (route: { method: string; path: string }): string =>
 /**
  * Routes the client calls that the deployed Lambda genuinely does not serve yet.
  *
- * This is a record of existing debt, not permission to add more. Each entry needs a
- * backing engine in the Lambda before it can be removed, and the test below fails
- * if an entry here is no longer missing — so closing a gap forces deleting its line
- * rather than leaving a stale exemption behind.
+ * This is a record of existing debt, not permission to add more. The test below
+ * fails if an entry here is no longer missing — so closing a gap forces deleting
+ * its line rather than leaving a stale exemption behind.
+ *
+ * Most of these are now only a ROUTING gap: `RepositoryLearnerKernel` grew
+ * `getTodaysPath`, `buildTodaysPath`, `recordPlanActivity`, `setDailyBudget`, and
+ * `practiceTestSummary`, and the dev harness already dispatches to them. What is
+ * still missing is an entry in `ROUTES` and a branch in the deployed handler.
  */
 const KNOWN_UNIMPLEMENTED: readonly string[] = [
-  // Today's Path engine: served by the dev authority only.
+  // Today's Path. Engine present; not routed by the Lambda.
   'GET /v1/plan/today/path',
   'POST /v1/plan/today/build',
   'POST /v1/plan/today/activity',
-  // Daily-budget editor.
+  // Daily-budget editor. Engine present; not routed by the Lambda.
   'PUT /v1/profile/daily-budget',
-  // Offline command sync.
+  // Offline command sync. No engine either.
   'POST /v1/sync',
-  // Scored practice-test engine; the client treats a 404 as "no test taken".
+  // Scored practice-test summary. Engine present; not routed by the Lambda, and
+  // the client treats a 404 as "no test taken".
   'GET /v1/practice-test/summary',
 ];
 
