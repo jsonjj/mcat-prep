@@ -547,8 +547,11 @@ body {
   border-color: color-mix(in srgb, #f0b95a 32%, var(--mc-border));
 }
 .mc-passage__play {
-  background:
-    radial-gradient(circle at 30% 25%, color-mix(in srgb, #ffffff 55%, transparent), transparent 60%),
+  background: radial-gradient(
+      circle at 30% 25%,
+      color-mix(in srgb, #ffffff 55%, transparent),
+      transparent 60%
+    ),
     linear-gradient(135deg, #ffcf6b 0%, #ffb14e 55%, #f59e3c 100%);
   box-shadow: 0 8px 22px color-mix(in srgb, #f0b95a 34%, transparent);
 }
@@ -1535,6 +1538,16 @@ body {
     padding-top: var(--mc-space-3);
     padding-bottom: var(--mc-space-4);
   }
+  /* Curriculum is a zoomable two-up card map: it wants the same escape from the
+     760px shell cap that Practice/Progress use so the child grid breathes and the
+     rings/typography can scale up. The cap lives on the PARENT (`.mc-shell__main`),
+     so a child `max-width` on `.mc-curriculum` alone would be moot — widen the
+     shell here. Unlike Practice this screen SCROLLS (it can be a long grid), so the
+     generous bottom padding is kept; only the top whitespace is trimmed. */
+  .mc-shell__main:has(.mc-curriculum) {
+    max-width: 1240px;
+    padding-top: var(--mc-space-3);
+  }
   /* CARS Duel setup: a wider, sectioned page (mode cards · intensity · topic),
      matching the approved mockup — same PARENT-cap escape as above. The top/bottom
      padding is trimmed here (vs the default main padding) so the sectioned setup
@@ -1588,7 +1601,9 @@ body {
   padding: var(--mc-space-2) var(--mc-space-4);
   border-radius: var(--mc-radius-pill);
   cursor: pointer;
-  transition: background var(--mc-motion-control) var(--mc-ease), color var(--mc-motion-control) var(--mc-ease);
+  transition:
+    background var(--mc-motion-control) var(--mc-ease),
+    color var(--mc-motion-control) var(--mc-ease);
 }
 .mc-seg__tab--active {
   background: var(--mc-surface);
@@ -2077,12 +2092,17 @@ body {
   height: 24px;
 }
 
-/* ---- Curriculum (browse-only V3 path) ---- */
+/* ---- Curriculum (zoomable drill-down: Path → Phase → Module → Lesson → KC) ----
+   Every level is the same shape — a node header with a rolled-up teal mastery
+   ring, then a responsive two-up grid of child cards, each with its own ring, a
+   count, and a mini heat-strip previewing the level below it. Colour language is
+   token-only: teal = on track / fresh, warm amber = in progress / due, muted
+   grey = not started. The ring shows capability (a display mean, never a
+   threshold); the heat-strip and KC chips show evidence freshness. */
 .mc-curriculum {
-  --mc-curr-node: 40px;
   display: flex;
   flex-direction: column;
-  gap: var(--mc-space-5);
+  gap: var(--mc-space-6);
   padding-top: var(--mc-space-2);
 }
 .mc-curriculum__head {
@@ -2091,305 +2111,335 @@ body {
   gap: var(--mc-space-2);
 }
 
-/* Phase path / stepper — the single visual signature. Selection, not progress:
-   the connector line is uniform and never "fills" toward the current phase. */
-.mc-curriculum__path {
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: var(--mc-space-2);
-  margin-inline: calc(-1 * var(--mc-space-2));
-  scrollbar-width: thin;
-  -webkit-overflow-scrolling: touch;
-}
-.mc-curriculum__steps {
+/* Top bar: breadcrumb trail (a nav landmark) + a Zoom-out affordance. Wraps
+   rather than overflowing on narrow screens. */
+.mc-curriculum__bar {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+  flex-wrap: wrap;
 }
-.mc-curriculum__step {
-  position: relative;
-  flex: 1 0 0;
-  min-width: clamp(84px, 20vw, 128px);
+.mc-curriculum__crumbs {
+  min-width: 0;
+}
+.mc-curriculum__crumbs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mc-space-1);
+  font-size: var(--mc-text-14);
+}
+.mc-curriculum__crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-1);
+  min-width: 0;
+}
+.mc-curriculum__crumb-link {
+  color: var(--mc-primary-text);
+  text-decoration: none;
+  font-weight: 600;
+}
+.mc-curriculum__crumb-link:hover {
+  text-decoration: underline;
+}
+.mc-curriculum__crumb-link:focus-visible {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+  border-radius: var(--mc-radius-control);
+}
+.mc-curriculum__crumb-current {
+  color: var(--mc-ink);
+  font-weight: 700;
+}
+.mc-curriculum__crumb-sep {
+  color: var(--mc-ink-muted);
+}
+.mc-curriculum__zoomout {
+  flex: none;
+  display: inline-flex;
   align-items: center;
   gap: var(--mc-space-2);
   min-height: var(--mc-touch);
-  padding: var(--mc-space-2) var(--mc-space-1) 0;
+  padding-inline: var(--mc-space-4);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-pill);
+  background: color-mix(in srgb, var(--mc-surface) 70%, transparent);
+  color: var(--mc-ink);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: var(--mc-text-14);
+}
+.mc-curriculum__zoomout:hover {
+  border-color: var(--mc-primary);
+}
+.mc-curriculum__zoomout:focus-visible {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+}
+.mc-curriculum__zoomout-icon {
+  width: 8px;
+  height: 8px;
+  border-left: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+  transform: rotate(-45deg);
+}
+
+/* Lens toggle — a segmented pill. "By Phase" ships; "By Subject" is a disclosed
+   fast-follow, disabled with an honest "Coming soon", never a dead toggle. */
+.mc-curriculum__lens {
+  align-self: flex-start;
+  display: inline-flex;
+  gap: var(--mc-space-1);
+  padding: var(--mc-space-1);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-pill);
+  background: color-mix(in srgb, var(--mc-surface) 70%, transparent);
+}
+.mc-curriculum__lens-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+  min-height: var(--mc-touch);
+  padding-inline: var(--mc-space-4);
   border: 0;
+  border-radius: var(--mc-radius-pill);
   background: transparent;
   color: var(--mc-ink-muted);
   font: inherit;
-  cursor: pointer;
-  text-align: center;
-}
-.mc-curriculum__step:not(:first-child)::before {
-  content: '';
-  position: absolute;
-  top: calc(var(--mc-space-2) + var(--mc-curr-node) / 2);
-  right: 50%;
-  width: 100%;
-  height: 2px;
-  background: var(--mc-border);
-  transform: translateY(-50%);
-  z-index: 0;
-}
-.mc-curriculum__step-node {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: var(--mc-curr-node);
-  height: var(--mc-curr-node);
-  border-radius: 50%;
-  background: var(--mc-surface);
-  border: 1.5px solid var(--mc-border);
-  transition:
-    border-color var(--mc-motion-control) var(--mc-ease),
-    background-color var(--mc-motion-control) var(--mc-ease);
-}
-.mc-curriculum__step-num {
-  font-family: var(--mc-font-mono);
-  font-size: var(--mc-text-15);
-  font-weight: 500;
-  color: var(--mc-ink-muted);
-}
-.mc-curriculum__step-label {
-  font-size: var(--mc-text-12);
   font-weight: 600;
-  line-height: 1.25;
-  overflow-wrap: break-word;
-  hyphens: auto;
+  cursor: pointer;
 }
-.mc-curriculum__step:hover:not(.mc-curriculum__step--active) .mc-curriculum__step-node {
-  border-color: var(--mc-primary-text);
+.mc-curriculum__lens-btn:focus-visible {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
 }
-.mc-curriculum__step--active .mc-curriculum__step-node {
+.mc-curriculum__lens-btn--active {
   background: var(--mc-primary);
-  border-color: var(--mc-primary);
-}
-.mc-curriculum__step--active .mc-curriculum__step-num {
   color: var(--mc-on-primary);
 }
-.mc-curriculum__step--active .mc-curriculum__step-label {
-  color: var(--mc-primary-text);
-  font-weight: 700;
+.mc-curriculum__lens-btn:disabled {
+  cursor: not-allowed;
+}
+.mc-curriculum__lens-soon {
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-12);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mc-ink-muted);
 }
 
-/* Selected phase panel */
-.mc-curriculum__panel {
+/* One level of the drill-down. */
+.mc-curriculum__level {
   display: flex;
   flex-direction: column;
+  gap: var(--mc-space-5);
+}
+
+/* Node header — the CURRENT node's name + subtitle + rolled-up ring. */
+.mc-curriculum__node {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: var(--mc-space-4);
 }
-.mc-curriculum__phase {
+.mc-curriculum__node-titles {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--mc-space-1);
 }
-.mc-curriculum__phase-step {
+.mc-curriculum__node-eyebrow {
   font-family: var(--mc-font-mono);
   font-size: var(--mc-text-12);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--mc-primary-text);
 }
-.mc-curriculum__phase-title {
+.mc-curriculum__node-title {
   font-family: var(--mc-font-display);
-  font-size: var(--mc-text-28);
+  font-size: var(--mc-text-36);
   line-height: var(--mc-leading-tight);
 }
-.mc-curriculum__phase-sub {
+.mc-curriculum__node-title:focus-visible {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+  border-radius: var(--mc-radius-control);
+}
+.mc-curriculum__node-sub {
   font-size: var(--mc-text-15);
 }
-.mc-curriculum__phase-meta {
+.mc-curriculum__node-badge {
   margin-top: var(--mc-space-1);
-  font-family: var(--mc-font-mono);
-  font-size: var(--mc-text-12);
-  color: var(--mc-ink-muted);
 }
 
-/* Modules — accessible collapsible sections. Every module (lessons, integration
-   checkpoints, and Phase-5 revisits) uses the same button + region disclosure. */
-.mc-curriculum__modules {
+/* Legend for the colour language. */
+.mc-curriculum__legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mc-space-4);
+  font-size: var(--mc-text-14);
+  color: var(--mc-ink-muted);
+}
+.mc-curriculum__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+}
+.mc-curriculum__legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+.mc-curriculum__legend-dot--ontrack {
+  background: var(--mc-primary);
+}
+.mc-curriculum__legend-dot--inprogress {
+  background: var(--mc-accent-warm);
+}
+.mc-curriculum__legend-dot--none {
+  background: color-mix(in srgb, var(--mc-ink-muted) 22%, transparent);
+}
+
+/* Responsive two-up grid of child cards, one column on mobile. `minmax(0, 1fr)`
+   lets a card shrink instead of forcing horizontal page overflow. */
+.mc-curriculum__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mc-space-5);
+}
+.mc-curriculum__grid > li {
+  display: flex;
+  min-width: 0;
+}
+
+/* Child card — the self-similar unit at every level. */
+.mc-curriculum__card {
+  position: relative;
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--mc-space-3);
-}
-.mc-curriculum__module {
+  gap: var(--mc-space-4);
+  padding: var(--mc-space-5);
   border: 1px solid var(--mc-border);
   border-radius: var(--mc-radius-card);
-  background: color-mix(in srgb, var(--mc-surface) 70%, transparent);
+  background: color-mix(in srgb, var(--mc-surface) 82%, transparent);
   backdrop-filter: blur(8px);
 }
-.mc-curriculum__module-h {
-  margin: 0;
-  font: inherit;
+.mc-curriculum__card--zoom {
+  transition:
+    border-color var(--mc-motion-control) var(--mc-ease),
+    box-shadow var(--mc-motion-control) var(--mc-ease),
+    transform var(--mc-motion-control) var(--mc-ease);
 }
-.mc-curriculum__module-toggle {
+.mc-curriculum__card--zoom:hover {
+  border-color: var(--mc-primary);
+  box-shadow: var(--mc-shadow-card);
+  transform: translateY(-2px);
+}
+.mc-curriculum__card--zoom:focus-within {
+  border-color: var(--mc-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mc-primary) 26%, transparent);
+}
+.mc-curriculum__card-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: var(--mc-space-3);
-  width: 100%;
-  min-height: var(--mc-touch);
-  padding: var(--mc-space-3) var(--mc-space-4);
-  border: 0;
-  border-radius: calc(var(--mc-radius-card) - 1px);
-  background: transparent;
-  color: var(--mc-ink);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color var(--mc-motion-control) var(--mc-ease);
 }
-.mc-curriculum__module-toggle:hover {
-  background: color-mix(in srgb, var(--mc-surface) 55%, transparent);
-}
-.mc-curriculum__module-toggle[aria-expanded='true'] {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-.mc-curriculum__module-titles {
-  flex: 1;
+.mc-curriculum__card-heading {
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-.mc-curriculum__module-title {
-  font-family: var(--mc-font-display);
-  font-size: var(--mc-text-17);
-  line-height: 1.25;
-}
-.mc-curriculum__module-count {
+.mc-curriculum__card-eyebrow {
   font-family: var(--mc-font-mono);
   font-size: var(--mc-text-12);
-  color: var(--mc-ink-muted);
-}
-.mc-curriculum__lane {
-  flex: none;
-  align-self: center;
-  padding: 3px 10px;
-  border-radius: var(--mc-radius-pill);
-  border: 1px solid color-mix(in srgb, var(--mc-primary) 22%, transparent);
-  background: color-mix(in srgb, var(--mc-primary) 12%, transparent);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--mc-primary-text);
-  font-size: var(--mc-text-12);
-  font-weight: 600;
-  white-space: nowrap;
 }
-.mc-curriculum__chev {
-  flex: none;
-  width: 9px;
-  height: 9px;
-  border-right: 2px solid var(--mc-ink-muted);
-  border-bottom: 2px solid var(--mc-ink-muted);
-  transform: rotate(45deg);
-  transition: transform var(--mc-motion-control) var(--mc-ease);
-}
-.mc-curriculum__module-toggle[aria-expanded='true'] .mc-curriculum__chev {
-  transform: rotate(-135deg);
-}
-/* Section (module) average mastery — surfaced in the collapsible header so it is
-   visible while the section is COLLAPSED. Reuses the shared MasteryRing at a
-   compact header size, pinned teal like the per-lesson rings (a mean carries no
-   threshold, so it reads as one calm colour). It stays a fixed compact block
-   between the title cluster and the chevron; the title takes the free width. */
-.mc-curriculum__modmastery {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  line-height: 1.15;
-}
-.mc-curriculum__modmastery .mc-ring {
-  width: 40px;
-  height: 40px;
-  display: block;
-}
-.mc-curriculum__modmastery-ring .mc-ring__arc {
-  stroke: var(--mc-primary);
-}
-.mc-curriculum__modmastery-ring .mc-ring__pct {
-  font-size: 32px;
-}
-.mc-curriculum__modmastery-cap {
-  font-size: var(--mc-text-12);
-  font-weight: 600;
-  color: var(--mc-ink-muted);
-  white-space: nowrap;
-}
-/* Narrow headers: keep just the compact ring (its % rides inside) and drop the
-   caption, so the title, optional CARS lane, ring and chevron never crowd or
-   force horizontal overflow. The value stays available to assistive tech. */
-@media (max-width: 560px) {
-  .mc-curriculum__modmastery-cap {
-    display: none;
-  }
-}
-.mc-curriculum__region {
-  padding: var(--mc-space-1) var(--mc-space-4) var(--mc-space-4);
-}
-/* Truthful body for zero-lesson modules (integration checkpoints and Phase-5
-   revisit modules), shown inside the same collapsible region as lesson lists. */
-.mc-curriculum__note {
+.mc-curriculum__card-title {
   margin: 0;
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-22);
+  line-height: 1.25;
+}
+/* Drill-in chevron beside a zoom card's title (the whole card is the link, so the
+   chevron is a decorative cue that nudges on hover — replacing the old "Open" word). */
+.mc-curriculum__card-chev {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: var(--mc-space-2);
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  color: var(--mc-primary-text);
+  opacity: 0.7;
+  vertical-align: middle;
+  transition:
+    transform var(--mc-motion-control) var(--mc-ease),
+    opacity var(--mc-motion-control) var(--mc-ease);
+}
+.mc-curriculum__card--zoom:hover .mc-curriculum__card-chev {
+  opacity: 1;
+  transform: translateX(3px) rotate(-45deg);
+}
+/* The whole zoom card is one link: the title's ::after is stretched over the
+   card so a click anywhere drills in, without nesting interactive elements. */
+.mc-curriculum__card-link {
+  color: var(--mc-ink);
+  text-decoration: none;
+}
+.mc-curriculum__card--zoom .mc-curriculum__card-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.mc-curriculum__card--zoom .mc-curriculum__card-link:focus-visible {
+  outline: none;
+}
+/* Inline title link (lesson cards keep their own controls, so no stretch). */
+.mc-curriculum__card-link--inline {
+  color: var(--mc-ink);
+}
+.mc-curriculum__card-link--inline:hover {
+  color: var(--mc-primary-text);
+  text-decoration: underline;
+}
+.mc-curriculum__card-link--inline:focus-visible {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+  border-radius: var(--mc-radius-control);
+}
+.mc-curriculum__card-sub {
   color: var(--mc-ink-muted);
   font-size: var(--mc-text-15);
-  line-height: var(--mc-leading-body);
+  line-height: 1.4;
 }
-
-/* Lessons — compact "Variant A" rows: the ordinal + title + a collapsed
-   "What you'll learn" disclosure on the left; a teal mastery ring and the
-   Start/status action on the right. Slim vertical rhythm, aligned rings, and no
-   page overflow (the right cluster drops beneath the title on narrow screens). */
-.mc-curriculum__lessons {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.mc-curriculum__card-count {
+  font-family: var(--mc-font-mono);
+  font-size: var(--mc-text-14);
+  color: var(--mc-ink-muted);
+}
+.mc-curriculum__card-badge {
   display: flex;
-  flex-direction: column;
-  gap: var(--mc-space-3);
-}
-.mc-curriculum__lesson {
-  display: flex;
-  align-items: center;
-  gap: var(--mc-space-4);
-  padding: var(--mc-space-3) var(--mc-space-4);
-  border: 1px solid var(--mc-border);
-  border-radius: var(--mc-radius-control);
-  background: var(--mc-surface);
-}
-/* A lesson arrived at via ?lesson= deep-link — briefly draw the eye to it. */
-.mc-curriculum__lesson--highlight {
-  border-color: var(--mc-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mc-primary) 28%, transparent);
-  animation: mc-curriculum-pulse 1.6s var(--mc-ease) 1;
-}
-@keyframes mc-curriculum-pulse {
-  0% {
-    box-shadow: 0 0 0 6px color-mix(in srgb, var(--mc-primary) 42%, transparent);
-  }
-  100% {
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mc-primary) 28%, transparent);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .mc-curriculum__lesson--highlight {
-    animation: none;
-  }
-}
-/* Left column — number + title + disclosure. Takes the row's free width. */
-.mc-curriculum__lesson-main {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  align-items: flex-start;
-  gap: var(--mc-space-3);
 }
 .mc-curriculum__ordinal {
-  flex: none;
-  padding-top: 4px;
   font-family: var(--mc-font-mono);
   font-size: var(--mc-text-14);
   font-weight: 500;
@@ -2397,21 +2447,125 @@ body {
   font-variant-numeric: tabular-nums;
   color: var(--mc-ink-muted);
 }
-.mc-curriculum__lesson-body {
-  flex: 1;
-  min-width: 0;
+/* CARS parallel-practice module — a distinct teal-accented, book-marked card. */
+.mc-curriculum__card--cars {
+  border-color: color-mix(in srgb, var(--mc-primary) 32%, var(--mc-border));
+  border-left-width: 3px;
+  background: color-mix(
+    in srgb,
+    var(--mc-primary) 6%,
+    color-mix(in srgb, var(--mc-surface) 82%, transparent)
+  );
+}
+.mc-curriculum__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: var(--mc-radius-pill);
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 24%, transparent);
+  background: color-mix(in srgb, var(--mc-primary) 12%, transparent);
+  color: var(--mc-primary-text);
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.mc-curriculum__badge-book {
+  width: 11px;
+  height: 13px;
+  border: 1.5px solid currentColor;
+  border-left-width: 3px;
+  border-radius: 2px 3px 3px 2px;
+}
+
+/* Dashed "review / integration" card for zero-lesson modules — no Start. */
+.mc-curriculum__card--review {
+  border-style: dashed;
+  background: color-mix(in srgb, var(--mc-surface) 55%, transparent);
+}
+.mc-curriculum__review-icon {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--mc-ink-muted);
+  border-top-color: transparent;
+  border-radius: 50%;
+  transform: rotate(45deg);
+}
+.mc-curriculum__note {
+  margin: 0;
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-15);
+  line-height: var(--mc-leading-body);
+}
+
+/* Mini heat-strip previewing the level below a card. */
+.mc-curriculum__heat {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.mc-curriculum__heat-tile {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--mc-ink-muted) 18%, transparent);
+}
+.mc-curriculum__heat-tile--ontrack {
+  background: var(--mc-primary);
+}
+.mc-curriculum__heat-tile--inprogress {
+  background: var(--mc-accent-warm);
+}
+.mc-curriculum__heat-tile--none {
+  background: color-mix(in srgb, var(--mc-ink-muted) 18%, transparent);
+}
+
+/* Rolled-up mastery ring + caption. Reuses the shared MasteryRing, pinned teal
+   (a mean carries no threshold), or the muted ghost ring when there is no
+   evidence — never a fabricated 0%. */
+.mc-curriculum__ring {
+  flex: none;
   display: flex;
   flex-direction: column;
-  gap: var(--mc-space-1);
+  align-items: center;
+  gap: 2px;
 }
-.mc-curriculum__lesson-title {
-  margin: 0;
-  font-family: var(--mc-font-body);
-  font-weight: 700;
-  font-size: var(--mc-text-20);
-  line-height: 1.25;
+.mc-curriculum__ring .mc-ring {
+  width: 60px;
+  height: 60px;
+  display: block;
 }
-/* Collapsed "What you'll learn" — a quiet teal link, not a full-width divider. */
+.mc-curriculum__ring-svg .mc-ring__arc {
+  stroke: var(--mc-primary);
+}
+.mc-curriculum__ring-svg .mc-ring__pct {
+  font-size: 30px;
+}
+.mc-curriculum__ring-cap {
+  font-size: var(--mc-text-12);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--mc-ink-muted);
+  white-space: nowrap;
+}
+.mc-curriculum__node .mc-curriculum__ring .mc-ring {
+  width: 92px;
+  height: 92px;
+}
+.mc-curriculum__ring--readiness .mc-ring__arc {
+  transition: none;
+}
+
+/* Lesson card (L3) — the launch level. */
+.mc-curriculum__lessoncard-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--mc-space-2);
+}
+/* Collapsed "What you'll learn" disclosure. */
 .mc-curriculum__kc {
   min-width: 0;
 }
@@ -2453,51 +2607,91 @@ body {
 .mc-curriculum__kc-item {
   line-height: 1.4;
 }
-/* Right cluster — the mastery ring beside the Start/status action. */
-.mc-curriculum__lesson-aside {
-  flex: none;
-  display: flex;
+
+/* Lesson detail (L4) — header card, launch action, and the KC status list. */
+.mc-curriculum__detail-head {
+  padding: var(--mc-space-4);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-card);
+  background: color-mix(in srgb, var(--mc-surface) 82%, transparent);
+  backdrop-filter: blur(8px);
+}
+.mc-curriculum__cluster {
+  margin: var(--mc-space-1) 0 0;
+}
+.mc-curriculum__cluster-chip {
+  display: inline-flex;
   align-items: center;
-  gap: var(--mc-space-4);
-}
-/* Ring + caption. Reuses the shared MasteryRing (Progress/Practice), sized down to
-   the ~52px rail size and pinned teal here: a lesson's mastery mean carries no
-   threshold, so its ring reads as one calm colour, never a high/low split. */
-.mc-curriculum__mastery {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-.mc-curriculum__mastery .mc-ring {
-  width: 52px;
-  height: 52px;
-  display: block;
-}
-.mc-curriculum__ring .mc-ring__arc {
-  stroke: var(--mc-primary);
-}
-.mc-curriculum__ring .mc-ring__pct {
-  font-size: 30px;
-}
-.mc-curriculum__mastery-cap {
+  padding: 3px 10px;
+  border-radius: var(--mc-radius-pill);
+  border: 1px solid var(--mc-border);
+  background: var(--mc-surface-2);
+  color: var(--mc-ink);
+  font-family: var(--mc-font-mono);
   font-size: var(--mc-text-12);
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--mc-ink-muted);
-  white-space: nowrap;
 }
-/* Action column — the Start/status button, right-aligned. The availability badge
-   is carried by the button label itself, so its text is kept for assistive tech
-   only (mc-visually-hidden), leaving the row visually uncluttered. */
-.mc-curriculum__lesson-foot {
-  flex: none;
+.mc-curriculum__detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-curriculum__kcs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   gap: var(--mc-space-2);
 }
+.mc-curriculum__kcrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mc-space-3);
+  padding: var(--mc-space-3) var(--mc-space-4);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-control);
+  background: var(--mc-surface);
+}
+.mc-curriculum__kcrow-label {
+  min-width: 0;
+  line-height: 1.4;
+}
+.mc-curriculum__kc-caption {
+  margin: 0;
+  font-size: var(--mc-text-14);
+}
+
+/* Qualitative KC status chip (never a number). */
+.mc-curriculum__chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--mc-radius-pill);
+  border: 1px solid transparent;
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.mc-curriculum__chip--fresh {
+  color: var(--mc-primary-text);
+  background: color-mix(in srgb, var(--mc-primary) 12%, transparent);
+  border-color: color-mix(in srgb, var(--mc-primary) 30%, transparent);
+}
+.mc-curriculum__chip--due {
+  color: var(--mc-accent-warm-text);
+  background: color-mix(in srgb, var(--mc-accent-warm) 16%, transparent);
+  border-color: color-mix(in srgb, var(--mc-accent-warm) 34%, transparent);
+}
+.mc-curriculum__chip--none {
+  color: var(--mc-ink-muted);
+  background: var(--mc-surface-2);
+  border-color: var(--mc-border);
+}
+
+/* Launch seam (shared by L3 card + L4 detail). */
 .mc-curriculum__soon {
   display: inline-flex;
   align-items: center;
@@ -2512,30 +2706,41 @@ body {
 }
 .mc-curriculum__launch {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: var(--mc-space-2);
   flex-direction: column;
 }
 .mc-curriculum__launch-error {
-  max-width: 24ch;
+  max-width: 28ch;
   color: var(--mc-danger);
   font-size: var(--mc-text-12);
   line-height: 1.35;
-  text-align: right;
 }
-/* Narrow screens: drop the ring + action beneath the title, full width, so a slim
-   row never forces horizontal scroll. */
+
+@media (prefers-reduced-motion: reduce) {
+  .mc-curriculum__card--zoom {
+    transition: none;
+  }
+  .mc-curriculum__card--zoom:hover {
+    transform: none;
+  }
+  .mc-curriculum__card-chev {
+    transition: none;
+  }
+  .mc-curriculum__card--zoom:hover .mc-curriculum__card-chev {
+    transform: rotate(-45deg);
+  }
+}
+/* One column on mobile; stack the node header ring under its titles. */
+@media (max-width: 720px) {
+  .mc-curriculum__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 @media (max-width: 560px) {
-  .mc-curriculum__lesson {
-    flex-wrap: wrap;
-    gap: var(--mc-space-3);
-  }
-  .mc-curriculum__lesson-main {
-    flex-basis: 100%;
-  }
-  .mc-curriculum__lesson-aside {
-    width: 100%;
-    justify-content: space-between;
+  .mc-curriculum__node,
+  .mc-curriculum__detail-head {
+    flex-direction: column;
   }
 }
 
@@ -4830,8 +5035,11 @@ body {
    .mc-passage colors, so the daily passage reads as its own inviting thing. */
 .mc-passage--hero {
   padding: var(--mc-space-5) var(--mc-space-5) var(--mc-space-5) var(--mc-space-6);
-  background:
-    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, #ffd98a 34%, transparent), transparent 58%),
+  background: radial-gradient(
+      120% 140% at 0% 0%,
+      color-mix(in srgb, #ffd98a 34%, transparent),
+      transparent 58%
+    ),
     color-mix(in srgb, #ffd98a 22%, var(--mc-surface));
   border-color: color-mix(in srgb, #f0b95a 40%, var(--mc-border));
 }

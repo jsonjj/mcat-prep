@@ -29,7 +29,14 @@
  */
 import { useCountUp } from '../app/use-count-up';
 
-const HIGH_MASTERY_PCT = 50;
+/**
+ * The display cut where the ring's arc turns from amber (low) to teal (high). It
+ * is a PRESENTATION band, not the capability cut (`MASTERY_THRESHOLD`): it colours
+ * a readout and makes no claim. Exported as the single source of truth for that
+ * green/amber boundary so the Curriculum's heat-strip tiles can band capability
+ * the SAME way the ring does — the tiles and the ring then never disagree.
+ */
+export const HIGH_MASTERY_PCT = 50;
 
 type RingTone = 'mastery' | 'review';
 
@@ -37,7 +44,9 @@ function arcClass(pct: number, atCut: boolean, reviewDue: boolean, tone: RingTon
   if (tone === 'review') return 'mc-ring__arc mc-ring__arc--review';
   if (reviewDue) return 'mc-ring__arc mc-ring__arc--reviewdue';
   if (atCut) return 'mc-ring__arc mc-ring__arc--atcut';
-  return pct >= HIGH_MASTERY_PCT ? 'mc-ring__arc mc-ring__arc--high' : 'mc-ring__arc mc-ring__arc--low';
+  return pct >= HIGH_MASTERY_PCT
+    ? 'mc-ring__arc mc-ring__arc--high'
+    : 'mc-ring__arc mc-ring__arc--low';
 }
 
 export function MasteryRing({
