@@ -1,8 +1,6 @@
 import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 import { Authority } from '@mcat/authority-core';
-import { toProjectionRecord } from '@mcat/authority-kernel';
-import { fixedClock, systemClock, type LearnerId, type PassageOfTheDayEntry } from '@mcat/contracts';
-import type { LearnerProjectionRecord } from '@mcat/database';
+import { systemClock, type PassageOfTheDayEntry } from '@mcat/contracts';
 import { PassageOfDayService } from '@mcat/passage-of-day';
 import {
   PostgresAuthorityRepository,
@@ -16,6 +14,12 @@ import {
 
 import { aiConfigFromEnv } from '@mcat/ai-gateway/server';
 
+import {
+  SupabaseIdentityProvider,
+  parseSupabaseConfig,
+  type SupabaseConfig,
+} from './auth/supabase';
+import { createGuestProjection } from './guest-projection';
 import { createRepositoryLearnerApi, type LearnerApi, type PassagePort } from './handler';
 import type { LambdaApiGatewayEvent, LambdaApiGatewayResult, SafeLogger } from './http';
 
@@ -29,6 +33,12 @@ export interface LearnerApiEnvironment {
   readonly secretArn: string;
   readonly rateLimitPepperSecretArn: string;
   readonly originVerificationSecretArn: string;
+  /**
+   * Resolved by name rather than by ARN because the identity stack that owns this
+   * secret depends on the API stack, so CDK cannot pass its ARN in without closing
+   * a stack cycle. See `infra/cdk/lib/supabase-config.ts`.
+   */
+  readonly supabaseConfigSecretName: string;
   readonly endpoint: string;
   readonly port: 5432;
   readonly database: string;
@@ -97,6 +107,17 @@ export async function loadRateLimitPepper(
   return pepper;
 }
 
+export async function loadSupabaseConfig(
+  client: SecretCommandClient,
+  secretName: string,
+): Promise<SupabaseConfig> {
+  const response = await client.send(new GetSecretValueCommand({ SecretId: secretName }));
+  if (response.SecretString === undefined) {
+    throw new Error('Secrets Manager did not return a string Supabase configuration.');
+  }
+  return parseSupabaseConfig(response.SecretString);
+}
+
 export async function loadOriginVerificationSecret(
   client: SecretCommandClient,
   secretArn: string,
@@ -116,6 +137,7 @@ export function parseLearnerApiEnvironment(
   const secretArn = environment.DB_SECRET_ARN;
   const rateLimitPepperSecretArn = environment.RATE_LIMIT_PEPPER_SECRET_ARN;
   const originVerificationSecretArn = environment.ORIGIN_VERIFICATION_SECRET_ARN;
+  const supabaseConfigSecretName = environment.SUPABASE_CONFIG_SECRET_NAME;
   const endpoint = environment.DB_PROXY_ENDPOINT;
   const database = environment.DB_NAME;
   const learnerWebOrigin = environment.LEARNER_WEB_ORIGIN;
@@ -146,6 +168,8 @@ export function parseLearnerApiEnvironment(
     !/^arn:aws:secretsmanager:us-east-1:056956104102:secret:\/mcat\/dev\/origin\/verification-[A-Za-z0-9]+$/.test(
       originVerificationSecretArn,
     ) ||
+    supabaseConfigSecretName === undefined ||
+    !/^\/mcat\/dev\/supabase\/learner-api$/.test(supabaseConfigSecretName) ||
     endpoint === undefined ||
     !/^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?\.rds\.amazonaws\.com$/i.test(endpoint) ||
     database === undefined ||
@@ -160,6 +184,7 @@ export function parseLearnerApiEnvironment(
     secretArn,
     rateLimitPepperSecretArn,
     originVerificationSecretArn,
+    supabaseConfigSecretName,
     endpoint,
     port: 5432,
     database,
@@ -169,13 +194,6 @@ export function parseLearnerApiEnvironment(
 
 function databaseUrl(environment: LearnerApiEnvironment, secret: DatabaseSecret): string {
   return `postgresql://${encodeURIComponent(secret.username)}:${encodeURIComponent(secret.password)}@${environment.endpoint}:${environment.port}/${environment.database}`;
-}
-
-export function createGuestProjection(learnerId: string, now: string): LearnerProjectionRecord {
-  const authority = new Authority(undefined, fixedClock(now));
-  const state = authority.createGuest();
-  state.learnerId = learnerId as LearnerId;
-  return toProjectionRecord(state, 0, now);
 }
 
 const logger: SafeLogger = {
@@ -219,10 +237,11 @@ function createPassagePort(pool: PostgresPool): PassagePort {
 async function createRuntime(): Promise<LearnerApi> {
   const environment = parseLearnerApiEnvironment(process.env);
   const secrets = new SecretsManagerClient({ region: environment.region });
-  const [secret, rateLimitPepper, originVerificationSecret] = await Promise.all([
+  const [secret, rateLimitPepper, originVerificationSecret, supabaseConfig] = await Promise.all([
     loadDatabaseSecret(secrets, environment.secretArn),
     loadRateLimitPepper(secrets, environment.rateLimitPepperSecretArn),
     loadOriginVerificationSecret(secrets, environment.originVerificationSecretArn),
+    loadSupabaseConfig(secrets, environment.supabaseConfigSecretName),
   ]);
   const pool = createPgPool({
     connectionString: databaseUrl(environment, secret),
@@ -241,6 +260,10 @@ async function createRuntime(): Promise<LearnerApi> {
     // writes exposure/repair there; mastery persists via the projection.
     practiceBank: createPostgresPracticeBankPort(pool),
     sessions: new PostgresGuestSessionService(pool, createGuestProjection),
+    // Supabase holds credentials only; it never sees learner data. Its access
+    // token is verified here and then discarded, so what the browser keeps is the
+    // same opaque session cookie every other route already understands.
+    identity: new SupabaseIdentityProvider(supabaseConfig),
     rateLimiter: new PostgresFixedWindowRateLimiter(pool),
     rateLimitPepper,
     originVerificationSecret,

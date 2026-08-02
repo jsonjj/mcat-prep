@@ -91,6 +91,9 @@ export class FoundationStack extends Stack {
       ...endpointOptions,
       service: ec2.InterfaceVpcEndpointAwsService.XRAY,
     });
+    // No identity endpoint. The browser authenticates against Supabase directly,
+    // and the API verifies the resulting token with a pinned public key, so
+    // sign-in requires no egress from the isolated subnets at all.
 
     const appKey = new kms.Key(this, 'ApplicationKey', {
       alias: 'alias/mcat/dev/application',

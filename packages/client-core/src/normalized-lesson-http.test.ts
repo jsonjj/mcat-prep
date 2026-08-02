@@ -16,8 +16,9 @@ import { HttpAuthorityClient } from './http';
  */
 
 const bootstrap = {
+  authenticated: true,
   learnerId: '11111111-1111-4111-8111-111111111111',
-  accountState: 'guest',
+  accountState: 'linked',
   bankStatus: 'loaded',
   contentRelease: 'synthetic-2026.07',
   apiVersion: 'v1',

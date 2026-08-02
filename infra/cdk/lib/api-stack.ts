@@ -9,6 +9,7 @@ import {
   type StackProps,
   aws_apigateway as apigateway,
   aws_ec2 as ec2,
+  aws_iam as iam,
   aws_lambda as lambda,
   aws_lambda_nodejs as nodejs,
   aws_logs as logs,
@@ -18,6 +19,10 @@ import {
 import type { Construct } from 'constructs';
 
 import type { EnvironmentConfig } from '../config/environments.js';
+import {
+  LEARNER_SUPABASE_SECRET_NAME,
+  learnerSupabaseSecretArnPattern,
+} from './supabase-config.js';
 import type { ApiResources, DataResources, FoundationResources } from './interfaces.js';
 import { acknowledgeCdkNagFinding } from './nag.js';
 import { applySandboxPermissionsBoundary } from './permissions-boundary.js';
@@ -104,6 +109,7 @@ export class ApiStack extends Stack {
         DB_SECRET_ARN: props.data.learnerApiDbSecret.secretArn,
         ORIGIN_VERIFICATION_SECRET_ARN: props.data.originVerificationSecret.secretArn,
         RATE_LIMIT_PEPPER_SECRET_ARN: props.data.rateLimitPepperSecret.secretArn,
+        SUPABASE_CONFIG_SECRET_NAME: LEARNER_SUPABASE_SECRET_NAME,
         LEARNER_WEB_ORIGIN: Lazy.string({
           produce: () => {
             if (deliveryReference.learnerOrigin === undefined) {
@@ -124,6 +130,19 @@ export class ApiStack extends Stack {
     props.data.learnerApiDbSecret.grantRead(learnerHandler);
     props.data.rateLimitPepperSecret.grantRead(learnerHandler);
     props.data.originVerificationSecret.grantRead(learnerHandler);
+    // Granted by name rather than by reference: the identity stack that owns this
+    // secret depends on this stack for its web origins, so a CDK reference here
+    // would close a cycle. See `supabase-config.ts`.
+    //
+    // This is the whole of the function's identity-related permission. Verifying a
+    // Supabase token is local public-key cryptography, so unlike the Cognito
+    // arrangement it calls no identity API and needs no action grants at all.
+    learnerHandler.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['secretsmanager:GetSecretValue'],
+        resources: [learnerSupabaseSecretArnPattern(this.account, this.region)],
+      }),
+    );
     const appKey = kms.Key.fromKeyArn(
       this,
       'ApplicationKeyReference',
@@ -269,12 +288,12 @@ export class ApiStack extends Stack {
       {
         id: 'AwsSolutions-APIG4',
         reason:
-          'Guest and linked learner sessions are authorized in the runtime using opaque rotating HttpOnly sessions and ownership-derived principals; staff APIs use a separate future authorizer.',
+          'Linked learner sessions are authorized in the runtime using opaque rotating HttpOnly sessions and ownership-derived principals; staff APIs use a separate future authorizer.',
       },
       {
         id: 'AwsSolutions-COG4',
         reason:
-          'This learner API intentionally supports secure guest sessions before account linking and therefore cannot require a Cognito authorizer on every method.',
+          'Credentials are held by Supabase, not a Cognito user pool. The runtime verifies the Supabase token and issues its own opaque session cookie, so no Cognito authorizer exists to attach; the unauthenticated /v1/auth/session and /v1/health routes must also stay reachable without one.',
       },
     );
     Validations.of(learnerHandler).acknowledge({
@@ -295,6 +314,11 @@ export class ApiStack extends Stack {
       learnerHandler,
       'AwsSolutions-IAM5[Resource::*]',
       'AWS X-Ray PutTraceSegments and PutTelemetryRecords do not support resource-level permissions; all database secret and KMS grants remain resource-scoped.',
+    );
+    acknowledgeCdkNagFinding(
+      learnerHandler,
+      `AwsSolutions-IAM5[Resource::arn:aws:secretsmanager:${this.region}:${this.account}:secret:${LEARNER_SUPABASE_SECRET_NAME}-*]`,
+      'Secrets Manager appends a random suffix to every secret ARN, so a name-based grant must end in a wildcard; the identity stack that owns this secret cannot be referenced directly without closing a stack cycle.',
     );
     acknowledgeCdkNagFinding(
       restApi,

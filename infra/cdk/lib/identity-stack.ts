@@ -1,16 +1,25 @@
 import {
+  Annotations,
   Duration,
   Fn,
   RemovalPolicy,
+  SecretValue,
   Stack,
   Token,
   Validations,
   type StackProps,
   aws_cognito as cognito,
+  aws_secretsmanager as secretsmanager,
 } from 'aws-cdk-lib';
 import type { Construct } from 'constructs';
 
 import type { EnvironmentConfig } from '../config/environments.js';
+import {
+  LEARNER_SUPABASE_SECRET_NAME,
+  isPlaceholderProjectRef,
+  supabaseProjectRef,
+  supabaseProjectUrl,
+} from './supabase-config.js';
 import type { IdentityResources } from './interfaces.js';
 import { assertExactHttpsOrigin, type WebOrigins } from './origins.js';
 import { applySandboxPermissionsBoundary } from './permissions-boundary.js';
@@ -46,53 +55,41 @@ export class IdentityStack extends Stack {
     applySandboxPermissionsBoundary(this);
     applyRequiredTags(this, 'restricted');
 
-    const learnerUserPool = new cognito.UserPool(this, 'LearnerUserPool', {
-      userPoolName: 'mcat-dev-learners',
-      selfSignUpEnabled: true,
-      signInAliases: { email: true },
-      autoVerify: { email: true },
-      standardAttributes: { email: { required: true, mutable: true } },
-      accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
-      deletionProtection: true,
-      featurePlan: cognito.FeaturePlan.PLUS,
-      mfa: cognito.Mfa.OPTIONAL,
-      mfaSecondFactor: { sms: false, otp: true },
-      signInPolicy: {
-        allowedFirstAuthFactors: {
-          password: true,
-          emailOtp: true,
-          passkey: true,
-        },
-      },
-      passwordPolicy: {
-        minLength: 12,
-        requireDigits: true,
-        requireLowercase: true,
-        requireSymbols: true,
-        requireUppercase: true,
-        passwordHistorySize: 5,
-        tempPasswordValidity: Duration.days(3),
-      },
-      removalPolicy: RemovalPolicy.RETAIN,
+    // Learner credentials live in Supabase, not in a user pool here. What this
+    // stack owns for learners is the verification material the API needs:
+    // the project URL and the public JWT signing keys.
+    //
+    // The key set is seeded empty and populated out of band by
+    // `pnpm supabase:sync-jwks`, because the keys are owned by Supabase and
+    // change on their rotation schedule, not on ours. Keeping them out of the
+    // template means a key rotation is a one-command secret update rather than a
+    // CloudFormation deployment, and means the repo never has to be redeployed to
+    // recover from an unplanned rotation. An empty key set fails closed: every
+    // token is rejected until the sync runs.
+    const projectRef = supabaseProjectRef(this);
+    const learnerApiSupabaseSecret = new secretsmanager.Secret(this, 'LearnerApiSupabaseSecret', {
+      secretName: LEARNER_SUPABASE_SECRET_NAME,
+      description:
+        'Supabase project URL and public JWT signing keys used to verify learner access tokens.',
+      // One JSON document rather than `secretObjectValue`, which stringifies each
+      // field individually and would deliver `jwks` as a string of JSON that the
+      // runtime parser rejects.
+      secretStringValue: SecretValue.unsafePlainText(
+        JSON.stringify({ projectUrl: supabaseProjectUrl(projectRef), jwks: { keys: [] } }),
+      ),
     });
-    const learnerClient = learnerUserPool.addClient('LearnerWebClient', {
-      userPoolClientName: 'mcat-dev-learner-web',
-      generateSecret: false,
-      authFlows: { user: true, userSrp: true },
-      accessTokenValidity: Duration.minutes(15),
-      idTokenValidity: Duration.minutes(15),
-      refreshTokenValidity: Duration.days(30),
-      authSessionValidity: Duration.minutes(3),
-      enableTokenRevocation: true,
-      preventUserExistenceErrors: true,
-      oAuth: {
-        flows: { authorizationCodeGrant: true },
-        scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL],
-        callbackUrls: [`${props.webOrigins.learner}/auth/callback`],
-        logoutUrls: [`${props.webOrigins.learner}/`],
-      },
-      supportedIdentityProviders: [cognito.UserPoolClientIdentityProvider.COGNITO],
+    learnerApiSupabaseSecret.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    Validations.of(learnerApiSupabaseSecret).acknowledge({
+      id: 'AwsSolutions-SMG4',
+      reason:
+        'The value holds a project URL and public keys, so there is no secret material to rotate on a schedule; it is refreshed from Supabase when Supabase rotates its signing keys.',
     });
+    if (isPlaceholderProjectRef(projectRef)) {
+      Annotations.of(learnerApiSupabaseSecret).addWarning(
+        'This secret points at a placeholder Supabase project. Learner sign-in will fail until ' +
+          'the stack is synthesized with `-c supabaseProjectRef=<ref>` and `pnpm supabase:sync-jwks` has run.',
+      );
+    }
 
     const staffUserPool = new cognito.UserPool(this, 'StaffUserPool', {
       userPoolName: 'mcat-dev-staff',
@@ -153,12 +150,6 @@ export class IdentityStack extends Stack {
       });
     }
 
-    Validations.of(learnerUserPool).acknowledge({
-      id: 'AwsSolutions-COG2',
-      reason:
-        'Learner MFA is intentionally optional for the adult beta to preserve accessible account entry; staff MFA remains mandatory and learner TOTP is available as an opt-in control.',
-    });
-
-    this.resources = { learnerUserPool, learnerClient, staffUserPool, staffClient };
+    this.resources = { staffUserPool, staffClient };
   }
 }

@@ -12,6 +12,7 @@ import {
   IconProgress,
   IconSun,
   IconToday,
+  IconUser,
 } from '../components/icons';
 
 const NAV = [
@@ -25,19 +26,13 @@ const NAV = [
 const TODAY_ITEM = { to: '/app/today', end: false, label: 'Today', Icon: IconToday };
 const PRACTICE_ITEM = { to: '/app/practice', end: false, label: 'Practice', Icon: IconPractice };
 const CARS_ITEM = { to: '/app/cars', end: false, label: 'CARS Duel', Icon: IconCarsDuel };
-// Account (exam date / goal + settings) is TEMPORARILY HIDDEN for now. The screen
-// (screens/Profile.tsx), its /app/profile route, the backend goal.testDate storage,
-// bootstrap goal exposure, and the CARS Defend-taper wiring all remain intact — only
-// the UI entry points are removed so this is trivially reversible. To restore:
-// re-add `IconUser` to the icon import above, uncomment ACCOUNT_ITEM, re-add it to
-// SIDEBAR, re-add the /app/profile route in router.tsx, and restore the header link.
-// const ACCOUNT_ITEM = { to: '/app/profile', end: false, label: 'Account', Icon: IconUser };
+const ACCOUNT_ITEM = { to: '/app/profile', end: false, label: 'Account', Icon: IconUser };
 
 // Desktop sidebar order: Today's Path sits right under Home; Practice sits above
 // Recall; CARS Duel sits just below Recall. The mobile bottom nav stays the shared
 // five-item NAV so the longest label ("Curriculum") never overflows a narrow phone
-// — Today's Path, Practice, and CARS Duel are reached from elsewhere on mobile.
-// (Account is temporarily hidden — see the note above.)
+// — Today's Path, Practice, CARS Duel, and Account are reached from elsewhere on
+// mobile (Account also from the header icon).
 const SIDEBAR = [
   NAV[0],
   TODAY_ITEM,
@@ -47,6 +42,7 @@ const SIDEBAR = [
   CARS_ITEM,
   NAV[3],
   NAV[4],
+  ACCOUNT_ITEM,
 ];
 
 export function AppShell() {
@@ -56,9 +52,10 @@ export function AppShell() {
   if (bootstrap.isLoading) {
     return <div className="mc-center mc-muted">Restoring your session…</div>;
   }
-  if (bootstrap.data && !bootstrap.data.onboardingComplete) {
-    // Learning stays locked until placement + plan are complete.
-    return <Navigate to="/" replace />;
+  // Authentication is RequireAuth's job, so by here the caller is signed in and
+  // the only remaining gate is placement + plan.
+  if (bootstrap.data?.authenticated === true && !bootstrap.data.onboardingComplete) {
+    return <Navigate to="/onboarding" replace />;
   }
 
   return (
@@ -78,9 +75,9 @@ export function AppShell() {
           >
             {resolved === 'dark' ? <IconSun /> : <IconMoon />}
           </button>
-          {/* Account entry point (header user icon → /app/profile) temporarily hidden.
-              Restore this NavLink alongside the sidebar ACCOUNT_ITEM and the
-              /app/profile route to bring the Account page back. */}
+          <NavLink to="/app/profile" className="mc-iconbtn" aria-label="Account">
+            <IconUser />
+          </NavLink>
         </div>
       </header>
 

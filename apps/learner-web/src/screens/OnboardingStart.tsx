@@ -4,10 +4,16 @@ import { useBootstrap } from '../app/queries';
 import { isDiagnosticCompleted } from '../app/diagnostic-status';
 import { BrainAtlas } from '../components/BrainAtlas';
 
-export function Welcome() {
+/**
+ * The first screen behind the login wall. This used to be the public landing page;
+ * now that an account exists before anyone gets here, it does the one thing that
+ * needs a learner: offer the placement.
+ */
+export function OnboardingStart() {
   const navigate = useNavigate();
   const bootstrap = useBootstrap();
-  const onboardingComplete = bootstrap.data?.onboardingComplete ?? false;
+  const onboardingComplete =
+    (bootstrap.data?.authenticated === true && bootstrap.data.onboardingComplete) ?? false;
   // The diagnostic is only "done" when actually completed — skipping it (which
   // still completes onboarding via plan setup) leaves this false, so we keep
   // offering the placement each time until the learner finishes it.

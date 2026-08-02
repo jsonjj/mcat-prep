@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { authoredQuestionToBankRows, type AuthoredQuestion } from '@mcat/content';
-import { FilePracticeBankPort } from './practice-bank-file';
-import type { PulledCorpus, PulledProtected, PulledQuestion } from './db-pull';
+import {
+  FilePracticeBankPort,
+  type PulledCorpus,
+  type PulledProtected,
+  type PulledQuestion,
+} from '@mcat/corpus-pull';
 
 /**
  * End-to-end round trip for an INGESTED authored question: author → compile →

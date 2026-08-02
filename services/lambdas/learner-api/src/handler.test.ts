@@ -3,13 +3,12 @@ import {
   AuthorityKernel,
   InMemoryAuthorityRepository,
   toProjectionRecord,
-  type Principal,
 } from '@mcat/authority-kernel';
 import { fixedClock } from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 
 import { createRepositoryLearnerApi, type PassagePort } from './handler';
-import { hashOpaqueToken, type GuestSessionService } from './session';
+import { createLinkedSessionDouble } from './test-support/linked-session';
 import type { ApiGatewayV1Event, ApiGatewayV2Event, RateLimitInput, SafeLogEvent } from './http';
 import { allowedMethodsFor, routeFor } from './routes';
 import type { AiFetch, AiProxyConfig } from '@mcat/ai-gateway/server';
@@ -140,30 +139,15 @@ function harness(
 
   const repository = new InMemoryAuthorityRepository([toProjectionRecord(state, 0, NOW)]);
   const kernel = new AuthorityKernel({ repository, clock, bank: authority.bank });
-  const principal: Principal = {
-    kind: 'guest',
+  const session = createLinkedSessionDouble({
     learnerId: state.learnerId,
     sessionId: crypto.randomUUID(),
-  };
-  let sessionBootstrapCalls = 0;
-  let sessionResolveCalls = 0;
-  const sessions: GuestSessionService = {
-    bootstrap: async () => {
-      sessionBootstrapCalls += 1;
-      return {
-        principal,
-        sessionToken: ROTATED_SESSION_TOKEN,
-        csrfToken: CSRF_TOKEN,
-        maxAgeSeconds: 3600,
-      };
-    },
-    resolve: async (token) => {
-      sessionResolveCalls += 1;
-      return token === SESSION_TOKEN
-        ? { principal, csrfTokenHash: hashOpaqueToken(CSRF_TOKEN) }
-        : null;
-    },
-  };
+    sessionToken: SESSION_TOKEN,
+    rotatedSessionToken: ROTATED_SESSION_TOKEN,
+    csrfToken: CSRF_TOKEN,
+  });
+  const principal = session.principal;
+  const sessions = session.sessions;
   const logs: SafeLogEvent[] = [];
   const rateInputs: RateLimitInput[] = [];
   const api = createRepositoryLearnerApi({
@@ -194,8 +178,8 @@ function harness(
     principal,
     rateInputs,
     repository,
-    sessionBootstrapCalls: () => sessionBootstrapCalls,
-    sessionResolveCalls: () => sessionResolveCalls,
+    sessionBootstrapCalls: session.bootstrapCalls,
+    sessionResolveCalls: session.resolveCalls,
   };
 }
 
@@ -260,7 +244,9 @@ describe('Passage of the Day route (formative, off the kernel)', () => {
 
   it('404s a malformed tz path', async () => {
     const { api } = harness({ passage });
-    const response = await api.handle(request('GET', '/v1/passage/today/notanumber', undefined, authed));
+    const response = await api.handle(
+      request('GET', '/v1/passage/today/notanumber', undefined, authed),
+    );
     expect(response.statusCode).toBe(404);
   });
 
@@ -346,8 +332,8 @@ describe('learner Lambda API security boundary', () => {
     expect(preflight.headers?.['access-control-allow-origin']).toBeUndefined();
   });
 
-  it('sets secure rotated guest cookies and no-store on bootstrap', async () => {
-    const { api, logs, principal } = harness();
+  it('creates no learner and issues no session for a signed-out bootstrap', async () => {
+    const { api, logs, sessionBootstrapCalls } = harness();
 
     const response = await api.handle(
       request('POST', '/v1/bootstrap', undefined, { origin: APP_ORIGIN }),
@@ -356,6 +342,27 @@ describe('learner Lambda API security boundary', () => {
     expect(response.statusCode).toBe(200);
     expect(response.headers?.['cache-control']).toBe('no-store');
     expect(response.headers?.['access-control-allow-origin']).toBe(APP_ORIGIN);
+    // Only the CSRF cookie the signed-out /v1/auth/* routes need. No session
+    // cookie, because there is no session and no learner behind it.
+    expect(response.cookies).toHaveLength(1);
+    expect(response.cookies?.[0]).toMatch(
+      /^__Host-mcat_csrf=.+; Path=\/; Max-Age=3600; HttpOnly; Secure; SameSite=Lax$/,
+    );
+    expect(responseBody(response)).toMatchObject({ authenticated: false, apiVersion: 'v1' });
+    expect(responseBody(response)).not.toHaveProperty('learnerId');
+    expect(sessionBootstrapCalls()).toBe(0);
+    expect(logs.at(-1)).toMatchObject({ principalKind: 'anonymous' });
+    expect(logs.at(-1)).not.toHaveProperty('learnerHash');
+  });
+
+  it('rotates both cookies and reports the learner on a signed-in bootstrap', async () => {
+    const { api, logs, principal } = harness();
+
+    const response = await api.handle(
+      request('POST', '/v1/bootstrap', undefined, { origin: APP_ORIGIN, authenticated: true }),
+    );
+
+    expect(response.statusCode).toBe(200);
     expect(response.cookies?.[0]).toMatch(
       /^__Host-mcat_session=.+; Path=\/; Max-Age=3600; HttpOnly; Secure; SameSite=Lax$/,
     );
@@ -363,12 +370,14 @@ describe('learner Lambda API security boundary', () => {
       /^__Host-mcat_csrf=.+; Path=\/; Max-Age=3600; HttpOnly; Secure; SameSite=Lax$/,
     );
     expect(responseBody(response)).toMatchObject({
+      authenticated: true,
       learnerId: principal.learnerId,
+      accountState: 'linked',
       csrfToken: CSRF_TOKEN,
       streamVersion: 0,
     });
     expect(logs.at(-1)).toMatchObject({
-      principalKind: 'guest',
+      principalKind: 'linked',
       learnerHash: expect.stringMatching(/^[0-9a-f]{24}$/),
     });
   });
@@ -381,6 +390,7 @@ describe('learner Lambda API security boundary', () => {
       headers: {
         origin: APP_ORIGIN,
         'x-mcat-origin-verify': ORIGIN_VERIFICATION_SECRET,
+        cookie: `__Host-mcat_session=${SESSION_TOKEN}; __Host-mcat_csrf=${CSRF_TOKEN}`,
       },
       requestContext: {
         requestId: 'rest-request-123',
@@ -784,7 +794,9 @@ describe('learner Lambda API security boundary', () => {
     // Idempotent: a replay returns the same result and appends no new event.
     expect(responseBody(duplicate)).toEqual(responseBody(scored));
     expect(repository.eventsFor(principal.learnerId)).toHaveLength(1);
-    const projection = repository.projectionFor(principal.learnerId)?.state as { mastery?: unknown };
+    const projection = repository.projectionFor(principal.learnerId)?.state as {
+      mastery?: unknown;
+    };
     expect(projection.mastery).toBeDefined();
   });
 
@@ -1183,7 +1195,7 @@ describe('learner Lambda API security boundary', () => {
       route: '/v1/attempts',
       method: 'POST',
       status: 400,
-      principalKind: 'guest',
+      principalKind: 'linked',
     });
   });
 
@@ -1213,7 +1225,9 @@ describe('WS4 grounded rewrite route (POST /v1/ai/rewrite)', () => {
     ok: true,
     status: 200,
     json: async () => ({
-      choices: [{ message: { content: 'Put another way: with no net force there is no acceleration.' } }],
+      choices: [
+        { message: { content: 'Put another way: with no net force there is no acceleration.' } },
+      ],
     }),
     text: async () => 'ok',
   });

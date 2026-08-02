@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { GuestBootstrapResponseSchema, SyncSubmitRequestSchema } from './api';
+import { BootstrapEnvelopeSchema, SyncSubmitRequestSchema } from './api';
+import {
+  SessionExchangeRequestSchema,
+  SessionExchangeResponseSchema,
+  SignOutResponseSchema,
+} from './auth';
 import { AttemptCommandSchema, GoalCommandSchema, GoalViewSchema } from './commands';
 import { ErrorCodeSchema } from './errors';
 import { EventIdSchema } from './ids';
@@ -90,7 +95,21 @@ export const HTTP_API = {
   bootstrap: {
     method: 'POST',
     path: '/v1/bootstrap',
-    response: GuestBootstrapResponseSchema,
+    response: BootstrapEnvelopeSchema,
+  },
+  // Session exchange. The only route callable without a session. Credentials
+  // never reach this API — the browser authenticates against Supabase and sends
+  // only the resulting access token here.
+  authSessionExchange: {
+    method: 'POST',
+    path: '/v1/auth/session',
+    body: SessionExchangeRequestSchema,
+    response: SessionExchangeResponseSchema,
+  },
+  authSignOut: {
+    method: 'POST',
+    path: '/v1/auth/signout',
+    response: SignOutResponseSchema,
   },
   goal: { method: 'PUT', path: '/v1/profile/goal', body: GoalCommandSchema },
   // Read-only goal projection so the Account/Profile editor can prefill (WS8).

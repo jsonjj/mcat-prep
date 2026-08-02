@@ -769,6 +769,151 @@ body {
   color: var(--mc-primary-text);
 }
 
+/* ---- Public homepage ---- */
+/* An anchor styled as a button: the button rules are element-agnostic, so a
+   link only needs the underline removed to match a real .mc-button. */
+.mc-linkbtn {
+  text-decoration: none;
+}
+.mc-landing {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+.mc-landing__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mc-space-4);
+  padding: var(--mc-space-4) var(--mc-space-5);
+  max-width: 1160px;
+  width: 100%;
+  margin: 0 auto;
+}
+.mc-landing__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-3);
+}
+.mc-landing__main {
+  flex: 1;
+  max-width: 1160px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--mc-space-5) var(--mc-space-5) var(--mc-space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-7);
+}
+.mc-landing__hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mc-space-5);
+  align-items: center;
+  text-align: center;
+}
+.mc-landing__hero-visual {
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+.mc-landing .mc-brainhero__img {
+  width: min(560px, 88vw);
+}
+.mc-landing .mc-brainhero__halo {
+  width: min(660px, 94vw);
+}
+.mc-landing__title {
+  font-family: var(--mc-font-display);
+  font-size: var(--mc-text-36);
+  line-height: var(--mc-leading-tight);
+}
+.mc-landing__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mc-space-3);
+  justify-content: center;
+}
+.mc-landing__grid {
+  display: grid;
+  gap: var(--mc-space-4);
+  grid-template-columns: 1fr;
+}
+.mc-landing__card-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--mc-primary-text);
+}
+.mc-landing__section--closing {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+.mc-landing__footer {
+  padding: var(--mc-space-5);
+  text-align: center;
+  border-top: 1px solid var(--mc-border);
+}
+
+@media (min-width: 880px) {
+  .mc-landing__hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    text-align: left;
+    gap: var(--mc-space-6);
+  }
+  .mc-landing__cta {
+    justify-content: flex-start;
+  }
+  .mc-landing__title {
+    font-size: clamp(2.5rem, 3.4vw, 3.2rem);
+  }
+  .mc-landing__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---- Auth screens ---- */
+/* The credential screens reuse the .mc-onboarding column so they sit at the same
+   measure as plan setup; only the vertical centering differs. */
+.mc-auth {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--mc-space-4);
+}
+.mc-auth__footer {
+  text-align: center;
+}
+/* A labelled rule between the password form and the Google button. The rules are
+   drawn as flexed pseudo-elements so the label stays centred at any width. */
+.mc-auth__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--mc-space-3);
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-14);
+}
+.mc-auth__divider::before,
+.mc-auth__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--mc-border);
+}
+/* Offline-only scaffolding. Set apart from the real copy so it is never read as
+   something a learner would see. */
+.mc-auth__devnote {
+  display: grid;
+  gap: var(--mc-space-2);
+  padding: var(--mc-space-3);
+  border: 1px dashed var(--mc-border);
+  border-radius: var(--mc-radius-control);
+}
+
 /* ---- Welcome ---- */
 .mc-welcome {
   min-height: 100dvh;

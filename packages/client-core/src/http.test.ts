@@ -1,16 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import { AcceptedCommandResponseSchema, GoalCommandSchema } from '@mcat/contracts';
-import { ApiClientError, HttpAuthorityClient, MemorySession } from './http';
+import { ApiClientError, HttpAuthorityClient, MemorySession, isUnauthenticatedError } from './http';
 
 const bootstrapResponse = {
+  authenticated: true,
   learnerId: '11111111-1111-4111-8111-111111111111',
-  accountState: 'guest',
+  accountState: 'linked',
   bankStatus: 'loaded',
   contentRelease: 'synthetic-2026.07',
   apiVersion: 'v1',
   onboardingComplete: false,
   serverTime: '2026-07-22T00:00:00.000Z',
   streamVersion: 7,
+  csrfToken: 'csrf-token-with-at-least-32-characters',
+};
+
+const anonymousBootstrapResponse = {
+  authenticated: false,
+  apiVersion: 'v1',
+  serverTime: '2026-07-22T00:00:00.000Z',
   csrfToken: 'csrf-token-with-at-least-32-characters',
 };
 
@@ -36,8 +44,8 @@ describe('HttpAuthorityClient', () => {
     const result = await client.bootstrap();
 
     expect(calls[0]?.credentials).toBe('include');
-    expect(result).not.toHaveProperty('csrfToken');
-    expect(result).not.toHaveProperty('streamVersion');
+    expect(result.authenticated).toBe(true);
+    if (!result.authenticated) throw new Error('expected an authenticated bootstrap');
     expect(result.learnerId).toBe(bootstrapResponse.learnerId);
   });
 
@@ -122,3 +130,130 @@ describe('HttpAuthorityClient', () => {
     await expect(client.bootstrap()).rejects.toMatchObject({ name: 'ZodError' });
   });
 });
+
+describe('signed-out client behaviour', () => {
+  it('reports a signed-out bootstrap without learner fields', async () => {
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      fetch: async () => Response.json(anonymousBootstrapResponse),
+    });
+
+    const result = await client.bootstrap();
+
+    expect(result.authenticated).toBe(false);
+    expect(result).not.toHaveProperty('learnerId');
+  });
+
+  it('keeps the signed-out CSRF token so a credential call is same-site', async () => {
+    const session = new MemorySession();
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      session,
+      fetch: async () => Response.json(anonymousBootstrapResponse),
+    });
+
+    await client.bootstrap();
+
+    expect(session.getCsrfToken()).toBe(anonymousBootstrapResponse.csrfToken);
+  });
+
+  it('fails a learner read as unauthenticated rather than calling the route', async () => {
+    const paths: string[] = [];
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      fetch: async (url) => {
+        paths.push(new URL(String(url)).pathname);
+        return Response.json(anonymousBootstrapResponse);
+      },
+    });
+
+    await expect(client.getToday()).rejects.toMatchObject({
+      name: 'ApiClientError',
+      code: 'unauthorized',
+    });
+    expect(paths).toEqual(['/v1/bootstrap']);
+  });
+
+  it('classifies both server and client unauthenticated failures the same way', async () => {
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      fetch: async () => Response.json(anonymousBootstrapResponse),
+    });
+
+    const clientSide = await client.getToday().catch((error: unknown) => error);
+    const serverSide = ApiClientError.from({
+      code: 'unauthorized',
+      message: 'A valid learner session is required.',
+      requestId: 'request-9',
+      retryable: false,
+    });
+
+    expect(isUnauthenticatedError(clientSide)).toBe(true);
+    expect(isUnauthenticatedError(serverSide)).toBe(true);
+    expect(isUnauthenticatedError(new Error('network'))).toBe(false);
+  });
+
+  it('bootstraps for a CSRF token before the first exchange attempt', async () => {
+    const paths: string[] = [];
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      fetch: async (url) => {
+        const path = new URL(String(url)).pathname;
+        paths.push(path);
+        return path === '/v1/bootstrap'
+          ? Response.json(anonymousBootstrapResponse)
+          : Response.json({ status: 'signed_in', csrfToken: bootstrapResponse.csrfToken });
+      },
+    });
+
+    await client.exchangeSession('header.payload.signature');
+
+    expect(paths).toEqual(['/v1/bootstrap', '/v1/auth/session']);
+  });
+
+  it('sends the Supabase token in the body, never in the URL', async () => {
+    const urls: string[] = [];
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      session: signedOutSessionWithToken(),
+      fetch: async (url) => {
+        urls.push(String(url));
+        return Response.json({ status: 'signed_in', csrfToken: bootstrapResponse.csrfToken });
+      },
+    });
+
+    await client.exchangeSession('header.payload.signature');
+
+    expect(urls).toEqual(['https://api.example.test/v1/auth/session']);
+    // A token in a URL would land in access logs, proxy logs, and Referer headers.
+    expect(urls.join()).not.toContain('header.payload.signature');
+  });
+
+  it('drops the local session on sign-out even when the server call fails', async () => {
+    const session = signedOutSessionWithToken();
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      session,
+      fetch: async () =>
+        Response.json(
+          {
+            code: 'unavailable',
+            message: 'nope',
+            requestId: 'request-1',
+            retryable: true,
+          },
+          { status: 503 },
+        ),
+    });
+
+    await expect(client.signOut()).rejects.toMatchObject({ name: 'ApiClientError' });
+
+    expect(session.getCsrfToken()).toBeNull();
+  });
+});
+
+function signedOutSessionWithToken(): MemorySession {
+  const session = new MemorySession();
+  session.setCsrfToken(anonymousBootstrapResponse.csrfToken);
+  return session;
+}

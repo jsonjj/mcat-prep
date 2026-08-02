@@ -40,6 +40,10 @@ describe('FoundationStack', () => {
     expect(endpoints).toContain('secretsmanager');
     expect(endpoints).toContain('sqs');
     expect(endpoints).toContain('xray');
+    // No identity endpoint: the browser authenticates against Supabase directly
+    // and the API verifies the token with a pinned public key, so sign-in needs no
+    // egress from the isolated subnets.
+    expect(endpoints).not.toContain('cognito-idp');
     expect(endpoints).not.toContain('0.0.0.0/0');
     expect(JSON.stringify(template.findResources('AWS::EC2::SecurityGroupIngress'))).not.toContain(
       'CidrIp',

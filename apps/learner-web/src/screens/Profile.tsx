@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack, useTheme, type ThemePreference } from '@mcat/ui-web';
 import { DAILY_MINUTES_PRESETS } from '@mcat/contracts';
 import { useBootstrap, useConfirmPlan, useGoal, useResetProgress } from '../app/queries';
+import { useSignOut } from '../app/auth-queries';
 import { useBuildTodaysPath, useSetDailyBudget, useTodaysPath } from '../app/today-queries';
 import { isGhostOptedOut, setGhostOptOut } from '../components/GhostCompanion';
 
@@ -15,7 +16,11 @@ const THEMES: { value: ThemePreference; label: string }[] = [
 export function Profile() {
   const navigate = useNavigate();
   const bootstrap = useBootstrap();
+  // Narrowed once: the signed-out arm of the envelope carries no learner fields,
+  // and RequireAuth means we should never actually be rendering in that state.
+  const account = bootstrap.data?.authenticated === true ? bootstrap.data : undefined;
   const reset = useResetProgress();
+  const signOut = useSignOut();
   const { preference, setPreference } = useTheme();
   const todaysPath = useTodaysPath();
   const setBudget = useSetDailyBudget();
@@ -93,8 +98,7 @@ export function Profile() {
       <header className="mc-screen__head">
         <h1 className="mc-h1">Profile &amp; settings</h1>
         <p className="mc-muted">
-          Account: {bootstrap.data?.accountState ?? 'guest'} · content release{' '}
-          {bootstrap.data?.contentRelease ?? '—'}
+          Account: {account?.accountState ?? '—'} · content release {account?.contentRelease ?? '—'}
         </p>
       </header>
 
@@ -280,13 +284,43 @@ export function Profile() {
 
       <Card elevated>
         <Stack gap={3}>
+          <Eyebrow>Session</Eyebrow>
+          <p className="mc-muted mc-fineprint">
+            Signing out ends this session everywhere it was used. Your progress stays on your
+            account and comes back when you sign in again.
+          </p>
+          <Button
+            variant="secondary"
+            disabled={signOut.isPending}
+            onClick={() =>
+              signOut.mutate(undefined, {
+                // onSettled, not onSuccess: the client drops the local session even
+                // when the server call fails, so staying on a learner screen would
+                // show an account we can no longer read.
+                onSettled: () => navigate('/', { replace: true }),
+              })
+            }
+          >
+            {signOut.isPending ? 'Signing out…' : 'Sign out'}
+          </Button>
+        </Stack>
+      </Card>
+
+      <Card elevated>
+        <Stack gap={3}>
           <Eyebrow>Reset</Eyebrow>
           <Callout tone="warning" title="Start over">
             This clears local progress on this device (a development convenience).
           </Callout>
           <Button
             variant="danger"
-            onClick={() => reset.mutate(undefined, { onSuccess: () => navigate('/', { replace: true }) })}
+            onClick={() =>
+              reset.mutate(undefined, {
+                // Onboarding, not the homepage: the account survives a progress
+                // reset, so the learner needs the placement again, not a sign-in pitch.
+                onSuccess: () => navigate('/onboarding', { replace: true }),
+              })
+            }
           >
             Reset local progress
           </Button>

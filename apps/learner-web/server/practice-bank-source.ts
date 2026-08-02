@@ -3,7 +3,7 @@ import {
   createDatabasePoolFromEnv,
   createPostgresPracticeBankPort,
 } from '@mcat/persistence-postgres';
-import { createFilePracticeBankPort, type FilePracticeBankPort } from './practice-bank-file';
+import { createFilePracticeBankPort, type FilePracticeBankPort } from '@mcat/corpus-pull';
 
 /**
  * Which corpus backs adaptive Practice in the dev server, in priority order:

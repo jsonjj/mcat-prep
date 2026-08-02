@@ -11,7 +11,7 @@ import {
   type Principal,
 } from '@mcat/authority-kernel';
 import {
-  GuestBootstrapResponseSchema,
+  AuthenticatedBootstrapResponseSchema,
   NormalizedLessonCommandSchema,
   NormalizedLessonRunViewSchema,
   NormalizedLessonStartCommandSchema,
@@ -294,9 +294,13 @@ export async function createLocalLessonHttpServer(
         sendJson(
           response,
           200,
-          GuestBootstrapResponseSchema.parse({
+          AuthenticatedBootstrapResponseSchema.parse({
+            authenticated: true,
             learnerId: principal.learnerId,
-            accountState: 'guest',
+            // This loopback harness serves one fixed learner and holds no
+            // credentials, so it reports the signed-in state the app requires
+            // rather than making callers log in to a store that does not exist.
+            accountState: 'linked',
             bankStatus: 'loaded',
             contentRelease: snapshot.contentRelease,
             apiVersion: 'v1',
@@ -305,6 +309,22 @@ export async function createLocalLessonHttpServer(
             streamVersion: snapshot.streamVersion,
             csrfToken,
           }),
+          origin,
+        );
+        return;
+      }
+      if (method === 'POST' && path === '/v1/auth/signout') {
+        sendJson(response, 200, { status: 'signed_out' }, origin);
+        return;
+      }
+      if (method === 'POST' && path.startsWith('/v1/auth/')) {
+        // The fixed learner is always signed in here, so there is nothing to
+        // exchange. Answering 501 keeps a client that reaches for these routes
+        // from reading a fabricated success.
+        sendJson(
+          response,
+          501,
+          { error: 'This harness serves one fixed learner and has no credential store.' },
           origin,
         );
         return;

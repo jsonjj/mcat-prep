@@ -1,4 +1,4 @@
-import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
+import { createHash, createHmac, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import type { PracticeBankPort } from '@mcat/authority-core';
 import {
   AuthorityKernelError,
@@ -8,7 +8,8 @@ import {
 } from '@mcat/authority-kernel';
 import {
   AcceptedCommandResponseSchema,
-  GuestBootstrapResponseSchema,
+  AnonymousBootstrapResponseSchema,
+  AuthenticatedBootstrapResponseSchema,
   HttpApiErrorSchema,
   PassageAttemptResponseSchema,
   PassageTodayResponseSchema,
@@ -56,12 +57,14 @@ import {
   type RevealCommandBody,
   type RouteDefinition,
 } from './routes';
+import type { IdentityProvider } from './auth/identity-provider';
 import {
   CSRF_COOKIE,
   SESSION_COOKIE,
   parseCookies,
   secureCookie,
   verifyDoubleSubmitCsrf,
+  verifyStatelessDoubleSubmitCsrf,
   type GuestSessionService,
   type ResolvedGuestSession,
 } from './session';
@@ -185,6 +188,14 @@ export interface PassagePort {
 export interface LearnerApiDependencies {
   readonly kernel: KernelPort;
   readonly sessions: GuestSessionService;
+  /**
+   * Verifies the Supabase access tokens presented to `/v1/auth/session`. Optional
+   * so a deployment can omit it, in which case that route reports 503 rather than
+   * silently accepting anyone; every learner route stays closed either way.
+   */
+  readonly identity?: IdentityProvider;
+  /** Identity provider recorded in `linked_identities`. Defaults to `'supabase'`. */
+  readonly identityProviderName?: string;
   readonly allowedOrigins: readonly string[];
   readonly originVerificationSecret: string;
   readonly rateLimitPepper: string;
@@ -218,6 +229,20 @@ export interface LearnerApi {
 }
 
 const DEFAULT_MAX_BODY_BYTES = 64 * 1024;
+const DEFAULT_IDENTITY_PROVIDER = 'supabase';
+/** Long enough to finish a sign-up or reset, short enough not to linger. */
+const CREDENTIAL_CSRF_MAX_AGE_SECONDS = 60 * 60;
+
+function newOpaqueToken(): string {
+  return randomBytes(32).toString('base64url');
+}
+
+/** `Max-Age=0` clears both cookies on sign-out; `secureCookie` only issues live ones. */
+function expiredSessionCookies(): readonly string[] {
+  return [SESSION_COOKIE, CSRF_COOKIE].map(
+    (name) => `${name}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`,
+  );
+}
 
 function requestId(value: string): string {
   return /^[A-Za-z0-9_-]{1,128}$/.test(value) ? value : randomUUID();
@@ -229,6 +254,15 @@ function pseudonymousHash(value: string): string {
 
 function rateLimitKey(pepper: string, value: string): string {
   return createHmac('sha256', pepper).update(value, 'utf8').digest('hex');
+}
+
+/**
+ * The caller's IP as API Gateway saw it. Never a client-supplied header such as
+ * `x-forwarded-for`, which would let an attacker rotate their own rate-limit key.
+ */
+function sourceIpOf(event: ApiGatewayV2Event): string {
+  const ip = event.requestContext.http.sourceIp;
+  return typeof ip === 'string' && ip.length > 0 && ip.length <= 45 ? ip : 'unknown';
 }
 
 function containsControlCharacter(value: string): boolean {
@@ -517,7 +551,10 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       if (route.auth === 'session') {
         const token = cookies[SESSION_COOKIE];
         resolved = token === undefined ? null : await dependencies.sessions.resolve(token);
-        if (resolved === null) {
+        // A session that resolves to anything other than a linked account is not
+        // an account. Guest sessions are no longer issued, but an old cookie from
+        // before login was required could still resolve, and it must not pass.
+        if (resolved === null || resolved.principal.kind !== 'linked') {
           response = errorResponse(
             'unauthorized',
             'A valid learner session is required.',
@@ -529,10 +566,19 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
         principal = resolved.principal;
       }
 
+      // Credential routes have no session to meter, so they are metered by source
+      // IP instead. Without this, sign-in would be the one unmetered state-changing
+      // route in the API and the obvious place to mount a password-guessing attack.
+      const rateLimitSubject =
+        principal !== undefined
+          ? `session:${principal.sessionId}`
+          : route.auth === 'credential'
+            ? `ip:${sourceIpOf(event)}`
+            : null;
       if (
-        principal !== undefined &&
+        rateLimitSubject !== null &&
         !(await dependencies.rateLimiter.allow({
-          key: rateLimitKey(dependencies.rateLimitPepper, `session:${principal.sessionId}`),
+          key: rateLimitKey(dependencies.rateLimitPepper, rateLimitSubject),
           route: route.path,
           method,
         }))
@@ -556,6 +602,18 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             resolved.csrfTokenHash,
           )
         ) {
+          response = errorResponse(
+            'forbidden',
+            'CSRF validation failed.',
+            allowedOrigin,
+            requestIdValue,
+          );
+          return response;
+        }
+      }
+
+      if (route.auth === 'credential') {
+        if (!verifyStatelessDoubleSubmitCsrf(headers['x-csrf-token'], cookies[CSRF_COOKIE])) {
           response = errorResponse(
             'forbidden',
             'CSRF validation failed.',
@@ -612,6 +670,130 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
     }
   }
 
+  function anonymousBootstrap(
+    origin: string | undefined,
+    requestIdValue: string,
+  ): ApiGatewayV2Result {
+    const csrfToken = newOpaqueToken();
+    const payload = AnonymousBootstrapResponseSchema.parse({
+      authenticated: false,
+      apiVersion: 'v1',
+      serverTime: new Date(nowMs()).toISOString(),
+      csrfToken,
+    });
+    return jsonResponse(200, payload, origin, requestIdValue, {
+      cookies: [secureCookie(CSRF_COOKIE, csrfToken, CREDENTIAL_CSRF_MAX_AGE_SECONDS)],
+    });
+  }
+
+  async function authenticatedBootstrap(
+    bootstrapped: Awaited<ReturnType<GuestSessionService['bootstrap']>>,
+    origin: string | undefined,
+    requestIdValue: string,
+  ): Promise<ApiGatewayV2Result> {
+    const snapshot = await dependencies.kernel.snapshot(bootstrapped.principal);
+    const payload = AuthenticatedBootstrapResponseSchema.parse({
+      authenticated: true,
+      learnerId: bootstrapped.principal.learnerId,
+      accountState: bootstrapped.principal.kind,
+      bankStatus: 'loaded',
+      contentRelease: snapshot.contentRelease,
+      apiVersion: 'v1',
+      onboardingComplete: snapshot.today !== null && snapshot.session.kind !== 'locked',
+      serverTime: new Date(nowMs()).toISOString(),
+      streamVersion: snapshot.streamVersion,
+      csrfToken: bootstrapped.csrfToken,
+    });
+    return jsonResponse(200, payload, origin, requestIdValue, {
+      cookies: [
+        secureCookie(SESSION_COOKIE, bootstrapped.sessionToken, bootstrapped.maxAgeSeconds),
+        secureCookie(CSRF_COOKIE, bootstrapped.csrfToken, bootstrapped.maxAgeSeconds),
+      ],
+    });
+  }
+
+  /**
+   * The signed-out session exchange.
+   *
+   * Trades a Supabase access token for one of our sessions. Credentials never
+   * reach this API, so there is nothing here that could distinguish a registered
+   * address from an unregistered one — the enumeration surface that the previous
+   * sign-up and reset routes had to defend against is simply gone.
+   */
+  async function authRoute(
+    route: RouteDefinition,
+    event: ApiGatewayV2Event,
+    origin: string | undefined,
+    requestIdValue: string,
+  ): Promise<ApiGatewayV2Result> {
+    const identity = dependencies.identity;
+    if (identity === undefined) {
+      return errorResponse(
+        'unavailable',
+        'Accounts are temporarily unavailable.',
+        origin,
+        requestIdValue,
+        { status: 503, retryable: true },
+      );
+    }
+    const headers = normalizedHeaders(event.headers);
+    const parsedBody = parseBody(event, headers, maxBodyBytes);
+    if (!parsedBody.ok) {
+      return errorResponse('validation_error', parsedBody.message, origin, requestIdValue, {
+        status: parsedBody.status,
+      });
+    }
+    const parsed = route.bodySchema?.safeParse(parsedBody.value);
+    if (parsed === undefined || !parsed.success) {
+      return errorResponse(
+        'validation_error',
+        'The request body does not match the route contract.',
+        origin,
+        requestIdValue,
+      );
+    }
+
+    switch (route.id) {
+      case 'authSessionExchange': {
+        const { accessToken } = parsed.data as { accessToken: string };
+        const result = await identity.verify(accessToken);
+        if (result.status !== 'verified') {
+          return errorResponse(
+            'unauthorized',
+            'That sign-in has expired. Sign in again.',
+            origin,
+            requestIdValue,
+          );
+        }
+
+        // Find-or-create, keyed on the provider subject. A learner who signs in
+        // on a second device, or who signed up with a password and later uses
+        // Google on the same verified address, resolves to the same row because
+        // Supabase hands back the same `sub`.
+        const session = await dependencies.sessions.signIn(
+          dependencies.identityProviderName ?? DEFAULT_IDENTITY_PROVIDER,
+          result.identity.subject,
+        );
+        return jsonResponse(
+          200,
+          { status: 'signed_in', csrfToken: session.csrfToken },
+          origin,
+          requestIdValue,
+          {
+            cookies: [
+              secureCookie(SESSION_COOKIE, session.sessionToken, session.maxAgeSeconds),
+              secureCookie(CSRF_COOKIE, session.csrfToken, session.maxAgeSeconds),
+            ],
+          },
+        );
+      }
+      default:
+        return errorResponse('not_found', 'Route not found.', origin, requestIdValue, {
+          status: 404,
+        });
+    }
+  }
+
   async function dispatch(
     route: RouteDefinition,
     event: ApiGatewayV2Event,
@@ -626,26 +808,35 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       return jsonResponse(200, { status: 'ok' }, origin, requestIdValue);
     }
     if (route.id === 'bootstrap') {
-      const bootstrapped = await dependencies.sessions.bootstrap(cookies[SESSION_COOKIE] ?? null);
+      // Bootstrap no longer mints a learner. It reports whether the caller already
+      // holds a linked session and, when they do not, hands back only the CSRF
+      // token the signed-out credential routes need.
+      const existingToken = cookies[SESSION_COOKIE];
+      const existing =
+        existingToken === undefined ? null : await dependencies.sessions.resolve(existingToken);
+      if (existing === null || existing.principal.kind !== 'linked') {
+        return anonymousBootstrap(origin, requestIdValue);
+      }
+
+      const bootstrapped = await dependencies.sessions.bootstrap(existingToken ?? null);
+      // The session could have expired between resolving it and rotating it, in
+      // which case the service falls back to a fresh guest. That is not an account,
+      // so report the caller as signed out rather than handing back a guest cookie.
+      if (bootstrapped.principal.kind !== 'linked') {
+        return anonymousBootstrap(origin, requestIdValue);
+      }
       principal = bootstrapped.principal;
       setPrincipal(principal);
-      const snapshot = await dependencies.kernel.snapshot(principal);
-      const payload = GuestBootstrapResponseSchema.parse({
-        learnerId: principal.learnerId,
-        accountState: principal.kind,
-        bankStatus: 'loaded',
-        contentRelease: snapshot.contentRelease,
-        apiVersion: 'v1',
-        onboardingComplete: snapshot.today !== null && snapshot.session.kind !== 'locked',
-        serverTime: new Date(nowMs()).toISOString(),
-        streamVersion: snapshot.streamVersion,
-        csrfToken: bootstrapped.csrfToken,
-      });
-      return jsonResponse(200, payload, origin, requestIdValue, {
-        cookies: [
-          secureCookie(SESSION_COOKIE, bootstrapped.sessionToken, bootstrapped.maxAgeSeconds),
-          secureCookie(CSRF_COOKIE, bootstrapped.csrfToken, bootstrapped.maxAgeSeconds),
-        ],
+      return authenticatedBootstrap(bootstrapped, origin, requestIdValue);
+    }
+    if (route.auth === 'credential') {
+      return authRoute(route, event, origin, requestIdValue);
+    }
+    if (route.id === 'authSignOut') {
+      const token = cookies[SESSION_COOKIE];
+      if (token !== undefined) await dependencies.sessions.revoke(token);
+      return jsonResponse(200, { status: 'signed_out' }, origin, requestIdValue, {
+        cookies: expiredSessionCookies(),
       });
     }
     if (principal === undefined) {

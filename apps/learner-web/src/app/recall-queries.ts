@@ -16,13 +16,18 @@ import {
 
 /** The Recall service for the current learner, or null until bootstrap resolves. */
 export function useRecallService(): RecallService | null {
-  const bootstrap = useBootstrap();
-  const learnerId = bootstrap.data?.learnerId ?? null;
+  const learnerId = useLearnerId();
   return learnerId ? getRecallService(learnerId) : null;
 }
 
+/**
+ * Null while bootstrap is in flight and also for a signed-out visitor, which is
+ * what keeps a signed-out browser from opening — or reading — a per-learner
+ * IndexedDB database.
+ */
 function useLearnerId(): string | null {
-  return useBootstrap().data?.learnerId ?? null;
+  const bootstrap = useBootstrap();
+  return bootstrap.data?.authenticated === true ? bootstrap.data.learnerId : null;
 }
 
 export function useRecallLoad() {

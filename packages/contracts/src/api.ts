@@ -44,6 +44,52 @@ export const GuestBootstrapResponseSchema = BootstrapResponseSchema.extend({
 }).strict();
 export type GuestBootstrapResponse = z.infer<typeof GuestBootstrapResponseSchema>;
 
+/**
+ * Bootstrap for a visitor with no session.
+ *
+ * Bootstrap does not create a learner, so there is no `learnerId` to report and
+ * nothing here is learner-specific. The CSRF token still ships because the
+ * unauthenticated `/v1/auth/*` routes are state-changing and need a double-submit
+ * pair; it authorizes nothing on its own.
+ */
+export const AnonymousBootstrapResponseSchema = z
+  .object({
+    authenticated: z.literal(false),
+    apiVersion: z.literal('v1'),
+    serverTime: UtcTimestampSchema,
+    csrfToken: z.string().min(32),
+  })
+  .strict();
+export type AnonymousBootstrapResponse = z.infer<typeof AnonymousBootstrapResponseSchema>;
+
+export const AuthenticatedBootstrapResponseSchema = GuestBootstrapResponseSchema.extend({
+  authenticated: z.literal(true),
+}).strict();
+export type AuthenticatedBootstrapResponse = z.infer<typeof AuthenticatedBootstrapResponseSchema>;
+
+/**
+ * What a learner app reads from bootstrap, as opposed to what the wire carries.
+ *
+ * `streamVersion` and `csrfToken` are HTTP transport state that the HTTP client
+ * consumes on the caller's behalf, so they are deliberately absent here — which is
+ * also what lets an in-process authority satisfy the port without inventing a
+ * concurrency token and a CSRF token it has no use for.
+ */
+export type BootstrapView =
+  | AnonymousBootstrapResponse
+  | (BootstrapResponse & { authenticated: true });
+
+/**
+ * What `POST /v1/bootstrap` returns. The `authenticated` discriminant is what lets
+ * the client tell "signed out" apart from "signed in", and it is the only shape in
+ * which a learner id is ever present.
+ */
+export const BootstrapEnvelopeSchema = z.discriminatedUnion('authenticated', [
+  AnonymousBootstrapResponseSchema,
+  AuthenticatedBootstrapResponseSchema,
+]);
+export type BootstrapEnvelope = z.infer<typeof BootstrapEnvelopeSchema>;
+
 /** Offline commands are applied in order; identity is always derived from the session. */
 export const SyncSubmitRequestSchema = z
   .object({

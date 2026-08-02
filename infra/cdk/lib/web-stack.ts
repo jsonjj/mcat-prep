@@ -16,6 +16,7 @@ import type { Construct } from 'constructs';
 
 import type { EnvironmentConfig } from '../config/environments.js';
 import { applySandboxPermissionsBoundary } from './permissions-boundary.js';
+import { supabaseProjectUrlFor } from './supabase-config.js';
 import { applyRequiredTags } from './tags.js';
 
 export interface WebStackProps extends StackProps {
@@ -35,22 +36,36 @@ export interface WebDeliveryResources {
   readonly adminOrigin: string;
 }
 
-const STRICT_CSP = [
-  "default-src 'none'",
-  "base-uri 'none'",
-  "connect-src 'self' https://*.execute-api.us-east-1.amazonaws.com https://cognito-idp.us-east-1.amazonaws.com https://*.auth.us-east-1.amazoncognito.com",
-  "font-src 'self' data:",
-  "form-action 'self'",
-  "frame-ancestors 'none'",
-  "img-src 'self' data: blob:",
-  "manifest-src 'self'",
-  "media-src 'self' blob:",
-  "object-src 'none'",
-  "script-src 'self'",
-  "style-src 'self'",
-  "worker-src 'self' blob:",
-  'upgrade-insecure-requests',
-].join('; ');
+/**
+ * `connect-src` names the Supabase project because the browser now authenticates
+ * against it directly — email/password, confirmation, and reset are all `fetch`
+ * calls to `<project>.supabase.co/auth/v1`. It is the exact project origin rather
+ * than a `*.supabase.co` wildcard, so a compromised script cannot exfiltrate to
+ * some other Supabase project.
+ *
+ * Google sign-in needs nothing here: it is a top-level navigation to Supabase,
+ * which `connect-src` does not govern, and the browser returns to `'self'`.
+ */
+const strictCsp = (supabaseOrigin?: string): string =>
+  [
+    "default-src 'none'",
+    "base-uri 'none'",
+    [
+      "connect-src 'self' https://*.execute-api.us-east-1.amazonaws.com",
+      ...(supabaseOrigin === undefined ? [] : [supabaseOrigin]),
+    ].join(' '),
+    "font-src 'self' data:",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "img-src 'self' data: blob:",
+    "manifest-src 'self'",
+    "media-src 'self' blob:",
+    "object-src 'none'",
+    "script-src 'self'",
+    "style-src 'self'",
+    "worker-src 'self' blob:",
+    'upgrade-insecure-requests',
+  ].join('; ');
 
 export class WebStack extends Stack {
   public readonly resources: WebResources;
@@ -158,9 +173,23 @@ export function createWebDelivery(
       },
     ],
   });
-  const publicHeaders = createResponseHeadersPolicy(scope, 'PublicResponseHeaders', false);
-  const privateHeaders = createResponseHeadersPolicy(scope, 'PrivateResponseHeaders', true);
-  const adminHeaders = createResponseHeadersPolicy(scope, 'AdminResponseHeaders', true);
+  // Only the learner app authenticates against Supabase, so only its CSP names
+  // that origin. The admin console keeps the tighter default.
+  const learnerCsp = strictCsp(supabaseProjectUrlFor(scope));
+  const adminCsp = strictCsp();
+  const publicHeaders = createResponseHeadersPolicy(
+    scope,
+    'PublicResponseHeaders',
+    false,
+    learnerCsp,
+  );
+  const privateHeaders = createResponseHeadersPolicy(
+    scope,
+    'PrivateResponseHeaders',
+    true,
+    learnerCsp,
+  );
+  const adminHeaders = createResponseHeadersPolicy(scope, 'AdminResponseHeaders', true, adminCsp);
   const learnerDistribution = createDistribution(scope, 'LearnerDistribution', {
     comment: 'MCAT development learner PWA',
     bucket: options.web.learnerBucket,
@@ -260,12 +289,13 @@ function createResponseHeadersPolicy(
   scope: Construct,
   id: string,
   noindex: boolean,
+  csp: string,
 ): cloudfront.ResponseHeadersPolicy {
   return new cloudfront.ResponseHeadersPolicy(scope, id, {
     responseHeadersPolicyName: `mcat-dev-${id.replaceAll(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`,
     comment: 'Strict security and privacy headers for MCAT development web delivery.',
     securityHeadersBehavior: {
-      contentSecurityPolicy: { contentSecurityPolicy: STRICT_CSP, override: true },
+      contentSecurityPolicy: { contentSecurityPolicy: csp, override: true },
       contentTypeOptions: { override: true },
       frameOptions: { frameOption: cloudfront.HeadersFrameOption.DENY, override: true },
       referrerPolicy: {

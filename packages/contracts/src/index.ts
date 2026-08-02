@@ -16,6 +16,7 @@ export * from './practice';
 export * from './practice-test';
 export * from './todays-path';
 export * from './api';
+export * from './auth';
 export * from './http';
 export * from './v3-vector-lesson';
 export * from './lesson-delivery';

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 /**
  * Stable identifiers. Learner-facing records are keyed by an application-owned
- * `LearnerId` (a UUID) so that linking a Cognito identity later never rewrites
+ * `LearnerId` (a UUID) so that linking a Supabase identity later never rewrites
  * events. Client-generated ids (events, idempotency keys) are UUIDs too.
  */
 

@@ -30,6 +30,9 @@ import {
   PracticeQueueViewSchema,
   PracticeResultSchema,
   RepairQueueViewSchema,
+  SessionExchangeRequestSchema,
+  SessionExchangeResponseSchema,
+  SignOutResponseSchema,
   SkillMasteryViewSchema,
   SkillSummarySchema,
   StudyStepViewSchema,
@@ -52,6 +55,8 @@ import { parseRewriteRequest, type RewriteRequest } from '@mcat/ai-gateway';
 export type RouteId =
   | 'health'
   | 'bootstrap'
+  | 'authSessionExchange'
+  | 'authSignOut'
   | 'diagnosticNext'
   | 'goal'
   | 'goalView'
@@ -272,7 +277,15 @@ export interface RouteDefinition {
   readonly id: RouteId;
   readonly method: 'DELETE' | 'GET' | 'POST' | 'PUT';
   readonly path: string;
-  readonly auth: 'public' | 'bootstrap' | 'session';
+  /**
+   * - `public`: no session, no CSRF (health only).
+   * - `bootstrap`: establishes or rotates the session cookie pair.
+   * - `credential`: signed-out token exchange. No session exists yet, so CSRF is a
+   *   stateless header/cookie match and the rate limit is keyed by source IP
+   *   rather than by session.
+   * - `session`: requires a linked learner session.
+   */
+  readonly auth: 'public' | 'bootstrap' | 'credential' | 'session';
   readonly stateChanging: boolean;
   readonly bodySchema?: RuntimeSchema;
   readonly responseSchema?: RuntimeSchema;
@@ -292,6 +305,30 @@ export const ROUTES: readonly RouteDefinition[] = [
     path: '/v1/bootstrap',
     auth: 'bootstrap',
     stateChanging: true,
+  },
+  {
+    // Trades a verified Supabase access token for our own session cookie. This is
+    // the only door from "signed in with Supabase" to "signed in here", so it is
+    // the one route where an unauthenticated caller can cause a learner row to be
+    // created — hence the IP-keyed limit that `credential` implies.
+    id: 'authSessionExchange',
+    method: 'POST',
+    path: '/v1/auth/session',
+    auth: 'credential',
+    stateChanging: true,
+    bodySchema: SessionExchangeRequestSchema,
+    responseSchema: SessionExchangeResponseSchema,
+  },
+  {
+    // Sign-out takes the session route so an unauthenticated caller cannot spend a
+    // signed-in learner's rate budget, and so the CSRF check runs against the real
+    // session secret rather than the stateless pair.
+    id: 'authSignOut',
+    method: 'POST',
+    path: '/v1/auth/signout',
+    auth: 'session',
+    stateChanging: true,
+    responseSchema: SignOutResponseSchema,
   },
   {
     id: 'diagnosticNext',

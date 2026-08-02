@@ -6,10 +6,10 @@ import { fileURLToPath } from 'node:url';
  * The gitignored local corpus pull (`content/question-bank/.local/db-pull`,
  * produced by .tmp/db-pull.mjs) as it sits on disk.
  *
- * This is the ONE reader of those files. Both server-side consumers — the
- * Bayesian diagnostic (`diagnostic-bank.ts`) and the adaptive-practice bank
- * port (`practice-bank-file.ts`) — map from this shape rather than parsing the
- * JSON again, so the field names of the pull are only spelled out in one place.
+ * This is the ONE reader of those files. Every server-side consumer — the
+ * Bayesian diagnostic, the practice-test bank, and the adaptive-practice bank
+ * port next door — maps from this shape rather than parsing the JSON again, so
+ * the field names of the pull are only spelled out in one place.
  *
  * Node-only: `protected.json` carries answer keys and explanation prose, so this
  * module must never be reachable from the browser bundle.
@@ -62,10 +62,10 @@ export interface PulledCorpus {
   readonly protectedById: ReadonlyMap<string, PulledProtected>;
 }
 
-/** Where the pull lives, relative to this module (apps/learner-web/server). */
+/** Where the pull lives, relative to this module (packages/corpus-pull/src). */
 export function dbPullDir(): string {
   const here = dirname(fileURLToPath(import.meta.url));
-  // apps/learner-web/server → repo root
+  // packages/corpus-pull/src → repo root
   return join(here, '..', '..', '..', 'content', 'question-bank', '.local', 'db-pull');
 }
 

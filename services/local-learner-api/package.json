@@ -1,0 +1,28 @@
+{
+  "name": "@mcat/local-learner-api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --import tsx src/main.ts",
+    "ensure-env": "node --import tsx src/ensure-secrets.ts",
+    "migrate": "node --import tsx src/migrate.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mcat/ai-gateway": "workspace:*",
+    "@mcat/authority-core": "workspace:*",
+    "@mcat/contracts": "workspace:*",
+    "@mcat/corpus-pull": "workspace:*",
+    "@mcat/database": "workspace:*",
+    "@mcat/learner-api": "workspace:*",
+    "@mcat/passage-of-day": "workspace:*",
+    "@mcat/persistence-postgres": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.5",
+    "tsx": "4.23.1",
+    "typescript": "5.7.3",
+    "vitest": "3.2.6"
+  }
+}

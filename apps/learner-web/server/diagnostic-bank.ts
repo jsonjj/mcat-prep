@@ -6,7 +6,7 @@ import {
   type LearnerSafeV7Question,
 } from '@mcat/content';
 import { fcForLesson, type DiagnosticCandidate, type FormItem } from '@mcat/policies';
-import { loadPulledCorpus } from './db-pull';
+import { loadPulledCorpus } from '@mcat/corpus-pull';
 
 /**
  * Server-side diagnostic bank. Built once from the v7 fixture corpus. This module
@@ -41,7 +41,7 @@ const SECTION_TITLE: Readonly<Record<Section, string>> = {
 // ---------------------------------------------------------------------------
 // Real bank loader (production_candidate corpus pulled from Postgres).
 //
-// Maps the gitignored local pull (read by ./db-pull) into diagnostic items. If
+// Maps the gitignored local pull (read by @mcat/corpus-pull) into diagnostic items. If
 // the pull is absent or malformed, the bank falls back to the synthetic fixture
 // so the app still runs. Answer material stays server-side (Node-only module).
 // ---------------------------------------------------------------------------

@@ -6,7 +6,14 @@ export type PostgresPool = Pool;
 
 export interface PostgresPoolOptions {
   readonly connectionString: string;
-  readonly tls?: false | { readonly ca?: string };
+  /**
+   * `rejectUnauthorized` defaults to true and every deployed caller leaves it
+   * there. It is settable because a managed Postgres whose CA is not installed
+   * locally (Supabase's Session pooler) otherwise cannot be reached at all — the
+   * transport is still TLS, only the chain check is skipped, and it is a property
+   * of one connection rather than of how the API trusts anybody.
+   */
+  readonly tls?: false | { readonly ca?: string; readonly rejectUnauthorized?: boolean };
   readonly applicationName?: string;
   readonly maxConnections?: number;
   readonly connectionTimeoutMs?: number;
@@ -79,7 +86,7 @@ export function createPgPool(options: PostgresPoolOptions): PostgresPool {
     options.tls === false
       ? false
       : {
-          rejectUnauthorized: true,
+          rejectUnauthorized: options.tls?.rejectUnauthorized ?? true,
           ...(options.tls?.ca === undefined ? {} : { ca: options.tls.ca }),
         };
 

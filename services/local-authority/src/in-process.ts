@@ -75,8 +75,15 @@ export class InProcessAuthorityClient implements AuthorityPort {
     return result;
   }
 
-  async bootstrap(): Promise<BootstrapResponse> {
-    return BootstrapResponseSchema.parse(this.mutate((state) => this.authority.bootstrap(state)));
+  /**
+   * Always authenticated. This harness has no credential store and serves a single
+   * fixed learner, so there is no signed-out arm to return.
+   */
+  async bootstrap(): Promise<BootstrapResponse & { authenticated: true }> {
+    const response = BootstrapResponseSchema.parse(
+      this.mutate((state) => this.authority.bootstrap(state)),
+    );
+    return { ...response, authenticated: true };
   }
 
   async getDiagnosticNext() {

@@ -13,6 +13,7 @@ export default defineWorkspace([
         'packages/content/**/*.test.ts',
         'packages/authority-core/**/*.test.ts',
         'packages/client-core/**/*.test.ts',
+        'packages/corpus-pull/**/*.test.ts',
         'packages/recall-core/**/*.test.ts',
         'packages/ai-gateway/**/*.test.ts',
         'packages/cars-generation/**/*.test.ts',

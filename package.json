@@ -11,9 +11,11 @@
   "type": "module",
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
+    "dev": "pnpm --filter @mcat/local-learner-api run ensure-env && VITE_AUTHORITY_LOCAL=1 pnpm --parallel --filter @mcat/local-learner-api --filter @mcat/learner-web run dev",
+    "dev:offline": "turbo run dev --parallel --filter=!@mcat/local-learner-api",
     "dev:lesson": "VITE_AUTHORITY_BASE_URL=http://127.0.0.1:8787 pnpm --parallel --filter @mcat/local-authority --filter @mcat/learner-web run dev",
     "dev:local": "cp -n apps/learner-web/.env.example apps/learner-web/.env.local 2>/dev/null; pnpm install --prefer-offline && pnpm --filter @mcat/learner-web dev",
+    "db:migrate": "pnpm --filter @mcat/local-learner-api run migrate",
     "typecheck": "turbo run typecheck",
     "lint": "eslint .",
     "test": "vitest run",
@@ -26,6 +28,7 @@
     "passages:ingest": "pnpm --filter @mcat/passage-cli start ingest",
     "passages:seed": "pnpm --filter @mcat/passage-cli start seed",
     "questions:ingest": "pnpm --filter @mcat/questions-cli start ingest",
+    "supabase:sync-jwks": "pnpm --filter @mcat/learner-api run sync-jwks",
     "scan:protected": "node tools/scanners/protected-field-scan.mjs",
     "scan:vector-lesson-bundle": "node tools/scanners/vector-lesson-bundle-scan.mjs",
     "verify": "pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run scan:protected"

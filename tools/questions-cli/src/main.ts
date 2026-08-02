@@ -32,8 +32,8 @@ import { createDatabasePoolFromEnv, upsertQuestions } from '@mcat/persistence-po
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
-// Must match apps/learner-web/server/db-pull.ts `dbPullDir()`. Kept in sync by
-// hand so neither the app server nor this tool has to depend on the other.
+// Must match `dbPullDir()` in packages/corpus-pull. Kept in sync by hand so
+// neither the reader package nor this tool has to depend on the other.
 const STORE_DIR = join(REPO_ROOT, 'content', 'question-bank', '.local', 'db-pull');
 const STORE_QUESTIONS = join(STORE_DIR, 'questions.json');
 const STORE_PROTECTED = join(STORE_DIR, 'protected.json');
