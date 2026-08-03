@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url';
+
 import {
   CfnOutput,
   Duration,
@@ -17,6 +19,18 @@ import {
   aws_wafv2 as wafv2,
 } from 'aws-cdk-lib';
 import type { Construct } from 'constructs';
+
+// The vendored lesson catalog the learner runtime reads through its one content
+// seam. It is copied INTO the learner Lambda bundle (see the function's
+// `commandHooks` below) and located at runtime via the `LESSON_CONTENT_ROOT`
+// environment variable, because the runtime resolves several lessons EAGERLY at
+// module load (e.g. the L1 vector lesson's definition hash and authored
+// bindings) — an empty catalog would crash the handler on load, not merely serve
+// empty lessons.
+const LEARNER_CONTENT_LESSONS_DIRECTORY = fileURLToPath(
+  new URL('../../../content/lessons', import.meta.url),
+);
+const LAMBDA_CONTENT_LESSONS_PATH = '/var/task/content/lessons';
 
 import type { EnvironmentConfig } from '../config/environments.js';
 import {
@@ -120,11 +134,27 @@ export class ApiStack extends Stack {
         }),
         NODE_EXTRA_CA_CERTS: '/var/runtime/ca-cert.pem',
         NODE_OPTIONS: '--enable-source-maps',
+        // The vendored lesson catalog is bundled next to the handler (commandHooks
+        // below); point the content provider at it. Without this the provider
+        // resolves a repo-relative path that does not exist under /var/task, and
+        // the runtime's eager L1-lesson resolution crashes the handler on load.
+        LESSON_CONTENT_ROOT: LAMBDA_CONTENT_LESSONS_PATH,
       },
       bundling: {
         target: 'node22',
         minify: true,
         sourceMap: false,
+        // Vendor the lesson catalog into the asset so the read-only provider finds
+        // it at LESSON_CONTENT_ROOT. Copy the directory INTO an existing parent
+        // (portable across GNU/BSD cp) so it lands at <asset>/content/lessons.
+        commandHooks: {
+          beforeBundling: () => [],
+          beforeInstall: () => [],
+          afterBundling: (_inputDir, outputDir) => [
+            `mkdir -p ${shellQuote(`${outputDir}/content`)}`,
+            `cp -R ${shellQuote(LEARNER_CONTENT_LESSONS_DIRECTORY)} ${shellQuote(`${outputDir}/content/`)}`,
+          ],
+        },
       },
     });
     props.data.learnerApiDbSecret.grantRead(learnerHandler);
@@ -337,6 +367,10 @@ export class ApiStack extends Stack {
       adminOrigin: delivery.adminOrigin,
     };
   }
+}
+
+function shellQuote(value: string): string {
+  return `'${value.replaceAll("'", `'\\''`)}'`;
 }
 
 function managedRule(

@@ -112,22 +112,32 @@ export class AnswerKeyResolutionError extends Error {
   }
 }
 
-// The vendored catalog root, resolved relative to THIS module so the provider is
-// cwd-independent (services/lambdas/learner-api/src -> repo root -> content/lessons).
-const DEFAULT_CONTENT_ROOT = join(
-  dirname(fileURLToPath(import.meta.url)),
-  '..',
-  '..',
-  '..',
-  '..',
-  'content',
-  'lessons',
-);
+// This module's own directory, resolved so the provider works BOTH under ESM
+// (dev/tests/tsx, where `import.meta.url` is defined and `__dirname` is not) AND
+// inside the CommonJS Lambda bundle esbuild emits (where `__dirname` is the real
+// Node global and `import.meta` is empty). Referencing `import.meta.url` unguarded
+// at module scope is exactly what crashed the deployed handler on load
+// (`fileURLToPath(undefined)`); the `__dirname` guard selects the CJS global first
+// and never evaluates the ESM-only branch in a bundle.
+function moduleDirname(): string {
+  return typeof __dirname === 'string' ? __dirname : dirname(fileURLToPath(import.meta.url));
+}
+
+// The vendored catalog root. In the deployed Lambda the catalog is copied next to
+// the handler and pointed at by `LESSON_CONTENT_ROOT` (see the learner function's
+// bundling in `infra/cdk/lib/api-stack.ts`); in dev and tests it resolves relative
+// to this module (services/lambdas/learner-api/src -> repo root -> content/lessons)
+// so the provider stays cwd-independent.
+const DEFAULT_CONTENT_ROOT =
+  process.env.LESSON_CONTENT_ROOT ??
+  join(moduleDirname(), '..', '..', '..', '..', 'content', 'lessons');
 
 type JsonRecord = Record<string, unknown>;
 
 const asRecord = (value: unknown): JsonRecord | undefined =>
-  value !== null && typeof value === 'object' && !Array.isArray(value) ? (value as JsonRecord) : undefined;
+  value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? (value as JsonRecord)
+    : undefined;
 
 const asArray = (value: unknown): readonly unknown[] => (Array.isArray(value) ? value : []);
 
@@ -154,10 +164,13 @@ function resolveL1Answer(lessonId: string, item: NormalizedItem): ServerItemAnsw
   // L1 keeps its key in code (no protected-items.json): a letter per item_binding_id.
   const record = VECTOR_LESSON_PROTECTED_ANSWERS[item.itemId];
   if (record === undefined) {
-    throw new AnswerKeyResolutionError(`L1 item "${item.itemId}" has no entry in the protected answer authority`, {
-      lessonId,
-      itemId: item.itemId,
-    });
+    throw new AnswerKeyResolutionError(
+      `L1 item "${item.itemId}" has no entry in the protected answer authority`,
+      {
+        lessonId,
+        itemId: item.itemId,
+      },
+    );
   }
   const choice = item.projection.choices.find((c) => c.choiceId === record.correctChoiceId);
   if (choice === undefined) {
@@ -193,9 +206,13 @@ function buildL2Index(artifacts: RawLessonArtifacts): Map<string, L2ProtectedRec
           ? rec.prompt_ref
           : undefined;
     if (key === undefined) continue;
-    const accepted = asArray(rec.accepted_responses).filter((x): x is string => typeof x === 'string');
+    const accepted = asArray(rec.accepted_responses).filter(
+      (x): x is string => typeof x === 'string',
+    );
     const correct = typeof rec.correct_response === 'string' ? rec.correct_response : undefined;
-    const acceptedResponses = [...new Set([...(correct !== undefined ? [correct] : []), ...accepted])];
+    const acceptedResponses = [
+      ...new Set([...(correct !== undefined ? [correct] : []), ...accepted]),
+    ];
     const rationale =
       typeof rec.rationale === 'string'
         ? rec.rationale
@@ -262,7 +279,8 @@ function buildL3Index(artifacts: RawLessonArtifacts): Map<string, L3ProtectedRec
     if (rec === undefined) continue;
     if (typeof rec.answer_record_id !== 'string') continue;
     index.set(rec.answer_record_id, {
-      correctOptionIndex: typeof rec.correct_option_index === 'number' ? rec.correct_option_index : undefined,
+      correctOptionIndex:
+        typeof rec.correct_option_index === 'number' ? rec.correct_option_index : undefined,
       responseAuthority: asRecord(rec.response_authority),
       rationale: typeof rec.rationale === 'string' ? rec.rationale : null,
     });
@@ -277,10 +295,13 @@ function resolveL3Answer(
 ): ServerItemAnswer {
   const record = index.get(item.itemId);
   if (record === undefined) {
-    throw new AnswerKeyResolutionError(`L3 item "${item.itemId}" has no protected record (by answer_record_id)`, {
-      lessonId,
-      itemId: item.itemId,
-    });
+    throw new AnswerKeyResolutionError(
+      `L3 item "${item.itemId}" has no protected record (by answer_record_id)`,
+      {
+        lessonId,
+        itemId: item.itemId,
+      },
+    );
   }
   const base = {
     itemId: item.itemId,
@@ -309,14 +330,22 @@ function resolveL3Answer(
         { lessonId, itemId: item.itemId },
       );
     }
-    return { ...base, correctChoiceId: null, acceptedResponses: accepted, structuredAuthority: record.responseAuthority };
+    return {
+      ...base,
+      correctChoiceId: null,
+      acceptedResponses: accepted,
+      structuredAuthority: record.responseAuthority,
+    };
   }
 
   if (!Number.isInteger(record.correctOptionIndex)) {
-    throw new AnswerKeyResolutionError(`L3 item "${item.itemId}" has a non-integer correct_option_index`, {
-      lessonId,
-      itemId: item.itemId,
-    });
+    throw new AnswerKeyResolutionError(
+      `L3 item "${item.itemId}" has a non-integer correct_option_index`,
+      {
+        lessonId,
+        itemId: item.itemId,
+      },
+    );
   }
   const choice = item.projection.choices.find((c) => c.ordinal === record.correctOptionIndex);
   if (choice === undefined) {
@@ -328,7 +357,10 @@ function resolveL3Answer(
   return { ...base, correctChoiceId: choice.choiceId, acceptedResponses: [choice.text] };
 }
 
-function buildAnswerKey(normalized: NormalizedLesson, artifacts: RawLessonArtifacts): ServerAnswerKey {
+function buildAnswerKey(
+  normalized: NormalizedLesson,
+  artifacts: RawLessonArtifacts,
+): ServerAnswerKey {
   const scored = normalized.items.filter((item) => item.scored);
   const byItemId: Record<string, ServerItemAnswer> = {};
   switch (normalized.grammar) {
@@ -337,12 +369,14 @@ function buildAnswerKey(normalized: NormalizedLesson, artifacts: RawLessonArtifa
       break;
     case 'L2_PROMPTREF': {
       const index = buildL2Index(artifacts);
-      for (const item of scored) byItemId[item.itemId] = resolveL2Answer(normalized.lessonId, item, index);
+      for (const item of scored)
+        byItemId[item.itemId] = resolveL2Answer(normalized.lessonId, item, index);
       break;
     }
     case 'L3_PROJECTIONREF': {
       const index = buildL3Index(artifacts);
-      for (const item of scored) byItemId[item.itemId] = resolveL3Answer(normalized.lessonId, item, index);
+      for (const item of scored)
+        byItemId[item.itemId] = resolveL3Answer(normalized.lessonId, item, index);
       break;
     }
   }
@@ -354,7 +388,9 @@ function buildAnswerKey(normalized: NormalizedLesson, artifacts: RawLessonArtifa
  * `lesson-script.json`, keyed by the script's own `payload.lesson_id`.
  * Normalization and answer keys are resolved lazily and cached.
  */
-export function createRepoLessonContentProvider(contentRoot: string = DEFAULT_CONTENT_ROOT): LessonContentProvider {
+export function createRepoLessonContentProvider(
+  contentRoot: string = DEFAULT_CONTENT_ROOT,
+): LessonContentProvider {
   const dirById = new Map<string, string>();
   if (existsSync(contentRoot)) {
     for (const entry of readdirSync(contentRoot, { withFileTypes: true })) {
@@ -407,7 +443,8 @@ export function createRepoLessonContentProvider(contentRoot: string = DEFAULT_CO
         .filter((entry): entry is JsonRecord => entry !== undefined);
       const value: AuthoredLessonBindings = {
         lessonId,
-        artifactVersion: typeof script?.artifact_version === 'string' ? script.artifact_version : undefined,
+        artifactVersion:
+          typeof script?.artifact_version === 'string' ? script.artifact_version : undefined,
         entries,
       };
       authoringCache.set(lessonId, value);

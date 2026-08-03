@@ -64,7 +64,12 @@ export interface PulledCorpus {
 
 /** Where the pull lives, relative to this module (packages/corpus-pull/src). */
 export function dbPullDir(): string {
-  const here = dirname(fileURLToPath(import.meta.url));
+  // Resolve this module's directory under BOTH ESM (dev/tests/tsx, where
+  // `import.meta.url` is defined) AND a CommonJS esbuild bundle (where `__dirname`
+  // is the real Node global and `import.meta` is empty). Without the `__dirname`
+  // guard this throws `fileURLToPath(undefined)` when bundled into the learner
+  // Lambda as CJS.
+  const here = typeof __dirname === 'string' ? __dirname : dirname(fileURLToPath(import.meta.url));
   // packages/corpus-pull/src → repo root
   return join(here, '..', '..', '..', 'content', 'question-bank', '.local', 'db-pull');
 }
