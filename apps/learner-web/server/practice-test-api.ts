@@ -20,7 +20,7 @@ import {
   DiagnosticSessionError,
   DiagnosticSessionStore,
   type SessionRecord,
-} from './diagnostic-session-store';
+} from '@mcat/diagnostic-runner';
 import {
   bankSupportsPracticeTest,
   recordPracticeTestBlock,

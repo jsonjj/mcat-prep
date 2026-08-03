@@ -1,8 +1,15 @@
+import { readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { aiConfigFromEnv } from '@mcat/ai-gateway/server';
 import { Authority } from '@mcat/authority-core';
-import { systemClock } from '@mcat/contracts';
+import {
+  PassageOfTheDayEntrySchema,
+  systemClock,
+  type PassageOfTheDayEntry,
+} from '@mcat/contracts';
 import { createFilePracticeBankPort } from '@mcat/corpus-pull';
 import {
   SupabaseIdentityProvider,
@@ -20,6 +27,8 @@ import {
   PostgresFixedWindowRateLimiter,
   PostgresGuestSessionService,
   createPgPool,
+  listPassages,
+  type PostgresPool,
 } from '@mcat/persistence-postgres';
 
 import { hardcodedPassagePool } from '../../../content/passage-of-the-day/pool';
@@ -46,10 +55,13 @@ import {
  *
  *  - Configuration is plain environment variables, not Secrets Manager. This
  *    process has no AWS credentials and needs none.
- *  - Question content comes from the local corpus pull and the hardcoded passage
- *    pool, never from the database. The database behind a local run is a hosted
- *    Supabase project, and `question_protected` holds answer keys; the learner
+ *  - QUESTION content comes from the local corpus pull, not the database: the
+ *    `question_protected` answer keys live only in the pull, and the learner
  *    tables have no foreign key to `questions`, so the split costs nothing.
+ *    PASSAGE content, by contrast, is read from the `passages` table exactly like
+ *    the deployed Lambda (see `createPassagePort`), so Passage of the Day serves
+ *    the same DB pool in every runtime mode — degrading to the local dev store /
+ *    hardcoded seed only when the table is empty or unreadable.
  */
 
 const say = (line: string): void => {
@@ -62,18 +74,92 @@ const logger: SafeLogger = {
   },
 };
 
+/** Repo root, from `services/local-learner-api/src` → three levels up. */
+function repoRoot(): string {
+  return join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+}
+
 /**
- * Formative Passage of the Day over the vetted pool compiled into
- * `content/passage-of-the-day/pool.ts`. The deployed runtime reads the
- * `passages` table instead; here that table would be content in a database that
- * is meant to hold none, and the hardcoded pool is the same fallback a fresh
- * clone already uses.
+ * The gitignored local dev store the in-process/offline loader also reads
+ * (`content/passage-of-the-day/.local/passages.json`) — the ingest target for a
+ * developer with no database. Returns null when it is absent, empty, or malformed
+ * so a bad hand-edit degrades to the hardcoded pool rather than taking the feature
+ * down (mirrors `apps/learner-web/server/passage-store-file.ts`).
  */
-function createPassagePort(): PassagePort {
-  const service = new PassageOfDayService(hardcodedPassagePool());
+function loadLocalPassageStore(): readonly PassageOfTheDayEntry[] | null {
+  const path = join(repoRoot(), 'content', 'passage-of-the-day', '.local', 'passages.json');
+  let raw: unknown;
+  try {
+    raw = JSON.parse(readFileSync(path, 'utf8'));
+  } catch {
+    return null;
+  }
+  if (!Array.isArray(raw) || raw.length === 0) return null;
+  const parsed = PassageOfTheDayEntrySchema.array().safeParse(raw);
+  return parsed.success ? parsed.data : null;
+}
+
+/**
+ * Resolve the passage pool with the SAME precedence the in-process dev loader
+ * (`apps/learner-web/server/passage-pool-source.ts`) uses, so every runtime mode
+ * shares one resolution:
+ *   1. the `passages` table — the deployed article, mirroring the Lambda's
+ *      `createPassagePort` (`listPassages` over the pool),
+ *   2. the gitignored local dev store, then
+ *   3. the hardcoded seed pool.
+ * An empty/unreadable table degrades to the store / hardcoded pool rather than
+ * "no passage today", so the real local stack still serves something offline.
+ */
+async function resolvePassageEntries(
+  pool: PostgresPool,
+): Promise<readonly PassageOfTheDayEntry[]> {
+  try {
+    const entries = await listPassages(pool);
+    if (entries.length > 0) {
+      say(`[local-api] passages: postgres — ${entries.length} passages.`);
+      return entries;
+    }
+    say('[local-api] passages: table empty — falling back to local store / hardcoded pool.');
+  } catch (error) {
+    say(
+      `[local-api] passages: table read failed (${
+        error instanceof Error ? error.message : String(error)
+      }) — falling back to local store / hardcoded pool.`,
+    );
+  }
+  const stored = loadLocalPassageStore();
+  if (stored !== null && stored.length > 0) {
+    say(`[local-api] passages: local store — ${stored.length} passages.`);
+    return stored;
+  }
+  const hardcoded = hardcodedPassagePool();
+  say(`[local-api] passages: hardcoded pool — ${hardcoded.length} passages.`);
+  return hardcoded;
+}
+
+/**
+ * Formative Passage of the Day, now DB-first (parity with the deployed Lambda and
+ * the offline dev loader). The pool is resolved once and memoized; the shared
+ * `@mcat/passage-of-day` service still owns the learner-safe projection and
+ * server-only grading, so no answer key crosses the wire. A failed build is not
+ * cached, so a transient DB error retries on the next request.
+ */
+function createPassagePort(pool: PostgresPool): PassagePort {
+  let servicePromise: Promise<PassageOfDayService> | undefined;
+  const service = (): Promise<PassageOfDayService> => {
+    if (servicePromise === undefined) {
+      servicePromise = resolvePassageEntries(pool)
+        .then((entries) => new PassageOfDayService(entries))
+        .catch((error: unknown) => {
+          servicePromise = undefined;
+          throw error;
+        });
+    }
+    return servicePromise;
+  };
   return {
-    today: async (tzMinutes) => service.todayView(new Date(), tzMinutes),
-    grade: async (questionId, choiceId) => service.grade(questionId, choiceId),
+    today: async (tzMinutes) => (await service()).todayView(new Date(), tzMinutes),
+    grade: async (questionId, choiceId) => (await service()).grade(questionId, choiceId),
   };
 }
 
@@ -147,7 +233,7 @@ async function createRuntime(): Promise<{ api: LearnerApi; port: number; origin:
     allowedOrigins: [environment.learnerWebOrigin],
     logger,
     aiConfig: aiConfigFromEnv(process.env),
-    passage: createPassagePort(),
+    passage: createPassagePort(pool),
   });
 
   return { api, port: environment.port, origin: environment.learnerWebOrigin };

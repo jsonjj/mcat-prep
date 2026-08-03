@@ -146,8 +146,12 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       aiApiPlugin(env),
-      authorityApiPlugin(),
+      // Before the dev authority plugin's `/v1` mount so `/v1/diagnostic/*` is
+      // answered by the in-memory diagnostic (same package as prod) rather than
+      // being swallowed by the catch-all `/v1` authority handler — the same
+      // ordering the AI plugin relies on for `/v1/ai/*`.
       diagnosticApiPlugin(),
+      authorityApiPlugin(),
       passageApiPlugin(),
       practiceTestApiPlugin(),
     ],

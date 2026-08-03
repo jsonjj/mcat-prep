@@ -1,9 +1,13 @@
 /**
- * Browser client for the diagnostic API (served by the dev/preview Vite plugin,
- * and by an API Gateway route in production). It only ever sends a session token,
- * a one-use block token, and the learner's choices; it never receives an answer
- * key or per-item correctness. The session token is kept in `sessionStorage` so
- * an interrupted diagnostic resumes exactly where it left off.
+ * Browser client for the placement diagnostic. It talks to the SAME deployed
+ * learner-API the rest of the app uses — `POST {authority}/v1/diagnostic/next`
+ * and `/block`, with `credentials: 'include'` so the session cookie (and, in
+ * prod, the CloudFront-injected `x-mcat-origin-verify`) ride along — rather than
+ * a bespoke same-origin `/api/*` path. The dev/preview server answers the same
+ * `/v1/diagnostic/*` routes in-process. It only ever sends a session token, a
+ * one-use block token, and the learner's choices; it never receives an answer key
+ * or per-item correctness. The session token is kept in `sessionStorage` so an
+ * interrupted diagnostic resumes exactly where it left off.
  *
  * Delivery is by block: the server serves a whole multistage stage, the learner
  * moves around inside it and revises freely, and one commit scores the block and
@@ -111,7 +115,27 @@ interface WireResponse extends DiagnosticBlockView {
 
 const SESSION_KEY = 'mcat.diagnostic.session';
 const DRAFT_PREFIX = 'mcat.diagnostic.draft.';
-const BASE = '/api/diagnostic';
+
+/**
+ * The diagnostic base URL, resolved exactly like the shared authority client
+ * (`app/authority.ts`) so both hit the same origin with the same cookie auth:
+ * in a production build the configured absolute API origin; in dev a relative
+ * `/` routes same-origin through the Vite server (and its `/v1/diagnostic/*`
+ * middleware), while an absolute value (e.g. `dev:lesson`) points at the local
+ * authority. Resolved without throwing so importing this module never requires
+ * the env at load time — the app itself still requires it via `authority.ts`.
+ */
+function resolveDiagnosticBase(): string {
+  const configured = import.meta.env.VITE_AUTHORITY_BASE_URL;
+  if (typeof configured !== 'string' || configured === '') return '/v1/diagnostic';
+  const origin =
+    import.meta.env.DEV && configured.startsWith('/') && typeof window !== 'undefined'
+      ? new URL(configured, window.location.origin).toString()
+      : configured;
+  return `${origin.replace(/\/$/, '')}/v1/diagnostic`;
+}
+
+const BASE = resolveDiagnosticBase();
 
 class DiagnosticApiError extends Error {}
 
@@ -185,6 +209,9 @@ export class DiagnosticClient {
       method: 'POST',
       headers: { 'content-type': 'application/json', accept: 'application/json' },
       cache: 'no-store',
+      // Send the session cookie (and, in prod, let CloudFront add x-mcat-origin-verify)
+      // exactly as the shared authority client does — the diagnostic is session-gated.
+      credentials: 'include',
       body: JSON.stringify(body),
     });
     let json: unknown;
@@ -194,10 +221,16 @@ export class DiagnosticClient {
       throw new DiagnosticApiError('The diagnostic service returned an invalid response.');
     }
     if (!response.ok) {
+      // Dev returns `{ error }`; the deployed API returns the shared
+      // `{ code, message, … }` error body — accept either so the message reads
+      // the same in both.
+      const body = json as { error?: unknown; message?: unknown };
       const message =
-        typeof (json as { error?: unknown }).error === 'string'
-          ? (json as { error: string }).error
-          : 'The diagnostic service is unavailable.';
+        typeof body.error === 'string'
+          ? body.error
+          : typeof body.message === 'string'
+            ? body.message
+            : 'The diagnostic service is unavailable.';
       // A stale/expired session should restart cleanly.
       if (response.status === 401) this.reset();
       throw new DiagnosticApiError(message);

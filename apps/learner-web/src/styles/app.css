@@ -692,55 +692,6 @@ body {
   margin-top: var(--mc-space-2);
 }
 
-/* Ghost pace companion — supportive, compact, never alarming. */
-.mc-ghost {
-  display: flex;
-  align-items: center;
-  gap: var(--mc-space-3);
-  width: 100%;
-  max-width: 540px;
-  margin: 0 auto;
-  padding: var(--mc-space-2) var(--mc-space-4);
-  border-radius: var(--mc-radius-pill);
-  text-align: left;
-  background: color-mix(in srgb, var(--mc-surface) 55%, transparent);
-  border: 1px solid color-mix(in srgb, #ffffff 35%, var(--mc-border));
-  backdrop-filter: blur(10px);
-}
-.mc-ghost__orb {
-  flex: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--mc-glow-aqua), var(--mc-primary));
-  box-shadow: 0 0 14px color-mix(in srgb, var(--mc-primary) 40%, transparent);
-}
-.mc-ghost--behind .mc-ghost__orb,
-.mc-ghost--idle .mc-ghost__orb {
-  background: radial-gradient(circle at 35% 30%, var(--mc-glow-cream), #c9922f);
-}
-.mc-ghost__body {
-  flex: 1;
-  min-width: 0;
-}
-.mc-ghost__headline {
-  font-weight: 700;
-  font-size: var(--mc-text-14);
-}
-.mc-ghost__message {
-  color: var(--mc-ink-muted);
-  font-size: var(--mc-text-12);
-  line-height: var(--mc-leading-snug, 1.35);
-}
-.mc-ghost__cta {
-  flex: none;
-  color: var(--mc-primary-text);
-  text-decoration: none;
-  font-weight: 700;
-  font-size: var(--mc-text-14);
-  white-space: nowrap;
-}
-
 /* Secondary daily card (Passage of the Day) — deliberately quieter than Up Next. */
 .mc-daily {
   display: flex;
@@ -790,6 +741,14 @@ body {
 .mc-wrappedcard__dismiss {
   padding: 0;
   font-size: var(--mc-text-12);
+}
+.mc-wrappedcard__cta {
+  flex: none;
+  color: var(--mc-primary-text);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: var(--mc-text-14);
+  white-space: nowrap;
 }
 .mc-home__plan {
   display: flex;
@@ -888,7 +847,7 @@ body {
 .mc-landing__grid {
   display: grid;
   gap: var(--mc-space-4);
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 .mc-landing__card-icon {
   width: 28px;
@@ -922,7 +881,7 @@ body {
     font-size: clamp(2.5rem, 3.4vw, 3.2rem);
   }
   .mc-landing__grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -1173,7 +1132,112 @@ body {
   font-size: var(--mc-text-14, inherit);
 }
 
+/* ---- Onboarding: "what to expect" list ---- */
+.mc-expect {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--mc-space-2);
+}
+.mc-expect li {
+  position: relative;
+  padding-left: calc(var(--mc-space-4) + 1.4em);
+  color: var(--mc-ink);
+  line-height: 1.4;
+}
+.mc-expect li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: var(--mc-radius-pill);
+  background: color-mix(in srgb, var(--mc-primary) 16%, transparent);
+  color: var(--mc-primary-text);
+  font-size: 0.8em;
+  font-weight: 700;
+}
+
 /* ---- Diagnostic ---- */
+.mc-diag-progresslabel {
+  margin: 0;
+  text-align: right;
+}
+
+/* ---- Onboarding: guided step indicator ---- */
+.mc-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mc-space-3);
+}
+.mc-steps__label {
+  font-family: var(--mc-font-mono, monospace);
+  font-size: var(--mc-text-12, 0.72rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mc-ink-muted, var(--mc-ink));
+}
+.mc-steps__pills {
+  display: inline-flex;
+  gap: 6px;
+}
+.mc-steps__pill {
+  width: 22px;
+  height: 6px;
+  border-radius: var(--mc-radius-pill, 999px);
+  background: color-mix(in srgb, var(--mc-ink) 14%, transparent);
+  transition: background 0.2s ease;
+}
+.mc-steps__pill.is-active {
+  background: var(--mc-primary);
+}
+.mc-steps__pill.is-done {
+  background: color-mix(in srgb, var(--mc-primary) 55%, transparent);
+}
+
+/* ---- Onboarding: themed shell (glass card on the gradient + faint brain) ---- */
+.mc-onboarding--themed {
+  position: relative;
+}
+.mc-onboarding--themed::before {
+  content: '';
+  position: fixed;
+  left: -5%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(42vw, 540px);
+  height: min(68vh, 600px);
+  background: url('/assets/brain-hero.png') center / contain no-repeat;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+}
+.mc-onboarding--themed > * {
+  position: relative;
+  z-index: 1;
+}
+.mc-onboard__card {
+  background: color-mix(in srgb, var(--mc-surface) 74%, transparent);
+  backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in srgb, #ffffff 45%, var(--mc-border));
+}
+@media (max-width: 720px) {
+  .mc-onboarding--themed::before {
+    display: none;
+  }
+}
+
+/* ---- Onboarding: hero CTA (thicker, bigger text) ---- */
+.mc-cta-hero > button {
+  min-height: 60px;
+  font-size: var(--mc-text-19, 1.2rem);
+  font-weight: 700;
+}
 .mc-diag-section {
   font-family: var(--mc-font-mono);
   font-size: 0.8rem;
@@ -1828,27 +1892,6 @@ body {
   font-family: var(--mc-font-display);
   font-size: var(--mc-text-22);
   margin-bottom: 4px;
-}
-.mc-ghostbar {
-  height: 10px;
-  border-radius: var(--mc-radius-pill);
-  background: var(--mc-surface-2);
-  position: relative;
-  overflow: hidden;
-}
-.mc-ghostbar > span {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  border-radius: inherit;
-}
-.mc-ghostbar__you {
-  left: 0;
-  background: var(--mc-primary);
-}
-.mc-ghostbar__ghost {
-  left: 0;
-  background: color-mix(in srgb, var(--mc-retained) 60%, transparent);
 }
 .mc-wrapped {
   display: grid;

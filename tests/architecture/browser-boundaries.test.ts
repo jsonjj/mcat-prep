@@ -12,7 +12,8 @@ const read = (path: string): string => readFileSync(join(root, path), 'utf8');
 // (always quote-terminated), not a bare mention of the package name in prose —
 // so a rationale comment explaining an exemption can name the package without
 // itself satisfying the "still references it" check below.
-const SERVER_ONLY_REFERENCE = /@mcat\/(?:authority-core|content)["']|InProcessAuthorityClient/;
+const SERVER_ONLY_REFERENCE =
+  /@mcat\/(?:authority-core|content|diagnostic-runner)["']|InProcessAuthorityClient/;
 
 /**
  * This boundary protects the SHIPPED BROWSER BUNDLE, not the source tree at

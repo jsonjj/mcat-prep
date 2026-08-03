@@ -6,6 +6,11 @@ import {
   SignOutResponseSchema,
 } from './auth';
 import { AttemptCommandSchema, GoalCommandSchema, GoalViewSchema } from './commands';
+import {
+  DiagnosticBlockRequestSchema,
+  DiagnosticBlockResponseSchema,
+  DiagnosticNextRequestSchema,
+} from './diagnostic-block';
 import { ErrorCodeSchema } from './errors';
 import { EventIdSchema } from './ids';
 import {
@@ -200,6 +205,24 @@ export const HTTP_API = {
   },
   attempt: { method: 'POST', path: '/v1/attempts', body: AttemptCommandSchema },
   sync: { method: 'POST', path: '/v1/sync', body: SyncSubmitRequestSchema },
+  // Placement DIAGNOSTIC (adaptive multistage). Block-based: `/next` starts or
+  // resumes a session and serves the current block; `/block` commits it (one-use
+  // block token) and serves the next, or the completed result. Both mutate the
+  // learner's own persisted diagnostic session ONLY — no mastery — so like
+  // passageAttempt they are session-gated but not CSRF write-gated. The wire
+  // carries no answer key and no per-item correctness.
+  diagnosticNext: {
+    method: 'POST',
+    path: '/v1/diagnostic/next',
+    body: DiagnosticNextRequestSchema,
+    response: DiagnosticBlockResponseSchema,
+  },
+  diagnosticBlock: {
+    method: 'POST',
+    path: '/v1/diagnostic/block',
+    body: DiagnosticBlockRequestSchema,
+    response: DiagnosticBlockResponseSchema,
+  },
   // Adaptive Practice (count-based test-out). The queue is path-parameterized
   // (`/v1/practice/queue/{x}` and `/v1/practice/queue/{x}/{focus}`) because the
   // authority edge rejects query strings; the client appends the segments. The

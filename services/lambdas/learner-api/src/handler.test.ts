@@ -8,6 +8,14 @@ import { fixedClock } from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 
 import { createRepositoryLearnerApi, type PassagePort } from './handler';
+import {
+  DiagnosticBank,
+  InMemoryDiagnosticSessions,
+  serveDiagnosticBlock,
+  serveDiagnosticNext,
+} from '@mcat/diagnostic-runner';
+import { buildDiagnosticBank } from '@mcat/content';
+import type { DiagnosticPort } from './diagnostic-port';
 import { createLinkedSessionDouble } from './test-support/linked-session';
 import type { ApiGatewayV1Event, ApiGatewayV2Event, RateLimitInput, SafeLogEvent } from './http';
 import { allowedMethodsFor, routeFor } from './routes';
@@ -125,6 +133,7 @@ function harness(
     state?: 'diagnostic' | 'lesson' | 'question' | 'recall';
     aiConfig?: AiProxyConfig;
     passage?: PassagePort;
+    diagnostic?: DiagnosticPort;
   } = {},
 ) {
   const authority = new Authority(undefined, clock);
@@ -169,6 +178,7 @@ function harness(
     ...(options.maxBodyBytes === undefined ? {} : { maxBodyBytes: options.maxBodyBytes }),
     ...(options.aiConfig === undefined ? {} : { aiConfig: options.aiConfig }),
     ...(options.passage === undefined ? {} : { passage: options.passage }),
+    ...(options.diagnostic === undefined ? {} : { diagnostic: options.diagnostic }),
   });
   return {
     api,
@@ -186,6 +196,35 @@ function harness(
 function responseBody(response: { body?: string }): unknown {
   return JSON.parse(response.body ?? 'null') as unknown;
 }
+
+/**
+ * An in-memory diagnostic port over the SYNTHETIC fixture bank, wired into the
+ * harness exactly as the deployed Postgres-backed port is. It exercises the same
+ * `@mcat/diagnostic-runner` serving core the Lambda uses, so this pins the HTTP
+ * block contract (auth, wire shape, one-use block token, resume) without a DB.
+ */
+function inMemoryDiagnosticPort(): DiagnosticPort {
+  const bank = new DiagnosticBank(buildDiagnosticBank());
+  const sessions = new InMemoryDiagnosticSessions();
+  return {
+    next: (learnerId, body) => serveDiagnosticNext(bank, sessions, learnerId, body),
+    block: (learnerId, body) => serveDiagnosticBlock(bank, sessions, learnerId, body),
+  };
+}
+
+interface DiagnosticWireView {
+  done: boolean;
+  itemsScored: number;
+  stageId: string | null;
+  stageNumber: number;
+  sessionToken: string;
+  blockToken: string | null;
+  questions: { id: string }[];
+  result: { masterySeed: { kcPriors: Record<string, number> } } | null;
+}
+
+const diagnosticView = (response: { body?: string }): DiagnosticWireView =>
+  responseBody(response) as DiagnosticWireView;
 
 describe('Passage of the Day route (formative, off the kernel)', () => {
   let receivedTz: number | undefined;
@@ -506,40 +545,105 @@ describe('learner Lambda API security boundary', () => {
     );
   });
 
-  it('completes the synthetic diagnostic through the authenticated HTTP contract', async () => {
-    const { api, principal, repository } = harness({ state: 'diagnostic' });
-    const authenticated = { origin: APP_ORIGIN, authenticated: true } as const;
+  // The placement diagnostic is now the BLOCK/multistage form, served off the
+  // kernel (like Passage of the Day) over its own persisted session — the legacy
+  // single-question `GET /v1/diagnostic/next` + attempt-based submit is gone.
+  // These pin the new `POST /v1/diagnostic/{next,block}` contract against an
+  // in-memory port over the synthetic fixture bank.
+  it('serves and drives the block diagnostic to a completed, leak-free result', async () => {
+    const { api } = harness({ diagnostic: inMemoryDiagnosticPort() });
+    const authed = { origin: APP_ORIGIN, authenticated: true } as const;
 
-    const next = await api.handle(request('GET', '/v1/diagnostic/next', undefined, authenticated));
-    const nextBody = responseBody(next) as {
-      done: boolean;
-      progress: number;
-      question: { id: string } | null;
-    };
-
-    expect(next.statusCode).toBe(200);
-    expect(nextBody).toMatchObject({ done: false, progress: 0 });
-    expect(nextBody.question?.id).toBe('q-enz-basics-1');
-    expect(JSON.stringify(nextBody)).not.toMatch(/correct_choice_id|rationales|correctChoiceId/i);
-
-    const diagnosticCommand = attemptCommand('q-enz-basics-1', 'A');
-    const answer = await api.handle(
-      request('POST', '/v1/attempts', diagnosticCommand, {
-        ...authenticated,
-        csrf: CSRF_TOKEN,
-      }),
-    );
-    const completed = await api.handle(
-      request('GET', '/v1/diagnostic/next', undefined, authenticated),
+    const started = await api.handle(request('POST', '/v1/diagnostic/next', {}, authed));
+    expect(started.statusCode).toBe(200);
+    let view = diagnosticView(started);
+    expect(view.done).toBe(false);
+    expect(view.stageNumber).toBe(1);
+    expect(view.questions.length).toBeGreaterThan(0);
+    expect(typeof view.sessionToken).toBe('string');
+    expect(typeof view.blockToken).toBe('string');
+    // Learner-safe wire only: no answer key, no per-item correctness, no session
+    // internals beyond the opaque tokens.
+    expect(JSON.stringify(view)).not.toMatch(
+      /correct_answer|explanations|correctChoiceId|"correct"|tokenHash|clientId/i,
     );
 
-    expect(answer.statusCode).toBe(200);
-    expect(responseBody(completed)).toEqual({ done: true, question: null, progress: 1 });
-    expect(repository.eventsFor(principal.learnerId)).toHaveLength(1);
-    expect(repository.projectionFor(principal.learnerId)?.state).toMatchObject({
-      onboarding: { diagnosticComplete: true, planConfirmed: false },
-      evidence: [{ evidenceId: diagnosticCommand.envelope.eventId }],
-    });
+    const servedBlocks: string[][] = [];
+    for (let guard = 0; guard < 20 && !view.done; guard += 1) {
+      servedBlocks.push(view.questions.map((q) => q.id));
+      const answers = Object.fromEntries(view.questions.map((q) => [q.id, 'A']));
+      const committed = await api.handle(
+        request(
+          'POST',
+          '/v1/diagnostic/block',
+          {
+            sessionToken: view.sessionToken,
+            blockToken: view.blockToken,
+            stageId: view.stageId,
+            answers,
+          },
+          authed,
+        ),
+      );
+      expect(committed.statusCode).toBe(200);
+      view = diagnosticView(committed);
+    }
+
+    expect(view.done).toBe(true);
+    expect(view.questions).toEqual([]);
+    expect(view.result).not.toBeNull();
+    // Every served item was scored, and no item was served twice across stages.
+    const allServed = servedBlocks.flat();
+    expect(view.itemsScored).toBe(allServed.length);
+    expect(new Set(allServed).size).toBe(allServed.length);
+    // The one point at which the diagnostic touches mastery is the seed it emits.
+    expect(Object.keys(view.result!.masterySeed.kcPriors).length).toBeGreaterThan(0);
+    expect(JSON.stringify(view.result)).not.toMatch(/correct_answer|explanations|"correct"/i);
+  });
+
+  it('re-serves an open block on resume and refuses a replayed block token', async () => {
+    const { api } = harness({ diagnostic: inMemoryDiagnosticPort() });
+    const authed = { origin: APP_ORIGIN, authenticated: true } as const;
+
+    const first = diagnosticView(await api.handle(request('POST', '/v1/diagnostic/next', {}, authed)));
+
+    // A refresh mid-block: the stage is derived from the response log, so the same
+    // items come back — only the one-use block token is reissued.
+    const resumed = diagnosticView(
+      await api.handle(
+        request('POST', '/v1/diagnostic/next', { sessionToken: first.sessionToken }, authed),
+      ),
+    );
+    expect(resumed.stageId).toBe(first.stageId);
+    expect(resumed.questions.map((q) => q.id)).toEqual(first.questions.map((q) => q.id));
+    expect(resumed.blockToken).not.toBe(first.blockToken);
+
+    const answers = Object.fromEntries(resumed.questions.map((q) => [q.id, 'A']));
+    const commit = (blockToken: string | null) =>
+      api.handle(
+        request(
+          'POST',
+          '/v1/diagnostic/block',
+          { sessionToken: resumed.sessionToken, blockToken, stageId: resumed.stageId, answers },
+          authed,
+        ),
+      );
+
+    const committed = await commit(resumed.blockToken);
+    expect(committed.statusCode).toBe(200);
+    expect(diagnosticView(committed).stageId).not.toBe(first.stageId);
+
+    // Replaying the committed block's token is refused (409) — a committed block
+    // cannot be re-submitted.
+    const replay = await commit(resumed.blockToken);
+    expect(replay.statusCode).toBe(409);
+  });
+
+  it('answers 503 for the diagnostic when no diagnostic backend is configured', async () => {
+    const { api } = harness();
+    const authed = { origin: APP_ORIGIN, authenticated: true } as const;
+    const response = await api.handle(request('POST', '/v1/diagnostic/next', {}, authed));
+    expect(response.statusCode).toBe(503);
   });
 
   /**

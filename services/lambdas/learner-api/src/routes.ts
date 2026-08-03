@@ -6,7 +6,9 @@ import {
   ChoiceIdSchema,
   CommandEnvelopeSchema,
   ContentIdSchema,
-  DiagnosticNextSchema,
+  DiagnosticBlockRequestSchema,
+  DiagnosticBlockResponseSchema,
+  DiagnosticNextRequestSchema,
   ErrorEntryViewSchema,
   GoalCommandSchema,
   GoalViewSchema,
@@ -63,6 +65,7 @@ export type RouteId =
   | 'authSessionExchange'
   | 'authSignOut'
   | 'diagnosticNext'
+  | 'diagnosticBlock'
   | 'goal'
   | 'goalView'
   | 'attempt'
@@ -356,12 +359,29 @@ export const ROUTES: readonly RouteDefinition[] = [
     responseSchema: SignOutResponseSchema,
   },
   {
+    // Placement DIAGNOSTIC (adaptive multistage), block-based. `/next` starts or
+    // resumes a session and serves the current block; `/block` commits it (one-use
+    // block token) and serves the next / the completed result. Both persist the
+    // learner's own diagnostic session ONLY — no mastery — so, like passageAttempt,
+    // they are session + origin-verify gated but NOT `stateChanging` (no CSRF write
+    // gate). The one-use block token is the anti-replay guard, and the served wire
+    // never carries an answer key or per-item correctness.
     id: 'diagnosticNext',
-    method: 'GET',
+    method: 'POST',
     path: '/v1/diagnostic/next',
     auth: 'session',
     stateChanging: false,
-    responseSchema: DiagnosticNextSchema,
+    bodySchema: DiagnosticNextRequestSchema,
+    responseSchema: DiagnosticBlockResponseSchema,
+  },
+  {
+    id: 'diagnosticBlock',
+    method: 'POST',
+    path: '/v1/diagnostic/block',
+    auth: 'session',
+    stateChanging: false,
+    bodySchema: DiagnosticBlockRequestSchema,
+    responseSchema: DiagnosticBlockResponseSchema,
   },
   {
     id: 'goal',

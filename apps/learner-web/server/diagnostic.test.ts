@@ -9,14 +9,15 @@ import {
 } from '@mcat/policies';
 import { buildDiagnosticBank } from '@mcat/content';
 import { MasterySeedSchema } from '@mcat/contracts';
-import { DiagnosticBank } from './diagnostic-bank';
-import { DiagnosticSessionError, DiagnosticSessionStore } from './diagnostic-session-store';
 import {
   bankSupportsProductionForm,
+  DiagnosticBank,
+  DiagnosticSessionError,
+  DiagnosticSessionStore,
   recordBlock,
   REPORTED_PRIORITY_COUNT,
   resolveBlock,
-} from './diagnostic-engine';
+} from '@mcat/diagnostic-runner';
 
 const PROTECTED_FIELDS = ['correct_answer', 'explanations', 'correct_choice_id', 'rationales'];
 
@@ -463,22 +464,44 @@ describe.skipIf(!PRODUCTION_FORM_SERVABLE)('diagnostic engine end-to-end', () =>
     expect(Object.values(outOfScopeByCluster).reduce((s, n) => s + n, 0)).toBe(outOfScope);
   });
 
-  it('buckets the bank exactly as the swept partition profile does', () => {
-    // The sweep's conclusions only apply to what ships if the shipped map cuts
-    // the bank the same way. The comparison is against the FC rows of `fc-15`,
-    // not `fc-10`: only `fc-15` is a partition, resolving a multi-FC lesson to
-    // its first listed concept, which is the rule this map follows. The `fc-10`
-    // column counts a multi-FC question once per concept it carries, so it runs
-    // fat in exactly FC2/FC4/FC5/FC10 and sums to more than the bank holds.
-    const counts: Record<string, [number, number, number]> = {};
+  it('cuts the bank into a clean FC partition that can deal the production form', () => {
+    // The sweep's conclusions only apply to what ships if the shipped map cuts the
+    // bank onto the SAME reporting axis it assumed. What that guards is a clean FC
+    // PARTITION — every in-scope item in exactly one Foundational Concept, on the
+    // axis, at a valid difficulty — that can still deal the production form. The
+    // exact per-DOK census used to be pinned to `BANK_PROFILES['fc-15']`, but that
+    // is a property of whichever corpus this machine loaded: the real pull grows
+    // over time (and the synthetic fallback is frozen), so a frozen census breaks
+    // the moment the bank changes without the axis being wrong. The CI-guard suite
+    // below still pins the SYNTHETIC bank to `fc-15` deterministically; here we
+    // assert the invariant the axis actually owns.
+    const axis = axisIds(FC_AXIS);
+    const axisSet = new Set<string>(axis);
     for (const item of bank.formItems) {
-      const row = (counts[item.bucketId] ??= [0, 0, 0]);
-      row[item.dokLevel - 1] += 1;
+      expect(axisSet.has(item.bucketId), `${item.questionId} → ${item.bucketId} off-axis`).toBe(
+        true,
+      );
+      expect(item.dokLevel, `${item.questionId} dok`).toBeGreaterThanOrEqual(1);
+      expect(item.dokLevel, `${item.questionId} dok`).toBeLessThanOrEqual(3);
     }
-    const partition = Object.fromEntries(
-      axisIds(FC_AXIS).map((id) => [id, BANK_PROFILES['fc-15'][id]]),
-    );
-    expect(counts).toEqual(partition);
+
+    const plan = planMstForm(MST_140_RECOMMENDED, bank.formItems, FC_AXIS);
+    // The plan deals to EXACTLY the axis — nothing off-axis, nothing missing — and
+    // no concept is uncoverable.
+    expect([...plan.itemsPerBucket.keys()]).toEqual(axis);
+    expect(plan.uncoverableBuckets).toEqual([]);
+
+    // Every concept holds at least the design's floor of eligible in-scope items,
+    // so the reporting axis can deal each bucket's share without repeating one.
+    const perBucket = new Map<string, number>();
+    for (const item of bank.formItems) {
+      perBucket.set(item.bucketId, (perBucket.get(item.bucketId) ?? 0) + 1);
+    }
+    for (const bucket of axis) {
+      expect(perBucket.get(bucket) ?? 0, bucket).toBeGreaterThanOrEqual(
+        MST_140_RECOMMENDED.minItemsPerBucket,
+      );
+    }
   });
 
   it('carries a gap, a certainty and an item count for every concept', () => {

@@ -22,6 +22,7 @@ import {
   type SupabaseConfig,
 } from './auth/supabase';
 import { createGuestProjection } from './guest-projection';
+import { createPostgresDiagnosticPort } from './diagnostic-port';
 import { createRepositoryLearnerApi, type LearnerApi, type PassagePort } from './handler';
 import type { LambdaApiGatewayEvent, LambdaApiGatewayResult, SafeLogger } from './http';
 
@@ -334,6 +335,15 @@ async function createRuntime(): Promise<LearnerApi> {
     // hardcoded/file fallback in prod: an empty/unreadable table yields "no passage
     // today" until seeded (pnpm content:seed / passages:seed). Writes no mastery.
     passage: createPassagePort(pool),
+    // Placement DIAGNOSTIC (block/multistage), served through the same
+    // session/origin-verify pipeline as every other /v1 route. The bank is built
+    // once per warm container from the question bank (production_candidate /
+    // published) via the SAME mapping the local pull uses; sessions persist in the
+    // `diagnostic_sessions` table (migration 0021). Writes no mastery — the
+    // diagnostic seeds mastery only through the separate mastery-seed hook. Falls
+    // back to the synthetic fixture if the bank is unseeded so onboarding never
+    // dead-ends (the cold-start content-health probe already flags an unseeded DB).
+    diagnostic: createPostgresDiagnosticPort(pool),
     // Periodic scored practice TEST — GATED OFF in production. The runner the
     // client drives (`/api/practice-test/*`) is served only by the dev/preview
     // Vite plugin; the deployed CloudFront/S3 SPA routes only `/v1/*` to this

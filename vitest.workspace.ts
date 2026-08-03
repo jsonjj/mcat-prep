@@ -11,6 +11,7 @@ export default defineWorkspace([
         'packages/domain/**/*.test.ts',
         'packages/policies/**/*.test.ts',
         'packages/content/**/*.test.ts',
+        'packages/diagnostic-runner/**/*.test.ts',
         'packages/authority-core/**/*.test.ts',
         'packages/client-core/**/*.test.ts',
         'packages/corpus-pull/**/*.test.ts',

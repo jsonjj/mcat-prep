@@ -4,6 +4,7 @@ import { useBootstrap } from '../app/queries';
 import { isDiagnosticCompleted } from '../app/diagnostic-status';
 import { DIAGNOSTIC_ENABLED } from '../app/capabilities';
 import { BrainAtlas } from '../components/BrainAtlas';
+import { OnboardingSteps } from '../components/OnboardingSteps';
 
 /**
  * The first screen behind the login wall. This used to be the public landing page;
@@ -40,6 +41,7 @@ export function OnboardingStart() {
       </div>
       <Card elevated className="mc-welcome__card">
         <Stack gap={4}>
+          <OnboardingSteps current={1} />
           <Eyebrow>MCAT Mastery</Eyebrow>
           <h1 className="mc-welcome__title">One calm next step, backed by your own evidence.</h1>
           <p className="mc-muted">
@@ -47,15 +49,20 @@ export function OnboardingStart() {
               ? 'We start with a short, provisional placement — not a graded test — then build a plan that adapts as you learn. Your progress is private by default.'
               : 'We build a plan that adapts as you learn, then keep sharpening it from your own evidence. Your progress is private by default.'}
           </p>
+          <ul className="mc-expect">
+            <li>A plan that adapts to your own evidence</li>
+            <li>Short daily paths — one clear step at a time</li>
+            <li>Private by default — no scores shared</li>
+          </ul>
           {diagnosticDone ? (
-            <Button variant="primary" size="lg" fullWidth onClick={() => navigate('/app')}>
-              Continue
-            </Button>
+            <div className="mc-cta-hero">
+              <Button variant="primary" size="lg" fullWidth onClick={() => navigate('/app')}>
+                Continue
+              </Button>
+            </div>
           ) : DIAGNOSTIC_ENABLED ? (
-            <>
-              {/* One placement CTA, worded the same first-time and when re-offered:
-                  the copy used to swap on `onboardingComplete`, so the two entry
-                  contexts showed different labels for the identical action. */}
+            // Single placement CTA (Skip removed): the guided flow starts here.
+            <div className="mc-cta-hero">
               <Button
                 variant="primary"
                 size="lg"
@@ -64,17 +71,16 @@ export function OnboardingStart() {
               >
                 Take the placement
               </Button>
-              <Button variant="secondary" size="lg" fullWidth onClick={onSkip}>
-                Skip for now
-              </Button>
-            </>
+            </div>
           ) : (
             // Placement gated off (no deployed diagnostic backend): a single path
             // straight to plan setup, so a new learner in prod never dead-ends on a
             // quiz that cannot load.
-            <Button variant="primary" size="lg" fullWidth onClick={onSkip}>
-              {onboardingComplete ? 'Continue' : 'Build my plan'}
-            </Button>
+            <div className="mc-cta-hero">
+              <Button variant="primary" size="lg" fullWidth onClick={onSkip}>
+                {onboardingComplete ? 'Continue' : 'Build my plan'}
+              </Button>
+            </div>
           )}
           {DIAGNOSTIC_ENABLED ? (
             <p className="mc-fineprint">

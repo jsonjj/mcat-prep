@@ -61,10 +61,10 @@ async function del(path) {
   if (!response.ok) throw new Error(`${path} ${response.status}`);
 }
 
-const next = (sessionToken) => post('/api/diagnostic/next', sessionToken ? { sessionToken } : {});
+const next = (sessionToken) => post('/v1/diagnostic/next', sessionToken ? { sessionToken } : {});
 
 const submit = (view, answers) =>
-  post('/api/diagnostic/block', {
+  post('/v1/diagnostic/block', {
     sessionToken: view.sessionToken,
     blockToken: view.blockToken,
     stageId: view.stageId,

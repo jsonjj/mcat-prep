@@ -47,7 +47,7 @@ export function WrappedCard() {
         <span className="mc-upnext__meta">A quick recap of the evidence you built.</span>
       </div>
       <div className="mc-wrappedcard__actions">
-        <Link to="/app/wrapped" className="mc-ghost__cta">
+        <Link to="/app/wrapped" className="mc-wrappedcard__cta">
           See recap →
         </Link>
         <button type="button" className="mc-textbtn mc-wrappedcard__dismiss" onClick={dismiss}>

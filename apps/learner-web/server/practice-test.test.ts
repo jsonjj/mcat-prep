@@ -3,7 +3,7 @@ import type { UtcTimestamp } from '@mcat/contracts';
 import type { DatedUnitObservation, PracticeTestBlueprint } from '@mcat/policies';
 import { validatePracticeTestForm } from '@mcat/policies';
 import { PracticeTestBank } from './practice-test-bank';
-import { DiagnosticSessionStore, type SessionRecord } from './diagnostic-session-store';
+import { DiagnosticSessionStore, type SessionRecord } from '@mcat/diagnostic-runner';
 import {
   bankSupportsPracticeTest,
   recordPracticeTestBlock,

@@ -69,11 +69,12 @@ import {
   type ResolvedGuestSession,
 } from './session';
 import { RepositoryLearnerKernel, type NormalizedLessonCommandInput } from './workflow';
+import { DiagnosticSessionError } from '@mcat/diagnostic-runner';
+import type { DiagnosticPort } from './diagnostic-port';
 
 interface KernelPort {
   handle(input: unknown, principal: Principal): ReturnType<AuthorityKernel['handle']>;
   snapshot(principal: Principal): ReturnType<AuthorityKernel['snapshot']>;
-  diagnosticNext(principal: Principal): ReturnType<RepositoryLearnerKernel['diagnosticNext']>;
   handleAttempt(
     input: unknown,
     principal: Principal,
@@ -212,6 +213,13 @@ export interface LearnerApiDependencies {
   readonly aiConfig?: AiProxyConfig;
   /** Formative Passage of the Day (see `PassagePort`). Optional. */
   readonly passage?: PassagePort;
+  /**
+   * Placement DIAGNOSTIC (block/multistage). Off the authority kernel — writes no
+   * mastery, owns only its own session rows — like {@link PassagePort}. Optional:
+   * a deployment without it answers 503 on the diagnostic routes (every learner
+   * route stays closed either way).
+   */
+  readonly diagnostic?: DiagnosticPort;
 }
 
 export interface RepositoryLearnerApiDependencies extends Omit<LearnerApiDependencies, 'kernel'> {
@@ -285,6 +293,20 @@ function verifyOriginSecret(provided: string | undefined, expected: string): boo
   return (
     providedBytes.length === expectedBytes.length && timingSafeEqual(providedBytes, expectedBytes)
   );
+}
+
+/** Map a diagnostic session error's HTTP status onto the API's error-code vocab. */
+function diagnosticErrorCode(status: number): HttpErrorCode {
+  switch (status) {
+    case 401:
+      return 'unauthorized';
+    case 409:
+      return 'conflict';
+    case 429:
+      return 'rate_limited';
+    default:
+      return 'validation_error';
+  }
 }
 
 function statusForCode(code: string): number {
@@ -929,6 +951,41 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             origin,
             requestIdValue,
           );
+        case 'diagnosticNext':
+        case 'diagnosticBlock': {
+          // Off-kernel like passageAttempt: serves the block diagnostic over its
+          // own persisted session (no mastery). A DiagnosticSessionError carries
+          // its own HTTP status (401 expired/foreign, 409 replayed block token);
+          // anything else propagates to the outer 503 handler.
+          if (dependencies.diagnostic === undefined) {
+            return errorResponse(
+              'unavailable',
+              'The diagnostic is temporarily unavailable.',
+              origin,
+              requestIdValue,
+              { status: 503, retryable: true },
+            );
+          }
+          try {
+            const body = parsed.data as Record<string, unknown>;
+            const payload =
+              route.id === 'diagnosticNext'
+                ? await dependencies.diagnostic.next(principal.learnerId, body)
+                : await dependencies.diagnostic.block(principal.learnerId, body);
+            return jsonResponse(200, route.responseSchema?.parse(payload), origin, requestIdValue);
+          } catch (error) {
+            if (error instanceof DiagnosticSessionError) {
+              return errorResponse(
+                diagnosticErrorCode(error.status),
+                error.message,
+                origin,
+                requestIdValue,
+                { status: error.status, retryable: error.status === 429 },
+              );
+            }
+            throw error;
+          }
+        }
         case 'passageAttempt': {
           // FORMATIVE: scores one answer and reveals its explanation; writes no
           // mastery, appends no event. Returns 404 for an unknown question id (or
@@ -1085,15 +1142,6 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             requestIdValue,
           );
       }
-    }
-
-    if (route.id === 'diagnosticNext') {
-      return jsonResponse(
-        200,
-        route.responseSchema?.parse(await dependencies.kernel.diagnosticNext(principal)),
-        origin,
-        requestIdValue,
-      );
     }
 
     if (route.id === 'skills') {

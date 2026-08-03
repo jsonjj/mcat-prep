@@ -3,28 +3,30 @@ import { Link, Navigate } from 'react-router-dom';
 import { Card, Eyebrow, Stack, useTheme } from '@mcat/ui-web';
 import { useBootstrap } from '../app/queries';
 import { BrainAtlas } from '../components/BrainAtlas';
-import { IconMistakesX, IconMoon, IconProgress, IconSun, IconToday } from '../components/icons';
+import { IconCarsDuel, IconMoon, IconProgress, IconRecall, IconSun, IconToday } from '../components/icons';
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
-const PILLARS: Array<{ eyebrow: string; title: string; body: string; Icon: IconComponent }> = [
+const FEATURES: Array<{ label: string; body: string; Icon: IconComponent }> = [
   {
-    eyebrow: 'Diagnose before reveal',
-    title: 'Name what failed before you read the explanation.',
-    body: 'Every miss asks whether it came from content, setup, representation, execution, or inference — so the fix targets the actual break, not the topic label.',
-    Icon: IconMistakesX,
-  },
-  {
-    eyebrow: 'Help fades, proof gets harder',
-    title: 'Assisted work and independent evidence stay separate.',
-    body: 'Scaffolded practice teaches. Mastery is only claimed once you have shown the same reasoning unaided, in a new context, after time has passed.',
-    Icon: IconProgress,
-  },
-  {
-    eyebrow: 'One next task, with reasons',
-    title: 'Your plan says why today’s task comes next.',
-    body: 'Prerequisites, unresolved errors, stale evidence, and the time you actually have all feed one calm recommendation you can act on.',
+    label: 'Adaptive daily plan',
+    body: 'One clear next task each day — with the reason it comes next.',
     Icon: IconToday,
+  },
+  {
+    label: 'Spaced-repetition recall',
+    body: 'Flashcards timed to resurface facts right before you would forget them.',
+    Icon: IconRecall,
+  },
+  {
+    label: 'CARS practice & duels',
+    body: 'Passage sets plus an AI sparring partner to sharpen your reasoning.',
+    Icon: IconCarsDuel,
+  },
+  {
+    label: 'Progress you can see',
+    body: 'A living map of what you can actually do — not just what you covered.',
+    Icon: IconProgress,
   },
 ];
 
@@ -57,6 +59,9 @@ export function Homepage() {
           </button>
           <Link className="mc-button mc-button--secondary mc-linkbtn" to="/signin">
             Sign in
+          </Link>
+          <Link className="mc-button mc-button--primary mc-linkbtn" to="/signup">
+            Create account
           </Link>
         </div>
       </header>
@@ -107,12 +112,11 @@ export function Homepage() {
               </h2>
             </Stack>
             <div className="mc-landing__grid">
-              {PILLARS.map(({ eyebrow, title, body, Icon }) => (
-                <Card key={eyebrow}>
+              {FEATURES.map(({ label, body, Icon }) => (
+                <Card key={label}>
                   <Stack gap={3}>
                     <Icon className="mc-landing__card-icon" aria-hidden="true" />
-                    <Eyebrow>{eyebrow}</Eyebrow>
-                    <h3 className="mc-h3">{title}</h3>
+                    <h3 className="mc-h3">{label}</h3>
                     <p className="mc-muted">{body}</p>
                   </Stack>
                 </Card>

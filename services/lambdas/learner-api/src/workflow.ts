@@ -26,7 +26,6 @@ import {
   AttemptCommandSchema,
   CarsReadinessViewSchema,
   CarsReasoningPatternViewSchema,
-  DiagnosticNextSchema,
   GoalViewSchema,
   LessonMasteryViewSchema,
   LessonWarrantViewSchema,
@@ -49,7 +48,6 @@ import {
   type Clock,
   type CommandEnvelope,
   type ContentId,
-  type DiagnosticNext,
   type GoalView,
   type LessonMasteryView,
   type LessonWarrantView,
@@ -273,27 +271,6 @@ export class RepositoryLearnerKernel {
 
   snapshot(principal: Principal) {
     return this.authorityKernel.snapshot(principal);
-  }
-
-  async diagnosticNext(principal: Principal): Promise<DiagnosticNext> {
-    const state = await this.loadState(principal);
-    if (state.onboarding.diagnosticComplete) {
-      return DiagnosticNextSchema.parse({ done: true, question: null, progress: 1 });
-    }
-
-    const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
-    const next = authority.diagnosticNext(state);
-    const questionId = next.questionId;
-    const question =
-      questionId === undefined ? null : (authority.bank.compiled.get(questionId)?.safe ?? null);
-    if (!next.done && question === null) {
-      throw new AuthorityKernelError({
-        code: 'unavailable',
-        message: 'The diagnostic item is temporarily unavailable.',
-        retryable: true,
-      });
-    }
-    return DiagnosticNextSchema.parse({ done: next.done, question, progress: next.progress });
   }
 
   async skills(principal: Principal): Promise<readonly SkillSummary[]> {

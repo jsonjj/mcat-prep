@@ -31,6 +31,13 @@ import {
   systemClock,
 } from '@mcat/contracts';
 import { orderedKcsForLesson } from '@mcat/content';
+import {
+  DiagnosticBank,
+  DiagnosticSessionError,
+  InMemoryDiagnosticSessions,
+  serveDiagnosticBlock,
+  serveDiagnosticNext,
+} from '@mcat/diagnostic-runner';
 import { PassageOfDayService } from '@mcat/passage-of-day';
 import {
   NORMALIZED_LESSON_ROUTE_SLUGS,
@@ -284,6 +291,13 @@ export async function createLocalLessonHttpServer(
   // hardcoded pool; the same shared service the deployed Lambda and real local
   // stack use.
   const passageService = new PassageOfDayService(hardcodedPassagePool());
+  // Placement DIAGNOSTIC (block/multistage), off the authority kernel like the
+  // deployed learner-API. The bank prefers the gitignored local corpus pull and
+  // falls back to the synthetic fixture (same seam the dev/preview server uses);
+  // sessions live in memory, bound to this harness's single fixed learner. Writes
+  // no mastery — the result seeds mastery only through the mastery-seed hook.
+  const diagnosticBank = new DiagnosticBank();
+  const diagnosticSessions = new InMemoryDiagnosticSessions();
   const csrfToken = `${randomUUID()}${randomUUID()}`;
   // Read once, at startup: neither the opt-in nor the origin allowlist can be
   // widened mid-flight.
@@ -438,6 +452,51 @@ export async function createLocalLessonHttpServer(
             status: 200,
             payload: await kernel.handleCarsDuel(parsed.data as CarsDuelCommandBody, principal),
           };
+        case 'diagnosticNext':
+        case 'diagnosticBlock':
+          // Block diagnostic over the promoted runner (same package the deployed
+          // Lambda uses), against an in-memory session store bound to this
+          // harness's fixed learner. A DiagnosticSessionError carries its own
+          // status (401 expired, 409 replayed block token).
+          try {
+            const body = parsed.data as Record<string, unknown>;
+            const payload =
+              route.id === 'diagnosticNext'
+                ? await serveDiagnosticNext(
+                    diagnosticBank,
+                    diagnosticSessions,
+                    principal.learnerId,
+                    body,
+                  )
+                : await serveDiagnosticBlock(
+                    diagnosticBank,
+                    diagnosticSessions,
+                    principal.learnerId,
+                    body,
+                  );
+            return { status: 200, payload };
+          } catch (error) {
+            if (error instanceof DiagnosticSessionError) {
+              const code =
+                error.status === 401
+                  ? 'unauthorized'
+                  : error.status === 409
+                    ? 'conflict'
+                    : error.status === 429
+                      ? 'rate_limited'
+                      : 'validation_error';
+              return {
+                status: error.status,
+                payload: {
+                  code,
+                  message: error.message,
+                  requestId: randomUUID(),
+                  retryable: error.status === 429,
+                },
+              };
+            }
+            throw error;
+          }
         case 'practiceTestCompleted':
           return {
             status: 200,
@@ -475,8 +534,6 @@ export async function createLocalLessonHttpServer(
     }
 
     switch (route.id) {
-      case 'diagnosticNext':
-        return { status: 200, payload: await kernel.diagnosticNext(principal) };
       case 'goalView':
         return { status: 200, payload: await kernel.goal(principal) };
       case 'skills':
