@@ -228,6 +228,23 @@ $role$`,
       'grant select, insert on table accepted_events to mcat_learner_api',
       'grant insert on table outbox to mcat_learner_api',
       'grant select, insert, update on table mastery_kc, mastery_skill, mastery_lesson, cars_ability, question_stats to mcat_learner_api',
+      // Identity: the credential exchange reads the learner row (account_state)
+      // and the Google/email identity link, and writes the link. `learners`
+      // already has INSERT above and needs SELECT for that read.
+      'grant select on table learners to mcat_learner_api',
+      'grant select, insert, update on table linked_identities to mcat_learner_api',
+      // Content is READ-ONLY to the runtime: the v7 question bank plus the
+      // server-only answer key it scores against, the Passage-of-the-Day pool,
+      // and the CARS Duel topic pool are authored and seeded by mcat_admin and
+      // only ever selected here. Their absence is what 503'd login — the
+      // cold-start content-health probe selects passages/questions.
+      'grant select on table questions, question_protected, passages, passage_questions, cars_duel_topics to mcat_learner_api',
+      // Adaptive-practice and placement-diagnostic bookkeeping the runtime owns
+      // per learner. Read + append + update, but deliberately NO DELETE: expiry
+      // is by timestamp, so withholding DELETE keeps a compromised runtime from
+      // erasing a learner's attempt history or diagnostic sessions.
+      'grant select, insert, update on table practice_exposure, practice_attempt_grant, diagnostic_sessions to mcat_learner_api',
+      'grant select, insert on table practice_repair, attempt_results to mcat_learner_api',
     ],
   },
   {

@@ -371,6 +371,25 @@ describe('migration runtime security boundary', () => {
     expect(sql).toContain(
       'grant select, insert, update on table mastery_kc, mastery_skill, mastery_lesson, cars_ability, question_stats to mcat_learner_api',
     );
+    // Identity read (account_state) + the Google/email link the credential
+    // exchange writes — the auth/session path that returned 503.
+    expect(sql).toContain('grant select on table learners to mcat_learner_api');
+    expect(sql).toContain(
+      'grant select, insert, update on table linked_identities to mcat_learner_api',
+    );
+    // Content is granted SELECT only (never written by the runtime): the v7
+    // question bank + server-only key, the passage pool, and the CARS Duel pool.
+    // Missing `passages`/`questions` here is the content-health/login outage.
+    expect(sql).toContain(
+      'grant select on table questions, question_protected, passages, passage_questions, cars_duel_topics to mcat_learner_api',
+    );
+    // Per-learner practice/diagnostic bookkeeping: read + append + update only.
+    expect(sql).toContain(
+      'grant select, insert, update on table practice_exposure, practice_attempt_grant, diagnostic_sessions to mcat_learner_api',
+    );
+    expect(sql).toContain(
+      'grant select, insert on table practice_repair, attempt_results to mcat_learner_api',
+    );
     expect(sql).toContain('grant select, update on table outbox to mcat_workers');
     expect(sql).toContain('grant select, insert on table inbox_deduplication to mcat_workers');
     expect(sql).toContain('grant usage on schema public to mcat_learner_api');
