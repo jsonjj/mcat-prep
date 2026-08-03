@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat.local/schemas/lesson-quality-anchor-set/v0.1",
+  "title": "Lesson quality anchor candidate set",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "anchor_set_version",
+    "rubric_version",
+    "lifecycle_state",
+    "gold_labels_available",
+    "baseline_revisions",
+    "anchors"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "lesson-quality-anchor-set/v0.1"
+    },
+    "anchor_set_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rubric_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lifecycle_state": {
+      "const": "CANDIDATE_PENDING_REVIEW"
+    },
+    "gold_labels_available": {
+      "const": false
+    },
+    "baseline_revisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["V3-LES-130923", "V3-LES-789208", "V3-LES-844372"],
+      "properties": {
+        "V3-LES-130923": {
+          "$ref": "#/$defs/sha256"
+        },
+        "V3-LES-789208": {
+          "$ref": "#/$defs/sha256"
+        },
+        "V3-LES-844372": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "anchors": {
+      "type": "array",
+      "minItems": 36,
+      "maxItems": 36,
+      "items": {
+        "$ref": "#/$defs/anchor"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "anchor_id",
+        "dimension_id",
+        "case_kind",
+        "lifecycle_state",
+        "proposed_verdict",
+        "current_evidence_status",
+        "gold_verdict",
+        "input_kind",
+        "source_lesson_id",
+        "source_revision_sha256",
+        "source_refs",
+        "synthetic_transform",
+        "evidence_refs",
+        "blocking_facts",
+        "non_blocking_findings",
+        "rationale",
+        "required_reviewer_roles",
+        "review_receipts"
+      ],
+      "properties": {
+        "anchor_id": {
+          "type": "string",
+          "pattern": "^LQA-[CX]0[1-6]-[PFB]01$"
+        },
+        "dimension_id": {
+          "type": "string",
+          "pattern": "^LQR-[CX]0[1-6]$"
+        },
+        "case_kind": {
+          "enum": ["CLEAR_PASS", "CLEAR_FAIL", "BOUNDARY"]
+        },
+        "lifecycle_state": {
+          "const": "CANDIDATE_PENDING_REVIEW"
+        },
+        "proposed_verdict": {
+          "enum": ["PASS", "FAIL", "BLOCKED"]
+        },
+        "current_evidence_status": {
+          "enum": ["SUFFICIENT", "BLOCKED"]
+        },
+        "gold_verdict": {
+          "type": "null"
+        },
+        "input_kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_lesson_id": {
+          "type": "string",
+          "pattern": "^V3-LES-[0-9]{6}$"
+        },
+        "source_revision_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "synthetic_transform": {
+          "type": ["string", "null"],
+          "minLength": 1
+        },
+        "evidence_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "blocking_facts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "non_blocking_findings": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required_reviewer_roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "PRODUCT_PEDAGOGY_OWNER",
+              "DOMAIN_CONSTRUCT_SME",
+              "INDEPENDENT_BLIND_SOLVER",
+              "ACCESSIBILITY_REVIEWER",
+              "NOVICE_WALKTHROUGH_REVIEWER",
+              "PLATFORM_RELIABILITY_REVIEWER"
+            ]
+          }
+        },
+        "review_receipts": {
+          "type": "array",
+          "maxItems": 0
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "input_kind": {
+                "pattern": "^SYNTHETIC_"
+              }
+            },
+            "required": ["input_kind"]
+          },
+          "then": {
+            "properties": {
+              "synthetic_transform": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
