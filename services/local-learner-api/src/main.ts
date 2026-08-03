@@ -111,6 +111,15 @@ async function createRuntime(): Promise<{ api: LearnerApi; port: number; origin:
     // pause can take several seconds. The deployed 5s budget assumes a warm RDS
     // Proxy next door and would turn that cold start into a boot failure.
     connectionTimeoutMs: 30_000,
+    // A connection to the hosted pooler costs ~500ms to open (TCP, TLS, and
+    // SCRAM to us-west-2) plus one more round trip for the session GUCs. The
+    // 30s default discards them faster than a developer clicks, so a pause for
+    // a code change means the next page load re-handshakes all four — measured
+    // at ~640ms added to every request in that first burst. The deployed API
+    // keeps the default: Lambda concurrency there is elastic and idle
+    // connections are a shared resource, whereas this process is one developer's
+    // and holding four open is exactly what the pooler is for.
+    idleTimeoutMs: 300_000,
   });
 
   const authority = new Authority(undefined, systemClock);
