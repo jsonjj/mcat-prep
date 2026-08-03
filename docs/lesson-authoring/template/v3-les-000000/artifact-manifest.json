@@ -1,0 +1,59 @@
+{
+  "artifact_type": "LESSON_ARTIFACT_MANIFEST",
+  "manifest_id": "V3-MANIFEST-000000",
+  "manifest_version": "1.0.0-canonical-template",
+  "lesson_binding": {
+    "lesson_id": "V3-LES-000000",
+    "grouping_id": "V3-CL-000000",
+    "ordered_kc_ids": ["V3-KC-452593"]
+  },
+  "hash_algorithm": "SHA-256",
+  "hash_scope": "Repository canonical JSON for content_sha256; exact stored UTF-8 bytes for file_sha256.",
+  "primary_artifacts": [
+    {
+      "path": "lesson-script.json",
+      "artifact_type": "LESSON_SCRIPT",
+      "artifact_id": "V3-LSCR-000000",
+      "content_sha256": "ea5a3239f66fd79dbf463302e73b140dd07a9be61f1e7a774b04f18ce576012f",
+      "file_sha256": "cfa1f44a8da22af45ba8af8d7f898ba176a21a1cb0259bf98a9b0ca5142d8011"
+    },
+    {
+      "path": "kc-coverage-matrix.json",
+      "artifact_type": "KC_COVERAGE_MATRIX",
+      "artifact_id": "V3-KCOV-000000",
+      "content_sha256": "cce835a4fba8eee12be01281e910fce51708347b6d190d76c01c92c104a88637",
+      "file_sha256": "e25252b01b62122c3ed7629000092903a048f947ab616e736d752b5aed47453c"
+    },
+    {
+      "path": "lesson-presentation-plan.json",
+      "artifact_type": "LESSON_PRESENTATION_PLAN",
+      "artifact_id": "V3-LPPL-000000",
+      "content_sha256": "dbbd490f19af810fec8444f1a2a74544344d2b322b6ecbf18175f8d0bbcd209d",
+      "file_sha256": "2ba0f0858ca073e9719d5d8d5b0792feb7165ad606b4f93a3b706b188a1bb5ae"
+    },
+    {
+      "path": "lesson-quality-report.json",
+      "artifact_type": "LESSON_QUALITY_REPORT",
+      "artifact_id": "V3-LQRP-000000",
+      "content_sha256": "741d3790f37a81239651a145520fa4971b9aab189911aa198be3a58c9f01e27c",
+      "file_sha256": "13c2477be398c40bb838be8a88990dfe838c75804cd7e9269f2fca43efa26c01"
+    }
+  ],
+  "companion_artifacts": [
+    {
+      "path": "learner-safe-items.json",
+      "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+      "file_sha256": "0e80e9bd36644d5c4dadab31def9510e6169c26a225377ecd3cdcec68aa5745c",
+      "answer_material_policy": "NO_ANSWERS_RATIONALES_OR_SCORING_AUTHORITY"
+    },
+    {
+      "path": "protected-items.json",
+      "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+      "file_sha256": "876ffedbd50fe3b5853325eb8a37f31020094134381b91f998836b3e56ee94d1",
+      "access_policy": "SERVER_ONLY",
+      "browser_import_prohibited": true
+    }
+  ],
+  "integration_status": "CANONICAL_COMPILER_READY_RUNTIME_PENDING",
+  "publication_status": "INTERNAL_DRAFT_ONLY"
+}

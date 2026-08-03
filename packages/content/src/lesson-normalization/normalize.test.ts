@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ACTIVITY_ROLES,
   LessonNormalizationError,
+  compileCanonicalLesson,
   detectGrammar,
   normalizeL1,
   normalizeL2,
@@ -23,8 +24,14 @@ const readJson = (path: string): unknown => JSON.parse(readFileSync(path, 'utf8'
 function loadArtifacts(id: string): RawLessonArtifacts {
   const dir = lessonDir(id);
   const read = (f: string): unknown => readJson(join(dir, f));
-  const artifacts: { script: unknown; learnerSafeItems?: unknown; protectedItems?: unknown } = {
+  const artifacts: {
+    script: unknown;
+    learnerSafeItems?: unknown;
+    protectedItems?: unknown;
+    presentationPlan?: unknown;
+  } = {
     script: read('lesson-script.json'),
+    presentationPlan: read('lesson-presentation-plan.json'),
   };
   // L2/L3 carry these; L1 does not.
   try {
@@ -43,7 +50,8 @@ const histogram = (lesson: NormalizedLesson): Record<string, number> => {
 };
 const perKcHistogram = (lesson: NormalizedLesson, kcId: string): Record<string, number> => {
   const h: Record<string, number> = {};
-  for (const it of lesson.items) if (it.primaryKcId === kcId) h[it.activityRole] = (h[it.activityRole] ?? 0) + 1;
+  for (const it of lesson.items)
+    if (it.primaryKcId === kcId) h[it.activityRole] = (h[it.activityRole] ?? 0) + 1;
   return h;
 };
 const HEX64 = /^[0-9a-f]{64}$/;
@@ -98,7 +106,9 @@ describe('normalized invariants shared by all three lessons', () => {
         expect(lesson.kcs.reduce((n, kc) => n + kc.items.length, 0)).toBe(lesson.items.length);
       });
       it('exposes both exit functions among its exit items', () => {
-        const exitFns = new Set(lesson.items.filter((i) => i.exitFunction !== 'NONE').map((i) => i.exitFunction));
+        const exitFns = new Set(
+          lesson.items.filter((i) => i.exitFunction !== 'NONE').map((i) => i.exitFunction),
+        );
         expect(exitFns).toContain('NEAR_USE');
         expect(exitFns).toContain('CHANGED_TASK');
       });
@@ -107,6 +117,12 @@ describe('normalized invariants shared by all three lessons', () => {
 });
 
 describe('L1 V3-LES-130923 — inline grammar', () => {
+  it('is rejected by the canonical compiler and remains on its bespoke vector authority', () => {
+    expect(() => compileCanonicalLesson(loadArtifacts('v3-les-130923'))).toThrow(
+      /L1_INLINE uses the isolated bespoke vector answer authority/,
+    );
+  });
+
   it('has 42 items across 3 KCs, no worked examples, all scored', () => {
     expect(L1.grammar).toBe('L1_INLINE');
     expect(L1.items.length).toBe(42);
@@ -141,7 +157,7 @@ describe('L2 V3-LES-789208 — prompt-ref grammar (two-hop join)', () => {
     expect(L2.items.length).toBe(40);
     expect(L2.orderedKcIds.length).toBe(4);
     expect(L2.items.every((i) => i.scored)).toBe(true);
-    expect(L2.items.every((i) => i.projection.sourceRef.startsWith('prompt-'))).toBe(true);
+    expect(L2.items.every((i) => i.sourceRef.startsWith('prompt-'))).toBe(true);
   });
   it('per-KC role histogram matches the authored micro-cycle', () => {
     for (const kc of L2.orderedKcIds) {
@@ -164,6 +180,36 @@ describe('L2 V3-LES-789208 — prompt-ref grammar (two-hop join)', () => {
   it('hard-fails when the protected bridge file is absent (server-side resolution required)', () => {
     const noBridge: RawLessonArtifacts = { script: loadArtifacts('v3-les-789208').script };
     expect(() => normalizeL2(noBridge)).toThrow(LessonNormalizationError);
+  });
+  it('compiles authored teaching and exposition before practice in presentation order', () => {
+    const steps = L2.kcs[0]?.deliverySteps ?? [];
+    expect(steps.slice(0, 7).map((step) => step.stage)).toEqual([
+      'ENTRY_CHECK_BOUNDARY',
+      'ORIENTATION',
+      'EXPLANATION',
+      'MENTAL_MODEL',
+      'EXPERT_THINK_ALOUD',
+      'WORKED_EXAMPLE',
+      'GUIDED_PRACTICE',
+    ]);
+    expect(steps[1]?.heading).toBe('Focus now: Convert units and dimensions');
+    expect(steps.slice(1, 6).every((step) => step.contentBlocks.length > 0)).toBe(true);
+  });
+  it('recognizes exactly eight bound re-entry items and excludes branch-only items from the clean baseline', () => {
+    const reentries = L2.items.filter((item) => item.isReentry);
+    const baselineIds = L2.kcs.flatMap((kc) => kc.cleanBaselineItemIds ?? []);
+    expect(reentries).toHaveLength(8);
+    expect(baselineIds).toHaveLength(24);
+    expect(baselineIds.some((itemId) => reentries.some((item) => item.itemId === itemId))).toBe(
+      false,
+    );
+    expect(
+      L2.kcs.every(
+        (kc) =>
+          kc.branchBindings.length === 2 &&
+          kc.branchBindings.every((binding) => binding.reentryItemId.length > 0),
+      ),
+    ).toBe(true);
   });
 });
 
@@ -191,7 +237,7 @@ describe('L3 V3-LES-844372 — projection-ref grammar (prompt_key + NODE)', () =
   });
   it('resolves worked-example NODE refs and marks the 6 explicit re-entry items', () => {
     const worked = L3.items.filter((i) => i.activityRole === 'WORKED_EXAMPLE');
-    expect(worked.every((i) => i.projection.sourceRef.startsWith('NODE:'))).toBe(true);
+    expect(worked.every((i) => i.sourceRef.startsWith('NODE:'))).toBe(true);
     expect(worked.every((i) => i.activityId === null)).toBe(true);
     expect(L3.items.filter((i) => i.isReentry).length).toBe(6);
   });
@@ -210,5 +256,100 @@ describe('L3 V3-LES-844372 — projection-ref grammar (prompt_key + NODE)', () =
     if (!firstItem) throw new Error('fixture missing question_evidence_plan items');
     firstItem.learner_safe_projection_ref = 'DOES_NOT_EXIST';
     expect(() => normalizeL3({ ...artifacts, script })).toThrow(LessonNormalizationError);
+  });
+  it('resolves worked NODE exposition to authored prose without an internal placeholder token', () => {
+    const worked = L3.items.find((item) => item.itemId === 'ALG-GRAPH-WORKED-01');
+    expect(worked?.projection.prompt).toContain(
+      'Worked visual: a vertical axis shows 1, 10, 100, and 1000',
+    );
+    expect(worked?.projection.prompt).not.toMatch(/\[worked example:|NODE:/i);
+    expect(JSON.stringify(worked?.projection)).not.toContain('ALG-GRAPH-WORKED-01');
+  });
+  it('exposes the exact stable authored fields for a structured response', () => {
+    const structured = L3.items.find((item) => item.itemId === 'ALG-SYS-CHANGED-01');
+    expect(structured?.projection.responseControl).toEqual({
+      kind: 'STRUCTURED_FIELDS',
+      fields: [
+        { fieldId: 'equation_1', label: 'Perimeter equation' },
+        { fieldId: 'equation_2', label: 'Difference equation' },
+        { fieldId: 'solution_pair', label: 'Ordered pair (L, W)' },
+      ],
+    });
+  });
+});
+
+describe('normalization fails closed at compiler boundaries', () => {
+  it('rejects an unknown authored response type', () => {
+    const artifacts = loadArtifacts('v3-les-844372');
+    const learnerSafeItems = JSON.parse(JSON.stringify(artifacts.learnerSafeItems)) as {
+      items: Array<{ response_type?: string }>;
+    };
+    const first = learnerSafeItems.items[0];
+    if (!first) throw new Error('fixture missing learner-safe items');
+    first.response_type = 'UNBOUNDED_ESSAY';
+    expect(() => normalizeL3({ ...artifacts, learnerSafeItems })).toThrow(LessonNormalizationError);
+  });
+
+  it('rejects a response control that contradicts its authored options', () => {
+    const artifacts = loadArtifacts('v3-les-789208');
+    const learnerSafeItems = JSON.parse(JSON.stringify(artifacts.learnerSafeItems)) as {
+      items: Array<{ response_type?: string; options?: string[] }>;
+    };
+    const first = learnerSafeItems.items[0];
+    if (!first) throw new Error('fixture missing learner-safe items');
+    first.response_type = 'SHORT_RESPONSE';
+    expect(() => normalizeL2({ ...artifacts, learnerSafeItems })).toThrow(LessonNormalizationError);
+  });
+
+  it('rejects an unresolved required kc_script node reference', () => {
+    const artifacts = loadArtifacts('v3-les-789208');
+    const script = JSON.parse(JSON.stringify(artifacts.script)) as {
+      payload: { kc_scripts: Array<{ orientation_node_id?: string }> };
+    };
+    const first = script.payload.kc_scripts[0];
+    if (!first) throw new Error('fixture missing kc_scripts');
+    first.orientation_node_id = 'missing-required-orientation';
+    expect(() => normalizeL2({ ...artifacts, script })).toThrow(LessonNormalizationError);
+  });
+
+  it('rejects protected answer material embedded in a learner-safe record', () => {
+    const artifacts = loadArtifacts('v3-les-844372');
+    const learnerSafeItems = JSON.parse(JSON.stringify(artifacts.learnerSafeItems)) as {
+      items: Array<Record<string, unknown>>;
+    };
+    const first = learnerSafeItems.items[0];
+    if (!first) throw new Error('fixture missing learner-safe items');
+    first.rationale = 'This must remain server-only.';
+    expect(() => normalizeL3({ ...artifacts, learnerSafeItems })).toThrow(LessonNormalizationError);
+  });
+
+  it('keeps every normalized learner projection answer- and rationale-free', () => {
+    for (const lesson of [L1, L2, L3]) {
+      const projections = JSON.stringify(lesson.items.map((item) => item.projection));
+      expect(projections).not.toMatch(
+        /answerKey|answer_authority|accepted_responses|correct_response|correct_option|rationale|response_authority/i,
+      );
+    }
+  });
+
+  it('rejects duplicate item and presentation-step identities', () => {
+    const artifacts = loadArtifacts('v3-les-789208');
+    const script = JSON.parse(JSON.stringify(artifacts.script)) as {
+      payload: { question_evidence_plan: Array<{ item_binding_id: string }> };
+    };
+    const first = script.payload.question_evidence_plan[0];
+    const second = script.payload.question_evidence_plan[1];
+    if (!first || !second) throw new Error('fixture missing question_evidence_plan items');
+    second.item_binding_id = first.item_binding_id;
+    expect(() => normalizeL2({ ...artifacts, script })).toThrow(LessonNormalizationError);
+
+    const presentationPlan = JSON.parse(JSON.stringify(artifacts.presentationPlan)) as {
+      payload: { screens: Array<{ screen_id: string }> };
+    };
+    const firstScreen = presentationPlan.payload.screens[0];
+    const secondScreen = presentationPlan.payload.screens[1];
+    if (!firstScreen || !secondScreen) throw new Error('fixture missing presentation screens');
+    secondScreen.screen_id = firstScreen.screen_id;
+    expect(() => normalizeL2({ ...artifacts, presentationPlan })).toThrow(LessonNormalizationError);
   });
 });

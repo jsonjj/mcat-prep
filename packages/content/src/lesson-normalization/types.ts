@@ -62,11 +62,45 @@ export interface NormalizedChoice {
   readonly text: string;
 }
 
+export interface NormalizedSingleSelectControl {
+  readonly kind: 'SINGLE_SELECT';
+  readonly choices: readonly NormalizedChoice[];
+}
+
+export interface NormalizedShortTextControl {
+  readonly kind: 'SHORT_TEXT';
+  /** Public input semantics only. Accepted answers remain in the server-only answer key. */
+  readonly inputConvention: {
+    readonly normalization: 'TRIM_AND_COLLAPSE_WHITESPACE';
+    readonly matching: 'AUTHORED_EQUIVALENTS_ONLY';
+    readonly caseSensitive: true;
+  };
+}
+
+export interface NormalizedStructuredField {
+  /** Stable authored field id, never derived from a mutable label. */
+  readonly fieldId: string;
+  readonly label: string;
+}
+
+export interface NormalizedStructuredFieldsControl {
+  readonly kind: 'STRUCTURED_FIELDS';
+  readonly fields: readonly NormalizedStructuredField[];
+}
+
+/** Closed learner response-control model. Worked exposition has no response control (`null`). */
+export type NormalizedResponseControl =
+  | NormalizedSingleSelectControl
+  | NormalizedShortTextControl
+  | NormalizedStructuredFieldsControl;
+
 export interface NormalizedProjection {
-  /** The raw ref that produced this projection (`prompt_ref` / `projection_ref` / `"[inline]"`). */
-  readonly sourceRef: string;
+  /** Learner-safe authored content only; source refs and protected authority live outside this projection. */
   readonly prompt: string;
+  /** Validated source spelling retained for traceability across the current three grammars. */
   readonly responseType: string;
+  readonly responseControl: NormalizedResponseControl | null;
+  /** Compatibility view for existing renderers; identical to SINGLE_SELECT.choices, otherwise empty. */
   readonly choices: readonly NormalizedChoice[];
   readonly title?: string | undefined;
   readonly directions?: string | undefined;
@@ -76,6 +110,8 @@ export interface NormalizedProjection {
 export interface NormalizedItem {
   /** Stable, unique within the lesson: the source `item_binding_id` (present on every item, all grammars). */
   readonly itemId: string;
+  /** Internal authored ref used to resolve the learner projection; never copied into `projection`. */
+  readonly sourceRef: string;
   /** The delivery `activity_id`; `null` for L3 WORKED_EXAMPLE items, which carry only a binding id. */
   readonly activityId: string | null;
   readonly primaryKcId: string;
@@ -92,11 +128,48 @@ export interface NormalizedItem {
   readonly projection: NormalizedProjection;
 }
 
+export interface NormalizedDeliveryStep {
+  /** Stable authored screen id when a presentation plan exists, otherwise the source node id. */
+  readonly stepId: string;
+  /** 1-based position in this KC's authored delivery order. */
+  readonly canonicalOrdinal: number;
+  readonly primaryKcId: string;
+  /** Authoritative presentation kind, falling back to the source node kind. */
+  readonly stage: string;
+  /** Authored presentation heading; never inferred from titles or prose. */
+  readonly heading: string | null;
+  readonly nodeIds: readonly string[];
+  /** Learner-safe script-node prose in node and block source order. */
+  readonly contentBlocks: readonly string[];
+  /** QEP item identities reached through node → activity → item bindings. */
+  readonly itemIds: readonly string[];
+  /** True for targeted repair and exact-re-entry delivery that must not enter the clean baseline. */
+  readonly branchOnly: boolean;
+}
+
+export type BranchExitFunction = Exclude<ExitFunction, 'NONE'>;
+
+export interface NormalizedBranchBinding {
+  readonly failedFunction: BranchExitFunction;
+  readonly repairNodeIds: readonly string[];
+  readonly repairItemIds: readonly string[];
+  readonly reentryNodeId: string;
+  readonly reentryItemId: string;
+  readonly successNextNodeId: string | null;
+  readonly plannerHandoffNodeId: string | null;
+}
+
 export interface NormalizedKc {
   readonly kcId: string;
   /** 1-based position within `orderedKcIds`. */
   readonly canonicalOrdinal: number;
   readonly items: readonly NormalizedItem[];
+  readonly deliverySteps: readonly NormalizedDeliveryStep[];
+  /** Delivery steps available on an unbranched first pass. */
+  readonly cleanBaselineSteps: readonly NormalizedDeliveryStep[];
+  /** QEP source-order item ids available on that clean first pass. */
+  readonly cleanBaselineItemIds: readonly string[];
+  readonly branchBindings: readonly NormalizedBranchBinding[];
 }
 
 export interface NormalizedLesson {
@@ -111,6 +184,30 @@ export interface NormalizedLesson {
   readonly items: readonly NormalizedItem[];
 }
 
+/** SERVER-ONLY answer authority. Never place this object in a learner DTO. */
+export interface CanonicalServerItemAnswer {
+  readonly itemId: string;
+  readonly primaryKcId: string;
+  readonly responseType: string;
+  readonly correctChoiceId: string | null;
+  readonly acceptedResponses: readonly string[];
+  readonly rationale: string | null;
+  readonly structuredAuthority?: Readonly<Record<string, unknown>>;
+}
+
+/** SERVER-ONLY total key for every scored item in a canonical (non-L1) lesson. */
+export interface CanonicalServerAnswerKey {
+  readonly lessonId: string;
+  readonly definitionHash: string;
+  readonly byItemId: Readonly<Record<string, CanonicalServerItemAnswer>>;
+}
+
+/** Split compilation result: learner-safe normalized model plus separately protected authority. */
+export interface CanonicalLessonCompilation {
+  readonly lesson: NormalizedLesson;
+  readonly answerKey: CanonicalServerAnswerKey;
+}
+
 /** Thrown when a lesson cannot be normalized (unresolvable ref, unknown role, missing field). */
 export class LessonNormalizationError extends Error {
   constructor(
@@ -119,6 +216,7 @@ export class LessonNormalizationError extends Error {
       lessonId?: string | undefined;
       itemId?: string | undefined;
       ref?: string | undefined;
+      stepId?: string | undefined;
     },
   ) {
     super(message);

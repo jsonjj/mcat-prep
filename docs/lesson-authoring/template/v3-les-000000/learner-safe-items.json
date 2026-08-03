@@ -1,134 +1,84 @@
 {
   "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
-  "artifact_version": "0.1.0-draft.1",
+  "artifact_version": "1.0.0-canonical-template",
   "visibility": "LEARNER_SAFE",
-  "learner_notice": "Choose an answer, then submit to see feedback.",
+  "learner_notice": "Commit one response before feedback appears.",
   "items": [
     {
-      "prompt_key": "GRAPH_SCALE_START",
+      "prompt_key": "TPL_GRAPH_ENTRY",
       "title": "Starting check",
-      "prompt": "A vertical axis has equally spaced labels 1, 10, and 100. Moving one labelled major step changes the value how?",
+      "prompt": "A vertical axis has equally spaced labels 1, 10, and 100. What operation carries a value one labelled step upward?",
       "response_type": "single_select",
-      "options": [
-        "It adds 9.",
-        "It divides the value by 10.",
-        "It multiplies the value by 10.",
-        "Not sure"
-      ]
+      "options": ["Add 9", "Multiply by 10", "Divide by 10", "Not sure"]
     },
     {
-      "prompt_key": "GRAPH_SLOPE_GUIDED",
+      "prompt_key": "TPL_GRAPH_GUIDED",
       "title": "Guided practice",
-      "prompt": "A linear output-versus-trial display moves from 4 units at trial 2 to 16 units at trial 5. Which calculation finds the slope?",
-      "response_type": "single_select",
-      "options": [
-        "(16 − 4) / (5 − 2) = 4",
-        "(5 − 2) / (16 − 4) = 1/4",
-        "(16 + 4) / (5 + 2)",
-        "Not sure"
-      ]
+      "prompt": "A linear graph moves from (2 trials, 5 units) to (5 trials, 17 units). Enter the slope with units per trial.",
+      "response_type": "SHORT_RESPONSE",
+      "options": [],
+      "directions": "Enter a number and its rate units."
     },
     {
-      "prompt_key": "GRAPH_SCALE_LIGHT",
+      "prompt_key": "TPL_GRAPH_LIGHT",
       "title": "Less help",
-      "prompt": "On a log-log graph, a straight trend has plotted slope 2. When x increases by a factor of 10, what change in y does that trend predict?",
+      "prompt": "Equally spaced vertical labels read 3, 30, and 300. Which scale rule is encoded?",
       "response_type": "single_select",
       "options": [
-        "y increases by a factor of 10.",
-        "y increases by a factor of 100.",
-        "y increases by 2 units.",
+        "Add 27 each step",
+        "Multiply by 10 each step",
+        "Multiply by 3 each step",
         "Not sure"
-      ],
-      "text_description": "Both axes are base-10 logarithmic axes with equally spaced labels 0.1, 1, and 10."
+      ]
     },
     {
-      "prompt_key": "GRAPH_SLOPE_SOLO",
+      "prompt_key": "TPL_GRAPH_SOLO",
       "title": "On your own",
-      "prompt": "A linear graph includes the labelled points (3, 8) and (7, 20). What is the slope?",
+      "prompt": "A linear graph includes the points (1, 4) and (4, 16). What is its slope?",
       "response_type": "single_select",
-      "options": [
-        "4",
-        "12",
-        "3",
-        "Not sure"
-      ]
+      "options": ["3", "4", "12", "Not sure"]
     },
     {
-      "prompt_key": "GRAPH_LINEAR_FINAL",
-      "title": "Final check",
-      "prompt": "A linear position-versus-time graph shows 18 meters at 6 seconds and 30 meters at 10 seconds. What does its slope represent?",
+      "prompt_key": "TPL_GRAPH_NEAR",
+      "title": "Final near check",
+      "prompt": "A linear distance-time graph moves from 10 meters at 2 seconds to 25 meters at 7 seconds. What is its slope?",
       "response_type": "single_select",
-      "options": [
-        "12 meters per second",
-        "3 meters per second",
-        "4 seconds per meter",
-        "Not sure"
-      ],
-      "text_description": "The horizontal axis is time in seconds and the vertical axis is position in meters."
+      "options": ["3 meters per second", "5 meters per second", "15 meters per second", "Not sure"]
     },
     {
-      "prompt_key": "GRAPH_SEMILOG_FINAL",
-      "title": "Changed final check",
-      "prompt": "A semilog graph shows values of 2, 20, and 200 at x = 0, 1, and 2. If the same straight pattern continues, what value is predicted at x = 3?",
+      "prompt_key": "TPL_GRAPH_CHANGED",
+      "title": "Changed-task check",
+      "prompt": "A logarithmic vertical axis shows 4, 40, and 400 at x = 0, 1, and 2. If the pattern continues, what value appears at x = 3?",
       "response_type": "single_select",
-      "options": [
-        "2000",
-        "202",
-        "800",
-        "Not sure"
-      ],
-      "text_description": "The vertical axis is base-10 logarithmic; equal vertical display steps represent equal factors of 10."
+      "options": ["404", "1200", "4000", "Not sure"]
     },
     {
-      "prompt_key": "GRAPH_REPAIR_SCALE",
-      "title": "Try the scale rule",
-      "prompt": "A logarithmic vertical axis has equally spaced labels 5, 50, and 500. Which operation carries a value one labelled step upward?",
+      "prompt_key": "TPL_GRAPH_REPAIR_NEAR",
+      "title": "Repair the slope rule",
+      "prompt": "Which expression gives the slope between (2, 7) and (6, 19)?",
       "response_type": "single_select",
-      "options": [
-        "Add 45.",
-        "Divide by 10.",
-        "Multiply by 10.",
-        "Not sure"
-      ]
+      "options": ["(19 - 7) / (6 - 2)", "(6 - 2) / (19 - 7)", "19 - 7", "Not sure"]
     },
     {
-      "prompt_key": "GRAPH_REPAIR_SLOPE",
-      "title": "Rebuild the slope rule",
-      "prompt": "A line moves from (2 seconds, 7 meters) to (5 seconds, 19 meters). What slope do you obtain?",
-      "response_type": "single_select",
-      "options": [
-        "3 meters per second",
-        "4 meters per second",
-        "12 meters per second",
-        "Not sure"
-      ],
-      "text_description": "The horizontal axis is time in seconds and the vertical axis is position in meters."
-    },
-    {
-      "prompt_key": "GRAPH_REENTRY_LINEAR",
+      "prompt_key": "TPL_GRAPH_REENTRY_NEAR",
       "title": "Return to the linear check",
-      "prompt": "A linear drainage graph shows 56 liters at 2 minutes and 32 liters at 8 minutes. What is the slope?",
+      "prompt": "A fresh linear graph moves from (3 seconds, 20 meters) to (8 seconds, 5 meters). What is its slope?",
       "response_type": "single_select",
-      "options": [
-        "−4 liters per minute",
-        "4 liters per minute",
-        "−6 liters per minute",
-        "Not sure"
-      ],
-      "text_description": "The horizontal axis is time in minutes and the vertical axis is volume in liters."
+      "options": ["-3 meters per second", "3 meters per second", "-5 meters per second", "Not sure"]
     },
     {
-      "prompt_key": "GRAPH_REENTRY_SEMILOG",
-      "title": "Return to the semilog check",
-      "prompt": "A straight pattern on a semilog graph has value 5 at x = 0 and value 50 at x = 1. Which equation represents that same multiplicative pattern?",
+      "prompt_key": "TPL_GRAPH_REPAIR_CHANGED",
+      "title": "Repair the scale rule",
+      "prompt": "Equally spaced labels read 6, 60, and 600. What does one labelled step do?",
       "response_type": "single_select",
-      "options": [
-        "y = 5 + 45x",
-        "y = 5 × 10^x",
-        "y = 50x",
-        "Not sure"
-      ],
-      "text_description": "The vertical axis is base-10 logarithmic. Moving one equal vertical display interval multiplies the value by 10."
+      "options": ["Add 54", "Multiply by 10", "Divide by 10", "Not sure"]
+    },
+    {
+      "prompt_key": "TPL_GRAPH_REENTRY_CHANGED",
+      "title": "Return to the logarithmic check",
+      "prompt": "A fresh logarithmic pattern has values 7 and 70 at consecutive x-values. What is the next value?",
+      "response_type": "single_select",
+      "options": ["77", "140", "700", "Not sure"]
     }
   ]
 }
