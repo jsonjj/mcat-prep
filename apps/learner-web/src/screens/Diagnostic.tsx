@@ -152,12 +152,6 @@ export function Diagnostic() {
     });
   };
 
-  // Skipping placement: go straight to plan setup. The learner can still take
-  // the diagnostic later.
-  const onSkip = () => {
-    navigate('/onboarding/plan');
-  };
-
   return (
     <div className="mc-onboarding mc-onboarding--themed">
       <Card elevated className="mc-onboard__card">
@@ -324,10 +318,6 @@ export function Diagnostic() {
             You can change any answer in this block until you submit it. This finds your
             highest-leverage starting point across every area of the test — not a score.
           </p>
-
-          <button type="button" className="mc-textbtn mc-diag-skip" onClick={onSkip}>
-            Skip for now
-          </button>
         </Stack>
       </Card>
     </div>

@@ -1,11 +1,13 @@
 import {
   AttemptCommandSchema,
+  BuildTodaysPathCommandSchema,
   CarsDuelOutcomeInputSchema,
   CarsReadinessViewSchema,
   CarsReasoningPatternViewSchema,
   ChoiceIdSchema,
   CommandEnvelopeSchema,
   ContentIdSchema,
+  DailyBudgetCommandSchema,
   DiagnosticBlockRequestSchema,
   DiagnosticBlockResponseSchema,
   DiagnosticNextRequestSchema,
@@ -25,6 +27,7 @@ import {
   PassageAttemptRequestSchema,
   PassageAttemptResponseSchema,
   PassageTodayResponseSchema,
+  PlanActivityProgressCommandSchema,
   PracticeAttemptCommandSchema,
   PracticeAttemptResultSchema,
   PracticeFocusSchema,
@@ -39,6 +42,7 @@ import {
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
+  TodaysPathViewSchema,
   VectorLessonCommandSchema,
   VectorLessonRunViewSchema,
   VectorLessonStartCommandSchema,
@@ -88,6 +92,10 @@ export type RouteId =
   | 'wrapped'
   | 'resetProgress'
   | 'today'
+  | 'todaysPath'
+  | 'todaysPathBuild'
+  | 'todaysPathActivity'
+  | 'dailyBudget'
   | 'session'
   | 'mastery'
   | 'progressSkills'
@@ -594,6 +602,53 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: false,
     responseSchema: TodayViewSchema,
+  },
+  {
+    // Today's Path — the daily learning-plan projection (orchestrates the other
+    // engines; writes no mastery itself). Read-only like `today`, but with NO
+    // onboarding gate: it returns a full view with `built: false` when no plan
+    // exists for the current day yet, and the client then calls build.
+    id: 'todaysPath',
+    method: 'GET',
+    path: '/v1/plan/today/path',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: TodaysPathViewSchema,
+  },
+  {
+    // Build (and persist) today's plan from the client-fed recall load +
+    // candidate lessons. It advances the learner stream through the SAME kernel
+    // transaction every command uses, so it IS `stateChanging` (CSRF write-gated)
+    // — but like the adaptive practice attempt it returns the built VIEW rather
+    // than an AcceptedCommandResponse.
+    id: 'todaysPathBuild',
+    method: 'POST',
+    path: '/v1/plan/today/build',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: BuildTodaysPathCommandSchema,
+    responseSchema: TodaysPathViewSchema,
+  },
+  {
+    // Advance the guided runner: mark one activity in_progress / complete /
+    // skipped. A normal command write (AcceptedCommandResponse), CSRF-gated.
+    id: 'todaysPathActivity',
+    method: 'POST',
+    path: '/v1/plan/today/activity',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: PlanActivityProgressCommandSchema,
+  },
+  {
+    // Daily time-budget editor (2–6 hr, in minutes; clamped by the engine). It
+    // sits under /v1/profile like the goal writer, but is part of the Today's
+    // Path feature — the budget the plan is sized to. A normal command write.
+    id: 'dailyBudget',
+    method: 'PUT',
+    path: '/v1/profile/daily-budget',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: DailyBudgetCommandSchema,
   },
   {
     id: 'session',

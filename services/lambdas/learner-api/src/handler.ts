@@ -13,14 +13,17 @@ import {
   HttpApiErrorSchema,
   PassageAttemptResponseSchema,
   PassageTodayResponseSchema,
+  type BuildTodaysPathCommand,
   type Clock,
   type CommandEnvelope,
+  type DailyBudgetCommand,
   type HttpErrorCode,
   type NormalizedLessonStartCommand,
   type PassageAttemptRequest,
   type PassageChoiceId,
   type PassageGrade,
   type PassageTodayView,
+  type PlanActivityProgressCommand,
   type VectorLessonCommand,
   type VectorLessonStartCommand,
 } from '@mcat/contracts';
@@ -105,6 +108,19 @@ interface KernelPort {
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['carsReasoningPatterns']>;
   goal(principal: Principal): ReturnType<RepositoryLearnerKernel['goal']>;
+  getTodaysPath(principal: Principal): ReturnType<RepositoryLearnerKernel['getTodaysPath']>;
+  buildTodaysPath(
+    input: BuildTodaysPathCommand,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['buildTodaysPath']>;
+  recordPlanActivity(
+    input: PlanActivityProgressCommand,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['recordPlanActivity']>;
+  setDailyBudget(
+    input: DailyBudgetCommand,
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['setDailyBudget']>;
   handlePractice(
     input: PracticeAttemptCommandBody,
     principal: Principal,
@@ -951,6 +967,45 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             origin,
             requestIdValue,
           );
+        case 'todaysPathBuild':
+          // Persists the day's plan through the kernel transaction, then returns
+          // the built view (not an AcceptedCommandResponse) — like the adaptive
+          // practice attempt.
+          return jsonResponse(
+            200,
+            route.responseSchema?.parse(
+              await dependencies.kernel.buildTodaysPath(
+                parsed.data as BuildTodaysPathCommand,
+                principal,
+              ),
+            ),
+            origin,
+            requestIdValue,
+          );
+        case 'todaysPathActivity':
+          return jsonResponse(
+            200,
+            AcceptedCommandResponseSchema.parse(
+              await dependencies.kernel.recordPlanActivity(
+                parsed.data as PlanActivityProgressCommand,
+                principal,
+              ),
+            ),
+            origin,
+            requestIdValue,
+          );
+        case 'dailyBudget':
+          return jsonResponse(
+            200,
+            AcceptedCommandResponseSchema.parse(
+              await dependencies.kernel.setDailyBudget(
+                parsed.data as DailyBudgetCommand,
+                principal,
+              ),
+            ),
+            origin,
+            requestIdValue,
+          );
         case 'diagnosticNext':
         case 'diagnosticBlock': {
           // Off-kernel like passageAttempt: serves the block diagnostic over its
@@ -1268,6 +1323,17 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       return jsonResponse(
         200,
         route.responseSchema?.parse(await dependencies.kernel.goal(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'todaysPath') {
+      // Read-only plan projection: `built: false` (never a 404 or an onboarding
+      // conflict) when no plan exists for the current day yet.
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.getTodaysPath(principal)),
         origin,
         requestIdValue,
       );

@@ -4,7 +4,7 @@ import {
   InMemoryAuthorityRepository,
   toProjectionRecord,
 } from '@mcat/authority-kernel';
-import { fixedClock } from '@mcat/contracts';
+import { TodaysPathViewSchema, fixedClock } from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 
 import { createRepositoryLearnerApi, type PassagePort } from './handler';
@@ -318,6 +318,156 @@ describe('Passage of the Day route (formative, off the kernel)', () => {
     const response = await api.handle(request('GET', '/v1/passage/today/0', undefined, authed));
     expect(response.statusCode).toBe(200);
     expect(responseBody(response)).toEqual({ passage: null });
+  });
+});
+
+/**
+ * Today's Path route parity. These routes existed on the offline authority and
+ * the kernel but were NEVER registered on the deployed Lambda, so `pnpm dev`
+ * (services/local-learner-api wraps this handler) and prod returned 404 and the
+ * Today page fell back to "Couldn't build today's path". This pins the four
+ * routes end-to-end through the deployed handler + the real kernel transaction.
+ */
+describe("Today's Path routes (deployed learner-API parity)", () => {
+  const read = { origin: APP_ORIGIN, authenticated: true } as const;
+  const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
+  const buildInput = {
+    recallLoad: { dueLearning: 0, dueReviews: 0, newAvailable: 0, due: 0, estimatedMinutesForDue: 0 },
+    candidateLessons: [],
+    force: false,
+  };
+
+  it('registers the four routes with the contract method+path, auth, and stateChanging', () => {
+    expect(routeFor('GET', '/v1/plan/today/path')?.id).toBe('todaysPath');
+    expect(routeFor('GET', '/v1/plan/today/path')?.stateChanging).toBe(false);
+    expect(routeFor('POST', '/v1/plan/today/build')?.id).toBe('todaysPathBuild');
+    expect(routeFor('POST', '/v1/plan/today/build')?.stateChanging).toBe(true);
+    expect(routeFor('POST', '/v1/plan/today/activity')?.id).toBe('todaysPathActivity');
+    expect(routeFor('POST', '/v1/plan/today/activity')?.stateChanging).toBe(true);
+    expect(routeFor('PUT', '/v1/profile/daily-budget')?.id).toBe('dailyBudget');
+    expect(routeFor('PUT', '/v1/profile/daily-budget')?.stateChanging).toBe(true);
+    for (const route of [
+      routeFor('GET', '/v1/plan/today/path'),
+      routeFor('POST', '/v1/plan/today/build'),
+      routeFor('POST', '/v1/plan/today/activity'),
+      routeFor('PUT', '/v1/profile/daily-budget'),
+    ]) {
+      expect(route?.auth).toBe('session');
+    }
+  });
+
+  it('serves a valid TodaysPathView (not 404) for an authenticated learner, unbuilt by default', async () => {
+    const { api } = harness();
+    const response = await api.handle(request('GET', '/v1/plan/today/path', undefined, read));
+
+    expect(response.statusCode).toBe(200);
+    const view = TodaysPathViewSchema.parse(responseBody(response));
+    expect(view.built).toBe(false);
+  });
+
+  it('requires a session for the plan projection', async () => {
+    const { api } = harness();
+    const response = await api.handle(request('GET', '/v1/plan/today/path', undefined, { origin: APP_ORIGIN }));
+    expect(response.statusCode).toBe(401);
+  });
+
+  it('builds the plan, advances an activity, and sets the daily budget end-to-end', async () => {
+    const { api, principal, repository } = harness();
+
+    const built = await api.handle(
+      request('POST', '/v1/plan/today/build', { envelope: commandEnvelope(0), input: buildInput }, write),
+    );
+    expect(built.statusCode).toBe(200);
+    const view = TodaysPathViewSchema.parse(responseBody(built));
+    expect(view.built).toBe(true);
+
+    // A real activityId when the freshly built plan has one; a synthetic id
+    // otherwise (the engine no-ops an unknown id but still acks the command).
+    const activityId = view.activities[0]?.activityId ?? 'no-such-activity';
+    const activity = await api.handle(
+      request(
+        'POST',
+        '/v1/plan/today/activity',
+        { envelope: commandEnvelope(1), activityId, status: 'in_progress' },
+        write,
+      ),
+    );
+    expect(activity.statusCode).toBe(200);
+    expect(responseBody(activity)).toMatchObject({ streamVersion: 2, sequence: 2 });
+
+    const budget = await api.handle(
+      request(
+        'PUT',
+        '/v1/profile/daily-budget',
+        { envelope: commandEnvelope(2), minutesPerDay: 180 },
+        write,
+      ),
+    );
+    expect(budget.statusCode).toBe(200);
+    expect(responseBody(budget)).toMatchObject({ streamVersion: 3 });
+
+    // Each of the three writes appended exactly one accepted event to the stream.
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(3);
+  });
+
+  it('persists the daily budget, reflected in the (unbuilt) plan projection', async () => {
+    const { api, principal, repository } = harness();
+
+    const budget = await api.handle(
+      request(
+        'PUT',
+        '/v1/profile/daily-budget',
+        { envelope: commandEnvelope(0), minutesPerDay: 180 },
+        write,
+      ),
+    );
+    expect(budget.statusCode).toBe(200);
+    expect(responseBody(budget)).toMatchObject({ streamVersion: 1 });
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(1);
+
+    // Read before any build: the view reports the goal preset the budget just set
+    // (a built plan snapshots its own preset at build time, so this is the read
+    // where the change is observable straight from the goal).
+    const view = await api.handle(request('GET', '/v1/plan/today/path', undefined, read));
+    expect(TodaysPathViewSchema.parse(responseBody(view))).toMatchObject({
+      built: false,
+      dailyMinutesPreset: 180,
+    });
+  });
+
+  it('idempotently returns the first build result for a duplicate command', async () => {
+    const { api, principal, repository } = harness();
+    const event = request(
+      'POST',
+      '/v1/plan/today/build',
+      { envelope: commandEnvelope(0), input: buildInput },
+      write,
+    );
+
+    const first = await api.handle(event);
+    const second = await api.handle(event);
+
+    expect(first.statusCode).toBe(200);
+    expect(responseBody(second)).toEqual(responseBody(first));
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(1);
+  });
+
+  it('CSRF-gates the plan writes (build, activity, daily budget)', async () => {
+    const cases: readonly [string, string, unknown][] = [
+      ['POST', '/v1/plan/today/build', { envelope: commandEnvelope(0), input: buildInput }],
+      [
+        'POST',
+        '/v1/plan/today/activity',
+        { envelope: commandEnvelope(0), activityId: 'a', status: 'complete' },
+      ],
+      ['PUT', '/v1/profile/daily-budget', { envelope: commandEnvelope(0), minutesPerDay: 240 }],
+    ];
+    for (const [method, path, body] of cases) {
+      const { api, principal, repository } = harness();
+      const response = await api.handle(request(method, path, body, read));
+      expect(response.statusCode).toBe(403);
+      expect(repository.eventsFor(principal.learnerId)).toHaveLength(0);
+    }
   });
 });
 

@@ -24,18 +24,15 @@ const signature = (route: { method: string; path: string }): string =>
  * fails if an entry here is no longer missing — so closing a gap forces deleting
  * its line rather than leaving a stale exemption behind.
  *
- * Most of these are now only a ROUTING gap: `RepositoryLearnerKernel` grew
- * `getTodaysPath`, `buildTodaysPath`, `recordPlanActivity`, `setDailyBudget`, and
- * `practiceTestSummary`, and the dev harness already dispatches to them. What is
- * still missing is an entry in `ROUTES` and a branch in the deployed handler.
+ * Today's Path (`GET /v1/plan/today/path`, `POST /v1/plan/today/build`,
+ * `POST /v1/plan/today/activity`) and the daily-budget editor
+ * (`PUT /v1/profile/daily-budget`) USED to live here — the kernel had the engine
+ * methods but the Lambda never routed them, so they 404'd in `pnpm dev` and prod.
+ * They are now wired end-to-end (routes.ts → handler.ts → the same kernel methods
+ * the offline authority calls), so their lines are gone; the honesty check below
+ * would fail if they were left behind.
  */
 const KNOWN_UNIMPLEMENTED: readonly string[] = [
-  // Today's Path. Engine present; not routed by the Lambda.
-  'GET /v1/plan/today/path',
-  'POST /v1/plan/today/build',
-  'POST /v1/plan/today/activity',
-  // Daily-budget editor. Engine present; not routed by the Lambda.
-  'PUT /v1/profile/daily-budget',
   // Offline command sync. No engine either.
   'POST /v1/sync',
   // Scored practice-test summary. Engine present; not routed by the Lambda, and

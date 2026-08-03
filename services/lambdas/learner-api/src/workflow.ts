@@ -361,9 +361,11 @@ export class RepositoryLearnerKernel {
   // The daily-plan engine lives on the core `Authority`, so these delegate to
   // it through the SAME `mutate`/`loadState` transaction, idempotency, and
   // projection persistence every other command uses — no bespoke store. The
-  // deployed learner API does not route these yet; the local full-engine HTTP
-  // server (services/local-authority) routes to them so `dev:lesson` serves the
-  // whole app surface at dev parity with the light in-process authority.
+  // deployed learner API routes Today's Path + daily budget (see `ROUTES` /
+  // `handler.ts`), so `pnpm dev` (services/local-learner-api) and prod serve the
+  // same methods the local full-engine HTTP server (services/local-authority)
+  // already dispatched to. `practiceTestSummary` remains dev-only until the
+  // scored-test runner ships a production route.
   // -------------------------------------------------------------------------
 
   /** Read the current day's plan (built:false when none exists for today yet). */
