@@ -41,8 +41,17 @@ export class FoundationStack extends Stack {
       vpcName: 'mcat-dev-vpc',
       ipAddresses: ec2.IpAddresses.cidr('10.42.0.0/16'),
       maxAzs: 2,
-      natGateways: 0,
+      // A single NAT gateway (≈ $32/mo + data) gives the one workload that needs
+      // it — the learner API, for the external AI provider behind /v1/ai/* — a
+      // metered egress path. Everything else stays in the no-egress isolated tier.
+      natGateways: 1,
       restrictDefaultSecurityGroup: true,
+      // ORDER MATTERS: the CDK subnet allocator assigns CIDRs config-by-config in
+      // this array's order (public → 10.42.0/1.0/24, isolated → 10.42.2/3.0/24).
+      // The `egress` tier is APPENDED LAST on purpose so it takes the next free
+      // blocks (10.42.4/5.0/24) and the already-deployed public/isolated subnets
+      // keep their exact CIDRs and logical IDs — an additive change, never a
+      // renumber/replace of the live subnets.
       subnetConfiguration: [
         {
           name: 'public',
@@ -53,6 +62,11 @@ export class FoundationStack extends Stack {
           name: 'isolated',
           cidrMask: 24,
           subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+        },
+        {
+          name: 'egress',
+          cidrMask: 24,
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
       ],
     });

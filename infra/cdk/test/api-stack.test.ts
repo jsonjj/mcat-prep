@@ -199,7 +199,7 @@ describe('ApiStack', () => {
     expect(JSON.stringify(template.toJSON())).not.toContain('Access-Control-Allow-Origin":"*');
   });
 
-  it('runs the learner handler on Node 22 in isolated subnets without secret values', () => {
+  it('runs the learner handler on Node 22 in the egress subnet tier without secret values', () => {
     const { stack } = createApi();
     const template = Template.fromStack(stack);
 
@@ -213,6 +213,11 @@ describe('ApiStack', () => {
         SecurityGroupIds: Match.anyValue(),
         SubnetIds: Match.anyValue(),
       }),
+      // The AI provider config is fetched at runtime from this secret; only the
+      // ARN is on the function, never the key itself.
+      Environment: {
+        Variables: Match.objectLike({ AI_CONFIG_SECRET_ARN: Match.anyValue() }),
+      },
     });
     const functions = template.findResources('AWS::Lambda::Function');
     const variables = Object.values(functions).map(
@@ -223,7 +228,20 @@ describe('ApiStack', () => {
     expect(JSON.stringify(variables)).not.toMatch(/password|secret_value|session_token/i);
   });
 
-  it('uses the foundation service endpoints required by no-NAT Lambda execution', () => {
+  it('creates the AI provider secret without baking the key into the template', () => {
+    const { stack } = createApi();
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties('AWS::SecretsManager::Secret', {
+      Name: '/mcat/dev/ai/provider',
+    });
+    // The generated secret only ever holds empty placeholders in the template; the
+    // real key is populated out-of-band with put-secret-value.
+    const secrets = JSON.stringify(template.findResources('AWS::SecretsManager::Secret'));
+    expect(secrets).not.toContain('tfy_pat_');
+  });
+
+  it('uses the foundation service endpoints and a metered HTTPS egress for Lambda execution', () => {
     const { stack } = createApi();
     const template = Template.fromStack(stack);
     template.resourceCountIs('AWS::EC2::VPCEndpoint', 0);
@@ -233,9 +251,24 @@ describe('ApiStack', () => {
       SourceSecurityGroupId: Match.anyValue(),
       ToPort: 443,
     });
+    // The only CidrIp-based rule is the deliberate outbound-HTTPS path to the AI
+    // provider via NAT; inbound never allows an open CIDR.
     expect(JSON.stringify(template.findResources('AWS::EC2::SecurityGroupIngress'))).not.toContain(
       'CidrIp',
     );
+    // The open-CIDR egress rule is rendered inline on the learner SG (CIDR rules
+    // stay inline; the cross-stack SG rules break out into SecurityGroupEgress).
+    template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+      GroupDescription: 'Allows the learner API Lambda to reach only approved private services.',
+      SecurityGroupEgress: Match.arrayWith([
+        Match.objectLike({
+          CidrIp: '0.0.0.0/0',
+          FromPort: 443,
+          ToPort: 443,
+          IpProtocol: 'tcp',
+        }),
+      ]),
+    });
   });
 
   it('grants only secret/KMS access and network connectivity to the proxy', () => {

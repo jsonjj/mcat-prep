@@ -16,6 +16,7 @@ import {
   aws_lambda_nodejs as nodejs,
   aws_logs as logs,
   aws_kms as kms,
+  aws_secretsmanager as secretsmanager,
   aws_wafv2 as wafv2,
 } from 'aws-cdk-lib';
 import type { Construct } from 'constructs';
@@ -94,6 +95,16 @@ export class ApiStack extends Stack {
       toPort: 443,
       description: 'Allow only the learner API Lambda to call approved AWS services.',
     });
+    // Outbound HTTPS to the internet (via the foundation NAT gateway) so the
+    // in-process AI routes (/v1/ai/rewrite, /v1/ai/chat) can reach the external
+    // provider. Egress is capped at 443; the provider is fronted by a CDN with
+    // rotating public IPs, so it cannot be pinned to a narrower CIDR. Database
+    // egress stays restricted to the RDS Proxy security group (5432) above.
+    lambdaSecurityGroup.addEgressRule(
+      ec2.Peer.anyIpv4(),
+      ec2.Port.tcp(443),
+      'HTTPS egress to the external AI provider through the NAT gateway.',
+    );
 
     const learnerLogGroup = new logs.LogGroup(this, 'LearnerApiLogGroup', {
       logGroupName: '/aws/lambda/mcat-dev-learner-api',
@@ -115,7 +126,12 @@ export class ApiStack extends Stack {
       reservedConcurrentExecutions: 20,
       tracing: lambda.Tracing.ACTIVE,
       vpc: props.foundation.vpc,
-      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
+      // Runs in the PRIVATE_WITH_EGRESS tier so it reaches the external AI
+      // provider over the NAT gateway. It still reaches the RDS Proxy, the
+      // Secrets Manager / SQS / X-Ray interface endpoints (private DNS resolves
+      // them VPC-wide, reached over the local route + the security-group rules
+      // above), so no isolated-tier access is lost by the move.
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
       securityGroups: [lambdaSecurityGroup],
       environment: {
         DB_NAME: 'mcat',
@@ -179,6 +195,30 @@ export class ApiStack extends Stack {
       props.foundation.appKey.keyArn,
     );
     appKey.grantDecrypt(learnerHandler);
+
+    // ── External AI provider configuration ─────────────────────────────────────
+    // The two in-process AI routes (/v1/ai/rewrite, /v1/ai/chat) read their
+    // provider config (key, base URL, model) from this secret at cold start — the
+    // SAME runtime-fetch pattern as DB_SECRET_ARN, so the key is NEVER baked into
+    // the CloudFormation template. It is created with EMPTY placeholder values and
+    // populated out-of-band (`aws secretsmanager put-secret-value`) so the real
+    // key lives only in Secrets Manager. Until it is populated — or if it is ever
+    // unreadable/invalid — the handler resolves an empty config and BOTH routes
+    // fail closed with 503 (the "AI not configured" path the clients already
+    // degrade on), so a missing value never breaks the rest of the API.
+    const aiProviderSecret = new secretsmanager.Secret(this, 'AiProviderSecret', {
+      secretName: '/mcat/dev/ai/provider',
+      description:
+        'External AI provider configuration (AI_API_KEY / AI_BASE_URL / AI_MODEL) for the learner API /v1/ai/* routes.',
+      encryptionKey: appKey,
+      generateSecretString: {
+        secretStringTemplate: JSON.stringify({ AI_API_KEY: '', AI_BASE_URL: '', AI_MODEL: '' }),
+        generateStringKey: 'placeholder',
+      },
+    });
+    aiProviderSecret.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    aiProviderSecret.grantRead(learnerHandler);
+    learnerHandler.addEnvironment('AI_CONFIG_SECRET_ARN', aiProviderSecret.secretArn);
 
     const accessLogGroup = new logs.LogGroup(this, 'ApiAccessLogGroup', {
       logGroupName: '/aws/apigateway/mcat-dev-learner-api-access',
@@ -326,6 +366,11 @@ export class ApiStack extends Stack {
           'Credentials are held by Supabase, not a Cognito user pool. The runtime verifies the Supabase token and issues its own opaque session cookie, so no Cognito authorizer exists to attach; the unauthenticated /v1/auth/session and /v1/health routes must also stay reachable without one.',
       },
     );
+    Validations.of(aiProviderSecret).acknowledge({
+      id: 'AwsSolutions-SMG4',
+      reason:
+        'Third-party AI provider configuration (a vendor API key plus its base URL and model), not an AWS credential we can rotate programmatically — rotating it means minting a new token in the provider console. It is populated and rotated deliberately via runbook, stays KMS-encrypted, is read only server-side by the learner API, and is never exposed to browsers; the AI routes fail closed (503) whenever it is absent or invalid.',
+    });
     Validations.of(learnerHandler).acknowledge({
       id: 'AwsSolutions-L1',
       reason: 'The function uses the current project-standard Node.js 22 managed runtime.',

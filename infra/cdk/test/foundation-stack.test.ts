@@ -18,16 +18,19 @@ function createFoundation(): { readonly app: App; readonly stack: FoundationStac
 }
 
 describe('FoundationStack', () => {
-  it('creates a two-AZ VPC without NAT gateways', () => {
+  it('creates a two-AZ VPC with a single NAT gateway and an egress subnet tier', () => {
     const { stack } = createFoundation();
     const template = Template.fromStack(stack);
 
     template.resourceCountIs('AWS::EC2::VPC', 1);
-    template.resourceCountIs('AWS::EC2::Subnet', 4);
-    template.resourceCountIs('AWS::EC2::NatGateway', 0);
+    // public x2 + isolated x2 + egress x2 (the egress tier is appended last so the
+    // already-deployed public/isolated subnets keep their CIDRs).
+    template.resourceCountIs('AWS::EC2::Subnet', 6);
+    // A single NAT gateway gives the egress tier a metered internet path.
+    template.resourceCountIs('AWS::EC2::NatGateway', 1);
   });
 
-  it('creates the no-NAT gateway and shared private service endpoints', () => {
+  it('creates the S3 gateway and shared private service endpoints', () => {
     const { stack } = createFoundation();
     const template = Template.fromStack(stack);
 

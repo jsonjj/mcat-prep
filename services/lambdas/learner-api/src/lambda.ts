@@ -14,7 +14,7 @@ import {
   type PostgresPool,
 } from '@mcat/persistence-postgres';
 
-import { aiConfigFromEnv } from '@mcat/ai-gateway/server';
+import { aiConfigFromEnv, type AiProxyConfig } from '@mcat/ai-gateway/server';
 
 import {
   SupabaseIdentityProvider,
@@ -133,6 +133,44 @@ export async function loadOriginVerificationSecret(
   return secret;
 }
 
+/**
+ * Load the OPTIONAL external AI provider configuration from Secrets Manager and
+ * shape it exactly like the process environment `aiConfigFromEnv` reads, so the
+ * two in-process AI routes can be fed from a secret in production while dev keeps
+ * reading straight from the environment. The secret is a JSON object with any of
+ * AI_API_KEY / AI_BASE_URL / AI_MODEL; empty strings are treated as unset. It
+ * throws on a missing or malformed secret, and the sole caller (`resolveAiConfig`)
+ * treats ANY failure as "AI not configured" — so this must never abort cold start.
+ */
+export async function loadAiProviderConfig(
+  client: SecretCommandClient,
+  secretArn: string,
+): Promise<Record<string, string | undefined>> {
+  const response = await client.send(new GetSecretValueCommand({ SecretId: secretArn }));
+  if (response.SecretString === undefined) {
+    throw new Error('Secrets Manager did not return a string AI configuration.');
+  }
+  let value: unknown;
+  try {
+    value = JSON.parse(response.SecretString);
+  } catch {
+    throw new Error('AI configuration secret has an invalid shape.');
+  }
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error('AI configuration secret has an invalid shape.');
+  }
+  const record = value as Record<string, unknown>;
+  const readValue = (key: string): string | undefined => {
+    const raw = record[key];
+    return typeof raw === 'string' && raw.length > 0 ? raw : undefined;
+  };
+  return {
+    AI_API_KEY: readValue('AI_API_KEY'),
+    AI_BASE_URL: readValue('AI_BASE_URL'),
+    AI_MODEL: readValue('AI_MODEL'),
+  };
+}
+
 export function parseLearnerApiEnvironment(
   environment: Readonly<Record<string, string | undefined>>,
 ): LearnerApiEnvironment {
@@ -204,6 +242,38 @@ const logger: SafeLogger = {
     process.stdout.write(`${JSON.stringify(event)}\n`);
   },
 };
+
+/**
+ * Resolve the OPTIONAL AI provider config for the two in-process AI routes.
+ * Production sets AI_CONFIG_SECRET_ARN and the value is fetched from Secrets
+ * Manager (the same runtime-fetch pattern as the DB secret); dev/local reads
+ * straight from the environment. This is BEST-EFFORT: any failure — no ARN, an
+ * unpopulated/placeholder secret, a malformed value — resolves to an empty config
+ * so BOTH AI routes return 503 and degrade gracefully, EXACTLY as when no key is
+ * set. It never throws, so a half-provisioned secret cannot break cold start for
+ * the rest of the learner API.
+ */
+async function resolveAiConfig(client: SecretCommandClient): Promise<AiProxyConfig> {
+  const aiSecretArn = process.env.AI_CONFIG_SECRET_ARN;
+  if (aiSecretArn === undefined || aiSecretArn.length === 0) {
+    return aiConfigFromEnv(process.env);
+  }
+  try {
+    return aiConfigFromEnv(await loadAiProviderConfig(client, aiSecretArn));
+  } catch (error) {
+    // Best-effort structured warning (same direct-write pattern as the
+    // content-health probe); never rethrow — an unreadable AI secret must not
+    // break cold start, it just leaves the AI routes returning 503.
+    process.stderr.write(
+      `${JSON.stringify({
+        event: 'ai.config.load_failed',
+        level: 'warn',
+        message: error instanceof Error ? error.message : String(error),
+      })}\n`,
+    );
+    return aiConfigFromEnv(process.env);
+  }
+}
 
 /**
  * The formative Passage-of-the-Day port, backed by the shared
@@ -285,12 +355,14 @@ async function logContentHealth(pool: PostgresPool): Promise<void> {
 async function createRuntime(): Promise<LearnerApi> {
   const environment = parseLearnerApiEnvironment(process.env);
   const secrets = new SecretsManagerClient({ region: environment.region });
-  const [secret, rateLimitPepper, originVerificationSecret, supabaseConfig] = await Promise.all([
-    loadDatabaseSecret(secrets, environment.secretArn),
-    loadRateLimitPepper(secrets, environment.rateLimitPepperSecretArn),
-    loadOriginVerificationSecret(secrets, environment.originVerificationSecretArn),
-    loadSupabaseConfig(secrets, environment.supabaseConfigSecretName),
-  ]);
+  const [secret, rateLimitPepper, originVerificationSecret, supabaseConfig, aiConfig] =
+    await Promise.all([
+      loadDatabaseSecret(secrets, environment.secretArn),
+      loadRateLimitPepper(secrets, environment.rateLimitPepperSecretArn),
+      loadOriginVerificationSecret(secrets, environment.originVerificationSecretArn),
+      loadSupabaseConfig(secrets, environment.supabaseConfigSecretName),
+      resolveAiConfig(secrets),
+    ]);
   const pool = createPgPool({
     connectionString: databaseUrl(environment, secret),
     applicationName: 'mcat-learner-api',
@@ -322,14 +394,15 @@ async function createRuntime(): Promise<LearnerApi> {
     // Shared AI provider config for BOTH in-process AI routes, each behind the
     // same auth as every other /v1 route: grounded rewrite (`POST /v1/ai/rewrite`,
     // WS4 "Explain it another way") and the CARS Duel opponent (`POST
-    // /v1/ai/chat`). One config, read once from the environment — the routes reuse
-    // the same `@mcat/ai-gateway/server` core rather than forking it. Optional by
-    // design: with no AI_API_KEY set BOTH routes return 503, and each client
-    // degrades gracefully (rewrite falls back deterministically; CARS Duel shows
-    // the opponent as offline). NOTE: reaching an external provider also requires
-    // the Lambda to have public egress; provisioning the key + egress is an infra
-    // step outside this change.
-    aiConfig: aiConfigFromEnv(process.env),
+    // /v1/ai/chat`). One config, resolved once at cold start — from Secrets Manager
+    // in production (AI_CONFIG_SECRET_ARN) or straight from the environment in
+    // dev/local — and reused by the same `@mcat/ai-gateway/server` core rather than
+    // forking it. Optional by design: with no key resolved BOTH routes return 503,
+    // and each client degrades gracefully (rewrite falls back deterministically;
+    // CARS Duel shows the opponent as offline). In production the deployed Lambda
+    // runs in the PRIVATE_WITH_EGRESS subnet tier so it can reach the external
+    // provider over HTTPS through the NAT gateway.
+    aiConfig,
     // Formative Passage of the Day, served through the same session/origin-verify
     // pipeline as every other /v1 route. Reads the passages table ONLY — there is NO
     // hardcoded/file fallback in prod: an empty/unreadable table yields "no passage
