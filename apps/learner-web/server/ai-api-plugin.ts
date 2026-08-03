@@ -3,8 +3,9 @@ import type { Plugin } from 'vite';
 import type { AiProxyConfig } from '@mcat/ai-gateway/server';
 
 /**
- * Dev-only AI proxy plugin. The provider key stays server-side (read from an
- * untracked `.env` via Vite's `loadEnv`), never in the client bundle. Like the
+ * Dev-only AI proxy plugin. The provider key stays server-side (read via Vite's
+ * `loadEnv`, which merges the untracked repo-root `.env.local` and
+ * `apps/learner-web/.env.local`), never in the client bundle. Like the
  * authority/diagnostic plugins, the handler module is loaded lazily through
  * `ssrLoadModule`, so the Node-only route code (and its `@mcat/ai-gateway/server`
  * dependency) runs only inside the dev server.

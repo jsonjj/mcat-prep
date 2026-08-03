@@ -75,12 +75,17 @@ the learner app and a loopback-only, in-memory HTTP authority at `127.0.0.1:8787
 answers remain in the Node process. Local run state survives browser refreshes while the process is
 running, but intentionally resets when the local authority restarts.
 
-> **First-time local setup:** `cp apps/learner-web/.env.example apps/learner-web/.env.local`, then
-> `pnpm --filter @mcat/learner-web dev`. The template sets `VITE_AUTHORITY_BASE_URL=/`, which routes
+> **First-time local setup:** `pnpm install`; create both env files —
+> `cp .env.example .env.local` (its `DATABASE_URL` is the one value a teammate has to send you) and
+> `cp apps/learner-web/.env.example apps/learner-web/.env.local`; then `pnpm db:migrate` and
+> `pnpm dev`, and accept the self-signed certificate once at <https://localhost:5173>. For a run
+> with no database and no Supabase, follow the offline note in `apps/learner-web/.env.example` and
+> use `pnpm dev:offline`. The learner-web template sets `VITE_AUTHORITY_BASE_URL=/`, which routes
 > API calls through a **dev-only Vite proxy** (see `apps/learner-web/vite.config.ts`) that forwards
 > `/v1` to the authority server-side — so the browser stays same-origin and local dev is **not**
-> blocked by CORS. `.env.local` is gitignored; never commit it. (Production builds set an absolute
-> `VITE_AUTHORITY_BASE_URL`; the dev-only relative behavior is compiled out of a production build.)
+> blocked by CORS. Both `.env.local` files are gitignored; never commit them. (Production builds set
+> an absolute `VITE_AUTHORITY_BASE_URL`; the dev-only relative behavior is compiled out of a
+> production build.)
 
 ## Accounts and sign-in
 
@@ -143,8 +148,8 @@ lead service and a shared durable rate-limit/attempt store.
 
 The data layer reads its Postgres connection from the environment (`DATABASE_URL`, `DATABASE_SSL`) via `@mcat/persistence-postgres` `createDatabasePoolFromEnv` — nothing is hardcoded. To configure it locally:
 
-1. `cp .env.example .env` and fill in your connection string (local Postgres, Supabase, or Aurora). **`.env` is gitignored — never commit it.**
-2. Run Node entrypoints/tooling with Node's native env-file loader (Node ≥ 20.6; no `dotenv` dependency), e.g. `node --env-file=.env <script>`.
+1. `cp .env.example .env.local` and fill in your connection string (local Postgres, Supabase, or Aurora). **`.env.local` is gitignored — never commit it.**
+2. `pnpm dev` and `pnpm db:migrate` read repo-root `.env.local` themselves (`services/local-learner-api/src/env-file.ts`). Other Node tooling does not, so point Node's native env-file loader at the same file (Node ≥ 20.6; no `dotenv` dependency), e.g. `node --env-file=.env.local <script>`.
 
 `DATABASE_SSL`: `require` (verify cert, default) · `no-verify` (managed Postgres such as Supabase) · `disable` (local only).
 
