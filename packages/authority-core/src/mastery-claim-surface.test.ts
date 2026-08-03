@@ -181,7 +181,7 @@ describe('no learner-facing surface claims mastery from P(L) alone', () => {
       wrapped: await authority.getWrapped(state),
       cars: authority.getCarsReadiness(state),
       today: authority.getTodaysPath(state),
-      bootstrap: authority.bootstrap(state),
+      bootstrap: authority.bootstrap(state, 'linked'),
     };
 
     for (const [name, payload] of Object.entries(surfaces)) {

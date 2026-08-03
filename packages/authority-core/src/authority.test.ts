@@ -61,13 +61,13 @@ describe('Authority — synthetic enzyme vertical', () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = auth.createGuest();
     expect(auth.getSession(state).kind).toBe('locked');
-    expect(auth.bootstrap(state).onboardingComplete).toBe(false);
+    expect(auth.bootstrap(state, 'linked').onboardingComplete).toBe(false);
   });
 
   it('completes the placement-to-protected-proof loop and produces mastery evidence', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);
-    expect(auth.bootstrap(state).onboardingComplete).toBe(true);
+    expect(auth.bootstrap(state, 'linked').onboardingComplete).toBe(true);
 
     // Walk the whole path answering correctly.
     for (let guard = 0; guard < 40; guard += 1) {

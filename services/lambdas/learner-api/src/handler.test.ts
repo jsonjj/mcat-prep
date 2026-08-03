@@ -382,6 +382,34 @@ describe('learner Lambda API security boundary', () => {
     });
   });
 
+  it('reports a linked learner as linked and erases a legacy guest state stamped on the projection', async () => {
+    const { api, principal, repository } = harness();
+    const stored = repository.projectionFor(principal.learnerId);
+    if (stored === null) throw new Error('expected a seeded projection');
+    // Every learner created before migration 0020 looks like this: the learners
+    // row says `linked`, the projection blob it was seeded with says `guest`.
+    repository.seedProjection({
+      ...stored,
+      state: { ...stored.state, accountState: 'guest' },
+    });
+
+    const bootstrap = await api.handle(
+      request('POST', '/v1/bootstrap', undefined, { origin: APP_ORIGIN, authenticated: true }),
+    );
+    const accepted = await api.handle(
+      request('PUT', '/v1/profile/goal', goalCommand(), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+        csrf: CSRF_TOKEN,
+      }),
+    );
+
+    expect(responseBody(bootstrap)).toMatchObject({ accountState: 'linked' });
+    expect(accepted.statusCode).toBe(200);
+    // The next write must not carry the stale key back out of the blob it loaded.
+    expect(repository.projectionFor(principal.learnerId)?.state).not.toHaveProperty('accountState');
+  });
+
   it('adapts REST API Gateway v1 events and emits multi-value Set-Cookie headers', async () => {
     const { api } = harness();
     const event: ApiGatewayV1Event = {
@@ -1004,12 +1032,14 @@ describe('learner Lambda API security boundary', () => {
       sequence: 2,
       state: {
         learnerId: principal.learnerId,
-        accountState: 'guest',
         onboarding: { diagnosticComplete: false, planConfirmed: false },
         events: [],
         evidence: [],
       },
     });
+    // A reset rebuilds the projection from `createGuest()`. That is precisely the
+    // write that used to stamp `accountState: 'guest'` onto a linked learner.
+    expect(repository.projectionFor(principal.learnerId)?.state).not.toHaveProperty('accountState');
   });
 
   it.each([

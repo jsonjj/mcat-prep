@@ -87,6 +87,9 @@ describe('InProcessAuthorityClient (synthetic local seam)', () => {
     }
 
     const second = new InProcessAuthorityClient(store, clock);
-    expect((await second.bootstrap()).accountState).toBe('guest');
+    // This harness has no signed-out arm, so it reports the account it serves
+    // rather than reading one back out of the stored learner state.
+    expect((await second.bootstrap()).accountState).toBe('linked');
+    expect(store.load()?.diagnostic?.complete).toBe(true);
   });
 });

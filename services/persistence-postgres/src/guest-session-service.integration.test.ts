@@ -17,7 +17,7 @@ const newGuestProjection = (learnerId: string, now: string): LearnerProjectionRe
   learnerId,
   sequence: 0,
   projectionVersion: 'test-projection-v1',
-  state: { learnerId, accountState: 'guest', marker: 'session-test' },
+  state: { learnerId, marker: 'session-test' },
   updatedAt: now,
 });
 

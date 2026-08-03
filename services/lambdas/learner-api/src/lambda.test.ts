@@ -21,11 +21,13 @@ describe('learner Lambda runtime composition', () => {
       projectionVersion: 'synthetic-authority-v1',
       state: {
         learnerId,
-        accountState: 'guest',
         onboarding: { diagnosticComplete: false, planConfirmed: false },
       },
       updatedAt: now,
     });
+    // The signed-in path seeds this same projection, so an account state written
+    // here would be `guest` for every learner who has just linked an identity.
+    expect(projection.state).not.toHaveProperty('accountState');
   });
 
   it('validates exact development environment coordinates', () => {

@@ -61,6 +61,21 @@ function dropLegacyLessonBkt(state: LearnerState): void {
   delete state.mastery.lesson;
 }
 
+/**
+ * Drop the legacy `accountState` copy from a persisted projection.
+ *
+ * The projection used to carry an account state seeded from `createGuest()`, and
+ * nothing ever rewrote it — every learner created through the linked sign-in path
+ * still had `"guest"` written next to their progress while `learners.account_state`
+ * said `linked`. The field is gone from `LearnerState` (see its doc comment), but
+ * blobs written before migration 0020 still hold it, and a load that left it in
+ * place would write it straight back out on the next `toProjectionRecord`. Erasing
+ * it on the way in is what makes the migration stick.
+ */
+function dropLegacyAccountState(state: LearnerState): void {
+  delete (state as { accountState?: unknown }).accountState;
+}
+
 export function learnerStateFromProjection(record: LearnerProjectionRecord): LearnerState {
   const state = structuredClone(record.state) as unknown as LearnerState;
   if (state.learnerId !== record.learnerId) {
@@ -68,6 +83,7 @@ export function learnerStateFromProjection(record: LearnerProjectionRecord): Lea
   }
   state.nextSequence = record.sequence;
   dropLegacyLessonBkt(state);
+  dropLegacyAccountState(state);
   return state;
 }
 

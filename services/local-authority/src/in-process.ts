@@ -81,7 +81,7 @@ export class InProcessAuthorityClient implements AuthorityPort {
    */
   async bootstrap(): Promise<BootstrapResponse & { authenticated: true }> {
     const response = BootstrapResponseSchema.parse(
-      this.mutate((state) => this.authority.bootstrap(state)),
+      this.mutate((state) => this.authority.bootstrap(state, 'linked')),
     );
     return { ...response, authenticated: true };
   }

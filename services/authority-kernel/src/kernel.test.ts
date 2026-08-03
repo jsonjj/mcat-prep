@@ -273,6 +273,19 @@ describe('learner projections', () => {
     expect(restored.mastery?.cars).toEqual({ FOC: 0.3 });
   });
 
+  it('erases a legacy account state instead of replaying it back onto the stream', () => {
+    const authority = new Authority(undefined, clock);
+    const record = toProjectionRecord(authority.createGuest(), 0, NOW);
+    // Exactly what every learner written before migration 0020 carries: a linked
+    // learner whose progress blob still claims the account is a guest.
+    (record.state as unknown as Record<string, unknown>).accountState = 'guest';
+
+    const restored = learnerStateFromProjection(record);
+
+    expect(restored).not.toHaveProperty('accountState');
+    expect(toProjectionRecord(restored, 1, NOW).state).not.toHaveProperty('accountState');
+  });
+
   it('never reintroduces a lesson chain when a legacy projection is re-saved', () => {
     const authority = new Authority(undefined, clock);
     const restored = learnerStateFromProjection(legacyProjection());

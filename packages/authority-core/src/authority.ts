@@ -14,6 +14,7 @@ import {
   newIdempotencyKey,
   newLearnerId,
   systemClock,
+  type AccountState,
   type BktApplicationRejectionCode,
   type BktClockAdjustment,
   type BktObservationSource,
@@ -771,7 +772,6 @@ export class Authority {
   createGuest(): LearnerState {
     return {
       learnerId: newLearnerId(),
-      accountState: 'guest',
       createdAt: this.clock.now(),
       onboarding: { diagnosticComplete: false, planConfirmed: false },
       goal: null,
@@ -784,10 +784,16 @@ export class Authority {
     };
   }
 
-  bootstrap(state: LearnerState): BootstrapResponse {
+  /**
+   * `accountState` is a parameter rather than a field of `state` because the
+   * learner record — not the projection — knows whether the session is linked.
+   * Callers pass what the session resolved to, so a stale projection cannot
+   * report a signed-in learner as a guest.
+   */
+  bootstrap(state: LearnerState, accountState: AccountState): BootstrapResponse {
     return {
       learnerId: state.learnerId,
-      accountState: state.accountState,
+      accountState,
       bankStatus: this.bank.questions.length > 0 ? 'loaded' : 'not_loaded',
       contentRelease: this.bank.contentRelease,
       apiVersion: 'v1',

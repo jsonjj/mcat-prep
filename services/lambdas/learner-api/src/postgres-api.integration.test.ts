@@ -367,6 +367,44 @@ describeWithPostgres('PostgreSQL-backed learner API vertical', () => {
         events: [],
       },
     });
+    expect(counts.rows[0]?.state_json).not.toHaveProperty('accountState');
+  });
+
+  it('reports one account state for a signed-in learner from the column and the wire', async () => {
+    const clock = fixedClock(NOW);
+    const authority = new Authority(undefined, clock);
+    const api = createRepositoryLearnerApi({
+      repository: new PostgresAuthorityRepository(pool, {
+        newGuestProjection: createGuestProjection,
+      }),
+      clock,
+      bank: authority.bank,
+      sessions: new PostgresGuestSessionService(pool, createGuestProjection, { now: () => NOW }),
+      identity,
+      rateLimiter: new PostgresFixedWindowRateLimiter(pool, { now: () => Date.parse(NOW) }),
+      rateLimitPepper: 'p'.repeat(32),
+      originVerificationSecret: ORIGIN_VERIFICATION_SECRET,
+      allowedOrigins: [ORIGIN],
+      logger: { info: () => undefined },
+      nowMs: () => Date.parse(NOW),
+    });
+
+    const session = await signIn(api);
+
+    const stored = await pool.query<{ account_state: string; state_json: Record<string, unknown> }>(
+      `select l.account_state, s.state_json
+         from learners l
+         join learner_streams s on s.learner_id = l.learner_id
+        where l.learner_id = $1`,
+      [session.learnerId],
+    );
+    expect(stored.rows[0]?.account_state).toBe('linked');
+    // The learner row is the only place an account state is recorded. A second
+    // copy beside the progress blob is what used to say `guest` for this learner.
+    expect(stored.rows[0]?.state_json).not.toHaveProperty('accountState');
+
+    const reloaded = await api.handle(event('POST', '/v1/bootstrap', { cookies: session.cookies }));
+    expect(body<{ accountState: string }>(reloaded).accountState).toBe('linked');
   });
 
   it('mints no learner for a caller who has not signed in', async () => {
