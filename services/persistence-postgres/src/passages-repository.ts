@@ -114,6 +114,15 @@ export async function listPassages(q: Queryable): Promise<PassageOfTheDayEntry[]
 /** Alias matching the loader's vocabulary — the DB read of the whole pool. */
 export const getPassagePool = listPassages;
 
+/**
+ * Count passages in the pool (0 ⇒ unseeded). A light COUNT for the prod cold-start
+ * content-health probe — unlike {@link listPassages} it materializes no rows.
+ */
+export async function countPassages(q: Queryable): Promise<number> {
+  const { rows } = await q.query<{ n: number }>('select count(*)::int as n from passages');
+  return Number(rows[0]?.n ?? 0);
+}
+
 function placeholders(rowCount: number, columnsPerRow: number, casts: readonly string[]): string {
   const rows: string[] = [];
   let n = 0;

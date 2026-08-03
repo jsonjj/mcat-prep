@@ -1,7 +1,13 @@
 import type { PassageChoice, PassageChoiceId, PassageOfTheDayEntry } from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 import type { Queryable } from './mastery-repository';
-import { hasPassages, listPassages, seedPassages, upsertPassages } from './passages-repository';
+import {
+  countPassages,
+  hasPassages,
+  listPassages,
+  seedPassages,
+  upsertPassages,
+} from './passages-repository';
 
 interface Captured {
   sql: string;
@@ -120,6 +126,13 @@ describe('upsertPassages / seedPassages', () => {
     const count = await seedPassages(q, [entry()]);
     expect(count).toBe(1);
     expect(calls[0]!.sql).toContain('insert into passages');
+  });
+});
+
+describe('countPassages', () => {
+  it('returns the row count, and 0 for an unseeded pool', async () => {
+    expect(await countPassages(fakeQueryable([{ n: 12 }]).q)).toBe(12);
+    expect(await countPassages(fakeQueryable([]).q)).toBe(0);
   });
 });
 

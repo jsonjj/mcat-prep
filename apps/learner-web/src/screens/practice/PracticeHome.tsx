@@ -12,6 +12,7 @@ import {
 import { CURRICULUM_PHASES } from '../../data/curriculum-v3.generated';
 import { useMasteryLessons, usePracticeTestSummary } from '../../app/queries';
 import { useLaunchPlanActivity, useTodaysPath } from '../../app/today-queries';
+import { PRACTICE_TEST_ENABLED } from '../../app/capabilities';
 import { MasteryRing } from '../../components/MasteryRing';
 import { IconCheck, IconClock } from '../../components/icons';
 
@@ -128,7 +129,7 @@ export function PracticeHome() {
         <h1 className="mc-h1">Practice</h1>
       </header>
 
-      <div className="mc-practice__cols">
+      <div className={`mc-practice__cols${PRACTICE_TEST_ENABLED ? '' : ' mc-practice__cols--single'}`}>
         {/* LEFT — Practice questions. Fully functional: real mastery data + real
             navigation (count stepper → session, weakest rings → curriculum). */}
         <Card elevated className="mc-practice__card mc-practice__card--questions">
@@ -251,11 +252,14 @@ export function PracticeHome() {
           </Stack>
         </Card>
 
-        {/* RIGHT — Practice test. The scored-test engine is deferred, so the real
-            backend serves no summary and `dashboard` is null: every region shows the
-            same honest empty state laid out where its real content will live, and
-            nothing is faked. When a summary IS present (today, only the local mastery
-            simulator), each region fills in from it — no other visual change. */}
+        {/* RIGHT — Practice test. GATED (PRACTICE_TEST_ENABLED): the scored-test
+            RUNNER has no deployed backend (dev/preview only), so in production this
+            whole card is HIDDEN rather than left in a permanent empty/"coming soon"
+            state — the single Practice-questions card then spans the row. In dev the
+            feature is enabled and the card renders as before: populated from a real
+            summary when one exists, or its honest empty states until the first
+            sitting. See app/capabilities.ts + docs/practice-test-prod.md. */}
+        {PRACTICE_TEST_ENABLED ? (
         <Card elevated className="mc-practice__card mc-practice__card--test">
           <Stack gap={4}>
             <div className="mc-testdash__head">
@@ -348,6 +352,7 @@ export function PracticeHome() {
             )}
           </Stack>
         </Card>
+        ) : null}
       </div>
     </div>
   );

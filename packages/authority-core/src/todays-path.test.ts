@@ -511,6 +511,35 @@ describe("Authority — periodic practice test in Today\u2019s Path (WS5)", () =
     expect(auth.getMasterySkills(state).map((s) => s.pL)).toEqual(before);
   });
 
+  it('reserves no test when the practice-test capability is disabled, even when due+unlocked', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    unlockPractice(state);
+
+    // Baseline (default options) IS due for a freshly-unlocked learner…
+    expect(hasTest((await build(auth, state)).activities)).toBe(true);
+
+    // …but with the deployment capability OFF, the planner reserves none — the
+    // gate the deployed learner-API uses until the scored-test runner ships, so a
+    // dead-runner slot can never deadlock the strict plan. Other activities are
+    // unaffected: the day still schedules the rest of its work.
+    const gated = await auth.buildTodaysPath(
+      state,
+      { recallLoad: EMPTY_LOAD, candidateLessons, force: true },
+      { practiceTestEnabled: false },
+    );
+    expect(hasTest(gated.activities)).toBe(false);
+    expect(gated.activities.length).toBeGreaterThan(0);
+
+    // Explicitly enabling it restores the reservation (same as the default).
+    const enabled = await auth.buildTodaysPath(
+      state,
+      { recallLoad: EMPTY_LOAD, candidateLessons, force: true },
+      { practiceTestEnabled: true },
+    );
+    expect(hasTest(enabled.activities)).toBe(true);
+  });
+
   it('does not surface a test inside the pre-exam blackout window', async () => {
     const auth = new Authority(loadSyntheticBank(), clock); // today = 2026-07-20
     const state = onboard(auth);

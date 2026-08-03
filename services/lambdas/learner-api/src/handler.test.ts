@@ -1364,3 +1364,118 @@ describe('WS4 grounded rewrite route (POST /v1/ai/rewrite)', () => {
     expect(providerCalls).toBe(0);
   });
 });
+
+describe('CARS Duel opponent route (POST /v1/ai/chat)', () => {
+  /** A stub provider that returns a duel opponent reply. */
+  const chatFetch: AiFetch = async () => ({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      choices: [{ message: { content: 'I hold that anonymity weakens the argument. Your move.' } }],
+    }),
+    text: async () => 'ok',
+  });
+
+  function chatBody(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+    return { messages: [{ role: 'user', content: 'Begin the debate.' }], ...overrides };
+  }
+
+  it('is registered as a session POST that does not mutate state, exactly like rewrite', () => {
+    const route = routeFor('POST', '/v1/ai/chat');
+    expect(route?.id).toBe('aiChat');
+    expect(route?.auth).toBe('session');
+    expect(route?.stateChanging).toBe(false);
+    expect(allowedMethodsFor('/v1/ai/chat')).toEqual(['POST']);
+  });
+
+  it('requires a session (401 for an anonymous caller)', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: chatFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody(), { origin: APP_ORIGIN }),
+    );
+    expect(response.statusCode).toBe(401);
+  });
+
+  it('refuses a cross-origin authenticated caller (403)', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: chatFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody(), {
+        origin: EVIL_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(403);
+  });
+
+  it('serves an opponent reply to an authenticated learner (no CSRF required)', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: chatFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody(), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(200);
+    expect(response.headers?.['cache-control']).toBe('no-store');
+    expect(responseBody(response)).toEqual({
+      text: 'I hold that anonymity weakens the argument. Your move.',
+    });
+  });
+
+  it('is throttled by the per-session rate limiter like other authenticated routes', async () => {
+    const { api, rateInputs } = harness({
+      allowRate: false,
+      aiConfig: { apiKey: 'k', fetchImpl: chatFetch },
+    });
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody(), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(429);
+    expect(rateInputs).toHaveLength(1);
+    expect(rateInputs[0]?.route).toBe('/v1/ai/chat');
+  });
+
+  it('returns 503 (client shows the opponent offline) when no AI key is configured', async () => {
+    const { api } = harness();
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody(), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(503);
+  });
+
+  it('rejects a malformed chat body with 400', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: chatFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody({ messages: 'nope' }), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('rejects an oversize message list with 400 before the provider is called', async () => {
+    let providerCalls = 0;
+    const countingFetch: AiFetch = async () => {
+      providerCalls += 1;
+      return { ok: true, status: 200, json: async () => ({ choices: [] }), text: async () => '' };
+    };
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: countingFetch } });
+    const response = await api.handle(
+      request(
+        'POST',
+        '/v1/ai/chat',
+        chatBody({ messages: [{ role: 'user', content: 'x'.repeat(25_000) }] }),
+        { origin: APP_ORIGIN, authenticated: true },
+      ),
+    );
+    expect(response.statusCode).toBe(400);
+    expect(providerCalls).toBe(0);
+  });
+});

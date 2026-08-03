@@ -6,6 +6,8 @@ import {
   PostgresAuthorityRepository,
   PostgresFixedWindowRateLimiter,
   PostgresGuestSessionService,
+  countPassages,
+  countQuestions,
   createPgPool,
   createPostgresPracticeBankPort,
   listPassages,
@@ -205,9 +207,14 @@ const logger: SafeLogger = {
 /**
  * The formative Passage-of-the-Day port, backed by the shared
  * `@mcat/passage-of-day` service over the `passages` table. Built once per warm
- * container and memoized. An empty/unreadable table serves "no passage today"
- * until it is seeded (see tools/passage-cli / `pnpm passages:seed`). Reads only —
- * mints no mastery.
+ * container and memoized.
+ *
+ * IMPORTANT: in production there is NO hardcoded/file fallback (unlike the dev
+ * loader `apps/learner-web/server/passage-pool-source.ts`, which falls back to the
+ * local store / hardcoded pool). An empty or unreadable `passages` table yields an
+ * empty pool — "no passage today" — until the table is seeded (`pnpm content:seed`
+ * / `pnpm passages:seed`). The cold-start content-health probe logs loudly when the
+ * pool is empty so an unseeded deploy is obvious. Reads only — mints no mastery.
  */
 function createPassagePort(pool: PostgresPool): PassagePort {
   let servicePromise: Promise<PassageOfDayService> | undefined;
@@ -234,6 +241,46 @@ function createPassagePort(pool: PostgresPool): PassagePort {
   };
 }
 
+/**
+ * Cold-start CONTENT-HEALTH probe. An unseeded production database is otherwise
+ * SILENT: adaptive Practice quietly returns no items (Postgres bank, no fallback in
+ * prod) and Passage of the Day returns "no passage today". This emits a loud,
+ * structured `content.health.unseeded` line to stderr when the questions bank or the
+ * passage pool is empty, so an unseeded deploy is obvious in CloudWatch instead of a
+ * mysteriously-empty API. Best-effort: it never throws (a probe must not break cold
+ * start) and it does not gate the API — seeding is an operational step
+ * (`pnpm content:seed`), not a deploy blocker.
+ */
+async function logContentHealth(pool: PostgresPool): Promise<void> {
+  try {
+    const [questions, passages] = await Promise.all([countQuestions(pool), countPassages(pool)]);
+    const unseeded = questions === 0 || passages === 0;
+    const line = JSON.stringify({
+      event: unseeded ? 'content.health.unseeded' : 'content.health.ok',
+      level: unseeded ? 'error' : 'info',
+      questions,
+      passages,
+      ...(unseeded
+        ? {
+            message:
+              'Question bank and/or passage pool is EMPTY in production. Run the ' +
+              'post-migrate content seed (pnpm content:seed). Practice/Passage will serve ' +
+              'empty until seeded.',
+          }
+        : {}),
+    });
+    (unseeded ? process.stderr : process.stdout).write(`${line}\n`);
+  } catch (error) {
+    process.stderr.write(
+      `${JSON.stringify({
+        event: 'content.health.error',
+        level: 'error',
+        message: error instanceof Error ? error.message : String(error),
+      })}\n`,
+    );
+  }
+}
+
 async function createRuntime(): Promise<LearnerApi> {
   const environment = parseLearnerApiEnvironment(process.env);
   const secrets = new SecretsManagerClient({ region: environment.region });
@@ -248,6 +295,8 @@ async function createRuntime(): Promise<LearnerApi> {
     applicationName: 'mcat-learner-api',
     maxConnections: 2,
   });
+  // Loudly flag an unseeded database at cold start (best-effort; never blocks boot).
+  await logContentHealth(pool);
   const authority = new Authority(undefined, systemClock);
   const repository = new PostgresAuthorityRepository(pool, {
     newGuestProjection: createGuestProjection,
@@ -269,17 +318,31 @@ async function createRuntime(): Promise<LearnerApi> {
     originVerificationSecret,
     allowedOrigins: [environment.learnerWebOrigin],
     logger,
-    // WS4 "Explain it another way": grounded rewrite runs in-process behind the
-    // same auth as every other /v1 route. Optional by design — with no
-    // AI_API_KEY set the route returns 503 and the client falls back
-    // deterministically. NOTE: reaching an external provider also requires the
-    // Lambda to have public egress; provisioning the key + egress is an infra
+    // Shared AI provider config for BOTH in-process AI routes, each behind the
+    // same auth as every other /v1 route: grounded rewrite (`POST /v1/ai/rewrite`,
+    // WS4 "Explain it another way") and the CARS Duel opponent (`POST
+    // /v1/ai/chat`). One config, read once from the environment — the routes reuse
+    // the same `@mcat/ai-gateway/server` core rather than forking it. Optional by
+    // design: with no AI_API_KEY set BOTH routes return 503, and each client
+    // degrades gracefully (rewrite falls back deterministically; CARS Duel shows
+    // the opponent as offline). NOTE: reaching an external provider also requires
+    // the Lambda to have public egress; provisioning the key + egress is an infra
     // step outside this change.
     aiConfig: aiConfigFromEnv(process.env),
     // Formative Passage of the Day, served through the same session/origin-verify
-    // pipeline as every other /v1 route. Reads the passages table (hardcoded pool
-    // fallback); writes no mastery.
+    // pipeline as every other /v1 route. Reads the passages table ONLY — there is NO
+    // hardcoded/file fallback in prod: an empty/unreadable table yields "no passage
+    // today" until seeded (pnpm content:seed / passages:seed). Writes no mastery.
     passage: createPassagePort(pool),
+    // Periodic scored practice TEST — GATED OFF in production. The runner the
+    // client drives (`/api/practice-test/*`) is served only by the dev/preview
+    // Vite plugin; the deployed CloudFront/S3 SPA routes only `/v1/*` to this
+    // Lambda, so the runner has no production backend yet. Reserving a
+    // `practice_test` plan slot here would launch a dead runner and deadlock the
+    // strict plan, so the planner reserves none until the runner ships. Opt back
+    // in per-environment with PRACTICE_TEST_ENABLED=true. See
+    // docs/practice-test-prod.md for what remains to fully enable it.
+    practiceTestEnabled: process.env.PRACTICE_TEST_ENABLED === 'true',
   });
 }
 

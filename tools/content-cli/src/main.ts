@@ -33,11 +33,53 @@ import {
 } from '@mcat/content/lesson-validator';
 
 /**
- * Default v7 corpus location. This lives in the LOCAL-ONLY archive OUTSIDE the
- * repo and must never be copied into the repo or committed. We only read it.
+ * Where the v7 JSONL corpus is expected under the repo when a developer keeps a
+ * local copy. It is gitignored (`.local/`): the corpus is answer-bearing and large,
+ * so it is intentionally NOT vendored into git. See content/question-bank/corpus-source.md.
  */
-const DEFAULT_V7_PATH =
-  '/Users/jonat/Desktop/mcat-prep_LOCAL_ONLY_DO_NOT_PUSH_20260721_131303/question-corpus/generated/v7-dok-dynamic-textonly-2026-07-23/repairs_2026-07-23/generated-v7-dok-dynamic-final.jsonl';
+const DEFAULT_V7_RELATIVE = join(
+  'content',
+  'question-bank',
+  '.local',
+  'v7-corpus',
+  'generated-v7-dok-dynamic-final.jsonl',
+);
+
+/** Actionable hint printed whenever the corpus cannot be located/read. */
+const CORPUS_HINT =
+  'Point at the v7 corpus with $MCAT_V7_CORPUS_PATH (absolute, or relative to the repo ' +
+  'root), or pass the path as the command argument. The corpus is answer-bearing and is ' +
+  'NOT vendored into git — see content/question-bank/corpus-source.md for how to obtain/place it.';
+
+/**
+ * Resolve the v7 corpus path from (in order): an explicit CLI argument,
+ * $MCAT_V7_CORPUS_PATH, else the documented gitignored repo-relative default. This
+ * replaces the former hardcoded single-machine absolute path so the same command
+ * works on any machine / in CI once the corpus is provided.
+ */
+function resolveV7CorpusPath(explicit: string | undefined): string {
+  if (explicit !== undefined && explicit.trim() !== '') {
+    return isAbsolute(explicit) ? explicit : join(process.env.INIT_CWD ?? process.cwd(), explicit);
+  }
+  const fromEnv = process.env.MCAT_V7_CORPUS_PATH;
+  if (fromEnv !== undefined && fromEnv.trim() !== '') {
+    return isAbsolute(fromEnv) ? fromEnv : join(REPO_ROOT, fromEnv);
+  }
+  return join(REPO_ROOT, DEFAULT_V7_RELATIVE);
+}
+
+/** Read the corpus, or exit with the resolved path + an actionable hint. */
+function readCorpusOrExit(path: string): string {
+  try {
+    return readFileSync(path, 'utf8');
+  } catch (err) {
+    console.error(
+      `Could not read the v7 corpus at:\n  ${path}\n` +
+        `${err instanceof Error ? err.message : String(err)}\n\n${CORPUS_HINT}`,
+    );
+    process.exit(1);
+  }
+}
 
 const args = process.argv.slice(2).filter((a) => a !== '--');
 const command = args[0];
@@ -145,16 +187,7 @@ function cmdSchemas(): void {
  * source into the repo and never writes tracked answer-bearing output.
  */
 function cmdLoadV7(path: string): void {
-  let text: string;
-  try {
-    text = readFileSync(path, 'utf8');
-  } catch (err) {
-    console.error(
-      `Could not read v7 corpus at:\n  ${path}\n${err instanceof Error ? err.message : String(err)}`,
-    );
-    process.exit(1);
-    return;
-  }
+  const text = readCorpusOrExit(path);
 
   const result = loadV7Jsonl([{ name: path, text }]);
   const summary = summarizeV7(result);
@@ -217,16 +250,7 @@ const sqlJsonOrNull = (v: unknown): string => (v === undefined || v === null ? '
  * MUST stay out of git (it is written under the gitignored `.local/` bundle).
  */
 function cmdDbSeed(path: string): void {
-  let text: string;
-  try {
-    text = readFileSync(path, 'utf8');
-  } catch (err) {
-    console.error(
-      `Could not read v7 corpus at:\n  ${path}\n${err instanceof Error ? err.message : String(err)}`,
-    );
-    process.exit(1);
-    return;
-  }
+  const text = readCorpusOrExit(path);
 
   const result = loadV7Jsonl([{ name: path, text }]);
   if (result.errors.length > 0) {
@@ -581,10 +605,10 @@ switch (command) {
     cmdSchemas();
     break;
   case 'load-v7':
-    cmdLoadV7(arg ?? DEFAULT_V7_PATH);
+    cmdLoadV7(resolveV7CorpusPath(arg));
     break;
   case 'db-seed':
-    cmdDbSeed(arg ?? DEFAULT_V7_PATH);
+    cmdDbSeed(resolveV7CorpusPath(arg));
     break;
   case 'rehash':
     cmdRehash(arg);

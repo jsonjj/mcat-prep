@@ -25,7 +25,7 @@ import {
   type VectorLessonStartCommand,
 } from '@mcat/contracts';
 import type { AuthorityRepository } from '@mcat/database';
-import { groundedRewrite, type AiProxyConfig } from '@mcat/ai-gateway/server';
+import { groundedRewrite, proxyChat, type AiProxyConfig } from '@mcat/ai-gateway/server';
 
 import {
   type ApiGatewayV1Event,
@@ -220,6 +220,12 @@ export interface RepositoryLearnerApiDependencies extends Omit<LearnerApiDepende
   readonly bank: AuthorityKernelDependencies['bank'];
   /** Adaptive-practice bank/exposure seam (Postgres in prod; synthetic fallback). */
   readonly practiceBank?: PracticeBankPort;
+  /**
+   * Whether the periodic scored practice TEST may be reserved into Today's Path.
+   * Defaults to `true`. Production sets this `false` until the scored-test runner
+   * is served by the deployed backend (see `docs/practice-test-prod.md`).
+   */
+  readonly practiceTestEnabled?: boolean;
 }
 
 export interface LearnerApi {
@@ -952,6 +958,17 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
           const rewrite = await groundedRewrite(parsed.data, dependencies.aiConfig ?? {});
           return jsonResponse(rewrite.status, rewrite.json, origin, requestIdValue);
         }
+        case 'aiChat': {
+          // CARS Duel opponent. The client builds its own guarded CARS prompts;
+          // this route holds the provider key server-side (the SAME aiConfig as
+          // rewrite) and runs behind the same auth as every /v1 route. The parser
+          // already capped message count + combined size. No key configured -> 503
+          // -> the client shows the opponent offline (and a plan-launched duel
+          // still completes so the guided plan can't deadlock). A transport
+          // failure is 502, never a 500.
+          const chat = await proxyChat(parsed.data, dependencies.aiConfig ?? {});
+          return jsonResponse(chat.status, chat.json, origin, requestIdValue);
+        }
         case 'practiceTestCompleted':
           return jsonResponse(
             200,
@@ -1306,7 +1323,8 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
 export function createRepositoryLearnerApi(
   dependencies: RepositoryLearnerApiDependencies,
 ): LearnerApi {
-  const { repository, clock, bank, practiceBank, ...apiDependencies } = dependencies;
+  const { repository, clock, bank, practiceBank, practiceTestEnabled, ...apiDependencies } =
+    dependencies;
   return createLearnerApi({
     ...apiDependencies,
     kernel: new RepositoryLearnerKernel({
@@ -1314,6 +1332,7 @@ export function createRepositoryLearnerApi(
       clock,
       bank,
       ...(practiceBank !== undefined ? { practiceBank } : {}),
+      ...(practiceTestEnabled !== undefined ? { practiceTestEnabled } : {}),
     }),
   });
 }

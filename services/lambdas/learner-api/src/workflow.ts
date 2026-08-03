@@ -142,6 +142,14 @@ interface WorkflowDependencies {
   readonly lessonResponseSubmissions?: LessonResponseSubmissionSource;
   /** Adaptive-practice bank/exposure seam. Falls back to synthetic when absent. */
   readonly practiceBank?: PracticeBankPort;
+  /**
+   * Whether the periodic scored practice TEST may be reserved into Today's Path.
+   * Defaults to `true`. The deployed runtime sets this `false` until the
+   * scored-test RUNNER is served by the deployed backend (today it is a
+   * dev/preview-only `/api/practice-test/*` surface with no production route), so
+   * the strict plan never reserves a slot whose runner would deadlock it.
+   */
+  readonly practiceTestEnabled?: boolean;
 }
 
 type VectorLessonLearnerState = LearnerState & {
@@ -393,7 +401,11 @@ export class RepositoryLearnerKernel {
     principal: Principal,
   ): Promise<TodaysPathView> {
     const view = await this.mutate(command.envelope, principal, async (authority, state) => {
-      const built = await authority.buildTodaysPath(state, command.input);
+      const built = await authority.buildTodaysPath(state, command.input, {
+        // Server-authoritative capability gate (defaults on). The deployed API
+        // sets this off until the scored-test runner is wired into prod.
+        practiceTestEnabled: this.dependencies.practiceTestEnabled ?? true,
+      });
       return {
         eventType: 'todays_path_built',
         payload: toJsonObject({ envelope: command.envelope, input: command.input }),

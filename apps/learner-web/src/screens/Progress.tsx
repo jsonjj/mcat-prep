@@ -15,10 +15,11 @@ const toPct = (p: number): number => Math.round(p * 100);
 const RING_STAGGER_MS = 40;
 
 /**
- * Label for the CTA under the brain that opens the full curriculum. The final
- * wording is being decided separately — change THIS one constant to update it.
+ * Label for the CTA under the brain that opens the full curriculum. A calm, plain
+ * pointer to the map — it names the destination and makes no mastery claim (that
+ * claim lives on the Evidence Atlas, not on a button).
  */
-const CURRICULUM_CTA_LABEL = 'Expand Lesson Mastery';
+const CURRICULUM_CTA_LABEL = 'Open the curriculum';
 
 /**
  * Plain-language descriptions for the 7 reasoning skills, shown on Progress. Kept

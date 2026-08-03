@@ -18,6 +18,12 @@ import { loadPassageStore } from './passage-store-file';
  * `PassageOfDayService`, so the Postgres pool opened here is closed straight after.
  * Dependencies are injectable so the branch is testable without a database or a
  * store on disk.
+ *
+ * DEV DATABASE_URL PARITY: the Vite dev server does NOT auto-load the repo-root
+ * `.env`, so `process.env.DATABASE_URL` is set here only if it was exported in the
+ * shell that started the dev server (or placed in `apps/learner-web/.env.local`).
+ * Without it this resolves to the local store / hardcoded pool even when a database
+ * exists — export DATABASE_URL in the SAME shell to read passages from Postgres.
  */
 
 export type PassagePoolSource = 'postgres' | 'file-store' | 'hardcoded';

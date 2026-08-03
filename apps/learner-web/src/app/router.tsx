@@ -15,7 +15,6 @@ import { TodaysPath } from '../screens/today/TodaysPath';
 import { Curriculum } from '../screens/Curriculum';
 import { VectorLesson } from '../screens/VectorLesson';
 import { CatalogLesson } from '../screens/CatalogLesson';
-import { Study } from '../screens/Study';
 import { RecallHome } from '../screens/recall/RecallHome';
 import { RecallReview } from '../screens/recall/RecallReview';
 import { CardBrowser } from '../screens/recall/CardBrowser';
@@ -33,6 +32,7 @@ import { PracticeTest } from '../screens/practice/PracticeTest';
 import { CarsDuel } from '../screens/CarsDuel';
 import { Wrapped } from '../screens/Wrapped';
 import { CarsPreview } from '../screens/CarsPreview';
+import { PRACTICE_TEST_ENABLED } from './capabilities';
 
 export const router = createBrowserRouter([
   // Public: the marketing homepage and the four credential screens. Everything
@@ -91,7 +91,9 @@ export const router = createBrowserRouter([
       { path: 'lessons/v3-les-844372', element: <CatalogLesson lessonId="V3-LES-844372" /> },
       // Today's Path — the daily learning-plan engine (guided one-at-a-time runner).
       { path: 'today', element: <TodaysPath /> },
-      { path: 'learn', element: <Study /> },
+      // The standalone `/app/learn` Study loop was retired: it duplicated adaptive
+      // Practice and was only reachable from orphaned entry points. Study.tsx is kept
+      // (its no-cause-picker contract is still asserted) but no longer routed.
       // Recall (Anki-style flashcards): the tab landing plus its child surfaces.
       { path: 'recall', element: <RecallHome /> },
       { path: 'recall/review', element: <RecallReview /> },
@@ -118,7 +120,13 @@ export const router = createBrowserRouter([
       { path: 'practice', element: <PracticeHome /> },
       { path: 'practice/session', element: <PracticeSession /> },
       // The periodic, scored practice TEST (fixed-form, block-by-block runner).
-      { path: 'practice/test', element: <PracticeTest /> },
+      // GATED: the runner is dev/preview-only (no deployed backend), so in prod
+      // this route redirects to the Practice hub instead of loading a dead runner.
+      // See ./capabilities.ts (PRACTICE_TEST_ENABLED).
+      {
+        path: 'practice/test',
+        element: PRACTICE_TEST_ENABLED ? <PracticeTest /> : <Navigate to="/app/practice" replace />,
+      },
       { path: 'profile', element: <Profile /> },
     ],
   },

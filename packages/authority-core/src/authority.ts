@@ -740,6 +740,26 @@ export interface PracticeTestServeGate {
   readonly nextEligibleDate: string | null;
 }
 
+/**
+ * Deployment-scoped capabilities for {@link Authority.buildTodaysPath}. Every
+ * flag defaults to ENABLED, so callers that pass nothing (dev, tests, the local
+ * full-engine server) keep today's behaviour; a deployment opts a capability OUT
+ * explicitly.
+ */
+export interface BuildTodaysPathOptions {
+  /**
+   * Whether the periodic scored practice TEST may be reserved into the plan.
+   * Defaults to `true`. The deployed learner-API sets this `false` until the
+   * scored-test RUNNER is wired into the deployed backend: the runner is served
+   * only by the dev/preview Vite plugin (`/api/practice-test/*`), and the
+   * production CloudFront/S3 SPA routes only `/v1/*` to the Lambda — so a
+   * `practice_test` plan slot in prod would launch into a dead runner and, since
+   * it can never be completed, would deadlock the guided plan. Gating it at the
+   * planner keeps cadence server-authoritative and the strict plan safe.
+   */
+  readonly practiceTestEnabled?: boolean;
+}
+
 /** Reverse of {@link PRACTICE_TEST_TIER_MINUTES}: a reserved duration → its tier. */
 function tierFromReservedMinutes(minutes: number): PracticeTestLengthTier {
   for (const tier of ['short', 'standard', 'long'] as const) {
@@ -1155,7 +1175,11 @@ export class Authority {
   }
 
   /** Build (and persist) today's plan; idempotent per day unless `force`. */
-  async buildTodaysPath(state: LearnerState, input: BuildTodaysPathInput): Promise<TodaysPathView> {
+  async buildTodaysPath(
+    state: LearnerState,
+    input: BuildTodaysPathInput,
+    options: BuildTodaysPathOptions = {},
+  ): Promise<TodaysPathView> {
     const now = this.clock.now();
     // Persist the learner's timezone so reads (which have no request body) use the
     // same local day boundary as the build.
@@ -1190,6 +1214,7 @@ export class Authority {
       engineBudget,
       ctx,
       carryOver,
+      options,
     );
     const result = buildTodaysPathEngine(snapshot, TODAYS_PATH_CONFIG);
     // Dedupe by activityId as a safety net (the engine already avoids re-scheduling
@@ -1466,6 +1491,7 @@ export class Authority {
     preset: number,
     ctx: ReturnType<Authority['dayContext']>,
     carryOver: CarriedActivity[],
+    options: BuildTodaysPathOptions = {},
   ): Promise<TodaysPathSnapshot> {
     // Single mastery read, reused for both the mastered-id gate and the per-lesson
     // P(L) map that feeds scoreLesson's learning-need term (avoid computing twice).
@@ -1542,16 +1568,22 @@ export class Authority {
       masteryPct,
       lessonCompletionPct,
     });
-    const practiceTest = practiceUnlocked
-      ? {
-          due: testDecision.due,
-          phase: testDecision.phase,
-          tier: testDecision.tier,
-          // Sized to the decided length tier (short ≈ 40m, standard ≈ 90m, long ≈ 3h).
-          estimatedMinutes: PRACTICE_TEST_TIER_MINUTES[testDecision.tier],
-          reason: testDecision.reason,
-        }
-      : undefined;
+    // Deployment gate: when the scored-test runner is not wired into this
+    // backend (production, until the runner ships), never reserve a practice_test
+    // slot — a slot whose runner cannot serve would deadlock the strict plan.
+    // Defaults ENABLED, so dev + the local full engine schedule it as before.
+    const practiceTestEnabled = options.practiceTestEnabled ?? true;
+    const practiceTest =
+      practiceUnlocked && practiceTestEnabled
+        ? {
+            due: testDecision.due,
+            phase: testDecision.phase,
+            tier: testDecision.tier,
+            // Sized to the decided length tier (short ≈ 40m, standard ≈ 90m, long ≈ 3h).
+            estimatedMinutes: PRACTICE_TEST_TIER_MINUTES[testDecision.tier],
+            reason: testDecision.reason,
+          }
+        : undefined;
 
     const candidateLessons: TodaysPathCandidateLesson[] = input.candidateLessons.map((l) => ({
       lessonId: l.lessonId,

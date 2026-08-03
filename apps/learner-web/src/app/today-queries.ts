@@ -8,6 +8,7 @@ import {
   type RecallLoadInput,
 } from '@mcat/contracts';
 import { authority } from './authority';
+import { PRACTICE_TEST_ENABLED } from './capabilities';
 import { REGISTERED_LESSONS, lessonBySlug } from './lesson-catalog';
 import { useMasteryLessons } from './queries';
 import { useRecallLoad, useRecallService } from './recall-queries';
@@ -204,6 +205,15 @@ export function useLaunchPlanActivity() {
   const record = useRecordPlanActivity();
   return useCallback(
     (a: PlanActivityView): void => {
+      // Prod gate: the scored practice-test runner has no deployed backend, and
+      // the deployed planner reserves no practice_test slot. If a plan built
+      // BEFORE the gate still carries one, SKIP it (advancing the plan) instead
+      // of launching a dead runner — the strict plan must never deadlock. In dev
+      // the feature is enabled, so this is a no-op. See ./capabilities.ts.
+      if (a.kind === 'practice_test' && !PRACTICE_TEST_ENABLED) {
+        record.mutate({ activityId: a.activityId, status: 'skipped' });
+        return;
+      }
       record.mutate({ activityId: a.activityId, status: 'in_progress' });
       const state = { returnTo: '/app/today', activityId: a.activityId } as const;
       switch (a.kind) {
