@@ -4,6 +4,9 @@ on:
   pull_request:
   push:
     branches: [main, 'codex/**']
+  # Exposed as a reusable gate so the automated deploy pipeline
+  # (.github/workflows/deploy.yml) runs this exact verify job before any release.
+  workflow_call:
 
 permissions:
   contents: read
@@ -61,6 +64,12 @@ jobs:
 
       - name: Validate lesson catalog structure
         run: env -u TEST_DATABASE_URL pnpm --filter @mcat/content-cli start lesson-validate
+
+      - name: Scan question corpus referential integrity
+        # Fails on any kc_id/lesson_id/cluster violation; skips cleanly when no
+        # corpus pull is present (the normal case in CI). The guard logic itself is
+        # covered by packages/content/src/curriculum-integrity.test.ts in `verify`.
+        run: env -u TEST_DATABASE_URL pnpm run questions:scan
 
       - name: Verify migration runtime privileges
         run: >-

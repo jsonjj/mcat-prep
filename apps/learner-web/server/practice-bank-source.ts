@@ -19,6 +19,13 @@ import { createFilePracticeBankPort, type FilePracticeBankPort } from './practic
  * Kept separate from `authority-api.ts` because that module instantiates the
  * authority at import time; this one is a pure choice with injectable
  * dependencies, so the branch is testable without a database or a pull.
+ *
+ * DEV DATABASE_URL PARITY: the Vite dev server does NOT auto-load the repo-root
+ * `.env`, so `process.env.DATABASE_URL` is set here only if it was exported in the
+ * shell that started the dev server (or placed in `apps/learner-web/.env.local`).
+ * Without it this selection falls through to the local pull / synthetic bank even
+ * when a database exists — export DATABASE_URL in the SAME shell to use Postgres.
+ * (Same note applies to `passage-pool-source.ts` and the content-seed CLIs.)
  */
 
 export type PracticeBankSource = 'postgres' | 'file-pull' | 'synthetic';

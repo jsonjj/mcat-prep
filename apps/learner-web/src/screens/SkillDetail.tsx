@@ -73,9 +73,6 @@ export function SkillDetail() {
               </Card>
             );
           })}
-          <Button variant="primary" size="lg" onClick={() => navigate('/app/learn')}>
-            Practice this cluster
-          </Button>
         </Stack>
       ) : (
         <Callout tone="info" title="Content coming">

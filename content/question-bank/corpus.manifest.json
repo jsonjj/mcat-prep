@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "kind": "v7-question-corpus",
+  "vendored": false,
+  "reason": "Answer-bearing (keys + explanations) and large; kept in the LOCAL_ONLY archive outside git. See corpus-source.md.",
+  "source": {
+    "filename": "generated-v7-dok-dynamic-final.jsonl",
+    "format": "jsonl"
+  },
+  "registrySha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
+  "counts": {
+    "questions": 2108
+  },
+  "compiledPull": {
+    "dir": "content/question-bank/.local/db-pull",
+    "files": ["questions.json", "protected.json"]
+  },
+  "env": {
+    "MCAT_V7_CORPUS_PATH": "Path to the raw v7 JSONL corpus (content-cli load-v7 / db-seed). Absolute, or relative to the repo root.",
+    "MCAT_QUESTION_CORPUS_DIR": "Directory containing the compiled questions.json + protected.json (questions:seed / content:seed). Defaults to content/question-bank/.local/db-pull."
+  }
+}

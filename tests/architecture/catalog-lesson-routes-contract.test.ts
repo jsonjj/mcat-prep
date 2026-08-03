@@ -64,4 +64,25 @@ describe('Real Lesson Catalog routes + servability contract', () => {
     expect(source).toMatch(/navigate\(registered\.routePath\)/);
     expect(source).not.toMatch(/\/app\/lesson\//);
   });
+
+  // Registration plumbing (for lessons authored as they land): a registered lesson
+  // MUST have real authored content on disk, or it would 404/500 the moment a
+  // learner launches it in prod (the Lambda serves lessons from content/lessons/*,
+  // keyed by the lower-cased lesson id). This catches a "phantom" registration —
+  // an entry added to the manifest before its content artifacts exist — at CI time
+  // rather than at runtime. See docs/lesson-registration.md for the full steps.
+  it('every registered lesson has authored content on disk (no phantom registrations)', () => {
+    for (const lesson of REGISTERED_LESSONS) {
+      const scriptPath = join(
+        root,
+        'content/lessons',
+        lesson.lessonId.toLowerCase(),
+        'lesson-script.json',
+      );
+      expect(
+        existsSync(scriptPath),
+        `${lesson.lessonId} is registered but its content is missing at ${scriptPath} — add the lesson artifacts under content/lessons/${lesson.lessonId.toLowerCase()}/ (see docs/lesson-registration.md)`,
+      ).toBe(true);
+    }
+  });
 });

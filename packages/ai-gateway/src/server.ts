@@ -1,4 +1,4 @@
-import type { AiMessage } from './port';
+import { parseChatRequest, type AiMessage } from './port';
 import { MAX_OUTPUT_TOKENS } from './cars';
 import {
   buildRewriteMessages,
@@ -23,12 +23,20 @@ import {
  * service's session authorizer, `x-mcat-origin-verify`, rate limiter, and WAF —
  * there is no separate public AI Lambda or Function URL.
  *
- * `proxyChat` is a generic chat proxy retained ONLY for the local dev-server
- * CARS Duel middleware (`/api/ai/chat`), which builds its own guarded prompts
- * client-side. Because it accepts arbitrary messages it is deliberately NOT
- * wrapped in any deployable/public handler, so it can never be reached as an
- * open, unauthenticated arbitrary-message proxy (a denial-of-wallet vector).
- * Grounded rewrite needs no arbitrary messages and never goes through it.
+ * `proxyChat` is the generic chat proxy behind the CARS Duel opponent. It builds
+ * no prompt of its own — the client authors the guarded CARS prompts (see
+ * `cars.ts`) — so it forwards a bounded, recent message list to the model. It is
+ * served same-origin at `/v1/ai/chat`: in production IN-PROCESS by the
+ * learner-API (behind that service's session authorizer, `x-mcat-origin-verify`,
+ * per-session rate limiter, and WAF, exactly like grounded rewrite) and locally
+ * by the dev-server middleware, so dev and prod share one core. Because it
+ * forwards caller-supplied messages it must ONLY be mounted behind that
+ * authenticated, rate-limited seam — never as an open, unauthenticated route
+ * (which would re-open the arbitrary-message denial-of-wallet vector). It caps
+ * both the number of forwarded messages and their combined size (see
+ * `parseChatRequest`) so a single authenticated turn cannot inflate provider
+ * spend, and a missing key returns 503 — the "opponent offline" signal the
+ * client already degrades on.
  *
  * This module is server-only. It is exported from `@mcat/ai-gateway/server`, not
  * the package root, so it is never pulled into the browser bundle.
@@ -119,40 +127,34 @@ function logTransportError(where: string, err: unknown): void {
   console.error(`[ai-gateway] ${where} transport error`, detail);
 }
 
-function isAiMessageArray(value: unknown): value is AiMessage[] {
-  return (
-    Array.isArray(value) &&
-    value.every(
-      (entry) =>
-        entry !== null &&
-        typeof entry === 'object' &&
-        typeof (entry as { role?: unknown }).role === 'string' &&
-        typeof (entry as { content?: unknown }).content === 'string',
-    )
-  );
-}
-
 /**
- * Generic chat proxy — DEV-ONLY. It backs the local dev-server CARS Duel
- * middleware (`/api/ai/chat`), which builds its own guarded prompts client-side.
- * Because it forwards arbitrary messages it must never be mounted behind a
- * deployed/public route — doing so would re-open the arbitrary-message
- * denial-of-wallet vector. 503 when unconfigured — the signal the `HttpAiChat`
- * contract already treats as "unavailable".
+ * Generic chat proxy — the CARS Duel opponent. Served same-origin at
+ * `/v1/ai/chat`, in production in-process by the learner-API (behind its session
+ * authorizer, `x-mcat-origin-verify`, per-session rate limiter, and WAF) and
+ * locally by the dev-server middleware, so dev and prod share one core. The
+ * client authors the guarded CARS prompts; this only forwards a bounded, recent
+ * message list ({@link parseChatRequest} caps both the count and the combined
+ * size, so an oversize turn is rejected with 400 before any provider spend). A
+ * malformed body is 400; a missing key is 503 — the "opponent offline" signal
+ * the `HttpAiChat` contract already degrades on; a transport failure is 502
+ * (never a 500), like {@link groundedRewrite}. Because it forwards
+ * caller-supplied messages it must ONLY be mounted behind that authenticated,
+ * rate-limited seam.
  */
 export async function proxyChat(rawBody: unknown, config: AiProxyConfig): Promise<AiRouteResult> {
+  // Validate + size-cap the SHAPE FIRST (like groundedRewrite), so a malformed or
+  // oversize body is refused before the key check and before any provider spend.
+  const request = parseChatRequest(rawBody);
+  if (request === null) {
+    return { status: 400, json: { error: 'invalid_messages' } };
+  }
+  // No key: the "opponent offline" signal the client already degrades on.
   if (config.apiKey === undefined || config.apiKey.length === 0) {
     return { status: 503, json: { error: 'ai_not_configured' } };
   }
-  const body = (rawBody ?? {}) as { messages?: unknown; maxOutputTokens?: unknown };
-  if (!isAiMessageArray(body.messages)) {
-    return { status: 400, json: { error: 'invalid_messages' } };
-  }
-  const messages = body.messages.slice(-20);
-  const maxOutputTokens =
-    typeof body.maxOutputTokens === 'number' ? body.maxOutputTokens : MAX_OUTPUT_TOKENS;
+  const maxOutputTokens = request.maxOutputTokens ?? MAX_OUTPUT_TOKENS;
   try {
-    const upstream = await callCompletions(messages, maxOutputTokens, config);
+    const upstream = await callCompletions(request.messages, maxOutputTokens, config);
     if (!upstream.ok) {
       let detail = '';
       try {
@@ -165,10 +167,11 @@ export async function proxyChat(rawBody: unknown, config: AiProxyConfig): Promis
     return { status: 200, json: { text: extractText(await upstream.json()) } };
   } catch (err) {
     // The transport threw (DNS, TLS, a dead HTTP(S)_PROXY -> ECONNREFUSED, etc.),
-    // not an HTTP status. Surface it server-side so the opaque `proxy_failure`
-    // the client sees is diagnosable; the key is never part of the error.
+    // not an HTTP status. Map it to 502 like groundedRewrite (never a 500, which
+    // would read as a server bug): the client shows the opponent as offline. The
+    // key is never part of the error.
     logTransportError('proxyChat', err);
-    return { status: 500, json: { error: 'proxy_failure' } };
+    return { status: 502, json: { error: 'proxy_failure' } };
   }
 }
 
@@ -226,9 +229,11 @@ export function aiConfigFromEnv(env: Readonly<Record<string, string | undefined>
 }
 
 // NOTE: There is intentionally no deployable HTTP-event adapter / Lambda entry
-// here. The grounded rewrite is served in-process by the learner-API at
-// `POST /v1/ai/rewrite` (see services/lambdas/learner-api), behind its session
-// authorizer, `x-mcat-origin-verify`, rate limiter, and WAF. A standalone
-// public handler that routed everything-but-`/rewrite` to `proxyChat` would be
-// an unauthenticated, arbitrary-message open proxy (denial-of-wallet), so it was
-// removed. `proxyChat` remains only for the local dev CARS Duel middleware.
+// here, and no standalone public AI Function URL. Both AI routes are served
+// IN-PROCESS by the learner-API (see services/lambdas/learner-api) behind its
+// session authorizer, `x-mcat-origin-verify`, per-session rate limiter, and WAF:
+// grounded rewrite at `POST /v1/ai/rewrite` (-> groundedRewrite) and the CARS
+// Duel opponent at `POST /v1/ai/chat` (-> proxyChat). Mounting `proxyChat` as a
+// standalone unauthenticated route would re-open the arbitrary-message
+// denial-of-wallet vector, so it exists ONLY behind that authenticated seam (and
+// the matching dev middleware). The dev server mirrors the same two routes.

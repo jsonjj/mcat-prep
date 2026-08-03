@@ -505,6 +505,54 @@ body {
   font-size: var(--mc-text-15);
 }
 
+/* Mobile-only quick links to the destinations the five-item bottom nav omits
+   (Today's Path, Practice, CARS Duel). Hidden on desktop, where the sidebar lists
+   them — so the bottom-nav contract is untouched while phones can still reach each. */
+.mc-home__quicklinks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--mc-space-2);
+  margin-top: var(--mc-space-1);
+}
+.mc-home__quicklink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mc-space-2);
+  min-height: var(--mc-touch);
+  padding: var(--mc-space-3) var(--mc-space-2);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-control);
+  background: color-mix(in srgb, var(--mc-surface) 60%, transparent);
+  color: var(--mc-ink);
+  text-decoration: none;
+  font-size: var(--mc-text-14);
+  font-weight: 600;
+  text-align: center;
+  transition:
+    border-color var(--mc-motion-control) var(--mc-ease),
+    transform var(--mc-motion-control) var(--mc-ease);
+}
+.mc-home__quicklink:hover {
+  border-color: color-mix(in srgb, var(--mc-primary) 40%, var(--mc-border));
+  transform: translateY(-1px);
+}
+.mc-home__quicklink:focus-visible {
+  outline: var(--mc-focus-width) solid var(--mc-focus);
+  outline-offset: var(--mc-focus-offset);
+}
+.mc-home__quicklink-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--mc-primary-text);
+}
+@media (min-width: 840px) {
+  .mc-home__quicklinks {
+    display: none;
+  }
+}
+
 .mc-upnext {
   display: flex;
   align-items: center;
@@ -2714,6 +2762,34 @@ body {
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+/* Servable-lesson marker: the quiet teal counterpart to "Coming soon". A catalog
+   cue (a real launch seam exists), never a mastery claim, so the map's built
+   lessons stand out from the disabled field. Token-only per the UI contract. */
+.mc-curriculum__available {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mc-space-2);
+  padding: 4px 10px;
+  border-radius: var(--mc-radius-pill);
+  border: 1px solid color-mix(in srgb, var(--mc-primary) 24%, transparent);
+  background: color-mix(in srgb, var(--mc-primary) 10%, transparent);
+  color: var(--mc-primary-text);
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.mc-curriculum__available::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mc-primary);
+}
+/* A subtle teal left-accent so servable lesson cards read as built in the grid. */
+.mc-curriculum__lessoncard--available {
+  border-left: 3px solid color-mix(in srgb, var(--mc-primary) 45%, var(--mc-border));
+}
 .mc-curriculum__launch {
   display: flex;
   align-items: flex-start;
@@ -3830,6 +3906,14 @@ body {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
   }
+}
+/* Practice-test card gated off (app/capabilities.ts → PRACTICE_TEST_ENABLED): the
+   Practice-questions card is the only column, so collapse to a single track and cap
+   its width so it keeps the same left-aligned footprint it had as the left column of
+   the two-up layout instead of stretching the full screen width on desktop. */
+.mc-practice__cols--single {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 560px;
 }
 /* A rounded accent bar sits across the top of each column card: teal for the live
    side, warm amber for the deferred test side. Inset from the corners so it reads

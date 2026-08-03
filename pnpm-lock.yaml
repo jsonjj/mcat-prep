@@ -683,10 +683,20 @@ importers:
         version: 3.2.6(@types/node@22.10.5)(jsdom@30.0.1)(tsx@4.23.1)
 
   tools/aws:
+    dependencies:
+      '@mcat/database':
+        specifier: workspace:*
+        version: link:../../database
+      pg:
+        specifier: 8.22.0
+        version: 8.22.0
     devDependencies:
       '@types/node':
         specifier: 22.10.5
         version: 22.10.5
+      '@types/pg':
+        specifier: 8.20.0
+        version: 8.20.0
       tsx:
         specifier: 4.23.1
         version: 4.23.1

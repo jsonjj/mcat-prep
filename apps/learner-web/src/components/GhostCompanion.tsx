@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useToday } from '../app/queries';
 
 const GHOST_OPTOUT_KEY = 'mc.ghost.optout';
@@ -32,8 +31,6 @@ export function GhostCompanion() {
   const ghost = today.data?.ghost;
   if (!ghost || optedOut) return null;
 
-  const showCta = ghost.state === 'behind' || ghost.state === 'idle';
-
   return (
     <aside className={`mc-ghost mc-ghost--${ghost.state}`} aria-label="Pace companion">
       <span className="mc-ghost__orb" aria-hidden="true" />
@@ -41,11 +38,6 @@ export function GhostCompanion() {
         <p className="mc-ghost__headline">{ghost.headline}</p>
         <p className="mc-ghost__message">{ghost.message}</p>
       </div>
-      {showCta ? (
-        <Link to="/app/learn" className="mc-ghost__cta">
-          One rep →
-        </Link>
-      ) : null}
     </aside>
   );
 }

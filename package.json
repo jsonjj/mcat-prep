@@ -26,6 +26,9 @@
     "passages:ingest": "pnpm --filter @mcat/passage-cli start ingest",
     "passages:seed": "pnpm --filter @mcat/passage-cli start seed",
     "questions:ingest": "pnpm --filter @mcat/questions-cli start ingest",
+    "questions:seed": "pnpm --filter @mcat/questions-cli start seed",
+    "questions:scan": "pnpm --filter @mcat/questions-cli start scan",
+    "content:seed": "pnpm run questions:seed && pnpm run passages:seed",
     "scan:protected": "node tools/scanners/protected-field-scan.mjs",
     "scan:vector-lesson-bundle": "node tools/scanners/vector-lesson-bundle-scan.mjs",
     "verify": "pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run scan:protected"

@@ -9,12 +9,12 @@ import type { AiProxyConfig } from '@mcat/ai-gateway/server';
  * `ssrLoadModule`, so the Node-only route code (and its `@mcat/ai-gateway/server`
  * dependency) runs only inside the dev server.
  *
- * This mirrors the production seam: the grounded rewrite is served same-origin
- * at `/v1/ai/rewrite`, which the deployed learner-API answers in prod (behind
- * its session auth + WAF) and this middleware answers locally — the client is
- * unchanged either way. `/v1/ai/rewrite` is registered before the dev authority
- * plugin's `/v1` mount, so it wins for that exact path. Mounts `/v1/ai/rewrite`
- * (Explain another way) and `/api/ai/chat` (CARS Duel, dev-only).
+ * This mirrors the production seam: BOTH AI routes are served same-origin under
+ * `/v1/ai/*`, which the deployed learner-API answers in prod (behind its session
+ * auth + `x-mcat-origin-verify` + WAF) and this middleware answers locally — the
+ * client is unchanged either way. Both are registered before the dev authority
+ * plugin's `/v1` mount, so they win for those exact paths. Mounts
+ * `/v1/ai/rewrite` (Explain another way) and `/v1/ai/chat` (CARS Duel opponent).
  */
 interface AiRouteModule {
   handleAiChatRequest(
@@ -42,7 +42,7 @@ export function aiApiPlugin(env: Record<string, string>): Plugin {
       server.middlewares.use('/v1/ai/rewrite', (req, res) => {
         void mod.handleAiRewriteRequest(req, res, config);
       });
-      server.middlewares.use('/api/ai/chat', (req, res) => {
+      server.middlewares.use('/v1/ai/chat', (req, res) => {
         void mod.handleAiChatRequest(req, res, config);
       });
     },

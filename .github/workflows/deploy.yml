@@ -1,0 +1,168 @@
+name: Deploy (AWS dev)
+
+# Automated release pipeline for the MCAT Mastery AWS development backend.
+#
+# It runs the existing verify CI as a required gate (reusable workflow_call in
+# aws-backend-ci.yml), then — only after checks pass and a human approves the
+# GitHub Environment — authenticates with short-lived GitHub OIDC credentials
+# (no long-lived AWS keys) and: builds the learner SPA, applies forward-only DB
+# migrations, seeds questions + passages, deploys the API + web CDK stacks, and
+# publishes the SPA to S3 + invalidates CloudFront.
+#
+# ── ONE-TIME BOOTSTRAP (before this workflow can run) ────────────────────────
+#   1. CDK bootstrap the target account/region (creates the cdk-<qualifier>-*
+#      roles this pipeline assumes):
+#        pnpm --filter @mcat/infra-cdk exec cdk bootstrap aws://<ACCOUNT>/<REGION>
+#   2. Create the GitHub OIDC provider + deploy role (see infra/cdk):
+#        pnpm --filter @mcat/infra-cdk github-deploy:deploy -- \
+#          -c awsAccountId=<ACCOUNT> -c awsRegion=<REGION> \
+#          -c githubOwner=<OWNER> -c githubRepo=<REPO> \
+#          -c permissionsBoundaryArn=arn:aws:iam::<ACCOUNT>:policy/InternSandboxBoundary
+#      Copy the GithubDeployRoleArn output into the AWS_DEPLOY_ROLE_ARN variable.
+#   3. Create a GitHub Environment named `aws-dev` with required reviewers
+#      (Settings ▸ Environments). Its name must match the OIDC subject the deploy
+#      role trusts: repo:<OWNER>/<REPO>:environment:aws-dev.
+#   4. Deploy the foundation + data stacks at least once so the database exists
+#      and is reachable before migrate/seed run (see docs/runbooks/aws-dev-deploy.md).
+#
+# ── REQUIRED CONFIGURATION (Settings ▸ Secrets and variables ▸ Actions) ──────
+#   Repository / environment VARIABLES (non-secret):
+#     AWS_DEPLOY_ROLE_ARN     arn:aws:iam::<ACCOUNT>:role/mcat-github-deploy
+#     AWS_ACCOUNT_ID          056956104102 (must match infra/cdk dev environment)
+#     AWS_REGION              us-east-1
+#     VITE_AUTHORITY_BASE_URL https://<learner-cloudfront-domain>  (compiled into the SPA)
+#     MCAT_QUESTION_CORPUS_DIR path to the vendored question corpus (required by questions:seed)
+#     DATABASE_SSL            require | no-verify | disable   (optional; default require)
+#   Repository / environment SECRETS:
+#     DATABASE_URL            Postgres URL for migrate + seed, reachable from the runner
+#                             (RDS Proxy / Session pooler; the Aurora cluster is in
+#                             isolated subnets — see the runbook for the network path).
+#
+# Full detail: docs/runbooks/github-actions-deploy.md
+# The fail-closed, human-reviewed manual path remains docs/runbooks/aws-dev-deploy.md.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  # Never cancel an in-flight deploy; serialize releases instead.
+  group: mcat-dev-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write # required for GitHub OIDC
+
+jobs:
+  # Reuse the exact verify-only CI as the merge/deploy gate. This runs the full
+  # verify + lesson-validate + integration tests + build + cdk synth suite; deploy
+  # only starts if it succeeds.
+  verify:
+    name: Verify (reuse AWS backend CI)
+    uses: ./.github/workflows/aws-backend-ci.yml
+
+  deploy:
+    name: Migrate, seed, and deploy
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # GitHub Environment approval gate. Configure required reviewers on `aws-dev`.
+    environment: aws-dev
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      CI: 'true'
+      MCAT_STAGE: dev
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      CDK_DEFAULT_REGION: ${{ vars.AWS_REGION }}
+      CDK_DEFAULT_ACCOUNT: ${{ vars.AWS_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # 1. install
+      - name: Install immutable dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Authenticate via GitHub OIDC before any AWS-touching step. The role ARN is
+      # provisioned by the infra/cdk GithubDeployStack; no static keys are used.
+      - name: Configure AWS credentials (GitHub OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: mcat-github-deploy-${{ github.run_id }}
+
+      # 2. build web artifacts (VITE_AUTHORITY_BASE_URL is compiled into the learner SPA)
+      - name: Build web artifacts
+        env:
+          VITE_AUTHORITY_BASE_URL: ${{ vars.VITE_AUTHORITY_BASE_URL }}
+        run: pnpm run build
+
+      # Guardrail: never ship answer keys / rationales / server-only modules to the edge.
+      - name: Guard against protected material in the learner artifact
+        run: |
+          if rg -n "correct_choice_id|option_rationales|@mcat/authority-core|@mcat/content" apps/learner-web/dist; then
+            echo "Protected or server-only material found in learner artifact" >&2
+            exit 1
+          fi
+
+      # 3. migrate (forward-only SQL via tools/aws against DATABASE_URL)
+      - name: Apply database migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_SSL: ${{ vars.DATABASE_SSL || 'require' }}
+        run: pnpm --filter @mcat/aws-tools migrate:ci
+
+      # 4. content:seed (idempotent questions + passages upsert into Postgres)
+      - name: Seed questions and passages
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_SSL: ${{ vars.DATABASE_SSL || 'require' }}
+          MCAT_QUESTION_CORPUS_DIR: ${{ vars.MCAT_QUESTION_CORPUS_DIR }}
+        run: pnpm content:seed
+
+      # 5. cdk deploy the api + web stacks (CDK also pulls in their foundation + data
+      #    dependencies). Uses the OIDC role → cdk-<qualifier>-* bootstrap roles.
+      - name: Deploy API and web infrastructure (CDK)
+        run: >-
+          pnpm --filter @mcat/infra-cdk exec cdk deploy McatDevWeb McatDevApi
+          --require-approval never
+
+      # 6. upload the built SPA to its S3 bucket and invalidate the CloudFront shell.
+      #    web-stack.ts hosts the learner SPA from S3 behind CloudFront; the bucket
+      #    name and distribution id come from the deployed stack outputs.
+      - name: Publish SPA to S3 and invalidate CloudFront
+        run: |
+          set -euo pipefail
+          bucket="$(aws cloudformation describe-stacks --stack-name mcat-dev-web \
+            --query "Stacks[0].Outputs[?OutputKey=='LearnerArtifactBucketName'].OutputValue" \
+            --output text)"
+          distribution="$(aws cloudformation describe-stacks --stack-name mcat-dev-api \
+            --query "Stacks[0].Outputs[?OutputKey=='LearnerDistributionId'].OutputValue" \
+            --output text)"
+          if [ -z "$bucket" ] || [ -z "$distribution" ]; then
+            echo "Could not resolve the learner bucket or distribution from stack outputs" >&2
+            exit 1
+          fi
+          # Fingerprinted assets: immutable, one-year cache.
+          aws s3 sync apps/learner-web/dist "s3://$bucket" \
+            --exclude "*" --include "assets/*" \
+            --cache-control "public,max-age=31536000,immutable" --only-show-errors
+          # Shell (index.html, manifest, service worker, ...): no-cache; prune stale.
+          aws s3 sync apps/learner-web/dist "s3://$bucket" \
+            --exclude "assets/*" \
+            --cache-control "no-cache,must-revalidate" --delete --only-show-errors
+          aws cloudfront create-invalidation --distribution-id "$distribution" \
+            --paths "/" "/index.html" "/manifest.webmanifest" "/sw.js"

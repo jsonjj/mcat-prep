@@ -47,7 +47,12 @@ import {
   type MasterySeed,
   type PracticeAttemptCommand,
 } from '@mcat/contracts';
-import { parseRewriteRequest, type RewriteRequest } from '@mcat/ai-gateway';
+import {
+  parseChatRequest,
+  parseRewriteRequest,
+  type ChatRequest,
+  type RewriteRequest,
+} from '@mcat/ai-gateway';
 
 export type RouteId =
   | 'health'
@@ -68,6 +73,7 @@ export type RouteId =
   | 'passageToday'
   | 'passageAttempt'
   | 'aiRewrite'
+  | 'aiChat'
   | 'practiceTestCompleted'
   | 'practiceTestReviewed'
   | 'masterySeed'
@@ -268,6 +274,25 @@ const AiRewriteRequestSchema: RuntimeSchema<RewriteRequest> = {
   },
 };
 
+/**
+ * Validates the CARS Duel opponent body by delegating to the ai-gateway parser —
+ * which also enforces the message-count and combined-size caps — mirroring
+ * {@link AiRewriteRequestSchema}. Kept as a `RuntimeSchema` so the route flows
+ * through the handler's standard body parsing (JSON content-type + byte cap) and
+ * its uniform `validation_error` response before any provider spend.
+ */
+const AiChatRequestSchema: RuntimeSchema<ChatRequest> = {
+  parse(value: unknown): ChatRequest {
+    const parsed = parseChatRequest(value);
+    if (parsed === null) throw new TypeError('Invalid chat request.');
+    return parsed;
+  },
+  safeParse(value: unknown) {
+    const parsed = parseChatRequest(value);
+    return parsed === null ? { success: false } : { success: true, data: parsed };
+  },
+};
+
 export interface RouteDefinition {
   readonly id: RouteId;
   readonly method: 'DELETE' | 'GET' | 'POST' | 'PUT';
@@ -442,6 +467,24 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: false,
     bodySchema: AiRewriteRequestSchema,
+  },
+  {
+    // CARS Duel opponent: the same-origin seam the dev proxy stands in for, now
+    // served in prod. A POST that mutates NO learner state (the duel outcome is
+    // recorded separately via `/v1/hooks/cars-duel`), so it is not
+    // `stateChanging` — no CSRF/Origin-required write gate — exactly like
+    // `aiRewrite`. It still runs behind the same session authorizer,
+    // `x-mcat-origin-verify`, per-session rate limiter, and WAF as every other
+    // /v1 route, and a cross-origin browser call is still refused by the Origin
+    // check. handler.ts dispatches it to ai-gateway `proxyChat`; the client
+    // authors the guarded CARS prompts and the parser caps message count/size, so
+    // no key yields 503 and the client shows the opponent as offline (never 500).
+    id: 'aiChat',
+    method: 'POST',
+    path: '/v1/ai/chat',
+    auth: 'session',
+    stateChanging: false,
+    bodySchema: AiChatRequestSchema,
   },
   {
     // WS5: the learner reports a completed periodic test — envelope only, no

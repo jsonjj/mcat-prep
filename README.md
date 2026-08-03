@@ -98,6 +98,28 @@ The data layer reads its Postgres connection from the environment (`DATABASE_URL
 
 **Full guide:** [`docs/database.md`](docs/database.md) — how to **add / edit / read** questions, the `questions` vs `question_protected` tables, the `@mcat/persistence-postgres` read seam, migrations, and a commands cheat-sheet. See also [`docs/question-storage-plan.md`](docs/question-storage-plan.md) (design + integration boundary).
 
+## Deployment
+
+Two paths deploy the AWS development backend:
+
+- **Automated (CI/CD):** `.github/workflows/deploy.yml` runs on `workflow_dispatch`
+  and push to `main`. It reuses the verify-only `AWS backend CI` as a required gate,
+  waits for a GitHub Environment (`aws-dev`) approval, authenticates with **GitHub
+  OIDC** (no long-lived AWS keys), then builds the SPA, migrates, seeds
+  (`pnpm content:seed`), `cdk deploy`s the API + web stacks, and publishes the SPA to
+  S3 + invalidates CloudFront. The OIDC deploy role lives in
+  `infra/cdk/lib/github-deploy-stack.ts` (its own entrypoint `bin/github-deploy.ts`,
+  separate from the reviewed nine-stack app).
+  - **You must provide** repository/environment **variables** `AWS_DEPLOY_ROLE_ARN`,
+    `AWS_ACCOUNT_ID`, `AWS_REGION`, `VITE_AUTHORITY_BASE_URL`, `MCAT_QUESTION_CORPUS_DIR`
+    (and optional `DATABASE_SSL`); the **secret** `DATABASE_URL`; an `aws-dev`
+    environment with required reviewers; and a one-time bootstrap
+    (`cdk bootstrap`, create the OIDC provider + deploy role, provision the DB).
+  - **Full setup:** [`docs/runbooks/github-actions-deploy.md`](docs/runbooks/github-actions-deploy.md).
+- **Manual (fail-closed, human-reviewed):** the wave-based, attested path in
+  [`docs/runbooks/aws-dev-deploy.md`](docs/runbooks/aws-dev-deploy.md). Use it for
+  first-provisioning and stateful/high-risk changes.
+
 ## Authority boundaries (non-negotiable)
 
 - The server (AWS for deployed development; the in-process `services/local-authority` adapter for tests/tooling) is authoritative for correctness, protected scoring, planning, FSRS, mastery, and synchronization.

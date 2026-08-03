@@ -8,7 +8,7 @@ import {
 } from '../app/today-queries';
 import { EvidenceAtlas } from '../components/EvidenceAtlas';
 import { WrappedCard } from '../components/WrappedCard';
-import { IconPlay } from '../components/icons';
+import { IconCarsDuel, IconPlay, IconPractice, IconToday } from '../components/icons';
 import { fetchTodaysPassage } from './passage/passage-client';
 
 function greeting(): string {
@@ -130,6 +130,25 @@ export function Home() {
           <IconPlay />
         </span>
       </Link>
+
+      {/* Mobile-only shortcuts to the destinations the five-item bottom nav omits
+          (Today's Path, Practice, CARS Duel). Hidden on desktop, where the sidebar
+          already lists them — so phones keep a discoverable path to each without
+          touching the five-item bottom-nav contract. */}
+      <nav className="mc-home__quicklinks" aria-label="More ways to practice">
+        <Link to="/app/today" className="mc-home__quicklink">
+          <IconToday className="mc-home__quicklink-icon" />
+          <span>Today’s Path</span>
+        </Link>
+        <Link to="/app/practice" className="mc-home__quicklink">
+          <IconPractice className="mc-home__quicklink-icon" />
+          <span>Practice</span>
+        </Link>
+        <Link to="/app/cars" className="mc-home__quicklink">
+          <IconCarsDuel className="mc-home__quicklink-icon" />
+          <span>CARS Duel</span>
+        </Link>
+      </nav>
 
       <WrappedCard />
     </div>
