@@ -1,0 +1,24 @@
+{
+  "name": "@mcat/seed-lambda",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "3.1092.0",
+    "@mcat/content": "workspace:*",
+    "@mcat/contracts": "workspace:*",
+    "@mcat/persistence-postgres": "workspace:*",
+    "pg": "8.22.0"
+  },
+  "devDependencies": {
+    "@types/pg": "8.20.0",
+    "typescript": "5.7.3"
+  }
+}

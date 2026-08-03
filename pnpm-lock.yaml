@@ -650,6 +650,31 @@ importers:
         specifier: 3.2.6
         version: 3.2.6(@types/node@22.10.5)(jsdom@30.0.1)(tsx@4.23.1)
 
+  services/lambdas/seed:
+    dependencies:
+      '@aws-sdk/client-secrets-manager':
+        specifier: 3.1092.0
+        version: 3.1092.0
+      '@mcat/content':
+        specifier: workspace:*
+        version: link:../../../packages/content
+      '@mcat/contracts':
+        specifier: workspace:*
+        version: link:../../../packages/contracts
+      '@mcat/persistence-postgres':
+        specifier: workspace:*
+        version: link:../../persistence-postgres
+      pg:
+        specifier: 8.22.0
+        version: 8.22.0
+    devDependencies:
+      '@types/pg':
+        specifier: 8.20.0
+        version: 8.20.0
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
+
   services/lambdas/workers:
     dependencies:
       '@aws-sdk/client-secrets-manager':
