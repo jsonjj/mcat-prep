@@ -35,3 +35,35 @@ export const PRACTICE_TEST_ENABLED: boolean =
     : practiceTestOverride === 'false'
       ? false
       : Boolean(import.meta.env.DEV);
+
+/**
+ * ── Onboarding placement DIAGNOSTIC ─────────────────────────────────────────
+ * Gated OFF in production, ON in dev — same shape and rationale as the
+ * practice-test flag above.
+ *
+ * The onboarding placement quiz drives the multistage diagnostic engine through
+ * `diagnosticClient` → `POST /api/diagnostic/{block,…}` (see
+ * ./diagnostic-client.ts, `BASE = '/api/diagnostic'`), which is served ONLY by
+ * the dev/preview Vite plugin (`server/diagnostic-api-plugin.ts`). The deployed
+ * learner PWA is a static CloudFront/S3 SPA whose ONLY backend behaviour routes
+ * `/v1/*` to the learner-API Lambda; there is no deployed `/v1/diagnostic/*`
+ * route, so every `/api/diagnostic/*` path falls through the SPA rewrite to
+ * `index.html` and a brand-new learner dead-ends mid-onboarding. Until the
+ * diagnostic is wired into the deployed backend, the placement path is hidden in
+ * prod: Welcome offers no "Take the placement" CTA and `/onboarding/diagnostic`
+ * redirects to plan setup (see ../screens/OnboardingStart.tsx and ./router.tsx).
+ *
+ * This flag governs PRESENTATION + routing only; dev behaviour (the working
+ * quiz) is unchanged.
+ *
+ * Default: `import.meta.env.DEV` — on under `vite dev` / `dev:offline`, off in a
+ * production build. Override explicitly with
+ * `VITE_DIAGNOSTIC_ENABLED=(true|false)`.
+ */
+const diagnosticOverride = import.meta.env.VITE_DIAGNOSTIC_ENABLED;
+export const DIAGNOSTIC_ENABLED: boolean =
+  diagnosticOverride === 'true'
+    ? true
+    : diagnosticOverride === 'false'
+      ? false
+      : Boolean(import.meta.env.DEV);

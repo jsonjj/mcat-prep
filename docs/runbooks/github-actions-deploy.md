@@ -23,10 +23,23 @@ long-lived AWS access keys** anywhere in the workflow.
    2. Configure AWS credentials via GitHub OIDC (`role-to-assume`)
    3. `pnpm run build` (with `VITE_AUTHORITY_BASE_URL` compiled into the learner SPA)
    4. Guard: scan the learner artifact for protected/server-only material
-   5. `pnpm --filter @mcat/aws-tools migrate:ci` (forward-only SQL vs `DATABASE_URL`)
-   6. `pnpm content:seed` (idempotent questions + passages upsert)
-   7. `cdk deploy McatDevWeb McatDevApi` (CDK also deploys their foundation + data deps)
-   8. Upload the built SPA to S3 and invalidate the CloudFront shell
+   5. `cdk deploy McatDevData` — deploy the data plane first so the in-VPC migration
+      Lambda is refreshed with the **current** bundled migrations before it is
+      invoked (also deploys its foundation dependency)
+   6. Resolve the migration Lambda ARN from the `mcat-dev-data` stack output
+      `MigrationFunctionArn` (uses the ambient OIDC session, no named profile)
+   7. `pnpm --filter @mcat/aws-tools migrate:ci-lambda` — **invoke the in-VPC
+      migration Lambda** to apply forward-only migrations. The Lambda runs inside the
+      isolated subnets and reaches Aurora via the RDS Proxy, so the runner needs no
+      direct database reachability and no `DATABASE_URL` for migrations. The Lambda
+      re-validates the reviewed apply-forward manifest against its own bundled SQL
+      before applying anything and returns a signed attestation the tool verifies.
+   8. `pnpm content:seed` (idempotent questions + passages upsert) — still runs over
+      `DATABASE_URL` because it performs content upserts the migration Lambda cannot
+      run. This is now the **only** step that needs a runner-reachable database; it is
+      **skipped with a warning** when `DATABASE_URL` is unset (migrations still ran).
+   9. `cdk deploy McatDevWeb McatDevApi` (data is already current from step 5)
+   10. Upload the built SPA to S3 and invalidate the CloudFront shell
 
 ## Triggers
 
@@ -52,7 +65,7 @@ Both go through the `verify` gate **and** the `aws-dev` environment approval.
 
 | Secret | Notes |
 | --- | --- |
-| `DATABASE_URL` | Postgres URL used by **migrate + seed**, reachable **from the runner**. The Aurora cluster is in isolated subnets behind the RDS Proxy, so this must be a reachable endpoint (e.g. a Session pooler) or the job must run on a self-hosted in-VPC runner. |
+| `DATABASE_URL` | Postgres URL used by the **seed** step only, reachable **from the runner**. **Migrations no longer use it** — they run inside the VPC via the migration Lambda. The Aurora cluster is in isolated subnets behind the RDS Proxy, so for seed this must be a runner-reachable endpoint (e.g. a Session pooler / RDS Proxy session endpoint) or the job must run on a self-hosted in-VPC runner. If that reachability is not yet wired, leave `DATABASE_URL` unset: the seed step then skips with a warning and everything else (including migrations) still succeeds. Seed content separately via the manual in-VPC path in [`aws-dev-deploy.md`](./aws-dev-deploy.md). |
 
 > The deploy role ARN, account id, and region are **not secret** and are stored as
 > variables. Only `DATABASE_URL` (and any DB credentials embedded in it) is a secret.
@@ -121,11 +134,35 @@ steps run. On a brand-new account those steps have no database to talk to.
 
 ## Notes and caveats
 
-- **migrate/seed ordering.** The pipeline runs migrate → seed → `cdk deploy` as
-  specified; this assumes the data stack/DB already exists and is reachable from the
-  runner. `migrate:ci` applies the same ordered SQL in `database/migrations` that the
-  migration Lambda uses, but directly over `DATABASE_URL` (the reviewed
-  `migrate:dev` Lambda path rejects OIDC credentials and cannot run here).
+- **migrate via the in-VPC Lambda.** The pipeline runs `cdk deploy McatDevData` →
+  invoke migration Lambda → seed → `cdk deploy McatDevWeb McatDevApi`. Deploying the
+  data stack first guarantees the migration Lambda bundles the current
+  `database/migrations` before it is invoked (the Lambda re-validates the reviewed
+  manifest against its bundled SQL, so a stale Lambda would reject a newer manifest).
+  Because the Lambda executes inside the VPC and reaches Aurora through the RDS Proxy,
+  the runner never needs a network path to Aurora for migrations. `migrate:ci-lambda`
+  is the OIDC counterpart to the human-only `migrate:dev`: it preserves the ambient
+  OIDC session and invokes the Lambda without a named `--profile` (which `migrate:dev`
+  requires and which its command runner strips). The older `migrate:ci` (direct SQL
+  over `DATABASE_URL`) remains in `@mcat/aws-tools` as a fallback for environments
+  that already have a runner-reachable pooler path.
+- **seed still needs a reachable DB.** Only `content:seed` connects to Postgres
+  directly (it upserts questions + passages, which the migration Lambda does not do).
+  Point `DATABASE_URL` at a runner-reachable pooler / RDS Proxy session endpoint, or
+  run it from the manual in-VPC path. When `DATABASE_URL` is unset the seed step skips
+  with a warning so migrations and the rest of the deploy still complete.
+- **Database credential rotation.** The Aurora **administrator** secret rotates
+  automatically every 30 days (single-user rotation, wired in
+  `infra/cdk/lib/data-stack.ts` via `cluster.addRotationSingleUser`; the AWS-managed
+  rotation Lambda runs in the isolated subnets and reaches Secrets Manager through the
+  foundation's private interface endpoint, so no internet egress is needed). The two
+  least-privilege principal secrets (`mcat_learner_api`, `mcat_workers`) are **not**
+  auto-rotated by an independent Lambda because the in-VPC migration Lambda owns their
+  role/password lifecycle. Rotate them by updating the secret value and re-invoking the
+  migration Lambda (`migrate:ci-lambda` / `migrate:dev`), which re-applies the password
+  and re-hardens the role. Backups are retained 7 days and deletion protection is
+  intentionally off in the isolated dev account. See the `AwsSolutions-SMG4` and
+  `AwsSolutions-RDS10` acknowledgements in `data-stack.ts` for the full rationale.
 - **Double verify on `main`.** `AWS backend CI` also runs on push to `main`, so
   verify runs both standalone and inside this pipeline. The checks are idempotent.
 - **Admin web** is intentionally not published (matches `publish:web`).

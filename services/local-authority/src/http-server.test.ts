@@ -5,6 +5,8 @@ import {
   NormalizedLessonRunViewSchema,
   NormalizedLessonStartResponseSchema,
   NormalizedLessonStatusViewSchema,
+  PassageAttemptResponseSchema,
+  PassageTodayResponseSchema,
   VectorLessonRunViewSchema,
   VectorLessonStartResponseSchema,
   VectorLessonStatusViewSchema,
@@ -318,6 +320,52 @@ describe('local lesson HTTP authority: normalized catalog (L2/L3)', () => {
       }),
     });
     expect(denied.status).toBe(400);
+  });
+});
+
+describe('local lesson HTTP authority: Passage of the Day', () => {
+  it('serves the day’s learner-safe passage and grades an answer, never leaking a key', async () => {
+    const server = await createLocalLessonHttpServer({ port: 0 });
+    running.push(server);
+
+    // The tz offset rides in the PATH, exactly like the deployed route. Before
+    // this block existed the offline authority 404'd here and the runner showed
+    // "Passage unavailable".
+    const todayResponse = await fetch(`${server.baseUrl}/v1/passage/today/-300`, {
+      headers: LOCAL_HEADERS,
+    });
+    expect(todayResponse.status).toBe(200);
+    const { passage } = PassageTodayResponseSchema.parse(await todayResponse.json());
+    // The hardcoded dev pool is non-empty, so a passage is always served.
+    expect(passage).not.toBeNull();
+    if (passage === null) throw new Error('unreachable');
+    expect(passage.questions.length).toBeGreaterThan(0);
+    // The learner-safe view carries no answer key, rationale, or explanation.
+    expect(JSON.stringify(passage)).not.toMatch(
+      /"correct"|"correctChoiceId"|"misconception"|"rationale"|"explanation"/,
+    );
+
+    // Scoring one answer reveals the key + explanation — a POST that is session-
+    // gated but NOT state-changing (no CSRF needed).
+    const questionId = passage.questions[0]!.id;
+    const attemptResponse = await fetch(`${server.baseUrl}/v1/passage/attempts`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...LOCAL_HEADERS },
+      body: JSON.stringify({ questionId, choiceId: 'A' }),
+    });
+    expect(attemptResponse.status).toBe(200);
+    const { grade } = PassageAttemptResponseSchema.parse(await attemptResponse.json());
+    expect(typeof grade.correct).toBe('boolean');
+    expect(['A', 'B', 'C', 'D']).toContain(grade.correctChoiceId);
+    expect(grade.rationale.length).toBeGreaterThan(0);
+
+    // An unknown question id is a 404 not_found, exactly like the deployed API.
+    const missing = await fetch(`${server.baseUrl}/v1/passage/attempts`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...LOCAL_HEADERS },
+      body: JSON.stringify({ questionId: 'not-a-real-question', choiceId: 'A' }),
+    });
+    expect(missing.status).toBe(404);
   });
 });
 

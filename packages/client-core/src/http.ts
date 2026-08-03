@@ -15,6 +15,8 @@ import {
   LessonWarrantViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
+  PassageAttemptResponseSchema,
+  PassageTodayResponseSchema,
   PracticeAttemptResultSchema,
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
@@ -49,6 +51,9 @@ import {
   type HttpErrorCode,
   type MasterySeed,
   type NormalizedLessonAction,
+  type PassageChoiceId,
+  type PassageGrade,
+  type PassageTodayView,
   type PracticeAttemptCommand,
   type VectorLessonAction,
 } from '@mcat/contracts';
@@ -597,6 +602,32 @@ export class HttpAuthorityClient implements AuthorityPort, AuthPort {
       if (error instanceof ApiClientError && error.code === 'not_found') return null;
       throw error;
     }
+  }
+
+  async passageToday(tz: number): Promise<PassageTodayView | null> {
+    await this.ensureBootstrap();
+    // Path-parameterized like the practice queue (the authority edge rejects query
+    // strings), so the tz offset rides as a segment the authority reads back.
+    const segment = encodeURIComponent(String(Math.trunc(tz)));
+    const response = await this.request(
+      `${HTTP_API.passageToday.path}/${segment}`,
+      PassageTodayResponseSchema,
+    );
+    return response.passage;
+  }
+
+  async passageAttempt(
+    questionId: string,
+    choiceId: PassageChoiceId | null,
+  ): Promise<PassageGrade> {
+    // Session-gated but NOT state-changing (no CSRF write gate); the shared
+    // request() still sends the session cookie via `credentials: 'include'`.
+    await this.ensureBootstrap();
+    const response = await this.request(HTTP_API.passageAttempt.path, PassageAttemptResponseSchema, {
+      method: HTTP_API.passageAttempt.method,
+      body: JSON.stringify({ questionId, choiceId }),
+    });
+    return response.grade;
   }
 
   async recordCarsDuel(outcome?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {

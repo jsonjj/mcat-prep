@@ -65,6 +65,15 @@ const DEFAULT_MIGRATIONS_DIRECTORY = fileURLToPath(
   new URL('../../../database/migrations/', import.meta.url),
 );
 
+// Characters excluded from every generated database password so the value is safe
+// in a Postgres connection string, in `format(... %L ...)` DDL, and behind the RDS
+// Proxy. Shared by the initial generation and by automatic rotation so rotated
+// passwords keep the exact same character policy.
+const GENERATED_PASSWORD_EXCLUDE_CHARACTERS = ' %+~`#$&*()|[]{}:;<>?!\'"\\/@';
+
+// How often database credentials are automatically rotated.
+const DATABASE_SECRET_ROTATION_PERIOD = Duration.days(30);
+
 export class DataStack extends Stack {
   public readonly resources: DataResources;
 
@@ -115,7 +124,7 @@ export class DataStack extends Stack {
       generateSecretString: {
         secretStringTemplate: JSON.stringify({ username: 'mcat_admin' }),
         generateStringKey: 'password',
-        excludeCharacters: ' %+~`#$&*()|[]{}:;<>?!\'"\\/@',
+        excludeCharacters: GENERATED_PASSWORD_EXCLUDE_CHARACTERS,
         passwordLength: 40,
       },
     });
@@ -185,6 +194,9 @@ export class DataStack extends Stack {
       },
       cloudwatchLogsExports: ['postgresql'],
       copyTagsToSnapshot: true,
+      // Backups are retained 7 days (see `backup` above). Deletion protection is
+      // intentionally disabled only in the isolated dev account; the cluster still
+      // snapshots on replace/delete. See the AwsSolutions-RDS10 acknowledgement.
       deletionProtection: false,
       removalPolicy: RemovalPolicy.SNAPSHOT,
       securityGroups: [databaseSecurityGroup],
@@ -291,6 +303,49 @@ export class DataStack extends Stack {
       exportName: 'mcat-dev-migration-function-arn',
     });
 
+    // ── Automatic administrator-credential rotation ────────────────────────────
+    // The Aurora administrator secret rotates automatically with the single-user
+    // strategy. The AWS-managed rotation Lambda runs inside the isolated VPC, so it
+    // reaches Aurora directly on 5432 (the ingress/egress is wired by
+    // addRotationSingleUser through the cluster connections) and reaches Secrets
+    // Manager through the foundation's private interface endpoint — private DNS
+    // resolves the standard Secrets Manager hostname to it, so no internet egress
+    // is required. This gives the highest-value credential real rotation and
+    // resolves AwsSolutions-SMG4 for it. The two least-privilege principal secrets
+    // are handled by the migration Lambda instead (see the SMG4 acknowledgements).
+    const secretRotationSecurityGroup = new ec2.SecurityGroup(
+      this,
+      'DatabaseSecretRotationSecurityGroup',
+      {
+        vpc: props.foundation.vpc,
+        allowAllOutbound: false,
+        description:
+          'Allows the credential rotation Lambda to reach only Aurora and the private Secrets Manager endpoint.',
+        securityGroupName: 'mcat-dev-db-secret-rotation',
+      },
+    );
+    secretRotationSecurityGroup.addEgressRule(
+      props.foundation.serviceEndpointSecurityGroup,
+      ec2.Port.tcp(443),
+      'Read and write rotated credentials through the private Secrets Manager endpoint.',
+    );
+    new ec2.CfnSecurityGroupIngress(this, 'EndpointIngressFromSecretRotation', {
+      groupId: props.foundation.serviceEndpointSecurityGroup.securityGroupId,
+      sourceSecurityGroupId: secretRotationSecurityGroup.securityGroupId,
+      ipProtocol: 'tcp',
+      fromPort: 443,
+      toPort: 443,
+      description: 'Allow only the credential rotation Lambda to call approved AWS services.',
+    });
+    // Egress to Aurora on 5432 and the matching ingress on the database security
+    // group are added by addRotationSingleUser via the cluster connections. The
+    // rotation Lambda is placed in the cluster's PRIVATE_ISOLATED subnets.
+    cluster.addRotationSingleUser({
+      securityGroup: secretRotationSecurityGroup,
+      automaticallyAfter: DATABASE_SECRET_ROTATION_PERIOD,
+      excludeCharacters: GENERATED_PASSWORD_EXCLUDE_CHARACTERS,
+    });
+
     const bucketSuffix = `${props.environment.account}-${props.environment.region}`;
     const auditLogs = createBucket(this, 'AuditLogsBucket', {
       name: `mcat-dev-audit-logs-${bucketSuffix}`,
@@ -378,17 +433,21 @@ export class DataStack extends Stack {
       reason:
         'This bucket is the dedicated encrypted server-access-log sink; recursive access logging would create an unbounded logging loop.',
     });
-    for (const secret of [
-      dbSecret,
-      learnerApiDbSecret,
-      workersDbSecret,
-      rateLimitPepperSecret,
-      originVerificationSecret,
-    ]) {
+    // The administrator credential (dbSecret) now rotates automatically via
+    // cluster.addRotationSingleUser above, so it is intentionally NOT acknowledged
+    // here — cdk-nag sees its RotationSchedule and reports it compliant.
+    for (const secret of [learnerApiDbSecret, workersDbSecret]) {
       Validations.of(secret).acknowledge({
         id: 'AwsSolutions-SMG4',
         reason:
-          'Automatic rotation is deferred until the migration-safe three-principal rotation workflow is exercised in development; generated credentials remain encrypted and are never exposed to browsers.',
+          'Least-privilege application-role credentials whose password lifecycle is owned by the in-VPC migration Lambda: it (re)creates and hardens mcat_learner_api / mcat_workers and sets each password from this secret on every run, asserting the role has no extra memberships. Independent SAR rotation is therefore deferred — the alternating-user (multi-user) strategy would spawn clone roles the migration hardening never re-applies, and single-user rotation would require attaching Aurora connection metadata to the secret, which the migration runtime rejects (it requires an exact {username,password} shape). These are rotated via the migration/rotation runbook, which updates the value and re-invokes the migration Lambda to apply it. The admin credential above already rotates automatically.',
+      });
+    }
+    for (const secret of [rateLimitPepperSecret, originVerificationSecret]) {
+      Validations.of(secret).acknowledge({
+        id: 'AwsSolutions-SMG4',
+        reason:
+          'Non-credential high-entropy secret (rate-limit pepper / CloudFront origin-verification token), not a database login. Automatic rotation is deferred because rotating it invalidates in-flight hashed identifiers or origin checks; it is rotated deliberately via runbook, remains encrypted, and is never exposed to browsers.',
       });
     }
     Validations.of(cluster).acknowledge({
@@ -452,7 +511,7 @@ function createDatabasePrincipalSecret(
     generateSecretString: {
       secretStringTemplate: JSON.stringify({ username }),
       generateStringKey: 'password',
-      excludeCharacters: ' %+~`#$&*()|[]{}:;<>?!\'"\\/@',
+      excludeCharacters: GENERATED_PASSWORD_EXCLUDE_CHARACTERS,
       passwordLength: 40,
     },
   });

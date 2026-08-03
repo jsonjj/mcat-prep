@@ -24,6 +24,11 @@ import {
   SkillMasteryViewSchema,
 } from './mastery';
 import {
+  PassageAttemptRequestSchema,
+  PassageAttemptResponseSchema,
+  PassageTodayResponseSchema,
+} from './passage-of-the-day';
+import {
   PracticeAttemptCommandSchema,
   PracticeAttemptResultSchema,
   PracticeQueueViewSchema,
@@ -218,6 +223,31 @@ export const HTTP_API = {
     method: 'GET',
     path: '/v1/practice-test/summary',
     response: PracticeTestSummaryViewSchema.nullable(),
+  },
+  /**
+   * Passage of the Day — FORMATIVE (writes no mastery). The learner's tz offset
+   * rides in the PATH (`/v1/passage/today/{tz}`) because the authority edge
+   * rejects query strings; the client appends the segment, exactly like the
+   * practice queue's count and the mistakes-repair limit. A `null` passage is the
+   * honest "pool is empty" answer the runner renders on-brand.
+   */
+  passageToday: {
+    method: 'GET',
+    path: '/v1/passage/today',
+    response: PassageTodayResponseSchema,
+  },
+  /**
+   * Scores one passage answer and reveals its explanation. A POST that mutates NO
+   * learner state, so it is not `stateChanging` — no CSRF write gate — but it is
+   * still session-gated like every /v1 route, so the shared client's cookie auth
+   * carries it. Deliberately namespaced away from the adaptive
+   * `POST /v1/practice/attempts`.
+   */
+  passageAttempt: {
+    method: 'POST',
+    path: '/v1/passage/attempts',
+    body: PassageAttemptRequestSchema,
+    response: PassageAttemptResponseSchema,
   },
   vectorLessonStatus: {
     method: 'GET',

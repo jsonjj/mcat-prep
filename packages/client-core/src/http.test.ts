@@ -252,6 +252,90 @@ describe('signed-out client behaviour', () => {
   });
 });
 
+describe('passage of the day (formative)', () => {
+  const passageView = {
+    id: 'p1',
+    title: 'A short read',
+    discipline: 'Aesthetics',
+    body: ['Paragraph one.'],
+    questions: [
+      {
+        id: 'p1-q1',
+        stem: 'What follows?',
+        choices: [
+          { id: 'A', text: 'a' },
+          { id: 'B', text: 'b' },
+          { id: 'C', text: 'c' },
+          { id: 'D', text: 'd' },
+        ],
+      },
+    ],
+    dayIndex: 0,
+    poolSize: 12,
+    localDate: '2026-08-03',
+  };
+  const grade = {
+    correct: false,
+    correctChoiceId: 'B',
+    rationale: 'Because B.',
+    choiceRationale: 'A over-reads the passage.',
+  };
+
+  it('reads the day’s passage from a path-encoded tz, with credentials', async () => {
+    const calls: Array<{ url: string; init: RequestInit }> = [];
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      fetch: async (url, init) => {
+        calls.push({ url: String(url), init: init ?? {} });
+        return String(url).endsWith('/v1/bootstrap')
+          ? Response.json(bootstrapResponse)
+          : Response.json({ passage: passageView });
+      },
+    });
+
+    const passage = await client.passageToday(-300);
+
+    // The tz rides in the PATH — never a query string the authority edge rejects.
+    const today = calls.find((call) => call.url.includes('/v1/passage/today'));
+    expect(new URL(today?.url ?? '').pathname).toBe('/v1/passage/today/-300');
+    expect(today?.init.credentials).toBe('include');
+    expect(passage?.id).toBe('p1');
+  });
+
+  it('treats an empty pool as a served null passage', async () => {
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      fetch: async (url) =>
+        String(url).endsWith('/v1/bootstrap')
+          ? Response.json(bootstrapResponse)
+          : Response.json({ passage: null }),
+    });
+
+    expect(await client.passageToday(0)).toBeNull();
+  });
+
+  it('scores an answer via a session-gated POST and unwraps the grade', async () => {
+    const calls: Array<{ url: string; init: RequestInit }> = [];
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      fetch: async (url, init) => {
+        calls.push({ url: String(url), init: init ?? {} });
+        return String(url).endsWith('/v1/bootstrap')
+          ? Response.json(bootstrapResponse)
+          : Response.json({ grade });
+      },
+    });
+
+    const result = await client.passageAttempt('p1-q1', 'A');
+
+    const attempt = calls.find((call) => call.url.endsWith('/v1/passage/attempts'));
+    expect(attempt?.init.method).toBe('POST');
+    expect(attempt?.init.credentials).toBe('include');
+    expect(JSON.parse(String(attempt?.init.body))).toEqual({ questionId: 'p1-q1', choiceId: 'A' });
+    expect(result).toEqual(grade);
+  });
+});
+
 function signedOutSessionWithToken(): MemorySession {
   const session = new MemorySession();
   session.setCsrfToken(anonymousBootstrapResponse.csrfToken);

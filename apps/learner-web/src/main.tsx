@@ -14,17 +14,22 @@ import { RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from '@mcat/ui-web';
 import { queryClient } from './app/queries';
 import { router } from './app/router';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 const rootEl = document.getElementById('root');
 if (!rootEl) throw new Error('#root not found');
 
 createRoot(rootEl).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider initial="light">
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </QueryClientProvider>
+    {/* Outermost crash net: catches render errors from the providers and the
+        router alike, showing a calm recovery screen instead of a blank page. */}
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider initial="light">
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   </StrictMode>,
 );
 

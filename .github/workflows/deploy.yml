@@ -5,8 +5,10 @@ name: Deploy (AWS dev)
 # It runs the existing verify CI as a required gate (reusable workflow_call in
 # aws-backend-ci.yml), then — only after checks pass and a human approves the
 # GitHub Environment — authenticates with short-lived GitHub OIDC credentials
-# (no long-lived AWS keys) and: builds the learner SPA, applies forward-only DB
-# migrations, seeds questions + passages, deploys the API + web CDK stacks, and
+# (no long-lived AWS keys) and: builds the learner SPA, deploys the data plane,
+# applies forward-only DB migrations by INVOKING THE IN-VPC MIGRATION LAMBDA
+# (the Aurora cluster is in isolated subnets, so the runner never connects to it
+# directly), seeds questions + passages, deploys the API + web CDK stacks, and
 # publishes the SPA to S3 + invalidates CloudFront.
 #
 # ── ONE-TIME BOOTSTRAP (before this workflow can run) ────────────────────────
@@ -34,9 +36,12 @@ name: Deploy (AWS dev)
 #     MCAT_QUESTION_CORPUS_DIR path to the vendored question corpus (required by questions:seed)
 #     DATABASE_SSL            require | no-verify | disable   (optional; default require)
 #   Repository / environment SECRETS:
-#     DATABASE_URL            Postgres URL for migrate + seed, reachable from the runner
-#                             (RDS Proxy / Session pooler; the Aurora cluster is in
-#                             isolated subnets — see the runbook for the network path).
+#     DATABASE_URL            Postgres URL for the SEED step ONLY, reachable from the
+#                             runner (RDS Proxy / Session pooler; the Aurora cluster is
+#                             in isolated subnets — see the runbook for the network
+#                             path). Migrations no longer need it: they run inside the
+#                             VPC via the migration Lambda. If seed reachability is not
+#                             yet wired, run content:seed from the manual in-VPC path.
 #
 # Full detail: docs/runbooks/github-actions-deploy.md
 # The fail-closed, human-reviewed manual path remains docs/runbooks/aws-dev-deploy.md.
@@ -118,23 +123,61 @@ jobs:
             exit 1
           fi
 
-      # 3. migrate (forward-only SQL via tools/aws against DATABASE_URL)
-      - name: Apply database migrations
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DATABASE_SSL: ${{ vars.DATABASE_SSL || 'require' }}
-        run: pnpm --filter @mcat/aws-tools migrate:ci
+      # 3. Deploy the data plane first (CDK). This refreshes the in-VPC migration
+      #    Lambda with the CURRENT bundled migrations before we invoke it, and pulls
+      #    in its foundation dependency. Uses the OIDC role → cdk-<qualifier>-* roles.
+      - name: Deploy data plane (CDK)
+        run: >-
+          pnpm --filter @mcat/infra-cdk exec cdk deploy McatDevData
+          --require-approval never
 
-      # 4. content:seed (idempotent questions + passages upsert into Postgres)
+      # 4. Resolve the in-VPC migration Lambda ARN from the data stack output using
+      #    the ambient OIDC session (no named profile), and expose it to the next step.
+      - name: Resolve migration Lambda ARN
+        run: |
+          set -euo pipefail
+          arn="$(aws cloudformation describe-stacks --stack-name mcat-dev-data \
+            --query "Stacks[0].Outputs[?OutputKey=='MigrationFunctionArn'].OutputValue" \
+            --output text)"
+          if [ -z "$arn" ] || [ "$arn" = "None" ]; then
+            echo "Could not resolve MigrationFunctionArn from the mcat-dev-data stack outputs" >&2
+            exit 1
+          fi
+          echo "MCAT_MIGRATION_FUNCTION_ARN=$arn" >> "$GITHUB_ENV"
+
+      # 5. migrate — INVOKE THE IN-VPC MIGRATION LAMBDA. It runs inside the isolated
+      #    subnets and reaches Aurora through the RDS Proxy, so the runner needs no
+      #    direct database reachability and no DATABASE_URL for migrations. The Lambda
+      #    re-validates the reviewed apply-forward manifest before applying anything.
+      - name: Apply database migrations (in-VPC Lambda)
+        env:
+          MCAT_MIGRATION_GIT_COMMIT: ${{ github.sha }}
+        run: pnpm --filter @mcat/aws-tools migrate:ci-lambda
+
+      # 6. content:seed (idempotent questions + passages upsert into Postgres). Seed
+      #    performs content upserts the migration Lambda cannot run, so it still needs
+      #    a DATABASE_URL that is REACHABLE FROM THE RUNNER. The Aurora cluster is in
+      #    isolated subnets, so this must be a pooler / RDS Proxy session endpoint (or
+      #    a self-hosted in-VPC runner). See docs/runbooks/github-actions-deploy.md.
       - name: Seed questions and passages
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DATABASE_SSL: ${{ vars.DATABASE_SSL || 'require' }}
           MCAT_QUESTION_CORPUS_DIR: ${{ vars.MCAT_QUESTION_CORPUS_DIR }}
-        run: pnpm content:seed
+        run: |
+          set -euo pipefail
+          if [ -z "${DATABASE_URL:-}" ]; then
+            echo "DATABASE_URL is not set; skipping content:seed. Migrations already" \
+              "ran in-VPC via the Lambda. Configure a runner-reachable pooler / RDS" \
+              "Proxy session endpoint (or run content:seed from the manual in-VPC" \
+              "path in aws-dev-deploy.md) to enable automated seeding. See" \
+              "docs/runbooks/github-actions-deploy.md." >&2
+            exit 0
+          fi
+          pnpm content:seed
 
-      # 5. cdk deploy the api + web stacks (CDK also pulls in their foundation + data
-      #    dependencies). Uses the OIDC role → cdk-<qualifier>-* bootstrap roles.
+      # 7. cdk deploy the api + web stacks (CDK also pulls in their foundation + data
+      #    dependencies, already current from step 3). Uses the OIDC role.
       - name: Deploy API and web infrastructure (CDK)
         run: >-
           pnpm --filter @mcat/infra-cdk exec cdk deploy McatDevWeb McatDevApi

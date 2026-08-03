@@ -19,6 +19,9 @@ import {
   NormalizedLessonStartCommandSchema,
   NormalizedLessonStartResponseSchema,
   NormalizedLessonStatusViewSchema,
+  PassageAttemptRequestSchema,
+  PassageAttemptResponseSchema,
+  PassageTodayResponseSchema,
   PlanActivityProgressCommandSchema,
   VectorLessonCommandSchema,
   VectorLessonRunViewSchema,
@@ -28,12 +31,14 @@ import {
   systemClock,
 } from '@mcat/contracts';
 import { orderedKcsForLesson } from '@mcat/content';
+import { PassageOfDayService } from '@mcat/passage-of-day';
 import {
   NORMALIZED_LESSON_ROUTE_SLUGS,
   RepositoryLearnerKernel,
   lessonContentProvider,
   mistakesRepairLimit,
   normalizedLessonIdFor,
+  passageTzFromPath,
   practiceQueueParams,
   practiceQuestionId,
   routeFor,
@@ -52,6 +57,13 @@ import {
   isDebugStateRequestAllowed,
   DEBUG_LEARNER_STATE_PATH,
 } from './debug-state';
+// The formative Passage-of-the-Day pool. This offline authority holds no
+// database, so it serves the vetted hardcoded pool compiled into
+// `content/passage-of-the-day/pool.ts` — the same fallback a fresh clone and the
+// dev/preview server already use — through the shared @mcat/passage-of-day
+// service the deployed Lambda and the real local stack use, so the daily rotation
+// and grading cannot drift across environments.
+import { hardcodedPassagePool } from '../../../content/passage-of-the-day/pool';
 
 const DEFAULT_HOST = '127.0.0.1';
 const DEFAULT_PORT = 8787;
@@ -267,6 +279,11 @@ export async function createLocalLessonHttpServer(
     clock: systemClock,
     bank: authority.bank,
   });
+  // Formative Passage of the Day, off the authority kernel — like the feature
+  // itself, it writes no mastery and logs no attempt. Built once over the vetted
+  // hardcoded pool; the same shared service the deployed Lambda and real local
+  // stack use.
+  const passageService = new PassageOfDayService(hardcodedPassagePool());
   const csrfToken = `${randomUUID()}${randomUUID()}`;
   // Read once, at startup: neither the opt-in nor the origin allowlist can be
   // widened mid-flight.
@@ -317,6 +334,50 @@ export async function createLocalLessonHttpServer(
     }
     if (method === 'GET' && path === '/v1/practice-test/summary') {
       return { status: 200, payload: await kernel.practiceTestSummary(principal) };
+    }
+
+    // ---- Passage of the Day (FORMATIVE; off-kernel) -----------------------
+    // Served through the SAME shared @mcat/passage-of-day service the deployed
+    // Lambda and the real local stack use, so the daily rotation + grading cannot
+    // drift. The tz offset rides in the path (the edge rejects query strings); a
+    // null passage is the honest "pool is empty" answer the runner renders.
+    {
+      const tz = passageTzFromPath(path);
+      if (method === 'GET' && tz !== null) {
+        return {
+          status: 200,
+          payload: PassageTodayResponseSchema.parse({
+            passage: passageService.todayView(new Date(), tz),
+          }),
+        };
+      }
+    }
+    if (method === 'POST' && path === '/v1/passage/attempts') {
+      const parsed = PassageAttemptRequestSchema.safeParse(body);
+      if (!parsed.success) {
+        return {
+          status: 400,
+          payload: {
+            code: 'validation_error',
+            message: 'The request body does not match the route contract.',
+            requestId: randomUUID(),
+            retryable: false,
+          },
+        };
+      }
+      const grade = passageService.grade(parsed.data.questionId, parsed.data.choiceId);
+      if (grade === null) {
+        return {
+          status: 404,
+          payload: {
+            code: 'not_found',
+            message: 'That passage question is not in the pool.',
+            requestId: randomUUID(),
+            retryable: false,
+          },
+        };
+      }
+      return { status: 200, payload: PassageAttemptResponseSchema.parse({ grade }) };
     }
 
     // ---- the deployed /v1 surface -----------------------------------------
@@ -479,7 +540,9 @@ export async function createLocalLessonHttpServer(
         return { status: 200, payload: snapshot.errorPatterns };
       }
       default:
-        // Lesson reads, health, passage, ai, and sync are not served here.
+        // Lesson reads, health, ai, and sync are not served here. Passage of the
+        // Day IS served, by the dedicated block above (before the deployed-surface
+        // route dispatch).
         return undefined;
     }
   }

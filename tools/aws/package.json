@@ -9,6 +9,7 @@
     "deploy:dev": "node --import tsx src/deploy.ts",
     "migrate:dev": "node --import tsx src/migrate.ts",
     "migrate:ci": "node --import tsx src/migrate-ci.ts",
+    "migrate:ci-lambda": "node --import tsx src/migrate-ci-lambda.ts",
     "publish:web": "node --import tsx src/publish-web.ts",
     "smoke": "node --import tsx src/smoke.ts",
     "test": "vitest run",

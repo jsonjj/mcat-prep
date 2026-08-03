@@ -1,8 +1,14 @@
-import { useState } from 'react';
-import { useToday } from '../app/queries';
-
 const GHOST_OPTOUT_KEY = 'mc.ghost.optout';
 
+/**
+ * Ghost (supportive pace companion) opt-out helpers.
+ *
+ * The `GhostCompanion` component that once rendered the companion was never
+ * mounted anywhere (its only entry point linked to the retired `/app/learn`
+ * loop), so it was removed. These two localStorage helpers stay because the
+ * Account screen (screens/Profile.tsx) still exposes the on/off toggle, and the
+ * engine-side Ghost state is surfaced elsewhere.
+ */
 export function isGhostOptedOut(): boolean {
   try {
     return localStorage.getItem(GHOST_OPTOUT_KEY) === '1';
@@ -18,26 +24,4 @@ export function setGhostOptOut(optedOut: boolean): void {
   } catch {
     /* storage unavailable */
   }
-}
-
-/**
- * Supportive pace companion. Reads the engine-derived Ghost state (own goal +
- * timeline + coverage only) and greets/celebrates/reframes. Never blocks; can be
- * turned off entirely in Profile for learners it stresses rather than motivates.
- */
-export function GhostCompanion() {
-  const today = useToday();
-  const [optedOut] = useState(isGhostOptedOut);
-  const ghost = today.data?.ghost;
-  if (!ghost || optedOut) return null;
-
-  return (
-    <aside className={`mc-ghost mc-ghost--${ghost.state}`} aria-label="Pace companion">
-      <span className="mc-ghost__orb" aria-hidden="true" />
-      <div className="mc-ghost__body">
-        <p className="mc-ghost__headline">{ghost.headline}</p>
-        <p className="mc-ghost__message">{ghost.message}</p>
-      </div>
-    </aside>
-  );
 }

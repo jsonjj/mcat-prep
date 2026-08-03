@@ -16,6 +16,9 @@ import type {
   NormalizedLessonRunView,
   NormalizedLessonStartResponse,
   NormalizedLessonStatusView,
+  PassageChoiceId,
+  PassageGrade,
+  PassageTodayView,
   PracticeAttemptCommand,
   PracticeAttemptResult,
   PracticeItemView,
@@ -153,6 +156,22 @@ export interface AuthorityPort {
    * payload still throws, so DTO drift fails loudly rather than silently emptying.
    */
   getPracticeTestSummary(): Promise<PracticeTestSummaryView | null>;
+  /**
+   * Passage of the Day (FORMATIVE): the day's learner-safe passage for the
+   * learner-local day, keyed by the browser's `Date.getTimezoneOffset()` (minutes).
+   * Resolves to `null` when the pool is empty (or no passage source is configured),
+   * which the runner renders as its on-brand "no passage today" state. Reads only —
+   * never routes through the authority kernel and writes no mastery.
+   */
+  passageToday(tz: number): Promise<PassageTodayView | null>;
+  /**
+   * Passage of the Day (FORMATIVE): score one answer and reveal its explanation
+   * (correct choice + rationale). Server-side scoring only — the view carries no
+   * answer key. It is session-gated but NOT state-changing (no CSRF write gate),
+   * and writes no mastery. Rejects with an `unauthorized`/`not_found` `ApiClientError`
+   * when the session is missing or the question is not in the pool.
+   */
+  passageAttempt(questionId: string, choiceId: PassageChoiceId | null): Promise<PassageGrade>;
   /**
    * Record a CARS Duel. The optional rubric feeds a low-weight CARS ability nudge;
    * the optional {mode, topicId, intensity} let the formative engine update its

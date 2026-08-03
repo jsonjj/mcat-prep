@@ -1,4 +1,10 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  QueryCache,
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import type {
   CarsDuelOutcomeInput,
   MasterySeed,
@@ -13,6 +19,17 @@ import { CARS_REASONING_KEY, LEARNER_KEYS, TODAYS_PATH_INVALIDATE } from './inva
 import { PRACTICE_TEST_ENABLED } from './capabilities';
 
 export const queryClient = new QueryClient({
+  // Queries run with `retry: false`, so a single failed read used to surface only
+  // wherever it happened to be consumed — and a read consumed during render (or a
+  // future suspense/throwOnError path) could bubble up and blank the app. This
+  // cache-level handler gives every query error one central landing spot: it is
+  // logged here (and can toast once the app grows a toaster) instead of being lost
+  // or crashing a screen. Per-query error UI still works exactly as before.
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      console.error(`Query failed [${String(query.queryKey)}]:`, error);
+    },
+  }),
   defaultOptions: { queries: { staleTime: 0, refetchOnWindowFocus: false, retry: false } },
 });
 
