@@ -588,9 +588,10 @@ export function Curriculum() {
 
   return (
     <div className="mc-curriculum">
-      <header className="mc-curriculum__head">
-        <h1 className="mc-curriculum__kicker">Curriculum</h1>
-      </header>
+      {/* Accessible page heading only; the visible title is each level's node header
+          ("The full path" / "Foundations" / …), so the SR-only h1 keeps the landmark
+          without a redundant visible "Curriculum" kicker. */}
+      <h1 className="mc-visually-hidden">Curriculum</h1>
 
       {!isTopLevel ? (
         <div className="mc-curriculum__bar">
