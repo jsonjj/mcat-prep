@@ -101,7 +101,10 @@ Never purge a queue to clear an alarm.
 
 ## Identity/session recovery
 
-Do not delete or recreate Cognito pools. If the learner API or session store is unsafe, stop new
+Do not delete or recreate the staff Cognito pool, and do not delete the Supabase verification
+secret — a rollback that drops it leaves the API unable to verify any token until
+`pnpm supabase:sync-jwks` is re-run. Learner credentials live in Supabase and are unaffected by any
+CloudFormation rollback. If the learner API or session store is unsafe, stop new
 sessions, revoke affected sessions, preserve account/link histories, deploy the reviewed fix, and
 verify bootstrap, recovery, linking, merge idempotency, CSRF, and cross-tab sign-out. Account merge
 rollback must preserve both immutable histories and recompute authoritative state.

@@ -5,7 +5,7 @@ import {
   selectPracticeBankSource,
   type PracticeBankSelection,
 } from './practice-bank-source';
-import { FilePracticeBankPort } from './practice-bank-file';
+import { FilePracticeBankPort } from '@mcat/corpus-pull';
 
 /**
  * The source choice is tested with every dependency injected, so none of these

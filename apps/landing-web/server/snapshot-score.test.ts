@@ -249,7 +249,12 @@ describe('Prep Pattern Snapshot scoring', () => {
     expect(counts).toEqual({ positive: 1, friction: 12, none: 243 });
   });
 
-  it('returns a complete report across 20,736 scoring equivalence profiles', () => {
+  // 20,736 profiles is an exhaustive sweep, so its cost is fixed and known rather
+  // than a symptom of a slow assertion. It lands around 5.5s on CI hardware and
+  // ~2.4s locally, which put it either side of Vitest's 5s default and made a green
+  // suite depend on which runner picked it up. The timeout is raised rather than the
+  // sweep narrowed: exhaustiveness is the point of the test.
+  it('returns a complete report across 20,736 scoring equivalence profiles', { timeout: 30_000 }, () => {
     const dataIds = ['snapshot-q02', 'snapshot-q08', 'snapshot-q06', 'snapshot-q12'];
     const nonDataStates: Array<Partial<Record<string, ChoiceId>>> = [];
     const pairProfiles = [

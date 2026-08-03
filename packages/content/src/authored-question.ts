@@ -295,7 +295,7 @@ export function authoredQuestionToV7(authored: AuthoredQuestion): V7Question {
 
 // ---------------------------------------------------------------------------
 // Practice-bank store rows — the two shapes the dev pull + Postgres upsert write.
-// These mirror apps/learner-web/server/db-pull.ts (`PulledQuestion` /
+// These mirror packages/corpus-pull's db-pull.ts (`PulledQuestion` /
 // `PulledProtected`) plus the additive `reasoning_operation` column the corpus
 // already carries in Postgres (migration 0008). Kept here so the ingest tool and
 // the Postgres upsert map from ONE definition.

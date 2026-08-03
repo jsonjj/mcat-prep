@@ -11,14 +11,17 @@ import {
   type Principal,
 } from '@mcat/authority-kernel';
 import {
+  AuthenticatedBootstrapResponseSchema,
   BuildTodaysPathCommandSchema,
   DailyBudgetCommandSchema,
-  GuestBootstrapResponseSchema,
   NormalizedLessonCommandSchema,
   NormalizedLessonRunViewSchema,
   NormalizedLessonStartCommandSchema,
   NormalizedLessonStartResponseSchema,
   NormalizedLessonStatusViewSchema,
+  PassageAttemptRequestSchema,
+  PassageAttemptResponseSchema,
+  PassageTodayResponseSchema,
   PlanActivityProgressCommandSchema,
   VectorLessonCommandSchema,
   VectorLessonRunViewSchema,
@@ -29,11 +32,20 @@ import {
 } from '@mcat/contracts';
 import { orderedKcsForLesson } from '@mcat/content';
 import {
+  DiagnosticBank,
+  DiagnosticSessionError,
+  InMemoryDiagnosticSessions,
+  serveDiagnosticBlock,
+  serveDiagnosticNext,
+} from '@mcat/diagnostic-runner';
+import { PassageOfDayService } from '@mcat/passage-of-day';
+import {
   NORMALIZED_LESSON_ROUTE_SLUGS,
   RepositoryLearnerKernel,
   lessonContentProvider,
   mistakesRepairLimit,
   normalizedLessonIdFor,
+  passageTzFromPath,
   practiceQueueParams,
   practiceQuestionId,
   routeFor,
@@ -52,6 +64,13 @@ import {
   isDebugStateRequestAllowed,
   DEBUG_LEARNER_STATE_PATH,
 } from './debug-state';
+// The formative Passage-of-the-Day pool. This offline authority holds no
+// database, so it serves the vetted hardcoded pool compiled into
+// `content/passage-of-the-day/pool.ts` — the same fallback a fresh clone and the
+// dev/preview server already use — through the shared @mcat/passage-of-day
+// service the deployed Lambda and the real local stack use, so the daily rotation
+// and grading cannot drift across environments.
+import { hardcodedPassagePool } from '../../../content/passage-of-the-day/pool';
 
 const DEFAULT_HOST = '127.0.0.1';
 const DEFAULT_PORT = 8787;
@@ -267,6 +286,18 @@ export async function createLocalLessonHttpServer(
     clock: systemClock,
     bank: authority.bank,
   });
+  // Formative Passage of the Day, off the authority kernel — like the feature
+  // itself, it writes no mastery and logs no attempt. Built once over the vetted
+  // hardcoded pool; the same shared service the deployed Lambda and real local
+  // stack use.
+  const passageService = new PassageOfDayService(hardcodedPassagePool());
+  // Placement DIAGNOSTIC (block/multistage), off the authority kernel like the
+  // deployed learner-API. The bank prefers the gitignored local corpus pull and
+  // falls back to the synthetic fixture (same seam the dev/preview server uses);
+  // sessions live in memory, bound to this harness's single fixed learner. Writes
+  // no mastery — the result seeds mastery only through the mastery-seed hook.
+  const diagnosticBank = new DiagnosticBank();
+  const diagnosticSessions = new InMemoryDiagnosticSessions();
   const csrfToken = `${randomUUID()}${randomUUID()}`;
   // Read once, at startup: neither the opt-in nor the origin allowlist can be
   // widened mid-flight.
@@ -317,6 +348,50 @@ export async function createLocalLessonHttpServer(
     }
     if (method === 'GET' && path === '/v1/practice-test/summary') {
       return { status: 200, payload: await kernel.practiceTestSummary(principal) };
+    }
+
+    // ---- Passage of the Day (FORMATIVE; off-kernel) -----------------------
+    // Served through the SAME shared @mcat/passage-of-day service the deployed
+    // Lambda and the real local stack use, so the daily rotation + grading cannot
+    // drift. The tz offset rides in the path (the edge rejects query strings); a
+    // null passage is the honest "pool is empty" answer the runner renders.
+    {
+      const tz = passageTzFromPath(path);
+      if (method === 'GET' && tz !== null) {
+        return {
+          status: 200,
+          payload: PassageTodayResponseSchema.parse({
+            passage: passageService.todayView(new Date(), tz),
+          }),
+        };
+      }
+    }
+    if (method === 'POST' && path === '/v1/passage/attempts') {
+      const parsed = PassageAttemptRequestSchema.safeParse(body);
+      if (!parsed.success) {
+        return {
+          status: 400,
+          payload: {
+            code: 'validation_error',
+            message: 'The request body does not match the route contract.',
+            requestId: randomUUID(),
+            retryable: false,
+          },
+        };
+      }
+      const grade = passageService.grade(parsed.data.questionId, parsed.data.choiceId);
+      if (grade === null) {
+        return {
+          status: 404,
+          payload: {
+            code: 'not_found',
+            message: 'That passage question is not in the pool.',
+            requestId: randomUUID(),
+            retryable: false,
+          },
+        };
+      }
+      return { status: 200, payload: PassageAttemptResponseSchema.parse({ grade }) };
     }
 
     // ---- the deployed /v1 surface -----------------------------------------
@@ -377,6 +452,51 @@ export async function createLocalLessonHttpServer(
             status: 200,
             payload: await kernel.handleCarsDuel(parsed.data as CarsDuelCommandBody, principal),
           };
+        case 'diagnosticNext':
+        case 'diagnosticBlock':
+          // Block diagnostic over the promoted runner (same package the deployed
+          // Lambda uses), against an in-memory session store bound to this
+          // harness's fixed learner. A DiagnosticSessionError carries its own
+          // status (401 expired, 409 replayed block token).
+          try {
+            const body = parsed.data as Record<string, unknown>;
+            const payload =
+              route.id === 'diagnosticNext'
+                ? await serveDiagnosticNext(
+                    diagnosticBank,
+                    diagnosticSessions,
+                    principal.learnerId,
+                    body,
+                  )
+                : await serveDiagnosticBlock(
+                    diagnosticBank,
+                    diagnosticSessions,
+                    principal.learnerId,
+                    body,
+                  );
+            return { status: 200, payload };
+          } catch (error) {
+            if (error instanceof DiagnosticSessionError) {
+              const code =
+                error.status === 401
+                  ? 'unauthorized'
+                  : error.status === 409
+                    ? 'conflict'
+                    : error.status === 429
+                      ? 'rate_limited'
+                      : 'validation_error';
+              return {
+                status: error.status,
+                payload: {
+                  code,
+                  message: error.message,
+                  requestId: randomUUID(),
+                  retryable: error.status === 429,
+                },
+              };
+            }
+            throw error;
+          }
         case 'practiceTestCompleted':
           return {
             status: 200,
@@ -414,8 +534,6 @@ export async function createLocalLessonHttpServer(
     }
 
     switch (route.id) {
-      case 'diagnosticNext':
-        return { status: 200, payload: await kernel.diagnosticNext(principal) };
       case 'goalView':
         return { status: 200, payload: await kernel.goal(principal) };
       case 'skills':
@@ -479,7 +597,9 @@ export async function createLocalLessonHttpServer(
         return { status: 200, payload: snapshot.errorPatterns };
       }
       default:
-        // Lesson reads, health, passage, ai, and sync are not served here.
+        // Lesson reads, health, ai, and sync are not served here. Passage of the
+        // Day IS served, by the dedicated block above (before the deployed-surface
+        // route dispatch).
         return undefined;
     }
   }
@@ -522,9 +642,13 @@ export async function createLocalLessonHttpServer(
         sendJson(
           response,
           200,
-          GuestBootstrapResponseSchema.parse({
+          AuthenticatedBootstrapResponseSchema.parse({
+            authenticated: true,
             learnerId: principal.learnerId,
-            accountState: 'guest',
+            // This loopback harness serves one fixed learner and holds no
+            // credentials, so it reports the signed-in state the app requires
+            // rather than making callers log in to a store that does not exist.
+            accountState: 'linked',
             bankStatus: 'loaded',
             contentRelease: snapshot.contentRelease,
             apiVersion: 'v1',
@@ -533,6 +657,22 @@ export async function createLocalLessonHttpServer(
             streamVersion: snapshot.streamVersion,
             csrfToken,
           }),
+          origin,
+        );
+        return;
+      }
+      if (method === 'POST' && path === '/v1/auth/signout') {
+        sendJson(response, 200, { status: 'signed_out' }, origin);
+        return;
+      }
+      if (method === 'POST' && path.startsWith('/v1/auth/')) {
+        // The fixed learner is always signed in here, so there is nothing to
+        // exchange. Answering 501 keeps a client that reaches for these routes
+        // from reading a fabricated success.
+        sendJson(
+          response,
+          501,
+          { error: 'This harness serves one fixed learner and has no credential store.' },
           origin,
         );
         return;

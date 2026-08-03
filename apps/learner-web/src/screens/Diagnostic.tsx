@@ -13,6 +13,7 @@ import { BucketGapChart, type BucketGapRow } from '../components/BucketGapChart'
 import { PriorityList, priorityFraming, priorityHeading } from '../components/PriorityList';
 import { QuestionPalette } from '../components/QuestionPalette';
 import { markDiagnosticCompleted } from '../app/diagnostic-status';
+import { OnboardingSteps } from '../components/OnboardingSteps';
 
 const CONFIDENCE_SENTENCE: Record<DiagnosticResultView['confidenceLabel'], string> = {
   High: 'We have a clear starting plan for you. We’ll keep sharpening it as you study.',
@@ -151,32 +152,32 @@ export function Diagnostic() {
     });
   };
 
-  // Skipping placement: go straight to plan setup. The learner can still take
-  // the diagnostic later.
-  const onSkip = () => {
-    navigate('/onboarding/plan');
-  };
-
   return (
-    <div className="mc-onboarding">
-      <Card elevated>
+    <div className="mc-onboarding mc-onboarding--themed">
+      <Card elevated className="mc-onboard__card">
         <Stack gap={4}>
-          <Eyebrow>
-            Diagnostic · block {next.data.stageNumber} of {next.data.stageCount} · question{' '}
-            {questionNumber}
-            {totalItems > 0 ? ` of ${totalItems}` : ''}
-          </Eyebrow>
+          <OnboardingSteps current={2} />
+          <Stack gap={2}>
+            <Eyebrow>
+              Diagnostic · block {next.data.stageNumber} of {next.data.stageCount} · question{' '}
+              {questionNumber}
+              {totalItems > 0 ? ` of ${totalItems}` : ''}
+            </Eyebrow>
 
-          <div
-            className="mc-progress"
-            role="progressbar"
-            aria-valuenow={progressPct}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label="Diagnostic progress"
-          >
-            <span style={{ width: `${Math.max(6, progressPct)}%` }} />
-          </div>
+            <div
+              className="mc-progress"
+              role="progressbar"
+              aria-valuenow={progressPct}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Diagnostic progress"
+            >
+              <span style={{ width: `${Math.max(6, progressPct)}%` }} />
+            </div>
+            <p className="mc-fineprint mc-muted mc-diag-progresslabel">
+              {progressPct}% through the placement
+            </p>
+          </Stack>
 
           <p className="mc-diag-section" aria-hidden="true">
             {question.sectionTitle}
@@ -317,10 +318,6 @@ export function Diagnostic() {
             You can change any answer in this block until you submit it. This finds your
             highest-leverage starting point across every area of the test — not a score.
           </p>
-
-          <button type="button" className="mc-textbtn mc-diag-skip" onClick={onSkip}>
-            Skip for now
-          </button>
         </Stack>
       </Card>
     </div>

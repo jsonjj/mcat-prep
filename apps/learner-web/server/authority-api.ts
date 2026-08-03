@@ -2,7 +2,9 @@ import { randomUUID } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import {
   AcceptedCommandResponseSchema,
-  GuestBootstrapResponseSchema,
+  AnonymousBootstrapResponseSchema,
+  SessionExchangeRequestSchema,
+  AuthenticatedBootstrapResponseSchema,
   MasterySeedSchema,
   newEventId,
   type HttpErrorCode,
@@ -59,6 +61,83 @@ export const client = new InProcessAuthorityClient(store, undefined, practiceBan
 const csrfToken = `${randomUUID()}${randomUUID()}`.replace(/-/g, '');
 let streamVersion = 0;
 let sequence = 0;
+
+/**
+ * Dev starts signed in so `pnpm dev` still opens straight into the app — lesson
+ * authoring should not have to pass a login screen. Set `MCAT_DEV_REQUIRE_AUTH=1`
+ * to exercise the real signed-out entry path against this shim.
+ *
+ * There is no credential check either way. This is a single-process dev store with
+ * no user table; it models *whether* a session exists, not who holds it.
+ */
+const requireAuth = process.env.MCAT_DEV_REQUIRE_AUTH === '1';
+let signedIn = !requireAuth;
+if (requireAuth) {
+  console.warn('[authority] MCAT_DEV_REQUIRE_AUTH=1 — starting signed out.');
+}
+
+/**
+ * A throwaway stand-in for Supabase, so the local sign-up → confirm → sign-in
+ * walk behaves like the deployed one: an unknown address is refused, an
+ * unconfirmed account cannot sign in, and a wrong password fails.
+ *
+ * It is a `Map` in one process, and it holds passwords in plain text. That is
+ * deliberate and safe only because nothing here ever leaves the dev machine —
+ * the real credential store is Supabase, which this never talks to. It is served
+ * under `/v1/dev-auth/*`, a prefix the deployed authority does not implement, so
+ * these routes cannot be reached by anything but the Vite dev server.
+ */
+interface DevAccount {
+  password: string;
+  confirmed: boolean;
+  /** The one-time value carried by the dev "email link". */
+  linkToken: string;
+}
+const accounts = new Map<string, DevAccount>();
+
+/**
+ * Shaped like a compact JWS because the exchange route's contract requires three
+ * base64url segments. It is not signed and is not verified — the dev authority
+ * has no keys — so it is only ever a dev-loop convenience.
+ */
+function devAccessToken(email: string): string {
+  const part = (value: unknown): string => Buffer.from(JSON.stringify(value)).toString('base64url');
+  return `${part({ alg: 'none' })}.${part({ sub: `dev-${email}` })}.${part('unsigned')}`;
+}
+
+const linkToken = (): string => randomUUID().replace(/-/g, '');
+
+/**
+ * The stand-in for an inbox, readable over `GET /v1/dev-auth/last-link?email=`
+ * so the confirm screen can offer the link instead of sending a developer to
+ * read the server's console.
+ *
+ * Keyed by address for the same reason a real inbox is: a link sent to one
+ * person must not turn up in front of another. An unaddressed "most recent
+ * link" slot would hand the previous account's link to whoever asked next —
+ * requesting a reset for an address with no account would offer someone else's.
+ *
+ * This does let the offline screen show that an address is registered, which
+ * the HTTP responses below are careful never to reveal. That asymmetry is the
+ * point: a real inbox reveals exactly the same thing to exactly the same
+ * person, and none of it is reachable outside the dev server.
+ */
+const mailbox = new Map<string, { kind: string; path: string }>();
+
+function emailLink(
+  kind: 'Confirm your account' | 'Reset your password',
+  to: string,
+  token: string,
+): void {
+  const suffix = kind === 'Reset your password' ? '&type=recovery' : '';
+  // Path only. Vite picks whatever port is free, and this module is not told
+  // which, so printing an absolute URL would send developers to a dead port
+  // whenever 5173 was already taken.
+  const path = `/auth/callback?dev_token=${token}${suffix}`;
+  mailbox.set(to, { kind, path });
+  console.warn(`[authority] ${kind} — open on this dev server:`);
+  console.warn(`[authority]   ${path}`);
+}
 
 function planConfirmed(): boolean {
   const state = snapshot as { onboarding?: { planConfirmed?: boolean } } | null;
@@ -133,17 +212,154 @@ export async function handleAuthorityRequest(
   try {
     // ---- bootstrap ----------------------------------------------------------
     if (path === '/v1/bootstrap' && method === 'POST') {
+      if (!signedIn) {
+        return sendJson(
+          response,
+          200,
+          AnonymousBootstrapResponseSchema.parse({
+            authenticated: false,
+            apiVersion: 'v1',
+            serverTime: new Date().toISOString(),
+            csrfToken,
+          }),
+        );
+      }
       const base = await client.bootstrap();
       return sendJson(
         response,
         200,
-        GuestBootstrapResponseSchema.parse({
+        AuthenticatedBootstrapResponseSchema.parse({
           ...base,
+          authenticated: true,
+          accountState: 'linked',
           onboardingComplete: planConfirmed(),
           streamVersion,
           csrfToken,
         }),
       );
+    }
+
+    // ---- session exchange ---------------------------------------------------
+    if (path.startsWith('/v1/auth/') && method === 'POST') {
+      if (path === '/v1/auth/signout') {
+        signedIn = false;
+        return sendJson(response, 200, { status: 'signed_out' });
+      }
+      if (path === '/v1/auth/session') {
+        const parsed = SessionExchangeRequestSchema.safeParse(await readBody(request));
+        if (!parsed.success) {
+          return sendError(response, 400, 'validation_error', 'Malformed access token.');
+        }
+        // The deployed route verifies the token's signature here. This one cannot
+        // and does not pretend to: it models the *exchange*, not the trust
+        // decision, which is why it lives only in the dev server.
+        signedIn = true;
+        return sendJson(response, 200, { status: 'signed_in', csrfToken });
+      }
+      return sendError(response, 404, 'not_found', 'Unknown authority route.');
+    }
+
+    // ---- the local Supabase stand-in ----------------------------------------
+    if (path === '/v1/dev-auth/last-link' && method === 'GET') {
+      const query = new URLSearchParams((request.url ?? '').split('?')[1] ?? '');
+      const to = (query.get('email') ?? '').trim().toLowerCase();
+      return sendJson(response, 200, { link: mailbox.get(to) ?? null });
+    }
+
+    if (path.startsWith('/v1/dev-auth/') && method === 'POST') {
+      const body = await readBody(request);
+      const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+      const password = typeof body.password === 'string' ? body.password : '';
+
+      switch (path) {
+        case '/v1/dev-auth/signup': {
+          if (!email.includes('@') || password.length < 8) {
+            return sendError(
+              response,
+              400,
+              'validation_error',
+              'Enter a valid email and a password of at least 8 characters.',
+            );
+          }
+          // Registering an address twice is answered exactly like a fresh
+          // sign-up, and never overwrites the stored password, matching
+          // Supabase's refusal to confirm whether an address is taken.
+          //
+          // An account still awaiting confirmation does get a fresh link, which
+          // is Supabase's resend behaviour and the reason someone would submit
+          // the form twice. A confirmed one gets nothing.
+          const existing = accounts.get(email);
+          if (existing === undefined) {
+            const token = linkToken();
+            accounts.set(email, { password, confirmed: false, linkToken: token });
+            emailLink('Confirm your account', email, token);
+          } else if (!existing.confirmed) {
+            existing.linkToken = linkToken();
+            emailLink('Confirm your account', email, existing.linkToken);
+          }
+          return sendJson(response, 200, { status: 'confirmation_required' });
+        }
+        case '/v1/dev-auth/signin': {
+          const account = accounts.get(email);
+          if (account === undefined || account.password !== password) {
+            return sendError(response, 400, 'validation_error', 'Invalid login credentials.');
+          }
+          if (!account.confirmed) {
+            return sendError(response, 400, 'validation_error', 'Email not confirmed.');
+          }
+          return sendJson(response, 200, { accessToken: devAccessToken(email) });
+        }
+        case '/v1/dev-auth/reset-request': {
+          // Answered identically for an unknown address, so recovery cannot be
+          // used to enumerate accounts; only a real one gets a link.
+          const account = accounts.get(email);
+          if (account !== undefined) {
+            account.linkToken = linkToken();
+            emailLink('Reset your password', email, account.linkToken);
+          }
+          return sendJson(response, 200, { status: 'requested' });
+        }
+        case '/v1/dev-auth/confirm-link': {
+          // Following the confirmation link is what marks the account usable, so
+          // a later password sign-in is not refused as unconfirmed.
+          const token = typeof body.token === 'string' ? body.token : '';
+          const entry = [...accounts.entries()].find(
+            ([, account]) => token !== '' && account.linkToken === token,
+          );
+          if (entry === undefined) {
+            return sendError(response, 400, 'validation_error', 'That link is not valid.');
+          }
+          const [ownerEmail, account] = entry;
+          account.confirmed = true;
+          account.linkToken = linkToken();
+          // Spent, so the screen stops offering a link that would now be refused.
+          mailbox.delete(ownerEmail);
+          return sendJson(response, 200, { accessToken: devAccessToken(ownerEmail) });
+        }
+        case '/v1/dev-auth/reset-confirm': {
+          const token = typeof body.token === 'string' ? body.token : '';
+          const entry = [...accounts.entries()].find(
+            ([, account]) => token !== '' && account.linkToken === token,
+          );
+          if (entry === undefined || password.length < 8) {
+            return sendError(response, 400, 'validation_error', 'That reset link is not valid.');
+          }
+          const [ownerEmail, account] = entry;
+          account.password = password;
+          // Following a link proves control of the inbox, which is what
+          // confirmation was asking for in the first place.
+          account.confirmed = true;
+          account.linkToken = linkToken();
+          mailbox.delete(ownerEmail);
+          return sendJson(response, 200, { accessToken: devAccessToken(ownerEmail) });
+        }
+        default:
+          return sendError(response, 404, 'not_found', 'Unknown authority route.');
+      }
+    }
+
+    if (!signedIn) {
+      return sendError(response, 401, 'unauthorized', 'A valid learner session is required.');
     }
 
     // ---- reads --------------------------------------------------------------
@@ -221,7 +437,11 @@ export async function handleAuthorityRequest(
       // route. Real delivery is served by the persisted HTTP authority.
       const normalizedStatus = /^\/v1\/lessons\/(v3-les-\d{6})\/status$/.exec(path);
       if (normalizedStatus) {
-        return sendJson(response, 200, await client.getNormalizedLessonStatus(normalizedStatus[1]!));
+        return sendJson(
+          response,
+          200,
+          await client.getNormalizedLessonStatus(normalizedStatus[1]!),
+        );
       }
       if (/^\/v1\/lessons\/v3-les-\d{6}\/run$/.test(path)) {
         return sendJson(response, 503, {

@@ -26,7 +26,6 @@ import {
   AttemptCommandSchema,
   CarsReadinessViewSchema,
   CarsReasoningPatternViewSchema,
-  DiagnosticNextSchema,
   GoalViewSchema,
   LessonMasteryViewSchema,
   LessonWarrantViewSchema,
@@ -49,7 +48,6 @@ import {
   type Clock,
   type CommandEnvelope,
   type ContentId,
-  type DiagnosticNext,
   type GoalView,
   type LessonMasteryView,
   type LessonWarrantView,
@@ -142,6 +140,14 @@ interface WorkflowDependencies {
   readonly lessonResponseSubmissions?: LessonResponseSubmissionSource;
   /** Adaptive-practice bank/exposure seam. Falls back to synthetic when absent. */
   readonly practiceBank?: PracticeBankPort;
+  /**
+   * Whether the periodic scored practice TEST may be reserved into Today's Path.
+   * Defaults to `true`. The deployed runtime sets this `false` until the
+   * scored-test RUNNER is served by the deployed backend (today it is a
+   * dev/preview-only `/api/practice-test/*` surface with no production route), so
+   * the strict plan never reserves a slot whose runner would deadlock it.
+   */
+  readonly practiceTestEnabled?: boolean;
 }
 
 type VectorLessonLearnerState = LearnerState & {
@@ -267,27 +273,6 @@ export class RepositoryLearnerKernel {
     return this.authorityKernel.snapshot(principal);
   }
 
-  async diagnosticNext(principal: Principal): Promise<DiagnosticNext> {
-    const state = await this.loadState(principal);
-    if (state.onboarding.diagnosticComplete) {
-      return DiagnosticNextSchema.parse({ done: true, question: null, progress: 1 });
-    }
-
-    const authority = new Authority(this.dependencies.bank, this.dependencies.clock);
-    const next = authority.diagnosticNext(state);
-    const questionId = next.questionId;
-    const question =
-      questionId === undefined ? null : (authority.bank.compiled.get(questionId)?.safe ?? null);
-    if (!next.done && question === null) {
-      throw new AuthorityKernelError({
-        code: 'unavailable',
-        message: 'The diagnostic item is temporarily unavailable.',
-        retryable: true,
-      });
-    }
-    return DiagnosticNextSchema.parse({ done: next.done, question, progress: next.progress });
-  }
-
   async skills(principal: Principal): Promise<readonly SkillSummary[]> {
     await this.loadState(principal);
     return SkillSummarySchema.array().parse(
@@ -376,9 +361,11 @@ export class RepositoryLearnerKernel {
   // The daily-plan engine lives on the core `Authority`, so these delegate to
   // it through the SAME `mutate`/`loadState` transaction, idempotency, and
   // projection persistence every other command uses — no bespoke store. The
-  // deployed learner API does not route these yet; the local full-engine HTTP
-  // server (services/local-authority) routes to them so `dev:lesson` serves the
-  // whole app surface at dev parity with the light in-process authority.
+  // deployed learner API routes Today's Path + daily budget (see `ROUTES` /
+  // `handler.ts`), so `pnpm dev` (services/local-learner-api) and prod serve the
+  // same methods the local full-engine HTTP server (services/local-authority)
+  // already dispatched to. `practiceTestSummary` remains dev-only until the
+  // scored-test runner ships a production route.
   // -------------------------------------------------------------------------
 
   /** Read the current day's plan (built:false when none exists for today yet). */
@@ -393,7 +380,11 @@ export class RepositoryLearnerKernel {
     principal: Principal,
   ): Promise<TodaysPathView> {
     const view = await this.mutate(command.envelope, principal, async (authority, state) => {
-      const built = await authority.buildTodaysPath(state, command.input);
+      const built = await authority.buildTodaysPath(state, command.input, {
+        // Server-authoritative capability gate (defaults on). The deployed API
+        // sets this off until the scored-test runner is wired into prod.
+        practiceTestEnabled: this.dependencies.practiceTestEnabled ?? true,
+      });
       return {
         eventType: 'todays_path_built',
         payload: toJsonObject({ envelope: command.envelope, input: command.input }),

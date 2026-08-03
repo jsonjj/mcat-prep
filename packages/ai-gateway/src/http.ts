@@ -7,9 +7,11 @@ export interface HttpAiChatOptions {
 }
 
 /**
- * Talks to a same-origin proxy (dev middleware now, API Gateway later). The proxy
- * owns the provider key; this client never sees it. 404/503 map to a clean
- * "unavailable" signal so the UI can degrade gracefully.
+ * Talks to a same-origin route that owns the provider key (the learner-API
+ * `/v1/ai/chat` in prod; the Vite dev middleware locally) — this client never
+ * sees the key. 404/503 map to a clean "unavailable" signal so the UI can degrade
+ * gracefully (CARS Duel shows the opponent as offline). Messages are kept
+ * environment-neutral since they surface to the learner in both dev and prod.
  */
 export class HttpAiChat implements AiChat {
   constructor(private readonly opts: HttpAiChatOptions) {}
@@ -27,13 +29,13 @@ export class HttpAiChat implements AiChat {
         }),
       });
     } catch {
-      throw new AiUnavailableError('Could not reach the AI service');
+      throw new AiUnavailableError('Could not reach the AI opponent');
     }
     if (res.status === 503) {
-      throw new AiUnavailableError('AI key not configured (restart the dev server after setting it)');
+      throw new AiUnavailableError('The AI opponent is not configured');
     }
     if (res.status === 404) {
-      throw new AiUnavailableError('AI proxy not found (are you on the dev server?)');
+      throw new AiUnavailableError('The AI opponent endpoint was not found');
     }
     if (!res.ok) {
       let detail = '';

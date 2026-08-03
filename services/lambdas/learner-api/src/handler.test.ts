@@ -3,13 +3,20 @@ import {
   AuthorityKernel,
   InMemoryAuthorityRepository,
   toProjectionRecord,
-  type Principal,
 } from '@mcat/authority-kernel';
-import { fixedClock } from '@mcat/contracts';
+import { TodaysPathViewSchema, fixedClock } from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 
 import { createRepositoryLearnerApi, type PassagePort } from './handler';
-import { hashOpaqueToken, type GuestSessionService } from './session';
+import {
+  DiagnosticBank,
+  InMemoryDiagnosticSessions,
+  serveDiagnosticBlock,
+  serveDiagnosticNext,
+} from '@mcat/diagnostic-runner';
+import { buildDiagnosticBank } from '@mcat/content';
+import type { DiagnosticPort } from './diagnostic-port';
+import { createLinkedSessionDouble } from './test-support/linked-session';
 import type { ApiGatewayV1Event, ApiGatewayV2Event, RateLimitInput, SafeLogEvent } from './http';
 import { allowedMethodsFor, routeFor } from './routes';
 import type { AiFetch, AiProxyConfig } from '@mcat/ai-gateway/server';
@@ -126,6 +133,7 @@ function harness(
     state?: 'diagnostic' | 'lesson' | 'question' | 'recall';
     aiConfig?: AiProxyConfig;
     passage?: PassagePort;
+    diagnostic?: DiagnosticPort;
   } = {},
 ) {
   const authority = new Authority(undefined, clock);
@@ -140,30 +148,15 @@ function harness(
 
   const repository = new InMemoryAuthorityRepository([toProjectionRecord(state, 0, NOW)]);
   const kernel = new AuthorityKernel({ repository, clock, bank: authority.bank });
-  const principal: Principal = {
-    kind: 'guest',
+  const session = createLinkedSessionDouble({
     learnerId: state.learnerId,
     sessionId: crypto.randomUUID(),
-  };
-  let sessionBootstrapCalls = 0;
-  let sessionResolveCalls = 0;
-  const sessions: GuestSessionService = {
-    bootstrap: async () => {
-      sessionBootstrapCalls += 1;
-      return {
-        principal,
-        sessionToken: ROTATED_SESSION_TOKEN,
-        csrfToken: CSRF_TOKEN,
-        maxAgeSeconds: 3600,
-      };
-    },
-    resolve: async (token) => {
-      sessionResolveCalls += 1;
-      return token === SESSION_TOKEN
-        ? { principal, csrfTokenHash: hashOpaqueToken(CSRF_TOKEN) }
-        : null;
-    },
-  };
+    sessionToken: SESSION_TOKEN,
+    rotatedSessionToken: ROTATED_SESSION_TOKEN,
+    csrfToken: CSRF_TOKEN,
+  });
+  const principal = session.principal;
+  const sessions = session.sessions;
   const logs: SafeLogEvent[] = [];
   const rateInputs: RateLimitInput[] = [];
   const api = createRepositoryLearnerApi({
@@ -185,6 +178,7 @@ function harness(
     ...(options.maxBodyBytes === undefined ? {} : { maxBodyBytes: options.maxBodyBytes }),
     ...(options.aiConfig === undefined ? {} : { aiConfig: options.aiConfig }),
     ...(options.passage === undefined ? {} : { passage: options.passage }),
+    ...(options.diagnostic === undefined ? {} : { diagnostic: options.diagnostic }),
   });
   return {
     api,
@@ -194,14 +188,43 @@ function harness(
     principal,
     rateInputs,
     repository,
-    sessionBootstrapCalls: () => sessionBootstrapCalls,
-    sessionResolveCalls: () => sessionResolveCalls,
+    sessionBootstrapCalls: session.bootstrapCalls,
+    sessionResolveCalls: session.resolveCalls,
   };
 }
 
 function responseBody(response: { body?: string }): unknown {
   return JSON.parse(response.body ?? 'null') as unknown;
 }
+
+/**
+ * An in-memory diagnostic port over the SYNTHETIC fixture bank, wired into the
+ * harness exactly as the deployed Postgres-backed port is. It exercises the same
+ * `@mcat/diagnostic-runner` serving core the Lambda uses, so this pins the HTTP
+ * block contract (auth, wire shape, one-use block token, resume) without a DB.
+ */
+function inMemoryDiagnosticPort(): DiagnosticPort {
+  const bank = new DiagnosticBank(buildDiagnosticBank());
+  const sessions = new InMemoryDiagnosticSessions();
+  return {
+    next: (learnerId, body) => serveDiagnosticNext(bank, sessions, learnerId, body),
+    block: (learnerId, body) => serveDiagnosticBlock(bank, sessions, learnerId, body),
+  };
+}
+
+interface DiagnosticWireView {
+  done: boolean;
+  itemsScored: number;
+  stageId: string | null;
+  stageNumber: number;
+  sessionToken: string;
+  blockToken: string | null;
+  questions: { id: string }[];
+  result: { masterySeed: { kcPriors: Record<string, number> } } | null;
+}
+
+const diagnosticView = (response: { body?: string }): DiagnosticWireView =>
+  responseBody(response) as DiagnosticWireView;
 
 describe('Passage of the Day route (formative, off the kernel)', () => {
   let receivedTz: number | undefined;
@@ -260,7 +283,9 @@ describe('Passage of the Day route (formative, off the kernel)', () => {
 
   it('404s a malformed tz path', async () => {
     const { api } = harness({ passage });
-    const response = await api.handle(request('GET', '/v1/passage/today/notanumber', undefined, authed));
+    const response = await api.handle(
+      request('GET', '/v1/passage/today/notanumber', undefined, authed),
+    );
     expect(response.statusCode).toBe(404);
   });
 
@@ -293,6 +318,156 @@ describe('Passage of the Day route (formative, off the kernel)', () => {
     const response = await api.handle(request('GET', '/v1/passage/today/0', undefined, authed));
     expect(response.statusCode).toBe(200);
     expect(responseBody(response)).toEqual({ passage: null });
+  });
+});
+
+/**
+ * Today's Path route parity. These routes existed on the offline authority and
+ * the kernel but were NEVER registered on the deployed Lambda, so `pnpm dev`
+ * (services/local-learner-api wraps this handler) and prod returned 404 and the
+ * Today page fell back to "Couldn't build today's path". This pins the four
+ * routes end-to-end through the deployed handler + the real kernel transaction.
+ */
+describe("Today's Path routes (deployed learner-API parity)", () => {
+  const read = { origin: APP_ORIGIN, authenticated: true } as const;
+  const write = { origin: APP_ORIGIN, authenticated: true, csrf: CSRF_TOKEN } as const;
+  const buildInput = {
+    recallLoad: { dueLearning: 0, dueReviews: 0, newAvailable: 0, due: 0, estimatedMinutesForDue: 0 },
+    candidateLessons: [],
+    force: false,
+  };
+
+  it('registers the four routes with the contract method+path, auth, and stateChanging', () => {
+    expect(routeFor('GET', '/v1/plan/today/path')?.id).toBe('todaysPath');
+    expect(routeFor('GET', '/v1/plan/today/path')?.stateChanging).toBe(false);
+    expect(routeFor('POST', '/v1/plan/today/build')?.id).toBe('todaysPathBuild');
+    expect(routeFor('POST', '/v1/plan/today/build')?.stateChanging).toBe(true);
+    expect(routeFor('POST', '/v1/plan/today/activity')?.id).toBe('todaysPathActivity');
+    expect(routeFor('POST', '/v1/plan/today/activity')?.stateChanging).toBe(true);
+    expect(routeFor('PUT', '/v1/profile/daily-budget')?.id).toBe('dailyBudget');
+    expect(routeFor('PUT', '/v1/profile/daily-budget')?.stateChanging).toBe(true);
+    for (const route of [
+      routeFor('GET', '/v1/plan/today/path'),
+      routeFor('POST', '/v1/plan/today/build'),
+      routeFor('POST', '/v1/plan/today/activity'),
+      routeFor('PUT', '/v1/profile/daily-budget'),
+    ]) {
+      expect(route?.auth).toBe('session');
+    }
+  });
+
+  it('serves a valid TodaysPathView (not 404) for an authenticated learner, unbuilt by default', async () => {
+    const { api } = harness();
+    const response = await api.handle(request('GET', '/v1/plan/today/path', undefined, read));
+
+    expect(response.statusCode).toBe(200);
+    const view = TodaysPathViewSchema.parse(responseBody(response));
+    expect(view.built).toBe(false);
+  });
+
+  it('requires a session for the plan projection', async () => {
+    const { api } = harness();
+    const response = await api.handle(request('GET', '/v1/plan/today/path', undefined, { origin: APP_ORIGIN }));
+    expect(response.statusCode).toBe(401);
+  });
+
+  it('builds the plan, advances an activity, and sets the daily budget end-to-end', async () => {
+    const { api, principal, repository } = harness();
+
+    const built = await api.handle(
+      request('POST', '/v1/plan/today/build', { envelope: commandEnvelope(0), input: buildInput }, write),
+    );
+    expect(built.statusCode).toBe(200);
+    const view = TodaysPathViewSchema.parse(responseBody(built));
+    expect(view.built).toBe(true);
+
+    // A real activityId when the freshly built plan has one; a synthetic id
+    // otherwise (the engine no-ops an unknown id but still acks the command).
+    const activityId = view.activities[0]?.activityId ?? 'no-such-activity';
+    const activity = await api.handle(
+      request(
+        'POST',
+        '/v1/plan/today/activity',
+        { envelope: commandEnvelope(1), activityId, status: 'in_progress' },
+        write,
+      ),
+    );
+    expect(activity.statusCode).toBe(200);
+    expect(responseBody(activity)).toMatchObject({ streamVersion: 2, sequence: 2 });
+
+    const budget = await api.handle(
+      request(
+        'PUT',
+        '/v1/profile/daily-budget',
+        { envelope: commandEnvelope(2), minutesPerDay: 180 },
+        write,
+      ),
+    );
+    expect(budget.statusCode).toBe(200);
+    expect(responseBody(budget)).toMatchObject({ streamVersion: 3 });
+
+    // Each of the three writes appended exactly one accepted event to the stream.
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(3);
+  });
+
+  it('persists the daily budget, reflected in the (unbuilt) plan projection', async () => {
+    const { api, principal, repository } = harness();
+
+    const budget = await api.handle(
+      request(
+        'PUT',
+        '/v1/profile/daily-budget',
+        { envelope: commandEnvelope(0), minutesPerDay: 180 },
+        write,
+      ),
+    );
+    expect(budget.statusCode).toBe(200);
+    expect(responseBody(budget)).toMatchObject({ streamVersion: 1 });
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(1);
+
+    // Read before any build: the view reports the goal preset the budget just set
+    // (a built plan snapshots its own preset at build time, so this is the read
+    // where the change is observable straight from the goal).
+    const view = await api.handle(request('GET', '/v1/plan/today/path', undefined, read));
+    expect(TodaysPathViewSchema.parse(responseBody(view))).toMatchObject({
+      built: false,
+      dailyMinutesPreset: 180,
+    });
+  });
+
+  it('idempotently returns the first build result for a duplicate command', async () => {
+    const { api, principal, repository } = harness();
+    const event = request(
+      'POST',
+      '/v1/plan/today/build',
+      { envelope: commandEnvelope(0), input: buildInput },
+      write,
+    );
+
+    const first = await api.handle(event);
+    const second = await api.handle(event);
+
+    expect(first.statusCode).toBe(200);
+    expect(responseBody(second)).toEqual(responseBody(first));
+    expect(repository.eventsFor(principal.learnerId)).toHaveLength(1);
+  });
+
+  it('CSRF-gates the plan writes (build, activity, daily budget)', async () => {
+    const cases: readonly [string, string, unknown][] = [
+      ['POST', '/v1/plan/today/build', { envelope: commandEnvelope(0), input: buildInput }],
+      [
+        'POST',
+        '/v1/plan/today/activity',
+        { envelope: commandEnvelope(0), activityId: 'a', status: 'complete' },
+      ],
+      ['PUT', '/v1/profile/daily-budget', { envelope: commandEnvelope(0), minutesPerDay: 240 }],
+    ];
+    for (const [method, path, body] of cases) {
+      const { api, principal, repository } = harness();
+      const response = await api.handle(request(method, path, body, read));
+      expect(response.statusCode).toBe(403);
+      expect(repository.eventsFor(principal.learnerId)).toHaveLength(0);
+    }
   });
 });
 
@@ -346,8 +521,8 @@ describe('learner Lambda API security boundary', () => {
     expect(preflight.headers?.['access-control-allow-origin']).toBeUndefined();
   });
 
-  it('sets secure rotated guest cookies and no-store on bootstrap', async () => {
-    const { api, logs, principal } = harness();
+  it('creates no learner and issues no session for a signed-out bootstrap', async () => {
+    const { api, logs, sessionBootstrapCalls } = harness();
 
     const response = await api.handle(
       request('POST', '/v1/bootstrap', undefined, { origin: APP_ORIGIN }),
@@ -356,6 +531,27 @@ describe('learner Lambda API security boundary', () => {
     expect(response.statusCode).toBe(200);
     expect(response.headers?.['cache-control']).toBe('no-store');
     expect(response.headers?.['access-control-allow-origin']).toBe(APP_ORIGIN);
+    // Only the CSRF cookie the signed-out /v1/auth/* routes need. No session
+    // cookie, because there is no session and no learner behind it.
+    expect(response.cookies).toHaveLength(1);
+    expect(response.cookies?.[0]).toMatch(
+      /^__Host-mcat_csrf=.+; Path=\/; Max-Age=3600; HttpOnly; Secure; SameSite=Lax$/,
+    );
+    expect(responseBody(response)).toMatchObject({ authenticated: false, apiVersion: 'v1' });
+    expect(responseBody(response)).not.toHaveProperty('learnerId');
+    expect(sessionBootstrapCalls()).toBe(0);
+    expect(logs.at(-1)).toMatchObject({ principalKind: 'anonymous' });
+    expect(logs.at(-1)).not.toHaveProperty('learnerHash');
+  });
+
+  it('rotates both cookies and reports the learner on a signed-in bootstrap', async () => {
+    const { api, logs, principal } = harness();
+
+    const response = await api.handle(
+      request('POST', '/v1/bootstrap', undefined, { origin: APP_ORIGIN, authenticated: true }),
+    );
+
+    expect(response.statusCode).toBe(200);
     expect(response.cookies?.[0]).toMatch(
       /^__Host-mcat_session=.+; Path=\/; Max-Age=3600; HttpOnly; Secure; SameSite=Lax$/,
     );
@@ -363,14 +559,44 @@ describe('learner Lambda API security boundary', () => {
       /^__Host-mcat_csrf=.+; Path=\/; Max-Age=3600; HttpOnly; Secure; SameSite=Lax$/,
     );
     expect(responseBody(response)).toMatchObject({
+      authenticated: true,
       learnerId: principal.learnerId,
+      accountState: 'linked',
       csrfToken: CSRF_TOKEN,
       streamVersion: 0,
     });
     expect(logs.at(-1)).toMatchObject({
-      principalKind: 'guest',
+      principalKind: 'linked',
       learnerHash: expect.stringMatching(/^[0-9a-f]{24}$/),
     });
+  });
+
+  it('reports a linked learner as linked and erases a legacy guest state stamped on the projection', async () => {
+    const { api, principal, repository } = harness();
+    const stored = repository.projectionFor(principal.learnerId);
+    if (stored === null) throw new Error('expected a seeded projection');
+    // Every learner created before migration 0020 looks like this: the learners
+    // row says `linked`, the projection blob it was seeded with says `guest`.
+    repository.seedProjection({
+      ...stored,
+      state: { ...stored.state, accountState: 'guest' },
+    });
+
+    const bootstrap = await api.handle(
+      request('POST', '/v1/bootstrap', undefined, { origin: APP_ORIGIN, authenticated: true }),
+    );
+    const accepted = await api.handle(
+      request('PUT', '/v1/profile/goal', goalCommand(), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+        csrf: CSRF_TOKEN,
+      }),
+    );
+
+    expect(responseBody(bootstrap)).toMatchObject({ accountState: 'linked' });
+    expect(accepted.statusCode).toBe(200);
+    // The next write must not carry the stale key back out of the blob it loaded.
+    expect(repository.projectionFor(principal.learnerId)?.state).not.toHaveProperty('accountState');
   });
 
   it('adapts REST API Gateway v1 events and emits multi-value Set-Cookie headers', async () => {
@@ -381,6 +607,7 @@ describe('learner Lambda API security boundary', () => {
       headers: {
         origin: APP_ORIGIN,
         'x-mcat-origin-verify': ORIGIN_VERIFICATION_SECRET,
+        cookie: `__Host-mcat_session=${SESSION_TOKEN}; __Host-mcat_csrf=${CSRF_TOKEN}`,
       },
       requestContext: {
         requestId: 'rest-request-123',
@@ -468,40 +695,105 @@ describe('learner Lambda API security boundary', () => {
     );
   });
 
-  it('completes the synthetic diagnostic through the authenticated HTTP contract', async () => {
-    const { api, principal, repository } = harness({ state: 'diagnostic' });
-    const authenticated = { origin: APP_ORIGIN, authenticated: true } as const;
+  // The placement diagnostic is now the BLOCK/multistage form, served off the
+  // kernel (like Passage of the Day) over its own persisted session — the legacy
+  // single-question `GET /v1/diagnostic/next` + attempt-based submit is gone.
+  // These pin the new `POST /v1/diagnostic/{next,block}` contract against an
+  // in-memory port over the synthetic fixture bank.
+  it('serves and drives the block diagnostic to a completed, leak-free result', async () => {
+    const { api } = harness({ diagnostic: inMemoryDiagnosticPort() });
+    const authed = { origin: APP_ORIGIN, authenticated: true } as const;
 
-    const next = await api.handle(request('GET', '/v1/diagnostic/next', undefined, authenticated));
-    const nextBody = responseBody(next) as {
-      done: boolean;
-      progress: number;
-      question: { id: string } | null;
-    };
-
-    expect(next.statusCode).toBe(200);
-    expect(nextBody).toMatchObject({ done: false, progress: 0 });
-    expect(nextBody.question?.id).toBe('q-enz-basics-1');
-    expect(JSON.stringify(nextBody)).not.toMatch(/correct_choice_id|rationales|correctChoiceId/i);
-
-    const diagnosticCommand = attemptCommand('q-enz-basics-1', 'A');
-    const answer = await api.handle(
-      request('POST', '/v1/attempts', diagnosticCommand, {
-        ...authenticated,
-        csrf: CSRF_TOKEN,
-      }),
-    );
-    const completed = await api.handle(
-      request('GET', '/v1/diagnostic/next', undefined, authenticated),
+    const started = await api.handle(request('POST', '/v1/diagnostic/next', {}, authed));
+    expect(started.statusCode).toBe(200);
+    let view = diagnosticView(started);
+    expect(view.done).toBe(false);
+    expect(view.stageNumber).toBe(1);
+    expect(view.questions.length).toBeGreaterThan(0);
+    expect(typeof view.sessionToken).toBe('string');
+    expect(typeof view.blockToken).toBe('string');
+    // Learner-safe wire only: no answer key, no per-item correctness, no session
+    // internals beyond the opaque tokens.
+    expect(JSON.stringify(view)).not.toMatch(
+      /correct_answer|explanations|correctChoiceId|"correct"|tokenHash|clientId/i,
     );
 
-    expect(answer.statusCode).toBe(200);
-    expect(responseBody(completed)).toEqual({ done: true, question: null, progress: 1 });
-    expect(repository.eventsFor(principal.learnerId)).toHaveLength(1);
-    expect(repository.projectionFor(principal.learnerId)?.state).toMatchObject({
-      onboarding: { diagnosticComplete: true, planConfirmed: false },
-      evidence: [{ evidenceId: diagnosticCommand.envelope.eventId }],
-    });
+    const servedBlocks: string[][] = [];
+    for (let guard = 0; guard < 20 && !view.done; guard += 1) {
+      servedBlocks.push(view.questions.map((q) => q.id));
+      const answers = Object.fromEntries(view.questions.map((q) => [q.id, 'A']));
+      const committed = await api.handle(
+        request(
+          'POST',
+          '/v1/diagnostic/block',
+          {
+            sessionToken: view.sessionToken,
+            blockToken: view.blockToken,
+            stageId: view.stageId,
+            answers,
+          },
+          authed,
+        ),
+      );
+      expect(committed.statusCode).toBe(200);
+      view = diagnosticView(committed);
+    }
+
+    expect(view.done).toBe(true);
+    expect(view.questions).toEqual([]);
+    expect(view.result).not.toBeNull();
+    // Every served item was scored, and no item was served twice across stages.
+    const allServed = servedBlocks.flat();
+    expect(view.itemsScored).toBe(allServed.length);
+    expect(new Set(allServed).size).toBe(allServed.length);
+    // The one point at which the diagnostic touches mastery is the seed it emits.
+    expect(Object.keys(view.result!.masterySeed.kcPriors).length).toBeGreaterThan(0);
+    expect(JSON.stringify(view.result)).not.toMatch(/correct_answer|explanations|"correct"/i);
+  });
+
+  it('re-serves an open block on resume and refuses a replayed block token', async () => {
+    const { api } = harness({ diagnostic: inMemoryDiagnosticPort() });
+    const authed = { origin: APP_ORIGIN, authenticated: true } as const;
+
+    const first = diagnosticView(await api.handle(request('POST', '/v1/diagnostic/next', {}, authed)));
+
+    // A refresh mid-block: the stage is derived from the response log, so the same
+    // items come back — only the one-use block token is reissued.
+    const resumed = diagnosticView(
+      await api.handle(
+        request('POST', '/v1/diagnostic/next', { sessionToken: first.sessionToken }, authed),
+      ),
+    );
+    expect(resumed.stageId).toBe(first.stageId);
+    expect(resumed.questions.map((q) => q.id)).toEqual(first.questions.map((q) => q.id));
+    expect(resumed.blockToken).not.toBe(first.blockToken);
+
+    const answers = Object.fromEntries(resumed.questions.map((q) => [q.id, 'A']));
+    const commit = (blockToken: string | null) =>
+      api.handle(
+        request(
+          'POST',
+          '/v1/diagnostic/block',
+          { sessionToken: resumed.sessionToken, blockToken, stageId: resumed.stageId, answers },
+          authed,
+        ),
+      );
+
+    const committed = await commit(resumed.blockToken);
+    expect(committed.statusCode).toBe(200);
+    expect(diagnosticView(committed).stageId).not.toBe(first.stageId);
+
+    // Replaying the committed block's token is refused (409) — a committed block
+    // cannot be re-submitted.
+    const replay = await commit(resumed.blockToken);
+    expect(replay.statusCode).toBe(409);
+  });
+
+  it('answers 503 for the diagnostic when no diagnostic backend is configured', async () => {
+    const { api } = harness();
+    const authed = { origin: APP_ORIGIN, authenticated: true } as const;
+    const response = await api.handle(request('POST', '/v1/diagnostic/next', {}, authed));
+    expect(response.statusCode).toBe(503);
   });
 
   /**
@@ -784,7 +1076,9 @@ describe('learner Lambda API security boundary', () => {
     // Idempotent: a replay returns the same result and appends no new event.
     expect(responseBody(duplicate)).toEqual(responseBody(scored));
     expect(repository.eventsFor(principal.learnerId)).toHaveLength(1);
-    const projection = repository.projectionFor(principal.learnerId)?.state as { mastery?: unknown };
+    const projection = repository.projectionFor(principal.learnerId)?.state as {
+      mastery?: unknown;
+    };
     expect(projection.mastery).toBeDefined();
   });
 
@@ -992,12 +1286,14 @@ describe('learner Lambda API security boundary', () => {
       sequence: 2,
       state: {
         learnerId: principal.learnerId,
-        accountState: 'guest',
         onboarding: { diagnosticComplete: false, planConfirmed: false },
         events: [],
         evidence: [],
       },
     });
+    // A reset rebuilds the projection from `createGuest()`. That is precisely the
+    // write that used to stamp `accountState: 'guest'` onto a linked learner.
+    expect(repository.projectionFor(principal.learnerId)?.state).not.toHaveProperty('accountState');
   });
 
   it.each([
@@ -1183,7 +1479,7 @@ describe('learner Lambda API security boundary', () => {
       route: '/v1/attempts',
       method: 'POST',
       status: 400,
-      principalKind: 'guest',
+      principalKind: 'linked',
     });
   });
 
@@ -1213,7 +1509,9 @@ describe('WS4 grounded rewrite route (POST /v1/ai/rewrite)', () => {
     ok: true,
     status: 200,
     json: async () => ({
-      choices: [{ message: { content: 'Put another way: with no net force there is no acceleration.' } }],
+      choices: [
+        { message: { content: 'Put another way: with no net force there is no acceleration.' } },
+      ],
     }),
     text: async () => 'ok',
   });
@@ -1315,6 +1613,121 @@ describe('WS4 grounded rewrite route (POST /v1/ai/rewrite)', () => {
         origin: APP_ORIGIN,
         authenticated: true,
       }),
+    );
+    expect(response.statusCode).toBe(400);
+    expect(providerCalls).toBe(0);
+  });
+});
+
+describe('CARS Duel opponent route (POST /v1/ai/chat)', () => {
+  /** A stub provider that returns a duel opponent reply. */
+  const chatFetch: AiFetch = async () => ({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      choices: [{ message: { content: 'I hold that anonymity weakens the argument. Your move.' } }],
+    }),
+    text: async () => 'ok',
+  });
+
+  function chatBody(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+    return { messages: [{ role: 'user', content: 'Begin the debate.' }], ...overrides };
+  }
+
+  it('is registered as a session POST that does not mutate state, exactly like rewrite', () => {
+    const route = routeFor('POST', '/v1/ai/chat');
+    expect(route?.id).toBe('aiChat');
+    expect(route?.auth).toBe('session');
+    expect(route?.stateChanging).toBe(false);
+    expect(allowedMethodsFor('/v1/ai/chat')).toEqual(['POST']);
+  });
+
+  it('requires a session (401 for an anonymous caller)', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: chatFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody(), { origin: APP_ORIGIN }),
+    );
+    expect(response.statusCode).toBe(401);
+  });
+
+  it('refuses a cross-origin authenticated caller (403)', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: chatFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody(), {
+        origin: EVIL_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(403);
+  });
+
+  it('serves an opponent reply to an authenticated learner (no CSRF required)', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: chatFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody(), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(200);
+    expect(response.headers?.['cache-control']).toBe('no-store');
+    expect(responseBody(response)).toEqual({
+      text: 'I hold that anonymity weakens the argument. Your move.',
+    });
+  });
+
+  it('is throttled by the per-session rate limiter like other authenticated routes', async () => {
+    const { api, rateInputs } = harness({
+      allowRate: false,
+      aiConfig: { apiKey: 'k', fetchImpl: chatFetch },
+    });
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody(), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(429);
+    expect(rateInputs).toHaveLength(1);
+    expect(rateInputs[0]?.route).toBe('/v1/ai/chat');
+  });
+
+  it('returns 503 (client shows the opponent offline) when no AI key is configured', async () => {
+    const { api } = harness();
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody(), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(503);
+  });
+
+  it('rejects a malformed chat body with 400', async () => {
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: chatFetch } });
+    const response = await api.handle(
+      request('POST', '/v1/ai/chat', chatBody({ messages: 'nope' }), {
+        origin: APP_ORIGIN,
+        authenticated: true,
+      }),
+    );
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('rejects an oversize message list with 400 before the provider is called', async () => {
+    let providerCalls = 0;
+    const countingFetch: AiFetch = async () => {
+      providerCalls += 1;
+      return { ok: true, status: 200, json: async () => ({ choices: [] }), text: async () => '' };
+    };
+    const { api } = harness({ aiConfig: { apiKey: 'k', fetchImpl: countingFetch } });
+    const response = await api.handle(
+      request(
+        'POST',
+        '/v1/ai/chat',
+        chatBody({ messages: [{ role: 'user', content: 'x'.repeat(25_000) }] }),
+        { origin: APP_ORIGIN, authenticated: true },
+      ),
     );
     expect(response.statusCode).toBe(400);
     expect(providerCalls).toBe(0);

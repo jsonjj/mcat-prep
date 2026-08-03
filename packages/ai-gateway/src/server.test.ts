@@ -7,6 +7,7 @@ import {
   type AiHttpResponse,
   type RewriteResponseBody,
 } from './server';
+import { MAX_CHAT_INPUT_CHARS } from './port';
 
 const source = {
   rationale: 'The buffer resists pH change because the weak acid and its conjugate base absorb added H+.',
@@ -161,6 +162,32 @@ describe('proxyChat (generic route, e.g. CARS Duel)', () => {
 
   it('rejects a non-message body', async () => {
     expect((await proxyChat({ messages: 'nope' }, { apiKey: 'k' })).status).toBe(400);
+  });
+
+  it('rejects an oversize message list with 400 before the provider is called', async () => {
+    let providerCalls = 0;
+    const countingFetch: AiFetch = async () => {
+      providerCalls += 1;
+      return okResponse('nope');
+    };
+    const result = await proxyChat(
+      { messages: [{ role: 'user', content: 'x'.repeat(MAX_CHAT_INPUT_CHARS + 1) }] },
+      { apiKey: 'k', fetchImpl: countingFetch },
+    );
+    expect(result.status).toBe(400);
+    expect(providerCalls).toBe(0);
+  });
+
+  it('maps a transport failure to 502 (never 500) so the client degrades to offline', async () => {
+    const throwingFetch: AiFetch = async () => {
+      throw new Error('ECONNREFUSED');
+    };
+    const result = await proxyChat(
+      { messages: [{ role: 'user', content: 'hi' }] },
+      { apiKey: 'k', fetchImpl: throwingFetch },
+    );
+    expect(result.status).toBe(502);
+    expect((result.json as { error: string }).error).toBe('proxy_failure');
   });
 });
 

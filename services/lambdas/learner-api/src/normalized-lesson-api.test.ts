@@ -1,9 +1,5 @@
 import { Authority } from '@mcat/authority-core';
-import {
-  InMemoryAuthorityRepository,
-  toProjectionRecord,
-  type Principal,
-} from '@mcat/authority-kernel';
+import { InMemoryAuthorityRepository, toProjectionRecord } from '@mcat/authority-kernel';
 import { fixedClock } from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 
@@ -11,7 +7,7 @@ import { createRepositoryLearnerApi } from './handler';
 import type { ApiGatewayV2Event } from './http';
 import { createRepoLessonContentProvider, type ServerItemAnswer } from './lesson-content-provider';
 import type { EngineResponse } from './normalized-lesson-runtime';
-import { hashOpaqueToken, type GuestSessionService } from './session';
+import { createLinkedSessionDouble } from './test-support/linked-session';
 
 /**
  * Server-authoritative HTTP integration for the normalized-engine catalog (L2/L3
@@ -115,21 +111,12 @@ function harness() {
   state.onboarding.diagnosticComplete = true;
   authority.confirmPlan(state, { testDate: null, targetScore: 515, minutesPerWeek: 420 });
   const repository = new InMemoryAuthorityRepository([toProjectionRecord(state, 0, NOW)]);
-  const principal: Principal = {
-    kind: 'guest',
+  const { principal, sessions } = createLinkedSessionDouble({
     learnerId: state.learnerId,
     sessionId: crypto.randomUUID(),
-  };
-  const sessions: GuestSessionService = {
-    bootstrap: async () => ({
-      principal,
-      sessionToken: SESSION_TOKEN,
-      csrfToken: CSRF_TOKEN,
-      maxAgeSeconds: 3600,
-    }),
-    resolve: async (token) =>
-      token === SESSION_TOKEN ? { principal, csrfTokenHash: hashOpaqueToken(CSRF_TOKEN) } : null,
-  };
+    sessionToken: SESSION_TOKEN,
+    csrfToken: CSRF_TOKEN,
+  });
   const makeApi = () =>
     createRepositoryLearnerApi({
       repository,
@@ -151,7 +138,8 @@ function harness() {
   return { makeApi, principal, repository, learnerState };
 }
 
-const ANSWER_LEAK = /correctChoiceId|correct_choice_id|correct_option_index|answerKey|accepted_responses|response_authority|rationale/i;
+const ANSWER_LEAK =
+  /correctChoiceId|correct_choice_id|correct_option_index|answerKey|accepted_responses|response_authority|rationale/i;
 
 describe('normalized-engine catalog: server-authoritative HTTP integration', () => {
   it('routes Lesson 3 status → start → run → commands and never leaks an answer', async () => {
@@ -268,7 +256,10 @@ describe('normalized-engine catalog: server-authoritative HTTP integration', () 
     const completed = await api.handle(
       request('GET', `/v1/lessons/${L3_SLUG}/run`, undefined, { authenticated: true }),
     );
-    expect(body(completed)).toMatchObject({ status: 'DELIVERY_COMPLETE', screen: { kind: 'COMPLETE' } });
+    expect(body(completed)).toMatchObject({
+      status: 'DELIVERY_COMPLETE',
+      screen: { kind: 'COMPLETE' },
+    });
 
     const persisted = learnerState();
     expect(persisted.normalizedLessonRuns?.[L3]?.status).toBe('DELIVERY_COMPLETE');

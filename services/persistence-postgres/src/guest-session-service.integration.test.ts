@@ -17,7 +17,7 @@ const newGuestProjection = (learnerId: string, now: string): LearnerProjectionRe
   learnerId,
   sequence: 0,
   projectionVersion: 'test-projection-v1',
-  state: { learnerId, accountState: 'guest', marker: 'session-test' },
+  state: { learnerId, marker: 'session-test' },
   updatedAt: now,
 });
 
@@ -203,6 +203,98 @@ describeWithPostgres('PostgresGuestSessionService', () => {
     `);
     expect(counts.rows[0]).toEqual({ learners: '0', streams: '0' });
     expect(pool.waitingCount).toBe(0);
+  });
+
+  it('creates a linked learner and identity on a first sign-in', async () => {
+    const signedIn = await service.signIn('supabase', 'sub-first');
+
+    expect(signedIn.principal.kind).toBe('linked');
+    const learner = await pool.query<{ account_state: string }>(
+      'select account_state from learners where learner_id = $1',
+      [signedIn.principal.learnerId],
+    );
+    expect(learner.rows[0]?.account_state).toBe('linked');
+    const identity = await pool.query<{ learner_id: string; last_authenticated_at: Date | null }>(
+      `select learner_id, last_authenticated_at from linked_identities
+       where provider = $1 and provider_subject = $2`,
+      ['supabase', 'sub-first'],
+    );
+    expect(identity.rows[0]?.learner_id).toBe(signedIn.principal.learnerId);
+    expect(identity.rows[0]?.last_authenticated_at).not.toBeNull();
+    const stream = await pool.query<{ count: string }>(
+      'select count(*)::text from learner_streams where learner_id = $1',
+      [signedIn.principal.learnerId],
+    );
+    expect(stream.rows[0]?.count).toBe('1');
+  });
+
+  it('returns the same learner on every later sign-in for one subject', async () => {
+    const first = await service.signIn('supabase', 'sub-returning');
+    nowMs += 60_000;
+    const second = await service.signIn('supabase', 'sub-returning');
+
+    expect(second.principal.learnerId).toBe(first.principal.learnerId);
+    expect(second.principal.sessionId).not.toBe(first.principal.sessionId);
+    expect(second.sessionToken).not.toBe(first.sessionToken);
+    const learners = await pool.query<{ count: string }>('select count(*)::text from learners');
+    expect(learners.rows[0]?.count).toBe('1');
+    const identity = await pool.query<{ last_authenticated_at: Date }>(
+      `select last_authenticated_at from linked_identities where provider_subject = $1`,
+      ['sub-returning'],
+    );
+    expect(identity.rows[0]?.last_authenticated_at.toISOString()).toBe(
+      new Date(nowMs).toISOString(),
+    );
+  });
+
+  it('creates exactly one learner when a subject signs in concurrently', async () => {
+    const [a, b] = await Promise.all([
+      service.signIn('supabase', 'sub-concurrent'),
+      service.signIn('supabase', 'sub-concurrent'),
+    ]);
+
+    expect(a.principal.learnerId).toBe(b.principal.learnerId);
+    const learners = await pool.query<{ count: string }>('select count(*)::text from learners');
+    expect(learners.rows[0]?.count).toBe('1');
+  });
+
+  it('keeps two different subjects on separate learners', async () => {
+    const a = await service.signIn('supabase', 'sub-a');
+    const b = await service.signIn('supabase', 'sub-b');
+
+    expect(a.principal.learnerId).not.toBe(b.principal.learnerId);
+  });
+
+  it('reports a linked principal when resolving and rotating a linked session', async () => {
+    const signedIn = await service.signIn('supabase', 'sub-resolve');
+    nowMs += 60_000;
+
+    await expect(service.resolve(signedIn.sessionToken)).resolves.toMatchObject({
+      principal: { kind: 'linked', learnerId: signedIn.principal.learnerId },
+    });
+    const rotated = await service.bootstrap(signedIn.sessionToken);
+    expect(rotated.principal).toMatchObject({
+      kind: 'linked',
+      learnerId: signedIn.principal.learnerId,
+    });
+  });
+
+  it('stops resolving a session once it is revoked', async () => {
+    const signedIn = await service.signIn('supabase', 'sub-signout');
+
+    await service.revoke(signedIn.sessionToken);
+
+    await expect(service.resolve(signedIn.sessionToken)).resolves.toBeNull();
+    const row = await pool.query<{ revoked_at: Date | null }>(
+      'select revoked_at from guest_sessions where guest_session_id = $1',
+      [signedIn.principal.sessionId],
+    );
+    expect(row.rows[0]?.revoked_at).not.toBeNull();
+  });
+
+  it('ignores revocation of a malformed or unknown token', async () => {
+    await expect(service.revoke('not-a-token')).resolves.toBeUndefined();
+    await expect(service.revoke('A'.repeat(43))).resolves.toBeUndefined();
   });
 
   it('never stores or logs raw session and CSRF credentials', async () => {

@@ -73,9 +73,14 @@ export function VectorLesson() {
       aria-labelledby="mc-vector-lesson-heading"
       aria-busy={submit.isPending}
     >
-      <div className="mc-vector-lesson__preview" role="note">
-        INTERNAL_DRAFT_ONLY
-      </div>
+      {/* Dev-only draft marker. Gated to `import.meta.env.DEV` so it never ships in a
+          production build; the `INTERNAL_DRAFT_ONLY` literal stays in source for the
+          vector-lesson UI contract test. */}
+      {import.meta.env.DEV ? (
+        <div className="mc-vector-lesson__preview" role="note">
+          INTERNAL_DRAFT_ONLY
+        </div>
+      ) : null}
       <header className="mc-vector-lesson__header">
         <div>
           <p className="mc-vector-lesson__progress">

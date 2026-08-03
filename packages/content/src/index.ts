@@ -7,6 +7,7 @@ export * from './bank';
 export * from './load-v7';
 export * from './authored-question';
 export * from './v7-cluster-map';
+export * from './curriculum-integrity';
 export * from './reasoning-operation';
 export * from './cars-duel/topics';
 export * from './diagnostic/bank';

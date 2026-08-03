@@ -1,5 +1,4 @@
 import type {
-  AccountState,
   CalibrationBand,
   CarsDuelSelectionView,
   CarsSkill,
@@ -31,10 +30,17 @@ import type {
 
 export type { GhostView, GhostState } from '@mcat/policies';
 
-/** Authoritative per-learner state. Events are append-only; evidence is a derived cache. */
+/**
+ * Authoritative per-learner state. Events are append-only; evidence is a derived cache.
+ *
+ * Deliberately carries NO account state. Whether a session speaks for a real
+ * account is answered by `learners.account_state` and reaches request handling
+ * as `principal.kind`; the projection is learning progress only. A copy here
+ * would be a second source of truth that nothing keeps in step — it was one,
+ * and it said `guest` for every linked learner.
+ */
 export interface LearnerState {
   learnerId: LearnerId;
-  accountState: AccountState;
   createdAt: UtcTimestamp;
   onboarding: { diagnosticComplete: boolean; planConfirmed: boolean };
   goal: {

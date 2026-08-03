@@ -1,4 +1,10 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  QueryCache,
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import type {
   CarsDuelOutcomeInput,
   MasterySeed,
@@ -10,8 +16,20 @@ import { authority } from './authority';
 import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
 import { practiceTestClient, type PracticeTestBlockView } from './practice-test-client';
 import { CARS_REASONING_KEY, LEARNER_KEYS, TODAYS_PATH_INVALIDATE } from './invalidation-keys';
+import { PRACTICE_TEST_ENABLED } from './capabilities';
 
 export const queryClient = new QueryClient({
+  // Queries run with `retry: false`, so a single failed read used to surface only
+  // wherever it happened to be consumed — and a read consumed during render (or a
+  // future suspense/throwOnError path) could bubble up and blank the app. This
+  // cache-level handler gives every query error one central landing spot: it is
+  // logged here (and can toast once the app grows a toaster) instead of being lost
+  // or crashing a screen. Per-query error UI still works exactly as before.
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      console.error(`Query failed [${String(query.queryKey)}]:`, error);
+    },
+  }),
   defaultOptions: { queries: { staleTime: 0, refetchOnWindowFocus: false, retry: false } },
 });
 
@@ -66,16 +84,18 @@ export const useCarsReasoningPatterns = () =>
 export const useSkills = () =>
   useQuery({ queryKey: ['skills'], queryFn: () => authority.getSkills() });
 /**
- * Practice-TEST dashboard summary (the amber card on Practice). The scored-test
- * engine is deferred, so the deployed backend does not serve this yet and the
- * query resolves to `null` — the card then renders its existing "coming soon" /
- * empty states unchanged. When the engine ships (or the local mastery simulator
- * fills it in), the same query returns the summary and the card populates.
+ * Practice-TEST dashboard summary (the amber card on Practice). GATED by
+ * {@link PRACTICE_TEST_ENABLED}: the scored-test runner has no deployed backend
+ * (dev/preview only), so in production the whole feature is hidden and this query
+ * is disabled — it never fires the `/v1/practice-test/summary` read the deployed
+ * API does not route. In dev the query runs and returns the learner's real
+ * completed sittings (or `null` until they take one). See ./capabilities.ts.
  */
 export const usePracticeTestSummary = () =>
   useQuery({
     queryKey: ['practice-test-summary'],
     queryFn: () => authority.getPracticeTestSummary(),
+    enabled: PRACTICE_TEST_ENABLED,
   });
 /**
  * The diagnostic is served by the real multistage engine over the v7

@@ -20,7 +20,7 @@ import {
   type PracticeTestBank,
   type PracticeTestItemView,
 } from './practice-test-bank';
-import type { ScoredResponse, SessionRecord } from './diagnostic-session-store';
+import type { ScoredResponse, SessionRecord } from '@mcat/diagnostic-runner';
 
 /**
  * Pure orchestration for the periodic practice test (WS5).

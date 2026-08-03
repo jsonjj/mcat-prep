@@ -11,3 +11,4 @@ export * from './practice-exposure-repository';
 export * from './practice-attempt-repository';
 export * from './cars-duel-topics-repository';
 export * from './passages-repository';
+export * from './diagnostic-sessions-repository';

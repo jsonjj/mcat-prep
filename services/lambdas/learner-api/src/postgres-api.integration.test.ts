@@ -10,15 +10,32 @@ import {
 import type { PoolClient } from 'pg';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
-import { createRepositoryLearnerApi } from './handler';
-import type { ApiGatewayV2Event } from './http';
-import { createGuestProjection } from './lambda';
+import type { IdentityProvider } from './auth/identity-provider';
+import { createGuestProjection } from './guest-projection';
+import { createRepositoryLearnerApi, type LearnerApi } from './handler';
+import type { ApiGatewayV2Event, ApiGatewayV2Result } from './http';
 
 const DATABASE_URL = process.env.TEST_DATABASE_URL;
 const describeWithPostgres = DATABASE_URL === undefined ? describe.skip : describe;
 const ORIGIN = 'https://learner.example.test';
 const ORIGIN_VERIFICATION_SECRET = 'o'.repeat(64);
 const NOW = '2026-07-21T12:00:00.000Z';
+
+/**
+ * Learner routes are linked-only, so the vertical starts where a real visitor
+ * does: an anonymous bootstrap for a CSRF token, then a session exchange. The
+ * token's signature is Supabase's business and is stubbed here; what this suite
+ * is for is the Postgres side of the same walk — the learner row the exchange
+ * creates, and every stream write that follows it.
+ */
+const ACCESS_TOKEN = 'stub-header.stub-payload.stub-signature';
+const IDENTITY_SUBJECT = 'supabase-subject-integration';
+const identity: IdentityProvider = {
+  verify: async (accessToken) =>
+    accessToken === ACCESS_TOKEN
+      ? { status: 'verified', identity: { subject: IDENTITY_SUBJECT } }
+      : { status: 'invalid' },
+};
 
 function event(
   method: string,
@@ -50,6 +67,59 @@ function event(
 const body = <T>(response: { readonly body?: string }): T =>
   JSON.parse(response.body ?? 'null') as T;
 
+/** The `name=value` pairs a response's `Set-Cookie` list would leave in a browser. */
+const cookiesOf = (response: ApiGatewayV2Result): readonly string[] =>
+  (response.cookies ?? []).map((cookie) => cookie.split(';', 1)[0]!);
+
+interface SignedInSession {
+  readonly cookies: readonly string[];
+  readonly csrfToken: string;
+  readonly learnerId: string;
+  readonly contentRelease: string;
+  readonly streamVersion: number;
+}
+
+/**
+ * Anonymous bootstrap → session exchange → authenticated bootstrap. The last step
+ * is not ceremony: `bootstrap` rotates the session token, so its cookies are the
+ * ones every later request has to carry.
+ */
+async function signIn(api: LearnerApi): Promise<SignedInSession> {
+  const anonymous = await api.handle(event('POST', '/v1/bootstrap'));
+  expect(body<{ authenticated: boolean }>(anonymous).authenticated).toBe(false);
+
+  const exchange = await api.handle(
+    event('POST', '/v1/auth/session', {
+      body: { accessToken: ACCESS_TOKEN },
+      cookies: cookiesOf(anonymous),
+      csrf: body<{ csrfToken: string }>(anonymous).csrfToken,
+    }),
+  );
+  expect(exchange.statusCode).toBe(200);
+
+  const bootstrap = await api.handle(
+    event('POST', '/v1/bootstrap', { cookies: cookiesOf(exchange) }),
+  );
+  const bootstrapBody = body<{
+    authenticated: true;
+    learnerId: string;
+    csrfToken: string;
+    contentRelease: string;
+    streamVersion: number;
+  }>(bootstrap);
+  expect(bootstrap.statusCode).toBe(200);
+  expect(bootstrapBody.authenticated).toBe(true);
+  expect(bootstrap.headers?.['cache-control']).toBe('no-store');
+
+  return {
+    cookies: cookiesOf(bootstrap),
+    csrfToken: bootstrapBody.csrfToken,
+    learnerId: bootstrapBody.learnerId,
+    contentRelease: bootstrapBody.contentRelease,
+    streamVersion: bootstrapBody.streamVersion,
+  };
+}
+
 describeWithPostgres('PostgreSQL-backed learner API vertical', () => {
   let pool: PostgresPool;
   let suiteLock: PoolClient;
@@ -77,7 +147,7 @@ describeWithPostgres('PostgreSQL-backed learner API vertical', () => {
     await pool.query('truncate table api_rate_limits');
   });
 
-  it('persists bootstrap, diagnostic, goal, attempt, reload, and duplicate delivery', async () => {
+  it('persists sign-in, diagnostic, goal, attempt, reload, and duplicate delivery', async () => {
     const clock = fixedClock(NOW);
     const authority = new Authority(undefined, clock);
     const repository = new PostgresAuthorityRepository(pool, {
@@ -90,6 +160,7 @@ describeWithPostgres('PostgreSQL-backed learner API vertical', () => {
       sessions: new PostgresGuestSessionService(pool, createGuestProjection, {
         now: () => NOW,
       }),
+      identity,
       rateLimiter: new PostgresFixedWindowRateLimiter(pool, {
         now: () => Date.parse(NOW),
       }),
@@ -101,16 +172,8 @@ describeWithPostgres('PostgreSQL-backed learner API vertical', () => {
     } as const;
     const api = createRepositoryLearnerApi(dependencies);
 
-    const bootstrap = await api.handle(event('POST', '/v1/bootstrap'));
-    const bootstrapBody = body<{
-      learnerId: string;
-      csrfToken: string;
-      contentRelease: string;
-      streamVersion: number;
-    }>(bootstrap);
-    const cookies = bootstrap.cookies!.map((cookie) => cookie.split(';', 1)[0]!);
-    expect(bootstrap.statusCode).toBe(200);
-    expect(bootstrap.headers?.['cache-control']).toBe('no-store');
+    const bootstrapBody = await signIn(api);
+    const { cookies } = bootstrapBody;
 
     const diagnostic = await api.handle(event('GET', '/v1/diagnostic/next', { cookies }));
     const diagnosticBody = body<{
@@ -275,7 +338,7 @@ describeWithPostgres('PostgreSQL-backed learner API vertical', () => {
     expect(reset.statusCode).toBe(200);
     expect(body(duplicateReset)).toEqual(body(reset));
 
-    expect(JSON.stringify({ bootstrap, goal, session, firstAttempt, today })).not.toMatch(
+    expect(JSON.stringify({ goal, session, firstAttempt, today })).not.toMatch(
       /correct_choice_id|option_rationales|session_hash|csrf_token_hash/i,
     );
 
@@ -303,6 +366,75 @@ describeWithPostgres('PostgreSQL-backed learner API vertical', () => {
         evidence: [],
         events: [],
       },
+    });
+    expect(counts.rows[0]?.state_json).not.toHaveProperty('accountState');
+  });
+
+  it('reports one account state for a signed-in learner from the column and the wire', async () => {
+    const clock = fixedClock(NOW);
+    const authority = new Authority(undefined, clock);
+    const api = createRepositoryLearnerApi({
+      repository: new PostgresAuthorityRepository(pool, {
+        newGuestProjection: createGuestProjection,
+      }),
+      clock,
+      bank: authority.bank,
+      sessions: new PostgresGuestSessionService(pool, createGuestProjection, { now: () => NOW }),
+      identity,
+      rateLimiter: new PostgresFixedWindowRateLimiter(pool, { now: () => Date.parse(NOW) }),
+      rateLimitPepper: 'p'.repeat(32),
+      originVerificationSecret: ORIGIN_VERIFICATION_SECRET,
+      allowedOrigins: [ORIGIN],
+      logger: { info: () => undefined },
+      nowMs: () => Date.parse(NOW),
+    });
+
+    const session = await signIn(api);
+
+    const stored = await pool.query<{ account_state: string; state_json: Record<string, unknown> }>(
+      `select l.account_state, s.state_json
+         from learners l
+         join learner_streams s on s.learner_id = l.learner_id
+        where l.learner_id = $1`,
+      [session.learnerId],
+    );
+    expect(stored.rows[0]?.account_state).toBe('linked');
+    // The learner row is the only place an account state is recorded. A second
+    // copy beside the progress blob is what used to say `guest` for this learner.
+    expect(stored.rows[0]?.state_json).not.toHaveProperty('accountState');
+
+    const reloaded = await api.handle(event('POST', '/v1/bootstrap', { cookies: session.cookies }));
+    expect(body<{ accountState: string }>(reloaded).accountState).toBe('linked');
+  });
+
+  it('mints no learner for a caller who has not signed in', async () => {
+    const clock = fixedClock(NOW);
+    const authority = new Authority(undefined, clock);
+    const api = createRepositoryLearnerApi({
+      repository: new PostgresAuthorityRepository(pool, {
+        newGuestProjection: createGuestProjection,
+      }),
+      clock,
+      bank: authority.bank,
+      sessions: new PostgresGuestSessionService(pool, createGuestProjection, { now: () => NOW }),
+      identity,
+      rateLimiter: new PostgresFixedWindowRateLimiter(pool, { now: () => Date.parse(NOW) }),
+      rateLimitPepper: 'p'.repeat(32),
+      originVerificationSecret: ORIGIN_VERIFICATION_SECRET,
+      allowedOrigins: [ORIGIN],
+      logger: { info: () => undefined },
+      nowMs: () => Date.parse(NOW),
+    });
+
+    const anonymous = await api.handle(event('POST', '/v1/bootstrap'));
+    const today = await api.handle(
+      event('GET', '/v1/plan/today', { cookies: cookiesOf(anonymous) }),
+    );
+
+    expect(body<{ authenticated: boolean }>(anonymous)).toMatchObject({ authenticated: false });
+    expect(today.statusCode).toBe(401);
+    expect((await pool.query('select count(*)::text as n from learners')).rows[0]).toEqual({
+      n: '0',
     });
   });
 });

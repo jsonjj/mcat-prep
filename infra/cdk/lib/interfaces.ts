@@ -52,8 +52,6 @@ export interface DataResources {
 }
 
 export interface IdentityResources {
-  readonly learnerUserPool: cognito.IUserPool;
-  readonly learnerClient: cognito.IUserPoolClient;
   readonly staffUserPool: cognito.IUserPool;
   readonly staffClient: cognito.IUserPoolClient;
 }

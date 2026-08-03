@@ -15,7 +15,7 @@ import {
 import { describe, expect, it } from 'vitest';
 import { createRepositoryLearnerApi } from './handler';
 import type { ApiGatewayV2Event } from './http';
-import { hashOpaqueToken, type GuestSessionService } from './session';
+import { createLinkedSessionDouble } from './test-support/linked-session';
 import { VECTOR_LESSON_PROTECTED_ANSWERS } from './vector-lesson-protected';
 import { RepositoryLearnerKernel, type LessonResponseSubmission } from './workflow';
 
@@ -101,21 +101,13 @@ function harness() {
   state.onboarding.diagnosticComplete = true;
   authority.confirmPlan(state, { testDate: null, targetScore: 515, minutesPerWeek: 420 });
   const repository = new InMemoryAuthorityRepository([toProjectionRecord(state, 0, NOW)]);
-  const principal: Principal = {
-    kind: 'guest',
+  const { principal, sessions } = createLinkedSessionDouble({
     learnerId: state.learnerId,
     sessionId: crypto.randomUUID(),
-  };
-  const sessions: GuestSessionService = {
-    bootstrap: async () => ({
-      principal,
-      sessionToken: ROTATED_SESSION_TOKEN,
-      csrfToken: CSRF_TOKEN,
-      maxAgeSeconds: 3600,
-    }),
-    resolve: async (token) =>
-      token === SESSION_TOKEN ? { principal, csrfTokenHash: hashOpaqueToken(CSRF_TOKEN) } : null,
-  };
+    sessionToken: SESSION_TOKEN,
+    rotatedSessionToken: ROTATED_SESSION_TOKEN,
+    csrfToken: CSRF_TOKEN,
+  });
   const makeApi = () =>
     createRepositoryLearnerApi({
       repository,

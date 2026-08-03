@@ -21,8 +21,8 @@ import {
   type FormItem,
   type MstDesign,
 } from '@mcat/policies';
-import type { DiagnosticBank, DiagnosticItemView } from './diagnostic-bank';
-import type { ScoredResponse, SessionRecord } from './diagnostic-session-store';
+import type { DiagnosticBank, DiagnosticItemView } from './bank';
+import type { ScoredResponse, SessionRecord } from './session-store';
 
 /**
  * Pure orchestration over the multistage policy: derive the route from the

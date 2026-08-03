@@ -1,3 +1,7 @@
+export * from './auth/identity-provider';
+export * from './auth/supabase';
+export * from './auth/supabase-jwks';
+export * from './guest-projection';
 export * from './handler';
 export * from './http';
 export * from './practice-authorization';

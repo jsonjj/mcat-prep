@@ -1,4 +1,4 @@
-import { HttpAuthorityClient, type AuthorityPort } from '@mcat/client-core';
+import { HttpAuthorityClient, type AuthPort, type AuthorityPort } from '@mcat/client-core';
 
 const configured = import.meta.env.VITE_AUTHORITY_BASE_URL;
 if (!configured) throw new Error('VITE_AUTHORITY_BASE_URL is required');
@@ -13,4 +13,4 @@ const baseUrl =
     ? new URL(configured, window.location.origin).toString()
     : configured;
 
-export const authority: AuthorityPort = new HttpAuthorityClient({ baseUrl });
+export const authority: AuthorityPort & AuthPort = new HttpAuthorityClient({ baseUrl });

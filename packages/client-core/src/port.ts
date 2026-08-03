@@ -1,5 +1,5 @@
 import type {
-  BootstrapResponse,
+  BootstrapView,
   BuildTodaysPathInput,
   CarsDuelOutcomeInput,
   CarsReadinessView,
@@ -16,6 +16,9 @@ import type {
   NormalizedLessonRunView,
   NormalizedLessonStartResponse,
   NormalizedLessonStatusView,
+  PassageChoiceId,
+  PassageGrade,
+  PassageTodayView,
   PracticeAttemptCommand,
   PracticeAttemptResult,
   PracticeItemView,
@@ -57,8 +60,32 @@ export interface AttemptTiming {
   answerChanges: number;
 }
 
+/**
+ * The session-exchange half of the authority, kept separate from
+ * {@link AuthorityPort} because it is the only part a signed-out visitor can call
+ * — and because harnesses that serve a fixed learner have nothing to exchange and
+ * should not have to stub it.
+ *
+ * There is no sign-up, confirmation, or password-reset method here. Those are
+ * Supabase's, and the UI calls Supabase directly for them; this port begins once
+ * the visitor holds a Supabase access token.
+ */
+export interface AuthPort {
+  /**
+   * Trade a verified Supabase access token for a session. Resolves once the
+   * session cookies are set; no tokens reach the caller.
+   */
+  exchangeSession(accessToken: string): Promise<void>;
+  signOut(): Promise<void>;
+}
+
 export interface AuthorityPort {
-  bootstrap(): Promise<BootstrapResponse>;
+  /**
+   * Returns a discriminated envelope: a signed-out caller gets
+   * `{ authenticated: false }` and no learner fields, because bootstrap no longer
+   * creates a learner.
+   */
+  bootstrap(): Promise<BootstrapView>;
   getDiagnosticNext(): Promise<DiagnosticNext>;
   submitDiagnostic(questionId: string, choiceId: string | null): Promise<void>;
   confirmPlan(goal: GoalInput): Promise<void>;
@@ -129,6 +156,22 @@ export interface AuthorityPort {
    * payload still throws, so DTO drift fails loudly rather than silently emptying.
    */
   getPracticeTestSummary(): Promise<PracticeTestSummaryView | null>;
+  /**
+   * Passage of the Day (FORMATIVE): the day's learner-safe passage for the
+   * learner-local day, keyed by the browser's `Date.getTimezoneOffset()` (minutes).
+   * Resolves to `null` when the pool is empty (or no passage source is configured),
+   * which the runner renders as its on-brand "no passage today" state. Reads only —
+   * never routes through the authority kernel and writes no mastery.
+   */
+  passageToday(tz: number): Promise<PassageTodayView | null>;
+  /**
+   * Passage of the Day (FORMATIVE): score one answer and reveal its explanation
+   * (correct choice + rationale). Server-side scoring only — the view carries no
+   * answer key. It is session-gated but NOT state-changing (no CSRF write gate),
+   * and writes no mastery. Rejects with an `unauthorized`/`not_found` `ApiClientError`
+   * when the session is missing or the question is not in the pool.
+   */
+  passageAttempt(questionId: string, choiceId: PassageChoiceId | null): Promise<PassageGrade>;
   /**
    * Record a CARS Duel. The optional rubric feeds a low-weight CARS ability nudge;
    * the optional {mode, topicId, intensity} let the formative engine update its

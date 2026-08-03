@@ -6,16 +6,17 @@ import {
   type LearnerSafeV7Question,
 } from '@mcat/content';
 import { fcForLesson, type DiagnosticCandidate, type FormItem } from '@mcat/policies';
-import { loadPulledCorpus } from './db-pull';
+import { loadPulledCorpus } from '@mcat/corpus-pull';
 
 /**
- * Server-side diagnostic bank. Built once from the v7 fixture corpus. This module
- * is the ONLY place the protected answer key lives on the server; the learner-safe
- * views it hands out cannot represent a key or explanation.
+ * Server-side diagnostic bank. This module is the ONLY place the protected answer
+ * key lives on the server; the learner-safe views it hands out cannot represent a
+ * key or explanation.
  *
- * It runs exclusively inside the Vite dev/preview middleware (Node) — it is never
- * imported by the browser bundle, so `@mcat/content` (and any answer material)
- * never crosses the client boundary.
+ * Node-only, and deliberately so (it pulls in `@mcat/content` and answer
+ * material). It is imported by the dev/preview Vite middleware, the deployed
+ * learner-API Lambda, and the local full-engine authority — never by the browser
+ * bundle. The architecture boundary tests enforce that.
  */
 
 /** A learner-safe question view for the browser. No key, no explanations. */
@@ -39,11 +40,11 @@ const SECTION_TITLE: Readonly<Record<Section, string>> = {
 };
 
 // ---------------------------------------------------------------------------
-// Real bank loader (production_candidate corpus pulled from Postgres).
+// Bank rows → diagnostic items.
 //
-// Maps the gitignored local pull (read by ./db-pull) into diagnostic items. If
-// the pull is absent or malformed, the bank falls back to the synthetic fixture
-// so the app still runs. Answer material stays server-side (Node-only module).
+// One mapping, two producers. The gitignored local corpus pull (dev) and the
+// Postgres question bank (deployed) both hand rows in the same shape; this
+// module turns them into diagnostic items, keeping answer material server-side.
 // ---------------------------------------------------------------------------
 
 const DB_SECTION_TO_V7: Readonly<Record<string, LearnerSafeV7Question['section']>> = {
@@ -58,60 +59,181 @@ const DB_SECTION_TO_V7: Readonly<Record<string, LearnerSafeV7Question['section']
 const ELIGIBLE_STATUS = new Set(['production_candidate', 'published']);
 const VALID_CLUSTERS = new Set<string>(SKILL_CLUSTERS);
 
-function loadPulledBank(): DiagnosticItem[] | null {
-  try {
-    const corpus = loadPulledCorpus();
-    if (corpus === null) return null;
+/**
+ * One question-bank row, learner-safe fields plus its SERVER-ONLY answer key.
+ * The shape the local pull (`@mcat/corpus-pull`) and the Postgres reader
+ * (`@mcat/persistence-postgres` `listDiagnosticBankRows`) both produce, so the
+ * mapping to a {@link DiagnosticItem} lives in exactly one place.
+ */
+export interface DiagnosticSourceRow {
+  question_id: string;
+  section: string;
+  cluster: string | null;
+  lesson_id: string | null;
+  family_id: string | null;
+  subject: string | null;
+  primary_skill: string | null;
+  dok_level: number | null;
+  stem: string;
+  passage: string | null;
+  choices: { A?: string; B?: string; C?: string; D?: string } | null;
+  status: string | null;
+  correct_answer: 'A' | 'B' | 'C' | 'D';
+  explanations: Record<string, string>;
+}
 
-    const items: DiagnosticItem[] = [];
-    for (const q of corpus.questions) {
-      const key = corpus.protectedById.get(q.question_id);
-      const c = q.cluster;
-      const choices = q.choices;
-      if (
-        key === undefined ||
-        c === null ||
-        !VALID_CLUSTERS.has(c) ||
-        choices === null ||
-        !(choices.A && choices.B && choices.C && choices.D)
-      ) {
-        continue;
-      }
-      const cluster = c as SkillCluster;
-      const safe: LearnerSafeV7Question = {
-        id: q.question_id,
-        section: DB_SECTION_TO_V7[q.section] ?? 'CROSS_SECTION',
-        subject: q.subject ?? null,
-        primary_skill: q.primary_skill ?? null,
-        family_id: q.family_id ?? null,
-        stem: q.stem,
-        passage: q.passage ?? '',
-        choices: { A: choices.A, B: choices.B, C: choices.C, D: choices.D },
-        assets: [],
-      };
-      // Defense in depth: never let answer material reach the learner-safe view.
-      assertNoProtectedFields(safe, `diagnostic-db:${safe.id}`);
-      items.push({
-        safe,
-        protected: { id: q.question_id, correct_answer: key.correct_answer, explanations: key.explanations },
-        cluster,
-        section: CLUSTER_INFO[cluster].section,
-        lessonId: q.lesson_id ?? null,
-        familyId: q.family_id ?? `fam-${q.question_id}`,
-        dokLevel: q.dok_level ?? undefined,
-        eligible: ELIGIBLE_STATUS.has(q.status ?? ''),
-        routedViaAdapter: true,
-      });
+/**
+ * Map question-bank rows into diagnostic items. Rows missing a valid cluster,
+ * an incomplete A–D choice set are skipped (never delivered). Answer material is
+ * carried in the item's `protected` half only, and a defense-in-depth
+ * `assertNoProtectedFields` guards the learner-safe half of every row.
+ */
+export function diagnosticItemsFromRows(rows: readonly DiagnosticSourceRow[]): DiagnosticItem[] {
+  const items: DiagnosticItem[] = [];
+  for (const row of rows) {
+    const c = row.cluster;
+    const choices = row.choices;
+    if (
+      c === null ||
+      !VALID_CLUSTERS.has(c) ||
+      choices === null ||
+      !(choices.A && choices.B && choices.C && choices.D)
+    ) {
+      continue;
     }
-    return items.length > 0 ? items : null;
-  } catch {
-    return null;
+    const cluster = c as SkillCluster;
+    const safe: LearnerSafeV7Question = {
+      id: row.question_id,
+      section: DB_SECTION_TO_V7[row.section] ?? 'CROSS_SECTION',
+      subject: row.subject ?? null,
+      primary_skill: row.primary_skill ?? null,
+      family_id: row.family_id ?? null,
+      stem: row.stem,
+      passage: row.passage ?? '',
+      choices: { A: choices.A, B: choices.B, C: choices.C, D: choices.D },
+      assets: [],
+    };
+    // Defense in depth: never let answer material reach the learner-safe view.
+    assertNoProtectedFields(safe, `diagnostic-db:${safe.id}`);
+    items.push({
+      safe,
+      protected: {
+        id: row.question_id,
+        correct_answer: row.correct_answer,
+        explanations: row.explanations,
+      },
+      cluster,
+      section: CLUSTER_INFO[cluster].section,
+      lessonId: row.lesson_id ?? null,
+      familyId: row.family_id ?? `fam-${row.question_id}`,
+      dokLevel: row.dok_level ?? undefined,
+      eligible: ELIGIBLE_STATUS.has(row.status ?? ''),
+      routedViaAdapter: true,
+    });
   }
+  return items;
+}
+
+/**
+ * The gitignored local corpus pull as diagnostic items, or null when it is
+ * absent/empty (fresh clone, CI). Merges the pull's learner-safe rows with their
+ * protected keys and reuses {@link diagnosticItemsFromRows}.
+ */
+export function loadPulledBank(): DiagnosticItem[] | null {
+  const corpus = loadPulledCorpus();
+  if (corpus === null) return null;
+  const rows: DiagnosticSourceRow[] = [];
+  for (const q of corpus.questions) {
+    const key = corpus.protectedById.get(q.question_id);
+    if (key === undefined) continue;
+    rows.push({
+      question_id: q.question_id,
+      section: q.section,
+      cluster: q.cluster,
+      lesson_id: q.lesson_id,
+      family_id: q.family_id,
+      subject: q.subject,
+      primary_skill: q.primary_skill,
+      dok_level: q.dok_level,
+      stem: q.stem,
+      passage: q.passage,
+      choices: q.choices,
+      status: q.status,
+      correct_answer: key.correct_answer,
+      explanations: key.explanations,
+    });
+  }
+  const items = diagnosticItemsFromRows(rows);
+  return items.length > 0 ? items : null;
 }
 
 /** Prefer the real pulled corpus; fall back to the synthetic fixture. */
 export function loadDiagnosticBankItems(): DiagnosticItem[] {
   return loadPulledBank() ?? buildDiagnosticBank();
+}
+
+// ---------------------------------------------------------------------------
+// Bank source seam (postgres → local pull → fixture), mirroring the passage
+// pool loader. The deployed Lambda injects `loadFromPostgres`; dev leaves it
+// unset and falls straight through to the local pull / fixture (today's behaviour).
+// ---------------------------------------------------------------------------
+
+export type DiagnosticBankSource = 'postgres' | 'local-pull' | 'fixture';
+
+export interface DiagnosticBankResult {
+  readonly source: DiagnosticBankSource;
+  readonly items: DiagnosticItem[];
+}
+
+export interface DiagnosticBankSourceDeps {
+  /** Deployed path: eligible questions from Postgres, mapped via `diagnosticItemsFromRows`. */
+  readonly loadFromPostgres?: () => Promise<DiagnosticItem[] | null>;
+  readonly loadFromLocalPull?: () => DiagnosticItem[] | null;
+  readonly loadFixture?: () => DiagnosticItem[];
+  readonly warn?: (message: string, error?: unknown) => void;
+}
+
+/**
+ * Resolve the diagnostic bank items through the priority fallback. `postgres`
+ * (when a loader is supplied and returns rows) wins; otherwise the local pull;
+ * otherwise the synthetic fixture — so the diagnostic can always deal a form
+ * rather than dead-ending onboarding on an unseeded/absent bank.
+ */
+export async function resolveDiagnosticBankItems(
+  deps: DiagnosticBankSourceDeps = {},
+): Promise<DiagnosticBankResult> {
+  const {
+    loadFromPostgres,
+    loadFromLocalPull = loadPulledBank,
+    loadFixture = buildDiagnosticBank,
+    warn = console.warn,
+  } = deps;
+
+  if (loadFromPostgres !== undefined) {
+    try {
+      const items = await loadFromPostgres();
+      if (items !== null && items.length > 0) return { source: 'postgres', items };
+      warn('[diagnostic] the question bank returned no diagnostic items; falling back to the fixture.');
+    } catch (error) {
+      warn('[diagnostic] reading the question bank failed; falling back to the fixture.', error);
+    }
+  }
+
+  const pulled = loadFromLocalPull();
+  if (pulled !== null && pulled.length > 0) return { source: 'local-pull', items: pulled };
+  return { source: 'fixture', items: loadFixture() };
+}
+
+/** One boot line stating which corpus the diagnostic is serving from. */
+export function diagnosticBankSourceLine(result: DiagnosticBankResult): string {
+  switch (result.source) {
+    case 'postgres':
+      return `[diagnostic] bank source: postgres — ${result.items.length} items.`;
+    case 'local-pull':
+      return `[diagnostic] bank source: local pull — ${result.items.length} items (no DB reachable).`;
+    case 'fixture':
+      return `[diagnostic] bank source: synthetic fixture — ${result.items.length} items (no DB, no local pull).`;
+  }
 }
 
 /** Server-side reveal for a recall attempt: correctness plus explanation. */
@@ -267,7 +389,10 @@ export class DiagnosticBank {
    * served ids when possible. Returns null when the cluster has no eligible
    * items (e.g. PS1 in the fixture bank).
    */
-  viewByCluster(cluster: SkillCluster, exclude: ReadonlySet<string> = new Set()): DiagnosticItemView | null {
+  viewByCluster(
+    cluster: SkillCluster,
+    exclude: ReadonlySet<string> = new Set(),
+  ): DiagnosticItemView | null {
     const pool = this.eligibleByCluster.get(cluster);
     if (!pool || pool.length === 0) return null;
     const fresh = pool.filter((item) => !exclude.has(item.safe.id));
@@ -298,18 +423,3 @@ export class DiagnosticBank {
     };
   }
 }
-
-/** Process-wide singleton bank for the dev/preview server. */
-export const diagnosticBank = new DiagnosticBank();
-
-// Stated once at boot. The exclusion is intended, but an axis change that
-// silently shrinks the deliverable pool is exactly the failure this accounting
-// exists to catch, so it is announced rather than left to be discovered.
-console.warn(
-  `[diagnostic] bank scope: ${diagnosticBank.scope.inScope} of ${diagnosticBank.scope.eligible} eligible items ` +
-    `are on the reporting axis; ${diagnosticBank.scope.outOfScope} excluded (no foundational concept) — ` +
-    Object.entries(diagnosticBank.scope.outOfScopeByCluster)
-      .sort(([a], [b]) => (a < b ? -1 : 1))
-      .map(([cluster, n]) => `${cluster}:${n}`)
-      .join(' '),
-);

@@ -2,19 +2,19 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { getPassageOfDayService, isPassageChoiceId } from './passage-of-day';
 
 /**
- * Passage of the Day HTTP surface for the learner-web dev/preview server.
+ * Passage of the Day HTTP surface for the learner-web dev server — the OFFLINE
+ * FALLBACK behind `server/passage-api-plugin.ts`, mounted at the REAL
+ * `/v1/passage/*` routes the browser now calls in every mode.
  *
  * Mirrors the diagnostic API's hardening: same-origin only, JSON only (for the
  * POST), no-store, bounded body. The passage view carries no answer key; scoring
- * is server-side and returned only after the learner commits an answer. It is a
- * dedicated surface (mounted at `/api/passage/*`, like `/api/diagnostic/*`) so it
- * works whether the dev server owns `/v1` in-process or proxies it to a remote
- * authority, and so the formative passage never routes through the authority
- * kernel.
+ * is server-side and returned only after the learner commits an answer, and the
+ * formative passage never routes through the authority kernel.
  *
- * Production/preview serving beyond the Vite middleware is out of scope here (the
- * feature would be delivered by an API Gateway route, as the diagnostic is); see
- * the build report.
+ * In production and the proxy dev modes these routes are served by the deployed
+ * learner-API Lambda / the local learner API instead (see
+ * services/lambdas/learner-api and services/local-learner-api); this middleware
+ * only answers when the fully in-process dev authority owns `/v1`.
  */
 
 class RequestBodyError extends Error {
@@ -79,22 +79,23 @@ async function readJsonBody(request: IncomingMessage): Promise<Record<string, un
 
 /**
  * The browser sends its `Date.getTimezoneOffset()` so the server can key the
- * rotation to the learner-local day. Parsed defensively: a missing or malformed
- * value falls back to 0 (UTC) rather than failing the request.
+ * rotation to the learner-local day. It rides in the request PATH
+ * (`/v1/passage/today/{tz}`), matching the deployed route. The plugin mounts this
+ * handler at `/v1/passage/today`, so Connect strips that prefix from `request.url`;
+ * `originalUrl` keeps the full path. Parsed defensively: a missing/malformed value
+ * falls back to 0 (UTC) rather than failing the request.
  */
-function timezoneOffsetFromUrl(request: IncomingMessage): number {
-  try {
-    const url = new URL(request.url ?? '/', 'http://localhost');
-    const raw = url.searchParams.get('tz');
-    if (raw === null) return 0;
-    const value = Number.parseInt(raw, 10);
-    return Number.isFinite(value) ? value : 0;
-  } catch {
-    return 0;
-  }
+function timezoneOffsetFromPath(request: IncomingMessage): number {
+  const full =
+    (request as IncomingMessage & { originalUrl?: string }).originalUrl ?? request.url ?? '';
+  const path = full.split('?', 1)[0] ?? '';
+  const match = /(-?\d{1,4})\/?$/.exec(path);
+  if (match === null) return 0;
+  const value = Number.parseInt(match[1]!, 10);
+  return Number.isFinite(value) && Math.abs(value) <= 1440 ? value : 0;
 }
 
-/** GET /api/passage/today?tz=<offsetMinutes> — the day's learner-safe passage. */
+/** GET /v1/passage/today/<offsetMinutes> — the day's learner-safe passage. */
 export async function handleTodayRequest(
   request: IncomingMessage,
   response: ServerResponse,
@@ -110,7 +111,7 @@ export async function handleTodayRequest(
   }
   try {
     const service = await getPassageOfDayService();
-    const view = service.todayView(new Date(), timezoneOffsetFromUrl(request));
+    const view = service.todayView(new Date(), timezoneOffsetFromPath(request));
     // `passage: null` is the honest "pool is empty" response; the runner renders
     // an on-brand empty state for it rather than treating it as an error.
     writeJson(response, 200, { passage: view });
@@ -119,7 +120,7 @@ export async function handleTodayRequest(
   }
 }
 
-/** POST /api/passage/attempts — score one answer and reveal its explanation. */
+/** POST /v1/passage/attempts — score one answer and reveal its explanation. */
 export function handleAttemptRequest(request: IncomingMessage, response: ServerResponse): void {
   if (request.method !== 'POST') {
     response.setHeader('Allow', 'POST');

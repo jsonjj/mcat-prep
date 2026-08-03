@@ -20,6 +20,13 @@ export interface ResolvedGuestSession {
 export interface GuestSessionService {
   bootstrap(existingSessionToken: string | null): Promise<BootstrapGuestSession>;
   resolve(sessionToken: string): Promise<ResolvedGuestSession | null>;
+  /**
+   * Exchange a verified identity-provider subject for a session, creating the
+   * learner on first sign-in. The caller must already have proven the subject.
+   */
+  signIn(provider: string, providerSubject: string): Promise<BootstrapGuestSession>;
+  /** Invalidate one session so the cookie cannot be replayed after sign-out. */
+  revoke(sessionToken: string): Promise<void>;
 }
 
 export function hashOpaqueToken(token: string): string {
@@ -48,6 +55,29 @@ export function verifyDoubleSubmitCsrf(
   const headerHash = hashOpaqueToken(headerToken);
   const cookieHash = hashOpaqueToken(cookieToken);
   return safeHashEquals(headerHash, cookieHash) && safeHashEquals(headerHash, expectedHash);
+}
+
+/**
+ * Double-submit check for the signed-out credential routes.
+ *
+ * There is no session yet, so there is no stored hash to compare against; the
+ * guarantee is only that the caller could read the `__Host-` CSRF cookie, which a
+ * cross-site page cannot do. That is exactly the property these routes need — they
+ * authorize nothing, they only accept credentials.
+ */
+export function verifyStatelessDoubleSubmitCsrf(
+  headerToken: string | undefined,
+  cookieToken: string | undefined,
+): boolean {
+  if (
+    headerToken === undefined ||
+    cookieToken === undefined ||
+    !/^[A-Za-z0-9_-]{32,256}$/.test(headerToken) ||
+    !/^[A-Za-z0-9_-]{32,256}$/.test(cookieToken)
+  ) {
+    return false;
+  }
+  return safeHashEquals(hashOpaqueToken(headerToken), hashOpaqueToken(cookieToken));
 }
 
 export function parseCookies(

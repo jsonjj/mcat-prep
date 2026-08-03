@@ -7,7 +7,7 @@ import {
   handlePracticeTestNextRequest,
   type PracticeTestAuthorityRecorder,
 } from './practice-test-api';
-import type { PulledCorpus, PulledProtected, PulledQuestion } from './db-pull';
+import type { PulledCorpus, PulledProtected, PulledQuestion } from '@mcat/corpus-pull';
 
 /**
  * The §6 cadence is enforced at the SERVING boundary, not only in Today's Path:

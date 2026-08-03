@@ -5,6 +5,8 @@ import {
   NormalizedLessonRunViewSchema,
   NormalizedLessonStartResponseSchema,
   NormalizedLessonStatusViewSchema,
+  PassageAttemptResponseSchema,
+  PassageTodayResponseSchema,
   VectorLessonRunViewSchema,
   VectorLessonStartResponseSchema,
   VectorLessonStatusViewSchema,
@@ -318,6 +320,148 @@ describe('local lesson HTTP authority: normalized catalog (L2/L3)', () => {
       }),
     });
     expect(denied.status).toBe(400);
+  });
+});
+
+describe('local lesson HTTP authority: Passage of the Day', () => {
+  it('serves the day’s learner-safe passage and grades an answer, never leaking a key', async () => {
+    const server = await createLocalLessonHttpServer({ port: 0 });
+    running.push(server);
+
+    // The tz offset rides in the PATH, exactly like the deployed route. Before
+    // this block existed the offline authority 404'd here and the runner showed
+    // "Passage unavailable".
+    const todayResponse = await fetch(`${server.baseUrl}/v1/passage/today/-300`, {
+      headers: LOCAL_HEADERS,
+    });
+    expect(todayResponse.status).toBe(200);
+    const { passage } = PassageTodayResponseSchema.parse(await todayResponse.json());
+    // The hardcoded dev pool is non-empty, so a passage is always served.
+    expect(passage).not.toBeNull();
+    if (passage === null) throw new Error('unreachable');
+    expect(passage.questions.length).toBeGreaterThan(0);
+    // The learner-safe view carries no answer key, rationale, or explanation.
+    expect(JSON.stringify(passage)).not.toMatch(
+      /"correct"|"correctChoiceId"|"misconception"|"rationale"|"explanation"/,
+    );
+
+    // Scoring one answer reveals the key + explanation — a POST that is session-
+    // gated but NOT state-changing (no CSRF needed).
+    const questionId = passage.questions[0]!.id;
+    const attemptResponse = await fetch(`${server.baseUrl}/v1/passage/attempts`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...LOCAL_HEADERS },
+      body: JSON.stringify({ questionId, choiceId: 'A' }),
+    });
+    expect(attemptResponse.status).toBe(200);
+    const { grade } = PassageAttemptResponseSchema.parse(await attemptResponse.json());
+    expect(typeof grade.correct).toBe('boolean');
+    expect(['A', 'B', 'C', 'D']).toContain(grade.correctChoiceId);
+    expect(grade.rationale.length).toBeGreaterThan(0);
+
+    // An unknown question id is a 404 not_found, exactly like the deployed API.
+    const missing = await fetch(`${server.baseUrl}/v1/passage/attempts`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...LOCAL_HEADERS },
+      body: JSON.stringify({ questionId: 'not-a-real-question', choiceId: 'A' }),
+    });
+    expect(missing.status).toBe(404);
+  });
+});
+
+interface DiagnosticWire {
+  done: boolean;
+  itemsScored: number;
+  stageId: string | null;
+  stageNumber: number;
+  sessionToken: string;
+  blockToken: string | null;
+  questions: { id: string }[];
+  result: { masterySeed: { kcPriors: Record<string, number> } } | null;
+}
+
+/**
+ * No answer key, no per-item correctness, no session internals crossed the wire.
+ * Checks protected FIELD KEYS (quoted), not bare words — real question prose can
+ * legitimately contain "explanation"/"correct" in a stem or choice.
+ */
+function assertDiagnosticNoLeak(payload: unknown): void {
+  const json = JSON.stringify(payload);
+  for (const field of ['correct_answer', 'explanations', 'correct_choice_id', 'rationales']) {
+    expect(json.includes(`"${field}"`), `leaked ${field}`).toBe(false);
+  }
+  expect(json.includes('"correct":'), 'leaked per-item correctness').toBe(false);
+  expect(json.includes('tokenHash'), 'leaked a block-token hash').toBe(false);
+}
+
+describe('local lesson HTTP authority: placement diagnostic (block)', () => {
+  const post = (server: RunningLocalLessonServer, path: string, body: unknown) =>
+    fetch(`${server.baseUrl}${path}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...LOCAL_HEADERS },
+      body: JSON.stringify(body),
+    });
+
+  it('serves, resumes, and drives the block diagnostic to a completed result over HTTP', async () => {
+    const server = await createLocalLessonHttpServer({ port: 0 });
+    running.push(server);
+
+    const startedRes = await post(server, '/v1/diagnostic/next', {});
+    expect(startedRes.status).toBe(200);
+    let view = (await startedRes.json()) as DiagnosticWire;
+    expect(view.done).toBe(false);
+    expect(view.stageNumber).toBe(1);
+    expect(view.questions.length).toBeGreaterThan(0);
+    expect(typeof view.sessionToken).toBe('string');
+    expect(typeof view.blockToken).toBe('string');
+    assertDiagnosticNoLeak(view);
+
+    // A refresh mid-block re-serves the same open stage with a fresh one-use token.
+    const resumed = (await (
+      await post(server, '/v1/diagnostic/next', { sessionToken: view.sessionToken })
+    ).json()) as DiagnosticWire;
+    expect(resumed.stageId).toBe(view.stageId);
+    expect(resumed.questions.map((q) => q.id)).toEqual(view.questions.map((q) => q.id));
+    expect(resumed.blockToken).not.toBe(view.blockToken);
+
+    view = resumed;
+    const served: string[][] = [];
+    for (let guard = 0; guard < 20 && !view.done; guard += 1) {
+      served.push(view.questions.map((q) => q.id));
+      const answers = Object.fromEntries(view.questions.map((q) => [q.id, 'A']));
+      const committed = await post(server, '/v1/diagnostic/block', {
+        sessionToken: view.sessionToken,
+        blockToken: view.blockToken,
+        stageId: view.stageId,
+        answers,
+      });
+      expect(committed.status).toBe(200);
+      view = (await committed.json()) as DiagnosticWire;
+    }
+
+    expect(view.done).toBe(true);
+    expect(view.result).not.toBeNull();
+    const all = served.flat();
+    expect(view.itemsScored).toBe(all.length);
+    expect(new Set(all).size).toBe(all.length);
+    expect(Object.keys(view.result!.masterySeed.kcPriors).length).toBeGreaterThan(0);
+    assertDiagnosticNoLeak(view);
+  });
+
+  it('refuses a replayed block token with 409', async () => {
+    const server = await createLocalLessonHttpServer({ port: 0 });
+    running.push(server);
+
+    const first = (await (await post(server, '/v1/diagnostic/next', {})).json()) as DiagnosticWire;
+    const body = {
+      sessionToken: first.sessionToken,
+      blockToken: first.blockToken,
+      stageId: first.stageId,
+      answers: Object.fromEntries(first.questions.map((q) => [q.id, 'A'])),
+    };
+    expect((await post(server, '/v1/diagnostic/block', body)).status).toBe(200);
+    // The committed block's one-use token is spent; re-submitting is a 409.
+    expect((await post(server, '/v1/diagnostic/block', body)).status).toBe(409);
   });
 });
 

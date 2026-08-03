@@ -162,6 +162,32 @@ checks health, CORS, two secure `__Host-` cookies, CSRF, idempotent goal replay,
 reads, unauthenticated/CSRF/ownership negatives, direct-origin rejection, and protected-field
 absence.
 
+### Pin the Supabase signing keys
+
+`McatDevIdentity` seeds the verification secret with an **empty** key set, because the keys belong
+to Supabase and change on its rotation schedule rather than ours. Until they are synced, sign-in
+fails closed — every other route keeps working, so this does not block the smoke above.
+
+```bash
+pnpm supabase:sync-jwks <project-ref>
+```
+
+Synth must also carry the project ref (`-c supabaseProjectRef=<ref>`), because the learner CSP
+names the Supabase origin. A synth without it warns and emits a placeholder.
+
+**This is also the rotation procedure.** The Lambda verifies offline against pinned keys and has no
+egress to re-fetch them, so a Supabase key rotation requires re-running the command above — a
+redeploy alone will not pick up new keys. Supabase rotates in stages, and tokens signed by a
+previously-used key stay valid for their lifetime, so run this while both the standby and current
+keys are published and no learner sees an interruption. Verify with:
+
+```bash
+aws secretsmanager get-secret-value --secret-id /mcat/dev/supabase/learner-api \
+  --query SecretString --output text | python3 -m json.tool
+```
+
+Changes take effect on the next Lambda cold start.
+
 ## 7. Deploy the edge and operations wave
 
 ```bash

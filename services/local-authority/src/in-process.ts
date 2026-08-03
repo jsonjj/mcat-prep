@@ -29,6 +29,9 @@ import {
   type Clock,
   type MasterySeed,
   type NormalizedLessonAction,
+  type PassageChoiceId,
+  type PassageGrade,
+  type PassageTodayView,
   type PracticeAttemptCommand,
   type VectorLessonAction,
 } from '@mcat/contracts';
@@ -75,8 +78,15 @@ export class InProcessAuthorityClient implements AuthorityPort {
     return result;
   }
 
-  async bootstrap(): Promise<BootstrapResponse> {
-    return BootstrapResponseSchema.parse(this.mutate((state) => this.authority.bootstrap(state)));
+  /**
+   * Always authenticated. This harness has no credential store and serves a single
+   * fixed learner, so there is no signed-out arm to return.
+   */
+  async bootstrap(): Promise<BootstrapResponse & { authenticated: true }> {
+    const response = BootstrapResponseSchema.parse(
+      this.mutate((state) => this.authority.bootstrap(state, 'linked')),
+    );
+    return { ...response, authenticated: true };
   }
 
   async getDiagnosticNext() {
@@ -244,6 +254,23 @@ export class InProcessAuthorityClient implements AuthorityPort {
   async getPracticeTestSummary() {
     const view = this.authority.getPracticeTestSummary(this.state());
     return view === null ? null : PracticeTestSummaryViewSchema.parse(view);
+  }
+
+  // Passage of the Day is FORMATIVE and off the authority kernel. In local dev it
+  // is served by the dev Vite passage plugin (apps/learner-web/server/passage-api.ts)
+  // and by the persisted HTTP authority (src/http-server.ts) — never through this
+  // synthetic single-learner seam, which carries no curated passage pool. These
+  // satisfy the AuthorityPort surface honestly: no passage, and an ungradeable
+  // attempt.
+  async passageToday(_tz: number): Promise<PassageTodayView | null> {
+    return null;
+  }
+
+  async passageAttempt(
+    _questionId: string,
+    _choiceId: PassageChoiceId | null,
+  ): Promise<PassageGrade> {
+    throw new Error('Passage of the Day is not served by the synthetic in-process authority.');
   }
 
   async recordCarsDuel(outcome?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {

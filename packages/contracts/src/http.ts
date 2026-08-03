@@ -1,6 +1,16 @@
 import { z } from 'zod';
-import { GuestBootstrapResponseSchema, SyncSubmitRequestSchema } from './api';
+import { BootstrapEnvelopeSchema, SyncSubmitRequestSchema } from './api';
+import {
+  SessionExchangeRequestSchema,
+  SessionExchangeResponseSchema,
+  SignOutResponseSchema,
+} from './auth';
 import { AttemptCommandSchema, GoalCommandSchema, GoalViewSchema } from './commands';
+import {
+  DiagnosticBlockRequestSchema,
+  DiagnosticBlockResponseSchema,
+  DiagnosticNextRequestSchema,
+} from './diagnostic-block';
 import { ErrorCodeSchema } from './errors';
 import { EventIdSchema } from './ids';
 import {
@@ -18,6 +28,11 @@ import {
   LessonMasteryViewSchema,
   SkillMasteryViewSchema,
 } from './mastery';
+import {
+  PassageAttemptRequestSchema,
+  PassageAttemptResponseSchema,
+  PassageTodayResponseSchema,
+} from './passage-of-the-day';
 import {
   PracticeAttemptCommandSchema,
   PracticeAttemptResultSchema,
@@ -90,7 +105,21 @@ export const HTTP_API = {
   bootstrap: {
     method: 'POST',
     path: '/v1/bootstrap',
-    response: GuestBootstrapResponseSchema,
+    response: BootstrapEnvelopeSchema,
+  },
+  // Session exchange. The only route callable without a session. Credentials
+  // never reach this API — the browser authenticates against Supabase and sends
+  // only the resulting access token here.
+  authSessionExchange: {
+    method: 'POST',
+    path: '/v1/auth/session',
+    body: SessionExchangeRequestSchema,
+    response: SessionExchangeResponseSchema,
+  },
+  authSignOut: {
+    method: 'POST',
+    path: '/v1/auth/signout',
+    response: SignOutResponseSchema,
   },
   goal: { method: 'PUT', path: '/v1/profile/goal', body: GoalCommandSchema },
   // Read-only goal projection so the Account/Profile editor can prefill (WS8).
@@ -176,6 +205,24 @@ export const HTTP_API = {
   },
   attempt: { method: 'POST', path: '/v1/attempts', body: AttemptCommandSchema },
   sync: { method: 'POST', path: '/v1/sync', body: SyncSubmitRequestSchema },
+  // Placement DIAGNOSTIC (adaptive multistage). Block-based: `/next` starts or
+  // resumes a session and serves the current block; `/block` commits it (one-use
+  // block token) and serves the next, or the completed result. Both mutate the
+  // learner's own persisted diagnostic session ONLY — no mastery — so like
+  // passageAttempt they are session-gated but not CSRF write-gated. The wire
+  // carries no answer key and no per-item correctness.
+  diagnosticNext: {
+    method: 'POST',
+    path: '/v1/diagnostic/next',
+    body: DiagnosticNextRequestSchema,
+    response: DiagnosticBlockResponseSchema,
+  },
+  diagnosticBlock: {
+    method: 'POST',
+    path: '/v1/diagnostic/block',
+    body: DiagnosticBlockRequestSchema,
+    response: DiagnosticBlockResponseSchema,
+  },
   // Adaptive Practice (count-based test-out). The queue is path-parameterized
   // (`/v1/practice/queue/{x}` and `/v1/practice/queue/{x}/{focus}`) because the
   // authority edge rejects query strings; the client appends the segments. The
@@ -199,6 +246,31 @@ export const HTTP_API = {
     method: 'GET',
     path: '/v1/practice-test/summary',
     response: PracticeTestSummaryViewSchema.nullable(),
+  },
+  /**
+   * Passage of the Day — FORMATIVE (writes no mastery). The learner's tz offset
+   * rides in the PATH (`/v1/passage/today/{tz}`) because the authority edge
+   * rejects query strings; the client appends the segment, exactly like the
+   * practice queue's count and the mistakes-repair limit. A `null` passage is the
+   * honest "pool is empty" answer the runner renders on-brand.
+   */
+  passageToday: {
+    method: 'GET',
+    path: '/v1/passage/today',
+    response: PassageTodayResponseSchema,
+  },
+  /**
+   * Scores one passage answer and reveals its explanation. A POST that mutates NO
+   * learner state, so it is not `stateChanging` — no CSRF write gate — but it is
+   * still session-gated like every /v1 route, so the shared client's cookie auth
+   * carries it. Deliberately namespaced away from the adaptive
+   * `POST /v1/practice/attempts`.
+   */
+  passageAttempt: {
+    method: 'POST',
+    path: '/v1/passage/attempts',
+    body: PassageAttemptRequestSchema,
+    response: PassageAttemptResponseSchema,
   },
   vectorLessonStatus: {
     method: 'GET',

@@ -588,9 +588,10 @@ export function Curriculum() {
 
   return (
     <div className="mc-curriculum">
-      <header className="mc-curriculum__head">
-        <h1 className="mc-curriculum__kicker">Curriculum</h1>
-      </header>
+      {/* Accessible page heading only; the visible title is each level's node header
+          ("The full path" / "Foundations" / …), so the SR-only h1 keeps the landmark
+          without a redundant visible "Curriculum" kicker. */}
+      <h1 className="mc-visually-hidden">Curriculum</h1>
 
       {!isTopLevel ? (
         <div className="mc-curriculum__bar">
@@ -1238,6 +1239,12 @@ function LessonCard({
   const kcCount = lesson.kcs.length;
   const titleId = `mc-curriculum-lesson-${lesson.id}`;
   const pct = mastery === undefined ? null : Math.round(mastery.pL * 100);
+  // Whether this lesson has a real launch seam (registered in the catalog). The few
+  // servable lessons carry a quiet "Available now" marker + accent so the map's built
+  // lessons read as launchable rather than lost in the field of "Coming soon" cards.
+  // This is a catalog fact (does a launch seam exist), not a mastery or run-state
+  // claim — the honest server-authoritative Start/"Coming soon" below is unchanged.
+  const available = lessonById(lesson.id) !== undefined;
   // The deepest strip: one tile per KC. Per-KC CAPABILITY is not exposed, so this
   // strip previews the actionable per-skill warrant FRESHNESS, in the shared tile
   // display band (`freshnessBand`). It matches the KC chips on the lesson detail.
@@ -1247,7 +1254,10 @@ function LessonCard({
       ? hrefFor({ lens: 'subject', lesson: lesson.id })
       : hrefFor({ phase: phase.id, module: module.id, lesson: lesson.id });
   return (
-    <article className="mc-curriculum__card mc-curriculum__lessoncard" aria-labelledby={titleId}>
+    <article
+      className={`mc-curriculum__card mc-curriculum__lessoncard${available ? ' mc-curriculum__lessoncard--available' : ''}`}
+      aria-labelledby={titleId}
+    >
       <div className="mc-curriculum__card-top">
         <div className="mc-curriculum__card-heading">
           <span className="mc-curriculum__ordinal" aria-hidden="true">
@@ -1287,6 +1297,13 @@ function LessonCard({
       <HeatStrip items={heat} label="Skills" />
 
       <div className="mc-curriculum__lessoncard-foot">
+        {available ? (
+          // Decorative: the launch button below carries the actionable, server-truthful
+          // status for assistive tech, so this visual marker is hidden from it.
+          <span className="mc-curriculum__available" aria-hidden="true">
+            Available now
+          </span>
+        ) : null}
         <LaunchAction lesson={lesson} />
       </div>
     </article>

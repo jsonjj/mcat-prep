@@ -2,11 +2,15 @@
 
 Launch boundary: United States, adults 18+, free beta, no billing. Pseudonymous by default.
 
+An account is required before any learning surface. "Pseudonymous" means the account holds an email
+address and nothing else identifying: the app-owned `learner_id` is what every record is keyed to,
+and no real name, school, or medical information is asked for or stored.
+
 ## Collected data
 
 | Category          | Examples                                                                                             | Basis                           | Notes                                                                                |
 | ----------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------ |
-| Identity          | app `learner_id`, Cognito subject, email/provider (only when linked), sessions, device/push token    | necessary for account + sync    | No real name, school, or medical info required                                       |
+| Identity          | app `learner_id`, Supabase subject, email, provider link, sessions, device/push token                | necessary for account + sync    | Email lives in Supabase; the authority stores only the opaque provider subject       |
 | Beta updates      | optional email, consent version, submission time, and capture source                                 | explicit communications consent | Stored separately from Snapshot responses; never required for the Snapshot or report |
 | Study inputs      | test date, timezone, availability, target, notification prefs                                        | optional (product function)     | Defaults allow proceeding without a scheduled date                                   |
 | Learning evidence | attempts, timing, confidence, hints, typed reasoning, errors, repairs, reviews, plans, derived state | necessary for learning          | Free text minimized; not sent to general analytics                                   |
@@ -23,8 +27,10 @@ social/Ghost comparison.
 
 ## Retention (proposed defaults)
 
-- Unlinked inactive guest: 180 days.
 - Linked account: active + 24 months inactivity, then warning.
+- Session rows: 30 days from last use, then expired and swept.
+- Unconfirmed sign-up: retained by Supabase until it expires the unconfirmed user; no learner row exists here, because a learner is created only at the first successful token exchange
+  until a first successful sign-in, so an abandoned sign-up leaves no learner data behind.
 - Raw speech: **zero retention** default.
 - Product/learning analytics: 13 months.
 - Beta-update email: until unsubscribe or 90 days after the beta-update program closes.

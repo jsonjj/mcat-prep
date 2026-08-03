@@ -3,7 +3,7 @@ import type { UtcTimestamp } from '@mcat/contracts';
 import type { DatedUnitObservation, PracticeTestBlueprint } from '@mcat/policies';
 import { validatePracticeTestForm } from '@mcat/policies';
 import { PracticeTestBank } from './practice-test-bank';
-import { DiagnosticSessionStore, type SessionRecord } from './diagnostic-session-store';
+import { DiagnosticSessionStore, type SessionRecord } from '@mcat/diagnostic-runner';
 import {
   bankSupportsPracticeTest,
   recordPracticeTestBlock,
@@ -11,7 +11,7 @@ import {
   type PracticeTestBlockView,
   type PracticeTestFreshness,
 } from './practice-test-engine';
-import type { PulledCorpus, PulledProtected, PulledQuestion } from './db-pull';
+import type { PulledCorpus, PulledProtected, PulledQuestion } from '@mcat/corpus-pull';
 
 /**
  * The practice test reuses the diagnostic SESSION STORE and the RESULT-ENVELOPE
@@ -39,10 +39,8 @@ const CARS_SKILL = ['CARS_FOC', 'CARS_RWT', 'CARS_RBT'];
 function makeCorpus(perSection = 12): PulledCorpus {
   const questions: PulledQuestion[] = [];
   const keys: PulledProtected[] = [];
-  let n = 0;
   for (const section of ['cp', 'cars', 'bb', 'ps'] as const) {
     for (let i = 0; i < perSection; i += 1) {
-      n += 1;
       const id = `q-${section}-${i}`;
       const cluster = CLUSTER[section][i % CLUSTER[section].length]!;
       const isCars = section === 'cars';

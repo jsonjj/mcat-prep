@@ -2,7 +2,7 @@
 
 How the MCAT Mastery database works, and how to **add**, **edit**, and **read** from it. Written for a mixed audience — short sections, with a [commands cheat-sheet](#commands-cheat-sheet) at the end.
 
-> **Two rules before anything else:** never commit secrets (`.env`), and never put answer keys / explanations into a learner-safe payload. Both are enforced by `pnpm run verify`.
+> **Two rules before anything else:** never commit secrets (`.env.local`), and never put answer keys / explanations into a learner-safe payload. Both are enforced by `pnpm run verify`.
 
 ---
 
@@ -22,11 +22,11 @@ The full schema lives in `database/migrations/*.sql`. The question bank is `data
 ## 3) Connecting
 The connection is **env-driven** — nothing is hardcoded.
 
-1. `cp .env.example .env`, then edit `.env`. **`.env` is gitignored — never commit it.**
+1. `cp .env.example .env.local`, then edit `.env.local`. **`.env.local` is gitignored — never commit it.** The filename matters: the local stack (`pnpm dev`, `pnpm db:migrate`) reads repo-root `.env.local` and nothing else — see [`docs/runbooks/local-real-stack.md`](runbooks/local-real-stack.md).
 2. Set two variables (placeholders — use your own values):
-   - `DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/postgres` (local, Supabase Session pooler, or Aurora)
+   - `DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/postgres` (local, Supabase, or Aurora). For the shared Supabase dev project this must be the **transaction pooler on port 6543**: the session pooler on 5432 does not answer, and the direct `db.<ref>.supabase.co` host is IPv6-only.
    - `DATABASE_SSL` = `require` (verify cert, default) · `no-verify` (Supabase / managed Postgres) · `disable` (local only)
-3. Load it with Node's native loader (Node ≥ 20.6; no `dotenv` dependency): `node --env-file=.env <script>`.
+3. `pnpm dev` and `pnpm db:migrate` load `.env.local` themselves. The CLIs below read `DATABASE_URL` straight from the environment, so export it or point Node's native loader at the same file (Node ≥ 20.6; no `dotenv` dependency): `node --env-file=.env.local <script>`.
 
 ## 4) Reading
 Read through the `@mcat/persistence-postgres` seam — don't hand-write answer queries in app code.
@@ -86,11 +86,11 @@ Answer material stays server-only end-to-end: `compileV7Question` (`packages/con
 
 ## 6) Migrations
 - SQL migrations live in `database/migrations/NNNN_name.sql` and apply in filename order.
-- The runner is `database/src/migrate.ts` → `runMigrations(pool, migrationsDir)`: it creates an `authority_schema_migrations` table, takes an advisory lock, and applies each *unapplied* file in a transaction, with a checksum guard against edits to already-applied files. (AWS runs it via the migration Lambda; locally you can apply files with `psql -f`.)
+- The runner is `database/src/migrate.ts` → `runMigrations(pool, migrationsDir)`: it creates an `authority_schema_migrations` table, takes an advisory lock, and applies each *unapplied* file in a transaction, with a checksum guard against edits to already-applied files. (AWS runs it via the migration Lambda; locally, `pnpm db:migrate` applies them against the `DATABASE_URL` in your `.env.local`, or you can apply files with `psql -f`.)
 - **Add a migration:** create the next-numbered file, e.g. `database/migrations/0007_description.sql`, following the existing style (lowercase SQL, `check` constraints, `timestamptz`). **Never edit an already-applied migration** — the checksum guard will fail.
 
 ## 7) Safety rules (please read)
-- **Never commit `.env` or any secret.** Only `.env.example` (placeholders) is committed.
+- **Never commit `.env.local` or any secret.** Only `.env.example` (placeholders) is committed.
 - **Never put `correct_answer` / `explanations` in a learner-safe payload.** Learner reads use the safe functions; answers come only from `getQuestionAnswer`.
 - The **protected-content scan** (`pnpm run scan:protected`, part of `pnpm run verify`) fails the build if answer fields appear in tracked learner-safe files. Keep `verify` green before pushing.
 - The `.local/` seed bundle (which contains answers) is **gitignored** — never commit it.
@@ -108,7 +108,7 @@ pnpm --filter @mcat/content-cli start -- db-seed [path]     # build seed.sql (gi
 pnpm --filter @mcat/content-cli start -- schemas           # regenerate JSON Schemas
 
 # connect + apply to a DB (PLACEHOLDERS ONLY — never paste a real URL/password here)
-cp .env.example .env                                       # then edit .env (gitignored)
+cp .env.example .env.local                                 # then edit .env.local (gitignored)
 psql "$DATABASE_URL" -f database/migrations/0006_question_bank.sql
 psql "$DATABASE_URL" -f content/question-bank/.local/v7-load/seed.sql
 psql "$DATABASE_URL" -c 'select section, count(*) from questions group by section order by section;'

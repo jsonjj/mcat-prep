@@ -1,45 +1,66 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
+import { DAILY_MINUTES_PRESETS } from '@mcat/contracts';
 import { useConfirmPlan } from '../app/queries';
+import { useSetDailyBudget } from '../app/today-queries';
+import { OnboardingSteps } from '../components/OnboardingSteps';
+
+/** Middle daily preset — a sensible default the learner can change with one tap. */
+const DEFAULT_DAILY_MINUTES: number =
+  DAILY_MINUTES_PRESETS[Math.floor(DAILY_MINUTES_PRESETS.length / 2)] ?? 240;
 
 export function PlanSetup() {
   const navigate = useNavigate();
   const confirm = useConfirmPlan();
+  const setDailyBudget = useSetDailyBudget();
   const [scheduled, setScheduled] = useState(false);
   const [testDate, setTestDate] = useState('');
   const [target, setTarget] = useState('511');
-  const [hours, setHours] = useState('7');
+  const [dailyMinutes, setDailyMinutes] = useState<number>(DEFAULT_DAILY_MINUTES);
 
-  const parsedHours = Number(hours);
-  const minutesPerWeek =
-    Number.isFinite(parsedHours) && parsedHours > 0 ? Math.round(parsedHours * 60) : 0;
+  const hoursPerDay = Math.round(dailyMinutes / 60);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (minutesPerWeek <= 0) return;
+    if (dailyMinutes <= 0) return;
+    // One daily choice drives both budgets: the plan's weekly budget
+    // (dailyMinutes × 7) and today's daily plan size (setDailyBudget). Navigation
+    // waits on the plan being confirmed; the daily-budget set fires alongside.
+    setDailyBudget.mutate(dailyMinutes);
     confirm.mutate(
       {
         testDate: scheduled && testDate ? new Date(testDate).toISOString() : null,
         targetScore: Number(target) || null,
-        minutesPerWeek,
+        minutesPerWeek: dailyMinutes * 7,
       },
       { onSuccess: () => navigate('/app', { replace: true }) },
     );
   };
 
   return (
-    <div className="mc-onboarding">
-      <Card elevated>
+    <div className="mc-onboarding mc-onboarding--themed">
+      <Card elevated className="mc-onboard__card">
         <form onSubmit={onSubmit}>
           <Stack gap={5}>
-            <Eyebrow>Plan setup</Eyebrow>
-            <h1 className="mc-h2">Let&apos;s shape a plan around your time.</h1>
+            <OnboardingSteps current={3} />
+            <Stack gap={2}>
+              <Eyebrow>Plan setup</Eyebrow>
+              <h1 className="mc-h2">Let&apos;s shape a plan around your time.</h1>
+              <p className="mc-muted">
+                Two quick inputs — we build your first path from them, and you can change any of it
+                later.
+              </p>
+            </Stack>
 
             <Stack gap={2}>
-              <span className="mc-label">Test date</span>
+              <span className="mc-label">1 · Test date</span>
               <label className="mc-switch">
-                <input type="checkbox" checked={scheduled} onChange={(e) => setScheduled(e.target.checked)} />
+                <input
+                  type="checkbox"
+                  checked={scheduled}
+                  onChange={(e) => setScheduled(e.target.checked)}
+                />
                 <span>I have a scheduled test date</span>
               </label>
               {scheduled ? (
@@ -59,7 +80,7 @@ export function PlanSetup() {
 
             <Stack gap={2}>
               <label className="mc-label" htmlFor="target">
-                Target score
+                2 · Target score
               </label>
               <input
                 id="target"
@@ -77,26 +98,26 @@ export function PlanSetup() {
             </Stack>
 
             <Stack gap={2}>
-              <label className="mc-label" htmlFor="weekly-hours">
-                Weekly study time
-              </label>
-              <div className="mc-input-suffix">
-                <input
-                  id="weekly-hours"
-                  className="mc-input"
-                  type="number"
-                  min={1}
-                  max={80}
-                  step={0.5}
-                  inputMode="decimal"
-                  value={hours}
-                  onChange={(e) => setHours(e.target.value)}
-                  aria-describedby="weekly-hours-hint"
-                />
-                <span className="mc-input-suffix__unit">hours / week</span>
+              <span className="mc-label" id="daily-minutes-label">
+                3 · Daily study time
+              </span>
+              <div className="mc-segmented" role="radiogroup" aria-labelledby="daily-minutes-label">
+                {DAILY_MINUTES_PRESETS.map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    role="radio"
+                    className={`mc-segmented__opt${dailyMinutes === preset ? ' is-active' : ''}`}
+                    aria-checked={dailyMinutes === preset}
+                    onClick={() => setDailyMinutes(preset)}
+                  >
+                    {Math.round(preset / 60)} hr
+                  </button>
+                ))}
               </div>
-              <p id="weekly-hours-hint" className="mc-fineprint mc-muted">
-                A rough weekly budget — we use it to pace your plan, not to cap what you can study.
+              <p className="mc-fineprint mc-muted">
+                About {hoursPerDay} {hoursPerDay === 1 ? 'hour' : 'hours'} a day — we size your plan
+                to this, not cap what you can study.
               </p>
             </Stack>
 
@@ -110,7 +131,7 @@ export function PlanSetup() {
               size="lg"
               fullWidth
               type="submit"
-              disabled={confirm.isPending || minutesPerWeek <= 0}
+              disabled={confirm.isPending || dailyMinutes <= 0}
             >
               {confirm.isPending ? 'Building your plan…' : 'Generate my plan'}
             </Button>

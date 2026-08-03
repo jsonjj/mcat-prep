@@ -10,7 +10,7 @@ import {
 } from '@mcat/contracts';
 import { resolveCarsSkill, resolveReasoningOperation } from '@mcat/content';
 import type { PracticeTestCandidate } from '@mcat/policies';
-import { loadPulledCorpus, type PulledCorpus, type PulledQuestion } from './db-pull';
+import { loadPulledCorpus, type PulledCorpus, type PulledQuestion } from '@mcat/corpus-pull';
 
 /**
  * Server-side bank for the periodic practice test (WS5).

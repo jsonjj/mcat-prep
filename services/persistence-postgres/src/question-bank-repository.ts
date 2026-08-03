@@ -222,6 +222,53 @@ export async function countQuestionsBySection(pool: Pool): Promise<Record<string
 }
 
 /**
+ * One diagnostic-eligible question, learner-safe fields plus its SERVER-ONLY key.
+ *
+ * The row the placement diagnostic's bank is built from. Structurally the same
+ * shape `@mcat/corpus-pull` produces for the local pull, so the diagnostic
+ * runner maps both through the SAME `diagnosticItemsFromRows`. The key +
+ * explanations are selected here for SERVER-SIDE scoring only and must never be
+ * returned to a learner surface.
+ */
+export interface DiagnosticBankRow {
+  question_id: string;
+  section: string;
+  cluster: string | null;
+  lesson_id: string | null;
+  family_id: string | null;
+  subject: string | null;
+  primary_skill: string | null;
+  dok_level: number | null;
+  stem: string;
+  passage: string | null;
+  choices: { A?: string; B?: string; C?: string; D?: string } | null;
+  status: string | null;
+  correct_answer: 'A' | 'B' | 'C' | 'D';
+  explanations: Record<string, string>;
+}
+
+/**
+ * SERVER-ONLY. Every diagnostic-eligible question (production_candidate /
+ * published) joined to its answer key, for building the diagnostic bank at
+ * cold start. INNER JOIN on `question_protected`, so an item with no key is
+ * never returned (it could not be scored). NEVER return these rows to the
+ * browser — only the runner's learner-safe projection may cross that boundary.
+ */
+export async function listDiagnosticBankRows(pool: Pool): Promise<DiagnosticBankRow[]> {
+  const { rows } = await pool.query(
+    `select
+       q.question_id, q.section, q.cluster, q.lesson_id, q.family_id, q.subject,
+       q.primary_skill, q.dok_level, q.stem, q.passage, q.choices, q.status,
+       p.correct_answer, p.explanations
+     from questions q
+     join question_protected p on p.question_id = q.question_id
+     where q.status in ('production_candidate', 'published')
+     order by q.question_id`,
+  );
+  return rows as DiagnosticBankRow[];
+}
+
+/**
  * SERVER-ONLY. The answer key + per-choice explanations for scoring. NEVER call
  * this on a learner-safe surface and NEVER return the result to the browser.
  */

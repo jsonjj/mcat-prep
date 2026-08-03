@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { createGuestProjection } from './guest-projection';
 import {
-  createGuestProjection,
   loadDatabaseSecret,
   loadOriginVerificationSecret,
   loadRateLimitPepper,
@@ -21,11 +21,13 @@ describe('learner Lambda runtime composition', () => {
       projectionVersion: 'synthetic-authority-v1',
       state: {
         learnerId,
-        accountState: 'guest',
         onboarding: { diagnosticComplete: false, planConfirmed: false },
       },
       updatedAt: now,
     });
+    // The signed-in path seeds this same projection, so an account state written
+    // here would be `guest` for every learner who has just linked an identity.
+    expect(projection.state).not.toHaveProperty('accountState');
   });
 
   it('validates exact development environment coordinates', () => {
@@ -37,13 +39,38 @@ describe('learner Lambda runtime composition', () => {
         'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/rate-limit/pepper-AbCd12',
       ORIGIN_VERIFICATION_SECRET_ARN:
         'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/origin/verification-AbCd12',
+      SUPABASE_CONFIG_SECRET_NAME: '/mcat/dev/supabase/learner-api',
       DB_PROXY_ENDPOINT: 'mcat-dev-proxy.proxy-abc.us-east-1.rds.amazonaws.com',
       DB_NAME: 'mcat',
       LEARNER_WEB_ORIGIN: 'https://d1234567890.cloudfront.net',
     });
 
-    expect(environment).toMatchObject({ region: 'us-east-1', database: 'mcat', port: 5432 });
+    expect(environment).toMatchObject({
+      region: 'us-east-1',
+      database: 'mcat',
+      port: 5432,
+      supabaseConfigSecretName: '/mcat/dev/supabase/learner-api',
+    });
     expect(() => parseLearnerApiEnvironment({ AWS_REGION: 'us-west-2' })).toThrow(
+      'Learner API environment is invalid',
+    );
+  });
+
+  it('refuses to start without the Supabase configuration secret', () => {
+    const withoutSupabase = {
+      AWS_REGION: 'us-east-1',
+      DB_SECRET_ARN:
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/database/learner-api-AbCd12',
+      RATE_LIMIT_PEPPER_SECRET_ARN:
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/rate-limit/pepper-AbCd12',
+      ORIGIN_VERIFICATION_SECRET_ARN:
+        'arn:aws:secretsmanager:us-east-1:056956104102:secret:/mcat/dev/origin/verification-AbCd12',
+      DB_PROXY_ENDPOINT: 'mcat-dev-proxy.proxy-abc.us-east-1.rds.amazonaws.com',
+      DB_NAME: 'mcat',
+      LEARNER_WEB_ORIGIN: 'https://d1234567890.cloudfront.net',
+    };
+
+    expect(() => parseLearnerApiEnvironment(withoutSupabase)).toThrow(
       'Learner API environment is invalid',
     );
   });

@@ -24,7 +24,9 @@ import { Markdown } from '../components/Markdown';
  * CARS Duel — an AI debate that sharpens critical analysis and reasoning.
  * No win/lose: it ends with constructive reflection. Contributes only contextual
  * CA1/CA2 evidence (an AI is in the loop, so it can never mint mastery).
- * The provider key stays server-side behind /api/ai/chat.
+ * The provider key stays server-side behind the same-origin /v1/ai/chat route —
+ * served by the learner-API in prod (behind its session auth + WAF) and by the
+ * Vite dev middleware locally, so dev and prod share one client path.
  */
 const MODES: DuelMode[] = ['rebut', 'defend'];
 
@@ -110,7 +112,7 @@ export function CarsDuel() {
   const recordDuel = useRecordCarsDuel();
   const recordPlan = useRecordPlanActivity();
   const carsReadiness = useCarsReadiness();
-  const ai = useMemo(() => new HttpAiChat({ endpoint: '/api/ai/chat' }), []);
+  const ai = useMemo(() => new HttpAiChat({ endpoint: '/v1/ai/chat' }), []);
 
   const [phase, setPhase] = useState<Phase>('setup');
   const [mode, setMode] = useState<DuelMode>('rebut');
@@ -291,9 +293,16 @@ export function CarsDuel() {
         <Eyebrow>CARS Duel</Eyebrow>
         <h1 className="mc-h1">Your sparring partner is offline</h1>
         <Callout tone="info" title="AI opponent not connected">
-          The debate opponent runs through the dev AI proxy (see{' '}
-          <code>apps/learner-web/.env</code>). After setting/changing the key you must fully restart
-          the dev server — Vite only reads the key at startup. Your key never touches the browser.
+          The debate opponent is temporarily unavailable — please try again in a moment. Your key
+          never touches the browser.
+          {import.meta.env.DEV ? (
+            <>
+              {' '}
+              In local dev it runs through the AI proxy (see <code>apps/learner-web/.env</code>):
+              after setting or changing the key, fully restart the dev server — Vite only reads it at
+              startup.
+            </>
+          ) : null}
         </Callout>
         {errorDetail ? (
           <Callout tone="warning" title="What went wrong">

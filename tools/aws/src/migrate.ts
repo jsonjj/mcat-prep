@@ -116,7 +116,7 @@ export function migrationInvocationCommand(
   };
 }
 
-function verifyMigrationResponse(
+export function verifyMigrationResponse(
   invocationOutput: string,
   payloadOutput: string,
   manifest: MigrationManifest,

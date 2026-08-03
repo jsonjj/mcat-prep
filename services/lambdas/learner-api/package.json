@@ -8,6 +8,7 @@
   },
   "types": "./src/index.ts",
   "scripts": {
+    "sync-jwks": "node --import tsx src/sync-jwks.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -18,13 +19,17 @@
     "@mcat/content": "workspace:*",
     "@mcat/contracts": "workspace:*",
     "@mcat/database": "workspace:*",
+    "@mcat/diagnostic-runner": "workspace:*",
     "@mcat/domain": "workspace:*",
     "@mcat/passage-of-day": "workspace:*",
     "@mcat/persistence-postgres": "workspace:*",
-    "@mcat/policies": "workspace:*"
+    "@mcat/policies": "workspace:*",
+    "jose": "6.2.7"
   },
   "devDependencies": {
+    "@types/node": "22.10.5",
     "@types/pg": "8.20.0",
+    "tsx": "4.23.1",
     "typescript": "5.7.3",
     "vitest": "3.2.6"
   }

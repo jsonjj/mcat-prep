@@ -1,14 +1,13 @@
 import {
   AcceptedCommandResponseSchema,
   AttemptCommandSchema,
-  BootstrapResponseSchema,
+  BootstrapEnvelopeSchema,
   CarsReadinessViewSchema,
   CarsReasoningPatternViewSchema,
   DiagnosticNextSchema,
   ErrorEntryViewSchema,
   GoalCommandSchema,
   GoalViewSchema,
-  GuestBootstrapResponseSchema,
   HTTP_API,
   HttpApiErrorSchema,
   MistakePatternViewSchema,
@@ -16,11 +15,16 @@ import {
   LessonWarrantViewSchema,
   MasteryMapEntrySchema,
   MasterySeedSchema,
+  PassageAttemptResponseSchema,
+  PassageTodayResponseSchema,
   PracticeAttemptResultSchema,
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
   PracticeTestSummaryViewSchema,
   RepairQueueViewSchema,
+  SessionExchangeRequestSchema,
+  SessionExchangeResponseSchema,
+  SignOutResponseSchema,
   SkillMasteryViewSchema,
   PracticeResultSchema,
   SkillSummarySchema,
@@ -41,16 +45,19 @@ import {
   newEventId,
   newIdempotencyKey,
   newTaskInstanceId,
-  type BootstrapResponse,
+  type BootstrapEnvelope,
   type BuildTodaysPathInput,
   type HttpApiError,
   type HttpErrorCode,
   type MasterySeed,
   type NormalizedLessonAction,
+  type PassageChoiceId,
+  type PassageGrade,
+  type PassageTodayView,
   type PracticeAttemptCommand,
   type VectorLessonAction,
 } from '@mcat/contracts';
-import type { AttemptTiming, AuthorityPort, GoalInput, SessionPort } from './port';
+import type { AttemptTiming, AuthPort, AuthorityPort, GoalInput, SessionPort } from './port';
 
 interface RuntimeSchema<T> {
   parse(value: unknown): T;
@@ -152,7 +159,24 @@ const safeUnavailable = (requestId: string): ApiClientError =>
     retryable: true,
   });
 
-export class HttpAuthorityClient implements AuthorityPort {
+const unauthenticated = (): ApiClientError =>
+  ApiClientError.from({
+    code: 'unauthorized',
+    message: 'Sign in to continue.',
+    requestId: 'client-unauthenticated',
+    retryable: false,
+  });
+
+/**
+ * Whether a failure means "no valid session", raised either by the server or by
+ * the client noticing it bootstrapped as a signed-out visitor. Callers use it to
+ * send the learner to the sign-in screen instead of showing an error.
+ */
+export function isUnauthenticatedError(error: unknown): boolean {
+  return error instanceof ApiClientError && error.code === 'unauthorized';
+}
+
+export class HttpAuthorityClient implements AuthorityPort, AuthPort {
   private readonly baseUrl: string;
   private readonly fetchImpl: typeof globalThis.fetch;
   private readonly session: SessionPort;
@@ -215,10 +239,14 @@ export class HttpAuthorityClient implements AuthorityPort {
     return schema.parse(json);
   }
 
+  /**
+   * Every learner call funnels through here, so this is the single point at which
+   * "not signed in" turns into a typed `unauthorized` failure the app can route on.
+   */
   private async ensureBootstrap(): Promise<void> {
-    if (this.streamVersion === undefined || this.contentRelease === undefined) {
-      await this.bootstrap();
-    }
+    if (this.streamVersion !== undefined && this.contentRelease !== undefined) return;
+    const bootstrap = await this.bootstrap();
+    if (!bootstrap.authenticated) throw unauthenticated();
   }
 
   private async commandEnvelope() {
@@ -245,15 +273,74 @@ export class HttpAuthorityClient implements AuthorityPort {
     this.accept(response);
   }
 
-  async bootstrap(): Promise<BootstrapResponse> {
-    const response = await this.request(HTTP_API.bootstrap.path, GuestBootstrapResponseSchema, {
+  /**
+   * Establish or refresh the session.
+   *
+   * A signed-out visitor gets `{ authenticated: false }` and a CSRF token that is
+   * only good for the credential routes — no learner is created, so there is no
+   * learner state to return.
+   */
+  async bootstrap(): Promise<BootstrapEnvelope> {
+    const response = await this.request(HTTP_API.bootstrap.path, BootstrapEnvelopeSchema, {
       method: HTTP_API.bootstrap.method,
     });
-    const { csrfToken, streamVersion, ...bootstrap } = response;
-    this.session.setCsrfToken(csrfToken);
-    this.streamVersion = streamVersion;
-    this.contentRelease = bootstrap.contentRelease;
-    return BootstrapResponseSchema.parse(bootstrap);
+    // Stored in both arms: the signed-out token is what authorizes sign-in and
+    // sign-up as a same-site request.
+    this.session.setCsrfToken(response.csrfToken);
+    if (!response.authenticated) {
+      this.streamVersion = undefined;
+      this.contentRelease = undefined;
+      return response;
+    }
+    this.streamVersion = response.streamVersion;
+    this.contentRelease = response.contentRelease;
+    return response;
+  }
+
+  /**
+   * Trade a Supabase access token for a session.
+   *
+   * The Supabase token is used once and not retained. What persists is the
+   * `HttpOnly` session cookie pair the response sets, which script cannot read —
+   * so an XSS foothold cannot lift a long-lived credential out of the page the
+   * way it could if the Supabase session were the thing kept in the browser.
+   */
+  async exchangeSession(accessToken: string): Promise<void> {
+    await this.ensureCredentialToken();
+    const response = await this.request(
+      HTTP_API.authSessionExchange.path,
+      SessionExchangeResponseSchema,
+      {
+        method: 'POST',
+        body: JSON.stringify(SessionExchangeRequestSchema.parse({ accessToken })),
+      },
+    );
+    this.session.setCsrfToken(response.csrfToken);
+    // The previous identity's cached versions must not survive into the new one.
+    this.streamVersion = undefined;
+    this.contentRelease = undefined;
+    this.currentQuestionId = undefined;
+  }
+
+  async signOut(): Promise<void> {
+    try {
+      await this.request(HTTP_API.authSignOut.path, SignOutResponseSchema, { method: 'POST' });
+    } finally {
+      // Local state is dropped even if the server call failed, so a failed
+      // sign-out never leaves the UI showing a session the learner ended.
+      this.session.clear();
+      this.streamVersion = undefined;
+      this.contentRelease = undefined;
+      this.currentQuestionId = undefined;
+    }
+  }
+
+  /**
+   * The exchange route is CSRF-protected, so a visitor who lands straight on
+   * `/signin` needs a token before the first attempt.
+   */
+  private async ensureCredentialToken(): Promise<void> {
+    if (this.session.getCsrfToken() === null) await this.bootstrap();
   }
 
   async getDiagnosticNext() {
@@ -482,10 +569,14 @@ export class HttpAuthorityClient implements AuthorityPort {
   }
 
   async submitPracticeAttempt(command: PracticeAttemptCommand) {
-    const response = await this.request('/v1/practice/attempts/adaptive', PracticeAttemptResultSchema, {
-      method: 'POST',
-      body: JSON.stringify({ envelope: await this.commandEnvelope(), ...command }),
-    });
+    const response = await this.request(
+      '/v1/practice/attempts/adaptive',
+      PracticeAttemptResultSchema,
+      {
+        method: 'POST',
+        body: JSON.stringify({ envelope: await this.commandEnvelope(), ...command }),
+      },
+    );
     // The adaptive attempt advances the stream but returns feedback (not an
     // AcceptedCommandResponse), so resync the stream version like PotD does.
     await this.bootstrap();
@@ -511,6 +602,32 @@ export class HttpAuthorityClient implements AuthorityPort {
       if (error instanceof ApiClientError && error.code === 'not_found') return null;
       throw error;
     }
+  }
+
+  async passageToday(tz: number): Promise<PassageTodayView | null> {
+    await this.ensureBootstrap();
+    // Path-parameterized like the practice queue (the authority edge rejects query
+    // strings), so the tz offset rides as a segment the authority reads back.
+    const segment = encodeURIComponent(String(Math.trunc(tz)));
+    const response = await this.request(
+      `${HTTP_API.passageToday.path}/${segment}`,
+      PassageTodayResponseSchema,
+    );
+    return response.passage;
+  }
+
+  async passageAttempt(
+    questionId: string,
+    choiceId: PassageChoiceId | null,
+  ): Promise<PassageGrade> {
+    // Session-gated but NOT state-changing (no CSRF write gate); the shared
+    // request() still sends the session cookie via `credentials: 'include'`.
+    await this.ensureBootstrap();
+    const response = await this.request(HTTP_API.passageAttempt.path, PassageAttemptResponseSchema, {
+      method: HTTP_API.passageAttempt.method,
+      body: JSON.stringify({ questionId, choiceId }),
+    });
+    return response.grade;
   }
 
   async recordCarsDuel(outcome?: Parameters<AuthorityPort['recordCarsDuel']>[0]): Promise<void> {

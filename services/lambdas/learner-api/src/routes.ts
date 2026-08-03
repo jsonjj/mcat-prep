@@ -1,12 +1,16 @@
 import {
   AttemptCommandSchema,
+  BuildTodaysPathCommandSchema,
   CarsDuelOutcomeInputSchema,
   CarsReadinessViewSchema,
   CarsReasoningPatternViewSchema,
   ChoiceIdSchema,
   CommandEnvelopeSchema,
   ContentIdSchema,
-  DiagnosticNextSchema,
+  DailyBudgetCommandSchema,
+  DiagnosticBlockRequestSchema,
+  DiagnosticBlockResponseSchema,
+  DiagnosticNextRequestSchema,
   ErrorEntryViewSchema,
   GoalCommandSchema,
   GoalViewSchema,
@@ -23,6 +27,7 @@ import {
   PassageAttemptRequestSchema,
   PassageAttemptResponseSchema,
   PassageTodayResponseSchema,
+  PlanActivityProgressCommandSchema,
   PracticeAttemptCommandSchema,
   PracticeAttemptResultSchema,
   PracticeFocusSchema,
@@ -30,10 +35,14 @@ import {
   PracticeQueueViewSchema,
   PracticeResultSchema,
   RepairQueueViewSchema,
+  SessionExchangeRequestSchema,
+  SessionExchangeResponseSchema,
+  SignOutResponseSchema,
   SkillMasteryViewSchema,
   SkillSummarySchema,
   StudyStepViewSchema,
   TodayViewSchema,
+  TodaysPathViewSchema,
   VectorLessonCommandSchema,
   VectorLessonRunViewSchema,
   VectorLessonStartCommandSchema,
@@ -47,12 +56,20 @@ import {
   type MasterySeed,
   type PracticeAttemptCommand,
 } from '@mcat/contracts';
-import { parseRewriteRequest, type RewriteRequest } from '@mcat/ai-gateway';
+import {
+  parseChatRequest,
+  parseRewriteRequest,
+  type ChatRequest,
+  type RewriteRequest,
+} from '@mcat/ai-gateway';
 
 export type RouteId =
   | 'health'
   | 'bootstrap'
+  | 'authSessionExchange'
+  | 'authSignOut'
   | 'diagnosticNext'
+  | 'diagnosticBlock'
   | 'goal'
   | 'goalView'
   | 'attempt'
@@ -68,12 +85,17 @@ export type RouteId =
   | 'passageToday'
   | 'passageAttempt'
   | 'aiRewrite'
+  | 'aiChat'
   | 'practiceTestCompleted'
   | 'practiceTestReviewed'
   | 'masterySeed'
   | 'wrapped'
   | 'resetProgress'
   | 'today'
+  | 'todaysPath'
+  | 'todaysPathBuild'
+  | 'todaysPathActivity'
+  | 'dailyBudget'
   | 'session'
   | 'mastery'
   | 'progressSkills'
@@ -268,11 +290,38 @@ const AiRewriteRequestSchema: RuntimeSchema<RewriteRequest> = {
   },
 };
 
+/**
+ * Validates the CARS Duel opponent body by delegating to the ai-gateway parser —
+ * which also enforces the message-count and combined-size caps — mirroring
+ * {@link AiRewriteRequestSchema}. Kept as a `RuntimeSchema` so the route flows
+ * through the handler's standard body parsing (JSON content-type + byte cap) and
+ * its uniform `validation_error` response before any provider spend.
+ */
+const AiChatRequestSchema: RuntimeSchema<ChatRequest> = {
+  parse(value: unknown): ChatRequest {
+    const parsed = parseChatRequest(value);
+    if (parsed === null) throw new TypeError('Invalid chat request.');
+    return parsed;
+  },
+  safeParse(value: unknown) {
+    const parsed = parseChatRequest(value);
+    return parsed === null ? { success: false } : { success: true, data: parsed };
+  },
+};
+
 export interface RouteDefinition {
   readonly id: RouteId;
   readonly method: 'DELETE' | 'GET' | 'POST' | 'PUT';
   readonly path: string;
-  readonly auth: 'public' | 'bootstrap' | 'session';
+  /**
+   * - `public`: no session, no CSRF (health only).
+   * - `bootstrap`: establishes or rotates the session cookie pair.
+   * - `credential`: signed-out token exchange. No session exists yet, so CSRF is a
+   *   stateless header/cookie match and the rate limit is keyed by source IP
+   *   rather than by session.
+   * - `session`: requires a linked learner session.
+   */
+  readonly auth: 'public' | 'bootstrap' | 'credential' | 'session';
   readonly stateChanging: boolean;
   readonly bodySchema?: RuntimeSchema;
   readonly responseSchema?: RuntimeSchema;
@@ -294,12 +343,53 @@ export const ROUTES: readonly RouteDefinition[] = [
     stateChanging: true,
   },
   {
+    // Trades a verified Supabase access token for our own session cookie. This is
+    // the only door from "signed in with Supabase" to "signed in here", so it is
+    // the one route where an unauthenticated caller can cause a learner row to be
+    // created — hence the IP-keyed limit that `credential` implies.
+    id: 'authSessionExchange',
+    method: 'POST',
+    path: '/v1/auth/session',
+    auth: 'credential',
+    stateChanging: true,
+    bodySchema: SessionExchangeRequestSchema,
+    responseSchema: SessionExchangeResponseSchema,
+  },
+  {
+    // Sign-out takes the session route so an unauthenticated caller cannot spend a
+    // signed-in learner's rate budget, and so the CSRF check runs against the real
+    // session secret rather than the stateless pair.
+    id: 'authSignOut',
+    method: 'POST',
+    path: '/v1/auth/signout',
+    auth: 'session',
+    stateChanging: true,
+    responseSchema: SignOutResponseSchema,
+  },
+  {
+    // Placement DIAGNOSTIC (adaptive multistage), block-based. `/next` starts or
+    // resumes a session and serves the current block; `/block` commits it (one-use
+    // block token) and serves the next / the completed result. Both persist the
+    // learner's own diagnostic session ONLY — no mastery — so, like passageAttempt,
+    // they are session + origin-verify gated but NOT `stateChanging` (no CSRF write
+    // gate). The one-use block token is the anti-replay guard, and the served wire
+    // never carries an answer key or per-item correctness.
     id: 'diagnosticNext',
-    method: 'GET',
+    method: 'POST',
     path: '/v1/diagnostic/next',
     auth: 'session',
     stateChanging: false,
-    responseSchema: DiagnosticNextSchema,
+    bodySchema: DiagnosticNextRequestSchema,
+    responseSchema: DiagnosticBlockResponseSchema,
+  },
+  {
+    id: 'diagnosticBlock',
+    method: 'POST',
+    path: '/v1/diagnostic/block',
+    auth: 'session',
+    stateChanging: false,
+    bodySchema: DiagnosticBlockRequestSchema,
+    responseSchema: DiagnosticBlockResponseSchema,
   },
   {
     id: 'goal',
@@ -444,6 +534,24 @@ export const ROUTES: readonly RouteDefinition[] = [
     bodySchema: AiRewriteRequestSchema,
   },
   {
+    // CARS Duel opponent: the same-origin seam the dev proxy stands in for, now
+    // served in prod. A POST that mutates NO learner state (the duel outcome is
+    // recorded separately via `/v1/hooks/cars-duel`), so it is not
+    // `stateChanging` — no CSRF/Origin-required write gate — exactly like
+    // `aiRewrite`. It still runs behind the same session authorizer,
+    // `x-mcat-origin-verify`, per-session rate limiter, and WAF as every other
+    // /v1 route, and a cross-origin browser call is still refused by the Origin
+    // check. handler.ts dispatches it to ai-gateway `proxyChat`; the client
+    // authors the guarded CARS prompts and the parser caps message count/size, so
+    // no key yields 503 and the client shows the opponent as offline (never 500).
+    id: 'aiChat',
+    method: 'POST',
+    path: '/v1/ai/chat',
+    auth: 'session',
+    stateChanging: false,
+    bodySchema: AiChatRequestSchema,
+  },
+  {
     // WS5: the learner reports a completed periodic test — envelope only, no
     // payload; the authority stamps the date/count off its own clock.
     id: 'practiceTestCompleted',
@@ -494,6 +602,53 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: false,
     responseSchema: TodayViewSchema,
+  },
+  {
+    // Today's Path — the daily learning-plan projection (orchestrates the other
+    // engines; writes no mastery itself). Read-only like `today`, but with NO
+    // onboarding gate: it returns a full view with `built: false` when no plan
+    // exists for the current day yet, and the client then calls build.
+    id: 'todaysPath',
+    method: 'GET',
+    path: '/v1/plan/today/path',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: TodaysPathViewSchema,
+  },
+  {
+    // Build (and persist) today's plan from the client-fed recall load +
+    // candidate lessons. It advances the learner stream through the SAME kernel
+    // transaction every command uses, so it IS `stateChanging` (CSRF write-gated)
+    // — but like the adaptive practice attempt it returns the built VIEW rather
+    // than an AcceptedCommandResponse.
+    id: 'todaysPathBuild',
+    method: 'POST',
+    path: '/v1/plan/today/build',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: BuildTodaysPathCommandSchema,
+    responseSchema: TodaysPathViewSchema,
+  },
+  {
+    // Advance the guided runner: mark one activity in_progress / complete /
+    // skipped. A normal command write (AcceptedCommandResponse), CSRF-gated.
+    id: 'todaysPathActivity',
+    method: 'POST',
+    path: '/v1/plan/today/activity',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: PlanActivityProgressCommandSchema,
+  },
+  {
+    // Daily time-budget editor (2–6 hr, in minutes; clamped by the engine). It
+    // sits under /v1/profile like the goal writer, but is part of the Today's
+    // Path feature — the budget the plan is sized to. A normal command write.
+    id: 'dailyBudget',
+    method: 'PUT',
+    path: '/v1/profile/daily-budget',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: DailyBudgetCommandSchema,
   },
   {
     id: 'session',
