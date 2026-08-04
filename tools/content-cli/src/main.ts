@@ -1,4 +1,13 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { basename, dirname, isAbsolute, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { zodToJsonSchema } from 'zod-to-json-schema';
@@ -31,6 +40,11 @@ import {
   type RehashFile,
   type ResolvableIds,
 } from '@mcat/content/lesson-validator';
+import {
+  createAssignmentAllocation,
+  finalizeAssignmentManifests,
+  type AssignmentPartitionInput,
+} from '@mcat/content/lesson-factory';
 
 /**
  * Where the v7 JSONL corpus is expected under the repo when a developer keeps a
@@ -591,6 +605,138 @@ function cmdComputedQuality(): void {
   if (reports.some((r) => !r.ok)) process.exit(1);
 }
 
+/**
+ * Deterministically partition the 111 not-yet-authored canonical lessons into the
+ * 51/30/30 factory lanes. The pure implementation receives exact bytes; this command
+ * only resolves the frozen WP-01 inputs, verifies their pins, and persists its files.
+ */
+function assignmentAllocationInput(): AssignmentPartitionInput {
+  const manifestRel = 'curriculum/v3/v3-lesson-authoring-manifest.json';
+  const assignmentSchemaRel = 'content/lesson-factory/schemas/assignment-manifest.schema.json';
+  const proofSchemaRel = 'content/lesson-factory/schemas/assignment-partition-proof.schema.json';
+  const sharedSchemaRel = 'content/lesson-factory/schemas/shared-vocabulary.schema.json';
+  const profileRel = 'content/lesson-factory/deadline-profile/deadline-profile.json';
+  const releasePolicyRel = 'content/lesson-factory/deadline-profile/release-policy.json';
+
+  const manifestText = readFileSync(join(REPO_ROOT, manifestRel), 'utf8');
+  const assignmentSchemaText = readFileSync(join(REPO_ROOT, assignmentSchemaRel), 'utf8');
+  const proofSchemaText = readFileSync(join(REPO_ROOT, proofSchemaRel), 'utf8');
+  const sharedVocabularySchemaText = readFileSync(join(REPO_ROOT, sharedSchemaRel), 'utf8');
+  const profileText = readFileSync(join(REPO_ROOT, profileRel), 'utf8');
+  const releasePolicyText = readFileSync(join(REPO_ROOT, releasePolicyRel), 'utf8');
+  const profile = JSON.parse(profileText) as Record<string, unknown>;
+  const rubricIdentity = profile.rubric_identity;
+  if (
+    rubricIdentity === null ||
+    typeof rubricIdentity !== 'object' ||
+    Array.isArray(rubricIdentity)
+  ) {
+    throw new Error('assignment-partition: deadline profile has no rubric_identity object');
+  }
+  const rubric = rubricIdentity as Record<string, unknown>;
+  if (
+    typeof rubric.rubric_path !== 'string' ||
+    typeof rubric.rubric_version !== 'string' ||
+    typeof rubric.rubric_sha256 !== 'string'
+  ) {
+    throw new Error('assignment-partition: deadline profile rubric_identity is incomplete');
+  }
+  if (typeof profile.frozen_at !== 'string') {
+    throw new Error('assignment-partition: deadline profile has no deterministic frozen_at');
+  }
+
+  const sha256 = (text: string): string =>
+    createHash('sha256').update(Buffer.from(text, 'utf8')).digest('hex');
+  const expectedReleasePolicyRef = `policy:${releasePolicyRel}#sha256:${sha256(releasePolicyText)}`;
+  if (profile.release_policy_ref !== expectedReleasePolicyRef) {
+    throw new Error(
+      `assignment-partition: deadline profile release_policy_ref is stale; expected ${expectedReleasePolicyRef}`,
+    );
+  }
+  const rubricText = readFileSync(join(REPO_ROOT, rubric.rubric_path), 'utf8');
+  const actualRubricSha256 = sha256(rubricText);
+  if (rubric.rubric_sha256 !== actualRubricSha256) {
+    throw new Error(
+      `assignment-partition: deadline profile rubric hash is stale; expected ${actualRubricSha256}`,
+    );
+  }
+
+  return {
+    manifestText,
+    assignmentSchemaText,
+    proofSchemaText,
+    sharedVocabularySchemaText,
+    sourceManifestPath: manifestRel,
+    assignmentSchemaPath: assignmentSchemaRel,
+    proofSchemaPath: proofSchemaRel,
+    createdAt: profile.frozen_at,
+    deadlineProfileRef: `profile:${profileRel}#sha256:${sha256(profileText)}`,
+    releasePolicyRef: expectedReleasePolicyRef,
+    rubricIdentity: {
+      rubric_path: rubric.rubric_path,
+      rubric_version: rubric.rubric_version,
+      rubric_sha256: rubric.rubric_sha256,
+    },
+  };
+}
+
+function cmdAssignmentPartition(): void {
+  const result = createAssignmentAllocation(assignmentAllocationInput());
+  const staleAssignmentFiles = [
+    'content/lesson-factory/assignments/primary-51.json',
+    'content/lesson-factory/assignments/team-A-30.json',
+    'content/lesson-factory/assignments/team-B-30.json',
+  ];
+  for (const relativePath of staleAssignmentFiles) {
+    rmSync(join(REPO_ROOT, relativePath), { force: true });
+  }
+
+  for (const [relativePath, bytes] of Object.entries(result.files)) {
+    const outputPath = join(REPO_ROOT, relativePath);
+    mkdirSync(dirname(outputPath), { recursive: true });
+    writeFileSync(outputPath, bytes);
+  }
+
+  console.log('assignment-partition: wrote deterministic allocation proof only');
+  for (const assignment of result.allocations) {
+    console.log(`  ${assignment.teamId}: ${assignment.rows.length}`);
+  }
+  console.log(`  allocation: ${result.allocationContentSha256}`);
+  console.log(`  output set: ${result.outputSetSha256}`);
+}
+
+function cmdAssignmentFinalize(packetMapArg: string | undefined): void {
+  if (packetMapArg === undefined) {
+    throw new Error('assignment-finalize: expected a packet-reference map JSON path');
+  }
+  const packetMapPath = isAbsolute(packetMapArg) ? packetMapArg : join(REPO_ROOT, packetMapArg);
+  const parsedPacketMap = JSON.parse(readFileSync(packetMapPath, 'utf8')) as unknown;
+  if (
+    parsedPacketMap === null ||
+    typeof parsedPacketMap !== 'object' ||
+    Array.isArray(parsedPacketMap)
+  ) {
+    throw new Error('assignment-finalize: packet-reference map must be a JSON object');
+  }
+  const allocationInput = assignmentAllocationInput();
+  const proofPath = join(REPO_ROOT, 'content/lesson-factory/assignments/partition-proof.json');
+  const result = finalizeAssignmentManifests({
+    allocationProof: JSON.parse(readFileSync(proofPath, 'utf8')) as unknown,
+    assignmentSchemaText: allocationInput.assignmentSchemaText,
+    proofSchemaText: allocationInput.proofSchemaText,
+    sharedVocabularySchemaText: allocationInput.sharedVocabularySchemaText,
+    packetRefs: parsedPacketMap as Record<string, string>,
+  });
+  for (const [relativePath, bytes] of Object.entries(result.files)) {
+    const outputPath = join(REPO_ROOT, relativePath);
+    mkdirSync(dirname(outputPath), { recursive: true });
+    writeFileSync(outputPath, bytes);
+  }
+  console.log('assignment-finalize: wrote final WP-01 assignment manifests');
+  console.log(`  assignment set: ${result.assignmentSetContentSha256}`);
+  console.log(`  output set: ${result.outputSetSha256}`);
+}
+
 switch (command) {
   case 'manifest':
     cmdManifest();
@@ -622,6 +768,12 @@ switch (command) {
   case 'computed-quality':
     cmdComputedQuality();
     break;
+  case 'assignment-partition':
+    cmdAssignmentPartition();
+    break;
+  case 'assignment-finalize':
+    cmdAssignmentFinalize(arg);
+    break;
   default:
     console.log(
       'MCAT content CLI\n\nCommands:\n' +
@@ -634,6 +786,8 @@ switch (command) {
         '  rehash <lessonDir>  Recompute a lesson content-hash chain (content_sha256 + file_sha256) after an authored edit\n' +
         '  lesson-validate [dir] [--json]  Structural R1–R15 gate over content/lessons/ (non-zero exit on failure; CI merge gate)\n' +
         '  proposed-kcs [--write]  Advisory queue of lesson KCs absent from the curriculum catalog (mirrors R14; never gates)\n' +
-        '  computed-quality [--json]  estimatedMinutes plausibility + difficulty distribution (N/A when uncalibrated; FAIL gates)\n',
+        '  computed-quality [--json]  estimatedMinutes plausibility + difficulty distribution (N/A when uncalibrated; FAIL gates)\n' +
+        '  assignment-partition  Generate deterministic lesson-factory 51/30/30 allocation proof (removes stale manifests)\n' +
+        '  assignment-finalize <packet-ref-map.json>  Finalize assignment manifests after WP-04 packet generation\n',
     );
 }

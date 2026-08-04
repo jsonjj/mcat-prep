@@ -1,0 +1,309 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/assignment-partition-proof.schema.json",
+  "x_contract_id": "lesson-factory.assignment-partition-proof",
+  "x_contract_version": "1.0.0",
+  "title": "Lesson factory assignment partition proof",
+  "description": "The deterministic allocation of the canonical lesson set to three authoring lanes. This proof deliberately contains no task-packet references: assignment manifests are finalized only after WP-04 supplies a complete real packet-reference map.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "created_at",
+    "deadline_profile_ref",
+    "release_policy_ref",
+    "rubric_identity",
+    "source_manifest",
+    "assignment_schema",
+    "proof_schema",
+    "excluded_existing_lesson_ids",
+    "capacities",
+    "algorithm",
+    "assignments",
+    "invariants",
+    "allocation_content_sha256"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.assignment-partition-proof"
+    },
+    "contract_version": {
+      "const": "1.0.0"
+    },
+    "created_at": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "deadline_profile_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/ProfileRef"
+    },
+    "release_policy_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenReleasePolicyRef"
+    },
+    "rubric_identity": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RubricIdentity"
+    },
+    "source_manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "content_sha256",
+        "file_sha256",
+        "canonical_lesson_count",
+        "remaining_lesson_count"
+      ],
+      "properties": {
+        "path": {
+          "const": "curriculum/v3/v3-lesson-authoring-manifest.json"
+        },
+        "content_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        },
+        "file_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        },
+        "canonical_lesson_count": {
+          "const": 114
+        },
+        "remaining_lesson_count": {
+          "const": 111
+        }
+      }
+    },
+    "assignment_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "contract_id",
+        "contract_version",
+        "content_sha256",
+        "file_sha256",
+        "shared_vocabulary_file_sha256"
+      ],
+      "properties": {
+        "path": {
+          "const": "content/lesson-factory/schemas/assignment-manifest.schema.json"
+        },
+        "contract_id": {
+          "const": "lesson-factory.assignment-manifest"
+        },
+        "contract_version": {
+          "const": "3.0.0"
+        },
+        "content_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        },
+        "file_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        },
+        "shared_vocabulary_file_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        }
+      }
+    },
+    "proof_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "contract_id", "contract_version", "content_sha256", "file_sha256"],
+      "properties": {
+        "path": {
+          "const": "content/lesson-factory/schemas/assignment-partition-proof.schema.json"
+        },
+        "contract_id": {
+          "const": "lesson-factory.assignment-partition-proof"
+        },
+        "contract_version": {
+          "const": "1.0.0"
+        },
+        "content_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        },
+        "file_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        }
+      }
+    },
+    "excluded_existing_lesson_ids": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/LessonId"
+      }
+    },
+    "capacities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "team-A", "team-B"],
+      "properties": {
+        "primary": {
+          "const": 51
+        },
+        "team-A": {
+          "const": 30
+        },
+        "team-B": {
+          "const": 30
+        }
+      }
+    },
+    "algorithm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bucket_key", "initial_apportionment", "reconciliation", "tie_breakers"],
+      "properties": {
+        "bucket_key": {
+          "const": "sorted source_sections joined with +"
+        },
+        "initial_apportionment": {
+          "const": "largest remainder"
+        },
+        "reconciliation": {
+          "const": "minimum proportional distortion"
+        },
+        "tie_breakers": {
+          "const": ["bucket", "lesson_id", "team order"]
+        }
+      }
+    },
+    "assignments": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "team_id",
+          "lane_id",
+          "assignment_id",
+          "assignment_file",
+          "count",
+          "subject_distribution",
+          "rows"
+        ],
+        "properties": {
+          "team_id": {
+            "enum": ["primary", "team-A", "team-B"]
+          },
+          "lane_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/LaneId"
+          },
+          "assignment_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/AssignmentId"
+          },
+          "assignment_file": {
+            "enum": [
+              "content/lesson-factory/assignments/primary-51.json",
+              "content/lesson-factory/assignments/team-A-30.json",
+              "content/lesson-factory/assignments/team-B-30.json"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "subject_distribution": {
+            "type": "object",
+            "minProperties": 1,
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "rows": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "lesson_id",
+                "display_label",
+                "source_section_bucket",
+                "slug",
+                "output_path",
+                "assignment_id",
+                "team_id",
+                "lane_id"
+              ],
+              "properties": {
+                "lesson_id": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/LessonId"
+                },
+                "display_label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "source_section_bucket": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "slug": {
+                  "type": "string",
+                  "pattern": "^v3-les-[0-9]{6}$"
+                },
+                "output_path": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/OutputDirectory"
+                },
+                "assignment_id": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/AssignmentId"
+                },
+                "team_id": {
+                  "enum": ["primary", "team-A", "team-B"]
+                },
+                "lane_id": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/LaneId"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pairwise_disjoint",
+        "union_equals_remaining",
+        "existing_three_excluded",
+        "unique_slugs",
+        "unique_output_paths",
+        "proof_schema_valid"
+      ],
+      "properties": {
+        "pairwise_disjoint": {
+          "const": true
+        },
+        "union_equals_remaining": {
+          "const": true
+        },
+        "existing_three_excluded": {
+          "const": true
+        },
+        "unique_slugs": {
+          "const": true
+        },
+        "unique_output_paths": {
+          "const": true
+        },
+        "proof_schema_valid": {
+          "const": true
+        }
+      }
+    },
+    "allocation_content_sha256": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+    }
+  }
+}

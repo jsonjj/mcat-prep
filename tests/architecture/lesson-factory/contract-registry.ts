@@ -15,6 +15,7 @@ export const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..
 export const FACTORY_ROOT = join(REPO_ROOT, 'content/lesson-factory');
 export const SCHEMA_DIR = join(FACTORY_ROOT, 'schemas');
 export const PROFILE_DIR = join(FACTORY_ROOT, 'deadline-profile');
+export const ASSIGNMENTS_DIR = join(FACTORY_ROOT, 'assignments');
 export const FIXTURE_DIR = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
 export const DOC_PATH = join(REPO_ROOT, 'docs/lesson-factory/deadline-profile.md');
 export const RUBRIC_PATH = join(REPO_ROOT, 'key-docs/lesson-quality-rubric.md');
@@ -49,6 +50,15 @@ export const SCHEMA_VERSIONS = {
 } as const;
 
 export const SCHEMA_FILES = Object.keys(SCHEMA_VERSIONS) as Array<keyof typeof SCHEMA_VERSIONS>;
+
+/** WP-02's allocation-only proof contract, versioned separately from the frozen WP-01 set. */
+export const ASSIGNMENT_SCHEMA_VERSIONS = {
+  'assignment-partition-proof.schema.json': '1.0.0',
+} as const;
+
+export const ASSIGNMENT_ARTIFACTS = {
+  'partition-proof.json': 'assignment-partition-proof.schema.json',
+} as const;
 
 /** Shipped profile artifacts, mapped to the schema that governs each. */
 export const PROFILE_ARTIFACTS = {
@@ -393,6 +403,10 @@ export function loadSchema(fileName: string): JsonObject {
 
 export function loadArtifact(fileName: string): JsonObject {
   return readJson(join(PROFILE_DIR, fileName));
+}
+
+export function loadAssignmentArtifact(fileName: string): JsonObject {
+  return readJson(join(ASSIGNMENTS_DIR, fileName));
 }
 
 /**
