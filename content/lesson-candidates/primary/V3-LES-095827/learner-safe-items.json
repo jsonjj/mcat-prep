@@ -1,0 +1,488 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback. “Not sure” is available through omission rather than an answer-bearing hint.",
+  "items": [
+    {
+      "prompt_key": "REL_ENTRY",
+      "title": "Starting check: locate the bearing",
+      "prompt": "A passage says a library added evening workshops to reach adults whose jobs prevent daytime attendance. New information says most evening participants work daytime shifts. Which passage component should be compared with the new information first?",
+      "response_type": "single_select",
+      "options": [
+        "The work-schedule link to evening access",
+        "The order in which the workshop examples appear",
+        "The author’s preference for public institutions",
+        "The color scheme used in the library’s notices"
+      ]
+    },
+    {
+      "prompt_key": "REL_GUIDED",
+      "title": "Guided practice: match fact to mechanism",
+      "prompt": "A passage argues that planting street trees cools dense blocks because mature canopies shade pavement. A report says nearly all new saplings were planted in already cool parks. Where does the report bear most directly?",
+      "response_type": "single_select",
+      "options": [
+        "On the history of the city parks department",
+        "The planting-location link to pavement shade",
+        "On whether residents generally like mature trees",
+        "On the wording of the passage’s opening sentence"
+      ]
+    },
+    {
+      "prompt_key": "REL_LIGHT",
+      "title": "Less help: choose the narrow relation",
+      "prompt": "A critic argues that digital reproductions broaden access to paintings but cannot preserve either texture or physical scale. A new display preserves visible texture but not physical scale. Which part of the model must be linked to the new display before impact is judged?",
+      "response_type": "single_select",
+      "options": [
+        "The claim that museums should charge less",
+        "The history of image-compression software",
+        "The critic’s use of a two-part limitation",
+        "The popularity of digital exhibitions"
+      ]
+    },
+    {
+      "prompt_key": "REL_SOLO",
+      "title": "Solo practice: place the observation",
+      "prompt": "A historian claims public clocks coordinated urban work by giving distant workers a shared signal. A record shows factory whistles already synchronized one industrial district. Which model component does the record touch?",
+      "response_type": "single_select",
+      "options": [
+        "The aesthetic design of public clock towers",
+        "The historian’s choice of archival vocabulary",
+        "The number of factories located outside the district",
+        "Clocks as the shared coordinating signal"
+      ]
+    },
+    {
+      "prompt_key": "REL_NEAR",
+      "title": "Near exit: identify the touched mechanism",
+      "prompt": "A passage claims school gardens increase science engagement because students observe seasonal change. A new study finds equal engagement in an indoor hydroponics group that did not observe seasons. Where does the study bear most directly?",
+      "response_type": "single_select",
+      "options": [
+        "On the proposed seasonal-observation mechanism",
+        "On the schools’ annual food budgets",
+        "On the nutritional value of garden produce",
+        "On the teachers’ preferred classroom layouts"
+      ]
+    },
+    {
+      "prompt_key": "REL_CHANGED",
+      "title": "Changed exit: read a condition map",
+      "prompt": "A policy model is shown as: local schedule control → neighborhood adaptation → program participation. New information says a central office now fixes every schedule. Which relation is touched first?",
+      "response_type": "single_select",
+      "options": [
+        "The relation between participation and later publicity",
+        "Local control as the basis for adaptation",
+        "The relation between office size and staff seniority",
+        "The relation between neighborhood names and map order"
+      ]
+    },
+    {
+      "prompt_key": "REL_REPAIR_NEAR",
+      "title": "Repair: distinguish bearing from topic",
+      "prompt": "Passage claim: rotating meeting chairs distributes authority because each member periodically sets the agenda. New information: one member writes every agenda. Which relation should be named?",
+      "response_type": "single_select",
+      "options": [
+        "The relation between meeting length and room temperature",
+        "The relation between chair titles and printed stationery",
+        "Agenda control as a source of authority",
+        "The relation between membership dues and refreshments"
+      ]
+    },
+    {
+      "prompt_key": "REL_REENTRY_NEAR",
+      "title": "Fresh re-entry: locate a new observation",
+      "prompt": "A passage says neighborhood murals build trust because residents jointly choose the design. A record shows the final design was selected by an outside sponsor. What does the record touch?",
+      "response_type": "single_select",
+      "options": [
+        "The cost of maintaining outdoor paint",
+        "The sponsor’s office location",
+        "The chronology of mural styles",
+        "Joint design choice as a source of trust"
+      ]
+    },
+    {
+      "prompt_key": "REL_REPAIR_CHANGED",
+      "title": "Repair: translate the map",
+      "prompt": "A model reads: open records → public scrutiny → accountable decisions. New information says records are released only after decisions become final. Which link should be examined first?",
+      "response_type": "single_select",
+      "options": [
+        "Timely open records as a basis for scrutiny",
+        "The link between record typography and reader interest",
+        "The link between final decisions and office furniture",
+        "The link between agency names and filing order"
+      ]
+    },
+    {
+      "prompt_key": "REL_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "A fresh model reads: repeated rehearsal → fluent retrieval → lower performance anxiety. New information says rehearsal occurred only once. Which relation is touched first?",
+      "response_type": "single_select",
+      "options": [
+        "The relation between anxiety and the room’s wall color",
+        "Repeated rehearsal as a basis for retrieval",
+        "The relation between performers and ticket prices",
+        "The relation between retrieval and audience size"
+      ]
+    },
+    {
+      "prompt_key": "IMP_ENTRY",
+      "title": "Starting check: classify direction",
+      "prompt": "A passage says all community theaters rely entirely on ticket sales. New information says one theater receives half its budget from a city grant. What is the most precise effect on the quoted claim?",
+      "response_type": "single_select",
+      "options": [
+        "It supports the claim",
+        "It coexists without effect",
+        "It negates the universal claim",
+        "It verifies the claim externally"
+      ]
+    },
+    {
+      "prompt_key": "IMP_GUIDED",
+      "title": "Guided practice: identify support",
+      "prompt": "A passage argues that later bus service increases attendance at evening classes. A survey finds that many new attendees began coming only after the last bus was moved two hours later. How does the survey bear on the argument?",
+      "response_type": "single_select",
+      "options": [
+        "It contradicts the proposed link",
+        "It qualifies the link to daytime classes",
+        "It negates the existence of evening classes",
+        "It supports the proposed link"
+      ]
+    },
+    {
+      "prompt_key": "IMP_LIGHT",
+      "title": "Less help: distinguish qualification",
+      "prompt": "A passage claims open plazas foster conversation throughout the year. Observations show lively conversation in spring and autumn but little use during windy winters. What is the most precise impact?",
+      "response_type": "single_select",
+      "options": [
+        "It qualifies the claim by season",
+        "It supports the claim without limitation",
+        "It coexists because weather is unrelated",
+        "It negates all conversation in plazas"
+      ]
+    },
+    {
+      "prompt_key": "IMP_SOLO",
+      "title": "Solo practice: separate contradiction and coexistence",
+      "prompt": "A passage says handwritten notes preserve a writer’s revisions better than plain text files. New information says cloud storage prevents plain text files from being lost. How does the new information affect the preservation-of-revisions claim?",
+      "response_type": "single_select",
+      "options": [
+        "It negates the claim",
+        "It coexists with the claim",
+        "It contradicts the claim",
+        "It supports handwriting as revision evidence"
+      ]
+    },
+    {
+      "prompt_key": "IMP_NEAR",
+      "title": "Near exit: preserve the quantifier",
+      "prompt": "A passage says councils usually adopt proposals after unanimous committee recommendations. Records show adoption in 18 of 20 prior unanimous cases. A new unanimous recommendation is rejected, making the record 18 adoptions in 21 cases. What is the most precise impact?",
+      "response_type": "single_select",
+      "options": [
+        "It negates the claim entirely",
+        "It supports the usual pattern",
+        "It qualifies but does not negate the usual pattern",
+        "It coexists because recommendations are irrelevant"
+      ]
+    },
+    {
+      "prompt_key": "IMP_CHANGED",
+      "title": "Changed exit: read the condition table",
+      "prompt": "A table states: “Volunteer autonomy improves retention when coordinators set clear boundaries.” A new case shows high autonomy, unclear boundaries, and low retention. What is the best passage-bounded judgment?",
+      "response_type": "single_select",
+      "options": [
+        "The case supports autonomy under every condition",
+        "The case contradicts the need for boundaries",
+        "The case negates volunteer retention",
+        "The case coexists with the conditional claim"
+      ]
+    },
+    {
+      "prompt_key": "IMP_REPAIR_NEAR",
+      "title": "Repair: match direction to scope",
+      "prompt": "Claim: all 20 neighborhood newsletters in a directory publish monthly. The directory shows that 16 publish monthly and 4 publish quarterly. Which classification follows from the supplied counts?",
+      "response_type": "single_select",
+      "options": [
+        "Qualification",
+        "Universal negation",
+        "Direct support",
+        "Topical coexistence"
+      ]
+    },
+    {
+      "prompt_key": "IMP_REENTRY_NEAR",
+      "title": "Fresh re-entry: classify a new case",
+      "prompt": "A passage says every sculpture in a garden was commissioned for that site. A ledger identifies one sculpture moved there from a train station. What is the effect on the quoted claim?",
+      "response_type": "single_select",
+      "options": [
+        "It supports the site-specific claim",
+        "It negates the universal claim",
+        "It only narrows the claim by season",
+        "It coexists because both are sculptures"
+      ]
+    },
+    {
+      "prompt_key": "IMP_REPAIR_CHANGED",
+      "title": "Repair: read the condition precisely",
+      "prompt": "Conditional claim: shared studios improve collaboration only when artists overlap in their working hours. A studio has shared space but no schedule overlap and shows no new collaboration. How does the case bear on the claim?",
+      "response_type": "single_select",
+      "options": [
+        "It contradicts the overlap condition",
+        "It supports collaboration without overlap",
+        "It coexists with the conditional claim",
+        "It negates the existence of studios"
+      ]
+    },
+    {
+      "prompt_key": "IMP_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "A model says a reminder improves attendance when it arrives at least one day before an event. A same-hour reminder produces no attendance change. Which judgment is best?",
+      "response_type": "single_select",
+      "options": [
+        "The case supports reminders at any time",
+        "The case contradicts advance notice",
+        "The case negates event attendance",
+        "The case coexists with the timing condition"
+      ]
+    },
+    {
+      "prompt_key": "REV_ENTRY",
+      "title": "Starting check: choose a bounded revision",
+      "prompt": "A passage claims a reading room is quiet throughout every weekday. New information says construction makes it noisy on Fridays. Which revision is best bounded?",
+      "response_type": "single_select",
+      "options": [
+        "The room is quiet on weekdays except Fridays",
+        "The room is never quiet",
+        "Construction always improves reading rooms",
+        "Weekday schedules are unreliable everywhere"
+      ]
+    },
+    {
+      "prompt_key": "REV_GUIDED",
+      "title": "Guided practice: preserve the mechanism",
+      "prompt": "A passage argues that free outdoor concerts increase park use when weather is mild. New information says attendance falls during heavy rain. Which revision best preserves the model?",
+      "response_type": "single_select",
+      "options": [
+        "Outdoor concerts never affect park use",
+        "Free concerts raise park use in favorable weather",
+        "Rain is the only reason people visit parks",
+        "All cultural events should move indoors"
+      ]
+    },
+    {
+      "prompt_key": "REV_LIGHT",
+      "title": "Less help: revise only what changed",
+      "prompt": "A passage says shared tools reduce every workshop’s start-up costs. In a set of 20 workshops, shared tools reduced start-up costs for 14, while 6 specialized workshops still had to buy custom tools. Which revision is most precise?",
+      "response_type": "single_select",
+      "options": [
+        "Shared tools eliminate all workshop expenses",
+        "Custom tools never affect start-up costs",
+        "Shared tools reduce many workshop start-up costs",
+        "Specialized workshops should stop opening"
+      ]
+    },
+    {
+      "prompt_key": "REV_SOLO",
+      "title": "Solo practice: retain unaffected support",
+      "prompt": "A passage argues that rotating exhibits encourage repeat visits because visitors expect novelty. New information says one permanent exhibit also draws repeat visitors through monthly demonstrations. Which revision is best?",
+      "response_type": "single_select",
+      "options": [
+        "Only permanent exhibits encourage repeat visits",
+        "Rotating exhibits prevent demonstrations",
+        "Repeat visits have no identifiable cause",
+        "Novelty and demonstrations can both prompt visits"
+      ]
+    },
+    {
+      "prompt_key": "REV_NEAR",
+      "title": "Near exit: revise a scoped claim",
+      "prompt": "A passage says neighborhood surveys improve planning because residents identify local needs. New information says surveys with only yes/no questions miss newly emerging concerns. Which revision is best?",
+      "response_type": "single_select",
+      "options": [
+        "Expressive surveys can reveal unlisted local needs",
+        "All surveys make planning worse",
+        "Resident input is irrelevant to local planning",
+        "New concerns can be found only by outside experts"
+      ]
+    },
+    {
+      "prompt_key": "REV_CHANGED",
+      "title": "Changed exit: revise one argument-map link",
+      "prompt": "Baseline map: local archives → access to records → stronger community history; volunteer indexing → easier search. New information says the archive remains local and indexed, but its records are available only to staff. Which revision best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Volunteer indexing always weakens community history",
+        "Local records strengthen history when accessible",
+        "Local archives should be replaced by national archives",
+        "Record access has no relation to community history"
+      ]
+    },
+    {
+      "prompt_key": "REV_REPAIR_NEAR",
+      "title": "Repair: make the smallest edit",
+      "prompt": "Original claim: all evening lectures attract larger audiences than afternoon lectures. Attendance records cover 20 matched evening-afternoon pairs: the evening lecture drew more people in 19 pairs and fewer in 1 pair. Which edit is minimally sufficient?",
+      "response_type": "single_select",
+      "options": [
+        "Afternoon lectures always attract larger audiences",
+        "Lecture time never affects audience size",
+        "Most evening lectures draw larger audiences",
+        "Every evening lecture should be canceled"
+      ]
+    },
+    {
+      "prompt_key": "REV_REENTRY_NEAR",
+      "title": "Fresh re-entry: revise a new claim",
+      "prompt": "Original claim: public benches increase plaza use at all hours. New information: use rises after benches are installed during daylight, but not after midnight. Which revision is best?",
+      "response_type": "single_select",
+      "options": [
+        "Benches never affect plaza use",
+        "Midnight use determines all plaza design",
+        "Plazas should remove every bench",
+        "Benches increase plaza use during daylight hours"
+      ]
+    },
+    {
+      "prompt_key": "REV_REPAIR_CHANGED",
+      "title": "Repair: preserve untouched links",
+      "prompt": "Map: clear labels → easier navigation → longer visits; shaded paths → summer comfort. New information says the labels are clear but placed too high for many visitors to read. Which revision preserves unaffected links?",
+      "response_type": "single_select",
+      "options": [
+        "Readable labels aid navigation; shade aids comfort",
+        "Shaded paths cause unreadable labels",
+        "Navigation never affects visit length",
+        "The entire visitor model must be discarded"
+      ]
+    },
+    {
+      "prompt_key": "REV_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "Map: open rehearsal → community feedback → revised performance; printed programs → audience context. New information says rehearsal was open, but comments were collected after the final performance. Which revision is best?",
+      "response_type": "single_select",
+      "options": [
+        "Printed programs prevent community feedback",
+        "Feedback shapes revision; programs add context",
+        "Open rehearsals never serve a purpose",
+        "Community comments should replace every performance"
+      ]
+    },
+    {
+      "prompt_key": "LST_ENTRY",
+      "title": "Starting check: preserve the thesis",
+      "prompt": "A passage argues that neighborhood newsletters strengthen civic participation by reporting local decisions in accessible language. Which addition would alter that argument least?",
+      "response_type": "single_select",
+      "options": [
+        "Local decisions should never be reported to residents",
+        "Accessible language prevents civic participation",
+        "Some newsletters also list local events",
+        "Only national newspapers can discuss public decisions"
+      ]
+    },
+    {
+      "prompt_key": "LST_GUIDED",
+      "title": "Guided practice: compare change budgets",
+      "prompt": "Model: a guided art-walk route focuses observation, and focused observation helps residents notice overlooked streets. Addition A says guides give a brief building date after each observation stop. Addition B says half the route replaces observation with an indoor summary. Which judgment uses the smaller change budget?",
+      "response_type": "single_select",
+      "options": [
+        "B, because replacing observation leaves every link intact",
+        "Both additions preserve every link equally",
+        "A and B both require replacing the thesis",
+        "A; it adds context and preserves both links"
+      ]
+    },
+    {
+      "prompt_key": "LST_LIGHT",
+      "title": "Less help: ignore surface overlap",
+      "prompt": "A passage argues shared kitchens build cooperation because neighbors coordinate limited counter space. Which addition alters the argument least?",
+      "response_type": "single_select",
+      "options": [
+        "Some kitchens also coordinate shared pantry shelves",
+        "Counter space has a polished stone surface",
+        "Neighbors never cooperate in shared spaces",
+        "Private kitchens are the only legitimate kitchens"
+      ]
+    },
+    {
+      "prompt_key": "LST_SOLO",
+      "title": "Solo practice: select the least-altering addition",
+      "prompt": "Model: rotating committee roles gives members varied responsibilities, which broadens participation. Addition A says experienced members answer questions after a new role-holder performs the role. Addition B says a permanent chair keeps all decision tasks. Which addition changes the model least?",
+      "response_type": "single_select",
+      "options": [
+        "B, because permanent control preserves rotation",
+        "A; support follows role performance",
+        "Both require deleting the participation link",
+        "B, because removing varied responsibility is peripheral"
+      ]
+    },
+    {
+      "prompt_key": "LST_NEAR",
+      "title": "Near exit: compare compatible additions",
+      "prompt": "Model: museum objects are connected to neighborhood stories, and those stories deepen local understanding. Addition A lets residents record memories that curators label as supplemental stories. Addition B removes neighborhood stories from half the exhibits and uses generic chronology. Which addition alters the thesis least?",
+      "response_type": "single_select",
+      "options": [
+        "B, because generic chronology preserves the story link",
+        "Both additions change the two links equally",
+        "A; it extends stories without removing a link",
+        "A, because every resident memory must replace curator context"
+      ]
+    },
+    {
+      "prompt_key": "LST_CHANGED",
+      "title": "Changed exit: use the relation matrix",
+      "prompt": "Model links: open meetings → visible decisions; plain-language minutes → public understanding; archived named votes → later accountability. Candidate additions are: A, close the decision segment; B, archive vote totals without names; C, add a brief glossary to the minutes. Which candidate consumes the smallest central change budget?",
+      "response_type": "single_select",
+      "options": [
+        "A, because closing decisions preserves visibility",
+        "B, because removing names leaves accountability unchanged",
+        "A and B, because each preserves all three links",
+        "C; a glossary supplements minutes"
+      ]
+    },
+    {
+      "prompt_key": "LST_REPAIR_NEAR",
+      "title": "Repair: test compatibility first",
+      "prompt": "Repair cue: mark whether an addition preserves or replaces repeated group rehearsal as the choir’s connection mechanism. Addition A adds a shared meal after rehearsal. Addition B replaces every second rehearsal with a meal. Which has the lower central change cost?",
+      "response_type": "single_select",
+      "options": [
+        "A; rehearsal stays repeated",
+        "B, because replacing rehearsal cannot affect its repetition",
+        "Both, because any meal deletes the connection thesis",
+        "B, because central mechanisms receive less weight than additions"
+      ]
+    },
+    {
+      "prompt_key": "LST_REENTRY_NEAR",
+      "title": "Fresh re-entry: compare new additions",
+      "prompt": "Fresh model: repair cafés teach residents to fix appliances, and successful repair reduces waste. Addition A lends basic tools between sessions. Addition B replaces repair instruction with an appliance-swap table. Which addition changes the model least?",
+      "response_type": "single_select",
+      "options": [
+        "B, because removing instruction preserves the teaching link",
+        "A; tools support repair without replacing a link",
+        "Both, because any new service reverses waste reduction",
+        "B, because replacement always costs less than supplementation"
+      ]
+    },
+    {
+      "prompt_key": "LST_REPAIR_CHANGED",
+      "title": "Repair: weight central relations",
+      "prompt": "Repair cue: weight each map relation separately—public map → route awareness; clear symbols → quick interpretation; update dates → trust. Candidate A makes symbols decorative rather than clear. Candidate B removes update dates. Candidate C adds optional landmark names. Which has the lowest change cost?",
+      "response_type": "single_select",
+      "options": [
+        "A, because decorative symbols preserve quick interpretation",
+        "B, because trust does not appear in the model",
+        "C; landmarks supplement the map",
+        "A and B, because breaking one link costs zero"
+      ]
+    },
+    {
+      "prompt_key": "LST_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "Fresh model: shared workshop → pooled equipment; posted schedule → fair access; safety briefing → fewer preventable errors. Candidate A replaces the schedule with first-come access. Candidate B makes the safety briefing optional. Candidate C reserves a cleanup period after work. Which has the lowest change cost?",
+      "response_type": "single_select",
+      "options": [
+        "A, because first-come access preserves the posted-schedule link",
+        "B, because an optional briefing cannot affect preventable errors",
+        "A and B, because each preserves every stated relation",
+        "C; cleanup follows all three mechanisms"
+      ]
+    }
+  ]
+}

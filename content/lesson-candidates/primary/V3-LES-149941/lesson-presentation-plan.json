@@ -1,0 +1,1880 @@
+{
+  "artifact_type": "LESSON_PRESENTATION_PLAN",
+  "artifact_id": "V3-LPPL-149941",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "9a78a5aad6cf5384956aac183451dcdb4f504d102e5c5de8acad6d0ee9e66411",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-149941",
+    "lesson_script_sha256": "a654c8fac54a950323e027870c2581dd64dc7182bb9f60d66301b3f5de1947f0",
+    "kc_coverage_matrix_id": "V3-KCOV-149941",
+    "kc_coverage_matrix_sha256": "75d1321465b6147fb65109b3f3b7aaa224d0949fd082984286ebb8e20d34723c"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-149941",
+    "lesson_script_id": "V3-LSCR-149941",
+    "lesson_script_sha256": "a654c8fac54a950323e027870c2581dd64dc7182bb9f60d66301b3f5de1947f0",
+    "kc_coverage_matrix_id": "V3-KCOV-149941",
+    "kc_coverage_matrix_sha256": "75d1321465b6147fb65109b3f3b7aaa224d0949fd082984286ebb8e20d34723c",
+    "learner_rhythm": [
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP"
+    ],
+    "screens": [
+      {
+        "screen_id": "MOD-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "MOD-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: entry check boundary",
+        "progress_label": "KC 1 of 4 · ENTRY CHECK BOUNDARY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "MOD-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: orientation",
+        "progress_label": "KC 1 of 4 · ORIENTATION",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "MOD-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: explanation",
+        "progress_label": "KC 1 of 4 · EXPLANATION",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "MOD-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: mental model",
+        "progress_label": "KC 1 of 4 · MENTAL MODEL",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "MOD-NODE-THINK"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: expert think aloud",
+        "progress_label": "KC 1 of 4 · EXPERT THINK ALOUD",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "MOD-NODE-WORKED"
+        ],
+        "primary_job": "Follow one complete selection-and-validity reasoning path.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: worked example",
+        "progress_label": "KC 1 of 4 · WORKED EXAMPLE",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "MOD-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: guided practice",
+        "progress_label": "KC 1 of 4 · GUIDED PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "MOD-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: light support practice",
+        "progress_label": "KC 1 of 4 · LIGHT SUPPORT PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "MOD-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: solo practice",
+        "progress_label": "KC 1 of 4 · SOLO PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "MOD-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: contrast boundary",
+        "progress_label": "KC 1 of 4 · CONTRAST BOUNDARY",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "MOD-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: near exit",
+        "progress_label": "KC 1 of 4 · NEAR EXIT",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "MOD-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: changed exit",
+        "progress_label": "KC 1 of 4 · CHANGED EXIT",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "MOD-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: targeted repair",
+        "progress_label": "KC 1 of 4 · TARGETED REPAIR",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "MOD-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: exact reentry",
+        "progress_label": "KC 1 of 4 · EXACT REENTRY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "MOD-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: targeted repair",
+        "progress_label": "KC 1 of 4 · TARGETED REPAIR",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "MOD-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: exact reentry",
+        "progress_label": "KC 1 of 4 · EXACT REENTRY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOD-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "MOD-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Explain modeling and vicarious mechanisms: recap",
+        "progress_label": "KC 1 of 4 · RECAP",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOD-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "OBS-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply observational learning to behavior: entry check boundary",
+        "progress_label": "KC 2 of 4 · ENTRY CHECK BOUNDARY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "OBS-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply observational learning to behavior: orientation",
+        "progress_label": "KC 2 of 4 · ORIENTATION",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "OBS-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply observational learning to behavior: explanation",
+        "progress_label": "KC 2 of 4 · EXPLANATION",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "OBS-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply observational learning to behavior: mental model",
+        "progress_label": "KC 2 of 4 · MENTAL MODEL",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "OBS-NODE-THINK"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply observational learning to behavior: expert think aloud",
+        "progress_label": "KC 2 of 4 · EXPERT THINK ALOUD",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "OBS-NODE-WORKED"
+        ],
+        "primary_job": "Follow one complete selection-and-validity reasoning path.",
+        "learner_heading": "Apply observational learning to behavior: worked example",
+        "progress_label": "KC 2 of 4 · WORKED EXAMPLE",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "OBS-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply observational learning to behavior: guided practice",
+        "progress_label": "KC 2 of 4 · GUIDED PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "OBS-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply observational learning to behavior: light support practice",
+        "progress_label": "KC 2 of 4 · LIGHT SUPPORT PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "OBS-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply observational learning to behavior: solo practice",
+        "progress_label": "KC 2 of 4 · SOLO PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "OBS-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply observational learning to behavior: contrast boundary",
+        "progress_label": "KC 2 of 4 · CONTRAST BOUNDARY",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "OBS-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply observational learning to behavior: near exit",
+        "progress_label": "KC 2 of 4 · NEAR EXIT",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "OBS-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply observational learning to behavior: changed exit",
+        "progress_label": "KC 2 of 4 · CHANGED EXIT",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "OBS-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply observational learning to behavior: targeted repair",
+        "progress_label": "KC 2 of 4 · TARGETED REPAIR",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "OBS-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply observational learning to behavior: exact reentry",
+        "progress_label": "KC 2 of 4 · EXACT REENTRY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "OBS-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply observational learning to behavior: targeted repair",
+        "progress_label": "KC 2 of 4 · TARGETED REPAIR",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "OBS-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply observational learning to behavior: exact reentry",
+        "progress_label": "KC 2 of 4 · EXACT REENTRY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OBS-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "OBS-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply observational learning to behavior: recap",
+        "progress_label": "KC 2 of 4 · RECAP",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OBS-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "ELM-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: entry check boundary",
+        "progress_label": "KC 3 of 4 · ENTRY CHECK BOUNDARY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "ELM-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: orientation",
+        "progress_label": "KC 3 of 4 · ORIENTATION",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "ELM-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: explanation",
+        "progress_label": "KC 3 of 4 · EXPLANATION",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "ELM-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: mental model",
+        "progress_label": "KC 3 of 4 · MENTAL MODEL",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "ELM-NODE-THINK"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: expert think aloud",
+        "progress_label": "KC 3 of 4 · EXPERT THINK ALOUD",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "ELM-NODE-WORKED"
+        ],
+        "primary_job": "Follow one complete selection-and-validity reasoning path.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: worked example",
+        "progress_label": "KC 3 of 4 · WORKED EXAMPLE",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "ELM-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: guided practice",
+        "progress_label": "KC 3 of 4 · GUIDED PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "ELM-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: light support practice",
+        "progress_label": "KC 3 of 4 · LIGHT SUPPORT PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "ELM-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: solo practice",
+        "progress_label": "KC 3 of 4 · SOLO PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "ELM-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: contrast boundary",
+        "progress_label": "KC 3 of 4 · CONTRAST BOUNDARY",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "ELM-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: near exit",
+        "progress_label": "KC 3 of 4 · NEAR EXIT",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "ELM-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: changed exit",
+        "progress_label": "KC 3 of 4 · CHANGED EXIT",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ELM-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: targeted repair",
+        "progress_label": "KC 3 of 4 · TARGETED REPAIR",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "ELM-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: exact reentry",
+        "progress_label": "KC 3 of 4 · EXACT REENTRY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ELM-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: targeted repair",
+        "progress_label": "KC 3 of 4 · TARGETED REPAIR",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "ELM-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: exact reentry",
+        "progress_label": "KC 3 of 4 · EXACT REENTRY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ELM-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "ELM-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Apply elaboration-likelihood and social-cognitive models: recap",
+        "progress_label": "KC 3 of 4 · RECAP",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ELM-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "ATT-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Analyze factors affecting attitude change: entry check boundary",
+        "progress_label": "KC 4 of 4 · ENTRY CHECK BOUNDARY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "ATT-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Analyze factors affecting attitude change: orientation",
+        "progress_label": "KC 4 of 4 · ORIENTATION",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 1,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "ATT-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Analyze factors affecting attitude change: explanation",
+        "progress_label": "KC 4 of 4 · EXPLANATION",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "ATT-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Analyze factors affecting attitude change: mental model",
+        "progress_label": "KC 4 of 4 · MENTAL MODEL",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "ATT-NODE-THINK"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Analyze factors affecting attitude change: expert think aloud",
+        "progress_label": "KC 4 of 4 · EXPERT THINK ALOUD",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "ATT-NODE-WORKED"
+        ],
+        "primary_job": "Follow one complete selection-and-validity reasoning path.",
+        "learner_heading": "Analyze factors affecting attitude change: worked example",
+        "progress_label": "KC 4 of 4 · WORKED EXAMPLE",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "ATT-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Analyze factors affecting attitude change: guided practice",
+        "progress_label": "KC 4 of 4 · GUIDED PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "ATT-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Analyze factors affecting attitude change: light support practice",
+        "progress_label": "KC 4 of 4 · LIGHT SUPPORT PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "ATT-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Analyze factors affecting attitude change: solo practice",
+        "progress_label": "KC 4 of 4 · SOLO PRACTICE",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "ATT-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Analyze factors affecting attitude change: contrast boundary",
+        "progress_label": "KC 4 of 4 · CONTRAST BOUNDARY",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "ATT-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Analyze factors affecting attitude change: near exit",
+        "progress_label": "KC 4 of 4 · NEAR EXIT",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "ATT-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Analyze factors affecting attitude change: changed exit",
+        "progress_label": "KC 4 of 4 · CHANGED EXIT",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ATT-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Analyze factors affecting attitude change: targeted repair",
+        "progress_label": "KC 4 of 4 · TARGETED REPAIR",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "ATT-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Analyze factors affecting attitude change: exact reentry",
+        "progress_label": "KC 4 of 4 · EXACT REENTRY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ATT-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Analyze factors affecting attitude change: targeted repair",
+        "progress_label": "KC 4 of 4 · TARGETED REPAIR",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "ATT-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Analyze factors affecting attitude change: exact reentry",
+        "progress_label": "KC 4 of 4 · EXACT REENTRY",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-RELATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ATT-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "ATT-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Analyze factors affecting attitude change: recap",
+        "progress_label": "KC 4 of 4 · RECAP",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ATT-REP-MODEL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      }
+    ],
+    "representation_plans": [
+      {
+        "representation_id": "MOD-REP-MODEL",
+        "target_kc_id": "V3-KC-149607",
+        "representation_type": "OBSERVER_MODEL_ACTION_CONSEQUENCE_AND_RESPONSE_DIAGRAM",
+        "learner_operation": "Trace attended model behavior, observed consequence or emotion, and the observer’s later response without collapsing them into one mechanism.",
+        "text_nonvisual_equivalent": "List model action, visible consequence, observer attention, emotional response, and later behavior in sequence."
+      },
+      {
+        "representation_id": "MOD-REP-RELATION",
+        "target_kc_id": "V3-KC-149607",
+        "representation_type": "BRAIN_BEHAVIOR_AND_VICARIOUS_EMOTION_VIGNETTE",
+        "learner_operation": "Choose the bounded mechanism statement that fits the observed modeling and vicarious evidence.",
+        "text_nonvisual_equivalent": "State model behavior, observer response, and available neural or emotional evidence without naming a sole cause."
+      },
+      {
+        "representation_id": "OBS-REP-MODEL",
+        "target_kc_id": "V3-KC-969899",
+        "representation_type": "MODEL_CHARACTERISTIC_ACTION_CONSEQUENCE_SEQUENCE",
+        "learner_operation": "Evaluate attention to the model, observed consequence, capability, and opportunity before predicting behavior.",
+        "text_nonvisual_equivalent": "List model similarity or status, action, consequence, observer capability, and later opportunity in order."
+      },
+      {
+        "representation_id": "OBS-REP-RELATION",
+        "target_kc_id": "V3-KC-969899",
+        "representation_type": "INDIVIDUAL_BEHAVIOR_VIGNETTE",
+        "learner_operation": "Predict whether the observer is more or less likely to reproduce the modeled behavior under the stated conditions.",
+        "text_nonvisual_equivalent": "State model features, consequence, and observer conditions without supplying the prediction."
+      },
+      {
+        "representation_id": "ELM-REP-MODEL",
+        "target_kc_id": "V3-KC-060896",
+        "representation_type": "CENTRAL_PERIPHERAL_AND_SOCIAL_COGNITIVE_COMPARISON",
+        "learner_operation": "Select the model whose premises match message elaboration or reciprocal person-behavior-environment processes.",
+        "text_nonvisual_equivalent": "List motivation, ability, argument quality, cues, self-efficacy, model behavior, and environment under separate headings."
+      },
+      {
+        "representation_id": "ELM-REP-RELATION",
+        "target_kc_id": "V3-KC-060896",
+        "representation_type": "MESSAGE_AND_BEHAVIOR_CHANGE_CASE",
+        "learner_operation": "Generate the model-consistent prediction after one message-processing or social-cognitive condition changes.",
+        "text_nonvisual_equivalent": "State message, audience, model, efficacy, behavior, and environment facts without labeling a route or theory."
+      },
+      {
+        "representation_id": "ATT-REP-MODEL",
+        "target_kc_id": "V3-KC-241449",
+        "representation_type": "FOUR_CLASS_ATTITUDE_CHANGE_FACTOR_MATRIX",
+        "learner_operation": "Classify each manipulated variable as behavior, message, target, or social and predict its directional effect.",
+        "text_nonvisual_equivalent": "List the four factor classes with the case variable and attitude result in an accessible table."
+      },
+      {
+        "representation_id": "ATT-REP-RELATION",
+        "target_kc_id": "V3-KC-241449",
+        "representation_type": "FACTORIAL_STUDY_AND_ATTITUDE_CHANGE_GRAPH",
+        "learner_operation": "Compare conditions and attribute a bounded attitude prediction to the manipulated factor or stated interaction.",
+        "text_nonvisual_equivalent": "State factor levels, group characteristics, and attitude scores in a table without highlighting the stronger condition."
+      }
+    ],
+    "learner_reviewer_separation": {
+      "learner_projection": "NORMALIZED_LEARNER_SAFE_ONLY",
+      "reviewer_projection": "SEPARATE_SERVER_AUTHORITY",
+      "prohibited_learner_fields": [
+        "ANSWER_KEY",
+        "CORRECT_RESPONSE",
+        "RATIONALE",
+        "RESPONSE_AUTHORITY",
+        "ROUTE_METADATA"
+      ]
+    },
+    "accessibility_acceptance": {
+      "keyboard_required": true,
+      "visible_focus_required": true,
+      "text_equivalent_required": true,
+      "human_accessibility_review_status": "BLOCKED"
+    },
+    "presentation_status": "CONTENT_CANDIDATE_RUNTIME_AND_BROWSER_QA_PENDING"
+  }
+}

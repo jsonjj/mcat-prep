@@ -1,0 +1,217 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-134007",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-134007",
+    "grouping_id": "V3-CL-134007",
+    "ordered_kc_ids": [
+      "V3-KC-506618",
+      "V3-KC-718381",
+      "V3-KC-755923"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020",
+      "AAMC-2020-MCAT-CONTENT"
+    ],
+    "source_classes": [
+      "PUBLIC_PRIMARY_RESEARCH"
+    ],
+    "source_anchor_ids": [
+      "PS-SA-AAMC-9A"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "2abb987842bb242ae527c70749db21c8fe60c1827f050be354c98619ea94448a",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "134007-V3-SRC-100158",
+      "source_occurrence_id": "V3-SRC-100158",
+      "occurrence_kind": "AAMC_TEACHABLE_TOPIC",
+      "source_id": "AAMC-2020",
+      "source_class": "PUBLIC_PRIMARY_RESEARCH",
+      "official_topic": "Theoretical Approaches",
+      "printed_pages": [
+        96
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-9A"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "134007-V3-SRC-200095",
+      "source_occurrence_id": "V3-SRC-200095",
+      "occurrence_kind": "AAMC_SOURCE_ANCHOR",
+      "source_id": "AAMC-2020-MCAT-CONTENT",
+      "source_class": "PUBLIC_PRIMARY_RESEARCH",
+      "official_topic": null,
+      "printed_pages": [
+        96,
+        97
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-9A"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "SCL-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-506618",
+      "authorial_claim": "The learner can distinguish interactional or micro explanations from structural or macro explanations and state both the insight and omission created by the selected scale without treating scale as a complete theory or value judgment.",
+      "scope_in_refs": [
+        "V3-KC-506618:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-506618:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-9A"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100158",
+        "V3-SRC-200095"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600664",
+        "V3-MAP-601527"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "FCF-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-718381",
+      "authorial_claim": "The learner can use functionalism and conflict theory to generate contrasting introductory explanations of social stability, institutional function, power, resource distribution, and inequality without advanced theorist exegesis.",
+      "scope_in_refs": [
+        "V3-KC-718381:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-718381:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-9A"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100158",
+        "V3-SRC-200095"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-601101",
+        "V3-MAP-601528"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "FEM-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-755923",
+      "authorial_claim": "The learner can use feminist theory at introductory depth to analyze how gendered power, roles, resource access, and institutional arrangements produce or challenge inequality, including a simple distribution-of-costs-and-benefits representation without formal game-theory mathematics.",
+      "scope_in_refs": [
+        "V3-KC-755923:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-755923:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-9A"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100158",
+        "V3-SRC-200095"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600702",
+        "V3-MAP-601529"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-462809",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-412958",
+        "V3-MOD-741509"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 103,
+          "relation_ids": [
+            "R14-PL-581402-103"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 103,
+          "relation_ids": [
+            "R14-PL-904137-103"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-315978",
+          "position": 25,
+          "relation_ids": [
+            "R14-PL-315978-025"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-134007",
+      "revisit_relation_ids": [
+        "R14-RV-134007"
+      ]
+    },
+    "hard_prerequisites": [],
+    "attachment_relation_ids": [
+      "R14-FD-134007"
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "No present-day AAMC authority refresh or current endorsement is claimed.",
+      "The lesson boundary, transfer, remediation, and sequence are not learner-validated.",
+      "Hard-edge necessity, representation readiness, and sequence remain provisional.",
+      "Knowledge-type assignments are canonical but not human-ratified or learner-validated.",
+      "No adaptive bypass or numeric threshold is calibrated or authorized."
+    ]
+  }
+}

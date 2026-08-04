@@ -1,0 +1,488 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears.",
+  "items": [
+    {
+      "prompt_key": "PAT_ENTRY",
+      "title": "Starting check: center with an outlier",
+      "prompt": "A sample has values 4, 5, 5, 6, and 30. Which statistic best describes a typical value without being pulled strongly by 30?",
+      "response_type": "single_select",
+      "options": [
+        "Median",
+        "Mean",
+        "Range",
+        "Standard deviation"
+      ]
+    },
+    {
+      "prompt_key": "PAT_GUIDED",
+      "title": "Guided practice: read center and range",
+      "prompt": "A table lists trial times of 10, 12, 12, and 14 seconds. Which pair correctly reports the mean and range?",
+      "response_type": "single_select",
+      "options": [
+        "Mean 12; range 2",
+        "Mean 12; range 4",
+        "Mean 11; range 4",
+        "Median 12; range 14"
+      ]
+    },
+    {
+      "prompt_key": "PAT_LIGHT",
+      "title": "Less help: identify mode and middle spread",
+      "prompt": "For values 2, 2, 3, 4, 5, 5, 5, and 9, which statement is supported?",
+      "response_type": "single_select",
+      "options": [
+        "The mode is 2",
+        "The median is 5",
+        "The mode is 5",
+        "The range is 7 values"
+      ]
+    },
+    {
+      "prompt_key": "PAT_SOLO",
+      "title": "Solo practice: compare dispersion",
+      "prompt": "Groups A and B have the same mean. A has standard deviation 2 units and B has standard deviation 7 units. Which statement is supported?",
+      "response_type": "single_select",
+      "options": [
+        "B has the larger mean",
+        "A has the larger range for certain",
+        "A contains more observations",
+        "B is more dispersed around the mean"
+      ]
+    },
+    {
+      "prompt_key": "PAT_NEAR",
+      "title": "Near exit: state the displayed pattern",
+      "prompt": "A line graph shows concentration falling from 18 to 11 to 7 micromoles per liter across three successive time points. Which conclusion stays within the display?",
+      "response_type": "single_select",
+      "options": [
+        "Concentration decreased at both intervals",
+        "The treatment caused the decrease",
+        "Every future value will be below 7",
+        "Measurement error was absent"
+      ]
+    },
+    {
+      "prompt_key": "PAT_CHANGED",
+      "title": "Changed exit: choose summaries for skew",
+      "prompt": "A salary list is strongly right-skewed because two values are much larger than the rest. Which pair best summarizes typical salary and middle-half spread?",
+      "response_type": "single_select",
+      "options": [
+        "Mean and standard deviation only",
+        "Median and interquartile range",
+        "Mode and maximum",
+        "Minimum and range only"
+      ]
+    },
+    {
+      "prompt_key": "PAT_REPAIR_NEAR",
+      "title": "Repair: separate center from spread",
+      "prompt": "For values 3, 6, 6, 9, and 11, which calculation gives the range?",
+      "response_type": "single_select",
+      "options": [
+        "9 minus 6",
+        "6 plus 6",
+        "11 minus 3",
+        "29 divided by 5"
+      ]
+    },
+    {
+      "prompt_key": "PAT_REENTRY_NEAR",
+      "title": "Fresh re-entry: summarize new values",
+      "prompt": "A new data set is 6, 7, 7, 8, and 12. Which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "The mean is 7",
+        "The mode is 12",
+        "The range is 5 observations",
+        "The median is 7"
+      ]
+    },
+    {
+      "prompt_key": "PAT_REPAIR_CHANGED",
+      "title": "Repair: match display to question",
+      "prompt": "A researcher needs to show how one variable changes at six ordered time points. Which display best preserves that pattern?",
+      "response_type": "single_select",
+      "options": [
+        "A labeled line graph",
+        "An unordered word list",
+        "One overall percentage",
+        "A table with no time labels"
+      ]
+    },
+    {
+      "prompt_key": "PAT_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "A new sample is skewed by one extreme value, and the question asks for the middle half of observations. Which statistic fits?",
+      "response_type": "single_select",
+      "options": [
+        "Total range",
+        "Interquartile range",
+        "Arithmetic mean",
+        "Most frequent value"
+      ]
+    },
+    {
+      "prompt_key": "ERR_ENTRY",
+      "title": "Starting check: classify a shared offset",
+      "prompt": "A thermometer reads 2 degrees Celsius too high for every calibration bath. Which error is most directly indicated?",
+      "response_type": "single_select",
+      "options": [
+        "Random error only",
+        "No measurement error",
+        "Systematic error",
+        "Sampling variation only"
+      ]
+    },
+    {
+      "prompt_key": "ERR_GUIDED",
+      "title": "Guided practice: identify random scatter",
+      "prompt": "Repeated readings of a stable voltage are 4.8, 5.2, 4.9, and 5.1 volts around a 5.0-volt reference. Which description fits best?",
+      "response_type": "single_select",
+      "options": [
+        "A fixed positive calibration shift",
+        "A fixed negative calibration shift",
+        "Proof that voltage changed",
+        "Random variation around the reference"
+      ]
+    },
+    {
+      "prompt_key": "ERR_LIGHT",
+      "title": "Less help: repetition and bias",
+      "prompt": "A scale is miscalibrated and reads every mass 5 grams high. What is the best effect of taking 100 repeated readings without recalibration?",
+      "response_type": "single_select",
+      "options": [
+        "The mean remains about 5 grams high",
+        "The bias disappears completely",
+        "The true mass becomes exactly known",
+        "The readings become random around truth"
+      ]
+    },
+    {
+      "prompt_key": "ERR_SOLO",
+      "title": "Solo practice: bound significance",
+      "prompt": "A reported difference is statistically significant at the study’s stated threshold. Which conclusion is warranted from that statement alone?",
+      "response_type": "single_select",
+      "options": [
+        "The effect is practically large",
+        "Data are less compatible with the null",
+        "The proposed mechanism is proven",
+        "The result will replicate in every setting"
+      ]
+    },
+    {
+      "prompt_key": "ERR_NEAR",
+      "title": "Near exit: distinguish error types",
+      "prompt": "Measurements vary widely above and below a reference, but their average is close to the reference. Which pattern is most evident?",
+      "response_type": "single_select",
+      "options": [
+        "Large fixed positive bias",
+        "Large fixed negative bias",
+        "Substantial random error",
+        "Zero uncertainty"
+      ]
+    },
+    {
+      "prompt_key": "ERR_CHANGED",
+      "title": "Changed exit: interpret an interval",
+      "prompt": "An estimated mean difference is 3 units with a confidence interval from 1 to 5 units. Which statement is most appropriately bounded?",
+      "response_type": "single_select",
+      "options": [
+        "The true effect is exactly 3 units",
+        "Every future sample must show an increase",
+        "The practical importance is proven",
+        "The procedure’s interval lies above zero"
+      ]
+    },
+    {
+      "prompt_key": "ERR_REPAIR_NEAR",
+      "title": "Repair: use direction and scatter",
+      "prompt": "All readings cluster tightly 4 units below a certified reference. Which error pattern should be named first?",
+      "response_type": "single_select",
+      "options": [
+        "Systematic negative error",
+        "Random scatter only",
+        "No error because spread is small",
+        "A positive calibration shift"
+      ]
+    },
+    {
+      "prompt_key": "ERR_REENTRY_NEAR",
+      "title": "Fresh re-entry: classify new readings",
+      "prompt": "A pipette delivers 9.2, 10.8, 9.5, and 10.5 milliliters around a 10.0-milliliter target. Which feature is most apparent?",
+      "response_type": "single_select",
+      "options": [
+        "One fixed positive offset",
+        "Random variation around the target",
+        "One fixed negative offset",
+        "Exact delivery without uncertainty"
+      ]
+    },
+    {
+      "prompt_key": "ERR_REPAIR_CHANGED",
+      "title": "Repair: preserve interval uncertainty",
+      "prompt": "A confidence interval for a difference spans from -2 to 4 units. Which statement avoids overclaiming?",
+      "response_type": "single_select",
+      "options": [
+        "The groups are certainly identical",
+        "The effect is certainly positive",
+        "The interval includes zero",
+        "The study proves no relationship"
+      ]
+    },
+    {
+      "prompt_key": "ERR_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "A new estimate is 8 units with an interval from 6 to 10 units. Which claim is supported without adding practical or causal meaning?",
+      "response_type": "single_select",
+      "options": [
+        "The mechanism is confirmed",
+        "The effect is important in practice",
+        "Every replication will match 8",
+        "The interval is entirely positive"
+      ]
+    },
+    {
+      "prompt_key": "CON_ENTRY",
+      "title": "Starting check: association versus cause",
+      "prompt": "In an observational sample, higher sleep duration is associated with higher quiz scores. Which conclusion is supported?",
+      "response_type": "single_select",
+      "options": [
+        "Sleep duration and scores were associated",
+        "More sleep caused every score increase",
+        "Quiz design caused longer sleep",
+        "All students need a sleep policy"
+      ]
+    },
+    {
+      "prompt_key": "CON_GUIDED",
+      "title": "Guided practice: match claim to result",
+      "prompt": "A controlled comparison shows group X had a lower mean reaction time than group Y under the tested condition. Which conclusion is directly supported?",
+      "response_type": "single_select",
+      "options": [
+        "X is faster in every possible setting",
+        "Group X had the lower tested mean",
+        "The condition explains all human reaction time",
+        "Group Y should be excluded from testing"
+      ]
+    },
+    {
+      "prompt_key": "CON_LIGHT",
+      "title": "Less help: retain an alternative",
+      "prompt": "Neighborhoods with more trees report lower summer temperatures, but tree cover was not assigned. Which conclusion is best bounded?",
+      "response_type": "single_select",
+      "options": [
+        "Trees alone caused the lower temperatures",
+        "Temperature determined every tree location",
+        "Tree cover correlated with temperature",
+        "All cities must adopt one planting rule"
+      ]
+    },
+    {
+      "prompt_key": "CON_SOLO",
+      "title": "Solo practice: reject overreach",
+      "prompt": "A treatment group improved by 3 points on one measured outcome compared with control. No other outcomes were measured. Which claim is supported?",
+      "response_type": "single_select",
+      "options": [
+        "The treatment improved every relevant outcome",
+        "The treatment has no possible adverse effects",
+        "The treatment should be mandatory",
+        "Only the measured outcome improved"
+      ]
+    },
+    {
+      "prompt_key": "CON_NEAR",
+      "title": "Near exit: choose the strongest bounded claim",
+      "prompt": "Under the tested conditions, enzyme activity rose as substrate concentration increased from 1 to 4 millimolar. Which conclusion is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Activity rose across the tested range",
+        "Activity rises without limit at all concentrations",
+        "Substrate caused every change in the sample",
+        "The enzyme should be used clinically"
+      ]
+    },
+    {
+      "prompt_key": "CON_CHANGED",
+      "title": "Changed exit: preserve alternatives",
+      "prompt": "Two schools using a new schedule have higher attendance than two schools using the old schedule, but the schools also differ in transit access. Which conclusion is best?",
+      "response_type": "single_select",
+      "options": [
+        "The schedule alone caused higher attendance",
+        "Schedule and attendance differed",
+        "Transit access had no possible influence",
+        "Every school should adopt the schedule"
+      ]
+    },
+    {
+      "prompt_key": "CON_REPAIR_NEAR",
+      "title": "Repair: remove the unsupported clause",
+      "prompt": "Result: plants under blue light grew taller than plants under red light for 14 days. Which conclusion removes unsupported scope?",
+      "response_type": "single_select",
+      "options": [
+        "Blue light always maximizes all plant growth",
+        "Red light permanently prevents growth",
+        "Blue-light plants were taller at day 14",
+        "All growers should use only blue light"
+      ]
+    },
+    {
+      "prompt_key": "CON_REENTRY_NEAR",
+      "title": "Fresh re-entry: bound a new result",
+      "prompt": "A new trial finds a lower mean pulse rate in condition A than B during a five-minute observation. Which conclusion is supported?",
+      "response_type": "single_select",
+      "options": [
+        "A lowers pulse permanently",
+        "B causes every high pulse reading",
+        "Condition A should replace all alternatives",
+        "Mean pulse was lower in A during testing"
+      ]
+    },
+    {
+      "prompt_key": "CON_REPAIR_CHANGED",
+      "title": "Repair: keep the alternative visible",
+      "prompt": "Result: neighborhoods with a weekly market show more foot traffic, but they are also closer to transit stops. Which conclusion is bounded?",
+      "response_type": "single_select",
+      "options": [
+        "Markets correlated with foot traffic",
+        "Markets alone caused all added traffic",
+        "Transit proximity cannot matter",
+        "Markets should be required everywhere"
+      ]
+    },
+    {
+      "prompt_key": "CON_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "A new data set links rehearsal frequency with performance ratings, but prior experience also differs across participants. Which conclusion fits?",
+      "response_type": "single_select",
+      "options": [
+        "Rehearsal alone caused every rating",
+        "Rehearsal and ratings were associated",
+        "Prior experience had no possible role",
+        "All performers need one rehearsal quota"
+      ]
+    },
+    {
+      "prompt_key": "PRJ_ENTRY",
+      "title": "Starting check: predict a repeat",
+      "prompt": "Mean output is 20 units at setting A and 31 units at setting B. A new trial repeats setting B under similar conditions. Which prediction is most bounded?",
+      "response_type": "single_select",
+      "options": [
+        "Output must equal 31 units exactly",
+        "Output will increase forever",
+        "Mean output may again be near 31 units",
+        "Setting B should be mandatory"
+      ]
+    },
+    {
+      "prompt_key": "PRJ_GUIDED",
+      "title": "Guided practice: stay within range",
+      "prompt": "A graph shows response rising from doses 1 to 2 to 3 milligrams. Which implication is supported for a repeat at 2 milligrams?",
+      "response_type": "single_select",
+      "options": [
+        "A response above every future dose",
+        "An exact response for every participant",
+        "A universal dosing recommendation",
+        "A response near the prior 2-mg mean"
+      ]
+    },
+    {
+      "prompt_key": "PRJ_LIGHT",
+      "title": "Less help: avoid unbounded extension",
+      "prompt": "Accuracy rises across 5, 10, and 15 practice trials. Which prediction is not supported by those data alone?",
+      "response_type": "single_select",
+      "options": [
+        "Accuracy rises forever",
+        "A repeat at 10 trials may resemble the prior mean",
+        "A repeat may show sampling variation",
+        "The observed range shows an upward pattern"
+      ]
+    },
+    {
+      "prompt_key": "PRJ_SOLO",
+      "title": "Solo practice: changed-condition implication",
+      "prompt": "A treatment effect appeared only when temperature stayed below 20 degrees Celsius. A new trial runs at 28 degrees. Which implication is best?",
+      "response_type": "single_select",
+      "options": [
+        "The effect must be identical at 28 degrees",
+        "The effect may change at 28 degrees",
+        "Temperature can never matter",
+        "The treatment should be banned"
+      ]
+    },
+    {
+      "prompt_key": "PRJ_NEAR",
+      "title": "Near exit: bounded replication",
+      "prompt": "A table shows mean recall of 12 words after a 20-minute delay in three comparable samples. What is the most bounded prediction for a fourth comparable sample?",
+      "response_type": "single_select",
+      "options": [
+        "Every person will recall 12 words",
+        "Recall will always equal 12 words",
+        "Mean recall may be near 12 words",
+        "Twenty minutes is ideal policy"
+      ]
+    },
+    {
+      "prompt_key": "PRJ_CHANGED",
+      "title": "Changed exit: alter one condition",
+      "prompt": "A pattern links brighter light with faster growth when water is constant. In a new condition, water becomes severely limited. Which implication is best?",
+      "response_type": "single_select",
+      "options": [
+        "Brightness must preserve the same growth gain",
+        "Water limitation cannot affect growth",
+        "All growers should maximize brightness",
+        "The pattern may change under low water"
+      ]
+    },
+    {
+      "prompt_key": "PRJ_REPAIR_NEAR",
+      "title": "Repair: use approximate replication language",
+      "prompt": "A prior sample averaged 40 units under condition C. Which prediction for a comparable repeat is appropriately bounded?",
+      "response_type": "single_select",
+      "options": [
+        "The repeat mean may be near 40 units",
+        "The repeat must be exactly 40 units",
+        "Every observation must equal 40",
+        "Condition C should become policy"
+      ]
+    },
+    {
+      "prompt_key": "PRJ_REENTRY_NEAR",
+      "title": "Fresh re-entry: predict a new repeat",
+      "prompt": "A new set of comparable trials averages 7.5 seconds at setting D. What is a bounded prediction for another D trial set?",
+      "response_type": "single_select",
+      "options": [
+        "Its mean must be exactly 7.5",
+        "Its mean may be near 7.5 seconds",
+        "Each trial must last 7.5 seconds",
+        "Setting D should replace all settings"
+      ]
+    },
+    {
+      "prompt_key": "PRJ_REPAIR_CHANGED",
+      "title": "Repair: identify the altered link",
+      "prompt": "Performance improved with feedback when practice occurred daily. A new group practices monthly. Which implication is best?",
+      "response_type": "single_select",
+      "options": [
+        "Feedback must have the identical effect",
+        "Practice frequency cannot matter",
+        "The prior improvement may change",
+        "Monthly practice should be prohibited"
+      ]
+    },
+    {
+      "prompt_key": "PRJ_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "A new pattern shows lower noise improves detection when signal strength is fixed. A later trial weakens the signal. Which projection is bounded?",
+      "response_type": "single_select",
+      "options": [
+        "The gain must remain identical",
+        "Signal strength has no possible role",
+        "All devices should use one setting",
+        "The gain may change with weaker signal"
+      ]
+    }
+  ]
+}

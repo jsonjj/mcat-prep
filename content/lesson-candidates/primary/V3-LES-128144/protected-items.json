@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "PAT-ITEM-ENTRY",
+      "learner_prompt_key": "PAT_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "The median is 5 and is resistant to the isolated high value.",
+      "post_commitment_feedback": "The median is 5 and is resistant to the isolated high value.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PAT-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PAT-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The mean uses 30 and is pulled above most observations."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PAT-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Range measures total spread rather than a typical value."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PAT-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Standard deviation measures spread around the mean, not the typical center requested."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PAT-ITEM-GUIDED",
+      "learner_prompt_key": "PAT_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "The mean is 48 divided by 4, or 12, and the range is 14 minus 10, or 4.",
+      "post_commitment_feedback": "The mean is 48 divided by 4, or 12, and the range is 14 minus 10, or 4.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PAT-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The range uses maximum minus minimum, not half that difference."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PAT-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PAT-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The four times sum to 48, so their mean is not 11."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PAT-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt requests a mean, and range is a difference rather than the maximum value."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PAT-ITEM-LIGHT",
+      "learner_prompt_key": "PAT_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Five occurs three times, more often than any other value.",
+      "post_commitment_feedback": "Five occurs three times, more often than any other value.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PAT-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Two occurs twice, fewer times than five."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PAT-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The middle pair is 4 and 5, so the median is 4.5."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PAT-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PAT-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The range is 9 minus 2, or 7 units, not seven observations."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PAT-ITEM-SOLO",
+      "learner_prompt_key": "PAT_SOLO",
+      "correct_option_index": 3,
+      "rationale": "The larger standard deviation indicates observations are typically farther from the shared mean in group B.",
+      "post_commitment_feedback": "The larger standard deviation indicates observations are typically farther from the shared mean in group B.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PAT-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt states that the means are equal."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PAT-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Standard deviation alone does not determine the exact range."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PAT-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither standard deviation nor mean identifies sample size."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PAT-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PAT-ITEM-NEAR",
+      "learner_prompt_key": "PAT_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Each plotted value is lower than the preceding value, so a decrease across both observed intervals is directly supported.",
+      "post_commitment_feedback": "Each plotted value is lower than the preceding value, so a decrease across both observed intervals is directly supported.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PAT-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PAT-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A trend alone does not establish the treatment as its cause."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PAT-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The graph contains no future observations and cannot support unbounded extrapolation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PAT-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A clean trend does not establish that measurement error was absent."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PAT-ITEM-CHANGED",
+      "learner_prompt_key": "PAT_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Median and interquartile range resist the influence of extreme high values and describe center plus middle-half spread.",
+      "post_commitment_feedback": "Median and interquartile range resist the influence of extreme high values and describe center plus middle-half spread.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PAT-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mean and standard deviation are both influenced by the high extremes and may obscure the typical value."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PAT-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PAT-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mode and maximum do not provide a complete resistant center-and-spread pair."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PAT-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Minimum and range emphasize extremes rather than typical value and middle spread."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PAT-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "PAT_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Range equals maximum minus minimum, so it is 11 minus 3.",
+      "post_commitment_feedback": "Range equals maximum minus minimum, so it is 11 minus 3.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PAT-REPAIR_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Subtracting adjacent central values does not use the endpoints."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PAT-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding repeated values does not calculate spread."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PAT-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PAT-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dividing the sum by count calculates the mean, not the range."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PAT-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "PAT_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The ordered middle value is 7.",
+      "post_commitment_feedback": "The ordered middle value is 7.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PAT-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The mean is 40 divided by 5, or 8."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PAT-REENTRY_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Seven, not twelve, occurs most often."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PAT-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The range is 12 minus 6, or 6 units; five is the sample size."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PAT-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PAT-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "PAT_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "A line graph with ordered time points makes the temporal pattern visible while preserving axis labels.",
+      "post_commitment_feedback": "A line graph with ordered time points makes the temporal pattern visible while preserving axis labels.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PAT-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PAT-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An unordered list removes the sequence needed to read change over time."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PAT-REPAIR_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One percentage collapses the six time-specific values."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PAT-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A table without time labels cannot preserve temporal order."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PAT-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "PAT_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Interquartile range spans the middle half of ordered observations and is resistant to the extreme value.",
+      "post_commitment_feedback": "Interquartile range spans the middle half of ordered observations and is resistant to the extreme value.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PAT-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Total range is determined by the extreme endpoints."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PAT-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PAT-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mean is a center measure and is influenced by the extreme value."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PAT-REENTRY_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mode reports frequency rather than middle-half spread."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERR-ITEM-ENTRY",
+      "learner_prompt_key": "ERR_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "A consistent offset in the same direction indicates systematic calibration error.",
+      "post_commitment_feedback": "A consistent offset in the same direction indicates systematic calibration error.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERR-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Random error produces unpredictable scatter rather than one shared offset."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERR-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Agreement in direction does not mean the instrument is accurate."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERR-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERR-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The pattern concerns instrument readings, not only which cases were sampled."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERR-ITEM-GUIDED",
+      "learner_prompt_key": "ERR_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "The readings scatter on both sides of the reference without a common directional shift.",
+      "post_commitment_feedback": "The readings scatter on both sides of the reference without a common directional shift.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERR-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Some readings are below the reference, so there is no fixed positive shift."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERR-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Some readings are above the reference, so there is no fixed negative shift."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERR-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Scatter in repeated measurement does not prove the stable source changed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERR-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERR-ITEM-LIGHT",
+      "learner_prompt_key": "ERR_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Repetition can reduce uncertainty from random scatter but does not remove a fixed calibration bias.",
+      "post_commitment_feedback": "Repetition can reduce uncertainty from random scatter but does not remove a fixed calibration bias.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERR-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERR-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A fixed bias persists when the instrument is not recalibrated."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERR-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Precision from repetition does not establish the true value under bias."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERR-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Repeated biased readings need not become centered on truth."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERR-ITEM-SOLO",
+      "learner_prompt_key": "ERR_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Statistical significance concerns compatibility with a specified null model under the stated analysis.",
+      "post_commitment_feedback": "Statistical significance concerns compatibility with a specified null model under the stated analysis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERR-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Significance alone does not establish practical magnitude."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERR-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERR-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A statistical comparison does not prove a causal mechanism."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERR-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One result cannot guarantee replication across every setting."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERR-ITEM-NEAR",
+      "learner_prompt_key": "ERR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Wide bidirectional scatter with little average offset is the characteristic pattern of random error.",
+      "post_commitment_feedback": "Wide bidirectional scatter with little average offset is the characteristic pattern of random error.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A positive bias would shift the average above the reference."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A negative bias would shift the average below the reference."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Wide scatter directly indicates uncertainty rather than its absence."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERR-ITEM-CHANGED",
+      "learner_prompt_key": "ERR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The reported interval produced by the stated procedure is entirely above zero; it does not make the point estimate certain.",
+      "post_commitment_feedback": "The reported interval produced by the stated procedure is entirely above zero; it does not make the point estimate certain.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The point estimate is not an exact statement of the unknown effect."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Sampling variation prevents a guarantee about every future sample."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Interval position alone does not establish practical importance."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERR-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ERR_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Tight clustering with a shared negative offset indicates systematic negative error.",
+      "post_commitment_feedback": "Tight clustering with a shared negative offset indicates systematic negative error.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERR-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERR-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The defining feature is the common offset, not unpredictable scatter."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERR-REPAIR_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Small spread indicates precision, not accuracy."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERR-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The readings are below rather than above the reference."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERR-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ERR_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The values scatter on both sides of the target and do not share one directional offset.",
+      "post_commitment_feedback": "The values scatter on both sides of the target and do not share one directional offset.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERR-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Two readings are below the target, so the shift is not uniformly positive."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERR-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERR-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Two readings are above the target, so the shift is not uniformly negative."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERR-REENTRY_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The variation itself shows that delivery is not exact."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERR-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ERR_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The stated interval includes zero, so both negative and positive differences remain compatible with that interval procedure.",
+      "post_commitment_feedback": "The stated interval includes zero, so both negative and positive differences remain compatible with that interval procedure.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERR-REPAIR_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Including zero does not prove exact identity."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERR-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The interval also contains negative values, so positivity is not certain."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERR-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERR-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An interval crossing zero does not prove absence of every relationship."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERR-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ERR_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Both interval endpoints are positive, which is the direct interval observation.",
+      "post_commitment_feedback": "Both interval endpoints are positive, which is the direct interval observation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERR-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An interval does not confirm a mechanism."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERR-REENTRY_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Practical importance requires domain context beyond interval position."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERR-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A point estimate cannot dictate every future replication."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERR-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CON-ITEM-ENTRY",
+      "learner_prompt_key": "CON_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "The observed association supports a relationship in the sample but not a causal direction.",
+      "post_commitment_feedback": "The observed association supports a relationship in the sample but not a causal direction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CON-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CON-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Observational association does not establish causation or universality."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CON-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The result does not show quiz design changed sleep."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CON-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A policy recommendation extends beyond the presented evidence."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CON-ITEM-GUIDED",
+      "learner_prompt_key": "CON_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "The observed comparison supports only the lower mean under the tested condition.",
+      "post_commitment_feedback": "The observed comparison supports only the lower mean under the tested condition.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CON-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One condition does not justify an every-setting claim."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CON-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CON-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The result does not explain all reaction-time variation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CON-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Exclusion is a policy action not established by the comparison."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CON-ITEM-LIGHT",
+      "learner_prompt_key": "CON_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The nonassigned comparison supports association while leaving other neighborhood differences as plausible alternatives.",
+      "post_commitment_feedback": "The nonassigned comparison supports association while leaving other neighborhood differences as plausible alternatives.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CON-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Uncontrolled neighborhood differences prevent an exclusive causal claim."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CON-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The observed direction does not establish reverse causation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CON-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CON-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A universal policy is outside the presented result."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CON-ITEM-SOLO",
+      "learner_prompt_key": "CON_SOLO",
+      "correct_option_index": 3,
+      "rationale": "The evidence supports a difference on the measured outcome and nothing broader.",
+      "post_commitment_feedback": "The evidence supports a difference on the measured outcome and nothing broader.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CON-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Unmeasured outcomes cannot be included in the conclusion."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CON-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The study did not measure every possible adverse effect."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CON-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A mandate is a policy prescription beyond the result."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CON-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CON-ITEM-NEAR",
+      "learner_prompt_key": "CON_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The data support the direction only across the observed concentration range.",
+      "post_commitment_feedback": "The data support the direction only across the observed concentration range.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CON-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CON-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No values outside the tested range support an unlimited trend."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CON-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The wording claims more causal completeness than the result establishes."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CON-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Clinical use is a policy or application claim not tested here."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CON-ITEM-CHANGED",
+      "learner_prompt_key": "CON_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The observed sample difference can be stated while transit access remains a plausible alternative explanation.",
+      "post_commitment_feedback": "The observed sample difference can be stated while transit access remains a plausible alternative explanation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CON-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Concurrent transit differences prevent an alone-cause claim."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CON-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CON-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The design does not rule out transit access."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CON-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A universal recommendation exceeds the evidence boundary."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CON-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CON_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The bounded statement preserves the measured group, outcome, and time point.",
+      "post_commitment_feedback": "The bounded statement preserves the measured group, outcome, and time point.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CON-REPAIR_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The study does not cover every plant, outcome, or duration."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CON-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The red-light plants grew; the result does not show permanent prevention."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CON-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CON-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A universal practice recommendation was not tested."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CON-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CON_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The claim preserves the measured mean, comparison, and five-minute context.",
+      "post_commitment_feedback": "The claim preserves the measured mean, comparison, and five-minute context.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CON-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A brief observation does not establish permanence."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CON-REENTRY_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The result does not make B the cause of every reading."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CON-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Replacement is a policy decision outside the comparison."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CON-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CON-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CON_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The association is observed while transit proximity remains a plausible alternative.",
+      "post_commitment_feedback": "The association is observed while transit proximity remains a plausible alternative.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CON-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CON-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The comparison does not isolate markets from transit proximity."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CON-REPAIR_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The supplied alternative cannot be dismissed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CON-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A requirement is a policy prescription beyond the result."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CON-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CON_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The observed association can be stated while prior experience remains a plausible alternative.",
+      "post_commitment_feedback": "The observed association can be stated while prior experience remains a plausible alternative.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CON-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The data do not isolate rehearsal as the sole cause."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CON-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CON-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The supplied experience difference remains relevant."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CON-REENTRY_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A quota is a policy prescription not supported by the association alone."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRJ-ITEM-ENTRY",
+      "learner_prompt_key": "PRJ_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "A comparable replication supports an approximate conditional prediction near the observed mean.",
+      "post_commitment_feedback": "A comparable replication supports an approximate conditional prediction near the observed mean.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRJ-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Sampling and measurement variation prevent an exact guarantee."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRJ-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Two settings do not support an unbounded trend."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRJ-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRJ-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A mandate is a policy conclusion not established by the data."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRJ-ITEM-GUIDED",
+      "learner_prompt_key": "PRJ_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "The repeated dose lies inside the observed range and supports an approximate response near its prior mean.",
+      "post_commitment_feedback": "The repeated dose lies inside the observed range and supports an approximate response near its prior mean.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRJ-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The observed pattern does not place 2 milligrams above every future dose."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRJ-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Group means do not determine every individual response."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRJ-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A recommendation exceeds the data-supported implication."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRJ-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRJ-ITEM-LIGHT",
+      "learner_prompt_key": "PRJ_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Three observed settings cannot support indefinite improvement outside the tested range.",
+      "post_commitment_feedback": "Three observed settings cannot support indefinite improvement outside the tested range.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRJ-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRJ-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A within-range repeat can reasonably be compared with the prior mean."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRJ-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Variation remains compatible with a repeated condition."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRJ-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The three observed points directly show an upward pattern."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRJ-ITEM-SOLO",
+      "learner_prompt_key": "PRJ_SOLO",
+      "correct_option_index": 1,
+      "rationale": "The new trial changes a condition associated with the observed effect, so transfer is uncertain.",
+      "post_commitment_feedback": "The new trial changes a condition associated with the observed effect, so transfer is uncertain.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRJ-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prior pattern was bounded to a lower-temperature condition."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRJ-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRJ-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The supplied condition dependence makes temperature relevant."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRJ-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A ban is a policy prescription beyond the evidence."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRJ-ITEM-NEAR",
+      "learner_prompt_key": "PRJ_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Repeated comparable samples support an approximate group-mean prediction, not an exact individual or universal value.",
+      "post_commitment_feedback": "Repeated comparable samples support an approximate group-mean prediction, not an exact individual or universal value.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRJ-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A group mean does not determine each person’s response."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRJ-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Sampling variation prevents an always-exact claim."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRJ-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRJ-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The data do not establish a policy optimum."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRJ-ITEM-CHANGED",
+      "learner_prompt_key": "PRJ_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Changing water availability alters a condition under which the light-growth relation was established.",
+      "post_commitment_feedback": "Changing water availability alters a condition under which the light-growth relation was established.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRJ-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The original relation was observed only with constant water."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRJ-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The changed condition is biologically and logically part of the supplied model."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRJ-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A universal recommendation exceeds the bounded implication."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRJ-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRJ-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "PRJ_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "A comparable replication supports an approximate mean prediction while preserving uncertainty.",
+      "post_commitment_feedback": "A comparable replication supports an approximate mean prediction while preserving uncertainty.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRJ-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRJ-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A repeat can vary around the prior estimate."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRJ-REPAIR_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A sample mean does not fix each observation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRJ-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A policy claim is outside a replication prediction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRJ-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "PRJ_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "A comparable repeat supports an approximate group-mean prediction.",
+      "post_commitment_feedback": "A comparable repeat supports an approximate group-mean prediction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRJ-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Sampling variation prevents an exact guarantee."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRJ-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRJ-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Individual trials can vary around a mean."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRJ-REENTRY_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Replacement is a policy choice not established by the repeat."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRJ-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "PRJ_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The changed practice frequency alters a condition of the observed feedback pattern.",
+      "post_commitment_feedback": "The changed practice frequency alters a condition of the observed feedback pattern.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRJ-REPAIR_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prior effect was established under daily practice."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRJ-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The new condition explicitly changes practice frequency."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRJ-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRJ-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A prohibition is a policy prescription outside the implication."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRJ-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "PRJ_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Weakening signal strength changes a condition under which the noise-detection relation was observed.",
+      "post_commitment_feedback": "Weakening signal strength changes a condition under which the noise-detection relation was observed.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRJ-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prior relation was established at fixed signal strength."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRJ-REENTRY_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The new condition makes signal strength relevant."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRJ-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A device policy exceeds the data-supported projection."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRJ-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    }
+  ]
+}

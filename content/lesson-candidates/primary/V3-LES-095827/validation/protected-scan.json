@@ -1,0 +1,65 @@
+{
+  "answerPositionPatternCheck": {
+    "itemCount": 40,
+    "positionCounts": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "maximumPositionCountSpread": 0,
+    "maximumRepeatedPositionRun": 1,
+    "status": "PASS"
+  },
+  "distractorRationaleAudit": {
+    "explicitRejectionRationaleCount": 120,
+    "incorrectOptionCount": 120,
+    "missingRationaleRefs": [],
+    "status": "PASS"
+  },
+  "findings": [],
+  "format": "lesson-generation-protected-scan/2",
+  "itemDokClaimAudit": {
+    "itemLevelDokLabelsAuthorized": false,
+    "itemLevelDokLabelsPresent": false,
+    "status": "PASS"
+  },
+  "lessonId": "V3-LES-095827",
+  "optionPresentationAudit": {
+    "auditedMeasurableItemCount": 40,
+    "correctOptionLengthThreshold": 53.109233265793314,
+    "incorrectOptionLengthMedian": 43,
+    "incorrectOptionLengthStandardDeviation": 10.109233265793316,
+    "residualLengthClueCount": 0,
+    "residualLengthClueItemIds": [],
+    "status": "PASS"
+  },
+  "postCommitmentFeedbackCheck": {
+    "authoredCount": 40,
+    "requiredCount": 40,
+    "status": "PASS"
+  },
+  "prerequisiteHandoffAudit": {
+    "exactPacketHandoffsPresent": true,
+    "requiredLessonIds": [
+      "V3-LES-191933",
+      "V3-LES-556584"
+    ],
+    "status": "PASS"
+  },
+  "protectedArtifact": {
+    "path": "protected-items.json",
+    "sha256": "69233cb49b150259924ac317026431e71bff145cd219cea64d8bce5a1a34c740",
+    "size": 70047
+  },
+  "scannedPathCount": 6,
+  "scannedPaths": [
+    "learner-safe-items.json",
+    "source-claim-ledger.json",
+    "candidate-quality-ledger.json",
+    "validation/lesson-validate.json",
+    "validation/computed-quality.json",
+    "validation/normalization-smoke.json"
+  ],
+  "status": "PASS"
+}
