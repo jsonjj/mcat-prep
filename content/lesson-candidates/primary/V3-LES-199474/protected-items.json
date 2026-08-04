@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "ISOM-ITEM-ENTRY",
+      "learner_prompt_key": "ISOM_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Allowed single-bond rotation changes conformation without changing connectivity or configuration.",
+      "post_commitment_feedback": "Rotation about an allowed single bond produces conformers of the same compound.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ISOM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ISOM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt states that the carbon skeleton and connectivity are unchanged."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ISOM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ordinary bond rotation does not establish a nonsuperimposable mirror pair."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ISOM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Different drawings can represent the same molecular identity."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ISOM-ITEM-GUIDED",
+      "learner_prompt_key": "ISOM_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "The same formula has different atom connectivity: aldehyde versus ketone.",
+      "post_commitment_feedback": "The carbonyl group has different connectivity, so the pair consists of structural isomers.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ISOM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rotation cannot move the carbonyl carbon from chain end to chain middle."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ISOM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ISOM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A mirror relationship is not the source of the connectivity difference."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ISOM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A shared formula is necessary for isomerism but does not prove identity."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ISOM-ITEM-LIGHT",
+      "learner_prompt_key": "ISOM_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Inversion of every stereocenter with a nonsuperimposable mirror relation defines enantiomers.",
+      "post_commitment_feedback": "Same connectivity plus a nonsuperimposable mirror relationship identifies enantiomers.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ISOM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rotation cannot interconvert a nonsuperimposable mirror pair."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ISOM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt states that connectivity is the same."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ISOM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ISOM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No double-bond or ring-side relation is specified."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ISOM-ITEM-SOLO",
+      "learner_prompt_key": "ISOM_SOLO",
+      "correct_option_index": 3,
+      "rationale": "The pair is stereoisomeric but not a mirror pair, which defines diastereomers.",
+      "post_commitment_feedback": "With one matching and one inverted center, the same-connectivity pair is diastereomeric.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ISOM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A changed configurational center prevents identity."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ISOM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Enantiomers would invert every corresponding stereocenter in this case."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ISOM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Spatial configuration changed while connectivity remained fixed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ISOM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ISOM-ITEM-NEAR",
+      "learner_prompt_key": "ISOM_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Nonsuperimposable mirror images with the same connectivity are enantiomers.",
+      "post_commitment_feedback": "The defining evidence is a nonsuperimposable mirror relationship, so the pair is enantiomeric.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ISOM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ISOM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Conformers interconvert by allowed rotation and are not a nonsuperimposable mirror pair."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ISOM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Structural isomers differ in connectivity, which is fixed here."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ISOM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Whole-molecule rotation cannot superimpose the stated pair."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ISOM-ITEM-CHANGED",
+      "learner_prompt_key": "ISOM_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Same-face versus opposite-face configuration gives a cis–trans diastereomeric pair.",
+      "post_commitment_feedback": "The ring-face relationship changes from cis to trans, producing diastereomers.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ISOM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A chair flip changes axial/equatorial positions but preserves cis or trans face relation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ISOM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ISOM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt fixes the atom connectivity and ring skeleton."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ISOM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cis–trans partners are not automatically mirror images."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ISOM-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ISOM_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Connectivity decides structural identity before any stereochemical test.",
+      "post_commitment_feedback": "Build and compare atom-neighbor lists first; only same-connectivity pairs proceed to stereochemical tests.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ISOM-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Page orientation can change under whole-molecule rotation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ISOM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Names can be incomplete or differently formatted and do not replace structural comparison."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ISOM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ISOM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A physical property is not the first classifier of molecular connectivity."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ISOM-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ISOM_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The fresh pair repeats the failed exit function: classify a same-connectivity nonsuperimposable mirror pair.",
+      "post_commitment_feedback": "The defining evidence is a nonsuperimposable mirror relationship, so the fresh pair is enantiomeric.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ISOM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A nonsuperimposable mirror pair cannot be made identical by changing page orientation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ISOM-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Allowed single-bond rotation does not interconvert nonsuperimposable mirror partners."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ISOM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt explicitly preserves atom connectivity."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ISOM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ISOM-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ISOM_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Allowed single-bond rotation changes conformation while preserving connectivity and configuration.",
+      "post_commitment_feedback": "Conformers arise from allowed rotations that preserve both connectivity and fixed stereochemical configuration.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ISOM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ISOM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Changing alkene configuration requires disrupting the π-bond constraint."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ISOM-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Inverting a fixed center creates a configurational relationship."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ISOM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Changing connectivity creates a structural isomer."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ISOM-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ISOM_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The fresh pair repeats the failed exit function: classify same-connectivity ring structures that differ by same-face versus opposite-face substitution.",
+      "post_commitment_feedback": "Same-face and opposite-face ring substitution gives a cis–trans diastereomeric relationship.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ISOM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ring motion does not interchange fixed cis and trans configurations."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ISOM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ISOM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt states that connectivity is unchanged."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ISOM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cis–trans partners are diastereomeric, not necessarily mirror images."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONF-ITEM-ENTRY",
+      "learner_prompt_key": "CONF_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Four different groups at a tetrahedral carbon provide the required configurational distinction.",
+      "post_commitment_feedback": "A tetrahedral carbon with four different substituent groups can serve as a stereogenic center.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONF-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Two identical hydrogen substituents prevent four-group distinction."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONF-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONF-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A trigonal-planar carbonyl carbon is not the tetrahedral center described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONF-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Four equivalent hydrogen substituents make methane achiral."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONF-ITEM-GUIDED",
+      "learner_prompt_key": "CONF_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Directly attached atomic numbers give Br > O > C > H.",
+      "post_commitment_feedback": "For directly attached atoms, decreasing atomic number gives Br, O, C, then H.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONF-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the atomic-number ordering."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONF-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Bromine has higher atomic number than oxygen."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONF-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Carbon does not outrank oxygen or bromine."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONF-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONF-ITEM-LIGHT",
+      "learner_prompt_key": "CONF_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "With group 4 away, a clockwise 1→2→3 path is R.",
+      "post_commitment_feedback": "Priority 4 is away, so the observed clockwise path is retained and the center is R.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONF-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONF-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "S would correspond to counterclockwise when group 4 is away."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONF-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Z labels alkene geometry, not a tetrahedral center."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONF-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Clockwise is decisive after the lowest-priority orientation is established."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONF-ITEM-SOLO",
+      "learner_prompt_key": "CONF_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Clockwise appears R, then inversion for group 4 toward gives S.",
+      "post_commitment_feedback": "Because priority 4 points toward the viewer, invert the apparent clockwise result to obtain S.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONF-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The clockwise rule cannot be retained when priority 4 points toward."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONF-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONF-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "E applies to substituted alkene geometry."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONF-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The supplied orientation is sufficient for assignment."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONF-ITEM-NEAR",
+      "learner_prompt_key": "CONF_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Counterclockwise with the lowest priority away is S.",
+      "post_commitment_feedback": "With priority 4 away, the counterclockwise path directly assigns S.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONF-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "R would require clockwise with group 4 away."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONF-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "E is a double-bond descriptor."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONF-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONF-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Z is a double-bond descriptor."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONF-ITEM-CHANGED",
+      "learner_prompt_key": "CONF_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Opposite placement of the selected high-priority groups gives E.",
+      "post_commitment_feedback": "The separately selected high-priority groups occupy opposite sides, so the alkene is E.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONF-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Z requires the two selected high-priority groups to be on the same side."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONF-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONF-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Clockwise R/S tracing does not assign alkene geometry."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONF-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Counterclockwise R/S tracing does not assign alkene geometry."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONF-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CONF_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The direction of priority 4 determines whether the apparent path is retained or inverted.",
+      "post_commitment_feedback": "Record the lowest-priority group’s orientation before interpreting clockwise or counterclockwise motion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONF-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Name numbering does not set viewing orientation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONF-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Bond color is not a stereochemical convention."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONF-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONF-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Boiling point does not control R/S assignment."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONF-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CONF_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The fresh item repeats the failed exit function: convert a 1→2→3 path to R/S when priority 4 points away.",
+      "post_commitment_feedback": "With priority 4 away, the clockwise 1→2→3 path is read directly as R.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONF-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONF-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "E labels alkene geometry rather than a tetrahedral stereocenter."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONF-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "With priority 4 away, a clockwise path is R rather than S."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONF-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Z labels alkene geometry rather than a tetrahedral stereocenter."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONF-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CONF_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Each alkene carbon is evaluated separately before the selected groups are compared.",
+      "post_commitment_feedback": "First identify one high-priority substituent on each alkene carbon, then compare their sides.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONF-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "E/Z does not use one four-group clockwise trace."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONF-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "CIP priority is not physical group size."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONF-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Trigonal alkene carbons are not assigned R/S by this procedure."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONF-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONF-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CONF_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The fresh item repeats the failed exit function: compare the selected higher-priority group on each alkene carbon.",
+      "post_commitment_feedback": "The selected higher-priority groups occupy opposite sides, so the alkene is E.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONF-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "R labels a tetrahedral stereocenter rather than alkene geometry."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONF-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Z requires the selected higher-priority groups to share one side."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONF-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONF-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "S labels a tetrahedral stereocenter rather than alkene geometry."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPT-ITEM-ENTRY",
+      "learner_prompt_key": "OPT_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "The positive sign directly reports the observed rotation direction.",
+      "post_commitment_feedback": "The measurement establishes positive optical rotation under the stated conditions, not an R/S assignment.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPT-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rotation sign does not determine an R/S label."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPT-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal enantiomer amounts would cancel rather than give +12°."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPT-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Optical activity is compatible with stereogenic structure."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPT-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPT-ITEM-GUIDED",
+      "learner_prompt_key": "OPT_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Pure enantiomers have equal-magnitude, opposite-sign specific rotations.",
+      "post_commitment_feedback": "Under matched conditions, the pure mirror partner is expected to rotate by −18°.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPT-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mirror partners do not double the magnitude under matched conditions."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPT-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPT-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Zero would describe cancellation or achirality, not a pure mirror partner."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPT-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Keeping the same sign fails to distinguish the mirror partner’s optical rotation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPT-ITEM-LIGHT",
+      "learner_prompt_key": "OPT_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Equal and opposite enantiomer rotations cancel in a racemic mixture.",
+      "post_commitment_feedback": "Equal amounts of mirror partners contribute equal and opposite rotations, yielding zero net rotation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPT-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The positive contribution is canceled by the equal negative contribution."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPT-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The negative contribution is canceled by the equal positive contribution."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPT-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPT-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The contributions have opposite signs rather than adding in one direction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPT-ITEM-SOLO",
+      "learner_prompt_key": "OPT_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Both molecular achirality and cancellation are compatible with the observation.",
+      "post_commitment_feedback": "Zero net rotation has multiple compatible causes and cannot uniquely establish molecular identity.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPT-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A racemic mixture can contain stereocenters and still show zero net rotation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPT-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A meso compound is one possibility, not the only explanation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPT-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A single nonzero-rotating enantiomer would not ordinarily give zero."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPT-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPT-ITEM-NEAR",
+      "learner_prompt_key": "OPT_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The magnitude ratio is 6/24 = 0.25, and the sign identifies the excess direction.",
+      "post_commitment_feedback": "The observed-to-pure magnitude ratio is 0.25, so the sample has 25% excess of the positive rotator.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPT-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPT-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A 50% excess would produce half the pure rotation, or +12°."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPT-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The observed sign is positive, not negative."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPT-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A racemic mixture would give zero net rotation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPT-ITEM-CHANGED",
+      "learner_prompt_key": "OPT_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Equal-magnitude opposite rotations cancel in the combined racemic composition.",
+      "post_commitment_feedback": "Equal amounts of the two mirror partners cancel optically, giving zero net rotation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPT-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Opposite signs cancel rather than add positively."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPT-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPT-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Opposite signs cancel rather than add negatively."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPT-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mixing does not change the molecular configurations into one label."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPT-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "OPT_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Rotation direction is empirical and independent of the naming convention.",
+      "post_commitment_feedback": "Treat rotation sign as measured evidence; an R or S label does not predict that sign.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPT-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No universal rule maps positive rotation to R."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPT-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No universal rule maps negative rotation to S."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPT-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPT-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pure enantiomers commonly show nonzero opposite rotations."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPT-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "OPT_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The fresh item repeats the failed exit function: divide observed rotation by the pure-enantiomer reference and retain the observed sign.",
+      "post_commitment_feedback": "The ratio 5/20 is 25%, and the positive sign identifies excess of the positive rotator.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPT-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPT-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The observed magnitude is one-quarter, not one-half, of the pure reference."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPT-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnitude is not 75%, and the sign points toward the positive rotator."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPT-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A racemic mixture would give zero net rotation under the matched conditions."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPT-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "OPT_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Composition or structure can reveal cancellation versus intrinsic achirality.",
+      "post_commitment_feedback": "Use independent composition or structural evidence to distinguish cancellation from an achiral identity.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPT-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Repeating the same net result does not distinguish its molecular cause."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPT-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPT-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Volume alone does not distinguish the two zero-rotation mechanisms."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPT-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A label change supplies no molecular evidence."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPT-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "OPT_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The fresh item repeats the failed exit function: combine equal contributions from pure mirror partners with equal and opposite rotations.",
+      "post_commitment_feedback": "Equal opposite rotations cancel, producing zero net rotation without changing molecular identity.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPT-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal opposite contributions cancel rather than add in the positive direction."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPT-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal opposite contributions cancel rather than add in the negative direction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPT-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mixing enantiomers does not change either molecule's absolute configuration."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPT-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMF-ITEM-ENTRY",
+      "learner_prompt_key": "IMF_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "The asymmetric bond-dipole arrangement in CH3Cl does not cancel, while symmetric CCl4 does.",
+      "post_commitment_feedback": "Bond dipoles cancel in symmetric CCl4 but not in asymmetric CH3Cl.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMF-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMF-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Geometry alone does not ensure cancellation when substituents differ."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMF-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The four equivalent C–Cl dipoles cancel in the symmetric tetrahedron."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMF-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Four bonds do not guarantee a zero molecular dipole."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMF-ITEM-GUIDED",
+      "learner_prompt_key": "IMF_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "The O–H donor and oxygen acceptor support intermolecular hydrogen bonding.",
+      "post_commitment_feedback": "Methanol molecules can donate and accept hydrogen bonds through their O–H and oxygen sites.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMF-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neutral methanol molecules are not an ionic lattice."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMF-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMF-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Methanol is not a metal with delocalized metallic bonding."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMF-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ordinary intermolecular association does not require new covalent bonds."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMF-ITEM-LIGHT",
+      "learner_prompt_key": "IMF_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The polar carbonyl supports dipole interactions, and every molecule has dispersion.",
+      "post_commitment_feedback": "Pure acetone exhibits permanent-dipole attraction and London dispersion but lacks self hydrogen-bond donation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMF-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Acetone lacks a hydrogen-bond donor and still has dispersion."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMF-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ion–dipole attraction requires ions, which are not present in pure acetone."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMF-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMF-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "All molecular substances experience intermolecular attraction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMF-ITEM-SOLO",
+      "learner_prompt_key": "IMF_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Greater polarizability strengthens dispersion and supports the higher boiling point of I2.",
+      "post_commitment_feedback": "I2 has the more polarizable electron cloud, stronger dispersion, and higher expected boiling point.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMF-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Larger, not smaller, electron clouds are generally more polarizable."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMF-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither elemental diatomic molecule supplies a hydrogen-bond donor."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMF-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both homonuclear diatomic molecules are nonpolar."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMF-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMF-ITEM-NEAR",
+      "learner_prompt_key": "IMF_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Ethanol’s donor and acceptor sites support stronger self-association.",
+      "post_commitment_feedback": "Ethanol’s O–H group enables self hydrogen bonding and supports a higher boiling point.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMF-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMF-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lack of an O–H donor weakens rather than strengthens ether self-association."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMF-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Shared formula does not make intermolecular-force patterns identical."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMF-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both compounds are neutral molecular substances, not ionic lattices."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMF-ITEM-CHANGED",
+      "learner_prompt_key": "IMF_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The less compact straight chain permits greater surface contact and stronger dispersion.",
+      "post_commitment_feedback": "Greater surface contact in straight-chain pentane strengthens dispersion and supports its higher boiling point.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMF-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither hydrocarbon has a hydrogen-bond donor."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMF-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMF-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No ions are present in the pure hydrocarbons."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMF-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both hydrocarbons are treated as nonpolar in this comparison."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMF-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "IMF_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The sequence keeps universal dispersion and adds interactions only when structural features warrant them.",
+      "post_commitment_feedback": "Start with universal dispersion, then add permanent-dipole and hydrogen-bonding interactions when structure supports them.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMF-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dispersion is present even when hydrogen bonding also occurs."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMF-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A polar bond does not turn a neutral molecular sample into an ionic lattice."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMF-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMF-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intermolecular attraction does not generally form new covalent bonds."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMF-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "IMF_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The fresh item repeats the failed exit function: compare boiling points of same-formula isomers that differ in self hydrogen-bond donation.",
+      "post_commitment_feedback": "The alcohol can form an intermolecular hydrogen-bond network, supporting its higher boiling point.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMF-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMF-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Removing self hydrogen-bond donation weakens rather than strengthens the relevant attraction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMF-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A shared formula does not make intermolecular attractions identical."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMF-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These neutral molecular substances are not compared through ion–ion attraction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMF-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "IMF_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "More energy is needed to separate molecules, while fewer escape into vapor at a fixed temperature.",
+      "post_commitment_feedback": "Stronger attraction generally raises boiling point and lowers vapor pressure at a fixed temperature.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMF-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Stronger attraction resists vaporization and generally raises boiling point."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMF-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Stronger attraction generally lowers, not raises, equilibrium vapor pressure."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMF-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMF-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intermolecular attractions materially affect phase-change properties."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMF-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "IMF_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The fresh item repeats the failed exit function: compare boiling points of nonpolar isomers using branching and molecular contact.",
+      "post_commitment_feedback": "The less-branched chain offers greater surface contact, supporting stronger dispersion and a higher boiling point.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMF-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither hydrocarbon supplies the donor and acceptor pattern required for hydrogen bonding."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMF-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neutral nonpolar hydrocarbons are compared primarily through dispersion, not ion–dipole attraction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMF-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Branching does not create a permanent dipole in this nonpolar hydrocarbon pair."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMF-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; unresolved fresh re-entry returns control without target exit credit.",
+  "items": [
+    {
+      "prompt_key": "ORG_ENTRY",
+      "title": "Entry check: genome compartment",
+      "prompt": "A eukaryotic cell must regulate access to most of its genomic DNA through a double membrane containing selective pores. Which compartment fits?",
+      "response_type": "single_select",
+      "options": [
+        "Nucleus",
+        "Lysosome",
+        "Golgi apparatus",
+        "Peroxisome"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "ORG_GUIDED",
+      "title": "Guided practice: ATP production",
+      "prompt": "A mutation disrupts the inner membrane that maintains the gradient used for most aerobic ATP production. Which organelle is directly affected?",
+      "response_type": "single_select",
+      "options": [
+        "Smooth endoplasmic reticulum",
+        "Mitochondrion",
+        "Nucleolus",
+        "Lysosome"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ORG_LIGHT",
+      "title": "Less support: acidic hydrolysis",
+      "prompt": "A compartment contains acid hydrolases and receives damaged macromolecules for controlled degradation. Which compartment is described?",
+      "response_type": "single_select",
+      "options": [
+        "Mitochondrion",
+        "Golgi apparatus",
+        "Lysosome",
+        "Nucleus"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ORG_SOLO",
+      "title": "Independent practice: peroxide handling",
+      "prompt": "A cell cannot efficiently break down hydrogen peroxide generated during an oxidative reaction. Which organelle defect is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Rough endoplasmic reticulum",
+        "Nuclear envelope",
+        "Golgi apparatus",
+        "Peroxisome"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ORG_NEAR",
+      "title": "Near exit: ribosomal-subunit assembly",
+      "prompt": "A cell loses a dense nuclear region where ribosomal RNA is produced and early ribosomal subunits are assembled. Which structure is missing?",
+      "response_type": "single_select",
+      "options": [
+        "Nucleolus",
+        "Lysosomal lumen",
+        "Smooth ER tubule",
+        "Golgi vesicle"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ORG_CHANGED",
+      "title": "Changed exit: cargo sorting defect",
+      "prompt": "A secreted protein enters the ER normally but is not properly modified or sorted into its final outgoing package. Which compartment is most directly implicated?",
+      "response_type": "single_select",
+      "options": [
+        "Peroxisome",
+        "Golgi apparatus",
+        "Mitochondrion",
+        "Nucleolus"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ORG_REPAIR_NEAR",
+      "title": "Repair: extract the compartment verb",
+      "prompt": "Which prompt rewrite best supports organelle localization before choosing an answer?",
+      "response_type": "single_select",
+      "options": [
+        "Replace every process with the word “cell”",
+        "Choose the largest organelle in the diagram",
+        "State the defect verb and substrate",
+        "Count the number of membranes without reading function"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ORG_REENTRY_NEAR",
+      "title": "Fresh re-entry: lipid synthesis",
+      "prompt": "A fresh cell defect selectively reduces synthesis of many membrane lipids while rough-ER protein entry remains intact. Which compartment is most directly affected?",
+      "response_type": "single_select",
+      "options": [
+        "Nucleolus",
+        "Lysosome",
+        "Mitochondrial matrix",
+        "Smooth endoplasmic reticulum"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ORG_REPAIR_CHANGED",
+      "title": "Repair: lysosome versus peroxisome",
+      "prompt": "Which distinction correctly separates lysosomal from peroxisomal function?",
+      "response_type": "single_select",
+      "options": [
+        "Lysosome hydrolyzes; peroxisome oxidizes",
+        "Lysosomes make ATP; peroxisomes store nuclear DNA",
+        "Lysosomes sort secreted cargo; peroxisomes assemble ribosomes",
+        "Lysosomes synthesize lipids; peroxisomes form nuclear pores"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ORG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: nuclear traffic",
+      "prompt": "A mutation closes nuclear pores while leaving the nuclear envelope intact. Which direct process is most disrupted?",
+      "response_type": "single_select",
+      "options": [
+        "Acidification of lysosomal contents",
+        "Regulated nuclear–cytoplasmic exchange",
+        "Sorting of proteins into Golgi vesicles",
+        "Oxidation of peroxide in peroxisomes"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "SEC_ENTRY",
+      "title": "Entry check: secreted-protein start",
+      "prompt": "A newly synthesized protein will be released from the cell. Which early localization is expected for its ordinary biosynthetic route?",
+      "response_type": "single_select",
+      "options": [
+        "Completion only inside the nucleus",
+        "Direct synthesis inside a lysosome",
+        "Ribosome engagement with rough ER",
+        "Translation by enzymes inside the Golgi"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "SEC_GUIDED",
+      "title": "Guided practice: order the route",
+      "prompt": "Which sequence correctly orders the major route for a soluble secreted protein?",
+      "response_type": "single_select",
+      "options": [
+        "Golgi → rough ER → ribosome → nucleus",
+        "Lysosome → mitochondrion → Golgi → release",
+        "Smooth ER → nucleolus → peroxisome → release",
+        "Rough ER → Golgi → outgoing package"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "SEC_LIGHT",
+      "title": "Less support: smooth-ER role",
+      "prompt": "Which process is most strongly associated with smooth ER rather than ribosome-studded rough ER?",
+      "response_type": "single_select",
+      "options": [
+        "Synthesis of many membrane lipids",
+        "Translation of a secreted peptide into the ER lumen",
+        "Assembly of ribosomal subunits in the nucleus",
+        "Acidic degradation of an engulfed particle"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "SEC_SOLO",
+      "title": "Independent practice: failed ER targeting",
+      "prompt": "A secreted enzyme loses the signal needed for rough-ER entry. What is the earliest likely consequence?",
+      "response_type": "single_select",
+      "options": [
+        "The enzyme reaches Golgi before translation begins",
+        "Translation stays outside the ER route",
+        "The enzyme is synthesized inside a peroxisome",
+        "Nuclear pores package the enzyme for secretion"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "SEC_NEAR",
+      "title": "Near exit: antibody secretion",
+      "prompt": "A plasma cell produces an antibody for extracellular release. Which route best fits the cargo destination?",
+      "response_type": "single_select",
+      "options": [
+        "Free ribosome → nucleus → direct release",
+        "Smooth ER → lysosome → direct release",
+        "Rough ER → Golgi → secretory package",
+        "Peroxisome → mitochondrion → plasma membrane"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "SEC_CHANGED",
+      "title": "Changed exit: membrane-protein route",
+      "prompt": "A transmembrane receptor is synthesized and inserted into the ER membrane. What happens next in the major route toward the plasma membrane?",
+      "response_type": "single_select",
+      "options": [
+        "It becomes a soluble nuclear-DNA component",
+        "It is translated again inside a lysosome",
+        "It leaves the endomembrane system for a peroxisome",
+        "It stays membrane-bound through Golgi"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "SEC_REPAIR_NEAR",
+      "title": "Repair: start from destination",
+      "prompt": "Which question most efficiently repairs a confused protein-trafficking sequence?",
+      "response_type": "single_select",
+      "options": [
+        "Where must the finished protein function?",
+        "Which organelle name is longest?",
+        "How many membranes exist in the whole cell?",
+        "Which compartment appears first alphabetically?"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "SEC_REENTRY_NEAR",
+      "title": "Fresh re-entry: digestive-enzyme secretion",
+      "prompt": "A pancreatic cell exports a newly synthesized digestive enzyme. Which sequence is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Cytosol → nucleus → mitochondrial matrix",
+        "Rough ER → Golgi → secretory carrier",
+        "Lysosome → peroxisome → nuclear pore",
+        "Smooth ER → nucleolus → extracellular space"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "SEC_REPAIR_CHANGED",
+      "title": "Repair: assign one verb per compartment",
+      "prompt": "Which pairing correctly distinguishes translation from post-ER sorting?",
+      "response_type": "single_select",
+      "options": [
+        "Golgi translates; ribosome stores DNA",
+        "Lysosome translates; nucleus sorts secretion",
+        "Ribosome translates; Golgi sorts",
+        "Peroxisome translates; smooth ER assembles ribosomes"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "SEC_REENTRY_CHANGED",
+      "title": "Fresh re-entry: ER-entry block",
+      "prompt": "A membrane channel is translated but cannot enter or insert into rough ER. Which downstream event is most directly lost?",
+      "response_type": "single_select",
+      "options": [
+        "Replication of nuclear DNA",
+        "Hydrolysis inside a lysosome",
+        "Peroxide breakdown in a peroxisome",
+        "Golgi processing of that membrane channel"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CYTO_ENTRY",
+      "title": "Entry check: crawling cell edge",
+      "prompt": "A crawling cell extends and retracts its leading edge through rapid cortical shape change. Which cytoskeletal element is most directly involved?",
+      "response_type": "single_select",
+      "options": [
+        "Actin microfilaments",
+        "Intermediate filaments only",
+        "Nuclear lamina only",
+        "Golgi cisternae"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "CYTO_GUIDED",
+      "title": "Guided practice: vesicle track",
+      "prompt": "A vesicle moves from near the cell center toward the periphery along a polarized intracellular track. Which structure best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Desmosomal junction",
+        "Microtubule",
+        "Lysosomal membrane",
+        "Intermediate filament bundle"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CYTO_LIGHT",
+      "title": "Less support: tensile resilience",
+      "prompt": "A tissue cell must resist repeated stretching without losing mechanical integrity. Which cytoskeletal network is most associated with durable tensile support?",
+      "response_type": "single_select",
+      "options": [
+        "Actin cleavage ring",
+        "Ciliary axoneme",
+        "Intermediate filaments",
+        "Golgi transport vesicles"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CYTO_SOLO",
+      "title": "Independent practice: ciliary beating",
+      "prompt": "A mutation disrupts the core tracks required for ciliary bending and coordinated beating. Which element is directly affected?",
+      "response_type": "single_select",
+      "options": [
+        "Actin stress fibers",
+        "Intermediate filaments",
+        "Extracellular collagen",
+        "Microtubules"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CYTO_NEAR",
+      "title": "Near exit: cleavage furrow",
+      "prompt": "A dividing animal cell cannot constrict its cleavage furrow. Which cytoskeletal function is most directly impaired?",
+      "response_type": "single_select",
+      "options": [
+        "Actin-based contractile ring",
+        "Microtubule-based nuclear pore",
+        "Intermediate-filament vesicle track",
+        "Collagen-based chromosome spindle"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CYTO_CHANGED",
+      "title": "Changed exit: chromosome spindle",
+      "prompt": "A drug prevents formation of the fibers that attach to and separate chromosomes during mitosis. Which cytoskeletal element is targeted?",
+      "response_type": "single_select",
+      "options": [
+        "Actin microfilaments",
+        "Microtubules",
+        "Intermediate filaments",
+        "Extracellular elastin"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CYTO_REPAIR_NEAR",
+      "title": "Repair: name the material demand",
+      "prompt": "Which question best repairs confusion among cytoskeletal elements?",
+      "response_type": "single_select",
+      "options": [
+        "Which element name appears most often?",
+        "Which structure is closest to the nucleus?",
+        "Is it contraction, transport, or tension?",
+        "Which option has the greatest molecular mass?"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CYTO_REENTRY_NEAR",
+      "title": "Fresh re-entry: organizing center",
+      "prompt": "A cell loses the site that nucleates and organizes many cytoplasmic tracks radiating from the cell center. Which network becomes disorganized?",
+      "response_type": "single_select",
+      "options": [
+        "Tight junction strands",
+        "Extracellular collagen fibers",
+        "Actin-only cleavage rings",
+        "Microtubules"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CYTO_REPAIR_CHANGED",
+      "title": "Repair: track versus tensile cable",
+      "prompt": "Which contrast correctly separates microtubules from intermediate filaments?",
+      "response_type": "single_select",
+      "options": [
+        "Microtubule tracks; filament tensile support",
+        "Microtubules store DNA; intermediate filaments make ATP",
+        "Microtubules digest cargo; intermediate filaments secrete proteins",
+        "Microtubules form ECM; intermediate filaments form tight junction pores"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CYTO_REENTRY_CHANGED",
+      "title": "Fresh re-entry: flagellar motor defect",
+      "prompt": "A mutation prevents motors from sliding adjacent structural tracks inside a eukaryotic flagellum. Which cytoskeletal system is implicated?",
+      "response_type": "single_select",
+      "options": [
+        "Actin cortex",
+        "Microtubule axoneme",
+        "Intermediate-filament network",
+        "Extracellular-matrix mesh"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "TISS_ENTRY",
+      "title": "Entry check: paracellular barrier",
+      "prompt": "An epithelial sheet becomes unusually leaky between adjacent cells while cell membranes remain intact. Which junction is most directly disrupted?",
+      "response_type": "single_select",
+      "options": [
+        "Gap junction",
+        "Desmosome",
+        "Tight junction",
+        "Cell–matrix attachment only"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "TISS_GUIDED",
+      "title": "Guided practice: direct communication",
+      "prompt": "Neighboring cells must pass ions and small signals directly from cytoplasm to cytoplasm. Which junction supports this function?",
+      "response_type": "single_select",
+      "options": [
+        "Tight junction",
+        "Desmosome",
+        "Extracellular collagen bundle",
+        "Gap junction"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "TISS_LIGHT",
+      "title": "Less support: resist pulling",
+      "prompt": "A sheet of cells tears apart under mechanical stress because strong cell–cell anchoring is lost. Which junction is most implicated?",
+      "response_type": "single_select",
+      "options": [
+        "Desmosome",
+        "Gap junction",
+        "Tight junction only",
+        "Nuclear pore"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "TISS_SOLO",
+      "title": "Independent practice: matrix-rich organization",
+      "prompt": "Cells are widely spaced within abundant collagen-rich extracellular material that bears tensile load. Which broad tissue organization fits best?",
+      "response_type": "single_select",
+      "options": [
+        "Closely packed epithelial barrier",
+        "Connective tissue with load-bearing matrix",
+        "A free suspension with no matrix role",
+        "A nuclear membrane compartment"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "TISS_NEAR",
+      "title": "Near exit: maintain an epithelial seal",
+      "prompt": "A kidney tubule must prevent uncontrolled movement between neighboring epithelial cells. Which structure most directly maintains this function?",
+      "response_type": "single_select",
+      "options": [
+        "Gap-junction channels",
+        "Desmosomal plaques alone",
+        "Tight-junction strands",
+        "Extracellular cartilage matrix"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "TISS_CHANGED",
+      "title": "Changed exit: synchronized cardiac tissue",
+      "prompt": "Cardiac cells must remain mechanically attached during contraction and rapidly share electrical signals. Which combination best supports both demands?",
+      "response_type": "single_select",
+      "options": [
+        "Tight junctions plus abundant cartilage matrix",
+        "Nuclear pores plus lysosomal membranes",
+        "Only extracellular collagen with no cell junctions",
+        "Desmosomes plus gap junctions"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "TISS_REPAIR_NEAR",
+      "title": "Repair: one verb per junction",
+      "prompt": "Which verb map correctly distinguishes the three named cell junctions?",
+      "response_type": "single_select",
+      "options": [
+        "Tight seals; gap signals; desmosome anchors",
+        "Tight communicates; gap anchors; desmosome seals",
+        "Tight digests; gap synthesizes; desmosome packages",
+        "Tight contracts; gap stores DNA; desmosome makes ATP"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "TISS_REENTRY_NEAR",
+      "title": "Fresh re-entry: skin cohesion",
+      "prompt": "A mutation weakens attachments that link neighboring skin cells to tensile cytoskeletal networks. The tissue blisters under friction. Which junction is most directly affected?",
+      "response_type": "single_select",
+      "options": [
+        "Gap junction",
+        "Desmosome",
+        "Tight junction",
+        "Nuclear pore complex"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "TISS_REPAIR_CHANGED",
+      "title": "Repair: sheet versus matrix",
+      "prompt": "Which observation most directly distinguishes epithelial from connective organization?",
+      "response_type": "single_select",
+      "options": [
+        "Whether every cell contains mitochondria",
+        "Whether cells can synthesize proteins",
+        "Close sheet versus matrix-dispersed cells",
+        "Whether the tissue contains any water"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "TISS_REENTRY_CHANGED",
+      "title": "Fresh re-entry: cartilage organization",
+      "prompt": "A tissue has relatively sparse cells embedded in abundant resilient extracellular matrix that resists compression. Which organization is supported?",
+      "response_type": "single_select",
+      "options": [
+        "A tight-junction epithelial sheet",
+        "A gap-junction-only epithelial layer",
+        "A desmosome-only surface lining",
+        "Matrix-dominated connective tissue"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    }
+  ]
+}

@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "ORG-ITEM-ENTRY",
+      "learner_prompt_key": "ORG_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "The nuclear envelope and pores surround most nuclear genomic DNA.",
+      "post_commitment_feedback": "The nucleus stores most genomic DNA behind an envelope whose pores regulate molecular traffic.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ORG-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ORG-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lysosomes contain hydrolytic enzymes rather than the nuclear genome."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ORG-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Golgi cisternae sort cargo but do not house most genomic DNA."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ORG-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peroxisomes conduct oxidative reactions rather than genome storage."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ORG-ITEM-GUIDED",
+      "learner_prompt_key": "ORG_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "The mitochondrial inner membrane supports the gradient coupled to ATP production.",
+      "post_commitment_feedback": "The mitochondrial inner membrane couples an electrochemical gradient to ATP production.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ORG-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Smooth ER does not house the mitochondrial energy-conversion membrane."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ORG-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ORG-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The nucleolus supports ribosomal-subunit production, not aerobic ATP generation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ORG-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lysosomes perform acidic degradation rather than oxidative phosphorylation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ORG-ITEM-LIGHT",
+      "learner_prompt_key": "ORG_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Lysosomes isolate acid hydrolases used for intracellular degradation.",
+      "post_commitment_feedback": "An acidic lumen with hydrolytic enzymes identifies lysosomal degradation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ORG-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mitochondria specialize in energy conversion rather than acidic bulk hydrolysis."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ORG-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Golgi compartments modify and sort cargo but are not the terminal acidic digestive compartment."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ORG-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ORG-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The nucleus regulates genome access and transcriptional processes."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ORG-ITEM-SOLO",
+      "learner_prompt_key": "ORG_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Peroxisomes contain oxidative enzymes and peroxide-handling activity.",
+      "post_commitment_feedback": "Peroxisomes compartmentalize oxidative reactions and enzymes that handle hydrogen peroxide.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ORG-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rough ER emphasizes protein synthesis and entry into the endomembrane route."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ORG-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The nuclear envelope regulates nuclear traffic rather than peroxide breakdown."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ORG-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Golgi cisternae sort cargo but do not specialize in peroxide handling."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ORG-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ORG-ITEM-NEAR",
+      "learner_prompt_key": "ORG_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The nucleolus is the nuclear region associated with rRNA production and subunit assembly.",
+      "post_commitment_feedback": "The missing dense nuclear region is the nucleolus, which supports rRNA and ribosomal-subunit production.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ORG-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ORG-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lysosomal lumens contain degradative enzymes."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ORG-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Smooth ER tubules emphasize lipid-related synthesis."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ORG-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Golgi vesicles transport sorted endomembrane cargo."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ORG-ITEM-CHANGED",
+      "learner_prompt_key": "ORG_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Golgi compartments modify, sort, and package cargo after ER entry.",
+      "post_commitment_feedback": "Normal ER entry followed by failed modification and sorting points to the Golgi apparatus.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ORG-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peroxisomes do not perform the endomembrane cargo-sorting step described."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ORG-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ORG-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mitochondria do not package ordinary secreted proteins for exocytosis."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ORG-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The nucleolus assembles ribosomal components rather than outgoing cargo."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ORG-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ORG_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "A verb–substrate pair such as hydrolyze macromolecule exposes the functional match.",
+      "post_commitment_feedback": "Translate the evidence into the immediate cellular action and substrate before matching a compartment.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ORG-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A generic label removes the distinguishing function."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ORG-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Organelle size does not reliably identify the required cellular work."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ORG-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ORG-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Membrane count alone can leave multiple compartments plausible."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ORG-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ORG_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Smooth ER is strongly associated with lipid synthesis.",
+      "post_commitment_feedback": "Selective loss of endomembrane lipid synthesis points to smooth ER function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ORG-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The nucleolus supports ribosomal-subunit production."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ORG-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lysosomes degrade cargo rather than supplying most membrane-lipid synthesis."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ORG-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The matrix is not the main endomembrane lipid-synthesis compartment."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ORG-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ORG-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ORG_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The distinction matches their characteristic lumen chemistry and substrates.",
+      "post_commitment_feedback": "Acidic hydrolysis distinguishes lysosomes, while oxidative peroxide handling distinguishes peroxisomes.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ORG-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ORG-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "ATP production and genome storage belong primarily to other compartments."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ORG-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Golgi and nucleolar functions are incorrectly reassigned here."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ORG-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Smooth ER and nuclear-envelope functions are incorrectly reassigned here."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ORG-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ORG_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Nuclear pores mediate regulated molecular traffic across the nuclear envelope.",
+      "post_commitment_feedback": "Closing nuclear pores directly disrupts regulated traffic between the nucleus and cytoplasm.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ORG-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lysosomal acidification is not controlled by nuclear pores."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ORG-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ORG-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Golgi vesicle sorting occurs outside the nuclear envelope."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ORG-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peroxisomal oxidation does not require transport through nuclear pores as its direct step."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEC-ITEM-ENTRY",
+      "learner_prompt_key": "SEC_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Secreted proteins commonly enter the rough-ER route during translation.",
+      "post_commitment_feedback": "A secreted protein typically begins on a ribosome that engages rough ER for pathway entry.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEC-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nuclear completion is not the ordinary secretory-protein route."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEC-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lysosomes receive degradative cargo rather than translate secreted proteins."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEC-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEC-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Golgi compartments do not contain the ribosomes that translate cargo."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEC-ITEM-GUIDED",
+      "learner_prompt_key": "SEC_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "ER entry precedes Golgi processing and final outgoing packaging.",
+      "post_commitment_feedback": "The major route proceeds from rough ER entry to Golgi processing and then an outgoing carrier.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEC-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This sequence reverses synthesis and processing and adds the nucleus incorrectly."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEC-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These compartments do not form the ordinary secretory route."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEC-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nucleolar and peroxisomal steps are unrelated to ordinary secretion."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEC-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEC-ITEM-LIGHT",
+      "learner_prompt_key": "SEC_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Smooth ER is a major site of lipid synthesis.",
+      "post_commitment_feedback": "Smooth ER is distinguished here by lipid synthesis rather than ribosome-mediated protein entry.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEC-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEC-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Secreted-peptide translation and entry are rough-ER-associated."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEC-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ribosomal-subunit assembly occurs in the nucleolus."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEC-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Acidic degradation occurs in lysosomal compartments."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEC-ITEM-SOLO",
+      "learner_prompt_key": "SEC_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Without ER targeting, translation does not enter the ordinary secretory pathway.",
+      "post_commitment_feedback": "Loss of the ER-entry signal leaves translation outside the secretory lumenal route at its earliest branch.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEC-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Golgi arrival cannot precede synthesis and ER-route entry."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEC-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEC-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peroxisomes do not replace cytosolic ribosomes for this synthesis."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEC-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nuclear pores regulate nuclear traffic rather than secretory packaging."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEC-ITEM-NEAR",
+      "learner_prompt_key": "SEC_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Antibody enters rough ER, passes through Golgi, and is packaged for secretion.",
+      "post_commitment_feedback": "An extracellular antibody follows rough-ER entry, Golgi processing, and secretory packaging.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEC-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nuclear transit is not the ordinary secretion route for antibody protein."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEC-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Smooth ER and lysosome do not supply the required synthesis-and-sorting sequence."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEC-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEC-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peroxisomal and mitochondrial transit is not the antibody secretory pathway."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEC-ITEM-CHANGED",
+      "learner_prompt_key": "SEC_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Membrane cargo can remain embedded while moving through Golgi sorting toward the surface.",
+      "post_commitment_feedback": "After ER insertion, the receptor remains membrane-associated through Golgi sorting toward the plasma membrane.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEC-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Membrane insertion does not convert the receptor into nuclear DNA."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEC-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lysosomes do not retranslate receptor cargo."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEC-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peroxisomal delivery is not the ordinary route described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEC-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEC-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "SEC_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Final destination determines whether the cargo requires ER entry and secretion or membrane routing.",
+      "post_commitment_feedback": "Identify the finished protein’s destination, then trace backward through the compartments required to reach it.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEC-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEC-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Name length has no biological routing significance."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEC-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Total cell membrane count does not identify this cargo route."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEC-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Alphabetical order is unrelated to biosynthetic sequence."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEC-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "SEC_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "A secreted enzyme enters rough ER, passes through Golgi, and leaves in a carrier.",
+      "post_commitment_feedback": "The fresh secreted enzyme follows rough ER, Golgi processing, and an outgoing secretory carrier.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEC-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nuclear and mitochondrial transit do not form the ordinary export route."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEC-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEC-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lysosomal, peroxisomal, and nuclear-pore transit is not the sequence."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEC-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Smooth ER and nucleolus do not replace rough-ER protein entry and Golgi sorting."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEC-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "SEC_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Ribosomes synthesize polypeptides; Golgi compartments modify and sort cargo.",
+      "post_commitment_feedback": "Keep the verbs distinct: ribosomes translate, while Golgi compartments modify and sort cargo.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEC-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Golgi does not translate proteins, and ribosomes do not store DNA."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEC-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lysosomes degrade rather than translate, and the nucleus is not the Golgi sorter."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEC-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEC-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peroxisomes do not translate ordinary secretory cargo, and nucleoli assemble ribosomal subunits."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEC-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "SEC_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Without ER insertion, the channel cannot proceed normally to Golgi membrane-cargo processing.",
+      "post_commitment_feedback": "Failure to enter the ER route prevents the channel’s normal downstream Golgi processing.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEC-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The channel’s ER targeting does not directly control nuclear DNA replication."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEC-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lysosomal hydrolysis is not the next step for a newly synthesized surface channel."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEC-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peroxisomal peroxide handling is not this cargo route."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEC-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CYTO-ITEM-ENTRY",
+      "learner_prompt_key": "CYTO_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Dynamic actin assembly supports cortical shape change and cell crawling.",
+      "post_commitment_feedback": "Actin microfilaments provide the dynamic cortical network used for leading-edge movement.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CYTO-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CYTO-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intermediate filaments emphasize tensile stability rather than leading-edge extension."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CYTO-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The nuclear lamina does not drive the cell’s leading edge."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CYTO-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Golgi cisternae are membrane compartments, not the cortical motility network."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CYTO-ITEM-GUIDED",
+      "learner_prompt_key": "CYTO_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Microtubules provide polarized tracks used for long-range vesicle transport.",
+      "post_commitment_feedback": "A polarized microtubule track supports long-range vesicle movement through the cytoplasm.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CYTO-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A desmosome joins cells and is not an intracellular transport track."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CYTO-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CYTO-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A lysosomal membrane encloses a compartment rather than spanning the cytoplasm as a track."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CYTO-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intermediate filaments provide support but not the main polarized motor track."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CYTO-ITEM-LIGHT",
+      "learner_prompt_key": "CYTO_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Intermediate filaments provide durable resistance to mechanical stress.",
+      "post_commitment_feedback": "Intermediate filaments act as durable tensile supports in mechanically stressed cells.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CYTO-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A cleavage ring is transient and contractile rather than the durable support requested."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CYTO-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A ciliary axoneme supports motility rather than broad tensile reinforcement."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CYTO-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CYTO-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Transport vesicles are membrane carriers, not tensile cytoskeletal fibers."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CYTO-ITEM-SOLO",
+      "learner_prompt_key": "CYTO_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Cilia contain organized microtubules that support bending and motion.",
+      "post_commitment_feedback": "The ciliary core is microtubule-based, so disrupted microtubules directly impair beating.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CYTO-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Actin fibers are not the core axonemal tracks described."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CYTO-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intermediate filaments do not form the ciliary axoneme."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CYTO-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Collagen is extracellular matrix rather than the ciliary core."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CYTO-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CYTO-ITEM-NEAR",
+      "learner_prompt_key": "CYTO_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Actin and associated contractile machinery constrict the cleavage furrow.",
+      "post_commitment_feedback": "Failure of the actin-based contractile ring directly blocks cleavage-furrow constriction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CYTO-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CYTO-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nuclear pores are not microtubule structures that drive cytokinesis."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CYTO-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intermediate filaments are not the principal vesicle tracks or cleavage ring."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CYTO-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Collagen is extracellular and does not form the chromosome spindle."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CYTO-ITEM-CHANGED",
+      "learner_prompt_key": "CYTO_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Mitotic spindle fibers are built from microtubules.",
+      "post_commitment_feedback": "Chromosome attachment and separation in the mitotic spindle depend on microtubules.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CYTO-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Actin is central to cortical contraction and cytokinesis, not the chromosome spindle fibers."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CYTO-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CYTO-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intermediate filaments provide tensile support rather than spindle attachment."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CYTO-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Elastin is extracellular matrix and does not form mitotic fibers."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CYTO-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CYTO_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The required material behavior distinguishes actin, microtubules, and intermediate filaments.",
+      "post_commitment_feedback": "Classify the task as force generation, polarized transport, motile organization, or tensile reinforcement.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CYTO-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Frequency of a name does not identify function."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CYTO-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Location alone can be shared by several networks."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CYTO-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CYTO-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Molecular mass is not the governing comparison in this task."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CYTO-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CYTO_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Microtubule-organizing centers nucleate and arrange many cytoplasmic microtubules.",
+      "post_commitment_feedback": "Loss of the organizing center disrupts the radiating microtubule network.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CYTO-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Tight junctions join neighboring cell membranes rather than radiating from a cellular center."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CYTO-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Collagen is extracellular and not nucleated by an intracellular organizing center."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CYTO-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cleavage rings do not form the radiating track system described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CYTO-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CYTO-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CYTO_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The contrast matches polarized transport and dynamic organization versus durable tensile support.",
+      "post_commitment_feedback": "Microtubules are dynamic organized tracks, whereas intermediate filaments emphasize tensile resilience.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CYTO-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CYTO-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Genome storage and ATP production belong to organelles, not these filament roles."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CYTO-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Digestion and secretion are compartmental processes rather than the stated filament functions."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CYTO-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Extracellular matrix and junctional barriers are not made by this pairing."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CYTO-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CYTO_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The flagellar axoneme contains microtubules whose motor-driven sliding produces bending.",
+      "post_commitment_feedback": "Motor-driven sliding within the flagellar axoneme implicates its organized microtubule system.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CYTO-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The actin cortex is not the core sliding-track system of a eukaryotic flagellum."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CYTO-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CYTO-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intermediate filaments do not form the axonemal tracks."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CYTO-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Extracellular matrix is outside the flagellar cytoskeletal core."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TISS-ITEM-ENTRY",
+      "learner_prompt_key": "TISS_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Tight junctions limit movement through spaces between epithelial cells.",
+      "post_commitment_feedback": "Leakage between neighboring epithelial cells points directly to failed tight-junction sealing.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TISS-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gap junctions support communication rather than the principal paracellular seal."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TISS-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Desmosomes provide mechanical attachment rather than the main barrier seal."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TISS-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TISS-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cell–matrix attachment does not directly create the adjacent-cell paracellular seal."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TISS-ITEM-GUIDED",
+      "learner_prompt_key": "TISS_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Gap junction channels connect neighboring cells for direct small-molecule communication.",
+      "post_commitment_feedback": "Gap junctions provide direct intercellular channels for ions and small signaling molecules.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TISS-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Tight junctions restrict paracellular movement rather than create cytoplasmic channels."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TISS-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Desmosomes are mechanical anchors."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TISS-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Extracellular collagen provides matrix support rather than direct cytoplasmic continuity."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TISS-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TISS-ITEM-LIGHT",
+      "learner_prompt_key": "TISS_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Desmosomes provide mechanically strong cell–cell attachment linked to cytoskeletal support.",
+      "post_commitment_feedback": "Loss of desmosomal anchoring makes a stressed cell sheet vulnerable to mechanical separation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TISS-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TISS-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gap junctions communicate but are not the main tensile anchors."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TISS-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Tight junctions seal but do not provide the strongest mechanical linkage."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TISS-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nuclear pores regulate nuclear traffic inside individual cells."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TISS-ITEM-SOLO",
+      "learner_prompt_key": "TISS_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Connective tissues characteristically place cells within functional extracellular matrix.",
+      "post_commitment_feedback": "Widely spaced cells in load-bearing extracellular matrix identify connective-tissue organization.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TISS-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Epithelia are generally organized as closely packed sheets rather than widely dispersed in abundant matrix."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TISS-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TISS-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt explicitly assigns a major mechanical role to matrix."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TISS-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A nuclear membrane is an intracellular compartment, not a tissue organization."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TISS-ITEM-NEAR",
+      "learner_prompt_key": "TISS_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Tight-junction strands restrict movement through the paracellular route.",
+      "post_commitment_feedback": "Tight-junction strands create the paracellular barrier needed by the tubule epithelium.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TISS-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gap junctions allow direct communication rather than block paracellular passage."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TISS-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Desmosomes strengthen attachment but do not provide the primary seal."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TISS-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TISS-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cartilage matrix is not the tubule epithelial seal."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TISS-ITEM-CHANGED",
+      "learner_prompt_key": "TISS_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Desmosomes resist mechanical separation, while gap junctions support rapid electrical coupling.",
+      "post_commitment_feedback": "Mechanical anchoring and direct signal spread require desmosomal and gap-junction functions together.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TISS-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A tight seal and cartilage matrix do not supply both cardiac attachment and direct signaling."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TISS-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These intracellular structures do not join neighboring cardiac cells."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TISS-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Matrix alone omits direct cell–cell electrical communication."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TISS-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TISS-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "TISS_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The verbs match the primary barrier, communication, and mechanical-linkage functions.",
+      "post_commitment_feedback": "Use the compact mapping: tight junctions seal, gap junctions communicate, and desmosomes anchor.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TISS-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TISS-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This permutes the three junction roles incorrectly."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TISS-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Digestion, synthesis, and packaging are organelle functions."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TISS-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Contraction, genome storage, and ATP production are not this junction map."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TISS-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "TISS_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Desmosomes connect neighboring cells to mechanical cytoskeletal support.",
+      "post_commitment_feedback": "Friction-induced separation from lost tensile cell–cell anchoring implicates desmosomes.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TISS-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gap-junction loss impairs communication rather than tensile cohesion."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TISS-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TISS-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Tight-junction loss primarily weakens a seal."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TISS-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nuclear pores do not connect neighboring skin cells."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TISS-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "TISS_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Cell packing and matrix role distinguish the broad tissue architectures.",
+      "post_commitment_feedback": "Compare close polarized sheets with matrix-dispersed cells rather than generic cellular features.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TISS-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both broad tissue types contain mitochondria in many constituent cells."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TISS-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Protein synthesis occurs in both and does not define organization."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TISS-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TISS-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Water content is not the organizing criterion."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TISS-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "TISS_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Sparse cells within abundant functional matrix characterize connective tissue.",
+      "post_commitment_feedback": "The matrix-rich, sparsely cellular organization is connective tissue rather than a close epithelial sheet.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TISS-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A close epithelial seal does not match sparse matrix-embedded cells."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TISS-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gap junctions do not define the abundant compression-resistant matrix."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TISS-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Desmosomes do not by themselves create the described matrix-rich organization."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TISS-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    }
+  ]
+}

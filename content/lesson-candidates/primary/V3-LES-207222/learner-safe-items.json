@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; unresolved fresh re-entry returns control without target exit credit.",
+  "items": [
+    {
+      "prompt_key": "CHG_ENTRY",
+      "title": "Entry check: conserve total charge",
+      "prompt": "Two isolated spheres have a combined charge of +6 nC before contact. After they touch and separate, sphere A has +1 nC. What charge must sphere B have?",
+      "response_type": "single_select",
+      "options": [
+        "+5 nC",
+        "−5 nC",
+        "+7 nC",
+        "−7 nC"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "CHG_GUIDED",
+      "title": "Guided practice: electron loss",
+      "prompt": "A neutral object loses electrons to another object. What is the sign of the first object’s resulting net charge?",
+      "response_type": "single_select",
+      "options": [
+        "Negative because electrons left",
+        "Positive because negative charge left",
+        "Zero because protons moved away",
+        "Indeterminate because charge is not conserved"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CHG_LIGHT",
+      "title": "Less support: conductor response",
+      "prompt": "A negatively charged rod approaches one end of a neutral metal bar without touching it. What happens inside the bar?",
+      "response_type": "single_select",
+      "options": [
+        "All charge vanishes from the metal",
+        "Positive nuclei flow to the far end",
+        "Mobile electrons redistribute away from the rod",
+        "The bar must gain a permanent net charge"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CHG_SOLO",
+      "title": "Independent practice: localized insulator charge",
+      "prompt": "A small charged patch is deposited on a dry insulating sheet. Which behavior is most consistent with an insulator?",
+      "response_type": "single_select",
+      "options": [
+        "The charge instantly spreads uniformly over every surface",
+        "All electrons leave the sheet through the air",
+        "The sheet becomes a perfect conductor at once",
+        "Charge stays near the deposited patch"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CHG_NEAR",
+      "title": "Near exit: grounding a negative conductor",
+      "prompt": "A negatively charged conductor is connected briefly to Earth and then disconnected. Which charge motion is expected during grounding?",
+      "response_type": "single_select",
+      "options": [
+        "Excess electrons flow into Earth",
+        "Protons leave atomic nuclei and enter Earth",
+        "Positive charge is created inside the conductor",
+        "All charge conservation rules stop applying"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CHG_CHANGED",
+      "title": "Changed exit: rubbed neutral pair",
+      "prompt": "Two initially neutral insulating objects are rubbed together in isolation. One ends with −5 nC. What net charge must the other have?",
+      "response_type": "single_select",
+      "options": [
+        "−10 nC",
+        "+5 nC",
+        "0 nC",
+        "+10 nC"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CHG_REPAIR_NEAR",
+      "title": "Repair: use signed totals",
+      "prompt": "Which equation is the correct starting point for an isolated charge-transfer problem?",
+      "response_type": "single_select",
+      "options": [
+        "Signed initial total = signed final total",
+        "Sum of charge magnitudes always doubles after contact",
+        "Positive charge total = zero in every material",
+        "Final electron count can be ignored if signs differ"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CHG_REENTRY_NEAR",
+      "title": "Fresh re-entry: shared conductor charge",
+      "prompt": "Two identical conducting spheres carry +8 nC and 0 nC. They touch, reach equilibrium, and separate. What charge does each carry?",
+      "response_type": "single_select",
+      "options": [
+        "+8 nC and 0 nC",
+        "+8 nC and +8 nC",
+        "+2 nC and +6 nC",
+        "+4 nC and +4 nC"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CHG_REPAIR_CHANGED",
+      "title": "Repair: transfer versus creation",
+      "prompt": "Which statement correctly interprets charging by rubbing in an isolated pair?",
+      "response_type": "single_select",
+      "options": [
+        "Electron transfer gives opposite charge changes",
+        "New positive and negative charge is created from nothing",
+        "Protons move freely between ordinary solid objects",
+        "Only one object changes charge while the pair total changes"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CHG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: neutral conductor polarization",
+      "prompt": "A positive rod approaches an isolated neutral conductor. Which response is expected before contact?",
+      "response_type": "single_select",
+      "options": [
+        "The conductor acquires positive net charge from empty space",
+        "Electrons shift toward rod; total stays zero",
+        "All protons migrate to the rod-facing surface",
+        "The conductor’s electrons become permanently fixed in place"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "COUL_ENTRY",
+      "title": "Entry check: double one charge",
+      "prompt": "Two point charges exert force magnitude F at fixed separation. If only the magnitude of one charge doubles, what is the new force magnitude?",
+      "response_type": "single_select",
+      "options": [
+        "F/4",
+        "F/2",
+        "2F",
+        "4F"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "COUL_GUIDED",
+      "title": "Guided practice: opposite signs",
+      "prompt": "A positive point charge lies to the left of a negative point charge. What is the force direction on the positive charge?",
+      "response_type": "single_select",
+      "options": [
+        "Left, away from the negative charge",
+        "Up, perpendicular to the charge line",
+        "No force because the signs cancel",
+        "Right, toward the negative charge"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "COUL_LIGHT",
+      "title": "Less support: double separation",
+      "prompt": "Two charges exert force F. Their separation doubles while charges stay fixed. What is the new magnitude?",
+      "response_type": "single_select",
+      "options": [
+        "F/4",
+        "F/2",
+        "2F",
+        "4F"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "COUL_SOLO",
+      "title": "Independent practice: double both charges",
+      "prompt": "At fixed separation, both point-charge magnitudes are doubled. How does the force magnitude change?",
+      "response_type": "single_select",
+      "options": [
+        "It stays F",
+        "It becomes 4F",
+        "It becomes 2F",
+        "It becomes F/4"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "COUL_NEAR",
+      "title": "Near exit: charge-product magnitude",
+      "prompt": "At the same separation, pair A has charges +2q and −3q while pair B has +q and −q. What is FA/FB?",
+      "response_type": "single_select",
+      "options": [
+        "1/6",
+        "3",
+        "6",
+        "9"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "COUL_CHANGED",
+      "title": "Changed exit: unequal interacting charges",
+      "prompt": "A +q charge attracts a −4q charge. How do the force magnitudes on the two charges compare?",
+      "response_type": "single_select",
+      "options": [
+        "The −4q charge feels four times the force",
+        "The +q charge feels four times the force",
+        "Only the +q charge feels a force",
+        "The magnitudes are equal and directions opposite"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "COUL_REPAIR_NEAR",
+      "title": "Repair: magnitude equation",
+      "prompt": "Which expression correctly gives Coulomb force magnitude between two point charges?",
+      "response_type": "single_select",
+      "options": [
+        "k|q1q2|/r²",
+        "k(q1 + q2)r²",
+        "kr/|q1q2|",
+        "k|q1 − q2|/r"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "COUL_REENTRY_NEAR",
+      "title": "Fresh re-entry: halve separation",
+      "prompt": "A fresh point-charge pair exerts force F. The separation is halved with charges fixed. What is the new magnitude?",
+      "response_type": "single_select",
+      "options": [
+        "F/4",
+        "4F",
+        "F/2",
+        "2F"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "COUL_REPAIR_CHANGED",
+      "title": "Repair: choose attraction or repulsion",
+      "prompt": "Which sign rule correctly sets Coulomb-force direction?",
+      "response_type": "single_select",
+      "options": [
+        "Every charged pair attracts",
+        "Positive charges repel while negative charges attract",
+        "Like signs repel and opposite signs attract",
+        "Direction depends only on charge magnitude"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "COUL_REENTRY_CHANGED",
+      "title": "Fresh re-entry: combined scaling",
+      "prompt": "One charge triples and the separation becomes √3 times larger; the other charge is fixed. How does force magnitude change?",
+      "response_type": "single_select",
+      "options": [
+        "It triples",
+        "It becomes one-third",
+        "It becomes nine times larger",
+        "It stays the same"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "FIELD_ENTRY",
+      "title": "Entry check: positive source field",
+      "prompt": "At a point directly to the right of an isolated positive source charge, which direction does the electric field point?",
+      "response_type": "single_select",
+      "options": [
+        "To the right, away from the source",
+        "To the left, toward the source",
+        "Upward, perpendicular to the radius",
+        "No direction because field is scalar"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "FIELD_GUIDED",
+      "title": "Guided practice: negative source field",
+      "prompt": "An observation point lies to the right of a negative source charge. Which way does the electric field point?",
+      "response_type": "single_select",
+      "options": [
+        "Right, away from the charge",
+        "Left, toward the charge",
+        "Up, because negative fields rotate",
+        "The field has magnitude but no direction"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "FIELD_LIGHT",
+      "title": "Less support: field from measured force",
+      "prompt": "A +2 C test charge experiences a 10 N force to the east at one point. What field is present there?",
+      "response_type": "single_select",
+      "options": [
+        "20 N/C east",
+        "5 N/C west",
+        "5 N/C east",
+        "20 N/C west"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "FIELD_SOLO",
+      "title": "Independent practice: source field versus test charge",
+      "prompt": "At a fixed point, a source configuration creates field E. If the probing positive test charge is doubled without altering the sources, what happens to E?",
+      "response_type": "single_select",
+      "options": [
+        "E doubles",
+        "E halves",
+        "E reverses",
+        "E stays unchanged"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "FIELD_NEAR",
+      "title": "Near exit: equal positive sources",
+      "prompt": "What is the net electric field at the midpoint between two equal positive point charges?",
+      "response_type": "single_select",
+      "options": [
+        "Zero because equal opposite field vectors cancel",
+        "Toward the left charge only",
+        "Toward the right charge only",
+        "Twice one field toward both charges"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "FIELD_CHANGED",
+      "title": "Changed exit: parallel plates",
+      "prompt": "Between large oppositely charged parallel plates and away from edges, which field description is appropriate?",
+      "response_type": "single_select",
+      "options": [
+        "Circular field tangent to both plates",
+        "Uniform from positive toward negative plate",
+        "Zero field because total plate charge cancels",
+        "Uniform field from negative plate to positive plate"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "FIELD_REPAIR_NEAR",
+      "title": "Repair: superpose source fields",
+      "prompt": "What is the correct first step for a multi-source electric-field problem?",
+      "response_type": "single_select",
+      "options": [
+        "Add source-charge signs as scalars only",
+        "Choose the strongest source and ignore the rest",
+        "Draw all source fields at one point",
+        "Draw force arrows at different points and average them"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "FIELD_REENTRY_NEAR",
+      "title": "Fresh re-entry: opposite sources",
+      "prompt": "At the midpoint between equal +q and −q point charges, what is the net field direction?",
+      "response_type": "single_select",
+      "options": [
+        "Away from both charges",
+        "Toward the positive charge",
+        "Zero by equal magnitude",
+        "From positive toward negative charge"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "FIELD_REPAIR_CHANGED",
+      "title": "Repair: field-line meaning",
+      "prompt": "Which statement correctly interprets an electric-field-line diagram?",
+      "response_type": "single_select",
+      "options": [
+        "Lines are tangent to field and never cross",
+        "Lines show the path every charge must follow",
+        "Line color alone sets field magnitude",
+        "Crossing lines indicate two field directions at one point"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "FIELD_REENTRY_CHANGED",
+      "title": "Fresh re-entry: negative particle force",
+      "prompt": "An electric field points east. A negative test charge is placed at the point. Which direction is the electric force on it?",
+      "response_type": "single_select",
+      "options": [
+        "East, because every charge follows E",
+        "West, opposite the field",
+        "North, perpendicular to E",
+        "No force because the charge is negative"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "POT_ENTRY",
+      "title": "Entry check: positive-source potential",
+      "prompt": "Relative to zero at infinity, what is the sign of electric potential at a finite point near one positive source charge?",
+      "response_type": "single_select",
+      "options": [
+        "Negative because field points outward",
+        "Zero because potential is scalar",
+        "Positive because kq/r is positive",
+        "Indeterminate without a test charge"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "POT_GUIDED",
+      "title": "Guided practice: add scalar potentials",
+      "prompt": "At a point, source A contributes +6 V and source B contributes −2 V. What is the net electric potential?",
+      "response_type": "single_select",
+      "options": [
+        "−8 V",
+        "−4 V",
+        "+8 V",
+        "+4 V"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "POT_LIGHT",
+      "title": "Less support: move on an equipotential",
+      "prompt": "A charge moves between two points on the same equipotential surface. What is the electrostatic potential difference?",
+      "response_type": "single_select",
+      "options": [
+        "0 V",
+        "A positive value set by path length",
+        "A negative value set by speed",
+        "Infinite because the path is curved"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "POT_SOLO",
+      "title": "Independent practice: compute potential energy",
+      "prompt": "A +3 C charge is placed at a point where V = −2 V. What is its electrostatic potential energy?",
+      "response_type": "single_select",
+      "options": [
+        "+6 J",
+        "−6 J",
+        "−1.5 J",
+        "+1.5 J"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "POT_NEAR",
+      "title": "Near exit: positive charge moves downhill",
+      "prompt": "A positive charge moves from 9 V to 4 V. What is the sign of its change in electrostatic potential energy?",
+      "response_type": "single_select",
+      "options": [
+        "Positive because it moved",
+        "Zero because charge is conserved",
+        "Negative because qΔV is negative",
+        "Indeterminate because potential is scalar"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "POT_CHANGED",
+      "title": "Changed exit: negative charge moves to higher potential",
+      "prompt": "A negative charge moves from 2 V to 7 V. What happens to its electrostatic potential energy?",
+      "response_type": "single_select",
+      "options": [
+        "It increases because potential increased",
+        "It stays fixed because q is constant",
+        "It becomes zero at every positive potential",
+        "It decreases because qΔV is negative"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "POT_REPAIR_NEAR",
+      "title": "Repair: scalar superposition",
+      "prompt": "How should potentials from several point charges be combined at one observation point?",
+      "response_type": "single_select",
+      "options": [
+        "Add the signed kq/r contributions as scalars",
+        "Add only the largest source and ignore the rest",
+        "Square every potential before adding directions",
+        "Use arrow cancellation exactly like electric field"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "POT_REENTRY_NEAR",
+      "title": "Fresh re-entry: opposite-source midpoint",
+      "prompt": "Equal +q and −q point charges are equally distant from a midpoint. What is the electric potential at that midpoint?",
+      "response_type": "single_select",
+      "options": [
+        "Positive because +q is present",
+        "Zero because equal scalar contributions cancel",
+        "Negative because −q dominates",
+        "Twice one contribution because fields add"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "POT_REPAIR_CHANGED",
+      "title": "Repair: connect field and potential",
+      "prompt": "Which relation correctly links electric-field direction to electric potential?",
+      "response_type": "single_select",
+      "options": [
+        "Field points toward increasing potential",
+        "Field is always perpendicular to potential change",
+        "Field points toward decreasing potential",
+        "Field direction is unrelated to potential"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "POT_REENTRY_CHANGED",
+      "title": "Fresh re-entry: work and energy",
+      "prompt": "The electric field does +6 J of work on a charge during a move. What is the charge’s electrostatic potential-energy change?",
+      "response_type": "single_select",
+      "options": [
+        "+12 J",
+        "+6 J",
+        "0 J",
+        "−6 J"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    }
+  ]
+}

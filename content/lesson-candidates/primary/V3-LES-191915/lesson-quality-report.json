@@ -1,0 +1,152 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-191915",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "65d78437038f5266678e38dd9008d4f10139fd53e08e8c8acf3125e500b055d5",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-191915",
+    "lesson_script_sha256": "6b4fc31b69ec7333a42e7289b4642a898c7227b56d11b0d2f90cb9884ba8eedc",
+    "kc_coverage_matrix_id": "V3-KCOV-191915",
+    "kc_coverage_matrix_sha256": "d6d230c4064428f03f78646fb3d2b43b3897a4f3cfc9f28382467f573b7c925d",
+    "lesson_presentation_plan_id": "V3-LPPL-191915",
+    "lesson_presentation_plan_sha256": "99fb1e9c836db2c2d646f398c63d15ecf79a402df1a4108305a31730b7b2b187"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-191915",
+    "review_scope": "STANDARD_ROUTE_PRIMARY_CANDIDATE",
+    "rubric_identity": {
+      "rubric_path": "key-docs/lesson-quality-rubric.md",
+      "rubric_version": "0.9.1",
+      "rubric_sha256": "21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+    },
+    "check_results": [
+      {
+        "check_id": "CANONICAL-PACKET-IDENTITY",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json"
+        ]
+      },
+      {
+        "check_id": "STANDARD-ROUTE-SCOPE",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json#/route_proofs"
+        ]
+      },
+      {
+        "check_id": "COMPLETE-KC-MICROCYCLES",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-script.json#/payload/kc_scripts",
+          "kc-coverage-matrix.json#/payload/rows"
+        ]
+      },
+      {
+        "check_id": "FUNCTION-SPECIFIC-REPAIR-AND-FRESH-REENTRY",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-script.json#/payload/question_evidence_plan",
+          "protected-items.json"
+        ]
+      },
+      {
+        "check_id": "EXACT-PREREQUISITE-HANDOFFS",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json#/prerequisites/hard",
+          "lesson-script.json#/payload/curriculum_context/hard_prerequisites",
+          "lesson-script.json#/payload/transitions"
+        ]
+      },
+      {
+        "check_id": "DISTRACTOR-RATIONALES-AND-POST-COMMIT-FEEDBACK",
+        "status": "PASS",
+        "evidence_refs": [
+          "protected-items.json#/records"
+        ]
+      },
+      {
+        "check_id": "NO-ITEM-DOK-OR-MASTERY-ELIGIBILITY-CLAIMS",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json#/dok_authoring",
+          "lesson-script.json#/payload/question_evidence_plan"
+        ]
+      },
+      {
+        "check_id": "R1-R15-STRUCTURAL",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/lesson-validate.json"
+        ]
+      },
+      {
+        "check_id": "CANONICAL-NORMALIZATION",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/normalization-smoke.json"
+        ]
+      },
+      {
+        "check_id": "PROTECTED-BOUNDARY",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/protected-scan.json"
+        ]
+      },
+      {
+        "check_id": "VALIDATE-ONE-CLOSURE",
+        "status": "BLOCKED",
+        "blocker_code": "KIT_MANIFEST_MISSING",
+        "reason": "The repository source kit has no materialized KIT-MANIFEST.json, so validate-one cannot establish immutable-kit closure in this working tree."
+      },
+      {
+        "check_id": "INDEPENDENT-JUDGE-PRE-SCREEN",
+        "status": "BLOCKED",
+        "blocker_code": "JUDGE_PRE_SCREEN_REQUIRED",
+        "reason": "No independent judge record is authored or claimed by the primary author."
+      },
+      {
+        "check_id": "RENDERED-ACCESSIBILITY-RELIABILITY-EVIDENCE",
+        "status": "BLOCKED",
+        "blocker_code": "HUMAN_AND_RENDERED_EVIDENCE_REQUIRED",
+        "reason": "No revision-bound browser, assistive-technology, novice, blind-solve, SME, or platform-reliability evidence is claimed."
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "LQRP-191915-001",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Obtain an independent judge pre-screen bound to the current primary artifact hashes."
+      },
+      {
+        "finding_id": "LQRP-191915-002",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Obtain the required human and rendered evidence without converting its absence into a pass."
+      }
+    ],
+    "evidence_refs": [
+      "source-claim-ledger.json",
+      "validation/lesson-validate.json",
+      "validation/computed-quality.json",
+      "validation/normalization-smoke.json",
+      "validation/protected-scan.json",
+      "reviews/author-self-audit.json"
+    ],
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false,
+      "calibrated_thresholds_available": false
+    },
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY",
+    "production_golden_status": "BLOCKED"
+  }
+}

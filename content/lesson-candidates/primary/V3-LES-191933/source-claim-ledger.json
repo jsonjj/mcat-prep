@@ -1,0 +1,453 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-191933",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-191933",
+    "grouping_id": "V3-CL-191933",
+    "ordered_kc_ids": [
+      "V3-KC-474889",
+      "V3-KC-296982",
+      "V3-KC-624774",
+      "V3-KC-821362"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020",
+      "CARS-SRC-AAMC-2020",
+      "CARS-SRC-KCC"
+    ],
+    "source_class": "PACKET_GOVERNED_PERMITTED_SOURCES",
+    "source_anchor_ids": [
+      "CARS-SA-AAMC-006",
+      "CARS-SA-AAMC-011",
+      "CARS-SA-AAMC-013",
+      "CARS-SA-BL-002"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "641f5ec08a385ada7950a58ba6eb87345345deded5dd6048ed19455ef3b9403d",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100071",
+      "source_occurrence_id": "V3-SRC-100071",
+      "source_id": "AAMC-2020",
+      "official_topic": "Applying or Extrapolating Ideas From the Passage to New Contexts",
+      "printed_pages": [
+        104,
+        107,
+        108
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-006",
+        "CARS-SA-AAMC-011",
+        "CARS-SA-AAMC-013",
+        "CARS-SA-BL-002"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200034",
+      "source_occurrence_id": "V3-SRC-200034",
+      "source_id": "CARS-SRC-AAMC-2020",
+      "official_topic": null,
+      "printed_pages": [
+        104
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-006"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200039",
+      "source_occurrence_id": "V3-SRC-200039",
+      "source_id": "CARS-SRC-AAMC-2020",
+      "official_topic": null,
+      "printed_pages": [
+        107,
+        108
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-011"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200041",
+      "source_occurrence_id": "V3-SRC-200041",
+      "source_id": "CARS-SRC-AAMC-2020",
+      "official_topic": null,
+      "printed_pages": [
+        106,
+        107,
+        108,
+        109
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-013"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200043",
+      "source_occurrence_id": "V3-SRC-200043",
+      "source_id": "CARS-SRC-KCC",
+      "official_topic": null,
+      "printed_pages": [],
+      "source_anchor_ids": [
+        "CARS-SA-BL-002"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "INV-CLAIM-PRIMARY",
+      "target_kc_id": "V3-KC-474889",
+      "authorial_claim": "A transferable passage framework preserves a passage-derived principle, relation, perspective, scenario constraint, or paradigm while allowing surface details to change.",
+      "scope_in_refs": [
+        "V3-KC-474889:SCOPE_IN:0",
+        "V3-KC-474889:SCOPE_IN:1"
+      ],
+      "scope_out_refs": [
+        "V3-KC-474889:SCOPE_OUT:0",
+        "V3-KC-474889:SCOPE_OUT:1"
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-006",
+        "CARS-SA-AAMC-011",
+        "CARS-SA-AAMC-013",
+        "CARS-SA-BL-002"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100071",
+        "V3-SRC-200034",
+        "V3-SRC-200039",
+        "V3-SRC-200041",
+        "V3-SRC-200043"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600539",
+        "V3-MAP-600616"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "INV-CLAIM-BOUNDARY",
+      "target_kc_id": "V3-KC-474889",
+      "authorial_claim": "A topic-only summary and an imported external theory fall outside the usable abstraction required for passage-bounded application.",
+      "scope_in_refs": [
+        "V3-KC-474889:SCOPE_IN:0",
+        "V3-KC-474889:SCOPE_IN:1"
+      ],
+      "scope_out_refs": [
+        "V3-KC-474889:SCOPE_OUT:0",
+        "V3-KC-474889:SCOPE_OUT:1"
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-006",
+        "CARS-SA-AAMC-011",
+        "CARS-SA-AAMC-013",
+        "CARS-SA-BL-002"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100071",
+        "V3-SRC-200034",
+        "V3-SRC-200039",
+        "V3-SRC-200041",
+        "V3-SRC-200043"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600539",
+        "V3-MAP-600616"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "MAP-CLAIM-PRIMARY",
+      "target_kc_id": "V3-KC-296982",
+      "authorial_claim": "Applying a fixed passage framework requires mapping relevant source roles and relations to question-provided target roles and relations.",
+      "scope_in_refs": [
+        "V3-KC-296982:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-296982:SCOPE_OUT:0",
+        "V3-KC-296982:SCOPE_OUT:1",
+        "V3-KC-296982:SCOPE_OUT:2"
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-006",
+        "CARS-SA-AAMC-011",
+        "CARS-SA-AAMC-013",
+        "CARS-SA-BL-002"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100071",
+        "V3-SRC-200034",
+        "V3-SRC-200039",
+        "V3-SRC-200041",
+        "V3-SRC-200043"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600617",
+        "V3-MAP-600934"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "MAP-CLAIM-BOUNDARY",
+      "target_kc_id": "V3-KC-296982",
+      "authorial_claim": "Surface-only similarity, framework alteration, and outside facts do not establish a valid passage-bounded mapping.",
+      "scope_in_refs": [
+        "V3-KC-296982:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-296982:SCOPE_OUT:0",
+        "V3-KC-296982:SCOPE_OUT:1",
+        "V3-KC-296982:SCOPE_OUT:2"
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-006",
+        "CARS-SA-AAMC-011",
+        "CARS-SA-AAMC-013",
+        "CARS-SA-BL-002"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100071",
+        "V3-SRC-200034",
+        "V3-SRC-200039",
+        "V3-SRC-200041",
+        "V3-SRC-200043"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600617",
+        "V3-MAP-600934"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "RESP-CLAIM-PRIMARY",
+      "target_kc_id": "V3-KC-624774",
+      "authorial_claim": "A passage-consistent hypothetical response is inferred from the author’s stated priorities, relations, and qualifications.",
+      "scope_in_refs": [
+        "V3-KC-624774:SCOPE_IN:0",
+        "V3-KC-624774:SCOPE_IN:1"
+      ],
+      "scope_out_refs": [
+        "V3-KC-624774:SCOPE_OUT:0",
+        "V3-KC-624774:SCOPE_OUT:1"
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-006",
+        "CARS-SA-AAMC-011",
+        "CARS-SA-AAMC-013",
+        "CARS-SA-BL-002"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100071",
+        "V3-SRC-200034",
+        "V3-SRC-200039",
+        "V3-SRC-200041",
+        "V3-SRC-200043"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600618",
+        "V3-MAP-600704"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "RESP-CLAIM-BOUNDARY",
+      "target_kc_id": "V3-KC-624774",
+      "authorial_claim": "Personal preference and outside likelihood do not warrant an author-response projection or passage-consistent outcome.",
+      "scope_in_refs": [
+        "V3-KC-624774:SCOPE_IN:0",
+        "V3-KC-624774:SCOPE_IN:1"
+      ],
+      "scope_out_refs": [
+        "V3-KC-624774:SCOPE_OUT:0",
+        "V3-KC-624774:SCOPE_OUT:1"
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-006",
+        "CARS-SA-AAMC-011",
+        "CARS-SA-AAMC-013",
+        "CARS-SA-BL-002"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100071",
+        "V3-SRC-200034",
+        "V3-SRC-200039",
+        "V3-SRC-200041",
+        "V3-SRC-200043"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600618",
+        "V3-MAP-600704"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ANLG-CLAIM-PRIMARY",
+      "target_kc_id": "V3-KC-821362",
+      "authorial_claim": "A structural analogy preserves a fundamental relation across superficially different source and target cases.",
+      "scope_in_refs": [
+        "V3-KC-821362:SCOPE_IN:0",
+        "V3-KC-821362:SCOPE_IN:1"
+      ],
+      "scope_out_refs": [
+        "V3-KC-821362:SCOPE_OUT:0",
+        "V3-KC-821362:SCOPE_OUT:1"
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-006",
+        "CARS-SA-AAMC-011",
+        "CARS-SA-AAMC-013",
+        "CARS-SA-BL-002"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100071",
+        "V3-SRC-200034",
+        "V3-SRC-200039",
+        "V3-SRC-200041",
+        "V3-SRC-200043"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600619",
+        "V3-MAP-600701"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ANLG-CLAIM-BOUNDARY",
+      "target_kc_id": "V3-KC-821362",
+      "authorial_claim": "Topic similarity and shared imagery do not establish an analogy when functional roles or relation direction differ.",
+      "scope_in_refs": [
+        "V3-KC-821362:SCOPE_IN:0",
+        "V3-KC-821362:SCOPE_IN:1"
+      ],
+      "scope_out_refs": [
+        "V3-KC-821362:SCOPE_OUT:0",
+        "V3-KC-821362:SCOPE_OUT:1"
+      ],
+      "source_anchor_ids": [
+        "CARS-SA-AAMC-006",
+        "CARS-SA-AAMC-011",
+        "CARS-SA-AAMC-013",
+        "CARS-SA-BL-002"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100071",
+        "V3-SRC-200034",
+        "V3-SRC-200039",
+        "V3-SRC-200041",
+        "V3-SRC-200043"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600619",
+        "V3-MAP-600701"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-462809",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-628490",
+        "V3-MOD-138674"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 113,
+          "relation_ids": [
+            "R14-PL-581402-113"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 113,
+          "relation_ids": [
+            "R14-PL-904137-113"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-862541",
+          "position": 8,
+          "relation_ids": [
+            "R14-PL-862541-008"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-191933",
+      "revisit_relation_ids": [
+        "R14-RV-191933"
+      ]
+    },
+    "hard_prerequisite_relation_ids": [],
+    "helpful_context_relation_ids": [
+      "R14-HELPFUL-14"
+    ],
+    "required_attachment_relation_ids": [
+      "R14-CAP-039718",
+      "R14-CAP-765371"
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110007",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009",
+      "V3-HOLD-110011"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}

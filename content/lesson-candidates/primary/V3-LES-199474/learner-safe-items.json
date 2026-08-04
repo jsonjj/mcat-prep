@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; unresolved fresh re-entry returns control without target exit credit.",
+  "items": [
+    {
+      "prompt_key": "ISOM_ENTRY",
+      "title": "Readiness check: geometry and rotation",
+      "prompt": "Two drawings show the same carbon skeleton and differ only by rotation around an unconstrained carbon–carbon single bond. What relation is supported?",
+      "response_type": "single_select",
+      "options": [
+        "They are conformations of the same molecular identity",
+        "They are structural isomers with different connectivity",
+        "They are enantiomers formed without any bond rotation",
+        "They are unrelated because every drawing is a new compound"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "ISOM_GUIDED",
+      "title": "Guided practice: connectivity first",
+      "prompt": "Two compounds share formula C3H6O. One is CH3CH2CHO and the other is CH3COCH3. How are they related?",
+      "response_type": "single_select",
+      "options": [
+        "They are conformers related by carbon–carbon rotation",
+        "They are structural isomers with different connectivity",
+        "They are enantiomers with opposite configurations",
+        "They are identical because their formulas are equal"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ISOM_LIGHT",
+      "title": "Less support: invert every center",
+      "prompt": "A molecule with two stereocenters is compared with a second molecule of the same connectivity. Both stereocenters are inverted, and the structures are nonsuperimposable mirror images. What is the relation?",
+      "response_type": "single_select",
+      "options": [
+        "Conformers of one compound",
+        "Structural isomers",
+        "Enantiomers",
+        "A cis–trans pair"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ISOM_SOLO",
+      "title": "Independent practice: invert one of two centers",
+      "prompt": "Two molecules have the same connectivity and two stereocenters. One center matches and the other is inverted. How are the molecules related?",
+      "response_type": "single_select",
+      "options": [
+        "Identical because one center matches",
+        "Enantiomers because one center is inverted",
+        "Structural isomers because orientation differs",
+        "Diastereomers because they are non-mirror stereoisomers"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ISOM_NEAR",
+      "title": "Near exit: mirror-related pair",
+      "prompt": "Two tetrahedral molecules have the same atom connectivity. Their three-dimensional arrangements are mirror images that cannot be superimposed. Which class applies?",
+      "response_type": "single_select",
+      "options": [
+        "Enantiomers",
+        "Conformers",
+        "Structural isomers",
+        "Identical rotations"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ISOM_CHANGED",
+      "title": "Changed exit: ring substituent sides",
+      "prompt": "Two disubstituted cyclohexanes have the same connectivity. In one, both substituents are on the same ring face; in the other, they are on opposite faces. What is their relationship?",
+      "response_type": "single_select",
+      "options": [
+        "Conformers that interconvert by a chair flip",
+        "Cis–trans diastereomers",
+        "Structural isomers with different rings",
+        "Enantiomers in every substitution pattern"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ISOM_REPAIR_NEAR",
+      "title": "Repair: locate the first identity difference",
+      "prompt": "What should be compared before wedges, dashes, or mirror images when classifying an isomer pair?",
+      "response_type": "single_select",
+      "options": [
+        "Only the direction each drawing faces on the page",
+        "Only the compound names printed below the structures",
+        "The atom connectivity and neighbor list in each structure",
+        "The measured boiling point before molecular structure"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ISOM_REENTRY_NEAR",
+      "title": "Fresh re-entry: mirror-related alcohols",
+      "prompt": "Two fresh tetrahedral alcohol structures have the same connectivity and are nonsuperimposable mirror images. Which class applies?",
+      "response_type": "single_select",
+      "options": [
+        "Identical rotations",
+        "Conformers",
+        "Structural isomers",
+        "Enantiomers"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ISOM_REPAIR_CHANGED",
+      "title": "Repair: distinguish rotation from configuration",
+      "prompt": "Which change can produce a conformer without producing a new configurational stereoisomer?",
+      "response_type": "single_select",
+      "options": [
+        "Rotation about an unconstrained carbon–carbon single bond",
+        "Breaking a π bond and swapping alkene substituent sides",
+        "Inverting one fixed stereocenter while others remain unchanged",
+        "Changing which atoms are directly connected to one another"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ISOM_REENTRY_CHANGED",
+      "title": "Fresh re-entry: ring substituent faces",
+      "prompt": "Two fresh disubstituted cyclopentanes have the same connectivity. Both substituents share one ring face in the first structure and occupy opposite faces in the second. What is their relationship?",
+      "response_type": "single_select",
+      "options": [
+        "Conformers related only by ring motion",
+        "Cis–trans diastereomers",
+        "Structural isomers with different connectivity",
+        "Enantiomers in every substitution pattern"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CONF_ENTRY",
+      "title": "Entry check: identify a stereogenic center",
+      "prompt": "Which tetrahedral carbon is a candidate stereocenter under the stated structures?",
+      "response_type": "single_select",
+      "options": [
+        "A carbon attached to two H atoms, CH3, and OH",
+        "A carbon attached to four different substituent groups",
+        "A planar carbonyl carbon attached through a C=O bond",
+        "A carbon in CH4 attached to four equivalent H atoms"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "CONF_GUIDED",
+      "title": "Guided practice: direct-atom priorities",
+      "prompt": "At a tetrahedral center attached directly to Br, O, C, and H, which priority order is correct?",
+      "response_type": "single_select",
+      "options": [
+        "H > C > O > Br",
+        "O > Br > C > H",
+        "C > O > Br > H",
+        "Br > O > C > H"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CONF_LIGHT",
+      "title": "Less support: lowest group away",
+      "prompt": "Priorities 1→2→3 trace clockwise while priority 4 points away from the viewer. What is the configuration?",
+      "response_type": "single_select",
+      "options": [
+        "R",
+        "S",
+        "Z",
+        "Cannot assign because clockwise is irrelevant"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CONF_SOLO",
+      "title": "Independent practice: lowest group toward",
+      "prompt": "Priorities 1→2→3 appear clockwise, but priority 4 points toward the viewer. What is the configuration?",
+      "response_type": "single_select",
+      "options": [
+        "R because every clockwise path is retained",
+        "S because the apparent result must be inverted",
+        "E because groups 1 and 2 are separated",
+        "Unassignable unless a bond is broken"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CONF_NEAR",
+      "title": "Near exit: counterclockwise with group 4 away",
+      "prompt": "A fresh stereocenter has priority 4 directed away. The 1→2→3 path is counterclockwise. Which label applies?",
+      "response_type": "single_select",
+      "options": [
+        "R",
+        "E",
+        "S",
+        "Z"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CONF_CHANGED",
+      "title": "Changed exit: opposite high-priority groups",
+      "prompt": "On a substituted alkene, the higher-priority group on the left carbon is above the double bond and the higher-priority group on the right carbon is below. What is the configuration?",
+      "response_type": "single_select",
+      "options": [
+        "Z because both selected groups have high priority",
+        "E because the selected groups are opposite",
+        "R because the path is clockwise",
+        "S because the path is counterclockwise"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CONF_REPAIR_NEAR",
+      "title": "Repair: orient before tracing",
+      "prompt": "What must be recorded immediately before converting a 1→2→3 path into R or S?",
+      "response_type": "single_select",
+      "options": [
+        "Whether the molecular name contains a number",
+        "Whether the drawing uses black or white bonds",
+        "Whether priority 4 points away from or toward the viewer",
+        "Whether the molecule has a measurable boiling point"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CONF_REENTRY_NEAR",
+      "title": "Fresh re-entry: clockwise with group 4 away",
+      "prompt": "At a fresh stereocenter, priority 4 points away and the 1→2→3 path is clockwise. Which label applies?",
+      "response_type": "single_select",
+      "options": [
+        "R",
+        "E",
+        "S",
+        "Z"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CONF_REPAIR_CHANGED",
+      "title": "Repair: select alkene priorities separately",
+      "prompt": "What is the correct first operation for an E/Z assignment?",
+      "response_type": "single_select",
+      "options": [
+        "Trace all four groups clockwise around the entire alkene",
+        "Choose the physically largest group on the whole molecule",
+        "Assign R/S to each trigonal alkene carbon",
+        "Select the higher-priority group on each alkene carbon"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "CONF_REENTRY_CHANGED",
+      "title": "Fresh re-entry: opposite selected alkene groups",
+      "prompt": "For a fresh alkene, F outranks H on the left carbon and CH2OH outranks CH3 on the right. The selected higher-priority groups are on opposite sides. Which label applies?",
+      "response_type": "single_select",
+      "options": [
+        "R",
+        "Z",
+        "E",
+        "S"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "OPT_ENTRY",
+      "title": "Entry check: interpret a signed rotation",
+      "prompt": "A pure sample has a measured specific rotation of +12° under stated conditions. Which conclusion is warranted from this measurement alone?",
+      "response_type": "single_select",
+      "options": [
+        "Every molecule in the sample must have R configuration",
+        "The sample must contain equal amounts of two enantiomers",
+        "The compound cannot possess any stereogenic element",
+        "The sample has positive optical rotation"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "OPT_GUIDED",
+      "title": "Guided practice: mirror-partner rotation",
+      "prompt": "One pure enantiomer has [α] = +18° under specified conditions. What is expected for its pure enantiomer under the same conditions?",
+      "response_type": "single_select",
+      "options": [
+        "+36°",
+        "−18°",
+        "0°",
+        "+18°"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "OPT_LIGHT",
+      "title": "Less support: racemic cancellation",
+      "prompt": "A solution contains equal amounts of two enantiomers and no other optically active solute. What net rotation is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Positive rotation equal to one enantiomer",
+        "Negative rotation equal to one enantiomer",
+        "Zero net rotation",
+        "Twice the pure-enantiomer rotation"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "OPT_SOLO",
+      "title": "Independent practice: avoid a unique zero-reading claim",
+      "prompt": "A sample shows zero net optical rotation. Which statement is most defensible without further structural or composition evidence?",
+      "response_type": "single_select",
+      "options": [
+        "The sample definitely contains no stereocenters",
+        "The sample is definitely one pure meso compound",
+        "The instrument proves the sample is a single enantiomer",
+        "Achirality or enantiomer cancellation could fit"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "OPT_NEAR",
+      "title": "Near exit: compute enantiomeric excess",
+      "prompt": "Under matched conditions, a pure positive-rotating enantiomer has [α] = +24°. A mixture gives +6°. What enantiomeric excess is supported?",
+      "response_type": "single_select",
+      "options": [
+        "25% toward the positive enantiomer",
+        "50% toward the positive enantiomer",
+        "75% toward the negative enantiomer",
+        "100% racemic cancellation"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "OPT_CHANGED",
+      "title": "Changed exit: combine equal mirror partners",
+      "prompt": "Two separately measured solutions contain pure enantiomers with rotations +30° and −30° under matched conditions. Equal amounts are combined without reaction. What follows?",
+      "response_type": "single_select",
+      "options": [
+        "The mixture rotates +60°",
+        "The mixture has zero net rotation",
+        "The mixture rotates −60°",
+        "The R/S labels become identical"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "OPT_REPAIR_NEAR",
+      "title": "Repair: separate sign from R/S",
+      "prompt": "Which statement correctly relates optical rotation sign to absolute configuration?",
+      "response_type": "single_select",
+      "options": [
+        "Positive rotation always means R",
+        "Negative rotation always means S",
+        "The sign must be measured and is not fixed by R or S",
+        "R and S samples always have zero rotation"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "OPT_REENTRY_NEAR",
+      "title": "Fresh re-entry: compute enantiomeric excess",
+      "prompt": "Under matched conditions, a pure positive-rotating enantiomer has [α] = +20°. A fresh mixture gives +5°. What enantiomeric excess is supported?",
+      "response_type": "single_select",
+      "options": [
+        "25% toward the positive enantiomer",
+        "50% toward the positive enantiomer",
+        "75% toward the negative enantiomer",
+        "100% racemic cancellation"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "OPT_REPAIR_CHANGED",
+      "title": "Repair: interpret a zero reading",
+      "prompt": "Which evidence would distinguish a racemic mixture from one achiral compound when both show zero rotation?",
+      "response_type": "single_select",
+      "options": [
+        "A repeated zero reading under the same conditions",
+        "Composition or structural evidence for the sample",
+        "A larger sample volume with the same concentration",
+        "A different label on the polarimeter tube"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "OPT_REENTRY_CHANGED",
+      "title": "Fresh re-entry: combine equal mirror partners",
+      "prompt": "Two fresh solutions contain pure enantiomers with rotations +16° and −16° under matched conditions. Equal amounts are combined without reaction. What follows?",
+      "response_type": "single_select",
+      "options": [
+        "The mixture rotates +32°",
+        "The mixture rotates −32°",
+        "The absolute configurations become identical",
+        "The mixture has zero net rotation"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "IMF_ENTRY",
+      "title": "Readiness check: net molecular polarity",
+      "prompt": "CH3Cl is tetrahedral with one C–Cl bond and three C–H bonds. CCl4 is tetrahedral and symmetric. Which statement is supported?",
+      "response_type": "single_select",
+      "options": [
+        "CH3Cl has a net dipole while CCl4 cancels symmetrically",
+        "Both molecules are nonpolar because both are tetrahedral",
+        "CCl4 is polar because it contains four polar bonds",
+        "CH3Cl is nonpolar because carbon has four bonds"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "IMF_GUIDED",
+      "title": "Guided practice: methanol interactions",
+      "prompt": "Which strongest distinguishing interaction occurs between methanol molecules because of their O–H groups?",
+      "response_type": "single_select",
+      "options": [
+        "Ion–ion attraction",
+        "Hydrogen bonding",
+        "Metallic bonding",
+        "Covalent bond formation between molecules"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "IMF_LIGHT",
+      "title": "Less support: acetone self-attraction",
+      "prompt": "Acetone has a polar C=O group but no O–H or N–H bond. Which description best fits pure acetone?",
+      "response_type": "single_select",
+      "options": [
+        "Only hydrogen bonding, with no dispersion",
+        "Only ion–dipole attraction",
+        "Dipole interactions plus London dispersion",
+        "No intermolecular attraction at all"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "IMF_SOLO",
+      "title": "Independent practice: halogen polarizability",
+      "prompt": "I2 and Br2 are nonpolar diatomic molecules. Which is expected to have the higher boiling point, and why?",
+      "response_type": "single_select",
+      "options": [
+        "Br2, because smaller clouds are always more polarizable",
+        "Br2, because it forms strong hydrogen bonds",
+        "I2, because it has a permanent molecular dipole",
+        "I2, because its larger electron cloud is more polarizable"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "IMF_NEAR",
+      "title": "Near exit: same formula, different donors",
+      "prompt": "Ethanol and dimethyl ether share formula C2H6O. Ethanol has an O–H bond; the ether does not. Which comparison is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Ethanol boils higher because it self hydrogen-bonds",
+        "Dimethyl ether has the higher boiling point because it lacks polarity",
+        "Both boil identically because molecular formulas match",
+        "The ether forms stronger ion–ion attractions than ethanol"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "IMF_CHANGED",
+      "title": "Changed exit: branching and surface contact",
+      "prompt": "Straight-chain pentane and highly branched neopentane are nonpolar isomers. Which comparison is supported?",
+      "response_type": "single_select",
+      "options": [
+        "Neopentane has stronger hydrogen bonding",
+        "Pentane has greater contact and a higher boiling point",
+        "Both have ion–dipole forces of equal strength",
+        "Neopentane has a permanent dipole that pentane lacks"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "IMF_REPAIR_NEAR",
+      "title": "Repair: classify interactions in order",
+      "prompt": "Which checklist correctly identifies intermolecular attractions in a neutral molecular sample?",
+      "response_type": "single_select",
+      "options": [
+        "Hydrogen bonding first; ignore all dispersion",
+        "Ion–ion attraction for every polar bond",
+        "Dispersion always, then dipole and donor/acceptor checks",
+        "Covalent bonding between every pair of molecules"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "IMF_REENTRY_NEAR",
+      "title": "Fresh re-entry: same formula, different donors",
+      "prompt": "Propan-1-ol and methoxyethane share formula C3H8O. The alcohol has an O–H bond; the ether does not. Which comparison is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Propan-1-ol boils higher because it self hydrogen-bonds",
+        "Methoxyethane boils higher because it cannot hydrogen-bond to itself",
+        "Both boil identically because their molecular formulas match",
+        "Methoxyethane forms stronger ion–ion attractions"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "IMF_REPAIR_CHANGED",
+      "title": "Repair: property direction",
+      "prompt": "For comparable molecular substances, what usually follows from stronger intermolecular attraction?",
+      "response_type": "single_select",
+      "options": [
+        "Lower boiling point and lower condensation tendency",
+        "Higher vapor pressure at the same temperature",
+        "Higher boiling point and lower vapor pressure",
+        "No change in any bulk physical property"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "IMF_REENTRY_CHANGED",
+      "title": "Fresh re-entry: branching and surface contact",
+      "prompt": "Straight-chain hexane and highly branched 2,2-dimethylbutane are nonpolar isomers. Which comparison is supported?",
+      "response_type": "single_select",
+      "options": [
+        "The branched isomer forms stronger hydrogen bonds",
+        "Both rely on ion–dipole attractions of equal strength",
+        "The branched isomer has a permanent dipole",
+        "Hexane has greater contact and a higher boiling point"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    }
+  ]
+}

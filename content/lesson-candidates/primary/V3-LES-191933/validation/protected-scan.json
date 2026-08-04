@@ -1,0 +1,56 @@
+{
+  "format": "lesson-generation-protected-scan/2",
+  "lessonId": "V3-LES-191933",
+  "status": "PASS",
+  "findings": [],
+  "protectedArtifact": {
+    "path": "protected-items.json",
+    "sha256": "2a3f64333baf25544084d5de02fdaeca7449277c8c4580a6f54004c27353aab1",
+    "size": 68080
+  },
+  "scannedPathCount": 6,
+  "scannedPaths": [
+    "learner-safe-items.json",
+    "source-claim-ledger.json",
+    "candidate-quality-ledger.json",
+    "validation/lesson-validate.json",
+    "validation/computed-quality.json",
+    "validation/normalization-smoke.json"
+  ],
+  "logHashes": {
+    "candidateStdoutSha256": "454489100c2009040cc496f6263db7941537447cfdf05b44c2067a106dbbffe8",
+    "candidateStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "lessonStdoutSha256": "9a40f54c18a98bf278cb59ef0f2513083b0151e59562fac33db968efa0e92da1",
+    "lessonStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "distractorRationaleAudit": {
+    "incorrectOptionCount": 120,
+    "explicitRejectionRationaleCount": 120,
+    "missingRationaleRefs": [],
+    "status": "PASS"
+  },
+  "optionPresentationAudit": {
+    "auditedMeasurableItemCount": 40,
+    "incorrectOptionLengthMedian": 61,
+    "incorrectOptionLengthStandardDeviation": 5.742622078226403,
+    "residualLengthClueCount": 0,
+    "residualLengthClueItemIds": [],
+    "status": "PASS"
+  },
+  "answerPositionPatternCheck": {
+    "itemCount": 40,
+    "positionCounts": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "maximumPositionCountSpread": 0,
+    "status": "PASS"
+  },
+  "postCommitmentFeedbackCheck": {
+    "requiredCount": 40,
+    "authoredCount": 40,
+    "status": "PASS"
+  }
+}

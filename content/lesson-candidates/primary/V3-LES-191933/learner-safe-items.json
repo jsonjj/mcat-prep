@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; unresolved fresh re-entry returns control without target exit credit.",
+  "items": [
+    {
+      "prompt_key": "INV_ENTRY",
+      "title": "Entry check: preservation criterion",
+      "prompt": "A critic writes: “A district is not preserved merely because its facades remain. Preservation succeeds when residents can still adapt buildings to changing communal uses.” Which statement best captures the transferable framework?",
+      "response_type": "single_select",
+      "options": [
+        "Living use matters more than frozen appearance in preservation",
+        "Historic districts should prohibit every change to old buildings",
+        "Facade materials determine whether a neighborhood remains authentic",
+        "All communal uses eventually damage architecturally valuable places"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "INV_GUIDED",
+      "title": "Guided practice: translation fidelity",
+      "prompt": "An essay argues that a translation can change syntax and imagery yet remain faithful if it preserves the original conflict between duty and desire. What is the invariant?",
+      "response_type": "single_select",
+      "options": [
+        "A faithful translation reproduces every original word in order",
+        "Fidelity can preserve a central conflict despite surface changes",
+        "Duty should always defeat desire in translated literature",
+        "Changed imagery makes literary translation inherently unfaithful"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "INV_LIGHT",
+      "title": "Less support: uncertainty in labels",
+      "prompt": "A curator says museum labels should present competing interpretations when evidence is incomplete, because confident closure can hide the limits of knowledge. Which abstraction is passage-derived?",
+      "response_type": "single_select",
+      "options": [
+        "Museum labels should contain every fact ever collected about an object",
+        "Visitors prefer displays that avoid disagreement among historians",
+        "Visible uncertainty preserves honesty under incomplete evidence",
+        "Museums should replace physical objects with interpretive essays"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "INV_SOLO",
+      "title": "Independent practice: negotiated streets",
+      "prompt": "A planner praises narrow streets with frequent crossings because they force drivers, cyclists, and pedestrians to negotiate movement rather than assume exclusive priority. What framework remains stable?",
+      "response_type": "single_select",
+      "options": [
+        "Narrow streets always carry more traffic than broad streets",
+        "Pedestrians should receive permanent priority over every vehicle",
+        "Street width matters only because it changes construction expense",
+        "Shared constraints can produce coordination through negotiation"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "INV_NEAR",
+      "title": "Near exit: rival archival accounts",
+      "prompt": "A historian values archives that preserve conflicting eyewitness accounts, arguing that disagreement reveals how memory is shaped rather than merely obstructing certainty. Which framework is most transferable?",
+      "response_type": "single_select",
+      "options": [
+        "Preserved disagreement can reveal how understanding is constructed",
+        "Archives are useful only when all witnesses report identical events",
+        "Eyewitness accounts become reliable after enough time has passed",
+        "Historical certainty depends mainly on storing more documents"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "INV_CHANGED",
+      "title": "Changed exit: revive a play",
+      "prompt": "A director argues that reviving a centuries-old play need not copy its original costumes. What must remain is the reciprocal tension between performers who challenge the audience and an audience whose reactions reshape the performance. Which framework fits?",
+      "response_type": "single_select",
+      "options": [
+        "Historical costumes are the only reliable source of theatrical meaning",
+        "Faithfulness can preserve reciprocity despite new surfaces",
+        "Modern audiences should remain silent during every live performance",
+        "A revival succeeds whenever its ticket sales exceed the original run"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "INV_REPAIR_NEAR",
+      "title": "Repair: test for an invariant",
+      "prompt": "Which test most directly distinguishes a transferable framework from a topic-only summary?",
+      "response_type": "single_select",
+      "options": [
+        "Ask whether the statement repeats the passage title exactly",
+        "Ask whether the statement includes the most technical vocabulary",
+        "Test whether the relation survives changed topic nouns",
+        "Ask whether outside experts would agree with the author’s conclusion"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "INV_REENTRY_NEAR",
+      "title": "Fresh re-entry: limits of models",
+      "prompt": "A scientist writes that models are most useful when they expose which observations they cannot explain, because visible limits guide the next inquiry. Which invariant follows?",
+      "response_type": "single_select",
+      "options": [
+        "A model is useful only after it explains every available observation",
+        "Unexplained observations should be removed from scientific reports",
+        "Scientific inquiry ends once a model predicts one successful result",
+        "Visible limits can direct a model’s next inquiry"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "INV_REPAIR_CHANGED",
+      "title": "Repair: keep the framework passage-bounded",
+      "prompt": "When two candidate frameworks explain the examples, which selection rule best prevents importing an external theory?",
+      "response_type": "single_select",
+      "options": [
+        "Choose the smallest relation supported across the passage",
+        "Choose the framework with the broadest possible philosophical scope",
+        "Choose the theory that is most familiar from another discipline",
+        "Choose whichever statement predicts the most events outside the text"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "INV_REENTRY_CHANGED",
+      "title": "Fresh re-entry: culinary continuity",
+      "prompt": "A food critic argues that a cuisine remains continuous not by repeating identical ingredients, but by preserving constraints on balance, seasonality, and shared preparation while adapting to local crops. Which framework is supported?",
+      "response_type": "single_select",
+      "options": [
+        "A cuisine is authentic only when every ingredient remains unchanged",
+        "Continuity can preserve constraints amid local adaptation",
+        "Seasonal ingredients prevent a cuisine from developing any identity",
+        "Shared preparation matters only when local crops are unavailable"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "MAP_ENTRY",
+      "title": "Entry check: reversible drafts",
+      "prompt": "Source framework: a printmaker has apprentices test layouts with movable paper before carving a permanent block. Which target case preserves that relation?",
+      "response_type": "single_select",
+      "options": [
+        "A programmer edits production code without making a backup",
+        "A chef repeats one finished recipe without testing alternatives",
+        "A programmer prototypes before changing production code",
+        "A sculptor selects the heaviest tool before planning the design"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "MAP_GUIDED",
+      "title": "Guided practice: affected participants",
+      "prompt": "A passage argues that a neighborhood plan gains legitimacy when affected residents can revise it before adoption. Which classroom case maps the framework most closely?",
+      "response_type": "single_select",
+      "options": [
+        "A teacher posts a finished rule after students have left",
+        "Students vote on an unrelated school mascot after rules are fixed",
+        "Parents receive a copy of a policy but cannot respond",
+        "Students affected by a rule revise a draft before it is adopted"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "MAP_LIGHT",
+      "title": "Less support: productive constraint",
+      "prompt": "An editor claims a strict word limit improves an essay by forcing the writer to select only indispensable claims. Which target case preserves the relation?",
+      "response_type": "single_select",
+      "options": [
+        "A small exhibit space forces a curator to select essential objects",
+        "A larger archive allows every document to remain on display",
+        "A museum copies the essay’s words onto a gallery wall",
+        "A curator removes labels so visitors receive less information"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "MAP_SOLO",
+      "title": "Independent practice: category power",
+      "prompt": "A historian argues that an institution retains power when it defines the categories through which others must describe themselves. Which target case maps this framework?",
+      "response_type": "single_select",
+      "options": [
+        "Users choose any description in a system with no fixed fields",
+        "A platform defines all available profile categories",
+        "A device runs faster after its battery is replaced",
+        "A writer changes categories after readers stop using them"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "MAP_NEAR",
+      "title": "Near exit: diversity buffers failure",
+      "prompt": "A passage says a garden with several crop varieties is less vulnerable because one disease is unlikely to damage every variety. Which new context preserves the framework?",
+      "response_type": "single_select",
+      "options": [
+        "A portfolio invests every dollar in one highly familiar company",
+        "A library buys many copies of the same vulnerable edition",
+        "A portfolio spreads assets so one sector loss is less destructive",
+        "A farm paints crop labels different colors after planting"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "MAP_CHANGED",
+      "title": "Changed exit: shared protocol",
+      "prompt": "A passage argues that jazz improvisation remains coherent because musicians share a pulse and harmonic frame while varying their lines. Which target case best maps the relation?",
+      "response_type": "single_select",
+      "options": [
+        "A team bans variation and requires identical work products",
+        "A team shares vocabulary but follows incompatible interfaces",
+        "A team varies interfaces so no component can connect",
+        "A team shares one interface while implementations vary"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "MAP_REPAIR_NEAR",
+      "title": "Repair: map by function",
+      "prompt": "What is the most reliable first step when mapping a passage framework to a new context?",
+      "response_type": "single_select",
+      "options": [
+        "Name each source element’s function before pairing target roles",
+        "Pair elements that use the same noun before reading relations",
+        "Add outside facts until one target seems most realistic",
+        "Replace the passage framework with a broader familiar theory"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "MAP_REENTRY_NEAR",
+      "title": "Fresh re-entry: distributed access",
+      "prompt": "A passage praises a library network because many branches can approve local events, reducing dependence on one central gatekeeper. Which target maps the relation?",
+      "response_type": "single_select",
+      "options": [
+        "A forum sends every moderation decision to one administrator",
+        "Local groups resolve routine forum cases independently",
+        "A website changes its logo at each regional office",
+        "A company increases the gatekeeper’s workload and authority"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "MAP_REPAIR_CHANGED",
+      "title": "Repair: ignore shared vocabulary",
+      "prompt": "Which comparison best tests whether a changed-context mapping preserves structure rather than surface?",
+      "response_type": "single_select",
+      "options": [
+        "Count how many source nouns reappear in the target",
+        "Choose the target set in the most familiar domain",
+        "Compare role functions, relation direction, and stated constraints",
+        "Prefer the target with the longest descriptive wording"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "MAP_REENTRY_CHANGED",
+      "title": "Fresh re-entry: deliberate friction",
+      "prompt": "A workshop adds a mandatory pause before a dangerous machine starts, arguing that slight friction prevents impulsive errors. Which target preserves the relation?",
+      "response_type": "single_select",
+      "options": [
+        "A clinic removes identity checks to shorten every appointment",
+        "A clinic uses brighter paint near equipment controls",
+        "A clinic adds more forms after treatment is complete",
+        "A clinic pauses for a checklist before a high-risk procedure"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "RESP_ENTRY",
+      "title": "Entry check: metrics as prompts",
+      "prompt": "An author says metrics should prompt questions but should never replace contextual judgment. A dashboard flags an unusual result. Which response best fits the author?",
+      "response_type": "single_select",
+      "options": [
+        "Investigate the anomaly using the metric and contextual judgment",
+        "Ignore every metric because numbers are always misleading",
+        "Accept the flagged result as decisive without further inquiry",
+        "Replace the dashboard with an unrelated employee survey"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "RESP_GUIDED",
+      "title": "Guided practice: reversible policy",
+      "prompt": "An author favors reversible trials before permanent policy because early evidence is incomplete. Which response to a proposed transit rule is most consistent?",
+      "response_type": "single_select",
+      "options": [
+        "Adopt the rule permanently before collecting any local evidence",
+        "Run a time-limited pilot with review and a sunset condition",
+        "Reject every transit rule because uncertainty can never shrink",
+        "Copy another city’s permanent rule without examining differences"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "RESP_LIGHT",
+      "title": "Less support: visible convenience costs",
+      "prompt": "An author distrusts conveniences that hide who bears their costs. How would the author likely respond to a delivery app that reveals worker pay and environmental costs at checkout?",
+      "response_type": "single_select",
+      "options": [
+        "Oppose the disclosure because convenience should remain effortless",
+        "Ignore the disclosure because hidden costs never affect judgment",
+        "Support the disclosure because it makes displaced costs visible",
+        "Ban delivery solely because the app uses digital technology"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "RESP_SOLO",
+      "title": "Independent practice: productive disagreement",
+      "prompt": "An author says disagreement improves decisions when participants share evidence standards. Which forum design would the author most likely endorse?",
+      "response_type": "single_select",
+      "options": [
+        "A forum where claims need no evidence if they are sincerely held",
+        "A forum that allows only one approved viewpoint",
+        "A forum that ranks comments solely by emotional intensity",
+        "A forum where opposing views cite sources under common rules"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "RESP_NEAR",
+      "title": "Near exit: layered restoration",
+      "prompt": "An author argues that restoration should preserve visible layers of a building’s history rather than erase later alterations to simulate one “pure” era. How would the author view a plan to repaint every room in its earliest known style?",
+      "response_type": "single_select",
+      "options": [
+        "Reject it because the plan erases later historical layers",
+        "Support it because earliest appearance is always most authentic",
+        "Support it only because uniform paint simplifies maintenance",
+        "Remain neutral because restoration never conveys interpretation"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "RESP_CHANGED",
+      "title": "Changed exit: transparent automation",
+      "prompt": "An author claims tools extend attention when they expose their decision points, but weaken judgment when they hide them. A new scheduling system records why it recommends each change and invites review. What outcome fits the framework?",
+      "response_type": "single_select",
+      "options": [
+        "Judgment necessarily disappears whenever software makes a suggestion",
+        "Reviewable choices let the system extend attention",
+        "The system is trustworthy only if no human can alter its schedule",
+        "The recommendations become correct because they are generated quickly"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "RESP_REPAIR_NEAR",
+      "title": "Repair: preserve priority and concession",
+      "prompt": "Which method best prevents an author-response inference from becoming too absolute?",
+      "response_type": "single_select",
+      "options": [
+        "Ignore concessions and use only the strongest sentence",
+        "Choose the response that matches the reader’s own preference",
+        "State one author priority and one limiting qualification first",
+        "Predict what most people would probably do outside the passage"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "RESP_REENTRY_NEAR",
+      "title": "Fresh re-entry: resident knowledge",
+      "prompt": "An author argues that public design improves when residents can revise expert proposals using local knowledge. Which response to a park redesign would the author likely support?",
+      "response_type": "single_select",
+      "options": [
+        "Experts finalize the plan before residents can view it",
+        "Residents receive the plan only after construction begins",
+        "Officials replace local testimony with national averages",
+        "Residents test and revise a draft alongside technical experts"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "RESP_REPAIR_CHANGED",
+      "title": "Repair: passage result, not outside likelihood",
+      "prompt": "Which question keeps a hypothetical inference inside the passage framework?",
+      "response_type": "single_select",
+      "options": [
+        "What follows if the author’s stated relation governs this case?",
+        "What outcome seems most common in the reader’s experience?",
+        "What would an outside specialist predict with additional facts?",
+        "What response would be safest regardless of the author’s view?"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "RESP_REENTRY_CHANGED",
+      "title": "Fresh re-entry: transparent scarcity",
+      "prompt": "An author says scarcity can sharpen priorities when tradeoffs are visible, but concealed cuts breed distrust. A library must reduce hours. Which outcome is most passage-consistent?",
+      "response_type": "single_select",
+      "options": [
+        "Secret cuts will sharpen priorities more effectively than public choices",
+        "Visible tradeoffs can focus priorities and preserve trust",
+        "Scarcity guarantees that every stakeholder will prefer the same schedule",
+        "The library should deny that any reduction has occurred"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ANLG_ENTRY",
+      "title": "Entry check: support network",
+      "prompt": "Source: a fungal network moves nutrients from well-supplied plants toward stressed neighbors. Which case shares the fundamental relation?",
+      "response_type": "single_select",
+      "options": [
+        "A team hides expertise so weaker groups remain dependent",
+        "A manager gives every group the same decorative badge",
+        "Experienced teams share expertise with groups facing new problems",
+        "A garden labels healthy and stressed plants with different colors"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This low-stakes check cannot satisfy an exit."
+    },
+    {
+      "prompt_key": "ANLG_GUIDED",
+      "title": "Guided practice: a selective frame",
+      "prompt": "Source: a picture frame does not alter the painting, but it selects which boundaries viewers treat as meaningful. Which target is analogous?",
+      "response_type": "single_select",
+      "options": [
+        "A survey destroys every response that does not fit expectations",
+        "A gallery repaints a work to match the surrounding wall",
+        "A camera records an entire room without choosing a field",
+        "A question’s wording directs attention to one aspect of an issue"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ANLG_LIGHT",
+      "title": "Less support: slowing to reveal",
+      "prompt": "Source: a river bend slows water, allowing suspended sediment to settle and become visible. Which target preserves the relation?",
+      "response_type": "single_select",
+      "options": [
+        "A pause slows discussion and surfaces overlooked concerns",
+        "A faster meeting hides fewer concerns because it ends sooner",
+        "A curved logo makes an organization appear more natural",
+        "A filter removes every concern before participants can examine it"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ANLG_SOLO",
+      "title": "Independent practice: structure through absence",
+      "prompt": "Source: rests in music organize phrases because deliberate absence separates and shapes the sounds around it. Which target is analogous?",
+      "response_type": "single_select",
+      "options": [
+        "A page uses more words so no blank area remains",
+        "Whitespace groups page elements by separating visual regions",
+        "A printer removes random lines from a finished paragraph",
+        "A speaker repeats every sentence without pausing"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ANLG_NEAR",
+      "title": "Near exit: constraint without determination",
+      "prompt": "Source: legal precedent constrains a new ruling but does not uniquely determine it; judges still interpret how the prior relation applies. Which target is analogous?",
+      "response_type": "single_select",
+      "options": [
+        "A template copies every prior decision without interpretation",
+        "A blank page supplies no constraints on a writer",
+        "Grammar constrains a sentence without dictating its exact content",
+        "A random number fixes the meaning of every word in a sentence"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ANLG_CHANGED",
+      "title": "Changed exit: marketplace relation",
+      "prompt": "A passage calls public debate a “marketplace of ideas,” emphasizing that claims gain value through comparison and challenge rather than through mere possession. Which literal case shares that relation?",
+      "response_type": "single_select",
+      "options": [
+        "A warehouse stores claims without allowing anyone to compare them",
+        "A speaker repeats one claim until alternatives disappear",
+        "A market raises value only by limiting the number of participants",
+        "Peer review tests competing explanations through criticism"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ANLG_REPAIR_NEAR",
+      "title": "Repair: draw the arrows",
+      "prompt": "What step most directly prevents choosing an analogy from shared topic alone?",
+      "response_type": "single_select",
+      "options": [
+        "Label source roles and draw the direction of each relation",
+        "Count repeated nouns before identifying what they do",
+        "Prefer the target with the most vivid shared imagery",
+        "Choose the option from the same academic discipline"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ANLG_REENTRY_NEAR",
+      "title": "Fresh re-entry: memory without prescription",
+      "prompt": "Source: immune memory accelerates response to a familiar pattern but does not dictate the exact form of every later response. Which target is analogous?",
+      "response_type": "single_select",
+      "options": [
+        "An organization deletes every record of past projects",
+        "Past lessons speed adaptation without fixing one response",
+        "A manual prescribes one unchangeable action for every event",
+        "A logo reminds staff of the company name but changes no response"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ANLG_REPAIR_CHANGED",
+      "title": "Repair: translate figurative language",
+      "prompt": "How should a figurative source be prepared for structural comparison?",
+      "response_type": "single_select",
+      "options": [
+        "Match the image to another case with the same visible object",
+        "Treat every metaphorical detail as a literal factual claim",
+        "Restate the image as a functional relation before mapping it",
+        "Discard the passage and use a familiar outside analogy"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ANLG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: metric as lens",
+      "prompt": "Source: an author calls a performance metric a lens because it magnifies selected features while narrowing the field of view. Which target shares that structure?",
+      "response_type": "single_select",
+      "options": [
+        "A complete archive preserves every feature with equal emphasis",
+        "A blank report hides all features without selecting among them",
+        "A larger screen displays the same data with no change in emphasis",
+        "A ranking highlights one dimension while obscuring other qualities"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    }
+  ]
+}
