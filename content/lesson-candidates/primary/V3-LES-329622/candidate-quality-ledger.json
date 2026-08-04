@@ -2,7 +2,7 @@
   "format": "lesson-generation-candidate-quality-ledger/1",
   "lessonId": "V3-LES-329622",
   "route": "STANDARD",
-  "lifecycle": "CANDIDATE_JUDGE_FAILED_CYCLE_EXHAUSTED",
+  "lifecycle": "CANDIDATE_AUTHOR_REMEDIATED_AWAITING_FRESH_INDEPENDENT_JUDGE",
   "statusKind": "MACHINE_SCREEN_ONLY",
   "hardGateResults": {
     "R1_R15_STRUCTURAL": "PASS",
@@ -39,8 +39,8 @@
     }
   },
   "officialQualityResult": {
-    "evaluationAvailable": true,
-    "humanGateStatus": "FAILED",
+    "evaluationAvailable": false,
+    "humanGateStatus": "BLOCKED",
     "approvalWithheld": true
   },
   "authorDiagnostics": {
@@ -50,18 +50,14 @@
     "sourceRightsChecked": true,
     "protectedMaterialSeparated": true,
     "renderedCheckPerformed": false,
-    "independentReviewPerformed": true,
+    "independentReviewPerformed": false,
     "learnerExposureOccurred": false,
     "optionPresentationChecked": true
   },
-  "finalGateStatus": "FAILED",
+  "finalGateStatus": "BLOCKED",
   "releaseEligibility": "INTERNAL_DRAFT_ONLY",
   "blockerCodes": [
-    "QUIN_CHANGED_KEY_LENGTH_CLUEING",
-    "QUIN_ENTRY_TITLE_REVEALS_OXIDIZED_STATE",
-    "QUIN_LIGHT_TITLE_REVEALS_OXIDATION",
-    "QUIN_REENTRY_CHANGED_TITLE_REVEALS_LOCALIZATION_OUTCOME",
-    "QUIN_REPAIR_CHANGED_KEY_LENGTH_CLUEING"
+    "FRESH_INDEPENDENT_JUDGE_REQUIRED"
   ],
   "nonclaims": {
     "humanApproved": false,

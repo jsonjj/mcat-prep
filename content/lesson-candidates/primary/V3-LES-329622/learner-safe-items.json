@@ -6,7 +6,7 @@
   "items": [
     {
       "prompt_key": "QUIN_ENTRY",
-      "title": "Starting check: identify oxidized head",
+      "title": "Starting check: read the ring pattern",
       "prompt": "A six-membered conjugated ring has two opposite carbonyl groups. Which redox form does this head-group pattern support?",
       "response_type": "single_select",
       "options": [
@@ -32,7 +32,7 @@
     },
     {
       "prompt_key": "QUIN_LIGHT",
-      "title": "Less help: classify oxidation",
+      "title": "Less help: classify the ring change",
       "prompt": "A carrier's ring changes from two hydroxyl groups to two carbonyl groups. What net process occurred at the head group?",
       "response_type": "single_select",
       "options": [
@@ -71,14 +71,14 @@
     },
     {
       "prompt_key": "QUIN_CHANGED",
-      "title": "Changed exit: diagnose head versus tail defect",
-      "prompt": "Variant A replaces one quinone carbonyl oxygen with a non-redox-active group but preserves the tail. Variant B shortens the tail but preserves both quinone carbonyls. Which prediction best separates the primary defects?",
+      "title": "Changed exit: compare two structural variants",
+      "prompt": "Variant A replaces one quinone carbonyl oxygen with a non-redox-active group while preserving the tail. Variant B shortens the hydrophobic tail while preserving both quinone carbonyls. Which paired prediction is best supported?",
       "response_type": "single_select",
       "options": [
-        "A impairs head-group redox chemistry; B weakens membrane localization",
-        "A weakens membrane localization; B impairs head-group redox chemistry",
-        "Both force electron-free Q-to-QH2 conversion at the head group",
-        "Neither alters carrier behavior because each retains an aromatic ring"
+        "A weakens head-group redox; B weakens membrane retention",
+        "A weakens membrane retention; B weakens head-group redox",
+        "A preserves head-group redox; B preserves membrane retention",
+        "A strengthens head-group redox; B strengthens membrane retention"
       ],
       "directions": "Choose one response, then commit it to receive feedback."
     },
@@ -111,19 +111,19 @@
     {
       "prompt_key": "QUIN_REPAIR_CHANGED",
       "title": "Repair: assign region to function",
-      "prompt": "Which pairing is supported for ubiquinone?",
+      "prompt": "Which head–tail function map is supported for ubiquinone?",
       "response_type": "single_select",
       "options": [
-        "Tail—carbonyl redox chemistry; head—hydrophobic membrane anchoring",
-        "Head—redox conversion; tail—hydrophobic membrane localization",
-        "Head—peptide synthesis; tail—transport across the nuclear envelope",
-        "Tail—phosphate transfer; head—sequence-specific DNA binding"
+        "Head—membrane anchoring; tail—carbonyl redox conversion",
+        "Head—carbonyl redox conversion; tail—membrane anchoring",
+        "Head—peptide synthesis; tail—nuclear-envelope transport",
+        "Head—DNA sequence binding; tail—phosphate-group transfer"
       ],
       "directions": "Choose one response, then commit it to receive feedback."
     },
     {
       "prompt_key": "QUIN_REENTRY_CHANGED",
-      "title": "Fresh changed re-entry: localization-preserving analog",
+      "title": "Fresh changed re-entry: evaluate analog C",
       "prompt": "Analog C keeps a long hydrophobic tail but replaces both head-group carbonyls with groups that cannot undergo the Q/QH2 conversion. Which outcome is most direct?",
       "response_type": "single_select",
       "options": [

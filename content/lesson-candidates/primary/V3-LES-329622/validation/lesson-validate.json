@@ -1,5 +1,5 @@
 {
-  "candidateCommand": {
+  "command": {
     "argv": [
       "node",
       "tools/content-cli/node_modules/tsx/dist/cli.mjs",
@@ -8,19 +8,119 @@
       "content/lesson-candidates/primary/V3-LES-329622",
       "--json"
     ],
-    "cliEntryPath": "tools/content-cli/src/entry.ts",
-    "cliEntrySha256": "069bdf24d431793df13c654dbfe03ef1f00407ad76cbe047f5a81e44570f0374",
-    "cliMainPath": "tools/content-cli/src/main.ts",
-    "cliMainSha256": "723afe84b1539f16ffdb02f720f94934452a4d10538b8bfd2d296af4e1cfcd8f",
-    "durationMs": 154,
-    "executableSha256": "f5f9b9db4d95f5e0340982685f083de654c21eef9d9122cab5321081ccaa2601",
+    "kind": "candidate-validate",
     "exitCode": 0,
     "signal": null,
-    "startedAt": "2026-08-04T13:10:15.255Z",
+    "stdoutSha256": "28cc5dc9217d9b8365a45214433d7a83d6a35050a5c91abb746c2e885eaeecb8",
     "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "stdoutSha256": "c0462ca1b3903905b8c6a904cb33359ba141aec7a20ddf126e6c70c58319f21f",
+    "executableSha256": "56b9b4f04e479fc14cdf74295ea4bd57d73be94d74350a36013741ed651a011d",
+    "cliEntrySha256": "069bdf24d431793df13c654dbfe03ef1f00407ad76cbe047f5a81e44570f0374",
+    "cliMainSha256": "723afe84b1539f16ffdb02f720f94934452a4d10538b8bfd2d296af4e1cfcd8f",
     "toolVersion": "candidate-validate/1",
-    "tsxCliSha256": "56b9b4f04e479fc14cdf74295ea4bd57d73be94d74350a36013741ed651a011d"
+    "validatorAggregateSha256": "ce30f30bb8873b03673f2d7795e37ad53f4b21485f34de3088c68c60c203af84",
+    "validatorFiles": [
+      {
+        "gitBlobSha256": "c35b7d209bf899b3808f9d3d7d225d7c89cf350f83a785079cb335ee500062c6",
+        "path": "packages/content/package.json",
+        "sha256": "c35b7d209bf899b3808f9d3d7d225d7c89cf350f83a785079cb335ee500062c6"
+      },
+      {
+        "gitBlobSha256": "d39cb2a345c858f24962fb6becd7f72a57cefbceb830bfca1cfcb3868d78343f",
+        "path": "packages/content/src/lesson-normalization/index.ts",
+        "sha256": "d39cb2a345c858f24962fb6becd7f72a57cefbceb830bfca1cfcb3868d78343f"
+      },
+      {
+        "gitBlobSha256": "fd6feb2da8ea4099999dcae03cba95d908c5e9612fbc2c3e4cea58b38da7ff1f",
+        "path": "packages/content/src/lesson-normalization/normalize.ts",
+        "sha256": "fd6feb2da8ea4099999dcae03cba95d908c5e9612fbc2c3e4cea58b38da7ff1f"
+      },
+      {
+        "gitBlobSha256": "c1f09aa627f1d5bd897d0c1fe7857f9f7f60a50cc724faf50bceeca0ee215a76",
+        "path": "packages/content/src/lesson-normalization/types.ts",
+        "sha256": "c1f09aa627f1d5bd897d0c1fe7857f9f7f60a50cc724faf50bceeca0ee215a76"
+      },
+      {
+        "gitBlobSha256": "e7c40c9a580436fa843cfd962535dc12e272f10d2517491767e7da29cc48615c",
+        "path": "packages/content/src/lesson-validator/canonical.ts",
+        "sha256": "e7c40c9a580436fa843cfd962535dc12e272f10d2517491767e7da29cc48615c"
+      },
+      {
+        "gitBlobSha256": "9bd95dc310250363cb97e042016cc8f6e8c9aa07a906297aa0cd851bfaa49785",
+        "path": "packages/content/src/lesson-validator/computed-quality.ts",
+        "sha256": "9bd95dc310250363cb97e042016cc8f6e8c9aa07a906297aa0cd851bfaa49785"
+      },
+      {
+        "gitBlobSha256": "2d8de3fb9f8f0faa425e201851c9cc6754e7ca7bb9e8da3252dc72c6d66c4316",
+        "path": "packages/content/src/lesson-validator/index.ts",
+        "sha256": "2d8de3fb9f8f0faa425e201851c9cc6754e7ca7bb9e8da3252dc72c6d66c4316"
+      },
+      {
+        "gitBlobSha256": "f8fdc36999b348ca36e3baa383ec8d7e0a43152cf109c4081ac0655b81372f04",
+        "path": "packages/content/src/lesson-validator/rehash.ts",
+        "sha256": "f8fdc36999b348ca36e3baa383ec8d7e0a43152cf109c4081ac0655b81372f04"
+      },
+      {
+        "gitBlobSha256": "6e403d731fb3ead9d3dd7e270a58f49738cd5f8b06157ef5dc620a534d698325",
+        "path": "packages/content/src/lesson-validator/resolvable.ts",
+        "sha256": "6e403d731fb3ead9d3dd7e270a58f49738cd5f8b06157ef5dc620a534d698325"
+      },
+      {
+        "gitBlobSha256": "02c255dd14d1e7fcd5f632ab79b57a8dad9ae8555c3f40df26c7cc1a87a74cf9",
+        "path": "packages/content/src/lesson-validator/rules.ts",
+        "sha256": "02c255dd14d1e7fcd5f632ab79b57a8dad9ae8555c3f40df26c7cc1a87a74cf9"
+      },
+      {
+        "gitBlobSha256": "99d71386d00ba21adf808bf73580e4870a949fd1436fcac8655b21cdb75b2ff8",
+        "path": "packages/content/src/lesson-validator/types.ts",
+        "sha256": "99d71386d00ba21adf808bf73580e4870a949fd1436fcac8655b21cdb75b2ff8"
+      },
+      {
+        "gitBlobSha256": "a62f4cc9f6154aa9fe5c7107bd9b8010d234a9db0f477c1f9888f6b348d2e754",
+        "path": "packages/content/src/lesson-validator/validate.ts",
+        "sha256": "a62f4cc9f6154aa9fe5c7107bd9b8010d234a9db0f477c1f9888f6b348d2e754"
+      },
+      {
+        "gitBlobSha256": "90d1579e4e1e2e7dce0dba8d233086cd21fdc3cf1c51f3a61cf0a198dd1de221",
+        "path": "tools/content-cli/package.json",
+        "sha256": "90d1579e4e1e2e7dce0dba8d233086cd21fdc3cf1c51f3a61cf0a198dd1de221"
+      },
+      {
+        "gitBlobSha256": "069bdf24d431793df13c654dbfe03ef1f00407ad76cbe047f5a81e44570f0374",
+        "path": "tools/content-cli/src/entry.ts",
+        "sha256": "069bdf24d431793df13c654dbfe03ef1f00407ad76cbe047f5a81e44570f0374"
+      },
+      {
+        "gitBlobSha256": "723afe84b1539f16ffdb02f720f94934452a4d10538b8bfd2d296af4e1cfcd8f",
+        "path": "tools/content-cli/src/main.ts",
+        "sha256": "723afe84b1539f16ffdb02f720f94934452a4d10538b8bfd2d296af4e1cfcd8f"
+      }
+    ]
+  },
+  "directLessonValidate": {
+    "command": {
+      "argv": [
+        "node",
+        "tools/content-cli/node_modules/tsx/dist/cli.mjs",
+        "tools/content-cli/src/entry.ts",
+        "lesson-validate",
+        "content/lesson-candidates/primary/V3-LES-329622",
+        "--json"
+      ],
+      "kind": "lesson-validate",
+      "exitCode": 0,
+      "signal": null,
+      "stdoutSha256": "c059d41fb2fee1e3b74686ac6f5fdafe9eed8c3329cc580e8b81e4c0225a73aa",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "executableSha256": "56b9b4f04e479fc14cdf74295ea4bd57d73be94d74350a36013741ed651a011d",
+      "cliEntrySha256": "069bdf24d431793df13c654dbfe03ef1f00407ad76cbe047f5a81e44570f0374",
+      "cliMainSha256": "723afe84b1539f16ffdb02f720f94934452a4d10538b8bfd2d296af4e1cfcd8f",
+      "toolVersion": "content-cli/current"
+    },
+    "ok": true,
+    "lessonCount": 1,
+    "resultCount": 32,
+    "uniqueRuleCount": 15,
+    "failureCount": 0
   },
   "format": "lesson-generation-validation/2",
   "lessonId": "V3-LES-329622",
@@ -42,12 +142,12 @@
     },
     {
       "path": "lesson-quality-report.json",
-      "sha256": "9ded7915ca2c8f03bf8f231ac548b5d3ea33749e898ca5cf74622bc994376562",
-      "size": 2766
+      "sha256": "6785c99ea356760ce7a84b1a79e4e272c7ed1ef101fd3fd5378b831e82d88525",
+      "size": 2776
     }
   ],
   "rehash": {
-    "changed": true,
+    "changed": false,
     "primaryContentSha": [
       {
         "relPath": "lesson-script.json",
@@ -66,8 +166,8 @@
       },
       {
         "relPath": "lesson-quality-report.json",
-        "oldContentSha256": "f2752693cff0af6c8c5b40adad83c1bc16a490434e7bd3797c49fe81f923d692",
-        "newContentSha256": "f2752693cff0af6c8c5b40adad83c1bc16a490434e7bd3797c49fe81f923d692"
+        "oldContentSha256": "49cbc40b64c0e27147535a76db025c606e7aa9be9ece76ae6d7b3f3d316d86dc",
+        "newContentSha256": "49cbc40b64c0e27147535a76db025c606e7aa9be9ece76ae6d7b3f3d316d86dc"
       }
     ],
     "verifyNoOp": true
@@ -107,7 +207,7 @@
       "rule": "R3",
       "lessonId": "V3-LES-329622",
       "ok": true,
-      "detailSha256": "ba41ccae43156c73387a85b767e2d56d9837b744883c0102428ca9823e5f7c53"
+      "detailSha256": "298be35ea4f4f11a5c6f41c1b700aca13c3b5992f6897ac6a1f7eb0c1b2ecb5d"
     },
     {
       "rule": "R4",
@@ -131,19 +231,19 @@
       "rule": "R4",
       "lessonId": "V3-LES-329622",
       "ok": true,
-      "detailSha256": "4baa75aa3d25873a835dc88d8cd826c352d21008f601967744405a3d6ceacc15"
+      "detailSha256": "fd3c9fdead97df2cfc290f0dd1f896baec8e689c28639e846c10bc1889f1b14a"
     },
     {
       "rule": "R4",
       "lessonId": "V3-LES-329622",
       "ok": true,
-      "detailSha256": "6afee6622cd1c61a40500534f0c5793b1a36f54692804b47df9913c55c4e58f5"
+      "detailSha256": "f5cb7431f77cf49b4cd73fcfddf9c6506631943c61321a5103ac0f961e31f943"
     },
     {
       "rule": "R4",
       "lessonId": "V3-LES-329622",
       "ok": true,
-      "detailSha256": "e90e32a445dce98c5bd01a83c47702b7fa2555485f40500e4f895ab87b66f90b"
+      "detailSha256": "fa7979570d4a1953b140569c99583a41db199d609696fb3c44bb748334997c6c"
     },
     {
       "rule": "R4",
@@ -155,7 +255,7 @@
       "rule": "R4",
       "lessonId": "V3-LES-329622",
       "ok": true,
-      "detailSha256": "3ef0854dd17d88ca30722e82acf5018f76dc61110746788714ee769fb066baed"
+      "detailSha256": "9538e20b1a23a5c9f2a98069599815a09bac2176b2c21081ceebcbbac46110f3"
     },
     {
       "rule": "R5",

@@ -3,7 +3,7 @@
   "artifact_id": "V3-LQRP-329622",
   "artifact_version": "0.1.0-candidate.1",
   "artifact_status": "DRAFT",
-  "content_sha256": "f2752693cff0af6c8c5b40adad83c1bc16a490434e7bd3797c49fe81f923d692",
+  "content_sha256": "49cbc40b64c0e27147535a76db025c606e7aa9be9ece76ae6d7b3f3d316d86dc",
   "dependency_bindings": {
     "lesson_script_id": "V3-LSCR-329622",
     "lesson_script_sha256": "3eb10f36242854d16cde8632e156f3979f4b5067aa475ffbf9074885c6bf9307",
@@ -60,7 +60,7 @@
       {
         "check_id": "INDEPENDENT-JUDGE-PRE-SCREEN",
         "status": "BLOCKED",
-        "blocker_code": "JUDGE_PRE_SCREEN_REQUIRED"
+        "blocker_code": "FRESH_INDEPENDENT_JUDGE_REQUIRED"
       }
     ],
     "findings": [
@@ -68,7 +68,7 @@
         "finding_id": "V3-LES-329622-QUALITY-HUMAN-EVIDENCE",
         "severity": "P1",
         "status": "BLOCKED",
-        "required_correction_code": "OBTAIN_REVISION_BOUND_INDEPENDENT_EVIDENCE"
+        "required_correction_code": "OBTAIN_FRESH_REVISION_BOUND_INDEPENDENT_JUDGE"
       }
     ],
     "claim_limits": {

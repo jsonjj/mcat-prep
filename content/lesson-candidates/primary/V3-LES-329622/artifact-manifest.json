@@ -37,21 +37,21 @@
       "path": "lesson-quality-report.json",
       "artifact_type": "LESSON_QUALITY_REPORT",
       "artifact_id": "V3-LQRP-329622",
-      "content_sha256": "f2752693cff0af6c8c5b40adad83c1bc16a490434e7bd3797c49fe81f923d692",
-      "file_sha256": "9ded7915ca2c8f03bf8f231ac548b5d3ea33749e898ca5cf74622bc994376562"
+      "content_sha256": "49cbc40b64c0e27147535a76db025c606e7aa9be9ece76ae6d7b3f3d316d86dc",
+      "file_sha256": "6785c99ea356760ce7a84b1a79e4e272c7ed1ef101fd3fd5378b831e82d88525"
     }
   ],
   "companion_artifacts": [
     {
       "path": "learner-safe-items.json",
       "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
-      "file_sha256": "1de74b369679c235fbbd79b366a53793158cf9ad6218c5baeacef7c0684be568",
+      "file_sha256": "f27ae14a1fd124a0e25882f973288288bc2cb036faaa7ec9b383dc8a40b98a56",
       "answer_material_policy": "NO_ANSWERS_RATIONALES_OR_SCORING_AUTHORITY"
     },
     {
       "path": "protected-items.json",
       "artifact_type": "PROTECTED_ANSWER_MATERIAL",
-      "file_sha256": "a79cb42fec3b9fce5af336f062e109cd477ef9ef523f7bd4db1d28b4e5a24109",
+      "file_sha256": "0007e78acaf0b0a0d685d19ff71d885477ca2fc3bcde17db508f0f8de7785f5c",
       "access_policy": "SERVER_ONLY",
       "browser_import_prohibited": true
     },
@@ -63,10 +63,10 @@
     {
       "path": "candidate-quality-ledger.json",
       "artifact_type": "CANDIDATE_QUALITY_LEDGER",
-      "file_sha256": "d2892e23ccc72547285352ca69c62c6d5cda8b433b23ac73bfa1b41b5c27dba9"
+      "file_sha256": "e50d2aefdea14616465ef1f22550a069eb1885c4d930a77be46a06f012c32862"
     }
   ],
-  "integration_status": "CANDIDATE_JUDGE_FAILED_CYCLE_EXHAUSTED",
+  "integration_status": "CANDIDATE_RUBRIC_SCREENED",
   "publication_status": "INTERNAL_DRAFT_ONLY",
   "evidence_artifacts": [
     {
@@ -78,8 +78,8 @@
     {
       "artifact_type": "LESSON_VALIDATION_RECEIPT",
       "path": "validation/lesson-validate.json",
-      "sha256": "ed0dcb1386bf9de8404e11a83fa22a1dfc72f5b5a6c16c5c3bc567743687f90d",
-      "size": 8603
+      "sha256": "4352cc274a9d1acc67912ed140adad8fcd60e1d276aadd555cd5c0f0edd941d4",
+      "size": 13374
     },
     {
       "artifact_type": "COMPUTED_QUALITY_RECEIPT",
@@ -90,26 +90,26 @@
     {
       "artifact_type": "NORMALIZATION_RECEIPT",
       "path": "validation/normalization-smoke.json",
-      "sha256": "f0ee2358f943586f5e28127f4136c718f66562de331462a847cf51f332c1ab56",
-      "size": 2426
+      "sha256": "74b2248f724408dacb88e759b4429f344c22b9f0f65e6b29e8f289aa38821fcf",
+      "size": 2404
     },
     {
       "artifact_type": "PROTECTED_SCAN_RECEIPT",
       "path": "validation/protected-scan.json",
-      "sha256": "c006fc54f7fcd1c08b14c3ff05bb114bd373425213a69dd8e3c4fff5b04e63f4",
+      "sha256": "ef5a9fcbb08a6e4fc6ab0fe56e23b299f7ac3640e7052d67f3ade063181cee91",
       "size": 2066
     },
     {
       "artifact_type": "AUTHOR_SELF_AUDIT",
       "path": "reviews/author-self-audit.json",
-      "sha256": "4117d1369eeba2998ff9d11794a5d88598ddaef1bfe20f8d29e43a53b6e13243",
-      "size": 2602
+      "sha256": "bedf9b49fad3be3753017da09cfcebaab3aaa81c5d67afd7f9355a5ff3b879f1",
+      "size": 2825
     },
     {
       "artifact_type": "INDEPENDENT_JUDGE_PRE_SCREEN",
       "path": "reviews/judge-pre-screen.json",
-      "sha256": "99a6ee8764144f562983b065a5bc311307da04743fd67bde46fb6c1b3b5e4a2e",
-      "size": 3399
+      "sha256": "796f9b92eccddb81caa64c82815409e4b1ce05f79e3b782e23fe254ae04608f3",
+      "size": 3180
     }
   ],
   "closure_policy": {
@@ -121,8 +121,8 @@
   "kit_validation_artifacts": [
     {
       "path": "candidate-quality-ledger.json",
-      "sha256": "d2892e23ccc72547285352ca69c62c6d5cda8b433b23ac73bfa1b41b5c27dba9",
-      "size": 2111
+      "sha256": "e50d2aefdea14616465ef1f22550a069eb1885c4d930a77be46a06f012c32862",
+      "size": 1940
     },
     {
       "path": "inputs/task-source-packet.json",
@@ -136,8 +136,8 @@
     },
     {
       "path": "learner-safe-items.json",
-      "sha256": "1de74b369679c235fbbd79b366a53793158cf9ad6218c5baeacef7c0684be568",
-      "size": 6445
+      "sha256": "f27ae14a1fd124a0e25882f973288288bc2cb036faaa7ec9b383dc8a40b98a56",
+      "size": 6397
     },
     {
       "path": "lesson-presentation-plan.json",
@@ -146,8 +146,8 @@
     },
     {
       "path": "lesson-quality-report.json",
-      "sha256": "9ded7915ca2c8f03bf8f231ac548b5d3ea33749e898ca5cf74622bc994376562",
-      "size": 2766
+      "sha256": "6785c99ea356760ce7a84b1a79e4e272c7ed1ef101fd3fd5378b831e82d88525",
+      "size": 2776
     },
     {
       "path": "lesson-script.json",
@@ -156,18 +156,18 @@
     },
     {
       "path": "protected-items.json",
-      "sha256": "a79cb42fec3b9fce5af336f062e109cd477ef9ef523f7bd4db1d28b4e5a24109",
-      "size": 16790
+      "sha256": "0007e78acaf0b0a0d685d19ff71d885477ca2fc3bcde17db508f0f8de7785f5c",
+      "size": 16859
     },
     {
       "path": "reviews/author-self-audit.json",
-      "sha256": "4117d1369eeba2998ff9d11794a5d88598ddaef1bfe20f8d29e43a53b6e13243",
-      "size": 2602
+      "sha256": "bedf9b49fad3be3753017da09cfcebaab3aaa81c5d67afd7f9355a5ff3b879f1",
+      "size": 2825
     },
     {
       "path": "reviews/judge-pre-screen.json",
-      "sha256": "99a6ee8764144f562983b065a5bc311307da04743fd67bde46fb6c1b3b5e4a2e",
-      "size": 3399
+      "sha256": "796f9b92eccddb81caa64c82815409e4b1ce05f79e3b782e23fe254ae04608f3",
+      "size": 3180
     },
     {
       "path": "source-claim-ledger.json",
@@ -181,17 +181,17 @@
     },
     {
       "path": "validation/lesson-validate.json",
-      "sha256": "ed0dcb1386bf9de8404e11a83fa22a1dfc72f5b5a6c16c5c3bc567743687f90d",
-      "size": 8603
+      "sha256": "4352cc274a9d1acc67912ed140adad8fcd60e1d276aadd555cd5c0f0edd941d4",
+      "size": 13374
     },
     {
       "path": "validation/normalization-smoke.json",
-      "sha256": "f0ee2358f943586f5e28127f4136c718f66562de331462a847cf51f332c1ab56",
-      "size": 2426
+      "sha256": "74b2248f724408dacb88e759b4429f344c22b9f0f65e6b29e8f289aa38821fcf",
+      "size": 2404
     },
     {
       "path": "validation/protected-scan.json",
-      "sha256": "c006fc54f7fcd1c08b14c3ff05bb114bd373425213a69dd8e3c4fff5b04e63f4",
+      "sha256": "ef5a9fcbb08a6e4fc6ab0fe56e23b299f7ac3640e7052d67f3ade063181cee91",
       "size": 2066
     }
   ],
