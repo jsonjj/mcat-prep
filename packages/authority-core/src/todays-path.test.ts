@@ -247,6 +247,115 @@ describe('Authority — Today\u2019s Path (orchestrator; writes no mastery)', ()
     expect(again.activities.filter((a) => a.kind === 'recall').length).toBe(1);
   });
 
+  it('injects Recall for a freshly added deck of NEW cards (none due yet)', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    const first = await auth.buildTodaysPath(state, {
+      recallLoad: EMPTY_LOAD,
+      candidateLessons,
+      force: false,
+    });
+    expect(first.activities.some((a) => a.kind === 'recall')).toBe(false);
+
+    // Import a deck that is entirely NEW (nothing "due" yet). Recall must still
+    // appear so the new cards surface on Today's Path immediately.
+    const newOnly = {
+      dueLearning: 0,
+      dueReviews: 0,
+      newAvailable: 8,
+      due: 0,
+      estimatedMinutesForDue: 0,
+    };
+    const after = await auth.buildTodaysPath(state, {
+      recallLoad: newOnly,
+      candidateLessons,
+      force: false,
+    });
+    const recall = after.activities.find((a) => a.kind === 'recall');
+    expect(recall).toBeDefined();
+    expect(recall!.count!).toBeGreaterThan(0);
+    expect(recall!.count!).toBeLessThanOrEqual(8); // never more than are available
+    expect(after.activities[0]!.kind).toBe('recall');
+  });
+
+  it('grows an unstarted Recall block when more cards are added mid-day', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: false });
+    const small = {
+      dueLearning: 0,
+      dueReviews: 0,
+      newAvailable: 6,
+      due: 0,
+      estimatedMinutesForDue: 0,
+    };
+    const afterSmall = await auth.buildTodaysPath(state, {
+      recallLoad: small,
+      candidateLessons,
+      force: false,
+    });
+    const smallCount = afterSmall.activities.find((a) => a.kind === 'recall')!.count!;
+    expect(smallCount).toBeLessThanOrEqual(6);
+
+    // A bigger deck is added while Recall is still unstarted → the count grows to
+    // cover it (still exactly one block, never duplicated).
+    const big = {
+      dueLearning: 0,
+      dueReviews: 0,
+      newAvailable: 40,
+      due: 0,
+      estimatedMinutesForDue: 0,
+    };
+    const afterBig = await auth.buildTodaysPath(state, {
+      recallLoad: big,
+      candidateLessons,
+      force: false,
+    });
+    const recalls = afterBig.activities.filter((a) => a.kind === 'recall');
+    expect(recalls.length).toBe(1);
+    expect(recalls[0]!.count!).toBeGreaterThan(smallCount);
+  });
+
+  it('leaves a Recall block the learner already finished today untouched', async () => {
+    const auth = new Authority(loadSyntheticBank(), clock);
+    const state = onboard(auth);
+    await auth.buildTodaysPath(state, { recallLoad: EMPTY_LOAD, candidateLessons, force: false });
+    const deck = {
+      dueLearning: 0,
+      dueReviews: 0,
+      newAvailable: 6,
+      due: 0,
+      estimatedMinutesForDue: 0,
+    };
+    const after = await auth.buildTodaysPath(state, {
+      recallLoad: deck,
+      candidateLessons,
+      force: false,
+    });
+    const recall = after.activities.find((a) => a.kind === 'recall')!;
+    const finishedCount = recall.count!;
+    await auth.recordPlanActivity(state, recall.activityId, 'complete');
+
+    // Adding more cards after finishing recall does NOT re-open or resize it — the
+    // day's recall is done (new cards wait for tomorrow / a direct Recall session).
+    const more = {
+      dueLearning: 0,
+      dueReviews: 0,
+      newAvailable: 40,
+      due: 0,
+      estimatedMinutesForDue: 0,
+    };
+    const later = await auth.buildTodaysPath(state, {
+      recallLoad: more,
+      candidateLessons,
+      force: false,
+    });
+    const recalls = later.activities.filter((a) => a.kind === 'recall');
+    expect(recalls.length).toBe(1);
+    expect(recalls[0]!.status).toBe('complete');
+    expect(recalls[0]!.count!).toBe(finishedCount);
+  });
+
   it('completes an activity and marks a finished lesson for eligibility', async () => {
     const auth = new Authority(loadSyntheticBank(), clock);
     const state = onboard(auth);

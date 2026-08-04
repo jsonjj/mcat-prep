@@ -1364,10 +1364,18 @@ export class Authority {
   }
 
   /**
-   * Inject a Recall block into today's existing plan when it wasn't scheduled at
-   * build time (no cards then) but cards are now due — e.g. the learner just added
-   * their first deck. Placed as the NEXT ready item (the very first when nothing is
-   * started yet), sized exactly like the build so Recall gets a card count to stop at.
+   * Keep today's Recall block in step with the learner's deck when cards are added
+   * mid-day (imported/created after the plan was built). Two cases, both sized
+   * exactly like the full build so Recall always carries a card count to stop at:
+   *
+   *  - No Recall block yet (none was due at build time): inject one as the NEXT
+   *    ready item (the very first when nothing is started).
+   *  - A Recall block exists but hasn't been started: refresh its count UPWARD to
+   *    cover the newly added cards.
+   *
+   * Deliberately conservative: a STARTED or FINISHED Recall block is left untouched
+   * (never disturb an in-flight session, never re-open recall already completed
+   * today), and the count is never shrunk.
    */
   private maybeInjectRecall(
     state: LearnerState,
@@ -1375,30 +1383,44 @@ export class Authority {
   ): void {
     const plan = state.plan;
     if (!plan) return;
-    // Already have a Recall block today (pending or done) — never duplicate it.
-    if (plan.activities.some((a) => a.kind === 'recall')) return;
     const sized = sizeRecall(recallLoad, plan.dailyBudgetMinutes, TODAYS_PATH_CONFIG);
     if (!sized) return;
-    const recall: TodaysPathActivityState = {
-      activityId: 'recall',
-      kind: 'recall',
-      title: 'Recall',
-      detail: `${sized.cards} flashcard${sized.cards === 1 ? '' : 's'} due (spaced repetition).`,
-      estimatedMinutes: Math.max(1, sized.minutes),
-      count: sized.cards,
-      minutesBudget: sized.minutes,
-      focus: null,
-      lessonSlug: null,
-      lessonId: null,
-      priorityReason: 'OVERDUE_REVIEW',
-      status: 'ready',
-      carriedOver: false,
-    };
-    // Next ready item (index 0 when nothing is started yet). An in-progress activity
-    // is left alone; Recall slots in right after it.
-    const firstReadyIdx = plan.activities.findIndex((a) => a.status === 'ready');
-    const insertAt = firstReadyIdx === -1 ? plan.activities.length : firstReadyIdx;
-    plan.activities.splice(insertAt, 0, recall);
+    const detail = `${sized.cards} flashcard${sized.cards === 1 ? '' : 's'} to review (spaced repetition).`;
+    const existing = plan.activities.find((a) => a.kind === 'recall');
+    if (existing) {
+      // Only grow an unstarted block, and only when more cards are now available.
+      if (existing.status !== 'ready') return;
+      if (sized.cards <= (existing.count ?? 0)) return;
+      // Activity fields are readonly, so replace the element with an updated copy.
+      plan.activities[plan.activities.indexOf(existing)] = {
+        ...existing,
+        detail,
+        count: sized.cards,
+        minutesBudget: sized.minutes,
+        estimatedMinutes: Math.max(1, sized.minutes),
+      };
+    } else {
+      const recall: TodaysPathActivityState = {
+        activityId: 'recall',
+        kind: 'recall',
+        title: 'Recall',
+        detail,
+        estimatedMinutes: Math.max(1, sized.minutes),
+        count: sized.cards,
+        minutesBudget: sized.minutes,
+        focus: null,
+        lessonSlug: null,
+        lessonId: null,
+        priorityReason: 'OVERDUE_REVIEW',
+        status: 'ready',
+        carriedOver: false,
+      };
+      // Next ready item (index 0 when nothing is started yet). An in-progress activity
+      // is left alone; Recall slots in right after it.
+      const firstReadyIdx = plan.activities.findIndex((a) => a.status === 'ready');
+      const insertAt = firstReadyIdx === -1 ? plan.activities.length : firstReadyIdx;
+      plan.activities.splice(insertAt, 0, recall);
+    }
     // Refresh derived fields the view reads straight off the plan.
     plan.plannedMinutes = plan.activities.reduce((sum, a) => sum + a.estimatedMinutes, 0);
     plan.freeStudyMinutes = Math.max(0, plan.dailyBudgetMinutes - plan.plannedMinutes);

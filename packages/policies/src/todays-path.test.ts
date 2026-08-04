@@ -265,6 +265,33 @@ describe('Today\u2019s Path engine', () => {
     expect(r!.minutes).toBe(Math.round(r!.cards * TODAYS_PATH_CONFIG.costs.recallPerCard));
   });
 
+  it('schedules Recall for a freshly added deck (new cards, none due yet)', () => {
+    // A newly imported deck is all "new" (nothing due). It must still schedule a
+    // Recall block so the cards surface on Today's Path, not stay invisible until due.
+    const r = sizeRecall(
+      { dueLearning: 0, dueReviews: 0, newAvailable: 8, due: 0, estimatedMinutesForDue: 0 },
+      180,
+    );
+    expect(r).not.toBeNull();
+    expect(r!.cards).toBeGreaterThanOrEqual(TODAYS_PATH_CONFIG.blocks.recallMinCards);
+    expect(r!.cards).toBeLessThanOrEqual(8); // never more than are available
+
+    const built = buildTodaysPath(
+      snap({
+        recall: { dueLearning: 0, dueReviews: 0, newAvailable: 8, due: 0, estimatedMinutesForDue: 0 },
+      }),
+    );
+    expect(built.activities.some((a) => a.kind === 'recall')).toBe(true);
+
+    // Still nothing below the floor when due + new together don't reach it.
+    expect(
+      sizeRecall(
+        { dueLearning: 0, dueReviews: 1, newAvailable: 3, due: 1, estimatedMinutesForDue: 0 },
+        180,
+      ),
+    ).toBeNull();
+  });
+
   it('flexes the recall ceiling above the normal 20 under a high review-debt band', () => {
     const highDebt = {
       dueLearning: 0,

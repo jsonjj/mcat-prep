@@ -167,9 +167,10 @@ const RECALL_MIN_DUE = 5;
 
 /**
  * Ensure today's plan exists and stays current on a hub screen (Home / Today's Path):
- * builds it on first view, and — if the learner adds their first deck mid-day — re-runs
- * the build so Recall is injected as the next step. Self-limiting: it only fires when a
- * build/refresh is actually warranted, and at most once per (day, need).
+ * builds it on first view, and — when the learner adds flashcards mid-day (imports a
+ * deck / creates cards) — re-runs the build so Recall is injected (or its count grown)
+ * as long as the day isn't finished. Self-limiting: it only fires when a build/refresh
+ * is actually warranted, and at most once per (day, card-count).
  */
 export function useEnsureTodaysPath() {
   const path = useTodaysPath();
@@ -179,13 +180,25 @@ export function useEnsureTodaysPath() {
   useEffect(() => {
     if (!path.isSuccess || build.isPending) return;
     const view = path.data;
-    const due = load.data?.due ?? 0;
-    const hasRecall = view?.activities.some((a) => a.kind === 'recall') ?? false;
+    // Count BOTH due reviews and available new cards (matches the engine's recall
+    // eligibility): a freshly imported deck is all "new", so gating on `due` alone
+    // kept newly added flashcards off Today's Path until they first came due.
+    const available = (load.data?.due ?? 0) + (load.data?.newAvailable ?? 0);
+    const recall = view?.activities.find((a) => a.kind === 'recall');
+    // Recall wants (re)planning when there are enough cards to review AND either no
+    // block is scheduled yet, or an unstarted block predates cards added since (its
+    // planned count trails what's now available). A started/finished block is left
+    // alone — the server injector applies the same rule, so a no-op is harmless.
+    const recallStale =
+      available >= RECALL_MIN_DUE &&
+      (recall === undefined || (recall.status === 'ready' && (recall.count ?? 0) < available));
     const needsBuild = !view?.built;
-    const needsRecall = Boolean(view?.built) && !hasRecall && due >= RECALL_MIN_DUE;
+    const needsRecall = Boolean(view?.built) && recallStale;
     if (!needsBuild && !needsRecall) return;
-    const sig = `${view?.planDate ?? 'none'}:${needsBuild ? 'build' : 'recall'}`;
-    if (attempted.current === sig) return; // a no-op server response must not loop
+    // Key the guard by the available count so each new import re-triggers exactly
+    // once; a no-op server response for the same count must not loop.
+    const sig = `${view?.planDate ?? 'none'}:${needsBuild ? 'build' : `recall:${available}`}`;
+    if (attempted.current === sig) return;
     attempted.current = sig;
     build.mutate(undefined);
   }, [path.isSuccess, path.data, load.data, build]);

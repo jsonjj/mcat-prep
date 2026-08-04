@@ -386,17 +386,22 @@ function newLessonCapFor(
 
 /**
  * Size the Recall block for a recall load + budget, or null when there aren't
- * enough due cards. Sized as a %-of-budget share flexing with review debt, within
- * the card floor/ceiling. Shared by the full build AND the authority's mid-day
- * "a deck was just added" recall injection so both size it identically (and both
- * hand Recall an explicit card count that it honors and stops at).
+ * enough cards to review (due reviews OR newly added cards). Sized as a
+ * %-of-budget share flexing with review debt, within the card floor/ceiling.
+ * Shared by the full build AND the authority's mid-day "a deck was just added"
+ * recall injection so both size it identically (and both hand Recall an explicit
+ * card count that it honors and stops at).
  */
 export function sizeRecall(
   recall: TodaysPathRecallLoad,
   budgetMinutes: number,
   cfg: TodaysPathConfig = TODAYS_PATH_CONFIG,
 ): { cards: number; minutes: number } | null {
-  if (recall.due < cfg.eligibility.recallMinDue) return null;
+  // Enough cards to be worth a block? Count BOTH due reviews and available NEW
+  // cards: a freshly added deck (all new, nothing "due" yet) should still schedule
+  // Recall so newly imported flashcards surface on Today's Path immediately,
+  // rather than staying invisible until they first come due.
+  if (recall.due + recall.newAvailable < cfg.eligibility.recallMinDue) return null;
   const band = reviewDebtBand(recall, budgetMinutes, cfg);
   const share = recallShareFor(band, cfg);
   const ceiling = recallCeilingFor(band, cfg);
@@ -551,7 +556,7 @@ export function buildTodaysPath(
       activityId: 'recall',
       kind: 'recall',
       title: 'Recall',
-      detail: `${core.recallCards} flashcard${core.recallCards === 1 ? '' : 's'} due (spaced repetition).`,
+      detail: `${core.recallCards} flashcard${core.recallCards === 1 ? '' : 's'} to review (spaced repetition).`,
       estimatedMinutes: Math.max(1, core.recallMinutes),
       count: core.recallCards,
       minutesBudget: core.recallMinutes,
