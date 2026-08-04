@@ -1,0 +1,50 @@
+{
+  "$test_fixture": {
+    "synthetic": true,
+    "not_for_production": true,
+    "fixture_of": "lesson-factory.intake-validation"
+  },
+  "instance": {
+    "contract_id": "lesson-factory.intake-validation",
+    "contract_version": "2.1.0",
+    "document": {
+      "kind": "profile",
+      "ref": "profile:content/lesson-factory/deadline-profile/deadline-profile.json#sha256:f565393997bfd19c2aaf3a1f32e797f758e89bedcc4d7fb4169e9621b41fc0a6",
+      "sha256": "f565393997bfd19c2aaf3a1f32e797f758e89bedcc4d7fb4169e9621b41fc0a6",
+      "contract_id": "lesson-factory.deadline-profile",
+      "contract_version": "5.0.0",
+      "schema_file": "deadline-profile.schema.json",
+      "schema_locator": "content/lesson-factory/schemas/deadline-profile.schema.json",
+      "schema_sha256": "b9c7c5c97e31f2df9e574140b031e07539681ee5a546dd360ef5088f49a6b773"
+    },
+    "schema_validation": {
+      "status": "PASS",
+      "error_count": 0
+    },
+    "resolver_validation": {
+      "status": "PASS",
+      "checked_count": 2,
+      "unresolved_count": 0,
+      "references": [
+        {
+          "field": "/lifecycle_nonclaims_ref",
+          "kind": "lifecycle",
+          "digest": "fadbda5cabf736c4028b5fab9f0c4705e0cacee228809ff73aa63bc9f91a024a",
+          "status": "RESOLVED"
+        },
+        {
+          "field": "/release_policy_ref",
+          "kind": "policy",
+          "digest": "0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e",
+          "status": "RESOLVED"
+        }
+      ]
+    },
+    "admission": "ADMITTED",
+    "admission_proof": {
+      "derivation": "INTAKE_DERIVATION_V2",
+      "derivation_sha256": "7e9f0cc57e6c444908e2703b78924aab3ce26c9b598aeb834143c738e835e0b5"
+    },
+    "validated_at": "2026-08-03T22:28:00Z"
+  }
+}

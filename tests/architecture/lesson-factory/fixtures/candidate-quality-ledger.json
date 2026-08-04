@@ -1,0 +1,165 @@
+{
+  "$test_fixture": {
+    "synthetic": true,
+    "not_for_production": true,
+    "fixture_of": "lesson-factory.candidate-quality-ledger",
+    "why": "A positive control for the architecture tests. Every hash below is invented; nothing here describes a real lesson, a real screen run, or a real decision. The marker key makes this envelope fail validation against the closed production contract it is a control for, so it cannot be mistaken for a production record or loaded as one."
+  },
+  "instance": {
+    "contract_id": "lesson-factory.candidate-quality-ledger",
+    "contract_version": "4.0.0",
+    "ledger_id": "lane-01-v3-les-000101-standard-ledger-01",
+    "screened_at": "2026-08-03T22:29:00Z",
+    "lesson_identity": {
+      "lesson_id": "V3-LES-000101",
+      "lesson_revision_id": "rev-000002",
+      "envelope_kind": "L2_L3",
+      "lesson_script_content_sha256": "b47cd4298b716746a0bfc9b6a959f0c5f743c35b03082a3cf3a3b5c8be003407",
+      "kc_coverage_matrix_sha256": "249b5cff86a25c95bd23cac04a5271be8ae2aae2837f3d50ab29d046453c734c",
+      "lesson_presentation_plan_sha256": "36805250aaebb3dceb8d837950bc94ed4495991ce8404693fbee578051569adb",
+      "lesson_quality_report_sha256": "2efa7d66015c986b97f1accd8ba4e5ab225e998e6afb2ff4ee38f5a755b829a8",
+      "artifact_manifest_sha256": "ff37eeb9624e74cd51e7829441237d29feaa9d7ac7bee3f9f795fe4956b7ed95"
+    },
+    "rubric_identity": {
+      "rubric_path": "key-docs/lesson-quality-rubric.md",
+      "rubric_version": "0.9.1",
+      "rubric_sha256": "21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+    },
+    "deadline_profile_ref": "profile:content/lesson-factory/deadline-profile/deadline-profile.json#sha256:f565393997bfd19c2aaf3a1f32e797f758e89bedcc4d7fb4169e9621b41fc0a6",
+    "route": "STANDARD",
+    "lifecycle_status": "CANDIDATE_RUBRIC_SCREENED",
+    "status_kind": "LIFECYCLE_ONLY",
+    "hard_gate_results": {
+      "R1_R15_STRUCTURAL": {
+        "status": "PASS",
+        "screened_at": "2026-08-03T22:28:00Z",
+        "screen_code": "R1_R15_STRUCTURAL",
+        "screen_ref": "screen:lane-01/v3-les-000101/r1-r15-structural#sha256:a1db4be81591115340a7b44c1f913e3a7907111e08410ab54e382210dbbb428a"
+      },
+      "NORMALIZATION": {
+        "status": "PASS",
+        "screened_at": "2026-08-03T22:28:00Z",
+        "screen_code": "NORMALIZATION",
+        "screen_ref": "screen:lane-01/v3-les-000101/normalization#sha256:c40a0fc11171749a06c98405074e686509e196369a94238e7ceadc2fd6d66f32"
+      },
+      "SOURCE_RIGHTS": {
+        "status": "PASS",
+        "screened_at": "2026-08-03T22:28:00Z",
+        "screen_code": "SOURCE_RIGHTS",
+        "screen_ref": "screen:lane-01/v3-les-000101/source-rights#sha256:4ca45a5dd1febc9d7af90ebdc2f6f32baf9427ca923db78861c8b3e571766808"
+      },
+      "PROTECTED_SEPARATION": {
+        "status": "PASS",
+        "screened_at": "2026-08-03T22:28:00Z",
+        "screen_code": "PROTECTED_SEPARATION",
+        "screen_ref": "screen:lane-01/v3-les-000101/protected-separation#sha256:e97b72ab2048aef259d1ed177761249eaee6e73e9ff0914d4b0770b7304f3138"
+      },
+      "HASH_CHAIN_INTEGRITY": {
+        "status": "PASS",
+        "screened_at": "2026-08-03T22:28:00Z",
+        "screen_code": "HASH_CHAIN_INTEGRITY",
+        "screen_ref": "screen:lane-01/v3-les-000101/hash-chain-integrity#sha256:0d8a46b31d617255a0729a1e3a4191f78021b32d150d06f6d9c9f32937e488a7"
+      },
+      "DEADLINE_MACHINE_SCREEN": {
+        "status": "PASS",
+        "screened_at": "2026-08-03T22:29:00Z",
+        "screen_code": "DEADLINE_MACHINE_SCREEN",
+        "screen_ref": "screen:lane-01/v3-les-000101/deadline-machine-screen#sha256:48de4e13e344b27cfc24e7e7a461a3e928bc2a6b9c46c4055afa863c3fafaa9c"
+      }
+    },
+    "evidence_class_results": {
+      "BROWSER_RENDERED": {
+        "state": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_BROWSER_RENDERED_EVIDENCE",
+        "receipt_refs": [],
+        "required_roles": ["PRODUCT_PEDAGOGY_OWNER"],
+        "independent_of_author": false,
+        "revision_bound": false,
+        "normalization_to_pass_allowed": false
+      },
+      "ACCESSIBILITY": {
+        "state": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_ACCESSIBILITY_REVIEW",
+        "receipt_refs": [],
+        "required_roles": ["ACCESSIBILITY_REVIEWER", "PRODUCT_PEDAGOGY_OWNER"],
+        "independent_of_author": false,
+        "revision_bound": false,
+        "normalization_to_pass_allowed": false
+      },
+      "DOMAIN_SME": {
+        "state": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_DOMAIN_SME_RECEIPT",
+        "receipt_refs": [],
+        "required_roles": ["DOMAIN_CONSTRUCT_SME", "INDEPENDENT_BLIND_SOLVER"],
+        "independent_of_author": false,
+        "revision_bound": false,
+        "normalization_to_pass_allowed": false
+      },
+      "NOVICE_WALKTHROUGH": {
+        "state": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_NOVICE_WALKTHROUGH_RECEIPT",
+        "receipt_refs": [],
+        "required_roles": ["NOVICE_WALKTHROUGH_REVIEWER"],
+        "independent_of_author": false,
+        "revision_bound": false,
+        "normalization_to_pass_allowed": false
+      },
+      "PLATFORM_RELIABILITY": {
+        "state": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_PLATFORM_RELIABILITY_RECEIPT",
+        "receipt_refs": [],
+        "required_roles": ["PLATFORM_RELIABILITY_REVIEWER"],
+        "independent_of_author": false,
+        "revision_bound": false,
+        "normalization_to_pass_allowed": false
+      },
+      "HUMAN_DECISION": {
+        "state": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_HUMAN_DECISION_RECEIPT",
+        "receipt_refs": [],
+        "required_roles": ["PRODUCT_PEDAGOGY_OWNER"],
+        "independent_of_author": false,
+        "revision_bound": false,
+        "normalization_to_pass_allowed": false
+      }
+    },
+    "official_quality_result": {
+      "evaluation_available": false,
+      "evaluation_ref": null,
+      "human_gate_status": "PENDING",
+      "approval_withheld": true,
+      "approval_blocker_codes": [
+        "NO_RUBRIC_EVALUATION_RUN",
+        "NO_BROWSER_RENDERED_EVIDENCE",
+        "NO_INDEPENDENT_ACCESSIBILITY_REVIEW",
+        "NO_DOMAIN_SME_RECEIPT",
+        "NO_NOVICE_WALKTHROUGH_RECEIPT",
+        "NO_PLATFORM_RELIABILITY_RECEIPT",
+        "NO_HUMAN_DECISION_RECEIPT"
+      ]
+    },
+    "author_diagnostics": {
+      "diag_self_audit_codes": [
+        "SELF_AUDIT_STRUCTURAL_RULES_CHECKED",
+        "SELF_AUDIT_NO_RENDERED_CHECK_PERFORMED",
+        "SELF_AUDIT_NO_INDEPENDENT_REVIEW_PERFORMED"
+      ],
+      "diag_open_question_codes": [],
+      "diag_revision_cycles_used": 2,
+      "diag_uncertainty_material": true
+    },
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY",
+    "nonclaims": {
+      "official_rubric_pass": false,
+      "human_approved": false,
+      "release_approved": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "learner_validated": false,
+      "publication_safe": false,
+      "production_published": false
+    }
+  }
+}

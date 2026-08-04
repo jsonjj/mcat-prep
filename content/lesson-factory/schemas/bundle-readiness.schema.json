@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/bundle-readiness.schema.json",
+  "x_contract_id": "lesson-factory.bundle-readiness",
+  "x_contract_version": "4.0.0",
+  "title": "Bundle readiness",
+  "description": "Whether one bundle may be imported into the candidate draft namespace. The only affirmative value is READY_FOR_CANDIDATE_IMPORT: there is no readiness value that means release-ready, publishable, or approved, because this record cannot establish any of those.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "readiness_id",
+    "evaluated_at",
+    "bundle_ref",
+    "lesson_identity",
+    "readiness_status",
+    "hard_gate_results",
+    "evidence_class_results",
+    "blockers",
+    "nonclaims"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.bundle-readiness"
+    },
+    "contract_version": {
+      "const": "4.0.0",
+      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+    },
+    "readiness_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/ReadinessId"
+    },
+    "evaluated_at": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "bundle_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/BundleRef"
+    },
+    "lesson_identity": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/LessonIdentity"
+    },
+    "readiness_status": {
+      "enum": ["READY_FOR_CANDIDATE_IMPORT", "BLOCKED"]
+    },
+    "hard_gate_results": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/HardGateResults"
+    },
+    "evidence_class_results": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/EvidenceClassResults"
+    },
+    "blockers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Non-empty in every state: the outstanding human, browser, accessibility, domain, novice, and reliability evidence is a standing blocker on anything past candidate import. Coded, because a blocker list in prose is where someone writes a blocker that reads like a resolution.",
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/ApprovalBlockerCode"
+      }
+    },
+    "nonclaims": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Nonclaims"
+    }
+  },
+  "allOf": [
+    {
+      "$comment": "Readiness for candidate import requires every hard gate to have passed.",
+      "if": {
+        "properties": {
+          "readiness_status": {
+            "const": "READY_FOR_CANDIDATE_IMPORT"
+          }
+        },
+        "required": ["readiness_status"]
+      },
+      "then": {
+        "properties": {
+          "hard_gate_results": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "const": "PASS"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

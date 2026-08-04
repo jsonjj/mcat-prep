@@ -1,0 +1,37 @@
+{
+  "$test_fixture": {
+    "synthetic": true,
+    "not_for_production": true,
+    "fixture_of": "lesson-factory.team-handoff",
+    "why": "A positive control for the architecture tests. Every hash below is invented; nothing here describes a real lesson, a real screen run, or a real decision. The marker key makes this envelope fail validation against the closed production contract it is a control for, so it cannot be mistaken for a production record or loaded as one."
+  },
+  "instance": {
+    "contract_id": "lesson-factory.team-handoff",
+    "contract_version": "3.0.0",
+    "team_handoff_id": "lane-01-team-handoff-01",
+    "lane_id": "lane-01",
+    "produced_at": "2026-08-03T22:32:00Z",
+    "assignment_ref": "assignment:lesson-factory-deadline-2026-08-03/assignment-01#sha256:35aff1048d88d54df55603a04026d1b98eca425b817818cf9dd31ec128473c37",
+    "lesson_handoff_refs": [
+      "handoff:lane-01/v3-les-000101#sha256:a3f26dd5e01f6d3b167f5991ae08eb7411164b5bd79073a116092973e2f5a431"
+    ],
+    "public_metadata": {
+      "lane_id": "lane-01",
+      "lesson_count": 1,
+      "lesson_ids": ["V3-LES-000101"],
+      "screened_status": "CANDIDATE_RUBRIC_SCREENED",
+      "generated_at": "2026-08-03T22:32:00Z"
+    },
+    "nonclaims": {
+      "official_rubric_pass": false,
+      "human_approved": false,
+      "release_approved": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "learner_validated": false,
+      "publication_safe": false,
+      "production_published": false
+    }
+  }
+}

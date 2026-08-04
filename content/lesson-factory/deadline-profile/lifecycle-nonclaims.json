@@ -1,0 +1,68 @@
+{
+  "contract_id": "lesson-factory.lifecycle-nonclaims",
+  "contract_version": "2.0.0",
+  "screened_status": "CANDIDATE_RUBRIC_SCREENED",
+  "status_kind": "LIFECYCLE_ONLY",
+  "lifecycle_states": [
+    "CANDIDATE_SCREEN_PENDING",
+    "CANDIDATE_SCREEN_BLOCKED",
+    "CANDIDATE_SCREEN_FAILED",
+    "CANDIDATE_RUBRIC_SCREENED"
+  ],
+  "transitions": [
+    {
+      "from": "CANDIDATE_SCREEN_PENDING",
+      "to": "CANDIDATE_RUBRIC_SCREENED",
+      "requires": "Every hard machine screen returned PASS against the exact draft revision named in lesson_identity."
+    },
+    {
+      "from": "CANDIDATE_SCREEN_PENDING",
+      "to": "CANDIDATE_SCREEN_FAILED",
+      "requires": "At least one hard machine screen returned FAIL against that revision."
+    },
+    {
+      "from": "CANDIDATE_SCREEN_PENDING",
+      "to": "CANDIDATE_SCREEN_BLOCKED",
+      "requires": "At least one hard machine screen could not be executed or bound to that revision."
+    },
+    {
+      "from": "CANDIDATE_SCREEN_FAILED",
+      "to": "CANDIDATE_SCREEN_PENDING",
+      "requires": "The defect is repaired and the lesson is re-screened at a new revision; a prior screen never carries forward."
+    },
+    {
+      "from": "CANDIDATE_SCREEN_BLOCKED",
+      "to": "CANDIDATE_SCREEN_PENDING",
+      "requires": "The named blocker is resolved and the screen is re-run against the exact revision."
+    }
+  ],
+  "never_asserts": [
+    "An official rubric PASS on any of the twelve dimensions; no rubric evaluation has been run.",
+    "A human approval; no PRODUCT_PEDAGOGY_OWNER or other decision-role receipt exists.",
+    "A release approval; release eligibility stays INTERNAL_DRAFT_ONLY.",
+    "Efficacy, learning, or score improvement of any kind.",
+    "Mastery calibration or BKT (Bayesian Knowledge Tracing) eligibility; only the mastery contract decides whether a response can move pL.",
+    "Readiness validation of the lesson, the route, or the build.",
+    "Learner validation; no learner has seen this content.",
+    "Publication safety, rights clearance, or rollout safety.",
+    "Production publication or registration in the served catalog.",
+    "Accessibility conformance; the accessibility evidence class is BLOCKED.",
+    "Delivered-experience fidelity; no browser evidence exists, so every LQR-X dimension is unevaluated."
+  ],
+  "separation": {
+    "author_diagnostics_namespace": "author_diagnostics",
+    "official_quality_namespace": "official_quality_result",
+    "separation_rule": "Author diagnostics are producer commentary carrying no verdict authority; they live under diag_-prefixed fields and are never merged into, summarised as, or read as the official quality result, which stays empty and approval-withheld until a rubric evaluation and a human decision exist."
+  },
+  "nonclaims": {
+    "official_rubric_pass": false,
+    "human_approved": false,
+    "release_approved": false,
+    "efficacy_established": false,
+    "mastery_calibrated": false,
+    "readiness_validated": false,
+    "learner_validated": false,
+    "publication_safe": false,
+    "production_published": false
+  }
+}

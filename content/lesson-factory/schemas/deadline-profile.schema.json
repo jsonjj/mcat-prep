@@ -1,0 +1,330 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/deadline-profile.schema.json",
+  "x_contract_id": "lesson-factory.deadline-profile",
+  "x_contract_version": "5.0.0",
+  "title": "Lesson factory deadline profile",
+  "description": "The frozen operating profile for one deadline release of the lesson factory: which authorities it screens against, which gates are hard, which evidence classes stay BLOCKED, and what the resulting lifecycle status never claims.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "profile_id",
+    "profile_version",
+    "status",
+    "frozen_at",
+    "rubric_identity",
+    "structural_authority",
+    "mastery_authority",
+    "canonical_template_path",
+    "release_policy_ref",
+    "lifecycle_nonclaims_ref",
+    "screened_status",
+    "hard_gates",
+    "evidence_classes",
+    "namespaces",
+    "protected_boundary",
+    "identifier_boundary",
+    "log_boundary",
+    "nonclaims",
+    "intake_contract"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.deadline-profile"
+    },
+    "contract_version": {
+      "const": "5.0.0",
+      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+    },
+    "profile_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/ProfileId"
+    },
+    "profile_version": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/SemanticVersion"
+    },
+    "status": {
+      "const": "ACTIVE"
+    },
+    "frozen_at": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "rubric_identity": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RubricIdentity"
+    },
+    "structural_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spec_path", "spec_sha256", "validator_rule_set"],
+      "properties": {
+        "spec_path": {
+          "const": "docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md",
+          "description": "The structural authority is one exact document. A path field typed as text is a text field with a path in it today."
+        },
+        "spec_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        },
+        "validator_rule_set": {
+          "const": "R1-R15"
+        }
+      }
+    },
+    "mastery_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_path", "contract_sha256"],
+      "properties": {
+        "contract_path": {
+          "const": "docs/lesson-evidence-mastery-contract.md"
+        },
+        "contract_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        }
+      }
+    },
+    "canonical_template_path": {
+      "const": "docs/lesson-authoring/template/v3-les-000000"
+    },
+    "release_policy_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenReleasePolicyRef"
+    },
+    "lifecycle_nonclaims_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/LifecycleRef"
+    },
+    "screened_status": {
+      "const": "CANDIDATE_RUBRIC_SCREENED"
+    },
+    "hard_gates": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/HardGateDeclarations"
+    },
+    "evidence_classes": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/EvidenceClassDeclarations"
+    },
+    "namespaces": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Author diagnostics and official quality results are separate namespaces. Conflating them is how a self-audit note becomes a quality claim.",
+      "required": [
+        "author_diagnostics_namespace",
+        "official_quality_namespace",
+        "separation_enforced"
+      ],
+      "properties": {
+        "author_diagnostics_namespace": {
+          "const": "author_diagnostics"
+        },
+        "official_quality_namespace": {
+          "const": "official_quality_result"
+        },
+        "separation_enforced": {
+          "const": true
+        }
+      }
+    },
+    "protected_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "`learner_safe_surfaces` are the contract surfaces that must carry no protected material of any kind; each is a closed object, so a protected field cannot be added without failing validation. Content hashes are not protected material. `protected_surfaces` names where protected material actually lives.",
+      "required": ["learner_safe_surfaces", "protected_surfaces", "protected_material_transport"],
+      "properties": {
+        "learner_safe_surfaces": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          }
+        },
+        "protected_surfaces": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          }
+        },
+        "protected_material_transport": {
+          "const": "REFERENCE_BY_HASH_ONLY"
+        }
+      }
+    },
+    "identifier_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "How this release names things. The factory used to share one slug grammar across every identifier and one locator grammar across every reference, which meant a public id and a public locator both admitted any lower-case hyphenated phrase — `bundle-answer-key-is-c` and `kit:official-rubric-pass#sha256:…` were well-formed. Each naming context now has its own grammar, and the flags below record that this is a property of the release rather than a habit of the current authors.",
+      "required": [
+        "identifier_grammar",
+        "general_slug_identifiers_permitted",
+        "general_locator_references_permitted",
+        "reference_resolution",
+        "placeholder_digests_permitted"
+      ],
+      "properties": {
+        "identifier_grammar": {
+          "const": "CONTEXT_SPECIFIC"
+        },
+        "general_slug_identifiers_permitted": {
+          "const": false
+        },
+        "general_locator_references_permitted": {
+          "const": false
+        },
+        "reference_resolution": {
+          "const": "KIND_LOCATOR_BYTES_AND_DIGEST",
+          "description": "A reference resolves only when its kind, its canonical locator, the bytes at that locator, and its digest all agree. Matching the digest alone leaves the locator as decoration."
+        },
+        "placeholder_digests_permitted": {
+          "const": false
+        }
+      }
+    },
+    "log_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What a runner may write to a log. The record contract is pinned by the hash of its own bytes, so loosening the log schema without re-pinning the profile breaks the freeze rather than quietly widening what may be emitted.",
+      "required": [
+        "record_contract",
+        "record_schema_path",
+        "record_schema_sha256",
+        "free_text_permitted",
+        "permitted_payload_kinds",
+        "forbidden_payload_kinds"
+      ],
+      "properties": {
+        "record_contract": {
+          "const": "lesson-factory.runner-log-record"
+        },
+        "record_schema_path": {
+          "const": "content/lesson-factory/schemas/runner-log-record.schema.json"
+        },
+        "record_schema_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        },
+        "free_text_permitted": {
+          "const": false
+        },
+        "permitted_payload_kinds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["OPAQUE_CODE", "OPAQUE_HASH", "COUNT"]
+          }
+        },
+        "forbidden_payload_kinds": {
+          "type": "array",
+          "minItems": 6,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "PROTECTED_ANSWER",
+              "SCORING_AUTHORITY",
+              "ACCEPTED_RESPONSE",
+              "RATIONALE",
+              "SECRET",
+              "LEARNER_PII",
+              "ARBITRARY_PAYLOAD",
+              "FREE_TEXT"
+            ]
+          }
+        }
+      }
+    },
+    "nonclaims": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Nonclaims"
+    },
+    "intake_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What a consumer must do before it may call a document valid. Schema validation is half of it; the other half is resolving every dynamic reference to bytes. Stated here because a rule that lives only in a validator is a rule the next consumer does not know about.",
+      "required": [
+        "record_contract",
+        "record_contract_version",
+        "record_schema_path",
+        "record_schema_sha256",
+        "schema_validation_required",
+        "resolver_validation_required",
+        "schema_validation_alone_sufficient",
+        "caller_supplied_identity_permitted",
+        "admission_proof_required",
+        "admission_rule",
+        "dynamic_reference_kinds",
+        "admissible_contracts",
+        "non_admissible_contracts"
+      ],
+      "properties": {
+        "record_contract": {
+          "const": "lesson-factory.intake-validation"
+        },
+        "record_schema_path": {
+          "const": "content/lesson-factory/schemas/intake-validation.schema.json"
+        },
+        "record_schema_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        },
+        "schema_validation_required": {
+          "const": true
+        },
+        "resolver_validation_required": {
+          "const": true
+        },
+        "schema_validation_alone_sufficient": {
+          "const": false
+        },
+        "admission_rule": {
+          "const": "BOTH_MUST_PASS"
+        },
+        "dynamic_reference_kinds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/ReferenceKindCode"
+          },
+          "description": "The reference kinds whose targets a runner writes. These are exactly the references a schema validator cannot check."
+        },
+        "record_contract_version": {
+          "const": "2.1.0",
+          "description": "The one version of the intake contract this freeze runs. A consumer producing records under another version is producing records nothing here can read."
+        },
+        "caller_supplied_identity_permitted": {
+          "const": false,
+          "description": "A caller may offer bytes and a locator and nothing else. Document kind, contract, contract version, and the schema to validate against are derived from the offered document and the trusted registry: a caller that names them has told intake what to conclude."
+        },
+        "admission_proof_required": {
+          "const": true,
+          "description": "An admission names the exact bytes it admitted and carries a digest over the whole derivation. Without it a record is a claim about a kind of document rather than about a document, and it stays true after the document changes."
+        },
+        "admissible_contracts": {
+          "type": "array",
+          "minItems": 12,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/AdmissibleContractId"
+          },
+          "description": "Every contract whose documents intake can identify and bind an admission to. A document of any other contract is refused at the door."
+        },
+        "non_admissible_contracts": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "description": "The contracts intake does not admit, each with the reason it does not. An unlisted contract is an oversight; a listed one is a decision somebody can argue with.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["contract_id", "reason_code"],
+            "properties": {
+              "contract_id": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/NonAdmissibleContractId"
+              },
+              "reason_code": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/NonAdmissionReasonCode"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

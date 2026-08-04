@@ -1,0 +1,48 @@
+{
+  "$test_fixture": {
+    "synthetic": true,
+    "not_for_production": true,
+    "fixture_of": "lesson-factory.kit-manifest",
+    "why": "A positive control for the architecture tests. Every hash below is invented; nothing here describes a real lesson, a real screen run, or a real decision. The marker key makes this envelope fail validation against the closed production contract it is a control for, so it cannot be mistaken for a production record or loaded as one."
+  },
+  "instance": {
+    "contract_id": "lesson-factory.kit-manifest",
+    "contract_version": "3.0.0",
+    "kit_id": "lesson-factory-deadline-2026-08-03-kit-01",
+    "kit_version": "1.0.0",
+    "assembled_at": "2026-08-03T22:34:00Z",
+    "deadline_profile_ref": "profile:content/lesson-factory/deadline-profile/deadline-profile.json#sha256:f565393997bfd19c2aaf3a1f32e797f758e89bedcc4d7fb4169e9621b41fc0a6",
+    "release_policy_ref": "policy:content/lesson-factory/deadline-profile/release-policy.json#sha256:0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e",
+    "assignment_ref": "assignment:lesson-factory-deadline-2026-08-03/assignment-01#sha256:35aff1048d88d54df55603a04026d1b98eca425b817818cf9dd31ec128473c37",
+    "bundles": [
+      {
+        "bundle_id": "kit-01-v3-les-000101",
+        "lesson_identity": {
+          "lesson_id": "V3-LES-000101",
+          "lesson_revision_id": "rev-000002",
+          "envelope_kind": "L2_L3",
+          "lesson_script_content_sha256": "b47cd4298b716746a0bfc9b6a959f0c5f743c35b03082a3cf3a3b5c8be003407",
+          "kc_coverage_matrix_sha256": "249b5cff86a25c95bd23cac04a5271be8ae2aae2837f3d50ab29d046453c734c",
+          "lesson_presentation_plan_sha256": "36805250aaebb3dceb8d837950bc94ed4495991ce8404693fbee578051569adb",
+          "lesson_quality_report_sha256": "2efa7d66015c986b97f1accd8ba4e5ab225e998e6afb2ff4ee38f5a755b829a8",
+          "artifact_manifest_sha256": "ff37eeb9624e74cd51e7829441237d29feaa9d7ac7bee3f9f795fe4956b7ed95"
+        },
+        "lesson_handoff_ref": "handoff:lane-01/v3-les-000101#sha256:a3f26dd5e01f6d3b167f5991ae08eb7411164b5bd79073a116092973e2f5a431",
+        "readiness_ref": "readiness:kit-01/v3-les-000101#sha256:26195f9a5f9756760424e06002fbee56dba6b5c173fc022bbd550ae1102f586b",
+        "bundle_sha256": "c3da9788e4f4e3567173332549acc2fa690299f07944e6bfa8b6e4ecd65bce1c"
+      }
+    ],
+    "bundle_index_sha256": "23b59a1b4670c719984a5474cf744460d947d7ce33a30233ab2c36669fbcfe19",
+    "nonclaims": {
+      "official_rubric_pass": false,
+      "human_approved": false,
+      "release_approved": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "learner_validated": false,
+      "publication_safe": false,
+      "production_published": false
+    }
+  }
+}

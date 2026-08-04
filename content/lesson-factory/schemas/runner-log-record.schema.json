@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/runner-log-record.schema.json",
+  "x_contract_id": "lesson-factory.runner-log-record",
+  "x_contract_version": "4.0.0",
+  "title": "Lesson factory runner log record",
+  "description": "One line a factory runner may emit. Logs are the surface where protected material leaks most easily, because a log line looks harmless and is written in a hurry: rubric §7.3 names logs alongside handoffs and diagnostics as a place protected keys, scoring material, and private rationale must never appear. This contract makes that structural rather than advisory. A record carries an enumerated event code, opaque identifiers, hash references, and integer counts. It carries no free text at all, so there is no field in which a key, an accepted response, a rationale, a secret, or a serialised payload could travel.",
+  "$comment": "Every string this record admits is an enum member, a fixed-shape identifier, a hex digest, or a timestamp. Nothing here references NonEmptyString, and nothing here uses the general-purpose reference and blocker types either: their locators admit dots, slashes, and hyphenated words, so `blocker:the-answer-is-c` and `lesson:the-answer-is-c#sha256:...` both match them. A log gets its own narrower types so an identifier cannot be used as a sentence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "run_id",
+    "emitted_at",
+    "stage",
+    "event_code",
+    "severity",
+    "lesson_ref",
+    "route",
+    "hard_gate_id",
+    "evidence_class_id",
+    "blocker_code",
+    "counts",
+    "hashes",
+    "redaction"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.runner-log-record"
+    },
+    "contract_version": {
+      "const": "4.0.0",
+      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+    },
+    "run_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RunId"
+    },
+    "emitted_at": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "stage": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/LogStage"
+    },
+    "event_code": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/LogEventCode"
+    },
+    "severity": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/LogSeverity"
+    },
+    "lesson_ref": {
+      "anyOf": [
+        {
+          "$ref": "shared-vocabulary.schema.json#/$defs/LessonRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The exact revision a line is about, as a lesson id, a revision number, and a hash — nothing else fits the shape. A bare lesson id is not accepted either: two retired preview lessons reused production ids (rubric §9.1), so an id in a log names an ambiguous thing."
+    },
+    "route": {
+      "anyOf": [
+        {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Route"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "hard_gate_id": {
+      "anyOf": [
+        {
+          "$ref": "shared-vocabulary.schema.json#/$defs/HardGateId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "evidence_class_id": {
+      "anyOf": [
+        {
+          "$ref": "shared-vocabulary.schema.json#/$defs/EvidenceClassId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "blocker_code": {
+      "anyOf": [
+        {
+          "$ref": "shared-vocabulary.schema.json#/$defs/BlockerCode"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Why something is blocked, from a closed list. The general blocker type is a pattern over slugs, which any runtime-invented string can satisfy; an enum can only hold a reason someone added deliberately."
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Aggregates only. A count of failures is safe to log; the thing that failed is not.",
+      "required": [
+        "gates_passed",
+        "gates_failed",
+        "gates_blocked",
+        "evidence_classes_blocked",
+        "artifacts_written",
+        "protected_items_referenced"
+      ],
+      "properties": {
+        "gates_passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gates_failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gates_blocked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence_classes_blocked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "artifacts_written": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "protected_items_referenced": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How many protected items a stage touched. The count is loggable; the items are not."
+        }
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Opaque digests, which identify bytes without disclosing them. The key set is closed, so a runner cannot invent a hash-shaped field and put something else in it.",
+      "required": [
+        "input_manifest_sha256",
+        "output_manifest_sha256",
+        "profile_sha256",
+        "policy_sha256"
+      ],
+      "properties": {
+        "input_manifest_sha256": {
+          "anyOf": [
+            {
+              "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "output_manifest_sha256": {
+          "anyOf": [
+            {
+              "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "profile_sha256": {
+          "anyOf": [
+            {
+              "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "policy_sha256": {
+          "anyOf": [
+            {
+              "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "redaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The record states its own transport rules, so a line that tried to opt out of them would be rejected by the same contract that validates it.",
+      "required": ["free_text_permitted", "protected_material_present", "payload_transport"],
+      "properties": {
+        "free_text_permitted": {
+          "const": false
+        },
+        "protected_material_present": {
+          "const": false
+        },
+        "payload_transport": {
+          "const": "CODES_HASHES_COUNTS_ONLY"
+        }
+      }
+    }
+  }
+}

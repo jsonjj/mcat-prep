@@ -1,0 +1,57 @@
+{
+  "$test_fixture": {
+    "synthetic": true,
+    "not_for_production": true,
+    "fixture_of": "lesson-factory.intake-validation"
+  },
+  "instance": {
+    "contract_id": "lesson-factory.intake-validation",
+    "contract_version": "2.1.0",
+    "document": {
+      "kind": "import-index",
+      "ref": "import-index:lesson-factory-deadline-2026-08-03/import-index-01#sha256:b3cd70f4b7d73d6606388d4956aea41a5ea36fe174b71a2ff28863d8a4c8b23b",
+      "sha256": "b3cd70f4b7d73d6606388d4956aea41a5ea36fe174b71a2ff28863d8a4c8b23b",
+      "contract_id": "lesson-factory.import-index",
+      "contract_version": "3.0.0",
+      "schema_file": "import-index.schema.json",
+      "schema_locator": "content/lesson-factory/schemas/import-index.schema.json",
+      "schema_sha256": "59402cfd3e138a11599fbc0761db1430829884aa9a84d57816c5f21c7c072e3e"
+    },
+    "schema_validation": {
+      "status": "PASS",
+      "error_count": 0
+    },
+    "resolver_validation": {
+      "status": "FAIL",
+      "checked_count": 3,
+      "unresolved_count": 3,
+      "references": [
+        {
+          "field": "/entries/0/bundle_ref",
+          "kind": "bundle",
+          "digest": "c3da9788e4f4e3567173332549acc2fa690299f07944e6bfa8b6e4ecd65bce1c",
+          "status": "NOT_YET_PRODUCED"
+        },
+        {
+          "field": "/entries/0/lesson_handoff_ref",
+          "kind": "handoff",
+          "digest": "a3f26dd5e01f6d3b167f5991ae08eb7411164b5bd79073a116092973e2f5a431",
+          "status": "NOT_YET_PRODUCED"
+        },
+        {
+          "field": "/kit_ref",
+          "kind": "kit",
+          "digest": "88ea88810327244911936230e33f5334f77a4633748a1fb46133f2fcf56e1163",
+          "status": "NOT_YET_PRODUCED"
+        }
+      ]
+    },
+    "admission": "REJECTED",
+    "refusal_code": "REFERENCES_UNRESOLVED",
+    "admission_proof": {
+      "derivation": "INTAKE_DERIVATION_V2",
+      "derivation_sha256": "fb84c6b6166c52552268e4afc512a67d2c808ee001a8d5f8c199192fee972c1d"
+    },
+    "validated_at": "2026-08-03T22:28:00Z"
+  }
+}

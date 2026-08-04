@@ -1,0 +1,521 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/owner-route-policy-receipt.schema.json",
+  "x_contract_id": "lesson-factory.owner-route-policy-receipt",
+  "x_contract_version": "4.0.0",
+  "title": "Owner route-policy decision receipt",
+  "description": "A durable record of one PRODUCT_PEDAGOGY_OWNER decision about which lesson routes a release covers. This is the only artifact in the set that carries a human decision, and it carries exactly one: release route scope. It approves no lesson, waives no hard gate, supplies no evidence, and turns no nonclaim true, which is why the standard nonclaims block below is still pinned false — a human ratified a scope, not a lesson.",
+  "$comment": "Every machine-readable decision field here is a code from a closed vocabulary, and all of them derive from `route_scope_code`. The human's own words are kept in a separate file, pinned by hash under `decision_provenance` and marked non-authoritative: a decision field that accepts sentences accepts `and the lesson is approved`, and prose alongside machine fields eventually gets read as if it governed them. The receipt does not pin the policy it ratifies — the policy pins the receipt, so the chain runs profile -> policy -> receipt in one direction and two files cannot each contain the other's hash.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "receipt_id",
+    "receipt_version",
+    "decision_status",
+    "decided_by_role",
+    "decision_authority_scope",
+    "decided_at",
+    "decision_date",
+    "ratified_policy",
+    "route_scope_code",
+    "initial_release_routes",
+    "route_decisions",
+    "decision_basis_codes",
+    "scope_limit_codes",
+    "decision_provenance",
+    "rubric_identity",
+    "supersedes",
+    "receipt_nonclaims",
+    "nonclaims"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.owner-route-policy-receipt"
+    },
+    "contract_version": {
+      "const": "4.0.0",
+      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+    },
+    "receipt_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptId"
+    },
+    "receipt_version": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/SemanticVersion"
+    },
+    "decision_status": {
+      "const": "RATIFIED",
+      "description": "A receipt records a decision that was made. There is no pending receipt: an undecided question has no receipt at all, which is why its absence is detectable."
+    },
+    "decided_by_role": {
+      "const": "PRODUCT_PEDAGOGY_OWNER",
+      "description": "Release route scope is this role's decision (rubric §7.4). No reviewer role can ratify it, and no agent can."
+    },
+    "decision_authority_scope": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/DecisionAuthorityScope"
+    },
+    "decided_at": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "decision_date": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoDate"
+    },
+    "ratified_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The exact policy identity this decision ratifies, named but not hash-pinned: the policy pins this receipt, so pinning back would make the chain circular and unsatisfiable.",
+      "required": ["policy_id", "policy_version"],
+      "properties": {
+        "policy_id": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/PolicyId"
+        },
+        "policy_version": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/SemanticVersion"
+        }
+      }
+    },
+    "route_scope_code": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RouteScopeCode"
+    },
+    "initial_release_routes": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RouteList"
+    },
+    "route_decisions": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/OwnerRouteDecisions"
+    },
+    "decision_basis_codes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/DecisionBasisCode"
+      },
+      "description": "Why the scope is what it is, as citable codes. A ratification with no stated basis is a signature, not a decision; a basis in prose is a signature with an essay attached."
+    },
+    "scope_limit_codes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/ScopeLimitCode"
+      },
+      "description": "What this decision deliberately leaves undecided, as codes, so the limits are enforceable and searchable rather than dependent on someone reading a caveat."
+    },
+    "decision_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Where the human's own words are, and the exact bytes of them. The statement is kept outside this record on purpose: a verbatim field sitting among the machine fields is read as one of them. `authority` is pinned to a single value that says so.",
+      "required": ["authority", "statement_path", "statement_sha256", "recorded_at"],
+      "properties": {
+        "authority": {
+          "const": "NON_AUTHORITATIVE_VERBATIM_RECORD",
+          "description": "The statement is evidence that a decision was taken, not a source of what it decided. Where the two differ, the coded fields govern and the discrepancy is a defect in this receipt."
+        },
+        "statement_path": {
+          "const": "content/lesson-factory/deadline-profile/owner-route-policy-statement.md"
+        },
+        "statement_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        },
+        "recorded_at": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+        }
+      }
+    },
+    "rubric_identity": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RubricIdentity"
+    },
+    "supersedes": {
+      "anyOf": [
+        {
+          "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The earlier receipt this one replaces, pinned by hash. A revised decision supersedes; it never edits the record of what was decided before."
+    },
+    "receipt_nonclaims": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The specific things a route-scope ratification is not. Each is pinned false so that no reader can treat one human decision about scope as authority over quality, evidence, or release.",
+      "required": [
+        "waives_any_nonclaim",
+        "waives_any_hard_gate",
+        "waives_any_evidence_requirement",
+        "approves_any_lesson",
+        "establishes_rubric_pass",
+        "authorizes_release",
+        "authorizes_publication"
+      ],
+      "properties": {
+        "waives_any_nonclaim": {
+          "const": false
+        },
+        "waives_any_hard_gate": {
+          "const": false
+        },
+        "waives_any_evidence_requirement": {
+          "const": false
+        },
+        "approves_any_lesson": {
+          "const": false
+        },
+        "establishes_rubric_pass": {
+          "const": false
+        },
+        "authorizes_release": {
+          "const": false
+        },
+        "authorizes_publication": {
+          "const": false
+        }
+      }
+    },
+    "nonclaims": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Nonclaims"
+    }
+  },
+  "allOf": [
+    {
+      "$comment": "The same scope code the policy carries, deriving the same routes here. Because both documents derive their route fields from the code by rule, agreement between them reduces to carrying the same code — which the canonical-reference resolver checks when it walks the chain.",
+      "if": {
+        "properties": {
+          "route_scope_code": {
+            "const": "STANDARD_ONLY"
+          }
+        },
+        "required": ["route_scope_code"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "initial_release_routes": {
+            "const": ["STANDARD"]
+          },
+          "route_decisions": {
+            "type": "object",
+            "properties": {
+              "STANDARD": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "const": "APPLICABLE"
+                  }
+                }
+              },
+              "CONCISE": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "const": "NOT_APPLICABLE"
+                  }
+                }
+              },
+              "MISCONCEPTION": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "const": "NOT_APPLICABLE"
+                  }
+                }
+              },
+              "PREREQUISITE_SUPPORT": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "const": "NOT_APPLICABLE"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "Membership biconditional per route: a route is in `initial_release_routes` exactly when the owner decided it APPLICABLE. Holds for any scope code, including ones not yet written.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/StandardMembership"
+        },
+        {
+          "$ref": "#/$defs/ConciseMembership"
+        },
+        {
+          "$ref": "#/$defs/MisconceptionMembership"
+        },
+        {
+          "$ref": "#/$defs/PrerequisiteSupportMembership"
+        }
+      ]
+    },
+    {
+      "$comment": "Each NOT_APPLICABLE decision cites the policy clause for its own route. Otherwise a decision about CONCISE can be justified by the clause that excluded MISCONCEPTION.",
+      "type": "object",
+      "properties": {
+        "route_decisions": {
+          "type": "object",
+          "properties": {
+            "STANDARD": {
+              "type": "object",
+              "properties": {
+                "policy_clause_id": {
+                  "anyOf": [
+                    {
+                      "const": "ROUTE_ABSENCE_STANDARD"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            "CONCISE": {
+              "type": "object",
+              "properties": {
+                "policy_clause_id": {
+                  "anyOf": [
+                    {
+                      "const": "ROUTE_ABSENCE_CONCISE"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            "MISCONCEPTION": {
+              "type": "object",
+              "properties": {
+                "policy_clause_id": {
+                  "anyOf": [
+                    {
+                      "const": "ROUTE_ABSENCE_MISCONCEPTION"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            "PREREQUISITE_SUPPORT": {
+              "type": "object",
+              "properties": {
+                "policy_clause_id": {
+                  "anyOf": [
+                    {
+                      "const": "ROUTE_ABSENCE_PREREQUISITE_SUPPORT"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "StandardMembership": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "route_decisions": {
+            "type": "object",
+            "properties": {
+              "STANDARD": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "const": "APPLICABLE"
+                  }
+                },
+                "required": ["decision"]
+              }
+            },
+            "required": ["STANDARD"]
+          }
+        },
+        "required": ["route_decisions"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "initial_release_routes": {
+            "type": "array",
+            "contains": {
+              "const": "STANDARD"
+            }
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "initial_release_routes": {
+            "type": "array",
+            "not": {
+              "type": "array",
+              "contains": {
+                "const": "STANDARD"
+              }
+            }
+          }
+        }
+      }
+    },
+    "ConciseMembership": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "route_decisions": {
+            "type": "object",
+            "properties": {
+              "CONCISE": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "const": "APPLICABLE"
+                  }
+                },
+                "required": ["decision"]
+              }
+            },
+            "required": ["CONCISE"]
+          }
+        },
+        "required": ["route_decisions"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "initial_release_routes": {
+            "type": "array",
+            "contains": {
+              "const": "CONCISE"
+            }
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "initial_release_routes": {
+            "type": "array",
+            "not": {
+              "type": "array",
+              "contains": {
+                "const": "CONCISE"
+              }
+            }
+          }
+        }
+      }
+    },
+    "MisconceptionMembership": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "route_decisions": {
+            "type": "object",
+            "properties": {
+              "MISCONCEPTION": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "const": "APPLICABLE"
+                  }
+                },
+                "required": ["decision"]
+              }
+            },
+            "required": ["MISCONCEPTION"]
+          }
+        },
+        "required": ["route_decisions"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "initial_release_routes": {
+            "type": "array",
+            "contains": {
+              "const": "MISCONCEPTION"
+            }
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "initial_release_routes": {
+            "type": "array",
+            "not": {
+              "type": "array",
+              "contains": {
+                "const": "MISCONCEPTION"
+              }
+            }
+          }
+        }
+      }
+    },
+    "PrerequisiteSupportMembership": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "route_decisions": {
+            "type": "object",
+            "properties": {
+              "PREREQUISITE_SUPPORT": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "const": "APPLICABLE"
+                  }
+                },
+                "required": ["decision"]
+              }
+            },
+            "required": ["PREREQUISITE_SUPPORT"]
+          }
+        },
+        "required": ["route_decisions"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "initial_release_routes": {
+            "type": "array",
+            "contains": {
+              "const": "PREREQUISITE_SUPPORT"
+            }
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "initial_release_routes": {
+            "type": "array",
+            "not": {
+              "type": "array",
+              "contains": {
+                "const": "PREREQUISITE_SUPPORT"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

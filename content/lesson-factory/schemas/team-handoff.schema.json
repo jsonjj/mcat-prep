@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/team-handoff.schema.json",
+  "x_contract_id": "lesson-factory.team-handoff",
+  "x_contract_version": "3.0.0",
+  "title": "Team handoff",
+  "description": "One lane's aggregated handoff. Lesson handoffs are referenced by pinned hash; the public metadata block is the only part intended for a surface outside the factory, and it carries no hash, no diagnostic, and no protected reference.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "team_handoff_id",
+    "lane_id",
+    "produced_at",
+    "assignment_ref",
+    "lesson_handoff_refs",
+    "public_metadata",
+    "nonclaims"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.team-handoff"
+    },
+    "contract_version": {
+      "const": "3.0.0",
+      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+    },
+    "team_handoff_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/TeamHandoffId"
+    },
+    "lane_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/LaneId"
+    },
+    "produced_at": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "assignment_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/AssignmentRef"
+    },
+    "lesson_handoff_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/HandoffRef"
+      }
+    },
+    "public_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Learner-safe and publishable. `screened_status` is the lifecycle value and nothing more.",
+      "required": ["lane_id", "lesson_count", "lesson_ids", "screened_status", "generated_at"],
+      "properties": {
+        "lane_id": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/LaneId"
+        },
+        "lesson_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lesson_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/LessonId"
+          }
+        },
+        "screened_status": {
+          "const": "CANDIDATE_RUBRIC_SCREENED"
+        },
+        "generated_at": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+        }
+      }
+    },
+    "nonclaims": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Nonclaims"
+    }
+  }
+}

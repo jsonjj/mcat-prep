@@ -1,0 +1,406 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/task-source-packet.schema.json",
+  "x_contract_id": "lesson-factory.task-source-packet",
+  "x_contract_version": "3.0.0",
+  "title": "Frozen task / source packet",
+  "description": "The immutable, revision-bound input a lesson author receives. It is a superset of the author-protocol input contract (key-docs/lesson-quality-author-protocol.md §4) and of key-docs/autonomous-lesson-authoring-context.md §5: every field those documents require appears here, so nothing is left for the author to invent. Route applicability is supplied to the author, never decided by the author.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "frozen",
+    "request_id",
+    "requested_name",
+    "lesson_id",
+    "grouping_id",
+    "curriculum_manifest_sha256",
+    "phase_placements",
+    "module_placements",
+    "pathway_placements",
+    "sequence_positions",
+    "ordered_kc_ids",
+    "kc_competency_and_scope",
+    "kc_non_goals",
+    "hard_prerequisites",
+    "helpful_context",
+    "attachments",
+    "source_anchors",
+    "open_holds",
+    "reasoning_operations",
+    "route_universe",
+    "route_proofs",
+    "required_human_review_roles",
+    "source_records",
+    "rubric_identity",
+    "anchor_set_version",
+    "output_directory",
+    "max_revision_cycles",
+    "deadline_profile_ref",
+    "nonclaims",
+    "route_scope_code",
+    "applicable_routes",
+    "ratified_policy_version",
+    "release_policy_ref"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.task-source-packet"
+    },
+    "contract_version": {
+      "const": "3.0.0",
+      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+    },
+    "frozen": {
+      "const": true
+    },
+    "request_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RequestId"
+    },
+    "requested_name": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+    },
+    "lesson_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/LessonId"
+    },
+    "grouping_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/GroupingId"
+    },
+    "curriculum_manifest_sha256": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+    },
+    "phase_placements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["phase_id", "source_relation_ids"],
+        "properties": {
+          "phase_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/PhaseId"
+          },
+          "source_relation_ids": {
+            "$ref": "#/$defs/RelationIds"
+          }
+        }
+      }
+    },
+    "module_placements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["module_id", "source_relation_ids"],
+        "properties": {
+          "module_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/ModuleId"
+          },
+          "source_relation_ids": {
+            "$ref": "#/$defs/RelationIds"
+          }
+        }
+      }
+    },
+    "pathway_placements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["pathway_id", "source_relation_ids"],
+        "properties": {
+          "pathway_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/PathwayId"
+          },
+          "source_relation_ids": {
+            "$ref": "#/$defs/RelationIds"
+          }
+        }
+      }
+    },
+    "sequence_positions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scope_id", "position", "source_relation_ids"],
+        "properties": {
+          "scope_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/ScopeId"
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "source_relation_ids": {
+            "$ref": "#/$defs/RelationIds"
+          }
+        }
+      }
+    },
+    "ordered_kc_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+      }
+    },
+    "kc_competency_and_scope": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kc_id", "competency", "scope"],
+        "properties": {
+          "kc_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+          },
+          "competency": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          },
+          "scope": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          }
+        }
+      }
+    },
+    "kc_non_goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kc_id", "non_goals"],
+        "properties": {
+          "kc_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+          },
+          "non_goals": {
+            "type": "array",
+            "items": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+            }
+          }
+        }
+      }
+    },
+    "hard_prerequisites": {
+      "type": "array",
+      "description": "A declared prerequisite is an evidence-bearing claim: it resolves to a named curriculum relation taught before this lesson's sequence position (rubric §4).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["relation_id", "kc_id", "taught_at_sequence_position"],
+        "properties": {
+          "relation_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/RelationId"
+          },
+          "kc_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+          },
+          "taught_at_sequence_position": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "helpful_context": {
+      "type": "array",
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+      }
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["attachment_id", "host_kc_id"],
+        "properties": {
+          "attachment_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/AttachmentId"
+          },
+          "host_kc_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+          }
+        }
+      }
+    },
+    "source_anchors": {
+      "type": "array",
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+      }
+    },
+    "open_holds": {
+      "type": "array",
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+      }
+    },
+    "reasoning_operations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kc_id", "operation"],
+        "properties": {
+          "kc_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+          },
+          "operation": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          }
+        }
+      }
+    },
+    "route_universe": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/Route"
+      }
+    },
+    "route_proofs": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RouteProofs"
+    },
+    "required_human_review_roles": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/CanonicalRole"
+      }
+    },
+    "source_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SourceRecord"
+      }
+    },
+    "rubric_identity": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RubricIdentity"
+    },
+    "anchor_set_version": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/AnchorSetVersion"
+    },
+    "output_directory": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/OutputDirectory"
+    },
+    "max_revision_cycles": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/MaxRevisionCycles"
+    },
+    "deadline_profile_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/ProfileRef"
+    },
+    "nonclaims": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Nonclaims"
+    },
+    "route_scope_code": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RouteScopeCode"
+    },
+    "applicable_routes": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RouteList"
+    },
+    "ratified_policy_version": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/SemanticVersion"
+    },
+    "release_policy_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenReleasePolicyRef"
+    }
+  },
+  "$defs": {
+    "RelationIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/RelationId"
+      }
+    },
+    "SourceRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Rights are cleared before extraction, storage, or calibration use. Anything other than PERMITTED carries no permitted use and no receipts (rubric §9.2).",
+      "required": [
+        "source_id",
+        "source_locator",
+        "permitted_use",
+        "rights_status",
+        "permission_receipt_refs"
+      ],
+      "properties": {
+        "source_id": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/SourceId"
+        },
+        "source_locator": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+        },
+        "permitted_use": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/PermittedUse"
+          }
+        },
+        "rights_status": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/RightsStatus"
+        },
+        "permission_receipt_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/PermissionReceiptRef"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "rights_status": {
+                "const": "PERMITTED"
+              }
+            },
+            "required": ["rights_status"]
+          },
+          "then": {
+            "properties": {
+              "permitted_use": {
+                "type": "array",
+                "minItems": 1
+              },
+              "permission_receipt_refs": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "permitted_use": {
+                "type": "array",
+                "maxItems": 0
+              },
+              "permission_receipt_refs": {
+                "type": "array",
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RouteScopeBinding"
+    }
+  ],
+  "$comment": "Route applicability is supplied by the frozen release policy, never chosen here: the document carries the policy reference, the ratified version, and the scope code, and the shared route binding derives the four proofs and their clauses from that code. A packet or handoff authored against a route the policy does not cover cannot validate."
+}

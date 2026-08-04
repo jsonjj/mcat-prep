@@ -1,0 +1,2016 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/shared-vocabulary.schema.json",
+  "x_contract_id": "lesson-factory.shared-vocabulary",
+  "x_contract_version": "3.2.0",
+  "title": "Lesson factory shared vocabulary",
+  "description": "Definitions only; this document describes no instance. Every contract in the frozen deadline set references these definitions so that one spelling of an identity, a route proof, a gate, an evidence class, and a nonclaim exists across the factory.",
+  "$comment": "Authorities: key-docs/lesson-quality-rubric.md v0.9.1 (§2 result model, §3.2 route universe, §7 evidence minimums, §9.2 rights), docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md (R1-R15, R12 claim limits), docs/lesson-evidence-mastery-contract.md.",
+  "$defs": {
+    "Sha256": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "Lower-case hex SHA-256 of exact bytes. Null, empty, and placeholder values are rejected: an identity is pinned, never reconstructed. The placeholder rule is shared with every reference family so one list of known conventions governs all of them."
+    },
+    "SemanticVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "RubricVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$"
+    },
+    "IsoTimestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$"
+    },
+    "IsoDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "A calendar date with no time part. A record that carries both a date and a timestamp must keep them consistent; neither substitutes for the other."
+    },
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unconstrained text. Admissible only where a human author is genuinely supplying prose to another human (a task packet's competency statement, a gate's design-time description) and never on a learner-safe, public, diagnostic, or log surface: an unconstrained string is the one field that can carry an answer key."
+    },
+    "LessonRevisionId": {
+      "type": "string",
+      "pattern": "^rev-[0-9]{6}$",
+      "description": "A lesson revision, numbered. Revision identity is structural; a free-text revision label can be anything, including a claim."
+    },
+    "LessonId": {
+      "type": "string",
+      "pattern": "^V3-LES-[0-9]{6}$"
+    },
+    "KcId": {
+      "type": "string",
+      "pattern": "^V3-KC-[0-9]{6}$"
+    },
+    "LaneId": {
+      "type": "string",
+      "pattern": "^lane-[0-9]{2}$"
+    },
+    "PolicyClauseId": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$",
+      "description": "The clause of a versioned policy that a decision ratifies or an absence proof cites."
+    },
+    "OutputDirectory": {
+      "type": "string",
+      "pattern": "^\\.tmp/lesson-factory/lane-[0-9]{2}/v3-les-[0-9]{6}$",
+      "description": "Drafts are authored outside content/lessons/, which is swept into the served catalog corpus and the lesson-validate gate. The lane segment is a lane number: it used to be any slug, which made the path a place to write something."
+    },
+    "MaxRevisionCycles": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "Route": {
+      "enum": ["STANDARD", "CONCISE", "MISCONCEPTION", "PREREQUISITE_SUPPORT"],
+      "description": "The rubric route universe (§3.2). Exactly these four, always."
+    },
+    "RouteApplicability": {
+      "enum": ["APPLICABLE", "NOT_APPLICABLE", "BLOCKED"]
+    },
+    "RouteList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/Route"
+      }
+    },
+    "RouteScopeCode": {
+      "enum": ["STANDARD_ONLY"],
+      "description": "The single machine value that fixes which routes a release covers. Every other route-shaped field — the applicable list, the four route proofs, the clause each absence proof cites, the owner's four route decisions — is derived from this code by schema rule rather than restated, so a document cannot disagree with itself. Adding a scope means adding a code here and the derivation that goes with it, in review."
+    },
+    "DecisionBasisCode": {
+      "enum": [
+        "RUBRIC_3_2_ABSENCE_PROOF_AUTHORITY",
+        "RUBRIC_10_OPEN_DECISION_4_SCOPED",
+        "INITIAL_RELEASE_SCOPE_LIMITED",
+        "STRUCTURAL_LANE_CHECK_IS_NOT_AN_ABSENCE_PROOF",
+        "NO_CONTENT_EXISTS_FOR_ROUTE"
+      ],
+      "description": "Why a route-scope decision was taken, as a citable code. Prose reasoning is recorded outside the machine fields and marked non-authoritative, because a reason field that accepts sentences accepts `approved`."
+    },
+    "ScopeLimitCode": {
+      "enum": [
+        "NO_LESSON_APPROVAL",
+        "NO_HARD_GATE_WAIVER",
+        "NO_EVIDENCE_WAIVER",
+        "NO_NONCLAIM_WAIVER",
+        "NO_RELEASE_AUTHORIZATION",
+        "NO_PUBLICATION_AUTHORIZATION",
+        "INITIAL_RELEASE_ONLY",
+        "HUMAN_DECISION_CLASS_UNCHANGED",
+        "PREREQUISITE_SUPPORT_REMAINS_OPEN_FOR_LATER_RELEASE"
+      ],
+      "description": "What a decision explicitly does not reach, as codes rather than caveats. A caveat in prose is not enforceable and is not searchable."
+    },
+    "RatificationBlockerCode": {
+      "enum": [
+        "OWNER_DECISION_ABSENT",
+        "RUBRIC_OPEN_DECISION_UNRESOLVED",
+        "ROUTE_CONTENT_UNDECIDED",
+        "RECEIPT_NOT_RECORDED"
+      ],
+      "description": "What is stopping a policy from being ratified, as codes. A blocker list written in prose is a place to write a blocker that reads like a resolution."
+    },
+    "DecisionAuthorityScope": {
+      "enum": ["RELEASE_ROUTE_SCOPE_ONLY"],
+      "description": "The only authority a route-scope receipt carries. There is deliberately no value meaning lesson approval, release authorisation, or gate waiver: those decisions need evidence this record cannot hold."
+    },
+    "DiagnosticCode": {
+      "enum": [
+        "SELF_AUDIT_STRUCTURAL_RULES_CHECKED",
+        "SELF_AUDIT_KC_COVERAGE_CHECKED",
+        "SELF_AUDIT_TEMPLATE_FOLLOWED",
+        "SELF_AUDIT_SOURCE_RIGHTS_CHECKED",
+        "SELF_AUDIT_PROTECTED_MATERIAL_SEPARATED",
+        "SELF_AUDIT_NO_RENDERED_CHECK_PERFORMED",
+        "SELF_AUDIT_NO_INDEPENDENT_REVIEW_PERFORMED",
+        "SELF_AUDIT_NO_LEARNER_EXPOSURE"
+      ],
+      "description": "What a producer audited itself for, as codes. The field this replaced was an unconstrained note on a surface that is read alongside a lesson, which is exactly where an answer or an approval claim would do the most damage."
+    },
+    "OpenQuestionCode": {
+      "enum": [
+        "OPEN_QUESTION_KC_SCOPE_BOUNDARY",
+        "OPEN_QUESTION_DISTRACTOR_PLAUSIBILITY",
+        "OPEN_QUESTION_PREREQUISITE_DEPTH",
+        "OPEN_QUESTION_ITEM_DIFFICULTY",
+        "OPEN_QUESTION_TERMINOLOGY_CHOICE",
+        "OPEN_QUESTION_WORKED_EXAMPLE_LENGTH"
+      ],
+      "description": "A producer's open question, as a category. The detail belongs in a review thread with a human, not in a machine record that travels with the lesson."
+    },
+    "ApprovalBlockerCode": {
+      "enum": [
+        "NO_RUBRIC_EVALUATION_RUN",
+        "NO_HUMAN_DECISION_RECEIPT",
+        "NO_BROWSER_RENDERED_EVIDENCE",
+        "NO_INDEPENDENT_ACCESSIBILITY_REVIEW",
+        "NO_DOMAIN_SME_RECEIPT",
+        "NO_NOVICE_WALKTHROUGH_RECEIPT",
+        "NO_PLATFORM_RELIABILITY_RECEIPT"
+      ],
+      "description": "Why approval is withheld, as codes. Written as prose, this list is the natural place for someone to write `everything passed, just waiting on sign-off`."
+    },
+    "AbsenceProofBasis": {
+      "enum": ["VERSIONED_RELEASE_POLICY", "STRUCTURAL_RECORD", "CURRICULUM_AUTHORITY"],
+      "description": "The admissible kinds of absence proof. REVIEWER_OPINION, EMPTY_COVERAGE_ROW, and RUNTIME_FALLBACK are deliberately absent (rubric §3.2)."
+    },
+    "CanonicalRole": {
+      "enum": [
+        "PRODUCT_PEDAGOGY_OWNER",
+        "DOMAIN_CONSTRUCT_SME",
+        "INDEPENDENT_BLIND_SOLVER",
+        "ACCESSIBILITY_REVIEWER",
+        "NOVICE_WALKTHROUGH_REVIEWER",
+        "PLATFORM_RELIABILITY_REVIEWER",
+        "RIGHTS_REVIEWER"
+      ],
+      "description": "The seven canonical roles (rubric §7.4). Legacy artifact aliases are read-only and are never written into a new record."
+    },
+    "RightsStatus": {
+      "enum": ["PENDING", "PERMITTED", "RESTRICTED", "PROHIBITED"]
+    },
+    "PermittedUse": {
+      "enum": [
+        "INTERNAL_HUMAN_REVIEW",
+        "MODEL_CALIBRATION",
+        "EXCERPT_STORAGE",
+        "SYNTHETIC_TRANSFORMATION",
+        "EXTERNAL_DISTRIBUTION"
+      ]
+    },
+    "GateStatus": {
+      "enum": ["PASS", "FAIL", "BLOCKED"]
+    },
+    "EvidenceClassState": {
+      "enum": ["PRESENT", "BLOCKED"],
+      "description": "Two states only. There is no PASS, WAIVED, NORMALIZED, or NOT_APPLICABLE: missing evidence fails closed (rubric §7.1)."
+    },
+    "LifecycleState": {
+      "enum": [
+        "CANDIDATE_SCREEN_PENDING",
+        "CANDIDATE_SCREEN_BLOCKED",
+        "CANDIDATE_SCREEN_FAILED",
+        "CANDIDATE_RUBRIC_SCREENED"
+      ],
+      "description": "The candidate lifecycle. Every value is a status; none is a rubric verdict, a human approval, or a release decision."
+    },
+    "Nonclaims": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What a CANDIDATE_RUBRIC_SCREENED record never establishes. Every flag is pinned false; flipping one requires the corresponding evidence and a human decision, which this contract cannot represent. Mirrors R12 claim_limits and rubric §1 nonclaims.",
+      "required": [
+        "official_rubric_pass",
+        "human_approved",
+        "release_approved",
+        "efficacy_established",
+        "mastery_calibrated",
+        "readiness_validated",
+        "learner_validated",
+        "publication_safe",
+        "production_published"
+      ],
+      "properties": {
+        "official_rubric_pass": {
+          "const": false
+        },
+        "human_approved": {
+          "const": false
+        },
+        "release_approved": {
+          "const": false
+        },
+        "efficacy_established": {
+          "const": false
+        },
+        "mastery_calibrated": {
+          "const": false
+        },
+        "readiness_validated": {
+          "const": false
+        },
+        "learner_validated": {
+          "const": false
+        },
+        "publication_safe": {
+          "const": false
+        },
+        "production_published": {
+          "const": false
+        }
+      }
+    },
+    "RubricIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Which standard a record was screened against. A later rubric version cannot silently relabel it.",
+      "required": ["rubric_path", "rubric_version", "rubric_sha256"],
+      "properties": {
+        "rubric_path": {
+          "const": "key-docs/lesson-quality-rubric.md",
+          "description": "The one rubric this freeze screens against."
+        },
+        "rubric_version": {
+          "$ref": "#/$defs/RubricVersion"
+        },
+        "rubric_sha256": {
+          "$ref": "#/$defs/Sha256"
+        }
+      }
+    },
+    "LessonIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One exact lesson revision, pinned by the recomputed content hash of each primary artifact (R3, R5). The manifest hash is present exactly when the envelope has a manifest.",
+      "required": [
+        "lesson_id",
+        "lesson_revision_id",
+        "envelope_kind",
+        "lesson_script_content_sha256",
+        "kc_coverage_matrix_sha256",
+        "lesson_presentation_plan_sha256",
+        "lesson_quality_report_sha256",
+        "artifact_manifest_sha256"
+      ],
+      "properties": {
+        "lesson_id": {
+          "$ref": "#/$defs/LessonId"
+        },
+        "lesson_revision_id": {
+          "$ref": "#/$defs/LessonRevisionId"
+        },
+        "envelope_kind": {
+          "enum": ["L1", "L2_L3"]
+        },
+        "lesson_script_content_sha256": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "kc_coverage_matrix_sha256": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "lesson_presentation_plan_sha256": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "lesson_quality_report_sha256": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "artifact_manifest_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "envelope_kind": {
+                "const": "L1"
+              }
+            },
+            "required": ["envelope_kind"]
+          },
+          "then": {
+            "properties": {
+              "artifact_manifest_sha256": {
+                "const": null
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "artifact_manifest_sha256": {
+                "$ref": "#/$defs/Sha256"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "StructuralValidation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "R1-R15 is a hard gate, so the only recordable status is PASS: a handoff cannot exist for a lesson the validator has not cleared.",
+      "required": ["rule_set", "status", "screen_code", "screen_ref", "validated_at"],
+      "properties": {
+        "rule_set": {
+          "const": "R1-R15"
+        },
+        "status": {
+          "const": "PASS"
+        },
+        "validated_at": {
+          "$ref": "#/$defs/IsoTimestamp"
+        },
+        "screen_code": {
+          "const": "R1_R15_STRUCTURAL"
+        },
+        "screen_ref": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ScreenRef"
+            },
+            {
+              "type": "string",
+              "pattern": "^screen:lane-[0-9]{2}/v3-les-[0-9]{6}/r1-r15-structural#sha256:[0-9a-f]{64}$"
+            }
+          ],
+          "description": "The pinned R1-R15 run this handoff rests on. The locator names the screen, so the record cannot claim one gate and cite another."
+        }
+      }
+    },
+    "ProtectedMaterialReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Protected keys, scoring material, and private rationales travel as a hash reference to server-only storage. They never appear in a handoff, a diagnostic, a log, or public metadata (rubric §7.3).",
+      "required": ["storage_class", "inventory_sha256", "item_count"],
+      "properties": {
+        "storage_class": {
+          "const": "SERVER_ONLY"
+        },
+        "inventory_sha256": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "item_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "AuthorDiagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "propertyNames": {
+        "pattern": "^diag_[a-z0-9_]+$"
+      },
+      "description": "Producer commentary, expressed only in closed vocabularies. Every field is diag_-prefixed so no reader can mistake it for an official quality result, and none of them admits text: this record travels beside the lesson, so an unconstrained note here is a channel for an answer, a rationale, or a claim that the lesson passed (rubric §2.5).",
+      "required": ["diag_self_audit_codes", "diag_revision_cycles_used"],
+      "properties": {
+        "diag_self_audit_codes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/DiagnosticCode"
+          }
+        },
+        "diag_open_question_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/OpenQuestionCode"
+          }
+        },
+        "diag_revision_cycles_used": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "diag_uncertainty_material": {
+          "type": "boolean"
+        }
+      }
+    },
+    "RouteProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One route's applicability decision and the proof that backs it. The structural route-proof record is the sole applicability authority (rubric §3.2).",
+      "required": [
+        "route_applicability",
+        "absence_proof_basis",
+        "absence_proof_ref",
+        "blocker_code",
+        "evidence_refs"
+      ],
+      "properties": {
+        "route_applicability": {
+          "$ref": "#/$defs/RouteApplicability"
+        },
+        "absence_proof_basis": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AbsenceProofBasis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "absence_proof_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AbsenceClauseRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/EvidenceAuthorityRef"
+          }
+        },
+        "blocker_code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BlockerCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "route_applicability": {
+                "const": "NOT_APPLICABLE"
+              }
+            },
+            "required": ["route_applicability"]
+          },
+          "then": {
+            "properties": {
+              "absence_proof_basis": {
+                "$ref": "#/$defs/AbsenceProofBasis"
+              },
+              "absence_proof_ref": {
+                "$ref": "#/$defs/AbsenceClauseRef"
+              },
+              "blocker_code": {
+                "const": null
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "route_applicability": {
+                "const": "APPLICABLE"
+              }
+            },
+            "required": ["route_applicability"]
+          },
+          "then": {
+            "properties": {
+              "absence_proof_basis": {
+                "const": null
+              },
+              "absence_proof_ref": {
+                "const": null
+              },
+              "blocker_code": {
+                "const": null
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "route_applicability": {
+                "const": "BLOCKED"
+              }
+            },
+            "required": ["route_applicability"]
+          },
+          "then": {
+            "properties": {
+              "absence_proof_basis": {
+                "const": null
+              },
+              "absence_proof_ref": {
+                "const": null
+              },
+              "blocker_code": {
+                "$ref": "#/$defs/BlockerCode"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "RouteProofs": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 4,
+      "maxProperties": 4,
+      "description": "An object with exactly the four canonical members, never a list: four entries named STANDARD satisfy any list-shaped contract, and three entries look identical to four with one omitted. An unconsidered route is a missing key, which is detectable.",
+      "required": ["STANDARD", "CONCISE", "MISCONCEPTION", "PREREQUISITE_SUPPORT"],
+      "properties": {
+        "STANDARD": {
+          "$ref": "#/$defs/RouteProof"
+        },
+        "CONCISE": {
+          "$ref": "#/$defs/RouteProof"
+        },
+        "MISCONCEPTION": {
+          "$ref": "#/$defs/RouteProof"
+        },
+        "PREREQUISITE_SUPPORT": {
+          "$ref": "#/$defs/RouteProof"
+        }
+      }
+    },
+    "OwnerRouteDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One route, as decided by the owner. There is no BLOCKED state here: a receipt exists only because a decision was made, and an undecided route is an absent key.",
+      "required": ["decision", "policy_clause_id"],
+      "properties": {
+        "decision": {
+          "enum": ["APPLICABLE", "NOT_APPLICABLE"]
+        },
+        "policy_clause_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PolicyClauseId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "decision": {
+                "const": "NOT_APPLICABLE"
+              }
+            },
+            "required": ["decision"]
+          },
+          "then": {
+            "properties": {
+              "policy_clause_id": {
+                "$ref": "#/$defs/PolicyClauseId"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "policy_clause_id": {
+                "const": null
+              }
+            }
+          }
+        }
+      ]
+    },
+    "OwnerRouteDecisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 4,
+      "maxProperties": 4,
+      "description": "The owner decides the whole route universe or none of it. Same four-member discipline as RouteProofs, for the same reason: a route nobody considered must be a missing key rather than an invisible omission.",
+      "required": ["STANDARD", "CONCISE", "MISCONCEPTION", "PREREQUISITE_SUPPORT"],
+      "properties": {
+        "STANDARD": {
+          "$ref": "#/$defs/OwnerRouteDecision"
+        },
+        "CONCISE": {
+          "$ref": "#/$defs/OwnerRouteDecision"
+        },
+        "MISCONCEPTION": {
+          "$ref": "#/$defs/OwnerRouteDecision"
+        },
+        "PREREQUISITE_SUPPORT": {
+          "$ref": "#/$defs/OwnerRouteDecision"
+        }
+      }
+    },
+    "HardGateId": {
+      "enum": [
+        "R1_R15_STRUCTURAL",
+        "NORMALIZATION",
+        "SOURCE_RIGHTS",
+        "PROTECTED_SEPARATION",
+        "HASH_CHAIN_INTEGRITY",
+        "DEADLINE_MACHINE_SCREEN"
+      ]
+    },
+    "EvidenceClassId": {
+      "enum": [
+        "BROWSER_RENDERED",
+        "ACCESSIBILITY",
+        "DOMAIN_SME",
+        "NOVICE_WALKTHROUGH",
+        "PLATFORM_RELIABILITY",
+        "HUMAN_DECISION"
+      ]
+    },
+    "RunId": {
+      "type": "string",
+      "pattern": "^run-[0-9a-f]{16}$",
+      "description": "An opaque run identifier. It is generated, not derived from content, so it can appear in a log without carrying anything."
+    },
+    "LogStage": {
+      "enum": [
+        "PACKET_FREEZE",
+        "ASSIGNMENT",
+        "AUTHORING",
+        "STRUCTURAL_SCREEN",
+        "NORMALIZATION_SCREEN",
+        "RIGHTS_SCREEN",
+        "PROTECTED_SEPARATION_SCREEN",
+        "HASH_CHAIN_SCREEN",
+        "HANDOFF",
+        "PACKAGING",
+        "IMPORT"
+      ]
+    },
+    "LogSeverity": {
+      "enum": ["DEBUG", "INFO", "WARN", "ERROR"]
+    },
+    "LogEventCode": {
+      "enum": [
+        "RUN_STARTED",
+        "RUN_COMPLETED",
+        "STAGE_STARTED",
+        "STAGE_COMPLETED",
+        "GATE_PASSED",
+        "GATE_FAILED",
+        "GATE_BLOCKED",
+        "EVIDENCE_CLASS_BLOCKED",
+        "ROUTE_PROOF_RECORDED",
+        "IDENTITY_PINNED",
+        "IDENTITY_MISMATCH",
+        "PROTECTED_REFERENCE_RESOLVED",
+        "RIGHTS_CHECK_PASSED",
+        "RIGHTS_CHECK_FAILED",
+        "ARTIFACT_WRITTEN",
+        "ARTIFACT_REJECTED",
+        "SCREEN_ABORTED"
+      ],
+      "description": "The closed set of things a runner may say. A runner that needs to report something not on this list adds a code here, in review, rather than writing a sentence at runtime: a free-text field is the one field that can carry anything."
+    },
+    "HardGateDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "enforcement", "fail_closed", "waivable", "authority_ref"],
+      "properties": {
+        "description": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "enforcement": {
+          "const": "HARD"
+        },
+        "fail_closed": {
+          "const": true
+        },
+        "waivable": {
+          "const": false
+        },
+        "authority_ref": {
+          "$ref": "#/$defs/AuthorityCitation"
+        }
+      }
+    },
+    "HardGateDeclarations": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 6,
+      "maxProperties": 6,
+      "required": [
+        "R1_R15_STRUCTURAL",
+        "NORMALIZATION",
+        "SOURCE_RIGHTS",
+        "PROTECTED_SEPARATION",
+        "HASH_CHAIN_INTEGRITY",
+        "DEADLINE_MACHINE_SCREEN"
+      ],
+      "properties": {
+        "R1_R15_STRUCTURAL": {
+          "$ref": "#/$defs/HardGateDeclaration"
+        },
+        "NORMALIZATION": {
+          "$ref": "#/$defs/HardGateDeclaration"
+        },
+        "SOURCE_RIGHTS": {
+          "$ref": "#/$defs/HardGateDeclaration"
+        },
+        "PROTECTED_SEPARATION": {
+          "$ref": "#/$defs/HardGateDeclaration"
+        },
+        "HASH_CHAIN_INTEGRITY": {
+          "$ref": "#/$defs/HardGateDeclaration"
+        },
+        "DEADLINE_MACHINE_SCREEN": {
+          "$ref": "#/$defs/HardGateDeclaration"
+        }
+      }
+    },
+    "HardGateResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One machine screen's outcome. There is no waiver field, because a hard gate has no waiver.",
+      "required": ["status", "screened_at", "screen_code", "screen_ref"],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/GateStatus"
+        },
+        "screened_at": {
+          "$ref": "#/$defs/IsoTimestamp"
+        },
+        "screen_ref": {
+          "$ref": "#/$defs/ScreenRef"
+        },
+        "screen_code": {
+          "$ref": "#/$defs/ScreenCode"
+        }
+      }
+    },
+    "HardGateResults": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 6,
+      "maxProperties": 6,
+      "required": [
+        "R1_R15_STRUCTURAL",
+        "NORMALIZATION",
+        "SOURCE_RIGHTS",
+        "PROTECTED_SEPARATION",
+        "HASH_CHAIN_INTEGRITY",
+        "DEADLINE_MACHINE_SCREEN"
+      ],
+      "properties": {
+        "R1_R15_STRUCTURAL": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/HardGateResult"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "screen_code": {
+                  "const": "R1_R15_STRUCTURAL"
+                },
+                "screen_ref": {
+                  "type": "string",
+                  "pattern": "^screen:lane-[0-9]{2}/v3-les-[0-9]{6}/r1-r15-structural#sha256:[0-9a-f]{64}$"
+                }
+              }
+            }
+          ]
+        },
+        "NORMALIZATION": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/HardGateResult"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "screen_code": {
+                  "const": "NORMALIZATION"
+                },
+                "screen_ref": {
+                  "type": "string",
+                  "pattern": "^screen:lane-[0-9]{2}/v3-les-[0-9]{6}/normalization#sha256:[0-9a-f]{64}$"
+                }
+              }
+            }
+          ]
+        },
+        "SOURCE_RIGHTS": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/HardGateResult"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "screen_code": {
+                  "const": "SOURCE_RIGHTS"
+                },
+                "screen_ref": {
+                  "type": "string",
+                  "pattern": "^screen:lane-[0-9]{2}/v3-les-[0-9]{6}/source-rights#sha256:[0-9a-f]{64}$"
+                }
+              }
+            }
+          ]
+        },
+        "PROTECTED_SEPARATION": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/HardGateResult"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "screen_code": {
+                  "const": "PROTECTED_SEPARATION"
+                },
+                "screen_ref": {
+                  "type": "string",
+                  "pattern": "^screen:lane-[0-9]{2}/v3-les-[0-9]{6}/protected-separation#sha256:[0-9a-f]{64}$"
+                }
+              }
+            }
+          ]
+        },
+        "HASH_CHAIN_INTEGRITY": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/HardGateResult"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "screen_code": {
+                  "const": "HASH_CHAIN_INTEGRITY"
+                },
+                "screen_ref": {
+                  "type": "string",
+                  "pattern": "^screen:lane-[0-9]{2}/v3-les-[0-9]{6}/hash-chain-integrity#sha256:[0-9a-f]{64}$"
+                }
+              }
+            }
+          ]
+        },
+        "DEADLINE_MACHINE_SCREEN": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/HardGateResult"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "screen_code": {
+                  "const": "DEADLINE_MACHINE_SCREEN"
+                },
+                "screen_ref": {
+                  "type": "string",
+                  "pattern": "^screen:lane-[0-9]{2}/v3-les-[0-9]{6}/deadline-machine-screen#sha256:[0-9a-f]{64}$"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "EvidenceClassDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "description",
+        "expected_state",
+        "normalization_to_pass_allowed",
+        "blocker_code",
+        "required_roles"
+      ],
+      "properties": {
+        "description": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "expected_state": {
+          "const": "BLOCKED"
+        },
+        "normalization_to_pass_allowed": {
+          "const": false
+        },
+        "required_roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/CanonicalRole"
+          }
+        },
+        "blocker_code": {
+          "$ref": "#/$defs/BlockerCode"
+        }
+      }
+    },
+    "EvidenceClassDeclarations": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 6,
+      "maxProperties": 6,
+      "required": [
+        "BROWSER_RENDERED",
+        "ACCESSIBILITY",
+        "DOMAIN_SME",
+        "NOVICE_WALKTHROUGH",
+        "PLATFORM_RELIABILITY",
+        "HUMAN_DECISION"
+      ],
+      "properties": {
+        "BROWSER_RENDERED": {
+          "$ref": "#/$defs/EvidenceClassDeclaration"
+        },
+        "ACCESSIBILITY": {
+          "$ref": "#/$defs/EvidenceClassDeclaration"
+        },
+        "DOMAIN_SME": {
+          "$ref": "#/$defs/EvidenceClassDeclaration"
+        },
+        "NOVICE_WALKTHROUGH": {
+          "$ref": "#/$defs/EvidenceClassDeclaration"
+        },
+        "PLATFORM_RELIABILITY": {
+          "$ref": "#/$defs/EvidenceClassDeclaration"
+        },
+        "HUMAN_DECISION": {
+          "$ref": "#/$defs/EvidenceClassDeclaration"
+        }
+      }
+    },
+    "EvidenceClassResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "A missing evidence class stays BLOCKED with a named blocker and no receipts. A PRESENT class needs revision-bound receipts recorded by someone other than the primary author (rubric §7.3, §7.4).",
+      "required": [
+        "state",
+        "blocker_code",
+        "receipt_refs",
+        "required_roles",
+        "independent_of_author",
+        "revision_bound",
+        "normalization_to_pass_allowed"
+      ],
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/EvidenceClassState"
+        },
+        "receipt_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/EvidenceReceiptRef"
+          }
+        },
+        "required_roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/CanonicalRole"
+          }
+        },
+        "independent_of_author": {
+          "type": "boolean"
+        },
+        "revision_bound": {
+          "type": "boolean"
+        },
+        "normalization_to_pass_allowed": {
+          "const": false
+        },
+        "blocker_code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BlockerCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "BLOCKED"
+              }
+            },
+            "required": ["state"]
+          },
+          "then": {
+            "properties": {
+              "receipt_refs": {
+                "type": "array",
+                "maxItems": 0
+              },
+              "independent_of_author": {
+                "const": false
+              },
+              "revision_bound": {
+                "const": false
+              },
+              "blocker_code": {
+                "$ref": "#/$defs/BlockerCode"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "receipt_refs": {
+                "type": "array",
+                "minItems": 1
+              },
+              "independent_of_author": {
+                "const": true
+              },
+              "revision_bound": {
+                "const": true
+              },
+              "blocker_code": {
+                "const": null
+              }
+            }
+          }
+        }
+      ]
+    },
+    "EvidenceClassResults": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 6,
+      "maxProperties": 6,
+      "required": [
+        "BROWSER_RENDERED",
+        "ACCESSIBILITY",
+        "DOMAIN_SME",
+        "NOVICE_WALKTHROUGH",
+        "PLATFORM_RELIABILITY",
+        "HUMAN_DECISION"
+      ],
+      "properties": {
+        "BROWSER_RENDERED": {
+          "$ref": "#/$defs/EvidenceClassResult"
+        },
+        "ACCESSIBILITY": {
+          "$ref": "#/$defs/EvidenceClassResult"
+        },
+        "DOMAIN_SME": {
+          "$ref": "#/$defs/EvidenceClassResult"
+        },
+        "NOVICE_WALKTHROUGH": {
+          "$ref": "#/$defs/EvidenceClassResult"
+        },
+        "PLATFORM_RELIABILITY": {
+          "$ref": "#/$defs/EvidenceClassResult"
+        },
+        "HUMAN_DECISION": {
+          "$ref": "#/$defs/EvidenceClassResult"
+        }
+      }
+    },
+    "ProfileId": {
+      "type": "string",
+      "pattern": "^lesson-factory-deadline-[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "The deadline profile, named by the dated run it freezes. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "PolicyId": {
+      "type": "string",
+      "pattern": "^lesson-factory-deadline-release$",
+      "description": "There is one release policy contract, and this is its name. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "ReceiptId": {
+      "type": "string",
+      "pattern": "^owner-route-policy-[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "An owner route-policy receipt, named by the date of the decision. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "AssignmentId": {
+      "type": "string",
+      "pattern": "^lesson-factory-deadline-[0-9]{4}-[0-9]{2}-[0-9]{2}-assignment-[0-9]{2}$",
+      "description": "One numbered assignment of one dated run. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "KitId": {
+      "type": "string",
+      "pattern": "^lesson-factory-deadline-[0-9]{4}-[0-9]{2}-[0-9]{2}-kit-[0-9]{2}$",
+      "description": "One numbered kit of one dated run. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "ImportIndexId": {
+      "type": "string",
+      "pattern": "^lesson-factory-deadline-[0-9]{4}-[0-9]{2}-[0-9]{2}-import-index-[0-9]{2}$",
+      "description": "One numbered import index of one dated run. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "RequestId": {
+      "type": "string",
+      "pattern": "^lesson-factory-deadline-[0-9]{4}-[0-9]{2}-[0-9]{2}-request-[0-9]{2}$",
+      "description": "One numbered packet request of one dated run. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "BundleId": {
+      "type": "string",
+      "pattern": "^kit-[0-9]{2}-v3-les-[0-9]{6}$",
+      "description": "One lesson inside one kit. A bundle id is a coordinate, not a label. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "ReadinessId": {
+      "type": "string",
+      "pattern": "^kit-[0-9]{2}-v3-les-[0-9]{6}-readiness-[0-9]{2}$",
+      "description": "One numbered readiness record for one bundle. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "HandoffId": {
+      "type": "string",
+      "pattern": "^lane-[0-9]{2}-v3-les-[0-9]{6}-handoff-[0-9]{2}$",
+      "description": "One numbered handoff from one lane for one lesson. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "TeamHandoffId": {
+      "type": "string",
+      "pattern": "^lane-[0-9]{2}-team-handoff-[0-9]{2}$",
+      "description": "One numbered team handoff from one lane. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "LedgerId": {
+      "type": "string",
+      "pattern": "^lane-[0-9]{2}-v3-les-[0-9]{6}-(?:standard|concise|misconception|prerequisite-support)-ledger-[0-9]{2}$",
+      "description": "One numbered ledger for one lesson on one route. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "SourceId": {
+      "type": "string",
+      "pattern": "^src-[0-9]{4}$",
+      "description": "One source in a packet, numbered. Every segment is an identifier or a fixed word; there is no free segment, because a slug field with a free segment is a text field that discourages spaces."
+    },
+    "NoPlaceholderDigest": {
+      "not": {
+        "type": "string",
+        "pattern": "(?:0{64}|1{64}|2{64}|3{64}|4{64}|5{64}|6{64}|7{64}|8{64}|9{64}|a{64}|b{64}|c{64}|d{64}|e{64}|f{64}|(?:0a){32}|(?:12){32}|(?:a1){32}|(?:ab){32}|(?:b2){32}|(?:c3){32}|(?:cd){32}|(?:d4){32}|(?:de){32}|(?:e5){32}|(?:f6){32}|(?:1f){32}|(?:2e){32}|(?:3d){32}|(?:4c){32}|(?:5b){32}|(?:6a){32}|(?:7d){32}|(?:8c){32}|(?:9c){32}|(?:deadbeef){8}|(?:cafebabe){8}|(?:baadf00d){8}|(?:feedface){8}|(?:0123456789abcdef){4}|(?:fedcba9876543210){4})$"
+      },
+      "description": "The digests that are conventions rather than digests: a repeated nibble, a repeated pair, a well-known hex constant, a counted hex sequence. Stated once and applied to the bare hash type and to every reference family, because a placeholder that validates inside a locator is exactly as bad as one that validates on its own — and the reference patterns used to embed a bare 64-hex run that admitted all of them. The pattern is anchored only at the end, so it catches the digest wherever the reference puts it."
+    },
+    "ProfileRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^profile:content/lesson-factory/deadline-profile/deadline-profile\\.json#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The frozen deadline profile. The locator is the literal repository path, so the reference resolves to bytes and nothing else can be named. Locator segments are identifiers, never text."
+    },
+    "PolicyRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^policy:content/lesson-factory/deadline-profile/release-policy\\.json#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The frozen release policy. The locator is the literal path: a policy reference that could name anything is not a policy reference. The locator is the literal repository path, so the reference resolves to bytes and nothing else can be named. Locator segments are identifiers, never text."
+    },
+    "LifecycleRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^lifecycle:content/lesson-factory/deadline-profile/lifecycle-nonclaims\\.json#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The lifecycle and nonclaims register. The locator is the literal repository path, so the reference resolves to bytes and nothing else can be named. Locator segments are identifiers, never text."
+    },
+    "ReceiptRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^receipt:content/lesson-factory/deadline-profile/owner-route-policy-receipt\\.json#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The owner route-scope decision receipt. The locator is the literal repository path, so the reference resolves to bytes and nothing else can be named. Locator segments are identifiers, never text."
+    },
+    "StatementRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^statement:content/lesson-factory/deadline-profile/owner-route-policy-statement\\.md#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The non-authoritative verbatim record of the owner decision. The locator is the literal repository path, so the reference resolves to bytes and nothing else can be named. Locator segments are identifiers, never text."
+    },
+    "SpecRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^spec:docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC\\.md#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The structural authoring spec (R1-R15). The locator is the literal repository path, so the reference resolves to bytes and nothing else can be named. Locator segments are identifiers, never text."
+    },
+    "RubricRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^rubric:key-docs/lesson-quality-rubric\\.md#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The lesson quality rubric. The locator is the literal repository path, so the reference resolves to bytes and nothing else can be named. Locator segments are identifiers, never text."
+    },
+    "MasteryRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^mastery:docs/lesson-evidence-mastery-contract\\.md#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The lesson evidence and mastery contract. The locator is the literal repository path, so the reference resolves to bytes and nothing else can be named. Locator segments are identifiers, never text."
+    },
+    "AssignmentRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^assignment:lesson-factory-deadline-[0-9]{4}-[0-9]{2}-[0-9]{2}/assignment-[0-9]{2}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "One assignment manifest of one dated deadline run. The locator determines the path the artifact occupies, so a resolver can find it without being told. Locator segments are identifiers, never text."
+    },
+    "KitRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^kit:lesson-factory-deadline-[0-9]{4}-[0-9]{2}-[0-9]{2}/kit-[0-9]{2}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "One packaged kit of one dated deadline run. The locator determines the path the artifact occupies, so a resolver can find it without being told. Locator segments are identifiers, never text."
+    },
+    "PacketRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^packet:lane-[0-9]{2}/v3-les-[0-9]{6}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The frozen packet one lane received for one lesson. The locator determines the path the artifact occupies, so a resolver can find it without being told. Locator segments are identifiers, never text."
+    },
+    "HandoffRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^handoff:lane-[0-9]{2}/v3-les-[0-9]{6}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The handoff one lane produced for one lesson. The locator determines the path the artifact occupies, so a resolver can find it without being told. Locator segments are identifiers, never text."
+    },
+    "LedgerRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^ledger:lane-[0-9]{2}/v3-les-[0-9]{6}/(?:standard|concise|misconception|prerequisite-support)#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The machine-screen ledger for one lesson on one route. The locator determines the path the artifact occupies, so a resolver can find it without being told. Locator segments are identifiers, never text."
+    },
+    "ScreenRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^screen:lane-[0-9]{2}/v3-les-[0-9]{6}/(?:r1-r15-structural|normalization|source-rights|protected-separation|hash-chain-integrity|deadline-machine-screen)#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "One hard-gate screen run. The screen segment is one of the six gate ids in kebab case, not a name the runner chooses. The locator determines the path the artifact occupies, so a resolver can find it without being told. Locator segments are identifiers, never text."
+    },
+    "BundleRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^bundle:kit-[0-9]{2}/v3-les-[0-9]{6}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "One packaged lesson bundle inside one kit. The locator determines the path the artifact occupies, so a resolver can find it without being told. Locator segments are identifiers, never text."
+    },
+    "ReadinessRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^readiness:kit-[0-9]{2}/v3-les-[0-9]{6}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The candidate-import readiness record for one bundle. The locator determines the path the artifact occupies, so a resolver can find it without being told. Locator segments are identifiers, never text."
+    },
+    "LessonRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^lesson:v3-les-[0-9]{6}@rev-[0-9]{6}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "One exact lesson revision. Identity only: the digest pins the revision bytes, which live in the lesson envelope rather than at a factory path. Identity only: the digest pins bytes that live outside the factory tree. Locator segments are identifiers, never text."
+    },
+    "TitleRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^title:v3-les-[0-9]{6}@rev-[0-9]{6}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The title of one lesson revision, referenced rather than carried. Identity only, for the same reason as `lesson`. Identity only: the digest pins bytes that live outside the factory tree. Locator segments are identifiers, never text."
+    },
+    "EvidenceReceiptRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^evidence-receipt:(?:browser-rendered|accessibility|domain-sme|novice-walkthrough|platform-reliability|human-decision)/v3-les-[0-9]{6}@rev-[0-9]{6}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "A receipt for one evidence class on one revision. The class segment is one of the six evidence class ids in kebab case. Identity only: the digest pins bytes that live outside the factory tree. Locator segments are identifiers, never text."
+    },
+    "PermissionReceiptRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^permission-receipt:src-[0-9]{4}/[0-9]{4}-[0-9]{2}-[0-9]{2}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "A rights-clearance receipt for one source, on one date. Identity only: the digest pins bytes that live outside the factory tree. Locator segments are identifiers, never text."
+    },
+    "BlockerCode": {
+      "enum": [
+        "BLOCKER_STRUCTURAL_RULE_FAILED",
+        "BLOCKER_NORMALIZATION_FAILED",
+        "BLOCKER_SOURCE_RIGHTS_UNCLEARED",
+        "BLOCKER_PROTECTED_MATERIAL_INLINE",
+        "BLOCKER_HASH_CHAIN_MISMATCH",
+        "BLOCKER_DEADLINE_SCREEN_INCOMPLETE",
+        "BLOCKER_ROUTE_PROOF_MISSING",
+        "BLOCKER_ROUTE_CONTENT_UNDECIDED",
+        "BLOCKER_EVIDENCE_CLASS_BLOCKED",
+        "BLOCKER_IDENTITY_UNPINNED",
+        "BLOCKER_NO_BROWSER_RENDERED_EVIDENCE",
+        "BLOCKER_NO_ACCESSIBILITY_REVIEW",
+        "BLOCKER_NO_DOMAIN_SME_RECEIPT",
+        "BLOCKER_NO_NOVICE_WALKTHROUGH_RECEIPT",
+        "BLOCKER_NO_PLATFORM_RELIABILITY_RECEIPT",
+        "BLOCKER_NO_HUMAN_DECISION_RECEIPT"
+      ],
+      "description": "Why something is blocked, from a closed list, everywhere a blocker is recorded. This replaces a `blocker:<slug>` reference type: a slug pattern admits any phrase someone types at runtime, and `blocker:the-answer-is-c` matched it as readily as `blocker:no-domain-sme-receipt`. A runner that needs a new reason adds a code here, in review."
+    },
+    "AuthorityCitation": {
+      "type": "string",
+      "pattern": "^(?:spec|rubric|mastery|profile)#(?:R[0-9]+(?:-R[0-9]+)?|[0-9]+(?:\\.[0-9]+)*)(?:,(?:R[0-9]+(?:-R[0-9]+)?|[0-9]+(?:\\.[0-9]+)*))*$",
+      "description": "The document and section a rule comes from, as a closed document name and a section list — `rubric#7.3,3.1`, `spec#2,R3-R5`. The field it replaced held a path and a section marker as free text, which is a free-text field with a citation-shaped convention."
+    },
+    "EvidenceAuthorityRef": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SpecRef"
+        },
+        {
+          "$ref": "#/$defs/RubricRef"
+        },
+        {
+          "$ref": "#/$defs/MasteryRef"
+        },
+        {
+          "$ref": "#/$defs/PolicyRef"
+        }
+      ],
+      "description": "The pinned authority a route proof rests on: the structural spec, the rubric, the mastery contract, or the frozen release policy. Four named documents, not any document."
+    },
+    "GroupingId": {
+      "type": "string",
+      "pattern": "^V3-GRP-[0-9]{6}$",
+      "description": "A curriculum grouping. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+    },
+    "PhaseId": {
+      "type": "string",
+      "pattern": "^V3-PHS-[0-9]{4}$",
+      "description": "A curriculum phase. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+    },
+    "ModuleId": {
+      "type": "string",
+      "pattern": "^V3-MOD-[0-9]{4}$",
+      "description": "A curriculum module. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+    },
+    "PathwayId": {
+      "type": "string",
+      "pattern": "^V3-PTH-[0-9]{4}$",
+      "description": "A curriculum pathway. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+    },
+    "RelationId": {
+      "type": "string",
+      "pattern": "^R[0-9]{1,2}-[A-Z]{2}-[0-9]{2}$",
+      "description": "One named curriculum relation. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+    },
+    "AttachmentId": {
+      "type": "string",
+      "pattern": "^V3-ATT-[0-9]{6}$",
+      "description": "One packet attachment. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+    },
+    "AnchorSetVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-candidate)?$",
+      "description": "The anchor set a packet was cut from. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+    },
+    "ScopeId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PhaseId"
+        },
+        {
+          "$ref": "#/$defs/ModuleId"
+        },
+        {
+          "$ref": "#/$defs/PathwayId"
+        }
+      ],
+      "description": "A sequence position is scoped to a phase, a module, or a pathway."
+    },
+    "StandardMembership": {
+      "$comment": "A route is in `applicable_routes` exactly when its proof says APPLICABLE. Stated in both directions so neither half can drift.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "route_proofs": {
+            "type": "object",
+            "properties": {
+              "STANDARD": {
+                "type": "object",
+                "properties": {
+                  "route_applicability": {
+                    "const": "APPLICABLE"
+                  }
+                },
+                "required": ["route_applicability"]
+              }
+            },
+            "required": ["STANDARD"]
+          }
+        },
+        "required": ["route_proofs"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "applicable_routes": {
+            "type": "array",
+            "contains": {
+              "const": "STANDARD"
+            }
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "applicable_routes": {
+            "type": "array",
+            "not": {
+              "type": "array",
+              "contains": {
+                "const": "STANDARD"
+              }
+            }
+          }
+        }
+      }
+    },
+    "ConciseMembership": {
+      "$comment": "A route is in `applicable_routes` exactly when its proof says APPLICABLE. Stated in both directions so neither half can drift.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "route_proofs": {
+            "type": "object",
+            "properties": {
+              "CONCISE": {
+                "type": "object",
+                "properties": {
+                  "route_applicability": {
+                    "const": "APPLICABLE"
+                  }
+                },
+                "required": ["route_applicability"]
+              }
+            },
+            "required": ["CONCISE"]
+          }
+        },
+        "required": ["route_proofs"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "applicable_routes": {
+            "type": "array",
+            "contains": {
+              "const": "CONCISE"
+            }
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "applicable_routes": {
+            "type": "array",
+            "not": {
+              "type": "array",
+              "contains": {
+                "const": "CONCISE"
+              }
+            }
+          }
+        }
+      }
+    },
+    "MisconceptionMembership": {
+      "$comment": "A route is in `applicable_routes` exactly when its proof says APPLICABLE. Stated in both directions so neither half can drift.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "route_proofs": {
+            "type": "object",
+            "properties": {
+              "MISCONCEPTION": {
+                "type": "object",
+                "properties": {
+                  "route_applicability": {
+                    "const": "APPLICABLE"
+                  }
+                },
+                "required": ["route_applicability"]
+              }
+            },
+            "required": ["MISCONCEPTION"]
+          }
+        },
+        "required": ["route_proofs"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "applicable_routes": {
+            "type": "array",
+            "contains": {
+              "const": "MISCONCEPTION"
+            }
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "applicable_routes": {
+            "type": "array",
+            "not": {
+              "type": "array",
+              "contains": {
+                "const": "MISCONCEPTION"
+              }
+            }
+          }
+        }
+      }
+    },
+    "PrerequisiteSupportMembership": {
+      "$comment": "A route is in `applicable_routes` exactly when its proof says APPLICABLE. Stated in both directions so neither half can drift.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "route_proofs": {
+            "type": "object",
+            "properties": {
+              "PREREQUISITE_SUPPORT": {
+                "type": "object",
+                "properties": {
+                  "route_applicability": {
+                    "const": "APPLICABLE"
+                  }
+                },
+                "required": ["route_applicability"]
+              }
+            },
+            "required": ["PREREQUISITE_SUPPORT"]
+          }
+        },
+        "required": ["route_proofs"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "applicable_routes": {
+            "type": "array",
+            "contains": {
+              "const": "PREREQUISITE_SUPPORT"
+            }
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "applicable_routes": {
+            "type": "array",
+            "not": {
+              "type": "array",
+              "contains": {
+                "const": "PREREQUISITE_SUPPORT"
+              }
+            }
+          }
+        }
+      }
+    },
+    "RouteScopeBinding": {
+      "$comment": "Applied by every document that carries route proofs: the release policy that decides scope, and the packet and handoff that work under it. Before this, only the policy encoded the derivation, so a packet could be authored against CONCISE while the frozen policy said STANDARD-only and both files validated.",
+      "description": "Derives every route-shaped field from the single scope code, and binds the derived clauses to one exact policy version. A document that applies this binding cannot disagree with the policy, or with itself.",
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "route_scope_code": {
+                "const": "STANDARD_ONLY"
+              }
+            },
+            "required": ["route_scope_code"]
+          },
+          "then": {
+            "type": "object",
+            "properties": {
+              "applicable_routes": {
+                "const": ["STANDARD"]
+              },
+              "policy_version": {
+                "const": "2.0.0"
+              },
+              "ratified_policy_version": {
+                "const": "2.0.0"
+              },
+              "policy_id": {
+                "const": "lesson-factory-deadline-release"
+              },
+              "route_proofs": {
+                "type": "object",
+                "properties": {
+                  "STANDARD": {
+                    "type": "object",
+                    "properties": {
+                      "route_applicability": {
+                        "const": "APPLICABLE"
+                      },
+                      "absence_proof_basis": {
+                        "const": null
+                      },
+                      "absence_proof_ref": {
+                        "const": null
+                      }
+                    }
+                  },
+                  "CONCISE": {
+                    "type": "object",
+                    "properties": {
+                      "route_applicability": {
+                        "const": "NOT_APPLICABLE"
+                      },
+                      "absence_proof_basis": {
+                        "const": "VERSIONED_RELEASE_POLICY"
+                      },
+                      "absence_proof_ref": {
+                        "const": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_CONCISE"
+                      }
+                    }
+                  },
+                  "MISCONCEPTION": {
+                    "type": "object",
+                    "properties": {
+                      "route_applicability": {
+                        "const": "NOT_APPLICABLE"
+                      },
+                      "absence_proof_basis": {
+                        "const": "VERSIONED_RELEASE_POLICY"
+                      },
+                      "absence_proof_ref": {
+                        "const": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_MISCONCEPTION"
+                      }
+                    }
+                  },
+                  "PREREQUISITE_SUPPORT": {
+                    "type": "object",
+                    "properties": {
+                      "route_applicability": {
+                        "const": "NOT_APPLICABLE"
+                      },
+                      "absence_proof_basis": {
+                        "const": "VERSIONED_RELEASE_POLICY"
+                      },
+                      "absence_proof_ref": {
+                        "const": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_PREREQUISITE_SUPPORT"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/StandardMembership"
+        },
+        {
+          "$ref": "#/$defs/ConciseMembership"
+        },
+        {
+          "$ref": "#/$defs/MisconceptionMembership"
+        },
+        {
+          "$ref": "#/$defs/PrerequisiteSupportMembership"
+        }
+      ]
+    },
+    "ScreenCode": {
+      "enum": [
+        "R1_R15_STRUCTURAL",
+        "NORMALIZATION",
+        "SOURCE_RIGHTS",
+        "PROTECTED_SEPARATION",
+        "HASH_CHAIN_INTEGRITY",
+        "DEADLINE_MACHINE_SCREEN"
+      ],
+      "description": "Which hard-gate screen produced a result. A code, because the six screens are a closed set decided by the profile; the command that implements one is a mapping the runner owns, and a command on a record is prose with a technical name."
+    },
+    "ConciseAbsenceClauseRef": {
+      "const": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_CONCISE",
+      "description": "The one clause of the one ratified policy that makes CONCISE not applicable for this release. A literal, because an absence proof that can name any policy and any clause proves the shape of a citation rather than the citation."
+    },
+    "MisconceptionAbsenceClauseRef": {
+      "const": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_MISCONCEPTION",
+      "description": "The one clause of the one ratified policy that makes MISCONCEPTION not applicable for this release. A literal, because an absence proof that can name any policy and any clause proves the shape of a citation rather than the citation."
+    },
+    "PrerequisiteSupportAbsenceClauseRef": {
+      "const": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_PREREQUISITE_SUPPORT",
+      "description": "The one clause of the one ratified policy that makes PREREQUISITE_SUPPORT not applicable for this release. A literal, because an absence proof that can name any policy and any clause proves the shape of a citation rather than the citation."
+    },
+    "AbsenceClauseRef": {
+      "description": "The closed set of absence clauses this release ratified: one per excluded route, at the ratified policy version. There is no fourth value, and no way to write one.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ConciseAbsenceClauseRef"
+        },
+        {
+          "$ref": "#/$defs/MisconceptionAbsenceClauseRef"
+        },
+        {
+          "$ref": "#/$defs/PrerequisiteSupportAbsenceClauseRef"
+        }
+      ]
+    },
+    "FrozenReleasePolicyRef": {
+      "const": "policy:content/lesson-factory/deadline-profile/release-policy.json#sha256:0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e",
+      "description": "The exact release policy this deadline freeze runs under, pinned by locator and by bytes. Every deadline consumer names this value: a reference that merely has the shape of a policy reference is satisfied by a policy nobody ratified."
+    },
+    "ReferenceKindCode": {
+      "enum": [
+        "profile",
+        "policy",
+        "lifecycle",
+        "receipt",
+        "statement",
+        "spec",
+        "rubric",
+        "mastery",
+        "assignment",
+        "kit",
+        "packet",
+        "handoff",
+        "team-handoff",
+        "import-index",
+        "ledger",
+        "screen",
+        "bundle",
+        "readiness",
+        "lesson",
+        "title",
+        "evidence-receipt",
+        "permission-receipt"
+      ],
+      "description": "One of the reference kinds this freeze defines. A kind is a code, not a word a caller chooses, so an intake record cannot invent a category of thing."
+    },
+    "ContractSchemaFile": {
+      "enum": [
+        "shared-vocabulary.schema.json",
+        "deadline-profile.schema.json",
+        "release-policy.schema.json",
+        "lifecycle-nonclaims.schema.json",
+        "owner-route-policy-receipt.schema.json",
+        "assignment-manifest.schema.json",
+        "task-source-packet.schema.json",
+        "lesson-handoff.schema.json",
+        "team-handoff.schema.json",
+        "candidate-quality-ledger.schema.json",
+        "kit-manifest.schema.json",
+        "import-index.schema.json",
+        "bundle-readiness.schema.json",
+        "runner-log-record.schema.json",
+        "intake-validation.schema.json"
+      ],
+      "description": "One of the contracts this freeze ships, named exactly."
+    },
+    "ResolutionStatus": {
+      "enum": ["RESOLVED", "NOT_YET_PRODUCED", "IDENTITY_ONLY", "MISMATCHED", "MALFORMED"],
+      "description": "What the resolver found. NOT_YET_PRODUCED is distinct from MISMATCHED on purpose: a reference to an artifact no runner has written is honest and unadmittable, while a reference whose target exists and hashes differently is a broken chain."
+    },
+    "IntakeAdmission": {
+      "enum": ["ADMITTED", "REJECTED"],
+      "description": "The two answers intake has. There is no PROVISIONAL: a document is either admitted on both halves or refused."
+    },
+    "JsonPointer": {
+      "type": "string",
+      "pattern": "^(?:/(?:[a-z][a-z0-9_]*|[0-9]+|[A-Z][A-Z0-9_]*))+$",
+      "description": "Where in a document something was found. Segments are field names or array indices, never text: a pointer field that admits any string is a free-text field with a structural name."
+    },
+    "ContractSchemaLocator": {
+      "enum": [
+        "content/lesson-factory/schemas/shared-vocabulary.schema.json",
+        "content/lesson-factory/schemas/deadline-profile.schema.json",
+        "content/lesson-factory/schemas/release-policy.schema.json",
+        "content/lesson-factory/schemas/lifecycle-nonclaims.schema.json",
+        "content/lesson-factory/schemas/owner-route-policy-receipt.schema.json",
+        "content/lesson-factory/schemas/assignment-manifest.schema.json",
+        "content/lesson-factory/schemas/task-source-packet.schema.json",
+        "content/lesson-factory/schemas/lesson-handoff.schema.json",
+        "content/lesson-factory/schemas/team-handoff.schema.json",
+        "content/lesson-factory/schemas/candidate-quality-ledger.schema.json",
+        "content/lesson-factory/schemas/kit-manifest.schema.json",
+        "content/lesson-factory/schemas/import-index.schema.json",
+        "content/lesson-factory/schemas/bundle-readiness.schema.json",
+        "content/lesson-factory/schemas/runner-log-record.schema.json",
+        "content/lesson-factory/schemas/intake-validation.schema.json"
+      ],
+      "description": "Where a contract lives, named as one of the shipped paths. An admission record says which bytes it validated against, and a path typed as text is a text field with a path in it today."
+    },
+    "AdmissibleContractId": {
+      "enum": [
+        "lesson-factory.deadline-profile",
+        "lesson-factory.release-policy",
+        "lesson-factory.lifecycle-nonclaims",
+        "lesson-factory.owner-route-policy-receipt",
+        "lesson-factory.assignment-manifest",
+        "lesson-factory.task-source-packet",
+        "lesson-factory.lesson-handoff",
+        "lesson-factory.team-handoff",
+        "lesson-factory.candidate-quality-ledger",
+        "lesson-factory.kit-manifest",
+        "lesson-factory.import-index",
+        "lesson-factory.bundle-readiness"
+      ],
+      "description": "The contracts whose documents intake can identify: each one has a canonical reference kind, so a document of that contract has a canonical location and can be named by a pinned reference. The three contracts missing from this list are missing on purpose, and the profile records which and why."
+    },
+    "ObservedDigest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "A digest the resolver read out of a reference, reported as found. Unlike Sha256 this admits placeholder conventions, because a record of a rejected document has to be able to say what the placeholder was; the rule that forbids placeholders lives on the fields that pin bytes, not on the report of what was seen."
+    },
+    "IntakeRefusalCode": {
+      "enum": ["SCHEMA_INVALID", "REFERENCES_UNRESOLVED"],
+      "description": "Why a document that intake could identify was refused. Documents intake cannot identify produce no record at all: there is no document to write a record about."
+    },
+    "IntakeDerivation": {
+      "const": "INTAKE_DERIVATION_V2",
+      "description": "Which derivation produced the admission proof. A proof is only checkable against the algorithm that made it, so the algorithm is named in the record."
+    },
+    "TeamHandoffRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^team-handoff:lane-[0-9]{2}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "One lane’s aggregate handoff. A lane produces exactly one, so the locator is the lane and nothing else — there is no free segment in which to name it something."
+    },
+    "ImportIndexRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^import-index:lesson-factory-deadline-[0-9]{4}-[0-9]{2}-[0-9]{2}/import-index-[0-9]{2}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "One import index of one dated deadline run. The locator is the run and the index number, so it resolves to a path without anyone being told where to look."
+    },
+    "NonAdmissibleContractId": {
+      "enum": [
+        "lesson-factory.shared-vocabulary",
+        "lesson-factory.intake-validation",
+        "lesson-factory.runner-log-record"
+      ],
+      "description": "The three contracts intake does not admit, listed so the absence is a decision rather than an oversight. Together with AdmissibleContractId this covers every contract the freeze ships."
+    },
+    "NonAdmissionReasonCode": {
+      "enum": ["SCHEMA_ONLY", "ADMISSION_RECORD", "LOG_EVENT"],
+      "description": "Why a contract is outside intake. SCHEMA_ONLY: the contract defines types other contracts use and has no instances of its own. ADMISSION_RECORD: it is what intake produces, so admitting it would be a second pass over its own output. LOG_EVENT: it describes one emitted line, bounded by the log boundary in the profile, not an artifact anyone persists and hands on."
+    }
+  }
+}

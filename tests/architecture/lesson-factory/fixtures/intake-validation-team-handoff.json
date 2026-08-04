@@ -1,0 +1,51 @@
+{
+  "$test_fixture": {
+    "synthetic": true,
+    "not_for_production": true,
+    "fixture_of": "lesson-factory.intake-validation"
+  },
+  "instance": {
+    "contract_id": "lesson-factory.intake-validation",
+    "contract_version": "2.1.0",
+    "document": {
+      "kind": "team-handoff",
+      "ref": "team-handoff:lane-01#sha256:cb9779a13f00e4f5d2cc45e48e2b5e08206e9c10b4256351a24c6a35a416462e",
+      "sha256": "cb9779a13f00e4f5d2cc45e48e2b5e08206e9c10b4256351a24c6a35a416462e",
+      "contract_id": "lesson-factory.team-handoff",
+      "contract_version": "3.0.0",
+      "schema_file": "team-handoff.schema.json",
+      "schema_locator": "content/lesson-factory/schemas/team-handoff.schema.json",
+      "schema_sha256": "313ad55c2d1a05c5b30c4e4001e69a8a95c76b629b903b6dace0161cb44059ed"
+    },
+    "schema_validation": {
+      "status": "PASS",
+      "error_count": 0
+    },
+    "resolver_validation": {
+      "status": "FAIL",
+      "checked_count": 2,
+      "unresolved_count": 2,
+      "references": [
+        {
+          "field": "/assignment_ref",
+          "kind": "assignment",
+          "digest": "35aff1048d88d54df55603a04026d1b98eca425b817818cf9dd31ec128473c37",
+          "status": "NOT_YET_PRODUCED"
+        },
+        {
+          "field": "/lesson_handoff_refs/0",
+          "kind": "handoff",
+          "digest": "a3f26dd5e01f6d3b167f5991ae08eb7411164b5bd79073a116092973e2f5a431",
+          "status": "NOT_YET_PRODUCED"
+        }
+      ]
+    },
+    "admission": "REJECTED",
+    "refusal_code": "REFERENCES_UNRESOLVED",
+    "admission_proof": {
+      "derivation": "INTAKE_DERIVATION_V2",
+      "derivation_sha256": "d506ed6937a3bca0d6d0259c06edb154f658d96b12d2f1895a5771b9716a65d5"
+    },
+    "validated_at": "2026-08-03T22:28:00Z"
+  }
+}

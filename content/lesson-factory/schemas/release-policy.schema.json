@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/release-policy.schema.json",
+  "x_contract_id": "lesson-factory.release-policy",
+  "x_contract_version": "3.0.0",
+  "title": "Lesson factory release policy and four-route proof",
+  "description": "Which routes one deadline release covers, and the four-member route-proof record that backs the decision. A route policy decides scope; it is not a release approval and grants no publication safety.",
+  "$comment": "Route scope is stated once, as `route_scope_code`, and every other route-shaped field is derived from it by the rules in `allOf`. A test that only checks the shipped values proves the shipped file is consistent; these rules prove no inconsistent file can be written.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "policy_id",
+    "policy_version",
+    "status",
+    "effective_from",
+    "route_scope_code",
+    "applicable_routes",
+    "route_proofs",
+    "policy_authority",
+    "rubric_identity",
+    "nonclaims"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.release-policy"
+    },
+    "contract_version": {
+      "const": "3.0.0",
+      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+    },
+    "policy_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/PolicyId"
+    },
+    "policy_version": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/SemanticVersion"
+    },
+    "status": {
+      "const": "ACTIVE"
+    },
+    "effective_from": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "route_scope_code": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RouteScopeCode"
+    },
+    "applicable_routes": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RouteList"
+    },
+    "route_proofs": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RouteProofs"
+    },
+    "policy_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Who owns this scoping decision and whether a human has ratified it. An unratified policy names its outstanding blockers rather than presenting itself as settled; a ratified one names the receipt that settled it and has no blockers left. There is no third state in which a policy is treated as authoritative without either.",
+      "required": [
+        "decided_by_role",
+        "decision_status",
+        "decision_ref",
+        "decision_authority_scope",
+        "ratification_blockers"
+      ],
+      "properties": {
+        "decided_by_role": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/CanonicalRole"
+        },
+        "decision_status": {
+          "enum": ["PENDING_OWNER_RATIFICATION", "RATIFIED"]
+        },
+        "decision_ref": {
+          "anyOf": [
+            {
+              "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "decision_authority_scope": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/DecisionAuthorityScope"
+        },
+        "ratification_blockers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/RatificationBlockerCode"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "decision_status": {
+                "const": "PENDING_OWNER_RATIFICATION"
+              }
+            },
+            "required": ["decision_status"]
+          },
+          "then": {
+            "type": "object",
+            "properties": {
+              "decision_ref": {
+                "const": null
+              },
+              "ratification_blockers": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          },
+          "else": {
+            "type": "object",
+            "properties": {
+              "decision_ref": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptRef"
+              },
+              "ratification_blockers": {
+                "type": "array",
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "rubric_identity": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RubricIdentity"
+    },
+    "nonclaims": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Nonclaims"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RouteScopeBinding"
+    }
+  ]
+}

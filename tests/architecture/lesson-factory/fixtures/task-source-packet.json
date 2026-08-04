@@ -1,0 +1,171 @@
+{
+  "$test_fixture": {
+    "synthetic": true,
+    "not_for_production": true,
+    "fixture_of": "lesson-factory.task-source-packet",
+    "why": "A positive control for the architecture tests. Every hash below is invented; nothing here describes a real lesson, a real screen run, or a real decision. The marker key makes this envelope fail validation against the closed production contract it is a control for, so it cannot be mistaken for a production record or loaded as one."
+  },
+  "instance": {
+    "contract_id": "lesson-factory.task-source-packet",
+    "contract_version": "3.0.0",
+    "frozen": true,
+    "request_id": "lesson-factory-deadline-2026-08-03-request-01",
+    "requested_name": "Synthetic control lesson for the WP-01 packet contract",
+    "lesson_id": "V3-LES-000101",
+    "grouping_id": "V3-GRP-000011",
+    "curriculum_manifest_sha256": "b46604fb9bf7d03da149074d2032e91701bad0367dabb507e52bafcbe3b53cb4",
+    "phase_placements": [
+      {
+        "phase_id": "V3-PHS-0001",
+        "source_relation_ids": ["R14-PM-01"]
+      }
+    ],
+    "module_placements": [
+      {
+        "module_id": "V3-MOD-0007",
+        "source_relation_ids": ["R14-PM-02"]
+      }
+    ],
+    "pathway_placements": [
+      {
+        "pathway_id": "V3-PTH-0003",
+        "source_relation_ids": ["R14-PW-01"]
+      }
+    ],
+    "sequence_positions": [
+      {
+        "scope_id": "V3-MOD-0007",
+        "position": 4,
+        "source_relation_ids": ["R14-SQ-04"]
+      }
+    ],
+    "ordered_kc_ids": ["V3-KC-000201", "V3-KC-000202"],
+    "kc_competency_and_scope": [
+      {
+        "kc_id": "V3-KC-000201",
+        "competency": "Select the operation a stated condition licenses, and justify the selection.",
+        "scope": "Single-step selection among two taught operations."
+      },
+      {
+        "kc_id": "V3-KC-000202",
+        "competency": "Apply the selected operation and check its validity condition.",
+        "scope": "Two dependent steps whose order the learner decides."
+      }
+    ],
+    "kc_non_goals": [
+      {
+        "kc_id": "V3-KC-000201",
+        "non_goals": ["Cases where neither taught operation applies; those are out of scope here."]
+      },
+      {
+        "kc_id": "V3-KC-000202",
+        "non_goals": ["Numerical estimation under time pressure."]
+      }
+    ],
+    "hard_prerequisites": [
+      {
+        "relation_id": "R14-PR-11",
+        "kc_id": "V3-KC-000188",
+        "taught_at_sequence_position": 2
+      }
+    ],
+    "helpful_context": ["The prior module introduces the notation this lesson reuses."],
+    "attachments": [],
+    "source_anchors": ["curriculum/v3/v3-lesson-authoring-manifest.json#V3-KC-000201"],
+    "open_holds": [
+      "No rendered-evidence harness exists, so every LQR-X dimension will be BLOCKED for this lesson."
+    ],
+    "reasoning_operations": [
+      {
+        "kc_id": "V3-KC-000201",
+        "operation": "SELECTION"
+      },
+      {
+        "kc_id": "V3-KC-000202",
+        "operation": "PROCEDURAL_APPLICATION"
+      }
+    ],
+    "route_universe": ["STANDARD", "CONCISE", "MISCONCEPTION", "PREREQUISITE_SUPPORT"],
+    "route_proofs": {
+      "STANDARD": {
+        "route_applicability": "APPLICABLE",
+        "absence_proof_basis": null,
+        "absence_proof_ref": null,
+        "blocker_code": null,
+        "evidence_refs": [
+          "spec:docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md#sha256:f9df47b75a7aca5bf5c59030d66261c118d6ea1f71002c4d4fde92592b05c8c8"
+        ]
+      },
+      "CONCISE": {
+        "route_applicability": "NOT_APPLICABLE",
+        "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+        "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_CONCISE",
+        "blocker_code": null,
+        "evidence_refs": [
+          "policy:content/lesson-factory/deadline-profile/release-policy.json#sha256:0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e"
+        ]
+      },
+      "MISCONCEPTION": {
+        "route_applicability": "NOT_APPLICABLE",
+        "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+        "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_MISCONCEPTION",
+        "blocker_code": null,
+        "evidence_refs": [
+          "policy:content/lesson-factory/deadline-profile/release-policy.json#sha256:0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e"
+        ]
+      },
+      "PREREQUISITE_SUPPORT": {
+        "route_applicability": "NOT_APPLICABLE",
+        "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+        "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_PREREQUISITE_SUPPORT",
+        "blocker_code": null,
+        "evidence_refs": [
+          "policy:content/lesson-factory/deadline-profile/release-policy.json#sha256:0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e"
+        ]
+      }
+    },
+    "required_human_review_roles": [
+      "PRODUCT_PEDAGOGY_OWNER",
+      "DOMAIN_CONSTRUCT_SME",
+      "ACCESSIBILITY_REVIEWER",
+      "NOVICE_WALKTHROUGH_REVIEWER",
+      "PLATFORM_RELIABILITY_REVIEWER",
+      "INDEPENDENT_BLIND_SOLVER"
+    ],
+    "source_records": [
+      {
+        "source_id": "src-0001",
+        "source_locator": "curriculum/v3/v3-lesson-authoring-manifest.json",
+        "permitted_use": ["INTERNAL_HUMAN_REVIEW", "SYNTHETIC_TRANSFORMATION"],
+        "rights_status": "PERMITTED",
+        "permission_receipt_refs": [
+          "permission-receipt:src-0001/2026-08-03#sha256:9d00b76539d60f931bd0dddbc392bcc2271948a7da4c2a0d1c5e41c039a84340"
+        ]
+      }
+    ],
+    "rubric_identity": {
+      "rubric_path": "key-docs/lesson-quality-rubric.md",
+      "rubric_version": "0.9.1",
+      "rubric_sha256": "21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+    },
+    "anchor_set_version": "0.9.1-candidate",
+    "output_directory": ".tmp/lesson-factory/lane-01/v3-les-000101",
+    "max_revision_cycles": 3,
+    "deadline_profile_ref": "profile:content/lesson-factory/deadline-profile/deadline-profile.json#sha256:f565393997bfd19c2aaf3a1f32e797f758e89bedcc4d7fb4169e9621b41fc0a6",
+    "nonclaims": {
+      "official_rubric_pass": false,
+      "human_approved": false,
+      "release_approved": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "learner_validated": false,
+      "publication_safe": false,
+      "production_published": false
+    },
+    "route_scope_code": "STANDARD_ONLY",
+    "applicable_routes": ["STANDARD"],
+    "ratified_policy_version": "2.0.0",
+    "release_policy_ref": "policy:content/lesson-factory/deadline-profile/release-policy.json#sha256:0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e"
+  }
+}
