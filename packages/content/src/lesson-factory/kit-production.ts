@@ -48,6 +48,7 @@ import {
   type ValidatedAssignmentProjection,
   type ValidatedPacketProjection,
 } from './kit-factory';
+import { deriveKitIdentityAggregate } from './kit-identity-aggregate';
 
 const RUN_ID = '2026-08-03T1727-0500';
 const LEGACY_GENERATION_ONE_ARMING_RECEIPT_ID = 'wp03-arm-99fb12fa4354944fcd035b9452ac976d';
@@ -93,6 +94,8 @@ const AUTHORITY_SOURCE_PATHS = Object.freeze([
   'packages/content/src/lesson-factory/kit-production.test.ts',
   'packages/content/src/lesson-factory/kit-factory.ts',
   'packages/content/src/lesson-factory/kit-factory.test.ts',
+  'packages/content/src/lesson-factory/kit-identity-aggregate.ts',
+  'packages/content/src/lesson-factory/kit-identity-aggregate.test.ts',
   'packages/content/src/lesson-factory/index.ts',
   'tools/content-cli/bin/lesson-factory-kit-smoke.mjs',
   'tools/content-cli/src/entry.ts',
@@ -2365,23 +2368,25 @@ async function productionPins(
   runtime: RuntimePins,
 ): Promise<CandidateSet['pins']> {
   const byPath = new Map(loaded.coreFiles.map((file) => [file.path, sha256(file.bytes)] as const));
+  let schemaSha256: string;
+  let templateSha256: string;
+  try {
+    schemaSha256 = deriveKitIdentityAggregate([...byPath], 'SCHEMA').sha256;
+    templateSha256 = deriveKitIdentityAggregate([...byPath], 'TEMPLATE').sha256;
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      /^(?:SCHEMA|TEMPLATE)_IDENTITY_SET_(?:EMPTY|INVALID)$/.test(error.message)
+    ) {
+      throw new PipelineFailure(error.message);
+    }
+    throw error;
+  }
   return {
     proofSha256: sha256(loaded.proofBytes),
     profileSha256: byPath.get('deadline-profile/rubric-profile.json') ?? '',
-    schemaSha256: sha256(
-      canonicalKitJson(
-        [...byPath]
-          .filter(([path]) => path.includes('/schemas/'))
-          .sort(([left], [right]) => left.localeCompare(right)),
-      ),
-    ),
-    templateSha256: sha256(
-      canonicalKitJson(
-        [...byPath]
-          .filter(([path]) => path.includes('/template/'))
-          .sort(([left], [right]) => left.localeCompare(right)),
-      ),
-    ),
+    schemaSha256,
+    templateSha256,
     repositoryCommit: runtime.repositoryCommit,
     toolSha256: sha256(await readFile(join(ADMISSION_REPOSITORY_ROOT, 'pnpm-lock.yaml'))),
     executableSha256: runtime.smokeExecutableSha256,
