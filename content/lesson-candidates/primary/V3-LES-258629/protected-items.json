@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "EMS-ITEM-ENTRY",
+      "learner_prompt_key": "EMS_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "With speed fixed, doubling frequency requires halving wavelength.",
+      "post_commitment_feedback": "Use the invariant product fλ: if f doubles, λ halves.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EMS-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At fixed speed, frequency and wavelength vary inversely rather than in the same direction."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EMS-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EMS-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Keeping both speed and wavelength fixed would prevent the stated frequency change."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EMS-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No squared relation connects wavelength to frequency in c = fλ."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EMS-ITEM-GUIDED",
+      "learner_prompt_key": "EMS_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "E = hf makes photon energy directly proportional to frequency.",
+      "post_commitment_feedback": "Frequency is multiplied by three, so energy per photon is also multiplied by three.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EMS-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Photon energy is directly rather than inversely proportional to frequency."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EMS-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "E = hf changes whenever frequency changes."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EMS-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The relation is linear in frequency, not quadratic."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EMS-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EMS-ITEM-LIGHT",
+      "learner_prompt_key": "EMS_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Red has longer wavelength, lower frequency, and lower energy per photon than violet.",
+      "post_commitment_feedback": "Across visible light toward violet, wavelength decreases while frequency and photon energy increase.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EMS-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EMS-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Longer wavelength corresponds to lower frequency and therefore lower photon energy."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EMS-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Red lies at the longer-wavelength end of the visible range."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EMS-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This combination describes the violet direction rather than red."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EMS-ITEM-SOLO",
+      "learner_prompt_key": "EMS_SOLO",
+      "correct_option_index": 2,
+      "rationale": "Subnanometer electromagnetic wavelengths fall in the X-ray region.",
+      "post_commitment_feedback": "A wavelength around one tenth of a nanometer is characteristic of X-rays.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EMS-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Radio waves have wavelengths vastly longer than a fraction of a nanometer."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EMS-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Infrared wavelengths are much longer than the stated subnanometer scale."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EMS-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EMS-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Microwaves have wavelengths far longer than the stated value."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EMS-ITEM-NEAR",
+      "learner_prompt_key": "EMS_NEAR",
+      "correct_option_index": 1,
+      "rationale": "At fixed c, wavelength is inverse to frequency, while photon energy is direct.",
+      "post_commitment_feedback": "Doubling frequency halves wavelength and doubles energy per photon.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EMS-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both directions are reversed for a frequency increase."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EMS-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EMS-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A fixed vacuum speed requires wavelength to change when frequency changes."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EMS-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "E = hf requires energy per photon to rise with frequency."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EMS-ITEM-CHANGED",
+      "learner_prompt_key": "EMS_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "At equal power, photon rate is power divided by energy per photon.",
+      "post_commitment_feedback": "Holding energy per time fixed means twice the energy per photon requires half the photons per time.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EMS-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Twice the energy per photon at equal power requires fewer, not more, photons each second."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EMS-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal power does not imply equal count when energy per photon differs."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EMS-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The factor is inverse and linear, so doubling energy halves the rate."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EMS-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EMS-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "EMS_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Tripling wavelength divides frequency by three, and E = hf divides photon energy by three.",
+      "post_commitment_feedback": "Use c = fλ first, then E = hf: both frequency and photon energy become one third.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EMS-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EMS-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Frequency is inverse to wavelength at fixed c."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EMS-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both frequency and energy must change when wavelength changes in vacuum."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EMS-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Energy follows frequency, so both fall by the same factor."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EMS-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "EMS_REENTRY_NEAR",
+      "correct_option_index": 2,
+      "rationale": "A fourfold frequency increase divides wavelength by four and multiplies photon energy by four.",
+      "post_commitment_feedback": "The fresh factor preserves the same inverse-direct pair: λ/4 and 4E.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EMS-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both directions conflict with the higher frequency."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EMS-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The wavelength comparison is right, but energy rises with frequency."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EMS-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EMS-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Vacuum wavelength cannot stay fixed when frequency changes at fixed c."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EMS-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "EMS_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Photon rate equals fixed power divided by energy per photon.",
+      "post_commitment_feedback": "Halving energy per photon doubles the number required each second to preserve power.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EMS-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lower energy per photon permits more photons per unit time at the same power."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EMS-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EMS-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A constant photon rate would halve the total power when energy per photon halves."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EMS-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The count-energy relation is inverse and linear, not squared."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EMS-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "EMS_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "E = hc/λ doubles photon energy, and equal power then requires half the photon rate.",
+      "post_commitment_feedback": "Shorter wavelength raises energy per photon; fixed power forces the count rate downward.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EMS-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Halving wavelength raises rather than lowers energy per photon."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EMS-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At fixed power, the photon count rate must move opposite energy per photon."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EMS-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Photon energy changes inversely with wavelength."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EMS-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "INT-ITEM-ENTRY",
+      "learner_prompt_key": "INT_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Equal in-phase field amplitudes add to 2A.",
+      "post_commitment_feedback": "Superposition adds the two aligned field amplitudes, giving 2A.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "INT-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Zero would require equal amplitudes arriving half a cycle out of phase."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "INT-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Keeping one-wave amplitude ignores superposition of the second in-phase field."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "INT-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "INT-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Field amplitudes add linearly; squaring is related to intensity after addition."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "INT-ITEM-GUIDED",
+      "learner_prompt_key": "INT_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "An integer number of wavelengths returns the waves to the same phase.",
+      "post_commitment_feedback": "A path difference of 3λ is three full cycles, so the rays reinforce.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "INT-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "INT-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Three wavelengths correspond to three complete cycles and an in-phase arrival."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "INT-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Coherent rays at the same point still superpose."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "INT-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Path phase changes interference but does not increase energy per photon."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "INT-ITEM-LIGHT",
+      "learner_prompt_key": "INT_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "A half-integer wavelength difference produces opposite-phase arrival.",
+      "post_commitment_feedback": "Remove two full cycles from 5λ/2; the remaining λ/2 gives destructive interference.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "INT-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Five halves is two full cycles plus one half-cycle, not an in-phase arrival."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "INT-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The remaining half-cycle after removing full cycles is a phase difference of π."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "INT-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Path difference changes relative phase rather than source frequency."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "INT-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "INT-ITEM-SOLO",
+      "learner_prompt_key": "INT_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Fringe spacing is proportional to λL/d.",
+      "post_commitment_feedback": "Doubling d halves the spacing between neighboring fringes.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "INT-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fringe spacing is inversely proportional to slit separation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "INT-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "INT-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Changing d changes λL/d when λ and L stay fixed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "INT-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The proportionality contains d to the first power in the denominator."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "INT-ITEM-NEAR",
+      "learner_prompt_key": "INT_NEAR",
+      "correct_option_index": 2,
+      "rationale": "At fixed L and d, fringe spacing is directly proportional to wavelength.",
+      "post_commitment_feedback": "Twice the wavelength produces twice the fringe spacing.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "INT-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Spacing changes directly rather than inversely with wavelength."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "INT-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The wavelength appears directly in λL/d."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "INT-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "INT-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The wavelength dependence is linear rather than quadratic."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "INT-ITEM-CHANGED",
+      "learner_prompt_key": "INT_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "One unmatched half-cycle reflection reversal creates a relative phase of π.",
+      "post_commitment_feedback": "With negligible travel phase, the single reversal leaves the rays half a cycle apart and destructive.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "INT-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "INT-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One unmatched half-cycle reversal makes the reflected rays arrive opposite in phase."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "INT-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reflection phase does not double the source frequency."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "INT-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The two reflected rays overlap and therefore superpose."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "INT-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "INT_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Fringe spacing is directly proportional to screen distance.",
+      "post_commitment_feedback": "Hold λ and d fixed in λL/d; tripling L triples the spacing.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "INT-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Spacing is directly rather than inversely proportional to L."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "INT-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Changing L changes λL/d."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "INT-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The dependence on L is linear rather than squared."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "INT-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "INT-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "INT_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The factor of two in λ cancels the factor of two in d.",
+      "post_commitment_feedback": "The fresh geometry has the same λ/d ratio, so spacing stays unchanged.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "INT-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The doubled denominator cancels the doubled numerator."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "INT-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "INT-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both wavelength and slit separation change by the same factor."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "INT-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The relation is a ratio of first powers, not a product of squares."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "INT-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "INT_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "One unmatched reversal contributes a relative phase of half a cycle.",
+      "post_commitment_feedback": "The phase ledger contains one half-cycle term, so equal amplitudes would cancel.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "INT-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The unmatched reflection reversal contributes a nonzero half-cycle difference."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "INT-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A low-to-high reflection adds half a cycle, not a full cycle."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "INT-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "INT-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No path or reflection term supplies two complete cycles."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "INT-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "INT_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The equal reflection reversals contribute no relative difference, and the integer path term is constructive.",
+      "post_commitment_feedback": "Count relative phase only: matched reversals cancel, leaving an integer-cycle path difference.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "INT-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "INT-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal reversal terms cancel in the relative phase, and the integer path difference is in phase."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "INT-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt describes reflected rays that overlap; it does not remove both rays."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "INT-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Matched phase reversals and path difference do not change source frequency."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIF-ITEM-ENTRY",
+      "learner_prompt_key": "DIF_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "At fixed speed, wavelength is inversely proportional to frequency.",
+      "post_commitment_feedback": "Use v = fλ: lower f requires larger λ when v stays fixed.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIF-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At fixed speed, wavelength moves opposite frequency."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIF-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fixed speed cannot preserve wavelength when frequency changes."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIF-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A finite frequency decrease does not force wavelength to vanish."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIF-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIF-ITEM-GUIDED",
+      "learner_prompt_key": "DIF_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Angular spreading grows as the ratio λ/a increases.",
+      "post_commitment_feedback": "Narrowing a increases λ/a, so the pattern spreads more widely.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIF-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A narrower opening produces stronger rather than weaker angular spreading."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIF-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIF-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt narrows rather than closes the slit."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIF-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Changing aperture width does not change source frequency."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIF-ITEM-LIGHT",
+      "learner_prompt_key": "DIF_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Longer wavelength increases the ratio of wavelength to slit width.",
+      "post_commitment_feedback": "At the same slit width, the longer-wavelength wave spreads more.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIF-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "For a fixed aperture, larger wavelength produces greater angular spreading."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIF-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The wavelength difference changes λ/a even though the slit widths match."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIF-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIF-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A single aperture also produces diffraction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIF-ITEM-SOLO",
+      "learner_prompt_key": "DIF_SOLO",
+      "correct_option_index": 0,
+      "rationale": "The path difference between adjacent openings depends on their spacing.",
+      "post_commitment_feedback": "Regular opening spacing provides the repeating path difference that selects principal orders.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIF-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIF-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Screen energy storage does not set the grating phase relation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIF-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Support color is not the periodic geometric variable in the grating condition."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIF-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Principal grating angles arise from repeated opening spacing and wavelength."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIF-ITEM-NEAR",
+      "learner_prompt_key": "DIF_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Red light has larger wavelength and therefore larger λ/a for the same slit.",
+      "post_commitment_feedback": "The same aperture spreads the longer red wavelength through a wider angle.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIF-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Shorter wavelength produces a smaller λ/a ratio at the same slit."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIF-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Visible wavelengths differ and therefore produce different angular widths."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIF-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Single slits produce a diffraction envelope."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIF-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIF-ITEM-CHANGED",
+      "learner_prompt_key": "DIF_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "In 2d sinθ = nλ, increasing λ at fixed d and n increases sinθ.",
+      "post_commitment_feedback": "The larger wavelength requires a larger diffraction angle for the same order and spacing.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIF-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At fixed d and n, a larger λ requires a larger sinθ."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIF-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIF-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The diffraction condition must respond to the wavelength change."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIF-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Changing X-ray wavelength does not change the physical phenomenon into sound."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIF-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "DIF_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Increasing λ and decreasing a both enlarge the ratio that controls spreading.",
+      "post_commitment_feedback": "A larger wavelength-to-aperture ratio produces wider angular diffraction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIF-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both changes make λ/a smaller."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIF-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Increasing the denominator reduces λ/a."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIF-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIF-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reducing the numerator decreases λ/a."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIF-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "DIF_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Halving a doubles λ/a and increases angular spread.",
+      "post_commitment_feedback": "The untouched case preserves the same function: a narrower slit gives a wider pattern.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIF-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIF-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Halving the slit increases λ/a rather than decreasing it."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIF-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Aperture width does not alter source frequency or photon energy."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIF-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Diffraction arises from wave contributions across the aperture and is not removed by narrowing."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIF-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "DIF_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "At fixed d and n, a larger λ requires larger sinθ.",
+      "post_commitment_feedback": "Hold d and n fixed and compare the right-hand side: larger λ moves the peak outward.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIF-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A smaller right-hand side requires smaller sinθ at fixed d and n."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIF-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lower n reduces the right-hand side and therefore the angle."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIF-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "With all quantities fixed, there is no reason for the angle to change."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIF-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIF-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "DIF_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Increasing d lowers the sinθ required to keep 2d sinθ equal to fixed nλ.",
+      "post_commitment_feedback": "The fresh variable change moves the peak inward: larger spacing requires a smaller angle.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIF-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A larger d permits the same nλ at a smaller sinθ."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIF-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIF-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Changing d changes the diffraction condition at fixed λ and n."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIF-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The task concerns X-ray diffraction geometry, not visible color classification."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POL-ITEM-ENTRY",
+      "learner_prompt_key": "POL_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Right-hand orientation from +x toward +y points along +z.",
+      "post_commitment_feedback": "The mutually perpendicular right-hand triad is E +x, B +y, propagation +z.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POL-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POL-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the right-hand orientation from +x toward +y."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POL-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Propagation must be perpendicular to the electric field rather than parallel to it."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POL-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Propagation must also be perpendicular to the magnetic field."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POL-ITEM-GUIDED",
+      "learner_prompt_key": "POL_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "An electric-field tip confined to a fixed line defines linear polarization.",
+      "post_commitment_feedback": "The electric-field direction stays on one axis, so the wave is linearly polarized.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POL-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Circular polarization requires the electric-field direction to rotate rather than remain on one line."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POL-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt describes an electromagnetic electric field, not a longitudinal sound wave."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POL-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POL-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A fixed-axis oscillating electric field is compatible with a linearly polarized wave."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POL-ITEM-LIGHT",
+      "learner_prompt_key": "POL_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "A constant-magnitude electric vector rotating through a circle is circularly polarized.",
+      "post_commitment_feedback": "The rotating electric-field tip traces a circle, identifying circular polarization.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POL-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Linear polarization confines the electric field to one fixed line."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POL-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POL-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The field magnitude is stated to remain nonzero and constant."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POL-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Polarization geometry does not remove photon frequency."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POL-ITEM-SOLO",
+      "learner_prompt_key": "POL_SOLO",
+      "correct_option_index": 3,
+      "rationale": "E +x toward B +y gives propagation +z by the stated right-hand orientation.",
+      "post_commitment_feedback": "The required perpendicular direction is +y.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POL-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnetic field must be perpendicular to E, not antiparallel to it."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POL-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnetic field must be perpendicular to propagation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POL-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Orienting from +x toward −y points along −z rather than +z."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POL-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POL-ITEM-NEAR",
+      "learner_prompt_key": "POL_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Right-hand orientation from +y toward +z points +x, and all directions are perpendicular.",
+      "post_commitment_feedback": "Check perpendicularity first, then orientation: +y toward +z gives +x.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POL-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POL-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electric and magnetic fields cannot be parallel in the plane-wave triad."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POL-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The directions are perpendicular, but the propagation sign reverses the stated right-hand orientation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POL-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Propagation cannot be parallel to the electric field."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POL-ITEM-CHANGED",
+      "learner_prompt_key": "POL_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The incident vertical field has zero component along a horizontal transmission axis.",
+      "post_commitment_feedback": "Crossed by 90 degrees, the ideal polarizer transmits zero of the incident linear field.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POL-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A horizontal axis transmits no vertical component in the ideal crossed case."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POL-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A passive ideal polarizer does not double the rejected field component."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POL-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POL-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Polarizer orientation changes transmitted field amplitude, not photon frequency."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POL-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "POL_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Right-hand orientation from electric field +z toward magnetic field −y gives propagation +x.",
+      "post_commitment_feedback": "Verify all three axes, then use the stated orientation to select the signed magnetic direction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POL-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnetic field cannot be parallel to the electric field."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POL-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POL-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Orienting from +z toward +y gives −x rather than the stated +x propagation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POL-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnetic field cannot be parallel to propagation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POL-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "POL_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Reversing the electric-field direction reverses the propagation direction for fixed magnetic orientation.",
+      "post_commitment_feedback": "The fresh signed-axis triad gives propagation −z.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POL-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Propagation must be perpendicular to the electric field."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POL-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Propagation must be perpendicular to the magnetic field."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POL-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reversing E from +x to −x reverses the propagation sign for fixed B +y."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POL-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POL-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "POL_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "An ideal linear polarizer transmits the electric-field component parallel to its axis.",
+      "post_commitment_feedback": "Project the incident electric field onto the polarizer axis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POL-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POL-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An ideal polarizer transmits the field component along its axis and rejects the perpendicular component."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POL-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The electric field remains transverse to propagation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POL-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Transmission orientation is determined by field direction relative to the axis."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POL-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "POL_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The first polarizer prepares vertical linear polarization, and the crossed horizontal axis transmits zero of it ideally.",
+      "post_commitment_feedback": "After the first axis selects vertical field, the crossed second axis has no parallel component to transmit.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POL-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The first polarizer selects vertical light, which is crossed with the second axis."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POL-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The horizontal second polarizer rejects the vertical field selected by the first."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POL-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POL-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Crossed polarizers do not double photon frequency."
+        }
+      ]
+    }
+  ]
+}

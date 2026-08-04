@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Exit misses may release one bounded function-specific repair and one fresh re-entry.",
+  "items": [
+    {
+      "prompt_key": "AAC_ENTRY",
+      "title": "Starting check: read the side chain",
+      "prompt": "Which side chain is most hydrophobic?",
+      "response_type": "single_select",
+      "options": [
+        "A deprotonated carboxylate",
+        "A branched hydrocarbon",
+        "A protonated amine",
+        "A neutral hydroxyl group"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AAC_GUIDED",
+      "title": "Guided practice: classify a carboxylate",
+      "prompt": "At a stated pH, a side chain is present as −COO⁻. Which classification fits?",
+      "response_type": "single_select",
+      "options": [
+        "Basic and hydrophobic",
+        "Neutral and hydrophobic",
+        "Basic and hydrophilic",
+        "Acidic and hydrophilic"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AAC_LIGHT",
+      "title": "Less help: classify a neutral polar group",
+      "prompt": "A side chain contains an uncharged hydroxyl group. Which description is most appropriate?",
+      "response_type": "single_select",
+      "options": [
+        "Polar and hydrophilic",
+        "Nonpolar and hydrophobic",
+        "Positively charged and basic",
+        "Negatively charged and acidic"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AAC_SOLO",
+      "title": "On your own: select an ionic partner",
+      "prompt": "A positively charged side chain is exposed on a protein surface. Which partner can form a favorable ionic interaction?",
+      "response_type": "single_select",
+      "options": [
+        "Another positive side chain",
+        "A buried hydrocarbon with no charge",
+        "A negatively charged carboxylate",
+        "A peptide carbon atom without formal charge"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AAC_NEAR",
+      "title": "Near exit: classify and place",
+      "prompt": "A side chain contains a protonated amine under the stated condition. Which prediction is best?",
+      "response_type": "single_select",
+      "options": [
+        "It is neutral and favors a dry hydrocarbon core",
+        "Basic, positive, and water-compatible",
+        "It is acidic, negatively charged, and repels water",
+        "It is nonpolar but forms no interactions"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AAC_CHANGED",
+      "title": "Changed-task exit: mutate a buried residue",
+      "prompt": "A buried hydrocarbon side chain in a soluble protein core is replaced by a permanently charged side chain. What is the most direct likely effect?",
+      "response_type": "single_select",
+      "options": [
+        "The core becomes more hydrophobic",
+        "The peptide bonds are all hydrolyzed",
+        "The primary sequence becomes unchanged",
+        "A buried charge destabilizes core packing"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AAC_REPAIR_NEAR",
+      "title": "Repair: classify in order",
+      "prompt": "Which side chain is acidic and hydrophilic under a condition where it is deprotonated?",
+      "response_type": "single_select",
+      "options": [
+        "A carboxylate side chain",
+        "A branched alkyl side chain",
+        "A protonated amino side chain",
+        "An uncharged aromatic hydrocarbon"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AAC_REENTRY_NEAR",
+      "title": "Fresh re-entry: classify an amide",
+      "prompt": "A side chain is a neutral amide with a carbonyl and N−H group. Which tendency is best?",
+      "response_type": "single_select",
+      "options": [
+        "Strongly hydrophobic with no hydrogen bonding",
+        "Permanently positive and basic",
+        "Polar, uncharged, and hydrophilic",
+        "Negatively charged and acidic"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AAC_REPAIR_CHANGED",
+      "title": "Repair: match residue to environment",
+      "prompt": "Which replacement is most likely to disrupt a dry hydrophobic core?",
+      "response_type": "single_select",
+      "options": [
+        "Hydrocarbon replaced by another hydrocarbon",
+        "Hydrocarbon replaced by an isolated charged group",
+        "Small nonpolar group replaced by a larger nonpolar group",
+        "Surface carboxylate replaced by surface amide"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AAC_REENTRY_CHANGED",
+      "title": "Fresh re-entry: mutate a surface residue",
+      "prompt": "An exposed charged residue is replaced by a nonpolar hydrocarbon side chain. Which direct tendency is most plausible?",
+      "response_type": "single_select",
+      "options": [
+        "The new side chain becomes more water-compatible",
+        "All quaternary structure necessarily disappears",
+        "Every peptide bond is reduced",
+        "A hydrophobic patch may become exposed to water"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ION_ENTRY",
+      "title": "Starting check: identify a zwitterion",
+      "prompt": "Which backbone form is dipolar and has net charge zero before side-chain charge?",
+      "response_type": "single_select",
+      "options": [
+        "NH₂ and COOH",
+        "NH₃⁺ and COOH",
+        "NH₃⁺ and COO⁻",
+        "NH₂ and COO⁻"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ION_GUIDED",
+      "title": "Guided practice: sum charges",
+      "prompt": "An amino acid has NH₃⁺, COO⁻, and an uncharged side chain. What is its net charge?",
+      "response_type": "single_select",
+      "options": [
+        "Zero",
+        "+1",
+        "−1",
+        "+2"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ION_LIGHT",
+      "title": "Less help: acidic conditions",
+      "prompt": "For an amino acid without an ionizable side chain, strongly acidic conditions favor which net-charge direction?",
+      "response_type": "single_select",
+      "options": [
+        "Negative",
+        "Always zero",
+        "No formal charges anywhere",
+        "Positive"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ION_SOLO",
+      "title": "On your own: identify chirality",
+      "prompt": "Which α carbon is achiral?",
+      "response_type": "single_select",
+      "options": [
+        "An α carbon bonded to four different substituents",
+        "An α carbon bonded to two hydrogen atoms",
+        "An α carbon with one hydrogen and three different nonhydrogen groups",
+        "An α carbon in a specified R configuration"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ION_NEAR",
+      "title": "Near exit: use a charge ledger",
+      "prompt": "A stated amino acid form has NH₃⁺, COO⁻, and a side chain carrying −1. What is the net charge?",
+      "response_type": "single_select",
+      "options": [
+        "+1",
+        "Zero",
+        "−1",
+        "−2"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ION_CHANGED",
+      "title": "Changed-task exit: assign configuration",
+      "prompt": "Priority 4 points away from the viewer. The 1→2→3 sequence is clockwise. What is the configuration?",
+      "response_type": "single_select",
+      "options": [
+        "R",
+        "S",
+        "Achiral",
+        "Zwitterionic"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ION_REPAIR_NEAR",
+      "title": "Repair: include every charge",
+      "prompt": "A form contains NH₂, COO⁻, and a side chain with +1. What is the net charge?",
+      "response_type": "single_select",
+      "options": [
+        "−2",
+        "−1",
+        "+1",
+        "Zero"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ION_REENTRY_NEAR",
+      "title": "Fresh re-entry: strongly basic conditions",
+      "prompt": "For a simple amino acid without an ionizable side chain, strongly basic conditions favor which net-charge direction?",
+      "response_type": "single_select",
+      "options": [
+        "Positive",
+        "Negative",
+        "Always zero",
+        "No electron pairs"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ION_REPAIR_CHANGED",
+      "title": "Repair: orient priority 4",
+      "prompt": "Priority 4 points toward the viewer, and the visible 1→2→3 sequence is clockwise. What final assignment follows?",
+      "response_type": "single_select",
+      "options": [
+        "R without inversion",
+        "Achiral",
+        "S after inversion",
+        "Net positive"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ION_REENTRY_CHANGED",
+      "title": "Fresh re-entry: use a new trace",
+      "prompt": "Priority 4 points away, and the 1→2→3 sequence is counterclockwise. What is the configuration?",
+      "response_type": "single_select",
+      "options": [
+        "S",
+        "R",
+        "Achiral",
+        "Dipolar only"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "PEP_ENTRY",
+      "title": "Starting check: identify the linkage",
+      "prompt": "Which bond joins adjacent residues in a peptide backbone?",
+      "response_type": "single_select",
+      "options": [
+        "A glycosidic bond",
+        "A phosphodiester bond",
+        "A sulfur-sulfur bond",
+        "An amide peptide bond"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "PEP_GUIDED",
+      "title": "Guided practice: locate the atoms",
+      "prompt": "A peptide bond forms between which functional groups?",
+      "response_type": "single_select",
+      "options": [
+        "Two hydrocarbon side chains",
+        "A carboxyl group and an amino group",
+        "Two phosphate groups",
+        "Two carboxylate groups only"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "PEP_LIGHT",
+      "title": "Less help: count peptide bonds",
+      "prompt": "How many peptide bonds are in a linear tetrapeptide?",
+      "response_type": "single_select",
+      "options": [
+        "One",
+        "Two",
+        "Three",
+        "Four"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "PEP_SOLO",
+      "title": "On your own: complete hydrolysis",
+      "prompt": "Complete hydrolysis of a linear dipeptide cleaves its peptide bond. How many amino-acid residues result?",
+      "response_type": "single_select",
+      "options": [
+        "Two",
+        "One",
+        "Three",
+        "Zero"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "PEP_NEAR",
+      "title": "Near exit: hydrolyze a fresh chain",
+      "prompt": "Complete hydrolysis of a linear pentapeptide cleaves how many peptide bonds and yields how many residues?",
+      "response_type": "single_select",
+      "options": [
+        "Five bonds and five residues",
+        "Four bonds and four residues",
+        "Five bonds and four residues",
+        "Four bonds and five residues"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "PEP_CHANGED",
+      "title": "Changed-task exit: reduce a disulfide",
+      "prompt": "A protein’s two regions are connected by one cystine disulfide bond. A reducing reagent acts without hydrolyzing peptide bonds. What is the direct result?",
+      "response_type": "single_select",
+      "options": [
+        "Every peptide bond is cleaved",
+        "The S−S cross-link is broken toward two thiols",
+        "A new peptide bond forms between the regions",
+        "All side chains become hydrophobic"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "PEP_REPAIR_NEAR",
+      "title": "Repair: use n−1",
+      "prompt": "How many peptide bonds join six residues in one linear chain?",
+      "response_type": "single_select",
+      "options": [
+        "Four",
+        "Six",
+        "Five",
+        "Seven"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "PEP_REENTRY_NEAR",
+      "title": "Fresh re-entry: hydrolyze a tripeptide",
+      "prompt": "Complete hydrolysis of a linear tripeptide gives which result?",
+      "response_type": "single_select",
+      "options": [
+        "Two peptide bonds cleaved and three residues released",
+        "Three bonds cleaved and two residues released",
+        "One bond cleaved and three residues released",
+        "No bonds cleaved and one residue released"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "PEP_REPAIR_CHANGED",
+      "title": "Repair: distinguish oxidation and reduction",
+      "prompt": "Which change forms a cystine disulfide from two cysteine thiols?",
+      "response_type": "single_select",
+      "options": [
+        "Peptide hydrolysis",
+        "Disulfide reduction",
+        "Backbone protonation only",
+        "Oxidation"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "PEP_REENTRY_CHANGED",
+      "title": "Fresh re-entry: break an interchain link",
+      "prompt": "Two peptide chains are joined only by a disulfide bond. What can selective reduction do?",
+      "response_type": "single_select",
+      "options": [
+        "Fuse the two backbones into one longer peptide",
+        "Separate the chains by breaking the S−S link",
+        "Hydrolyze every residue from both chains",
+        "Convert all amino acids to cysteine"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "STR_ENTRY",
+      "title": "Starting check: identify primary structure",
+      "prompt": "Which feature is primary protein structure?",
+      "response_type": "single_select",
+      "options": [
+        "The amino-acid sequence",
+        "A local α helix",
+        "The fold of one entire chain",
+        "The interface between two chains"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "STR_GUIDED",
+      "title": "Guided practice: identify secondary structure",
+      "prompt": "Backbone hydrogen bonds stabilize a local α helix. Which level is described?",
+      "response_type": "single_select",
+      "options": [
+        "Primary",
+        "Tertiary",
+        "Secondary",
+        "Quaternary"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "STR_LIGHT",
+      "title": "Less help: identify quaternary structure",
+      "prompt": "A contact surface joins two separately translated protein chains. Which level is represented?",
+      "response_type": "single_select",
+      "options": [
+        "Secondary",
+        "Quaternary",
+        "Primary",
+        "Tertiary only"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "STR_SOLO",
+      "title": "On your own: predict aqueous folding",
+      "prompt": "In a soluble globular protein, where do many nonpolar side chains tend to be found?",
+      "response_type": "single_select",
+      "options": [
+        "Exposed to water with no packing",
+        "Converted into charged groups",
+        "Hydrolyzed from the backbone",
+        "Packed in the protein interior"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "STR_NEAR",
+      "title": "Near exit: locate a proline effect",
+      "prompt": "A proline substitution disrupts a regular α helix while peptide bonds remain intact. Which level is affected first?",
+      "response_type": "single_select",
+      "options": [
+        "Secondary structure",
+        "Primary sequence remains unchanged",
+        "Quaternary structure only",
+        "No structural level"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "STR_CHANGED",
+      "title": "Changed-task exit: denature without hydrolysis",
+      "prompt": "Heat disrupts noncovalent interactions, but peptide bonds remain intact. Which statement is most accurate?",
+      "response_type": "single_select",
+      "options": [
+        "Primary sequence is completely hydrolyzed",
+        "All structural levels remain unchanged",
+        "Primary sequence remains; higher structure can unfold",
+        "Only amino-acid chirality changes"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "STR_REPAIR_NEAR",
+      "title": "Repair: name the level by its unit",
+      "prompt": "Which feature is tertiary structure?",
+      "response_type": "single_select",
+      "options": [
+        "The linear amino-acid order",
+        "The full fold of one chain",
+        "A local β sheet only",
+        "The arrangement of four separate chains"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "STR_REENTRY_NEAR",
+      "title": "Fresh re-entry: classify an interface",
+      "prompt": "An ionic contact forms between two different protein subunits. Which level does it stabilize directly?",
+      "response_type": "single_select",
+      "options": [
+        "Primary",
+        "Secondary",
+        "Tertiary only",
+        "Quaternary"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "STR_REPAIR_CHANGED",
+      "title": "Repair: list preserved bonds",
+      "prompt": "A denaturant disrupts hydrogen bonds and hydrophobic packing but not peptide bonds. What is preserved most directly?",
+      "response_type": "single_select",
+      "options": [
+        "Primary sequence",
+        "Every α helix",
+        "The exact tertiary fold",
+        "Every subunit interface"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "STR_REENTRY_CHANGED",
+      "title": "Fresh re-entry: reduce disulfides",
+      "prompt": "A reducing condition cleaves stabilizing disulfides but leaves peptide bonds intact. Which direct conclusion is best?",
+      "response_type": "single_select",
+      "options": [
+        "Primary sequence is hydrolyzed",
+        "Every noncovalent interaction is necessarily removed",
+        "Sequence remains; folds may weaken",
+        "All side chains become nonpolar"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    }
+  ]
+}

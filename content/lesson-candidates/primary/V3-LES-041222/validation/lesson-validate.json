@@ -1,0 +1,418 @@
+{
+  "command": {
+    "argv": [
+      "node",
+      "tools/content-cli/node_modules/tsx/dist/cli.mjs",
+      "tools/content-cli/src/entry.ts",
+      "candidate-validate",
+      "<candidate>",
+      "--json"
+    ],
+    "kind": "candidate-validate",
+    "startedAt": "2026-08-04T13:07:09.094Z",
+    "durationMs": 180,
+    "exitCode": 0,
+    "signal": null,
+    "stdoutSha256": "ca3b1176a466b680cdb1c9c49ac6a8439148e111dc83f534172f68dde10ae8c6",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "executableSha256": "f5f9b9db4d95f5e0340982685f083de654c21eef9d9122cab5321081ccaa2601",
+    "tsxCliSha256": "56b9b4f04e479fc14cdf74295ea4bd57d73be94d74350a36013741ed651a011d",
+    "cliEntrySha256": "069bdf24d431793df13c654dbfe03ef1f00407ad76cbe047f5a81e44570f0374",
+    "cliMainSha256": "723afe84b1539f16ffdb02f720f94934452a4d10538b8bfd2d296af4e1cfcd8f",
+    "toolVersion": "candidate-validate/1"
+  },
+  "directLessonValidate": {
+    "command": {
+      "argv": [
+        "node",
+        "tools/content-cli/node_modules/tsx/dist/cli.mjs",
+        "tools/content-cli/src/entry.ts",
+        "lesson-validate",
+        "<candidate>",
+        "--json"
+      ],
+      "kind": "lesson-validate",
+      "startedAt": "2026-08-04T13:07:09.325Z",
+      "durationMs": 161,
+      "exitCode": 0,
+      "signal": null,
+      "stdoutSha256": "716847e8fd39cb0a5e7bbbaa9db9ece250a37f05b82b34b6e147f592e927be3f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "executableSha256": "f5f9b9db4d95f5e0340982685f083de654c21eef9d9122cab5321081ccaa2601",
+      "tsxCliSha256": "56b9b4f04e479fc14cdf74295ea4bd57d73be94d74350a36013741ed651a011d",
+      "cliEntrySha256": "069bdf24d431793df13c654dbfe03ef1f00407ad76cbe047f5a81e44570f0374",
+      "cliMainSha256": "723afe84b1539f16ffdb02f720f94934452a4d10538b8bfd2d296af4e1cfcd8f",
+      "toolVersion": "content-cli/current"
+    },
+    "lessonCount": 1,
+    "resultCount": 48,
+    "uniqueRuleCount": 15,
+    "failureCount": 0,
+    "ok": true
+  },
+  "rehashCommand": {
+    "argv": [
+      "node",
+      "tools/content-cli/node_modules/tsx/dist/cli.mjs",
+      "tools/content-cli/src/entry.ts",
+      "rehash",
+      "<candidate>"
+    ],
+    "kind": "rehash",
+    "startedAt": "2026-08-04T13:07:08.903Z",
+    "durationMs": 140,
+    "exitCode": 0,
+    "signal": null,
+    "stdoutSha256": "cb7166e0fcef6fbb488899624f6e9ccafa7dacb602b16c1d5ae0af4e0caeefe7",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "executableSha256": "f5f9b9db4d95f5e0340982685f083de654c21eef9d9122cab5321081ccaa2601",
+    "tsxCliSha256": "56b9b4f04e479fc14cdf74295ea4bd57d73be94d74350a36013741ed651a011d",
+    "cliEntrySha256": "069bdf24d431793df13c654dbfe03ef1f00407ad76cbe047f5a81e44570f0374",
+    "cliMainSha256": "723afe84b1539f16ffdb02f720f94934452a4d10538b8bfd2d296af4e1cfcd8f",
+    "toolVersion": "content-cli/current"
+  },
+  "format": "lesson-generation-validation/2",
+  "lessonId": "V3-LES-041222",
+  "primaryArtifacts": [
+    {
+      "path": "lesson-script.json",
+      "sha256": "cefa7d5822c8cdb19b401dcafd5c63f4d658a240672278dbe6c7b6d331d5407b",
+      "size": 222557
+    },
+    {
+      "path": "kc-coverage-matrix.json",
+      "sha256": "2617bdde70f695c924862485711866ac9aa01f3e89591a22d2949a8bb1605ba0",
+      "size": 19882
+    },
+    {
+      "path": "lesson-presentation-plan.json",
+      "sha256": "c8c5cec3b6ccb90e4ac246dfa7822af25626f39bdb8337322d03dbd830c3b8f3",
+      "size": 85861
+    },
+    {
+      "path": "lesson-quality-report.json",
+      "sha256": "8c742a0a183173c62f5bd05af5ed5a09e5909a565e214d8cd0aecc5922a8491f",
+      "size": 7243
+    }
+  ],
+  "rehash": {
+    "changed": false,
+    "primaryContentSha": [
+      {
+        "relPath": "lesson-script.json",
+        "oldContentSha256": "23ad61ff830bc727b43765307fb1ec9fd0c5e8d150642d367a099bfed5fdab0d",
+        "newContentSha256": "23ad61ff830bc727b43765307fb1ec9fd0c5e8d150642d367a099bfed5fdab0d"
+      },
+      {
+        "relPath": "kc-coverage-matrix.json",
+        "oldContentSha256": "3624d6a52498d9da0c27523fd41e70f572e1d6896cef8028b6113daecebb2dbd",
+        "newContentSha256": "3624d6a52498d9da0c27523fd41e70f572e1d6896cef8028b6113daecebb2dbd"
+      },
+      {
+        "relPath": "lesson-presentation-plan.json",
+        "oldContentSha256": "23d27dbd40cce4ffad9bd8322582d5cb38045b780c8c35c76dd477163f415d2f",
+        "newContentSha256": "23d27dbd40cce4ffad9bd8322582d5cb38045b780c8c35c76dd477163f415d2f"
+      },
+      {
+        "relPath": "lesson-quality-report.json",
+        "oldContentSha256": "f8fd6e17a3720562ecbecc8fd4196a9c02924f68619d0382497d1f1d922ef576",
+        "newContentSha256": "f8fd6e17a3720562ecbecc8fd4196a9c02924f68619d0382497d1f1d922ef576"
+      }
+    ],
+    "verifyNoOp": true
+  },
+  "results": [
+    {
+      "rule": "R1",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "fda963957cfde5bc15aabb2b31f77194b57ae0e958de85279e570d55b1bd8ca8"
+    },
+    {
+      "rule": "R2",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "47b0369feefb3733be3409f52c2d45a51bcc62648a179293ec4c7b36c9fbdd8d"
+    },
+    {
+      "rule": "R3",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "1ed5448433f382d421058eb8f3c840c159a3439a35d8c590dd41c0a7a14cfa9f"
+    },
+    {
+      "rule": "R3",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "455dd8140f2c855a1c0a3fd89410ea1f61a0bc41ab9f0110761d742fa1814ee1"
+    },
+    {
+      "rule": "R3",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "f7bd5a27759ff8ba3ffab6243e0f31ad8439f45b6427f5ad301117743d0a9ffe"
+    },
+    {
+      "rule": "R3",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "15db85654d25e275778c7b998d79bcee252c191be67d0cf562556295a1e42d45"
+    },
+    {
+      "rule": "R4",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "e1451373d381e8d9c5dd48f5d5263318e844eb2153d4446da1c6438c04e6af7c"
+    },
+    {
+      "rule": "R4",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "dfdb9d3b4c2241903a006d3dc94273fa47565a3310705dbd52649c705c0832c2"
+    },
+    {
+      "rule": "R4",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "fb4303eb094a1478658bef4093763549da6fc1e98896073479474e05dd9131bb"
+    },
+    {
+      "rule": "R4",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "d329b68866537b85181aef5b06283d14d488c18d0fc770f56d3006810e02af84"
+    },
+    {
+      "rule": "R4",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "6759bd83cfb7ac83b9f2179cf69ff8fe1b636fa6d1587a90607228d2dfa0ef2c"
+    },
+    {
+      "rule": "R4",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "3d31f9d73a34328572e5e4bb8a99541b0637cf4c255003c1d3f9dd2b3bb39f1b"
+    },
+    {
+      "rule": "R4",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "192edcbc5caeca8f8921fc14264ad596a33c1b400b38fe3a466a24b93247766b"
+    },
+    {
+      "rule": "R4",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "92c6dc8aec2ed7f2bcaa1caa61504edbd891e0b65cb4c4a710a16fa0eb8ba3d5"
+    },
+    {
+      "rule": "R5",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "69f30c57ea7d09944eccd362d4a95d5ba74edeff162000e715c21bb6f93ebd4d"
+    },
+    {
+      "rule": "R5",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "24667876597e1963ee0ba4657056b0d7dce533c2f851bda8e6e7e451914b561f"
+    },
+    {
+      "rule": "R5",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "e6a8cf794bc7788502a940f016e6307b8c1de7639a81d53a572807b9121b5e09"
+    },
+    {
+      "rule": "R5",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "65439a84ebf66e00b46ba57088b82c3461be7b38c5d6f1fb81fcb625291e5c0a"
+    },
+    {
+      "rule": "R5",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "388c6e4d29744f7f0dadee1ac7d0f0b6aa8c857095275171a5beb9f04a2068e7"
+    },
+    {
+      "rule": "R5",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "172416c74e90f59e869285ef2c8dcb42c5b39cf88d8e380e9912d02859c7ee30"
+    },
+    {
+      "rule": "R6",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "0b96459c29a84c38f499034cfbe93c63f1f38c3603326dfd0195a413055577b0"
+    },
+    {
+      "rule": "R6",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "d7224f5b7c2d44b1f933ddebea4b5cc00251812561a34ee99c2b945451eada3b"
+    },
+    {
+      "rule": "R7",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "e01247d4c6bed7b1a7f90a55aec7751a23cf29cf18f8eca38badc963d6841657"
+    },
+    {
+      "rule": "R8",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "3d4315f0ac68185cc6b0517c32f71bc46ff09f5f06e23fe649215f7ba1364b5e"
+    },
+    {
+      "rule": "R8",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "e40445a6f8f0d631065f4eac710540367a7ba00bbd0f373a4684c1a151c25a12"
+    },
+    {
+      "rule": "R8",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "7e369762d3e1ebb76ba8464ed1e525204e3054bea11774dd23e2ef5a43dcbf13"
+    },
+    {
+      "rule": "R8",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "b30b855fc62ba71bad7f0f02bf743e88ebf7191371cca6c307ef5648e663fd7b"
+    },
+    {
+      "rule": "R8",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "6d8a63c3311c375565ac832b8ff6a0f765bd0c008ba008b73490431b86d14782"
+    },
+    {
+      "rule": "R9",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "fbb86f62cb420b7060b1668a9c84d57e5dc7acf5904fa875fd4b3fd426185e59"
+    },
+    {
+      "rule": "R9",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "bd584dda41e3a8da4cfe3dbb98ae00a80cec6e1cfadd5c7eb587efc38bad9801"
+    },
+    {
+      "rule": "R9",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "50f53a41e3045a728278be2814776a49f0a313e2f33eaa76fd9bc20720b20f0d"
+    },
+    {
+      "rule": "R9",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "82b0439d920ac394e14cbf1c182b614d85b3613fe0afbabc0cf7d72b67dddb6e"
+    },
+    {
+      "rule": "R9",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "b7cf4833ff05534330364eb06041839710af04f137d8fca6c1643f9e3b7c5fb1"
+    },
+    {
+      "rule": "R10",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "7fbb8bafc667328966fe235fd4e85ba7ef59ac33e014a3d20319f979cc083eab"
+    },
+    {
+      "rule": "R11",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "f2707e85fd79d24aa178e4bd784e1d4f9b7f44b2e23961c166764f5361c5b572"
+    },
+    {
+      "rule": "R11",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "a55e705538c3bd597f57c1a2e007601292cd04e1774ccefaaffc205f452dc280"
+    },
+    {
+      "rule": "R11",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "5f880f038d7911415c91914e0e3144599527773ad7021e2f507d637ff841e8e5"
+    },
+    {
+      "rule": "R11",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "15e40065b45c7f17a0af1ff4b7a81aba5c904b32bbb1c58b64fa9450cd026cb6"
+    },
+    {
+      "rule": "R11",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "b00133cee9f6c6b088a267ccd213baf90b423a41b0f2322c00e5ab99125f9af8"
+    },
+    {
+      "rule": "R11",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "a31da0b14889e489ecaf2f64993018f9c7461e16e3ebd96cfe27bb7c7645a142"
+    },
+    {
+      "rule": "R12",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "3f5d43574221d61bb223e882ea2a8af40ded431d7ff3616ae68af26cb7d7dbb5"
+    },
+    {
+      "rule": "R13",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "b160235982e8bb1b482e91a61d31343ffe8e83c379d01e6976fbf360e57a2021"
+    },
+    {
+      "rule": "R14",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "bd07255438beb26601af317bafc644709265dbe666390e3bf39508bb1e7637e3"
+    },
+    {
+      "rule": "R15",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "b1d313e0c50eb93d8cded8770c6846c9f35595b86256bac18270335cf2becf65"
+    },
+    {
+      "rule": "R15",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "18dd21def624d01661a0a4a7a965726bad4e01bf33747d1efb5cfb680d218676"
+    },
+    {
+      "rule": "R15",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "410b6791b6fb3afd38c3434eac7c2c82a001d50dcbe8b176fc7a5b086315ccab"
+    },
+    {
+      "rule": "R15",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "422cae5a3eb51d6b8869959271896364ff02ead27fa8473bafba0c893cbbe7f6"
+    },
+    {
+      "rule": "R15",
+      "lessonId": "V3-LES-041222",
+      "ok": true,
+      "detailSha256": "6fd40ee030d824482fbdafd9a7b19e987b5f54f4f12e33477a1064e4ef9bf58d"
+    }
+  ],
+  "resultCount": 48,
+  "uniqueRuleCount": 15,
+  "ruleSet": "R1-R15",
+  "status": "PASS"
+}

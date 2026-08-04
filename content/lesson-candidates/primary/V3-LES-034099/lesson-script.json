@@ -1,0 +1,3626 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-034099",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "462e6f0f6ceeaf80e655d02320ac6d2915017f9068482f1dfdefa98d848560f6",
+  "payload": {
+    "lesson_id": "V3-LES-034099",
+    "grouping_id": "V3-CL-034099",
+    "ordered_kc_ids": [
+      "V3-KC-403927",
+      "V3-KC-096746",
+      "V3-KC-146592"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-403927",
+      "V3-KC-096746",
+      "V3-KC-146592"
+    ],
+    "throughline": "Follow fluid from blood to filtrate to urine, and label every movement by direction so nephron structure explains whole-body fluid, solute, pressure, pH, storage, and elimination effects.",
+    "nodes": [
+      {
+        "node_id": "MAP-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify the direction of one lumen-to-blood transport step. This low-stakes check also activates the hard prerequisite V3-EDG-653998. If compartment flow, duct relationships, or absorption control from V3-LES-252091 is not ready, use the exact noncredit handoff before continuing."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [
+          "MAP-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "MAP-CP-ENTRY",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: map cortex, medulla, glomerulus, Bowman’s capsule, proximal tubule, loop, distal tubule, collecting duct, ureter, bladder, and urethra to fluid flow. The prerequisite handoff points specifically to V3-LES-252091 and its KCs V3-KC-507981, V3-KC-519155, and V3-KC-200171; it is not replaced by invented prerequisite teaching here."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MAP-CP-ORIENTATION",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Blood reaches a glomerular capillary tuft in the renal cortex. Filtered fluid crosses into Bowman’s capsule; blood cells and most large proteins remain in the circulation.",
+          "Filtrate then passes through proximal tubule, loop of Henle, distal tubule, and collecting duct. Glomeruli and most proximal and distal tubule regions lie in the cortex, while loops and collecting ducts extend through the medulla.",
+          "Fluid that remains after nephron processing becomes urine and drains toward the ureter. The ureter carries urine to the bladder; the bladder stores it; the urethra carries it out."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MAP-CP-EXPLANATION",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: filter at the cortical cup, process along a cortex–medulla–cortex path, collect through the medulla, then convey, store, and eliminate."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MAP-CP-MODEL",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: a tracer has crossed from glomerular blood into Bowman’s space, so I now track tubular fluid—not blood. The next listed segment is proximal tubule, then loop, distal tubule, and collecting duct. Once it enters the ureter, I switch from nephron processing to urinary transport."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MAP-CP-THINK",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a molecule appears in Bowman’s capsule and later in the descending limb. It must have passed through the proximal tubule before entering the loop.",
+          "A second tracer is already in the ureter. It has left nephron processing and will reach the bladder before the urethra."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MAP-CP-WORKED",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: place each structure on the visible route and mark whether the fluid is blood, filtrate, or urine at that point."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [
+          "MAP-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "MAP-CP-GUIDED",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: use cortex-versus-medulla location to identify a fresh structure."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [
+          "MAP-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "MAP-CP-LIGHT",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: select the next structure in a new flow description."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [
+          "MAP-ACT-SOLO"
+        ],
+        "checkpoint_ref": "MAP-CP-SOLO",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: the ureter and urethra are not interchangeable. Ureters carry urine from kidneys to bladder; the urethra carries urine from bladder outward. Also, blood does not flow through the tubular sequence."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MAP-CP-CONTRAST",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: order a fresh set of nephron and urinary structures."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [
+          "MAP-ACT-NEAR"
+        ],
+        "checkpoint_ref": "MAP-CP-NEAR",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: infer a damaged structure from where a tracer first stops along the route."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [
+          "MAP-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "MAP-CP-CHANGED",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the sequence function: split the route into filtration cup, tubular processing, and urinary transport. Rebuild each section before joining them."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [
+          "MAP-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "MAP-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: order a different subset with no repeated option sequence."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [
+          "MAP-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "MAP-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the localization function: identify the last reached compartment and the first missing downstream compartment. The boundary between them localizes the disrupted structure."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [
+          "MAP-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "MAP-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: localize a different obstruction using a new tracer path."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [
+          "MAP-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "MAP-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MAP-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: glomerulus to Bowman’s capsule starts filtrate flow; proximal tubule, loop, distal tubule, and collecting duct process it; ureter, bladder, and urethra transport, store, and eliminate urine."
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MAP-CP-RECAP",
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: distinguish filtration from secretion. If the hard prerequisite’s compartment-flow model is not ready, the noncredit handoff to V3-LES-252091 remains available."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "URN-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "URN-CP-ENTRY",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: trace filtration, reabsorption, secretion, and countercurrent concentration through nephron regions. The lesson uses the exact prerequisite relation V3-EDG-653998 and does not invent a transporter or hormone catalog beyond packet scope."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "URN-CP-ORIENTATION",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Glomerular filtration moves water and small solutes from capillary blood into Bowman’s capsule. Cells and most large proteins remain in blood.",
+          "Reabsorption moves useful water and solutes from tubular fluid to peritubular capillary blood. Secretion moves selected substances from blood into tubular fluid. Excretion is what ultimately leaves as urine.",
+          "In the loop, the descending limb permits water loss, while the ascending limb removes salt but is relatively impermeable to water. This countercurrent arrangement builds a hyperosmotic medullary gradient that can draw water from collecting-duct fluid and concentrate urine."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "URN-CP-EXPLANATION",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: filter into the tube, reclaim out of the tube, secrete into the tube, then use a two-limb gradient to recover water before excretion."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "URN-CP-MODEL",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: if a solute moves from capillary to tubule after filtration, I label it secretion. For concentration, I look for opposite limb properties: water exits the descending limb; salt exits the ascending limb. Their countercurrent flow preserves the gradient."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "URN-CP-THINK",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: glucose is filtered into Bowman’s capsule and then moves from proximal tubular fluid back into capillary blood. The second movement is reabsorption.",
+          "As filtrate descends into a more concentrated medulla, water leaves. In the ascending limb, salt leaves without water, helping maintain the medullary gradient."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "URN-CP-WORKED",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: draw one arrow for blood-to-tubule or tubule-to-blood, then name the process."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "URN-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "URN-CP-GUIDED",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: use one limb property to predict whether tubular fluid becomes more dilute or concentrated."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "URN-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "URN-CP-LIGHT",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: infer the effect of disrupting one countercurrent step."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "URN-ACT-SOLO"
+        ],
+        "checkpoint_ref": "URN-CP-SOLO",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: filtration is not “all movement into a tubule.” It occurs at the glomerulus; later blood-to-tubule movement is secretion. The countercurrent multiplier is not simple passive equilibration because the two limbs have different transport properties."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "URN-CP-CONTRAST",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: classify filtration, reabsorption, and secretion in a fresh nephron scenario."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "URN-ACT-NEAR"
+        ],
+        "checkpoint_ref": "URN-CP-NEAR",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: infer how a lost ascending-limb salt gradient changes collecting-duct concentration."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "URN-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "URN-CP-CHANGED",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the transport-label function: name start and destination. Blood to Bowman’s space is filtration; tubule to blood is reabsorption; blood to tubule later is secretion."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "URN-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "URN-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: classify a different solute movement with new compartments."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "URN-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "URN-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the gradient function: the ascending limb establishes medullary salt concentration without following water. Weakening that step weakens the gradient available for downstream water recovery."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "URN-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "URN-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: predict urine concentration from a new descending-limb permeability disruption."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "URN-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "URN-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "URN-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: filtration starts tubular fluid, reabsorption returns selected material, secretion adds selected material, and countercurrent limb differences build the gradient used to conserve water."
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "URN-CP-RECAP",
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify one consequence of failed water recovery. The exact prerequisite handoff remains available for learners who cannot yet track lumen-to-blood absorption."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "HOM-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "HOM-CP-ENTRY",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: predict renal effects on blood pressure, osmoregulation, acid–base balance, nitrogenous waste removal, water and solute recovery, storage, and elimination. Clinical renal management is outside scope."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HOM-CP-ORIENTATION",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Reabsorbing water and ions helps maintain blood volume and osmolarity; water recovery can therefore support blood pressure. Reabsorbing filtered glucose and amino acids conserves useful molecules.",
+          "Secretion of acid and handling of bicarbonate contribute to acid–base balance. Keeping nitrogenous wastes in tubular fluid and excreting them removes those wastes from the body.",
+          "Urine passes through ureters to the bladder for storage. During elimination, sphincter coordination permits urine to pass through the urethra."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HOM-CP-EXPLANATION",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: what returns to blood supports volume and useful solutes; what stays in or enters the tubule is available for waste and acid removal; the urinary tract then conveys, stores, and releases the final fluid."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HOM-CP-MODEL",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: if water reabsorption falls, more water remains in urine and less returns to blood. I predict higher urine volume and lower support for blood volume. If acid secretion falls, I focus on acid–base balance rather than storage anatomy."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HOM-CP-THINK",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: impaired glucose reabsorption leaves more glucose in tubular fluid, so more glucose appears in urine and less is recovered to blood.",
+          "A ureter obstruction affects conveyance from kidney to bladder; it does not relabel glomerular filtration or proximal reabsorption."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HOM-CP-WORKED",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: mark whether the affected substance returns to blood or remains for excretion, then predict one blood and one urine consequence."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "HOM-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "HOM-CP-GUIDED",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: infer the homeostatic category from a fresh transport defect."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "HOM-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "HOM-CP-LIGHT",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: trace a fluid or acid–base change through renal handling."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "HOM-ACT-SOLO"
+        ],
+        "checkpoint_ref": "HOM-CP-SOLO",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: urine storage in the bladder does not itself form or concentrate urine. Sphincters regulate elimination flow, not glomerular filtration. A transport defect and a urinary outflow obstruction therefore have different first consequences."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HOM-CP-CONTRAST",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: predict a blood-and-urine consequence from altered renal recovery."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "HOM-ACT-NEAR"
+        ],
+        "checkpoint_ref": "HOM-CP-NEAR",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: distinguish a nephron homeostasis defect from a urinary storage or outflow defect using observed data."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "HOM-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "HOM-CP-CHANGED",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the consequence function: write two destinations—back to blood or onward to urine. A decrease in reabsorption shifts the substance toward urine and away from blood recovery."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "HOM-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "HOM-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: predict a new useful-solute recovery defect with no repeated substance or option structure."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "HOM-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "HOM-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the localization function: altered composition points to nephron processing; normal composition with failed conveyance, storage, or release points to ureter, bladder, urethra, or sphincter."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "HOM-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "HOM-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: localize a different elimination defect from a new observation."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "HOM-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "HOM-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "HOM-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: renal transport supports volume, osmolality, pH, nutrient recovery, and waste removal; ureters, bladder, urethra, and sphincters then convey, store, and release urine."
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HOM-CP-RECAP",
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "MAP-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-403927",
+        "item_binding_id": "MAP-ITEM-ENTRY",
+        "learner_operation": "CHECK_COMPARTMENT_TO_BLOOD_DIRECTION",
+        "authorized_next_node_ids": [
+          "MAP-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "MAP-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-403927",
+        "item_binding_id": "MAP-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_FIRST_FILTRATE_COMPARTMENT",
+        "authorized_next_node_ids": [
+          "MAP-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "MAP-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-403927",
+        "item_binding_id": "MAP-ITEM-LIGHT",
+        "learner_operation": "LOCALIZE_NEPHRON_REGION",
+        "authorized_next_node_ids": [
+          "MAP-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "MAP-ACT-SOLO",
+        "primary_kc_id": "V3-KC-403927",
+        "item_binding_id": "MAP-ITEM-SOLO",
+        "learner_operation": "ORDER_URINARY_TRANSPORT",
+        "authorized_next_node_ids": [
+          "MAP-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "MAP-ACT-NEAR",
+        "primary_kc_id": "V3-KC-403927",
+        "item_binding_id": "MAP-ITEM-NEAR",
+        "learner_operation": "SEQUENCE_NEPHRON_FLOW",
+        "authorized_next_node_ids": [
+          "MAP-NODE-CHANGED",
+          "MAP-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "MAP-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-403927",
+        "item_binding_id": "MAP-ITEM-CHANGED",
+        "learner_operation": "LOCALIZE_OBSTRUCTION_FROM_TRACER",
+        "authorized_next_node_ids": [
+          "MAP-NODE-RECAP",
+          "MAP-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "MAP-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-403927",
+        "item_binding_id": "MAP-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_NEPHRON_SEQUENCE",
+        "authorized_next_node_ids": [
+          "MAP-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "MAP-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-403927",
+        "item_binding_id": "MAP-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_NEPHRON_SEQUENCE",
+        "authorized_next_node_ids": [
+          "MAP-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "MAP-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-403927",
+        "item_binding_id": "MAP-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_TRACER_BOUNDARY_INFERENCE",
+        "authorized_next_node_ids": [
+          "MAP-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "MAP-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-403927",
+        "item_binding_id": "MAP-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_TRACER_LOCALIZATION",
+        "authorized_next_node_ids": [
+          "MAP-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "URN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-096746",
+        "item_binding_id": "URN-ITEM-ENTRY",
+        "learner_operation": "CLASSIFY_GLOMERULAR_FILTRATION",
+        "authorized_next_node_ids": [
+          "URN-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "URN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-096746",
+        "item_binding_id": "URN-ITEM-GUIDED",
+        "learner_operation": "CLASSIFY_REABSORPTION",
+        "authorized_next_node_ids": [
+          "URN-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "URN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-096746",
+        "item_binding_id": "URN-ITEM-LIGHT",
+        "learner_operation": "CLASSIFY_TUBULAR_SECRETION",
+        "authorized_next_node_ids": [
+          "URN-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "URN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-096746",
+        "item_binding_id": "URN-ITEM-SOLO",
+        "learner_operation": "IDENTIFY_COUNTERCURRENT_LIMB_PROPERTY",
+        "authorized_next_node_ids": [
+          "URN-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "URN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-096746",
+        "item_binding_id": "URN-ITEM-NEAR",
+        "learner_operation": "DISTINGUISH_RENAL_TRANSPORT_DIRECTIONS",
+        "authorized_next_node_ids": [
+          "URN-NODE-CHANGED",
+          "URN-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "URN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-096746",
+        "item_binding_id": "URN-ITEM-CHANGED",
+        "learner_operation": "PREDICT_GRADIENT_FROM_ASCENDING_LIMB_DEFECT",
+        "authorized_next_node_ids": [
+          "URN-NODE-RECAP",
+          "URN-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "URN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-096746",
+        "item_binding_id": "URN-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_TRANSPORT_DIRECTION_LABELS",
+        "authorized_next_node_ids": [
+          "URN-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "URN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-096746",
+        "item_binding_id": "URN-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_TRANSPORT_CLASSIFICATION",
+        "authorized_next_node_ids": [
+          "URN-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "URN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-096746",
+        "item_binding_id": "URN-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_COUNTERCURRENT_GRADIENT",
+        "authorized_next_node_ids": [
+          "URN-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "URN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-096746",
+        "item_binding_id": "URN-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_DESCENDING_LIMB_PERTURBATION",
+        "authorized_next_node_ids": [
+          "URN-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "HOM-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-146592",
+        "item_binding_id": "HOM-ITEM-ENTRY",
+        "learner_operation": "PREDICT_WATER_RECOVERY_EFFECT",
+        "authorized_next_node_ids": [
+          "HOM-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "HOM-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-146592",
+        "item_binding_id": "HOM-ITEM-GUIDED",
+        "learner_operation": "RELATE_REABSORPTION_TO_SOLUTE_RECOVERY",
+        "authorized_next_node_ids": [
+          "HOM-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "HOM-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-146592",
+        "item_binding_id": "HOM-ITEM-LIGHT",
+        "learner_operation": "RELATE_ACID_SECRETION_TO_HOMEOSTASIS",
+        "authorized_next_node_ids": [
+          "HOM-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "HOM-ACT-SOLO",
+        "primary_kc_id": "V3-KC-146592",
+        "item_binding_id": "HOM-ITEM-SOLO",
+        "learner_operation": "IDENTIFY_URINE_STORAGE",
+        "authorized_next_node_ids": [
+          "HOM-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "HOM-ACT-NEAR",
+        "primary_kc_id": "V3-KC-146592",
+        "item_binding_id": "HOM-ITEM-NEAR",
+        "learner_operation": "PREDICT_SOLUTE_RECOVERY_CONSEQUENCES",
+        "authorized_next_node_ids": [
+          "HOM-NODE-CHANGED",
+          "HOM-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "HOM-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-146592",
+        "item_binding_id": "HOM-ITEM-CHANGED",
+        "learner_operation": "LOCALIZE_STORAGE_VERSUS_OUTFLOW_DEFECT",
+        "authorized_next_node_ids": [
+          "HOM-NODE-RECAP",
+          "HOM-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "HOM-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-146592",
+        "item_binding_id": "HOM-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_DESTINATION_CONSEQUENCE",
+        "authorized_next_node_ids": [
+          "HOM-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "HOM-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-146592",
+        "item_binding_id": "HOM-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_HOMEOSTATIC_DESTINATION",
+        "authorized_next_node_ids": [
+          "HOM-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "HOM-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-146592",
+        "item_binding_id": "HOM-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_PROCESSING_VERSUS_OUTFLOW",
+        "authorized_next_node_ids": [
+          "HOM-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "HOM-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-146592",
+        "item_binding_id": "HOM-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_URINARY_DEFECT_LOCALIZATION",
+        "authorized_next_node_ids": [
+          "HOM-NODE-RECAP"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-403927",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-403927",
+        "scope_in_refs": [
+          "V3-KC-403927:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-403927:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "MAP-CLAIM-1",
+          "MAP-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-653998"
+        ],
+        "entry_check_boundary_id": "MAP-NODE-ENTRY",
+        "orientation_node_id": "MAP-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "MAP-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "MAP-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "MAP-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "MAP-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "MAP-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "MAP-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "MAP-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "MAP-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "MAP-NODE-NEAR",
+          "activity_ids": [
+            "MAP-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "MAP-NODE-CHANGED",
+          "activity_ids": [
+            "MAP-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "MAP-FEATURE-NEAR",
+          "MAP-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "MAP-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "MAP-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "MAP-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "MAP-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "MAP-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "MAP-ACT-REENTRY-NEAR",
+            "success_next_node_id": "MAP-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "MAP-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "MAP-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "MAP-NODE-RECAP",
+            "planner_handoff_node_id": "URN-NODE-ENTRY"
+          }
+        ],
+        "representation_ids": [
+          "MAP-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "MAP-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "MAP-NODE-ENTRY",
+            "MAP-NODE-RECAP"
+          ],
+          "standard": [
+            "MAP-NODE-ENTRY",
+            "MAP-NODE-ORIENTATION",
+            "MAP-NODE-EXPLANATION",
+            "MAP-NODE-MODEL",
+            "MAP-NODE-THINK",
+            "MAP-NODE-WORKED",
+            "MAP-NODE-GUIDED",
+            "MAP-NODE-LIGHT",
+            "MAP-NODE-SOLO",
+            "MAP-NODE-CONTRAST",
+            "MAP-NODE-NEAR",
+            "MAP-NODE-CHANGED",
+            "MAP-NODE-REPAIR-NEAR",
+            "MAP-NODE-REENTRY-NEAR",
+            "MAP-NODE-REPAIR-CHANGED",
+            "MAP-NODE-REENTRY-CHANGED",
+            "MAP-NODE-RECAP"
+          ],
+          "misconception": [
+            "MAP-NODE-ENTRY",
+            "MAP-NODE-CONTRAST",
+            "MAP-NODE-REPAIR-NEAR",
+            "MAP-NODE-REPAIR-CHANGED",
+            "MAP-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "MAP-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-096746",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-096746",
+        "scope_in_refs": [
+          "V3-KC-096746:SCOPE_IN:0",
+          "V3-KC-096746:SCOPE_IN:1",
+          "V3-KC-096746:SCOPE_IN:2",
+          "V3-KC-096746:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-096746:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "URN-CLAIM-1",
+          "URN-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-653998"
+        ],
+        "entry_check_boundary_id": "URN-NODE-ENTRY",
+        "orientation_node_id": "URN-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "URN-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "URN-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "URN-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "URN-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "URN-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "URN-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "URN-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "URN-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "URN-NODE-NEAR",
+          "activity_ids": [
+            "URN-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "URN-NODE-CHANGED",
+          "activity_ids": [
+            "URN-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "URN-FEATURE-NEAR",
+          "URN-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "URN-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "URN-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "URN-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "URN-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "URN-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "URN-ACT-REENTRY-NEAR",
+            "success_next_node_id": "URN-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "URN-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "URN-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "URN-NODE-RECAP",
+            "planner_handoff_node_id": "HOM-NODE-ENTRY"
+          }
+        ],
+        "representation_ids": [
+          "URN-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "URN-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "URN-NODE-ENTRY",
+            "URN-NODE-RECAP"
+          ],
+          "standard": [
+            "URN-NODE-ENTRY",
+            "URN-NODE-ORIENTATION",
+            "URN-NODE-EXPLANATION",
+            "URN-NODE-MODEL",
+            "URN-NODE-THINK",
+            "URN-NODE-WORKED",
+            "URN-NODE-GUIDED",
+            "URN-NODE-LIGHT",
+            "URN-NODE-SOLO",
+            "URN-NODE-CONTRAST",
+            "URN-NODE-NEAR",
+            "URN-NODE-CHANGED",
+            "URN-NODE-REPAIR-NEAR",
+            "URN-NODE-REENTRY-NEAR",
+            "URN-NODE-REPAIR-CHANGED",
+            "URN-NODE-REENTRY-CHANGED",
+            "URN-NODE-RECAP"
+          ],
+          "misconception": [
+            "URN-NODE-ENTRY",
+            "URN-NODE-CONTRAST",
+            "URN-NODE-REPAIR-NEAR",
+            "URN-NODE-REPAIR-CHANGED",
+            "URN-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "URN-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-146592",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-146592",
+        "scope_in_refs": [
+          "V3-KC-146592:SCOPE_IN:0",
+          "V3-KC-146592:SCOPE_IN:1",
+          "V3-KC-146592:SCOPE_IN:2",
+          "V3-KC-146592:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-146592:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "HOM-CLAIM-1",
+          "HOM-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-653998"
+        ],
+        "entry_check_boundary_id": "HOM-NODE-ENTRY",
+        "orientation_node_id": "HOM-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "HOM-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "HOM-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "HOM-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "HOM-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "HOM-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "HOM-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "HOM-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "HOM-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "HOM-NODE-NEAR",
+          "activity_ids": [
+            "HOM-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "HOM-NODE-CHANGED",
+          "activity_ids": [
+            "HOM-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "HOM-FEATURE-NEAR",
+          "HOM-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "HOM-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "HOM-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "HOM-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "HOM-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "HOM-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "HOM-ACT-REENTRY-NEAR",
+            "success_next_node_id": "HOM-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "HOM-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "HOM-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "HOM-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "HOM-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "HOM-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "HOM-NODE-ENTRY",
+            "HOM-NODE-RECAP"
+          ],
+          "standard": [
+            "HOM-NODE-ENTRY",
+            "HOM-NODE-ORIENTATION",
+            "HOM-NODE-EXPLANATION",
+            "HOM-NODE-MODEL",
+            "HOM-NODE-THINK",
+            "HOM-NODE-WORKED",
+            "HOM-NODE-GUIDED",
+            "HOM-NODE-LIGHT",
+            "HOM-NODE-SOLO",
+            "HOM-NODE-CONTRAST",
+            "HOM-NODE-NEAR",
+            "HOM-NODE-CHANGED",
+            "HOM-NODE-REPAIR-NEAR",
+            "HOM-NODE-REENTRY-NEAR",
+            "HOM-NODE-REPAIR-CHANGED",
+            "HOM-NODE-REENTRY-CHANGED",
+            "HOM-NODE-RECAP"
+          ],
+          "misconception": [
+            "HOM-NODE-ENTRY",
+            "HOM-NODE-CONTRAST",
+            "HOM-NODE-REPAIR-NEAR",
+            "HOM-NODE-REPAIR-CHANGED",
+            "HOM-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "HOM-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "MAP-ITEM-ENTRY",
+        "activity_id": "MAP-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "MAP-FAM-ENTRY",
+        "stimulus_lineage_id": "MAP-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MAP-REP-MAIN",
+        "learner_operation": "CHECK_COMPARTMENT_TO_BLOOD_DIRECTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MAP_ENTRY",
+        "answer_authority_ref": "protected-items.json#MAP-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#MAP-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MAP-PATH-ENTRY",
+        "decisive_cue_id": "MAP-CUE-ENTRY",
+        "distractor_lineage_id": "MAP-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "MAP-FEATURE-ENTRY-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-ENTRY-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "MAP-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "MAP-FAM-WORKED",
+        "stimulus_lineage_id": "MAP-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MAP-REP-MAIN",
+        "learner_operation": "FOLLOW_MAP_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:MAP-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MAP-PATH-WORKED",
+        "decisive_cue_id": "MAP-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "MAP-ITEM-GUIDED",
+        "activity_id": "MAP-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "MAP-FAM-GUIDED",
+        "stimulus_lineage_id": "MAP-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_RELATIONSHIP_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MAP-REP-MAIN",
+        "learner_operation": "IDENTIFY_FIRST_FILTRATE_COMPARTMENT",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MAP_GUIDED",
+        "answer_authority_ref": "protected-items.json#MAP-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#MAP-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MAP-PATH-GUIDED",
+        "decisive_cue_id": "MAP-CUE-GUIDED",
+        "distractor_lineage_id": "MAP-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "MAP-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-GUIDED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-GUIDED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "MAP-ITEM-LIGHT",
+        "activity_id": "MAP-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "MAP-FAM-LIGHT",
+        "stimulus_lineage_id": "MAP-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MAP-REP-MAIN",
+        "learner_operation": "LOCALIZE_NEPHRON_REGION",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MAP_LIGHT",
+        "answer_authority_ref": "protected-items.json#MAP-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#MAP-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MAP-PATH-LIGHT",
+        "decisive_cue_id": "MAP-CUE-LIGHT",
+        "distractor_lineage_id": "MAP-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "MAP-FEATURE-LIGHT-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-LIGHT-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "MAP-ITEM-SOLO",
+        "activity_id": "MAP-ACT-SOLO",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "MAP-FAM-SOLO",
+        "stimulus_lineage_id": "MAP-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MAP-REP-MAIN",
+        "learner_operation": "ORDER_URINARY_TRANSPORT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MAP_SOLO",
+        "answer_authority_ref": "protected-items.json#MAP-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#MAP-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MAP-PATH-SOLO",
+        "decisive_cue_id": "MAP-CUE-SOLO",
+        "distractor_lineage_id": "MAP-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "MAP-FEATURE-SOLO-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-SOLO-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "MAP-ITEM-NEAR",
+        "activity_id": "MAP-ACT-NEAR",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "MAP-FAM-NEAR",
+        "stimulus_lineage_id": "MAP-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MAP-REP-MAIN",
+        "learner_operation": "SEQUENCE_NEPHRON_FLOW",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MAP_NEAR",
+        "answer_authority_ref": "protected-items.json#MAP-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#MAP-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MAP-PATH-NEAR",
+        "decisive_cue_id": "MAP-CUE-NEAR",
+        "distractor_lineage_id": "MAP-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "MAP-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "MAP-ITEM-CHANGED",
+        "activity_id": "MAP-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "MAP-FAM-CHANGED",
+        "stimulus_lineage_id": "MAP-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MAP-REP-MAIN",
+        "learner_operation": "LOCALIZE_OBSTRUCTION_FROM_TRACER",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MAP_CHANGED",
+        "answer_authority_ref": "protected-items.json#MAP-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#MAP-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MAP-PATH-CHANGED",
+        "decisive_cue_id": "MAP-CUE-CHANGED",
+        "distractor_lineage_id": "MAP-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "MAP-FEATURE-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task orders named structures; the changed task uses a tracer boundary to localize a failed structure."
+      },
+      {
+        "item_binding_id": "MAP-ITEM-REPAIR-NEAR",
+        "activity_id": "MAP-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MAP-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "MAP-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MAP-REP-MAIN",
+        "learner_operation": "REBUILD_NEPHRON_SEQUENCE",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MAP_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#MAP-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#MAP-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MAP-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "MAP-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "MAP-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "MAP-FEATURE-REPAIR-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-REPAIR-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "MAP-ITEM-REENTRY-NEAR",
+        "activity_id": "MAP-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MAP-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "MAP-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MAP-REP-MAIN",
+        "learner_operation": "REENTER_NEPHRON_SEQUENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MAP_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#MAP-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#MAP-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MAP-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "MAP-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "MAP-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "MAP-FEATURE-REENTRY-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-REENTRY-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "MAP-ITEM-NEAR",
+          "stimulus_difference": "Fresh map kidney, nephron, and urinary structures context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "MAP-ITEM-REPAIR-CHANGED",
+        "activity_id": "MAP-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MAP-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "MAP-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MAP-REP-MAIN",
+        "learner_operation": "REBUILD_TRACER_BOUNDARY_INFERENCE",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MAP_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#MAP-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#MAP-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MAP-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "MAP-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "MAP-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "MAP-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-REPAIR-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-REPAIR-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "MAP-ITEM-REENTRY-CHANGED",
+        "activity_id": "MAP-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-403927",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MAP-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "MAP-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MAP-REP-MAIN",
+        "learner_operation": "REENTER_TRACER_LOCALIZATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MAP_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#MAP-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#MAP-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MAP-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "MAP-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "MAP-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "MAP-FEATURE-REENTRY-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-REENTRY-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "MAP-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task orders named structures; the changed task uses a tracer boundary to localize a failed structure.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "MAP-ITEM-CHANGED",
+          "stimulus_difference": "Fresh map kidney, nephron, and urinary structures context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "URN-ITEM-ENTRY",
+        "activity_id": "URN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "URN-FAM-ENTRY",
+        "stimulus_lineage_id": "URN-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "URN-REP-MAIN",
+        "learner_operation": "CLASSIFY_GLOMERULAR_FILTRATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "URN_ENTRY",
+        "answer_authority_ref": "protected-items.json#URN-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#URN-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "URN-PATH-ENTRY",
+        "decisive_cue_id": "URN-CUE-ENTRY",
+        "distractor_lineage_id": "URN-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "URN-FEATURE-ENTRY-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-ENTRY-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "URN-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "URN-FAM-WORKED",
+        "stimulus_lineage_id": "URN-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "URN-REP-MAIN",
+        "learner_operation": "FOLLOW_URN_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:URN-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "URN-PATH-WORKED",
+        "decisive_cue_id": "URN-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "URN-ITEM-GUIDED",
+        "activity_id": "URN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "URN-FAM-GUIDED",
+        "stimulus_lineage_id": "URN-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_RELATIONSHIP_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "URN-REP-MAIN",
+        "learner_operation": "CLASSIFY_REABSORPTION",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "URN_GUIDED",
+        "answer_authority_ref": "protected-items.json#URN-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#URN-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "URN-PATH-GUIDED",
+        "decisive_cue_id": "URN-CUE-GUIDED",
+        "distractor_lineage_id": "URN-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "URN-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-GUIDED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-GUIDED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "URN-ITEM-LIGHT",
+        "activity_id": "URN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "URN-FAM-LIGHT",
+        "stimulus_lineage_id": "URN-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "URN-REP-MAIN",
+        "learner_operation": "CLASSIFY_TUBULAR_SECRETION",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "URN_LIGHT",
+        "answer_authority_ref": "protected-items.json#URN-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#URN-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "URN-PATH-LIGHT",
+        "decisive_cue_id": "URN-CUE-LIGHT",
+        "distractor_lineage_id": "URN-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "URN-FEATURE-LIGHT-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-LIGHT-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "URN-ITEM-SOLO",
+        "activity_id": "URN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "URN-FAM-SOLO",
+        "stimulus_lineage_id": "URN-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "URN-REP-MAIN",
+        "learner_operation": "IDENTIFY_COUNTERCURRENT_LIMB_PROPERTY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "URN_SOLO",
+        "answer_authority_ref": "protected-items.json#URN-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#URN-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "URN-PATH-SOLO",
+        "decisive_cue_id": "URN-CUE-SOLO",
+        "distractor_lineage_id": "URN-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "URN-FEATURE-SOLO-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-SOLO-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "URN-ITEM-NEAR",
+        "activity_id": "URN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "URN-FAM-NEAR",
+        "stimulus_lineage_id": "URN-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "URN-REP-MAIN",
+        "learner_operation": "DISTINGUISH_RENAL_TRANSPORT_DIRECTIONS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "URN_NEAR",
+        "answer_authority_ref": "protected-items.json#URN-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#URN-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "URN-PATH-NEAR",
+        "decisive_cue_id": "URN-CUE-NEAR",
+        "distractor_lineage_id": "URN-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "URN-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "URN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "URN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "URN-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "URN-ITEM-CHANGED",
+        "activity_id": "URN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "URN-FAM-CHANGED",
+        "stimulus_lineage_id": "URN-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "URN-REP-MAIN",
+        "learner_operation": "PREDICT_GRADIENT_FROM_ASCENDING_LIMB_DEFECT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "URN_CHANGED",
+        "answer_authority_ref": "protected-items.json#URN-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#URN-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "URN-PATH-CHANGED",
+        "decisive_cue_id": "URN-CUE-CHANGED",
+        "distractor_lineage_id": "URN-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "URN-FEATURE-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task labels transport direction; the changed task interprets a segment-specific perturbation to predict a concentration consequence."
+      },
+      {
+        "item_binding_id": "URN-ITEM-REPAIR-NEAR",
+        "activity_id": "URN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "URN-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "URN-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "URN-REP-MAIN",
+        "learner_operation": "REBUILD_TRANSPORT_DIRECTION_LABELS",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "URN_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#URN-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#URN-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "URN-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "URN-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "URN-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "URN-FEATURE-REPAIR-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-REPAIR-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "URN-ITEM-REENTRY-NEAR",
+        "activity_id": "URN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "URN-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "URN-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "URN-REP-MAIN",
+        "learner_operation": "REENTER_TRANSPORT_CLASSIFICATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "URN_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#URN-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#URN-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "URN-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "URN-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "URN-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "URN-FEATURE-REENTRY-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "URN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "URN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-REENTRY-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "URN-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "URN-ITEM-NEAR",
+          "stimulus_difference": "Fresh explain urine formation and concentration context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "URN-ITEM-REPAIR-CHANGED",
+        "activity_id": "URN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "URN-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "URN-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "URN-REP-MAIN",
+        "learner_operation": "REBUILD_COUNTERCURRENT_GRADIENT",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "URN_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#URN-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#URN-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "URN-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "URN-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "URN-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "URN-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-REPAIR-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-REPAIR-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "URN-ITEM-REENTRY-CHANGED",
+        "activity_id": "URN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-096746",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "URN-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "URN-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "URN-REP-MAIN",
+        "learner_operation": "REENTER_DESCENDING_LIMB_PERTURBATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "URN_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#URN-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#URN-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "URN-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "URN-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "URN-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "URN-FEATURE-REENTRY-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "URN-FEATURE-REENTRY-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task labels transport direction; the changed task interprets a segment-specific perturbation to predict a concentration consequence.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "URN-ITEM-CHANGED",
+          "stimulus_difference": "Fresh explain urine formation and concentration context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "HOM-ITEM-ENTRY",
+        "activity_id": "HOM-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "HOM-FAM-ENTRY",
+        "stimulus_lineage_id": "HOM-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HOM-REP-MAIN",
+        "learner_operation": "PREDICT_WATER_RECOVERY_EFFECT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HOM_ENTRY",
+        "answer_authority_ref": "protected-items.json#HOM-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#HOM-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HOM-PATH-ENTRY",
+        "decisive_cue_id": "HOM-CUE-ENTRY",
+        "distractor_lineage_id": "HOM-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "HOM-FEATURE-ENTRY-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-ENTRY-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "HOM-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "HOM-FAM-WORKED",
+        "stimulus_lineage_id": "HOM-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HOM-REP-MAIN",
+        "learner_operation": "FOLLOW_HOM_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:HOM-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HOM-PATH-WORKED",
+        "decisive_cue_id": "HOM-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "HOM-ITEM-GUIDED",
+        "activity_id": "HOM-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "HOM-FAM-GUIDED",
+        "stimulus_lineage_id": "HOM-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_RELATIONSHIP_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HOM-REP-MAIN",
+        "learner_operation": "RELATE_REABSORPTION_TO_SOLUTE_RECOVERY",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HOM_GUIDED",
+        "answer_authority_ref": "protected-items.json#HOM-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#HOM-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HOM-PATH-GUIDED",
+        "decisive_cue_id": "HOM-CUE-GUIDED",
+        "distractor_lineage_id": "HOM-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "HOM-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-GUIDED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-GUIDED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "HOM-ITEM-LIGHT",
+        "activity_id": "HOM-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "HOM-FAM-LIGHT",
+        "stimulus_lineage_id": "HOM-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HOM-REP-MAIN",
+        "learner_operation": "RELATE_ACID_SECRETION_TO_HOMEOSTASIS",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HOM_LIGHT",
+        "answer_authority_ref": "protected-items.json#HOM-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#HOM-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HOM-PATH-LIGHT",
+        "decisive_cue_id": "HOM-CUE-LIGHT",
+        "distractor_lineage_id": "HOM-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "HOM-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-LIGHT-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-LIGHT-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "HOM-ITEM-SOLO",
+        "activity_id": "HOM-ACT-SOLO",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "HOM-FAM-SOLO",
+        "stimulus_lineage_id": "HOM-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HOM-REP-MAIN",
+        "learner_operation": "IDENTIFY_URINE_STORAGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HOM_SOLO",
+        "answer_authority_ref": "protected-items.json#HOM-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#HOM-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HOM-PATH-SOLO",
+        "decisive_cue_id": "HOM-CUE-SOLO",
+        "distractor_lineage_id": "HOM-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "HOM-FEATURE-SOLO-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-SOLO-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "HOM-ITEM-NEAR",
+        "activity_id": "HOM-ACT-NEAR",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "HOM-FAM-NEAR",
+        "stimulus_lineage_id": "HOM-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HOM-REP-MAIN",
+        "learner_operation": "PREDICT_SOLUTE_RECOVERY_CONSEQUENCES",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HOM_NEAR",
+        "answer_authority_ref": "protected-items.json#HOM-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#HOM-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HOM-PATH-NEAR",
+        "decisive_cue_id": "HOM-CUE-NEAR",
+        "distractor_lineage_id": "HOM-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "HOM-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "HOM-ITEM-CHANGED",
+        "activity_id": "HOM-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "HOM-FAM-CHANGED",
+        "stimulus_lineage_id": "HOM-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HOM-REP-MAIN",
+        "learner_operation": "LOCALIZE_STORAGE_VERSUS_OUTFLOW_DEFECT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HOM_CHANGED",
+        "answer_authority_ref": "protected-items.json#HOM-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#HOM-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HOM-PATH-CHANGED",
+        "decisive_cue_id": "HOM-CUE-CHANGED",
+        "distractor_lineage_id": "HOM-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "HOM-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "section_application"
+        ],
+        "changed_dimension_detail": "The near task predicts a homeostatic consequence; the changed task uses composition and flow data to localize nephron versus urinary-tract dysfunction."
+      },
+      {
+        "item_binding_id": "HOM-ITEM-REPAIR-NEAR",
+        "activity_id": "HOM-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HOM-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "HOM-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HOM-REP-MAIN",
+        "learner_operation": "REBUILD_DESTINATION_CONSEQUENCE",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HOM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#HOM-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#HOM-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HOM-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "HOM-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "HOM-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "HOM-FEATURE-REPAIR-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-REPAIR-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "HOM-ITEM-REENTRY-NEAR",
+        "activity_id": "HOM-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HOM-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "HOM-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HOM-REP-MAIN",
+        "learner_operation": "REENTER_HOMEOSTATIC_DESTINATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HOM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#HOM-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#HOM-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HOM-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "HOM-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "HOM-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "HOM-FEATURE-REENTRY-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-REENTRY-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "HOM-ITEM-NEAR",
+          "stimulus_difference": "Fresh predict renal homeostatic effects context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "HOM-ITEM-REPAIR-CHANGED",
+        "activity_id": "HOM-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HOM-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "HOM-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HOM-REP-MAIN",
+        "learner_operation": "REBUILD_PROCESSING_VERSUS_OUTFLOW",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HOM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#HOM-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#HOM-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HOM-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "HOM-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "HOM-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "HOM-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-REPAIR-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-REPAIR-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "HOM-ITEM-REENTRY-CHANGED",
+        "activity_id": "HOM-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-146592",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HOM-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "HOM-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HOM-REP-MAIN",
+        "learner_operation": "REENTER_URINARY_DEFECT_LOCALIZATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HOM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#HOM-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#HOM-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HOM-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "HOM-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "HOM-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "HOM-FEATURE-REENTRY-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "HOM-FEATURE-REENTRY-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "section_application"
+        ],
+        "changed_dimension_detail": "The near task predicts a homeostatic consequence; the changed task uses composition and flow data to localize nephron versus urinary-tract dysfunction.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "HOM-ITEM-CHANGED",
+          "stimulus_difference": "Fresh predict renal homeostatic effects context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "PREREQUISITE-HANDOFF-1",
+        "from_activity_id": "MAP-ACT-ENTRY",
+        "trigger": "PREREQUISITE_CHECK_NOT_READY_OR_ABSTAINED",
+        "destination_lesson_id": "V3-LES-252091",
+        "destination_kc_ids": [
+          "V3-KC-507981",
+          "V3-KC-519155",
+          "V3-KC-200171"
+        ],
+        "prerequisite_relation_id": "V3-EDG-653998",
+        "credit_policy": "NONCREDIT_HANDOFF",
+        "return_policy": "RETURN_TO_CURRENT_LESSON_ENTRY_AFTER_PREREQUISITE"
+      }
+    ],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-502257",
+        "host_kc_id": "V3-KC-146592",
+        "relation_id": "R14-CAP-502257",
+        "credits_kc_evidence": false,
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-CAP-720072",
+        "host_kc_id": "V3-KC-096746",
+        "relation_id": "R14-CAP-720072",
+        "credits_kc_evidence": true,
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-CAP-720072",
+        "host_kc_id": "V3-KC-146592",
+        "relation_id": "R14-CAP-720072",
+        "credits_kc_evidence": true,
+        "required_delivery": true
+      }
+    ]
+  }
+}

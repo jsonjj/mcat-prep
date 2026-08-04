@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Exit misses may release one bounded function-specific repair and one fresh re-entry.",
+  "items": [
+    {
+      "prompt_key": "DIG_ENTRY",
+      "title": "Starting check: follow the route",
+      "prompt": "Which sequence follows ingested material through the alimentary canal without reversing two adjacent compartments?",
+      "response_type": "single_select",
+      "options": [
+        "Mouth → stomach → esophagus → small intestine → large intestine",
+        "Mouth → esophagus → stomach → small intestine → large intestine",
+        "Mouth → esophagus → small intestine → stomach → large intestine",
+        "Mouth → stomach → small intestine → esophagus → large intestine"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIG_GUIDED",
+      "title": "Guided practice: combine the clues",
+      "prompt": "A compartment stores a meal, mixes it with muscular contractions, maintains a strongly acidic lumen, and begins substantial protein digestion. Which compartment is described?",
+      "response_type": "single_select",
+      "options": [
+        "Large intestine",
+        "Esophagus",
+        "Small intestine",
+        "Stomach"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIG_LIGHT",
+      "title": "Less help: protect the stomach wall",
+      "prompt": "Which local feature most directly limits self-injury while the stomach lumen remains strongly acidic?",
+      "response_type": "single_select",
+      "options": [
+        "A mucus-and-bicarbonate barrier at the epithelium",
+        "A permanently neutral stomach lumen",
+        "A villus network that exports absorbed lipids",
+        "A rectal sphincter that delays elimination"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIG_SOLO",
+      "title": "On your own: classify the movement",
+      "prompt": "A ring of smooth muscle contracts behind a bolus while the segment ahead relaxes. What is the primary immediate function of this pattern?",
+      "response_type": "single_select",
+      "options": [
+        "Neutralize acid entering the small intestine",
+        "Hydrolyze peptide bonds in the bolus",
+        "Propel luminal contents along the tract",
+        "Absorb monosaccharides into capillaries"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIG_NEAR",
+      "title": "Near exit: locate the processing site",
+      "prompt": "Acidic chyme enters a highly folded compartment where bicarbonate raises pH, enzymes continue digestion, and most nutrient absorption occurs. Which compartment is it?",
+      "response_type": "single_select",
+      "options": [
+        "Stomach",
+        "Small intestine",
+        "Large intestine",
+        "Rectum"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIG_CHANGED",
+      "title": "Changed-task exit: isolate a motility defect",
+      "prompt": "A drug selectively suppresses coordinated smooth-muscle waves in the small intestine but leaves bicarbonate and digestive-enzyme secretion intact. Which change should occur first?",
+      "response_type": "single_select",
+      "options": [
+        "Protein hydrolysis stops because all enzymes disappear",
+        "The gastric mucus barrier immediately dissolves",
+        "Bile can no longer emulsify lipids chemically",
+        "Propulsion and mixing of intestinal contents slow"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIG_REPAIR_NEAR",
+      "title": "Repair: match every clue",
+      "prompt": "A downstream compartment recovers water from remaining material and supports a dense microbial community. Which compartment fits both clues?",
+      "response_type": "single_select",
+      "options": [
+        "Large intestine",
+        "Stomach",
+        "Esophagus",
+        "Rectum"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIG_REENTRY_NEAR",
+      "title": "Fresh re-entry: locate final storage",
+      "prompt": "After most water has been recovered, material is held temporarily immediately before defecation. Which compartment performs this storage role?",
+      "response_type": "single_select",
+      "options": [
+        "Small intestine",
+        "Large intestine",
+        "Rectum",
+        "Stomach"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIG_REPAIR_CHANGED",
+      "title": "Repair: hold secretions constant",
+      "prompt": "If esophageal peristaltic waves fail while swallowing and gastric secretion remain intact, which direct consequence is most likely?",
+      "response_type": "single_select",
+      "options": [
+        "Small-intestinal villi lose surface area",
+        "Bolus transport toward the stomach slows",
+        "The liver stops producing bile",
+        "The large intestine can no longer host flora"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: predict a new movement loss",
+      "prompt": "Stomach acid and protein-digesting enzymes remain normal, but gastric muscular churning is selectively lost. Which outcome is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "The esophagus reverses the route of a swallowed bolus",
+        "All chemical protein digestion becomes impossible",
+        "Rectal storage ends immediately",
+        "Mechanical mixing of the meal with gastric secretions decreases"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ACC_ENTRY",
+      "title": "Starting check: find the bile source",
+      "prompt": "Which organ produces bile before that secretion is stored or delivered to the small intestine?",
+      "response_type": "single_select",
+      "options": [
+        "Gallbladder",
+        "Pancreas",
+        "Liver",
+        "Large intestine"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ACC_GUIDED",
+      "title": "Guided practice: store the secretion",
+      "prompt": "Between meals, which structure stores and concentrates liver-produced bile for later release?",
+      "response_type": "single_select",
+      "options": [
+        "Gallbladder",
+        "Pancreatic islet",
+        "Stomach lumen",
+        "Hepatic portal vein"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ACC_LIGHT",
+      "title": "Less help: classify bile action",
+      "prompt": "What is the most direct digestive action of bile after it reaches the small intestine?",
+      "response_type": "single_select",
+      "options": [
+        "Hydrolyze peptide bonds into amino acids",
+        "Convert glucose directly into glycogen in muscle",
+        "Neutralize every acid molecule by enzymatic cleavage",
+        "Disperse large lipid droplets into smaller droplets"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ACC_SOLO",
+      "title": "On your own: choose the pancreatic route",
+      "prompt": "A pancreatic product travels through a duct and acts in the small-intestinal lumen. Which product best fits that route?",
+      "response_type": "single_select",
+      "options": [
+        "Insulin regulating glucose uptake in muscle",
+        "A digestive protease precursor released toward the intestine",
+        "Glucagon signaling the liver through circulation",
+        "A liver enzyme retained inside a hepatocyte"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ACC_NEAR",
+      "title": "Near exit: trace the bile chain",
+      "prompt": "Which chain correctly connects bile production, storage, destination, and immediate digestive action?",
+      "response_type": "single_select",
+      "options": [
+        "Gallbladder production → liver storage → stomach delivery → protein hydrolysis",
+        "Pancreas production → liver storage → blood delivery → glucose uptake",
+        "Liver production → gallbladder storage → small-intestinal delivery → lipid emulsification",
+        "Liver production → pancreatic storage → colon delivery → peptide cleavage"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ACC_CHANGED",
+      "title": "Changed-task exit: separate pancreatic routes",
+      "prompt": "A stone blocks the pancreatic duct, but endocrine pancreatic cells remain viable and well supplied with blood. Which paired outcome is most likely first?",
+      "response_type": "single_select",
+      "options": [
+        "Fewer digestive enzymes reach the intestine while hormone release to blood can remain",
+        "Insulin cannot enter blood while intestinal enzyme delivery remains normal",
+        "Bile production stops while pancreatic bicarbonate delivery increases",
+        "Liver detoxification stops while gallbladder storage becomes endocrine"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ACC_REPAIR_NEAR",
+      "title": "Repair: rebuild the bile chain",
+      "prompt": "Which statement assigns bile production and storage to the correct two structures?",
+      "response_type": "single_select",
+      "options": [
+        "The gallbladder produces bile, and the liver stores it",
+        "The pancreas produces bile, and the stomach stores it",
+        "The small intestine produces bile, and the colon stores it",
+        "The liver produces bile, and the gallbladder stores it"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ACC_REENTRY_NEAR",
+      "title": "Fresh re-entry: reason without a reservoir",
+      "prompt": "After gallbladder removal, the liver and bile ducts remain functional. Which statement is most accurate?",
+      "response_type": "single_select",
+      "options": [
+        "Bile production ends because the storage organ was removed",
+        "Bile still reaches the intestine, but gallbladder storage is lost",
+        "Pancreatic islets begin producing replacement bile",
+        "The large intestine becomes the new bile reservoir"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ACC_REPAIR_CHANGED",
+      "title": "Repair: identify the route",
+      "prompt": "Which pancreatic output normally enters blood rather than a duct leading to the small intestine?",
+      "response_type": "single_select",
+      "options": [
+        "A protease precursor",
+        "Bicarbonate-rich pancreatic fluid",
+        "Insulin",
+        "A lipid-digesting pancreatic enzyme"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ACC_REENTRY_CHANGED",
+      "title": "Fresh re-entry: move the defect to endocrine cells",
+      "prompt": "Pancreatic beta cells are selectively damaged, but acinar cells and the pancreatic duct remain functional. Which paired effect is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Insulin regulation declines while digestive-enzyme delivery can remain",
+        "Bile synthesis declines while intestinal water absorption remains",
+        "Digestive enzymes disappear while insulin secretion remains normal",
+        "Gallbladder storage ends while glucagon becomes a duct enzyme"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ABS_ENTRY",
+      "title": "Starting check: enlarge the interface",
+      "prompt": "Which structural feature most directly increases small-intestinal absorptive surface without requiring a longer tube?",
+      "response_type": "single_select",
+      "options": [
+        "A thicker serosal layer around the intestine",
+        "A single smooth epithelial sheet without projections",
+        "A wider rectal storage chamber",
+        "Villi and microvilli projecting toward the lumen"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ABS_GUIDED",
+      "title": "Guided practice: adjust the pH",
+      "prompt": "Acidic chyme enters the duodenum from the stomach. Which immediate change best supports the activity of many intestinal and pancreatic enzymes?",
+      "response_type": "single_select",
+      "options": [
+        "Add more gastric acid to keep the lumen strongly acidic",
+        "Deliver bicarbonate to raise the luminal pH",
+        "Remove all water from the intestinal lumen",
+        "Close every pancreatic and biliary duct"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ABS_LIGHT",
+      "title": "Less help: locate the enzyme",
+      "prompt": "An enzyme is anchored to the apical membrane of a small-intestinal epithelial cell and acts on a nutrient immediately before uptake. Where does it act?",
+      "response_type": "single_select",
+      "options": [
+        "Inside the gallbladder reservoir",
+        "Within the large-intestinal microbial community",
+        "At the brush border facing the intestinal lumen",
+        "Inside a pancreatic endocrine cell before blood release"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ABS_SOLO",
+      "title": "On your own: follow the remaining water",
+      "prompt": "After most nutrients have been absorbed, which downstream compartment recovers additional water and supports abundant microbial flora?",
+      "response_type": "single_select",
+      "options": [
+        "Large intestine",
+        "Esophagus",
+        "Stomach",
+        "Pancreatic duct"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ABS_NEAR",
+      "title": "Near exit: change the villus surface",
+      "prompt": "A treatment flattens small-intestinal villi but leaves nutrient digestion and luminal concentration unchanged. Which direct effect is most likely?",
+      "response_type": "single_select",
+      "options": [
+        "Bile production by the liver immediately stops",
+        "Gastric churning becomes the main absorption route",
+        "Rectal storage capacity increases enough to restore uptake",
+        "The rate of nutrient absorption across the epithelium decreases"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ABS_CHANGED",
+      "title": "Changed-task exit: isolate local control",
+      "prompt": "A toxin blocks a local enteric sensory-to-motor circuit in one intestinal segment. Circulating digestive hormones and their receptors remain functional. Which effect is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "All endocrine signaling to every digestive organ stops",
+        "Local coordination of motility and secretion is impaired in that segment",
+        "Villi instantly disappear from the entire small intestine",
+        "The liver can no longer transform any absorbed compound"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ABS_REPAIR_NEAR",
+      "title": "Repair: hold the other variables constant",
+      "prompt": "Two intestinal segments receive the same nutrient concentration and blood flow. Segment A has twice the functional epithelial surface area of segment B. What should increase most directly in A?",
+      "response_type": "single_select",
+      "options": [
+        "The acidity of gastric juice upstream",
+        "The number of rectal storage events",
+        "The potential rate of nutrient absorption",
+        "The need for every pancreatic enzyme to enter blood"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ABS_REENTRY_NEAR",
+      "title": "Fresh re-entry: change microvilli",
+      "prompt": "A mutation shortens epithelial microvilli while leaving villus number, digestion, and perfusion unchanged. Which outcome is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Lower absorptive capacity from reduced apical surface area",
+        "Higher absorption because a smoother surface always mixes faster",
+        "Complete loss of large-intestinal flora",
+        "Immediate overproduction of bile by the gallbladder"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ABS_REPAIR_CHANGED",
+      "title": "Repair: identify the controller route",
+      "prompt": "Which observation most specifically indicates endocrine rather than local enteric control of a digestive target?",
+      "response_type": "single_select",
+      "options": [
+        "Stretch activates nearby sensory neurons and a short local motor loop",
+        "A bolus is propelled by contraction behind it and relaxation ahead",
+        "A brush-border enzyme acts beside the epithelial membrane",
+        "A messenger travels in blood and binds receptors on the pancreas"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ABS_REENTRY_CHANGED",
+      "title": "Fresh re-entry: move the defect to a hormone target",
+      "prompt": "A gallbladder loses receptors for a circulating digestive hormone, but its local enteric innervation remains intact. Which effect is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Every local intestinal reflex disappears",
+        "Hormone-triggered gallbladder contraction is reduced",
+        "Villus surface area doubles throughout the intestine",
+        "The pancreas becomes unable to release any enzyme through its duct"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    }
+  ]
+}

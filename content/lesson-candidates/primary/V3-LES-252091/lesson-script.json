@@ -1,0 +1,3414 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-252091",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "18b9da6cd38767cd24c512812bc705142c3b98bfcc10bd326afd722f68a8ca23",
+  "payload": {
+    "lesson_id": "V3-LES-252091",
+    "grouping_id": "V3-CL-252091",
+    "ordered_kc_ids": [
+      "V3-KC-507981",
+      "V3-KC-519155",
+      "V3-KC-200171"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-507981",
+      "V3-KC-519155",
+      "V3-KC-200171"
+    ],
+    "throughline": "Follow material, secretions, and signals by asking where each process occurs, what moves or transforms the contents, and what reaches blood, lymph, or the exterior.",
+    "curriculum_context": {
+      "canonical_title": "Digest and absorb nutrients",
+      "placements": {
+        "phase_ids": [
+          "V3-PHS-462809",
+          "V3-PHS-608354"
+        ],
+        "module_ids": [
+          "V3-MOD-184936",
+          "V3-MOD-907235"
+        ],
+        "pathway_positions": [
+          {
+            "pathway_id": "V3-PTH-581402",
+            "position": 94,
+            "relation_ids": [
+              "R14-PL-581402-094"
+            ]
+          },
+          {
+            "pathway_id": "V3-PTH-904137",
+            "position": 94,
+            "relation_ids": [
+              "R14-PL-904137-094"
+            ]
+          },
+          {
+            "pathway_id": "V3-PTH-236815",
+            "position": 35,
+            "relation_ids": [
+              "R14-PL-236815-035"
+            ]
+          }
+        ],
+        "first_delivery_relation_id": "R14-FD-252091",
+        "revisit_relation_ids": [
+          "R14-RV-252091"
+        ]
+      },
+      "hard_prerequisites": [],
+      "required_attachments": [
+        {
+          "attachment_id": "V3-CAP-720072",
+          "attachment_type": "CAPSTONE",
+          "owner_lesson_id": "V3-LES-034099",
+          "host_scope": {
+            "kind": "SECONDARY_APPLICATION",
+            "primary_lesson_id": "V3-LES-034099"
+          },
+          "declared_host_core_ids": [
+            "V3-KC-991418",
+            "V3-KC-175515",
+            "V3-KC-507981",
+            "V3-KC-519155",
+            "V3-KC-200171",
+            "V3-KC-096746",
+            "V3-KC-146592"
+          ],
+          "host_core_membership_status": "RESOLVED",
+          "credits_kc_evidence": false,
+          "relation_ids": [
+            "R14-CAP-720072"
+          ],
+          "relation_class": "CAPSTONE_PLACEMENT",
+          "relation_direction": "LESSON_TO_ATTACHMENT",
+          "required_delivery": true
+        }
+      ],
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ],
+      "ratified_policy_version": "2.0.0"
+    },
+    "nodes": [
+      {
+        "node_id": "DIG-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: choose the route that keeps the alimentary compartments in anatomical order. This is low stakes; the full route is taught next."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [
+          "DIG-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "DIG-CP-ENTRY",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Purpose: by the end of this cycle, you will be able to locate a digestive event and predict what changes when a compartment, secretion, or movement is disrupted."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DIG-CP-ORIENTATION",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "The mouth fragments food and mixes it with saliva. The esophagus uses peristaltic waves to propel the bolus. The stomach stores and churns its contents; acid supports protein digestion, while a mucus-and-bicarbonate barrier limits acid injury to the stomach wall.",
+          "The small intestine receives neutralizing bicarbonate, bile, and digestive enzymes, completes most chemical digestion, and absorbs most nutrients. The large intestine recovers additional water and houses microbial flora. The rectum stores fecal material before elimination."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DIG-CP-EXPLANATION",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — route, local job, mechanism: first locate the material, then classify the event as movement, secretion, digestion, protection, absorption, or elimination."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DIG-CP-MODEL",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: a sample is acidic, mixed by muscular contractions, and contains active protein-digesting enzyme. I select the stomach because all three clues converge there; the esophagus transports but does not create that acidic digestive compartment."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DIG-CP-THINK",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked trace: after swallowing, peristalsis moves a bolus through the esophagus. The stomach stores, acidifies, and churns it. In the small intestine, acid is neutralized and digestion continues before nutrients cross the epithelium. Remaining material enters the large intestine for water recovery and then the rectum for storage before elimination.",
+          "Selection check: do not treat every muscular event as digestion. Peristalsis primarily changes location; churning also mixes contents with secretions."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DIG-CP-WORKED",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the supplied pH, movement, and enzyme clues to identify one compartment. Attend to the combination of clues rather than one familiar word."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [
+          "DIG-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "DIG-CP-GUIDED",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: identify the protective mechanism that lets a strongly acidic stomach lumen coexist with living epithelial tissue."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [
+          "DIG-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "DIG-CP-LIGHT",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: distinguish propulsion by peristalsis from chemical digestion by a secretion."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [
+          "DIG-ACT-SOLO"
+        ],
+        "checkpoint_ref": "DIG-CP-SOLO",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: a secretion can change chemical conditions without moving contents, while a muscular contraction can move or mix contents without cleaving a nutrient. Location alone does not make those functions interchangeable."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DIG-CP-CONTRAST",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: identify a fresh compartment from its position in the route and its combined processing roles."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [
+          "DIG-ACT-NEAR"
+        ],
+        "checkpoint_ref": "DIG-CP-NEAR",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: reason from a selective motility perturbation to the first digestive process expected to decline while secretions remain intact."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [
+          "DIG-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "DIG-CP-CHANGED",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the route-function match: locate the clue on the mouth-to-rectum route, then require every stated function to fit the same compartment."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [
+          "DIG-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "DIG-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: match a different downstream storage-and-elimination clue to the correct compartment. No prior item or answer is reused."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [
+          "DIG-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "DIG-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the perturbation function: hold secretions constant, remove only the named muscular movement, and predict the consequence that follows directly from lost movement."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [
+          "DIG-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "DIG-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: apply that same selective-perturbation reasoning to a different compartment and a different movement."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [
+          "DIG-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "DIG-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap from memory: say the route in order, then name one movement, one secretion or condition, one protective feature, one absorption site, and the final storage site."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DIG-CP-RECAP",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "DIG-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Each failed exit function receives one targeted cue and one fresh re-entry. If that fresh check remains unresolved, control returns for later support without awarding exit success."
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DIG-CP-HANDOFF",
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: separate the organ that makes bile from the organ that stores and concentrates it. The complete accessory-organ map follows."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [
+          "ACC-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "ACC-CP-ENTRY",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Purpose: you will be able to trace an accessory-organ product to the gut or blood and predict which function changes when one route is selectively disrupted."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ACC-CP-ORIENTATION",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "The liver lies mainly in the upper right abdomen. It produces bile, processes absorbed nutrients, stores and releases fuel such as glycogen, and transforms many compounds during detoxification. The gallbladder beneath the liver stores and concentrates bile and releases it toward the small intestine.",
+          "Bile disperses large lipid droplets into smaller droplets; it is not a bond-cleaving digestive enzyme. The exocrine pancreas sends bicarbonate and digestive enzymes through ducts to the small intestine. Endocrine pancreatic cells release hormones such as insulin and glucagon into blood to regulate blood glucose."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ACC-CP-EXPLANATION",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — product, route, target: liver-made bile and pancreatic digestive secretions travel through ducts to the intestine; pancreatic hormones travel through blood to distant target tissues."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ACC-CP-MODEL",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: a pancreatic product appears in a duct and acts in the intestinal lumen, so I classify it as exocrine. A pancreatic product measured in blood that changes glucose storage is endocrine; the transport route rules out the alternative."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ACC-CP-THINK",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked case: after a fatty meal, the liver has already produced bile. The gallbladder contracts and delivers stored bile to the small intestine, where bile emulsifies lipids. Pancreatic enzymes then gain more accessible lipid-water interface for digestion.",
+          "A separate blood-glucose rise recruits endocrine pancreatic signaling, not the pancreatic duct. Keep those two routes distinct even though both begin in the pancreas."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ACC-CP-WORKED",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: identify the organ that stores liver-made bile before release into the small intestine."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [
+          "ACC-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "ACC-CP-GUIDED",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: distinguish physical emulsification by bile from enzymatic hydrolysis of nutrient bonds."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [
+          "ACC-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "ACC-CP-LIGHT",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: send a pancreatic product through the correct route—duct to gut or blood to distant targets."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [
+          "ACC-ACT-SOLO"
+        ],
+        "checkpoint_ref": "ACC-CP-SOLO",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: bile is produced by liver, stored by gallbladder, and acts in the intestine. Pancreatic enzymes are exocrine; insulin and glucagon are endocrine. Do not assign all four actions to one organ or one transport route."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ACC-CP-CONTRAST",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: trace bile source, storage, delivery, and immediate action in one coherent chain."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [
+          "ACC-ACT-NEAR"
+        ],
+        "checkpoint_ref": "ACC-CP-NEAR",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: use a selective duct obstruction to separate exocrine pancreatic loss from preserved endocrine release."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [
+          "ACC-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "ACC-CP-CHANGED",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the bile chain: ask four questions in order—made where, stored where, released where, does what."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [
+          "ACC-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "ACC-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: reason about bile delivery after loss of storage, using a new situation rather than the original item."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [
+          "ACC-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "ACC-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the pancreatic route distinction: duct and intestinal lumen indicate exocrine action; blood and systemic glucose regulation indicate endocrine action."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [
+          "ACC-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "ACC-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: apply the same route distinction to an endocrine-cell defect while the duct remains open."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [
+          "ACC-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "ACC-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap from memory: state one liver metabolic role, the bile production-storage-action chain, one pancreatic duct product, and one pancreatic blood-borne function."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ACC-CP-RECAP",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ACC-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "The near and changed functions each receive one targeted cue and one untouched re-entry. Persistent uncertainty returns control without converting repair completion into exit success."
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ACC-CP-HANDOFF",
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify the structural change that increases absorptive area without changing the intestine’s length. Full absorption and control mechanisms follow."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [
+          "ABS-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "ABS-CP-ENTRY",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Purpose: you will be able to explain an absorption result from intestinal structure and distinguish a local enteric-control defect from a blood-borne endocrine signaling defect."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ABS-CP-ORIENTATION",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Folds, villi, and microvilli enlarge small-intestinal surface area. A thin epithelial barrier places digested nutrients near blood capillaries and lymphatic vessels. Pancreatic enzymes act in the lumen, and brush-border enzymes complete selected reactions at the epithelial surface; bicarbonate helps neutralize gastric acid.",
+          "The small intestine absorbs most nutrients and substantial water. The large intestine recovers additional water and supports microbial flora. Enteric neural circuits coordinate local motility and secretion, while digestive hormones travel in blood to targets such as pancreas, gallbladder, stomach, or intestine."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ABS-CP-EXPLANATION",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — surface, route, controller: first identify what crosses the epithelium and by which vascular route; then decide whether the regulating message is a local neural signal or a circulating hormone."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ABS-CP-MODEL",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: flattened villi reduce surface area while lumen chemistry remains normal. I predict lower nutrient absorption because the exchange interface shrinks; I do not blame pancreatic enzyme production, which the observation preserves."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ABS-CP-THINK",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked case: acidic chyme enters the small intestine and is neutralized. Luminal and brush-border enzymes generate absorbable products. Villi and microvilli provide a large epithelial interface, with many water-soluble products entering capillary blood and many packaged lipids entering lymph before reaching blood.",
+          "Control check: a local distension-triggered contraction can be coordinated by enteric circuits, whereas a hormone released into blood can alter secretion at a distant digestive target."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ABS-CP-WORKED",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the incoming acidic chyme clue to identify the chemical adjustment needed before many intestinal enzymes work effectively."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [
+          "ABS-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "ABS-CP-GUIDED",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: distinguish an enzyme acting in the lumen from one positioned at the brush border."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [
+          "ABS-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "ABS-CP-LIGHT",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: connect large-intestinal water recovery and flora to the downstream material that remains after most nutrient absorption."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [
+          "ABS-ACT-SOLO"
+        ],
+        "checkpoint_ref": "ABS-CP-SOLO",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: villi increase exchange area but do not themselves secrete every digestive enzyme. Enteric neurons act locally but are not circulating hormones; endocrine signals travel in blood but do not replace all local neural coordination."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ABS-CP-CONTRAST",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: infer the absorption consequence of a fresh structural change to villi while digestion in the lumen remains intact."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [
+          "ABS-ACT-NEAR"
+        ],
+        "checkpoint_ref": "ABS-CP-NEAR",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: use preserved hormone responses and a blocked local neural circuit to isolate the control function that fails first."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [
+          "ABS-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "ABS-CP-CHANGED",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the structure-function relation: hold concentration and digestion constant, change only epithelial surface area, and predict the direction of absorption rate."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [
+          "ABS-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "ABS-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: apply that surface-area relation to a different microscopic structure without reusing the exposed villus item."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [
+          "ABS-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "ABS-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the controller distinction: local sensory-motor loops indicate enteric control; a message carried in blood to a named target indicates endocrine control."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [
+          "ABS-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "ABS-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: apply that distinction to a receptor defect at a hormone target while local enteric circuits remain intact."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [
+          "ABS-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "ABS-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap from memory: explain one surface-area feature, one neutralization or enzyme site, one water-handling difference, and one contrast between enteric and endocrine control."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ABS-CP-RECAP",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      },
+      {
+        "node_id": "ABS-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair is limited to one structure-function cue or one controller-route cue followed by one untouched item. A second miss returns control without claiming the exit was met."
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ABS-CP-HANDOFF",
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "DIG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-507981",
+        "item_binding_id": "DIG-ITEM-ENTRY",
+        "learner_operation": "ORDER_DIGESTIVE_COMPARTMENTS",
+        "authorized_next_node_ids": [
+          "DIG-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "DIG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-507981",
+        "item_binding_id": "DIG-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_COMPARTMENT_FROM_MULTIPLE_CLUES",
+        "authorized_next_node_ids": [
+          "DIG-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "DIG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-507981",
+        "item_binding_id": "DIG-ITEM-LIGHT",
+        "learner_operation": "SELECT_GASTRIC_PROTECTIVE_FEATURE",
+        "authorized_next_node_ids": [
+          "DIG-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "DIG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-507981",
+        "item_binding_id": "DIG-ITEM-SOLO",
+        "learner_operation": "CLASSIFY_PERISTALTIC_FUNCTION",
+        "authorized_next_node_ids": [
+          "DIG-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "DIG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-507981",
+        "item_binding_id": "DIG-ITEM-NEAR",
+        "learner_operation": "MATCH_ROUTE_LOCATION_TO_PROCESS_SET",
+        "authorized_next_node_ids": [
+          "DIG-NODE-CHANGED",
+          "DIG-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "DIG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-507981",
+        "item_binding_id": "DIG-ITEM-CHANGED",
+        "learner_operation": "PREDICT_SELECTIVE_MOTILITY_PERTURBATION",
+        "authorized_next_node_ids": [
+          "DIG-NODE-RECAP",
+          "DIG-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "DIG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-507981",
+        "item_binding_id": "DIG-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_ROUTE_FUNCTION_MATCH",
+        "authorized_next_node_ids": [
+          "DIG-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "DIG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-507981",
+        "item_binding_id": "DIG-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_ROUTE_FUNCTION_MATCH",
+        "authorized_next_node_ids": [
+          "DIG-NODE-CHANGED",
+          "DIG-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "DIG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-507981",
+        "item_binding_id": "DIG-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_MOTILITY_PERTURBATION_REASONING",
+        "authorized_next_node_ids": [
+          "DIG-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "DIG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-507981",
+        "item_binding_id": "DIG-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_MOTILITY_PERTURBATION_REASONING",
+        "authorized_next_node_ids": [
+          "DIG-NODE-RECAP",
+          "DIG-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ACC-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-519155",
+        "item_binding_id": "ACC-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_BILE_SOURCE",
+        "authorized_next_node_ids": [
+          "ACC-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "ACC-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-519155",
+        "item_binding_id": "ACC-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_BILE_STORAGE_SITE",
+        "authorized_next_node_ids": [
+          "ACC-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "ACC-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-519155",
+        "item_binding_id": "ACC-ITEM-LIGHT",
+        "learner_operation": "CLASSIFY_BILE_ACTION",
+        "authorized_next_node_ids": [
+          "ACC-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "ACC-ACT-SOLO",
+        "primary_kc_id": "V3-KC-519155",
+        "item_binding_id": "ACC-ITEM-SOLO",
+        "learner_operation": "DISTINGUISH_PANCREATIC_TRANSPORT_ROUTE",
+        "authorized_next_node_ids": [
+          "ACC-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "ACC-ACT-NEAR",
+        "primary_kc_id": "V3-KC-519155",
+        "item_binding_id": "ACC-ITEM-NEAR",
+        "learner_operation": "TRACE_BILE_SOURCE_STORAGE_ACTION",
+        "authorized_next_node_ids": [
+          "ACC-NODE-CHANGED",
+          "ACC-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ACC-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-519155",
+        "item_binding_id": "ACC-ITEM-CHANGED",
+        "learner_operation": "PREDICT_DUCT_BLOCK_WITH_ENDOCRINE_PRESERVATION",
+        "authorized_next_node_ids": [
+          "ACC-NODE-RECAP",
+          "ACC-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ACC-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-519155",
+        "item_binding_id": "ACC-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_BILE_SOURCE_STORAGE",
+        "authorized_next_node_ids": [
+          "ACC-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ACC-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-519155",
+        "item_binding_id": "ACC-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_BILE_SOURCE_STORAGE_ACTION",
+        "authorized_next_node_ids": [
+          "ACC-NODE-CHANGED",
+          "ACC-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ACC-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-519155",
+        "item_binding_id": "ACC-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_EXOCRINE_ENDOCRINE_ROUTE",
+        "authorized_next_node_ids": [
+          "ACC-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ACC-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-519155",
+        "item_binding_id": "ACC-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_EXOCRINE_ENDOCRINE_PERTURBATION",
+        "authorized_next_node_ids": [
+          "ACC-NODE-RECAP",
+          "ACC-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ABS-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-200171",
+        "item_binding_id": "ABS-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_ABSORPTIVE_SURFACE_FEATURE",
+        "authorized_next_node_ids": [
+          "ABS-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "ABS-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-200171",
+        "item_binding_id": "ABS-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_INTESTINAL_NEUTRALIZATION",
+        "authorized_next_node_ids": [
+          "ABS-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "ABS-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-200171",
+        "item_binding_id": "ABS-ITEM-LIGHT",
+        "learner_operation": "LOCATE_BRUSH_BORDER_ENZYME_SITE",
+        "authorized_next_node_ids": [
+          "ABS-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "ABS-ACT-SOLO",
+        "primary_kc_id": "V3-KC-200171",
+        "item_binding_id": "ABS-ITEM-SOLO",
+        "learner_operation": "RELATE_COLON_WATER_AND_FLORA",
+        "authorized_next_node_ids": [
+          "ABS-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "ABS-ACT-NEAR",
+        "primary_kc_id": "V3-KC-200171",
+        "item_binding_id": "ABS-ITEM-NEAR",
+        "learner_operation": "PREDICT_VILLUS_SURFACE_CHANGE",
+        "authorized_next_node_ids": [
+          "ABS-NODE-CHANGED",
+          "ABS-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ABS-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-200171",
+        "item_binding_id": "ABS-ITEM-CHANGED",
+        "learner_operation": "PREDICT_ENTERIC_CIRCUIT_BLOCK",
+        "authorized_next_node_ids": [
+          "ABS-NODE-RECAP",
+          "ABS-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ABS-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-200171",
+        "item_binding_id": "ABS-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_SURFACE_AREA_ABSORPTION_RELATION",
+        "authorized_next_node_ids": [
+          "ABS-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ABS-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-200171",
+        "item_binding_id": "ABS-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_SURFACE_AREA_ABSORPTION_RELATION",
+        "authorized_next_node_ids": [
+          "ABS-NODE-CHANGED",
+          "ABS-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ABS-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-200171",
+        "item_binding_id": "ABS-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_ENTERIC_ENDOCRINE_DISTINCTION",
+        "authorized_next_node_ids": [
+          "ABS-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ABS-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-200171",
+        "item_binding_id": "ABS-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_CONTROL_ROUTE_PERTURBATION",
+        "authorized_next_node_ids": [
+          "ABS-NODE-RECAP",
+          "ABS-NODE-HANDOFF"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-507981",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-507981",
+        "scope_in_refs": [
+          "V3-KC-507981:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-507981:SCOPE_OUT:0",
+          "V3-KC-507981:SCOPE_OUT:1"
+        ],
+        "source_claim_refs": [
+          "DIG-CLAIM-ROUTE",
+          "DIG-CLAIM-PROCESS"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "DIG-NODE-ENTRY",
+        "orientation_node_id": "DIG-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "DIG-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "DIG-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "DIG-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "DIG-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "DIG-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "DIG-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "DIG-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "DIG-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "DIG-NODE-NEAR",
+          "activity_ids": [
+            "DIG-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "DIG-NODE-CHANGED",
+          "activity_ids": [
+            "DIG-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "DIG-FEATURE-ROUTE-FUNCTION",
+          "DIG-FEATURE-MOTILITY-CONSEQUENCE"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "DIG-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "DIG-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "DIG-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "DIG-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "DIG-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "DIG-ACT-REENTRY-NEAR",
+            "success_next_node_id": "DIG-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "DIG-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "DIG-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "DIG-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "DIG-REP-ROUTE-PROCESS"
+        ],
+        "accessibility_equivalent_ids": [
+          "DIG-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "DIG-NODE-ENTRY",
+            "DIG-NODE-RECAP"
+          ],
+          "standard": [
+            "DIG-NODE-ENTRY",
+            "DIG-NODE-ORIENTATION",
+            "DIG-NODE-EXPLANATION",
+            "DIG-NODE-MODEL",
+            "DIG-NODE-THINK",
+            "DIG-NODE-WORKED",
+            "DIG-NODE-GUIDED",
+            "DIG-NODE-LIGHT",
+            "DIG-NODE-SOLO",
+            "DIG-NODE-CONTRAST",
+            "DIG-NODE-NEAR",
+            "DIG-NODE-CHANGED",
+            "DIG-NODE-REPAIR-NEAR",
+            "DIG-NODE-REENTRY-NEAR",
+            "DIG-NODE-REPAIR-CHANGED",
+            "DIG-NODE-REENTRY-CHANGED",
+            "DIG-NODE-RECAP",
+            "DIG-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "DIG-NODE-ENTRY",
+            "DIG-NODE-CONTRAST",
+            "DIG-NODE-REPAIR-NEAR",
+            "DIG-NODE-REPAIR-CHANGED",
+            "DIG-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "DIG-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-519155",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-519155",
+        "scope_in_refs": [
+          "V3-KC-519155:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-519155:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "ACC-CLAIM-BILE",
+          "ACC-CLAIM-PANCREAS"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "ACC-NODE-ENTRY",
+        "orientation_node_id": "ACC-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "ACC-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "ACC-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "ACC-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "ACC-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "ACC-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "ACC-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "ACC-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "ACC-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "ACC-NODE-NEAR",
+          "activity_ids": [
+            "ACC-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "ACC-NODE-CHANGED",
+          "activity_ids": [
+            "ACC-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "ACC-FEATURE-BILE-SOURCE-STORAGE-ACTION",
+          "ACC-FEATURE-EXOCRINE-ENDOCRINE-ROUTE"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ACC-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "ACC-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ACC-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "ACC-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ACC-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "ACC-ACT-REENTRY-NEAR",
+            "success_next_node_id": "ACC-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ACC-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "ACC-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "ACC-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "ACC-REP-ORGAN-DUCT-BLOOD"
+        ],
+        "accessibility_equivalent_ids": [
+          "ACC-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "ACC-NODE-ENTRY",
+            "ACC-NODE-RECAP"
+          ],
+          "standard": [
+            "ACC-NODE-ENTRY",
+            "ACC-NODE-ORIENTATION",
+            "ACC-NODE-EXPLANATION",
+            "ACC-NODE-MODEL",
+            "ACC-NODE-THINK",
+            "ACC-NODE-WORKED",
+            "ACC-NODE-GUIDED",
+            "ACC-NODE-LIGHT",
+            "ACC-NODE-SOLO",
+            "ACC-NODE-CONTRAST",
+            "ACC-NODE-NEAR",
+            "ACC-NODE-CHANGED",
+            "ACC-NODE-REPAIR-NEAR",
+            "ACC-NODE-REENTRY-NEAR",
+            "ACC-NODE-REPAIR-CHANGED",
+            "ACC-NODE-REENTRY-CHANGED",
+            "ACC-NODE-RECAP",
+            "ACC-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "ACC-NODE-ENTRY",
+            "ACC-NODE-CONTRAST",
+            "ACC-NODE-REPAIR-NEAR",
+            "ACC-NODE-REPAIR-CHANGED",
+            "ACC-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "ACC-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-200171",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-200171",
+        "scope_in_refs": [
+          "V3-KC-200171:SCOPE_IN:0",
+          "V3-KC-200171:SCOPE_IN:1",
+          "V3-KC-200171:SCOPE_IN:2",
+          "V3-KC-200171:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-200171:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "ABS-CLAIM-ABSORPTION",
+          "ABS-CLAIM-CONTROL"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "ABS-NODE-ENTRY",
+        "orientation_node_id": "ABS-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "ABS-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "ABS-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "ABS-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "ABS-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "ABS-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "ABS-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "ABS-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "ABS-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "ABS-NODE-NEAR",
+          "activity_ids": [
+            "ABS-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "ABS-NODE-CHANGED",
+          "activity_ids": [
+            "ABS-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "ABS-FEATURE-VILLUS-ABSORPTION",
+          "ABS-FEATURE-ENTERIC-ENDOCRINE-CONTROL"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ABS-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "ABS-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ABS-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "ABS-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ABS-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "ABS-ACT-REENTRY-NEAR",
+            "success_next_node_id": "ABS-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ABS-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "ABS-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "ABS-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "ABS-REP-VILLUS-CONTROL"
+        ],
+        "accessibility_equivalent_ids": [
+          "ABS-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "ABS-NODE-ENTRY",
+            "ABS-NODE-RECAP"
+          ],
+          "standard": [
+            "ABS-NODE-ENTRY",
+            "ABS-NODE-ORIENTATION",
+            "ABS-NODE-EXPLANATION",
+            "ABS-NODE-MODEL",
+            "ABS-NODE-THINK",
+            "ABS-NODE-WORKED",
+            "ABS-NODE-GUIDED",
+            "ABS-NODE-LIGHT",
+            "ABS-NODE-SOLO",
+            "ABS-NODE-CONTRAST",
+            "ABS-NODE-NEAR",
+            "ABS-NODE-CHANGED",
+            "ABS-NODE-REPAIR-NEAR",
+            "ABS-NODE-REENTRY-NEAR",
+            "ABS-NODE-REPAIR-CHANGED",
+            "ABS-NODE-REENTRY-CHANGED",
+            "ABS-NODE-RECAP",
+            "ABS-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "ABS-NODE-ENTRY",
+            "ABS-NODE-CONTRAST",
+            "ABS-NODE-REPAIR-NEAR",
+            "ABS-NODE-REPAIR-CHANGED",
+            "ABS-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "ABS-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "DIG-ITEM-ENTRY",
+        "activity_id": "DIG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "DIG-FAMILY-ENTRY",
+        "stimulus_lineage_id": "DIG-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "DIG-REP-ROUTE-PROCESS",
+        "changed_dimensions": [],
+        "learner_operation": "ORDER_DIGESTIVE_COMPARTMENTS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "DIG_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#DIG-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#DIG-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DIG-SOLUTION-ENTRY",
+        "decisive_cue_id": "DIG-CUE-ENTRY",
+        "distractor_lineage_id": "DIG-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "DIG-ITEM-GUIDED",
+        "activity_id": "DIG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "DIG-FAMILY-GUIDED",
+        "stimulus_lineage_id": "DIG-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "DIG-REP-ROUTE-PROCESS",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_COMPARTMENT_FROM_MULTIPLE_CLUES",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "DIG_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#DIG-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#DIG-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DIG-SOLUTION-GUIDED",
+        "decisive_cue_id": "DIG-CUE-GUIDED",
+        "distractor_lineage_id": "DIG-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "DIG-ITEM-LIGHT",
+        "activity_id": "DIG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "DIG-FAMILY-LIGHT",
+        "stimulus_lineage_id": "DIG-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_PROCESS_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "DIG-REP-ROUTE-PROCESS",
+        "changed_dimensions": [],
+        "learner_operation": "SELECT_GASTRIC_PROTECTIVE_FEATURE",
+        "hint_policy": "BRIEF_PROCESS_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "DIG_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#DIG-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#DIG-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DIG-SOLUTION-LIGHT",
+        "decisive_cue_id": "DIG-CUE-LIGHT",
+        "distractor_lineage_id": "DIG-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "DIG-ITEM-SOLO",
+        "activity_id": "DIG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "DIG-FAMILY-SOLO",
+        "stimulus_lineage_id": "DIG-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "DIG-REP-ROUTE-PROCESS",
+        "changed_dimensions": [],
+        "learner_operation": "CLASSIFY_PERISTALTIC_FUNCTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "DIG_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#DIG-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#DIG-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DIG-SOLUTION-SOLO",
+        "decisive_cue_id": "DIG-CUE-SOLO",
+        "distractor_lineage_id": "DIG-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "DIG-ITEM-NEAR",
+        "activity_id": "DIG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "DIG-FAMILY-NEAR",
+        "stimulus_lineage_id": "DIG-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "DIG-REP-ROUTE-PROCESS",
+        "changed_dimensions": [],
+        "learner_operation": "MATCH_ROUTE_LOCATION_TO_PROCESS_SET",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "DIG_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#DIG-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#DIG-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DIG-SOLUTION-NEAR",
+        "decisive_cue_id": "DIG-CUE-NEAR",
+        "distractor_lineage_id": "DIG-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "DIG-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DIG-FEATURE-ROUTE-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "DIG-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DIG-FEATURE-ROUTE-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "DIG-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DIG-FEATURE-ROUTE-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "DIG-ITEM-CHANGED",
+        "activity_id": "DIG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "DIG-FAMILY-CHANGED",
+        "stimulus_lineage_id": "DIG-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "DIG-REP-ROUTE-PROCESS",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "learner_operation": "PREDICT_SELECTIVE_MOTILITY_PERTURBATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "DIG_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#DIG-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#DIG-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DIG-SOLUTION-CHANGED",
+        "decisive_cue_id": "DIG-CUE-CHANGED",
+        "distractor_lineage_id": "DIG-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "DIG-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DIG-FEATURE-MOTILITY-CONSEQUENCE"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "DIG-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DIG-FEATURE-MOTILITY-CONSEQUENCE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "DIG-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DIG-FEATURE-MOTILITY-CONSEQUENCE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "DIG-ITEM-REPAIR-NEAR",
+        "activity_id": "DIG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "DIG-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "DIG-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "DIG-REP-ROUTE-PROCESS",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_ROUTE_FUNCTION_MATCH",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "DIG_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#DIG-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#DIG-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DIG-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "DIG-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "DIG-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "DIG-ITEM-REENTRY-NEAR",
+        "activity_id": "DIG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "DIG-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "DIG-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "DIG-REP-ROUTE-PROCESS",
+        "changed_dimensions": [],
+        "learner_operation": "REENTER_ROUTE_FUNCTION_MATCH",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "DIG_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#DIG-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#DIG-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DIG-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "DIG-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "DIG-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "DIG-ITEM-REPAIR-CHANGED",
+        "activity_id": "DIG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "DIG-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "DIG-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "DIG-REP-ROUTE-PROCESS",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_MOTILITY_PERTURBATION_REASONING",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "DIG_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#DIG-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#DIG-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DIG-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "DIG-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "DIG-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "DIG-ITEM-REENTRY-CHANGED",
+        "activity_id": "DIG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "DIG-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "DIG-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "DIG-REP-ROUTE-PROCESS",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "learner_operation": "REENTER_MOTILITY_PERTURBATION_REASONING",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "DIG_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#DIG-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#DIG-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DIG-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "DIG-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "DIG-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "DIG-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-507981",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "DIG-FAMILY-WORKED",
+        "stimulus_lineage_id": "DIG-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "DIG-REP-ROUTE-PROCESS",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_AND_CAUSAL_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:DIG-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DIG-SOLUTION-WORKED",
+        "decisive_cue_id": "DIG-CUE-WORKED",
+        "distractor_lineage_id": "DIG-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "ACC-ITEM-ENTRY",
+        "activity_id": "ACC-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "ACC-FAMILY-ENTRY",
+        "stimulus_lineage_id": "ACC-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "ACC-REP-ORGAN-DUCT-BLOOD",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_BILE_SOURCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ACC_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#ACC-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#ACC-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ACC-SOLUTION-ENTRY",
+        "decisive_cue_id": "ACC-CUE-ENTRY",
+        "distractor_lineage_id": "ACC-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "ACC-ITEM-GUIDED",
+        "activity_id": "ACC-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "ACC-FAMILY-GUIDED",
+        "stimulus_lineage_id": "ACC-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ACC-REP-ORGAN-DUCT-BLOOD",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_BILE_STORAGE_SITE",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ACC_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#ACC-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#ACC-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ACC-SOLUTION-GUIDED",
+        "decisive_cue_id": "ACC-CUE-GUIDED",
+        "distractor_lineage_id": "ACC-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "ACC-ITEM-LIGHT",
+        "activity_id": "ACC-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "ACC-FAMILY-LIGHT",
+        "stimulus_lineage_id": "ACC-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_PROCESS_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ACC-REP-ORGAN-DUCT-BLOOD",
+        "changed_dimensions": [],
+        "learner_operation": "CLASSIFY_BILE_ACTION",
+        "hint_policy": "BRIEF_PROCESS_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ACC_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#ACC-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#ACC-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ACC-SOLUTION-LIGHT",
+        "decisive_cue_id": "ACC-CUE-LIGHT",
+        "distractor_lineage_id": "ACC-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "ACC-ITEM-SOLO",
+        "activity_id": "ACC-ACT-SOLO",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "ACC-FAMILY-SOLO",
+        "stimulus_lineage_id": "ACC-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ACC-REP-ORGAN-DUCT-BLOOD",
+        "changed_dimensions": [],
+        "learner_operation": "DISTINGUISH_PANCREATIC_TRANSPORT_ROUTE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ACC_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#ACC-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#ACC-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ACC-SOLUTION-SOLO",
+        "decisive_cue_id": "ACC-CUE-SOLO",
+        "distractor_lineage_id": "ACC-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "ACC-ITEM-NEAR",
+        "activity_id": "ACC-ACT-NEAR",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "ACC-FAMILY-NEAR",
+        "stimulus_lineage_id": "ACC-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "ACC-REP-ORGAN-DUCT-BLOOD",
+        "changed_dimensions": [],
+        "learner_operation": "TRACE_BILE_SOURCE_STORAGE_ACTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ACC_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ACC-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ACC-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ACC-SOLUTION-NEAR",
+        "decisive_cue_id": "ACC-CUE-NEAR",
+        "distractor_lineage_id": "ACC-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "ACC-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ACC-FEATURE-BILE-SOURCE-STORAGE-ACTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ACC-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ACC-FEATURE-BILE-SOURCE-STORAGE-ACTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "ACC-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ACC-FEATURE-BILE-SOURCE-STORAGE-ACTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ACC-ITEM-CHANGED",
+        "activity_id": "ACC-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "ACC-FAMILY-CHANGED",
+        "stimulus_lineage_id": "ACC-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "ACC-REP-ORGAN-DUCT-BLOOD",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "learner_operation": "PREDICT_DUCT_BLOCK_WITH_ENDOCRINE_PRESERVATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ACC_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ACC-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ACC-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ACC-SOLUTION-CHANGED",
+        "decisive_cue_id": "ACC-CUE-CHANGED",
+        "distractor_lineage_id": "ACC-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ACC-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ACC-FEATURE-EXOCRINE-ENDOCRINE-ROUTE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ACC-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ACC-FEATURE-EXOCRINE-ENDOCRINE-ROUTE"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "ACC-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ACC-FEATURE-EXOCRINE-ENDOCRINE-ROUTE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ACC-ITEM-REPAIR-NEAR",
+        "activity_id": "ACC-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ACC-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "ACC-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ACC-REP-ORGAN-DUCT-BLOOD",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_BILE_SOURCE_STORAGE",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ACC_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ACC-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ACC-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ACC-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "ACC-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "ACC-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "ACC-ITEM-REENTRY-NEAR",
+        "activity_id": "ACC-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ACC-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "ACC-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ACC-REP-ORGAN-DUCT-BLOOD",
+        "changed_dimensions": [],
+        "learner_operation": "REENTER_BILE_SOURCE_STORAGE_ACTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ACC_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ACC-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ACC-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ACC-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "ACC-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "ACC-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "ACC-ITEM-REPAIR-CHANGED",
+        "activity_id": "ACC-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ACC-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "ACC-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ACC-REP-ORGAN-DUCT-BLOOD",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_EXOCRINE_ENDOCRINE_ROUTE",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ACC_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ACC-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ACC-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ACC-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "ACC-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "ACC-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "ACC-ITEM-REENTRY-CHANGED",
+        "activity_id": "ACC-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ACC-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "ACC-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ACC-REP-ORGAN-DUCT-BLOOD",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "learner_operation": "REENTER_EXOCRINE_ENDOCRINE_PERTURBATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ACC_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ACC-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ACC-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ACC-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "ACC-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "ACC-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "ACC-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-519155",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "ACC-FAMILY-WORKED",
+        "stimulus_lineage_id": "ACC-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ACC-REP-ORGAN-DUCT-BLOOD",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_AND_CAUSAL_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:ACC-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ACC-SOLUTION-WORKED",
+        "decisive_cue_id": "ACC-CUE-WORKED",
+        "distractor_lineage_id": "ACC-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "ABS-ITEM-ENTRY",
+        "activity_id": "ABS-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "ABS-FAMILY-ENTRY",
+        "stimulus_lineage_id": "ABS-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "ABS-REP-VILLUS-CONTROL",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_ABSORPTIVE_SURFACE_FEATURE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ABS_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#ABS-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#ABS-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ABS-SOLUTION-ENTRY",
+        "decisive_cue_id": "ABS-CUE-ENTRY",
+        "distractor_lineage_id": "ABS-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "ABS-ITEM-GUIDED",
+        "activity_id": "ABS-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "ABS-FAMILY-GUIDED",
+        "stimulus_lineage_id": "ABS-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ABS-REP-VILLUS-CONTROL",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_INTESTINAL_NEUTRALIZATION",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ABS_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#ABS-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#ABS-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ABS-SOLUTION-GUIDED",
+        "decisive_cue_id": "ABS-CUE-GUIDED",
+        "distractor_lineage_id": "ABS-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "ABS-ITEM-LIGHT",
+        "activity_id": "ABS-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "ABS-FAMILY-LIGHT",
+        "stimulus_lineage_id": "ABS-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_PROCESS_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ABS-REP-VILLUS-CONTROL",
+        "changed_dimensions": [],
+        "learner_operation": "LOCATE_BRUSH_BORDER_ENZYME_SITE",
+        "hint_policy": "BRIEF_PROCESS_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ABS_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#ABS-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#ABS-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ABS-SOLUTION-LIGHT",
+        "decisive_cue_id": "ABS-CUE-LIGHT",
+        "distractor_lineage_id": "ABS-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "ABS-ITEM-SOLO",
+        "activity_id": "ABS-ACT-SOLO",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "ABS-FAMILY-SOLO",
+        "stimulus_lineage_id": "ABS-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ABS-REP-VILLUS-CONTROL",
+        "changed_dimensions": [],
+        "learner_operation": "RELATE_COLON_WATER_AND_FLORA",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ABS_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#ABS-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#ABS-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ABS-SOLUTION-SOLO",
+        "decisive_cue_id": "ABS-CUE-SOLO",
+        "distractor_lineage_id": "ABS-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "ABS-ITEM-NEAR",
+        "activity_id": "ABS-ACT-NEAR",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "ABS-FAMILY-NEAR",
+        "stimulus_lineage_id": "ABS-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "ABS-REP-VILLUS-CONTROL",
+        "changed_dimensions": [],
+        "learner_operation": "PREDICT_VILLUS_SURFACE_CHANGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ABS_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ABS-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ABS-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ABS-SOLUTION-NEAR",
+        "decisive_cue_id": "ABS-CUE-NEAR",
+        "distractor_lineage_id": "ABS-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "ABS-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ABS-FEATURE-VILLUS-ABSORPTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ABS-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ABS-FEATURE-VILLUS-ABSORPTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ABS-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ABS-FEATURE-VILLUS-ABSORPTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ABS-ITEM-CHANGED",
+        "activity_id": "ABS-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "ABS-FAMILY-CHANGED",
+        "stimulus_lineage_id": "ABS-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "ABS-REP-VILLUS-CONTROL",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "learner_operation": "PREDICT_ENTERIC_CIRCUIT_BLOCK",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ABS_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ABS-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ABS-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ABS-SOLUTION-CHANGED",
+        "decisive_cue_id": "ABS-CUE-CHANGED",
+        "distractor_lineage_id": "ABS-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "ABS-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ABS-FEATURE-ENTERIC-ENDOCRINE-CONTROL"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ABS-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ABS-FEATURE-ENTERIC-ENDOCRINE-CONTROL"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "ABS-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ABS-FEATURE-ENTERIC-ENDOCRINE-CONTROL"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ABS-ITEM-REPAIR-NEAR",
+        "activity_id": "ABS-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ABS-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "ABS-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ABS-REP-VILLUS-CONTROL",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_SURFACE_AREA_ABSORPTION_RELATION",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ABS_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ABS-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ABS-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ABS-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "ABS-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "ABS-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "ABS-ITEM-REENTRY-NEAR",
+        "activity_id": "ABS-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ABS-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "ABS-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ABS-REP-VILLUS-CONTROL",
+        "changed_dimensions": [],
+        "learner_operation": "REENTER_SURFACE_AREA_ABSORPTION_RELATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ABS_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ABS-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ABS-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ABS-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "ABS-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "ABS-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "ABS-ITEM-REPAIR-CHANGED",
+        "activity_id": "ABS-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ABS-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "ABS-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ABS-REP-VILLUS-CONTROL",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_ENTERIC_ENDOCRINE_DISTINCTION",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ABS_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ABS-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ABS-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ABS-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "ABS-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "ABS-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "ABS-ITEM-REENTRY-CHANGED",
+        "activity_id": "ABS-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ABS-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "ABS-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ABS-REP-VILLUS-CONTROL",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "learner_operation": "REENTER_CONTROL_ROUTE_PERTURBATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ABS_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ABS-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ABS-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ABS-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "ABS-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "ABS-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "ABS-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-200171",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "ABS-FAMILY-WORKED",
+        "stimulus_lineage_id": "ABS-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ABS-REP-VILLUS-CONTROL",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_AND_CAUSAL_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:ABS-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ABS-SOLUTION-WORKED",
+        "decisive_cue_id": "ABS-CUE-WORKED",
+        "distractor_lineage_id": "ABS-DISTRACTOR-WORKED"
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "DIG-TRANSITION-NEAR-PASS",
+        "from_node_id": "DIG-NODE-NEAR",
+        "to_node_id": "DIG-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "DIG-TRANSITION-NEAR-MISS",
+        "from_node_id": "DIG-NODE-NEAR",
+        "to_node_id": "DIG-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "DIG-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "DIG-NODE-REENTRY-NEAR",
+        "to_node_id": "DIG-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED"
+      },
+      {
+        "transition_id": "DIG-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "DIG-NODE-REENTRY-NEAR",
+        "to_node_id": "DIG-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "DIG-TRANSITION-CHANGED-PASS",
+        "from_node_id": "DIG-NODE-CHANGED",
+        "to_node_id": "DIG-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "DIG-TRANSITION-CHANGED-MISS",
+        "from_node_id": "DIG-NODE-CHANGED",
+        "to_node_id": "DIG-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "DIG-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "DIG-NODE-REENTRY-CHANGED",
+        "to_node_id": "DIG-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED"
+      },
+      {
+        "transition_id": "DIG-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "DIG-NODE-REENTRY-CHANGED",
+        "to_node_id": "DIG-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "ACC-TRANSITION-NEAR-PASS",
+        "from_node_id": "ACC-NODE-NEAR",
+        "to_node_id": "ACC-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ACC-TRANSITION-NEAR-MISS",
+        "from_node_id": "ACC-NODE-NEAR",
+        "to_node_id": "ACC-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ACC-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "ACC-NODE-REENTRY-NEAR",
+        "to_node_id": "ACC-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED"
+      },
+      {
+        "transition_id": "ACC-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "ACC-NODE-REENTRY-NEAR",
+        "to_node_id": "ACC-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "ACC-TRANSITION-CHANGED-PASS",
+        "from_node_id": "ACC-NODE-CHANGED",
+        "to_node_id": "ACC-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ACC-TRANSITION-CHANGED-MISS",
+        "from_node_id": "ACC-NODE-CHANGED",
+        "to_node_id": "ACC-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ACC-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "ACC-NODE-REENTRY-CHANGED",
+        "to_node_id": "ACC-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED"
+      },
+      {
+        "transition_id": "ACC-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "ACC-NODE-REENTRY-CHANGED",
+        "to_node_id": "ACC-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "ABS-TRANSITION-NEAR-PASS",
+        "from_node_id": "ABS-NODE-NEAR",
+        "to_node_id": "ABS-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ABS-TRANSITION-NEAR-MISS",
+        "from_node_id": "ABS-NODE-NEAR",
+        "to_node_id": "ABS-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ABS-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "ABS-NODE-REENTRY-NEAR",
+        "to_node_id": "ABS-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED"
+      },
+      {
+        "transition_id": "ABS-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "ABS-NODE-REENTRY-NEAR",
+        "to_node_id": "ABS-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "ABS-TRANSITION-CHANGED-PASS",
+        "from_node_id": "ABS-NODE-CHANGED",
+        "to_node_id": "ABS-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ABS-TRANSITION-CHANGED-MISS",
+        "from_node_id": "ABS-NODE-CHANGED",
+        "to_node_id": "ABS-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ABS-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "ABS-NODE-REENTRY-CHANGED",
+        "to_node_id": "ABS-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED"
+      },
+      {
+        "transition_id": "ABS-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "ABS-NODE-REENTRY-CHANGED",
+        "to_node_id": "ABS-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "DIG-TO-ACC",
+        "from_node_id": "DIG-NODE-RECAP",
+        "to_node_id": "ACC-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "ACC-TO-ABS",
+        "from_node_id": "ACC-NODE-RECAP",
+        "to_node_id": "ABS-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      }
+    ],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-720072",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-034099",
+        "host_scope": {
+          "kind": "SECONDARY_APPLICATION",
+          "primary_lesson_id": "V3-LES-034099"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-991418",
+          "V3-KC-175515",
+          "V3-KC-507981",
+          "V3-KC-519155",
+          "V3-KC-200171",
+          "V3-KC-096746",
+          "V3-KC-146592"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-CAP-720072"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "LESSON_TO_ATTACHMENT",
+        "required_delivery": true
+      }
+    ]
+  }
+}

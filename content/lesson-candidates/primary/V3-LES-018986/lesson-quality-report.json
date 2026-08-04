@@ -1,0 +1,141 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-018986",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "84a879bc4c401b7e35f78da5170a44a500264c5d4c029b73e977ad2787295a9f",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-018986",
+    "lesson_script_sha256": "637ff1535f443cf1c1e8565cae8edeb75c7f457e9e147179a6d84f9744dab07d",
+    "kc_coverage_matrix_id": "V3-KCOV-018986",
+    "kc_coverage_matrix_sha256": "d05761ada92023c436595b5d52bcf0844badf3706a6b8475caa7a4dc8c0320f0",
+    "lesson_presentation_plan_id": "V3-LPPL-018986",
+    "lesson_presentation_plan_sha256": "4078c47bfbc0d874ca9db149d862d1fc8493f1c6c7383ef259f75ff4da18070c"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-018986",
+    "review_scope": "STANDARD_CANDIDATE_AUTHOR_DIAGNOSTICS_ONLY",
+    "route_proofs": {
+      "STANDARD": {
+        "route_applicability": "APPLICABLE",
+        "absence_proof_basis": null,
+        "absence_proof_ref": null,
+        "blocker_code": null,
+        "evidence_refs": [
+          "spec:docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md#sha256:f9df47b75a7aca5bf5c59030d66261c118d6ea1f71002c4d4fde92592b05c8c8"
+        ]
+      },
+      "CONCISE": {
+        "route_applicability": "NOT_APPLICABLE",
+        "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+        "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_CONCISE",
+        "blocker_code": null,
+        "evidence_refs": [
+          "spec:docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md#sha256:f9df47b75a7aca5bf5c59030d66261c118d6ea1f71002c4d4fde92592b05c8c8"
+        ]
+      },
+      "MISCONCEPTION": {
+        "route_applicability": "NOT_APPLICABLE",
+        "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+        "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_MISCONCEPTION",
+        "blocker_code": null,
+        "evidence_refs": [
+          "spec:docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md#sha256:f9df47b75a7aca5bf5c59030d66261c118d6ea1f71002c4d4fde92592b05c8c8"
+        ]
+      },
+      "PREREQUISITE_SUPPORT": {
+        "route_applicability": "NOT_APPLICABLE",
+        "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+        "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_PREREQUISITE_SUPPORT",
+        "blocker_code": null,
+        "evidence_refs": [
+          "rubric:key-docs/lesson-quality-rubric.md#sha256:21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+        ]
+      }
+    },
+    "prerequisite_handoffs": [],
+    "check_results": [
+      {
+        "check_id": "R1-R15-STRUCTURAL",
+        "status": "PASS",
+        "claim_scope": "MACHINE_GATE_ONLY",
+        "evidence_refs": [
+          "validation/lesson-validate.json"
+        ]
+      },
+      {
+        "check_id": "CANONICAL-NORMALIZATION",
+        "status": "PASS",
+        "claim_scope": "MACHINE_GATE_ONLY",
+        "evidence_refs": [
+          "validation/normalization-smoke.json"
+        ]
+      },
+      {
+        "check_id": "SOURCE-RIGHTS-INPUT",
+        "status": "PASS",
+        "claim_scope": "PACKET_RIGHTS_STATUS_ONLY",
+        "evidence_refs": [
+          "inputs/task-source-packet.json"
+        ]
+      },
+      {
+        "check_id": "PROTECTED-SEPARATION",
+        "status": "PASS",
+        "claim_scope": "MACHINE_GATE_ONLY",
+        "evidence_refs": [
+          "validation/protected-scan.json"
+        ]
+      },
+      {
+        "check_id": "INDEPENDENT-JUDGE-PRE-SCREEN",
+        "status": "BLOCKED",
+        "blocker_code": "JUDGE_PRE_SCREEN_REQUIRED",
+        "reason": "No independent judge record is authored or claimed by the primary author."
+      },
+      {
+        "check_id": "BROWSER-RENDERED-EVIDENCE",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_BROWSER_RENDERED_EVIDENCE",
+        "reason": "No revision-bound rendered browser evidence exists."
+      },
+      {
+        "check_id": "ACCESSIBILITY-REVIEW",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_ACCESSIBILITY_REVIEW",
+        "reason": "No independent Safari and VoiceOver or construct-equivalence receipt exists."
+      },
+      {
+        "check_id": "DOMAIN-SME-REVIEW",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_DOMAIN_SME_RECEIPT",
+        "reason": "No independent domain construct or blind-solve receipt exists."
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "018986-QUALITY-001",
+        "severity": "P1",
+        "status": "BLOCKED",
+        "required_correction": "Obtain an independent judge pre-screen bound to the current primary hashes."
+      },
+      {
+        "finding_id": "018986-QUALITY-002",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Obtain the required rendered, accessibility, domain, novice, platform, rights, and human-decision receipts without self-approval."
+      }
+    ],
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false,
+      "calibrated_thresholds_available": false
+    },
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY",
+    "production_golden_status": "BLOCKED"
+  }
+}

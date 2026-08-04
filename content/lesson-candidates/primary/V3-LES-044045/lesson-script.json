@@ -1,0 +1,4776 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-044045",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "12d9792bef2a02c22a4ae1723bfecf2cc89ae8b6baa718a829a1c12a8968a22d",
+  "payload": {
+    "lesson_id": "V3-LES-044045",
+    "grouping_id": "V3-CL-044045",
+    "ordered_kc_ids": [
+      "V3-KC-966555",
+      "V3-KC-499380",
+      "V3-KC-287619",
+      "V3-KC-987880"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-966555",
+      "V3-KC-499380",
+      "V3-KC-287619",
+      "V3-KC-987880"
+    ],
+    "throughline": "Classify what the infectious particle contains, then trace how its information or conformation uses a host from entry through replication, assembly, release, transfer, or integration.",
+    "nodes": [
+      {
+        "node_id": "STR-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify one structure shared by enveloped and nonenveloped viruses. The packet declares no hard prerequisite; leaving the item blank records a nonconsequential abstention."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "STR-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "STR-CP-ENTRY",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: classify viruses by genome type, protein organization, envelope, phage structure, cellular absences, and relative size without memorizing a virus-family taxonomy."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STR-CP-ORIENTATION",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "A virion contains nucleic acid—DNA or RNA—inside a protein capsid. Some virions also carry a lipid envelope acquired from host membranes, with viral proteins embedded in it.",
+          "A bacteriophage can have a genome-containing head, tail, base plate, and fibers that attach to a bacterium and deliver the genome.",
+          "Viruses are acellular: they lack a nucleus, ribosomes, and energy-producing organelles, and cannot synthesize all components independently. Virions are much smaller than typical eukaryotic cells and usually smaller than bacteria."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STR-CP-EXPLANATION",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: genome is the instructions, capsid is the package, envelope is an optional host-derived outer layer, and phage tail structures are delivery hardware."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STR-CP-MODEL",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: if detergent destroys infectivity while the capsid remains, I infer an essential lipid envelope. If a diagram shows a head and tail fibers attached to a bacterium, I classify a phage and trace genome injection rather than whole-particle engulfment."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STR-CP-THINK",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a particle contains RNA, capsid proteins, and a lipid membrane but no ribosomes. It is an enveloped RNA virus, not a cell.",
+          "A head-tail particle binds a bacterial surface by fibers and delivers nucleic acid through its tail; that organization is bacteriophage structure."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STR-CP-WORKED",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: sort each observed component into genome, capsid, optional envelope, phage delivery structure, or absent cellular machinery."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "STR-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "STR-CP-GUIDED",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: classify a fresh particle from one structural observation."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "STR-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "STR-CP-LIGHT",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: distinguish genome type and envelope status from a new component list."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "STR-ACT-SOLO"
+        ],
+        "checkpoint_ref": "STR-CP-SOLO",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: an envelope is not the capsid and is not universal. A virus does not become a cell because it carries nucleic acid, and a phage tail is not a flagellum for independent motility."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STR-CP-CONTRAST",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: classify a familiar virion from genome, capsid, and envelope evidence."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "STR-ACT-NEAR"
+        ],
+        "checkpoint_ref": "STR-CP-NEAR",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: infer envelope dependence from detergent sensitivity rather than from a labeled diagram."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "STR-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "STR-CP-CHANGED",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the component function: every virus has genome plus capsid; only some have an outer lipid envelope. Keep genome type separate from envelope status."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "STR-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "STR-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: classify a different genome-envelope combination with new options."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "STR-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "STR-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the evidence function: detergent disrupts lipid layers. Loss of infectivity after detergent therefore supports an essential envelope, not the absence of a capsid."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "STR-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "STR-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: infer a structural feature from a different physical disruption."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "STR-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "STR-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "STR-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: viruses package DNA or RNA in capsid, may add an envelope, lack cellular machinery, and use specialized structures such as phage tails for host entry."
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STR-CP-RECAP",
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify why a virion cannot complete protein synthesis by itself. A blank response is an abstention, not an exit."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LIF-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "LIF-CP-ENTRY",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: trace attachment and entry, use of host synthesis, component replication, assembly, and release in generalized phage or animal-virus cycles. Pathogenesis and treatment are outside scope."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIF-CP-ORIENTATION",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Attachment begins when viral binding proteins recognize host surface molecules. Entry then delivers the genome or particle into the host; phages commonly inject genomes, while animal viruses may enter or fuse and then uncoat.",
+          "The viral genome directs production of nucleic acid and proteins using host energy, ribosomes, enzymes, or substrates, with details depending on genome type.",
+          "New genomes and structural proteins assemble into particles. Release can occur by host-cell lysis, budding, or another route appropriate to the virus."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIF-CP-EXPLANATION",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: dock, deliver, copy and build, package, depart. Host dependence is concentrated in the copy-and-build stage but begins with compatible attachment."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIF-CP-MODEL",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: if viral genomes and proteins accumulate separately but no infectious particles appear, synthesis succeeded and assembly is blocked. If no viral material enters after binding, the block is entry."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIF-CP-THINK",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a phage binds a bacterium, injects DNA, uses host machinery to make genomes and capsid proteins, assembles heads and tails, then releases particles after lysis.",
+          "An enveloped animal virus can acquire its membrane while budding from a host membrane during release."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIF-CP-WORKED",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: place observation cards under dock, deliver, synthesize, assemble, or release."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LIF-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "LIF-CP-GUIDED",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: identify one missing life-cycle stage from a host-cell observation."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LIF-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "LIF-CP-LIGHT",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: order a fresh generalized cycle."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LIF-ACT-SOLO"
+        ],
+        "checkpoint_ref": "LIF-CP-SOLO",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: assembly is not genome replication; it packages already made components. Attachment alone also does not establish entry, and budding is a release mechanism rather than the universal replication method."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIF-CP-CONTRAST",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: order generalized viral life-cycle stages."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LIF-ACT-NEAR"
+        ],
+        "checkpoint_ref": "LIF-CP-NEAR",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: localize a replication defect from measured genome, protein, and infectious-particle levels."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LIF-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "LIF-CP-CHANGED",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the sequence function: group stages into host contact, information production, particle construction, and departure."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LIF-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "LIF-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: order a new subset with different stage wording."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LIF-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "LIF-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the localization function: detect the last successful output. Genome plus protein but no particles points after synthesis and before completed assembly."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LIF-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "LIF-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: localize a different block using new entry-and-release data."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LIF-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "LIF-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LIF-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: viruses attach, enter, use host resources to make genomes and proteins, assemble particles, and release them."
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIF-CP-RECAP",
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify the direction catalyzed by reverse transcriptase. No hard prerequisite is declared."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEN-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "GEN-CP-ENTRY",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: explain transduction and retroviral integration as distinct information-transfer mechanisms, and mark why prions and viroids do not fit those mechanisms. Clinical HIV treatment and a prion disease catalog are outside scope."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-ORIENTATION",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "In transduction, a bacteriophage carries bacterial DNA from a donor bacterium to a recipient bacterium. The transferred DNA can then recombine or otherwise affect the recipient.",
+          "A retrovirus carries RNA. Reverse transcriptase synthesizes DNA from the viral RNA template, and viral DNA can integrate into a host chromosome as a provirus. HIV is a retrovirus example.",
+          "A prion is infectious protein without nucleic acid, so it does not transfer information by reverse transcription or DNA integration. A viroid is small naked RNA without a protein capsid and depends on host machinery but is not a retrovirus."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-EXPLANATION",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: transduction is phage delivery of bacterial DNA; retroviral integration is RNA → DNA → host chromosome."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-MODEL",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: if bacterial marker DNA appears in a recipient after a phage moves between cells, I choose transduction. If an RNA virus makes a DNA copy that inserts into a chromosome, I choose retroviral integration."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-THINK",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a phage accidentally packages donor bacterial DNA and injects it into another bacterium. The bacterial gene transfer is transduction.",
+          "A retroviral RNA genome is copied into DNA by reverse transcriptase; integrase-mediated insertion produces a chromosomal provirus."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-WORKED",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: label the cargo, carrier, conversion enzyme, and final destination for each path."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEN-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "GEN-CP-GUIDED",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: identify a mechanism from one information-flow arrow."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEN-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "GEN-CP-LIGHT",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: distinguish transduction from integration and from subviral propagation."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEN-ACT-SOLO"
+        ],
+        "checkpoint_ref": "GEN-CP-SOLO",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: transduction is not ordinary phage genome replication; the transferred cargo is bacterial DNA. Reverse transcription is also not translation, and integration is not a property of protein-only prions."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-CONTRAST",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: classify a familiar gene-transfer or integration scenario."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEN-ACT-NEAR"
+        ],
+        "checkpoint_ref": "GEN-CP-NEAR",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: infer the missing enzyme from an RNA-to-chromosomal-DNA block."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEN-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "GEN-CP-CHANGED",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the mechanism function: identify cargo and destination. Bacterial DNA moved by phage is transduction; viral RNA converted to integrated DNA is retroviral integration."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEN-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "GEN-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: classify a different donor-recipient scenario."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEN-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "GEN-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the information-flow function: integration requires a DNA intermediate, so an RNA retrovirus must first use reverse transcriptase."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEN-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "GEN-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: use a new molecular observation to distinguish failure of reverse transcription from failure after DNA formation."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEN-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "GEN-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: phages can transduce bacterial DNA; retroviruses reverse-transcribe RNA into DNA and integrate that DNA; prions and viroids follow neither full pathway."
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-RECAP",
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: classify a protein-only infectious agent. A blank response remains a nonconsequential abstention."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "SUB-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "SUB-CP-ENTRY",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: distinguish viruses, prions, and viroids by composition and replication dependence while retaining transduction and retroviral integration as contrasts. Clinical HIV treatment and disease catalogs are outside scope."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SUB-CP-ORIENTATION",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "A virus contains DNA or RNA enclosed by capsid and may have envelope. It uses host machinery to synthesize viral genomes and proteins.",
+          "A prion is infectious misfolded protein with no nucleic acid. It propagates by inducing a similar conformation in host proteins rather than by genome replication.",
+          "A viroid is a small naked RNA molecule without protein capsid. It relies on host processes for RNA replication and is distinct from a retrovirus because it does not form a capsid-containing retroviral particle or DNA integration pathway."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SUB-CP-EXPLANATION",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: virus = genome plus package; prion = protein shape; viroid = naked RNA."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SUB-CP-MODEL",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: nuclease-sensitive naked RNA with no capsid points to a viroid. Protease-sensitive infectivity with no detectable nucleic acid points to a prion. Capsid plus genome points to a virus."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SUB-CP-THINK",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: an infectious agent contains RNA inside protein capsid and produces particles in host cells. It is a virus.",
+          "A second agent contains no nucleic acid and propagates a misfolded protein conformation. It is a prion."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SUB-CP-WORKED",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: mark nucleic acid, capsid, protein-only propagation, and host dependence before choosing the entity."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "SUB-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "SUB-CP-GUIDED",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: classify a new agent from one composition test."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "SUB-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "SUB-CP-LIGHT",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: distinguish all three entities from a fresh evidence set."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "SUB-ACT-SOLO"
+        ],
+        "checkpoint_ref": "SUB-CP-SOLO",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: host dependence does not by itself identify a virus because viroids also depend on hosts. Nucleic acid alone also does not identify a virus because viroids contain RNA; capsid and composition complete the distinction."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SUB-CP-CONTRAST",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: classify familiar virus, prion, and viroid descriptions."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "SUB-ACT-NEAR"
+        ],
+        "checkpoint_ref": "SUB-CP-NEAR",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: combine nuclease, protease, and capsid evidence to classify an unknown agent."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "SUB-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "SUB-CP-CHANGED",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the composition function: ask two questions in order—Is nucleic acid present? Is a protein capsid present? Protein-only points to prion; naked RNA points to viroid; genome plus capsid points to virus."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "SUB-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "SUB-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: classify a different entity using new composition wording."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "SUB-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "SUB-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the perturbation function: nuclease targets nucleic acid, protease targets protein, and detergent targets lipid. Match lost infectivity to the agent’s essential material."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "SUB-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "SUB-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: classify a different unknown using another paired treatment result."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "SUB-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "SUB-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SUB-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: viruses package nucleic acid in capsid; prions propagate protein conformation without nucleic acid; viroids are naked host-dependent RNA."
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SUB-CP-RECAP",
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "STR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-966555",
+        "item_binding_id": "STR-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_SHARED_VIRAL_COMPONENT",
+        "authorized_next_node_ids": [
+          "STR-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "STR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-966555",
+        "item_binding_id": "STR-ITEM-GUIDED",
+        "learner_operation": "CLASSIFY_VIRION_COMPONENTS",
+        "authorized_next_node_ids": [
+          "STR-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "STR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-966555",
+        "item_binding_id": "STR-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_PHAGE_ATTACHMENT_STRUCTURE",
+        "authorized_next_node_ids": [
+          "STR-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "STR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-966555",
+        "item_binding_id": "STR-ITEM-SOLO",
+        "learner_operation": "IDENTIFY_VIRAL_CELLULAR_ABSENCE",
+        "authorized_next_node_ids": [
+          "STR-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "STR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-966555",
+        "item_binding_id": "STR-ITEM-NEAR",
+        "learner_operation": "CLASSIFY_VIRAL_GENOME_AND_ENVELOPE",
+        "authorized_next_node_ids": [
+          "STR-NODE-CHANGED",
+          "STR-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "STR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-966555",
+        "item_binding_id": "STR-ITEM-CHANGED",
+        "learner_operation": "INFER_ENVELOPE_FROM_DETERGENT_SENSITIVITY",
+        "authorized_next_node_ids": [
+          "STR-NODE-RECAP",
+          "STR-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "STR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-966555",
+        "item_binding_id": "STR-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_VIRION_COMPONENT_MODEL",
+        "authorized_next_node_ids": [
+          "STR-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "STR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-966555",
+        "item_binding_id": "STR-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_VIRION_CLASSIFICATION",
+        "authorized_next_node_ids": [
+          "STR-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "STR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-966555",
+        "item_binding_id": "STR-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_ENVELOPE_PERTURBATION",
+        "authorized_next_node_ids": [
+          "STR-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "STR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-966555",
+        "item_binding_id": "STR-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_STRUCTURAL_PERTURBATION_INFERENCE",
+        "authorized_next_node_ids": [
+          "STR-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "LIF-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-499380",
+        "item_binding_id": "LIF-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_HOST_SYNTHESIS_DEPENDENCE",
+        "authorized_next_node_ids": [
+          "LIF-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "LIF-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-499380",
+        "item_binding_id": "LIF-ITEM-GUIDED",
+        "learner_operation": "ORDER_ATTACHMENT_AND_ENTRY",
+        "authorized_next_node_ids": [
+          "LIF-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "LIF-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-499380",
+        "item_binding_id": "LIF-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_ASSEMBLY_STAGE",
+        "authorized_next_node_ids": [
+          "LIF-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "LIF-ACT-SOLO",
+        "primary_kc_id": "V3-KC-499380",
+        "item_binding_id": "LIF-ITEM-SOLO",
+        "learner_operation": "ORDER_EARLY_VIRAL_LIFE_CYCLE",
+        "authorized_next_node_ids": [
+          "LIF-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "LIF-ACT-NEAR",
+        "primary_kc_id": "V3-KC-499380",
+        "item_binding_id": "LIF-ITEM-NEAR",
+        "learner_operation": "SEQUENCE_GENERALIZED_VIRAL_LIFE_CYCLE",
+        "authorized_next_node_ids": [
+          "LIF-NODE-CHANGED",
+          "LIF-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "LIF-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-499380",
+        "item_binding_id": "LIF-ITEM-CHANGED",
+        "learner_operation": "LOCALIZE_LIFE_CYCLE_BLOCK_FROM_COMPONENTS",
+        "authorized_next_node_ids": [
+          "LIF-NODE-RECAP",
+          "LIF-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LIF-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-499380",
+        "item_binding_id": "LIF-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_LIFE_CYCLE_STAGE_FUNCTIONS",
+        "authorized_next_node_ids": [
+          "LIF-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "LIF-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-499380",
+        "item_binding_id": "LIF-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_LIFE_CYCLE_SEQUENCE",
+        "authorized_next_node_ids": [
+          "LIF-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LIF-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-499380",
+        "item_binding_id": "LIF-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_STAGE_LOCALIZATION",
+        "authorized_next_node_ids": [
+          "LIF-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LIF-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-499380",
+        "item_binding_id": "LIF-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_LIFE_CYCLE_BLOCK_LOCALIZATION",
+        "authorized_next_node_ids": [
+          "LIF-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-287619",
+        "item_binding_id": "GEN-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_REVERSE_TRANSCRIPTASE_PRODUCT",
+        "authorized_next_node_ids": [
+          "GEN-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-287619",
+        "item_binding_id": "GEN-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_TRANSDUCTION",
+        "authorized_next_node_ids": [
+          "GEN-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-287619",
+        "item_binding_id": "GEN-ITEM-LIGHT",
+        "learner_operation": "TRACE_RETROVIRAL_INFORMATION_FLOW",
+        "authorized_next_node_ids": [
+          "GEN-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-287619",
+        "item_binding_id": "GEN-ITEM-SOLO",
+        "learner_operation": "CONTRAST_PRION_WITH_INTEGRATING_AGENT",
+        "authorized_next_node_ids": [
+          "GEN-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-287619",
+        "item_binding_id": "GEN-ITEM-NEAR",
+        "learner_operation": "CLASSIFY_PHAGE_MEDIATED_TRANSFER",
+        "authorized_next_node_ids": [
+          "GEN-NODE-CHANGED",
+          "GEN-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-287619",
+        "item_binding_id": "GEN-ITEM-CHANGED",
+        "learner_operation": "INFER_MISSING_RETROVIRAL_ENZYME",
+        "authorized_next_node_ids": [
+          "GEN-NODE-RECAP",
+          "GEN-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-287619",
+        "item_binding_id": "GEN-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_TRANSDUCTION_MODEL",
+        "authorized_next_node_ids": [
+          "GEN-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-287619",
+        "item_binding_id": "GEN-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_INFORMATION_TRANSFER_CLASSIFICATION",
+        "authorized_next_node_ids": [
+          "GEN-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-287619",
+        "item_binding_id": "GEN-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_RETROVIRAL_DNA_INTERMEDIATE",
+        "authorized_next_node_ids": [
+          "GEN-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-287619",
+        "item_binding_id": "GEN-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_RETROVIRAL_BLOCK_LOCALIZATION",
+        "authorized_next_node_ids": [
+          "GEN-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "SUB-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-987880",
+        "item_binding_id": "SUB-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_PRION_COMPOSITION",
+        "authorized_next_node_ids": [
+          "SUB-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "SUB-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-987880",
+        "item_binding_id": "SUB-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_VIROID_COMPOSITION",
+        "authorized_next_node_ids": [
+          "SUB-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "SUB-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-987880",
+        "item_binding_id": "SUB-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_VIRUS_COMPOSITION",
+        "authorized_next_node_ids": [
+          "SUB-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "SUB-ACT-SOLO",
+        "primary_kc_id": "V3-KC-987880",
+        "item_binding_id": "SUB-ITEM-SOLO",
+        "learner_operation": "EXPLAIN_PRION_PROPAGATION",
+        "authorized_next_node_ids": [
+          "SUB-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "SUB-ACT-NEAR",
+        "primary_kc_id": "V3-KC-987880",
+        "item_binding_id": "SUB-ITEM-NEAR",
+        "learner_operation": "CLASSIFY_VIROID_FROM_FEATURES",
+        "authorized_next_node_ids": [
+          "SUB-NODE-CHANGED",
+          "SUB-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "SUB-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-987880",
+        "item_binding_id": "SUB-ITEM-CHANGED",
+        "learner_operation": "INFER_PRION_FROM_BIOCHEMICAL_EVIDENCE",
+        "authorized_next_node_ids": [
+          "SUB-NODE-RECAP",
+          "SUB-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SUB-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-987880",
+        "item_binding_id": "SUB-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_SUBVIRAL_COMPARISON",
+        "authorized_next_node_ids": [
+          "SUB-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "SUB-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-987880",
+        "item_binding_id": "SUB-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_ENTITY_CLASSIFICATION",
+        "authorized_next_node_ids": [
+          "SUB-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SUB-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-987880",
+        "item_binding_id": "SUB-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_COMPOSITION_SENSITIVITY_MAP",
+        "authorized_next_node_ids": [
+          "SUB-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SUB-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-987880",
+        "item_binding_id": "SUB-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_BIOCHEMICAL_ENTITY_CLASSIFICATION",
+        "authorized_next_node_ids": [
+          "SUB-NODE-RECAP"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-966555",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-966555",
+        "scope_in_refs": [
+          "V3-KC-966555:SCOPE_IN:0",
+          "V3-KC-966555:SCOPE_IN:1",
+          "V3-KC-966555:SCOPE_IN:2",
+          "V3-KC-966555:SCOPE_IN:3",
+          "V3-KC-966555:SCOPE_IN:4"
+        ],
+        "scope_out_refs": [
+          "V3-KC-966555:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "STR-CLAIM-1",
+          "STR-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "STR-NODE-ENTRY",
+        "orientation_node_id": "STR-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "STR-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "STR-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "STR-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "STR-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "STR-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "STR-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "STR-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "STR-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "STR-NODE-NEAR",
+          "activity_ids": [
+            "STR-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "STR-NODE-CHANGED",
+          "activity_ids": [
+            "STR-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "STR-FEATURE-NEAR",
+          "STR-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "STR-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "STR-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "STR-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "STR-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "STR-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "STR-ACT-REENTRY-NEAR",
+            "success_next_node_id": "STR-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "STR-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "STR-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "STR-NODE-RECAP",
+            "planner_handoff_node_id": "LIF-NODE-ENTRY"
+          }
+        ],
+        "representation_ids": [
+          "STR-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "STR-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "STR-NODE-ENTRY",
+            "STR-NODE-RECAP"
+          ],
+          "standard": [
+            "STR-NODE-ENTRY",
+            "STR-NODE-ORIENTATION",
+            "STR-NODE-EXPLANATION",
+            "STR-NODE-MODEL",
+            "STR-NODE-THINK",
+            "STR-NODE-WORKED",
+            "STR-NODE-GUIDED",
+            "STR-NODE-LIGHT",
+            "STR-NODE-SOLO",
+            "STR-NODE-CONTRAST",
+            "STR-NODE-NEAR",
+            "STR-NODE-CHANGED",
+            "STR-NODE-REPAIR-NEAR",
+            "STR-NODE-REENTRY-NEAR",
+            "STR-NODE-REPAIR-CHANGED",
+            "STR-NODE-REENTRY-CHANGED",
+            "STR-NODE-RECAP"
+          ],
+          "misconception": [
+            "STR-NODE-ENTRY",
+            "STR-NODE-CONTRAST",
+            "STR-NODE-REPAIR-NEAR",
+            "STR-NODE-REPAIR-CHANGED",
+            "STR-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "STR-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-499380",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-499380",
+        "scope_in_refs": [
+          "V3-KC-499380:SCOPE_IN:0",
+          "V3-KC-499380:SCOPE_IN:1",
+          "V3-KC-499380:SCOPE_IN:2",
+          "V3-KC-499380:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-499380:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "LIF-CLAIM-1",
+          "LIF-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "LIF-NODE-ENTRY",
+        "orientation_node_id": "LIF-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "LIF-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "LIF-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "LIF-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "LIF-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "LIF-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "LIF-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "LIF-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "LIF-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "LIF-NODE-NEAR",
+          "activity_ids": [
+            "LIF-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "LIF-NODE-CHANGED",
+          "activity_ids": [
+            "LIF-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "LIF-FEATURE-NEAR",
+          "LIF-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "LIF-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "LIF-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "LIF-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "LIF-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "LIF-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "LIF-ACT-REENTRY-NEAR",
+            "success_next_node_id": "LIF-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "LIF-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "LIF-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "LIF-NODE-RECAP",
+            "planner_handoff_node_id": "GEN-NODE-ENTRY"
+          }
+        ],
+        "representation_ids": [
+          "LIF-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "LIF-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "LIF-NODE-ENTRY",
+            "LIF-NODE-RECAP"
+          ],
+          "standard": [
+            "LIF-NODE-ENTRY",
+            "LIF-NODE-ORIENTATION",
+            "LIF-NODE-EXPLANATION",
+            "LIF-NODE-MODEL",
+            "LIF-NODE-THINK",
+            "LIF-NODE-WORKED",
+            "LIF-NODE-GUIDED",
+            "LIF-NODE-LIGHT",
+            "LIF-NODE-SOLO",
+            "LIF-NODE-CONTRAST",
+            "LIF-NODE-NEAR",
+            "LIF-NODE-CHANGED",
+            "LIF-NODE-REPAIR-NEAR",
+            "LIF-NODE-REENTRY-NEAR",
+            "LIF-NODE-REPAIR-CHANGED",
+            "LIF-NODE-REENTRY-CHANGED",
+            "LIF-NODE-RECAP"
+          ],
+          "misconception": [
+            "LIF-NODE-ENTRY",
+            "LIF-NODE-CONTRAST",
+            "LIF-NODE-REPAIR-NEAR",
+            "LIF-NODE-REPAIR-CHANGED",
+            "LIF-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "LIF-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-287619",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-287619",
+        "scope_in_refs": [
+          "V3-KC-287619:SCOPE_IN:0",
+          "V3-KC-287619:SCOPE_IN:1",
+          "V3-KC-287619:SCOPE_IN:2",
+          "V3-KC-287619:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-287619:SCOPE_OUT:0",
+          "V3-KC-287619:SCOPE_OUT:1"
+        ],
+        "source_claim_refs": [
+          "GEN-CLAIM-1",
+          "GEN-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "GEN-NODE-ENTRY",
+        "orientation_node_id": "GEN-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "GEN-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "GEN-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "GEN-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "GEN-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "GEN-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "GEN-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "GEN-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "GEN-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "GEN-NODE-NEAR",
+          "activity_ids": [
+            "GEN-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "GEN-NODE-CHANGED",
+          "activity_ids": [
+            "GEN-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "GEN-FEATURE-NEAR",
+          "GEN-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GEN-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "GEN-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GEN-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "GEN-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GEN-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "GEN-ACT-REENTRY-NEAR",
+            "success_next_node_id": "GEN-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GEN-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "GEN-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "GEN-NODE-RECAP",
+            "planner_handoff_node_id": "SUB-NODE-ENTRY"
+          }
+        ],
+        "representation_ids": [
+          "GEN-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "GEN-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "GEN-NODE-ENTRY",
+            "GEN-NODE-RECAP"
+          ],
+          "standard": [
+            "GEN-NODE-ENTRY",
+            "GEN-NODE-ORIENTATION",
+            "GEN-NODE-EXPLANATION",
+            "GEN-NODE-MODEL",
+            "GEN-NODE-THINK",
+            "GEN-NODE-WORKED",
+            "GEN-NODE-GUIDED",
+            "GEN-NODE-LIGHT",
+            "GEN-NODE-SOLO",
+            "GEN-NODE-CONTRAST",
+            "GEN-NODE-NEAR",
+            "GEN-NODE-CHANGED",
+            "GEN-NODE-REPAIR-NEAR",
+            "GEN-NODE-REENTRY-NEAR",
+            "GEN-NODE-REPAIR-CHANGED",
+            "GEN-NODE-REENTRY-CHANGED",
+            "GEN-NODE-RECAP"
+          ],
+          "misconception": [
+            "GEN-NODE-ENTRY",
+            "GEN-NODE-CONTRAST",
+            "GEN-NODE-REPAIR-NEAR",
+            "GEN-NODE-REPAIR-CHANGED",
+            "GEN-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "GEN-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-987880",
+        "canonical_ordinal": 4,
+        "objective_ref": "objective:V3-KC-987880",
+        "scope_in_refs": [
+          "V3-KC-987880:SCOPE_IN:0",
+          "V3-KC-987880:SCOPE_IN:1",
+          "V3-KC-987880:SCOPE_IN:2",
+          "V3-KC-987880:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-987880:SCOPE_OUT:0",
+          "V3-KC-987880:SCOPE_OUT:1"
+        ],
+        "source_claim_refs": [
+          "SUB-CLAIM-1",
+          "SUB-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "SUB-NODE-ENTRY",
+        "orientation_node_id": "SUB-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "SUB-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "SUB-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "SUB-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "SUB-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "SUB-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "SUB-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "SUB-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "SUB-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "SUB-NODE-NEAR",
+          "activity_ids": [
+            "SUB-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "SUB-NODE-CHANGED",
+          "activity_ids": [
+            "SUB-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "SUB-FEATURE-NEAR",
+          "SUB-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "SUB-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "SUB-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "SUB-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "SUB-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "SUB-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "SUB-ACT-REENTRY-NEAR",
+            "success_next_node_id": "SUB-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "SUB-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "SUB-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "SUB-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "SUB-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "SUB-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "SUB-NODE-ENTRY",
+            "SUB-NODE-RECAP"
+          ],
+          "standard": [
+            "SUB-NODE-ENTRY",
+            "SUB-NODE-ORIENTATION",
+            "SUB-NODE-EXPLANATION",
+            "SUB-NODE-MODEL",
+            "SUB-NODE-THINK",
+            "SUB-NODE-WORKED",
+            "SUB-NODE-GUIDED",
+            "SUB-NODE-LIGHT",
+            "SUB-NODE-SOLO",
+            "SUB-NODE-CONTRAST",
+            "SUB-NODE-NEAR",
+            "SUB-NODE-CHANGED",
+            "SUB-NODE-REPAIR-NEAR",
+            "SUB-NODE-REENTRY-NEAR",
+            "SUB-NODE-REPAIR-CHANGED",
+            "SUB-NODE-REENTRY-CHANGED",
+            "SUB-NODE-RECAP"
+          ],
+          "misconception": [
+            "SUB-NODE-ENTRY",
+            "SUB-NODE-CONTRAST",
+            "SUB-NODE-REPAIR-NEAR",
+            "SUB-NODE-REPAIR-CHANGED",
+            "SUB-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "SUB-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "STR-ITEM-ENTRY",
+        "activity_id": "STR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "STR-FAM-ENTRY",
+        "stimulus_lineage_id": "STR-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STR-REP-MAIN",
+        "learner_operation": "IDENTIFY_SHARED_VIRAL_COMPONENT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STR_ENTRY",
+        "answer_authority_ref": "protected-items.json#STR-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#STR-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STR-PATH-ENTRY",
+        "decisive_cue_id": "STR-CUE-ENTRY",
+        "distractor_lineage_id": "STR-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "STR-FEATURE-ENTRY-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-ENTRY-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "STR-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "STR-FAM-WORKED",
+        "stimulus_lineage_id": "STR-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STR-REP-MAIN",
+        "learner_operation": "FOLLOW_STR_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:STR-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STR-PATH-WORKED",
+        "decisive_cue_id": "STR-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "STR-ITEM-GUIDED",
+        "activity_id": "STR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "STR-FAM-GUIDED",
+        "stimulus_lineage_id": "STR-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_RELATIONSHIP_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STR-REP-MAIN",
+        "learner_operation": "CLASSIFY_VIRION_COMPONENTS",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STR_GUIDED",
+        "answer_authority_ref": "protected-items.json#STR-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#STR-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STR-PATH-GUIDED",
+        "decisive_cue_id": "STR-CUE-GUIDED",
+        "distractor_lineage_id": "STR-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "STR-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-GUIDED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-GUIDED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "STR-ITEM-LIGHT",
+        "activity_id": "STR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "STR-FAM-LIGHT",
+        "stimulus_lineage_id": "STR-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STR-REP-MAIN",
+        "learner_operation": "IDENTIFY_PHAGE_ATTACHMENT_STRUCTURE",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STR_LIGHT",
+        "answer_authority_ref": "protected-items.json#STR-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#STR-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STR-PATH-LIGHT",
+        "decisive_cue_id": "STR-CUE-LIGHT",
+        "distractor_lineage_id": "STR-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "STR-FEATURE-LIGHT-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-LIGHT-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "STR-ITEM-SOLO",
+        "activity_id": "STR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "STR-FAM-SOLO",
+        "stimulus_lineage_id": "STR-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STR-REP-MAIN",
+        "learner_operation": "IDENTIFY_VIRAL_CELLULAR_ABSENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STR_SOLO",
+        "answer_authority_ref": "protected-items.json#STR-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#STR-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STR-PATH-SOLO",
+        "decisive_cue_id": "STR-CUE-SOLO",
+        "distractor_lineage_id": "STR-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "STR-FEATURE-SOLO-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-SOLO-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "STR-ITEM-NEAR",
+        "activity_id": "STR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "STR-FAM-NEAR",
+        "stimulus_lineage_id": "STR-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STR-REP-MAIN",
+        "learner_operation": "CLASSIFY_VIRAL_GENOME_AND_ENVELOPE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STR_NEAR",
+        "answer_authority_ref": "protected-items.json#STR-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#STR-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STR-PATH-NEAR",
+        "decisive_cue_id": "STR-CUE-NEAR",
+        "distractor_lineage_id": "STR-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "STR-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STR-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "STR-ITEM-CHANGED",
+        "activity_id": "STR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "STR-FAM-CHANGED",
+        "stimulus_lineage_id": "STR-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STR-REP-MAIN",
+        "learner_operation": "INFER_ENVELOPE_FROM_DETERGENT_SENSITIVITY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STR_CHANGED",
+        "answer_authority_ref": "protected-items.json#STR-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#STR-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STR-PATH-CHANGED",
+        "decisive_cue_id": "STR-CUE-CHANGED",
+        "distractor_lineage_id": "STR-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "STR-FEATURE-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task classifies named components; the changed task infers an unseen lipid envelope from a perturbation."
+      },
+      {
+        "item_binding_id": "STR-ITEM-REPAIR-NEAR",
+        "activity_id": "STR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "STR-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "STR-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STR-REP-MAIN",
+        "learner_operation": "REBUILD_VIRION_COMPONENT_MODEL",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STR_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#STR-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#STR-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STR-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "STR-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "STR-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "STR-FEATURE-REPAIR-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-REPAIR-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "STR-ITEM-REENTRY-NEAR",
+        "activity_id": "STR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "STR-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "STR-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STR-REP-MAIN",
+        "learner_operation": "REENTER_VIRION_CLASSIFICATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STR_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#STR-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#STR-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STR-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "STR-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "STR-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "STR-FEATURE-REENTRY-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "STR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-REENTRY-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "STR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "STR-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "STR-ITEM-NEAR",
+          "stimulus_difference": "Fresh classify viral structure and genome context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "STR-ITEM-REPAIR-CHANGED",
+        "activity_id": "STR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "STR-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "STR-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STR-REP-MAIN",
+        "learner_operation": "REBUILD_ENVELOPE_PERTURBATION",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STR_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#STR-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#STR-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STR-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "STR-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "STR-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "STR-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-REPAIR-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-REPAIR-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "STR-ITEM-REENTRY-CHANGED",
+        "activity_id": "STR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-966555",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "STR-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "STR-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STR-REP-MAIN",
+        "learner_operation": "REENTER_STRUCTURAL_PERTURBATION_INFERENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STR_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#STR-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#STR-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STR-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "STR-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "STR-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "STR-FEATURE-REENTRY-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-REENTRY-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "STR-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task classifies named components; the changed task infers an unseen lipid envelope from a perturbation.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "STR-ITEM-CHANGED",
+          "stimulus_difference": "Fresh classify viral structure and genome context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "LIF-ITEM-ENTRY",
+        "activity_id": "LIF-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "LIF-FAM-ENTRY",
+        "stimulus_lineage_id": "LIF-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIF-REP-MAIN",
+        "learner_operation": "IDENTIFY_HOST_SYNTHESIS_DEPENDENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIF_ENTRY",
+        "answer_authority_ref": "protected-items.json#LIF-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#LIF-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIF-PATH-ENTRY",
+        "decisive_cue_id": "LIF-CUE-ENTRY",
+        "distractor_lineage_id": "LIF-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LIF-FEATURE-ENTRY-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-ENTRY-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LIF-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "LIF-FAM-WORKED",
+        "stimulus_lineage_id": "LIF-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIF-REP-MAIN",
+        "learner_operation": "FOLLOW_LIF_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:LIF-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIF-PATH-WORKED",
+        "decisive_cue_id": "LIF-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "LIF-ITEM-GUIDED",
+        "activity_id": "LIF-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "LIF-FAM-GUIDED",
+        "stimulus_lineage_id": "LIF-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_RELATIONSHIP_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIF-REP-MAIN",
+        "learner_operation": "ORDER_ATTACHMENT_AND_ENTRY",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIF_GUIDED",
+        "answer_authority_ref": "protected-items.json#LIF-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#LIF-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIF-PATH-GUIDED",
+        "decisive_cue_id": "LIF-CUE-GUIDED",
+        "distractor_lineage_id": "LIF-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LIF-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-GUIDED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-GUIDED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LIF-ITEM-LIGHT",
+        "activity_id": "LIF-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "LIF-FAM-LIGHT",
+        "stimulus_lineage_id": "LIF-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIF-REP-MAIN",
+        "learner_operation": "IDENTIFY_ASSEMBLY_STAGE",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIF_LIGHT",
+        "answer_authority_ref": "protected-items.json#LIF-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#LIF-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIF-PATH-LIGHT",
+        "decisive_cue_id": "LIF-CUE-LIGHT",
+        "distractor_lineage_id": "LIF-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LIF-FEATURE-LIGHT-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-LIGHT-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LIF-ITEM-SOLO",
+        "activity_id": "LIF-ACT-SOLO",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "LIF-FAM-SOLO",
+        "stimulus_lineage_id": "LIF-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIF-REP-MAIN",
+        "learner_operation": "ORDER_EARLY_VIRAL_LIFE_CYCLE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIF_SOLO",
+        "answer_authority_ref": "protected-items.json#LIF-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#LIF-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIF-PATH-SOLO",
+        "decisive_cue_id": "LIF-CUE-SOLO",
+        "distractor_lineage_id": "LIF-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LIF-FEATURE-SOLO-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-SOLO-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LIF-ITEM-NEAR",
+        "activity_id": "LIF-ACT-NEAR",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "LIF-FAM-NEAR",
+        "stimulus_lineage_id": "LIF-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIF-REP-MAIN",
+        "learner_operation": "SEQUENCE_GENERALIZED_VIRAL_LIFE_CYCLE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIF_NEAR",
+        "answer_authority_ref": "protected-items.json#LIF-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#LIF-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIF-PATH-NEAR",
+        "decisive_cue_id": "LIF-CUE-NEAR",
+        "distractor_lineage_id": "LIF-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LIF-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LIF-ITEM-CHANGED",
+        "activity_id": "LIF-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "LIF-FAM-CHANGED",
+        "stimulus_lineage_id": "LIF-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIF-REP-MAIN",
+        "learner_operation": "LOCALIZE_LIFE_CYCLE_BLOCK_FROM_COMPONENTS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIF_CHANGED",
+        "answer_authority_ref": "protected-items.json#LIF-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#LIF-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIF-PATH-CHANGED",
+        "decisive_cue_id": "LIF-CUE-CHANGED",
+        "distractor_lineage_id": "LIF-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LIF-FEATURE-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task recalls stage order; the changed task interprets component measurements to locate a failed stage."
+      },
+      {
+        "item_binding_id": "LIF-ITEM-REPAIR-NEAR",
+        "activity_id": "LIF-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LIF-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "LIF-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIF-REP-MAIN",
+        "learner_operation": "REBUILD_LIFE_CYCLE_STAGE_FUNCTIONS",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIF_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#LIF-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#LIF-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIF-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "LIF-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "LIF-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LIF-FEATURE-REPAIR-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-REPAIR-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LIF-ITEM-REENTRY-NEAR",
+        "activity_id": "LIF-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LIF-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "LIF-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIF-REP-MAIN",
+        "learner_operation": "REENTER_LIFE_CYCLE_SEQUENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIF_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#LIF-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#LIF-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIF-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "LIF-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "LIF-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LIF-FEATURE-REENTRY-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-REENTRY-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "LIF-ITEM-NEAR",
+          "stimulus_difference": "Fresh trace a host-dependent viral life cycle context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "LIF-ITEM-REPAIR-CHANGED",
+        "activity_id": "LIF-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LIF-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "LIF-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIF-REP-MAIN",
+        "learner_operation": "REBUILD_STAGE_LOCALIZATION",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIF_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#LIF-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#LIF-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIF-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "LIF-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "LIF-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LIF-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-REPAIR-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-REPAIR-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LIF-ITEM-REENTRY-CHANGED",
+        "activity_id": "LIF-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-499380",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LIF-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "LIF-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIF-REP-MAIN",
+        "learner_operation": "REENTER_LIFE_CYCLE_BLOCK_LOCALIZATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIF_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#LIF-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#LIF-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIF-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "LIF-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "LIF-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LIF-FEATURE-REENTRY-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LIF-FEATURE-REENTRY-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task recalls stage order; the changed task interprets component measurements to locate a failed stage.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "LIF-ITEM-CHANGED",
+          "stimulus_difference": "Fresh trace a host-dependent viral life cycle context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "GEN-ITEM-ENTRY",
+        "activity_id": "GEN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "GEN-FAM-ENTRY",
+        "stimulus_lineage_id": "GEN-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-MAIN",
+        "learner_operation": "IDENTIFY_REVERSE_TRANSCRIPTASE_PRODUCT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_ENTRY",
+        "answer_authority_ref": "protected-items.json#GEN-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#GEN-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-PATH-ENTRY",
+        "decisive_cue_id": "GEN-CUE-ENTRY",
+        "distractor_lineage_id": "GEN-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEN-FEATURE-ENTRY-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-ENTRY-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEN-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "GEN-FAM-WORKED",
+        "stimulus_lineage_id": "GEN-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-MAIN",
+        "learner_operation": "FOLLOW_GEN_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:GEN-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-PATH-WORKED",
+        "decisive_cue_id": "GEN-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "GEN-ITEM-GUIDED",
+        "activity_id": "GEN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "GEN-FAM-GUIDED",
+        "stimulus_lineage_id": "GEN-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_RELATIONSHIP_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-MAIN",
+        "learner_operation": "IDENTIFY_TRANSDUCTION",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_GUIDED",
+        "answer_authority_ref": "protected-items.json#GEN-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#GEN-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-PATH-GUIDED",
+        "decisive_cue_id": "GEN-CUE-GUIDED",
+        "distractor_lineage_id": "GEN-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEN-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-GUIDED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-GUIDED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEN-ITEM-LIGHT",
+        "activity_id": "GEN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "GEN-FAM-LIGHT",
+        "stimulus_lineage_id": "GEN-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-MAIN",
+        "learner_operation": "TRACE_RETROVIRAL_INFORMATION_FLOW",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_LIGHT",
+        "answer_authority_ref": "protected-items.json#GEN-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#GEN-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-PATH-LIGHT",
+        "decisive_cue_id": "GEN-CUE-LIGHT",
+        "distractor_lineage_id": "GEN-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEN-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-LIGHT-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-LIGHT-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEN-ITEM-SOLO",
+        "activity_id": "GEN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "GEN-FAM-SOLO",
+        "stimulus_lineage_id": "GEN-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-MAIN",
+        "learner_operation": "CONTRAST_PRION_WITH_INTEGRATING_AGENT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_SOLO",
+        "answer_authority_ref": "protected-items.json#GEN-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#GEN-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-PATH-SOLO",
+        "decisive_cue_id": "GEN-CUE-SOLO",
+        "distractor_lineage_id": "GEN-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEN-FEATURE-SOLO-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-SOLO-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEN-ITEM-NEAR",
+        "activity_id": "GEN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "GEN-FAM-NEAR",
+        "stimulus_lineage_id": "GEN-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-MAIN",
+        "learner_operation": "CLASSIFY_PHAGE_MEDIATED_TRANSFER",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_NEAR",
+        "answer_authority_ref": "protected-items.json#GEN-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#GEN-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-PATH-NEAR",
+        "decisive_cue_id": "GEN-CUE-NEAR",
+        "distractor_lineage_id": "GEN-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEN-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEN-ITEM-CHANGED",
+        "activity_id": "GEN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "GEN-FAM-CHANGED",
+        "stimulus_lineage_id": "GEN-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-MAIN",
+        "learner_operation": "INFER_MISSING_RETROVIRAL_ENZYME",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_CHANGED",
+        "answer_authority_ref": "protected-items.json#GEN-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GEN-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-PATH-CHANGED",
+        "decisive_cue_id": "GEN-CUE-CHANGED",
+        "distractor_lineage_id": "GEN-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEN-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task labels a mechanism; the changed task uses molecular products to infer the missing retroviral step."
+      },
+      {
+        "item_binding_id": "GEN-ITEM-REPAIR-NEAR",
+        "activity_id": "GEN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEN-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "GEN-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-MAIN",
+        "learner_operation": "REBUILD_TRANSDUCTION_MODEL",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#GEN-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#GEN-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "GEN-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "GEN-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEN-FEATURE-REPAIR-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-REPAIR-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEN-ITEM-REENTRY-NEAR",
+        "activity_id": "GEN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEN-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "GEN-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-MAIN",
+        "learner_operation": "REENTER_INFORMATION_TRANSFER_CLASSIFICATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#GEN-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#GEN-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "GEN-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "GEN-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEN-FEATURE-REENTRY-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-REENTRY-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "GEN-ITEM-NEAR",
+          "stimulus_difference": "Fresh explain viral genetic transfer and retroviral integration context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "GEN-ITEM-REPAIR-CHANGED",
+        "activity_id": "GEN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEN-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "GEN-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-MAIN",
+        "learner_operation": "REBUILD_RETROVIRAL_DNA_INTERMEDIATE",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#GEN-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GEN-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "GEN-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "GEN-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEN-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-REPAIR-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-REPAIR-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEN-ITEM-REENTRY-CHANGED",
+        "activity_id": "GEN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-287619",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEN-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "GEN-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-MAIN",
+        "learner_operation": "REENTER_RETROVIRAL_BLOCK_LOCALIZATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#GEN-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GEN-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "GEN-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "GEN-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEN-FEATURE-REENTRY-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEN-FEATURE-REENTRY-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task labels a mechanism; the changed task uses molecular products to infer the missing retroviral step.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "GEN-ITEM-CHANGED",
+          "stimulus_difference": "Fresh explain viral genetic transfer and retroviral integration context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "SUB-ITEM-ENTRY",
+        "activity_id": "SUB-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "SUB-FAM-ENTRY",
+        "stimulus_lineage_id": "SUB-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SUB-REP-MAIN",
+        "learner_operation": "IDENTIFY_PRION_COMPOSITION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SUB_ENTRY",
+        "answer_authority_ref": "protected-items.json#SUB-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#SUB-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SUB-PATH-ENTRY",
+        "decisive_cue_id": "SUB-CUE-ENTRY",
+        "distractor_lineage_id": "SUB-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "SUB-FEATURE-ENTRY-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-ENTRY-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-ENTRY-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SUB-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "SUB-FAM-WORKED",
+        "stimulus_lineage_id": "SUB-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SUB-REP-MAIN",
+        "learner_operation": "FOLLOW_SUB_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:SUB-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SUB-PATH-WORKED",
+        "decisive_cue_id": "SUB-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "SUB-ITEM-GUIDED",
+        "activity_id": "SUB-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "SUB-FAM-GUIDED",
+        "stimulus_lineage_id": "SUB-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_RELATIONSHIP_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SUB-REP-MAIN",
+        "learner_operation": "IDENTIFY_VIROID_COMPOSITION",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SUB_GUIDED",
+        "answer_authority_ref": "protected-items.json#SUB-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#SUB-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SUB-PATH-GUIDED",
+        "decisive_cue_id": "SUB-CUE-GUIDED",
+        "distractor_lineage_id": "SUB-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "SUB-FEATURE-GUIDED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-GUIDED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-GUIDED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SUB-ITEM-LIGHT",
+        "activity_id": "SUB-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "SUB-FAM-LIGHT",
+        "stimulus_lineage_id": "SUB-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SUB-REP-MAIN",
+        "learner_operation": "IDENTIFY_VIRUS_COMPOSITION",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SUB_LIGHT",
+        "answer_authority_ref": "protected-items.json#SUB-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#SUB-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SUB-PATH-LIGHT",
+        "decisive_cue_id": "SUB-CUE-LIGHT",
+        "distractor_lineage_id": "SUB-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "SUB-FEATURE-LIGHT-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-LIGHT-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-LIGHT-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SUB-ITEM-SOLO",
+        "activity_id": "SUB-ACT-SOLO",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "SUB-FAM-SOLO",
+        "stimulus_lineage_id": "SUB-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SUB-REP-MAIN",
+        "learner_operation": "EXPLAIN_PRION_PROPAGATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SUB_SOLO",
+        "answer_authority_ref": "protected-items.json#SUB-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#SUB-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SUB-PATH-SOLO",
+        "decisive_cue_id": "SUB-CUE-SOLO",
+        "distractor_lineage_id": "SUB-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "SUB-FEATURE-SOLO-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-SOLO-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-SOLO-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SUB-ITEM-NEAR",
+        "activity_id": "SUB-ACT-NEAR",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "SUB-FAM-NEAR",
+        "stimulus_lineage_id": "SUB-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SUB-REP-MAIN",
+        "learner_operation": "CLASSIFY_VIROID_FROM_FEATURES",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SUB_NEAR",
+        "answer_authority_ref": "protected-items.json#SUB-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#SUB-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SUB-PATH-NEAR",
+        "decisive_cue_id": "SUB-CUE-NEAR",
+        "distractor_lineage_id": "SUB-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "SUB-FEATURE-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SUB-ITEM-CHANGED",
+        "activity_id": "SUB-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "SUB-FAM-CHANGED",
+        "stimulus_lineage_id": "SUB-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SUB-REP-MAIN",
+        "learner_operation": "INFER_PRION_FROM_BIOCHEMICAL_EVIDENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SUB_CHANGED",
+        "answer_authority_ref": "protected-items.json#SUB-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#SUB-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SUB-PATH-CHANGED",
+        "decisive_cue_id": "SUB-CUE-CHANGED",
+        "distractor_lineage_id": "SUB-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "SUB-FEATURE-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task classifies explicit descriptions; the changed task interprets biochemical sensitivity and capsid evidence."
+      },
+      {
+        "item_binding_id": "SUB-ITEM-REPAIR-NEAR",
+        "activity_id": "SUB-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SUB-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "SUB-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SUB-REP-MAIN",
+        "learner_operation": "REBUILD_SUBVIRAL_COMPARISON",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SUB_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#SUB-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#SUB-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SUB-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "SUB-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "SUB-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "SUB-FEATURE-REPAIR-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-REPAIR-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-REPAIR-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SUB-ITEM-REENTRY-NEAR",
+        "activity_id": "SUB-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SUB-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "SUB-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SUB-REP-MAIN",
+        "learner_operation": "REENTER_ENTITY_CLASSIFICATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SUB_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#SUB-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#SUB-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SUB-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "SUB-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "SUB-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "SUB-FEATURE-REENTRY-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-REENTRY-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-REENTRY-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "SUB-ITEM-NEAR",
+          "stimulus_difference": "Fresh distinguish viruses, prions, and viroids context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "SUB-ITEM-REPAIR-CHANGED",
+        "activity_id": "SUB-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SUB-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "SUB-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SUB-REP-MAIN",
+        "learner_operation": "REBUILD_COMPOSITION_SENSITIVITY_MAP",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SUB_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#SUB-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#SUB-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SUB-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "SUB-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "SUB-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "SUB-FEATURE-REPAIR-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-REPAIR-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-REPAIR-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SUB-ITEM-REENTRY-CHANGED",
+        "activity_id": "SUB-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-987880",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SUB-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "SUB-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SUB-REP-MAIN",
+        "learner_operation": "REENTER_BIOCHEMICAL_ENTITY_CLASSIFICATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SUB_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#SUB-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#SUB-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SUB-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "SUB-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "SUB-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "SUB-FEATURE-REENTRY-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-REENTRY-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "SUB-FEATURE-REENTRY-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task classifies explicit descriptions; the changed task interprets biochemical sensitivity and capsid evidence.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "SUB-ITEM-CHANGED",
+          "stimulus_difference": "Fresh distinguish viruses, prions, and viroids context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      }
+    ],
+    "transitions": [],
+    "attachment_bindings": []
+  }
+}

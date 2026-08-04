@@ -1,0 +1,1118 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "DIG-ITEM-ENTRY",
+      "learner_prompt_key": "DIG_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Swallowed material passes from mouth through esophagus to stomach, then small intestine and large intestine.",
+      "post_commitment_feedback": "The route proceeds mouth, esophagus, stomach, small intestine, and large intestine before rectal storage and elimination.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIG-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This places the stomach before the esophagus even though swallowed material traverses the esophagus first."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIG-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIG-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This places the small intestine before the stomach and reverses the normal route."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIG-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This moves the esophagus downstream of both stomach and small intestine."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIG-ITEM-GUIDED",
+      "learner_prompt_key": "DIG_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Storage, churning, low pH, and early protein digestion converge on the stomach.",
+      "post_commitment_feedback": "The combined storage, churning, acidic pH, and protein-digestion clues identify the stomach.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIG-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The large intestine recovers water and supports flora but is not the strongly acidic protein-digestion compartment."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIG-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The esophagus propels a bolus but does not store and acidify a meal for protein digestion."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIG-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The small intestine is normally neutralized rather than maintained as the strongly acidic compartment."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIG-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIG-ITEM-LIGHT",
+      "learner_prompt_key": "DIG_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Surface mucus and bicarbonate create a protective microenvironment near gastric epithelial cells.",
+      "post_commitment_feedback": "The gastric mucus-and-bicarbonate barrier protects the epithelium while the lumen remains acidic.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIG-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIG-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Permanently neutralizing the stomach would remove the acidic condition rather than protect tissue within it."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIG-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Villi specialize in intestinal absorption and do not form the stomach acid barrier."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIG-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A rectal sphincter controls elimination and is anatomically remote from gastric protection."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIG-ITEM-SOLO",
+      "learner_prompt_key": "DIG_SOLO",
+      "correct_option_index": 2,
+      "rationale": "Coordinated contraction behind and relaxation ahead of a bolus produces propulsion by peristalsis.",
+      "post_commitment_feedback": "The coordinated smooth-muscle wave propels luminal contents; it does not itself digest or absorb them.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIG-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Acid neutralization is a chemical effect of bicarbonate rather than the immediate effect of a traveling contraction."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIG-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peptide hydrolysis requires enzymes and is not performed by smooth-muscle contraction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIG-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIG-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Absorption crosses intestinal epithelium; the contraction pattern primarily moves contents."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIG-ITEM-NEAR",
+      "learner_prompt_key": "DIG_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The small intestine combines acid neutralization, continuing digestion, folded absorptive surface, and most nutrient uptake.",
+      "post_commitment_feedback": "Neutralization, continued enzymatic digestion, and most nutrient absorption converge in the small intestine.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIG-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stomach creates acidic chyme but is not the neutralized, highly folded site of most nutrient absorption."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIG-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIG-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The large intestine recovers water and supports flora but is not the main site described for nutrient digestion and absorption."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIG-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The rectum stores fecal material before elimination and does not perform the stated neutralization and nutrient absorption."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIG-ITEM-CHANGED",
+      "learner_prompt_key": "DIG_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Removing coordinated intestinal contractions directly reduces movement and mixing while leaving secretory chemistry available.",
+      "post_commitment_feedback": "With secretions preserved, the first direct loss is slower propulsion and mixing from reduced motility.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIG-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt preserves enzyme secretion, so complete loss of enzymes contradicts the selective perturbation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIG-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The perturbation is intestinal motility and does not directly remove the stomach epithelial barrier."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIG-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt does not remove bile delivery or its emulsifying action; it removes coordinated muscular waves."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIG-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIG-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "DIG_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Water recovery and abundant flora are paired functions of the large intestine.",
+      "post_commitment_feedback": "Require both clues to fit: water recovery and microbial flora identify the large intestine.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIG-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIG-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stomach acidifies and churns a meal but is not the downstream water-recovery and flora compartment."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIG-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The esophagus transports a bolus and does not support the stated water-recovery and microbial functions."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIG-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The rectum stores fecal material, whereas the paired water-recovery and flora clues identify the large intestine."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIG-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "DIG_REENTRY_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The rectum is the distal storage compartment immediately preceding elimination.",
+      "post_commitment_feedback": "Temporary storage immediately before defecation is the rectal function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIG-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The small intestine is upstream and primarily completes digestion and nutrient absorption."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIG-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The large intestine forms and advances fecal material, but the immediate pre-defecation storage site is more distal."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIG-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIG-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stomach stores an ingested meal early in the route, not fecal material immediately before defecation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIG-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "DIG_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Esophageal peristalsis provides propulsion, so its selective loss slows transport to the stomach.",
+      "post_commitment_feedback": "Keeping other functions intact isolates the direct result: impaired bolus propulsion toward the stomach.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIG-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Villus surface area is not directly determined by esophageal peristaltic waves."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIG-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIG-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Bile production is an accessory-organ function and is not the direct consequence of lost esophageal motility."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIG-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Microbial flora are not directly removed by an esophageal movement defect."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DIG-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "DIG_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Churning mechanically mixes stomach contents with secretions, so its selective loss directly reduces that mixing.",
+      "post_commitment_feedback": "Normal acid and enzymes preserve chemical capacity; the direct deficit is reduced mechanical mixing.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DIG-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The perturbation is gastric churning and does not reverse esophageal anatomy."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DIG-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Acid and protein-digesting enzymes remain available, so chemical digestion is not eliminated."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DIG-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rectal storage is downstream and is not the first direct effect of losing gastric mixing."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DIG-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ACC-ITEM-ENTRY",
+      "learner_prompt_key": "ACC_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Bile is synthesized by the liver and may then be stored and concentrated in the gallbladder.",
+      "post_commitment_feedback": "The liver produces bile; the gallbladder stores and concentrates it before release.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ACC-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The gallbladder stores and concentrates bile but does not produce it."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ACC-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The pancreas provides digestive enzymes and bicarbonate but is not the source of bile."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ACC-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ACC-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The large intestine recovers water and supports flora rather than producing bile."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ACC-ITEM-GUIDED",
+      "learner_prompt_key": "ACC_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "The gallbladder stores and concentrates bile made by the liver.",
+      "post_commitment_feedback": "Storage and concentration of liver-produced bile occur in the gallbladder.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ACC-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ACC-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pancreatic islets release hormones into blood and do not store bile."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ACC-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stomach stores a meal and gastric secretions, not a reservoir of liver-produced bile."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ACC-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A blood vessel transports blood and does not serve as the bile-storage organ."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ACC-ITEM-LIGHT",
+      "learner_prompt_key": "ACC_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "Bile emulsifies lipids, increasing dispersed surface without enzymatically hydrolyzing nutrient bonds.",
+      "post_commitment_feedback": "Bile emulsifies fat into smaller droplets; it is not itself a digestive hydrolase.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ACC-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peptide hydrolysis is catalyzed by proteolytic enzymes rather than by bile."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ACC-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glucose storage is metabolically regulated and is not bile action in the intestinal lumen."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ACC-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Bicarbonate contributes to neutralization; bile is not an acid-cleaving enzyme."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ACC-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ACC-ITEM-SOLO",
+      "learner_prompt_key": "ACC_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Duct delivery to the intestinal lumen is an exocrine pancreatic route used by digestive enzymes.",
+      "post_commitment_feedback": "A pancreatic digestive enzyme uses the exocrine duct route to the intestinal lumen.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ACC-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Insulin is an endocrine hormone released into blood, not through the pancreatic duct."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ACC-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ACC-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glucagon is released into blood and acts systemically rather than in the intestinal lumen."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ACC-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An intracellular liver enzyme is neither pancreatic nor a duct-delivered intestinal product."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ACC-ITEM-NEAR",
+      "learner_prompt_key": "ACC_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The liver produces bile, the gallbladder stores it, and delivery to the small intestine supports lipid emulsification.",
+      "post_commitment_feedback": "Keep the four links distinct: liver, gallbladder, small intestine, emulsification.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ACC-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses production and storage, sends bile to the wrong compartment, and assigns an enzymatic protein action."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ACC-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Bile is not a pancreatic blood-borne glucose signal."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ACC-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ACC-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The pancreas is not the bile reservoir, and bile neither targets the colon nor cleaves peptides."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ACC-ITEM-CHANGED",
+      "learner_prompt_key": "ACC_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "A pancreatic duct block impairs exocrine delivery to the intestine but need not prevent endocrine secretion into blood.",
+      "post_commitment_feedback": "The duct carries exocrine products; endocrine hormones use blood, so the selective block separates the two functions.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ACC-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ACC-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the affected routes: the duct carries exocrine enzymes, whereas insulin enters blood independently of that duct."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ACC-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Bile production is hepatic, and a blocked pancreatic duct does not increase duct delivery."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ACC-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither liver detoxification nor gallbladder identity follows from selective pancreatic duct obstruction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ACC-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ACC_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Bile production is hepatic; gallbladder storage is a separate downstream function.",
+      "post_commitment_feedback": "Use the source-reservoir distinction: liver makes bile, gallbladder stores it.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ACC-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the production and storage assignments."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ACC-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither pancreatic production nor gastric storage describes the bile pathway."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ACC-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The intestinal compartments receive or process contents but are not the bile source-reservoir pair."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ACC-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ACC-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ACC_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The liver can continue producing bile, but removal of the gallbladder removes its storage and concentration function.",
+      "post_commitment_feedback": "Production persists in the liver; what is lost is the gallbladder reservoir and its concentrated meal-timed release.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ACC-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The liver remains the production organ, so removal of the reservoir does not end synthesis."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ACC-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ACC-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Endocrine pancreatic cells do not assume bile production."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ACC-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The colon does not replace the gallbladder as a bile-storage organ."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ACC-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ACC_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Insulin is an endocrine pancreatic hormone released into circulation.",
+      "post_commitment_feedback": "Blood-borne glucose regulation identifies the endocrine route; digestive products use ducts.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ACC-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Digestive protease precursors are exocrine products sent toward the intestinal lumen."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ACC-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pancreatic bicarbonate is delivered through the exocrine duct system."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ACC-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ACC-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A pancreatic digestive enzyme follows the exocrine duct route rather than direct blood release."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ACC-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ACC_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Selective beta-cell damage impairs endocrine insulin release while preserving acinar exocrine production and duct delivery.",
+      "post_commitment_feedback": "Moving the defect to beta cells reverses which route is affected: endocrine insulin falls while exocrine delivery may persist.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ACC-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ACC-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Bile is produced by the liver and is not the direct beta-cell function."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ACC-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt preserves acinar cells and ducts but selectively damages insulin-producing beta cells."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ACC-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The gallbladder and glucagon transport route do not change identity after beta-cell damage."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ABS-ITEM-ENTRY",
+      "learner_prompt_key": "ABS_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "Villi and microvilli multiply the epithelial area available for exchange with luminal contents.",
+      "post_commitment_feedback": "Lumen-facing villi and microvilli enlarge the absorptive interface without lengthening the intestine.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ABS-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Increasing outer-wall thickness does not create the lumen-facing exchange area used for absorption."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ABS-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Removing projections decreases rather than increases the lumen-facing surface."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ABS-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rectal storage does not enlarge the small-intestinal absorptive interface."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ABS-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ABS-ITEM-GUIDED",
+      "learner_prompt_key": "ABS_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Bicarbonate neutralizes gastric acid entering the small intestine and supports a more suitable pH for many enzymes.",
+      "post_commitment_feedback": "Bicarbonate raises the pH of incoming chyme, protecting the intestine and supporting intestinal digestion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ABS-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Additional acid would oppose the neutralization needed for many small-intestinal enzymes."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ABS-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ABS-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Water removal does not directly neutralize incoming acid and would not establish the needed pH."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ABS-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Closing these ducts would reduce rather than support delivery of neutralizing and digestive secretions."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ABS-ITEM-LIGHT",
+      "learner_prompt_key": "ABS_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The apical epithelial membrane and immediate pre-uptake reaction identify a brush-border enzyme.",
+      "post_commitment_feedback": "An apical membrane enzyme acts at the brush border, at the interface between lumen and absorptive cell.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ABS-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The gallbladder stores bile and is not the epithelial enzyme site described."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ABS-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt places the enzyme on small-intestinal epithelial cells rather than in colonic flora."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ABS-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ABS-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A brush-border digestive enzyme is not an endocrine pancreatic product."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ABS-ITEM-SOLO",
+      "learner_prompt_key": "ABS_SOLO",
+      "correct_option_index": 0,
+      "rationale": "The large intestine recovers remaining water and supports a substantial microbial community.",
+      "post_commitment_feedback": "Downstream water recovery and microbial flora are paired large-intestinal functions.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ABS-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ABS-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The esophagus transports swallowed material and is upstream of nutrient absorption."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ABS-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stomach acidifies and churns a meal but is not the downstream flora-rich water-recovery compartment."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ABS-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The pancreatic duct transports secretions and is not a compartment for water recovery or flora."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ABS-ITEM-NEAR",
+      "learner_prompt_key": "ABS_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Flattening villi reduces epithelial surface area, lowering absorptive capacity when other driving conditions are held constant.",
+      "post_commitment_feedback": "With digestion and concentration preserved, reduced epithelial area directly lowers nutrient absorption.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ABS-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Villus flattening does not directly disable hepatic bile synthesis."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ABS-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stomach does not replace the lost small-intestinal exchange interface."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ABS-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rectal storage cannot compensate for reduced epithelial exchange area."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ABS-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ABS-ITEM-CHANGED",
+      "learner_prompt_key": "ABS_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Enteric circuits coordinate local sensory, motor, and secretory responses, whereas preserved hormones can still act through endocrine routes.",
+      "post_commitment_feedback": "The selective lesion isolates local enteric coordination; preserved blood-borne hormone signaling need not fail.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ABS-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt preserves circulating hormones and their receptors, so global endocrine failure is excluded."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ABS-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ABS-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A local neural circuit block does not directly erase epithelial structure throughout the intestine."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ABS-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hepatic metabolic processing is not the first direct target of the local enteric circuit lesion."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ABS-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ABS_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "With concentration and perfusion held constant, more functional epithelial area increases potential exchange.",
+      "post_commitment_feedback": "The controlled comparison isolates surface area, so the direct change is greater absorptive capacity.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ABS-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Upstream gastric acidity is not directly set by the local epithelial surface comparison."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ABS-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rectal storage frequency does not directly follow from exchange area in the compared segments."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ABS-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ABS-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pancreatic digestive enzymes act through the gut route; increased surface area does not reroute them into blood."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ABS-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ABS_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Shorter microvilli reduce apical membrane surface and therefore reduce absorptive capacity under matched conditions.",
+      "post_commitment_feedback": "The fresh structure change again reduces exchange area, so absorptive capacity falls.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ABS-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ABS-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A smoother apical surface reduces exchange area; the prompt does not supply a compensating mechanism."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ABS-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Small-intestinal microvillus length does not directly eliminate colonic microbial communities."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ABS-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The gallbladder stores rather than produces bile, and microvillus shortening does not directly control hepatic synthesis."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ABS-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ABS_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Transport in blood to a distant receptor-bearing target is the defining route clue for endocrine control.",
+      "post_commitment_feedback": "Use the route: a blood-borne messenger acting at a distant digestive target is endocrine.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ABS-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A local sensory-motor loop within the gut wall is enteric neural control."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ABS-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This describes coordinated motility but does not specifically establish a blood-borne endocrine signal."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ABS-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Enzyme location at the epithelial surface does not identify the controller as endocrine."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ABS-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ABS-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ABS_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "A missing receptor at the endocrine target selectively weakens that hormone-triggered response while local neural pathways may remain.",
+      "post_commitment_feedback": "The defect is in the hormone-target link, so hormone-triggered gallbladder contraction declines without erasing all enteric control.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ABS-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt preserves enteric innervation, so global loss of local reflexes is not the direct outcome."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ABS-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ABS-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Loss of a gallbladder hormone receptor does not directly enlarge intestinal epithelial surface."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ABS-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The receptor defect is at the gallbladder and does not directly close the pancreatic duct."
+        }
+      ]
+    }
+  ]
+}

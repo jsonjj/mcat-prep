@@ -1,0 +1,1159 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "author_option_presentation_audit": {
+    "review_status": "AUTHOR_CHECK_COMPLETED_INDEPENDENT_REVIEW_PENDING",
+    "correct_position_counts": {
+      "0": 7,
+      "1": 8,
+      "2": 7,
+      "3": 8
+    },
+    "longest_repeated_correct_position_run": 1,
+    "item_count": 30
+  },
+  "records": [
+    {
+      "answer_record_id": "MAP-ITEM-ENTRY",
+      "learner_prompt_key": "MAP_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Reabsorption moves a substance from tubular fluid back into blood.",
+      "post_commitment_feedback": "Reabsorption moves a substance from tubular fluid back into blood.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "MAP-FEATURE-ENTRY-1",
+          "observation_language": "This response is consistent with selecting “Secretion” for the stated evidence.",
+          "rejection_rationale": "Secretion moves a substance from blood into tubular fluid.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "MAP-FEATURE-ENTRY-2",
+          "observation_language": "This response is consistent with selecting “Filtration” for the stated evidence.",
+          "rejection_rationale": "Filtration moves fluid from glomerular blood into Bowman’s capsule.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "MAP-FEATURE-ENTRY-3",
+          "observation_language": "This response is consistent with selecting “Elimination” for the stated evidence.",
+          "rejection_rationale": "Elimination removes urine from the body.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for check compartment to blood direction.",
+        "Apply the taught model before inspecting option presentation.",
+        "Reabsorption moves a substance from tubular fluid back into blood."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "MAP-ITEM-GUIDED",
+      "learner_prompt_key": "MAP_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Glomerular filtrate first enters Bowman’s capsule.",
+      "post_commitment_feedback": "Glomerular filtrate first enters Bowman’s capsule.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "MAP-FEATURE-GUIDED-0",
+          "observation_language": "This response is consistent with selecting “Proximal tubule” for the stated evidence.",
+          "rejection_rationale": "The proximal tubule receives fluid after Bowman’s capsule.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "MAP-FEATURE-GUIDED-2",
+          "observation_language": "This response is consistent with selecting “Collecting duct” for the stated evidence.",
+          "rejection_rationale": "The collecting duct is much later in the tubular route.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "MAP-FEATURE-GUIDED-3",
+          "observation_language": "This response is consistent with selecting “Ureter” for the stated evidence.",
+          "rejection_rationale": "The ureter receives urine after nephron processing.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify first filtrate compartment.",
+        "Apply the taught model before inspecting option presentation.",
+        "Glomerular filtrate first enters Bowman’s capsule."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "MAP-ITEM-LIGHT",
+      "learner_prompt_key": "MAP_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The loop of Henle descends into and returns from the medulla.",
+      "post_commitment_feedback": "The loop of Henle descends into and returns from the medulla.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "MAP-FEATURE-LIGHT-0",
+          "observation_language": "This response is consistent with selecting “Glomerulus” for the stated evidence.",
+          "rejection_rationale": "Glomeruli are located in the cortex.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "MAP-FEATURE-LIGHT-1",
+          "observation_language": "This response is consistent with selecting “Bowman’s capsule” for the stated evidence.",
+          "rejection_rationale": "Bowman’s capsules are located in the cortex.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "MAP-FEATURE-LIGHT-3",
+          "observation_language": "This response is consistent with selecting “Proximal tubule” for the stated evidence.",
+          "rejection_rationale": "Most proximal tubule lies in the cortex.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for localize nephron region.",
+        "Apply the taught model before inspecting option presentation.",
+        "The loop of Henle descends into and returns from the medulla."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "MAP-ITEM-SOLO",
+      "learner_prompt_key": "MAP_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Urine travels through ureter to bladder and exits through urethra.",
+      "post_commitment_feedback": "Urine travels through ureter to bladder and exits through urethra.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "MAP-FEATURE-SOLO-0",
+          "observation_language": "This response is consistent with selecting “B→U→H” for the stated evidence.",
+          "rejection_rationale": "The ureter carries urine toward rather than away from the bladder.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "MAP-FEATURE-SOLO-1",
+          "observation_language": "This response is consistent with selecting “H→B→U” for the stated evidence.",
+          "rejection_rationale": "The sequence is reversed.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "MAP-FEATURE-SOLO-2",
+          "observation_language": "This response is consistent with selecting “U→H→B” for the stated evidence.",
+          "rejection_rationale": "The bladder must precede the urethra.",
+          "repair_feature_id": "MAP-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for order urinary transport.",
+        "Apply the taught model before inspecting option presentation.",
+        "Urine travels through ureter to bladder and exits through urethra."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "MAP-ITEM-NEAR",
+      "learner_prompt_key": "MAP_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Tubular fluid passes proximal tubule, loop of Henle, distal tubule, then collecting duct.",
+      "post_commitment_feedback": "Tubular fluid passes proximal tubule, loop of Henle, distal tubule, then collecting duct.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "MAP-FEATURE-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Distal; loop” for the stated evidence.",
+          "rejection_rationale": "The proximal tubule precedes the loop.",
+          "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "MAP-FEATURE-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Collecting; loop” for the stated evidence.",
+          "rejection_rationale": "The loop precedes the distal tubule.",
+          "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "MAP-FEATURE-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Loop; proximal” for the stated evidence.",
+          "rejection_rationale": "This reverses the tubular route.",
+          "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for sequence nephron flow.",
+        "Apply the taught model before inspecting option presentation.",
+        "Tubular fluid passes proximal tubule, loop of Henle, distal tubule, then collecting duct."
+      ],
+      "decision_point": "Separate the tubular route from the later ureter–bladder–urethra route.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "MAP-ITEM-CHANGED",
+      "learner_prompt_key": "MAP_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "After leaving kidney collecting pathways, urine reaches the bladder through a ureter.",
+      "post_commitment_feedback": "After leaving kidney collecting pathways, urine reaches the bladder through a ureter.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "MAP-FEATURE-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Proximal tubule” for the stated evidence.",
+          "rejection_rationale": "The proximal tubule is upstream of the collecting duct already reached.",
+          "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "MAP-FEATURE-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Loop of Henle” for the stated evidence.",
+          "rejection_rationale": "The loop is upstream of the collecting duct already reached.",
+          "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "MAP-FEATURE-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Urethra” for the stated evidence.",
+          "rejection_rationale": "The urethra is downstream of the bladder, which the tracer never reached.",
+          "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for localize obstruction from tracer.",
+        "Apply the taught model before inspecting option presentation.",
+        "After leaving kidney collecting pathways, urine reaches the bladder through a ureter."
+      ],
+      "decision_point": "Use the last observed and first missing compartments to locate the boundary.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "MAP-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "MAP_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Filtrate enters Bowman’s capsule, then proximal tubule, then the loop.",
+      "post_commitment_feedback": "Filtrate enters Bowman’s capsule, then proximal tubule, then the loop.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "MAP-FEATURE-REPAIR-NEAR-1",
+          "observation_language": "This response is consistent with selecting “L→B→P” for the stated evidence.",
+          "rejection_rationale": "The loop cannot precede Bowman’s capsule and proximal tubule.",
+          "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "MAP-FEATURE-REPAIR-NEAR-2",
+          "observation_language": "This response is consistent with selecting “P→B→L” for the stated evidence.",
+          "rejection_rationale": "Bowman’s capsule precedes the proximal tubule.",
+          "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "MAP-FEATURE-REPAIR-NEAR-3",
+          "observation_language": "This response is consistent with selecting “L→P→B” for the stated evidence.",
+          "rejection_rationale": "This reverses the three structures.",
+          "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild nephron sequence.",
+        "Apply the taught model before inspecting option presentation.",
+        "Filtrate enters Bowman’s capsule, then proximal tubule, then the loop."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "MAP-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "MAP_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "After the loop, fluid passes distal tubule, collecting duct, then toward the ureter.",
+      "post_commitment_feedback": "After the loop, fluid passes distal tubule, collecting duct, then toward the ureter.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "MAP-FEATURE-REENTRY-NEAR-0",
+          "observation_language": "This response is consistent with selecting “C→D→U” for the stated evidence.",
+          "rejection_rationale": "The distal tubule precedes the collecting duct.",
+          "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "MAP-FEATURE-REENTRY-NEAR-1",
+          "observation_language": "This response is consistent with selecting “U→D→C” for the stated evidence.",
+          "rejection_rationale": "The ureter follows nephron processing.",
+          "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "MAP-FEATURE-REENTRY-NEAR-2",
+          "observation_language": "This response is consistent with selecting “D→U→C” for the stated evidence.",
+          "rejection_rationale": "The collecting duct precedes the ureter.",
+          "repair_feature_id": "MAP-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter nephron sequence.",
+        "Apply the taught model before inspecting option presentation.",
+        "After the loop, fluid passes distal tubule, collecting duct, then toward the ureter."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "MAP-ITEM-NEAR"
+    },
+    {
+      "answer_record_id": "MAP-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "MAP_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The urethra carries urine from the bladder out of the body.",
+      "post_commitment_feedback": "The urethra carries urine from the bladder out of the body.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "MAP-FEATURE-REPAIR-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Ureter” for the stated evidence.",
+          "rejection_rationale": "The ureter carried urine into the bladder and is upstream of the observed point.",
+          "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "MAP-FEATURE-REPAIR-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Collecting duct” for the stated evidence.",
+          "rejection_rationale": "The collecting duct is upstream within the kidney.",
+          "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "MAP-FEATURE-REPAIR-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Proximal tubule” for the stated evidence.",
+          "rejection_rationale": "The proximal tubule is much earlier in nephron flow.",
+          "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild tracer boundary inference.",
+        "Apply the taught model before inspecting option presentation.",
+        "The urethra carries urine from the bladder out of the body."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "MAP-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "MAP_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The first missing downstream compartment is the proximal tubule, localizing the capsule-to-proximal boundary.",
+      "post_commitment_feedback": "The first missing downstream compartment is the proximal tubule, localizing the capsule-to-proximal boundary.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "MAP-FEATURE-REENTRY-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Loop entry” for the stated evidence.",
+          "rejection_rationale": "The marker fails before reaching the loop.",
+          "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "MAP-FEATURE-REENTRY-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Distal entry” for the stated evidence.",
+          "rejection_rationale": "The marker fails before reaching the distal tubule.",
+          "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "MAP-FEATURE-REENTRY-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Collecting entry” for the stated evidence.",
+          "rejection_rationale": "The marker fails before reaching the collecting duct.",
+          "repair_feature_id": "MAP-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter tracer localization.",
+        "Apply the taught model before inspecting option presentation.",
+        "The first missing downstream compartment is the proximal tubule, localizing the capsule-to-proximal boundary."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "MAP-ITEM-CHANGED"
+    },
+    {
+      "answer_record_id": "URN-ITEM-ENTRY",
+      "learner_prompt_key": "URN_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Movement from glomerular blood into Bowman’s capsule is filtration.",
+      "post_commitment_feedback": "Movement from glomerular blood into Bowman’s capsule is filtration.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "URN-FEATURE-ENTRY-0",
+          "observation_language": "This response is consistent with selecting “Elimination” for the stated evidence.",
+          "rejection_rationale": "Elimination removes urine from the body.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "URN-FEATURE-ENTRY-2",
+          "observation_language": "This response is consistent with selecting “Reabsorption” for the stated evidence.",
+          "rejection_rationale": "Reabsorption moves material from tubule back to blood.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "URN-FEATURE-ENTRY-3",
+          "observation_language": "This response is consistent with selecting “Secretion” for the stated evidence.",
+          "rejection_rationale": "Secretion is later blood-to-tubule movement, not glomerular filtration.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for classify glomerular filtration.",
+        "Apply the taught model before inspecting option presentation.",
+        "Movement from glomerular blood into Bowman’s capsule is filtration."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "URN-ITEM-GUIDED",
+      "learner_prompt_key": "URN_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "Tubule-to-blood movement is reabsorption.",
+      "post_commitment_feedback": "Tubule-to-blood movement is reabsorption.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "URN-FEATURE-GUIDED-0",
+          "observation_language": "This response is consistent with selecting “Excretion” for the stated evidence.",
+          "rejection_rationale": "Excretion refers to material leaving the body in urine.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "URN-FEATURE-GUIDED-1",
+          "observation_language": "This response is consistent with selecting “Filtration” for the stated evidence.",
+          "rejection_rationale": "Filtration moves from glomerular blood into Bowman’s capsule.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "URN-FEATURE-GUIDED-3",
+          "observation_language": "This response is consistent with selecting “Secretion” for the stated evidence.",
+          "rejection_rationale": "Secretion moves from blood into tubular fluid.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for classify reabsorption.",
+        "Apply the taught model before inspecting option presentation.",
+        "Tubule-to-blood movement is reabsorption."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "URN-ITEM-LIGHT",
+      "learner_prompt_key": "URN_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "Post-filtration blood-to-tubule movement is secretion.",
+      "post_commitment_feedback": "Post-filtration blood-to-tubule movement is secretion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "URN-FEATURE-LIGHT-0",
+          "observation_language": "This response is consistent with selecting “Storage” for the stated evidence.",
+          "rejection_rationale": "Storage occurs in the bladder and does not name this transport.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "URN-FEATURE-LIGHT-1",
+          "observation_language": "This response is consistent with selecting “Filtration” for the stated evidence.",
+          "rejection_rationale": "Filtration occurs at the glomerulus into Bowman’s capsule.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "URN-FEATURE-LIGHT-2",
+          "observation_language": "This response is consistent with selecting “Reabsorption” for the stated evidence.",
+          "rejection_rationale": "Reabsorption moves in the opposite direction.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for classify tubular secretion.",
+        "Apply the taught model before inspecting option presentation.",
+        "Post-filtration blood-to-tubule movement is secretion."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "URN-ITEM-SOLO",
+      "learner_prompt_key": "URN_SOLO",
+      "correct_option_index": 0,
+      "rationale": "Salt removal without accompanying water from the ascending limb helps establish a hyperosmotic medulla.",
+      "post_commitment_feedback": "Salt removal without accompanying water from the ascending limb helps establish a hyperosmotic medulla.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "URN-FEATURE-SOLO-1",
+          "observation_language": "This response is consistent with selecting “Both limbs pass water equally” for the stated evidence.",
+          "rejection_rationale": "Equal water permeability would erase the functional limb contrast.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "URN-FEATURE-SOLO-2",
+          "observation_language": "This response is consistent with selecting “Both limbs retain all salt” for the stated evidence.",
+          "rejection_rationale": "Salt retention would not build the external medullary gradient.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "URN-FEATURE-SOLO-3",
+          "observation_language": "This response is consistent with selecting “Ascending limb passes water freely” for the stated evidence.",
+          "rejection_rationale": "The ascending limb is relatively impermeable to water.",
+          "repair_feature_id": "URN-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify countercurrent limb property.",
+        "Apply the taught model before inspecting option presentation.",
+        "Salt removal without accompanying water from the ascending limb helps establish a hyperosmotic medulla."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "URN-ITEM-NEAR",
+      "learner_prompt_key": "URN_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Reabsorption returns material from tubular fluid to capillary blood.",
+      "post_commitment_feedback": "Reabsorption returns material from tubular fluid to capillary blood.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "URN-FEATURE-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Bladder → urethra” for the stated evidence.",
+          "rejection_rationale": "Bladder to urethra is urinary elimination flow.",
+          "repair_feature_id": "URN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "URN-FEATURE-NEAR-1",
+          "observation_language": "This response is consistent with selecting “Blood → Bowman’s space” for the stated evidence.",
+          "rejection_rationale": "Blood to Bowman’s space is filtration.",
+          "repair_feature_id": "URN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "URN-FEATURE-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Capillary blood → distal tubule” for the stated evidence.",
+          "rejection_rationale": "Blood to distal tubular fluid is secretion.",
+          "repair_feature_id": "URN-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for distinguish renal transport directions.",
+        "Apply the taught model before inspecting option presentation.",
+        "Reabsorption returns material from tubular fluid to capillary blood."
+      ],
+      "decision_point": "Name both source and destination before assigning the process label.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "URN-ITEM-CHANGED",
+      "learner_prompt_key": "URN_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Reduced ascending-limb salt removal weakens the medullary gradient used for water recovery and urine concentration.",
+      "post_commitment_feedback": "Reduced ascending-limb salt removal weakens the medullary gradient used for water recovery and urine concentration.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "URN-FEATURE-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “More bladder storage” for the stated evidence.",
+          "rejection_rationale": "Bladder storage is downstream transport and does not restore the gradient.",
+          "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "URN-FEATURE-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Stronger medullary gradient” for the stated evidence.",
+          "rejection_rationale": "Less salt deposited in the medulla weakens rather than strengthens the gradient.",
+          "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "URN-FEATURE-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “More glomerular filtration” for the stated evidence.",
+          "rejection_rationale": "The local loop defect does not directly increase glomerular filtration.",
+          "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for predict gradient from ascending limb defect.",
+        "Apply the taught model before inspecting option presentation.",
+        "Reduced ascending-limb salt removal weakens the medullary gradient used for water recovery and urine concentration."
+      ],
+      "decision_point": "Propagate the segment defect through the medullary gradient to collecting-duct concentration.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "URN-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "URN_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Reabsorption moves material from tubular fluid back into blood.",
+      "post_commitment_feedback": "Reabsorption moves material from tubular fluid back into blood.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "URN-FEATURE-REPAIR-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Urine→outside: filtration” for the stated evidence.",
+          "rejection_rationale": "Urine leaving the body is elimination.",
+          "repair_feature_id": "URN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "URN-FEATURE-REPAIR-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Blood→tubule: reabsorb” for the stated evidence.",
+          "rejection_rationale": "Blood-to-tubule movement after filtration is secretion.",
+          "repair_feature_id": "URN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "URN-FEATURE-REPAIR-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Blood→Bowman’s: secretion” for the stated evidence.",
+          "rejection_rationale": "Blood into Bowman’s capsule is filtration.",
+          "repair_feature_id": "URN-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild transport direction labels.",
+        "Apply the taught model before inspecting option presentation.",
+        "Reabsorption moves material from tubular fluid back into blood."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "URN-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "URN_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Later capillary-to-tubule movement is secretion.",
+      "post_commitment_feedback": "Later capillary-to-tubule movement is secretion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "URN-FEATURE-REENTRY-NEAR-1",
+          "observation_language": "This response is consistent with selecting “Reabsorption” for the stated evidence.",
+          "rejection_rationale": "Reabsorption moves from tubule to blood.",
+          "repair_feature_id": "URN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "URN-FEATURE-REENTRY-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Filtration” for the stated evidence.",
+          "rejection_rationale": "Filtration specifically crosses the glomerular barrier into Bowman’s capsule.",
+          "repair_feature_id": "URN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "URN-FEATURE-REENTRY-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Elimination” for the stated evidence.",
+          "rejection_rationale": "Elimination occurs when urine leaves the body.",
+          "repair_feature_id": "URN-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter transport classification.",
+        "Apply the taught model before inspecting option presentation.",
+        "Later capillary-to-tubule movement is secretion."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "URN-ITEM-NEAR"
+    },
+    {
+      "answer_record_id": "URN-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "URN_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Salt removal from the water-impermeable ascending limb helps create a hyperosmotic medullary gradient.",
+      "post_commitment_feedback": "Salt removal from the water-impermeable ascending limb helps create a hyperosmotic medullary gradient.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "URN-FEATURE-REPAIR-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Bladder volume” for the stated evidence.",
+          "rejection_rationale": "Bladder volume reflects storage, not gradient formation.",
+          "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "URN-FEATURE-REPAIR-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Dilute cortex” for the stated evidence.",
+          "rejection_rationale": "The relevant gradient is medullary, not a dilute cortical target.",
+          "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "URN-FEATURE-REPAIR-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Glomerular pressure” for the stated evidence.",
+          "rejection_rationale": "Glomerular pressure drives filtration and is a different mechanism.",
+          "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild countercurrent gradient.",
+        "Apply the taught model before inspecting option presentation.",
+        "Salt removal from the water-impermeable ascending limb helps create a hyperosmotic medullary gradient."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "URN-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "URN_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "If descending-limb water permeability falls, less water can leave as filtrate descends.",
+      "post_commitment_feedback": "If descending-limb water permeability falls, less water can leave as filtrate descends.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "URN-FEATURE-REENTRY-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “More water leaves descending fluid” for the stated evidence.",
+          "rejection_rationale": "Lower permeability reduces water exit.",
+          "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "URN-FEATURE-REENTRY-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “A stronger gradient automatically forms” for the stated evidence.",
+          "rejection_rationale": "A stronger gradient does not follow automatically from blocked water movement.",
+          "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "URN-FEATURE-REENTRY-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Filtrate concentrates more in descent” for the stated evidence.",
+          "rejection_rationale": "Reduced water loss makes concentration during descent smaller, not larger.",
+          "repair_feature_id": "URN-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter descending limb perturbation.",
+        "Apply the taught model before inspecting option presentation.",
+        "If descending-limb water permeability falls, less water can leave as filtrate descends."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "URN-ITEM-CHANGED"
+    },
+    {
+      "answer_record_id": "HOM-ITEM-ENTRY",
+      "learner_prompt_key": "HOM_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Less water returns to blood, so more water remains in tubular fluid and urine volume rises.",
+      "post_commitment_feedback": "Less water returns to blood, so more water remains in tubular fluid and urine volume rises.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "HOM-FEATURE-ENTRY-0",
+          "observation_language": "This response is consistent with selecting “No urine formation” for the stated evidence.",
+          "rejection_rationale": "Reduced reabsorption does not necessarily stop filtration and urine formation.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "HOM-FEATURE-ENTRY-1",
+          "observation_language": "This response is consistent with selecting “More glucose recovery” for the stated evidence.",
+          "rejection_rationale": "Water reabsorption does not directly increase glucose recovery.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "HOM-FEATURE-ENTRY-3",
+          "observation_language": "This response is consistent with selecting “Lower urine volume” for the stated evidence.",
+          "rejection_rationale": "Lower volume would require greater water recovery, not less.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for predict water recovery effect.",
+        "Apply the taught model before inspecting option presentation.",
+        "Less water returns to blood, so more water remains in tubular fluid and urine volume rises."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "HOM-ITEM-GUIDED",
+      "learner_prompt_key": "HOM_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Reabsorption returns filtered amino acids from tubular fluid to blood.",
+      "post_commitment_feedback": "Reabsorption returns filtered amino acids from tubular fluid to blood.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "HOM-FEATURE-GUIDED-0",
+          "observation_language": "This response is consistent with selecting “Storage in bladder” for the stated evidence.",
+          "rejection_rationale": "Bladder storage occurs after nephron processing.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "HOM-FEATURE-GUIDED-1",
+          "observation_language": "This response is consistent with selecting “Flow through urethra” for the stated evidence.",
+          "rejection_rationale": "Urethral flow eliminates rather than recovers solute.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "HOM-FEATURE-GUIDED-2",
+          "observation_language": "This response is consistent with selecting “Secretion into tubule” for the stated evidence.",
+          "rejection_rationale": "Secretion moves material toward excretion.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for relate reabsorption to solute recovery.",
+        "Apply the taught model before inspecting option presentation.",
+        "Reabsorption returns filtered amino acids from tubular fluid to blood."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "HOM-ITEM-LIGHT",
+      "learner_prompt_key": "HOM_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Tubular acid secretion contributes directly to acid–base regulation.",
+      "post_commitment_feedback": "Tubular acid secretion contributes directly to acid–base regulation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "HOM-FEATURE-LIGHT-1",
+          "observation_language": "This response is consistent with selecting “Ureter transport” for the stated evidence.",
+          "rejection_rationale": "Ureter transport conveys urine but does not secrete acid.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "HOM-FEATURE-LIGHT-2",
+          "observation_language": "This response is consistent with selecting “Urine storage” for the stated evidence.",
+          "rejection_rationale": "Urine storage is a bladder function.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "HOM-FEATURE-LIGHT-3",
+          "observation_language": "This response is consistent with selecting “Glucose filtration” for the stated evidence.",
+          "rejection_rationale": "Glucose filtration occurs at the glomerulus and is not the named acid process.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for relate acid secretion to homeostasis.",
+        "Apply the taught model before inspecting option presentation.",
+        "Tubular acid secretion contributes directly to acid–base regulation."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "HOM-ITEM-SOLO",
+      "learner_prompt_key": "HOM_SOLO",
+      "correct_option_index": 1,
+      "rationale": "The bladder stores urine before it is released through the urethra.",
+      "post_commitment_feedback": "The bladder stores urine before it is released through the urethra.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "HOM-FEATURE-SOLO-0",
+          "observation_language": "This response is consistent with selecting “Urethra” for the stated evidence.",
+          "rejection_rationale": "The urethra carries urine outward during elimination.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "HOM-FEATURE-SOLO-2",
+          "observation_language": "This response is consistent with selecting “Ureter” for the stated evidence.",
+          "rejection_rationale": "The ureter conveys urine to the bladder.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "HOM-FEATURE-SOLO-3",
+          "observation_language": "This response is consistent with selecting “Collecting duct” for the stated evidence.",
+          "rejection_rationale": "The collecting duct participates in renal processing before urinary storage.",
+          "repair_feature_id": "HOM-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify urine storage.",
+        "Apply the taught model before inspecting option presentation.",
+        "The bladder stores urine before it is released through the urethra."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "HOM-ITEM-NEAR",
+      "learner_prompt_key": "HOM_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Reduced reabsorption leaves more glucose in urine and returns less glucose to blood.",
+      "post_commitment_feedback": "Reduced reabsorption leaves more glucose in urine and returns less glucose to blood.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "HOM-FEATURE-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Down; down” for the stated evidence.",
+          "rejection_rationale": "Urinary glucose rises rather than falls when less is reabsorbed.",
+          "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "HOM-FEATURE-NEAR-1",
+          "observation_language": "This response is consistent with selecting “Unchanged; up” for the stated evidence.",
+          "rejection_rationale": "Urinary glucose does not stay unchanged, and blood recovery does not rise.",
+          "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "HOM-FEATURE-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Down; up” for the stated evidence.",
+          "rejection_rationale": "Both directions are reversed: urinary glucose rises while blood recovery falls.",
+          "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for predict solute recovery consequences.",
+        "Apply the taught model before inspecting option presentation.",
+        "Reduced reabsorption leaves more glucose in urine and returns less glucose to blood."
+      ],
+      "decision_point": "Track the solute between blood recovery and urinary loss.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "HOM-ITEM-CHANGED",
+      "learner_prompt_key": "HOM_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Normal processed urine in the bladder with failed release points to urethral sphincter control.",
+      "post_commitment_feedback": "Normal processed urine in the bladder with failed release points to urethral sphincter control.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "HOM-FEATURE-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Loop of Henle” for the stated evidence.",
+          "rejection_rationale": "A loop defect would affect concentration rather than isolated bladder outflow.",
+          "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "HOM-FEATURE-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Glomerulus” for the stated evidence.",
+          "rejection_rationale": "A glomerular defect would alter formation before urine reached the bladder normally.",
+          "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "HOM-FEATURE-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Proximal tubule” for the stated evidence.",
+          "rejection_rationale": "A proximal defect would alter composition rather than only release.",
+          "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for localize storage versus outflow defect.",
+        "Apply the taught model before inspecting option presentation.",
+        "Normal processed urine in the bladder with failed release points to urethral sphincter control."
+      ],
+      "decision_point": "Use normal composition to exclude nephron processing before localizing the failed release step.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "HOM-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "HOM_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Reduced tubule-to-blood movement leaves more of the substance in tubular fluid for excretion.",
+      "post_commitment_feedback": "Reduced tubule-to-blood movement leaves more of the substance in tubular fluid for excretion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "HOM-FEATURE-REPAIR-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Renal artery only” for the stated evidence.",
+          "rejection_rationale": "The substance has already entered tubular fluid after filtration.",
+          "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "HOM-FEATURE-REPAIR-NEAR-1",
+          "observation_language": "This response is consistent with selecting “Inside the glomerulus” for the stated evidence.",
+          "rejection_rationale": "The relevant destination choice is tubule versus blood, not retention inside the glomerulus.",
+          "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "HOM-FEATURE-REPAIR-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Capillary blood” for the stated evidence.",
+          "rejection_rationale": "Capillary recovery decreases when reabsorption falls.",
+          "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild destination consequence.",
+        "Apply the taught model before inspecting option presentation.",
+        "Reduced tubule-to-blood movement leaves more of the substance in tubular fluid for excretion."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "HOM-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "HOM_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Reduced ion reabsorption leaves more ion in tubular fluid and final urine.",
+      "post_commitment_feedback": "Reduced ion reabsorption leaves more ion in tubular fluid and final urine.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "HOM-FEATURE-REENTRY-NEAR-0",
+          "observation_language": "This response is consistent with selecting “More bladder contraction” for the stated evidence.",
+          "rejection_rationale": "Bladder contraction does not restore nephron ion recovery.",
+          "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "HOM-FEATURE-REENTRY-NEAR-2",
+          "observation_language": "This response is consistent with selecting “More blood recovery” for the stated evidence.",
+          "rejection_rationale": "Blood recovery falls rather than rises.",
+          "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "HOM-FEATURE-REENTRY-NEAR-3",
+          "observation_language": "This response is consistent with selecting “No urine flow” for the stated evidence.",
+          "rejection_rationale": "An ion transport change does not automatically stop all urine flow.",
+          "repair_feature_id": "HOM-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter homeostatic destination.",
+        "Apply the taught model before inspecting option presentation.",
+        "Reduced ion reabsorption leaves more ion in tubular fluid and final urine."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "HOM-ITEM-NEAR"
+    },
+    {
+      "answer_record_id": "HOM-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "HOM_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Normal urine already in the bladder with failed release localizes to storage or outflow control.",
+      "post_commitment_feedback": "Normal urine already in the bladder with failed release localizes to storage or outflow control.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "HOM-FEATURE-REPAIR-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Reduced glomerular filtration” for the stated evidence.",
+          "rejection_rationale": "A weak medullary gradient is a nephron concentration defect.",
+          "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "HOM-FEATURE-REPAIR-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Abnormal urine solute pattern” for the stated evidence.",
+          "rejection_rationale": "Reduced filtration is a renal formation defect.",
+          "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "HOM-FEATURE-REPAIR-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Weak medullary gradient” for the stated evidence.",
+          "rejection_rationale": "Abnormal composition points toward nephron processing.",
+          "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild processing versus outflow.",
+        "Apply the taught model before inspecting option presentation.",
+        "Normal urine already in the bladder with failed release localizes to storage or outflow control."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "HOM-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "HOM_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The ureter carries urine from kidney to bladder.",
+      "post_commitment_feedback": "The ureter carries urine from kidney to bladder.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "HOM-FEATURE-REENTRY-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Collecting duct” for the stated evidence.",
+          "rejection_rationale": "The collecting duct is upstream inside the kidney.",
+          "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "HOM-FEATURE-REENTRY-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Urethra” for the stated evidence.",
+          "rejection_rationale": "The urethra carries urine out after bladder storage.",
+          "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "HOM-FEATURE-REENTRY-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Bladder sphincter” for the stated evidence.",
+          "rejection_rationale": "A bladder sphincter acts after urine reaches the bladder.",
+          "repair_feature_id": "HOM-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter urinary defect localization.",
+        "Apply the taught model before inspecting option presentation.",
+        "The ureter carries urine from kidney to bladder."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "HOM-ITEM-CHANGED"
+    }
+  ]
+}

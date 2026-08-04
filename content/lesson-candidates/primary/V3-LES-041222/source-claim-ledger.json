@@ -1,0 +1,571 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-041222",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-041222",
+    "grouping_id": "V3-CL-041222",
+    "ordered_kc_ids": [
+      "V3-KC-168342",
+      "V3-KC-201790",
+      "V3-KC-982443",
+      "V3-KC-475515",
+      "V3-KC-569631"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020",
+      "AAMC-2020-MCAT-CONTENT"
+    ],
+    "source_class": "PUBLIC_PRIMARY_RESEARCH",
+    "source_anchor_ids": [
+      "CP-SA-022"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "da4361783aabfad1ea849e0b562ef43a549fc34c7f55db5f21bcd7a07c36244f",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-LES-041222-SOURCE-V3-SRC-100111",
+      "source_occurrence_id": "V3-SRC-100111",
+      "source_id": "AAMC-2020",
+      "official_topic": "Carboxylic Acids",
+      "printed_pages": [
+        71
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-LES-041222-SOURCE-V3-SRC-200071",
+      "source_occurrence_id": "V3-SRC-200071",
+      "source_id": "AAMC-2020-MCAT-CONTENT",
+      "official_topic": null,
+      "printed_pages": [
+        69,
+        70,
+        71,
+        72
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-LES-041222-SOURCE-V3-SRC-100112",
+      "source_occurrence_id": "V3-SRC-100112",
+      "source_id": "AAMC-2020",
+      "official_topic": "Acid Derivatives (Anhydrides, Amides, Esters)",
+      "printed_pages": [
+        71,
+        72
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-LES-041222-SOURCE-V3-SRC-100110",
+      "source_occurrence_id": "V3-SRC-100110",
+      "source_id": "AAMC-2020",
+      "official_topic": "Alcohols",
+      "printed_pages": [
+        71
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "ALC-CLAIM-1",
+      "target_kc_id": "V3-KC-168342",
+      "authorial_claim": "Alcohol hydrogen bonding affects physical properties, while alcohol acidity is governed by alkoxide stability.",
+      "scope_in_refs": [
+        "V3-KC-168342:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-168342:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100111",
+        "V3-SRC-200071",
+        "V3-SRC-100112",
+        "V3-SRC-100110"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600152",
+        "V3-MAP-600804",
+        "V3-MAP-600902",
+        "V3-MAP-601226"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ALC-CLAIM-2",
+      "target_kc_id": "V3-KC-168342",
+      "authorial_claim": "Alcohol oxidation and substitution depend on carbon substitution, leaving-group activation, and SN1-versus-SN2 conditions.",
+      "scope_in_refs": [
+        "V3-KC-168342:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-168342:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100111",
+        "V3-SRC-200071",
+        "V3-SRC-100112",
+        "V3-SRC-100110"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600152",
+        "V3-MAP-600804",
+        "V3-MAP-600902",
+        "V3-MAP-601226"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ACT-CLAIM-1",
+      "target_kc_id": "V3-KC-201790",
+      "authorial_claim": "An alcohol protecting group temporarily suppresses OH reactivity and is later removed to restore the alcohol.",
+      "scope_in_refs": [
+        "V3-KC-201790:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-201790:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100111",
+        "V3-SRC-200071",
+        "V3-SRC-100110",
+        "V3-SRC-100112"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600153",
+        "V3-MAP-600572",
+        "V3-MAP-600805",
+        "V3-MAP-601227"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ACT-CLAIM-2",
+      "target_kc_id": "V3-KC-201790",
+      "authorial_claim": "Mesylate or tosylate formation converts an alcohol into a sulfonate ester with a much better leaving group while preserving the carbon framework.",
+      "scope_in_refs": [
+        "V3-KC-201790:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-201790:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100111",
+        "V3-SRC-200071",
+        "V3-SRC-100110",
+        "V3-SRC-100112"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600153",
+        "V3-MAP-600572",
+        "V3-MAP-600805",
+        "V3-MAP-601227"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ACD-CLAIM-1",
+      "target_kc_id": "V3-KC-982443",
+      "authorial_claim": "Carboxylic acids form derivatives through acyl substitution and may be reduced or decarboxylated under appropriate conditions.",
+      "scope_in_refs": [
+        "V3-KC-982443:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-982443:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100111",
+        "V3-SRC-200071",
+        "V3-SRC-100112",
+        "V3-SRC-100110"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600154",
+        "V3-MAP-600806",
+        "V3-MAP-601214",
+        "V3-MAP-601228"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ACD-CLAIM-2",
+      "target_kc_id": "V3-KC-982443",
+      "authorial_claim": "Substitution at the 2-position occurs at the carbon adjacent to the carboxyl carbon rather than at a remote carbon.",
+      "scope_in_refs": [
+        "V3-KC-982443:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-982443:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100111",
+        "V3-SRC-200071",
+        "V3-SRC-100112",
+        "V3-SRC-100110"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600154",
+        "V3-MAP-600806",
+        "V3-MAP-601214",
+        "V3-MAP-601228"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "NAS-CLAIM-1",
+      "target_kc_id": "V3-KC-475515",
+      "authorial_claim": "Nucleophilic acyl substitution proceeds through nucleophilic addition to the carbonyl, a tetrahedral intermediate, and elimination that restores the carbonyl.",
+      "scope_in_refs": [
+        "V3-KC-475515:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-475515:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100111",
+        "V3-SRC-200071",
+        "V3-SRC-100112",
+        "V3-SRC-100110"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600155",
+        "V3-MAP-600807",
+        "V3-MAP-601229",
+        "V3-MAP-601456"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "NAS-CLAIM-2",
+      "target_kc_id": "V3-KC-475515",
+      "authorial_claim": "Transesterification exchanges an ester alkoxy group, while amide hydrolysis yields a carboxylic acid or carboxylate plus a nitrogen-containing product according to conditions.",
+      "scope_in_refs": [
+        "V3-KC-475515:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-475515:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100111",
+        "V3-SRC-200071",
+        "V3-SRC-100112",
+        "V3-SRC-100110"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600155",
+        "V3-MAP-600807",
+        "V3-MAP-601229",
+        "V3-MAP-601456"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "REA-CLAIM-1",
+      "target_kc_id": "V3-KC-569631",
+      "authorial_claim": "Acid-derivative reactivity reflects carbonyl electrophilicity, leaving-group ability, resonance donation, and steric access.",
+      "scope_in_refs": [
+        "V3-KC-569631:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-569631:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100111",
+        "V3-SRC-200071",
+        "V3-SRC-100110",
+        "V3-SRC-100112"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600156",
+        "V3-MAP-600642",
+        "V3-MAP-600808",
+        "V3-MAP-601230"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "REA-CLAIM-2",
+      "target_kc_id": "V3-KC-569631",
+      "authorial_claim": "Ring strain in β-lactams reduces ordinary amide resonance stabilization and increases susceptibility to acyl reaction.",
+      "scope_in_refs": [
+        "V3-KC-569631:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-569631:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-022"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100111",
+        "V3-SRC-200071",
+        "V3-SRC-100110",
+        "V3-SRC-100112"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600156",
+        "V3-MAP-600642",
+        "V3-MAP-600808",
+        "V3-MAP-601230"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-715380",
+        "V3-MOD-273816"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 80,
+          "relation_ids": [
+            "R14-PL-581402-080"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 80,
+          "relation_ids": [
+            "R14-PL-904137-080"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-749320",
+          "position": 43,
+          "relation_ids": [
+            "R14-PL-749320-043"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-041222",
+      "revisit_relation_ids": [
+        "R14-RV-041222"
+      ]
+    },
+    "hard_prerequisites": [
+      {
+        "lesson_id": "V3-LES-560768",
+        "relation_ids": [
+          "V3-EDG-145568",
+          "V3-EDG-407357"
+        ],
+        "source_kc_ids": [
+          "V3-KC-669728",
+          "V3-KC-338522",
+          "V3-KC-460552",
+          "V3-KC-040072",
+          "V3-KC-060298"
+        ],
+        "taught_at_sequence_position": 96
+      }
+    ],
+    "helpful_context": [],
+    "required_attachments": [
+      {
+        "attachment_id": "V3-CAP-616783",
+        "kind": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-041222",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-168342",
+            "V3-KC-201790",
+            "V3-KC-982443",
+            "V3-KC-475515",
+            "V3-KC-569631"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-669728",
+          "V3-KC-338522",
+          "V3-KC-460552",
+          "V3-KC-040072",
+          "V3-KC-060298",
+          "V3-KC-168342",
+          "V3-KC-201790",
+          "V3-KC-982443",
+          "V3-KC-475515",
+          "V3-KC-569631"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-CAP-616783"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": true
+      }
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "prerequisite_handoffs": [
+    {
+      "relation_id": "V3-EDG-145568",
+      "prerequisite_lesson_id": "V3-LES-560768",
+      "prerequisite_kc_ids": [
+        "V3-KC-669728",
+        "V3-KC-338522",
+        "V3-KC-460552",
+        "V3-KC-040072",
+        "V3-KC-060298"
+      ],
+      "taught_at_sequence_position": 96,
+      "handoff_behavior": "CHECK_THEN_HAND_OFF_TO_CANONICAL_PREREQUISITE"
+    },
+    {
+      "relation_id": "V3-EDG-407357",
+      "prerequisite_lesson_id": "V3-LES-560768",
+      "prerequisite_kc_ids": [
+        "V3-KC-669728",
+        "V3-KC-338522",
+        "V3-KC-460552",
+        "V3-KC-040072",
+        "V3-KC-060298"
+      ],
+      "taught_at_sequence_position": 96,
+      "handoff_behavior": "CHECK_THEN_HAND_OFF_TO_CANONICAL_PREREQUISITE"
+    }
+  ],
+  "attachment_bindings": [
+    {
+      "attachment_id": "V3-CAP-616783",
+      "host_kc_id": "V3-KC-168342",
+      "relation_id": "R14-CAP-616783",
+      "credits_kc_evidence": true,
+      "required_delivery": true
+    },
+    {
+      "attachment_id": "V3-CAP-616783",
+      "host_kc_id": "V3-KC-201790",
+      "relation_id": "R14-CAP-616783",
+      "credits_kc_evidence": true,
+      "required_delivery": true
+    },
+    {
+      "attachment_id": "V3-CAP-616783",
+      "host_kc_id": "V3-KC-982443",
+      "relation_id": "R14-CAP-616783",
+      "credits_kc_evidence": true,
+      "required_delivery": true
+    },
+    {
+      "attachment_id": "V3-CAP-616783",
+      "host_kc_id": "V3-KC-475515",
+      "relation_id": "R14-CAP-616783",
+      "credits_kc_evidence": true,
+      "required_delivery": true
+    },
+    {
+      "attachment_id": "V3-CAP-616783",
+      "host_kc_id": "V3-KC-569631",
+      "relation_id": "R14-CAP-616783",
+      "credits_kc_evidence": true,
+      "required_delivery": true
+    }
+  ],
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "hold_nonclaims": [
+      "No present-day AAMC authority refresh or current endorsement is claimed.",
+      "The lesson boundary, transfer, remediation, and sequence are not learner-validated.",
+      "Hard-edge necessity, representation readiness, and sequence remain provisional.",
+      "Knowledge-type assignments are canonical but not human-ratified or learner-validated.",
+      "No adaptive bypass or numeric threshold is calibrated or authorized."
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}

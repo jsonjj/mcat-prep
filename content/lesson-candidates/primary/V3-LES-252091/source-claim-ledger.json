@@ -1,0 +1,287 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-252091",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-252091",
+    "grouping_id": "V3-CL-252091",
+    "ordered_kc_ids": [
+      "V3-KC-507981",
+      "V3-KC-519155",
+      "V3-KC-200171"
+    ]
+  },
+  "authority_boundary": {
+    "source_id": "AAMC-2020",
+    "source_class": "PUBLIC_PRIMARY_RESEARCH",
+    "source_anchor_ids": [
+      "BB-SA-0025"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "ab9f6334fb7d748894dcb8a285059700f00417ff18296bed05e6691f12293e31",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100060",
+      "source_occurrence_id": "V3-SRC-100060",
+      "source_id": "AAMC-2020",
+      "official_topic": "Digestive System (BIO)",
+      "printed_pages": [
+        45,
+        46
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0025"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200025",
+      "source_occurrence_id": "V3-SRC-200025",
+      "source_id": "AAMC-2020",
+      "official_topic": null,
+      "printed_pages": [
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0025"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "DIG-CLAIM-ROUTE",
+      "target_kc_id": "V3-KC-507981",
+      "authorial_claim": "A learner may trace material through mouth, esophagus, stomach, small intestine, large intestine, and rectum while distinguishing transport, storage, digestion, absorption, and elimination.",
+      "scope_in_refs": [
+        "V3-KC-507981:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-507981:SCOPE_OUT:0",
+        "V3-KC-507981:SCOPE_OUT:1"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0025"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100060",
+        "V3-SRC-200025"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600101",
+        "V3-MAP-601012"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "DIG-CLAIM-PROCESS",
+      "target_kc_id": "V3-KC-507981",
+      "authorial_claim": "A learner may connect peristalsis, churning, local pH, epithelial protection, digestive secretions, water recovery, flora, and rectal storage to the compartments where they function.",
+      "scope_in_refs": [
+        "V3-KC-507981:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-507981:SCOPE_OUT:1"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0025"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100060",
+        "V3-SRC-200025"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600101",
+        "V3-MAP-601012"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ACC-CLAIM-BILE",
+      "target_kc_id": "V3-KC-519155",
+      "authorial_claim": "A learner may distinguish hepatic bile production, gallbladder storage, intestinal delivery, and lipid emulsification while retaining the liver’s broad metabolic and detoxification roles.",
+      "scope_in_refs": [
+        "V3-KC-519155:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-519155:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0025"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100060",
+        "V3-SRC-200025"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600122",
+        "V3-MAP-601013"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ACC-CLAIM-PANCREAS",
+      "target_kc_id": "V3-KC-519155",
+      "authorial_claim": "A learner may separate pancreatic exocrine enzyme and bicarbonate delivery through ducts from endocrine insulin and glucagon release into blood.",
+      "scope_in_refs": [
+        "V3-KC-519155:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-519155:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0025"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100060",
+        "V3-SRC-200025"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600122",
+        "V3-MAP-601013"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ABS-CLAIM-ABSORPTION",
+      "target_kc_id": "V3-KC-200171",
+      "authorial_claim": "A learner may relate intestinal folds, villi, microvilli, epithelial routes, acid neutralization, enzyme location, and water handling to digestion and absorption.",
+      "scope_in_refs": [
+        "V3-KC-200171:SCOPE_IN:0",
+        "V3-KC-200171:SCOPE_IN:1"
+      ],
+      "scope_out_refs": [
+        "V3-KC-200171:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0025"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100060",
+        "V3-SRC-200025"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600464",
+        "V3-MAP-601014"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ABS-CLAIM-CONTROL",
+      "target_kc_id": "V3-KC-200171",
+      "authorial_claim": "A learner may distinguish local enteric neural coordination from blood-borne endocrine control of digestive targets without requiring a detailed transporter catalog.",
+      "scope_in_refs": [
+        "V3-KC-200171:SCOPE_IN:2",
+        "V3-KC-200171:SCOPE_IN:3"
+      ],
+      "scope_out_refs": [
+        "V3-KC-200171:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0025"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100060",
+        "V3-SRC-200025"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600464",
+        "V3-MAP-601014"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-462809",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-184936",
+        "V3-MOD-907235"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 94,
+          "relation_ids": [
+            "R14-PL-581402-094"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 94,
+          "relation_ids": [
+            "R14-PL-904137-094"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-236815",
+          "position": 35,
+          "relation_ids": [
+            "R14-PL-236815-035"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-252091",
+      "revisit_relation_ids": [
+        "R14-RV-252091"
+      ]
+    },
+    "hard_prerequisite_relation_ids": [],
+    "required_attachment_relation_ids": [
+      "R14-CAP-720072"
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}
