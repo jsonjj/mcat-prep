@@ -107,7 +107,10 @@ describe('getAnswerKey — a total, self-consistent join over every SCORED item'
           expect(item.projection.choices).toHaveLength(0);
         } else {
           const choice = item.projection.choices.find((c) => c.choiceId === answer.correctChoiceId);
-          expect(choice, `${item.itemId} correctChoiceId does not resolve to a real option`).toBeDefined();
+          expect(
+            choice,
+            `${item.itemId} correctChoiceId does not resolve to a real option`,
+          ).toBeDefined();
           expect(answer.acceptedResponses[0]).toBe(choice?.text);
         }
       }

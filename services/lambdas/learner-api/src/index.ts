@@ -9,6 +9,6 @@ export * from './routes';
 export * from './session';
 export * from './workflow';
 // The one content seam (design note D5): every consumer that needs a lesson's
-// vendored definition hash / authored bindings resolves it here, not from a
-// per-lesson code generator.
-export { lessonContentProvider, createRepoLessonContentProvider } from './lesson-content-provider';
+// catalog identity, exact revision, definition hash, or authored bindings
+// resolves it here, not from a per-lesson code generator.
+export * from './lesson-content-provider';
