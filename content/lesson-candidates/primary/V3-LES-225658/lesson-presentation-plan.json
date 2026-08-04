@@ -1,0 +1,1980 @@
+{
+  "artifact_type": "LESSON_PRESENTATION_PLAN",
+  "artifact_id": "V3-LPPL-225658",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "623947082cd46b05843c5c02db442e28b9f62bb504034d28b20f3065cf43f104",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-225658",
+    "lesson_script_sha256": "a2d5d39bb889a870c18b474e9249ba0bf92cd47a743ce8bcf336faf6ac0bfb85",
+    "kc_coverage_matrix_id": "V3-KCOV-225658",
+    "kc_coverage_matrix_sha256": "06fb0816a7fefdea85bb52957703571dade6af7481c851ebc5879616ceb005c5"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-225658",
+    "lesson_script_id": "V3-LSCR-225658",
+    "lesson_script_sha256": "a2d5d39bb889a870c18b474e9249ba0bf92cd47a743ce8bcf336faf6ac0bfb85",
+    "kc_coverage_matrix_id": "V3-KCOV-225658",
+    "kc_coverage_matrix_sha256": "06fb0816a7fefdea85bb52957703571dade6af7481c851ebc5879616ceb005c5",
+    "learner_rhythm": [
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "TRANSITION",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "TRANSITION",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "TRANSITION",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "TRANSITION"
+    ],
+    "screens": [
+      {
+        "screen_id": "HAB-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "HAB-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "entry check boundary",
+        "progress_label": "entry check boundary",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "HAB-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "orientation",
+        "progress_label": "orientation",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "HAB-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "explanation",
+        "progress_label": "explanation",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "HAB-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "mental model",
+        "progress_label": "mental model",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "HAB-NODE-THINK"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "expert think aloud",
+        "progress_label": "expert think aloud",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "HAB-NODE-WORKED"
+        ],
+        "primary_job": "Follow one complete worked reasoning path.",
+        "learner_heading": "worked example",
+        "progress_label": "worked example",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "HAB-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "guided practice",
+        "progress_label": "guided practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "HAB-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "light support practice",
+        "progress_label": "light support practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "HAB-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "solo practice",
+        "progress_label": "solo practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "HAB-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "contrast boundary",
+        "progress_label": "contrast boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "HAB-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "near exit",
+        "progress_label": "near exit",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "HAB-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "changed exit",
+        "progress_label": "changed exit",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-STIMULUS-CHANGE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "HAB-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "targeted repair",
+        "progress_label": "targeted repair",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "HAB-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "exact reentry",
+        "progress_label": "exact reentry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "HAB-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "targeted repair",
+        "progress_label": "targeted repair",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-STIMULUS-CHANGE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "HAB-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "exact reentry",
+        "progress_label": "exact reentry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-STIMULUS-CHANGE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "HAB-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "recap",
+        "progress_label": "recap",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "HAB-SCREEN-HANDOFF",
+        "screen_kind": "TRANSITION",
+        "script_node_ids": [
+          "HAB-NODE-HANDOFF"
+        ],
+        "primary_job": "Return control honestly without granting exit credit.",
+        "learner_heading": "transition",
+        "progress_label": "transition",
+        "primary_action": "RETURN_TO_PLANNER",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "CLS-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "entry check boundary",
+        "progress_label": "entry check boundary",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "CLS-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "orientation",
+        "progress_label": "orientation",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "CLS-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "explanation",
+        "progress_label": "explanation",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "CLS-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "mental model",
+        "progress_label": "mental model",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "CLS-NODE-THINK"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "expert think aloud",
+        "progress_label": "expert think aloud",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "CLS-NODE-WORKED"
+        ],
+        "primary_job": "Follow one complete worked reasoning path.",
+        "learner_heading": "worked example",
+        "progress_label": "worked example",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "CLS-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "guided practice",
+        "progress_label": "guided practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "CLS-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "light support practice",
+        "progress_label": "light support practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "CLS-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "solo practice",
+        "progress_label": "solo practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "CLS-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "contrast boundary",
+        "progress_label": "contrast boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "CLS-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "near exit",
+        "progress_label": "near exit",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "CLS-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "changed exit",
+        "progress_label": "changed exit",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-LEARNING-CURVE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "CLS-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "targeted repair",
+        "progress_label": "targeted repair",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "CLS-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "exact reentry",
+        "progress_label": "exact reentry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "CLS-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "targeted repair",
+        "progress_label": "targeted repair",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-LEARNING-CURVE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "CLS-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "exact reentry",
+        "progress_label": "exact reentry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-LEARNING-CURVE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "CLS-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "recap",
+        "progress_label": "recap",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CLS-SCREEN-HANDOFF",
+        "screen_kind": "TRANSITION",
+        "script_node_ids": [
+          "CLS-NODE-HANDOFF"
+        ],
+        "primary_job": "Return control honestly without granting exit credit.",
+        "learner_heading": "transition",
+        "progress_label": "transition",
+        "primary_action": "RETURN_TO_PLANNER",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "OPR-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "entry check boundary",
+        "progress_label": "entry check boundary",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "OPR-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "orientation",
+        "progress_label": "orientation",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "OPR-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "explanation",
+        "progress_label": "explanation",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "OPR-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "mental model",
+        "progress_label": "mental model",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "OPR-NODE-THINK"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "expert think aloud",
+        "progress_label": "expert think aloud",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "OPR-NODE-WORKED"
+        ],
+        "primary_job": "Follow one complete worked reasoning path.",
+        "learner_heading": "worked example",
+        "progress_label": "worked example",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "OPR-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "guided practice",
+        "progress_label": "guided practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "OPR-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "light support practice",
+        "progress_label": "light support practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "OPR-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "solo practice",
+        "progress_label": "solo practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "OPR-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "contrast boundary",
+        "progress_label": "contrast boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "OPR-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "near exit",
+        "progress_label": "near exit",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "OPR-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "changed exit",
+        "progress_label": "changed exit",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-SCHEDULE-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "OPR-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "targeted repair",
+        "progress_label": "targeted repair",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "OPR-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "exact reentry",
+        "progress_label": "exact reentry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "OPR-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "targeted repair",
+        "progress_label": "targeted repair",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-SCHEDULE-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "OPR-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "exact reentry",
+        "progress_label": "exact reentry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-SCHEDULE-GRAPH"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "OPR-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "recap",
+        "progress_label": "recap",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OPR-SCREEN-HANDOFF",
+        "screen_kind": "TRANSITION",
+        "script_node_ids": [
+          "OPR-NODE-HANDOFF"
+        ],
+        "primary_job": "Return control honestly without granting exit credit.",
+        "learner_heading": "transition",
+        "progress_label": "transition",
+        "primary_action": "RETURN_TO_PLANNER",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "CNS-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "entry check boundary",
+        "progress_label": "entry check boundary",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "CNS-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "orientation",
+        "progress_label": "orientation",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "CNS-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "explanation",
+        "progress_label": "explanation",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "CNS-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "mental model",
+        "progress_label": "mental model",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "CNS-NODE-THINK"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "expert think aloud",
+        "progress_label": "expert think aloud",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "CNS-NODE-WORKED"
+        ],
+        "primary_job": "Follow one complete worked reasoning path.",
+        "learner_heading": "worked example",
+        "progress_label": "worked example",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "CNS-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "guided practice",
+        "progress_label": "guided practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "CNS-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "light support practice",
+        "progress_label": "light support practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "CNS-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "solo practice",
+        "progress_label": "solo practice",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "CNS-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "contrast boundary",
+        "progress_label": "contrast boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "CNS-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "near exit",
+        "progress_label": "near exit",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "CNS-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "changed exit",
+        "progress_label": "changed exit",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-CONSTRAINT-VIGNETTE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "CNS-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "targeted repair",
+        "progress_label": "targeted repair",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "CNS-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "exact reentry",
+        "progress_label": "exact reentry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "CNS-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "targeted repair",
+        "progress_label": "targeted repair",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-CONSTRAINT-VIGNETTE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "CNS-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "exact reentry",
+        "progress_label": "exact reentry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-CONSTRAINT-VIGNETTE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "CNS-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "recap",
+        "progress_label": "recap",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "CNS-SCREEN-HANDOFF",
+        "screen_kind": "TRANSITION",
+        "script_node_ids": [
+          "CNS-NODE-HANDOFF"
+        ],
+        "primary_job": "Return control honestly without granting exit credit.",
+        "learner_heading": "transition",
+        "progress_label": "transition",
+        "primary_action": "RETURN_TO_PLANNER",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      }
+    ],
+    "representation_plans": [
+      {
+        "representation_id": "HAB-REP-TRIAL-GRAPH",
+        "target_kc_id": "V3-KC-337354",
+        "representation_type": "RESPONSE_MAGNITUDE_OVER_REPEATED_TRIALS_GRAPH",
+        "learner_operation": "Identify response decline tied to repeated presentation of one stimulus.",
+        "text_nonvisual_equivalent": "Provide trial number and response magnitude as an ordered data table, including any stimulus changes."
+      },
+      {
+        "representation_id": "HAB-REP-STIMULUS-CHANGE",
+        "target_kc_id": "V3-KC-337354",
+        "representation_type": "REPETITION_THEN_NOVEL_STIMULUS_VIGNETTE",
+        "learner_operation": "Predict whether a changed stimulus renews responding and classify the process.",
+        "text_nonvisual_equivalent": "State the repeated stimulus, response sequence, changed stimulus, and renewed response without naming the process."
+      },
+      {
+        "representation_id": "CLS-REP-SR-MAP",
+        "target_kc_id": "V3-KC-564671",
+        "representation_type": "CLASSICAL_CONDITIONING_STIMULUS_RESPONSE_MAP",
+        "learner_operation": "Label NS, US, UR, CS, and CR from timing and response relations.",
+        "text_nonvisual_equivalent": "State every event, its order, and the response before and after pairing without supplying labels."
+      },
+      {
+        "representation_id": "CLS-REP-LEARNING-CURVE",
+        "target_kc_id": "V3-KC-564671",
+        "representation_type": "ACQUISITION_EXTINCTION_RECOVERY_AND_STIMULUS_SCOPE_CURVE",
+        "learner_operation": "Identify process changes from pairings, cue-alone trials, rest, and similar cues.",
+        "text_nonvisual_equivalent": "Provide trial blocks, cue conditions, and response magnitudes as an ordered table."
+      },
+      {
+        "representation_id": "OPR-REP-CONTINGENCY",
+        "target_kc_id": "V3-KC-628404",
+        "representation_type": "ANTECEDENT_BEHAVIOR_CONSEQUENCE_FUTURE_EFFECT_MAP",
+        "learner_operation": "Classify added or removed consequences by whether behavior later increases or decreases.",
+        "text_nonvisual_equivalent": "State the antecedent, behavior, immediate consequence, and later behavior frequency in order."
+      },
+      {
+        "representation_id": "OPR-REP-SCHEDULE-GRAPH",
+        "target_kc_id": "V3-KC-628404",
+        "representation_type": "OPERANT_SCHEDULE_AND_RESPONSE_PATTERN_GRAPH",
+        "learner_operation": "Infer ratio versus interval and fixed versus variable from the reinforcement rule and response pattern.",
+        "text_nonvisual_equivalent": "Provide response count, elapsed time, and reinforcement deliveries as an ordered data table."
+      },
+      {
+        "representation_id": "CNS-REP-EXPECTED-OBSERVED",
+        "target_kc_id": "V3-KC-730668",
+        "representation_type": "SIMPLE_ASSOCIATIVE_PREDICTION_VERSUS_OBSERVED_PERFORMANCE_CURVE",
+        "learner_operation": "Identify when expectancy or representation explains a departure from a reinforcement-only prediction.",
+        "text_nonvisual_equivalent": "Provide predicted and observed performance values by trial block with condition labels."
+      },
+      {
+        "representation_id": "CNS-REP-CONSTRAINT-VIGNETTE",
+        "target_kc_id": "V3-KC-730668",
+        "representation_type": "PREDISPOSITION_OR_INSTINCTIVE_DRIFT_VIGNETTE",
+        "learner_operation": "Predict how biological preparedness or species-typical behavior changes acquisition or maintained performance.",
+        "text_nonvisual_equivalent": "State the trained contingency, biological relation, and observed behavior sequence without naming the constraint."
+      }
+    ],
+    "learner_reviewer_separation": {
+      "learner_projection": "NORMALIZED_LEARNER_SAFE_ONLY",
+      "reviewer_projection": "SEPARATE_SERVER_AUTHORITY",
+      "prohibited_learner_fields": [
+        "ANSWER_KEY",
+        "CORRECT_RESPONSE",
+        "RATIONALE",
+        "RESPONSE_AUTHORITY",
+        "ROUTE_METADATA"
+      ]
+    },
+    "accessibility_acceptance": {
+      "keyboard_required": true,
+      "visible_focus_required": true,
+      "text_equivalent_required": true,
+      "human_accessibility_review_status": "BLOCKED"
+    },
+    "presentation_status": "CONTENT_CANDIDATE_RUNTIME_AND_BROWSER_QA_PENDING"
+  }
+}

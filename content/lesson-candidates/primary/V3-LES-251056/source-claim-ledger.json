@@ -1,0 +1,333 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-251056",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-251056",
+    "grouping_id": "V3-CL-251056",
+    "ordered_kc_ids": [
+      "V3-KC-753596",
+      "V3-KC-689996",
+      "V3-KC-795626"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020"
+    ],
+    "source_classes": [
+      "PUBLIC_PRIMARY_RESEARCH"
+    ],
+    "source_anchor_ids": [
+      "BB-SA-0019"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "6b5fe5f81c39e7815464e9de8fb0cea09fa3e1a52241e61d71103c08841f3f54",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100024",
+      "source_occurrence_id": "V3-SRC-100024",
+      "source_id": "AAMC-2020",
+      "official_topic": "Analytic Methods (BIO)",
+      "printed_pages": [
+        31
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200019",
+      "source_occurrence_id": "V3-SRC-200019",
+      "source_id": "AAMC-2020",
+      "official_topic": null,
+      "printed_pages": [
+        30,
+        31,
+        32
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100023",
+      "source_occurrence_id": "V3-SRC-100023",
+      "source_id": "AAMC-2020",
+      "official_topic": "Meiosis and Other Factors Affecting Genetic Variability (BIO)",
+      "printed_pages": [
+        31
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100025",
+      "source_occurrence_id": "V3-SRC-100025",
+      "source_id": "AAMC-2020",
+      "official_topic": "Evolution (BIO)",
+      "printed_pages": [
+        32
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "ANA-CLAIM-METHODS",
+      "target_kc_id": "V3-KC-753596",
+      "authorial_claim": "Hardy–Weinberg equations, testcrosses and backcrosses, recombination frequency, and simple biometry answer different questions about population or inheritance data.",
+      "scope_in_refs": [
+        "V3-KC-753596:SCOPE_IN:0",
+        "V3-KC-753596:SCOPE_IN:1",
+        "V3-KC-753596:SCOPE_IN:2",
+        "V3-KC-753596:SCOPE_IN:3"
+      ],
+      "scope_out_refs": [
+        "V3-KC-753596:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100024",
+        "V3-SRC-200019"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600875",
+        "V3-MAP-601062"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ANA-CLAIM-CHECK",
+      "target_kc_id": "V3-KC-753596",
+      "authorial_claim": "An analytic result must be checked against its model: allele and genotype frequencies must close, cross generations must match the proposed genotypes, and recombination estimates must use recombinant offspring over total offspring.",
+      "scope_in_refs": [
+        "V3-KC-753596:SCOPE_IN:0",
+        "V3-KC-753596:SCOPE_IN:1",
+        "V3-KC-753596:SCOPE_IN:2",
+        "V3-KC-753596:SCOPE_IN:3"
+      ],
+      "scope_out_refs": [
+        "V3-KC-753596:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100024",
+        "V3-SRC-200019"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600875",
+        "V3-MAP-601062"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "NSL-CLAIM-DRIFT-FLOW",
+      "target_kc_id": "V3-KC-689996",
+      "authorial_claim": "Genetic drift changes allele representation through random sampling, bottlenecks intensify sampling loss, and migration changes a gene pool through gene flow.",
+      "scope_in_refs": [
+        "V3-KC-689996:SCOPE_IN:0",
+        "V3-KC-689996:SCOPE_IN:1",
+        "V3-KC-689996:SCOPE_IN:2"
+      ],
+      "scope_out_refs": [
+        "V3-KC-689996:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100023",
+        "V3-SRC-200019",
+        "V3-SRC-100025"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600203",
+        "V3-MAP-600429",
+        "V3-MAP-601009"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "NSL-CLAIM-MATING",
+      "target_kc_id": "V3-KC-689996",
+      "authorial_claim": "Inbreeding tends to increase homozygosity and outbreeding tends to increase heterozygosity, effects that must be distinguished from immediate allele-frequency change.",
+      "scope_in_refs": [
+        "V3-KC-689996:SCOPE_IN:3",
+        "V3-KC-689996:SCOPE_IN:4"
+      ],
+      "scope_out_refs": [
+        "V3-KC-689996:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100023",
+        "V3-SRC-200019",
+        "V3-SRC-100025"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600203",
+        "V3-MAP-600429",
+        "V3-MAP-601009"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "SEL-CLAIM-FITNESS",
+      "target_kc_id": "V3-KC-795626",
+      "authorial_claim": "Natural selection changes gene-pool representation when heritable differences produce differential reproductive contribution, so fitness is relative reproductive success in an environment.",
+      "scope_in_refs": [
+        "V3-KC-795626:SCOPE_IN:0",
+        "V3-KC-795626:SCOPE_IN:1",
+        "V3-KC-795626:SCOPE_IN:2",
+        "V3-KC-795626:SCOPE_IN:3"
+      ],
+      "scope_out_refs": [
+        "V3-KC-795626:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100025",
+        "V3-SRC-200019"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600097",
+        "V3-MAP-600430"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "SEL-CLAIM-DIVERGENCE",
+      "target_kc_id": "V3-KC-795626",
+      "authorial_claim": "Selection can maintain polymorphism or favor adaptation and specialization, while reduced gene flow and accumulated genomic divergence over time can contribute to speciation.",
+      "scope_in_refs": [
+        "V3-KC-795626:SCOPE_IN:0",
+        "V3-KC-795626:SCOPE_IN:4",
+        "V3-KC-795626:SCOPE_IN:5",
+        "V3-KC-795626:SCOPE_IN:6",
+        "V3-KC-795626:SCOPE_IN:7"
+      ],
+      "scope_out_refs": [
+        "V3-KC-795626:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100025",
+        "V3-SRC-200019"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600097",
+        "V3-MAP-600430"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-374829",
+        "V3-MOD-907235"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 60,
+          "relation_ids": [
+            "R14-PL-581402-060"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 60,
+          "relation_ids": [
+            "R14-PL-904137-060"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-236815",
+          "position": 23,
+          "relation_ids": [
+            "R14-PL-236815-023"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-251056",
+      "revisit_relation_ids": [
+        "R14-RV-251056"
+      ]
+    },
+    "hard_prerequisites": [],
+    "helpful_prerequisites": [],
+    "attachment_bindings": [],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110006",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}

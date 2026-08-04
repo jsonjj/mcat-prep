@@ -1,0 +1,1118 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "IMP-ITEM-ENTRY",
+      "learner_prompt_key": "IMP_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "The volunteer selects language to support a desired impression before donors.",
+      "post_commitment_feedback": "Audience, selected cue, and desired impression are all explicit.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMP-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMP-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The behavior is selected for an approaching audience rather than away from one."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMP-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The scenario concerns human self-presentation in a social interaction."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMP-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No declining sensory response is described."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMP-ITEM-GUIDED",
+      "learner_prompt_key": "IMP_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Front stage is defined by performance before the relevant audience.",
+      "post_commitment_feedback": "Classify from audience access and performance function, not architecture or emotion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMP-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Literal room position does not determine the dramaturgical function."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMP-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMP-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rehearsal can be back stage, but the current classification depends on current audience and function."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMP-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Comfort is not the defining criterion for front-stage performance."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMP-ITEM-LIGHT",
+      "learner_prompt_key": "IMP_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The team prepares and coordinates away from the later patient audience.",
+      "post_commitment_feedback": "Preparation with reduced audience access is the back-stage function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMP-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Formality of the room does not replace the missing relevant audience."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMP-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Coworker coordination and rehearsal are social, back-stage functions."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMP-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMP-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Patients are absent and are not the actors in the described session."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMP-ITEM-SOLO",
+      "learner_prompt_key": "IMP_SOLO",
+      "correct_option_index": 3,
+      "rationale": "People can truthfully select different relevant aspects of self for different audiences.",
+      "post_commitment_feedback": "Management concerns presentation, not an automatic verdict of dishonesty.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMP-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Impression management can be sincere and selective without factual deception."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMP-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Interview and reunion audiences create different interaction contexts."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMP-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Language and topic selection can also support an impression."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMP-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMP-ITEM-NEAR",
+      "learner_prompt_key": "IMP_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The displayed prop and language are selected to support preparedness before a specific audience.",
+      "post_commitment_feedback": "Audience plus desired impression identifies the process.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMP-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMP-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The researcher is the actor selecting cues for the panel audience."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMP-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Presentation style does not establish empirical accuracy."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMP-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The timeline is itself part of an audience-facing performance."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMP-ITEM-CHANGED",
+      "learner_prompt_key": "IMP_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The same space changes function as audience access changes.",
+      "post_commitment_feedback": "Classify each time period independently from who can observe and what the interaction is for.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMP-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equipment and room identity do not determine audience access."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMP-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMP-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The afternoon function is an audience-facing performance."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMP-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Stage classification can change when audience and interaction purpose change."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMP-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "IMP_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The process links an audience to a strategically selected cue and intended definition.",
+      "post_commitment_feedback": "Repair by making all three observable parts explicit.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMP-REPAIR_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Physical details matter only when they function as presentation cues in context."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMP-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The process should be inferred from observable interaction features, not trait assumptions."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMP-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMP-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Those dimensions concern animal communication rather than human self-presentation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMP-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "IMP_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Language and a prop are selected before a relevant audience to support organization.",
+      "post_commitment_feedback": "The new context preserves audience-specific self-presentation without implying deception.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMP-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The visible checklist is part of the coordinator's audience-facing presentation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMP-REENTRY_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A presentation cue cannot establish perfect performance."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMP-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A useful cue can also support an impression; the functions are not mutually exclusive."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMP-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMP-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "IMP_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The distinction is contextual and turns on who can observe and what the setting enables.",
+      "post_commitment_feedback": "Repair by replacing architectural labels with social function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMP-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMP-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Workplaces contain both public performance and preparation contexts."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMP-REPAIR_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Back stage does not imply dishonesty or misconduct."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMP-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Literal physical position is not the sociological distinction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "IMP-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "IMP_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Rehearsal supports preparation away from the audience, while the broadcast is the audience-facing performance.",
+      "post_commitment_feedback": "The fresh setting again changes stage when audience and purpose change.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "IMP-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equipment does not replace audience access and interaction function."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "IMP-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "IMP-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The live audience-facing broadcast changes the social function."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "IMP-REENTRY_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One space can serve different dramaturgical functions over time."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HUM-ITEM-ENTRY",
+      "learner_prompt_key": "HUM_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Clock checking is a visible action rather than spoken content.",
+      "post_commitment_feedback": "Separate channels before interpreting what their combination might mean.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HUM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The phrase is verbal content."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HUM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Grammar is part of the verbal message."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HUM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HUM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Word meaning belongs to the verbal channel."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HUM-ITEM-GUIDED",
+      "learner_prompt_key": "HUM_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Verbal agreement and a clarification request are incongruent enough to justify clarification, not certainty about motive.",
+      "post_commitment_feedback": "Describe the mixed channels and choose the next evidence-gathering action.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HUM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The later request supplies observable evidence of unresolved information."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HUM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A pause has multiple possible meanings and does not establish motive."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HUM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One clarification request does not support an all-or-nothing conclusion."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HUM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HUM-ITEM-LIGHT",
+      "learner_prompt_key": "HUM_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Local context and within-person baseline constrain the possible meanings of the pause.",
+      "post_commitment_feedback": "Interpret signals relationally and sequentially, not from a universal cue dictionary.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HUM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HUM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pause meaning varies across contexts and interaction norms."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HUM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No channel has universal priority independent of context."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HUM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Identity alone cannot determine the meaning of an individual pause."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HUM-ITEM-SOLO",
+      "learner_prompt_key": "HUM_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Individual interpretation should prioritize observed behavior and local context while treating group data as bounded background.",
+      "post_commitment_feedback": "Avoid both stereotype and dismissal: group patterns are context, not destiny.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HUM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An average describes a distribution and does not fix each person's behavior."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HUM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HUM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Current individual evidence is directly relevant to interpreting this interaction."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HUM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Group data can inform context without determining an individual."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HUM-ITEM-NEAR",
+      "learner_prompt_key": "HUM_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Words invite time while timing and gesture pressure movement, creating observable incongruence.",
+      "post_commitment_feedback": "Name the channel conflict and preserve uncertainty rather than diagnosing motive.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HUM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Interruptions and pointing provide conflicting contextual evidence."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HUM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gesture meaning is context-dependent and not universally fixed."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HUM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HUM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One interaction does not establish a stable trait or motive."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HUM-ITEM-CHANGED",
+      "learner_prompt_key": "HUM_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Individual baseline and current context provide the most specific evidence, while group findings remain background.",
+      "post_commitment_feedback": "Use the narrower evidence for the individual and resist deterministic identity inference.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HUM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The individual's observed behavior directly differs from the group average."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HUM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Eye-contact meaning varies by setting, relationship, and norms."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HUM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Variation around an average is expected and does not establish deception."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HUM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HUM-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "HUM_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "A channel inventory and context check make the evidence observable before interpretation.",
+      "post_commitment_feedback": "Repair by separating observation from inference.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HUM-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HUM-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Single-cue universalism ignores context and channel interaction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HUM-REPAIR_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Incongruence warrants clarification, not a universal truth hierarchy."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HUM-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One episode does not support a stable trait conclusion."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HUM-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "HUM_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The verbal statement and follow-up request do not fully align, making clarification the bounded response.",
+      "post_commitment_feedback": "The new relationship and cues preserve the same observation-before-inference function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HUM-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Breathing behavior alone does not establish motive."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HUM-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HUM-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The request is relevant evidence about remaining uncertainty."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HUM-REENTRY_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Asking about one step does not support a global inability judgment."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HUM-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "HUM_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Group data can modify context but must be tested against individual and situational evidence.",
+      "post_commitment_feedback": "Repair by moving from category certainty to bounded, locally checked interpretation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HUM-REPAIR_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Group tendencies do not determine each individual."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HUM-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The data cannot support those individual trait inferences by itself."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HUM-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HUM-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Group patterns can be contextual evidence when used cautiously."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HUM-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "HUM_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The participant's repeated baseline is the strongest individual evidence, with survey findings retained only as broader context.",
+      "post_commitment_feedback": "The fresh data case rewards calibrated use of both levels without stereotyping.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HUM-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Direct repeated evidence is more specific to the individual."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HUM-REENTRY_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Difference from an average does not establish motive."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HUM-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Individual variation does not erase a group-level distribution."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HUM-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANI-ITEM-ENTRY",
+      "learner_prompt_key": "ANI_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "The receivers alter their behavior by moving after detecting the signal.",
+      "post_commitment_feedback": "Complete the chain by distinguishing signal production from receiver action.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANI-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANI-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That action belongs to the sender."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANI-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That describes signal transmission rather than receiver behavior."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANI-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Habitat is context, not the receiver's response."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANI-ITEM-GUIDED",
+      "learner_prompt_key": "ANI_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "The forager produces a persistent chemical detected by nestmates, changing their route behavior.",
+      "post_commitment_feedback": "Map actor, transmitted signal, detector, and changed behavior in order.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANI-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The forager deposits the signal and nestmates respond."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANI-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANI-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The roles are categories and cannot be reassigned this way."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANI-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The food is a resource rather than a receiver."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANI-ITEM-LIGHT",
+      "learner_prompt_key": "ANI_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Tactile communication is transmitted through direct contact.",
+      "post_commitment_feedback": "Contact requirement is the decisive modality property.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANI-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Sound can travel without direct contact."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANI-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Chemical signals can remain after the sender leaves."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANI-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANI-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Visual signals require line of sight but not direct touch."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANI-ITEM-SOLO",
+      "learner_prompt_key": "ANI_SOLO",
+      "correct_option_index": 3,
+      "rationale": "The event can inform behavior but lacks an animal sender in the stated causal chain.",
+      "post_commitment_feedback": "Detectability alone does not make an event a social signal.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANI-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The event is visual movement caused by wind, not animal-produced sound."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANI-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The animals observe movement without touching a sender."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANI-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No chemical deposit or animal sender is described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANI-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANI-ITEM-NEAR",
+      "learner_prompt_key": "ANI_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The call is produced by the sentinel and changes receiver behavior.",
+      "post_commitment_feedback": "The near-use chain closes from sender to signal to receiver response.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANI-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANI-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The described causal direction runs from sentinel call to group freezing."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANI-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cover is environmental context and freezing is the receiver response."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANI-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A signal is detected by receivers; it is not itself the receiver."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANI-ITEM-CHANGED",
+      "learner_prompt_key": "ANI_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Sound can operate without light, travel around obstacles, and end rapidly.",
+      "post_commitment_feedback": "Match modality properties to all three changed environmental constraints.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANI-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Darkness and obstacles reduce the fit of a visual display."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANI-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANI-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Long persistence conflicts with the need for rapid updating."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANI-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Direct contact does not fit communication around obstacles to multiple receivers."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANI-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ANI_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The communication mechanism requires detection and a receiver response linked to the signal.",
+      "post_commitment_feedback": "Repair by making the receiver side observable.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANI-REPAIR_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Human salience does not establish a receiver effect."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANI-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Proximity alone does not complete a communication chain."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANI-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANI-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Species reputation cannot replace evidence in the vignette."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANI-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ANI_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "A sender-produced visual display precedes and changes the rival's behavior.",
+      "post_commitment_feedback": "The fresh modality preserves the same sender–signal–receiver–response chain.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANI-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Movement after detection is the response, not signal production."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANI-REENTRY_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The crest is the transmitted visual display."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANI-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Retreat is behavior and no chemical deposit is described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANI-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANI-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ANI_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Environmental and transmission properties determine which modality can perform the social function.",
+      "post_commitment_feedback": "Repair by matching mechanism to constraints rather than memorizing examples.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANI-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANI-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Human preference does not determine biological transmission fit."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANI-REPAIR_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A species catalogue is outside scope and ignores the stated environment."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANI-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Human linguistic structure is not required for animal social signaling."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANI-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ANI_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Direct contact and darkness favor a rapidly changeable tactile signal.",
+      "post_commitment_feedback": "The new conditions point to touch rather than line-of-sight or persistent marking.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANI-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Darkness and very short contact range make a visual display a poor fit."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANI-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANI-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Persistence conflicts with the need for rapid change."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANI-REENTRY_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Long range is unnecessary when receivers remain in contact."
+        }
+      ]
+    }
+  ]
+}

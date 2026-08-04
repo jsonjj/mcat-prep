@@ -1,0 +1,3370 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-251056",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "e35cedb92a8b63272b477a30bf0201a1528d7313292c1396bbd10f3a6edf2ff6",
+  "payload": {
+    "lesson_id": "V3-LES-251056",
+    "grouping_id": "V3-CL-251056",
+    "ordered_kc_ids": [
+      "V3-KC-753596",
+      "V3-KC-689996",
+      "V3-KC-795626"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-753596",
+      "V3-KC-689996",
+      "V3-KC-795626"
+    ],
+    "throughline": "Use genetic data to test inheritance models, separate nonselective gene-pool change from selection, and trace differential reproduction into adaptation and speciation over time.",
+    "curriculum_context": {
+      "canonical_title": "Explain population change and evolution",
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-374829",
+        "V3-MOD-907235"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 60,
+          "relation_ids": [
+            "R14-PL-581402-060"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 60,
+          "relation_ids": [
+            "R14-PL-904137-060"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-236815",
+          "position": 23,
+          "relation_ids": [
+            "R14-PL-236815-023"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-251056",
+      "revisit_relation_ids": [
+        "R14-RV-251056"
+      ],
+      "hard_prerequisites": [],
+      "helpful_context": [],
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ]
+    },
+    "nodes": [
+      {
+        "node_id": "ANA-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: decide whether a prompt asks about population frequencies, a hidden parental genotype, linkage distance, or a summary of measured data. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [
+          "ANA-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "ANA-CP-ENTRY",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: choose the analytic method from the question being asked, carry out the minimum calculation, and check whether the result is compatible with the proposed inheritance or population model."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-ORIENTATION",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "For two alleles A and a, Hardy–Weinberg uses p + q = 1 and expected genotype frequencies p², 2pq, and q² under its model assumptions. If a recessive-phenotype frequency is q², take its square root to estimate q, then find p and the heterozygote expectation.",
+          "A testcross pairs an individual with unknown genotype to a homozygous recessive tester so offspring reveal the unknown gametes. A backcross mates offspring to a parental genotype. Track parental (P), first filial (F1), and second filial (F2) generations before interpreting ratios.",
+          "For linked loci, recombination frequency equals recombinant offspring divided by total offspring, multiplied by 100%; for introductory mapping, the percentage approximates map units. Simple biometry summarizes and compares data using proportions, means, variation, and observed-versus-expected differences. The target is method selection and model checking, not advanced population-genetic statistics."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-EXPLANATION",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Name the target quantity → choose one method → compute with labelled terms → check totals, generations, and observed-versus-expected fit → state a bounded conclusion."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-MODEL",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: if I am given a recessive phenotype frequency in a population model, I use q². If offspring from a recessive tester reveal gametes, I use a testcross. If parental and recombinant classes are counted, I estimate map distance. If replicate measurements are supplied, I summarize center, spread, or observed-versus-expected fit before interpreting."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-THINK",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a recessive phenotype occurs in 9% of a model population. Under Hardy–Weinberg, q² = 0.09, so q = 0.30 and p = 0.70. The expected heterozygote frequency is 2pq = 0.42. The check is 0.49 + 0.42 + 0.09 = 1.00. This is a model-based expectation, not proof that all assumptions hold."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-WORKED",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: underline the target quantity and label every supplied frequency, generation, or offspring class before calculating."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [
+          "ANA-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "ANA-CP-GUIDED",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: choose between a testcross and a recombination calculation from a fresh offspring table."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [
+          "ANA-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "ANA-CP-LIGHT",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: compute a simple estimate and verify that categories and totals close."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [
+          "ANA-ACT-SOLO"
+        ],
+        "checkpoint_ref": "ANA-CP-SOLO",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: Hardy–Weinberg predicts model frequencies; it does not identify a hidden parent's genotype from one family. A testcross reveals gametes but does not directly estimate population equilibrium. Recombination percentage is not the fraction of parental offspring."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-CONTRAST",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: select and execute the correct analytic method for a fresh genetic data set."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [
+          "ANA-ACT-NEAR"
+        ],
+        "checkpoint_ref": "ANA-CP-NEAR",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: switch from choosing a population-analysis method to identifying recombinant classes in an F1 testcross table and computing recombination frequency."
+        ],
+        "representation_ids": [
+          "ANA-REP-OBSERVED-EXPECTED"
+        ],
+        "activity_ids": [
+          "ANA-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "ANA-CP-CHANGED",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: translate the question into one target—allele frequency, hidden genotype, map distance, or data summary—before touching numbers."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [
+          "ANA-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "ANA-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: select a method for a new parental/F1/F2 or population scenario."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [
+          "ANA-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "ANA-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function: label parental and recombinant classes, use the correct denominator, and close the result against total counts or frequency one."
+        ],
+        "representation_ids": [
+          "ANA-REP-OBSERVED-EXPECTED"
+        ],
+        "activity_ids": [
+          "ANA-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "ANA-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: compute linkage from a new testcross and explain what the percentage estimates."
+        ],
+        "representation_ids": [
+          "ANA-REP-OBSERVED-EXPECTED"
+        ],
+        "activity_ids": [
+          "ANA-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "ANA-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: choose Hardy–Weinberg for model population frequencies, crosses for inheritance and hidden genotypes, recombination for linkage, and simple biometry for summarized or observed-versus-expected data."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-RECAP",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, return to the planner without exit credit and resume later at the exact failed analytic-method function."
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-HANDOFF",
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: decide whether an allele-frequency change is random, caused by migrants, or linked to differential reproduction. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [
+          "NSL-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "NSL-CP-ENTRY",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: explain gene-pool change that does not require selection. Track random sampling, population bottlenecks, migration, and mating structure, and state whether allele representation, heterozygosity, or overall diversity changes."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NSL-CP-ORIENTATION",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Genetic drift is random change in allele frequencies from sampling across generations and has stronger effects in small populations. A bottleneck sharply reduces population size; survivors may carry an unrepresentative subset of the original alleles, reducing diversity even after numbers recover.",
+          "Migration or immigration moves alleles between populations through gene flow. It can introduce an absent allele and make populations more similar, although the result depends on migrant allele frequencies.",
+          "Inbreeding increases mating among relatives and tends to increase homozygosity while decreasing heterozygosity; by itself it rearranges alleles into genotypes more directly than it changes allele frequencies. Outbreeding between less-related individuals tends to increase heterozygosity and can introduce variation. These are genetic effects, not a full population-demography survey."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NSL-CP-EXPLANATION",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Random sample? drift. Severe size reduction? bottleneck. Alleles move between populations? gene flow. Relative mating changes? track homozygosity versus heterozygosity separately from allele frequency."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NSL-CP-MODEL",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: I ask whether reproductive success differs by trait. If not, I inspect population size, migration, and mating pattern. I never say inbreeding automatically changes allele frequency in one generation; I first predict more homozygotes from the same allele pool."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NSL-CP-THINK",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a storm randomly leaves 12 survivors from a population of 500. Allele B happened to be rare among survivors, so its frequency falls and one allele is lost. This is a bottleneck with strong drift, not evidence that the lost allele reduced fitness. If migrants later bring B back, gene flow can restore its presence without natural selection."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NSL-CP-WORKED",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: mark whether the scenario changes sample size, moves alleles, or changes mate relatedness."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [
+          "NSL-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "NSL-CP-GUIDED",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: predict whether the first effect is allele-frequency change or genotype-frequency change."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [
+          "NSL-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "NSL-CP-LIGHT",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: compare drift strength in large and small populations and explain the role of chance."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [
+          "NSL-ACT-SOLO"
+        ],
+        "checkpoint_ref": "NSL-CP-SOLO",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: drift is not an organism choosing to adapt, and bottleneck recovery in head count does not guarantee restored genetic diversity. Inbreeding raises homozygosity but does not create a new harmful allele."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NSL-CP-CONTRAST",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: identify drift, bottleneck, or gene flow from a fresh allele-frequency history."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [
+          "NSL-ACT-NEAR"
+        ],
+        "checkpoint_ref": "NSL-CP-NEAR",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: distinguish an allele-frequency change from a heterozygosity change when migration and mating pattern both change."
+        ],
+        "representation_ids": [
+          "NSL-REP-DIVERSITY-COMPARISON"
+        ],
+        "activity_ids": [
+          "NSL-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "NSL-CP-CHANGED",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: ask whether chance sampling or allele movement is sufficient before invoking fitness or selection."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [
+          "NSL-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "NSL-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: classify a new founder-like sample and migrant event without reusing the exposed population."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [
+          "NSL-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "NSL-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function: keep two ledgers—allele frequencies and genotype proportions—then update migration before mating structure."
+        ],
+        "representation_ids": [
+          "NSL-REP-DIVERSITY-COMPARISON"
+        ],
+        "activity_ids": [
+          "NSL-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "NSL-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: predict allele representation and heterozygosity in a new migrant-plus-outbreeding scenario."
+        ],
+        "representation_ids": [
+          "NSL-REP-DIVERSITY-COMPARISON"
+        ],
+        "activity_ids": [
+          "NSL-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "NSL-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: drift and bottlenecks sample alleles by chance, migration moves alleles, and inbreeding or outbreeding chiefly shifts homozygosity and heterozygosity. Track diversity separately."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NSL-CP-RECAP",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "NSL-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, return to the planner without exit credit and resume later at the exact failed nonselective-change function."
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NSL-CP-HANDOFF",
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify whether a heritable trait changes reproductive contribution rather than merely survival or strength. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [
+          "SEL-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "SEL-CP-ENTRY",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: trace selection from heritable variation to differential reproduction and changed gene-pool representation, then extend the model to polymorphism, adaptation, specialization, group-level differences, speciation, and genomic time."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SEL-CP-ORIENTATION",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Natural selection requires heritable variation and differential reproductive contribution in a particular environment. Fitness is relative success in contributing offspring or alleles to later generations; it is not health, size, or lifespan by itself. Evolutionary success is measured through that contribution.",
+          "An adaptation is a heritable feature whose effect increased reproductive success in the relevant environment. Specialization can improve performance in a narrow setting while creating trade-offs elsewhere. Polymorphism is coexistence of multiple forms or alleles and can persist when environments, frequencies, or heterozygote effects prevent one form from fixing.",
+          "Selection can be described at individual or group levels only when differences at that level produce differential persistence or reproduction; do not infer a trait evolved simply for the good of the species. Speciation involves divergence with reduced gene flow and reproductive isolation. Genomic differences can accumulate over evolutionary time and inform divergence without requiring phylogenetic-method depth."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SEL-CP-EXPLANATION",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Heritable variation → environment-dependent reproductive difference → altered allele representation → possible adaptation or maintained polymorphism. Add reduced gene flow and accumulated divergence for speciation."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SEL-CP-MODEL",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: I demand offspring or allele contribution evidence before calling a trait fitter. I separate selection from drift by linking the trait to the difference. For speciation, I look for reduced gene flow and reproductive isolation, not appearance alone. For group selection language, I identify whether groups truly differ in persistence or reproduction."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SEL-CP-THINK",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: two heritable color forms have equal survival, but one form produces an average of four fertile offspring in a dark habitat while the other produces two. The first form has higher relative fitness there, so its associated allele is expected to increase. If the environment alternates and each form performs better in a different condition, both forms may persist as a polymorphism."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SEL-CP-WORKED",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: verify heritability, identify the reproductive difference, and predict the direction of allele-frequency change."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [
+          "SEL-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "SEL-CP-GUIDED",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: distinguish adaptation from an acquired individual change and from random drift."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [
+          "SEL-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "SEL-CP-LIGHT",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: explain a maintained polymorphism from opposing fitness effects rather than assuming one allele must fix."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [
+          "SEL-ACT-SOLO"
+        ],
+        "checkpoint_ref": "SEL-CP-SOLO",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: individuals do not evolve during their lifetimes, survival alone is not fitness, and need does not create an adaptation. Population appearance differences alone do not establish speciation without reduced gene flow or reproductive isolation."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SEL-CP-CONTRAST",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: trace heritable differential reproduction into a next-generation frequency prediction."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [
+          "SEL-ACT-NEAR"
+        ],
+        "checkpoint_ref": "SEL-CP-NEAR",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: connect heritable local reproductive differences to specialization, then evaluate how reduced gene flow, declining compatibility, genomic divergence, and time support speciation."
+        ],
+        "representation_ids": [
+          "SEL-REP-DIVERGENCE"
+        ],
+        "activity_ids": [
+          "SEL-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "SEL-CP-CHANGED",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: connect trait to fertile offspring or allele contribution, then predict the next generation. Do not substitute survival, effort, or need."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [
+          "SEL-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "SEL-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: predict allele change from a new heritable trait and reproductive-output table."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [
+          "SEL-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "SEL-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function in two chains: heritable variation to differential reproduction to frequency change, then reduced gene flow to reproductive isolation and accumulated divergence."
+        ],
+        "representation_ids": [
+          "SEL-REP-DIVERGENCE"
+        ],
+        "activity_ids": [
+          "SEL-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "SEL-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: predict how renewed gene flow changes the speciation pathway while habitat-linked selection continues."
+        ],
+        "representation_ids": [
+          "SEL-REP-DIVERGENCE"
+        ],
+        "activity_ids": [
+          "SEL-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "SEL-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: selection is heritable differential reproduction. It can drive adaptation, specialization, or maintained polymorphism; reduced gene flow and reproductive isolation permit divergence across genomic time."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SEL-CP-RECAP",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      },
+      {
+        "node_id": "SEL-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, return to the planner without exit credit and resume later at the exact failed selection-and-divergence function."
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SEL-CP-HANDOFF",
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "ANA-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-753596",
+        "item_binding_id": "ANA-ITEM-ENTRY",
+        "learner_operation": "Inspect the entry scenario to select and apply the genetic-analysis method that matches the data and question.",
+        "authorized_next_node_ids": [
+          "ANA-NODE-ORIENTATION",
+          "ANA-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-753596",
+        "item_binding_id": "ANA-ITEM-GUIDED",
+        "learner_operation": "Follow the guided steps to select and apply the genetic-analysis method that matches the data and question.",
+        "authorized_next_node_ids": [
+          "ANA-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-753596",
+        "item_binding_id": "ANA-ITEM-LIGHT",
+        "learner_operation": "Complete a brief scaffolded check to select and apply the genetic-analysis method that matches the data and question.",
+        "authorized_next_node_ids": [
+          "ANA-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-SOLO",
+        "primary_kc_id": "V3-KC-753596",
+        "item_binding_id": "ANA-ITEM-SOLO",
+        "learner_operation": "Work independently to select and apply the genetic-analysis method that matches the data and question.",
+        "authorized_next_node_ids": [
+          "ANA-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-NEAR",
+        "primary_kc_id": "V3-KC-753596",
+        "item_binding_id": "ANA-ITEM-NEAR",
+        "learner_operation": "Apply the method in a nearby context to select and apply the genetic-analysis method that matches the data and question.",
+        "authorized_next_node_ids": [
+          "ANA-NODE-CHANGED",
+          "ANA-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-753596",
+        "item_binding_id": "ANA-ITEM-CHANGED",
+        "learner_operation": "Transfer the method to a changed representation and context to select and apply the genetic-analysis method that matches the data and question.",
+        "authorized_next_node_ids": [
+          "ANA-NODE-RECAP",
+          "ANA-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-753596",
+        "item_binding_id": "ANA-ITEM-REPAIR-NEAR",
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to select and apply the genetic-analysis method that matches the data and question.",
+        "authorized_next_node_ids": [
+          "ANA-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-753596",
+        "item_binding_id": "ANA-ITEM-REENTRY-NEAR",
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to select and apply the genetic-analysis method that matches the data and question.",
+        "authorized_next_node_ids": [
+          "ANA-NODE-CHANGED",
+          "ANA-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-753596",
+        "item_binding_id": "ANA-ITEM-REPAIR-CHANGED",
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to select and apply the genetic-analysis method that matches the data and question.",
+        "authorized_next_node_ids": [
+          "ANA-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-753596",
+        "item_binding_id": "ANA-ITEM-REENTRY-CHANGED",
+        "learner_operation": "Reapply the corrected method in a fresh changed context to select and apply the genetic-analysis method that matches the data and question.",
+        "authorized_next_node_ids": [
+          "ANA-NODE-RECAP",
+          "ANA-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "NSL-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-689996",
+        "item_binding_id": "NSL-ITEM-ENTRY",
+        "learner_operation": "Inspect the entry scenario to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "authorized_next_node_ids": [
+          "NSL-NODE-ORIENTATION",
+          "NSL-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "NSL-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-689996",
+        "item_binding_id": "NSL-ITEM-GUIDED",
+        "learner_operation": "Follow the guided steps to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "authorized_next_node_ids": [
+          "NSL-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "NSL-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-689996",
+        "item_binding_id": "NSL-ITEM-LIGHT",
+        "learner_operation": "Complete a brief scaffolded check to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "authorized_next_node_ids": [
+          "NSL-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "NSL-ACT-SOLO",
+        "primary_kc_id": "V3-KC-689996",
+        "item_binding_id": "NSL-ITEM-SOLO",
+        "learner_operation": "Work independently to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "authorized_next_node_ids": [
+          "NSL-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "NSL-ACT-NEAR",
+        "primary_kc_id": "V3-KC-689996",
+        "item_binding_id": "NSL-ITEM-NEAR",
+        "learner_operation": "Apply the method in a nearby context to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "authorized_next_node_ids": [
+          "NSL-NODE-CHANGED",
+          "NSL-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "NSL-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-689996",
+        "item_binding_id": "NSL-ITEM-CHANGED",
+        "learner_operation": "Transfer the method to a changed representation and context to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "authorized_next_node_ids": [
+          "NSL-NODE-RECAP",
+          "NSL-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "NSL-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-689996",
+        "item_binding_id": "NSL-ITEM-REPAIR-NEAR",
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "authorized_next_node_ids": [
+          "NSL-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "NSL-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-689996",
+        "item_binding_id": "NSL-ITEM-REENTRY-NEAR",
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "authorized_next_node_ids": [
+          "NSL-NODE-CHANGED",
+          "NSL-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "NSL-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-689996",
+        "item_binding_id": "NSL-ITEM-REPAIR-CHANGED",
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "authorized_next_node_ids": [
+          "NSL-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "NSL-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-689996",
+        "item_binding_id": "NSL-ITEM-REENTRY-CHANGED",
+        "learner_operation": "Reapply the corrected method in a fresh changed context to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "authorized_next_node_ids": [
+          "NSL-NODE-RECAP",
+          "NSL-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "SEL-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-795626",
+        "item_binding_id": "SEL-ITEM-ENTRY",
+        "learner_operation": "Inspect the entry scenario to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "authorized_next_node_ids": [
+          "SEL-NODE-ORIENTATION",
+          "SEL-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "SEL-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-795626",
+        "item_binding_id": "SEL-ITEM-GUIDED",
+        "learner_operation": "Follow the guided steps to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "authorized_next_node_ids": [
+          "SEL-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "SEL-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-795626",
+        "item_binding_id": "SEL-ITEM-LIGHT",
+        "learner_operation": "Complete a brief scaffolded check to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "authorized_next_node_ids": [
+          "SEL-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "SEL-ACT-SOLO",
+        "primary_kc_id": "V3-KC-795626",
+        "item_binding_id": "SEL-ITEM-SOLO",
+        "learner_operation": "Work independently to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "authorized_next_node_ids": [
+          "SEL-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "SEL-ACT-NEAR",
+        "primary_kc_id": "V3-KC-795626",
+        "item_binding_id": "SEL-ITEM-NEAR",
+        "learner_operation": "Apply the method in a nearby context to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "authorized_next_node_ids": [
+          "SEL-NODE-CHANGED",
+          "SEL-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "SEL-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-795626",
+        "item_binding_id": "SEL-ITEM-CHANGED",
+        "learner_operation": "Transfer the method to a changed representation and context to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "authorized_next_node_ids": [
+          "SEL-NODE-RECAP",
+          "SEL-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SEL-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-795626",
+        "item_binding_id": "SEL-ITEM-REPAIR-NEAR",
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "authorized_next_node_ids": [
+          "SEL-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "SEL-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-795626",
+        "item_binding_id": "SEL-ITEM-REENTRY-NEAR",
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "authorized_next_node_ids": [
+          "SEL-NODE-CHANGED",
+          "SEL-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "SEL-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-795626",
+        "item_binding_id": "SEL-ITEM-REPAIR-CHANGED",
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "authorized_next_node_ids": [
+          "SEL-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SEL-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-795626",
+        "item_binding_id": "SEL-ITEM-REENTRY-CHANGED",
+        "learner_operation": "Reapply the corrected method in a fresh changed context to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "authorized_next_node_ids": [
+          "SEL-NODE-RECAP",
+          "SEL-NODE-HANDOFF"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-753596",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-753596",
+        "scope_in_refs": [
+          "V3-KC-753596:SCOPE_IN:0",
+          "V3-KC-753596:SCOPE_IN:1",
+          "V3-KC-753596:SCOPE_IN:2",
+          "V3-KC-753596:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-753596:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "ANA-CLAIM-METHODS",
+          "ANA-CLAIM-CHECK"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "ANA-NODE-ENTRY",
+        "orientation_node_id": "ANA-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "ANA-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "ANA-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "ANA-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "ANA-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "ANA-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "ANA-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "ANA-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "ANA-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "ANA-NODE-NEAR",
+          "activity_ids": [
+            "ANA-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "ANA-NODE-CHANGED",
+          "activity_ids": [
+            "ANA-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "ANA-FEATURE-SELECT-METHOD-FROM-QUESTION",
+          "ANA-FEATURE-COMPUTE-AND-CHECK-MODEL"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ANA-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "ANA-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ANA-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "ANA-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ANA-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "ANA-ACT-REENTRY-NEAR",
+            "success_next_node_id": "ANA-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ANA-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "ANA-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "ANA-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "ANA-REP-METHOD-SELECTOR",
+          "ANA-REP-OBSERVED-EXPECTED"
+        ],
+        "accessibility_equivalent_ids": [
+          "ANA-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "ANA-NODE-ENTRY",
+            "ANA-NODE-RECAP"
+          ],
+          "standard": [
+            "ANA-NODE-ENTRY",
+            "ANA-NODE-ORIENTATION",
+            "ANA-NODE-EXPLANATION",
+            "ANA-NODE-MODEL",
+            "ANA-NODE-THINK",
+            "ANA-NODE-WORKED",
+            "ANA-NODE-GUIDED",
+            "ANA-NODE-LIGHT",
+            "ANA-NODE-SOLO",
+            "ANA-NODE-CONTRAST",
+            "ANA-NODE-NEAR",
+            "ANA-NODE-CHANGED",
+            "ANA-NODE-REPAIR-NEAR",
+            "ANA-NODE-REENTRY-NEAR",
+            "ANA-NODE-REPAIR-CHANGED",
+            "ANA-NODE-REENTRY-CHANGED",
+            "ANA-NODE-RECAP",
+            "ANA-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "ANA-NODE-ENTRY",
+            "ANA-NODE-REPAIR-NEAR",
+            "ANA-NODE-REPAIR-CHANGED",
+            "ANA-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "ANA-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-689996",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-689996",
+        "scope_in_refs": [
+          "V3-KC-689996:SCOPE_IN:0",
+          "V3-KC-689996:SCOPE_IN:1",
+          "V3-KC-689996:SCOPE_IN:2",
+          "V3-KC-689996:SCOPE_IN:3",
+          "V3-KC-689996:SCOPE_IN:4"
+        ],
+        "scope_out_refs": [
+          "V3-KC-689996:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "NSL-CLAIM-DRIFT-FLOW",
+          "NSL-CLAIM-MATING"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "NSL-NODE-ENTRY",
+        "orientation_node_id": "NSL-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "NSL-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "NSL-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "NSL-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "NSL-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "NSL-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "NSL-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "NSL-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "NSL-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "NSL-NODE-NEAR",
+          "activity_ids": [
+            "NSL-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "NSL-NODE-CHANGED",
+          "activity_ids": [
+            "NSL-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "NSL-FEATURE-RANDOM-SAMPLING-AND-GENE-FLOW",
+          "NSL-FEATURE-ALLELE-FREQUENCY-VERSUS-HETEROZYGOSITY"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "NSL-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "NSL-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "NSL-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "NSL-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "NSL-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "NSL-ACT-REENTRY-NEAR",
+            "success_next_node_id": "NSL-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "NSL-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "NSL-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "NSL-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "NSL-REP-GENE-POOL",
+          "NSL-REP-DIVERSITY-COMPARISON"
+        ],
+        "accessibility_equivalent_ids": [
+          "NSL-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "NSL-NODE-ENTRY",
+            "NSL-NODE-RECAP"
+          ],
+          "standard": [
+            "NSL-NODE-ENTRY",
+            "NSL-NODE-ORIENTATION",
+            "NSL-NODE-EXPLANATION",
+            "NSL-NODE-MODEL",
+            "NSL-NODE-THINK",
+            "NSL-NODE-WORKED",
+            "NSL-NODE-GUIDED",
+            "NSL-NODE-LIGHT",
+            "NSL-NODE-SOLO",
+            "NSL-NODE-CONTRAST",
+            "NSL-NODE-NEAR",
+            "NSL-NODE-CHANGED",
+            "NSL-NODE-REPAIR-NEAR",
+            "NSL-NODE-REENTRY-NEAR",
+            "NSL-NODE-REPAIR-CHANGED",
+            "NSL-NODE-REENTRY-CHANGED",
+            "NSL-NODE-RECAP",
+            "NSL-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "NSL-NODE-ENTRY",
+            "NSL-NODE-REPAIR-NEAR",
+            "NSL-NODE-REPAIR-CHANGED",
+            "NSL-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "NSL-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-795626",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-795626",
+        "scope_in_refs": [
+          "V3-KC-795626:SCOPE_IN:0",
+          "V3-KC-795626:SCOPE_IN:1",
+          "V3-KC-795626:SCOPE_IN:2",
+          "V3-KC-795626:SCOPE_IN:3",
+          "V3-KC-795626:SCOPE_IN:4",
+          "V3-KC-795626:SCOPE_IN:5",
+          "V3-KC-795626:SCOPE_IN:6",
+          "V3-KC-795626:SCOPE_IN:7"
+        ],
+        "scope_out_refs": [
+          "V3-KC-795626:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "SEL-CLAIM-FITNESS",
+          "SEL-CLAIM-DIVERGENCE"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "SEL-NODE-ENTRY",
+        "orientation_node_id": "SEL-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "SEL-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "SEL-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "SEL-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "SEL-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "SEL-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "SEL-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "SEL-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "SEL-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "SEL-NODE-NEAR",
+          "activity_ids": [
+            "SEL-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "SEL-NODE-CHANGED",
+          "activity_ids": [
+            "SEL-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "SEL-FEATURE-DIFFERENTIAL-REPRODUCTION-TO-FREQUENCY",
+          "SEL-FEATURE-POLYMORPHISM-ADAPTATION-ISOLATION-TIME"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "SEL-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "SEL-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "SEL-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "SEL-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "SEL-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "SEL-ACT-REENTRY-NEAR",
+            "success_next_node_id": "SEL-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "SEL-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "SEL-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "SEL-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "SEL-REP-FITNESS-FREQUENCY",
+          "SEL-REP-DIVERGENCE"
+        ],
+        "accessibility_equivalent_ids": [
+          "SEL-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "SEL-NODE-ENTRY",
+            "SEL-NODE-RECAP"
+          ],
+          "standard": [
+            "SEL-NODE-ENTRY",
+            "SEL-NODE-ORIENTATION",
+            "SEL-NODE-EXPLANATION",
+            "SEL-NODE-MODEL",
+            "SEL-NODE-THINK",
+            "SEL-NODE-WORKED",
+            "SEL-NODE-GUIDED",
+            "SEL-NODE-LIGHT",
+            "SEL-NODE-SOLO",
+            "SEL-NODE-CONTRAST",
+            "SEL-NODE-NEAR",
+            "SEL-NODE-CHANGED",
+            "SEL-NODE-REPAIR-NEAR",
+            "SEL-NODE-REENTRY-NEAR",
+            "SEL-NODE-REPAIR-CHANGED",
+            "SEL-NODE-REENTRY-CHANGED",
+            "SEL-NODE-RECAP",
+            "SEL-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "SEL-NODE-ENTRY",
+            "SEL-NODE-REPAIR-NEAR",
+            "SEL-NODE-REPAIR-CHANGED",
+            "SEL-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "SEL-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "ANA-ITEM-ENTRY",
+        "activity_id": "ANA-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "ANA-FAMILY-ENTRY",
+        "stimulus_lineage_id": "ANA-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-METHOD-SELECTOR",
+        "changed_dimensions": [],
+        "learner_operation": "Inspect the entry scenario to select and apply the genetic-analysis method that matches the data and question.",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANA_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-ENTRY",
+        "decisive_cue_id": "ANA-CUE-ENTRY",
+        "distractor_lineage_id": "ANA-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "ANA-FAMILY-WORKED",
+        "stimulus_lineage_id": "ANA-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-METHOD-SELECTOR",
+        "changed_dimensions": [],
+        "learner_operation": "Trace a worked example to select and apply the genetic-analysis method that matches the data and question.",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:ANA-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-WORKED",
+        "decisive_cue_id": "ANA-CUE-WORKED",
+        "distractor_lineage_id": "ANA-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-GUIDED",
+        "activity_id": "ANA-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "ANA-FAMILY-GUIDED",
+        "stimulus_lineage_id": "ANA-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-METHOD-SELECTOR",
+        "changed_dimensions": [],
+        "learner_operation": "Follow the guided steps to select and apply the genetic-analysis method that matches the data and question.",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANA_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-GUIDED",
+        "decisive_cue_id": "ANA-CUE-GUIDED",
+        "distractor_lineage_id": "ANA-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-LIGHT",
+        "activity_id": "ANA-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "ANA-FAMILY-LIGHT",
+        "stimulus_lineage_id": "ANA-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-METHOD-SELECTOR",
+        "changed_dimensions": [],
+        "learner_operation": "Complete a brief scaffolded check to select and apply the genetic-analysis method that matches the data and question.",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANA_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-LIGHT",
+        "decisive_cue_id": "ANA-CUE-LIGHT",
+        "distractor_lineage_id": "ANA-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-SOLO",
+        "activity_id": "ANA-ACT-SOLO",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "ANA-FAMILY-SOLO",
+        "stimulus_lineage_id": "ANA-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-METHOD-SELECTOR",
+        "changed_dimensions": [],
+        "learner_operation": "Work independently to select and apply the genetic-analysis method that matches the data and question.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANA_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-SOLO",
+        "decisive_cue_id": "ANA-CUE-SOLO",
+        "distractor_lineage_id": "ANA-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-NEAR",
+        "activity_id": "ANA-ACT-NEAR",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "ANA-FAMILY-NEAR",
+        "stimulus_lineage_id": "ANA-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-METHOD-SELECTOR",
+        "changed_dimensions": [],
+        "learner_operation": "Apply the method in a nearby context to select and apply the genetic-analysis method that matches the data and question.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-NEAR",
+        "decisive_cue_id": "ANA-CUE-NEAR",
+        "distractor_lineage_id": "ANA-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ANA-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-SELECT-METHOD-FROM-QUESTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ANA-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-SELECT-METHOD-FROM-QUESTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "ANA-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-SELECT-METHOD-FROM-QUESTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ANA-ITEM-CHANGED",
+        "activity_id": "ANA-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "ANA-FAMILY-CHANGED",
+        "stimulus_lineage_id": "ANA-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-OBSERVED-EXPECTED",
+        "changed_dimensions": [
+          "representation",
+          "required_operation"
+        ],
+        "learner_operation": "Transfer the method to a changed representation and context to select and apply the genetic-analysis method that matches the data and question.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-CHANGED",
+        "decisive_cue_id": "ANA-CUE-CHANGED",
+        "distractor_lineage_id": "ANA-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "ANA-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-COMPUTE-AND-CHECK-MODEL"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ANA-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-COMPUTE-AND-CHECK-MODEL"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "ANA-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-COMPUTE-AND-CHECK-MODEL"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ANA-ITEM-REPAIR-NEAR",
+        "activity_id": "ANA-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANA-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "ANA-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ANA-REP-METHOD-SELECTOR",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to select and apply the genetic-analysis method that matches the data and question.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "ANA-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "ANA-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-REENTRY-NEAR",
+        "activity_id": "ANA-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANA-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "ANA-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-METHOD-SELECTOR",
+        "changed_dimensions": [],
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to select and apply the genetic-analysis method that matches the data and question.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "ANA-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "ANA-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-REPAIR-CHANGED",
+        "activity_id": "ANA-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANA-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "ANA-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ANA-REP-OBSERVED-EXPECTED",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to select and apply the genetic-analysis method that matches the data and question.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "ANA-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "ANA-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-REENTRY-CHANGED",
+        "activity_id": "ANA-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-753596",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANA-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "ANA-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-OBSERVED-EXPECTED",
+        "changed_dimensions": [
+          "representation",
+          "required_operation"
+        ],
+        "learner_operation": "Reapply the corrected method in a fresh changed context to select and apply the genetic-analysis method that matches the data and question.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "ANA-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "ANA-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "NSL-ITEM-ENTRY",
+        "activity_id": "NSL-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "NSL-FAMILY-ENTRY",
+        "stimulus_lineage_id": "NSL-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NSL-REP-GENE-POOL",
+        "changed_dimensions": [],
+        "learner_operation": "Inspect the entry scenario to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NSL_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#NSL-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#NSL-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NSL-SOLUTION-ENTRY",
+        "decisive_cue_id": "NSL-CUE-ENTRY",
+        "distractor_lineage_id": "NSL-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "NSL-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "NSL-FAMILY-WORKED",
+        "stimulus_lineage_id": "NSL-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NSL-REP-GENE-POOL",
+        "changed_dimensions": [],
+        "learner_operation": "Trace a worked example to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:NSL-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NSL-SOLUTION-WORKED",
+        "decisive_cue_id": "NSL-CUE-WORKED",
+        "distractor_lineage_id": "NSL-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "NSL-ITEM-GUIDED",
+        "activity_id": "NSL-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "NSL-FAMILY-GUIDED",
+        "stimulus_lineage_id": "NSL-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NSL-REP-GENE-POOL",
+        "changed_dimensions": [],
+        "learner_operation": "Follow the guided steps to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NSL_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#NSL-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#NSL-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NSL-SOLUTION-GUIDED",
+        "decisive_cue_id": "NSL-CUE-GUIDED",
+        "distractor_lineage_id": "NSL-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "NSL-ITEM-LIGHT",
+        "activity_id": "NSL-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "NSL-FAMILY-LIGHT",
+        "stimulus_lineage_id": "NSL-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NSL-REP-GENE-POOL",
+        "changed_dimensions": [],
+        "learner_operation": "Complete a brief scaffolded check to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NSL_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#NSL-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#NSL-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NSL-SOLUTION-LIGHT",
+        "decisive_cue_id": "NSL-CUE-LIGHT",
+        "distractor_lineage_id": "NSL-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "NSL-ITEM-SOLO",
+        "activity_id": "NSL-ACT-SOLO",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "NSL-FAMILY-SOLO",
+        "stimulus_lineage_id": "NSL-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NSL-REP-GENE-POOL",
+        "changed_dimensions": [],
+        "learner_operation": "Work independently to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NSL_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#NSL-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#NSL-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NSL-SOLUTION-SOLO",
+        "decisive_cue_id": "NSL-CUE-SOLO",
+        "distractor_lineage_id": "NSL-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "NSL-ITEM-NEAR",
+        "activity_id": "NSL-ACT-NEAR",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "NSL-FAMILY-NEAR",
+        "stimulus_lineage_id": "NSL-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NSL-REP-GENE-POOL",
+        "changed_dimensions": [],
+        "learner_operation": "Apply the method in a nearby context to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NSL_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#NSL-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#NSL-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NSL-SOLUTION-NEAR",
+        "decisive_cue_id": "NSL-CUE-NEAR",
+        "distractor_lineage_id": "NSL-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "NSL-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NSL-FEATURE-RANDOM-SAMPLING-AND-GENE-FLOW"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "NSL-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NSL-FEATURE-RANDOM-SAMPLING-AND-GENE-FLOW"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "NSL-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NSL-FEATURE-RANDOM-SAMPLING-AND-GENE-FLOW"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "NSL-ITEM-CHANGED",
+        "activity_id": "NSL-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "NSL-FAMILY-CHANGED",
+        "stimulus_lineage_id": "NSL-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NSL-REP-DIVERSITY-COMPARISON",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Transfer the method to a changed representation and context to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NSL_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#NSL-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#NSL-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NSL-SOLUTION-CHANGED",
+        "decisive_cue_id": "NSL-CUE-CHANGED",
+        "distractor_lineage_id": "NSL-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "NSL-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NSL-FEATURE-ALLELE-FREQUENCY-VERSUS-HETEROZYGOSITY"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "NSL-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NSL-FEATURE-ALLELE-FREQUENCY-VERSUS-HETEROZYGOSITY"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "NSL-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NSL-FEATURE-ALLELE-FREQUENCY-VERSUS-HETEROZYGOSITY"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "NSL-ITEM-REPAIR-NEAR",
+        "activity_id": "NSL-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "NSL-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "NSL-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "NSL-REP-GENE-POOL",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NSL_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#NSL-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#NSL-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NSL-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "NSL-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "NSL-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "NSL-ITEM-REENTRY-NEAR",
+        "activity_id": "NSL-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "NSL-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "NSL-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NSL-REP-GENE-POOL",
+        "changed_dimensions": [],
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NSL_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#NSL-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#NSL-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NSL-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "NSL-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "NSL-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "NSL-ITEM-REPAIR-CHANGED",
+        "activity_id": "NSL-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "NSL-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "NSL-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "NSL-REP-DIVERSITY-COMPARISON",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NSL_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#NSL-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#NSL-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NSL-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "NSL-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "NSL-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "NSL-ITEM-REENTRY-CHANGED",
+        "activity_id": "NSL-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-689996",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "NSL-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "NSL-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NSL-REP-DIVERSITY-COMPARISON",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Reapply the corrected method in a fresh changed context to calculate and interpret allele or genotype frequency change under explicit population assumptions.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NSL_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#NSL-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#NSL-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NSL-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "NSL-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "NSL-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "SEL-ITEM-ENTRY",
+        "activity_id": "SEL-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "SEL-FAMILY-ENTRY",
+        "stimulus_lineage_id": "SEL-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SEL-REP-FITNESS-FREQUENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Inspect the entry scenario to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SEL_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#SEL-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#SEL-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SEL-SOLUTION-ENTRY",
+        "decisive_cue_id": "SEL-CUE-ENTRY",
+        "distractor_lineage_id": "SEL-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "SEL-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "SEL-FAMILY-WORKED",
+        "stimulus_lineage_id": "SEL-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SEL-REP-FITNESS-FREQUENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Trace a worked example to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:SEL-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SEL-SOLUTION-WORKED",
+        "decisive_cue_id": "SEL-CUE-WORKED",
+        "distractor_lineage_id": "SEL-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "SEL-ITEM-GUIDED",
+        "activity_id": "SEL-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "SEL-FAMILY-GUIDED",
+        "stimulus_lineage_id": "SEL-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SEL-REP-FITNESS-FREQUENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Follow the guided steps to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SEL_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#SEL-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#SEL-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SEL-SOLUTION-GUIDED",
+        "decisive_cue_id": "SEL-CUE-GUIDED",
+        "distractor_lineage_id": "SEL-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "SEL-ITEM-LIGHT",
+        "activity_id": "SEL-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "SEL-FAMILY-LIGHT",
+        "stimulus_lineage_id": "SEL-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SEL-REP-FITNESS-FREQUENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Complete a brief scaffolded check to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SEL_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#SEL-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#SEL-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SEL-SOLUTION-LIGHT",
+        "decisive_cue_id": "SEL-CUE-LIGHT",
+        "distractor_lineage_id": "SEL-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "SEL-ITEM-SOLO",
+        "activity_id": "SEL-ACT-SOLO",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "SEL-FAMILY-SOLO",
+        "stimulus_lineage_id": "SEL-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SEL-REP-FITNESS-FREQUENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Work independently to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SEL_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#SEL-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#SEL-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SEL-SOLUTION-SOLO",
+        "decisive_cue_id": "SEL-CUE-SOLO",
+        "distractor_lineage_id": "SEL-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "SEL-ITEM-NEAR",
+        "activity_id": "SEL-ACT-NEAR",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "SEL-FAMILY-NEAR",
+        "stimulus_lineage_id": "SEL-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SEL-REP-FITNESS-FREQUENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Apply the method in a nearby context to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SEL_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#SEL-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#SEL-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SEL-SOLUTION-NEAR",
+        "decisive_cue_id": "SEL-CUE-NEAR",
+        "distractor_lineage_id": "SEL-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "SEL-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SEL-FEATURE-DIFFERENTIAL-REPRODUCTION-TO-FREQUENCY"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "SEL-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SEL-FEATURE-DIFFERENTIAL-REPRODUCTION-TO-FREQUENCY"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "SEL-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SEL-FEATURE-DIFFERENTIAL-REPRODUCTION-TO-FREQUENCY"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SEL-ITEM-CHANGED",
+        "activity_id": "SEL-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "SEL-FAMILY-CHANGED",
+        "stimulus_lineage_id": "SEL-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SEL-REP-DIVERGENCE",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Transfer the method to a changed representation and context to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SEL_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#SEL-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#SEL-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SEL-SOLUTION-CHANGED",
+        "decisive_cue_id": "SEL-CUE-CHANGED",
+        "distractor_lineage_id": "SEL-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "SEL-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SEL-FEATURE-POLYMORPHISM-ADAPTATION-ISOLATION-TIME"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "SEL-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SEL-FEATURE-POLYMORPHISM-ADAPTATION-ISOLATION-TIME"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "SEL-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SEL-FEATURE-POLYMORPHISM-ADAPTATION-ISOLATION-TIME"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SEL-ITEM-REPAIR-NEAR",
+        "activity_id": "SEL-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SEL-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "SEL-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "SEL-REP-FITNESS-FREQUENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SEL_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#SEL-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#SEL-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SEL-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "SEL-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "SEL-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "SEL-ITEM-REENTRY-NEAR",
+        "activity_id": "SEL-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SEL-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "SEL-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SEL-REP-FITNESS-FREQUENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SEL_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#SEL-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#SEL-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SEL-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "SEL-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "SEL-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "SEL-ITEM-REPAIR-CHANGED",
+        "activity_id": "SEL-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SEL-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "SEL-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "SEL-REP-DIVERGENCE",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SEL_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#SEL-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#SEL-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SEL-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "SEL-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "SEL-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "SEL-ITEM-REENTRY-CHANGED",
+        "activity_id": "SEL-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-795626",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SEL-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "SEL-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SEL-REP-DIVERGENCE",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Reapply the corrected method in a fresh changed context to connect heritable variation and differential reproduction to adaptation, maintained variation, and speciation.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SEL_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#SEL-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#SEL-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SEL-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "SEL-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "SEL-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "ANA-TRANSITION-NEAR-PASS",
+        "from_node_id": "ANA-NODE-NEAR",
+        "to_node_id": "ANA-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANA-TRANSITION-NEAR-MISS",
+        "from_node_id": "ANA-NODE-NEAR",
+        "to_node_id": "ANA-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANA-TRANSITION-CHANGED-PASS",
+        "from_node_id": "ANA-NODE-CHANGED",
+        "to_node_id": "ANA-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANA-TRANSITION-CHANGED-MISS",
+        "from_node_id": "ANA-NODE-CHANGED",
+        "to_node_id": "ANA-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANA-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "ANA-NODE-REENTRY-NEAR",
+        "to_node_id": "ANA-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANA-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "ANA-NODE-REENTRY-NEAR",
+        "to_node_id": "ANA-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "ANA-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "ANA-NODE-REENTRY-CHANGED",
+        "to_node_id": "ANA-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANA-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "ANA-NODE-REENTRY-CHANGED",
+        "to_node_id": "ANA-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "NSL-TRANSITION-NEAR-PASS",
+        "from_node_id": "NSL-NODE-NEAR",
+        "to_node_id": "NSL-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "NSL-TRANSITION-NEAR-MISS",
+        "from_node_id": "NSL-NODE-NEAR",
+        "to_node_id": "NSL-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "NSL-TRANSITION-CHANGED-PASS",
+        "from_node_id": "NSL-NODE-CHANGED",
+        "to_node_id": "NSL-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "NSL-TRANSITION-CHANGED-MISS",
+        "from_node_id": "NSL-NODE-CHANGED",
+        "to_node_id": "NSL-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "NSL-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "NSL-NODE-REENTRY-NEAR",
+        "to_node_id": "NSL-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "NSL-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "NSL-NODE-REENTRY-NEAR",
+        "to_node_id": "NSL-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "NSL-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "NSL-NODE-REENTRY-CHANGED",
+        "to_node_id": "NSL-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "NSL-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "NSL-NODE-REENTRY-CHANGED",
+        "to_node_id": "NSL-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "SEL-TRANSITION-NEAR-PASS",
+        "from_node_id": "SEL-NODE-NEAR",
+        "to_node_id": "SEL-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SEL-TRANSITION-NEAR-MISS",
+        "from_node_id": "SEL-NODE-NEAR",
+        "to_node_id": "SEL-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SEL-TRANSITION-CHANGED-PASS",
+        "from_node_id": "SEL-NODE-CHANGED",
+        "to_node_id": "SEL-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SEL-TRANSITION-CHANGED-MISS",
+        "from_node_id": "SEL-NODE-CHANGED",
+        "to_node_id": "SEL-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SEL-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "SEL-NODE-REENTRY-NEAR",
+        "to_node_id": "SEL-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SEL-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "SEL-NODE-REENTRY-NEAR",
+        "to_node_id": "SEL-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "SEL-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "SEL-NODE-REENTRY-CHANGED",
+        "to_node_id": "SEL-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SEL-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "SEL-NODE-REENTRY-CHANGED",
+        "to_node_id": "SEL-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "ANA-TO-NSL",
+        "from_node_id": "ANA-NODE-RECAP",
+        "to_node_id": "NSL-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "NSL-TO-SEL",
+        "from_node_id": "NSL-NODE-RECAP",
+        "to_node_id": "SEL-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      }
+    ],
+    "attachment_bindings": []
+  }
+}

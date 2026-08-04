@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Feedback follows a committed response. The opening activity is informational; an unresolved fresh check returns to planning without credit.",
+  "items": [
+    {
+      "prompt_key": "HAB_ENTRY",
+      "title": "entry: Distinguish habituation and dishabituation",
+      "prompt": "A person turns toward a quiet tone on the first trial but responds less across ten identical harmless tones. No other event occurs. Which process best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Habituation to the repeatedly presented tone",
+        "Classical conditioning between the tone and another stimulus",
+        "Operant punishment contingent on turning toward the tone",
+        "Dishabituation caused by a newly introduced stimulus"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "HAB_GUIDED",
+      "title": "guided: Distinguish habituation and dishabituation",
+      "prompt": "Which observation most strongly distinguishes habituation from sensory adaptation in a repeated-sound study?",
+      "response_type": "single_select",
+      "options": [
+        "The repeated sound continues at the same intensity",
+        "A different sound restores a strong orientation response",
+        "The participant reports hearing fewer sounds over time",
+        "The orientation response declines on later identical trials"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "HAB_LIGHT",
+      "title": "light: Distinguish habituation and dishabituation",
+      "prompt": "A swimmer notices pool-water pressure less after continuous immersion, and a receptor-sensitivity measure also declines. Which explanation is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Habituation established by pairing water pressure with food",
+        "Dishabituation caused by a novel pressure stimulus",
+        "Sensory adaptation during continuous stimulation",
+        "Operant extinction after reinforcement is withheld"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "HAB_SOLO",
+      "title": "solo: Distinguish habituation and dishabituation",
+      "prompt": "A response graph falls steadily across repeated flashes, with no second stimulus and no consequence after responding. What inference is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "The flashes became conditioned stimuli through an unstated pairing",
+        "The response was punished after every flash",
+        "Dishabituation occurred throughout the declining trials",
+        "The pattern supports habituation rather than associative conditioning"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "HAB_NEAR",
+      "title": "near: Distinguish habituation and dishabituation",
+      "prompt": "A laboratory animal startles less with each presentation of the same harmless click. No reward, punishment, or paired event occurs. What is the best classification?",
+      "response_type": "single_select",
+      "options": [
+        "Habituation",
+        "Stimulus generalization",
+        "Negative reinforcement",
+        "Spontaneous recovery"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "HAB_CHANGED",
+      "title": "changed: Distinguish habituation and dishabituation",
+      "prompt": "After a participant stops orienting to repeated blue circles, a bright yellow triangle produces a strong orientation response. What does the renewed response indicate?",
+      "response_type": "single_select",
+      "options": [
+        "Permanent sensory inability to respond to visual input",
+        "Dishabituation after a meaningful stimulus change",
+        "Operant punishment of orientation to the repeated circles",
+        "Classical acquisition between the triangle and an unconditioned stimulus"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "HAB_REPAIR_NEAR",
+      "title": "repair near: Distinguish habituation and dishabituation",
+      "prompt": "Which checklist most directly identifies habituation?",
+      "response_type": "single_select",
+      "options": [
+        "Two stimuli pair, a cue predicts an outcome, and response increases",
+        "A behavior changes because a consequence follows it",
+        "One stimulus repeats, response declines, and no association is required",
+        "A novel stimulus appears and response immediately renews"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "HAB_REENTRY_NEAR",
+      "title": "reentry near: Distinguish habituation and dishabituation",
+      "prompt": "A person reacts less to each repetition of the same mild wrist vibration, with no paired event or consequence. Which process fits the fresh case?",
+      "response_type": "single_select",
+      "options": [
+        "Classical extinction of a vibration-conditioned response",
+        "Avoidance learning that prevents the vibration",
+        "Dishabituation following a new tactile stimulus",
+        "Habituation to repeated vibration"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "HAB_REPAIR_CHANGED",
+      "title": "repair changed: Distinguish habituation and dishabituation",
+      "prompt": "What observation best supports dishabituation rather than an inability to respond?",
+      "response_type": "single_select",
+      "options": [
+        "Novelty restores responding after repetition-linked decline",
+        "The repeated stimulus continues and response stays low",
+        "The participant receives a reward after every response",
+        "A second stimulus is paired with an aversive event"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "HAB_REENTRY_CHANGED",
+      "title": "reentry changed: Distinguish habituation and dishabituation",
+      "prompt": "A participant no longer turns toward repeated low tones. A sudden change to a high tone restores turning. Which interpretation is most precise?",
+      "response_type": "single_select",
+      "options": [
+        "The auditory system permanently adapted to every possible tone",
+        "The high tone produced dishabituation after habituation to low tones",
+        "The high tone became a conditioned stimulus through food pairing",
+        "Turning was negatively reinforced by removal of the low tones"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CLS_ENTRY",
+      "title": "entry: Model classical conditioning",
+      "prompt": "Before any training, a sudden air puff causes an eye blink. What is the air puff?",
+      "response_type": "single_select",
+      "options": [
+        "The conditioned response",
+        "The neutral stimulus",
+        "The unconditioned stimulus",
+        "The conditioned stimulus"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CLS_GUIDED",
+      "title": "guided: Model classical conditioning",
+      "prompt": "A tone initially causes no salivation. Food naturally causes salivation. After repeated tone–food pairings, the tone alone causes salivation. What is the tone after training?",
+      "response_type": "single_select",
+      "options": [
+        "The unconditioned response",
+        "The unconditioned stimulus",
+        "The conditioned response",
+        "The conditioned stimulus"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CLS_LIGHT",
+      "title": "light: Model classical conditioning",
+      "prompt": "After acquisition, a light is presented repeatedly without the air puff and blinking to the light declines. Which process is occurring?",
+      "response_type": "single_select",
+      "options": [
+        "Extinction",
+        "Spontaneous recovery",
+        "Stimulus generalization",
+        "Acquisition"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CLS_SOLO",
+      "title": "solo: Model classical conditioning",
+      "prompt": "A response was extinguished yesterday. At the first cue presentation today, a small conditioned response returns before declining again. What is this return?",
+      "response_type": "single_select",
+      "options": [
+        "Acquisition",
+        "Spontaneous recovery",
+        "Stimulus discrimination",
+        "Habituation"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CLS_NEAR",
+      "title": "near: Model classical conditioning",
+      "prompt": "Juice naturally produces lip movement. A shape initially does not. After shape–juice pairings, the shape alone produces lip movement. What is lip movement to the shape?",
+      "response_type": "single_select",
+      "options": [
+        "The neutral stimulus",
+        "The unconditioned stimulus",
+        "The conditioned response",
+        "The conditioned stimulus"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CLS_CHANGED",
+      "title": "changed: Model classical conditioning",
+      "prompt": "After extinction and a rest, a small CR returns. The learner also responds to a similar tone but not to a tone repeatedly presented without the US. Which processes appear?",
+      "response_type": "single_select",
+      "options": [
+        "Acquisition, habituation, and positive reinforcement",
+        "Only extinction because every later response must be absent",
+        "Operant shaping, escape, and stimulus adaptation",
+        "Spontaneous recovery, generalization, and discrimination"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CLS_REPAIR_NEAR",
+      "title": "repair near: Model classical conditioning",
+      "prompt": "Which labeling order reduces confusion in a classical-conditioning vignette?",
+      "response_type": "single_select",
+      "options": [
+        "Find the natural US–UR relation, then track the neutral cue into CS–CR",
+        "Label every event conditioned before examining any pretraining response",
+        "Treat every stimulus as a response and every response as a stimulus",
+        "Start with extinction and infer an unmentioned acquisition history"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CLS_REENTRY_NEAR",
+      "title": "reentry near: Model classical conditioning",
+      "prompt": "A sour solution naturally produces a grimace. A click initially does not. After click–solution pairings, a click alone produces a grimace. What is the click?",
+      "response_type": "single_select",
+      "options": [
+        "The unconditioned response",
+        "The conditioned stimulus",
+        "The unconditioned stimulus",
+        "The conditioned response"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CLS_REPAIR_CHANGED",
+      "title": "repair changed: Model classical conditioning",
+      "prompt": "Which observation-to-process mapping is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Similar cue evokes CR: discrimination; different outcomes are ignored",
+        "Repeated CS–US pairings lower CR: extinction",
+        "CS alone lowers CR: extinction; rest restores CR: spontaneous recovery",
+        "Rest permanently erases the conditioned relation: acquisition"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CLS_REENTRY_CHANGED",
+      "title": "reentry changed: Model classical conditioning",
+      "prompt": "A conditioned skin response declines during cue-alone trials, returns slightly after two days, and occurs to a similar cue but not a trained-safe cue. What pattern is present?",
+      "response_type": "single_select",
+      "options": [
+        "Only habituation to one repeated harmless stimulus",
+        "Only operant punishment followed by avoidance",
+        "Acquisition without any later change in the conditioned relation",
+        "Extinction, recovery, generalization, and discrimination"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "OPR_ENTRY",
+      "title": "entry: Model operant conditioning",
+      "prompt": "A student submits practice problems, receives praise immediately, and submits more problems the next week. Which element is the behavior?",
+      "response_type": "single_select",
+      "options": [
+        "Submitting the practice problems",
+        "Receiving the praise afterward",
+        "The increase observed the next week",
+        "The teacher who delivers the praise"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "OPR_GUIDED",
+      "title": "guided: Model operant conditioning",
+      "prompt": "A loud alarm is already sounding. Pressing a button stops it, and button pressing becomes faster on later trials. Which contingency is shown?",
+      "response_type": "single_select",
+      "options": [
+        "Positive punishment through alarm removal",
+        "Negative reinforcement through escape",
+        "Negative punishment through response increase",
+        "Positive reinforcement through stimulus addition"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "OPR_LIGHT",
+      "title": "light: Model operant conditioning",
+      "prompt": "A child loses game time after shouting, and shouting decreases. How should the contingency be classified?",
+      "response_type": "single_select",
+      "options": [
+        "Negative reinforcement",
+        "Positive punishment",
+        "Negative punishment",
+        "Positive reinforcement"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "OPR_SOLO",
+      "title": "solo: Model operant conditioning",
+      "prompt": "A slot-like task delivers a reward after an unpredictable number of responses. Which schedule is this?",
+      "response_type": "single_select",
+      "options": [
+        "Fixed ratio",
+        "Fixed interval",
+        "Variable interval",
+        "Variable ratio"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "OPR_NEAR",
+      "title": "near: Model operant conditioning",
+      "prompt": "A worker presses a key, an irritating noise stops, and key pressing increases. Which classification is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Negative reinforcement",
+        "Positive punishment",
+        "Negative punishment",
+        "Positive reinforcement"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "OPR_CHANGED",
+      "title": "changed: Model operant conditioning",
+      "prompt": "At unpredictable time intervals, a warning can occur. A technician checks a panel before a warning; a successful check prevents the warning, and checking becomes more frequent. Which classification fits both the contingency and schedule?",
+      "response_type": "single_select",
+      "options": [
+        "Escape maintained by positive punishment after a fixed number of checks",
+        "Avoidance maintained by negative reinforcement on variable-interval opportunities",
+        "Shaping maintained by reward addition on a fixed-ratio schedule",
+        "Classical extinction caused by repeated warning presentations"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "OPR_REPAIR_NEAR",
+      "title": "repair near: Model operant conditioning",
+      "prompt": "Which two questions classify reinforcement or punishment most reliably?",
+      "response_type": "single_select",
+      "options": [
+        "Did the consequence seem pleasant, and did the observer approve?",
+        "Was the behavior voluntary, and was the setting a laboratory?",
+        "Track addition or removal, then later increase or decrease",
+        "Was a cue repeated, and did a reflex become conditioned?"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "OPR_REENTRY_NEAR",
+      "title": "reentry near: Model operant conditioning",
+      "prompt": "A driver parks illegally, receives an added fine, and illegal parking decreases. Which fresh classification fits?",
+      "response_type": "single_select",
+      "options": [
+        "Negative reinforcement",
+        "Positive reinforcement",
+        "Negative punishment",
+        "Positive punishment"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "OPR_REPAIR_CHANGED",
+      "title": "repair changed: Model operant conditioning",
+      "prompt": "Which feature pair identifies avoidance maintained by negative reinforcement?",
+      "response_type": "single_select",
+      "options": [
+        "The response prevents an aversive event and later becomes more frequent",
+        "The response stops a present aversive event and later becomes less frequent",
+        "A reward is added after successive approximations and responding decreases",
+        "Two stimuli are paired until a reflexive response disappears"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "OPR_REENTRY_CHANGED",
+      "title": "reentry changed: Model operant conditioning",
+      "prompt": "At unpredictable time points, a lab animal can cross compartments before a mild air puff; crossing prevents the puff and becomes more frequent. Which classification is best?",
+      "response_type": "single_select",
+      "options": [
+        "Escape maintained by punishment on a fixed-ratio schedule",
+        "Avoidance maintained by negative reinforcement on variable-interval opportunities",
+        "Shaping maintained by positive reinforcement on a variable-ratio schedule",
+        "Classical acquisition maintained by repeated stimulus pairing"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CNS_ENTRY",
+      "title": "entry: Explain cognitive and biological constraints on associative learning",
+      "prompt": "Two learners receive the same reward history, but one immediately changes behavior after being told the outcome is no longer valuable. What factor is most directly implicated?",
+      "response_type": "single_select",
+      "options": [
+        "Additional reinforcement trials that never occurred",
+        "Sensory adaptation to the response cue",
+        "A changed expectancy about the outcome",
+        "Habituation to one harmless repeated stimulus"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CNS_GUIDED",
+      "title": "guided: Explain cognitive and biological constraints on associative learning",
+      "prompt": "A group explores a maze without reward, then quickly takes an efficient route when reward is introduced. Which explanation best fits the earlier learning?",
+      "response_type": "single_select",
+      "options": [
+        "No learning occurred until the first reward was consumed",
+        "Every turn became an unconditioned stimulus during exploration",
+        "The group habituated to reward before reward was introduced",
+        "A cognitive map formed before reward made performance visible"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CNS_LIGHT",
+      "title": "light: Explain cognitive and biological constraints on associative learning",
+      "prompt": "One cue–outcome relation is learned rapidly after a single experience, while an arbitrary relation requires many trials. Which modifier is most relevant?",
+      "response_type": "single_select",
+      "options": [
+        "Biological predisposition for the first association",
+        "Identical associability for every possible cue and outcome",
+        "Operant extinction caused by removing every reinforcer",
+        "Dishabituation caused by changing a repeated stimulus"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CNS_SOLO",
+      "title": "solo: Explain cognitive and biological constraints on associative learning",
+      "prompt": "A trained animal continues receiving reinforcement, but its response increasingly changes into a species-typical handling pattern that interferes with the task. What is this?",
+      "response_type": "single_select",
+      "options": [
+        "Classical spontaneous recovery",
+        "Instinctive drift",
+        "Stimulus discrimination",
+        "Sensory adaptation"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CNS_NEAR",
+      "title": "near: Explain cognitive and biological constraints on associative learning",
+      "prompt": "A learner stops choosing a formerly rewarded option immediately after learning that the reward has lost its value, with no new choice trials. Which explanation is strongest?",
+      "response_type": "single_select",
+      "options": [
+        "The original reinforcement history was erased from memory",
+        "The response underwent habituation to a repeated neutral cue",
+        "Outcome expectancy altered performance without new acquisition",
+        "A punishment contingency was delivered during new trials"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CNS_CHANGED",
+      "title": "changed: Explain cognitive and biological constraints on associative learning",
+      "prompt": "Case A shows rapid learning of a biologically relevant cue–outcome relation. Case B shows a reinforced trained action shifting toward a natural species-typical action. Which labels fit?",
+      "response_type": "single_select",
+      "options": [
+        "Case A: extinction; Case B: spontaneous recovery",
+        "Case A: shaping; Case B: stimulus generalization",
+        "Case A: adaptation; Case B: classical acquisition",
+        "Case A: predisposition; Case B: instinctive drift"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CNS_REPAIR_NEAR",
+      "title": "repair near: Explain cognitive and biological constraints on associative learning",
+      "prompt": "Which observation best supports a cognitive expectancy explanation?",
+      "response_type": "single_select",
+      "options": [
+        "Behavior changes rapidly after new outcome information without added pairings",
+        "Behavior changes only after many additional reinforcement trials",
+        "A sensory receptor becomes less responsive during continuous input",
+        "A novel stimulus restores response after repeated exposure"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CNS_REENTRY_NEAR",
+      "title": "reentry near: Explain cognitive and biological constraints on associative learning",
+      "prompt": "A learner chooses a new route immediately after being told a familiar road is closed, without practicing the new route. What best explains the adjustment?",
+      "response_type": "single_select",
+      "options": [
+        "The new route was strengthened by repetitions that never occurred",
+        "A cognitive map and updated expectancy guided the choice",
+        "The learner habituated to the closed road stimulus",
+        "Instinctive drift replaced driving with a species-typical action"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CNS_REPAIR_CHANGED",
+      "title": "repair changed: Explain cognitive and biological constraints on associative learning",
+      "prompt": "Which contrast correctly separates predisposition from instinctive drift?",
+      "response_type": "single_select",
+      "options": [
+        "Predisposition follows extinction; drift follows spontaneous recovery",
+        "Predisposition removes rewards; drift adds punishments",
+        "Predisposition eases association; drift redirects trained action",
+        "Predisposition is cognitive mapping; drift is sensory adaptation"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CNS_REENTRY_CHANGED",
+      "title": "reentry changed: Explain cognitive and biological constraints on associative learning",
+      "prompt": "A species rapidly associates a particular flavor with illness, while a reinforced token-deposit response later shifts into natural object manipulation. Which pairing is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Both patterns are sensory adaptation to repeated stimulation",
+        "Both patterns are classical extinction after cue-alone trials",
+        "Flavor learning shows drift; token handling shows generalization",
+        "Selective flavor learning is predisposition; response shift is drift"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    }
+  ]
+}

@@ -1,0 +1,3356 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-228369",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "a7157debba5461a21a329e474843aee9ea8ac6606182e461e2c6883085bae6a9",
+  "payload": {
+    "lesson_id": "V3-LES-228369",
+    "grouping_id": "V3-CL-228369",
+    "ordered_kc_ids": [
+      "V3-KC-701797",
+      "V3-KC-827045",
+      "V3-KC-451000"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-701797",
+      "V3-KC-827045",
+      "V3-KC-451000"
+    ],
+    "throughline": "Interpret how social setting shapes self-presentation, how verbal and nonverbal signals gain meaning from context, and how animal signals coordinate receiver behavior.",
+    "curriculum_context": {
+      "canonical_title": "Interpret self-presentation and communication",
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-851947",
+        "V3-MOD-741509"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 84,
+          "relation_ids": [
+            "R14-PL-581402-084"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 84,
+          "relation_ids": [
+            "R14-PL-904137-084"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-315978",
+          "position": 22,
+          "relation_ids": [
+            "R14-PL-315978-022"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-228369",
+      "revisit_relation_ids": [
+        "R14-RV-228369"
+      ],
+      "hard_prerequisites": [],
+      "helpful_context": [],
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ]
+    },
+    "nodes": [
+      {
+        "node_id": "IMP-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify one behavior selected because a particular audience is present. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [
+          "IMP-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "IMP-CP-ENTRY",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: explain self-presentation without claiming that every social act is deceptive. Identify the audience, the desired definition of the situation, and the cues selected to support it."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "IMP-CP-ORIENTATION",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Impression management is the effort to influence how others perceive an actor or interaction. People may select clothing, wording, demeanor, props, or setting to support a desired impression. The presentation can be sincere, strategic, routine, or mixed; management does not automatically mean lying.",
+          "In the introductory dramaturgical distinction, front stage is the setting where an actor performs before a relevant audience and follows expectations attached to that interaction. Back stage is a setting with reduced audience access where the actor can prepare, coordinate, rehearse, or relax the public performance.",
+          "Classify the setting from audience and function, not from literal architecture. A kitchen can be front stage during an open demonstration and back stage while staff prepare before guests arrive."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "IMP-CP-EXPLANATION",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Audience → desired impression → selected cues → observed performance. Then ask whether the setting supports public performance or preparation away from that audience."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "IMP-CP-MODEL",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: I first name who can observe the actor. I then locate what changes for that audience and what impression the change supports. To classify stage, I ask whether the interaction is the public performance or a preparation and coordination space; I rule out room labels by themselves."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "IMP-CP-THINK",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a restaurant host greets diners with formal language and controlled posture in the dining room, then reviews seating problems with coworkers in a staff area. The greeting supports an organized, welcoming impression before customers and is front-stage behavior. The staff discussion coordinates the performance away from customers and is back stage. Neither classification requires judging the host as dishonest."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "IMP-CP-WORKED",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: mark audience, selected cue, and desired impression before applying a stage label."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [
+          "IMP-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "IMP-CP-GUIDED",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: compare two settings with the same actor and decide which function changes when audience access changes."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [
+          "IMP-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "IMP-CP-LIGHT",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: identify impression management in a fresh interaction without equating it with deception."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [
+          "IMP-ACT-SOLO"
+        ],
+        "checkpoint_ref": "IMP-CP-SOLO",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: front stage does not mean outdoors or physically in front, and back stage does not mean secret misconduct. The distinction is about audience access and interaction function, not advanced dramaturgical sociology."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "IMP-CP-CONTRAST",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: identify the audience-specific cue and desired impression in a new professional interaction."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [
+          "IMP-ACT-NEAR"
+        ],
+        "checkpoint_ref": "IMP-CP-NEAR",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: classify front- and back-stage functions when the same physical space changes audience and purpose over time."
+        ],
+        "representation_ids": [
+          "IMP-REP-FRONT-BACK"
+        ],
+        "activity_ids": [
+          "IMP-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "IMP-CP-CHANGED",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: state who is watching, what cue the actor selects, and what definition of self or situation that cue supports."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [
+          "IMP-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "IMP-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: interpret a new volunteer-coordination interaction with a different audience."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [
+          "IMP-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "IMP-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function: ignore the room name and classify from audience access—public performance versus preparation, coordination, or release."
+        ],
+        "representation_ids": [
+          "IMP-REP-FRONT-BACK"
+        ],
+        "activity_ids": [
+          "IMP-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "IMP-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: classify a new space that switches from preparation to public demonstration."
+        ],
+        "representation_ids": [
+          "IMP-REP-FRONT-BACK"
+        ],
+        "activity_ids": [
+          "IMP-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "IMP-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: impression management links audience, selected cues, and desired impression. Front stage serves audience-facing performance; back stage supports preparation or reduced performance demands."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "IMP-CP-RECAP",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "IMP-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, return to the planner without exit credit and resume later at the exact failed self-presentation function."
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "IMP-CP-HANDOFF",
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: separate a speaker's words from a simultaneous nonverbal signal. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [
+          "HUM-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "HUM-CP-ENTRY",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: interpret communication as a multichannel, context-dependent process. Use words, tone, timing, gesture, expression, and spacing while treating gender and cultural variation as bounded patterns rather than fixed traits."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HUM-CP-ORIENTATION",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Verbal communication carries words and linguistic content. Nonverbal communication includes vocal qualities, facial expression, gaze, gesture, posture, interpersonal distance, touch, and timing. Channels can reinforce one another or be incongruent.",
+          "A signal's meaning depends on setting, relationship, sequence, and a person's baseline. The same pause can mark reflection, turn-taking, uncertainty, or respect in different contexts.",
+          "Gender and culture can shape display rules, conversational norms, and interpretations, but group-level tendencies do not determine an individual's meaning. Use local behavioral evidence and context; do not infer motives or abilities from identity alone. This lesson does not teach advanced linguistics or clinical communication protocols."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HUM-CP-EXPLANATION",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Inventory channels → locate timing and congruence → add relationship and setting → compare with baseline → make a bounded interpretation, not an identity-based certainty."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HUM-CP-MODEL",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: I quote the words, then separately note tone, gaze, posture, distance, and timing. If channels conflict, I describe the conflict rather than declaring one channel universally true. For cultural or gender information, I treat group data as context and require individual evidence before drawing a conclusion."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HUM-CP-THINK",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a team member says, 'That schedule works,' pauses, and then asks for the deadline to be repeated. The words express agreement, while the pause and follow-up request suggest unresolved information. A bounded interpretation is that the message is mixed and clarification is warranted. It would be unjustified to assign the pause a fixed meaning based only on the speaker's gender or cultural background."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HUM-CP-WORKED",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: list each channel and its timing before combining them into an interpretation."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [
+          "HUM-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "HUM-CP-GUIDED",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: compare congruent and incongruent cues in a fresh interaction."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [
+          "HUM-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "HUM-CP-LIGHT",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: use relationship, setting, and baseline to choose the least overconfident interpretation."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [
+          "HUM-ACT-SOLO"
+        ],
+        "checkpoint_ref": "HUM-CP-SOLO",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: one gesture has no universal meaning across all contexts, and group variation does not authorize stereotyping an individual. Nonverbal does not mean more truthful by definition."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HUM-CP-CONTRAST",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: interpret a mixed verbal and nonverbal message from observable channels and sequence."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [
+          "HUM-ACT-NEAR"
+        ],
+        "checkpoint_ref": "HUM-CP-NEAR",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: combine group-level communication data with an individual's baseline and current context without treating identity as destiny."
+        ],
+        "representation_ids": [
+          "HUM-REP-CONTEXT-DATA"
+        ],
+        "activity_ids": [
+          "HUM-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "HUM-CP-CHANGED",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: describe words, nonverbal cue, timing, and context separately before stating what remains uncertain."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [
+          "HUM-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "HUM-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: interpret a new multichannel interaction with a different relationship and setting."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [
+          "HUM-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "HUM-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function: use group data as a possible context modifier, then prioritize the person's observed baseline and current interaction evidence."
+        ],
+        "representation_ids": [
+          "HUM-REP-CONTEXT-DATA"
+        ],
+        "activity_ids": [
+          "HUM-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "HUM-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: evaluate a new group-pattern data set paired with an individual who differs from the group average."
+        ],
+        "representation_ids": [
+          "HUM-REP-CONTEXT-DATA"
+        ],
+        "activity_ids": [
+          "HUM-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "HUM-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: inventory verbal and nonverbal channels, interpret them in sequence and context, and use gender or cultural variation as bounded data rather than deterministic stereotypes."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HUM-CP-RECAP",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "HUM-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, return to the planner without exit credit and resume later at the exact failed human-communication function."
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HUM-CP-HANDOFF",
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify the receiver behavior that changes after a signal. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [
+          "ANI-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "ANI-CP-ENTRY",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: explain animal communication as a biological social-behavior mechanism. Trace sender, signal, transmission, detection, and receiver response, then compare signal modalities in context."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANI-CP-ORIENTATION",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "A communication model includes a sender, a signal, a receiver that can detect it, and a receiver response. A cue can carry information without being produced for communication; the bounded task here focuses on social signals linked to receiver behavior.",
+          "Auditory signals can travel around obstacles and work without light but may be brief and locatable. Visual signals can change rapidly and carry spatial detail but require line of sight and suitable light. Chemical signals can persist and mark routes or status but may update slowly. Tactile signals require proximity and direct contact.",
+          "Signals can coordinate alarm, courtship, territory, group movement, or resource use. The lesson compares mechanisms and functions without memorizing an advanced species signal catalogue."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANI-CP-EXPLANATION",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Sender → signal modality → transmission conditions → receiver detection → changed receiver behavior → social function."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANI-CP-MODEL",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: I do not classify from a dramatic animal action alone. I identify what another animal detects and what changes afterward. Then I test whether the signal modality fits visibility, distance, persistence, and contact constraints."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANI-CP-THINK",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a forager deposits a chemical trail while returning to a food source, and nestmates later follow the route. The first animal is sender, the persistent chemical is signal, nestmates are receivers, and route-following is the response. Persistence supports path marking but makes the signal slower to update than a momentary visual display."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANI-CP-WORKED",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: label sender, signal, receiver, and response before naming social function."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [
+          "ANI-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "ANI-CP-GUIDED",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: compare signal modalities using distance, visibility, persistence, and contact."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [
+          "ANI-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "ANI-CP-LIGHT",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: decide whether a described environmental change is a social signal or merely a cue."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [
+          "ANI-ACT-SOLO"
+        ],
+        "checkpoint_ref": "ANI-CP-SOLO",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: every detectable event is not automatically communication. A signal analysis requires a sender–receiver relation and a changed receiver response; no advanced species catalogue or human linguistic analysis is needed."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANI-CP-CONTRAST",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: map sender, auditory signal, receiver, and coordinated response in a fresh group vignette."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [
+          "ANI-ACT-NEAR"
+        ],
+        "checkpoint_ref": "ANI-CP-NEAR",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: select a signal modality after visibility, distance, and persistence conditions change."
+        ],
+        "representation_ids": [
+          "ANI-REP-MODALITY-CONTEXT"
+        ],
+        "activity_ids": [
+          "ANI-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "ANI-CP-CHANGED",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: write the full causal chain and require an observable receiver response rather than labeling any sound or movement a signal."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [
+          "ANI-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "ANI-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: trace a new visual display and receiver behavior without reusing the exposed signal family."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [
+          "ANI-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "ANI-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function: compare modality properties with the actual environment—line of sight, range, persistence, and need for contact."
+        ],
+        "representation_ids": [
+          "ANI-REP-MODALITY-CONTEXT"
+        ],
+        "activity_ids": [
+          "ANI-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "ANI-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: choose a new modality for a short-range, dark, rapidly changing social context."
+        ],
+        "representation_ids": [
+          "ANI-REP-MODALITY-CONTEXT"
+        ],
+        "activity_ids": [
+          "ANI-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "ANI-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: explain who sends what, how a receiver detects it, what behavior changes, and why the modality fits the environment and social function."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANI-CP-RECAP",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      },
+      {
+        "node_id": "ANI-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, return to the planner without exit credit and resume later at the exact failed animal-communication function."
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANI-CP-HANDOFF",
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "IMP-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-701797",
+        "item_binding_id": "IMP-ITEM-ENTRY",
+        "learner_operation": "Inspect the entry scenario to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "authorized_next_node_ids": [
+          "IMP-NODE-ORIENTATION",
+          "IMP-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "IMP-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-701797",
+        "item_binding_id": "IMP-ITEM-GUIDED",
+        "learner_operation": "Follow the guided steps to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "authorized_next_node_ids": [
+          "IMP-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "IMP-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-701797",
+        "item_binding_id": "IMP-ITEM-LIGHT",
+        "learner_operation": "Complete a brief scaffolded check to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "authorized_next_node_ids": [
+          "IMP-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "IMP-ACT-SOLO",
+        "primary_kc_id": "V3-KC-701797",
+        "item_binding_id": "IMP-ITEM-SOLO",
+        "learner_operation": "Work independently to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "authorized_next_node_ids": [
+          "IMP-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "IMP-ACT-NEAR",
+        "primary_kc_id": "V3-KC-701797",
+        "item_binding_id": "IMP-ITEM-NEAR",
+        "learner_operation": "Apply the method in a nearby context to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "authorized_next_node_ids": [
+          "IMP-NODE-CHANGED",
+          "IMP-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "IMP-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-701797",
+        "item_binding_id": "IMP-ITEM-CHANGED",
+        "learner_operation": "Transfer the method to a changed representation and context to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "authorized_next_node_ids": [
+          "IMP-NODE-RECAP",
+          "IMP-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "IMP-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-701797",
+        "item_binding_id": "IMP-ITEM-REPAIR-NEAR",
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "authorized_next_node_ids": [
+          "IMP-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "IMP-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-701797",
+        "item_binding_id": "IMP-ITEM-REENTRY-NEAR",
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "authorized_next_node_ids": [
+          "IMP-NODE-CHANGED",
+          "IMP-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "IMP-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-701797",
+        "item_binding_id": "IMP-ITEM-REPAIR-CHANGED",
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "authorized_next_node_ids": [
+          "IMP-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "IMP-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-701797",
+        "item_binding_id": "IMP-ITEM-REENTRY-CHANGED",
+        "learner_operation": "Reapply the corrected method in a fresh changed context to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "authorized_next_node_ids": [
+          "IMP-NODE-RECAP",
+          "IMP-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "HUM-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-827045",
+        "item_binding_id": "HUM-ITEM-ENTRY",
+        "learner_operation": "Inspect the entry scenario to identify language structure and communication constraints from the example.",
+        "authorized_next_node_ids": [
+          "HUM-NODE-ORIENTATION",
+          "HUM-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "HUM-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-827045",
+        "item_binding_id": "HUM-ITEM-GUIDED",
+        "learner_operation": "Follow the guided steps to identify language structure and communication constraints from the example.",
+        "authorized_next_node_ids": [
+          "HUM-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "HUM-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-827045",
+        "item_binding_id": "HUM-ITEM-LIGHT",
+        "learner_operation": "Complete a brief scaffolded check to identify language structure and communication constraints from the example.",
+        "authorized_next_node_ids": [
+          "HUM-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "HUM-ACT-SOLO",
+        "primary_kc_id": "V3-KC-827045",
+        "item_binding_id": "HUM-ITEM-SOLO",
+        "learner_operation": "Work independently to identify language structure and communication constraints from the example.",
+        "authorized_next_node_ids": [
+          "HUM-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "HUM-ACT-NEAR",
+        "primary_kc_id": "V3-KC-827045",
+        "item_binding_id": "HUM-ITEM-NEAR",
+        "learner_operation": "Apply the method in a nearby context to identify language structure and communication constraints from the example.",
+        "authorized_next_node_ids": [
+          "HUM-NODE-CHANGED",
+          "HUM-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "HUM-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-827045",
+        "item_binding_id": "HUM-ITEM-CHANGED",
+        "learner_operation": "Transfer the method to a changed representation and context to identify language structure and communication constraints from the example.",
+        "authorized_next_node_ids": [
+          "HUM-NODE-RECAP",
+          "HUM-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "HUM-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-827045",
+        "item_binding_id": "HUM-ITEM-REPAIR-NEAR",
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to identify language structure and communication constraints from the example.",
+        "authorized_next_node_ids": [
+          "HUM-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "HUM-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-827045",
+        "item_binding_id": "HUM-ITEM-REENTRY-NEAR",
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to identify language structure and communication constraints from the example.",
+        "authorized_next_node_ids": [
+          "HUM-NODE-CHANGED",
+          "HUM-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "HUM-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-827045",
+        "item_binding_id": "HUM-ITEM-REPAIR-CHANGED",
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to identify language structure and communication constraints from the example.",
+        "authorized_next_node_ids": [
+          "HUM-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "HUM-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-827045",
+        "item_binding_id": "HUM-ITEM-REENTRY-CHANGED",
+        "learner_operation": "Reapply the corrected method in a fresh changed context to identify language structure and communication constraints from the example.",
+        "authorized_next_node_ids": [
+          "HUM-NODE-RECAP",
+          "HUM-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ANI-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-451000",
+        "item_binding_id": "ANI-ITEM-ENTRY",
+        "learner_operation": "Inspect the entry scenario to interpret animal signals by modality, information, social function, and environmental context.",
+        "authorized_next_node_ids": [
+          "ANI-NODE-ORIENTATION",
+          "ANI-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ANI-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-451000",
+        "item_binding_id": "ANI-ITEM-GUIDED",
+        "learner_operation": "Follow the guided steps to interpret animal signals by modality, information, social function, and environmental context.",
+        "authorized_next_node_ids": [
+          "ANI-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "ANI-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-451000",
+        "item_binding_id": "ANI-ITEM-LIGHT",
+        "learner_operation": "Complete a brief scaffolded check to interpret animal signals by modality, information, social function, and environmental context.",
+        "authorized_next_node_ids": [
+          "ANI-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "ANI-ACT-SOLO",
+        "primary_kc_id": "V3-KC-451000",
+        "item_binding_id": "ANI-ITEM-SOLO",
+        "learner_operation": "Work independently to interpret animal signals by modality, information, social function, and environmental context.",
+        "authorized_next_node_ids": [
+          "ANI-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "ANI-ACT-NEAR",
+        "primary_kc_id": "V3-KC-451000",
+        "item_binding_id": "ANI-ITEM-NEAR",
+        "learner_operation": "Apply the method in a nearby context to interpret animal signals by modality, information, social function, and environmental context.",
+        "authorized_next_node_ids": [
+          "ANI-NODE-CHANGED",
+          "ANI-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ANI-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-451000",
+        "item_binding_id": "ANI-ITEM-CHANGED",
+        "learner_operation": "Transfer the method to a changed representation and context to interpret animal signals by modality, information, social function, and environmental context.",
+        "authorized_next_node_ids": [
+          "ANI-NODE-RECAP",
+          "ANI-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ANI-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-451000",
+        "item_binding_id": "ANI-ITEM-REPAIR-NEAR",
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to interpret animal signals by modality, information, social function, and environmental context.",
+        "authorized_next_node_ids": [
+          "ANI-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ANI-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-451000",
+        "item_binding_id": "ANI-ITEM-REENTRY-NEAR",
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to interpret animal signals by modality, information, social function, and environmental context.",
+        "authorized_next_node_ids": [
+          "ANI-NODE-CHANGED",
+          "ANI-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ANI-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-451000",
+        "item_binding_id": "ANI-ITEM-REPAIR-CHANGED",
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to interpret animal signals by modality, information, social function, and environmental context.",
+        "authorized_next_node_ids": [
+          "ANI-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ANI-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-451000",
+        "item_binding_id": "ANI-ITEM-REENTRY-CHANGED",
+        "learner_operation": "Reapply the corrected method in a fresh changed context to interpret animal signals by modality, information, social function, and environmental context.",
+        "authorized_next_node_ids": [
+          "ANI-NODE-RECAP",
+          "ANI-NODE-HANDOFF"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-701797",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-701797",
+        "scope_in_refs": [
+          "V3-KC-701797:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-701797:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "IMP-CLAIM-MANAGEMENT",
+          "IMP-CLAIM-DRAMATURGY"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "IMP-NODE-ENTRY",
+        "orientation_node_id": "IMP-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "IMP-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "IMP-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "IMP-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "IMP-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "IMP-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "IMP-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "IMP-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "IMP-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "IMP-NODE-NEAR",
+          "activity_ids": [
+            "IMP-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "IMP-NODE-CHANGED",
+          "activity_ids": [
+            "IMP-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "IMP-FEATURE-AUDIENCE-AND-DESIRED-IMPRESSION",
+          "IMP-FEATURE-FRONT-STAGE-BACK-STAGE-CONTEXT"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "IMP-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "IMP-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "IMP-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "IMP-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "IMP-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "IMP-ACT-REENTRY-NEAR",
+            "success_next_node_id": "IMP-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "IMP-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "IMP-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "IMP-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "IMP-REP-INTERACTION",
+          "IMP-REP-FRONT-BACK"
+        ],
+        "accessibility_equivalent_ids": [
+          "IMP-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "IMP-NODE-ENTRY",
+            "IMP-NODE-RECAP"
+          ],
+          "standard": [
+            "IMP-NODE-ENTRY",
+            "IMP-NODE-ORIENTATION",
+            "IMP-NODE-EXPLANATION",
+            "IMP-NODE-MODEL",
+            "IMP-NODE-THINK",
+            "IMP-NODE-WORKED",
+            "IMP-NODE-GUIDED",
+            "IMP-NODE-LIGHT",
+            "IMP-NODE-SOLO",
+            "IMP-NODE-CONTRAST",
+            "IMP-NODE-NEAR",
+            "IMP-NODE-CHANGED",
+            "IMP-NODE-REPAIR-NEAR",
+            "IMP-NODE-REENTRY-NEAR",
+            "IMP-NODE-REPAIR-CHANGED",
+            "IMP-NODE-REENTRY-CHANGED",
+            "IMP-NODE-RECAP",
+            "IMP-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "IMP-NODE-ENTRY",
+            "IMP-NODE-REPAIR-NEAR",
+            "IMP-NODE-REPAIR-CHANGED",
+            "IMP-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "IMP-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-827045",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-827045",
+        "scope_in_refs": [
+          "V3-KC-827045:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-827045:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "HUM-CLAIM-CHANNELS",
+          "HUM-CLAIM-VARIATION"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "HUM-NODE-ENTRY",
+        "orientation_node_id": "HUM-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "HUM-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "HUM-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "HUM-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "HUM-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "HUM-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "HUM-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "HUM-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "HUM-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "HUM-NODE-NEAR",
+          "activity_ids": [
+            "HUM-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "HUM-NODE-CHANGED",
+          "activity_ids": [
+            "HUM-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "HUM-FEATURE-VERBAL-NONVERBAL-CONTEXT",
+          "HUM-FEATURE-VARIATION-WITHOUT-STEREOTYPE"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "HUM-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "HUM-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "HUM-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "HUM-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "HUM-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "HUM-ACT-REENTRY-NEAR",
+            "success_next_node_id": "HUM-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "HUM-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "HUM-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "HUM-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "HUM-REP-MULTICHANNEL",
+          "HUM-REP-CONTEXT-DATA"
+        ],
+        "accessibility_equivalent_ids": [
+          "HUM-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "HUM-NODE-ENTRY",
+            "HUM-NODE-RECAP"
+          ],
+          "standard": [
+            "HUM-NODE-ENTRY",
+            "HUM-NODE-ORIENTATION",
+            "HUM-NODE-EXPLANATION",
+            "HUM-NODE-MODEL",
+            "HUM-NODE-THINK",
+            "HUM-NODE-WORKED",
+            "HUM-NODE-GUIDED",
+            "HUM-NODE-LIGHT",
+            "HUM-NODE-SOLO",
+            "HUM-NODE-CONTRAST",
+            "HUM-NODE-NEAR",
+            "HUM-NODE-CHANGED",
+            "HUM-NODE-REPAIR-NEAR",
+            "HUM-NODE-REENTRY-NEAR",
+            "HUM-NODE-REPAIR-CHANGED",
+            "HUM-NODE-REENTRY-CHANGED",
+            "HUM-NODE-RECAP",
+            "HUM-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "HUM-NODE-ENTRY",
+            "HUM-NODE-REPAIR-NEAR",
+            "HUM-NODE-REPAIR-CHANGED",
+            "HUM-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "HUM-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-451000",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-451000",
+        "scope_in_refs": [
+          "V3-KC-451000:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-451000:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "ANI-CLAIM-MECHANISM",
+          "ANI-CLAIM-MODALITY"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "ANI-NODE-ENTRY",
+        "orientation_node_id": "ANI-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "ANI-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "ANI-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "ANI-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "ANI-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "ANI-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "ANI-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "ANI-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "ANI-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "ANI-NODE-NEAR",
+          "activity_ids": [
+            "ANI-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "ANI-NODE-CHANGED",
+          "activity_ids": [
+            "ANI-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "ANI-FEATURE-SENDER-SIGNAL-RECEIVER-RESPONSE",
+          "ANI-FEATURE-MODALITY-ENVIRONMENT-AND-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ANI-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "ANI-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ANI-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "ANI-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ANI-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "ANI-ACT-REENTRY-NEAR",
+            "success_next_node_id": "ANI-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ANI-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "ANI-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "ANI-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "ANI-REP-SIGNAL-PATH",
+          "ANI-REP-MODALITY-CONTEXT"
+        ],
+        "accessibility_equivalent_ids": [
+          "ANI-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "ANI-NODE-ENTRY",
+            "ANI-NODE-RECAP"
+          ],
+          "standard": [
+            "ANI-NODE-ENTRY",
+            "ANI-NODE-ORIENTATION",
+            "ANI-NODE-EXPLANATION",
+            "ANI-NODE-MODEL",
+            "ANI-NODE-THINK",
+            "ANI-NODE-WORKED",
+            "ANI-NODE-GUIDED",
+            "ANI-NODE-LIGHT",
+            "ANI-NODE-SOLO",
+            "ANI-NODE-CONTRAST",
+            "ANI-NODE-NEAR",
+            "ANI-NODE-CHANGED",
+            "ANI-NODE-REPAIR-NEAR",
+            "ANI-NODE-REENTRY-NEAR",
+            "ANI-NODE-REPAIR-CHANGED",
+            "ANI-NODE-REENTRY-CHANGED",
+            "ANI-NODE-RECAP",
+            "ANI-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "ANI-NODE-ENTRY",
+            "ANI-NODE-REPAIR-NEAR",
+            "ANI-NODE-REPAIR-CHANGED",
+            "ANI-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "ANI-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "IMP-ITEM-ENTRY",
+        "activity_id": "IMP-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "IMP-FAMILY-ENTRY",
+        "stimulus_lineage_id": "IMP-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "IMP-REP-INTERACTION",
+        "changed_dimensions": [],
+        "learner_operation": "Inspect the entry scenario to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "IMP_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#IMP-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#IMP-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "IMP-SOLUTION-ENTRY",
+        "decisive_cue_id": "IMP-CUE-ENTRY",
+        "distractor_lineage_id": "IMP-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "IMP-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "IMP-FAMILY-WORKED",
+        "stimulus_lineage_id": "IMP-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "IMP-REP-INTERACTION",
+        "changed_dimensions": [],
+        "learner_operation": "Trace a worked example to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:IMP-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "IMP-SOLUTION-WORKED",
+        "decisive_cue_id": "IMP-CUE-WORKED",
+        "distractor_lineage_id": "IMP-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "IMP-ITEM-GUIDED",
+        "activity_id": "IMP-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "IMP-FAMILY-GUIDED",
+        "stimulus_lineage_id": "IMP-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "IMP-REP-INTERACTION",
+        "changed_dimensions": [],
+        "learner_operation": "Follow the guided steps to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "IMP_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#IMP-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#IMP-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "IMP-SOLUTION-GUIDED",
+        "decisive_cue_id": "IMP-CUE-GUIDED",
+        "distractor_lineage_id": "IMP-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "IMP-ITEM-LIGHT",
+        "activity_id": "IMP-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "IMP-FAMILY-LIGHT",
+        "stimulus_lineage_id": "IMP-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "IMP-REP-INTERACTION",
+        "changed_dimensions": [],
+        "learner_operation": "Complete a brief scaffolded check to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "IMP_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#IMP-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#IMP-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "IMP-SOLUTION-LIGHT",
+        "decisive_cue_id": "IMP-CUE-LIGHT",
+        "distractor_lineage_id": "IMP-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "IMP-ITEM-SOLO",
+        "activity_id": "IMP-ACT-SOLO",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "IMP-FAMILY-SOLO",
+        "stimulus_lineage_id": "IMP-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "IMP-REP-INTERACTION",
+        "changed_dimensions": [],
+        "learner_operation": "Work independently to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "IMP_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#IMP-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#IMP-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "IMP-SOLUTION-SOLO",
+        "decisive_cue_id": "IMP-CUE-SOLO",
+        "distractor_lineage_id": "IMP-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "IMP-ITEM-NEAR",
+        "activity_id": "IMP-ACT-NEAR",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "IMP-FAMILY-NEAR",
+        "stimulus_lineage_id": "IMP-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "IMP-REP-INTERACTION",
+        "changed_dimensions": [],
+        "learner_operation": "Apply the method in a nearby context to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "IMP_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#IMP-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#IMP-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "IMP-SOLUTION-NEAR",
+        "decisive_cue_id": "IMP-CUE-NEAR",
+        "distractor_lineage_id": "IMP-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "IMP-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "IMP-FEATURE-AUDIENCE-AND-DESIRED-IMPRESSION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "IMP-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "IMP-FEATURE-AUDIENCE-AND-DESIRED-IMPRESSION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "IMP-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "IMP-FEATURE-AUDIENCE-AND-DESIRED-IMPRESSION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "IMP-ITEM-CHANGED",
+        "activity_id": "IMP-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "IMP-FAMILY-CHANGED",
+        "stimulus_lineage_id": "IMP-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "IMP-REP-FRONT-BACK",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Transfer the method to a changed representation and context to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "IMP_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#IMP-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#IMP-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "IMP-SOLUTION-CHANGED",
+        "decisive_cue_id": "IMP-CUE-CHANGED",
+        "distractor_lineage_id": "IMP-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "IMP-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "IMP-FEATURE-FRONT-STAGE-BACK-STAGE-CONTEXT"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "IMP-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "IMP-FEATURE-FRONT-STAGE-BACK-STAGE-CONTEXT"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "IMP-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "IMP-FEATURE-FRONT-STAGE-BACK-STAGE-CONTEXT"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "IMP-ITEM-REPAIR-NEAR",
+        "activity_id": "IMP-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "IMP-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "IMP-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "IMP-REP-INTERACTION",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "IMP_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#IMP-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#IMP-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "IMP-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "IMP-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "IMP-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "IMP-ITEM-REENTRY-NEAR",
+        "activity_id": "IMP-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "IMP-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "IMP-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "IMP-REP-INTERACTION",
+        "changed_dimensions": [],
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "IMP_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#IMP-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#IMP-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "IMP-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "IMP-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "IMP-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "IMP-ITEM-REPAIR-CHANGED",
+        "activity_id": "IMP-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "IMP-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "IMP-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "IMP-REP-FRONT-BACK",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "IMP_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#IMP-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#IMP-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "IMP-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "IMP-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "IMP-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "IMP-ITEM-REENTRY-CHANGED",
+        "activity_id": "IMP-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-701797",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "IMP-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "IMP-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "IMP-REP-FRONT-BACK",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Reapply the corrected method in a fresh changed context to infer impression-management goals and distinguish self-presentation tactics from the interaction.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "IMP_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#IMP-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#IMP-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "IMP-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "IMP-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "IMP-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "HUM-ITEM-ENTRY",
+        "activity_id": "HUM-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "HUM-FAMILY-ENTRY",
+        "stimulus_lineage_id": "HUM-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HUM-REP-MULTICHANNEL",
+        "changed_dimensions": [],
+        "learner_operation": "Inspect the entry scenario to identify language structure and communication constraints from the example.",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "HUM_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#HUM-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#HUM-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HUM-SOLUTION-ENTRY",
+        "decisive_cue_id": "HUM-CUE-ENTRY",
+        "distractor_lineage_id": "HUM-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "HUM-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "HUM-FAMILY-WORKED",
+        "stimulus_lineage_id": "HUM-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HUM-REP-MULTICHANNEL",
+        "changed_dimensions": [],
+        "learner_operation": "Trace a worked example to identify language structure and communication constraints from the example.",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:HUM-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HUM-SOLUTION-WORKED",
+        "decisive_cue_id": "HUM-CUE-WORKED",
+        "distractor_lineage_id": "HUM-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "HUM-ITEM-GUIDED",
+        "activity_id": "HUM-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "HUM-FAMILY-GUIDED",
+        "stimulus_lineage_id": "HUM-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HUM-REP-MULTICHANNEL",
+        "changed_dimensions": [],
+        "learner_operation": "Follow the guided steps to identify language structure and communication constraints from the example.",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "HUM_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#HUM-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#HUM-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HUM-SOLUTION-GUIDED",
+        "decisive_cue_id": "HUM-CUE-GUIDED",
+        "distractor_lineage_id": "HUM-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "HUM-ITEM-LIGHT",
+        "activity_id": "HUM-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "HUM-FAMILY-LIGHT",
+        "stimulus_lineage_id": "HUM-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HUM-REP-MULTICHANNEL",
+        "changed_dimensions": [],
+        "learner_operation": "Complete a brief scaffolded check to identify language structure and communication constraints from the example.",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "HUM_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#HUM-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#HUM-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HUM-SOLUTION-LIGHT",
+        "decisive_cue_id": "HUM-CUE-LIGHT",
+        "distractor_lineage_id": "HUM-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "HUM-ITEM-SOLO",
+        "activity_id": "HUM-ACT-SOLO",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "HUM-FAMILY-SOLO",
+        "stimulus_lineage_id": "HUM-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HUM-REP-MULTICHANNEL",
+        "changed_dimensions": [],
+        "learner_operation": "Work independently to identify language structure and communication constraints from the example.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "HUM_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#HUM-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#HUM-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HUM-SOLUTION-SOLO",
+        "decisive_cue_id": "HUM-CUE-SOLO",
+        "distractor_lineage_id": "HUM-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "HUM-ITEM-NEAR",
+        "activity_id": "HUM-ACT-NEAR",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "HUM-FAMILY-NEAR",
+        "stimulus_lineage_id": "HUM-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HUM-REP-MULTICHANNEL",
+        "changed_dimensions": [],
+        "learner_operation": "Apply the method in a nearby context to identify language structure and communication constraints from the example.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HUM_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#HUM-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#HUM-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HUM-SOLUTION-NEAR",
+        "decisive_cue_id": "HUM-CUE-NEAR",
+        "distractor_lineage_id": "HUM-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "HUM-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HUM-FEATURE-VERBAL-NONVERBAL-CONTEXT"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "HUM-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HUM-FEATURE-VERBAL-NONVERBAL-CONTEXT"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "HUM-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HUM-FEATURE-VERBAL-NONVERBAL-CONTEXT"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "HUM-ITEM-CHANGED",
+        "activity_id": "HUM-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "HUM-FAMILY-CHANGED",
+        "stimulus_lineage_id": "HUM-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HUM-REP-CONTEXT-DATA",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Transfer the method to a changed representation and context to identify language structure and communication constraints from the example.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HUM_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#HUM-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#HUM-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HUM-SOLUTION-CHANGED",
+        "decisive_cue_id": "HUM-CUE-CHANGED",
+        "distractor_lineage_id": "HUM-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "HUM-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HUM-FEATURE-VARIATION-WITHOUT-STEREOTYPE"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "HUM-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HUM-FEATURE-VARIATION-WITHOUT-STEREOTYPE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "HUM-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HUM-FEATURE-VARIATION-WITHOUT-STEREOTYPE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "HUM-ITEM-REPAIR-NEAR",
+        "activity_id": "HUM-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HUM-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "HUM-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "HUM-REP-MULTICHANNEL",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to identify language structure and communication constraints from the example.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HUM_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#HUM-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#HUM-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HUM-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "HUM-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "HUM-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "HUM-ITEM-REENTRY-NEAR",
+        "activity_id": "HUM-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HUM-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "HUM-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HUM-REP-MULTICHANNEL",
+        "changed_dimensions": [],
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to identify language structure and communication constraints from the example.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HUM_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#HUM-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#HUM-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HUM-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "HUM-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "HUM-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "HUM-ITEM-REPAIR-CHANGED",
+        "activity_id": "HUM-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HUM-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "HUM-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "HUM-REP-CONTEXT-DATA",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to identify language structure and communication constraints from the example.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HUM_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#HUM-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#HUM-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HUM-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "HUM-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "HUM-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "HUM-ITEM-REENTRY-CHANGED",
+        "activity_id": "HUM-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-827045",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HUM-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "HUM-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HUM-REP-CONTEXT-DATA",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Reapply the corrected method in a fresh changed context to identify language structure and communication constraints from the example.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HUM_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#HUM-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#HUM-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HUM-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "HUM-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "HUM-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "ANI-ITEM-ENTRY",
+        "activity_id": "ANI-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "ANI-FAMILY-ENTRY",
+        "stimulus_lineage_id": "ANI-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANI-REP-SIGNAL-PATH",
+        "changed_dimensions": [],
+        "learner_operation": "Inspect the entry scenario to interpret animal signals by modality, information, social function, and environmental context.",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANI_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#ANI-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#ANI-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANI-SOLUTION-ENTRY",
+        "decisive_cue_id": "ANI-CUE-ENTRY",
+        "distractor_lineage_id": "ANI-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "ANI-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "ANI-FAMILY-WORKED",
+        "stimulus_lineage_id": "ANI-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANI-REP-SIGNAL-PATH",
+        "changed_dimensions": [],
+        "learner_operation": "Trace a worked example to interpret animal signals by modality, information, social function, and environmental context.",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:ANI-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANI-SOLUTION-WORKED",
+        "decisive_cue_id": "ANI-CUE-WORKED",
+        "distractor_lineage_id": "ANI-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "ANI-ITEM-GUIDED",
+        "activity_id": "ANI-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "ANI-FAMILY-GUIDED",
+        "stimulus_lineage_id": "ANI-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANI-REP-SIGNAL-PATH",
+        "changed_dimensions": [],
+        "learner_operation": "Follow the guided steps to interpret animal signals by modality, information, social function, and environmental context.",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANI_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#ANI-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#ANI-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANI-SOLUTION-GUIDED",
+        "decisive_cue_id": "ANI-CUE-GUIDED",
+        "distractor_lineage_id": "ANI-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "ANI-ITEM-LIGHT",
+        "activity_id": "ANI-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "ANI-FAMILY-LIGHT",
+        "stimulus_lineage_id": "ANI-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANI-REP-SIGNAL-PATH",
+        "changed_dimensions": [],
+        "learner_operation": "Complete a brief scaffolded check to interpret animal signals by modality, information, social function, and environmental context.",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANI_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#ANI-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#ANI-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANI-SOLUTION-LIGHT",
+        "decisive_cue_id": "ANI-CUE-LIGHT",
+        "distractor_lineage_id": "ANI-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "ANI-ITEM-SOLO",
+        "activity_id": "ANI-ACT-SOLO",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "ANI-FAMILY-SOLO",
+        "stimulus_lineage_id": "ANI-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANI-REP-SIGNAL-PATH",
+        "changed_dimensions": [],
+        "learner_operation": "Work independently to interpret animal signals by modality, information, social function, and environmental context.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANI_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#ANI-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#ANI-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANI-SOLUTION-SOLO",
+        "decisive_cue_id": "ANI-CUE-SOLO",
+        "distractor_lineage_id": "ANI-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "ANI-ITEM-NEAR",
+        "activity_id": "ANI-ACT-NEAR",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "ANI-FAMILY-NEAR",
+        "stimulus_lineage_id": "ANI-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANI-REP-SIGNAL-PATH",
+        "changed_dimensions": [],
+        "learner_operation": "Apply the method in a nearby context to interpret animal signals by modality, information, social function, and environmental context.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANI_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ANI-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ANI-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANI-SOLUTION-NEAR",
+        "decisive_cue_id": "ANI-CUE-NEAR",
+        "distractor_lineage_id": "ANI-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ANI-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANI-FEATURE-SENDER-SIGNAL-RECEIVER-RESPONSE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ANI-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANI-FEATURE-SENDER-SIGNAL-RECEIVER-RESPONSE"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "ANI-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANI-FEATURE-SENDER-SIGNAL-RECEIVER-RESPONSE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ANI-ITEM-CHANGED",
+        "activity_id": "ANI-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "ANI-FAMILY-CHANGED",
+        "stimulus_lineage_id": "ANI-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANI-REP-MODALITY-CONTEXT",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Transfer the method to a changed representation and context to interpret animal signals by modality, information, social function, and environmental context.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANI_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ANI-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ANI-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANI-SOLUTION-CHANGED",
+        "decisive_cue_id": "ANI-CUE-CHANGED",
+        "distractor_lineage_id": "ANI-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "ANI-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANI-FEATURE-MODALITY-ENVIRONMENT-AND-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ANI-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANI-FEATURE-MODALITY-ENVIRONMENT-AND-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "ANI-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANI-FEATURE-MODALITY-ENVIRONMENT-AND-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ANI-ITEM-REPAIR-NEAR",
+        "activity_id": "ANI-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANI-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "ANI-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ANI-REP-SIGNAL-PATH",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to interpret animal signals by modality, information, social function, and environmental context.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANI_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ANI-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ANI-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANI-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "ANI-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "ANI-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "ANI-ITEM-REENTRY-NEAR",
+        "activity_id": "ANI-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANI-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "ANI-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANI-REP-SIGNAL-PATH",
+        "changed_dimensions": [],
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to interpret animal signals by modality, information, social function, and environmental context.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANI_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ANI-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ANI-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANI-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "ANI-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "ANI-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "ANI-ITEM-REPAIR-CHANGED",
+        "activity_id": "ANI-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANI-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "ANI-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ANI-REP-MODALITY-CONTEXT",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to interpret animal signals by modality, information, social function, and environmental context.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANI_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ANI-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ANI-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANI-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "ANI-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "ANI-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "ANI-ITEM-REENTRY-CHANGED",
+        "activity_id": "ANI-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-451000",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANI-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "ANI-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANI-REP-MODALITY-CONTEXT",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Reapply the corrected method in a fresh changed context to interpret animal signals by modality, information, social function, and environmental context.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANI_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ANI-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ANI-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANI-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "ANI-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "ANI-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "IMP-TRANSITION-NEAR-PASS",
+        "from_node_id": "IMP-NODE-NEAR",
+        "to_node_id": "IMP-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "IMP-TRANSITION-NEAR-MISS",
+        "from_node_id": "IMP-NODE-NEAR",
+        "to_node_id": "IMP-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "IMP-TRANSITION-CHANGED-PASS",
+        "from_node_id": "IMP-NODE-CHANGED",
+        "to_node_id": "IMP-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "IMP-TRANSITION-CHANGED-MISS",
+        "from_node_id": "IMP-NODE-CHANGED",
+        "to_node_id": "IMP-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "IMP-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "IMP-NODE-REENTRY-NEAR",
+        "to_node_id": "IMP-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "IMP-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "IMP-NODE-REENTRY-NEAR",
+        "to_node_id": "IMP-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "IMP-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "IMP-NODE-REENTRY-CHANGED",
+        "to_node_id": "IMP-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "IMP-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "IMP-NODE-REENTRY-CHANGED",
+        "to_node_id": "IMP-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "HUM-TRANSITION-NEAR-PASS",
+        "from_node_id": "HUM-NODE-NEAR",
+        "to_node_id": "HUM-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HUM-TRANSITION-NEAR-MISS",
+        "from_node_id": "HUM-NODE-NEAR",
+        "to_node_id": "HUM-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HUM-TRANSITION-CHANGED-PASS",
+        "from_node_id": "HUM-NODE-CHANGED",
+        "to_node_id": "HUM-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HUM-TRANSITION-CHANGED-MISS",
+        "from_node_id": "HUM-NODE-CHANGED",
+        "to_node_id": "HUM-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HUM-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "HUM-NODE-REENTRY-NEAR",
+        "to_node_id": "HUM-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HUM-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "HUM-NODE-REENTRY-NEAR",
+        "to_node_id": "HUM-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "HUM-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "HUM-NODE-REENTRY-CHANGED",
+        "to_node_id": "HUM-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HUM-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "HUM-NODE-REENTRY-CHANGED",
+        "to_node_id": "HUM-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "ANI-TRANSITION-NEAR-PASS",
+        "from_node_id": "ANI-NODE-NEAR",
+        "to_node_id": "ANI-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANI-TRANSITION-NEAR-MISS",
+        "from_node_id": "ANI-NODE-NEAR",
+        "to_node_id": "ANI-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANI-TRANSITION-CHANGED-PASS",
+        "from_node_id": "ANI-NODE-CHANGED",
+        "to_node_id": "ANI-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANI-TRANSITION-CHANGED-MISS",
+        "from_node_id": "ANI-NODE-CHANGED",
+        "to_node_id": "ANI-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANI-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "ANI-NODE-REENTRY-NEAR",
+        "to_node_id": "ANI-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANI-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "ANI-NODE-REENTRY-NEAR",
+        "to_node_id": "ANI-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "ANI-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "ANI-NODE-REENTRY-CHANGED",
+        "to_node_id": "ANI-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ANI-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "ANI-NODE-REENTRY-CHANGED",
+        "to_node_id": "ANI-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "IMP-TO-HUM",
+        "from_node_id": "IMP-NODE-RECAP",
+        "to_node_id": "HUM-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "HUM-TO-ANI",
+        "from_node_id": "HUM-NODE-RECAP",
+        "to_node_id": "ANI-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      }
+    ],
+    "attachment_bindings": []
+  }
+}
