@@ -7,11 +7,18 @@ import type { Plugin } from 'vite';
  * proxied to a deployed backend), because the completion→state loop it closes
  * records into the SAME in-process dev authority that serves `/v1`.
  *
- * Like the diagnostic plugin, the handlers (and everything they pull in — the
- * corpus, answer keys, `@mcat/local-authority`) load lazily through
- * `ssrLoadModule`, so they run only inside the Node dev server. The authority
- * module resolves to the one cached instance the `/v1` plugin uses, so recording
- * a completed/reviewed test moves the very `LearnerState` Today's Path reads.
+ * These middlewares answer the SAME `/v1/practice-test/{next,block}` block
+ * contract the deployed learner-API serves in production, so the browser client
+ * is identical in dev and prod. Like the diagnostic plugin, they are registered
+ * BEFORE the dev authority plugin's `/v1` mount so these paths are answered by the
+ * in-process runner rather than swallowed by the catch-all `/v1` handler; the
+ * summary read and the reviewed hook fall through to that authority. The handlers
+ * (and everything they pull in — the corpus, answer keys, `@mcat/local-authority`)
+ * load lazily through `ssrLoadModule`, so they run only inside the Node dev
+ * server. The authority module resolves to the one cached instance the `/v1`
+ * plugin uses, so recording a completed test moves the very `LearnerState`
+ * Today's Path reads (and the runner reports `resultPersisted: true`, so the
+ * client skips the separate result write it makes against the deployed backend).
  */
 
 /** Structural mirror of the authority's serve gate + scored-result completion (WS5). */
@@ -85,11 +92,6 @@ interface PracticeTestApiModule {
     bank?: unknown,
     recorder?: PracticeTestRecorder,
   ) => void;
-  handlePracticeTestReviewRequest: (
-    request: IncomingMessage,
-    response: ServerResponse,
-    recorder?: PracticeTestRecorder,
-  ) => void;
 }
 
 interface AuthorityApiModule {
@@ -134,14 +136,11 @@ export function practiceTestApiPlugin(): Plugin {
             : authority.client.recordPracticeTestCompleted(),
         recordReviewed: () => authority.client.recordPracticeTestReviewed(),
       };
-      server.middlewares.use('/api/practice-test/next', (request, response) => {
+      server.middlewares.use('/v1/practice-test/next', (request, response) => {
         mod.handlePracticeTestNextRequest(request, response, undefined, recorder);
       });
-      server.middlewares.use('/api/practice-test/block', (request, response) => {
+      server.middlewares.use('/v1/practice-test/block', (request, response) => {
         mod.handlePracticeTestBlockRequest(request, response, undefined, recorder);
-      });
-      server.middlewares.use('/api/practice-test/review', (request, response) => {
-        mod.handlePracticeTestReviewRequest(request, response, recorder);
       });
     },
   };

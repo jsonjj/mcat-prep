@@ -146,14 +146,16 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       aiApiPlugin(env),
-      // Before the dev authority plugin's `/v1` mount so `/v1/diagnostic/*` is
-      // answered by the in-memory diagnostic (same package as prod) rather than
-      // being swallowed by the catch-all `/v1` authority handler — the same
-      // ordering the AI plugin relies on for `/v1/ai/*`.
+      // Before the dev authority plugin's `/v1` mount so `/v1/diagnostic/*` and
+      // `/v1/practice-test/{next,block}` are answered by the in-memory diagnostic
+      // and practice-test runners (same packages as prod) rather than being
+      // swallowed by the catch-all `/v1` authority handler — the same ordering the
+      // AI plugin relies on for `/v1/ai/*`. The summary read + reviewed hook fall
+      // through to the authority below.
       diagnosticApiPlugin(),
+      practiceTestApiPlugin(),
       authorityApiPlugin(),
       passageApiPlugin(),
-      practiceTestApiPlugin(),
     ],
     server: { port: 5173 },
     ...shared,

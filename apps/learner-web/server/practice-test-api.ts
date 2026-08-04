@@ -503,30 +503,3 @@ export function handlePracticeTestBlockRequest(
     })
     .catch((error: unknown) => handleError(response, error));
 }
-
-/**
- * POST /api/practice-test/review — the learner finished reviewing the prior test.
- * Distinct from completion: the §6 cadence blocks the NEXT test until the last
- * one has been reviewed, so this releases that gate through the authority command.
- */
-export function handlePracticeTestReviewRequest(
-  request: IncomingMessage,
-  response: ServerResponse,
-  recorder?: PracticeTestAuthorityRecorder,
-): void {
-  if (request.method !== 'POST') {
-    response.setHeader('Allow', 'POST');
-    writeJson(response, 405, { error: 'Use POST for the practice test.' });
-    return;
-  }
-  if (!isSameOriginRequest(request)) {
-    writeJson(response, 403, { error: 'This practice-test request was not accepted.' });
-    return;
-  }
-  void readJsonBody(request)
-    .then(async () => {
-      if (recorder !== undefined) await recorder.recordReviewed();
-      writeJson(response, 200, { ok: true });
-    })
-    .catch((error: unknown) => handleError(response, error));
-}
