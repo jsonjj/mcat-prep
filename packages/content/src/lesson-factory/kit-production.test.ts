@@ -24,6 +24,7 @@ type Scenario =
   | 'AUTHORITY_EXECUTION_REPLAY'
   | 'PREFLIGHT_STATE_MACHINE'
   | 'STALE_AUTHORITY_REFRESH'
+  | 'CONSUMED_GENERATION_ROLLOVER'
   | 'GENERATION_TWO_PACKAGE'
   | 'REAL_VALIDATE_ONE_GATES'
   | 'REAL_SMOKE_EXECUTABLE'
@@ -293,6 +294,43 @@ describe('WP-03 production authority boundary', () => {
       },
     });
   }, 30_000);
+
+  it('rolls a consumed immutable generation forward without refreshing it in place', async () => {
+    expect(await harness.run('CONSUMED_GENERATION_ROLLOVER')).toMatchObject({
+      status: 'READY',
+      evidence: {
+        diagnosticBefore: 'CONSUMED_GENERATION_ROLLOVER_REQUIRED',
+        preparedGeneration: 2,
+        preflightAfter: 'PREFLIGHT_OK',
+        legacyMigrationAttested: true,
+        legacySignatureExplicitlyUnverified: true,
+        migrationKeyUnchanged: true,
+        consumedArchivePreserved: true,
+        consumedArchiveNotSuperseded: true,
+        currentGenerationUnchanged: 1,
+        replayRejected: 'AUTHORIZATION_REPLAYED',
+        generationSkipRejected: 'CONSUMED_GENERATION_MISMATCH',
+        mismatchedCurrentRejected: 'CONSUMED_GENERATION_MISMATCH',
+        absentLedgerRejected: 'CONSUMPTION_EVIDENCE_MISSING',
+        ledgerReceiptIdRejected: true,
+        ledgerCommitRejected: true,
+        ledgerTimeRejected: true,
+        ledgerRawBytesRejected: true,
+        statusMismatchRejected: true,
+        versionMismatchRejected: true,
+        finalizationMismatchRejected: true,
+        publicationMismatchRejected: true,
+        migrationReplayRejected: true,
+        secondPrepareRejected: 'UNCONSUMED_AUTHORITY_EXISTS',
+        secondPrepareKeyUnchanged: true,
+        normalGenerationPrepared: 3,
+        normalAuthenticatedArmingEvidence: true,
+        normalLegacyFallbackAbsent: true,
+        corruptedNormalSignatureRejected: true,
+        corruptedNormalLedgerHashRejected: true,
+      },
+    });
+  }, 120_000);
 
   it('exports only zero-argument reviewed production entrypoints', async () => {
     const exports = Object.keys(await import('./kit-production')).sort();

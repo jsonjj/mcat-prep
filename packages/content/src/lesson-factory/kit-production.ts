@@ -50,6 +50,9 @@ import {
 } from './kit-factory';
 
 const RUN_ID = '2026-08-03T1727-0500';
+const LEGACY_GENERATION_ONE_ARMING_RECEIPT_ID = 'wp03-arm-99fb12fa4354944fcd035b9452ac976d';
+const LEGACY_GENERATION_ONE_FINALIZATION_RECEIPT_ID = 'wp03-finalization-1-2bf5b16eadb2bf20';
+const LEGACY_GENERATION_ONE_REPOSITORY_COMMIT = '4adab64e87eedc99af4e18efdb4e77696bf53a3d';
 const TEST_PARENT = join(
   ADMISSION_REPOSITORY_ROOT,
   '.tmp/scratch/lesson-factory-2026-08-03T1727-0500/wp-03-production-tests',
@@ -437,6 +440,73 @@ interface AuthorityArmingRecord {
   readonly signature: string;
 }
 
+interface ArmingConsumptionEvidence {
+  readonly format?: undefined;
+  readonly consumedAt: string;
+  readonly receiptId: string;
+  readonly repositoryCommit: string;
+  readonly signatureSha256: string;
+}
+
+interface AuthenticatedArmingConsumptionEvidence {
+  readonly format: 'wp-03-arming-consumption/2';
+  readonly generation: number;
+  readonly consumedAt: string;
+  readonly receiptId: string;
+  readonly repositoryCommit: string;
+  readonly signatureSha256: string;
+  readonly armingReceiptSha256: string;
+}
+
+type AnyArmingConsumptionEvidence =
+  | ArmingConsumptionEvidence
+  | AuthenticatedArmingConsumptionEvidence;
+
+interface LegacyGenerationOneMigration {
+  readonly format: 'wp-03-legacy-generation-migration/1';
+  readonly migrationType: 'LEGACY_GENERATION_1_MIGRATION';
+  readonly runId: typeof RUN_ID;
+  readonly generation: 1;
+  readonly finalizationReceiptId: string;
+  readonly legacyArmingReceiptId: string;
+  readonly repositoryCommit: string;
+  readonly rawArmingLedgerSha256: string;
+  readonly untrustedLegacySignatureSha256: string;
+  readonly originalArmingReceiptAvailable: false;
+  readonly originalArmingSignatureVerified: false;
+  readonly finalizationSha256: string;
+  readonly publicationLedgerEvidenceSha256: string;
+  readonly currentSha256: string;
+  readonly statusSha256: string;
+  readonly versionHash: string;
+  readonly allowedAction: 'MONOTONIC_ROLLOVER_TO_GENERATION_2_ONLY';
+  readonly lessonApprovalClaimed: false;
+  readonly validationPassClaimed: false;
+  readonly attestedAt: string;
+  readonly signature: string;
+}
+
+interface ConsumedAuthorityRecord {
+  readonly format: 'wp-03-consumed-authority/1';
+  readonly runId: typeof RUN_ID;
+  readonly generation: number;
+  readonly finalizationReceiptId: string;
+  readonly armingReceiptId: string;
+  readonly repositoryCommit: string;
+  readonly versionHash: string;
+  readonly finalizationSha256: string;
+  readonly consumptionEvidenceSha256: string;
+  readonly evidenceMode: 'AUTHENTICATED_ARMING_RECEIPT' | 'LEGACY_GENERATION_1_MIGRATION';
+  readonly authenticatedArmingReceiptSha256: string | null;
+  readonly legacyMigrationAttestationSha256: string | null;
+  readonly originalArmingSignatureVerified: boolean;
+  readonly publicationLedgerEvidenceSha256: string;
+  readonly currentSha256: string;
+  readonly statusSha256: string;
+  readonly consumedAt: string;
+  readonly signature: string;
+}
+
 interface VerifiedAuthorityStore {
   readonly root: OwnedRoot;
   readonly key: string;
@@ -593,6 +663,9 @@ function authorityPaths(root: string) {
     arming: join(directory, 'arming-receipt.json'),
     armingLedger: join(directory, 'arming-ledger.jsonl'),
     superseded: join(directory, 'superseded'),
+    consumed: join(directory, 'consumed'),
+    armingEvidence: join(directory, 'authenticated-arming'),
+    legacyMigration: join(directory, 'legacy-generation-1-migration.json'),
   } as const;
 }
 
@@ -966,6 +1039,41 @@ function verifyArmingCandidates(record: AuthorityArmingRecord, candidates: Candi
 
 async function consumeArmingReceipt(store: VerifiedAuthorityStore): Promise<void> {
   const paths = authorityPaths(store.root.path);
+  verifyArmingAuthenticity(store.arming, store.key);
+  const armingReceiptSha256 = sha256(canonicalKitJson(store.arming));
+  const evidenceTarget = join(paths.armingEvidence, store.arming.receiptId);
+  if (await pathExists(evidenceTarget)) {
+    if (
+      (await readFile(join(evidenceTarget, 'arming-receipt.json'), 'utf8')) !==
+      Buffer.from(canonicalBytes(store.arming)).toString('utf8')
+    ) {
+      throw new PipelineFailure('AUTHENTICATED_ARMING_EVIDENCE_INVALID');
+    }
+  } else {
+    await mkdir(paths.armingEvidence, { recursive: true, mode: 0o700 });
+    const evidenceStage = join(
+      paths.armingEvidence,
+      `.arming-${store.arming.receiptId}-${randomBytes(8).toString('hex')}.stage`,
+    );
+    await mkdir(evidenceStage, { mode: 0o700 });
+    try {
+      await writeCanonicalAtomic(
+        join(evidenceStage, 'arming-receipt.json'),
+        store.arming,
+        store.root,
+      );
+      await chmod(join(evidenceStage, 'arming-receipt.json'), 0o400);
+      await syncDirectory(evidenceStage);
+      await chmod(evidenceStage, 0o500);
+      await guardedRename(store.root, evidenceStage, evidenceTarget);
+      await syncDirectory(paths.armingEvidence);
+    } finally {
+      if (await pathExists(evidenceStage)) {
+        await chmod(evidenceStage, 0o700).catch(() => undefined);
+        await guardedRemove(store.root, evidenceStage, { recursive: true, force: true });
+      }
+    }
+  }
   const prior = (await pathExists(paths.armingLedger))
     ? await readFile(paths.armingLedger, 'utf8')
     : '';
@@ -982,9 +1090,12 @@ async function consumeArmingReceipt(store: VerifiedAuthorityStore): Promise<void
     throw new PipelineFailure('AUTHORIZATION_REPLAYED');
   }
   const record = canonicalKitJson({
+    format: 'wp-03-arming-consumption/2',
+    generation: store.finalization.generation,
     receiptId: store.arming.receiptId,
     repositoryCommit: store.arming.repositoryCommit,
     signatureSha256: sha256(store.arming.signature),
+    armingReceiptSha256,
     consumedAt: new Date().toISOString(),
   });
   const temp = join(paths.directory, `.arming-ledger-${randomBytes(8).toString('hex')}.tmp`);
@@ -995,8 +1106,11 @@ async function consumeArmingReceipt(store: VerifiedAuthorityStore): Promise<void
   await syncDirectory(paths.directory);
 }
 
-async function armingLedgerReceiptIds(path: string): Promise<Set<string>> {
-  if (!(await pathExists(path))) return new Set();
+async function armingLedgerEvidence(
+  path: string,
+): Promise<readonly AnyArmingConsumptionEvidence[]> {
+  if (!(await pathExists(path))) return [];
+  const records: AnyArmingConsumptionEvidence[] = [];
   const ids = new Set<string>();
   for (const line of (await readFile(path, 'utf8')).trim().split('\n').filter(Boolean)) {
     let record: unknown;
@@ -1005,21 +1119,51 @@ async function armingLedgerReceiptIds(path: string): Promise<Set<string>> {
     } catch {
       throw new PipelineFailure('PERSISTED_RECORD_INVALID');
     }
-    const receiptId =
-      record !== null && typeof record === 'object' && !Array.isArray(record)
-        ? (record as Record<string, unknown>).receiptId
-        : undefined;
+    if (record === null || typeof record !== 'object' || Array.isArray(record)) {
+      throw new PipelineFailure('PERSISTED_RECORD_INVALID');
+    }
+    const value = record as Record<string, unknown>;
+    const legacy =
+      canonicalKitJson(Object.keys(value).sort()) ===
+      canonicalKitJson(['consumedAt', 'receiptId', 'repositoryCommit', 'signatureSha256']);
+    const authenticated =
+      canonicalKitJson(Object.keys(value).sort()) ===
+        canonicalKitJson([
+          'armingReceiptSha256',
+          'consumedAt',
+          'format',
+          'generation',
+          'receiptId',
+          'repositoryCommit',
+          'signatureSha256',
+        ]) &&
+      value.format === 'wp-03-arming-consumption/2' &&
+      Number.isInteger(value.generation) &&
+      (value.generation as number) >= 2 &&
+      typeof value.armingReceiptSha256 === 'string' &&
+      /^[0-9a-f]{64}$/.test(value.armingReceiptSha256);
     if (
-      record === null ||
-      typeof record !== 'object' ||
-      Array.isArray(record) ||
-      typeof receiptId !== 'string'
+      (!legacy && !authenticated) ||
+      typeof value.receiptId !== 'string' ||
+      !/^wp03-arm-[0-9a-f]{32}$/.test(value.receiptId) ||
+      ids.has(value.receiptId) ||
+      typeof value.repositoryCommit !== 'string' ||
+      !/^[0-9a-f]{40}$/.test(value.repositoryCommit) ||
+      typeof value.signatureSha256 !== 'string' ||
+      !/^[0-9a-f]{64}$/.test(value.signatureSha256) ||
+      typeof value.consumedAt !== 'string' ||
+      !Number.isFinite(Date.parse(value.consumedAt))
     ) {
       throw new PipelineFailure('PERSISTED_RECORD_INVALID');
     }
-    ids.add(receiptId);
+    ids.add(value.receiptId);
+    records.push(value as unknown as AnyArmingConsumptionEvidence);
   }
-  return ids;
+  return records;
+}
+
+async function armingLedgerReceiptIds(path: string): Promise<Set<string>> {
+  return new Set((await armingLedgerEvidence(path)).map((record) => record.receiptId));
 }
 
 async function preserveSupersededUnconsumedAuthority(root: OwnedRoot, key: string): Promise<void> {
@@ -1099,6 +1243,498 @@ async function preserveSupersededUnconsumedAuthority(root: OwnedRoot, key: strin
   await syncDirectory(paths.superseded);
 }
 
+async function requireRefreshableUnconsumedAuthority(
+  root: OwnedRoot,
+  key: string,
+  source: { readonly head: string; readonly blobClosureSha256: string },
+): Promise<void> {
+  const paths = authorityPaths(root.path);
+  let arming: AuthorityArmingRecord;
+  let finalization: FinalizationReceipt;
+  try {
+    arming = parseAuthorityArming(JSON.parse(await readFile(paths.arming, 'utf8')));
+    finalization = parseClosedReceipt(JSON.parse(await readFile(paths.finalization, 'utf8')));
+  } catch {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  }
+  verifyArmingAuthenticity(arming, key);
+  verifyFinalizationAuthenticity(finalization, key, Date.now(), false);
+  if (
+    arming.finalizationReceiptId !== finalization.receiptId ||
+    arming.externalRoot !== root.path ||
+    arming.action !== 'PACKAGE_KITS' ||
+    arming.lessonApprovalClaimed !== false ||
+    arming.validationPassClaimed !== false
+  ) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_MISMATCH');
+  }
+  if ((await armingLedgerReceiptIds(paths.armingLedger)).has(arming.receiptId)) {
+    throw new PipelineFailure('AUTHORIZATION_REPLAYED');
+  }
+  if (
+    arming.repositoryCommit === source.head &&
+    arming.blobClosureSha256 === source.blobClosureSha256
+  ) {
+    throw new PipelineFailure('UNCONSUMED_AUTHORITY_EXISTS');
+  }
+}
+
+function unsignedConsumedAuthority(
+  record: ConsumedAuthorityRecord,
+): Omit<ConsumedAuthorityRecord, 'signature'> {
+  const { signature: _signature, ...unsigned } = record;
+  return unsigned;
+}
+
+function verifyConsumedAuthoritySignature(record: ConsumedAuthorityRecord, key: string): void {
+  const expected = createHmac('sha256', key)
+    .update(canonicalKitJson(unsignedConsumedAuthority(record)))
+    .digest('hex');
+  if (
+    !/^[0-9a-f]{64}$/.test(record.signature) ||
+    !timingSafeEqual(Buffer.from(expected), Buffer.from(record.signature))
+  ) {
+    throw new PipelineFailure('CONSUMED_AUTHORITY_ARCHIVE_INVALID');
+  }
+}
+
+async function archivedConsumptionRecords(
+  paths: ReturnType<typeof authorityPaths>,
+  key: string,
+): Promise<readonly ConsumedAuthorityRecord[]> {
+  if (!(await pathExists(paths.consumed))) return [];
+  const info = await lstat(paths.consumed);
+  if (info.isSymbolicLink() || !info.isDirectory()) {
+    throw new PipelineFailure('CONSUMED_AUTHORITY_ARCHIVE_INVALID');
+  }
+  const records: ConsumedAuthorityRecord[] = [];
+  for (const entry of await readdir(paths.consumed, { withFileTypes: true })) {
+    if (!entry.isDirectory() || entry.isSymbolicLink()) {
+      throw new PipelineFailure('CONSUMED_AUTHORITY_ARCHIVE_INVALID');
+    }
+    let record: ConsumedAuthorityRecord;
+    try {
+      record = JSON.parse(
+        await readFile(join(paths.consumed, entry.name, 'consumed-record.json'), 'utf8'),
+      ) as ConsumedAuthorityRecord;
+    } catch {
+      throw new PipelineFailure('CONSUMED_AUTHORITY_ARCHIVE_INVALID');
+    }
+    if (
+      canonicalKitJson(Object.keys(record).sort()) !==
+        canonicalKitJson([
+          'armingReceiptId',
+          'authenticatedArmingReceiptSha256',
+          'consumedAt',
+          'consumptionEvidenceSha256',
+          'currentSha256',
+          'evidenceMode',
+          'finalizationReceiptId',
+          'finalizationSha256',
+          'format',
+          'generation',
+          'legacyMigrationAttestationSha256',
+          'originalArmingSignatureVerified',
+          'publicationLedgerEvidenceSha256',
+          'repositoryCommit',
+          'runId',
+          'signature',
+          'statusSha256',
+          'versionHash',
+        ]) ||
+      record.format !== 'wp-03-consumed-authority/1' ||
+      record.runId !== RUN_ID ||
+      !Number.isInteger(record.generation) ||
+      record.generation < 1 ||
+      !['AUTHENTICATED_ARMING_RECEIPT', 'LEGACY_GENERATION_1_MIGRATION'].includes(
+        record.evidenceMode,
+      ) ||
+      (record.evidenceMode === 'AUTHENTICATED_ARMING_RECEIPT' &&
+        (typeof record.authenticatedArmingReceiptSha256 !== 'string' ||
+          record.legacyMigrationAttestationSha256 !== null ||
+          record.originalArmingSignatureVerified !== true)) ||
+      (record.evidenceMode === 'LEGACY_GENERATION_1_MIGRATION' &&
+        (record.authenticatedArmingReceiptSha256 !== null ||
+          typeof record.legacyMigrationAttestationSha256 !== 'string' ||
+          record.originalArmingSignatureVerified !== false)) ||
+      entry.name !== `${record.generation}-${record.finalizationReceiptId}`
+    ) {
+      throw new PipelineFailure('CONSUMED_AUTHORITY_ARCHIVE_INVALID');
+    }
+    verifyConsumedAuthoritySignature(record, key);
+    records.push(record);
+  }
+  if (
+    new Set(records.map((record) => record.armingReceiptId)).size !== records.length ||
+    new Set(records.map((record) => record.finalizationReceiptId)).size !== records.length
+  ) {
+    throw new PipelineFailure('CONSUMED_AUTHORITY_ARCHIVE_INVALID');
+  }
+  return records;
+}
+
+interface VerifiedConsumedGeneration {
+  readonly finalization: FinalizationReceipt;
+  readonly finalizationBytes: Uint8Array;
+  readonly consumption: AnyArmingConsumptionEvidence;
+  readonly authenticatedArming?: AuthorityArmingRecord;
+  readonly legacyMigration?: LegacyGenerationOneMigration;
+  readonly publicationLedgerRecord: Record<string, unknown>;
+  readonly current: Record<string, unknown>;
+  readonly currentBytes: Uint8Array;
+  readonly status: Record<string, unknown>;
+  readonly statusBytes: Uint8Array;
+  readonly record: ConsumedAuthorityRecord;
+  readonly target: string;
+}
+
+async function verifyConsumedPriorGeneration(
+  root: OwnedRoot,
+  key: string,
+  legacyMode: 'DIAGNOSE' | 'PREPARE' = 'DIAGNOSE',
+): Promise<VerifiedConsumedGeneration> {
+  const paths = authorityPaths(root.path);
+  if (await pathExists(paths.arming)) throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  if (!(await pathExists(paths.finalization))) {
+    throw new PipelineFailure('FINALIZATION_RECEIPT_MISSING');
+  }
+  let finalization: FinalizationReceipt;
+  const finalizationBytes = await readFile(paths.finalization);
+  try {
+    finalization = parseClosedReceipt(JSON.parse(Buffer.from(finalizationBytes).toString('utf8')));
+  } catch {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  }
+  verifyFinalizationAuthenticity(finalization, key, Date.now(), false);
+  if (
+    finalization.generation < 1 ||
+    !new RegExp(`^wp03-finalization-${finalization.generation}-[0-9a-f]{16}$`).test(
+      finalization.receiptId,
+    ) ||
+    !/^[0-9a-f]{40}$/.test(finalization.pins.repositoryCommit) ||
+    canonicalKitJson(finalization.teams.map((team) => team.teamId)) !==
+      canonicalKitJson(['team-A', 'team-B']) ||
+    finalization.teams.some(
+      (team) =>
+        !/^[0-9a-f]{64}$/.test(team.archiveSha256) ||
+        !/^[0-9a-f]{64}$/.test(team.manifestSha256) ||
+        !/^[0-9a-f]{64}$/.test(team.assignmentSha256) ||
+        !/^[0-9a-f]{64}$/.test(team.packetAggregateSha256) ||
+        !/^[0-9a-f]{64}$/.test(team.smokeReceiptSha256) ||
+        team.lessonIds.length !== 30 ||
+        new Set(team.lessonIds).size !== 30,
+    ) ||
+    Buffer.from(finalizationBytes).toString('utf8') !==
+      Buffer.from(canonicalBytes(finalization)).toString('utf8')
+  ) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  }
+
+  const currentPath = join(root.path, 'current.json');
+  const statusPath = join(root.path, 'bundle-readiness.json');
+  if (!(await pathExists(currentPath)) || !(await pathExists(statusPath))) {
+    throw new PipelineFailure('CONSUMED_GENERATION_MISMATCH');
+  }
+  const currentBytes = await readFile(currentPath);
+  const statusBytes = await readFile(statusPath);
+  let current: Record<string, unknown>;
+  let status: Record<string, unknown>;
+  try {
+    current = strictCurrent(JSON.parse(Buffer.from(currentBytes).toString('utf8')));
+    status = strictStatus(JSON.parse(Buffer.from(statusBytes).toString('utf8')));
+  } catch {
+    throw new PipelineFailure('CONSUMED_GENERATION_MISMATCH');
+  }
+  const publicationLedger = await receiptLedgerRecords(root);
+  const publicationLedgerRecord = publicationLedger.at(-1);
+  const versionDirectory = current.versionDirectory as string;
+  const versionHash = basename(versionDirectory);
+  if (
+    publicationLedgerRecord === undefined ||
+    current.generation !== finalization.generation ||
+    status.generation !== finalization.generation ||
+    status.generation !== current.generation ||
+    status.authorizationReceiptId !== finalization.receiptId ||
+    status.versionDirectory !== versionDirectory ||
+    publicationLedgerRecord.generation !== finalization.generation ||
+    publicationLedgerRecord.receiptId !== finalization.receiptId ||
+    publicationLedgerRecord.versionHash !== versionHash ||
+    publicationLedgerRecord.receiptSha256 !== sha256(canonicalKitJson(finalization))
+  ) {
+    throw new PipelineFailure('CONSUMED_GENERATION_MISMATCH');
+  }
+  const statusTeams = status.current as Record<string, unknown>[];
+  const versionRoot = join(root.path, versionDirectory);
+  const versionInfo = await lstat(versionRoot).catch(() => {
+    throw new PipelineFailure('CONSUMED_GENERATION_MISMATCH');
+  });
+  if (versionInfo.isSymbolicLink() || !versionInfo.isDirectory()) {
+    throw new PipelineFailure('CONSUMED_GENERATION_MISMATCH');
+  }
+  for (const team of finalization.teams) {
+    const statusTeam = statusTeams.find((entry) => entry.teamId === team.teamId);
+    const teamRoot = join(root.path, versionDirectory, team.teamId);
+    const ready = JSON.parse(await readFile(join(teamRoot, 'READY.json'), 'utf8')) as Record<
+      string,
+      unknown
+    >;
+    if (
+      statusTeam === undefined ||
+      statusTeam.archiveSha256 !== team.archiveSha256 ||
+      statusTeam.manifestSha256 !== team.manifestSha256 ||
+      statusTeam.versionDirectory !== versionDirectory ||
+      ready.format !== 'wp-03-team-ready/2' ||
+      ready.status !== 'READY' ||
+      ready.teamId !== team.teamId ||
+      ready.archiveSha256 !== team.archiveSha256 ||
+      ready.manifestSha256 !== team.manifestSha256 ||
+      ready.assignmentSha256 !== team.assignmentSha256 ||
+      ready.packetAggregateSha256 !== team.packetAggregateSha256 ||
+      ready.packetCount !== 30 ||
+      canonicalKitJson(ready.lessonIds) !== canonicalKitJson(team.lessonIds) ||
+      sha256(await readFile(join(teamRoot, `${team.teamId}-complete.zip`))) !==
+        team.archiveSha256 ||
+      sha256(await readFile(join(teamRoot, 'KIT-MANIFEST.json'))) !== team.manifestSha256
+    ) {
+      throw new PipelineFailure('CONSUMED_GENERATION_MISMATCH');
+    }
+  }
+
+  const rawArmingLedger = await readFile(paths.armingLedger).catch(() => undefined);
+  if (rawArmingLedger === undefined) throw new PipelineFailure('CONSUMPTION_EVIDENCE_MISSING');
+  const evidence = await armingLedgerEvidence(paths.armingLedger);
+  if (evidence.length === 0) throw new PipelineFailure('CONSUMPTION_EVIDENCE_MISSING');
+  const archived = await archivedConsumptionRecords(paths, key);
+  const target = join(paths.consumed, `${finalization.generation}-${finalization.receiptId}`);
+  const existing = archived.find(
+    (record) =>
+      record.generation === finalization.generation &&
+      record.finalizationReceiptId === finalization.receiptId,
+  );
+  const candidates =
+    existing === undefined
+      ? evidence.filter(
+          (record) =>
+            !archived.some((item) => item.armingReceiptId === record.receiptId) &&
+            record.repositoryCommit === finalization.pins.repositoryCommit,
+        )
+      : evidence.filter((record) => record.receiptId === existing.armingReceiptId);
+  if (candidates.length !== 1) {
+    throw new PipelineFailure('CONSUMPTION_EVIDENCE_MISMATCH');
+  }
+  const consumption = candidates[0]!;
+  let authenticatedArming: AuthorityArmingRecord | undefined;
+  let legacyMigration: LegacyGenerationOneMigration | undefined;
+  if (finalization.generation === 1) {
+    if (
+      existing !== undefined ||
+      (await pathExists(paths.legacyMigration)) ||
+      consumption.format !== undefined ||
+      evidence.length !== 1 ||
+      finalization.receiptId !== LEGACY_GENERATION_ONE_FINALIZATION_RECEIPT_ID ||
+      consumption.receiptId !== LEGACY_GENERATION_ONE_ARMING_RECEIPT_ID ||
+      consumption.repositoryCommit !== LEGACY_GENERATION_ONE_REPOSITORY_COMMIT ||
+      finalization.pins.repositoryCommit !== LEGACY_GENERATION_ONE_REPOSITORY_COMMIT ||
+      Date.parse(consumption.consumedAt) < Date.parse(finalization.validationTimestamp) ||
+      Date.parse(consumption.consumedAt) > Date.now() + 60_000 ||
+      Buffer.from(rawArmingLedger).toString('utf8') !== `${canonicalKitJson(consumption)}\n` ||
+      (await pathExists(paths.armingEvidence))
+    ) {
+      throw new PipelineFailure(
+        existing !== undefined || (await pathExists(paths.legacyMigration))
+          ? 'LEGACY_MIGRATION_ALREADY_USED'
+          : 'LEGACY_GENERATION_1_EVIDENCE_INVALID',
+      );
+    }
+    const migrationUnsigned: Omit<LegacyGenerationOneMigration, 'signature'> = {
+      format: 'wp-03-legacy-generation-migration/1',
+      migrationType: 'LEGACY_GENERATION_1_MIGRATION',
+      runId: RUN_ID,
+      generation: 1,
+      finalizationReceiptId: finalization.receiptId,
+      legacyArmingReceiptId: consumption.receiptId,
+      repositoryCommit: finalization.pins.repositoryCommit,
+      rawArmingLedgerSha256: sha256(rawArmingLedger),
+      untrustedLegacySignatureSha256: consumption.signatureSha256,
+      originalArmingReceiptAvailable: false,
+      originalArmingSignatureVerified: false,
+      finalizationSha256: sha256(canonicalKitJson(finalization)),
+      publicationLedgerEvidenceSha256: sha256(canonicalKitJson(publicationLedgerRecord)),
+      currentSha256: sha256(canonicalKitJson(current)),
+      statusSha256: sha256(canonicalKitJson(status)),
+      versionHash,
+      allowedAction: 'MONOTONIC_ROLLOVER_TO_GENERATION_2_ONLY',
+      lessonApprovalClaimed: false,
+      validationPassClaimed: false,
+      attestedAt: consumption.consumedAt,
+    };
+    legacyMigration = {
+      ...migrationUnsigned,
+      signature: createHmac('sha256', key)
+        .update(canonicalKitJson(migrationUnsigned))
+        .digest('hex'),
+    };
+    if (legacyMode === 'PREPARE' && finalization.generation !== 1) {
+      throw new PipelineFailure('LEGACY_GENERATION_1_EVIDENCE_INVALID');
+    }
+  } else {
+    if (
+      consumption.format !== 'wp-03-arming-consumption/2' ||
+      consumption.generation !== finalization.generation
+    ) {
+      throw new PipelineFailure('AUTHENTICATED_ARMING_EVIDENCE_MISSING');
+    }
+    const armingPath = join(paths.armingEvidence, consumption.receiptId, 'arming-receipt.json');
+    let armingBytes: Uint8Array;
+    try {
+      armingBytes = await readFile(armingPath);
+      authenticatedArming = parseAuthorityArming(
+        JSON.parse(Buffer.from(armingBytes).toString('utf8')),
+      );
+    } catch {
+      throw new PipelineFailure('AUTHENTICATED_ARMING_EVIDENCE_INVALID');
+    }
+    verifyArmingAuthenticity(authenticatedArming, key);
+    const boundFinalization = finalization.teams.map((team) => ({
+      teamId: team.teamId,
+      archiveSha256: team.archiveSha256,
+      manifestSha256: team.manifestSha256,
+      assignmentSha256: team.assignmentSha256,
+      lessonIds: team.lessonIds,
+    }));
+    const boundArming = authenticatedArming.assignments.map((team) => ({
+      teamId: team.teamId,
+      archiveSha256: team.archiveSha256,
+      manifestSha256: team.manifestSha256,
+      assignmentSha256: team.assignmentSha256,
+      lessonIds: team.lessonIds,
+    }));
+    if (
+      Buffer.from(armingBytes).toString('utf8') !==
+        Buffer.from(canonicalBytes(authenticatedArming)).toString('utf8') ||
+      authenticatedArming.receiptId !== consumption.receiptId ||
+      authenticatedArming.finalizationReceiptId !== finalization.receiptId ||
+      authenticatedArming.repositoryCommit !== finalization.pins.repositoryCommit ||
+      authenticatedArming.externalRoot !== root.path ||
+      canonicalKitJson(authenticatedArming.pins) !== canonicalKitJson(finalization.pins) ||
+      canonicalKitJson(boundArming) !== canonicalKitJson(boundFinalization) ||
+      consumption.armingReceiptSha256 !== sha256(canonicalKitJson(authenticatedArming)) ||
+      consumption.signatureSha256 !== sha256(authenticatedArming.signature)
+    ) {
+      throw new PipelineFailure('AUTHENTICATED_ARMING_EVIDENCE_INVALID');
+    }
+  }
+  const unsigned: Omit<ConsumedAuthorityRecord, 'signature'> = {
+    format: 'wp-03-consumed-authority/1',
+    runId: RUN_ID,
+    generation: finalization.generation,
+    finalizationReceiptId: finalization.receiptId,
+    armingReceiptId: consumption.receiptId,
+    repositoryCommit: finalization.pins.repositoryCommit,
+    versionHash,
+    finalizationSha256: sha256(canonicalKitJson(finalization)),
+    consumptionEvidenceSha256: sha256(canonicalKitJson(consumption)),
+    evidenceMode:
+      legacyMigration === undefined
+        ? 'AUTHENTICATED_ARMING_RECEIPT'
+        : 'LEGACY_GENERATION_1_MIGRATION',
+    authenticatedArmingReceiptSha256:
+      authenticatedArming === undefined ? null : sha256(canonicalKitJson(authenticatedArming)),
+    legacyMigrationAttestationSha256:
+      legacyMigration === undefined ? null : sha256(canonicalKitJson(legacyMigration)),
+    originalArmingSignatureVerified: authenticatedArming !== undefined,
+    publicationLedgerEvidenceSha256: sha256(canonicalKitJson(publicationLedgerRecord)),
+    currentSha256: sha256(canonicalKitJson(current)),
+    statusSha256: sha256(canonicalKitJson(status)),
+    consumedAt: consumption.consumedAt,
+  };
+  const record: ConsumedAuthorityRecord = {
+    ...unsigned,
+    signature: createHmac('sha256', key).update(canonicalKitJson(unsigned)).digest('hex'),
+  };
+  if (existing !== undefined && canonicalKitJson(existing) !== canonicalKitJson(record)) {
+    throw new PipelineFailure('CONSUMED_AUTHORITY_ARCHIVE_INVALID');
+  }
+  return {
+    finalization,
+    finalizationBytes,
+    consumption,
+    ...(authenticatedArming === undefined ? {} : { authenticatedArming }),
+    ...(legacyMigration === undefined ? {} : { legacyMigration }),
+    publicationLedgerRecord,
+    current,
+    currentBytes,
+    status,
+    statusBytes,
+    record,
+    target,
+  };
+}
+
+async function archiveConsumedGeneration(
+  root: OwnedRoot,
+  consumed: VerifiedConsumedGeneration,
+): Promise<void> {
+  const paths = authorityPaths(root.path);
+  const files: Array<readonly [string, unknown]> = [
+    ['finalization-receipt.json', consumed.finalization],
+    ['consumption-evidence.json', consumed.consumption],
+    ['publication-ledger-evidence.json', consumed.publicationLedgerRecord],
+    ['current.json', consumed.current],
+    ['bundle-readiness.json', consumed.status],
+    ['consumed-record.json', consumed.record],
+  ];
+  if (consumed.legacyMigration !== undefined) {
+    files.push(['legacy-migration-attestation.json', consumed.legacyMigration]);
+  }
+  if (consumed.authenticatedArming !== undefined) {
+    files.push(['authenticated-arming-receipt.json', consumed.authenticatedArming]);
+  }
+  if (await pathExists(consumed.target)) {
+    for (const [name, value] of files) {
+      if (
+        (await readFile(join(consumed.target, name), 'utf8')) !==
+        Buffer.from(canonicalBytes(value)).toString('utf8')
+      ) {
+        throw new PipelineFailure('CONSUMED_AUTHORITY_ARCHIVE_INVALID');
+      }
+    }
+    return;
+  }
+  await mkdir(paths.consumed, { recursive: true, mode: 0o700 });
+  const stage = join(
+    paths.consumed,
+    `.consumed-${consumed.record.generation}-${randomBytes(8).toString('hex')}.stage`,
+  );
+  await mkdir(stage, { mode: 0o700 });
+  try {
+    for (const [name, value] of files) {
+      await writeCanonicalAtomic(join(stage, name), value, root);
+      await chmod(join(stage, name), 0o400);
+    }
+    await syncDirectory(stage);
+    await chmod(stage, 0o500);
+    await guardedRename(root, stage, consumed.target);
+    await syncDirectory(paths.consumed);
+  } finally {
+    if (await pathExists(stage)) {
+      await chmod(stage, 0o700).catch(() => undefined);
+      await guardedRemove(root, stage, { recursive: true, force: true });
+    }
+  }
+}
+
+async function persistLegacyMigration(
+  root: OwnedRoot,
+  migration: LegacyGenerationOneMigration,
+): Promise<void> {
+  const path = authorityPaths(root.path).legacyMigration;
+  if (await pathExists(path)) throw new PipelineFailure('LEGACY_MIGRATION_ALREADY_USED');
+  await writeCanonicalAtomic(path, migration, root);
+  await chmod(path, 0o400);
+  await syncDirectory(dirname(path));
+}
+
 async function loadVerifiedAuthorityStore(
   loaded: LoadedProductionInputs,
 ): Promise<VerifiedAuthorityStore> {
@@ -1110,10 +1746,17 @@ async function loadVerifiedAuthorityStore(
   if (!(await pathExists(paths.finalization))) {
     throw new PipelineFailure('FINALIZATION_RECEIPT_MISSING');
   }
+  const key = await readAuthorityKey(paths.key);
   if (!(await pathExists(paths.arming))) {
+    if (
+      (await pathExists(join(root.path, 'current.json'))) ||
+      (await pathExists(join(root.path, 'bundle-readiness.json')))
+    ) {
+      await verifyConsumedPriorGeneration(root, key);
+      throw new PipelineFailure('CONSUMED_GENERATION_ROLLOVER_REQUIRED');
+    }
     throw new PipelineFailure('ARMING_RECEIPT_MISSING');
   }
-  const key = await readAuthorityKey(paths.key);
   let arming: AuthorityArmingRecord;
   let finalization: FinalizationReceipt;
   try {
@@ -1184,7 +1827,13 @@ async function collectAuthorityStoreBlockers(loaded: LoadedProductionInputs): Pr
   const paths = authorityPaths(rootPath);
   if (!(await pathExists(paths.key))) add('AUTHORITY_ISSUER_KEY_MISSING');
   if (!(await pathExists(paths.finalization))) add('FINALIZATION_RECEIPT_MISSING');
-  if (!(await pathExists(paths.arming))) add('ARMING_RECEIPT_MISSING');
+  if (
+    !(await pathExists(paths.arming)) &&
+    !(await pathExists(join(rootPath, 'current.json'))) &&
+    !(await pathExists(join(rootPath, 'bundle-readiness.json')))
+  ) {
+    add('ARMING_RECEIPT_MISSING');
+  }
   if (blockers.length === 0) {
     try {
       await loadVerifiedAuthorityStore(loaded);
@@ -1384,14 +2033,44 @@ export async function prepareProductionAuthority(): Promise<
       smokeExecutable: SMOKE_EXECUTABLE_PATH,
       smokeExecutableSha256,
     };
-    const generation = Math.max(2, await nextPublicationGeneration(root));
-    const candidates = await buildAndVerifyProductionCandidates(loaded, root, generation, runtime);
     if (!(await pathExists(paths.key))) {
+      if (
+        (await pathExists(paths.finalization)) ||
+        (await pathExists(paths.arming)) ||
+        (await pathExists(paths.armingLedger)) ||
+        (await pathExists(join(root.path, 'current.json'))) ||
+        (await pathExists(join(root.path, 'bundle-readiness.json'))) ||
+        (await pathExists(join(root.path, 'receipt-ledger.jsonl')))
+      ) {
+        throw new PipelineFailure('AUTHORITY_ISSUER_KEY_MISSING');
+      }
       await writeExclusiveNoFollow(paths.key, `${randomBytes(32).toString('hex')}\n`);
       await chmod(paths.key, 0o600);
     }
     const key = await readAuthorityKey(paths.key);
-    await preserveSupersededUnconsumedAuthority(root, key);
+    const hasArming = await pathExists(paths.arming);
+    const hasFinalization = await pathExists(paths.finalization);
+    let consumed: VerifiedConsumedGeneration | undefined;
+    if (!hasArming && hasFinalization) {
+      consumed = await verifyConsumedPriorGeneration(root, key, 'PREPARE');
+    } else if (hasArming !== hasFinalization) {
+      throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+    } else if (hasArming) {
+      await requireRefreshableUnconsumedAuthority(root, key, source);
+    }
+    const generation = Math.max(2, await nextPublicationGeneration(root));
+    if (consumed !== undefined && generation !== consumed.finalization.generation + 1) {
+      throw new PipelineFailure('CONSUMED_GENERATION_MISMATCH');
+    }
+    const candidates = await buildAndVerifyProductionCandidates(loaded, root, generation, runtime);
+    if (consumed !== undefined) {
+      if (consumed.legacyMigration !== undefined) {
+        await persistLegacyMigration(root, consumed.legacyMigration);
+      }
+      await archiveConsumedGeneration(root, consumed);
+    } else {
+      await preserveSupersededUnconsumedAuthority(root, key);
+    }
     const finalization = signReceipt(candidates, key);
     const issuedAt = new Date();
     const receiptId = `wp03-arm-${randomBytes(16).toString('hex')}`;
@@ -1914,11 +2593,12 @@ async function buildAndVerifyProductionCandidates(
   const pins = await productionPins(loaded, runtime);
   const kitPins = productionKitPins(loaded, pins);
   const approvedValidators = await validatorAuthority(await checkoutCommit());
+  const kitPackageGeneration = 2;
   const teamA = productionTeamInput(
     loaded.teams[0],
     loaded.coreFiles,
     kitPins,
-    generation,
+    kitPackageGeneration,
     loaded.assembledAt,
     approvedValidators,
   );
@@ -1926,7 +2606,7 @@ async function buildAndVerifyProductionCandidates(
     loaded.teams[1],
     loaded.coreFiles,
     kitPins,
-    generation,
+    kitPackageGeneration,
     loaded.assembledAt,
     approvedValidators,
   );
@@ -4572,6 +5252,112 @@ async function runSigkillReviewScenario(
   }
 }
 
+async function seedConsumedGenerationOne(container: OwnedRoot): Promise<{
+  readonly root: OwnedRoot;
+  readonly key: string;
+  readonly finalization: FinalizationReceipt;
+  readonly arming: AuthorityArmingRecord;
+  readonly armingBytes: Uint8Array;
+}> {
+  reviewAuthorityRoot = join(container.path, 'fixed-authority-root');
+  const root = await openProductionRoot(true);
+  const paths = authorityPaths(root.path);
+  await mkdir(paths.directory, { recursive: true, mode: 0o700 });
+  const key = randomBytes(32).toString('hex');
+  await writeExclusiveNoFollow(paths.key, `${key}\n`);
+  await chmod(paths.key, 0o600);
+  const source = await authoritySourceIdentity();
+  const loaded = await loadCanonicalProductionInputsForPreflight();
+  const base = createReviewCandidates();
+  const candidates: CandidateSet = {
+    ...base,
+    pins: {
+      ...base.pins,
+      repositoryCommit: LEGACY_GENERATION_ONE_REPOSITORY_COMMIT,
+    },
+  };
+  const generatedFinalization = signReceipt(candidates, key);
+  const { signature: _generatedSignature, ...generatedUnsigned } = generatedFinalization;
+  const legacyUnsigned = {
+    ...generatedUnsigned,
+    receiptId: LEGACY_GENERATION_ONE_FINALIZATION_RECEIPT_ID,
+  };
+  const finalization: FinalizationReceipt = {
+    ...legacyUnsigned,
+    signature: createHmac('sha256', key).update(canonicalKitJson(legacyUnsigned)).digest('hex'),
+  };
+  const published = await publishTransaction(root, candidates, generatedFinalization, 'FULL', key);
+  if (published.status !== 'READY') throw new PipelineFailure('GENERATION_ONE_SETUP_FAILED');
+  const statusPath = join(root.path, 'bundle-readiness.json');
+  const status = strictStatus(JSON.parse(await readFile(statusPath, 'utf8')));
+  await chmod(statusPath, 0o600);
+  await writeFile(
+    statusPath,
+    canonicalBytes({
+      ...status,
+      authorizationReceiptId: finalization.receiptId,
+    }),
+    { mode: 0o600 },
+  );
+  const publicationLedgerPath = join(root.path, 'receipt-ledger.jsonl');
+  const publicationRecord = JSON.parse(
+    (await readFile(publicationLedgerPath, 'utf8')).trim(),
+  ) as Record<string, unknown>;
+  publicationRecord.receiptId = finalization.receiptId;
+  publicationRecord.receiptSha256 = sha256(canonicalKitJson(finalization));
+  await writeFile(publicationLedgerPath, `${canonicalKitJson(publicationRecord)}\n`, {
+    mode: 0o600,
+  });
+  const arming = signArmingRecord(
+    {
+      format: 'wp-03-production-arming/1',
+      receiptId: LEGACY_GENERATION_ONE_ARMING_RECEIPT_ID,
+      finalizationReceiptId: finalization.receiptId,
+      runId: RUN_ID,
+      externalRoot: root.path,
+      repositoryCommit: LEGACY_GENERATION_ONE_REPOSITORY_COMMIT,
+      blobClosureSha256: source.blobClosureSha256,
+      inputSnapshotSha256: loaded.snapshotSha256,
+      packetSourceCommit: LEGACY_GENERATION_ONE_REPOSITORY_COMMIT,
+      packetAggregateSha256: packetAggregate(loaded),
+      proofSha256: sha256(loaded.proofBytes),
+      assignments: candidates.teams.map((team, index) => ({
+        teamId: team.teamId,
+        assignmentId: loaded.teams[index]!.assignmentId,
+        assignmentSha256: team.assignmentSha256,
+        lessonIds: team.lessonIds,
+        archiveSha256: team.archiveSha256,
+        manifestSha256: team.manifestSha256,
+      })),
+      smokeExecutable: SMOKE_EXECUTABLE_PATH,
+      smokeExecutableSha256: sha256(await readFile(SMOKE_EXECUTABLE_PATH)),
+      pins: candidates.pins,
+      action: 'PACKAGE_KITS',
+      issuedAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 15 * 60_000).toISOString(),
+      lessonApprovalClaimed: false,
+      validationPassClaimed: false,
+    },
+    key,
+  );
+  await writeCanonicalAtomic(paths.finalization, finalization, root);
+  await writeCanonicalAtomic(paths.arming, arming, root);
+  const armingBytes = await readFile(paths.arming);
+  await writeFile(
+    paths.armingLedger,
+    `${canonicalKitJson({
+      consumedAt: new Date().toISOString(),
+      receiptId: arming.receiptId,
+      repositoryCommit: arming.repositoryCommit,
+      signatureSha256: sha256(arming.signature),
+    })}\n`,
+    { mode: 0o600 },
+  );
+  await guardedRemove(root, paths.arming, { force: true });
+  await syncDirectory(paths.directory);
+  return { root, key, finalization, arming, armingBytes };
+}
+
 async function runReviewScenario(
   scenario:
     | 'FULL_PIPELINE'
@@ -4597,6 +5383,7 @@ async function runReviewScenario(
     | 'AUTHORITY_EXECUTION_REPLAY'
     | 'PREFLIGHT_STATE_MACHINE'
     | 'STALE_AUTHORITY_REFRESH'
+    | 'CONSUMED_GENERATION_ROLLOVER'
     | 'GENERATION_TWO_PACKAGE'
     | 'REAL_VALIDATE_ONE_GATES'
     | 'REAL_SMOKE_EXECUTABLE'
@@ -5567,6 +6354,268 @@ async function runReviewScenario(
       await cleanupOwnedRoot(container);
     }
   }
+  if (scenario === 'CONSUMED_GENERATION_ROLLOVER') {
+    reviewAuthorityHead = await checkoutCommit();
+    reviewAuthorityDirty = false;
+    const resultCode = (
+      result: ProductionPreflightResult | Awaited<ReturnType<typeof prepareProductionAuthority>>,
+    ): string =>
+      result.status === 'BLOCKED' ? (result.blockers[0]?.code ?? 'BLOCKED') : result.status;
+    const archiveDigest = async (path: string): Promise<string> =>
+      sha256(
+        canonicalKitJson(
+          await Promise.all(
+            (await readdir(path))
+              .sort()
+              .map(async (name) => ({ name, sha256: sha256(await readFile(join(path, name))) })),
+          ),
+        ),
+      );
+    const happyContainer = await createOwnedRoot();
+    const otherContainers: OwnedRoot[] = [];
+    try {
+      const seeded = await seedConsumedGenerationOne(happyContainer);
+      const paths = authorityPaths(seeded.root.path);
+      const diagnosticBefore = resultCode(await preflightProductionKits());
+      const prepared = await prepareProductionAuthority();
+      const preparedReceipt = parseClosedReceipt(
+        JSON.parse(await readFile(paths.finalization, 'utf8')),
+      );
+      const preparedArmingBytes = await readFile(paths.arming);
+      const preparedFinalizationBytes = await readFile(paths.finalization);
+      const preflightAfter = (await preflightProductionKits()).status;
+      const keyAfterMigration = sha256(await readFile(paths.key));
+      const migration = JSON.parse(
+        await readFile(paths.legacyMigration, 'utf8'),
+      ) as LegacyGenerationOneMigration;
+      await archivedConsumptionRecords(paths, seeded.key);
+      const consumedPath = join(paths.consumed, `1-${seeded.finalization.receiptId}`);
+      const consumedArchiveBefore = await archiveDigest(consumedPath);
+      const currentGeneration = strictCurrent(
+        JSON.parse(await readFile(join(seeded.root.path, 'current.json'), 'utf8')),
+      ).generation;
+      await writeFile(paths.finalization, canonicalBytes(seeded.finalization), { mode: 0o600 });
+      await writeFile(paths.arming, seeded.armingBytes, { mode: 0o600 });
+      const replayRejected = resultCode(await preflightProductionKits());
+      await writeFile(paths.finalization, preparedFinalizationBytes, { mode: 0o600 });
+      await writeFile(paths.arming, preparedArmingBytes, { mode: 0o600 });
+      const secondPrepare = await prepareProductionAuthority();
+      const secondPrepareKeyUnchanged = keyAfterMigration === sha256(await readFile(paths.key));
+
+      await rm(paths.arming, { force: true });
+      await writeFile(paths.finalization, canonicalBytes(seeded.finalization), { mode: 0o600 });
+      const migrationReplay = await prepareProductionAuthority();
+      await writeFile(paths.finalization, preparedFinalizationBytes, { mode: 0o600 });
+      await writeFile(paths.arming, preparedArmingBytes, { mode: 0o600 });
+
+      const publishedGenerationTwo = await executeProductionKits();
+      if (publishedGenerationTwo.status !== 'READY') {
+        throw new PipelineFailure('GENERATION_TWO_PUBLISH_SETUP_FAILED');
+      }
+      const generationTwoArming = parseAuthorityArming(
+        JSON.parse(Buffer.from(preparedArmingBytes).toString('utf8')),
+      );
+      const normalArmingPath = join(
+        paths.armingEvidence,
+        generationTwoArming.receiptId,
+        'arming-receipt.json',
+      );
+      const normalArmingBytes = await readFile(normalArmingPath);
+      const normalLedgerBytes = await readFile(paths.armingLedger);
+      const corruptedArming = {
+        ...parseAuthorityArming(JSON.parse(Buffer.from(normalArmingBytes).toString('utf8'))),
+        signature: '0'.repeat(64),
+      };
+      await chmod(normalArmingPath, 0o600);
+      await writeFile(normalArmingPath, canonicalBytes(corruptedArming));
+      const corruptedNormalSignature = await prepareProductionAuthority();
+      await writeFile(normalArmingPath, normalArmingBytes);
+      await chmod(normalArmingPath, 0o400);
+      const ledgerLines = Buffer.from(normalLedgerBytes).toString('utf8').trim().split('\n');
+      const normalLedgerRecord = JSON.parse(ledgerLines.at(-1)!) as Record<string, unknown>;
+      normalLedgerRecord.armingReceiptSha256 = 'f'.repeat(64);
+      ledgerLines[ledgerLines.length - 1] = canonicalKitJson(normalLedgerRecord);
+      await writeFile(paths.armingLedger, `${ledgerLines.join('\n')}\n`, { mode: 0o600 });
+      const corruptedNormalLedger = await prepareProductionAuthority();
+      await writeFile(paths.armingLedger, normalLedgerBytes, { mode: 0o600 });
+      const generationThree = await prepareProductionAuthority();
+      if (generationThree.status === 'BLOCKED') {
+        throw new PipelineFailure(
+          `GENERATION_THREE_PREPARE_${generationThree.blockers[0]?.code ?? 'BLOCKED'}`,
+        );
+      }
+      const generationThreeReceipt = parseClosedReceipt(
+        JSON.parse(await readFile(paths.finalization, 'utf8')),
+      );
+      const consumedGenerationTwoPath = join(
+        paths.consumed,
+        `2-${(JSON.parse(Buffer.from(preparedFinalizationBytes).toString('utf8')) as FinalizationReceipt).receiptId}`,
+      );
+      const consumedArchiveAfter = await archiveDigest(consumedPath);
+
+      const makeMalformedSeed = async (): Promise<{
+        readonly container: OwnedRoot;
+        readonly seeded: Awaited<ReturnType<typeof seedConsumedGenerationOne>>;
+      }> => {
+        const container = await createOwnedRoot();
+        otherContainers.push(container);
+        return { container, seeded: await seedConsumedGenerationOne(container) };
+      };
+
+      const skip = await makeMalformedSeed();
+      const skipPaths = authorityPaths(skip.seeded.root.path);
+      const { signature: _skipSignature, ...skipUnsigned } = skip.seeded.finalization;
+      const skippedUnsigned = {
+        ...skipUnsigned,
+        generation: 2,
+        receiptId: `wp03-finalization-2-${randomBytes(8).toString('hex')}`,
+      };
+      const skipped: FinalizationReceipt = {
+        ...skippedUnsigned,
+        signature: createHmac('sha256', skip.seeded.key)
+          .update(canonicalKitJson(skippedUnsigned))
+          .digest('hex'),
+      };
+      await writeFile(skipPaths.finalization, canonicalBytes(skipped), { mode: 0o600 });
+      const generationSkipRejected = resultCode(await prepareProductionAuthority());
+
+      const mismatch = await makeMalformedSeed();
+      const mismatchedCurrentPath = join(mismatch.seeded.root.path, 'current.json');
+      const mismatchedCurrent = strictCurrent(
+        JSON.parse(await readFile(mismatchedCurrentPath, 'utf8')),
+      );
+      await writeFile(
+        mismatchedCurrentPath,
+        canonicalBytes({ ...mismatchedCurrent, generation: 2 }),
+        { mode: 0o600 },
+      );
+      const mismatchedCurrentRejected = resultCode(await prepareProductionAuthority());
+
+      const absent = await makeMalformedSeed();
+      await rm(authorityPaths(absent.seeded.root.path).armingLedger, { force: true });
+      const absentLedgerRejected = resultCode(await prepareProductionAuthority());
+
+      const mutateLegacyLedger = async (
+        mutate: (record: Record<string, unknown>) => void,
+        rawSuffix = '',
+      ): Promise<boolean> => {
+        const value = await makeMalformedSeed();
+        const path = authorityPaths(value.seeded.root.path).armingLedger;
+        const record = JSON.parse(await readFile(path, 'utf8')) as Record<string, unknown>;
+        mutate(record);
+        await writeFile(path, `${canonicalKitJson(record)}\n${rawSuffix}`, { mode: 0o600 });
+        return (await prepareProductionAuthority()).status === 'BLOCKED';
+      };
+      const ledgerReceiptIdRejected = await mutateLegacyLedger((record) => {
+        record.receiptId = `wp03-arm-${'e'.repeat(32)}`;
+      });
+      const ledgerCommitRejected = await mutateLegacyLedger((record) => {
+        record.repositoryCommit = 'e'.repeat(40);
+      });
+      const ledgerTimeRejected = await mutateLegacyLedger((record) => {
+        record.consumedAt = '2020-01-01T00:00:00.000Z';
+      });
+      const ledgerRawBytesRejected = await mutateLegacyLedger(() => undefined, ' ');
+
+      const statusMismatch = await makeMalformedSeed();
+      const statusPath = join(statusMismatch.seeded.root.path, 'bundle-readiness.json');
+      const statusValue = strictStatus(JSON.parse(await readFile(statusPath, 'utf8')));
+      (statusValue.current as Record<string, unknown>[])[0]!.archiveSha256 = 'e'.repeat(64);
+      await writeFile(statusPath, canonicalBytes(statusValue), { mode: 0o600 });
+      const statusMismatchRejected = (await prepareProductionAuthority()).status === 'BLOCKED';
+
+      const versionMismatch = await makeMalformedSeed();
+      const versionCurrent = strictCurrent(
+        JSON.parse(await readFile(join(versionMismatch.seeded.root.path, 'current.json'), 'utf8')),
+      );
+      const versionArchivePath = join(
+        versionMismatch.seeded.root.path,
+        versionCurrent.versionDirectory as string,
+        'team-A',
+        'team-A-complete.zip',
+      );
+      await chmod(versionArchivePath, 0o600);
+      await writeFile(versionArchivePath, Buffer.from('corrupt'), { mode: 0o400 });
+      const versionMismatchRejected = (await prepareProductionAuthority()).status === 'BLOCKED';
+
+      const finalizationMismatch = await makeMalformedSeed();
+      const finalizationPath = authorityPaths(finalizationMismatch.seeded.root.path).finalization;
+      const finalizationValue = parseClosedReceipt(
+        JSON.parse(await readFile(finalizationPath, 'utf8')),
+      );
+      await writeFile(
+        finalizationPath,
+        canonicalBytes({ ...finalizationValue, signature: 'e'.repeat(64) }),
+        { mode: 0o600 },
+      );
+      const finalizationMismatchRejected =
+        (await prepareProductionAuthority()).status === 'BLOCKED';
+
+      const publicationMismatch = await makeMalformedSeed();
+      const publicationPath = join(publicationMismatch.seeded.root.path, 'receipt-ledger.jsonl');
+      const publicationValue = JSON.parse(
+        (await readFile(publicationPath, 'utf8')).trim(),
+      ) as Record<string, unknown>;
+      publicationValue.receiptSha256 = 'e'.repeat(64);
+      await writeFile(publicationPath, `${canonicalKitJson(publicationValue)}\n`, {
+        mode: 0o600,
+      });
+      const publicationMismatchRejected = (await prepareProductionAuthority()).status === 'BLOCKED';
+
+      return {
+        status: 'READY',
+        evidence: {
+          diagnosticBefore,
+          preparedGeneration: preparedReceipt.generation,
+          preflightAfter,
+          consumedArchivePreserved: consumedArchiveBefore === consumedArchiveAfter,
+          consumedArchiveNotSuperseded: !(await pathExists(
+            join(paths.superseded, seeded.arming.receiptId),
+          )),
+          currentGenerationUnchanged: currentGeneration,
+          replayRejected,
+          generationSkipRejected,
+          mismatchedCurrentRejected,
+          absentLedgerRejected,
+          ledgerReceiptIdRejected,
+          ledgerCommitRejected,
+          ledgerTimeRejected,
+          ledgerRawBytesRejected,
+          statusMismatchRejected,
+          versionMismatchRejected,
+          finalizationMismatchRejected,
+          publicationMismatchRejected,
+          legacyMigrationAttested:
+            migration.migrationType === 'LEGACY_GENERATION_1_MIGRATION' &&
+            migration.allowedAction === 'MONOTONIC_ROLLOVER_TO_GENERATION_2_ONLY',
+          legacySignatureExplicitlyUnverified:
+            migration.originalArmingReceiptAvailable === false &&
+            migration.originalArmingSignatureVerified === false,
+          migrationKeyUnchanged: keyAfterMigration === sha256(await readFile(paths.key)),
+          migrationReplayRejected: resultCode(migrationReplay) === 'LEGACY_MIGRATION_ALREADY_USED',
+          secondPrepareRejected: resultCode(secondPrepare),
+          secondPrepareKeyUnchanged,
+          normalGenerationPrepared: generationThreeReceipt.generation,
+          normalAuthenticatedArmingEvidence: await pathExists(
+            join(consumedGenerationTwoPath, 'authenticated-arming-receipt.json'),
+          ),
+          normalLegacyFallbackAbsent: !(await pathExists(
+            join(consumedGenerationTwoPath, 'legacy-migration-attestation.json'),
+          )),
+          corruptedNormalSignatureRejected: corruptedNormalSignature.status === 'BLOCKED',
+          corruptedNormalLedgerHashRejected: corruptedNormalLedger.status === 'BLOCKED',
+          firstPrepareStatus: prepared.status,
+          generationThreeStatus: generationThree.status,
+        },
+      };
+    } finally {
+      reviewAuthorityRoot = undefined;
+      reviewAuthorityHead = undefined;
+      reviewAuthorityDirty = false;
+      await cleanupOwnedRoot(happyContainer);
+      for (const container of otherContainers) await cleanupOwnedRoot(container);
+    }
+  }
   if (scenario === 'SCRATCH_HYGIENE' || scenario === 'RECONCILE_OWNED_SCRATCH') {
     const removed =
       scenario === 'RECONCILE_OWNED_SCRATCH' ? await reconcileMarkedOwnedTestRoots() : [];
@@ -5727,7 +6776,12 @@ async function runReviewScenario(
       reviewAuthorityDirty = false;
       await writeFile(
         paths.armingLedger,
-        `${canonicalKitJson({ receiptId: parsed.receiptId })}\n`,
+        `${canonicalKitJson({
+          consumedAt: new Date().toISOString(),
+          receiptId: parsed.receiptId,
+          repositoryCommit: parsed.repositoryCommit,
+          signatureSha256: sha256(parsed.signature),
+        })}\n`,
         { mode: 0o600 },
       );
       let replay = 'ACCEPTED';
