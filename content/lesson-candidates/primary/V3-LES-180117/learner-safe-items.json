@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.2",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Omission is available and is not scored as a selected misconception.",
+  "items": [
+    {
+      "prompt_key": "SMO_ENTRY",
+      "title": "Starting check: relative deprivation",
+      "prompt": "Residents' conditions improve slightly, but nearby communities improve much faster, increasing residents' sense of unfairness. Which mechanism is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Relative deprivation from a widening perceived comparison gap",
+        "Absolute deprivation because conditions reached the lowest possible level",
+        "Urban renewal because public buildings were replaced",
+        "Globalization because all local boundaries disappeared"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "SMO_GUIDED",
+      "title": "Guided practice: organization",
+      "prompt": "A shared grievance persists for years, but collective action begins only after neighborhood groups build communication networks and assign coordinators. What changed?",
+      "response_type": "single_select",
+      "options": [
+        "The grievance appeared for the first time",
+        "Organizational capacity for sustained collective action",
+        "A specific tactic became the movement's entire purpose",
+        "Absolute resources became equal across all neighborhoods"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "SMO_LIGHT",
+      "title": "Less help: strategy versus tactic",
+      "prompt": "A movement adopts a multi-year plan to change hiring rules and holds a one-day march within that plan. Which classification is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Both are tactics because they involve collective action",
+        "The march is strategy and the multi-year plan is a tactic",
+        "The multi-year plan is strategy and the march is a tactic",
+        "Neither can be classified without measuring absolute deprivation"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "SMO_SOLO",
+      "title": "On your own: identify a tactic",
+      "prompt": "Which example is best classified as a tactic rather than a broad movement strategy?",
+      "response_type": "single_select",
+      "options": [
+        "Pursue long-term change in national labor standards",
+        "Build a durable coalition across several industries",
+        "Shift public interpretation of workplace fairness",
+        "Coordinate a single petition delivery on a chosen date"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "SMO_NEAR",
+      "title": "Near exit: explain emergence",
+      "prompt": "A population perceives a widening unfair gap, develops shared language for the grievance, and forms funded local chapters. What best explains movement emergence?",
+      "response_type": "single_select",
+      "options": [
+        "Relative deprivation combined with growing organizational capacity",
+        "Absolute hardship alone automatically creates coordinated action",
+        "One isolated tactic explains the entire movement structure",
+        "A city-specific policy history is required before any explanation"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "SMO_CHANGED",
+      "title": "Changed exit: hold grievance constant",
+      "prompt": "Two communities report the same relative deprivation. Only one develops sustained action after gaining leaders, meeting spaces, and communication tools. Which factor explains the difference?",
+      "response_type": "single_select",
+      "options": [
+        "The active community must have greater relative deprivation",
+        "The active community has greater organizational capacity",
+        "The inactive community selected the wrong urban-growth model",
+        "Both communities must use identical tactics at all times"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "SMO_REPAIR_NEAR",
+      "title": "Repair the emergence chain",
+      "prompt": "A neighborhood reports a widening fairness gap and also builds trained teams, meeting hubs, and communication lists. Which two-link explanation should be tested?",
+      "response_type": "single_select",
+      "options": [
+        "One tactic alone creates both the grievance and the entire organization",
+        "Absolute hardship automatically produces coordinated action without resources",
+        "Relative deprivation supplies motivation while organization supplies coordination",
+        "Urban renewal supplies motivation while globalization supplies all coordination"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "SMO_REENTRY_NEAR",
+      "title": "Fresh re-entry: workplace mobilization",
+      "prompt": "Workers compare stagnant wages with nearby gains, adopt a shared injustice frame, and create dues-funded committees across workplaces. What best explains movement emergence?",
+      "response_type": "single_select",
+      "options": [
+        "Absolute hardship alone, because organization is irrelevant",
+        "A single protest tactic, because grievances and resources are interchangeable",
+        "Urban decline combined with suburbanization",
+        "Relative deprivation combined with organizational capacity"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "SMO_REPAIR_CHANGED",
+      "title": "Repair causal isolation",
+      "prompt": "If two cases have equal grievance but different mobilization, what should be compared next?",
+      "response_type": "single_select",
+      "options": [
+        "Their networks, leadership, roles, and usable resources",
+        "Whether both communities repeat exactly the same public slogan",
+        "Only their absolute income rankings within each community",
+        "The total number of urban buildings located in each case"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "SMO_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: resource loss",
+      "prompt": "A movement's grievance and goal remain stable, but participation falls after communication channels and meeting sites are lost. What best explains the decline?",
+      "response_type": "single_select",
+      "options": [
+        "Relative deprivation necessarily disappeared",
+        "Reduced organizational capacity weakened mobilization",
+        "Global economic interdependence ended locally",
+        "The strategy became identical to one tactic"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "GLB_ENTRY",
+      "title": "Starting check: communication link",
+      "prompt": "A low-cost messaging platform lets organizations on several continents coordinate in real time. Which globalization factor is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Relative deprivation produced by neighborhood comparison gaps",
+        "Urban decline produced by long-term central-city disinvestment",
+        "Communication technology reducing coordination across distance",
+        "Suburbanization produced by residential movement toward city outskirts"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "GLB_GUIDED",
+      "title": "Guided practice: interdependence",
+      "prompt": "A component shortage in one country halts assembly in another and retail supply in a third. What does this illustrate?",
+      "response_type": "single_select",
+      "options": [
+        "Independent local economies with no shared production exposure",
+        "Gentrification driven by rising rents and higher-income in-migration",
+        "A social movement tactic directed only at local city government",
+        "Economic interdependence through a cross-border production chain"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "GLB_LIGHT",
+      "title": "Less help: compare perspectives",
+      "prompt": "One analysis emphasizes wider market access; another emphasizes unequal bargaining power in the same global supply chain. How should they be read?",
+      "response_type": "single_select",
+      "options": [
+        "They foreground different distributed effects of one connection",
+        "Only the second can use evidence from economic networks",
+        "Only the first can describe any globalization process",
+        "They prove communication technology has no social role"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "GLB_SOLO",
+      "title": "On your own: cultural hybridization",
+      "prompt": "A local music scene adopts a global style but combines it with local language and instruments. Which social change is best represented?",
+      "response_type": "single_select",
+      "options": [
+        "Complete cultural isolation despite ongoing cross-border exchange",
+        "Hybridization through global diffusion and local adaptation",
+        "Urban decline produced only by long-term central population loss",
+        "Uniform replacement of every local language and cultural form"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "GLB_NEAR",
+      "title": "Near exit: distinguish linked processes",
+      "prompt": "Online collaboration spreads a design rapidly, while production is divided across several countries. Which explanation is most complete?",
+      "response_type": "single_select",
+      "options": [
+        "The case contains no social or economic connection across distance",
+        "Only local urban renewal can explain both cross-distance changes",
+        "Communication technology and economic interdependence operate together",
+        "One movement tactic determines the entire communication and production network"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "GLB_CHANGED",
+      "title": "Changed exit: locate the transmitting link",
+      "prompt": "A port closure delays medicine production abroad despite uninterrupted internet communication. Which mechanism transmits the main disruption?",
+      "response_type": "single_select",
+      "options": [
+        "Cultural hybridization through globally shared media content",
+        "Suburbanization around the port through outward residential movement",
+        "Relative deprivation within a locally organized social movement",
+        "Economic interdependence through material supply links"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "GLB_REPAIR_NEAR",
+      "title": "Repair globalization tracing",
+      "prompt": "What should a globalization explanation identify before naming an effect?",
+      "response_type": "single_select",
+      "options": [
+        "The cross-distance connection and what flows through it",
+        "A policy recommendation for every connected country",
+        "A complete geopolitical history of all locations",
+        "Whether every local culture becomes identical"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "GLB_REENTRY_NEAR",
+      "title": "Fresh re-entry: transnational care network",
+      "prompt": "Families in several countries use video calls and shared transfers to coordinate caregiving. Which interpretation is strongest?",
+      "response_type": "single_select",
+      "options": [
+        "Urban decline eliminates every form of long-distance family interaction",
+        "Communication and economic links support a transnational social network",
+        "The families become culturally identical after one video call",
+        "A single neighborhood tactic explains all of the cross-border ties"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "GLB_REPAIR_CHANGED",
+      "title": "Repair transmission-path isolation",
+      "prompt": "If digital communication continues but a physical input cannot cross borders, which link should be examined?",
+      "response_type": "single_select",
+      "options": [
+        "Only the language used in online messages",
+        "Whether local music becomes culturally hybrid",
+        "The material supply chain connecting production sites",
+        "Whether a social movement changes its slogan"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "GLB_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: financial shock",
+      "prompt": "A lending contraction in one region reduces investment by firms in several connected countries. Which explanation fits best?",
+      "response_type": "single_select",
+      "options": [
+        "Cultural diffusion makes all firms use identical symbols",
+        "Urban renewal directly moves every firm to a suburb",
+        "Relative deprivation automatically creates a movement",
+        "Economic interdependence transmits a financial shock"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "URB_ENTRY",
+      "title": "Starting check: urban growth",
+      "prompt": "Manufacturing jobs concentrate near a transport hub, and population grows around the hub. Which process is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Industrialization contributing to urban growth",
+        "Suburbanization away from an urban core",
+        "Gentrification through higher-income in-migration",
+        "Urban decline through central disinvestment"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "URB_GUIDED",
+      "title": "Guided practice: suburbanization",
+      "prompt": "Households and retail activity move from a central city toward surrounding residential areas. Which process is described?",
+      "response_type": "single_select",
+      "options": [
+        "Urbanization from rural areas into a growing central-city core population",
+        "Suburbanization through outward residential and activity movement",
+        "Gentrification within a lower-income central neighborhood after reinvestment",
+        "Globalization through a cross-border production, trade, and communication chain"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "URB_LIGHT",
+      "title": "Less help: urban decline",
+      "prompt": "A central district loses population and employers while buildings receive less investment. Which process best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Urban growth",
+        "Suburban renewal",
+        "Urban decline",
+        "Cultural hybridization"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "URB_SOLO",
+      "title": "On your own: planned redevelopment",
+      "prompt": "A city funds rehabilitation of public buildings and utilities without evidence of higher-income in-migration. Which label is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Gentrification necessarily causing displacement",
+        "Suburbanization through household movement outward",
+        "Urban decline through loss of investment",
+        "Urban renewal through planned redevelopment"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "URB_NEAR",
+      "title": "Near exit: linked outward movement and decline",
+      "prompt": "Population and businesses move toward suburbs while the central core loses tax base and investment. Which explanation is most complete?",
+      "response_type": "single_select",
+      "options": [
+        "Suburbanization occurs alongside urban decline",
+        "Gentrification occurs without any neighborhood investment",
+        "Urban growth occurs equally in every spatial zone",
+        "Global communication causes complete cultural uniformity"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "URB_CHANGED",
+      "title": "Changed exit: distinguish gentrification",
+      "prompt": "A lower-income neighborhood receives new investment, higher-income residents move in, rents rise, and displacement pressure increases. Which process is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Urban decline caused by withdrawal of all investment",
+        "Gentrification involving reinvestment and socioeconomic change",
+        "Suburbanization caused only by movement away from the core",
+        "Industrialization caused by new manufacturing employment"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "URB_REPAIR_NEAR",
+      "title": "Repair linked spatial change",
+      "prompt": "Residents and firms move toward a metro edge while the old core loses revenue and maintenance. Which paired interpretation preserves both links?",
+      "response_type": "single_select",
+      "options": [
+        "Gentrification alongside rising central investment",
+        "Globalization alongside cultural uniformity",
+        "Suburbanization alongside urban decline",
+        "Urban renewal alongside equal growth in every zone"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "URB_REENTRY_NEAR",
+      "title": "Fresh re-entry: edgeward relocation",
+      "prompt": "Over a decade, jobs and households relocate to outer municipalities while central vacancies rise and public investment contracts. Which linked change is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Gentrification coupled with rising core investment",
+        "Urban renewal coupled with stable central occupancy",
+        "Industrialization coupled with equal growth in all zones",
+        "Suburbanization coupled with urban decline"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "URB_REPAIR_CHANGED",
+      "title": "Repair renewal–gentrification boundary",
+      "prompt": "What additional evidence is needed to distinguish gentrification from redevelopment alone?",
+      "response_type": "single_select",
+      "options": [
+        "Higher-income in-migration with rising costs or displacement pressure",
+        "Whether the city publishes a formal redevelopment project schedule and budget",
+        "Whether any building receives a new coat of exterior paint during renewal",
+        "Whether the neighborhood lies entirely inside the city's municipal boundaries"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "URB_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: renewal without replacement",
+      "prompt": "Transit and parks are renovated, but resident income distribution, rents, and displacement remain stable. Which conclusion is strongest?",
+      "response_type": "single_select",
+      "options": [
+        "Gentrification is proven whenever any physical improvement occurs in the area",
+        "Urban renewal is supported, while gentrification is not established",
+        "Suburbanization is proven despite no outward resident or business movement",
+        "Urban decline is proven because public infrastructure spending increased"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    }
+  ]
+}

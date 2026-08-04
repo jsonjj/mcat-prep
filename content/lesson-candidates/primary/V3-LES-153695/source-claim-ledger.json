@@ -1,0 +1,211 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-153695",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-153695",
+    "grouping_id": "V3-CL-153695",
+    "ordered_kc_ids": [
+      "V3-KC-409560",
+      "V3-KC-893463",
+      "V3-KC-229383"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020",
+      "AAMC-2020-MCAT-CONTENT"
+    ],
+    "source_class": "PUBLIC_PRIMARY_RESEARCH",
+    "source_anchor_ids": [
+      "PS-SA-AAMC-6B"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "54d0ce7b0c5322b534119a67acb6bbd5442539fae79a247a1dcdeca3aa017d4c",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100133",
+      "source_occurrence_id": "V3-SRC-100133",
+      "source_id": "AAMC-2020",
+      "official_topic": "Language",
+      "printed_pages": [
+        85
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-6B"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200087",
+      "source_occurrence_id": "V3-SRC-200087",
+      "source_id": "AAMC-2020-MCAT-CONTENT",
+      "official_topic": null,
+      "printed_pages": [
+        83,
+        84,
+        85
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-6B"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "LDT-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-409560",
+      "authorial_claim": "Compare learning, nativist, and interactionist accounts by matching each account's mechanism to developmental evidence.",
+      "scope_in_refs": [
+        "V3-KC-409560:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-409560:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-6B"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100133",
+        "V3-SRC-200087"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600370",
+        "V3-MAP-600829"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "LCG-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-893463",
+      "authorial_claim": "Explain how language can influence attention, categorization, and memory without claiming that language rigidly determines possible thought.",
+      "scope_in_refs": [
+        "V3-KC-893463:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-893463:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-6B"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100133",
+        "V3-SRC-200087"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600371",
+        "V3-MAP-600629"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "BLS-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-229383",
+      "authorial_claim": "Relate frontal production, temporal comprehension, connecting white-matter, auditory, and motor systems to language and speech tasks without making clinical diagnoses.",
+      "scope_in_refs": [
+        "V3-KC-229383:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-229383:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-6B"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100133",
+        "V3-SRC-200087"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600372",
+        "V3-MAP-601513"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-280641",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-938420",
+        "V3-MOD-741509"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 50,
+          "relation_ids": [
+            "R14-PL-581402-050"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 50,
+          "relation_ids": [
+            "R14-PL-904137-050"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-315978",
+          "position": 13,
+          "relation_ids": [
+            "R14-PL-315978-013"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-153695",
+      "revisit_relation_ids": [
+        "R14-RV-153695"
+      ]
+    },
+    "hard_prerequisite_relation_ids": [],
+    "required_attachment_relation_ids": [],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}
