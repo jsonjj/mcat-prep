@@ -1429,6 +1429,13 @@ function uniqueProtectedIndex(
   return index;
 }
 
+function learnerSafePostCommitmentFeedback(record: Json): string | null {
+  if (record.feedback_release_point !== 'AFTER_COMMITMENT_ONLY') return null;
+  if (typeof record.post_commitment_feedback !== 'string') return null;
+  const feedback = record.post_commitment_feedback.trim();
+  return feedback.length > 0 ? feedback : null;
+}
+
 function l2ServerAnswer(
   item: NormalizedItem,
   record: Json,
@@ -1486,12 +1493,8 @@ function l2ServerAnswer(
     responseType: item.projection.responseType,
     correctChoiceId,
     acceptedResponses: normalizedAccepted,
-    rationale:
-      typeof record.rationale === 'string'
-        ? record.rationale
-        : typeof record.post_commitment_feedback === 'string'
-          ? record.post_commitment_feedback
-          : null,
+    rationale: typeof record.rationale === 'string' ? record.rationale : null,
+    learnerSafePostCommitmentFeedback: learnerSafePostCommitmentFeedback(record),
   };
 }
 
@@ -1522,6 +1525,7 @@ function l3ServerAnswer(
     primaryKcId: item.primaryKcId,
     responseType: item.projection.responseType,
     rationale: typeof record.rationale === 'string' ? record.rationale : null,
+    learnerSafePostCommitmentFeedback: learnerSafePostCommitmentFeedback(record),
   };
   if (control.kind === 'SINGLE_SELECT') {
     if (

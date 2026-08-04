@@ -1,5 +1,9 @@
 import { Authority } from '@mcat/authority-core';
-import { InMemoryAuthorityRepository, toProjectionRecord, type Principal } from '@mcat/authority-kernel';
+import {
+  InMemoryAuthorityRepository,
+  toProjectionRecord,
+  type Principal,
+} from '@mcat/authority-kernel';
 import { TARGET_LESSON_ID } from '@mcat/content/v3-vector-lesson';
 import {
   VectorLessonCommandSchema,
@@ -7,9 +11,14 @@ import {
   fixedClock,
   hasEligibleEvidenceMode,
 } from '@mcat/contracts';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
-import { createRepoLessonContentProvider, type LessonContentProvider } from './lesson-content-provider';
+import {
+  createRepoLessonContentProvider,
+  createRepoLessonRevisionProvider,
+  type LessonContentProvider,
+  type LoadedLessonRevision,
+} from './lesson-content-provider';
 import {
   normalizedLessonResponseSubmission,
   normalizedLessonResponseSubmissions,
@@ -28,15 +37,52 @@ const L2 = 'V3-LES-789208';
 const L3 = 'V3-LES-844372';
 
 const provider: LessonContentProvider = createRepoLessonContentProvider();
+const revisionProvider = createRepoLessonRevisionProvider();
+const revisions = new Map<string, LoadedLessonRevision>();
 
-function correctResponseFor(lessonId: string, itemId: string): EngineResponse {
-  const answer = provider.getAnswerKey(lessonId).byItemId[itemId];
-  if (answer === undefined) throw new Error(`no answer for ${itemId}`);
-  if (answer.correctChoiceId !== null) return { kind: 'MULTIPLE_CHOICE', choiceId: answer.correctChoiceId };
+beforeAll(async () => {
+  await Promise.all(
+    [L2, L3].map(async (lessonId) => {
+      revisions.set(lessonId, await revisionProvider.loadActiveRevision({ lessonId }));
+    }),
+  );
+});
+
+function revisionFor(lessonId: string): LoadedLessonRevision {
+  const revision = revisions.get(lessonId);
+  if (revision === undefined) throw new Error(`revision not loaded for ${lessonId}`);
+  return revision;
+}
+
+function correctResponseFor(revision: LoadedLessonRevision, itemId: string): EngineResponse {
+  const answer = revision.protectedAuthority.answerKey.byItemId[itemId];
+  const item = revision.lesson.items.find((candidate) => candidate.itemId === itemId);
+  if (answer === undefined || item === undefined) throw new Error(`no answer for ${itemId}`);
+  if (answer.correctChoiceId !== null)
+    return { kind: 'MULTIPLE_CHOICE', choiceId: answer.correctChoiceId };
   if (answer.structuredAuthority !== undefined) {
+    const control = item.projection.responseControl;
+    if (control?.kind !== 'STRUCTURED_FIELDS')
+      throw new Error(`no structured control for ${itemId}`);
+    const authority = answer.structuredAuthority as {
+      expected_equation_forms?: readonly string[];
+      expected_solution_pair?: readonly string[];
+    };
+    const equations = [...(authority.expected_equation_forms ?? [])];
+    const pair = (authority.expected_solution_pair ?? []).map((part) =>
+      part.split('=').at(-1)?.trim(),
+    );
+    let equationIndex = 0;
     return {
       kind: 'CONSTRUCTED',
-      fields: Object.fromEntries(answer.acceptedResponses.map((part, index) => [`f${index}`, part])),
+      fields: Object.fromEntries(
+        control.fields.map(({ fieldId }) => [
+          fieldId,
+          fieldId.includes('solution')
+            ? `(${pair.join(', ')})`
+            : (equations[equationIndex++] ?? '__missing_authority__'),
+        ]),
+      ),
     };
   }
   return { kind: 'SHORT', text: answer.acceptedResponses[0] ?? '' };
@@ -45,23 +91,24 @@ function correctResponseFor(lessonId: string, itemId: string): EngineResponse {
 /** Walk a lesson with correct answers, keyed by itemId → the submission the seam produced. */
 function collectSubmissions(lessonId: string): Map<string, LessonResponseSubmission> {
   const out = new Map<string, LessonResponseSubmission>();
-  let run = createNormalizedLessonRun({ lessonId, now: NOW, provider });
+  const revision = revisionFor(lessonId);
+  let run = createNormalizedLessonRun({ revision, now: NOW });
   for (let guard = 0; guard < 2000; guard += 1) {
     if (run.status !== 'IN_PROGRESS') break;
-    const { screen } = renderNormalizedLessonRun(run, provider);
+    const { screen } = renderNormalizedLessonRun(run, revision);
     if (screen.kind === 'QUESTION') {
       const before = run;
       run = applyNormalizedLessonAction(
         run,
-        { type: 'SUBMIT_RESPONSE', response: correctResponseFor(lessonId, screen.itemId) },
+        { type: 'SUBMIT_RESPONSE', response: correctResponseFor(revision, screen.itemId) },
         NOW,
-        provider,
+        revision,
       );
       for (const submission of normalizedLessonResponseSubmissions(before, run, provider)) {
         out.set(submission.response.itemBindingId, submission);
       }
     } else if (screen.kind === 'FEEDBACK' || screen.kind === 'EXPOSITION') {
-      run = applyNormalizedLessonAction(run, { type: 'CONTINUE' }, NOW, provider);
+      run = applyNormalizedLessonAction(run, { type: 'CONTINUE' }, NOW, revision);
     } else {
       break;
     }
@@ -96,7 +143,8 @@ describe('normalized-lesson-response-source — every committed response becomes
         expect(submission.response.revealUsed, itemId).toBe(false);
         // Correct walk → the server re-derives 'correct' from the answer key.
         expect(submission.scoring.scoringValid, itemId).toBe(true);
-        if (submission.scoring.scoringValid) expect(submission.scoring.outcome, itemId).toBe('correct');
+        if (submission.scoring.scoringValid)
+          expect(submission.scoring.outcome, itemId).toBe('correct');
       }
     });
   }
@@ -125,12 +173,14 @@ describe('normalized-lesson-response-source — every committed response becomes
       .projection.choices.find((c) => c.choiceId !== key?.correctChoiceId)!;
     const submission = normalizedLessonResponseSubmission(
       {
+        stepId: 'GRAPH-SCREEN-ENTRY',
         itemId: 'ALG-GRAPH-ENTRY-01',
         primaryKcId: 'V3-KC-452593',
         activityRole: 'ENTRY_CHECK',
         exitFunction: 'NONE',
         isReentry: false,
         response: { kind: 'MULTIPLE_CHOICE', choiceId: wrongChoice.choiceId },
+        outcome: 'CORRECT',
         correct: true, // the lie
         committedAt: NOW,
       },
@@ -186,7 +236,11 @@ async function startProbe() {
   const guest = authority.createGuest();
   guest.onboarding.diagnosticComplete = true;
   const repository = new InMemoryAuthorityRepository([toProjectionRecord(guest, 0, NOW)]);
-  const principal: Principal = { kind: 'guest', learnerId: guest.learnerId, sessionId: crypto.randomUUID() };
+  const principal: Principal = {
+    kind: 'guest',
+    learnerId: guest.learnerId,
+    sessionId: crypto.randomUUID(),
+  };
 
   const queued: LessonResponseSubmission[] = [];
   const kernel = new RepositoryLearnerKernel({
@@ -198,7 +252,10 @@ async function startProbe() {
 
   let streamVersion = 0;
   const started = (await kernel.handleVectorLessonStart(
-    VectorLessonStartCommandSchema.parse({ envelope: envelope(streamVersion), lessonId: WIRED_LESSON_ID }),
+    VectorLessonStartCommandSchema.parse({
+      envelope: envelope(streamVersion),
+      lessonId: WIRED_LESSON_ID,
+    }),
     principal,
   )) as { streamVersion: number };
   streamVersion = started.streamVersion;
@@ -209,7 +266,9 @@ async function startProbe() {
     return projection.state as unknown as PersistedState;
   };
 
-  const submit = async (submission: LessonResponseSubmission): Promise<LessonResponseRecord | undefined> => {
+  const submit = async (
+    submission: LessonResponseSubmission,
+  ): Promise<LessonResponseRecord | undefined> => {
     queued.push(submission);
     const view = (await kernel.vectorLessonRun(principal)) as unknown as {
       runId: string;
@@ -220,10 +279,19 @@ async function startProbe() {
       | undefined;
     const action =
       view.screen.kind === 'QUESTION'
-        ? { type: 'SUBMIT_RESPONSE', choiceId: VECTOR_LESSON_PROTECTED_ANSWERS[run?.currentItemId ?? '']?.correctChoiceId ?? null }
+        ? {
+            type: 'SUBMIT_RESPONSE',
+            choiceId:
+              VECTOR_LESSON_PROTECTED_ANSWERS[run?.currentItemId ?? '']?.correctChoiceId ?? null,
+          }
         : { type: 'CONTINUE' };
     const accepted = (await kernel.handleVectorLessonCommand(
-      VectorLessonCommandSchema.parse({ envelope: envelope(streamVersion), runId: view.runId, screenToken: view.screen.screenToken, action }),
+      VectorLessonCommandSchema.parse({
+        envelope: envelope(streamVersion),
+        runId: view.runId,
+        screenToken: view.screen.screenToken,
+        action,
+      }),
       principal,
     )) as { streamVersion: number };
     streamVersion = accepted.streamVersion;

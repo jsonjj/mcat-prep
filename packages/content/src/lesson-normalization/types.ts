@@ -192,6 +192,11 @@ export interface CanonicalServerItemAnswer {
   readonly correctChoiceId: string | null;
   readonly acceptedResponses: readonly string[];
   readonly rationale: string | null;
+  /**
+   * Explicitly authored learner-safe text licensed only for release after an
+   * immutable response commitment. Absent on the isolated legacy L1 authority.
+   */
+  readonly learnerSafePostCommitmentFeedback?: string | null;
   readonly structuredAuthority?: Readonly<Record<string, unknown>>;
 }
 

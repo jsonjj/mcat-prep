@@ -45,8 +45,17 @@ const runView = {
     itemId: 'v3-les-789208-item-1',
     kcId: 'V3-KC-399019',
     heading: 'Scaling check',
+    contentBlocks: ['Decode the scale, then commit one response.'],
     prompt: 'Express 0.0042 in scientific notation.',
-    responseType: 'single_select',
+    control: {
+      kind: 'SINGLE_SELECT',
+      choices: [
+        { choiceId: 'A', text: '4.2 × 10⁻³' },
+        { choiceId: 'B', text: '42 × 10⁻⁴' },
+        { choiceId: 'C', text: '4.2 × 10³' },
+        { choiceId: 'D', text: '0.42 × 10⁻²' },
+      ],
+    },
     choices: [
       { choiceId: 'A', text: '4.2 × 10⁻³' },
       { choiceId: 'B', text: '42 × 10⁻⁴' },
@@ -66,7 +75,11 @@ describe('HttpAuthorityClient normalized-catalog slug routing', () => {
         calls.push(request);
         if (request.url.endsWith('/v1/bootstrap')) return Response.json(bootstrap);
         if (request.url.endsWith(`/v1/lessons/${L2_SLUG}/status`)) {
-          return Response.json({ availability: 'AVAILABLE', runState: 'NOT_STARTED', actionLabel: 'Start' });
+          return Response.json({
+            availability: 'AVAILABLE',
+            runState: 'NOT_STARTED',
+            actionLabel: 'Start',
+          });
         }
         if (request.url.endsWith(`/v1/lessons/${L2_SLUG}/start`)) {
           const command = NormalizedLessonStartCommandSchema.parse(
@@ -93,7 +106,9 @@ describe('HttpAuthorityClient normalized-catalog slug routing', () => {
 
     await client.bootstrap();
     expect(await client.getNormalizedLessonStatus(L2_SLUG)).toMatchObject({ actionLabel: 'Start' });
-    expect(await client.startNormalizedLesson(L2_SLUG, L2)).toMatchObject({ disposition: 'STARTED' });
+    expect(await client.startNormalizedLesson(L2_SLUG, L2)).toMatchObject({
+      disposition: 'STARTED',
+    });
     expect((await client.getNormalizedLessonRun(L2_SLUG)).screen.kind).toBe('QUESTION');
     await client.submitNormalizedLessonAction(L2_SLUG, {
       type: 'SUBMIT_RESPONSE',
@@ -102,7 +117,9 @@ describe('HttpAuthorityClient normalized-catalog slug routing', () => {
 
     // Every endpoint was addressed under the lesson's OWN slug.
     for (const segment of ['status', 'start', 'run', 'commands']) {
-      expect(calls.some((call) => call.url.endsWith(`/v1/lessons/${L2_SLUG}/${segment}`))).toBe(true);
+      expect(calls.some((call) => call.url.endsWith(`/v1/lessons/${L2_SLUG}/${segment}`))).toBe(
+        true,
+      );
     }
     // The start body carries the id and the pre-start stream version; the command
     // that follows advances on the accepted stream — same envelope discipline the
@@ -132,6 +149,8 @@ describe('HttpAuthorityClient normalized-catalog slug routing', () => {
     });
 
     await client.bootstrap();
-    await expect(client.getNormalizedLessonRun(L2_SLUG)).rejects.toMatchObject({ name: 'ZodError' });
+    await expect(client.getNormalizedLessonRun(L2_SLUG)).rejects.toMatchObject({
+      name: 'ZodError',
+    });
   });
 });

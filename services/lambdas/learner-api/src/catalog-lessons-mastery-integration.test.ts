@@ -175,14 +175,36 @@ async function walkVectorLesson(env: ReturnType<typeof freshKernel>): Promise<vo
 
 function correctResponseFor(lessonId: string, itemId: string): EngineResponse {
   const answer = provider.getAnswerKey(lessonId).byItemId[itemId];
+  const item = provider
+    .getNormalizedLesson(lessonId)
+    .items.find((candidate) => candidate.itemId === itemId);
   if (answer === undefined) throw new Error(`no answer for ${itemId}`);
   if (answer.correctChoiceId !== null) {
     return { kind: 'MULTIPLE_CHOICE', choiceId: answer.correctChoiceId };
   }
   if (answer.structuredAuthority !== undefined) {
+    const control = item?.projection.responseControl;
+    if (control?.kind !== 'STRUCTURED_FIELDS')
+      throw new Error(`no structured control for ${itemId}`);
+    const authority = answer.structuredAuthority as {
+      expected_equation_forms?: readonly string[];
+      expected_solution_pair?: readonly string[];
+    };
+    const equations = [...(authority.expected_equation_forms ?? [])];
+    const pair = (authority.expected_solution_pair ?? []).map((part) =>
+      part.split('=').at(-1)?.trim(),
+    );
+    let equationIndex = 0;
     return {
       kind: 'CONSTRUCTED',
-      fields: Object.fromEntries(answer.acceptedResponses.map((part, index) => [`f${index}`, part])),
+      fields: Object.fromEntries(
+        control.fields.map(({ fieldId }) => [
+          fieldId,
+          fieldId.includes('solution')
+            ? `(${pair.join(', ')})`
+            : (equations[equationIndex++] ?? '__missing_authority__'),
+        ]),
+      ),
     };
   }
   return { kind: 'SHORT', text: answer.acceptedResponses[0] ?? '' };
@@ -252,9 +274,8 @@ function observe(state: PersistedState): Observed {
  * runtime scores from) inside the assertion, so a silent drift in either source is
  * caught rather than mirrored.
  *
- * `passesPerKc`: L1/L3 mark each KC's second exit as a miss-gated re-entry
- * (`isReentry`, pinned by the normalization suite), so a clean walk fires one; L2
- * carries no re-entry marking, so both of its baseline changed exits per KC fire.
+ * `passesPerKc`: each canonical clean baseline contains one changed exit per KC.
+ * Repair and exact-re-entry items remain branch-only and never run on a clean walk.
  */
 const EXPECTED: Readonly<
   Record<string, { readonly kcs: readonly string[]; readonly passesPerKc: number }>
@@ -262,7 +283,7 @@ const EXPECTED: Readonly<
   [L1]: { kcs: ['V3-KC-159529', 'V3-KC-700208', 'V3-KC-866848'], passesPerKc: 1 },
   [L2]: {
     kcs: ['V3-KC-399019', 'V3-KC-799492', 'V3-KC-919842', 'V3-KC-981438'],
-    passesPerKc: 2,
+    passesPerKc: 1,
   },
   [L3]: { kcs: ['V3-KC-008681', 'V3-KC-238607', 'V3-KC-452593'], passesPerKc: 1 },
 };
@@ -330,7 +351,7 @@ describe('the whole catalog discounts P(L) on changed exits only, through the gu
     assertGuessChannelDiscipline(L1, observe(env.persisted()));
   });
 
-  it('L2 (normalized engine) moves P(L) twice per KC — both baseline changed exits — over four KCs', async () => {
+  it('L2 (normalized engine) moves P(L) once per KC on the canonical clean changed exits', async () => {
     const env = freshKernel();
     expect(await walkNormalizedLesson(env, L2)).toBe('COMPLETE');
     assertGuessChannelDiscipline(L2, observe(env.persisted()));

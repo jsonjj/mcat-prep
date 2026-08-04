@@ -55,11 +55,63 @@ const NormalizedChoiceSchema = z
   })
   .strict();
 
+const NormalizedStructuredFieldSchema = z
+  .object({
+    fieldId: z.string().min(1),
+    label: z.string(),
+  })
+  .strict();
+
+export const NormalizedLessonResponseControlSchema = z
+  .discriminatedUnion('kind', [
+    z
+      .object({
+        kind: z.literal('SINGLE_SELECT'),
+        choices: z.array(NormalizedChoiceSchema).min(1),
+      })
+      .strict(),
+    z
+      .object({
+        kind: z.literal('SHORT_TEXT'),
+        inputConvention: z
+          .object({
+            normalization: z.literal('TRIM_AND_COLLAPSE_WHITESPACE'),
+            matching: z.literal('AUTHORED_EQUIVALENTS_ONLY'),
+            caseSensitive: z.literal(true),
+          })
+          .strict(),
+      })
+      .strict(),
+    z
+      .object({
+        kind: z.literal('STRUCTURED_FIELDS'),
+        fields: z.array(NormalizedStructuredFieldSchema).min(1),
+      })
+      .strict(),
+  ])
+  .superRefine((control, context) => {
+    if (control.kind === 'STRUCTURED_FIELDS') {
+      const seen = new Set<string>();
+      control.fields.forEach(({ fieldId }, index) => {
+        if (seen.has(fieldId)) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['fields', index, 'fieldId'],
+            message: `duplicate fieldId "${fieldId}"`,
+          });
+        }
+        seen.add(fieldId);
+      });
+    }
+  });
+export type NormalizedLessonResponseControl = z.infer<typeof NormalizedLessonResponseControlSchema>;
+
 const ExpositionScreenSchema = z
   .object({
     kind: z.literal('EXPOSITION'),
-    itemId: z.string().min(1),
     heading: z.string(),
+    contentBlocks: z.array(z.string()).min(1),
+    /** Compatibility text for the current WP-05E renderer. */
     prompt: z.string(),
   })
   .strict();
@@ -70,10 +122,13 @@ const QuestionScreenSchema = z
     itemId: z.string().min(1),
     kcId: z.string().min(1),
     heading: z.string(),
+    contentBlocks: z.array(z.string()),
     prompt: z.string(),
-    /** Projection response type (`single_select`, `SHORT_RESPONSE`, `constructed_*`, …). */
-    responseType: z.string().min(1),
-    /** Learner-safe options: id + text only. Empty for short/constructed items. */
+    control: NormalizedLessonResponseControlSchema,
+    /**
+     * Temporary WP-05E compatibility projection. `control` is canonical; this
+     * is identical to SINGLE_SELECT.choices and empty for the other controls.
+     */
     choices: z.array(NormalizedChoiceSchema),
   })
   .strict();
@@ -82,7 +137,8 @@ const FeedbackScreenSchema = z
   .object({
     kind: z.literal('FEEDBACK'),
     itemId: z.string().min(1),
-    outcome: z.enum(['CORRECT', 'INCORRECT']),
+    outcome: z.enum(['CORRECT', 'INCORRECT', 'OMITTED', 'INVALID']),
+    message: z.string().min(1),
   })
   .strict();
 
@@ -143,20 +199,45 @@ export const NormalizedLessonStartResponseSchema = z
 export type NormalizedLessonStartResponse = z.infer<typeof NormalizedLessonStartResponseSchema>;
 
 /**
- * A committed response, in the three encodings the engine scores. `null` is the
- * "omitted" signal in every shape (no selection / blank text / all-blank
- * fields); the server derives correctness from its own key, never from the wire.
+ * A committed response, in the three encodings the engine scores. Structured
+ * fields remain an ordered list until runtime validation so duplicate IDs
+ * cannot be hidden by JSON-object key replacement.
  */
-export const NormalizedLessonResponseSchema = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('MULTIPLE_CHOICE'), choiceId: z.string().min(1).nullable() }).strict(),
-  z.object({ kind: z.literal('SHORT'), text: z.string().nullable() }).strict(),
-  z
-    .object({
-      kind: z.literal('CONSTRUCTED'),
-      fields: z.record(z.string(), z.string().nullable()),
-    })
-    .strict(),
-]);
+const NormalizedStructuredResponseFieldSchema = z
+  .object({
+    fieldId: z.string().min(1),
+    value: z.string().nullable(),
+  })
+  .strict();
+
+export const NormalizedLessonResponseSchema = z
+  .discriminatedUnion('kind', [
+    z
+      .object({ kind: z.literal('MULTIPLE_CHOICE'), choiceId: z.string().min(1).nullable() })
+      .strict(),
+    z.object({ kind: z.literal('SHORT'), text: z.string().nullable() }).strict(),
+    z
+      .object({
+        kind: z.literal('CONSTRUCTED'),
+        fields: z.array(NormalizedStructuredResponseFieldSchema).min(1),
+      })
+      .strict(),
+  ])
+  .superRefine((response, context) => {
+    if (response.kind === 'CONSTRUCTED') {
+      const seen = new Set<string>();
+      response.fields.forEach(({ fieldId }, index) => {
+        if (seen.has(fieldId)) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['fields', index, 'fieldId'],
+            message: `duplicate fieldId "${fieldId}"`,
+          });
+        }
+        seen.add(fieldId);
+      });
+    }
+  });
 export type NormalizedLessonResponse = z.infer<typeof NormalizedLessonResponseSchema>;
 
 export const NormalizedLessonActionSchema = z.discriminatedUnion('type', [

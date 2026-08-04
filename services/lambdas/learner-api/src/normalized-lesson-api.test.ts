@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { createRepositoryLearnerApi } from './handler';
 import type { ApiGatewayV2Event } from './http';
 import { createRepoLessonContentProvider, type ServerItemAnswer } from './lesson-content-provider';
-import type { EngineResponse } from './normalized-lesson-runtime';
+import type { NormalizedLessonSubmittedResponse } from './normalized-lesson-runtime';
 import { createLinkedSessionDouble } from './test-support/linked-session';
 
 /**
@@ -34,16 +34,36 @@ const L3_SLUG = 'v3-les-844372';
 const provider = createRepoLessonContentProvider();
 
 /** The correct committed response for a scored item, from the SERVER-ONLY key. */
-function correctResponseFor(lessonId: string, itemId: string): EngineResponse {
+function correctResponseFor(lessonId: string, itemId: string): NormalizedLessonSubmittedResponse {
   const answer: ServerItemAnswer | undefined = provider.getAnswerKey(lessonId).byItemId[itemId];
+  const item = provider
+    .getNormalizedLesson(lessonId)
+    .items.find((candidate) => candidate.itemId === itemId);
   if (answer === undefined) throw new Error(`no answer for ${itemId}`);
   if (answer.correctChoiceId !== null) {
     return { kind: 'MULTIPLE_CHOICE', choiceId: answer.correctChoiceId };
   }
   if (answer.structuredAuthority !== undefined) {
+    const control = item?.projection.responseControl;
+    if (control?.kind !== 'STRUCTURED_FIELDS')
+      throw new Error(`no structured control for ${itemId}`);
+    const authority = answer.structuredAuthority as {
+      expected_equation_forms?: readonly string[];
+      expected_solution_pair?: readonly string[];
+    };
+    const equations = [...(authority.expected_equation_forms ?? [])];
+    const pair = (authority.expected_solution_pair ?? []).map((part) =>
+      part.split('=').at(-1)?.trim(),
+    );
+    let equationIndex = 0;
     return {
       kind: 'CONSTRUCTED',
-      fields: Object.fromEntries(answer.acceptedResponses.map((part, index) => [`f${index}`, part])),
+      fields: control.fields.map(({ fieldId }) => ({
+        fieldId,
+        value: fieldId.includes('solution')
+          ? `(${pair.join(', ')})`
+          : (equations[equationIndex++] ?? '__missing_authority__'),
+      })),
     };
   }
   return { kind: 'SHORT', text: answer.acceptedResponses[0] ?? '' };

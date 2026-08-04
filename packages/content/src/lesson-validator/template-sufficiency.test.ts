@@ -157,6 +157,7 @@ describe('Phase 9 spec-sufficiency: the authoring template is a gate-passing les
   it('is a canonical compilation fixture with a total protected key and learner-safe delivery model', () => {
     const compiled = lessonNormalization.compileCanonicalLesson(readTemplateArtifacts());
     const scored = compiled.lesson.items.filter((item) => item.scored);
+    const entryAnswer = compiled.answerKey.byItemId['TPL-GRAPH-ENTRY'];
     expect(compiled.lesson.lessonId).toBe('V3-LES-000000');
     expect(compiled.lesson.definitionHash).toMatch(/^[0-9a-f]{64}$/);
     expect(scored).toHaveLength(10);
@@ -166,6 +167,10 @@ describe('Phase 9 spec-sufficiency: the authoring template is a gate-passing les
     );
     expect(JSON.stringify(compiled.lesson.items.map((item) => item.projection))).not.toMatch(
       /accepted_responses|answer_authority|correct_response|correct_option|rationale|scoring_authority/i,
+    );
+    expect(entryAnswer?.rationale).toContain('PRIVATE');
+    expect(entryAnswer?.learnerSafePostCommitmentFeedback).toBe(
+      'Each equal display step multiplies the labelled value by ten.',
     );
   });
 

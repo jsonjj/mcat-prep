@@ -19,6 +19,7 @@ import {
 // packages/content/src/lesson-normalization -> repo root is four levels up.
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const lessonDir = (id: string): string => join(repoRoot, 'content/lessons', id);
+const templateDir = join(repoRoot, 'docs/lesson-authoring/template/v3-les-000000');
 const readJson = (path: string): unknown => JSON.parse(readFileSync(path, 'utf8'));
 
 function loadArtifacts(id: string): RawLessonArtifacts {
@@ -41,6 +42,16 @@ function loadArtifacts(id: string): RawLessonArtifacts {
     /* L1 has no external learner-safe / protected files */
   }
   return artifacts;
+}
+
+function loadTemplateArtifacts(): RawLessonArtifacts {
+  const read = (file: string): unknown => readJson(join(templateDir, file));
+  return {
+    script: read('lesson-script.json'),
+    learnerSafeItems: read('learner-safe-items.json'),
+    protectedItems: read('protected-items.json'),
+    presentationPlan: read('lesson-presentation-plan.json'),
+  };
 }
 
 const histogram = (lesson: NormalizedLesson): Record<string, number> => {
@@ -275,6 +286,64 @@ describe('L3 V3-LES-844372 — projection-ref grammar (prompt_key + NODE)', () =
         { fieldId: 'solution_pair', label: 'Ordered pair (L, W)' },
       ],
     });
+  });
+});
+
+describe('canonical post-commitment feedback authority', () => {
+  it('compiles L2 learner-safe feedback only from an explicit after-commitment release', () => {
+    const artifacts = loadArtifacts('v3-les-789208');
+    const protectedItems = artifacts.protectedItems as {
+      items: Array<{
+        internal_item_binding_id: string;
+        rationale: string;
+        post_commitment_feedback: string;
+        feedback_release_point: string;
+      }>;
+    };
+    const authored = protectedItems.items[0];
+    if (authored === undefined) throw new Error('L2 protected fixture is empty');
+    const answer =
+      compileCanonicalLesson(artifacts).answerKey.byItemId[authored.internal_item_binding_id];
+
+    expect(authored.feedback_release_point).toBe('AFTER_COMMITMENT_ONLY');
+    expect(answer?.rationale).toBe(authored.rationale);
+    expect(answer?.learnerSafePostCommitmentFeedback).toBe(authored.post_commitment_feedback);
+  });
+
+  it('does not promote L2 private rationale or unapproved feedback into learner-safe authority', () => {
+    const artifacts = loadArtifacts('v3-les-789208');
+    const protectedItems = structuredClone(artifacts.protectedItems) as {
+      items: Array<Record<string, unknown> & { internal_item_binding_id: string }>;
+    };
+    const authored = protectedItems.items[0];
+    if (authored === undefined) throw new Error('L2 protected fixture is empty');
+    authored.rationale = 'PRIVATE RATIONALE SENTINEL';
+    authored.post_commitment_feedback = 'UNAPPROVED FEEDBACK SENTINEL';
+    delete authored.feedback_release_point;
+    const answer = compileCanonicalLesson({ ...artifacts, protectedItems }).answerKey.byItemId[
+      authored.internal_item_binding_id
+    ];
+
+    expect(answer?.rationale).toBe('PRIVATE RATIONALE SENTINEL');
+    expect(answer?.learnerSafePostCommitmentFeedback).toBeNull();
+  });
+
+  it('keeps every L3 rationale private while no explicit release markers are authored', () => {
+    const answers = Object.values(
+      compileCanonicalLesson(loadArtifacts('v3-les-844372')).answerKey.byItemId,
+    );
+    expect(answers.some((answer) => answer.rationale !== null)).toBe(true);
+    expect(answers.every((answer) => answer.learnerSafePostCommitmentFeedback === null)).toBe(true);
+  });
+
+  it('compiles the template approved feedback separately from its private rationale', () => {
+    const entry =
+      compileCanonicalLesson(loadTemplateArtifacts()).answerKey.byItemId['TPL-GRAPH-ENTRY'];
+    expect(entry?.rationale).toContain('PRIVATE');
+    expect(entry?.learnerSafePostCommitmentFeedback).toBe(
+      'Each equal display step multiplies the labelled value by ten.',
+    );
+    expect(entry?.learnerSafePostCommitmentFeedback).not.toBe(entry?.rationale);
   });
 });
 

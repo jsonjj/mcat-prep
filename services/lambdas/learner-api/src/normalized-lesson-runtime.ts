@@ -1,144 +1,185 @@
 import { randomUUID } from 'node:crypto';
 
-import type {
-  ExitFunction,
-  NormalizedItem,
-  NormalizedKc,
-  NormalizedLesson,
+import {
+  ACTIVITY_ROLES,
+  type ActivityRole,
+  type ExitFunction,
+  type NormalizedBranchBinding,
+  type NormalizedDeliveryStep,
+  type NormalizedItem,
+  type NormalizedKc,
+  type NormalizedLesson,
+  type NormalizedResponseControl,
 } from '@mcat/content/lesson-normalization';
 
-import {
-  lessonContentProvider,
-  type LessonContentProvider,
-  type ServerItemAnswer,
-} from './lesson-content-provider';
+import type { LoadedLessonRevision, ServerItemAnswer } from './lesson-content-provider';
+
+const RUN_STATE_VERSION = 'CANONICAL_STEP_GRAPH_V1' as const;
+
+export type NormalizedLessonSubmittedResponse =
+  | { readonly kind: 'MULTIPLE_CHOICE'; readonly choiceId: string | null }
+  | { readonly kind: 'SHORT'; readonly text: string | null }
+  | {
+      readonly kind: 'CONSTRUCTED';
+      readonly fields: readonly {
+        readonly fieldId: string;
+        readonly value: string | null;
+      }[];
+    };
 
 /**
- * The grammar-agnostic delivery engine for the Real Lesson Catalog (Phase 5,
- * wave 5B).
- *
- * L1 (`V3-LES-130923`) keeps its bespoke 1660-line machine untouched (owner
- * decision: per-grammar dispatch). THIS engine drives every OTHER lesson — today
- * L2/L3, tomorrow anything the authoring template (Phase 9) produces — off the
- * single shared `NormalizedLesson`, so a new lesson needs zero new runtime code.
- *
- * It reads structure ONLY through `LessonContentProvider.getNormalizedLesson`
- * (answer-free) for what the learner sees, and scores ONLY through
- * `getAnswerKey` (server-only). The correct answer never enters a render.
- *
- * The persisted run is a small progress record: it stores the cursor, the
- * committed responses, and which exits have passed — never the lesson body,
- * which is recomputed from the content-addressed provider on every call. The
- * `definitionHash` pins the exact revision the progress belongs to, so a run
- * cannot silently drift onto a re-authored lesson.
+ * Immutable response representation retained for the existing WP-05D mastery
+ * seam. The wire keeps structured fields as a list until validation; persisted
+ * records use a field-id map only after exact control validation succeeds.
  */
-
-// ---------------------------------------------------------------------------
-// Learner-committed response. Mirrors the two shapes the seam already speaks
-// (`@mcat/contracts` lesson-observation: MULTIPLE_CHOICE + multi-field
-// CONSTRUCTED), plus SHORT for L2's short-response items (a single free field).
-// ---------------------------------------------------------------------------
-
 export type EngineResponse =
   | { readonly kind: 'MULTIPLE_CHOICE'; readonly choiceId: string | null }
   | { readonly kind: 'SHORT'; readonly text: string | null }
   | { readonly kind: 'CONSTRUCTED'; readonly fields: Readonly<Record<string, string | null>> };
 
 export type NormalizedLessonAction =
-  | { readonly type: 'SUBMIT_RESPONSE'; readonly response: EngineResponse }
+  | {
+      readonly type: 'SUBMIT_RESPONSE';
+      /**
+       * `EngineResponse` remains accepted at the server-internal seam while
+       * legacy direct callers migrate. HTTP accepts only the strict contract's
+       * `NormalizedLessonSubmittedResponse`.
+       */
+      readonly response: NormalizedLessonSubmittedResponse | EngineResponse;
+    }
   | { readonly type: 'CONTINUE' };
 
 export type NormalizedRunStatus = 'IN_PROGRESS' | 'BLOCKED' | 'DELIVERY_COMPLETE';
+export type NormalizedFeedbackOutcome = 'CORRECT' | 'INCORRECT' | 'OMITTED' | 'INVALID';
 
-/** One committed response, kept for evidence emission (5B.2) and idempotent replay. */
 export interface NormalizedResponseRecord {
+  readonly stepId: string;
   readonly itemId: string;
   readonly primaryKcId: string;
-  readonly activityRole: NormalizedItem['activityRole'];
+  readonly activityRole: ActivityRole;
   readonly exitFunction: ExitFunction;
   readonly isReentry: boolean;
   readonly response: EngineResponse;
+  readonly outcome: NormalizedFeedbackOutcome;
   readonly correct: boolean;
   readonly committedAt: string;
 }
 
+export interface NormalizedRunBranch {
+  readonly kcId: string;
+  readonly failedStepId: string;
+  readonly failedFunction: Exclude<ExitFunction, 'NONE'>;
+}
+
 /**
- * Persisted delivery state. Serializable to the learner projection as-is; every
- * derived fact (the current item, the KC sequence) is recomputed from the
- * provider, so this stays small and revision-pinned.
+ * Persisted normalized-run state. `currentStepId` is the only graph cursor;
+ * every position and transition is resolved against the exact loaded revision.
  */
 export interface NormalizedLessonRun {
+  readonly stateVersion: typeof RUN_STATE_VERSION;
   readonly runId: string;
   readonly lessonId: string;
-  /** `content_sha256` of the delivered revision — the attribution key for evidence. */
   readonly definitionHash: string;
   readonly status: NormalizedRunStatus;
   readonly paused: boolean;
-  /** Index into `orderedKcIds`. */
-  readonly kcIndex: number;
-  /** BASELINE walks the always-shown items; BRANCH walks repair/re-entry after a missed exit. */
-  readonly phase: 'BASELINE' | 'BRANCH';
-  readonly baselineCursor: number;
-  /** The exit function under repair while `phase === 'BRANCH'`; otherwise null. */
-  readonly branchFunction: ExitFunction | null;
-  readonly branchCursor: number;
-  /** PROMPT awaits a response (scored) or CONTINUE (exposition); FEEDBACK awaits CONTINUE. */
-  readonly stage: 'PROMPT' | 'FEEDBACK';
-  readonly currentItemId: string | null;
+  readonly currentStepId: string | null;
+  readonly display: 'CONTENT' | 'FEEDBACK';
+  readonly branch: NormalizedRunBranch | null;
+  /** True only while displaying an authored planner handoff before BLOCKED. */
+  readonly blockAfterCurrentStep: boolean;
   readonly responses: Readonly<Record<string, NormalizedResponseRecord>>;
-  /** kcId -> exit functions confirmed passed (fresh check, not repair process). */
+  /** kcId -> exact exit functions confirmed by a clean exit or fresh re-entry. */
   readonly passedExits: Readonly<Record<string, readonly ExitFunction[]>>;
   readonly startedAt: string;
   readonly updatedAt: string;
 }
 
+export type NormalizedLessonRuntimeErrorCode =
+  | 'ACTION_NOT_ALLOWED'
+  | 'ANSWER_AUTHORITY_MISSING'
+  | 'GRAPH_INVALID'
+  | 'LEGACY_STATE_UNSUPPORTED'
+  | 'RESPONSE_CONTROL_MISMATCH'
+  | 'RESPONSE_IMMUTABLE'
+  | 'REVISION_MISMATCH'
+  | 'STATE_MALFORMED'
+  | 'STATE_VERSION_UNSUPPORTED'
+  | 'STRUCTURED_FIELDS_MISMATCH'
+  | 'UNKNOWN_CHOICE';
+
 export class NormalizedLessonRuntimeError extends Error {
   constructor(
+    readonly code: NormalizedLessonRuntimeErrorCode,
     message: string,
-    readonly detail: { lessonId: string; runId?: string; itemId?: string },
+    readonly detail: {
+      readonly lessonId: string;
+      readonly runId?: string;
+      readonly stepId?: string;
+      readonly itemId?: string;
+    },
   ) {
     super(message);
     this.name = 'NormalizedLessonRuntimeError';
   }
 }
 
-// ---------------------------------------------------------------------------
-// Structural helpers — pure over the NormalizedLesson.
-// ---------------------------------------------------------------------------
-
-const isExitItem = (item: NormalizedItem): boolean =>
-  item.activityRole === 'NEAR_EXIT' || item.activityRole === 'CHANGED_EXIT';
-
-/** Branch items are held out of the baseline walk and only administered after a miss. */
-const isBranchItem = (item: NormalizedItem): boolean =>
-  item.activityRole === 'REPAIR_CONFIRMATION' || item.isReentry;
-
-const baselineItems = (kc: NormalizedKc): readonly NormalizedItem[] =>
-  kc.items.filter((item) => !isBranchItem(item));
-
-/**
- * The repair→re-entry sequence for a missed exit function: process-repair
- * confirmations first (in authored order), then the fresh re-entry exit that
- * actually re-checks the function. L2 has repairs but NO re-entry, so its branch
- * ends without a fresh check — the caller treats that as BLOCKED rather than
- * fabricating an exit pass from process evidence alone.
- */
-function branchItems(kc: NormalizedKc, fn: ExitFunction): readonly NormalizedItem[] {
-  const repairs = kc.items.filter(
-    (item) =>
-      item.activityRole === 'REPAIR_CONFIRMATION' && item.repairsFunction === fn && !item.isReentry,
-  );
-  const reentries = kc.items.filter(
-    (item) => item.isReentry && (item.exitFunction === fn || item.repairsFunction === fn),
-  );
-  return [...repairs, ...reentries];
+function fail(
+  code: NormalizedLessonRuntimeErrorCode,
+  message: string,
+  detail: NormalizedLessonRuntimeError['detail'],
+): never {
+  throw new NormalizedLessonRuntimeError(code, message, detail);
 }
 
-function kcOf(lesson: NormalizedLesson, kcIndex: number): NormalizedKc {
-  const kc = lesson.kcs[kcIndex];
-  if (kc === undefined) {
-    throw new NormalizedLessonRuntimeError(`kc index ${kcIndex} out of range`, {
+const asRecord = (value: unknown): Record<string, unknown> | undefined =>
+  value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
+
+function assertLoadedRevision(revision: LoadedLessonRevision): void {
+  if (
+    revision.lessonId !== revision.lesson.lessonId ||
+    revision.definitionHash !== revision.lesson.definitionHash ||
+    revision.lessonId !== revision.protectedAuthority.answerKey.lessonId ||
+    revision.definitionHash !== revision.protectedAuthority.answerKey.definitionHash
+  ) {
+    fail('REVISION_MISMATCH', 'loaded lesson revision components do not share one identity', {
+      lessonId: revision.lessonId,
+    });
+  }
+}
+
+function assertRunRevision(run: NormalizedLessonRun, revision: LoadedLessonRevision): void {
+  assertLoadedRevision(revision);
+  if (run.lessonId !== revision.lessonId || run.definitionHash !== revision.definitionHash) {
+    fail(
+      'REVISION_MISMATCH',
+      `run ${run.lessonId}@${run.definitionHash} cannot use ${revision.lessonId}@${revision.definitionHash}`,
+      { lessonId: run.lessonId, runId: run.runId },
+    );
+  }
+}
+
+const allSteps = (lesson: NormalizedLesson): readonly NormalizedDeliveryStep[] =>
+  lesson.kcs.flatMap((kc) => kc.deliverySteps);
+
+function stepOf(lesson: NormalizedLesson, stepId: string): NormalizedDeliveryStep {
+  const step = allSteps(lesson).find((candidate) => candidate.stepId === stepId);
+  if (step === undefined) {
+    fail('GRAPH_INVALID', `delivery step "${stepId}" does not exist in the pinned revision`, {
       lessonId: lesson.lessonId,
+      stepId,
+    });
+  }
+  return step;
+}
+
+function kcForStep(lesson: NormalizedLesson, step: NormalizedDeliveryStep): NormalizedKc {
+  const kc = lesson.kcs.find((candidate) => candidate.kcId === step.primaryKcId);
+  if (kc === undefined) {
+    fail('GRAPH_INVALID', `delivery step "${step.stepId}" has no canonical KC`, {
+      lessonId: lesson.lessonId,
+      stepId: step.stepId,
     });
   }
   return kc;
@@ -147,7 +188,7 @@ function kcOf(lesson: NormalizedLesson, kcIndex: number): NormalizedKc {
 function itemOf(lesson: NormalizedLesson, itemId: string): NormalizedItem {
   const item = lesson.items.find((candidate) => candidate.itemId === itemId);
   if (item === undefined) {
-    throw new NormalizedLessonRuntimeError(`item "${itemId}" not found in lesson`, {
+    fail('GRAPH_INVALID', `item "${itemId}" does not exist in the pinned revision`, {
       lessonId: lesson.lessonId,
       itemId,
     });
@@ -155,211 +196,519 @@ function itemOf(lesson: NormalizedLesson, itemId: string): NormalizedItem {
   return item;
 }
 
-// ---------------------------------------------------------------------------
-// Scoring — the ONLY place the server-only answer key is consulted.
-// ---------------------------------------------------------------------------
+function itemsForStep(
+  lesson: NormalizedLesson,
+  step: NormalizedDeliveryStep,
+): readonly NormalizedItem[] {
+  return step.itemIds.map((itemId) => itemOf(lesson, itemId));
+}
+
+function interactiveItem(
+  lesson: NormalizedLesson,
+  step: NormalizedDeliveryStep,
+): NormalizedItem | null {
+  const scored = itemsForStep(lesson, step).filter((item) => item.scored);
+  if (scored.length > 1) {
+    fail('GRAPH_INVALID', `delivery step "${step.stepId}" contains multiple response items`, {
+      lessonId: lesson.lessonId,
+      stepId: step.stepId,
+    });
+  }
+  return scored[0] ?? null;
+}
+
+function expositionBlocks(
+  lesson: NormalizedLesson,
+  step: NormalizedDeliveryStep,
+): readonly string[] {
+  if (step.contentBlocks.length > 0) return step.contentBlocks;
+  const fallback = itemsForStep(lesson, step)
+    .filter((item) => !item.scored)
+    .map((item) => item.projection.prompt)
+    .filter((text) => text.length > 0);
+  if (fallback.length > 0) return fallback;
+  fail('GRAPH_INVALID', `exposition step "${step.stepId}" has no learner-safe content`, {
+    lessonId: lesson.lessonId,
+    stepId: step.stepId,
+  });
+}
+
+function firstBaselineStep(lesson: NormalizedLesson): NormalizedDeliveryStep | null {
+  for (const kc of lesson.kcs) {
+    const first = kc.cleanBaselineSteps[0];
+    if (first !== undefined) return first;
+  }
+  return null;
+}
+
+function nextBaselineStep(
+  lesson: NormalizedLesson,
+  currentStepId: string,
+): NormalizedDeliveryStep | null {
+  const step = stepOf(lesson, currentStepId);
+  const kcIndex = lesson.kcs.findIndex((kc) => kc.kcId === step.primaryKcId);
+  if (kcIndex < 0) {
+    fail('GRAPH_INVALID', `delivery step "${currentStepId}" has no canonical KC`, {
+      lessonId: lesson.lessonId,
+      stepId: currentStepId,
+    });
+  }
+  const kc = lesson.kcs[kcIndex]!;
+  const stepIndex = kc.cleanBaselineSteps.findIndex(
+    (candidate) => candidate.stepId === currentStepId,
+  );
+  if (stepIndex < 0) {
+    fail('GRAPH_INVALID', `step "${currentStepId}" is not on the clean baseline`, {
+      lessonId: lesson.lessonId,
+      stepId: currentStepId,
+    });
+  }
+  const next = kc.cleanBaselineSteps[stepIndex + 1];
+  if (next !== undefined) return next;
+  for (let index = kcIndex + 1; index < lesson.kcs.length; index += 1) {
+    const first = lesson.kcs[index]?.cleanBaselineSteps[0];
+    if (first !== undefined) return first;
+  }
+  return null;
+}
 
 const normalizeText = (value: string): string => value.trim().replace(/\s+/g, ' ');
+const blank = (value: string | null): boolean => value === null || value.trim() === '';
 
-/**
- * Whether a committed response supplied no answer at all. Exported so the seam
- * adapter derives the `omitted`/`outcome` fact from the SAME rule the engine
- * scored with, never a second copy that could drift.
- */
 export function isEngineResponseOmitted(response: EngineResponse): boolean {
   if (response.kind === 'MULTIPLE_CHOICE') return response.choiceId === null;
-  if (response.kind === 'SHORT') return response.text === null || response.text.trim() === '';
-  return Object.values(response.fields).every((value) => value === null || value.trim() === '');
+  if (response.kind === 'SHORT') return blank(response.text);
+  return Object.values(response.fields).every(blank);
+}
+
+function isEngineResponseInvalid(response: EngineResponse): boolean {
+  if (response.kind !== 'CONSTRUCTED') return false;
+  const values = Object.values(response.fields);
+  return values.some(blank) && !values.every(blank);
+}
+
+function stringArray(value: unknown): readonly string[] | undefined {
+  return Array.isArray(value) && value.every((part) => typeof part === 'string')
+    ? value
+    : undefined;
+}
+
+function structuredResponseCorrect(
+  answer: ServerItemAnswer,
+  response: Extract<EngineResponse, { readonly kind: 'CONSTRUCTED' }>,
+): boolean {
+  const authority = asRecord(answer.structuredAuthority);
+  const requiredFields = stringArray(authority?.required_fields);
+  const expectedEquations = stringArray(authority?.expected_equation_forms);
+  const expectedPair = stringArray(authority?.expected_solution_pair);
+
+  if (
+    requiredFields !== undefined &&
+    expectedEquations !== undefined &&
+    expectedPair !== undefined
+  ) {
+    const equationFields = requiredFields.filter((fieldId) => !fieldId.includes('solution'));
+    const equationsCorrect =
+      equationFields.length === expectedEquations.length &&
+      equationFields.every((fieldId, index) => {
+        const supplied = response.fields[fieldId];
+        const expected = expectedEquations[index];
+        return supplied !== undefined && supplied !== null && expected !== undefined
+          ? normalizeText(supplied) === normalizeText(expected)
+          : false;
+      });
+    const solutionField = requiredFields.find((fieldId) => fieldId.includes('solution'));
+    const suppliedPair = solutionField === undefined ? undefined : response.fields[solutionField];
+    const rightSides = expectedPair.map((part) => part.split('=').at(-1)?.trim() ?? part.trim());
+    const pairVariants = [
+      `(${rightSides.join(', ')})`,
+      rightSides.join(', '),
+      expectedPair.join(', '),
+      `(${expectedPair.join(', ')})`,
+    ].map(normalizeText);
+    return (
+      equationsCorrect &&
+      suppliedPair !== undefined &&
+      suppliedPair !== null &&
+      pairVariants.includes(normalizeText(suppliedPair))
+    );
+  }
+
+  const accepted = new Set(answer.acceptedResponses.map(normalizeText));
+  const supplied = new Set<string>();
+  for (const value of Object.values(response.fields)) {
+    if (value === null) continue;
+    supplied.add(normalizeText(value));
+    value
+      .replace(/^\(|\)$/g, '')
+      .split(/[,;]/)
+      .map(normalizeText)
+      .forEach((part) => supplied.add(part));
+  }
+  return accepted.size > 0 && [...accepted].every((part) => supplied.has(part));
 }
 
 export function scoreEngineResponse(answer: ServerItemAnswer, response: EngineResponse): boolean {
-  // Multiple choice: the key names the winning choiceId directly.
   if (answer.correctChoiceId !== null) {
     return response.kind === 'MULTIPLE_CHOICE' && response.choiceId === answer.correctChoiceId;
   }
-  // No choiceId → free/short or constructed. The accepted strings ARE the key.
   const accepted = new Set(answer.acceptedResponses.map(normalizeText));
-  if (accepted.size === 0) return false;
   if (response.kind === 'SHORT') {
     return response.text !== null && accepted.has(normalizeText(response.text));
   }
   if (response.kind === 'CONSTRUCTED') {
-    const supplied = new Set(
-      Object.values(response.fields)
-        .filter((value): value is string => value !== null)
-        .map(normalizeText),
-    );
-    // A constructed item is correct only when EVERY required part (each expected
-    // equation form + the solution pair) is present — partial construction is a miss.
-    return [...accepted].every((part) => supplied.has(part));
+    return structuredResponseCorrect(answer, response);
   }
   return false;
 }
 
-// ---------------------------------------------------------------------------
-// Sequencing — compute the current item and the next state.
-// ---------------------------------------------------------------------------
-
-function currentItem(lesson: NormalizedLesson, run: NormalizedLessonRun): NormalizedItem | null {
-  if (run.currentItemId === null) return null;
-  return itemOf(lesson, run.currentItemId);
+function outcomeFor(answer: ServerItemAnswer, response: EngineResponse): NormalizedFeedbackOutcome {
+  if (isEngineResponseOmitted(response)) return 'OMITTED';
+  if (isEngineResponseInvalid(response)) return 'INVALID';
+  return scoreEngineResponse(answer, response) ? 'CORRECT' : 'INCORRECT';
 }
 
-/** First deliverable position from a KC index, skipping KCs whose baseline is empty. */
-function enterKc(
-  lesson: NormalizedLesson,
-  kcIndex: number,
-): Pick<NormalizedLessonRun, 'kcIndex' | 'phase' | 'baselineCursor' | 'branchFunction' | 'branchCursor' | 'currentItemId' | 'stage' | 'status'> {
-  for (let index = kcIndex; index < lesson.kcs.length; index += 1) {
-    const baseline = baselineItems(kcOf(lesson, index));
-    const first = baseline[0];
-    if (first !== undefined) {
-      return {
-        kcIndex: index,
-        phase: 'BASELINE',
-        baselineCursor: 0,
-        branchFunction: null,
-        branchCursor: 0,
-        currentItemId: first.itemId,
-        stage: 'PROMPT',
-        status: 'IN_PROGRESS',
-      };
+function toEngineResponse(
+  control: NormalizedResponseControl,
+  response: NormalizedLessonSubmittedResponse | EngineResponse,
+  detail: NormalizedLessonRuntimeError['detail'],
+): EngineResponse {
+  if (control.kind === 'SINGLE_SELECT') {
+    if (response.kind !== 'MULTIPLE_CHOICE') {
+      fail('RESPONSE_CONTROL_MISMATCH', 'response kind does not match SINGLE_SELECT', detail);
     }
+    if (
+      response.choiceId !== null &&
+      !control.choices.some((choice) => choice.choiceId === response.choiceId)
+    ) {
+      fail(
+        'UNKNOWN_CHOICE',
+        `choice "${response.choiceId}" is not authored for this question`,
+        detail,
+      );
+    }
+    return { kind: 'MULTIPLE_CHOICE', choiceId: response.choiceId };
   }
+  if (control.kind === 'SHORT_TEXT') {
+    if (response.kind !== 'SHORT') {
+      fail('RESPONSE_CONTROL_MISMATCH', 'response kind does not match SHORT_TEXT', detail);
+    }
+    return { kind: 'SHORT', text: response.text };
+  }
+  if (response.kind !== 'CONSTRUCTED') {
+    fail('RESPONSE_CONTROL_MISMATCH', 'response kind does not match STRUCTURED_FIELDS', detail);
+  }
+  const expected = control.fields.map(({ fieldId }) => fieldId);
+  const submittedFields = Array.isArray(response.fields)
+    ? response.fields
+    : Object.entries(response.fields).map(([fieldId, value]) => ({ fieldId, value }));
+  const supplied = submittedFields.map(({ fieldId }) => fieldId);
+  if (
+    new Set(supplied).size !== supplied.length ||
+    supplied.length !== expected.length ||
+    expected.some((fieldId) => !supplied.includes(fieldId)) ||
+    supplied.some((fieldId) => !expected.includes(fieldId))
+  ) {
+    fail(
+      'STRUCTURED_FIELDS_MISMATCH',
+      `structured fields must match authored ids exactly: ${expected.join(', ')}`,
+      detail,
+    );
+  }
+  const byId = new Map(submittedFields.map(({ fieldId, value }) => [fieldId, value]));
   return {
-    kcIndex: lesson.kcs.length,
-    phase: 'BASELINE',
-    baselineCursor: 0,
-    branchFunction: null,
-    branchCursor: 0,
-    currentItemId: null,
-    stage: 'PROMPT',
-    status: 'DELIVERY_COMPLETE',
+    kind: 'CONSTRUCTED',
+    fields: Object.fromEntries(expected.map((fieldId) => [fieldId, byId.get(fieldId) ?? null])),
   };
 }
 
-/**
- * Compute the run after a CONTINUE from the current screen. This is the whole
- * sequencer: it decides whether a missed exit diverts into repair, whether a
- * re-entry passed or blocked, and when a KC (then the lesson) is done.
- */
-function advance(lesson: NormalizedLesson, run: NormalizedLessonRun): NormalizedLessonRun {
-  const kc = kcOf(lesson, run.kcIndex);
-  const item = currentItem(lesson, run);
-  if (item === null) return run;
-  const record = run.responses[item.itemId];
-
-  if (run.phase === 'BASELINE') {
-    // A missed baseline exit diverts into its repair→re-entry branch.
-    if (isExitItem(item) && record !== undefined && !record.correct) {
-      const branch = branchItems(kc, item.exitFunction);
-      const first = branch[0];
-      if (first === undefined) {
-        // No repair path authored for this function: cannot confirm the exit.
-        return { ...run, status: 'BLOCKED', stage: 'PROMPT' };
-      }
-      return {
-        ...run,
-        phase: 'BRANCH',
-        branchFunction: item.exitFunction,
-        branchCursor: 0,
-        currentItemId: first.itemId,
-        stage: 'PROMPT',
-      };
-    }
-    // Otherwise walk to the next baseline item, or finish the KC.
-    const baseline = baselineItems(kc);
-    const nextCursor = run.baselineCursor + 1;
-    const next = baseline[nextCursor];
-    if (next !== undefined) {
-      return { ...run, baselineCursor: nextCursor, currentItemId: next.itemId, stage: 'PROMPT' };
-    }
-    return { ...run, ...enterKc(lesson, run.kcIndex + 1) };
-  }
-
-  // phase === 'BRANCH' — walk repair→re-entry in order, then resolve on exhaustion.
-  const branch = branchItems(kc, run.branchFunction ?? 'NONE');
-  const nextBranchCursor = run.branchCursor + 1;
-  const next = branch[nextBranchCursor];
-  if (next !== undefined) {
-    return { ...run, branchCursor: nextBranchCursor, currentItemId: next.itemId, stage: 'PROMPT' };
-  }
-  // Branch exhausted. The fresh re-entry item(s) are the actual re-check —
-  // detected by `isReentry`, NOT by role, because L3's changed re-entry is
-  // authored as REPAIR_CONFIRMATION. The exit is confirmed only if every
-  // re-entry was answered correctly; repair confirmations alone (L2 has no
-  // re-entry) are process evidence and cannot pass the exit.
-  const reentries = branch.filter((candidate) => candidate.isReentry);
-  const passedReentry =
-    reentries.length > 0 &&
-    reentries.every((candidate) => run.responses[candidate.itemId]?.correct === true);
-  if (passedReentry) {
-    const passed = markPassed(run.passedExits, kc.kcId, run.branchFunction);
-    return resumeBaselineAfterExit(lesson, { ...run, passedExits: passed });
-  }
-  return { ...run, status: 'BLOCKED', stage: 'PROMPT' };
+function sameResponse(left: EngineResponse, right: EngineResponse): boolean {
+  return JSON.stringify(left) === JSON.stringify(right);
 }
 
 function markPassed(
   passedExits: NormalizedLessonRun['passedExits'],
   kcId: string,
-  fn: ExitFunction | null,
+  fn: ExitFunction,
 ): NormalizedLessonRun['passedExits'] {
-  if (fn === null || fn === 'NONE') return passedExits;
+  if (fn === 'NONE') return passedExits;
   const current = passedExits[kcId] ?? [];
-  if (current.includes(fn)) return passedExits;
-  return { ...passedExits, [kcId]: [...current, fn] };
+  return current.includes(fn) ? passedExits : { ...passedExits, [kcId]: [...current, fn] };
 }
 
-/** Resume the baseline walk at the item after the exit that diverted into repair. */
-function resumeBaselineAfterExit(
+function bindingFor(kc: NormalizedKc, fn: ExitFunction): NormalizedBranchBinding | undefined {
+  return fn === 'NONE'
+    ? undefined
+    : kc.branchBindings.find((binding) => binding.failedFunction === fn);
+}
+
+function matchesStep(
+  step: NormalizedDeliveryStep,
+  nodeIds: readonly string[],
+  itemIds: readonly string[],
+): boolean {
+  return (
+    step.nodeIds.some((nodeId) => nodeIds.includes(nodeId)) ||
+    step.itemIds.some((itemId) => itemIds.includes(itemId))
+  );
+}
+
+function branchSequence(
+  kc: NormalizedKc,
+  binding: NormalizedBranchBinding,
+): readonly NormalizedDeliveryStep[] {
+  const repairs = kc.deliverySteps.filter((step) =>
+    matchesStep(step, binding.repairNodeIds, binding.repairItemIds),
+  );
+  const reentry = kc.deliverySteps.find((step) =>
+    matchesStep(step, [binding.reentryNodeId], [binding.reentryItemId]),
+  );
+  if (reentry === undefined) return repairs;
+  return [...repairs.filter((step) => step.stepId !== reentry.stepId), reentry];
+}
+
+function plannerHandoffStep(
+  kc: NormalizedKc,
+  binding: NormalizedBranchBinding,
+): NormalizedDeliveryStep | null {
+  if (binding.plannerHandoffNodeId === null) return null;
+  return (
+    kc.deliverySteps.find((step) =>
+      step.nodeIds.includes(binding.plannerHandoffNodeId as string),
+    ) ?? null
+  );
+}
+
+function terminal(
+  run: NormalizedLessonRun,
+  status: Extract<NormalizedRunStatus, 'BLOCKED' | 'DELIVERY_COMPLETE'>,
+): NormalizedLessonRun {
+  return {
+    ...run,
+    status,
+    currentStepId: null,
+    display: 'CONTENT',
+    branch: null,
+    blockAfterCurrentStep: false,
+  };
+}
+
+function enterStep(run: NormalizedLessonRun, step: NormalizedDeliveryStep): NormalizedLessonRun {
+  return {
+    ...run,
+    currentStepId: step.stepId,
+    display: 'CONTENT',
+    blockAfterCurrentStep: false,
+  };
+}
+
+function enterBranch(
+  lesson: NormalizedLesson,
+  run: NormalizedLessonRun,
+  failedStep: NormalizedDeliveryStep,
+  failedItem: NormalizedItem,
+): NormalizedLessonRun {
+  const kc = kcForStep(lesson, failedStep);
+  const binding = bindingFor(kc, failedItem.exitFunction);
+  if (binding === undefined) return terminal(run, 'BLOCKED');
+  const first = branchSequence(kc, binding)[0];
+  if (first === undefined) return terminal(run, 'BLOCKED');
+  return {
+    ...enterStep(run, first),
+    branch: {
+      kcId: kc.kcId,
+      failedStepId: failedStep.stepId,
+      failedFunction: binding.failedFunction,
+    },
+  };
+}
+
+function handoffOrBlock(lesson: NormalizedLesson, run: NormalizedLessonRun): NormalizedLessonRun {
+  const branch = run.branch;
+  if (branch === null) return terminal(run, 'BLOCKED');
+  const kc = lesson.kcs.find((candidate) => candidate.kcId === branch.kcId);
+  const binding = kc?.branchBindings.find(
+    (candidate) => candidate.failedFunction === branch.failedFunction,
+  );
+  if (kc === undefined || binding === undefined) return terminal(run, 'BLOCKED');
+  const handoff = plannerHandoffStep(kc, binding);
+  if (handoff === null) return terminal(run, 'BLOCKED');
+  return {
+    ...enterStep(run, handoff),
+    blockAfterCurrentStep: true,
+  };
+}
+
+function resumeAfterReentry(
   lesson: NormalizedLesson,
   run: NormalizedLessonRun,
 ): NormalizedLessonRun {
-  const kc = kcOf(lesson, run.kcIndex);
-  const baseline = baselineItems(kc);
-  const nextCursor = run.baselineCursor + 1;
-  const next = baseline[nextCursor];
+  const branch = run.branch;
+  if (branch === null) {
+    fail('GRAPH_INVALID', 'fresh re-entry has no failed-function context', {
+      lessonId: run.lessonId,
+      runId: run.runId,
+    });
+  }
+  const kc = lesson.kcs.find((candidate) => candidate.kcId === branch.kcId);
+  const binding = kc?.branchBindings.find(
+    (candidate) => candidate.failedFunction === branch.failedFunction,
+  );
+  if (kc === undefined || binding === undefined) {
+    fail('GRAPH_INVALID', 'fresh re-entry binding no longer resolves', {
+      lessonId: run.lessonId,
+      runId: run.runId,
+    });
+  }
+  let next: NormalizedDeliveryStep | null = null;
+  if (binding.successNextNodeId !== null) {
+    next =
+      kc.cleanBaselineSteps.find((step) =>
+        step.nodeIds.includes(binding.successNextNodeId as string),
+      ) ?? null;
+    if (next === null) {
+      fail(
+        'GRAPH_INVALID',
+        `success continuation "${binding.successNextNodeId}" is not on the clean baseline`,
+        { lessonId: run.lessonId, runId: run.runId },
+      );
+    }
+  } else {
+    next = nextBaselineStep(lesson, branch.failedStepId);
+  }
   const resumed: NormalizedLessonRun = {
     ...run,
-    phase: 'BASELINE',
-    branchFunction: null,
-    branchCursor: 0,
+    branch: null,
+    blockAfterCurrentStep: false,
   };
-  if (next !== undefined) {
-    return { ...resumed, baselineCursor: nextCursor, currentItemId: next.itemId, stage: 'PROMPT' };
-  }
-  return { ...resumed, ...enterKc(lesson, run.kcIndex + 1) };
+  return next === null ? terminal(resumed, 'DELIVERY_COMPLETE') : enterStep(resumed, next);
 }
 
-// ---------------------------------------------------------------------------
-// Public API — mirrors the vector-lesson runtime shape so the dispatcher can
-// treat both engines uniformly.
-// ---------------------------------------------------------------------------
+function advanceBranch(lesson: NormalizedLesson, run: NormalizedLessonRun): NormalizedLessonRun {
+  const branch = run.branch;
+  if (branch === null || run.currentStepId === null) {
+    fail('GRAPH_INVALID', 'branch cursor has no exact branch context', {
+      lessonId: run.lessonId,
+      runId: run.runId,
+    });
+  }
+  const kc = lesson.kcs.find((candidate) => candidate.kcId === branch.kcId);
+  const binding = kc?.branchBindings.find(
+    (candidate) => candidate.failedFunction === branch.failedFunction,
+  );
+  if (kc === undefined || binding === undefined) {
+    fail('GRAPH_INVALID', 'branch binding no longer resolves', {
+      lessonId: run.lessonId,
+      runId: run.runId,
+    });
+  }
+  const sequence = branchSequence(kc, binding);
+  const index = sequence.findIndex((step) => step.stepId === run.currentStepId);
+  if (index < 0) {
+    fail('GRAPH_INVALID', `step "${run.currentStepId}" is not in the exact branch binding`, {
+      lessonId: run.lessonId,
+      runId: run.runId,
+      stepId: run.currentStepId,
+    });
+  }
+  const next = sequence[index + 1];
+  return next === undefined ? handoffOrBlock(lesson, run) : enterStep(run, next);
+}
+
+function advanceAfterContent(
+  lesson: NormalizedLesson,
+  run: NormalizedLessonRun,
+): NormalizedLessonRun {
+  if (run.blockAfterCurrentStep) return terminal(run, 'BLOCKED');
+  if (run.currentStepId === null) return terminal(run, 'DELIVERY_COMPLETE');
+  if (run.branch !== null) return advanceBranch(lesson, run);
+  const next = nextBaselineStep(lesson, run.currentStepId);
+  return next === null ? terminal(run, 'DELIVERY_COMPLETE') : enterStep(run, next);
+}
+
+function advanceAfterFeedback(
+  lesson: NormalizedLesson,
+  run: NormalizedLessonRun,
+): NormalizedLessonRun {
+  if (run.currentStepId === null) return terminal(run, 'DELIVERY_COMPLETE');
+  const step = stepOf(lesson, run.currentStepId);
+  const item = interactiveItem(lesson, step);
+  const record = item === null ? undefined : run.responses[item.itemId];
+  if (item === null || record === undefined) {
+    fail('STATE_MALFORMED', 'feedback screen has no immutable response', {
+      lessonId: run.lessonId,
+      runId: run.runId,
+      stepId: step.stepId,
+    });
+  }
+
+  if (run.branch === null) {
+    if (item.exitFunction !== 'NONE' && record.outcome !== 'CORRECT') {
+      return enterBranch(lesson, run, step, item);
+    }
+    const next = nextBaselineStep(lesson, step.stepId);
+    return next === null ? terminal(run, 'DELIVERY_COMPLETE') : enterStep(run, next);
+  }
+
+  const kc = lesson.kcs.find((candidate) => candidate.kcId === run.branch?.kcId);
+  const binding = kc?.branchBindings.find(
+    (candidate) => candidate.failedFunction === run.branch?.failedFunction,
+  );
+  if (kc === undefined || binding === undefined) {
+    fail('GRAPH_INVALID', 'feedback branch binding no longer resolves', {
+      lessonId: run.lessonId,
+      runId: run.runId,
+      stepId: step.stepId,
+    });
+  }
+  const reentry = matchesStep(step, [binding.reentryNodeId], [binding.reentryItemId]);
+  if (reentry) {
+    return record.outcome === 'CORRECT'
+      ? resumeAfterReentry(lesson, run)
+      : handoffOrBlock(lesson, run);
+  }
+  if (record.outcome === 'CORRECT') return advanceBranch(lesson, run);
+  const repairs = kc.deliverySteps.filter((candidate) =>
+    matchesStep(candidate, binding.repairNodeIds, binding.repairItemIds),
+  );
+  const repairIndex = repairs.findIndex((candidate) => candidate.stepId === step.stepId);
+  if (repairIndex < 0) {
+    fail('GRAPH_INVALID', `step "${step.stepId}" is neither a repair nor exact re-entry`, {
+      lessonId: run.lessonId,
+      runId: run.runId,
+      stepId: step.stepId,
+    });
+  }
+  const nextRepair = repairs[repairIndex + 1];
+  return nextRepair === undefined ? handoffOrBlock(lesson, run) : enterStep(run, nextRepair);
+}
 
 export interface CreateNormalizedLessonRunOptions {
-  readonly lessonId: string;
+  readonly revision: LoadedLessonRevision;
   readonly now: string;
   readonly runId?: string;
-  readonly provider?: LessonContentProvider;
 }
 
 export function createNormalizedLessonRun(
   options: CreateNormalizedLessonRunOptions,
 ): NormalizedLessonRun {
-  const provider = options.provider ?? lessonContentProvider;
-  const lesson = provider.getNormalizedLesson(options.lessonId);
-  const entry = enterKc(lesson, 0);
+  assertLoadedRevision(options.revision);
+  const first = firstBaselineStep(options.revision.lesson);
   return {
+    stateVersion: RUN_STATE_VERSION,
     runId: options.runId ?? randomUUID(),
-    lessonId: lesson.lessonId,
-    definitionHash: lesson.definitionHash,
+    lessonId: options.revision.lessonId,
+    definitionHash: options.revision.definitionHash,
+    status: first === null ? 'DELIVERY_COMPLETE' : 'IN_PROGRESS',
     paused: false,
+    currentStepId: first?.stepId ?? null,
+    display: 'CONTENT',
+    branch: null,
+    blockAfterCurrentStep: false,
     responses: {},
     passedExits: {},
     startedAt: options.now,
     updatedAt: options.now,
-    ...entry,
   };
 }
 
@@ -367,81 +716,98 @@ export function applyNormalizedLessonAction(
   run: NormalizedLessonRun,
   action: NormalizedLessonAction,
   now: string,
-  provider: LessonContentProvider = lessonContentProvider,
+  revision: LoadedLessonRevision,
 ): NormalizedLessonRun {
-  if (run.status !== 'IN_PROGRESS') {
-    throw new NormalizedLessonRuntimeError('lesson is no longer in progress', {
+  assertRunRevision(run, revision);
+  if (run.status !== 'IN_PROGRESS' || run.currentStepId === null) {
+    fail('ACTION_NOT_ALLOWED', 'lesson is no longer in progress', {
       lessonId: run.lessonId,
       runId: run.runId,
     });
   }
-  const lesson = provider.getNormalizedLesson(run.lessonId);
-  const item = currentItem(lesson, run);
-  if (item === null) {
-    throw new NormalizedLessonRuntimeError('no current item to act on', {
-      lessonId: run.lessonId,
-      runId: run.runId,
-    });
-  }
+  const step = stepOf(revision.lesson, run.currentStepId);
+  const item = interactiveItem(revision.lesson, step);
 
   if (action.type === 'SUBMIT_RESPONSE') {
-    if (run.stage !== 'PROMPT') {
-      throw new NormalizedLessonRuntimeError('a response is only accepted at the prompt', {
+    if (item === null || item.projection.responseControl === null) {
+      fail('ACTION_NOT_ALLOWED', 'this delivery step is exposition and accepts only CONTINUE', {
         lessonId: run.lessonId,
         runId: run.runId,
-        itemId: item.itemId,
+        stepId: step.stepId,
       });
     }
-    if (!item.scored) {
-      throw new NormalizedLessonRuntimeError('this item is exposition — advance with CONTINUE', {
-        lessonId: run.lessonId,
-        runId: run.runId,
-        itemId: item.itemId,
-      });
+    const detail = {
+      lessonId: run.lessonId,
+      runId: run.runId,
+      stepId: step.stepId,
+      itemId: item.itemId,
+    };
+    const response = toEngineResponse(item.projection.responseControl, action.response, detail);
+    if (run.display === 'FEEDBACK') {
+      const existing = run.responses[item.itemId];
+      if (existing !== undefined && sameResponse(existing.response, response)) return run;
+      fail('RESPONSE_IMMUTABLE', 'the response for this step is already immutable', detail);
     }
-    const answerKey = provider.getAnswerKey(run.lessonId);
-    const answer = answerKey.byItemId[item.itemId];
+    const answer = revision.protectedAuthority.answerKey.byItemId[item.itemId];
     if (answer === undefined) {
-      throw new NormalizedLessonRuntimeError('scored item has no answer key entry', {
-        lessonId: run.lessonId,
-        runId: run.runId,
-        itemId: item.itemId,
-      });
+      fail(
+        'ANSWER_AUTHORITY_MISSING',
+        'scored item has no exact-revision answer authority',
+        detail,
+      );
     }
-    const correct = scoreEngineResponse(answer, action.response);
+    const outcome = outcomeFor(answer, response);
     const record: NormalizedResponseRecord = {
+      stepId: step.stepId,
       itemId: item.itemId,
       primaryKcId: item.primaryKcId,
       activityRole: item.activityRole,
       exitFunction: item.exitFunction,
       isReentry: item.isReentry,
-      response: action.response,
-      correct,
+      response,
+      outcome,
+      correct: outcome === 'CORRECT',
       committedAt: now,
     };
-    // A baseline exit answered correctly is confirmed here (no branch needed).
-    const passedExits =
-      run.phase === 'BASELINE' && isExitItem(item) && correct
-        ? markPassed(run.passedExits, item.primaryKcId, item.exitFunction)
-        : run.passedExits;
+    let passedExits = run.passedExits;
+    if (outcome === 'CORRECT') {
+      if (run.branch === null && item.exitFunction !== 'NONE') {
+        passedExits = markPassed(passedExits, item.primaryKcId, item.exitFunction);
+      } else if (run.branch !== null) {
+        const kc = revision.lesson.kcs.find((candidate) => candidate.kcId === run.branch?.kcId);
+        const binding = kc?.branchBindings.find(
+          (candidate) => candidate.failedFunction === run.branch?.failedFunction,
+        );
+        if (
+          kc !== undefined &&
+          binding !== undefined &&
+          matchesStep(step, [binding.reentryNodeId], [binding.reentryItemId])
+        ) {
+          passedExits = markPassed(passedExits, kc.kcId, binding.failedFunction);
+        }
+      }
+    }
     return {
       ...run,
-      stage: 'FEEDBACK',
+      display: 'FEEDBACK',
       responses: { ...run.responses, [item.itemId]: record },
       passedExits,
       updatedAt: now,
     };
   }
 
-  // CONTINUE
-  if (item.scored && run.stage === 'PROMPT') {
-    throw new NormalizedLessonRuntimeError('this item requires a response before continuing', {
+  if (run.display === 'FEEDBACK') {
+    return { ...advanceAfterFeedback(revision.lesson, run), updatedAt: now };
+  }
+  if (item !== null) {
+    fail('ACTION_NOT_ALLOWED', 'this question requires a response before continuing', {
       lessonId: run.lessonId,
       runId: run.runId,
+      stepId: step.stepId,
       itemId: item.itemId,
     });
   }
-  return { ...advance(lesson, run), updatedAt: now };
+  return { ...advanceAfterContent(revision.lesson, run), updatedAt: now };
 }
 
 export function resumeNormalizedLessonRun(
@@ -451,22 +817,51 @@ export function resumeNormalizedLessonRun(
   return { ...run, paused: false, updatedAt: now };
 }
 
-// ---------------------------------------------------------------------------
-// Learner-safe rendering — never consults the answer key.
-// ---------------------------------------------------------------------------
-
 export type NormalizedLessonScreen =
-  | { readonly kind: 'EXPOSITION'; readonly itemId: string; readonly heading: string; readonly prompt: string }
+  | {
+      readonly kind: 'EXPOSITION';
+      readonly heading: string;
+      readonly contentBlocks: readonly string[];
+      readonly prompt: string;
+    }
   | {
       readonly kind: 'QUESTION';
       readonly itemId: string;
       readonly kcId: string;
       readonly heading: string;
+      readonly contentBlocks: readonly string[];
       readonly prompt: string;
-      readonly responseType: string;
+      readonly control:
+        | {
+            readonly kind: 'SINGLE_SELECT';
+            readonly choices: readonly {
+              readonly choiceId: string;
+              readonly text: string;
+            }[];
+          }
+        | {
+            readonly kind: 'SHORT_TEXT';
+            readonly inputConvention: {
+              readonly normalization: 'TRIM_AND_COLLAPSE_WHITESPACE';
+              readonly matching: 'AUTHORED_EQUIVALENTS_ONLY';
+              readonly caseSensitive: true;
+            };
+          }
+        | {
+            readonly kind: 'STRUCTURED_FIELDS';
+            readonly fields: readonly {
+              readonly fieldId: string;
+              readonly label: string;
+            }[];
+          };
       readonly choices: readonly { readonly choiceId: string; readonly text: string }[];
     }
-  | { readonly kind: 'FEEDBACK'; readonly itemId: string; readonly outcome: 'CORRECT' | 'INCORRECT' }
+  | {
+      readonly kind: 'FEEDBACK';
+      readonly itemId: string;
+      readonly outcome: NormalizedFeedbackOutcome;
+      readonly message: string;
+    }
   | { readonly kind: 'BLOCKED' }
   | { readonly kind: 'COMPLETE' };
 
@@ -481,111 +876,360 @@ export interface NormalizedLessonRunView {
   readonly screen: NormalizedLessonScreen;
 }
 
+function learnerControl(
+  control: NormalizedResponseControl,
+): Extract<NormalizedLessonScreen, { readonly kind: 'QUESTION' }>['control'] {
+  if (control.kind === 'SINGLE_SELECT') {
+    return {
+      kind: 'SINGLE_SELECT',
+      choices: control.choices.map(({ choiceId, text }) => ({ choiceId, text })),
+    };
+  }
+  if (control.kind === 'SHORT_TEXT') {
+    return { kind: 'SHORT_TEXT', inputConvention: { ...control.inputConvention } };
+  }
+  return {
+    kind: 'STRUCTURED_FIELDS',
+    fields: control.fields.map(({ fieldId, label }) => ({ fieldId, label })),
+  };
+}
+
+function feedbackMessage(answer: ServerItemAnswer, outcome: NormalizedFeedbackOutcome): string {
+  const authored = answer.learnerSafePostCommitmentFeedback?.trim();
+  if (authored !== undefined && authored.length > 0) return authored;
+  if (outcome === 'CORRECT') return 'Correct.';
+  if (outcome === 'OMITTED') return 'No response was submitted.';
+  if (outcome === 'INVALID') return 'The submitted fields were incomplete.';
+  return 'Not quite.';
+}
+
 export function renderNormalizedLessonRun(
   run: NormalizedLessonRun,
-  provider: LessonContentProvider = lessonContentProvider,
+  revision: LoadedLessonRevision,
 ): NormalizedLessonRunView {
-  const lesson = provider.getNormalizedLesson(run.lessonId);
-  const totalKcs = lesson.kcs.length;
-  const kc = run.kcIndex < totalKcs ? kcOf(lesson, run.kcIndex) : null;
+  assertRunRevision(run, revision);
   const base = {
     runId: run.runId,
     lessonId: run.lessonId,
     status: run.status,
     paused: run.paused,
-    kcId: kc?.kcId ?? null,
-    kcOrdinal: kc?.canonicalOrdinal ?? null,
-    totalKcs,
   };
-
-  if (run.status === 'BLOCKED') return { ...base, screen: { kind: 'BLOCKED' } };
-  if (run.status === 'DELIVERY_COMPLETE') return { ...base, screen: { kind: 'COMPLETE' } };
-
-  const item = currentItem(lesson, run);
-  if (item === null) return { ...base, screen: { kind: 'COMPLETE' } };
-
-  if (run.stage === 'FEEDBACK') {
-    const record = run.responses[item.itemId];
+  if (run.status === 'BLOCKED') {
     return {
       ...base,
+      kcId: null,
+      kcOrdinal: null,
+      totalKcs: revision.lesson.kcs.length,
+      screen: { kind: 'BLOCKED' },
+    };
+  }
+  if (run.status === 'DELIVERY_COMPLETE' || run.currentStepId === null) {
+    return {
+      ...base,
+      kcId: null,
+      kcOrdinal: null,
+      totalKcs: revision.lesson.kcs.length,
+      screen: { kind: 'COMPLETE' },
+    };
+  }
+
+  const step = stepOf(revision.lesson, run.currentStepId);
+  const kc = kcForStep(revision.lesson, step);
+  const item = interactiveItem(revision.lesson, step);
+  const withPosition = {
+    ...base,
+    kcId: kc.kcId,
+    kcOrdinal: kc.canonicalOrdinal,
+    totalKcs: revision.lesson.kcs.length,
+  };
+
+  if (run.display === 'FEEDBACK') {
+    if (item === null) {
+      fail('STATE_MALFORMED', 'feedback display points to exposition', {
+        lessonId: run.lessonId,
+        runId: run.runId,
+        stepId: step.stepId,
+      });
+    }
+    const record = run.responses[item.itemId];
+    const answer = revision.protectedAuthority.answerKey.byItemId[item.itemId];
+    if (record === undefined || answer === undefined) {
+      fail('STATE_MALFORMED', 'feedback display lacks its exact immutable response', {
+        lessonId: run.lessonId,
+        runId: run.runId,
+        stepId: step.stepId,
+        itemId: item.itemId,
+      });
+    }
+    return {
+      ...withPosition,
       screen: {
         kind: 'FEEDBACK',
         itemId: item.itemId,
-        outcome: record?.correct ? 'CORRECT' : 'INCORRECT',
+        outcome: record.outcome,
+        message: feedbackMessage(answer, record.outcome),
       },
     };
   }
 
-  if (!item.scored) {
+  if (item === null) {
+    const blocks = expositionBlocks(revision.lesson, step);
     return {
-      ...base,
+      ...withPosition,
       screen: {
         kind: 'EXPOSITION',
-        itemId: item.itemId,
-        heading: item.projection.title ?? 'Worked example',
-        prompt: item.projection.prompt,
+        heading: step.heading ?? '',
+        contentBlocks: blocks,
+        prompt: blocks.join('\n\n'),
       },
     };
   }
-
+  const control = item.projection.responseControl;
+  if (control === null) {
+    fail('GRAPH_INVALID', `scored item "${item.itemId}" has no response control`, {
+      lessonId: run.lessonId,
+      runId: run.runId,
+      stepId: step.stepId,
+      itemId: item.itemId,
+    });
+  }
+  const choices =
+    control.kind === 'SINGLE_SELECT'
+      ? control.choices.map(({ choiceId, text }) => ({ choiceId, text }))
+      : [];
   return {
-    ...base,
+    ...withPosition,
     screen: {
       kind: 'QUESTION',
       itemId: item.itemId,
       kcId: item.primaryKcId,
-      heading: item.projection.title ?? kc?.kcId ?? item.primaryKcId,
+      heading: step.heading ?? item.projection.title ?? '',
+      contentBlocks: step.contentBlocks,
       prompt: item.projection.prompt,
-      responseType: item.projection.responseType,
-      // Learner-safe: choiceId + text only. The correct answer is never here.
-      choices: item.projection.choices.map((choice) => ({ choiceId: choice.choiceId, text: choice.text })),
+      control: learnerControl(control),
+      choices,
     },
   };
 }
 
-// ---------------------------------------------------------------------------
-// Restore — validate a persisted blob back into a run. The lesson body is NOT
-// stored, so restore also confirms the pinned revision still resolves.
-// ---------------------------------------------------------------------------
+function requiredString(raw: Record<string, unknown>, key: string, lessonId: string): string {
+  const value = raw[key];
+  if (typeof value !== 'string' || value.length === 0) {
+    fail('STATE_MALFORMED', `run state field "${key}" is not a non-empty string`, { lessonId });
+  }
+  return value;
+}
 
-const asRecord = (value: unknown): Record<string, unknown> | undefined =>
-  value !== null && typeof value === 'object' && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : undefined;
+export function normalizedRunRevisionAddress(value: unknown): {
+  readonly lessonId: string;
+  readonly definitionHash: string;
+} {
+  const raw = asRecord(value);
+  if (raw === undefined) {
+    fail('STATE_MALFORMED', 'run state is not an object', { lessonId: '(unknown)' });
+  }
+  if (raw.stateVersion === undefined) {
+    fail(
+      'LEGACY_STATE_UNSUPPORTED',
+      'pre-WP-05C normalized run state cannot be shallow-cast into the canonical graph',
+      {
+        lessonId: typeof raw.lessonId === 'string' ? raw.lessonId : '(unknown)',
+      },
+    );
+  }
+  if (raw.stateVersion !== RUN_STATE_VERSION) {
+    fail(
+      'STATE_VERSION_UNSUPPORTED',
+      `unsupported run state version "${String(raw.stateVersion)}"`,
+      {
+        lessonId: typeof raw.lessonId === 'string' ? raw.lessonId : '(unknown)',
+      },
+    );
+  }
+  const lessonId = requiredString(raw, 'lessonId', '(unknown)');
+  return {
+    lessonId,
+    definitionHash: requiredString(raw, 'definitionHash', lessonId),
+  };
+}
+
+function parseEngineResponse(value: unknown, lessonId: string, itemId: string): EngineResponse {
+  const raw = asRecord(value);
+  if (
+    raw?.kind === 'MULTIPLE_CHOICE' &&
+    (raw.choiceId === null || typeof raw.choiceId === 'string')
+  ) {
+    return { kind: 'MULTIPLE_CHOICE', choiceId: raw.choiceId };
+  }
+  if (raw?.kind === 'SHORT' && (raw.text === null || typeof raw.text === 'string')) {
+    return { kind: 'SHORT', text: raw.text };
+  }
+  if (raw?.kind === 'CONSTRUCTED') {
+    const fields = asRecord(raw.fields);
+    if (
+      fields !== undefined &&
+      Object.values(fields).every((field) => field === null || typeof field === 'string')
+    ) {
+      return { kind: 'CONSTRUCTED', fields: fields as Record<string, string | null> };
+    }
+  }
+  fail('STATE_MALFORMED', `response record for "${itemId}" is malformed`, {
+    lessonId,
+    itemId,
+  });
+}
+
+function parseResponses(
+  value: unknown,
+  lessonId: string,
+): Readonly<Record<string, NormalizedResponseRecord>> {
+  const raw = asRecord(value);
+  if (raw === undefined) {
+    fail('STATE_MALFORMED', 'run responses are not an object', { lessonId });
+  }
+  const out: Record<string, NormalizedResponseRecord> = {};
+  for (const [key, candidate] of Object.entries(raw)) {
+    const record = asRecord(candidate);
+    if (record === undefined) {
+      fail('STATE_MALFORMED', `response record "${key}" is not an object`, {
+        lessonId,
+        itemId: key,
+      });
+    }
+    const itemId = requiredString(record, 'itemId', lessonId);
+    const activityRole = record.activityRole;
+    const exitFunction = record.exitFunction;
+    const outcome = record.outcome;
+    if (
+      key !== itemId ||
+      !ACTIVITY_ROLES.includes(activityRole as ActivityRole) ||
+      (exitFunction !== 'NEAR_USE' && exitFunction !== 'CHANGED_TASK' && exitFunction !== 'NONE') ||
+      (outcome !== 'CORRECT' &&
+        outcome !== 'INCORRECT' &&
+        outcome !== 'OMITTED' &&
+        outcome !== 'INVALID') ||
+      typeof record.isReentry !== 'boolean' ||
+      typeof record.correct !== 'boolean' ||
+      record.correct !== (outcome === 'CORRECT')
+    ) {
+      fail('STATE_MALFORMED', `response record "${key}" has invalid metadata`, {
+        lessonId,
+        itemId,
+      });
+    }
+    out[key] = {
+      stepId: requiredString(record, 'stepId', lessonId),
+      itemId,
+      primaryKcId: requiredString(record, 'primaryKcId', lessonId),
+      activityRole: activityRole as ActivityRole,
+      exitFunction,
+      isReentry: record.isReentry,
+      response: parseEngineResponse(record.response, lessonId, itemId),
+      outcome,
+      correct: record.correct,
+      committedAt: requiredString(record, 'committedAt', lessonId),
+    };
+  }
+  return out;
+}
+
+function parsePassedExits(
+  value: unknown,
+  lessonId: string,
+): Readonly<Record<string, readonly ExitFunction[]>> {
+  const raw = asRecord(value);
+  if (raw === undefined) {
+    fail('STATE_MALFORMED', 'run passedExits are not an object', { lessonId });
+  }
+  const out: Record<string, readonly ExitFunction[]> = {};
+  for (const [kcId, candidate] of Object.entries(raw)) {
+    if (
+      !Array.isArray(candidate) ||
+      !candidate.every((fn) => fn === 'NEAR_USE' || fn === 'CHANGED_TASK') ||
+      new Set(candidate).size !== candidate.length
+    ) {
+      fail('STATE_MALFORMED', `passed exits for "${kcId}" are malformed`, { lessonId });
+    }
+    out[kcId] = candidate as ExitFunction[];
+  }
+  return out;
+}
+
+function parseBranch(value: unknown, lessonId: string): NormalizedRunBranch | null {
+  if (value === null) return null;
+  const raw = asRecord(value);
+  if (
+    raw === undefined ||
+    (raw.failedFunction !== 'NEAR_USE' && raw.failedFunction !== 'CHANGED_TASK')
+  ) {
+    fail('STATE_MALFORMED', 'run branch context is malformed', { lessonId });
+  }
+  return {
+    kcId: requiredString(raw, 'kcId', lessonId),
+    failedStepId: requiredString(raw, 'failedStepId', lessonId),
+    failedFunction: raw.failedFunction,
+  };
+}
 
 export function restoreNormalizedLessonRun(
   value: unknown,
-  provider: LessonContentProvider = lessonContentProvider,
+  revision: LoadedLessonRevision,
 ): NormalizedLessonRun {
-  const raw = asRecord(value);
-  if (raw === undefined) {
-    throw new NormalizedLessonRuntimeError('run state is not an object', { lessonId: '(unknown)' });
-  }
-  const lessonId = raw.lessonId;
-  if (typeof lessonId !== 'string') {
-    throw new NormalizedLessonRuntimeError('run state has no lessonId', { lessonId: '(unknown)' });
-  }
-  // Resolving the lesson proves the pinned revision is still deliverable.
-  const lesson = provider.getNormalizedLesson(lessonId);
-  const definitionHash = raw.definitionHash;
-  if (definitionHash !== lesson.definitionHash) {
-    throw new NormalizedLessonRuntimeError(
-      `run pinned revision ${String(definitionHash)} but catalog serves ${lesson.definitionHash}`,
-      { lessonId },
-    );
-  }
-  // The blob is our own; a shallow structural check is enough to fail loud on
-  // corruption without duplicating every field's schema here.
-  const run = value as NormalizedLessonRun;
+  const address = normalizedRunRevisionAddress(value);
+  const raw = asRecord(value)!;
+  const status = raw.status;
+  const display = raw.display;
   if (
-    typeof run.runId !== 'string' ||
-    typeof run.kcIndex !== 'number' ||
-    (run.phase !== 'BASELINE' && run.phase !== 'BRANCH') ||
-    (run.stage !== 'PROMPT' && run.stage !== 'FEEDBACK') ||
-    asRecord(run.responses) === undefined ||
-    asRecord(run.passedExits) === undefined
+    (status !== 'IN_PROGRESS' && status !== 'BLOCKED' && status !== 'DELIVERY_COMPLETE') ||
+    (display !== 'CONTENT' && display !== 'FEEDBACK') ||
+    typeof raw.paused !== 'boolean' ||
+    typeof raw.blockAfterCurrentStep !== 'boolean' ||
+    (raw.currentStepId !== null && typeof raw.currentStepId !== 'string')
   ) {
-    throw new NormalizedLessonRuntimeError('run state is malformed', { lessonId, runId: run.runId });
+    fail('STATE_MALFORMED', 'run state has invalid status or cursor fields', {
+      lessonId: address.lessonId,
+    });
+  }
+  const run: NormalizedLessonRun = {
+    stateVersion: RUN_STATE_VERSION,
+    runId: requiredString(raw, 'runId', address.lessonId),
+    lessonId: address.lessonId,
+    definitionHash: address.definitionHash,
+    status,
+    paused: raw.paused,
+    currentStepId: raw.currentStepId,
+    display,
+    branch: parseBranch(raw.branch, address.lessonId),
+    blockAfterCurrentStep: raw.blockAfterCurrentStep,
+    responses: parseResponses(raw.responses, address.lessonId),
+    passedExits: parsePassedExits(raw.passedExits, address.lessonId),
+    startedAt: requiredString(raw, 'startedAt', address.lessonId),
+    updatedAt: requiredString(raw, 'updatedAt', address.lessonId),
+  };
+  assertRunRevision(run, revision);
+  if (run.status === 'IN_PROGRESS') {
+    if (run.currentStepId === null) {
+      fail('STATE_MALFORMED', 'in-progress run has no currentStepId', {
+        lessonId: run.lessonId,
+        runId: run.runId,
+      });
+    }
+    const step = stepOf(revision.lesson, run.currentStepId);
+    if (run.display === 'FEEDBACK') {
+      const item = interactiveItem(revision.lesson, step);
+      if (item === null || run.responses[item.itemId] === undefined) {
+        fail('STATE_MALFORMED', 'feedback cursor has no matching immutable response', {
+          lessonId: run.lessonId,
+          runId: run.runId,
+          stepId: step.stepId,
+        });
+      }
+    }
+  } else if (run.currentStepId !== null) {
+    fail('STATE_MALFORMED', 'terminal run retains a graph cursor', {
+      lessonId: run.lessonId,
+      runId: run.runId,
+    });
   }
   return run;
 }
