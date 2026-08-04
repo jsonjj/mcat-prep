@@ -3,20 +3,21 @@
   "artifact_id": "V3-LPPL-323416",
   "artifact_version": "0.1.0-candidate.1",
   "artifact_status": "DRAFT",
-  "content_sha256": "3fd433da2d6f373ebee35a612a65aacf15eb14cfcb20b7b8f0a612cbb82d8c15",
+  "content_sha256": "a95c1b9c57216cef36ba6d74795764d47c625e429ce81a6a910c135077a6297e",
   "dependency_bindings": {
     "lesson_script_id": "V3-LSCR-323416",
-    "lesson_script_sha256": "8eca56743e10b7d3e0515c8db1cf754aa42d465b378e27aef451125f611e5bcb",
+    "lesson_script_sha256": "ea96c16c404f3eeedc5f5d8aaeb1fdc9d828b7bfa0740ee39c7d3d36c98b03ee",
     "kc_coverage_matrix_id": "V3-KCOV-323416",
-    "kc_coverage_matrix_sha256": "8fd29fb028efed26ab1ec18a2a71434130b0541f495cf6720ab698c67926076e"
+    "kc_coverage_matrix_sha256": "d0b1e4c5d3a6811049f514a00fc0a722048e51fe515426d018f9ff73f9b7298e"
   },
   "payload": {
     "lesson_id": "V3-LES-323416",
     "lesson_script_id": "V3-LSCR-323416",
-    "lesson_script_sha256": "8eca56743e10b7d3e0515c8db1cf754aa42d465b378e27aef451125f611e5bcb",
+    "lesson_script_sha256": "ea96c16c404f3eeedc5f5d8aaeb1fdc9d828b7bfa0740ee39c7d3d36c98b03ee",
     "kc_coverage_matrix_id": "V3-KCOV-323416",
-    "kc_coverage_matrix_sha256": "8fd29fb028efed26ab1ec18a2a71434130b0541f495cf6720ab698c67926076e",
+    "kc_coverage_matrix_sha256": "d0b1e4c5d3a6811049f514a00fc0a722048e51fe515426d018f9ff73f9b7298e",
     "learner_rhythm": [
+      "ENTRY_CHECK_BOUNDARY",
       "ENTRY_CHECK_BOUNDARY",
       "ORIENTATION",
       "EXPLANATION",
@@ -102,7 +103,33 @@
         "important_callout_count": 0,
         "collapsed_detail_ids": [],
         "representation_ids": [
-          "NUID-REP"
+          "NUID-PREREQ-REP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "NUID-SCREEN-GRAPH-RECHECK",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "NUID-NODE-GRAPH-RECHECK"
+        ],
+        "primary_job": "Complete a fresh semilog slope check before target teaching.",
+        "learner_heading": "Prerequisite recheck: graph skills",
+        "progress_label": "graph prerequisite recheck",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "NUID-GRAPH-RECHECK-REP"
         ],
         "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
         "keyboard_order": [
@@ -1807,9 +1834,9 @@
         "script_node_ids": [
           "NUID-NODE-HANDOFF-1"
         ],
-        "primary_job": "Return to the canonical prerequisite before continuing.",
-        "learner_heading": "Prerequisite handoff",
-        "progress_label": "prerequisite handoff",
+        "primary_job": "Return to Quantitative Measurement, Scaling, and Notation before continuing.",
+        "learner_heading": "Prerequisite handoff: quantitative skills",
+        "progress_label": "quantitative prerequisite handoff",
         "primary_action": "RETURN_TO_PLANNER",
         "important_callout_count": 0,
         "collapsed_detail_ids": [],
@@ -1829,9 +1856,9 @@
         "script_node_ids": [
           "NUID-NODE-HANDOFF-2"
         ],
-        "primary_job": "Return to the canonical prerequisite before continuing.",
-        "learner_heading": "Prerequisite handoff",
-        "progress_label": "prerequisite handoff",
+        "primary_job": "Return to Algebraic and Graphical Model Translation before continuing.",
+        "learner_heading": "Prerequisite handoff: graph skills",
+        "progress_label": "graph prerequisite handoff",
         "primary_action": "RETURN_TO_PLANNER",
         "important_callout_count": 0,
         "collapsed_detail_ids": [],
@@ -1847,6 +1874,20 @@
       }
     ],
     "representation_plans": [
+      {
+        "representation_id": "NUID-PREREQ-REP",
+        "target_kc_id": "V3-KC-669016",
+        "representation_type": "SCIENTIFIC_NOTATION_RATIO_AND_SEMILOG_AXIS_STATEMENTS",
+        "learner_operation": "Evaluate one quantitative ratio statement and one semilog repeated-halving statement independently.",
+        "text_nonvisual_equivalent": "State the scientific-notation ratio and the logarithmic-vertical-axis repeated-halving claim as two labelled text statements, Q and G."
+      },
+      {
+        "representation_id": "NUID-GRAPH-RECHECK-REP",
+        "target_kc_id": "V3-KC-669016",
+        "representation_type": "SEMI_LOG_COORDINATE_PAIR_WITH_SLOPE_CALCULATION",
+        "learner_operation": "Calculate change in log10(remaining amount) divided by elapsed time from a fresh coordinate pair.",
+        "text_nonvisual_equivalent": "State both time and log10(remaining amount) coordinates in text, then ask for signed vertical change per hour."
+      },
       {
         "representation_id": "NUID-REP",
         "target_kc_id": "V3-KC-669016",

@@ -8,8 +8,8 @@
       "answer_record_id": "NUID-ITEM-ENTRY",
       "learner_prompt_key": "NUID_ENTRY",
       "correct_option_index": 0,
-      "rationale": "Z = 16 gives 16 protons, and A − Z = 34 − 16 = 18 neutrons.",
-      "post_commitment_feedback": "Fix protons from Z, then subtract Z from A for neutrons.",
+      "rationale": "The powers-of-ten ratio is 4.0 × 10^1, and logarithmic scaling turns equal multiplicative halvings into equal vertical drops over equal time intervals.",
+      "post_commitment_feedback": "Both prerequisite statements are correct: the ratio preserves powers of ten, and repeated halving is evenly spaced on the stated semilog view.",
       "feedback_release_point": "AFTER_COMMITMENT_ONLY",
       "option_feedback": [
         {
@@ -23,21 +23,58 @@
           "observed_feature_id": "NUID-ENTRY-OPTION-1-DIVERGENCE",
           "observation_kind": "OBSERVED_DIVERGENCE",
           "learner_safe_release": "AFTER_COMMITMENT_ONLY",
-          "rejection_rationale": "This swaps the fixed proton count and calculated neutron count."
+          "rejection_rationale": "Q is correct and G is also correct. This response isolates the graph/logarithm prerequisite for handoff to Algebraic and Graphical Model Translation."
         },
         {
           "option_index": 2,
           "observed_feature_id": "NUID-ENTRY-OPTION-2-DIVERGENCE",
           "observation_kind": "OBSERVED_DIVERGENCE",
           "learner_safe_release": "AFTER_COMMITMENT_ONLY",
-          "rejection_rationale": "This treats mass number as neutron count."
+          "rejection_rationale": "G is correct and Q is also correct. This response isolates the ratio/scientific-notation prerequisite for handoff to Quantitative Measurement, Scaling, and Notation."
         },
         {
           "option_index": 3,
           "observed_feature_id": "NUID-ENTRY-OPTION-3-DIVERGENCE",
           "observation_kind": "OBSERVED_DIVERGENCE",
           "learner_safe_release": "AFTER_COMMITMENT_ONLY",
-          "rejection_rationale": "This treats mass number as proton count."
+          "rejection_rationale": "Both statements are correct. The authored branch first hands off the quantitative prerequisite, then uses a fresh check to determine whether the graph prerequisite also needs its separate handoff."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NUID-ITEM-GRAPH-RECHECK",
+      "learner_prompt_key": "NUID_GRAPH_RECHECK",
+      "correct_option_index": 0,
+      "rationale": "The semilog slope is (1.4 − 2.0)/(6 h − 0 h) = −0.60/6 h = −0.10 log10(amount) per hour.",
+      "post_commitment_feedback": "Subtract the two vertical coordinates and divide by the six-hour interval; the negative sign records the downward semilog trend.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NUID-GRAPH-RECHECK-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NUID-GRAPH-RECHECK-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the total vertical change, not the change per hour; divide −0.60 by 6 h."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NUID-GRAPH-RECHECK-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnitude is per hour, but the vertical coordinate decreases as time increases, so the slope must be negative."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NUID-GRAPH-RECHECK-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A slope uses change in vertical coordinate divided by change in time, not a ratio of the two endpoint coordinates."
         }
       ]
     },

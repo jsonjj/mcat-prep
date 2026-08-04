@@ -3,10 +3,10 @@
   "artifact_id": "V3-KCOV-323416",
   "artifact_version": "0.1.0-candidate.1",
   "artifact_status": "DRAFT",
-  "content_sha256": "8fd29fb028efed26ab1ec18a2a71434130b0541f495cf6720ab698c67926076e",
+  "content_sha256": "d0b1e4c5d3a6811049f514a00fc0a722048e51fe515426d018f9ff73f9b7298e",
   "dependency_bindings": {
     "lesson_script_id": "V3-LSCR-323416",
-    "lesson_script_sha256": "8eca56743e10b7d3e0515c8db1cf754aa42d465b378e27aef451125f611e5bcb"
+    "lesson_script_sha256": "ea96c16c404f3eeedc5f5d8aaeb1fdc9d828b7bfa0740ee39c7d3d36c98b03ee"
   },
   "payload": {
     "lesson_id": "V3-LES-323416",
@@ -17,13 +17,19 @@
       "V3-KC-786223"
     ],
     "lesson_script_id": "V3-LSCR-323416",
-    "lesson_script_sha256": "8eca56743e10b7d3e0515c8db1cf754aa42d465b378e27aef451125f611e5bcb",
+    "lesson_script_sha256": "ea96c16c404f3eeedc5f5d8aaeb1fdc9d828b7bfa0740ee39c7d3d36c98b03ee",
     "rows": [
       {
         "kc_id": "V3-KC-669016",
         "canonical_ordinal": 1,
         "objective_ref": "objective:V3-KC-669016",
         "entry_check_boundary_id": "NUID-NODE-ENTRY",
+        "prerequisite_recheck_item_ids": [
+          "NUID-ITEM-GRAPH-RECHECK"
+        ],
+        "prerequisite_recheck_node_ids": [
+          "NUID-NODE-GRAPH-RECHECK"
+        ],
         "orientation_node_id": "NUID-NODE-ORIENTATION",
         "explanation_node_ids": [
           "NUID-NODE-EXPLANATION"
@@ -166,11 +172,26 @@
               "V3-KC-981438"
             ],
             "handoff_node_id": "NUID-NODE-HANDOFF-1",
+            "return_after_prerequisite_routes": [
+              {
+                "origin_predicate": "ENTRY_OPTION_2_QUANTITATIVE_ONLY_GAP",
+                "return_node_id": "NUID-NODE-ORIENTATION"
+              },
+              {
+                "origin_predicate": "ENTRY_OPTION_3_BOTH_PREREQUISITE_GAPS",
+                "return_node_id": "NUID-NODE-GRAPH-RECHECK",
+                "return_check_activity_id": "NUID-ACT-GRAPH-RECHECK"
+              }
+            ],
             "behavior": "BLOCK_AND_RETURN_TO_PLANNER",
             "prerequisite_support_route_authored": false
           },
           {
             "check_activity_id": "NUID-ACT-ENTRY",
+            "check_activity_ids": [
+              "NUID-ACT-ENTRY",
+              "NUID-ACT-GRAPH-RECHECK"
+            ],
             "canonical_prerequisite_lesson_id": "V3-LES-844372",
             "relation_ids": [
               "V3-EDG-676286",
@@ -182,6 +203,13 @@
               "V3-KC-238607"
             ],
             "handoff_node_id": "NUID-NODE-HANDOFF-2",
+            "post_quantitative_recheck": {
+              "activity_id": "NUID-ACT-GRAPH-RECHECK",
+              "item_binding_id": "NUID-ITEM-GRAPH-RECHECK",
+              "pass_next_node_id": "NUID-NODE-ORIENTATION",
+              "fail_next_node_id": "NUID-NODE-HANDOFF-2",
+              "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED"
+            },
             "behavior": "BLOCK_AND_RETURN_TO_PLANNER",
             "prerequisite_support_route_authored": false
           }

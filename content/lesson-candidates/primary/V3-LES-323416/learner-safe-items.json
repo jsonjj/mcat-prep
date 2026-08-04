@@ -6,14 +6,27 @@
   "items": [
     {
       "prompt_key": "NUID_ENTRY",
-      "title": "Starting check: decode sulfur-34",
-      "prompt": "A sulfur-34 nucleus has atomic number 16. How many protons and neutrons does it contain?",
+      "title": "Prerequisite check: quantitative and graph skills",
+      "prompt": "Before nuclear content, evaluate two prerequisite statements. Q: (8.0 × 10^2)/(2.0 × 10^1) = 4.0 × 10^1. G: on a plot with log(remaining amount) on the vertical axis and time on the horizontal axis, repeated halving over equal time intervals gives equal vertical drops. Which evaluation is correct?",
       "response_type": "single_select",
       "options": [
-        "16 protons and 18 neutrons",
-        "18 protons and 16 neutrons",
-        "16 protons and 34 neutrons",
-        "34 protons and 18 neutrons"
+        "Q and G are both correct",
+        "Q is correct; G is incorrect",
+        "Q is incorrect; G is correct",
+        "Q and G are both incorrect"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NUID_GRAPH_RECHECK",
+      "title": "Prerequisite recheck: semilog slope",
+      "prompt": "After returning from quantitative prerequisite work, use a fresh graph check before nuclear content. A straight line on a plot of log10(remaining amount) versus time passes through (0 h, 2.0) and (6 h, 1.4). What is the slope of the line?",
+      "response_type": "single_select",
+      "options": [
+        "−0.10 log10(amount) per hour",
+        "−0.60 log10(amount) per hour",
+        "+0.10 log10(amount) per hour",
+        "+0.57 log10(amount) per hour"
       ],
       "directions": "Choose one response, then commit it to receive feedback."
     },
@@ -318,7 +331,7 @@
     },
     {
       "prompt_key": "HLIF_NEAR",
-      "title": "Near exit: five intervals",
+      "title": "Near exit: timed decay",
       "prompt": "A 96 μg sample has a half-life of 2 days. How much remains after 10 days?",
       "response_type": "single_select",
       "options": [

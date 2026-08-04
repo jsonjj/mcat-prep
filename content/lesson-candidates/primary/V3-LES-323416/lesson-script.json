@@ -3,7 +3,7 @@
   "artifact_id": "V3-LSCR-323416",
   "artifact_version": "0.1.0-candidate.1",
   "artifact_status": "DRAFT",
-  "content_sha256": "8eca56743e10b7d3e0515c8db1cf754aa42d465b378e27aef451125f611e5bcb",
+  "content_sha256": "ea96c16c404f3eeedc5f5d8aaeb1fdc9d828b7bfa0740ee39c7d3d36c98b03ee",
   "payload": {
     "lesson_id": "V3-LES-323416",
     "grouping_id": "V3-CL-323416",
@@ -74,7 +74,18 @@
           "checked_at_activity_id": "NUID-ACT-ENTRY",
           "unresolved_handoff_lesson_id": "V3-LES-789208",
           "failed_check_handoff_node_id": "NUID-NODE-HANDOFF-1",
-          "failed_check_predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED",
+          "failed_check_predicate": "ENTRY_OPTION_2_OR_3_QUANTITATIVE_PREREQUISITE_NOT_PASSED",
+          "return_after_prerequisite_routes": [
+            {
+              "origin_predicate": "ENTRY_OPTION_2_QUANTITATIVE_ONLY_GAP",
+              "return_node_id": "NUID-NODE-ORIENTATION"
+            },
+            {
+              "origin_predicate": "ENTRY_OPTION_3_BOTH_PREREQUISITE_GAPS",
+              "return_node_id": "NUID-NODE-GRAPH-RECHECK",
+              "return_activity_id": "NUID-ACT-GRAPH-RECHECK"
+            }
+          ],
           "planner_behavior": "BLOCK_CURRENT_PROGRESSION_AND_RETURN_TO_CANONICAL_PREREQUISITE",
           "prerequisite_support_route_authored": false
         },
@@ -91,9 +102,13 @@
           ],
           "taught_at_sequence_position": 3,
           "checked_at_activity_id": "NUID-ACT-ENTRY",
+          "checked_at_activity_ids": [
+            "NUID-ACT-ENTRY",
+            "NUID-ACT-GRAPH-RECHECK"
+          ],
           "unresolved_handoff_lesson_id": "V3-LES-844372",
           "failed_check_handoff_node_id": "NUID-NODE-HANDOFF-2",
-          "failed_check_predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED",
+          "failed_check_predicate": "ENTRY_OPTION_1_OR_NUID_GRAPH_RECHECK_UNSUPPORTED_OR_OMITTED",
           "planner_behavior": "BLOCK_CURRENT_PROGRESSION_AND_RETURN_TO_CANONICAL_PREREQUISITE",
           "prerequisite_support_route_authored": false
         }
@@ -141,15 +156,37 @@
           "STANDARD"
         ],
         "learner_content_blocks": [
-          "Starting check: read mass number and atomic number from nuclide notation. If weighted averages or graph interpretation are not secure, use the exact prerequisite handoff before continuing."
+          "Prerequisite check before target teaching: verify a scientific-notation ratio and a semilog repeated-halving statement. A miss routes to the exact quantitative or graph prerequisite before any nuclear instruction begins."
         ],
         "representation_ids": [
-          "NUID-REP"
+          "NUID-PREREQ-REP"
         ],
         "activity_ids": [
           "NUID-ACT-ENTRY"
         ],
         "checkpoint_ref": "NUID-CP-ENTRY",
+        "source_claim_refs": [
+          "NUID-CLAIM"
+        ]
+      },
+      {
+        "node_id": "NUID-NODE-GRAPH-RECHECK",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-669016",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh graph prerequisite recheck after the quantitative handoff: calculate a semilog slope from a new pair of coordinates before any nuclear instruction. A supported response proceeds to target orientation; an unsupported or omitted response routes to Algebraic and Graphical Model Translation."
+        ],
+        "representation_ids": [
+          "NUID-GRAPH-RECHECK-REP"
+        ],
+        "activity_ids": [
+          "NUID-ACT-GRAPH-RECHECK"
+        ],
+        "checkpoint_ref": "NUID-CP-GRAPH-RECHECK",
         "source_claim_refs": [
           "NUID-CLAIM"
         ]
@@ -1597,7 +1634,7 @@
           "STANDARD"
         ],
         "learner_content_blocks": [
-          "Pause this lesson when the prerequisite check is not secure. Return to the canonical prerequisite lesson, rebuild the required skill, and then begin this lesson again with a fresh entry check."
+          "If the quantitative statement was marked incorrectly, pause this lesson and return first to Quantitative Measurement, Scaling, and Notation. After that prerequisite, a quantitative-only gap returns to target orientation, while a response that showed both gaps returns to the distinct semilog-slope recheck. The exposed Q/G entry item is not reused."
         ],
         "representation_ids": [],
         "activity_ids": [],
@@ -1615,7 +1652,7 @@
           "STANDARD"
         ],
         "learner_content_blocks": [
-          "Pause this lesson when the prerequisite check is not secure. Return to the canonical prerequisite lesson, rebuild the required skill, and then begin this lesson again with a fresh entry check."
+          "If the entry response isolated the graph gap, or if the post-quantitative semilog-slope recheck was unsupported or omitted, pause this lesson and return to Algebraic and Graphical Model Translation. Rebuild logarithmic axes, slope, and semilog graph interpretation before returning."
         ],
         "representation_ids": [],
         "activity_ids": [],
@@ -1630,12 +1667,32 @@
         "activity_id": "NUID-ACT-ENTRY",
         "primary_kc_id": "V3-KC-669016",
         "item_binding_id": "NUID-ITEM-ENTRY",
-        "learner_operation": "DECODE_NUCLIDE_COMPOSITION",
+        "learner_operation": "VERIFY_BOUND_QUANTITATIVE_AND_GRAPH_PREREQUISITES",
         "authorized_next_node_ids": [
           "NUID-NODE-ORIENTATION",
           "NUID-NODE-HANDOFF-1",
           "NUID-NODE-HANDOFF-2"
-        ]
+        ],
+        "response_option_transition_map": {
+          "0": "NUID-NODE-ORIENTATION",
+          "1": "NUID-NODE-HANDOFF-2",
+          "2": "NUID-NODE-HANDOFF-1",
+          "3": "NUID-NODE-HANDOFF-1"
+        }
+      },
+      {
+        "activity_id": "NUID-ACT-GRAPH-RECHECK",
+        "primary_kc_id": "V3-KC-669016",
+        "item_binding_id": "NUID-ITEM-GRAPH-RECHECK",
+        "learner_operation": "CALCULATE_FRESH_SEMILOG_SLOPE",
+        "authorized_next_node_ids": [
+          "NUID-NODE-ORIENTATION",
+          "NUID-NODE-HANDOFF-2"
+        ],
+        "outcome_transition_map": {
+          "SUPPORTED_REASONING": "NUID-NODE-ORIENTATION",
+          "UNSUPPORTED_OR_OMITTED": "NUID-NODE-HANDOFF-2"
+        }
       },
       {
         "activity_id": "NUID-ACT-GUIDED",
@@ -2095,6 +2152,7 @@
           "concise": [],
           "standard": [
             "NUID-NODE-ENTRY",
+            "NUID-NODE-GRAPH-RECHECK",
             "NUID-NODE-ORIENTATION",
             "NUID-NODE-EXPLANATION",
             "NUID-NODE-MODEL",
@@ -2523,8 +2581,8 @@
           "INSTRUCTIONAL"
         ],
         "changed_dimensions": [],
-        "representation_id": "NUID-REP",
-        "learner_operation": "DECODE_NUCLIDE_COMPOSITION",
+        "representation_id": "NUID-PREREQ-REP",
+        "learner_operation": "VERIFY_BOUND_QUANTITATIVE_AND_GRAPH_PREREQUISITES",
         "hint_policy": "NONE_BEFORE_COMMIT",
         "feedback_release": "AFTER_COMMIT",
         "omission_policy": "RECORD_AS_LOW_STAKES_ABSTENTION",
@@ -2539,6 +2597,50 @@
         "solution_path_lineage_id": "NUID-SOLUTION-ENTRY",
         "decisive_cue_id": "NUID-CUE-ENTRY",
         "distractor_lineage_id": "NUID-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "NUID-ITEM-GRAPH-RECHECK",
+        "activity_id": "NUID-ACT-GRAPH-RECHECK",
+        "primary_kc_id": "V3-KC-669016",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "NUID-FAMILY-GRAPH-RECHECK",
+        "stimulus_lineage_id": "NUID-STIMULUS-GRAPH-RECHECK",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "required_operation",
+          "numeric_values",
+          "representation"
+        ],
+        "representation_id": "NUID-GRAPH-RECHECK-REP",
+        "learner_operation": "CALCULATE_FRESH_SEMILOG_SLOPE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NUID_GRAPH_RECHECK",
+        "server_scoring_authority_ref": "protected-items.json#NUID-ITEM-GRAPH-RECHECK",
+        "server_rationale_authority_ref": "protected-items.json#NUID-ITEM-GRAPH-RECHECK",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NUID-SOLUTION-GRAPH-RECHECK",
+        "decisive_cue_id": "NUID-CUE-GRAPH-RECHECK",
+        "distractor_lineage_id": "NUID-DISTRACTOR-GRAPH-RECHECK",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "NUID-ITEM-ENTRY",
+          "stimulus_difference": "NEW_COORDINATES_AND_GRAPH_TASK",
+          "solution_path_difference": "SLOPE_CALCULATION_INSTEAD_OF_STATEMENT_EVALUATION",
+          "distractor_difference": "NEW_NUMERIC_DIVERGENCES"
+        }
       },
       {
         "item_binding_id": "NUID-ITEM-GUIDED",
@@ -4210,6 +4312,54 @@
       }
     ],
     "transitions": [
+      {
+        "transition_id": "NUID-PREREQUISITE-ENTRY-BOTH-PASS",
+        "from_node_id": "NUID-NODE-ENTRY",
+        "to_node_id": "NUID-NODE-ORIENTATION",
+        "predicate": "ENTRY_OPTION_0_BOTH_PREREQUISITES_PASSED"
+      },
+      {
+        "transition_id": "NUID-PREREQUISITE-ENTRY-GRAPH-FAIL",
+        "from_node_id": "NUID-NODE-ENTRY",
+        "to_node_id": "NUID-NODE-HANDOFF-2",
+        "predicate": "ENTRY_OPTION_1_GRAPH_PREREQUISITE_NOT_PASSED"
+      },
+      {
+        "transition_id": "NUID-PREREQUISITE-ENTRY-QUANTITATIVE-FAIL",
+        "from_node_id": "NUID-NODE-ENTRY",
+        "to_node_id": "NUID-NODE-HANDOFF-1",
+        "predicate": "ENTRY_OPTION_2_QUANTITATIVE_ONLY_GAP"
+      },
+      {
+        "transition_id": "NUID-PREREQUISITE-ENTRY-BOTH-FAIL",
+        "from_node_id": "NUID-NODE-ENTRY",
+        "to_node_id": "NUID-NODE-HANDOFF-1",
+        "predicate": "ENTRY_OPTION_3_BOTH_PREREQUISITE_GAPS"
+      },
+      {
+        "transition_id": "NUID-QUANTITATIVE-RETURN-ORIENTATION",
+        "from_node_id": "NUID-NODE-HANDOFF-1",
+        "to_node_id": "NUID-NODE-ORIENTATION",
+        "predicate": "RETURNED_FROM_V3_LES_789208_AND_ENTRY_OPTION_2"
+      },
+      {
+        "transition_id": "NUID-QUANTITATIVE-RETURN-GRAPH-RECHECK",
+        "from_node_id": "NUID-NODE-HANDOFF-1",
+        "to_node_id": "NUID-NODE-GRAPH-RECHECK",
+        "predicate": "RETURNED_FROM_V3_LES_789208_AND_ENTRY_OPTION_3"
+      },
+      {
+        "transition_id": "NUID-GRAPH-RECHECK-PASS",
+        "from_node_id": "NUID-NODE-GRAPH-RECHECK",
+        "to_node_id": "NUID-NODE-ORIENTATION",
+        "predicate": "NUID_GRAPH_RECHECK_SUPPORTED_REASONING"
+      },
+      {
+        "transition_id": "NUID-GRAPH-RECHECK-FAIL",
+        "from_node_id": "NUID-NODE-GRAPH-RECHECK",
+        "to_node_id": "NUID-NODE-HANDOFF-2",
+        "predicate": "NUID_GRAPH_RECHECK_UNSUPPORTED_OR_OMITTED"
+      },
       {
         "transition_id": "NUID-TRANSITION-TO-DECY",
         "from_node_id": "NUID-NODE-RECAP",

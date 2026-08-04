@@ -2,7 +2,7 @@
   "format": "lesson-generation-candidate-quality-ledger/1",
   "lessonId": "V3-LES-323416",
   "route": "STANDARD",
-  "lifecycle": "CANDIDATE_JUDGE_FAILED_CYCLE_EXHAUSTED",
+  "lifecycle": "CANDIDATE_AUTHOR_REMEDIATED_AWAITING_FRESH_INDEPENDENT_JUDGE",
   "statusKind": "MACHINE_SCREEN_ONLY",
   "hardGateResults": {
     "R1_R15_STRUCTURAL": "PASS",
@@ -39,8 +39,8 @@
     }
   },
   "officialQualityResult": {
-    "evaluationAvailable": true,
-    "humanGateStatus": "FAILED",
+    "evaluationAvailable": false,
+    "humanGateStatus": "BLOCKED",
     "approvalWithheld": true
   },
   "authorDiagnostics": {
@@ -50,15 +50,13 @@
     "sourceRightsChecked": true,
     "protectedMaterialSeparated": true,
     "renderedCheckPerformed": false,
-    "independentReviewPerformed": true,
+    "independentReviewPerformed": false,
     "learnerExposureOccurred": false
   },
-  "finalGateStatus": "FAILED",
+  "finalGateStatus": "BLOCKED",
   "releaseEligibility": "INTERNAL_DRAFT_ONLY",
   "blockerCodes": [
-    "HLIF_NEAR_TITLE_SUPPLIES_INTERVAL_COUNT",
-    "PREREQUISITE_CHECK_DOES_NOT_TEST_BOUND_SKILLS",
-    "PREREQUISITE_HANDOFF_TARGET_UNDERDETERMINED"
+    "FRESH_INDEPENDENT_JUDGE_REQUIRED"
   ],
   "nonclaims": {
     "humanApproved": false,
