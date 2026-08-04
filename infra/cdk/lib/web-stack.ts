@@ -46,7 +46,21 @@ export interface WebDeliveryResources {
  * Google sign-in needs nothing here: it is a top-level navigation to Supabase,
  * which `connect-src` does not govern, and the browser returns to `'self'`.
  */
-const strictCsp = (supabaseOrigin?: string): string =>
+interface StrictCspOptions {
+  /** Supabase project origin to allow in `connect-src` (learner only). */
+  readonly supabaseOrigin?: string;
+  /**
+   * Allow WebAssembly compile/instantiate in `script-src` via 'wasm-unsafe-eval'.
+   * The learner Anki (.apkg) importer runs sql.js/SQLite as WASM to parse the deck,
+   * which a bare `script-src 'self'` blocks ("WebAssembly.instantiate() violates
+   * ... 'unsafe-eval' is not an allowed source"). This is strictly NARROWER than
+   * 'unsafe-eval': it permits only WASM, while JavaScript eval()/new Function()
+   * stay blocked — not a security downgrade. Admin has no WASM, so it keeps 'self'.
+   */
+  readonly allowWasmEval?: boolean;
+}
+
+const strictCsp = ({ supabaseOrigin, allowWasmEval = false }: StrictCspOptions = {}): string =>
   [
     "default-src 'none'",
     "base-uri 'none'",
@@ -61,7 +75,7 @@ const strictCsp = (supabaseOrigin?: string): string =>
     "manifest-src 'self'",
     "media-src 'self' blob:",
     "object-src 'none'",
-    "script-src 'self'",
+    allowWasmEval ? "script-src 'self' 'wasm-unsafe-eval'" : "script-src 'self'",
     "style-src 'self'",
     "worker-src 'self' blob:",
     'upgrade-insecure-requests',
@@ -175,7 +189,10 @@ export function createWebDelivery(
   });
   // Only the learner app authenticates against Supabase, so only its CSP names
   // that origin. The admin console keeps the tighter default.
-  const learnerCsp = strictCsp(supabaseProjectUrlFor(scope));
+  const learnerCsp = strictCsp({
+    supabaseOrigin: supabaseProjectUrlFor(scope),
+    allowWasmEval: true,
+  });
   const adminCsp = strictCsp();
   const publicHeaders = createResponseHeadersPolicy(
     scope,
