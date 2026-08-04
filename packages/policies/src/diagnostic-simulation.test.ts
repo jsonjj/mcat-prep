@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { BAYES_DIAGNOSTIC_CONFIG } from './diagnostic-bayes';
-import { runCohort, type CalibrationMode, type CohortMetrics } from './diagnostic-simulation';
+import {
+  collectCohortPairs,
+  summariseCohort,
+  type CalibrationMode,
+  type CohortMetrics,
+  type CohortOptions,
+} from './diagnostic-simulation';
 
 /**
  * The diagnostic plan's Track-1 gate: simulated students with known weak spots,
@@ -84,21 +90,70 @@ function report(label: string, m: CohortMetrics): void {
   console.log(lines.join('\n'));
 }
 
+/**
+ * A cohort scored in chunks that yield to the event loop between them.
+ *
+ * Running all `N` learners in one synchronous call blocks the worker long enough
+ * that Vitest's heartbeat — the birpc `onTaskUpdate` call — times out at 60s and
+ * reports the passing run as failed, the same hazard the sweep tests guard
+ * against. Learners are seeded from their index alone, so assembling the cohort
+ * in chunks and scoring the union with `summariseCohort` is identical to a
+ * whole-cohort run; only the synchronous spans get shorter. See
+ * `CohortOptions.firstLearner` and the note in `diagnostic-sweep.test.ts`.
+ */
+async function runCohortChunked(
+  options: Omit<CohortOptions, 'firstLearner'>,
+  chunk = 25,
+): Promise<CohortMetrics> {
+  const { learners } = options;
+  const head = collectCohortPairs({ ...options, learners: Math.min(chunk, learners) });
+  const pairs = [...head.pairs];
+  for (let first = chunk; first < learners; first += chunk) {
+    await new Promise<void>((resolve) => {
+      setImmediate(resolve);
+    });
+    pairs.push(
+      ...collectCohortPairs({
+        ...options,
+        learners: Math.min(chunk, learners - first),
+        firstLearner: first,
+      }).pairs,
+    );
+  }
+  return summariseCohort(pairs, head.bank, head.axis).metrics;
+}
+
 describe('diagnostic Track-1 simulation', () => {
   const cohorts = new Map<CalibrationMode, CohortMetrics>();
 
-  it('reports cohort metrics for both calibration settings', { timeout: 180_000 }, () => {
+  it('reports cohort metrics for both calibration settings', { timeout: 180_000 }, async () => {
     console.log('Config under test:', JSON.stringify(BAYES_DIAGNOSTIC_CONFIG));
     for (const mode of ['calibrated', 'misspecified'] as CalibrationMode[]) {
-      const m = runCohort(N, mode, BAYES_DIAGNOSTIC_CONFIG);
+      const m = await runCohortChunked({ learners: N, mode, cfg: BAYES_DIAGNOSTIC_CONFIG });
       cohorts.set(mode, m);
       report(`${mode} items`, m);
     }
     report(
       'misspecified + 10% careless + fatigue',
-      runCohort(N, 'misspecified', BAYES_DIAGNOSTIC_CONFIG, { carelessRate: 0.1, fatigue: 0.5 }),
+      await runCohortChunked({
+        learners: N,
+        mode: 'misspecified',
+        cfg: BAYES_DIAGNOSTIC_CONFIG,
+        run: { carelessRate: 0.1, fatigue: 0.5 },
+      }),
     );
     expect(cohorts.size).toBe(2);
+  });
+
+  it('scores a chunked cohort identically to a single-shot run', () => {
+    const options = {
+      learners: 16,
+      mode: 'misspecified' as CalibrationMode,
+      cfg: BAYES_DIAGNOSTIC_CONFIG,
+    };
+    const whole = collectCohortPairs(options);
+    const single = summariseCohort(whole.pairs, whole.bank, whole.axis).metrics;
+    return expect(runCohortChunked(options, 5)).resolves.toEqual(single);
   });
 
   it('recovers the true top priority within the reported Top 3', () => {

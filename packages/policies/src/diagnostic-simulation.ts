@@ -672,15 +672,24 @@ export function runCohortWith(options: CohortOptions): CohortMetrics {
 }
 
 /**
- * The cohort run, plus one {@link RetestRecord} per learner.
+ * Assemble every learner's pair of sittings for a cohort, without scoring them.
  *
- * `runCohortWith` is this function's `metrics` field and nothing else, so the
- * two can never drift apart: any question asked of the records is being asked of
- * the same sittings the bars were scored on.
+ * Split out of {@link runCohortDetailed} so a caller can build one cohort in
+ * chunks that yield to the event loop between them — a 250-learner run is a
+ * single uninterrupted synchronous span long enough to trip Vitest's worker
+ * heartbeat (the birpc `onTaskUpdate` timeout) and report a passing run as
+ * failed. Every learner is seeded from its index alone (see
+ * {@link CohortOptions.firstLearner}), so the pairs a chunk `[first, first+n)`
+ * produces are exactly the same slice a whole-cohort run would; concatenating
+ * the chunks in index order and scoring the union once with
+ * {@link summariseCohort} reproduces the whole run bit-for-bit. The bank and
+ * axis the pairs were built against are returned so the caller can score them
+ * without rebuilding either.
  */
-export function runCohortDetailed(options: CohortOptions): {
-  metrics: CohortMetrics;
-  records: RetestRecord[];
+export function collectCohortPairs(options: CohortOptions): {
+  pairs: CohortPair[];
+  bank: SimItem[];
+  axis: DiagnosticAxis;
 } {
   const {
     learners,
@@ -704,6 +713,21 @@ export function runCohortDetailed(options: CohortOptions): {
       b: simulateSitting(learner, bank, makeRng(seed + i * 104729 + 1), cfg, opts, axis),
     });
   }
+  return { pairs, bank, axis };
+}
+
+/**
+ * The cohort run, plus one {@link RetestRecord} per learner.
+ *
+ * `runCohortWith` is this function's `metrics` field and nothing else, so the
+ * two can never drift apart: any question asked of the records is being asked of
+ * the same sittings the bars were scored on.
+ */
+export function runCohortDetailed(options: CohortOptions): {
+  metrics: CohortMetrics;
+  records: RetestRecord[];
+} {
+  const { pairs, bank, axis } = collectCohortPairs(options);
   return summariseCohort(pairs, bank, axis);
 }
 
