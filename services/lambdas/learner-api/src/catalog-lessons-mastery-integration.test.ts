@@ -48,11 +48,10 @@ import { RepositoryLearnerKernel } from './workflow';
  * of the result. A cap or weight multiplier would land the grain somewhere else and
  * would leave the source unchanged, so the value IS the discriminator.
  *
- * L1 and L3 fire ONE changed exit per KC on a clean walk (their second exit per KC
- * is a miss-gated re-entry the walk never triggers). L2 carries no re-entry marking,
- * so BOTH of its baseline changed exits per KC fire — two discounted passes on each
- * grain, eight qualified observations over four KCs, exactly the Phase-4 pin. That
- * asymmetry is the whole point of walking all three through one seam.
+ * Every lesson fires ONE changed exit per KC on a clean walk. Repair confirmation
+ * and exact re-entry remain miss-gated branch items, so L2 contributes exactly four
+ * qualified observations over its four KCs under the canonical one-exit-per-KC
+ * graph.
  */
 
 const NOW = '2026-07-30T18:00:00.000Z';

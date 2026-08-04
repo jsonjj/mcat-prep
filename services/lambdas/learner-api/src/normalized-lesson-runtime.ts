@@ -11,6 +11,7 @@ import {
   type NormalizedLesson,
   type NormalizedResponseControl,
 } from '@mcat/content/lesson-normalization';
+import type { AssistanceLevel } from '@mcat/contracts';
 
 import type { LoadedLessonRevision, ServerItemAnswer } from './lesson-content-provider';
 
@@ -52,6 +53,28 @@ export type NormalizedLessonAction =
 export type NormalizedRunStatus = 'IN_PROGRESS' | 'BLOCKED' | 'DELIVERY_COMPLETE';
 export type NormalizedFeedbackOutcome = 'CORRECT' | 'INCORRECT' | 'OMITTED' | 'INVALID';
 
+/**
+ * Facts the normalized runner directly observed before an immutable commitment.
+ * Authored assistance affordances never enter this object. Older WP-05C records
+ * may omit it; the response source treats that absence as unobserved and fails
+ * mastery qualification closed.
+ */
+export interface NormalizedResponseRuntimeFacts {
+  readonly responseId: string;
+  readonly attemptIndex: number;
+  readonly firstAttempt: boolean;
+  readonly isRetry: boolean;
+  readonly isDiagnosticRetry: boolean;
+  readonly assistanceRequested: boolean;
+  readonly assistanceTaken: boolean;
+  readonly assistanceLevel: AssistanceLevel;
+  readonly contentBearingHintUsed: boolean;
+  readonly revealUsed: boolean;
+  readonly mixedAdministration: boolean;
+  readonly passageAdministration: boolean;
+  readonly timedAdministration: boolean;
+}
+
 export interface NormalizedResponseRecord {
   readonly stepId: string;
   readonly itemId: string;
@@ -63,6 +86,7 @@ export interface NormalizedResponseRecord {
   readonly outcome: NormalizedFeedbackOutcome;
   readonly correct: boolean;
   readonly committedAt: string;
+  readonly runtimeFacts?: NormalizedResponseRuntimeFacts;
 }
 
 export interface NormalizedRunBranch {
@@ -281,7 +305,7 @@ export function isEngineResponseOmitted(response: EngineResponse): boolean {
   return Object.values(response.fields).every(blank);
 }
 
-function isEngineResponseInvalid(response: EngineResponse): boolean {
+export function isEngineResponseInvalid(response: EngineResponse): boolean {
   if (response.kind !== 'CONSTRUCTED') return false;
   const values = Object.values(response.fields);
   return values.some(blank) && !values.every(blank);
@@ -762,12 +786,33 @@ export function applyNormalizedLessonAction(
       itemId: item.itemId,
       primaryKcId: item.primaryKcId,
       activityRole: item.activityRole,
-      exitFunction: item.exitFunction,
+      // Repair and fresh re-entry items are branch-scoped. Their normalized item
+      // role is often REPAIR_CONFIRMATION, so the active failed function is the
+      // only exact runtime source for the function this administration served.
+      exitFunction: run.branch?.failedFunction ?? item.exitFunction,
       isReentry: item.isReentry,
       response,
       outcome,
       correct: outcome === 'CORRECT',
       committedAt: now,
+      runtimeFacts: {
+        responseId: `${run.runId}:${item.itemId}:1`,
+        attemptIndex: 1,
+        firstAttempt: true,
+        isRetry: false,
+        isDiagnosticRetry: false,
+        // This runtime has no support-request, hint, reveal, timer, passage, or
+        // mixed-administration action. These are observed absences at commit,
+        // not values copied from authored affordance strings.
+        assistanceRequested: false,
+        assistanceTaken: false,
+        assistanceLevel: 'A0',
+        contentBearingHintUsed: false,
+        revealUsed: false,
+        mixedAdministration: false,
+        passageAdministration: false,
+        timedAdministration: false,
+      },
     };
     let passedExits = run.passedExits;
     if (outcome === 'CORRECT') {
@@ -1079,6 +1124,63 @@ function parseEngineResponse(value: unknown, lessonId: string, itemId: string): 
   });
 }
 
+function parseResponseRuntimeFacts(
+  value: unknown,
+  lessonId: string,
+  itemId: string,
+): NormalizedResponseRuntimeFacts | undefined {
+  if (value === undefined) return undefined;
+  const raw = asRecord(value);
+  const attemptIndex = raw?.attemptIndex;
+  const assistanceLevel = raw?.assistanceLevel;
+  const booleanFields = [
+    'firstAttempt',
+    'isRetry',
+    'isDiagnosticRetry',
+    'assistanceRequested',
+    'assistanceTaken',
+    'contentBearingHintUsed',
+    'revealUsed',
+    'mixedAdministration',
+    'passageAdministration',
+    'timedAdministration',
+  ] as const;
+  if (
+    raw === undefined ||
+    typeof raw.responseId !== 'string' ||
+    raw.responseId.length === 0 ||
+    typeof attemptIndex !== 'number' ||
+    !Number.isInteger(attemptIndex) ||
+    attemptIndex < 1 ||
+    (assistanceLevel !== 'A0' &&
+      assistanceLevel !== 'A1' &&
+      assistanceLevel !== 'A2' &&
+      assistanceLevel !== 'A3') ||
+    booleanFields.some((field) => typeof raw[field] !== 'boolean') ||
+    raw.firstAttempt !== (attemptIndex === 1)
+  ) {
+    fail('STATE_MALFORMED', `response runtime facts for "${itemId}" are malformed`, {
+      lessonId,
+      itemId,
+    });
+  }
+  return {
+    responseId: raw.responseId,
+    attemptIndex,
+    firstAttempt: raw.firstAttempt as boolean,
+    isRetry: raw.isRetry as boolean,
+    isDiagnosticRetry: raw.isDiagnosticRetry as boolean,
+    assistanceRequested: raw.assistanceRequested as boolean,
+    assistanceTaken: raw.assistanceTaken as boolean,
+    assistanceLevel,
+    contentBearingHintUsed: raw.contentBearingHintUsed as boolean,
+    revealUsed: raw.revealUsed as boolean,
+    mixedAdministration: raw.mixedAdministration as boolean,
+    passageAdministration: raw.passageAdministration as boolean,
+    timedAdministration: raw.timedAdministration as boolean,
+  };
+}
+
 function parseResponses(
   value: unknown,
   lessonId: string,
@@ -1117,6 +1219,7 @@ function parseResponses(
         itemId,
       });
     }
+    const runtimeFacts = parseResponseRuntimeFacts(record.runtimeFacts, lessonId, itemId);
     out[key] = {
       stepId: requiredString(record, 'stepId', lessonId),
       itemId,
@@ -1128,6 +1231,7 @@ function parseResponses(
       outcome,
       correct: record.correct,
       committedAt: requiredString(record, 'committedAt', lessonId),
+      ...(runtimeFacts === undefined ? {} : { runtimeFacts }),
     };
   }
   return out;

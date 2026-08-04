@@ -88,6 +88,75 @@ function correctResponseFor(revision: LoadedLessonRevision, itemId: string): Eng
   return { kind: 'SHORT', text: answer.acceptedResponses[0] ?? '' };
 }
 
+function wrongResponseFor(revision: LoadedLessonRevision, itemId: string): EngineResponse {
+  const item = revision.lesson.items.find((candidate) => candidate.itemId === itemId);
+  const answer = revision.protectedAuthority.answerKey.byItemId[itemId];
+  if (item === undefined || answer === undefined)
+    throw new Error(`no item authority for ${itemId}`);
+  if (item.projection.responseControl?.kind === 'SINGLE_SELECT') {
+    const wrong = item.projection.responseControl.choices.find(
+      (choice) => choice.choiceId !== answer.correctChoiceId,
+    );
+    if (wrong === undefined) throw new Error(`no wrong choice for ${itemId}`);
+    return { kind: 'MULTIPLE_CHOICE', choiceId: wrong.choiceId };
+  }
+  if (item.projection.responseControl?.kind === 'SHORT_TEXT') {
+    return { kind: 'SHORT', text: '__definitely_wrong__' };
+  }
+  const fields = item.projection.responseControl?.fields;
+  if (fields === undefined) throw new Error(`no response control for ${itemId}`);
+  return {
+    kind: 'CONSTRUCTED',
+    fields: Object.fromEntries(fields.map(({ fieldId }) => [fieldId, '__definitely_wrong__'])),
+  };
+}
+
+function advanceToStep(revision: LoadedLessonRevision, targetStepId: string) {
+  let run = createNormalizedLessonRun({ revision, now: NOW });
+  for (let guard = 0; guard < 2000; guard += 1) {
+    if (run.currentStepId === targetStepId) return run;
+    if (run.status !== 'IN_PROGRESS') break;
+    const { screen } = renderNormalizedLessonRun(run, revision);
+    run =
+      screen.kind === 'QUESTION'
+        ? applyNormalizedLessonAction(
+            run,
+            { type: 'SUBMIT_RESPONSE', response: correctResponseFor(revision, screen.itemId) },
+            NOW,
+            revision,
+          )
+        : applyNormalizedLessonAction(run, { type: 'CONTINUE' }, NOW, revision);
+  }
+  throw new Error(`step ${targetStepId} was not reached`);
+}
+
+interface ExpectedLessonAttribution {
+  readonly lessonId: string;
+  readonly definitionHash: string;
+  readonly questionId: string;
+  readonly itemBindingId: string;
+  readonly bindingVersion: string;
+  readonly serverItemVersion: number;
+  readonly primaryKcId: string;
+  readonly activityRole: string;
+  readonly exitFunction: string;
+  readonly semanticFamilyId: string;
+  readonly responseId: string;
+  readonly responseOccurredAt: string;
+  readonly serverScoringAuthorityRef: string;
+  readonly isReentry: boolean;
+}
+
+function attributionOf(
+  submission: LessonResponseSubmission,
+): ExpectedLessonAttribution | undefined {
+  return (
+    submission as LessonResponseSubmission & {
+      readonly lessonAttribution?: ExpectedLessonAttribution;
+    }
+  ).lessonAttribution;
+}
+
 /** Walk a lesson with correct answers, keyed by itemId → the submission the seam produced. */
 function collectSubmissions(lessonId: string): Map<string, LessonResponseSubmission> {
   const out = new Map<string, LessonResponseSubmission>();
@@ -104,7 +173,7 @@ function collectSubmissions(lessonId: string): Map<string, LessonResponseSubmiss
         NOW,
         revision,
       );
-      for (const submission of normalizedLessonResponseSubmissions(before, run, provider)) {
+      for (const submission of normalizedLessonResponseSubmissions(before, run, revision)) {
         out.set(submission.response.itemBindingId, submission);
       }
     } else if (screen.kind === 'FEEDBACK' || screen.kind === 'EXPOSITION') {
@@ -124,10 +193,15 @@ describe('normalized-lesson-response-source — every committed response becomes
   for (const lessonId of [L2, L3]) {
     it(`${lessonId}: each submission carries a parsed binding, the envelope version, and an A0 measured administration`, () => {
       const submissions = collectSubmissions(lessonId);
+      const revision = revisionFor(lessonId);
       const artifactVersion = provider.getAuthoredBindings(lessonId).artifactVersion;
       expect(submissions.size).toBeGreaterThan(0);
 
       for (const [itemId, submission] of submissions) {
+        const item = revision.lesson.items.find((candidate) => candidate.itemId === itemId);
+        if (submission.binding?.measurementKind !== 'MEASURABLE' || item === undefined) {
+          throw new Error(`measurable exact-revision item ${itemId} did not resolve`);
+        }
         expect(submission.lessonId).toBe(lessonId);
         expect(submission.envelopeBindingVersion).toBe(artifactVersion);
         // A committed response is a scored item, so its binding parsed and resolves.
@@ -145,6 +219,22 @@ describe('normalized-lesson-response-source — every committed response becomes
         expect(submission.scoring.scoringValid, itemId).toBe(true);
         if (submission.scoring.scoringValid)
           expect(submission.scoring.outcome, itemId).toBe('correct');
+        expect(attributionOf(submission), itemId).toEqual({
+          lessonId,
+          definitionHash: revision.definitionHash,
+          questionId: submission.binding.questionId,
+          itemBindingId: submission.binding.itemBindingId,
+          bindingVersion: submission.binding.bindingVersion ?? artifactVersion,
+          serverItemVersion: 1,
+          primaryKcId: submission.binding.primaryKcId,
+          activityRole: submission.binding.activityRole,
+          exitFunction: item.exitFunction,
+          semanticFamilyId: submission.binding.semanticFamilyId,
+          responseId: expect.any(String),
+          responseOccurredAt: NOW,
+          serverScoringAuthorityRef: submission.binding.serverScoringAuthorityRef,
+          isReentry: false,
+        });
       }
     });
   }
@@ -184,11 +274,294 @@ describe('normalized-lesson-response-source — every committed response becomes
         correct: true, // the lie
         committedAt: NOW,
       },
-      L3,
-      provider,
+      revisionFor(L3),
     );
     expect(submission.scoring.scoringValid).toBe(true);
     if (submission.scoring.scoringValid) expect(submission.scoring.outcome).toBe('incorrect');
+  });
+});
+
+describe('normalized-lesson-response-source — WP-05D runtime facts and outcome policy', () => {
+  it('maps an incomplete structured response to attempted incorrect with observed commit facts', async () => {
+    const revision = revisionFor(L3);
+    const run = advanceToStep(revision, 'SYS-SCREEN-CHANGED');
+    const screen = renderNormalizedLessonRun(run, revision).screen;
+    if (screen.kind !== 'QUESTION' || screen.control.kind !== 'STRUCTURED_FIELDS') {
+      throw new Error('the L3 structured changed exit was not reached');
+    }
+    const response: EngineResponse = {
+      kind: 'CONSTRUCTED',
+      fields: Object.fromEntries(
+        screen.control.fields.map(({ fieldId }, index) => [
+          fieldId,
+          index === 0 ? 'attempted value' : null,
+        ]),
+      ),
+    };
+
+    const after = applyNormalizedLessonAction(
+      run,
+      { type: 'SUBMIT_RESPONSE', response },
+      NOW,
+      revision,
+    );
+    const record = after.responses[screen.itemId];
+    expect(record?.outcome).toBe('INVALID');
+    expect(
+      (
+        record as typeof record & {
+          readonly runtimeFacts?: Readonly<Record<string, unknown>>;
+        }
+      )?.runtimeFacts,
+    ).toMatchObject({
+      attemptIndex: 1,
+      firstAttempt: true,
+      isRetry: false,
+      assistanceRequested: false,
+      assistanceTaken: false,
+      assistanceLevel: 'A0',
+      contentBearingHintUsed: false,
+      revealUsed: false,
+      mixedAdministration: false,
+      passageAdministration: false,
+      timedAdministration: false,
+    });
+
+    const [submission] = normalizedLessonResponseSubmissions(run, after, revision);
+    expect(submission?.response.omitted).toBe(false);
+    expect(submission?.scoring).toMatchObject({
+      scoringValid: true,
+      outcome: 'incorrect',
+    });
+    if (submission === undefined) return;
+    const probe = await startProbe();
+    const recorded = await probe.submit(submission);
+    expect(recorded).toMatchObject({
+      evidenceKind: 'transfer',
+      bkt: 'applied',
+      rejectionCodes: [],
+    });
+    expect(probe.persisted().evidence[0]).toMatchObject({ outcome: 'incorrect' });
+  });
+
+  it('maps a blank structured response to the qualifying scored omission', async () => {
+    const revision = revisionFor(L3);
+    const run = advanceToStep(revision, 'SYS-SCREEN-CHANGED');
+    const screen = renderNormalizedLessonRun(run, revision).screen;
+    if (screen.kind !== 'QUESTION' || screen.control.kind !== 'STRUCTURED_FIELDS') {
+      throw new Error('the L3 structured changed exit was not reached');
+    }
+    const after = applyNormalizedLessonAction(
+      run,
+      {
+        type: 'SUBMIT_RESPONSE',
+        response: {
+          kind: 'CONSTRUCTED',
+          fields: Object.fromEntries(screen.control.fields.map(({ fieldId }) => [fieldId, null])),
+        },
+      },
+      NOW,
+      revision,
+    );
+    const record = after.responses[screen.itemId];
+    expect(record?.outcome).toBe('OMITTED');
+    expect(
+      (
+        record as typeof record & {
+          readonly runtimeFacts?: { readonly firstAttempt?: boolean };
+        }
+      )?.runtimeFacts?.firstAttempt,
+    ).toBe(true);
+
+    const [submission] = normalizedLessonResponseSubmissions(run, after, revision);
+    expect(submission?.response.omitted).toBe(true);
+    expect(submission?.scoring).toMatchObject({
+      scoringValid: true,
+      outcome: 'omitted',
+    });
+    if (submission === undefined) return;
+    const probe = await startProbe();
+    const recorded = await probe.submit(submission);
+    expect(recorded).toMatchObject({
+      evidenceKind: 'transfer',
+      bkt: 'applied',
+      rejectionCodes: [],
+    });
+    expect(probe.persisted().evidence[0]).toMatchObject({ outcome: 'omitted' });
+  });
+
+  it('rejects a response-kind/control mismatch before commitment and emits no submission', () => {
+    const revision = revisionFor(L2);
+    const run = createNormalizedLessonRun({ revision, now: NOW });
+    const screen = renderNormalizedLessonRun(run, revision).screen;
+    if (screen.kind !== 'QUESTION') throw new Error('the L2 entry question was not reached');
+
+    expect(() =>
+      applyNormalizedLessonAction(
+        run,
+        { type: 'SUBMIT_RESPONSE', response: { kind: 'SHORT', text: 'not the control kind' } },
+        NOW,
+        revision,
+      ),
+    ).toThrow('response kind does not match SINGLE_SELECT');
+    expect(run.responses[screen.itemId]).toBeUndefined();
+    expect(normalizedLessonResponseSubmissions(run, run, revision)).toEqual([]);
+  });
+
+  it('fails closed when a legacy response has no observed assistance or attempt facts', () => {
+    const submission = normalizedLessonResponseSubmission(
+      {
+        stepId: 'GRAPH-SCREEN-CHANGED',
+        itemId: 'ALG-GRAPH-CHANGED-01',
+        primaryKcId: 'V3-KC-452593',
+        activityRole: 'CHANGED_EXIT',
+        exitFunction: 'CHANGED_TASK',
+        isReentry: false,
+        response: correctResponseFor(revisionFor(L3), 'ALG-GRAPH-CHANGED-01'),
+        outcome: 'CORRECT',
+        correct: true,
+        committedAt: NOW,
+      },
+      revisionFor(L3),
+    );
+
+    expect(submission.binding?.authoredAssistanceAffordances).toContain(
+      'AUTHORED_ASSISTANCE_LEVEL_A0',
+    );
+    expect(submission.assistanceObserved).toBe(false);
+    expect(submission.response).toMatchObject({
+      assistanceLevel: 'A3',
+      attemptIndex: 2,
+      isRetry: true,
+    });
+  });
+
+  it('emits no response observation for completion alone', () => {
+    const revision = revisionFor(L2);
+    let run = createNormalizedLessonRun({ revision, now: NOW });
+    let completionSubmissions: readonly LessonResponseSubmission[] | undefined;
+
+    for (let guard = 0; guard < 2000 && run.status === 'IN_PROGRESS'; guard += 1) {
+      const before = run;
+      const { screen } = renderNormalizedLessonRun(run, revision);
+      run =
+        screen.kind === 'QUESTION'
+          ? applyNormalizedLessonAction(
+              run,
+              { type: 'SUBMIT_RESPONSE', response: correctResponseFor(revision, screen.itemId) },
+              NOW,
+              revision,
+            )
+          : applyNormalizedLessonAction(run, { type: 'CONTINUE' }, NOW, revision);
+      const submissions = normalizedLessonResponseSubmissions(before, run, revision);
+      if (run.status === 'DELIVERY_COMPLETE') completionSubmissions = submissions;
+    }
+
+    expect(run.status).toBe('DELIVERY_COMPLETE');
+    expect(completionSubmissions).toEqual([]);
+  });
+});
+
+describe('normalized-lesson-response-source — repair and exact re-entry semantics', () => {
+  it('keeps repair confirmation contextual, then treats exact re-entry as a fresh item for only the failed function', async () => {
+    const revision = revisionFor(L3);
+    const kc = revision.lesson.kcs[0];
+    const branch = kc?.branchBindings.find(
+      (candidate) => candidate.failedFunction === 'CHANGED_TASK',
+    );
+    const failedStep = kc?.cleanBaselineSteps.find((step) =>
+      step.itemIds.some(
+        (itemId) =>
+          revision.lesson.items.find((item) => item.itemId === itemId)?.exitFunction ===
+          'CHANGED_TASK',
+      ),
+    );
+    if (kc === undefined || branch === undefined || failedStep === undefined) {
+      throw new Error('the L3 changed-task branch is incomplete');
+    }
+
+    let run = advanceToStep(revision, failedStep.stepId);
+    const failedScreen = renderNormalizedLessonRun(run, revision).screen;
+    if (failedScreen.kind !== 'QUESTION') throw new Error('changed exit question missing');
+    run = applyNormalizedLessonAction(
+      run,
+      {
+        type: 'SUBMIT_RESPONSE',
+        response: wrongResponseFor(revision, failedScreen.itemId),
+      },
+      NOW,
+      revision,
+    );
+    run = applyNormalizedLessonAction(run, { type: 'CONTINUE' }, NOW, revision);
+
+    const repairScreen = renderNormalizedLessonRun(run, revision).screen;
+    if (repairScreen.kind !== 'QUESTION') throw new Error('repair confirmation question missing');
+    const beforeRepair = run;
+    run = applyNormalizedLessonAction(
+      run,
+      {
+        type: 'SUBMIT_RESPONSE',
+        response: correctResponseFor(revision, repairScreen.itemId),
+      },
+      NOW,
+      revision,
+    );
+    const [repair] = normalizedLessonResponseSubmissions(beforeRepair, run, revision);
+    expect(repair).toBeDefined();
+    if (repair === undefined) return;
+    expect(attributionOf(repair)).toMatchObject({
+      lessonId: L3,
+      activityRole: 'REPAIR_CONFIRMATION',
+      exitFunction: 'CHANGED_TASK',
+      isReentry: false,
+    });
+    expect(run.passedExits[kc.kcId] ?? []).not.toContain('CHANGED_TASK');
+
+    const repairProbe = await startProbe();
+    const repairRecorded = await repairProbe.submit(repair);
+    expect(repairRecorded).toMatchObject({
+      evidenceKind: 'instruction',
+      bkt: 'not_qualified',
+    });
+    expect(repairProbe.persisted().mastery).toBeUndefined();
+
+    run = applyNormalizedLessonAction(run, { type: 'CONTINUE' }, NOW, revision);
+    const reentryScreen = renderNormalizedLessonRun(run, revision).screen;
+    if (reentryScreen.kind !== 'QUESTION') throw new Error('fresh re-entry question missing');
+    expect(reentryScreen.itemId).toBe(branch.reentryItemId);
+    const beforeReentry = run;
+    run = applyNormalizedLessonAction(
+      run,
+      {
+        type: 'SUBMIT_RESPONSE',
+        response: correctResponseFor(revision, reentryScreen.itemId),
+      },
+      NOW,
+      revision,
+    );
+    const [reentry] = normalizedLessonResponseSubmissions(beforeReentry, run, revision);
+    expect(reentry).toBeDefined();
+    if (reentry === undefined) return;
+
+    expect(reentry.response).toMatchObject({ attemptIndex: 1, isRetry: false });
+    expect(reentry.response.itemBindingId).not.toBe(repair.response.itemBindingId);
+    expect(reentry.binding?.semanticFamilyId).not.toBe(repair.binding?.semanticFamilyId);
+    expect(attributionOf(reentry)).toMatchObject({
+      lessonId: L3,
+      itemBindingId: branch.reentryItemId,
+      semanticFamilyId: reentry.binding?.semanticFamilyId,
+      activityRole: 'REPAIR_CONFIRMATION',
+      exitFunction: 'CHANGED_TASK',
+      isReentry: true,
+    });
+    expect(run.passedExits[kc.kcId] ?? []).toContain('CHANGED_TASK');
+
+    const reentryProbe = await startProbe();
+    const reentryRecorded = await reentryProbe.submit(reentry);
+    expect(reentryRecorded).toMatchObject({
+      evidenceKind: 'transfer',
+      bkt: 'applied',
+    });
   });
 });
 

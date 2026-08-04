@@ -102,6 +102,23 @@ const VALID_SCORING: ServerScoringResolution = {
   protectedScoring: false,
 };
 
+const LESSON_ATTRIBUTION = {
+  lessonId: 'Λ-COURSE::2099/unit 7',
+  definitionHash: 'a'.repeat(64),
+  questionId: 'Q?77?ALT — served',
+  itemBindingId: 'binding #77 (alt shape)',
+  bindingVersion: 'rev/2099.Ω',
+  serverItemVersion: 12,
+  primaryKcId: 'kc::Δ::9917',
+  activityRole: 'SOLO_PRACTICE',
+  exitFunction: 'CHANGED_TASK',
+  semanticFamilyId: 'family — 77',
+  responseId: 'response::run-1::item-77',
+  responseOccurredAt: '2026-07-27T12:00:00.000Z',
+  serverScoringAuthorityRef: 'server-only://scorer/77',
+  isReentry: false,
+} as const;
+
 const NO_ADMINISTRATION_CONDITIONS = {
   mixed: false,
   passage: false,
@@ -209,6 +226,118 @@ describe('lesson response adapter — qualification', () => {
     expect(isBktQualificationAccepted(result.qualification)).toBe(true);
     if (!isBktQualificationAccepted(result.qualification)) return;
     expect('dokLevel' in result.qualification.observation).toBe(false);
+  });
+});
+
+describe('lesson response adapter — WP-05D attribution and process evidence', () => {
+  it('binds the same immutable lesson attribution to accepted, evidence, and BKT observations', () => {
+    const result = adapt({
+      lessonAttribution: LESSON_ATTRIBUTION,
+    } as unknown as Partial<LessonResponseAdapterInput>);
+
+    expect(
+      (
+        result.observation as typeof result.observation & {
+          readonly lessonAttribution?: typeof LESSON_ATTRIBUTION;
+        }
+      )?.lessonAttribution,
+    ).toEqual(LESSON_ATTRIBUTION);
+    expect(
+      (
+        result.evidence as typeof result.evidence & {
+          readonly lessonAttribution?: typeof LESSON_ATTRIBUTION;
+        }
+      )?.lessonAttribution,
+    ).toEqual(LESSON_ATTRIBUTION);
+    expect(result.qualification.status).toBe('qualified');
+    if (result.qualification.status !== 'qualified') return;
+    expect(
+      (
+        result.qualification.observation as typeof result.qualification.observation & {
+          readonly lessonAttribution?: typeof LESSON_ATTRIBUTION;
+        }
+      ).lessonAttribution,
+    ).toEqual(LESSON_ATTRIBUTION);
+    expect(AcceptedLessonObservationSchema.parse(result.observation)).toEqual(result.observation);
+    expect(QualifiedBktObservationSchema.parse(result.qualification.observation)).toEqual(
+      result.qualification.observation,
+    );
+    expect(EvidenceRecordSchema.parse(result.evidence)).toEqual(result.evidence);
+  });
+
+  it('fails a repair confirmation closed without attribution while allowing trusted fresh re-entry', () => {
+    const binding = parseBinding({
+      activityRole: 'REPAIR_CONFIRMATION',
+      candidateEvidenceModes: ['TRANSFER'],
+    });
+    const missingAttribution = adapt({
+      binding,
+    } as unknown as Partial<LessonResponseAdapterInput>);
+
+    expect(missingAttribution.evidence?.kind).toBe('instruction');
+    expect(missingAttribution.qualification.status).toBe('rejected');
+    expect(rejectionCodesOf(missingAttribution)).toContain(
+      'RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY',
+    );
+
+    const repairAttribution = {
+      ...LESSON_ATTRIBUTION,
+      activityRole: 'REPAIR_CONFIRMATION',
+      isReentry: false,
+    } as const;
+    const repair = adapt({
+      binding,
+      lessonAttribution: repairAttribution,
+    } as unknown as Partial<LessonResponseAdapterInput>);
+
+    expect(repair.evidence?.kind).toBe('instruction');
+    expect(repair.qualification.status).toBe('rejected');
+    expect(rejectionCodesOf(repair)).toContain('RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY');
+
+    const reentryAttribution = { ...repairAttribution, isReentry: true } as const;
+    const reentry = adapt({
+      binding,
+      lessonAttribution: reentryAttribution,
+    } as unknown as Partial<LessonResponseAdapterInput>);
+    expect(reentry.evidence?.kind).toBe('transfer');
+    expect(reentry.qualification.status).toBe('qualified');
+  });
+
+  it('does not copy protected answer, rationale, or feedback text into attribution payloads', () => {
+    const result = adapt({
+      lessonAttribution: LESSON_ATTRIBUTION,
+    } as unknown as Partial<LessonResponseAdapterInput>);
+    const payload = JSON.stringify({
+      observation: result.observation,
+      evidence: result.evidence,
+      qualification: result.qualification,
+    });
+    const keysOf = (value: unknown): string[] => {
+      if (value === null || typeof value !== 'object') return [];
+      if (Array.isArray(value)) return value.flatMap(keysOf);
+      return Object.entries(value as Record<string, unknown>).flatMap(([key, nested]) => [
+        key,
+        ...keysOf(nested),
+      ]);
+    };
+    const keys = keysOf({
+      observation: result.observation,
+      evidence: result.evidence,
+      qualification: result.qualification,
+    });
+
+    expect(payload).not.toContain('private worked rationale');
+    expect(payload).not.toContain('approved post-commitment feedback');
+    for (const forbidden of [
+      'acceptedResponses',
+      'correctChoiceId',
+      'structuredAuthority',
+      'rationale',
+      'feedback',
+      'learnerSafePostCommitmentFeedback',
+    ]) {
+      expect(keys).not.toContain(forbidden);
+    }
   });
 });
 

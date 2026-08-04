@@ -82,6 +82,23 @@ const validResponse = (): Record<string, unknown> => ({
   occurredAt: '2026-07-27T12:00:00.000Z',
 });
 
+const validLessonAttribution = (): Record<string, unknown> => ({
+  lessonId: 'lesson-created-after-contract',
+  definitionHash: 'a'.repeat(64),
+  questionId: 'question-created-after-contract',
+  itemBindingId: 'binding-created-after-contract',
+  bindingVersion: 'draft-version-string',
+  serverItemVersion: 17,
+  primaryKcId: 'kc-created-after-contract',
+  activityRole: 'SOLO_PRACTICE',
+  exitFunction: 'NONE',
+  semanticFamilyId: 'family-created-after-contract',
+  responseId: 'response-created-after-contract',
+  responseOccurredAt: '2026-07-27T12:00:00.000Z',
+  serverScoringAuthorityRef: 'trusted-scorer-reference',
+  isReentry: false,
+});
+
 const validAcceptedObservation = (): Record<string, unknown> => ({
   observationId: '11111111-1111-4111-8111-111111111111',
   eventId: '22222222-2222-4222-8222-222222222222',
@@ -469,6 +486,67 @@ describe('lesson observation contracts', () => {
         serverItemVersion: 'draft-version-string',
       }).success,
     ).toBe(false);
+  });
+
+  it('rejects accepted-observation attribution that disagrees on version or KC identity', () => {
+    const acceptedObservationSchema = schemaFromIndex('AcceptedLessonObservationSchema');
+    const valid = {
+      ...validAcceptedObservation(),
+      lessonAttribution: validLessonAttribution(),
+    };
+    expect(acceptedObservationSchema.safeParse(valid).success).toBe(true);
+
+    const parsed = acceptedObservationSchema.safeParse({
+      ...valid,
+      lessonAttribution: {
+        ...valid.lessonAttribution,
+        bindingVersion: 'corrupt-binding-version',
+        primaryKcId: 'corrupt-kc-id',
+      },
+    });
+
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) {
+      const issuePaths = [
+        ...new Set(parsed.error.issues.map((issue) => JSON.stringify(issue.path))),
+      ].sort();
+      expect(issuePaths).toEqual(
+        [
+          ['lessonAttribution', 'bindingVersion'],
+          ['lessonAttribution', 'primaryKcId'],
+        ]
+          .map((path) => JSON.stringify(path))
+          .sort(),
+      );
+    }
+  });
+
+  it('rejects qualified-BKT attribution that disagrees on version or occurrence time', () => {
+    const qualifiedObservationSchema = schemaFromIndex('QualifiedBktObservationSchema');
+    const valid = {
+      ...validQualifiedObservation(),
+      lessonAttribution: validLessonAttribution(),
+    };
+    expect(qualifiedObservationSchema.safeParse(valid).success).toBe(true);
+
+    const parsed = qualifiedObservationSchema.safeParse({
+      ...valid,
+      lessonAttribution: {
+        ...valid.lessonAttribution,
+        bindingVersion: 'corrupt-binding-version',
+        responseOccurredAt: '2026-07-27T12:00:02.000Z',
+      },
+    });
+
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) {
+      expect(parsed.error.issues.map((issue) => issue.path).sort()).toEqual(
+        [
+          ['lessonAttribution', 'bindingVersion'],
+          ['lessonAttribution', 'responseOccurredAt'],
+        ].sort(),
+      );
+    }
   });
 
   it('represents multiple-choice and multi-field constructed responses', () => {

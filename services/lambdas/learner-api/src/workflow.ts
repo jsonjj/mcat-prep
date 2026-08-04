@@ -96,7 +96,6 @@ import {
 import { vectorLessonResponseSubmissions } from './vector-lesson-response-source';
 import {
   lessonRevisionProvider,
-  type LessonContentProvider,
   type LessonRevisionProvider,
   type LoadedLessonRevision,
 } from './lesson-content-provider';
@@ -180,45 +179,6 @@ type NormalizedLessonsLearnerState = LearnerState & {
 
 function withNormalizedLessons(state: LearnerState): NormalizedLessonsLearnerState {
   return state as NormalizedLessonsLearnerState;
-}
-
-const exactRevisionResponseProviders = new WeakMap<LoadedLessonRevision, LessonContentProvider>();
-
-/**
- * Exact-revision adapter for the unchanged WP-05D response source. This keeps
- * evidence derivation on the same immutable lesson/answer/binding tuple as the
- * runtime without letting that synchronous legacy seam choose the active cut.
- */
-function exactRevisionResponseProvider(revision: LoadedLessonRevision): LessonContentProvider {
-  const cached = exactRevisionResponseProviders.get(revision);
-  if (cached !== undefined) return cached;
-  const assertLesson = (lessonId: string): void => {
-    if (lessonId !== revision.lessonId) {
-      throw validationError('The response source requested a different lesson revision.');
-    }
-  };
-  const provider: LessonContentProvider = {
-    listLessonIds: () => [revision.lessonId],
-    hasLesson: (lessonId) => lessonId === revision.lessonId,
-    getNormalizedLesson: (lessonId) => {
-      assertLesson(lessonId);
-      return revision.lesson;
-    },
-    getAnswerKey: (lessonId) => {
-      assertLesson(lessonId);
-      return revision.protectedAuthority.answerKey;
-    },
-    getDefinitionHash: (lessonId) => {
-      assertLesson(lessonId);
-      return revision.definitionHash;
-    },
-    getAuthoredBindings: (lessonId) => {
-      assertLesson(lessonId);
-      return revision.authoredBindings;
-    },
-  };
-  exactRevisionResponseProviders.set(revision, provider);
-  return provider;
 }
 
 /** One command for a normalized-engine lesson: an envelope plus an engine action. */
@@ -723,11 +683,7 @@ export class RepositoryLearnerKernel {
         authority,
         baseState,
         command.envelope,
-        normalizedLessonResponseSubmissions(
-          previousRun,
-          nextRun,
-          exactRevisionResponseProvider(revision),
-        ),
+        normalizedLessonResponseSubmissions(previousRun, nextRun, revision),
       );
       return {
         eventType: 'lesson_command_accepted',
@@ -798,6 +754,9 @@ export class RepositoryLearnerKernel {
       sequence: state.nextSequence + 1,
       contentRelease: this.dependencies.bank.contentRelease,
       policies: state.events.at(-1)?.policies ?? [],
+      ...(submission.lessonAttribution === undefined
+        ? {}
+        : { lessonAttribution: submission.lessonAttribution }),
     });
 
     // BKT FIRST, then evidence. The authority re-parses the observation through
@@ -857,7 +816,10 @@ export class RepositoryLearnerKernel {
       assistance: {
         level: submission.response.assistanceLevel,
         observed: submission.assistanceObserved,
+        requested: submission.runtimeObservation?.assistanceRequested ?? null,
+        taken: submission.runtimeObservation?.assistanceTaken ?? null,
       },
+      firstAttempt: submission.runtimeObservation?.firstAttempt ?? null,
       observationId: adaptation.observation?.observationId ?? null,
       evidenceId: adaptation.evidence === null || refusedByAuthority ? null : evidenceId,
       evidenceKind: refusedByAuthority ? null : (adaptation.evidence?.kind ?? null),

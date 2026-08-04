@@ -121,6 +121,118 @@ describe('normalized lesson transport revision boundary', () => {
     expect(JSON.stringify(view)).not.toContain(newRevision.definitionHash);
   });
 
+  it('scores and attributes a committed response against the run-pinned revision after an active switch', async () => {
+    const base = await createRepoLessonRevisionProvider().loadActiveRevision({ lessonId: L2 });
+    const firstItem = base.lesson.items.find((item) => item.scored);
+    if (firstItem?.projection.responseControl?.kind !== 'SINGLE_SELECT') {
+      throw new Error('the L2 first scored item must be single-select');
+    }
+    const itemId = firstItem.itemId;
+    const oldBase = revisionWithIdentity(base, '3'.repeat(64), 'Old scored revision');
+    const oldRevision: LoadedLessonRevision = {
+      ...oldBase,
+      authoredBindings: {
+        ...oldBase.authoredBindings,
+        entries: oldBase.authoredBindings.entries.map((entry) =>
+          entry.item_binding_id === itemId ? { ...entry, binding_version: 'binding-old' } : entry,
+        ),
+      },
+    };
+    const oldAnswer = oldRevision.protectedAuthority.answerKey.byItemId[itemId];
+    if (oldAnswer?.correctChoiceId === null || oldAnswer === undefined) {
+      throw new Error('the old answer is missing');
+    }
+    const newCorrect = firstItem.projection.responseControl.choices.find(
+      (choice) => choice.choiceId !== oldAnswer.correctChoiceId,
+    )?.choiceId;
+    if (newCorrect === undefined) throw new Error('the new revision needs another authored choice');
+    const newBase = revisionWithIdentity(base, '4'.repeat(64), 'New active scored revision');
+    const newRevision: LoadedLessonRevision = {
+      ...newBase,
+      authoredBindings: {
+        ...newBase.authoredBindings,
+        entries: newBase.authoredBindings.entries.map((entry) =>
+          entry.item_binding_id === itemId ? { ...entry, binding_version: 'binding-new' } : entry,
+        ),
+      },
+      protectedAuthority: {
+        answerKey: {
+          ...newBase.protectedAuthority.answerKey,
+          byItemId: {
+            ...newBase.protectedAuthority.answerKey.byItemId,
+            [itemId]: { ...oldAnswer, correctChoiceId: newCorrect },
+          },
+        },
+      },
+    };
+    let active = oldRevision;
+    const provider: LessonRevisionProvider = {
+      listActiveCatalogEntries: async () => [active.catalogEntry],
+      resolveSlug: async () => ({
+        lessonId: active.lessonId,
+        slug: active.catalogEntry.slug,
+        activeDefinitionHash: active.definitionHash,
+      }),
+      loadActiveRevision: async () => active,
+      loadExactRevision: async (_lessonId, definitionHash) =>
+        definitionHash === oldRevision.definitionHash ? oldRevision : newRevision,
+    };
+    const { kernel, principal, repository } = kernelWith(provider);
+    const started = (await kernel.handleNormalizedLessonStart(
+      L2,
+      { envelope: envelope(0) },
+      principal,
+    )) as unknown as { streamVersion: number };
+    active = newRevision;
+    const view = await kernel.normalizedLessonRun(L2, principal);
+    if (view.screen.kind !== 'QUESTION') throw new Error('the pinned question was not served');
+    expect(view.screen.itemId).toBe(itemId);
+    expect(oldAnswer.correctChoiceId).not.toBe(newCorrect);
+
+    await kernel.handleNormalizedLessonCommand(
+      L2,
+      {
+        envelope: envelope(started.streamVersion),
+        action: {
+          type: 'SUBMIT_RESPONSE',
+          response: { kind: 'MULTIPLE_CHOICE', choiceId: oldAnswer.correctChoiceId },
+        },
+      },
+      principal,
+    );
+
+    const state = repository.projectionFor(principal.learnerId)?.state as
+      | {
+          evidence?: readonly {
+            outcome?: string;
+            itemVersion?: number;
+            lessonAttribution?: Readonly<Record<string, unknown>>;
+          }[];
+        }
+      | undefined;
+    expect(state?.evidence).toHaveLength(1);
+    expect(state?.evidence?.[0]).toMatchObject({
+      outcome: 'correct',
+      itemVersion: 1,
+      lessonAttribution: {
+        lessonId: L2,
+        definitionHash: oldRevision.definitionHash,
+        itemBindingId: itemId,
+        bindingVersion: 'binding-old',
+        serverItemVersion: 1,
+      },
+    });
+    expect(repository.eventsFor(principal.learnerId).at(-1)?.payload.lessonResponse).toMatchObject({
+      assistance: {
+        level: 'A0',
+        observed: true,
+        requested: false,
+        taken: false,
+      },
+      firstAttempt: true,
+    });
+  });
+
   it('returns the same feedback for an idempotent command replay and stores one response', async () => {
     const revision = await createRepoLessonRevisionProvider().loadActiveRevision({ lessonId: L2 });
     const provider: LessonRevisionProvider = {

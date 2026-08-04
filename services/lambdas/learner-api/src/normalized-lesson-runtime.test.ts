@@ -580,6 +580,7 @@ describe('canonical repair, exact re-entry, and bounded handoff', () => {
       wrongResponseFor(revision, itemForStep(revision, reentry.stepId).itemId),
       revision,
     );
+    expect(run.responses[binding.reentryItemId]?.exitFunction).toBe(binding.failedFunction);
     run = continueRun(run, revision);
     expect(run.currentStepId).toBe(handoff.stepId);
     expect(run.passedExits[kc.kcId] ?? []).not.toContain(binding.failedFunction);
@@ -714,6 +715,35 @@ describe('response-control validation and feedback', () => {
     expect(
       renderNormalizedLessonRun(submit(structuredRun, partial, revision), revision).screen,
     ).toMatchObject({ kind: 'FEEDBACK', outcome: 'INVALID' });
+  });
+
+  it('persists observed commit-time facts and restores them without authored inference', async () => {
+    const revision = await provider.loadActiveRevision({ lessonId: L3 });
+    const initial = createRun(revision);
+    const item = itemForStep(revision, initial.currentStepId!);
+    const committed = submit(initial, correctResponseFor(revision, item.itemId), revision);
+    const record = committed.responses[item.itemId] as
+      | ((typeof committed.responses)[string] & {
+          readonly runtimeFacts?: Readonly<Record<string, unknown>>;
+        })
+      | undefined;
+
+    expect(record?.runtimeFacts).toEqual({
+      responseId: `${initial.runId}:${item.itemId}:1`,
+      attemptIndex: 1,
+      firstAttempt: true,
+      isRetry: false,
+      isDiagnosticRetry: false,
+      assistanceRequested: false,
+      assistanceTaken: false,
+      assistanceLevel: 'A0',
+      contentBearingHintUsed: false,
+      revealUsed: false,
+      mixedAdministration: false,
+      passageAdministration: false,
+      timedAdministration: false,
+    });
+    expect(restoreNormalizedLessonRun(structuredClone(committed), revision)).toEqual(committed);
   });
 
   it('rejects a response to exposition and any action after a terminal state', async () => {

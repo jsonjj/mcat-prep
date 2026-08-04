@@ -50,7 +50,8 @@ export const ACTIVITY_ROLES: readonly ActivityRole[] = [
  * Normalized exit function. Both source spellings for "this is not an exit item"
  * (`null` in L1/L3, the string `"NOT_EXIT"` in L2) collapse to `NONE`.
  */
-export type ExitFunction = 'NEAR_USE' | 'CHANGED_TASK' | 'NONE';
+export const EXIT_FUNCTIONS = ['NEAR_USE', 'CHANGED_TASK', 'NONE'] as const;
+export type ExitFunction = (typeof EXIT_FUNCTIONS)[number];
 
 export type LessonGrammar = 'L1_INLINE' | 'L2_PROMPTREF' | 'L3_PROJECTIONREF';
 
