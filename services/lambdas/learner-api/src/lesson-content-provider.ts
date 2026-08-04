@@ -117,10 +117,46 @@ export class AnswerKeyResolutionError extends Error {
 // inside the CommonJS Lambda bundle esbuild emits (where `__dirname` is the real
 // Node global and `import.meta` is empty). Referencing `import.meta.url` unguarded
 // at module scope is exactly what crashed the deployed handler on load
-// (`fileURLToPath(undefined)`); the `__dirname` guard selects the CJS global first
-// and never evaluates the ESM-only branch in a bundle.
+// (`fileURLToPath(undefined)` throws), 502'ing EVERY route at import time. This
+// resolution must therefore NEVER throw — a bundle quirk in one file must not be
+// able to take the whole Lambda down before a single request is served.
+//
+// Priority (mirrors the numbered contract): the caller checks
+// `LESSON_CONTENT_ROOT` first (see `DEFAULT_CONTENT_ROOT`); then this function
+// prefers (2) the CJS `__dirname` global, (3) a VALID ESM `import.meta.url`, and
+// finally (4) degrades to `process.cwd()`. Pure and parameterized so a test can
+// exercise the "both unavailable" and "malformed URL" branches directly.
+export function resolveModuleDir(dirnameGlobal: unknown, importMetaUrl: unknown): string {
+  // (2) The CJS bundle path: `__dirname` is the real Node global. Selected first
+  // so the ESM-only branch is never evaluated in a bundle where `import.meta` is
+  // empty (`import.meta.url === undefined`).
+  if (typeof dirnameGlobal === 'string' && dirnameGlobal.length > 0) return dirnameGlobal;
+  // (3) The ESM path (dev/tests/tsx): a real `file:` URL. Wrapped in try/catch so a
+  // non-`file:` scheme or malformed URL degrades to the safe default instead of
+  // throwing `ERR_INVALID_URL*` at module load.
+  if (typeof importMetaUrl === 'string' && importMetaUrl.length > 0) {
+    try {
+      return dirname(fileURLToPath(importMetaUrl));
+    } catch {
+      return process.cwd();
+    }
+  }
+  // (4) Neither is available (e.g. a CJS bundle with an empty `import.meta` AND no
+  // usable `__dirname`): fall back to a safe, non-throwing default.
+  return process.cwd();
+}
+
 function moduleDirname(): string {
-  return typeof __dirname === 'string' ? __dirname : dirname(fileURLToPath(import.meta.url));
+  // Read the ambient globals defensively. `typeof` never throws even when the
+  // identifier is undeclared (ESM has no `__dirname`), and `import.meta` is empty
+  // rather than absent in the CJS bundle, so `import.meta.url` reads as `undefined`
+  // there instead of throwing.
+  const dirnameGlobal = typeof __dirname === 'string' ? __dirname : undefined;
+  const importMetaUrl =
+    typeof import.meta !== 'undefined' && typeof import.meta.url === 'string'
+      ? import.meta.url
+      : undefined;
+  return resolveModuleDir(dirnameGlobal, importMetaUrl);
 }
 
 // The vendored catalog root. In the deployed Lambda the catalog is copied next to

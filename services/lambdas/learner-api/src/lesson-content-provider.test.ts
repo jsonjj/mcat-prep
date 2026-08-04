@@ -1,7 +1,7 @@
 import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { afterAll, describe, expect, it } from 'vitest';
 
 import { normalizeLesson, type RawLessonArtifacts } from '@mcat/content/lesson-normalization';
@@ -10,6 +10,7 @@ import {
   AnswerKeyResolutionError,
   UnknownLessonError,
   createRepoLessonContentProvider,
+  resolveModuleDir,
 } from './lesson-content-provider';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
@@ -173,6 +174,47 @@ describe('the provider fails loud — it never guesses or silently drops an item
     const corrupt = createRepoLessonContentProvider(tmpRoot);
     expect(() => corrupt.getAnswerKey(L3)).toThrow(AnswerKeyResolutionError);
     expect(() => corrupt.getAnswerKey(L3)).toThrow(/out of range/);
+  });
+});
+
+describe('resolveModuleDir — module-dir resolution is crash-proof at import', () => {
+  it('prefers the CJS __dirname global (the deployed bundle) when it is a real string', () => {
+    // Even with a valid import.meta.url present, __dirname wins — so the ESM-only
+    // fileURLToPath branch is never evaluated inside the CJS Lambda bundle.
+    expect(resolveModuleDir('/var/task', 'file:///never/used.js')).toBe('/var/task');
+  });
+
+  it('falls back to a VALID import.meta.url (dev/tests/tsx) when __dirname is absent', () => {
+    const modulePath = join(tmpdir(), 'mcat-module-dir', 'handler.js');
+    expect(resolveModuleDir(undefined, pathToFileURL(modulePath).href)).toBe(dirname(modulePath));
+  });
+
+  // The exact failure that 502'd every route: `import.meta.url` undefined in a CJS
+  // bundle made `fileURLToPath(undefined)` throw at module load. Resolution must
+  // now degrade instead of throwing when BOTH signals are unavailable.
+  it('NEVER throws when both __dirname and import.meta.url are unavailable', () => {
+    let result: string | undefined;
+    expect(() => {
+      result = resolveModuleDir(undefined, undefined);
+    }).not.toThrow();
+    expect(result).toBe(process.cwd());
+    // Empty strings (a bundler that defined the globals but left them blank) also
+    // degrade rather than resolving to a bogus "" directory.
+    expect(resolveModuleDir('', '')).toBe(process.cwd());
+  });
+
+  it('NEVER throws on a malformed or non-file import.meta.url — degrades to cwd', () => {
+    for (const bad of ['not a url', 'https://example.com/handler.js', 'data:text/js,0']) {
+      expect(() => resolveModuleDir(undefined, bad)).not.toThrow();
+      expect(resolveModuleDir(undefined, bad)).toBe(process.cwd());
+    }
+  });
+
+  it('constructs the eager module-load provider without throwing', () => {
+    // `lessonContentProvider` and this test`s `provider` are both built at module
+    // load via `createRepoLessonContentProvider()`; a usable provider here proves
+    // module initialization did not throw on import.
+    expect(provider.listLessonIds().length).toBeGreaterThan(0);
   });
 });
 
