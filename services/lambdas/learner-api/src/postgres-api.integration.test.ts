@@ -11,9 +11,25 @@ import type { PoolClient } from 'pg';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import type { IdentityProvider } from './auth/identity-provider';
+import { createPostgresDiagnosticPort } from './diagnostic-port';
 import { createGuestProjection } from './guest-projection';
 import { createRepositoryLearnerApi, type LearnerApi } from './handler';
 import type { ApiGatewayV2Event, ApiGatewayV2Result } from './http';
+
+/**
+ * The learner-safe slice of the block-diagnostic wire this suite drives. The full
+ * contract is `DiagnosticBlockResponseSchema`; only the fields the walk reads are
+ * named here.
+ */
+interface DiagnosticWireView {
+  readonly done: boolean;
+  readonly itemsScored: number;
+  readonly stageId: string | null;
+  readonly sessionToken: string;
+  readonly blockToken: string | null;
+  readonly questions: readonly { id: string }[];
+  readonly result: unknown;
+}
 
 const DATABASE_URL = process.env.TEST_DATABASE_URL;
 const describeWithPostgres = DATABASE_URL === undefined ? describe.skip : describe;
@@ -157,6 +173,7 @@ describeWithPostgres('PostgreSQL-backed learner API vertical', () => {
       repository,
       clock,
       bank: authority.bank,
+      diagnostic: createPostgresDiagnosticPort(pool),
       sessions: new PostgresGuestSessionService(pool, createGuestProjection, {
         now: () => NOW,
       }),
@@ -175,12 +192,51 @@ describeWithPostgres('PostgreSQL-backed learner API vertical', () => {
     const bootstrapBody = await signIn(api);
     const { cookies } = bootstrapBody;
 
-    const diagnostic = await api.handle(event('GET', '/v1/diagnostic/next', { cookies }));
-    const diagnosticBody = body<{
-      done: false;
-      question: { id: string; choices: readonly { id: string }[] };
-    }>(diagnostic);
-    expect(diagnostic.statusCode).toBe(200);
+    // Placement diagnostic: the block/multistage form served off the kernel over
+    // its own persisted `diagnostic_sessions` (POST /v1/diagnostic/{next,block}).
+    // It writes no mastery and logs no attempt, so it does NOT advance the learner
+    // stream — the onboarding gate below is what does. Drive it to completion
+    // against the real Postgres session store and assert the wire stays leak-free.
+    const diagnosticStart = await api.handle(
+      event('POST', '/v1/diagnostic/next', { body: {}, cookies }),
+    );
+    expect(diagnosticStart.statusCode).toBe(200);
+    let block = body<DiagnosticWireView>(diagnosticStart);
+    expect(block.done).toBe(false);
+    expect(block.questions.length).toBeGreaterThan(0);
+    expect(typeof block.sessionToken).toBe('string');
+
+    const servedDiagnosticItems: string[] = [];
+    for (let guard = 0; guard < 20 && !block.done; guard += 1) {
+      servedDiagnosticItems.push(...block.questions.map((question) => question.id));
+      const answers = Object.fromEntries(block.questions.map((question) => [question.id, 'A']));
+      const committed = await api.handle(
+        event('POST', '/v1/diagnostic/block', {
+          body: {
+            sessionToken: block.sessionToken,
+            blockToken: block.blockToken,
+            stageId: block.stageId,
+            answers,
+          },
+          cookies,
+        }),
+      );
+      expect(committed.statusCode).toBe(200);
+      block = body<DiagnosticWireView>(committed);
+    }
+    expect(block.done).toBe(true);
+    expect(block.result).not.toBeNull();
+    expect(block.itemsScored).toBe(servedDiagnosticItems.length);
+    expect(new Set(servedDiagnosticItems).size).toBe(servedDiagnosticItems.length);
+    expect(JSON.stringify(block)).not.toMatch(
+      /correct_choice_id|option_rationales|"correct"|tokenHash/i,
+    );
+
+    // Onboarding gate: a learner's first `/v1/attempts` is scored as the kernel
+    // placement probe (see `handleAttempt`), which sets `onboarding.diagnosticComplete`
+    // and is the learner's first stream event. The probe id is fixed and
+    // authoritative (`DIAGNOSTIC_PROBE_IDS`); the block form above is the placement
+    // quiz served alongside it, not the onboarding gate.
     const diagnosticCommand = {
       envelope: {
         eventId: crypto.randomUUID(),
@@ -190,8 +246,8 @@ describeWithPostgres('PostgreSQL-backed learner API vertical', () => {
         contentRelease: bootstrapBody.contentRelease,
         taskInstanceId: crypto.randomUUID(),
       },
-      questionId: diagnosticBody.question.id,
-      choiceId: diagnosticBody.question.choices[0]!.id,
+      questionId: 'q-enz-basics-1',
+      choiceId: 'A',
       elapsedMs: 12_000,
       assistanceLevel: 'A0',
       contentBearingHintUsed: false,
