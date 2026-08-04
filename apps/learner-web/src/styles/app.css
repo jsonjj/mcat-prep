@@ -160,6 +160,50 @@ body {
   outline: none;
 }
 
+/* ---- Focused lesson shell ---- */
+.mc-focused-lesson-shell {
+  min-width: 0;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+.mc-focused-lesson-shell__header {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: var(--mc-space-2) var(--mc-space-4);
+}
+.mc-focused-lesson-shell__context {
+  padding-left: var(--mc-space-2);
+  border-left: 1px solid var(--mc-border);
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-14);
+}
+.mc-focused-lesson-shell__main {
+  min-width: 0;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--mc-space-4) var(--mc-space-4) var(--mc-space-7);
+  outline: none;
+}
+@media (max-width: 375px) {
+  .mc-focused-lesson-shell__header,
+  .mc-focused-lesson-shell__main {
+    padding-left: var(--mc-space-3);
+    padding-right: var(--mc-space-3);
+  }
+}
+@media (max-width: 320px) {
+  .mc-focused-lesson-shell__context {
+    font-size: var(--mc-text-12);
+  }
+  .mc-focused-lesson-shell__main {
+    padding-left: var(--mc-space-2);
+    padding-right: var(--mc-space-2);
+  }
+}
+
 .mc-sidebar {
   display: none;
 }
@@ -3127,6 +3171,21 @@ body {
   border: 0;
   display: grid;
   gap: var(--mc-space-2);
+}
+.mc-vector-lesson__fields,
+.mc-vector-lesson__field {
+  min-width: 0;
+  display: grid;
+  gap: var(--mc-space-2);
+}
+.mc-vector-lesson__fields {
+  gap: var(--mc-space-3);
+}
+.mc-vector-lesson__convention {
+  margin: 0;
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-14);
+  line-height: var(--mc-leading-body);
 }
 .mc-vector-lesson__prompt {
   width: 100%;

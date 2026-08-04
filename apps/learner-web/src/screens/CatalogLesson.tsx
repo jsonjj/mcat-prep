@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { NormalizedLessonAction, NormalizedLessonScreen } from '@mcat/contracts';
 import { Button, Callout } from '@mcat/ui-web';
@@ -26,6 +26,13 @@ import { lessonById } from '../app/lesson-catalog';
  */
 
 const COMPLETION_COPY = 'You finished this lesson’s required instruction.';
+type FeedbackOutcome = Extract<NormalizedLessonScreen, { kind: 'FEEDBACK' }>['outcome'];
+const FEEDBACK_HEADINGS: Record<FeedbackOutcome, string> = {
+  CORRECT: 'Correct',
+  INCORRECT: 'Not quite',
+  OMITTED: 'Response skipped',
+  INVALID: 'Check your response',
+};
 
 export function CatalogLesson({ lessonId }: { lessonId: string }) {
   const navigate = useNavigate();
@@ -58,7 +65,10 @@ export function CatalogLesson({ lessonId }: { lessonId: string }) {
   const run = useNormalizedLessonRun(slug, runEnabled);
   const view = run.data;
 
-  const screenKey = view?.screen.kind === 'QUESTION' ? view.screen.itemId : view?.screen.kind;
+  // The canonical wire has no public screen token. A stable serialization moves
+  // focus for every real screen change while avoiding refocus on an identical
+  // authoritative refetch (including consecutive screens of the same kind).
+  const screenKey = view === undefined ? undefined : JSON.stringify(view.screen);
   const focusTargetRef = useRef<HTMLElement | null>(null);
   const refetchRun = run.refetch;
   useEffect(() => {
@@ -79,6 +89,14 @@ export function CatalogLesson({ lessonId }: { lessonId: string }) {
   }, [refetchRun, submit.isError]);
 
   const backToCurriculum = (): void => navigate('/app/curriculum');
+  const retryRestore = (): void => {
+    if (runState === 'NOT_STARTED' && start.isError) {
+      start.mutate();
+      return;
+    }
+    void status.refetch();
+    if (runEnabled) void run.refetch();
+  };
 
   if (!lesson) {
     return (
@@ -117,20 +135,14 @@ export function CatalogLesson({ lessonId }: { lessonId: string }) {
     return <div className="mc-center mc-muted">Restoring your exact lesson checkpoint…</div>;
   }
 
-  if (status.isError || run.isError || !view) {
+  if (status.isError || start.isError || run.isError || !view) {
     return (
       <div className="mc-vector-lesson mc-vector-lesson--state">
         <Callout tone="warning" title="The lesson could not be restored">
           Your saved checkpoint has not been changed. Try loading it again.
         </Callout>
         <div className="mc-vector-lesson__state-actions">
-          <Button
-            variant="primary"
-            onClick={() => {
-              void status.refetch();
-              void run.refetch();
-            }}
-          >
+          <Button variant="primary" onClick={retryRestore}>
             Try again
           </Button>
           <Button variant="secondary" onClick={backToCurriculum}>
@@ -179,7 +191,7 @@ export function CatalogLesson({ lessonId }: { lessonId: string }) {
           checkpoint…
         </div>
       ) : null}
-      <span className="mc-visually-hidden" role="status" aria-live="polite">
+      <span className="mc-visually-hidden" aria-live="polite" aria-atomic="true">
         {submit.isPending ? 'Saving your lesson checkpoint.' : ''}
       </span>
 
@@ -218,9 +230,16 @@ function CatalogLessonScreen({
           {screen.heading}
         </h1>
         <div className="mc-vector-lesson__body">
-          <p>{screen.prompt}</p>
+          {screen.contentBlocks.map((block, index) => (
+            <p key={`${index}-${block.slice(0, 16)}`}>{block}</p>
+          ))}
         </div>
-        <Button variant="primary" size="lg" disabled={pending} onClick={() => onAction({ type: 'CONTINUE' })}>
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={pending}
+          onClick={() => onAction({ type: 'CONTINUE' })}
+        >
           {pending ? 'Saving…' : 'Continue'}
         </Button>
       </section>
@@ -230,6 +249,7 @@ function CatalogLessonScreen({
   if (screen.kind === 'QUESTION') {
     return (
       <QuestionScreen
+        key={screen.itemId}
         screen={screen}
         pending={pending}
         setFocusTarget={setFocusTarget}
@@ -239,12 +259,21 @@ function CatalogLessonScreen({
   }
 
   if (screen.kind === 'FEEDBACK') {
+    const heading = FEEDBACK_HEADINGS[screen.outcome];
     return (
       <section className="mc-vector-lesson__screen mc-vector-lesson__feedback">
         <h1 id="mc-catalog-lesson-heading" ref={setFocusTarget} tabIndex={-1} className="mc-h1">
-          {screen.outcome === 'CORRECT' ? 'Correct' : 'Not quite'}
+          {heading}
         </h1>
-        <Button variant="primary" size="lg" disabled={pending} onClick={() => onAction({ type: 'CONTINUE' })}>
+        <div className="mc-vector-lesson__body" role="status" aria-atomic="true">
+          <p>{screen.message}</p>
+        </div>
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={pending}
+          onClick={() => onAction({ type: 'CONTINUE' })}
+        >
           {pending ? 'Saving…' : 'Continue'}
         </Button>
       </section>
@@ -290,67 +319,159 @@ function QuestionScreen({
   setFocusTarget: (element: HTMLElement | null) => void;
   onAction: (action: NormalizedLessonAction) => void;
 }) {
+  const controlId = useId();
   const [choice, setChoice] = useState<string | null>(null);
   const [text, setText] = useState('');
-  const isMultipleChoice = screen.choices.length > 0;
-
-  // A fresh question clears any prior selection/text so nothing leaks across items.
-  useEffect(() => {
-    setChoice(null);
-    setText('');
-  }, [screen.itemId]);
+  const [fieldValues, setFieldValues] = useState<string[]>(() =>
+    screen.control.kind === 'STRUCTURED_FIELDS' ? screen.control.fields.map(() => '') : [],
+  );
 
   const submitResponse = (event: FormEvent): void => {
     event.preventDefault();
-    if (isMultipleChoice) {
+    if (screen.control.kind === 'SINGLE_SELECT') {
       if (choice !== null) {
-        onAction({ type: 'SUBMIT_RESPONSE', response: { kind: 'MULTIPLE_CHOICE', choiceId: choice } });
+        onAction({
+          type: 'SUBMIT_RESPONSE',
+          response: { kind: 'MULTIPLE_CHOICE', choiceId: choice },
+        });
       }
       return;
     }
-    const trimmed = text.trim();
-    onAction({ type: 'SUBMIT_RESPONSE', response: { kind: 'SHORT', text: trimmed === '' ? null : trimmed } });
+    if (screen.control.kind === 'SHORT_TEXT') {
+      const normalized = text.trim().replace(/\s+/g, ' ');
+      onAction({
+        type: 'SUBMIT_RESPONSE',
+        response: { kind: 'SHORT', text: normalized === '' ? null : normalized },
+      });
+      return;
+    }
+    onAction({
+      type: 'SUBMIT_RESPONSE',
+      response: {
+        kind: 'CONSTRUCTED',
+        fields: screen.control.fields.map(({ fieldId }, index) => {
+          const trimmed = fieldValues[index]?.trim() ?? '';
+          return { fieldId, value: trimmed === '' ? null : trimmed };
+        }),
+      },
+    });
   };
 
-  const canSubmit = isMultipleChoice ? choice !== null : text.trim() !== '';
+  const skipResponse = (): void => {
+    if (screen.control.kind === 'SINGLE_SELECT') {
+      onAction({
+        type: 'SUBMIT_RESPONSE',
+        response: { kind: 'MULTIPLE_CHOICE', choiceId: null },
+      });
+      return;
+    }
+    if (screen.control.kind === 'SHORT_TEXT') {
+      onAction({ type: 'SUBMIT_RESPONSE', response: { kind: 'SHORT', text: null } });
+      return;
+    }
+    onAction({
+      type: 'SUBMIT_RESPONSE',
+      response: {
+        kind: 'CONSTRUCTED',
+        fields: screen.control.fields.map(({ fieldId }) => ({ fieldId, value: null })),
+      },
+    });
+  };
+
+  const canSubmit =
+    screen.control.kind === 'SINGLE_SELECT'
+      ? choice !== null
+      : screen.control.kind === 'SHORT_TEXT'
+        ? text.trim() !== ''
+        : screen.control.fields.every((_, index) => fieldValues[index]?.trim() !== '');
 
   return (
     <section className="mc-vector-lesson__screen">
       <h1 id="mc-catalog-lesson-heading" ref={setFocusTarget} tabIndex={-1} className="mc-h1">
         {screen.heading}
       </h1>
+      {screen.contentBlocks.length > 0 ? (
+        <div className="mc-vector-lesson__body">
+          {screen.contentBlocks.map((block, index) => (
+            <p key={`${index}-${block.slice(0, 16)}`}>{block}</p>
+          ))}
+        </div>
+      ) : null}
       <form onSubmit={submitResponse}>
         <fieldset className="mc-vector-lesson__choices">
           <legend className="mc-vector-lesson__prompt">{screen.prompt}</legend>
-          {isMultipleChoice ? (
-            screen.choices.map((option) => (
-              <label
-                key={option.choiceId}
-                className={`mc-vector-choice${choice === option.choiceId ? ' mc-vector-choice--selected' : ''}`}
-              >
-                <input
-                  type="radio"
-                  name="catalog-lesson-response"
-                  value={option.choiceId}
-                  checked={choice === option.choiceId}
-                  onChange={() => setChoice(option.choiceId)}
-                />
-                <span className="mc-vector-choice__marker" aria-hidden="true">
-                  {option.choiceId}
-                </span>
-                <span>{option.text}</span>
+          {screen.control.kind === 'SINGLE_SELECT' ? (
+            screen.control.choices.map((option, index) => {
+              const optionId = `${controlId}-choice-${index}`;
+              return (
+                <label
+                  key={option.choiceId}
+                  htmlFor={optionId}
+                  className={`mc-vector-choice${choice === option.choiceId ? ' mc-vector-choice--selected' : ''}`}
+                >
+                  <input
+                    id={optionId}
+                    type="radio"
+                    name="catalog-lesson-response"
+                    value={option.choiceId}
+                    checked={choice === option.choiceId}
+                    onChange={() => setChoice(option.choiceId)}
+                  />
+                  <span className="mc-vector-choice__marker" aria-hidden="true">
+                    {index + 1}
+                  </span>
+                  <span>{option.text}</span>
+                </label>
+              );
+            })
+          ) : screen.control.kind === 'SHORT_TEXT' ? (
+            <div className="mc-vector-lesson__field">
+              <label className="mc-label" htmlFor={`${controlId}-text`}>
+                Your response
               </label>
-            ))
+              <input
+                id={`${controlId}-text`}
+                type="text"
+                className="mc-input"
+                name="catalog-lesson-response"
+                value={text}
+                onChange={(event) => setText(event.target.value)}
+                aria-describedby={`${controlId}-convention`}
+                autoComplete="off"
+              />
+              <p id={`${controlId}-convention`} className="mc-vector-lesson__convention">
+                Use the authored wording and capitalization. Extra spaces are normalized.
+              </p>
+            </div>
           ) : (
-            <input
-              type="text"
-              className="mc-input"
-              name="catalog-lesson-response"
-              value={text}
-              onChange={(event) => setText(event.target.value)}
-              aria-label="Your response"
-              autoComplete="off"
-            />
+            <div className="mc-vector-lesson__fields">
+              {screen.control.fields.map((field, index) => {
+                const fieldId = `${controlId}-field-${index}`;
+                return (
+                  <div key={field.fieldId} className="mc-vector-lesson__field">
+                    <label className="mc-label" htmlFor={fieldId}>
+                      {field.label || `Response ${index + 1}`}
+                    </label>
+                    <input
+                      id={fieldId}
+                      type="text"
+                      className="mc-input"
+                      name={field.fieldId}
+                      value={fieldValues[index] ?? ''}
+                      onChange={(event) => {
+                        const nextValue = event.target.value;
+                        setFieldValues((current) =>
+                          current.map((value, valueIndex) =>
+                            valueIndex === index ? nextValue : value,
+                          ),
+                        );
+                      }}
+                      autoComplete="off"
+                    />
+                  </div>
+                );
+              })}
+            </div>
           )}
         </fieldset>
 
@@ -358,19 +479,7 @@ function QuestionScreen({
           <Button type="submit" variant="primary" size="lg" disabled={!canSubmit || pending}>
             {pending ? 'Saving…' : 'Submit response'}
           </Button>
-          <button
-            type="button"
-            className="mc-textbtn"
-            disabled={pending}
-            onClick={() =>
-              onAction({
-                type: 'SUBMIT_RESPONSE',
-                response: isMultipleChoice
-                  ? { kind: 'MULTIPLE_CHOICE', choiceId: null }
-                  : { kind: 'SHORT', text: null },
-              })
-            }
-          >
+          <button type="button" className="mc-textbtn" disabled={pending} onClick={skipResponse}>
             Skip this response
           </button>
         </div>
