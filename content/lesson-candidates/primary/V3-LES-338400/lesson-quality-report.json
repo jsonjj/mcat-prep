@@ -1,0 +1,86 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-338400",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "8313301ed6520bf5a21ab836b565d330559531e056c22df8f45955851f11f830",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-338400",
+    "lesson_script_sha256": "d2311077c1288e29de9542bc1bbbe9eea849b6167aa08a0e3e36464a8413bde7",
+    "kc_coverage_matrix_id": "V3-KCOV-338400",
+    "kc_coverage_matrix_sha256": "4a4ff467e3b9c2992cd70458847e0fcbd00da8d0c3f4a1a0ec901e8bf56a83e9",
+    "lesson_presentation_plan_id": "V3-LPPL-338400",
+    "lesson_presentation_plan_sha256": "24b7d9124bf052b7fb1266ee8ff7f8eb207c260af243bca33244fe334d818215"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-338400",
+    "review_scope": "STANDARD_PRIMARY_CANDIDATE",
+    "check_results": [
+      {
+        "check_id": "PACKET-KC-SCOPE-COVERAGE",
+        "status": "AUTHOR_CHECKED",
+        "evidence_refs": [
+          "source-claim-ledger.json",
+          "kc-coverage-matrix.json"
+        ]
+      },
+      {
+        "check_id": "FIFTEEN-FUNCTION-MICROCYCLES",
+        "status": "AUTHOR_CHECKED",
+        "evidence_refs": [
+          "lesson-script.json",
+          "kc-coverage-matrix.json"
+        ]
+      },
+      {
+        "check_id": "FUNCTION-SPECIFIC-REPAIR-AND-FRESH-REENTRY",
+        "status": "AUTHOR_CHECKED",
+        "evidence_refs": [
+          "lesson-script.json",
+          "protected-items.json"
+        ]
+      },
+      {
+        "check_id": "ITEM-LEVEL-DOK-LABELS",
+        "status": "NOT_AUTHORED_BY_PACKET_RULE",
+        "evidence_refs": [
+          "inputs/task-source-packet.json"
+        ]
+      },
+      {
+        "check_id": "INDEPENDENT-DOMAIN-REVIEW",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_DOMAIN_SME_RECEIPT"
+      },
+      {
+        "check_id": "ACCESSIBILITY-AND-BROWSER-QA",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_ACCESSIBILITY_REVIEW"
+      },
+      {
+        "check_id": "INDEPENDENT-JUDGE-PRE-SCREEN",
+        "status": "BLOCKED",
+        "blocker_code": "JUDGE_PRE_SCREEN_REQUIRED"
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "V3-LES-338400-QUALITY-HUMAN-EVIDENCE",
+        "severity": "P1",
+        "status": "BLOCKED",
+        "required_correction_code": "OBTAIN_REVISION_BOUND_INDEPENDENT_EVIDENCE"
+      }
+    ],
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false,
+      "calibrated_thresholds_available": false
+    },
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY",
+    "production_golden_status": "BLOCKED"
+  }
+}

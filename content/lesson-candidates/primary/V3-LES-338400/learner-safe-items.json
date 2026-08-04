@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; a missed fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "WORK_ENTRY",
+      "title": "Starting check: perpendicular force",
+      "prompt": "A 40 N upward force acts while an object moves 3 m horizontally. How much work does that force do?",
+      "response_type": "single_select",
+      "options": [
+        "0 J",
+        "40 J",
+        "120 J",
+        "−120 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WORK_GUIDED",
+      "title": "Guided practice: parallel pull",
+      "prompt": "A constant 15 N force pulls in the direction of a 4 m displacement. What work does it do?",
+      "response_type": "single_select",
+      "options": [
+        "3.75 J",
+        "19 J",
+        "60 J",
+        "−60 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WORK_LIGHT",
+      "title": "Less help: oblique force",
+      "prompt": "A 30 N force acts 60° from a 6 m displacement. Use cos60° = 0.50. What is the work?",
+      "response_type": "single_select",
+      "options": [
+        "45 J",
+        "90 J",
+        "180 J",
+        "360 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WORK_SOLO",
+      "title": "On your own: opposing force",
+      "prompt": "A 9 N force points exactly opposite a 7 m displacement. What work does it do?",
+      "response_type": "single_select",
+      "options": [
+        "0 J",
+        "+16 J",
+        "+63 J",
+        "−63 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WORK_NEAR",
+      "title": "Near exit: angled tow",
+      "prompt": "A 50 N tow force acts 60° above a 10 m horizontal displacement. Use cos60° = 0.50. What work does the tow force do?",
+      "response_type": "single_select",
+      "options": [
+        "250 J",
+        "500 J",
+        "100 J",
+        "−250 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WORK_CHANGED",
+      "title": "Changed exit: infer angle",
+      "prompt": "A 20 N force acts over 5 m and does +50 J of work. Which included angle is consistent?",
+      "response_type": "single_select",
+      "options": [
+        "0°",
+        "60°",
+        "90°",
+        "180°"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WORK_REPAIR_NEAR",
+      "title": "Repair: select included angle",
+      "prompt": "A force points left while displacement points right. What angle belongs in W = Fd cosθ?",
+      "response_type": "single_select",
+      "options": [
+        "0°",
+        "45°",
+        "90°",
+        "180°"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WORK_REENTRY_NEAR",
+      "title": "Fresh near re-entry: angled push",
+      "prompt": "A 24 N force acts 60° from an 8 m displacement. Use cos60° = 0.50. What work is done?",
+      "response_type": "single_select",
+      "options": [
+        "192 J",
+        "96 J",
+        "32 J",
+        "−96 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WORK_REPAIR_CHANGED",
+      "title": "Repair: recover cosine",
+      "prompt": "Which expression isolates cosθ from W = Fd cosθ?",
+      "response_type": "single_select",
+      "options": [
+        "cosθ = Fd/W",
+        "cosθ = W/(Fd)",
+        "cosθ = WF/d",
+        "cosθ = W + F + d"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WORK_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: infer opposing angle",
+      "prompt": "A 10 N force acts over 4 m and does −40 J of work. Which angle is consistent?",
+      "response_type": "single_select",
+      "options": [
+        "0°",
+        "60°",
+        "90°",
+        "180°"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WKET_ENTRY",
+      "title": "Starting check: net work",
+      "prompt": "An applied force does +45 J and friction does −20 J. What is the net work?",
+      "response_type": "single_select",
+      "options": [
+        "+25 J",
+        "+65 J",
+        "−25 J",
+        "−65 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WKET_GUIDED",
+      "title": "Guided practice: update kinetic energy",
+      "prompt": "An object begins with 30 J of kinetic energy and experiences −12 J of net work. What is its final kinetic energy?",
+      "response_type": "single_select",
+      "options": [
+        "12 J",
+        "18 J",
+        "30 J",
+        "42 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WKET_LIGHT",
+      "title": "Less help: infer speed trend",
+      "prompt": "What does +80 J of net work imply for an object's kinetic energy?",
+      "response_type": "single_select",
+      "options": [
+        "It decreases by 80 J",
+        "It stays fixed because work is scalar",
+        "It increases by 80 J",
+        "It becomes exactly 80 J regardless of its initial value"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WKET_SOLO",
+      "title": "On your own: conservative distinction",
+      "prompt": "Which property identifies work by a conservative force between two fixed endpoints?",
+      "response_type": "single_select",
+      "options": [
+        "It always has a positive sign",
+        "It is independent of the path taken",
+        "It always equals zero",
+        "It increases with travel time"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WKET_NEAR",
+      "title": "Near exit: final speed",
+      "prompt": "A 2.0 kg object starts at 2.0 m/s. An applied force does +18 J and friction does −6 J. What final speed results?",
+      "response_type": "single_select",
+      "options": [
+        "2.0 m/s",
+        "4.0 m/s",
+        "6.0 m/s",
+        "8.0 m/s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WKET_CHANGED",
+      "title": "Changed exit: compare paths",
+      "prompt": "Two paths connect the same starting and ending heights, but path B is longer. Gravity and kinetic friction act. Which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Gravity does different work because path B is longer; friction does equal work",
+        "Both gravity and friction do endpoint-only work",
+        "Gravity: equal work; friction: more negative on path B",
+        "Neither force does work because endpoints match"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WKET_REPAIR_NEAR",
+      "title": "Repair: theorem setup",
+      "prompt": "Which equation correctly combines multiple force contributions?",
+      "response_type": "single_select",
+      "options": [
+        "Kf = Ki + ΣWforces",
+        "Kf = Σ|Wforces|",
+        "Ki = Kf + ΣWforces for every sign",
+        "Kf = Ki × ΣWforces"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WKET_REENTRY_NEAR",
+      "title": "Fresh near re-entry: new final speed",
+      "prompt": "A 1.0 kg object starts at 4.0 m/s. Net work of +10 J acts. What is its final speed?",
+      "response_type": "single_select",
+      "options": [
+        "sqrt(10) m/s",
+        "sqrt(26) m/s",
+        "sqrt(36) m/s",
+        "sqrt(52) m/s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WKET_REPAIR_CHANGED",
+      "title": "Repair: path dependence",
+      "prompt": "Which work contribution changes when travel distance changes but gravitational endpoints remain fixed?",
+      "response_type": "single_select",
+      "options": [
+        "Gravity only",
+        "Kinetic friction",
+        "Neither contribution",
+        "Both contributions must change equally"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "WKET_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: two ramps",
+      "prompt": "Two ramps reach the same vertical height. Ramp 2 is twice as long and both have the same kinetic-friction magnitude. Compared with ramp 1, what work is done on ramp 2?",
+      "response_type": "single_select",
+      "options": [
+        "Same gravity work; twice the negative friction work",
+        "Twice the gravitational work and same friction work",
+        "Half the gravitational work and no friction work",
+        "Zero work by both forces"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MENG_ENTRY",
+      "title": "Starting check: kinetic energy",
+      "prompt": "What is the kinetic energy of a 2.0 kg object moving at 3.0 m/s?",
+      "response_type": "single_select",
+      "options": [
+        "3 J",
+        "6 J",
+        "9 J",
+        "18 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MENG_GUIDED",
+      "title": "Guided practice: gravitational energy",
+      "prompt": "Use g = 10 m/s². How much does gravitational potential energy increase when a 3 kg mass rises 4 m?",
+      "response_type": "single_select",
+      "options": [
+        "12 J",
+        "40 J",
+        "70 J",
+        "120 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MENG_LIGHT",
+      "title": "Less help: spring energy",
+      "prompt": "A spring with k = 200 N/m is compressed 0.10 m. How much energy is stored?",
+      "response_type": "single_select",
+      "options": [
+        "0.5 J",
+        "1.0 J",
+        "2.0 J",
+        "20 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MENG_SOLO",
+      "title": "On your own: arbitrary reference",
+      "prompt": "What changes if the zero-height reference for gravitational potential energy is moved upward by 2 m?",
+      "response_type": "single_select",
+      "options": [
+        "All physical speed predictions must change",
+        "Gravity stops being conservative",
+        "Ug labels shift; predictions do not",
+        "Kinetic energy becomes negative"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MENG_NEAR",
+      "title": "Near exit: falling object",
+      "prompt": "Use g = 10 m/s². An object starts from rest and falls 20 m with no losses. What speed does it reach?",
+      "response_type": "single_select",
+      "options": [
+        "10 m/s",
+        "14 m/s",
+        "20 m/s",
+        "40 m/s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MENG_CHANGED",
+      "title": "Changed exit: spring, rise, and loss",
+      "prompt": "A spring initially stores 50 J. It launches a 1 kg object upward so the object gains 20 J of gravitational potential energy while friction removes 5 J. What final kinetic energy remains?",
+      "response_type": "single_select",
+      "options": [
+        "25 J",
+        "30 J",
+        "35 J",
+        "75 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MENG_REPAIR_NEAR",
+      "title": "Repair: write state balance",
+      "prompt": "For a lossless fall from rest with final height chosen as zero, which equation is correct?",
+      "response_type": "single_select",
+      "options": [
+        "mgh = mv",
+        "mgh = 1/2mv²",
+        "1/2mgh² = mv²",
+        "mgh + 1/2mv² = 0"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MENG_REENTRY_NEAR",
+      "title": "Fresh near re-entry: new drop",
+      "prompt": "Use g = 10 m/s². An object starts from rest and falls 5 m without losses. What speed results?",
+      "response_type": "single_select",
+      "options": [
+        "5 m/s",
+        "10 m/s",
+        "25 m/s",
+        "50 m/s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MENG_REPAIR_CHANGED",
+      "title": "Repair: place nonconservative work",
+      "prompt": "Which balance includes signed nonconservative work?",
+      "response_type": "single_select",
+      "options": [
+        "Ki + Ui + Wnoncons = Kf + Uf",
+        "Ki + Ui = Wnoncons only",
+        "Wnoncons = Ki + Kf + Ui + Uf",
+        "Ki − Ui = Kf − Uf regardless of friction"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MENG_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: spring and friction",
+      "prompt": "A spring releases 36 J. An object gains 8 J of gravitational potential and friction removes 4 J. What final kinetic energy results?",
+      "response_type": "single_select",
+      "options": [
+        "24 J",
+        "28 J",
+        "32 J",
+        "48 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POWR_ENTRY",
+      "title": "Starting check: average power",
+      "prompt": "A device transfers 600 J in 3.0 s. What is its average power?",
+      "response_type": "single_select",
+      "options": [
+        "200 W",
+        "600 W",
+        "1800 W",
+        "0.005 W"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POWR_GUIDED",
+      "title": "Guided practice: equal work, different time",
+      "prompt": "Two devices each do 1000 J of work. Device A takes 5 s and B takes 10 s. Which has greater average power?",
+      "response_type": "single_select",
+      "options": [
+        "B, by a factor of two",
+        "A, by a factor of two",
+        "They have equal power because work is equal",
+        "Power cannot be compared without force"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POWR_LIGHT",
+      "title": "Less help: ideal input distance",
+      "prompt": "An ideal machine lifts a 400 N load by 0.50 m using a 100 N input force. How far must the input move?",
+      "response_type": "single_select",
+      "options": [
+        "0.125 m",
+        "0.50 m",
+        "2.0 m",
+        "4.0 m"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POWR_SOLO",
+      "title": "On your own: calculate efficiency",
+      "prompt": "A machine receives 800 J and delivers 600 J of useful work. What is its efficiency?",
+      "response_type": "single_select",
+      "options": [
+        "25%",
+        "75%",
+        "80%",
+        "133%"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POWR_NEAR",
+      "title": "Near exit: lift and power",
+      "prompt": "An ideal machine raises a 500 N load 2.0 m in 4.0 s using a 250 N input force. What input distance and average output power are required?",
+      "response_type": "single_select",
+      "options": [
+        "2.0 m and 125 W",
+        "4.0 m and 250 W",
+        "8.0 m and 500 W",
+        "1.0 m and 1000 W"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POWR_CHANGED",
+      "title": "Changed exit: compare devices",
+      "prompt": "Devices A and B each deliver 400 J. A takes 4 s with 80% efficiency; B takes 8 s with 50% efficiency. Which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "A: 100 W, 500 J input; B: 50 W, 800 J input",
+        "A and B have equal power because output work matches",
+        "A requires 320 J input and B requires 200 J input",
+        "B is more efficient because it runs longer"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POWR_REPAIR_NEAR",
+      "title": "Repair: separate ratios",
+      "prompt": "Which pairing is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Power = Wt; efficiency = Win/Wout",
+        "Power = W/t; efficiency = Wout/Win",
+        "Power = F/d; efficiency = t/W",
+        "Power = d/F; efficiency = Wout + Win"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POWR_REENTRY_NEAR",
+      "title": "Fresh near re-entry: new ideal lift",
+      "prompt": "An ideal machine lifts 300 N through 1.5 m in 3.0 s using 150 N input. What input distance and output power result?",
+      "response_type": "single_select",
+      "options": [
+        "1.5 m and 75 W",
+        "3.0 m and 150 W",
+        "4.5 m and 300 W",
+        "0.75 m and 450 W"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POWR_REPAIR_CHANGED",
+      "title": "Repair: input from efficiency",
+      "prompt": "Which equation finds input work from useful output work and efficiency η?",
+      "response_type": "single_select",
+      "options": [
+        "Win = ηWout",
+        "Win = Wout/η",
+        "Win = Wout − η",
+        "Win = η/Wout"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POWR_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: compare pumps",
+      "prompt": "Pump C delivers 300 J in 3 s at 60% efficiency. Pump D delivers 300 J in 6 s at 75% efficiency. Which is correct?",
+      "response_type": "single_select",
+      "options": [
+        "C: 100 W and 500 J input; D: 50 W and 400 J input",
+        "C and D: 50 W and 300 J input each",
+        "C: 60 W and 180 J input; D: 75 W and 225 J input",
+        "D has greater output power and requires more input energy"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

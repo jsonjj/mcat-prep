@@ -1,0 +1,658 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; a missed fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "ERED_ENTRY",
+      "title": "Starting check: electron source",
+      "prompt": "A galvanic cell includes Fe(s) → Fe2+ + 2 e− and Ag+ + e− → Ag(s). Which statement identifies the electron-producing electrode?",
+      "response_type": "single_select",
+      "options": [
+        "Silver is the anode because Ag+ gains electrons",
+        "Iron is the anode because iron releases electrons",
+        "Silver is the cathode because silver releases electrons",
+        "Iron is the cathode because Fe2+ enters solution"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ERED_GUIDED",
+      "title": "Guided practice: trace electrons",
+      "prompt": "A galvanic cell runs with Al(s) → Al3+ + 3 e− and Ni2+ + 2 e− → Ni(s). Through the external wire, electrons move in which direction?",
+      "response_type": "single_select",
+      "options": [
+        "From nickel to aluminum",
+        "From the salt bridge to nickel",
+        "From aluminum to nickel",
+        "From aluminum ions to nickel ions through solution"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ERED_LIGHT",
+      "title": "Less help: assign galvanic signs",
+      "prompt": "In a galvanic cell, tin is oxidized and bromine is reduced. Which electrode-sign assignment is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Tin anode is negative; bromine cathode is positive",
+        "Tin cathode is positive; bromine anode is negative",
+        "Tin anode is positive; bromine cathode is negative",
+        "Both electrodes are positive because the reaction is spontaneous"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ERED_SOLO",
+      "title": "On your own: separate charge paths",
+      "prompt": "Which description correctly separates charge transport in a working two-compartment galvanic cell?",
+      "response_type": "single_select",
+      "options": [
+        "Electrons cross the salt bridge while ions move through the wire",
+        "Electrons and cations both move only through the external wire",
+        "Anions carry electrons from cathode to anode through solution",
+        "Electrons use the wire; ions use the electrolyte"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ERED_NEAR",
+      "title": "Near exit: magnesium and copper",
+      "prompt": "A galvanic cell uses Mg(s) → Mg2+ + 2 e− and Cu2+ + 2 e− → Cu(s). Which combined statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Copper is the negative anode, and electrons move copper → magnesium",
+        "Magnesium is the positive cathode, and electrons move copper → magnesium",
+        "Magnesium is the negative anode, and electrons move magnesium → copper",
+        "Copper is the positive anode, and electrons move magnesium → copper"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ERED_CHANGED",
+      "title": "Changed exit: driven iodide cell",
+      "prompt": "An external power source drives 2 I− → I2 + 2 e− at electrode P and Pb2+ + 2 e− → Pb at electrode Q. Which statement is correct for this electrolytic cell?",
+      "response_type": "single_select",
+      "options": [
+        "P is the positive anode, and the source removes electrons from P",
+        "P is the negative cathode, and the source supplies electrons to P",
+        "Q is the positive anode, and oxidation occurs at Q",
+        "Q is the negative anode, and electrons leave Q for P"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ERED_REPAIR_NEAR",
+      "title": "Repair: locate oxidation",
+      "prompt": "Which half-reaction marks an anode solely from electron placement?",
+      "response_type": "single_select",
+      "options": [
+        "Co3+ + e− → Co2+",
+        "S + 2 e− → S2−",
+        "2 Br− → Br2 + 2 e−",
+        "Ca2+ + 2 e− → Ca"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ERED_REENTRY_NEAR",
+      "title": "Fresh near re-entry: cobalt and gold",
+      "prompt": "A galvanic cell uses Co(s) → Co2+ + 2 e− and Au3+ + 3 e− → Au(s). Which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Cobalt is the negative anode, and electrons move cobalt → gold",
+        "Gold is the negative anode, and electrons move gold → cobalt",
+        "Cobalt is the positive cathode, and electrons move gold → cobalt",
+        "Gold is the positive anode, and electrons move cobalt → gold"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ERED_REPAIR_CHANGED",
+      "title": "Repair: preserve names, change signs",
+      "prompt": "Which rule remains true in both galvanic and electrolytic cells?",
+      "response_type": "single_select",
+      "options": [
+        "The anode is always negative",
+        "Oxidation occurs at the anode",
+        "The cathode always supplies electrons to the wire",
+        "Reduction occurs at the positive electrode"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ERED_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: driven sulfide cell",
+      "prompt": "A power source drives S2− → S + 2 e− at electrode R and Sn4+ + 2 e− → Sn2+ at electrode T. Which assignment is correct?",
+      "response_type": "single_select",
+      "options": [
+        "R is the negative cathode; T is the positive anode",
+        "R is the negative anode; T is the positive cathode",
+        "R is the positive anode; T is the negative cathode",
+        "R is the positive cathode; T is the negative anode"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ECEL_ENTRY",
+      "title": "Starting check: choose reduction",
+      "prompt": "Standard reduction potentials are Cl2 + 2 e− → 2 Cl−, +1.36 V, and Cu2+ + 2 e− → Cu, +0.34 V. In a spontaneous standard galvanic pairing, which species is reduced?",
+      "response_type": "single_select",
+      "options": [
+        "Cl2",
+        "Cl−",
+        "Cu",
+        "Cu2+ only after doubling +0.34 V"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ECEL_GUIDED",
+      "title": "Guided practice: calculate E°cell",
+      "prompt": "Ni2+/Ni has E°red = −0.25 V and Pb2+/Pb has E°red = −0.13 V. What is E°cell for the spontaneous standard galvanic direction?",
+      "response_type": "single_select",
+      "options": [
+        "−0.38 V",
+        "+0.12 V",
+        "−0.12 V",
+        "+0.38 V"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ECEL_LIGHT",
+      "title": "Less help: avoid coefficient scaling",
+      "prompt": "Al3+ + 3 e− → Al has E°red = −1.66 V. Ag+ + e− → Ag has E°red = +0.80 V. After multiplying the silver half-reaction by 3 to balance electrons, which cathode potential belongs in E°cell?",
+      "response_type": "single_select",
+      "options": [
+        "+2.40 V",
+        "−2.40 V",
+        "−0.80 V",
+        "+0.80 V"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ECEL_SOLO",
+      "title": "On your own: infer electron flow",
+      "prompt": "E°red for Sn2+/Sn is −0.14 V and for Fe2+/Fe is −0.44 V. In the spontaneous standard cell, external electrons move from which electrode to which?",
+      "response_type": "single_select",
+      "options": [
+        "Tin → iron",
+        "Iron → tin",
+        "Tin ions → iron ions through the salt bridge",
+        "The direction cannot be inferred from reduction potentials"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ECEL_NEAR",
+      "title": "Near exit: chromium and copper",
+      "prompt": "Cr3+ + 3 e− → Cr has E°red = −0.74 V and Cu2+ + 2 e− → Cu has E°red = +0.34 V. What are E°cell and the electron-flow direction for the spontaneous standard cell?",
+      "response_type": "single_select",
+      "options": [
+        "+1.08 V; chromium → copper",
+        "−1.08 V; copper → chromium",
+        "+0.40 V; chromium → copper",
+        "+1.82 V; copper → chromium"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ECEL_CHANGED",
+      "title": "Changed exit: assess reversed direction",
+      "prompt": "A cell reaction is written so that a +0.62 V reduction is forced to run as oxidation and a −0.18 V reduction runs at the cathode. What is E°cell for the written direction, and what does its sign imply under standard conditions?",
+      "response_type": "single_select",
+      "options": [
+        "+0.44 V; the written direction is spontaneous",
+        "+0.80 V; coefficients must be scaled",
+        "−0.80 V; the written direction requires external driving",
+        "−0.44 V; the written direction is galvanic"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ECEL_REPAIR_NEAR",
+      "title": "Repair: cathode minus anode",
+      "prompt": "Which setup correctly uses E°red(cathode) = +0.15 V and E°red(anode) = −0.52 V?",
+      "response_type": "single_select",
+      "options": [
+        "(−0.52) − (+0.15)",
+        "(+0.15) − (−0.52)",
+        "(+0.15) + (−0.52)",
+        "2(+0.15) − (−0.52)"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ECEL_REENTRY_NEAR",
+      "title": "Fresh near re-entry: manganese and silver",
+      "prompt": "Mn2+/Mn has E°red = −1.18 V and Ag+/Ag has E°red = +0.80 V. What are E°cell and electron flow for the spontaneous standard cell?",
+      "response_type": "single_select",
+      "options": [
+        "−1.98 V; silver → manganese",
+        "+0.38 V; manganese → silver",
+        "+1.98 V; silver → manganese",
+        "+1.98 V; manganese → silver"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ECEL_REPAIR_CHANGED",
+      "title": "Repair: interpret a negative result",
+      "prompt": "Under the stated standard conditions, what does E°cell = −0.45 V mean for the reaction exactly as written?",
+      "response_type": "single_select",
+      "options": [
+        "It is nonspontaneous in that direction and needs external driving",
+        "It is spontaneous because the magnitude is positive",
+        "It becomes spontaneous when every coefficient is doubled",
+        "It has no electron transfer"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ECEL_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: forced reverse cell",
+      "prompt": "A reaction direction places a −0.05 V reduction at the cathode and a +0.47 V reduction in reverse at the anode. Which conclusion is correct?",
+      "response_type": "single_select",
+      "options": [
+        "E°cell = +0.42 V, so the direction is galvanic",
+        "E°cell = −0.52 V, so the direction requires external input",
+        "E°cell = +0.52 V after balancing electrons",
+        "E°cell = −0.42 V, but the direction remains spontaneous"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FARD_ENTRY",
+      "title": "Starting check: current to charge",
+      "prompt": "A 2.50 A current runs for 400 s. How much charge passes?",
+      "response_type": "single_select",
+      "options": [
+        "160 C",
+        "402.5 C",
+        "1000 C",
+        "6.25 C"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FARD_GUIDED",
+      "title": "Guided practice: silver deposit",
+      "prompt": "Use F = 9.65 × 10^4 C/mol e−. A charge of 1.93 × 10^4 C passes while Ag+ + e− → Ag. How many moles of Ag form?",
+      "response_type": "single_select",
+      "options": [
+        "0.200 mol",
+        "0.100 mol",
+        "2.00 mol",
+        "5.00 mol"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FARD_LIGHT",
+      "title": "Less help: copper deposit",
+      "prompt": "Use F = 9.65 × 10^4 C/mol e−. A charge of 9.65 × 10^3 C passes while Cu2+ + 2 e− → Cu. How many moles of Cu form?",
+      "response_type": "single_select",
+      "options": [
+        "0.200 mol",
+        "0.100 mol",
+        "0.0500 mol",
+        "0.0250 mol"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FARD_SOLO",
+      "title": "On your own: chlorine amount",
+      "prompt": "Use F = 9.65 × 10^4 C/mol e−. During 2 Cl− → Cl2 + 2 e−, 1.93 × 10^5 C passes. How many moles of Cl2 are produced?",
+      "response_type": "single_select",
+      "options": [
+        "0.50 mol",
+        "1.00 mol",
+        "2.00 mol",
+        "4.00 mol"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FARD_NEAR",
+      "title": "Near exit: aluminum mass",
+      "prompt": "Use F = 9.65 × 10^4 C/mol e− and Al molar mass = 27.0 g/mol. A 10.0 A current runs for 2895 s while Al3+ + 3 e− → Al. What mass of Al forms?",
+      "response_type": "single_select",
+      "options": [
+        "9.00 g",
+        "27.0 g",
+        "2.70 g",
+        "81.0 g"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FARD_CHANGED",
+      "title": "Changed exit: solve for hydrogen time",
+      "prompt": "Use F = 9.65 × 10^4 C/mol e−. The cathode reaction is 2 H+ + 2 e− → H2. How long must a 5.00 A current run to produce 0.0500 mol H2?",
+      "response_type": "single_select",
+      "options": [
+        "965 s",
+        "1930 s",
+        "3860 s",
+        "96.5 s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FARD_REPAIR_NEAR",
+      "title": "Repair: order the Faraday ladder",
+      "prompt": "Which sequence correctly converts current and time into deposited mass?",
+      "response_type": "single_select",
+      "options": [
+        "I/t → moles product → coulombs → grams",
+        "It → coulombs/F → moles e− → half-reaction ratio → grams",
+        "F/It → moles product × electron coefficient → grams",
+        "It × F → moles e− → grams"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FARD_REENTRY_NEAR",
+      "title": "Fresh near re-entry: calcium mass",
+      "prompt": "Use F = 9.65 × 10^4 C/mol e− and Ca molar mass = 40.0 g/mol. A charge of 1.93 × 10^4 C passes while Ca2+ + 2 e− → Ca. What mass forms?",
+      "response_type": "single_select",
+      "options": [
+        "8.00 g",
+        "4.00 g",
+        "16.0 g",
+        "2.00 g"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FARD_REPAIR_CHANGED",
+      "title": "Repair: reverse the ladder",
+      "prompt": "To solve for time from a desired product amount, which order is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Product moles → electron moles → coulombs → time = Q/I",
+        "Product moles → grams → current → electron moles",
+        "Time → coulombs → product moles → current",
+        "Product moles → coulombs/F → current × charge"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FARD_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: oxygen time",
+      "prompt": "Use F = 9.65 × 10^4 C/mol e−. The anode reaction produces one O2 per 4 e−. How long must an 8.00 A current run to produce 0.0200 mol O2?",
+      "response_type": "single_select",
+      "options": [
+        "241 s",
+        "4825 s",
+        "965 s",
+        "1930 s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CONC_ENTRY",
+      "title": "Starting check: identify the driving difference",
+      "prompt": "A cell has Zn(s)|Zn2+(0.010 M) and Zn2+(1.0 M)|Zn(s). What distinguishes the half-cells?",
+      "response_type": "single_select",
+      "options": [
+        "The electrode metals",
+        "The number of electrons in the zinc half-reaction",
+        "The zinc-ion concentrations",
+        "The oxidation state of solid zinc"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CONC_GUIDED",
+      "title": "Guided practice: place oxidation",
+      "prompt": "In a Cu/Cu2+ concentration cell, which process on the 0.020 M side would raise its Cu2+ concentration?",
+      "response_type": "single_select",
+      "options": [
+        "Cu2+ + 2 e− → Cu",
+        "Cu → Cu2+ + 2 e−",
+        "Cu2+ moves through the wire",
+        "Electrons convert directly into Cu2+ in solution"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CONC_LIGHT",
+      "title": "Less help: assign electrode roles",
+      "prompt": "Two Ni/Ni2+ half-cells contain 0.005 M and 0.80 M Ni2+. Under the stated concentration-cell model, which assignment is correct?",
+      "response_type": "single_select",
+      "options": [
+        "0.005 M side is anode; 0.80 M side is cathode",
+        "0.005 M side is cathode; 0.80 M side is anode",
+        "Both sides are cathodes because the electrodes match",
+        "Neither side can transfer electrons because the metals match"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CONC_SOLO",
+      "title": "On your own: track concentration changes",
+      "prompt": "As an Ag/Ag+ concentration cell discharges, what happens under the stated model?",
+      "response_type": "single_select",
+      "options": [
+        "Both Ag+ concentrations increase equally",
+        "The dilute side becomes more dilute and the concentrated side more concentrated",
+        "Both Ag+ concentrations decrease equally",
+        "Dilute-side Ag+ rises; concentrated-side Ag+ falls"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CONC_NEAR",
+      "title": "Near exit: cobalt concentration cell",
+      "prompt": "A Co/Co2+ cell has 0.010 M Co2+ on side L and 0.60 M on side H. Which combined statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "L is cathode; electrons move H → L; the gap narrows",
+        "L is anode; electrons move L → H; the gap narrows",
+        "H is anode; electrons move H → L; the gap widens",
+        "H is cathode; electrons move H → L; both concentrations rise"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CONC_CHANGED",
+      "title": "Changed exit: labels reversed",
+      "prompt": "In a Sn/Sn2+ concentration cell, side A is changed from 0.020 M to 1.20 M while side B is changed from 0.90 M to 0.010 M. After this reversal, which direction should electrons move under the stated model?",
+      "response_type": "single_select",
+      "options": [
+        "A → B because A now has the higher concentration",
+        "No flow because both electrodes are tin",
+        "B → A because B is now the dilute-side anode",
+        "B → A because B is now the concentrated-side cathode"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CONC_REPAIR_NEAR",
+      "title": "Repair: match process to concentration",
+      "prompt": "Which pairing reduces a metal-ion concentration difference?",
+      "response_type": "single_select",
+      "options": [
+        "Oxidation on the concentrated side; reduction on the dilute side",
+        "Reduction on both sides",
+        "Oxidation on both sides",
+        "Oxidize dilute; reduce concentrated"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CONC_REENTRY_NEAR",
+      "title": "Fresh near re-entry: iron concentration cell",
+      "prompt": "An Fe/Fe2+ cell has 0.030 M Fe2+ on side X and 0.75 M on side Y. Which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "X oxidizes; electrons move X → Y; the concentrations converge",
+        "Y oxidizes; electrons move Y → X; the concentrations converge",
+        "X reduces; electrons move X → Y; both concentrations fall",
+        "Y reduces; electrons move Y → X; the concentrations diverge"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CONC_REPAIR_CHANGED",
+      "title": "Repair: recompute from current labels",
+      "prompt": "If the dilute and concentrated solutions are exchanged between two identical metal electrodes, what happens to their electrode roles?",
+      "response_type": "single_select",
+      "options": [
+        "The old anode remains anode because electrode material fixes the role",
+        "Both become cathodes",
+        "The roles reverse because the concentration condition moved",
+        "The roles become undefined until electrode metals differ"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CONC_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: new reversal",
+      "prompt": "A Pb/Pb2+ cell initially has side M dilute and side N concentrated. The solutions are replaced so M is 0.90 M and N is 0.015 M. Which assignment now applies?",
+      "response_type": "single_select",
+      "options": [
+        "M is anode and sends electrons to N",
+        "N is anode and sends electrons to M",
+        "M remains cathode but sends electrons to N",
+        "N is cathode because it was concentrated initially"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BATT_ENTRY",
+      "title": "Starting check: series voltage",
+      "prompt": "Four identical 1.2 V cells are connected in series. What approximate battery voltage is expected?",
+      "response_type": "single_select",
+      "options": [
+        "0.30 V",
+        "1.2 V",
+        "4.8 V",
+        "5.2 V"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BATT_GUIDED",
+      "title": "Guided practice: lead-acid discharge",
+      "prompt": "Which change occurs at both electrodes of a lead-acid cell during discharge?",
+      "response_type": "single_select",
+      "options": [
+        "Both electrodes become elemental lead",
+        "Both electrodes form PbSO4",
+        "Both electrodes release oxygen gas",
+        "Both electrodes become PbO2"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BATT_LIGHT",
+      "title": "Less help: acid concentration",
+      "prompt": "During normal lead-acid discharge, what qualitative change is expected in the sulfuric-acid electrolyte?",
+      "response_type": "single_select",
+      "options": [
+        "Its concentration decreases as acid is consumed and water forms",
+        "Its concentration increases because both electrodes release sulfate",
+        "It remains exactly fixed because electrolyte never participates",
+        "It becomes an alkaline potassium-hydroxide solution"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BATT_SOLO",
+      "title": "On your own: classify recharge",
+      "prompt": "Which statement best describes recharging a rechargeable electrochemical cell?",
+      "response_type": "single_select",
+      "options": [
+        "The discharge reaction continues spontaneously in the same direction",
+        "Cell voltage is multiplied without changing chemistry",
+        "Electrons stop moving, so no redox chemistry occurs",
+        "An external source drives the net discharge chemistry in reverse"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BATT_NEAR",
+      "title": "Near exit: lead-acid stack",
+      "prompt": "A lead-acid battery contains five approximately 2.0 V cells in series and is discharging. Which combined statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "About 10 V; both electrodes move toward PbSO4",
+        "About 2 V; both electrodes move toward PbO2",
+        "About 10 V; sulfuric acid concentration rises",
+        "About 4 V; both electrodes become Cd"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BATT_CHANGED",
+      "title": "Changed exit: nickel-cadmium charging",
+      "prompt": "During nickel-cadmium discharge, Cd is oxidized and nickel oxyhydroxide is reduced. What must a charger drive at the cadmium electrode during recharge?",
+      "response_type": "single_select",
+      "options": [
+        "Further oxidation of Cd to discharge the cell faster",
+        "Reduction that restores Cd from its oxidized discharge product",
+        "Reduction of nickel oxyhydroxide at both electrodes",
+        "Conversion of the alkaline electrolyte into sulfuric acid"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BATT_REPAIR_NEAR",
+      "title": "Repair: separate voltage and chemistry",
+      "prompt": "Which reasoning sequence correctly analyzes a named multi-cell battery?",
+      "response_type": "single_select",
+      "options": [
+        "Use voltage to infer all products, then ignore cell count",
+        "Add chemical coefficients to cell voltage",
+        "Identify per-cell discharge chemistry, then separately combine cell voltages",
+        "Infer capacity directly from voltage and choose a redox reaction afterward"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BATT_REENTRY_NEAR",
+      "title": "Fresh near re-entry: six-cell lead-acid battery",
+      "prompt": "A six-cell lead-acid battery has about 2.1 V per cell and is discharging. Which statement is supported?",
+      "response_type": "single_select",
+      "options": [
+        "About 2.1 V total, with sulfuric acid concentration increasing",
+        "About 8.4 V total, with both electrodes becoming PbO2",
+        "About 12.6 V total, with both electrodes moving toward PbSO4",
+        "About 12.6 V total, with cadmium oxidized"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BATT_REPAIR_CHANGED",
+      "title": "Repair: reverse the discharge half-reaction",
+      "prompt": "If species X is oxidized at an electrode during discharge, what process at that same electrode restores X during recharge?",
+      "response_type": "single_select",
+      "options": [
+        "Externally driven reduction of the oxidized product",
+        "Further spontaneous oxidation of X",
+        "No electron transfer",
+        "A voltage calculation with no chemical reversal"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BATT_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: nickel-side charging fault",
+      "prompt": "A nickel-cadmium charger restores cadmium correctly but fails to drive the nickel-electrode discharge reduction in reverse. What is the most direct consequence?",
+      "response_type": "single_select",
+      "options": [
+        "The cell becomes a lead-acid battery",
+        "The nickel electrode is not fully restored",
+        "Series voltage doubles without chemical restoration",
+        "Cadmium must continue oxidizing spontaneously during charging"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

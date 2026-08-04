@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; a missed fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "NUID_ENTRY",
+      "title": "Starting check: decode sulfur-34",
+      "prompt": "A sulfur-34 nucleus has atomic number 16. How many protons and neutrons does it contain?",
+      "response_type": "single_select",
+      "options": [
+        "16 protons and 18 neutrons",
+        "18 protons and 16 neutrons",
+        "16 protons and 34 neutrons",
+        "34 protons and 18 neutrons"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NUID_GUIDED",
+      "title": "Guided practice: identify isotopes",
+      "prompt": "Which pair represents isotopes of the same element?",
+      "response_type": "single_select",
+      "options": [
+        "Z = 8, A = 16 and Z = 7, A = 16",
+        "Z = 12, A = 24 and Z = 13, A = 25",
+        "Z = 6, A = 12 and Z = 6, A = 14",
+        "Z = 10, A = 20 and Z = 11, A = 20"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NUID_LIGHT",
+      "title": "Less help: weighted atomic mass",
+      "prompt": "An element is 25% isotope X-20 with mass 20.0 u and 75% isotope X-22 with mass 22.0 u. What is its average atomic mass?",
+      "response_type": "single_select",
+      "options": [
+        "20.5 u",
+        "21.0 u",
+        "21.5 u",
+        "22.5 u"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NUID_SOLO",
+      "title": "On your own: interpret mass defect",
+      "prompt": "The measured mass of a bound nucleus is less than the summed masses of its separated protons and neutrons. What does the difference represent?",
+      "response_type": "single_select",
+      "options": [
+        "Nucleons that vanished during measurement",
+        "Binding energy released when the nucleus formed",
+        "A change in atomic number",
+        "Extra electron mass inside the nucleus"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NUID_NEAR",
+      "title": "Near exit: compare neon nuclides",
+      "prompt": "Neon has Z = 10. Which statement correctly compares neon-20 and neon-22?",
+      "response_type": "single_select",
+      "options": [
+        "They have 20 and 22 protons, respectively",
+        "They have equal neutrons but different protons",
+        "They are different elements with equal charge",
+        "10 protons each; 10 versus 12 neutrons"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NUID_CHANGED",
+      "title": "Changed exit: infer abundance",
+      "prompt": "An element has isotopes of 30.0 u and 32.0 u. Its average atomic mass is 31.5 u. What fraction is the 32.0 u isotope?",
+      "response_type": "single_select",
+      "options": [
+        "0.25",
+        "0.50",
+        "0.75",
+        "0.875"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NUID_REPAIR_NEAR",
+      "title": "Repair: locate Z and A",
+      "prompt": "For a nuclide with Z = 19 and A = 41, which calculation gives neutron count?",
+      "response_type": "single_select",
+      "options": [
+        "19 + 41",
+        "41 − 19",
+        "41 ÷ 19",
+        "19 − 41"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NUID_REENTRY_NEAR",
+      "title": "Fresh near re-entry: potassium pair",
+      "prompt": "Potassium has Z = 19. Which statement correctly compares potassium-39 and potassium-41?",
+      "response_type": "single_select",
+      "options": [
+        "19 protons each; 20 versus 22 neutrons",
+        "They have 39 and 41 protons",
+        "They have equal neutrons but different protons",
+        "Only potassium-39 is potassium"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NUID_REPAIR_CHANGED",
+      "title": "Repair: set abundance equation",
+      "prompt": "For isotope masses m1 and m2 with heavier-isotope fraction x, which average expression is correct?",
+      "response_type": "single_select",
+      "options": [
+        "m1 + m2 + x",
+        "xm1 + xm2",
+        "(1 − x)m1 + xm2",
+        "m1/m2 = x"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NUID_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: isotope Q",
+      "prompt": "Isotopes Q-40 and Q-44 have masses 40.0 u and 44.0 u. The average is 43.0 u. What fraction is Q-44?",
+      "response_type": "single_select",
+      "options": [
+        "0.20",
+        "0.25",
+        "0.50",
+        "0.75"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DECY_ENTRY",
+      "title": "Starting check: alpha daughter",
+      "prompt": "Radium-226 (Z = 88) emits an alpha particle. What are the daughter's A and Z?",
+      "response_type": "single_select",
+      "options": [
+        "A = 222, Z = 86",
+        "A = 226, Z = 87",
+        "A = 224, Z = 86",
+        "A = 230, Z = 90"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DECY_GUIDED",
+      "title": "Guided practice: beta-minus daughter",
+      "prompt": "Phosphorus-32 (Z = 15) undergoes beta-minus decay. Which daughter is produced?",
+      "response_type": "single_select",
+      "options": [
+        "Silicon-28, Z = 14",
+        "Sulfur-32, Z = 16",
+        "Phosphorus-31, Z = 15",
+        "Sulfur-28, Z = 16"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DECY_LIGHT",
+      "title": "Less help: beta-plus daughter",
+      "prompt": "Sodium-22 (Z = 11) emits a positron. What happens to the daughter?",
+      "response_type": "single_select",
+      "options": [
+        "A becomes 18 and Z becomes 9",
+        "A remains 22 and Z becomes 12",
+        "A remains 22 and Z becomes 10",
+        "A becomes 21 and Z remains 11"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DECY_SOLO",
+      "title": "On your own: gamma identity",
+      "prompt": "An excited technetium-99 nucleus emits only a gamma photon. Which nuclear identity change occurs?",
+      "response_type": "single_select",
+      "options": [
+        "A decreases by 4 and Z by 2",
+        "A stays 99 and Z stays 43",
+        "A stays 99 and Z becomes 44",
+        "A becomes 98 and Z stays 43"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DECY_NEAR",
+      "title": "Near exit: beta-minus iodine",
+      "prompt": "Iodine-131 has Z = 53 and undergoes beta-minus decay. Which daughter is produced?",
+      "response_type": "single_select",
+      "options": [
+        "Tellurium-127, Z = 52",
+        "Iodine-130, Z = 53",
+        "Xenon-131, Z = 54",
+        "Tellurium-131, Z = 52"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DECY_CHANGED",
+      "title": "Changed exit: infer decay mode",
+      "prompt": "A parent with A = 64 and Z = 29 produces a daughter with A = 64 and Z = 28. Which emitted mode fits the change?",
+      "response_type": "single_select",
+      "options": [
+        "Alpha",
+        "Beta-minus",
+        "Beta-plus",
+        "Gamma"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DECY_REPAIR_NEAR",
+      "title": "Repair: beta-minus signature",
+      "prompt": "Which A/Z change identifies beta-minus decay?",
+      "response_type": "single_select",
+      "options": [
+        "ΔA = 0, ΔZ = +1",
+        "ΔA = −4, ΔZ = −2",
+        "ΔA = 0, ΔZ = −1",
+        "ΔA = 0, ΔZ = 0"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DECY_REENTRY_NEAR",
+      "title": "Fresh near re-entry: tritium",
+      "prompt": "Hydrogen-3 (Z = 1) undergoes beta-minus decay. What daughter results?",
+      "response_type": "single_select",
+      "options": [
+        "Helium-3, Z = 2",
+        "Hydrogen-2, Z = 1",
+        "Helium-4, Z = 2",
+        "A neutron-only nucleus, Z = 0"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DECY_REPAIR_CHANGED",
+      "title": "Repair: match signatures",
+      "prompt": "A daughter has the same A as its parent but Z is one greater. Which mode is indicated?",
+      "response_type": "single_select",
+      "options": [
+        "Gamma",
+        "Beta-plus",
+        "Alpha",
+        "Beta-minus"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DECY_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: classify 0/0",
+      "prompt": "A parent and daughter both have A = 152 and Z = 62, but the daughter is in a lower nuclear energy state. Which emission best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Beta-minus",
+        "Alpha",
+        "Gamma",
+        "Beta-plus"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "HLIF_ENTRY",
+      "title": "Starting check: two half-lives",
+      "prompt": "A sample begins with 64 mg and has a half-life of 3 h. How much remains after 6 h?",
+      "response_type": "single_select",
+      "options": [
+        "16 mg",
+        "21.3 mg",
+        "32 mg",
+        "0 mg"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "HLIF_GUIDED",
+      "title": "Guided practice: count intervals",
+      "prompt": "A radionuclide has an 8 day half-life. How many half-lives elapse in 24 days?",
+      "response_type": "single_select",
+      "options": [
+        "2",
+        "3",
+        "8",
+        "16"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "HLIF_LIGHT",
+      "title": "Less help: infer table pattern",
+      "prompt": "A sample has amounts 120, 60, 30, and 15 counts at times 0, 4, 8, and 12 h. What is its half-life?",
+      "response_type": "single_select",
+      "options": [
+        "2 h",
+        "3 h",
+        "4 h",
+        "8 h"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "HLIF_SOLO",
+      "title": "On your own: choose graph form",
+      "prompt": "Which plot is expected to be a straight decreasing line for ideal radioactive decay?",
+      "response_type": "single_select",
+      "options": [
+        "Amount versus time on two linear axes",
+        "Time versus time",
+        "Amount lost per interval versus starting mass",
+        "log(remaining amount) versus time"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "HLIF_NEAR",
+      "title": "Near exit: five intervals",
+      "prompt": "A 96 μg sample has a half-life of 2 days. How much remains after 10 days?",
+      "response_type": "single_select",
+      "options": [
+        "6 μg",
+        "3 μg",
+        "9.6 μg",
+        "12 μg"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "HLIF_CHANGED",
+      "title": "Changed exit: infer half-life from ratio",
+      "prompt": "A detector records 800 counts/min at t = 0 and 100 counts/min at t = 18 h for the same radionuclide under unchanged efficiency. What half-life fits the data?",
+      "response_type": "single_select",
+      "options": [
+        "3 h",
+        "6 h",
+        "9 h",
+        "18 h"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "HLIF_REPAIR_NEAR",
+      "title": "Repair: repeated halving",
+      "prompt": "Which expression gives the remaining fraction after four half-lives?",
+      "response_type": "single_select",
+      "options": [
+        "1 − 4/2",
+        "(1/2)^4",
+        "1/(2 + 4)",
+        "4(1/2)"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "HLIF_REENTRY_NEAR",
+      "title": "Fresh near re-entry: iodine sample",
+      "prompt": "A 160 mg sample has a half-life of 6 h. How much remains after 18 h?",
+      "response_type": "single_select",
+      "options": [
+        "10 mg",
+        "20 mg",
+        "40 mg",
+        "80 mg"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "HLIF_REPAIR_CHANGED",
+      "title": "Repair: detect one halving",
+      "prompt": "Which observation directly identifies one half-life?",
+      "response_type": "single_select",
+      "options": [
+        "A fixed 10-unit decrease",
+        "A doubling of elapsed time",
+        "A decrease to half the current amount",
+        "A line reaching zero"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "HLIF_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: activity endpoints",
+      "prompt": "Activity falls from 640 Bq to 80 Bq in 15 min. What half-life fits the data?",
+      "response_type": "single_select",
+      "options": [
+        "2.5 min",
+        "5 min",
+        "7.5 min",
+        "15 min"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MSPZ_ENTRY",
+      "title": "Starting check: singly charged ion",
+      "prompt": "A singly charged molecular ion appears at m/z 72. What ion mass is supported approximately?",
+      "response_type": "single_select",
+      "options": [
+        "36 u",
+        "72 u",
+        "144 u",
+        "The intensity is required before any mass estimate"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MSPZ_GUIDED",
+      "title": "Guided practice: identify base peak",
+      "prompt": "A spectrum has peaks at m/z 31 (100% relative intensity), 74 (40%), and 75 (5%). Which is the base peak?",
+      "response_type": "single_select",
+      "options": [
+        "m/z 31",
+        "m/z 74",
+        "m/z 75",
+        "The peak with greatest m/z must be the base peak"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MSPZ_LIGHT",
+      "title": "Less help: calculate neutral loss",
+      "prompt": "A singly charged parent ion at m/z 116 yields a fragment at m/z 88. What mass difference separates them?",
+      "response_type": "single_select",
+      "options": [
+        "18 u",
+        "28 u",
+        "88 u",
+        "204 u"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MSPZ_SOLO",
+      "title": "On your own: reject base-peak shortcut",
+      "prompt": "The tallest peak in a spectrum is at m/z 43, while an explicitly identified molecular ion is at m/z 86. Which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "The molecule must have mass 43 u because the tallest peak sets mass",
+        "The m/z 86 peak cannot be molecular because it is shorter",
+        "Both peaks must be the same ion",
+        "m/z 43 is base; m/z 86 is molecular ion"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MSPZ_NEAR",
+      "title": "Near exit: parent and fragment",
+      "prompt": "A singly charged molecular ion is at m/z 102 and a fragment is at m/z 74. Which combined inference is supported?",
+      "response_type": "single_select",
+      "options": [
+        "Mass near 102 u; peak difference 28 u",
+        "Ion mass near 74 u and a 176 u loss",
+        "Ion mass near 204 u because the parent is singly charged",
+        "Ion mass near 51 u and a 28 u loss"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MSPZ_CHANGED",
+      "title": "Changed exit: doubly charged ion",
+      "prompt": "An intact ion is explicitly 2+ and appears at m/z 65. What approximate ion mass is supported?",
+      "response_type": "single_select",
+      "options": [
+        "32.5 u",
+        "65 u",
+        "130 u",
+        "260 u"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MSPZ_REPAIR_NEAR",
+      "title": "Repair: separate spectrum facts",
+      "prompt": "Which sequence best analyzes a parent and fragment pair?",
+      "response_type": "single_select",
+      "options": [
+        "Choose the tallest peak as parent, then ignore charge",
+        "Add all m/z values to get molecular mass",
+        "Identify charge and roles, then compare coordinates",
+        "Use intensity percentage as charge magnitude"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MSPZ_REENTRY_NEAR",
+      "title": "Fresh near re-entry: new parent pair",
+      "prompt": "A singly charged molecular ion appears at m/z 94 and a stated fragment at m/z 66. What is supported?",
+      "response_type": "single_select",
+      "options": [
+        "Mass near 47 u and loss 28 u",
+        "Mass near 94 u and loss 28 u",
+        "Mass near 160 u and loss 66 u",
+        "Mass near 94 u and loss 160 u"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MSPZ_REPAIR_CHANGED",
+      "title": "Repair: rearrange m/z",
+      "prompt": "Which expression gives ion mass m from measured m/z and charge magnitude |z|?",
+      "response_type": "single_select",
+      "options": [
+        "m = (m/z)/|z|",
+        "m = (m/z)|z|",
+        "m = |z|/(m/z)",
+        "m = m/z + |z|"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MSPZ_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: triply charged ion",
+      "prompt": "An intact ion is explicitly 3+ and appears at m/z 48. What approximate mass is supported?",
+      "response_type": "single_select",
+      "options": [
+        "16 u",
+        "48 u",
+        "96 u",
+        "144 u"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

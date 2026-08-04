@@ -1,0 +1,1175 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-329622",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "3eb10f36242854d16cde8632e156f3979f4b5067aa475ffbf9074885c6bf9307",
+  "payload": {
+    "lesson_id": "V3-LES-329622",
+    "grouping_id": "V3-CL-329622",
+    "ordered_kc_ids": [
+      "V3-KC-271440"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-271440"
+    ],
+    "throughline": "Read the quinone head-group structure, track its net two-electron/two-proton redox change, and separate redox function from the membrane-localizing tail.",
+    "curriculum_context": {
+      "canonical_title": "Trace biological redox carriers and centers",
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-820156",
+        "V3-MOD-273816"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 61,
+          "relation_ids": [
+            "R14-PL-581402-061"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 61,
+          "relation_ids": [
+            "R14-PL-904137-061"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-749320",
+          "position": 30,
+          "relation_ids": [
+            "R14-PL-749320-030"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-329622",
+      "revisit_relation_ids": [
+        "R14-RV-329622"
+      ],
+      "hard_prerequisite_handoffs": [],
+      "helpful_context": [],
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ],
+      "open_holds": [
+        {
+          "hold_id": "V3-HOLD-110001",
+          "safe_interim_code": "RECORD_STALE_AUTHORITY_NONCLAIM",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110003",
+          "safe_interim_code": "PRESERVE_PROVISIONAL_LEARNER_VALIDATION",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110005",
+          "safe_interim_code": "PRESERVE_PROVISIONAL_SEQUENCE_AND_REPRESENTATION",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110008",
+          "safe_interim_code": "PRESERVE_CANONICAL_CLASSIFICATION_WITHOUT_VALIDATION_CLAIM",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110009",
+          "safe_interim_code": "DISABLE_ADAPTIVE_BYPASS_AND_NULL_THRESHOLDS",
+          "blocks_authoring": false
+        }
+      ]
+    },
+    "nodes": [
+      {
+        "node_id": "QUIN-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: distinguish oxidation from reduction by electron bookkeeping and identify carbonyl versus phenolic hydroxyl groups."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [
+          "QUIN-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "QUIN-CP-ENTRY",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: recognize the oxidized quinone and reduced hydroquinone forms, write their net two-electron redox relationship, and locate the redox-active part of ubiquinone.",
+          "Bridge: oxidation means net electron loss and reduction means net electron gain. Structural cues make that bookkeeping visible."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "QUIN-CP-ORIENTATION",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "A para-quinone head group contains two carbonyl groups on the ring. Net two-electron, two-proton reduction converts those carbonyl oxygens to two hydroxyl groups, giving the hydroquinone form.",
+          "The bounded net relationship is Q + 2 e− + 2 H+ ⇌ QH2. Moving Q → QH2 is reduction; moving QH2 → Q is oxidation. The equation tracks overall stoichiometry even when a biological system transfers the equivalents in controlled steps.",
+          "Ubiquinone has a redox-active quinone head group and a hydrophobic isoprenoid tail. The tail supports membrane localization; it is not the site that changes between the oxidized and fully reduced head-group forms."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "QUIN-CP-EXPLANATION",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use a head-and-tail model: inspect the ring oxygens for redox state, count net electron/proton uptake or release at the head, and treat the hydrocarbon tail as a localization feature."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "QUIN-CP-MODEL",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If the ring shows two C=O groups, I identify Q, the oxidized form. To reach QH2, I place 2 e− and 2 H+ on the reactant side and convert both carbonyl oxygens to hydroxyls. I do not assign the redox change to the isoprenoid tail because its bonding pattern is unchanged in the pair."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "QUIN-CP-THINK",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a membrane carrier changes from a ring with two carbonyls to the corresponding ring with two hydroxyls while the tail remains unchanged. The carrier has accepted two electrons and two protons overall, so the head group was reduced from ubiquinone to ubiquinol."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "QUIN-CP-WORKED",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: mark the two ring oxygens, classify each as carbonyl or hydroxyl, then place 2 e− and 2 H+ on the correct side of the net equation."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [
+          "QUIN-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "QUIN-CP-GUIDED",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: infer whether a named carrier was oxidized or reduced from the direction of its structural change."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [
+          "QUIN-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "QUIN-CP-LIGHT",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: distinguish a redox-head-group mutation from a tail change that primarily alters membrane localization."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [
+          "QUIN-ACT-SOLO"
+        ],
+        "checkpoint_ref": "QUIN-CP-SOLO",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: the net two-electron equation does not mean every mechanistic step must transfer two electrons simultaneously; it states the overall conversion between fully oxidized and fully reduced forms.",
+          "Non-example: shortening the hydrophobic tail can alter localization but does not by itself convert quinone carbonyls to hydroquinone hydroxyls."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "QUIN-CP-CONTRAST",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: classify a fresh head-group structure and complete its net electron/proton ledger without support."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [
+          "QUIN-ACT-NEAR"
+        ],
+        "checkpoint_ref": "QUIN-CP-NEAR",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: diagnose whether an experimental defect disrupts redox chemistry or membrane localization when head and tail changes are separated."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [
+          "QUIN-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "QUIN-CP-CHANGED",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the near-use function: compare only the two ring oxygens first. Two carbonyls mark Q; two hydroxyls mark QH2. Then balance the net pair with 2 e− and 2 H+."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [
+          "QUIN-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "QUIN-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: apply the same structural ledger to an untouched quinone/hydroquinone pair with new labels."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [
+          "QUIN-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "QUIN-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the changed-task function: assign function by the altered region—head-group oxygen chemistry controls redox conversion, whereas the hydrophobic tail chiefly supports membrane residence."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [
+          "QUIN-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "QUIN-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: evaluate a new mutation scenario that changes a different region and uses a new outcome pattern."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [
+          "QUIN-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "QUIN-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      },
+      {
+        "node_id": "QUIN-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: Q has two ring carbonyls; QH2 has two hydroxyls. Q + 2 e− + 2 H+ ⇌ QH2, and the head performs redox while the tail supports membrane localization."
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "QUIN-CP-RECAP",
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "QUIN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-271440",
+        "item_binding_id": "QUIN-ITEM-ENTRY",
+        "learner_operation": "CLASSIFY_QUINONE_HEAD_GROUP",
+        "authorized_next_node_ids": [
+          "QUIN-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "QUIN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-271440",
+        "item_binding_id": "QUIN-ITEM-GUIDED",
+        "learner_operation": "BALANCE_QUINONE_REDUCTION",
+        "authorized_next_node_ids": [
+          "QUIN-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "QUIN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-271440",
+        "item_binding_id": "QUIN-ITEM-LIGHT",
+        "learner_operation": "CLASSIFY_HYDROQUINONE_OXIDATION",
+        "authorized_next_node_ids": [
+          "QUIN-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "QUIN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-271440",
+        "item_binding_id": "QUIN-ITEM-SOLO",
+        "learner_operation": "LOCALIZE_UBIQUINONE_REDOX_CENTER",
+        "authorized_next_node_ids": [
+          "QUIN-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "QUIN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-271440",
+        "item_binding_id": "QUIN-ITEM-NEAR",
+        "learner_operation": "INTEGRATE_STRUCTURE_AND_REDOX_STOICHIOMETRY",
+        "authorized_next_node_ids": [
+          "QUIN-NODE-CHANGED",
+          "QUIN-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "QUIN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-271440",
+        "item_binding_id": "QUIN-ITEM-CHANGED",
+        "learner_operation": "TRANSFER_HEAD_TAIL_MODEL_TO_VARIANT_DIAGNOSIS",
+        "authorized_next_node_ids": [
+          "QUIN-NODE-RECAP",
+          "QUIN-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "QUIN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-271440",
+        "item_binding_id": "QUIN-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_REDOX_STRUCTURE_MAP",
+        "authorized_next_node_ids": [
+          "QUIN-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "QUIN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-271440",
+        "item_binding_id": "QUIN-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_QUINONE_REDUCTION_WITH_FRESH_CARRIER",
+        "authorized_next_node_ids": [
+          "QUIN-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "QUIN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-271440",
+        "item_binding_id": "QUIN-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_HEAD_TAIL_FUNCTION_MAP",
+        "authorized_next_node_ids": [
+          "QUIN-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "QUIN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-271440",
+        "item_binding_id": "QUIN-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_VARIANT_DIAGNOSIS_WITH_FRESH_REGION_CHANGE",
+        "authorized_next_node_ids": [
+          "QUIN-NODE-RECAP"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-271440",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-271440",
+        "scope_in_refs": [
+          "V3-KC-271440:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-271440:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "QUIN-CLAIM"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "QUIN-NODE-ENTRY",
+        "orientation_node_id": "QUIN-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "QUIN-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "QUIN-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "QUIN-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "QUIN-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "QUIN-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "QUIN-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "QUIN-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "QUIN-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "QUIN-NODE-NEAR",
+          "activity_ids": [
+            "QUIN-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "QUIN-NODE-CHANGED",
+          "activity_ids": [
+            "QUIN-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "QUIN-FEATURE-NEAR-FUNCTION",
+          "QUIN-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "QUIN-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "QUIN-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "QUIN-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "QUIN-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "QUIN-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "QUIN-ACT-REENTRY-NEAR",
+            "success_next_node_id": "QUIN-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "QUIN-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "QUIN-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "QUIN-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "QUIN-REP"
+        ],
+        "accessibility_equivalent_ids": [
+          "QUIN-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [],
+          "standard": [
+            "QUIN-NODE-ENTRY",
+            "QUIN-NODE-ORIENTATION",
+            "QUIN-NODE-EXPLANATION",
+            "QUIN-NODE-MODEL",
+            "QUIN-NODE-THINK",
+            "QUIN-NODE-WORKED",
+            "QUIN-NODE-GUIDED",
+            "QUIN-NODE-LIGHT",
+            "QUIN-NODE-SOLO",
+            "QUIN-NODE-CONTRAST",
+            "QUIN-NODE-NEAR",
+            "QUIN-NODE-CHANGED",
+            "QUIN-NODE-REPAIR-NEAR",
+            "QUIN-NODE-REENTRY-NEAR",
+            "QUIN-NODE-REPAIR-CHANGED",
+            "QUIN-NODE-REENTRY-CHANGED",
+            "QUIN-NODE-RECAP"
+          ],
+          "misconception": []
+        },
+        "recap_node_id": "QUIN-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "QUIN-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "QUIN-FAMILY-WORKED",
+        "stimulus_lineage_id": "QUIN-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "QUIN-REP",
+        "learner_operation": "FOLLOW_MODEL_SELECTION_AND_EXECUTION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:QUIN-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "QUIN-SOLUTION-WORKED",
+        "decisive_cue_id": "QUIN-CUE-WORKED",
+        "distractor_lineage_id": "QUIN-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "QUIN-ITEM-ENTRY",
+        "activity_id": "QUIN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "QUIN-FAMILY-ENTRY",
+        "stimulus_lineage_id": "QUIN-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "QUIN-REP",
+        "learner_operation": "CLASSIFY_QUINONE_HEAD_GROUP",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "QUIN_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#QUIN-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#QUIN-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "QUIN-SOLUTION-ENTRY",
+        "decisive_cue_id": "QUIN-CUE-ENTRY",
+        "distractor_lineage_id": "QUIN-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "QUIN-ITEM-GUIDED",
+        "activity_id": "QUIN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "QUIN-FAMILY-GUIDED",
+        "stimulus_lineage_id": "QUIN-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "QUIN-REP",
+        "learner_operation": "BALANCE_QUINONE_REDUCTION",
+        "hint_policy": "VISIBLE_SELECTION_SEQUENCE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "QUIN_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#QUIN-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#QUIN-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "QUIN-SOLUTION-GUIDED",
+        "decisive_cue_id": "QUIN-CUE-GUIDED",
+        "distractor_lineage_id": "QUIN-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "QUIN-ITEM-LIGHT",
+        "activity_id": "QUIN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "QUIN-FAMILY-LIGHT",
+        "stimulus_lineage_id": "QUIN-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "QUIN-REP",
+        "learner_operation": "CLASSIFY_HYDROQUINONE_OXIDATION",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "QUIN_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#QUIN-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#QUIN-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "QUIN-SOLUTION-LIGHT",
+        "decisive_cue_id": "QUIN-CUE-LIGHT",
+        "distractor_lineage_id": "QUIN-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "QUIN-ITEM-SOLO",
+        "activity_id": "QUIN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "QUIN-FAMILY-SOLO",
+        "stimulus_lineage_id": "QUIN-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "QUIN-REP",
+        "learner_operation": "LOCALIZE_UBIQUINONE_REDOX_CENTER",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "QUIN_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#QUIN-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#QUIN-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "QUIN-SOLUTION-SOLO",
+        "decisive_cue_id": "QUIN-CUE-SOLO",
+        "distractor_lineage_id": "QUIN-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "QUIN-ITEM-NEAR",
+        "activity_id": "QUIN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "QUIN-FAMILY-NEAR",
+        "stimulus_lineage_id": "QUIN-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "QUIN-REP",
+        "learner_operation": "INTEGRATE_STRUCTURE_AND_REDOX_STOICHIOMETRY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "QUIN_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#QUIN-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#QUIN-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "QUIN-SOLUTION-NEAR",
+        "decisive_cue_id": "QUIN-CUE-NEAR",
+        "distractor_lineage_id": "QUIN-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "QUIN-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "QUIN-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "QUIN-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "QUIN-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "QUIN-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "QUIN-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "QUIN-ITEM-CHANGED",
+        "activity_id": "QUIN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "QUIN-FAMILY-CHANGED",
+        "stimulus_lineage_id": "QUIN-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "representation_id": "QUIN-REP",
+        "learner_operation": "TRANSFER_HEAD_TAIL_MODEL_TO_VARIANT_DIAGNOSIS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "QUIN_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#QUIN-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#QUIN-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "QUIN-SOLUTION-CHANGED",
+        "decisive_cue_id": "QUIN-CUE-CHANGED",
+        "distractor_lineage_id": "QUIN-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "QUIN-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "QUIN-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "QUIN-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "QUIN-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "QUIN-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "QUIN-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "QUIN-ITEM-REPAIR-NEAR",
+        "activity_id": "QUIN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "QUIN-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "QUIN-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "QUIN-REP",
+        "learner_operation": "REBUILD_REDOX_STRUCTURE_MAP",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "QUIN_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#QUIN-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#QUIN-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "QUIN-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "QUIN-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "QUIN-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "QUIN-ITEM-REENTRY-NEAR",
+        "activity_id": "QUIN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "QUIN-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "QUIN-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "QUIN-REP",
+        "learner_operation": "REENTER_QUINONE_REDUCTION_WITH_FRESH_CARRIER",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "QUIN_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#QUIN-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#QUIN-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "QUIN-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "QUIN-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "QUIN-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "QUIN-ITEM-NEAR",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "QUIN-ITEM-REPAIR-CHANGED",
+        "activity_id": "QUIN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "QUIN-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "QUIN-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "QUIN-REP",
+        "learner_operation": "REBUILD_HEAD_TAIL_FUNCTION_MAP",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "QUIN_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#QUIN-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#QUIN-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "QUIN-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "QUIN-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "QUIN-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "QUIN-ITEM-REENTRY-CHANGED",
+        "activity_id": "QUIN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-271440",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "QUIN-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "QUIN-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "representation_id": "QUIN-REP",
+        "learner_operation": "REENTER_VARIANT_DIAGNOSIS_WITH_FRESH_REGION_CHANGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "QUIN_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#QUIN-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#QUIN-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "QUIN-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "QUIN-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "QUIN-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "QUIN-ITEM-CHANGED",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      }
+    ],
+    "transitions": [],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-162024",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-191915",
+        "host_scope": {
+          "kind": "SECONDARY_APPLICATION",
+          "primary_lesson_id": "V3-LES-191915"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-318276",
+          "V3-KC-891246",
+          "V3-KC-360631",
+          "V3-KC-365979",
+          "V3-KC-304296",
+          "V3-KC-028740",
+          "V3-KC-444504",
+          "V3-KC-115894",
+          "V3-KC-922672",
+          "V3-KC-947249",
+          "V3-KC-980903",
+          "V3-KC-573055",
+          "V3-KC-538252",
+          "V3-KC-714060",
+          "V3-KC-271440"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-CAP-162024"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "LESSON_TO_ATTACHMENT",
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-EXT-072959",
+        "attachment_type": "EXTENSION",
+        "owner_lesson_id": "V3-LES-329622",
+        "host_scope": {
+          "kind": "LESSON"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-922672"
+        ],
+        "host_core_membership_status": "MISMATCH_PROVISIONAL",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-FD-329622"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false,
+        "lineage_nonclaim": "The declared host cores are not knowledge components of this lesson. They are preserved as lineage and credit no knowledge component, no exit condition, and no mastery attribution here.",
+        "correction_required_after_deadline": true
+      },
+      {
+        "attachment_id": "V3-SUP-070003",
+        "attachment_type": "SUPPORT",
+        "owner_lesson_id": "V3-LES-329622",
+        "host_scope": {
+          "kind": "LESSON"
+        },
+        "declared_host_core_ids": [],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-FD-329622"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false
+      }
+    ]
+  }
+}

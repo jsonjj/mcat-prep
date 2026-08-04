@@ -1,0 +1,332 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-323416",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-323416",
+    "grouping_id": "V3-CL-323416",
+    "ordered_kc_ids": [
+      "V3-KC-669016",
+      "V3-KC-281480",
+      "V3-KC-906925",
+      "V3-KC-786223"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020",
+      "AAMC-2020-MCAT-CONTENT"
+    ],
+    "source_classes": [
+      "PUBLIC_PRIMARY_RESEARCH"
+    ],
+    "source_anchor_ids": [
+      "CP-SA-017"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_path": "content/lesson-factory/packets/V3-LES-323416/task-source-packet.json",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100091",
+      "source_occurrence_id": "V3-SRC-100091",
+      "source_id": "AAMC-2020",
+      "official_topic": "Atomic Nucleus",
+      "printed_pages": [
+        64
+      ],
+      "source_anchor_ids": [
+        "CP-SA-017"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200066",
+      "source_occurrence_id": "V3-SRC-200066",
+      "source_id": "AAMC-2020-MCAT-CONTENT",
+      "official_topic": null,
+      "printed_pages": [
+        64,
+        65
+      ],
+      "source_anchor_ids": [
+        "CP-SA-017"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "NUID-CLAIM",
+      "target_kc_id": "V3-KC-669016",
+      "authorial_claim": "A learner may extract proton, neutron, and isotope identity from nuclide notation, calculate a weighted atomic mass, and use mass defect or binding energy per nucleon as bounded stability evidence.",
+      "scope_in_refs": [
+        "V3-KC-669016:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-669016:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-017"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100091",
+        "V3-SRC-200066"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-601135",
+        "V3-MAP-601547"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "DECY-CLAIM",
+      "target_kc_id": "V3-KC-281480",
+      "authorial_claim": "A learner may conserve mass number and atomic number to identify daughter nuclides for alpha, beta-minus, beta-plus, and gamma emission.",
+      "scope_in_refs": [
+        "V3-KC-281480:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-281480:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-017"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100091",
+        "V3-SRC-200066"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-601053",
+        "V3-MAP-601548"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "HLIF-CLAIM",
+      "target_kc_id": "V3-KC-906925",
+      "authorial_claim": "A learner may relate elapsed half-lives to remaining amount and recognize the straight-line semi-log representation of exponential radioactive decay.",
+      "scope_in_refs": [
+        "V3-KC-906925:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-906925:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-017"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100091",
+        "V3-SRC-200066"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600437",
+        "V3-MAP-601549"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "MSPZ-CLAIM",
+      "target_kc_id": "V3-KC-786223",
+      "authorial_claim": "A learner may use molecular-ion, isotope, charge-state, and fragment m/z evidence to constrain identity while distinguishing base-peak intensity from ion mass.",
+      "scope_in_refs": [
+        "V3-KC-786223:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-786223:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-017"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100091",
+        "V3-SRC-200066"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600182",
+        "V3-MAP-601550"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-943612",
+        "V3-MOD-273816"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 75,
+          "relation_ids": [
+            "R14-PL-581402-075"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 75,
+          "relation_ids": [
+            "R14-PL-904137-075"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-749320",
+          "position": 38,
+          "relation_ids": [
+            "R14-PL-749320-038"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-323416",
+      "revisit_relation_ids": [
+        "R14-RV-323416"
+      ]
+    },
+    "hard_prerequisites": [
+      {
+        "lesson_id": "V3-LES-789208",
+        "relation_ids": [
+          "V3-EDG-152729",
+          "R14-SM-035"
+        ],
+        "source_kc_ids": [
+          "V3-KC-399019",
+          "V3-KC-799492",
+          "V3-KC-919842",
+          "V3-KC-981438"
+        ],
+        "taught_at_sequence_position": 2
+      },
+      {
+        "lesson_id": "V3-LES-844372",
+        "relation_ids": [
+          "V3-EDG-676286",
+          "R14-SM-036"
+        ],
+        "source_kc_ids": [
+          "V3-KC-452593",
+          "V3-KC-008681",
+          "V3-KC-238607"
+        ],
+        "taught_at_sequence_position": 3
+      }
+    ],
+    "helpful_context": [],
+    "required_attachments": [
+      {
+        "attachment_id": "V3-CAP-672944",
+        "kind": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-563427",
+        "host_scope": {
+          "kind": "SECONDARY_APPLICATION",
+          "primary_lesson_id": "V3-LES-563427"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-669016",
+          "V3-KC-281480",
+          "V3-KC-906925",
+          "V3-KC-786223",
+          "V3-KC-387624",
+          "V3-KC-198549",
+          "V3-KC-131071"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-CAP-672944"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "LESSON_TO_ATTACHMENT",
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-EXT-398695",
+        "kind": "EXTENSION",
+        "owner_lesson_id": "V3-LES-323416",
+        "host_scope": {
+          "kind": "SINGLE_KC",
+          "kc_id": "V3-KC-786223"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-786223"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-FD-323416"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false
+      },
+      {
+        "attachment_id": "V3-EXT-684562",
+        "kind": "EXTENSION",
+        "owner_lesson_id": "V3-LES-323416",
+        "host_scope": {
+          "kind": "SINGLE_KC",
+          "kc_id": "V3-KC-281480"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-281480"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-FD-323416"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false
+      }
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}

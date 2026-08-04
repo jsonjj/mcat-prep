@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "NUID-ITEM-ENTRY",
+      "learner_prompt_key": "NUID_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Z = 16 gives 16 protons, and A − Z = 34 − 16 = 18 neutrons.",
+      "post_commitment_feedback": "Fix protons from Z, then subtract Z from A for neutrons.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NUID-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NUID-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This swaps the fixed proton count and calculated neutron count."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NUID-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats mass number as neutron count."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NUID-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats mass number as proton count."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NUID-ITEM-GUIDED",
+      "learner_prompt_key": "NUID_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "Isotopes share atomic number Z and differ in mass number A.",
+      "post_commitment_feedback": "Hold Z constant and look for a changed A.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NUID-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal A with different Z describes isobars, not isotopes."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NUID-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Different Z values identify different elements."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NUID-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NUID-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Different atomic numbers identify different elements even when A matches."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NUID-ITEM-LIGHT",
+      "learner_prompt_key": "NUID_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "(0.25)(20.0) + (0.75)(22.0) = 21.5 u.",
+      "post_commitment_feedback": "Weight each isotope by fractional abundance before adding.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NUID-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This overweights the less abundant isotope."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NUID-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is an unweighted midpoint."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NUID-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NUID-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An average cannot exceed both supplied isotope masses."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NUID-ITEM-SOLO",
+      "learner_prompt_key": "NUID_SOLO",
+      "correct_option_index": 1,
+      "rationale": "The positive mass defect corresponds to nuclear binding energy through mass-energy equivalence.",
+      "post_commitment_feedback": "The mass difference is the bound system's binding energy expressed as mass.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NUID-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nucleon number is conserved; the mass difference is energy-equivalent."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NUID-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NUID-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mass defect does not change proton count or element identity."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NUID-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ordinary atomic electrons are not the source of nuclear mass defect."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NUID-ITEM-NEAR",
+      "learner_prompt_key": "NUID_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Both are neon because Z = 10; neutron counts are 20 − 10 = 10 and 22 − 10 = 12.",
+      "post_commitment_feedback": "Preserve Z to preserve identity, then compare A − Z.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NUID-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mass numbers are not proton counts."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NUID-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The proton counts match and neutron counts differ."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NUID-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Matching Z values make them the same element."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NUID-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NUID-ITEM-CHANGED",
+      "learner_prompt_key": "NUID_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "30(1 − x) + 32x = 31.5 gives x = 0.75.",
+      "post_commitment_feedback": "Set the two weighted contributions equal to the reported average and solve for the heavier-isotope fraction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NUID-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would give an average of 30.5 u."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NUID-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal abundance would give 31.0 u."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NUID-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NUID-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would produce 31.75 u."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NUID-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "NUID_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Because A = protons + neutrons and protons = Z, neutrons = A − Z.",
+      "post_commitment_feedback": "Rebuild the composition equation before substituting.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NUID-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This double-counts proton and total-nucleon values."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NUID-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NUID-REPAIRNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A ratio does not recover the count missing from the sum."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NUID-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the subtraction and gives a negative count."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NUID-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "NUID_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Both share Z = 19, while neutron counts are 20 and 22.",
+      "post_commitment_feedback": "The fresh pair confirms that shared Z fixes element identity.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NUID-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NUID-REENTRYNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These are mass numbers, not proton counts."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NUID-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The proton counts match and neutron counts differ."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NUID-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both nuclides have potassium's atomic number."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NUID-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "NUID_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The two fractions are 1 − x and x and must sum to one.",
+      "post_commitment_feedback": "Assign complementary fractions, then weight each isotope mass.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NUID-REPAIRCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This mixes mass and a dimensionless fraction by addition."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NUID-REPAIRCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These weights sum to 2x rather than one."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NUID-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NUID-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The mass ratio is not generally the isotope abundance."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NUID-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "NUID_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "40(1 − x) + 44x = 43 gives x = 0.75.",
+      "post_commitment_feedback": "The fresh values preserve the abundance-inference function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NUID-REENTRYCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This gives an average of 40.8 u."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NUID-REENTRYCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This gives 41.0 u."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NUID-REENTRYCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This gives 42.0 u."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NUID-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DECY-ITEM-ENTRY",
+      "learner_prompt_key": "DECY_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Alpha emission lowers A by 4 and Z by 2.",
+      "post_commitment_feedback": "Subtract the alpha particle's 4 nucleons and 2 protons.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DECY-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DECY-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This resembles beta-plus Z change but leaves A unchanged."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DECY-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts only two from A."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DECY-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds the alpha signature instead of emitting it."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DECY-ITEM-GUIDED",
+      "learner_prompt_key": "DECY_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Beta-minus keeps A = 32 and increases Z from 15 to 16.",
+      "post_commitment_feedback": "Preserve mass number and move one element higher in Z.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DECY-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This changes both A and Z in an alpha-like direction."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DECY-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DECY-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta-minus changes Z and does not remove a neutron from A."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DECY-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This changes A despite beta-minus conserving nucleon count."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DECY-ITEM-LIGHT",
+      "learner_prompt_key": "DECY_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Beta-plus keeps A constant and lowers Z by one.",
+      "post_commitment_feedback": "A proton converts to a neutron, so nucleon count stays 22 while Z becomes 10.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DECY-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This applies an alpha-like change."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DECY-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the beta-minus direction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DECY-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DECY-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta-plus does not remove a nucleon."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DECY-ITEM-SOLO",
+      "learner_prompt_key": "DECY_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Gamma emission changes nuclear energy state without changing A or Z.",
+      "post_commitment_feedback": "The photon carries energy, not nucleon or proton count.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DECY-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is alpha emission."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DECY-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DECY-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A Z+1 change is beta-minus, not gamma."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DECY-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gamma emission does not remove a nucleon."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DECY-ITEM-NEAR",
+      "learner_prompt_key": "DECY_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Beta-minus leaves A = 131 and increases Z to 54, which is xenon.",
+      "post_commitment_feedback": "Use the 0/+1 beta-minus signature before naming the element.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DECY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This changes both A and Z as alpha decay would."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DECY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This changes A without changing Z."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DECY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DECY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses beta-plus's Z direction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DECY-ITEM-CHANGED",
+      "learner_prompt_key": "DECY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "A unchanged and Z decreased by one is the beta-plus signature.",
+      "post_commitment_feedback": "Compare the observed 0/−1 change with the mode ledger.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DECY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Alpha would lower A by 4 and Z by 2."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DECY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta-minus increases Z by one."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DECY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DECY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gamma changes neither A nor Z."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DECY-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "DECY_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "A neutron-to-proton conversion preserves A and raises Z by one.",
+      "post_commitment_feedback": "Rebuild beta-minus from its nucleon conversion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DECY-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DECY-REPAIRNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is alpha emission."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DECY-REPAIRNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is beta-plus emission."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DECY-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is gamma emission."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DECY-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "DECY_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "A remains 3 and Z rises to 2, producing helium-3.",
+      "post_commitment_feedback": "The fresh nuclide preserves the beta-minus 0/+1 function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DECY-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DECY-REENTRYNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta-minus does not lower mass number."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DECY-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mass number remains 3, not 4."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DECY-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Z increases rather than decreasing to zero."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DECY-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "DECY_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The 0/+1 signature is beta-minus decay.",
+      "post_commitment_feedback": "Read the observed changes before naming the mode.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DECY-REPAIRCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gamma would leave Z unchanged."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DECY-REPAIRCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta-plus lowers Z."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DECY-REPAIRCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Alpha lowers both A and Z."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DECY-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "DECY-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "DECY_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Unchanged A and Z with lower nuclear energy indicates gamma emission.",
+      "post_commitment_feedback": "The fresh case uses the 0/0 identity signature plus an energy-state change.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "DECY-REENTRYCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta-minus would increase Z."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "DECY-REENTRYCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Alpha would lower A and Z."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "DECY-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "DECY-REENTRYCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta-plus would lower Z."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HLIF-ITEM-ENTRY",
+      "learner_prompt_key": "HLIF_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Six hours is two half-lives, so 64 × (1/2)^2 = 16 mg.",
+      "post_commitment_feedback": "Count two intervals and halve twice.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HLIF-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HLIF-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides by the number of hours rather than applying half-lives."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HLIF-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This applies only one half-life."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HLIF-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ideal exponential decay does not reach zero after two intervals."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HLIF-ITEM-GUIDED",
+      "learner_prompt_key": "HLIF_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Elapsed half-lives = 24/8 = 3.",
+      "post_commitment_feedback": "Divide elapsed time by the characteristic interval.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HLIF-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This undercounts the 8-day intervals."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HLIF-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HLIF-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports the half-life itself, not interval count."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HLIF-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts times rather than dividing."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HLIF-ITEM-LIGHT",
+      "learner_prompt_key": "HLIF_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The amount halves every 4 h.",
+      "post_commitment_feedback": "Measure the time between consecutive factor-of-two decreases.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HLIF-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No supplied pair halves over 2 h."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HLIF-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The table entries are 4 h apart, not 3 h."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HLIF-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HLIF-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Eight hours produces two halvings, not one."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HLIF-ITEM-SOLO",
+      "learner_prompt_key": "HLIF_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Taking the logarithm of an exponential amount makes its dependence on time linear.",
+      "post_commitment_feedback": "The semi-log representation turns multiplicative decay into a constant negative slope.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HLIF-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Amount versus time is curved for exponential decay."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HLIF-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This does not plot the decaying quantity."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HLIF-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is not the standard linearizing transform."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HLIF-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HLIF-ITEM-NEAR",
+      "learner_prompt_key": "HLIF_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Ten days is five half-lives, so 96/32 = 3 μg.",
+      "post_commitment_feedback": "Apply five factors of one-half.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HLIF-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This applies four halvings."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HLIF-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HLIF-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats decay as a 10% linear loss."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HLIF-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This applies three halvings."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HLIF-ITEM-CHANGED",
+      "learner_prompt_key": "HLIF_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "800 → 400 → 200 → 100 is three half-lives in 18 h, so each is 6 h.",
+      "post_commitment_feedback": "Count the three factor-of-two drops, then divide elapsed time by three.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HLIF-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would imply six halvings and a much smaller final rate."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HLIF-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HLIF-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This gives only two halvings."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HLIF-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This gives only one halving."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HLIF-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "HLIF_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Each independent interval contributes another multiplicative factor of one-half.",
+      "post_commitment_feedback": "Write one factor per interval.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HLIF-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats decay as fixed subtraction."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HLIF-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HLIF-REPAIRNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds interval count to the denominator rather than multiplying halves."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HLIF-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies by interval count instead of exponentiating."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HLIF-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "HLIF_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Eighteen hours is three half-lives, leaving 160/8 = 20 mg.",
+      "post_commitment_feedback": "The fresh values preserve the interval-count then halving function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HLIF-REENTRYNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This applies four halvings."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HLIF-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HLIF-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This applies two halvings."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HLIF-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This applies one halving."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HLIF-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "HLIF_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Half-life is the time for a factor-of-two decrease from the current amount.",
+      "post_commitment_feedback": "Use a ratio criterion, not a fixed difference.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HLIF-REPAIRCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A fixed decrease depends on starting amount."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HLIF-REPAIRCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Elapsed time alone does not identify the characteristic interval."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HLIF-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HLIF-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ideal exponential decay approaches zero asymptotically."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HLIF-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "HLIF_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "640 → 320 → 160 → 80 is three halvings, so 15/3 = 5 min.",
+      "post_commitment_feedback": "The fresh endpoints encode three factor-of-two decreases.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HLIF-REENTRYCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This counts six halvings."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HLIF-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HLIF-REENTRYCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This counts two halvings."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HLIF-REENTRYCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This counts one halving."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MSPZ-ITEM-ENTRY",
+      "learner_prompt_key": "MSPZ_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "For |z| = 1, numerical m/z approximately equals ion mass.",
+      "post_commitment_feedback": "Use the supplied single charge before reading the horizontal coordinate.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MSPZ-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats the ion as 2+."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MSPZ-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MSPZ-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies by two without a 2+ charge."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MSPZ-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Charge state, not intensity, is the needed conversion fact."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MSPZ-ITEM-GUIDED",
+      "learner_prompt_key": "MSPZ_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "The base peak is defined as the most intense detected peak.",
+      "post_commitment_feedback": "Read vertical intensity, not horizontal mass, to identify the base peak.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MSPZ-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MSPZ-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This may be a molecular-region peak but is not the most intense."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MSPZ-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the highest m/z listed but has low intensity."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MSPZ-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Base peak is an intensity definition."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MSPZ-ITEM-LIGHT",
+      "learner_prompt_key": "MSPZ_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "116 − 88 = 28 u.",
+      "post_commitment_feedback": "Subtract fragment m/z from singly charged parent m/z.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MSPZ-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is not the supplied peak difference."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MSPZ-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MSPZ-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports the fragment coordinate."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MSPZ-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds the coordinates rather than finding the loss."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MSPZ-ITEM-SOLO",
+      "learner_prompt_key": "MSPZ_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Peak intensity and molecular-ion role are different facts.",
+      "post_commitment_feedback": "Use the explicit molecular-ion identification for mass and the tallest peak only for base-peak status.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MSPZ-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intensity does not determine parent mass."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MSPZ-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Molecular ions need not be the most intense."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MSPZ-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Different m/z values cannot be the same charge-state ion."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MSPZ-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MSPZ-ITEM-NEAR",
+      "learner_prompt_key": "MSPZ_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Single charge gives mass near 102 u, and 102 − 74 = 28 u.",
+      "post_commitment_feedback": "Keep parent mass and fragment difference as two separate constraints.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MSPZ-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MSPZ-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This substitutes fragment mass for parent and adds peak values."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MSPZ-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Single charge does not double the coordinate."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MSPZ-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Half the coordinate would imply a different charge relation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MSPZ-ITEM-CHANGED",
+      "learner_prompt_key": "MSPZ_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "m = (m/z)|z| = 65 × 2 = 130 u.",
+      "post_commitment_feedback": "Use charge magnitude before translating the horizontal coordinate into mass.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MSPZ-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides by charge a second time."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MSPZ-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats a 2+ ion as singly charged."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MSPZ-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MSPZ-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies by charge twice."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MSPZ-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "MSPZ_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Charge state and assigned peak roles must precede mass and loss calculations.",
+      "post_commitment_feedback": "Rebuild the evidence chain instead of using a visual shortcut.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MSPZ-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The tallest peak need not be the parent."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MSPZ-REPAIRNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Separate fragments do not sum automatically to molecular mass."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MSPZ-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MSPZ-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Relative intensity is not ionic charge."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MSPZ-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "MSPZ_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Single charge gives mass near 94 u, and the peak difference is 28 u.",
+      "post_commitment_feedback": "The fresh peaks preserve the same two-constraint function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MSPZ-REENTRYNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats the ion as 2+ despite single charge."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MSPZ-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MSPZ-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds the coordinates and reports the fragment as a loss."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MSPZ-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds instead of subtracting the peak coordinates."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MSPZ-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "MSPZ_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Multiplying the ratio by charge magnitude recovers ion mass.",
+      "post_commitment_feedback": "Undo division by charge with multiplication.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MSPZ-REPAIRCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides by charge twice."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MSPZ-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MSPZ-REPAIRCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This inverts the relationship."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MSPZ-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mass and charge magnitude are not combined by addition."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MSPZ-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "MSPZ_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "m = 48 × 3 = 144 u.",
+      "post_commitment_feedback": "The fresh charge state confirms multiplication by |z|.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MSPZ-REENTRYCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides by charge."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MSPZ-REENTRYCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats the ion as singly charged."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MSPZ-REENTRYCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies by two instead of three."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MSPZ-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    }
+  ]
+}

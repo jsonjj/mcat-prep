@@ -1,0 +1,268 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; a missed fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "DISC_ENTRY",
+      "title": "Starting check: attitude or action",
+      "prompt": "A student reports privately believing that members of another group are less trustworthy, but no behavior is described. Which construct is directly supported?",
+      "response_type": "single_select",
+      "options": [
+        "Institutional discrimination",
+        "Individual discrimination",
+        "Prejudice",
+        "Equal-status contact"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DISC_GUIDED",
+      "title": "Guided practice: person-level action",
+      "prompt": "A landlord personally refuses to show an available apartment to a qualified applicant because of the applicant's social-group membership. Which classification best fits the described mechanism?",
+      "response_type": "single_select",
+      "options": [
+        "Prejudice only, because behavior is irrelevant",
+        "Individual discrimination",
+        "Institutional discrimination through a standing rule",
+        "A neutral outcome with no group-linked treatment"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DISC_LIGHT",
+      "title": "Less help: rule-level mechanism",
+      "prompt": "A company automatically rejects applications from a recurring list of neighborhoods, and the rule systematically excludes one social group from consideration. Which mechanism is most directly described?",
+      "response_type": "single_select",
+      "options": [
+        "Institutional discrimination via a recurring rule",
+        "Only a private prejudice with no action",
+        "An isolated interpersonal disagreement",
+        "A stereotype with no allocation consequence"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DISC_SOLO",
+      "title": "On your own: avoid intent inference",
+      "prompt": "A hospital scheduling routine repeatedly assigns fewer desirable shifts to one group, but the vignette gives no evidence about any scheduler's private beliefs. Which conclusion is best bounded by the evidence?",
+      "response_type": "single_select",
+      "options": [
+        "Every scheduler is prejudiced",
+        "No discrimination can occur without stated prejudice",
+        "The pattern proves a legal violation",
+        "Institutional mechanism; attitude unknown"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DISC_NEAR",
+      "title": "Near exit: three-part classification",
+      "prompt": "A supervisor expresses a negative group attitude, then personally denies one worker training because of group membership; no standing policy is involved. Which combined classification is supported?",
+      "response_type": "single_select",
+      "options": [
+        "Prejudice plus individual discrimination",
+        "Institutional discrimination only",
+        "Prejudice without discriminatory action",
+        "Institutional discrimination plus a legal finding"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DISC_CHANGED",
+      "title": "Changed exit: choose mechanism evidence",
+      "prompt": "A school shows a persistent group difference in access to advanced courses, but the cause is unspecified. Which additional observation would most directly support an institutional-discrimination classification?",
+      "response_type": "single_select",
+      "options": [
+        "One student reports feeling disappointed",
+        "A recurring placement rule systematically screens the group out",
+        "A teacher privately holds a negative attitude but never makes placement decisions",
+        "The groups have different average course preferences"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DISC_REPAIR_NEAR",
+      "title": "Repair: use the two-axis matrix",
+      "prompt": "Which sequence best classifies a vignette?",
+      "response_type": "single_select",
+      "options": [
+        "Infer intent, then decide legality, then identify behavior",
+        "Classify attitude/action, then person/routine",
+        "Start from group outcome and assume prejudice",
+        "Treat every stereotype as an institutional rule"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DISC_REENTRY_NEAR",
+      "title": "Fresh near re-entry: clinic assignment",
+      "prompt": "A clinic director personally assigns fewer leadership opportunities to qualified staff from one group because of their group identity, while no clinic-wide rule is described. Which classification fits?",
+      "response_type": "single_select",
+      "options": [
+        "Institutional discrimination from a standing rule",
+        "Prejudice only with no action",
+        "Individual discrimination",
+        "A neutral institutional routine"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DISC_REPAIR_CHANGED",
+      "title": "Repair: identify mechanism evidence",
+      "prompt": "Which observation best distinguishes institutional discrimination from an unexplained group disparity?",
+      "response_type": "single_select",
+      "options": [
+        "The disparity is statistically visible",
+        "A group member reports low confidence",
+        "A repeated group-linked allocation rule",
+        "One observer dislikes the outcome"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DISC_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: grant allocation",
+      "prompt": "A foundation's awards show a group disparity. Which new fact most directly supports an institutional mechanism rather than one reviewer's isolated choice?",
+      "response_type": "single_select",
+      "options": [
+        "A shared scoring rule discounts group experience",
+        "One rejected applicant believes the process was unfair",
+        "One reviewer expresses a private stereotype but did not score applications",
+        "Award recipients celebrate their results"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POCL_ENTRY",
+      "title": "Starting check: identify power",
+      "prompt": "A department chair can set hiring criteria and approve every final offer. Which enabling concept is most directly represented?",
+      "response_type": "single_select",
+      "options": [
+        "Formal power over decisions",
+        "Prestige without authority",
+        "A private stereotype only",
+        "Class consciousness"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POCL_GUIDED",
+      "title": "Guided practice: identify prestige",
+      "prompt": "An organization routinely accepts recommendations from a highly honored professional group even though that group has no formal hiring authority. Which mechanism is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Formal coercive power",
+        "Prestige-based influence",
+        "A legal mandate",
+        "Mechanical class mobility"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POCL_LIGHT",
+      "title": "Less help: identify class-linked access",
+      "prompt": "Unpaid internships are the main route to a profession, and only applicants with substantial financial support can accept them. Which mechanism is most directly described?",
+      "response_type": "single_select",
+      "options": [
+        "Class-linked resources shaping access",
+        "Prejudice proven in every supervisor",
+        "Prestige caused by a formal title",
+        "Individual discrimination by one named actor"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POCL_SOLO",
+      "title": "On your own: require action evidence",
+      "prompt": "A group has high prestige in an institution, but no differential treatment or allocation is described. What can be concluded?",
+      "response_type": "single_select",
+      "options": [
+        "Institutional discrimination is proven",
+        "Prejudice is proven",
+        "Prestige, not discrimination",
+        "Legal equality is proven"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POCL_NEAR",
+      "title": "Near exit: trace institutionalization",
+      "prompt": "Senior partners control promotion rules, treat referrals from a prestigious network as more credible, and encode that preference into a recurring promotion criterion that disadvantages workers outside class-linked networks. Which explanation best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Power encodes prestige and class access in an institutional rule",
+        "Prestige alone proves every partner holds prejudice",
+        "Class position directly determines ability without an institutional gate",
+        "The recurring rule is individual discrimination only"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POCL_CHANGED",
+      "title": "Changed exit: break the institutional channel",
+      "prompt": "A causal model shows an unmeasured private attitude and an organization-wide discretionary scoring rule that produces discrimination. Which modeled change removes the institutional channel without asserting attitude change?",
+      "response_type": "single_select",
+      "options": [
+        "Remove recurring rule; attitude unknown",
+        "Assume the manager no longer holds the attitude",
+        "Increase the manager's prestige",
+        "Rename the scoring rule without changing how it allocates opportunities"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POCL_REPAIR_NEAR",
+      "title": "Repair: build the causal chain",
+      "prompt": "Which sequence is best supported for explaining facilitation of discrimination?",
+      "response_type": "single_select",
+      "options": [
+        "Group disparity → assume prejudice → declare legal result",
+        "Resource/status → gate influence → differential allocation",
+        "Class label → fixed personal ability → outcome",
+        "Prestige → automatic institutional discrimination with no action"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POCL_REENTRY_NEAR",
+      "title": "Fresh near re-entry: research funding",
+      "prompt": "A high-prestige committee influences which topics are considered credible; executives with budget power turn its preferences into a recurring funding rule that excludes researchers lacking elite class-linked networks. Which mechanism is supported?",
+      "response_type": "single_select",
+      "options": [
+        "Prestige shapes credibility; power encodes; class shapes access",
+        "Class proves the excluded researchers lack ability",
+        "Only individual prejudice is possible because people wrote the rule",
+        "No discrimination can be institutional when prestige is involved"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POCL_REPAIR_CHANGED",
+      "title": "Repair: locate institutionalization",
+      "prompt": "Which change marks movement from an isolated discretionary act to institutionalization?",
+      "response_type": "single_select",
+      "options": [
+        "The actor thinks about the decision longer",
+        "The action enters a recurring organizational rule",
+        "The affected person disagrees",
+        "The actor gains a private preference"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "POCL_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: admissions routine",
+      "prompt": "A dean once favored applicants from a prestigious club. Later, the school embeds club membership as a recurring admissions bonus. Which observation most directly identifies the changed institutional mechanism?",
+      "response_type": "single_select",
+      "options": [
+        "The dean's private attitude is now legally proven",
+        "The club becomes less prestigious",
+        "A recurring admissions rule carries the preference",
+        "Every applicant acquires equal class resources"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}
