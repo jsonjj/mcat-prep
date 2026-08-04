@@ -1,0 +1,264 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-282413",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-282413",
+    "grouping_id": "V3-CL-282413",
+    "ordered_kc_ids": [
+      "V3-KC-115585",
+      "V3-KC-083129",
+      "V3-KC-751698",
+      "V3-KC-991418"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020"
+    ],
+    "source_class": "PUBLIC_PRIMARY_RESEARCH",
+    "source_anchor_ids": [
+      "BB-SA-0020"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "6865d77b2ad605772c6f1e7c75ed993f222b7e21fb1ebd86e8a37cda98de1f6a",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100031",
+      "source_occurrence_id": "V3-SRC-100031",
+      "source_id": "AAMC-2020",
+      "official_topic": "Metabolism of Fatty Acids and Proteins (BIO, BC)",
+      "printed_pages": [
+        34
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0020"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200020",
+      "source_occurrence_id": "V3-SRC-200020",
+      "source_id": "AAMC-2020",
+      "official_topic": null,
+      "printed_pages": [
+        32,
+        33,
+        34
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0020"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100029",
+      "source_occurrence_id": "V3-SRC-100029",
+      "source_id": "AAMC-2020",
+      "official_topic": "Principles of Metabolic Regulation (BC)",
+      "printed_pages": [
+        33
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0020"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100033",
+      "source_occurrence_id": "V3-SRC-100033",
+      "source_id": "AAMC-2020",
+      "official_topic": "Hormonal Regulation and Integration of Metabolism (BC)",
+      "printed_pages": [
+        34
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0020"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "FAT-CLAIM-BOUNDED",
+      "target_kc_id": "V3-KC-115585",
+      "authorial_claim": "A learner can trace dietary and stored fatty acids through bounded digestion, mobilization, transport, mitochondrial oxidation, and hepatic ketone production while relating cis unsaturation to packing and avoiding an enzyme-by-enzyme beta-oxidation catalog.",
+      "scope_in_refs": [
+        "V3-KC-115585:SCOPE_IN:0",
+        "V3-KC-115585:SCOPE_IN:1",
+        "V3-KC-115585:SCOPE_IN:2",
+        "V3-KC-115585:SCOPE_IN:3",
+        "V3-KC-115585:SCOPE_IN:4"
+      ],
+      "scope_out_refs": [
+        "V3-KC-115585:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100031",
+        "V3-SRC-200020"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600916",
+        "V3-MAP-601019"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ANA-CLAIM-BOUNDED",
+      "target_kc_id": "V3-KC-083129",
+      "authorial_claim": "A learner can distinguish nontemplate lipid and polysaccharide synthesis from catabolism, trace glucose storage as glycogen and fatty-acid storage as triacylglycerol, and avoid advanced biosynthetic pathway detail.",
+      "scope_in_refs": [
+        "V3-KC-083129:SCOPE_IN:0",
+        "V3-KC-083129:SCOPE_IN:1",
+        "V3-KC-083129:SCOPE_IN:2"
+      ],
+      "scope_out_refs": [
+        "V3-KC-083129:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100031",
+        "V3-SRC-200020"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600057",
+        "V3-MAP-600917"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "PRO-CLAIM-BOUNDED",
+      "target_kc_id": "V3-KC-751698",
+      "authorial_claim": "A learner can trace dietary or cellular protein to amino acids, distinguish reuse for synthesis from oxidation of excess amino acids, connect amino nitrogen to urea disposal, and place carbon skeletons into broad energy or glucose-supporting pathways without an advanced catabolic catalog.",
+      "scope_in_refs": [
+        "V3-KC-751698:SCOPE_IN:0",
+        "V3-KC-751698:SCOPE_IN:1",
+        "V3-KC-751698:SCOPE_IN:2"
+      ],
+      "scope_out_refs": [
+        "V3-KC-751698:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100031",
+        "V3-SRC-200020"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600779",
+        "V3-MAP-600918"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "REG-CLAIM-BOUNDED",
+      "target_kc_id": "V3-KC-991418",
+      "authorial_claim": "A learner can distinguish concentration from flux at dynamic steady state, predict rapid allosteric responses to energy status, and integrate peptide-hormone signaling with fed–fasted storage and mobilization without memorizing an unlisted hormone catalog.",
+      "scope_in_refs": [
+        "V3-KC-991418:SCOPE_IN:0",
+        "V3-KC-991418:SCOPE_IN:1",
+        "V3-KC-991418:SCOPE_IN:2"
+      ],
+      "scope_out_refs": [
+        "V3-KC-991418:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100029",
+        "V3-SRC-200020",
+        "V3-SRC-100033"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600285",
+        "V3-MAP-600499",
+        "V3-MAP-600796"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-820156",
+        "V3-MOD-907235"
+      ],
+      "pathway_relation_ids": [
+        "R14-PL-581402-065",
+        "R14-PL-904137-065",
+        "R14-PL-236815-027"
+      ],
+      "first_delivery_relation_id": "R14-FD-282413",
+      "revisit_relation_ids": [
+        "R14-RV-282413"
+      ]
+    },
+    "hard_prerequisite_relation_ids": [],
+    "helpful_context_relation_ids": [
+      "R14-HELPFUL-18"
+    ],
+    "attachment_relation_ids": [
+      "R14-CAP-758857",
+      "R14-FD-282413"
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}

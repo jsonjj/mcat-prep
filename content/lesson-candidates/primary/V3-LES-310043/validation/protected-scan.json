@@ -1,0 +1,57 @@
+{
+  "answerPositionPatternCheck": {
+    "itemCount": 20,
+    "maximumPositionCountSpread": 0,
+    "maximumRepeatedPositionRun": 2,
+    "positionCounts": [
+      5,
+      5,
+      5,
+      5
+    ],
+    "status": "PASS"
+  },
+  "distractorRationaleAudit": {
+    "explicitRejectionRationaleCount": 60,
+    "incorrectOptionCount": 60,
+    "missingRationaleRefs": [],
+    "status": "PASS"
+  },
+  "findings": [],
+  "format": "lesson-generation-protected-scan/2",
+  "lessonId": "V3-LES-310043",
+  "logHashes": {
+    "candidateStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidateStdoutSha256": "1b9840ca7969a120ac7f69a3e78d32f04cb316723d5c4bc245126a0009a20dd7",
+    "lessonStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "lessonStdoutSha256": "05efb029d308ada94e4291bda5c685ce699f7d94ecdb920ffb606a6fa6997e24"
+  },
+  "optionPresentationAudit": {
+    "auditedMeasurableItemCount": 20,
+    "grammaticalParallelismReviewedCount": 20,
+    "incorrectOptionLengthStandardDeviation": 9.917773047525449,
+    "residualLengthClueCount": 0,
+    "residualLengthClueItemIds": [],
+    "status": "PASS"
+  },
+  "postCommitmentFeedbackCheck": {
+    "authoredCount": 20,
+    "requiredCount": 20,
+    "status": "PASS"
+  },
+  "protectedArtifact": {
+    "path": "protected-items.json",
+    "sha256": "036d44176a59b6976d22798856f0c94aaaee79d7d968f3810b4b975e82c5c52e",
+    "size": 33767
+  },
+  "scannedPathCount": 6,
+  "scannedPaths": [
+    "learner-safe-items.json",
+    "source-claim-ledger.json",
+    "candidate-quality-ledger.json",
+    "validation/lesson-validate.json",
+    "validation/computed-quality.json",
+    "validation/normalization-smoke.json"
+  ],
+  "status": "PASS"
+}

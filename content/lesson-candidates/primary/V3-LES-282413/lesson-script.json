@@ -1,0 +1,4377 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-282413",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "e948eee1fcc501240be706e421d85e4a1fd0b7bb8605f485bd2e9ea72f34043f",
+  "payload": {
+    "lesson_id": "V3-LES-282413",
+    "grouping_id": "V3-CL-282413",
+    "ordered_kc_ids": [
+      "V3-KC-115585",
+      "V3-KC-083129",
+      "V3-KC-751698",
+      "V3-KC-991418"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-115585",
+      "V3-KC-083129",
+      "V3-KC-751698",
+      "V3-KC-991418"
+    ],
+    "throughline": "Trace fuel carbon and carriers, separate storage from mobilization, split amino-acid nitrogen from carbon, and predict regulated flux by metabolic state.",
+    "curriculum_context": {
+      "canonical_title": "Integrate fuel metabolism and regulation",
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-820156",
+        "V3-MOD-907235"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 65,
+          "relation_ids": [
+            "R14-PL-581402-065"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 65,
+          "relation_ids": [
+            "R14-PL-904137-065"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-236815",
+          "position": 27,
+          "relation_ids": [
+            "R14-PL-236815-027"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-282413",
+      "revisit_relation_ids": [
+        "R14-RV-282413"
+      ],
+      "hard_prerequisites": [],
+      "helpful_context": {
+        "lesson_id": "V3-LES-932938",
+        "relation_ids": [
+          "R14-HELPFUL-18"
+        ],
+        "required_for_progression": false
+      },
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ]
+    },
+    "nodes": [
+      {
+        "node_id": "FAT-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify the mobilized fuel. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [
+          "FAT-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "FAT-CP-ENTRY",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: follow the carbon source and physical carrier at each transition—from dietary lipid or adipose storage to oxidation—then predict where the pathway changes during sustained low carbohydrate availability.",
+          "No hard prerequisite is declared. V3-LES-932938 is helpful context only and never blocks entry."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "FAT-CP-ORIENTATION",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Dietary triacylglycerols are emulsified and hydrolyzed so lipid products can be absorbed, repackaged, and transported. Stored adipose triacylglycerol is mobilized to release fatty acids and glycerol.",
+          "Nonesterified fatty acids travel through blood bound to albumin. Inside oxidative tissues, fatty acids are activated; long-chain fatty acyl groups use the carnitine shuttle to reach the mitochondrial matrix.",
+          "Beta oxidation repeatedly shortens fatty acyl chains and produces acetyl-CoA plus reduced electron carriers. The acetyl-CoA can enter the citric acid cycle when capacity and oxaloacetate availability permit.",
+          "During prolonged low carbohydrate availability, hepatic acetyl-CoA from fatty-acid oxidation can be directed toward ketone bodies, which are exported as fuel. The liver produces but does not consume the ketone bodies it releases.",
+          "Cis double bonds introduce bends that reduce tight packing. Unsaturated fatty acids therefore tend to remain more fluid and have lower melting points than comparable saturated fatty acids."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "FAT-CP-EXPLANATION",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: storage or diet → release and packaging → blood carrier → cellular activation → mitochondrial access → acetyl-CoA and reducing equivalents → oxidation or ketone export."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "FAT-CP-MODEL",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: the prompt says adipose triacylglycerol is being broken down during fasting. I first expect fatty-acid release, albumin carriage, tissue uptake, and mitochondrial oxidation. I do not insert every beta-oxidation intermediate because the scope asks for pathway tracing, not an enzyme catalog."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "FAT-CP-THINK",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: during prolonged fasting, adipose tissue releases fatty acids. Albumin carries them to the liver, long-chain acyl groups enter mitochondria through the carnitine shuttle, and beta oxidation supplies acetyl-CoA. With carbohydrate-derived oxaloacetate constrained, more hepatic acetyl-CoA is directed to ketone-body synthesis.",
+          "Selection reasoning: ketone production follows high hepatic fatty-acid oxidation; it is not the first event after triacylglycerol mobilization."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "FAT-CP-WORKED",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the visible pathway trace, then commit before feedback."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [
+          "FAT-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "FAT-CP-GUIDED",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: apply the same model with one brief non-answer-bearing cue."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [
+          "FAT-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "FAT-CP-LIGHT",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: solve a fresh metabolic case without answer-bearing help."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [
+          "FAT-ACT-SOLO"
+        ],
+        "checkpoint_ref": "FAT-CP-SOLO",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: fatty acids do not circulate freely in large amounts without carriers, and long-chain fatty acyl groups do not simply diffuse into the mitochondrial matrix. Saturation changes packing, not the basic direction of mobilization."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "FAT-CP-CONTRAST",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: use the taught model independently in a closely aligned state."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [
+          "FAT-ACT-NEAR"
+        ],
+        "checkpoint_ref": "FAT-CP-NEAR",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: preserve the same construct while context, representation, or required prediction changes."
+        ],
+        "representation_ids": [
+          "FAT-REP-ALT"
+        ],
+        "activity_ids": [
+          "FAT-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "FAT-CP-CHANGED",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near-function repair: Anchor the trace at the blood step: mobilized fatty acids travel with albumin. The fresh re-entry remains unexposed."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [
+          "FAT-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "FAT-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: recheck only the failed function with a new metabolic case."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [
+          "FAT-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "FAT-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-function repair: Ketone production is favored when liver beta oxidation supplies abundant acetyl-CoA during sustained low carbohydrate availability. The fresh re-entry remains unexposed."
+        ],
+        "representation_ids": [
+          "FAT-REP-ALT"
+        ],
+        "activity_ids": [
+          "FAT-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "FAT-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed re-entry: recheck the same failed function in a new representation or state."
+        ],
+        "representation_ids": [
+          "FAT-REP-ALT"
+        ],
+        "activity_ids": [
+          "FAT-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "FAT-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Bounded stop: after one fresh re-entry miss, do not loop or award exit credit. Return control to the planner."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "FAT-CP-HANDOFF",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "FAT-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: identify the lipid source, release product, transport carrier, mitochondrial entry step, oxidation products, and the state-dependent destination of acetyl-CoA."
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "FAT-CP-RECAP",
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: classify storage synthesis. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [
+          "ANA-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "ANA-CP-ENTRY",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: explain where excess fuel carbon is stored and why lipid and polysaccharide synthesis are nontemplate processes.",
+          "No hard prerequisite is declared; use the supplied carbon-flow overview rather than importing an advanced synthesis pathway."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-ORIENTATION",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Anabolism consumes energy and reducing power to build or store molecules. Catabolism breaks fuels down and captures usable energy.",
+          "Glycogenesis links glucose units into glycogen for carbohydrate storage. Lipogenesis builds fatty acids from carbon units; esterification joins fatty acids with glycerol to form triacylglycerol for dense energy storage.",
+          "Lipid and polysaccharide synthesis is nontemplate: enzymes determine reactions, but no nucleic-acid template dictates a monomer sequence as it does for proteins.",
+          "In a fed state, insulin generally supports glucose uptake and storage while suppressing net fuel mobilization. This lesson uses that direction without cataloging every enzyme."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-EXPLANATION",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: excess available carbon + energy → choose short-term branched glucose storage or long-term reduced-carbon storage; both require assembly rather than oxidation."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-MODEL",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: the prompt describes abundant glucose and filled immediate energy needs. I look for storage: glycogen synthesis can store glucose directly, while excess carbon can support fatty-acid and triacylglycerol synthesis. I rule out beta oxidation because that is breakdown."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-THINK",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: after a carbohydrate-rich meal, liver glucose uptake rises. Some glucose units are linked into glycogen. When energy and carbon remain abundant, carbon can support fatty-acid synthesis and triacylglycerol storage.",
+          "Selection reasoning: “nontemplate” does not mean unregulated; it means the product is not copied from a nucleic-acid sequence template."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-WORKED",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the visible pathway trace, then commit before feedback."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [
+          "ANA-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "ANA-CP-GUIDED",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: apply the same model with one brief non-answer-bearing cue."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [
+          "ANA-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "ANA-CP-LIGHT",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: solve a fresh metabolic case without answer-bearing help."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [
+          "ANA-ACT-SOLO"
+        ],
+        "checkpoint_ref": "ANA-CP-SOLO",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: glycogenesis is not glycolysis, and fatty-acid synthesis is not beta oxidation. Nontemplate synthesis still depends on enzymes and regulation."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-CONTRAST",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: use the taught model independently in a closely aligned state."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [
+          "ANA-ACT-NEAR"
+        ],
+        "checkpoint_ref": "ANA-CP-NEAR",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: preserve the same construct while context, representation, or required prediction changes."
+        ],
+        "representation_ids": [
+          "ANA-REP-ALT"
+        ],
+        "activity_ids": [
+          "ANA-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "ANA-CP-CHANGED",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near-function repair: Anabolism builds a larger product and requires energy; mobilization and oxidation run in the opposite direction. The fresh re-entry remains unexposed."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [
+          "ANA-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "ANA-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: recheck only the failed function with a new metabolic case."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [
+          "ANA-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "ANA-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-function repair: Nontemplate synthesis is enzyme-guided assembly without a nucleic-acid sequence template. The fresh re-entry remains unexposed."
+        ],
+        "representation_ids": [
+          "ANA-REP-ALT"
+        ],
+        "activity_ids": [
+          "ANA-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "ANA-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed re-entry: recheck the same failed function in a new representation or state."
+        ],
+        "representation_ids": [
+          "ANA-REP-ALT"
+        ],
+        "activity_ids": [
+          "ANA-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "ANA-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Bounded stop: after one fresh re-entry miss, do not loop or award exit credit. Return control to the planner."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-HANDOFF",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "ANA-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: identify fed-state carbon abundance, distinguish building from breakdown, choose glycogen or triacylglycerol storage, and explain nontemplate assembly."
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ANA-CP-RECAP",
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify the amino-acid pool. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [
+          "PRO-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "PRO-CP-ENTRY",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: track both parts of an amino acid—nitrogen and carbon—after protein digestion or turnover.",
+          "No hard prerequisite is declared. Use broad pathway destinations instead of memorizing amino-acid-specific enzymes."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "PRO-CP-ORIENTATION",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Dietary proteins and cellular proteins can be hydrolyzed to amino acids. Amino acids support new protein synthesis and other nitrogen-containing compounds.",
+          "The body has no dedicated protein storage depot analogous to glycogen or triacylglycerol. Excess amino acids are not stored unchanged as a reserve.",
+          "Before substantial oxidation, amino nitrogen is transferred or removed at bounded depth. Nitrogen is ultimately disposed mainly as urea, while carbon skeletons enter central metabolism.",
+          "Depending on the amino acid and metabolic state, a carbon skeleton can support ATP production, glucose production, or lipid-related metabolism. This lesson does not catalog each amino acid’s route."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "PRO-CP-EXPLANATION",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: protein → amino-acid pool → reuse branch or breakdown branch; breakdown splits nitrogen toward urea and carbon toward central metabolism."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "PRO-CP-MODEL",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: the prompt says protein intake exceeds synthesis needs. I do not store the extra amino acids as “protein fuel granules.” I separate nitrogen for disposal and route carbon skeletons into central metabolism."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "PRO-CP-THINK",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: during prolonged fasting, muscle protein breakdown can add amino acids to the pool. Some carbon skeletons support hepatic glucose production, while amino nitrogen is carried into disposal pathways and ultimately excreted as urea.",
+          "Selection reasoning: the broad split is sufficient; naming every transaminase or carbon-skeleton entry intermediate would exceed scope."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "PRO-CP-WORKED",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the visible pathway trace, then commit before feedback."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [
+          "PRO-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "PRO-CP-GUIDED",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: apply the same model with one brief non-answer-bearing cue."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [
+          "PRO-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "PRO-CP-LIGHT",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: solve a fresh metabolic case without answer-bearing help."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [
+          "PRO-ACT-SOLO"
+        ],
+        "checkpoint_ref": "PRO-CP-SOLO",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: protein turnover is not the same as a dedicated protein fuel store. Amino acids can contribute carbon to energy metabolism, but their nitrogen must be managed rather than sent unchanged through carbohydrate pathways."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "PRO-CP-CONTRAST",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: use the taught model independently in a closely aligned state."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [
+          "PRO-ACT-NEAR"
+        ],
+        "checkpoint_ref": "PRO-CP-NEAR",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: preserve the same construct while context, representation, or required prediction changes."
+        ],
+        "representation_ids": [
+          "PRO-REP-ALT"
+        ],
+        "activity_ids": [
+          "PRO-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "PRO-CP-CHANGED",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near-function repair: Repair the trace by splitting amino nitrogen from the carbon skeleton before assigning destinations. The fresh re-entry remains unexposed."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [
+          "PRO-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "PRO-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: recheck only the failed function with a new metabolic case."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [
+          "PRO-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "PRO-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-function repair: Keep the claim broad but accurate: some carbon skeletons support glucose production; do not universalize every amino acid. The fresh re-entry remains unexposed."
+        ],
+        "representation_ids": [
+          "PRO-REP-ALT"
+        ],
+        "activity_ids": [
+          "PRO-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "PRO-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed re-entry: recheck the same failed function in a new representation or state."
+        ],
+        "representation_ids": [
+          "PRO-REP-ALT"
+        ],
+        "activity_ids": [
+          "PRO-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "PRO-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Bounded stop: after one fresh re-entry miss, do not loop or award exit credit. Return control to the planner."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "PRO-CP-HANDOFF",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "PRO-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: identify the amino-acid source, choose reuse or breakdown, send nitrogen toward urea, and place the carbon skeleton in a broad metabolic destination."
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "PRO-CP-RECAP",
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: distinguish flux from pool size. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [
+          "REG-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "REG-CP-ENTRY",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: predict the direction of pathway flux from the signal, target, and metabolic state rather than treating pathway diagrams as permanently on or off.",
+          "No hard prerequisite is declared. Helpful context may support interpretation, but all required control logic is taught here."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REG-CP-ORIENTATION",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Flux is the rate of material moving through a pathway. At dynamic steady state, a metabolite concentration can remain stable because production and consumption rates are equal even while flux continues.",
+          "Allosteric regulation is rapid and local: a metabolite binds a regulatory site and changes enzyme activity. High energy signals commonly reduce fuel-oxidation flux, whereas low energy signals can increase it.",
+          "Hormones coordinate tissues. In a fed state, insulin favors uptake and storage; in fasting, glucagon favors hepatic fuel mobilization and glucose maintenance. These are directional anchors, not a complete hormone catalog.",
+          "Insulin and glucagon are peptide hormones, so they signal through cell-surface receptors and intracellular cascades rather than diffusing through the membrane to bind DNA directly.",
+          "Reciprocal control prevents opposing storage and mobilization pathways from running maximally at the same time."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REG-CP-EXPLANATION",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: state signal → receptor or allosteric site → enzyme activity direction → pathway flux direction → metabolite steady-state consequence."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REG-CP-MODEL",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: ATP is high and AMP is low, so the cell does not need maximal fuel oxidation. I predict lower catabolic flux through an energy-producing control point. I do not infer that every metabolite concentration instantly falls, because steady state depends on both input and output."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REG-CP-THINK",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: after a meal, insulin binds a cell-surface receptor. The intracellular response favors glucose uptake and glycogen synthesis while suppressing net glycogen breakdown. Flux shifts toward storage even though both synthesis and breakdown enzymes still exist.",
+          "Selection reasoning: peptide-hormone structure rules out direct diffusion to a nuclear DNA-binding site as the first signaling step."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REG-CP-WORKED",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the visible pathway trace, then commit before feedback."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [
+          "REG-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "REG-CP-GUIDED",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: apply the same model with one brief non-answer-bearing cue."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [
+          "REG-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "REG-CP-LIGHT",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: solve a fresh metabolic case without answer-bearing help."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [
+          "REG-ACT-SOLO"
+        ],
+        "checkpoint_ref": "REG-CP-SOLO",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: steady concentration does not mean zero flux, and allosteric inhibition does not require destruction of the enzyme. Hormonal direction depends on state and target tissue rather than a universal on/off label."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REG-CP-CONTRAST",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: use the taught model independently in a closely aligned state."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [
+          "REG-ACT-NEAR"
+        ],
+        "checkpoint_ref": "REG-CP-NEAR",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: preserve the same construct while context, representation, or required prediction changes."
+        ],
+        "representation_ids": [
+          "REG-REP-ALT"
+        ],
+        "activity_ids": [
+          "REG-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "REG-CP-CHANGED",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near-function repair: Reciprocal regulation creates a clear net direction and reduces wasteful simultaneous cycling. The fresh re-entry remains unexposed."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [
+          "REG-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "REG-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: recheck only the failed function with a new metabolic case."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [
+          "REG-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "REG-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-function repair: A constant pool can hide either no turnover or rapid balanced turnover; input and output rates decide. The fresh re-entry remains unexposed."
+        ],
+        "representation_ids": [
+          "REG-REP-ALT"
+        ],
+        "activity_ids": [
+          "REG-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "REG-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed re-entry: recheck the same failed function in a new representation or state."
+        ],
+        "representation_ids": [
+          "REG-REP-ALT"
+        ],
+        "activity_ids": [
+          "REG-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "REG-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Bounded stop: after one fresh re-entry miss, do not loop or award exit credit. Return control to the planner."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REG-CP-HANDOFF",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "REG-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: identify signal type and location, infer enzyme activity direction, predict pathway flux, and distinguish ongoing steady-state turnover from zero activity."
+        ],
+        "representation_ids": [
+          "REG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REG-CP-RECAP",
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "FAT-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-115585",
+        "item_binding_id": "FAT-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_MOBILIZED_FATTY_ACID_FORM",
+        "authorized_next_node_ids": [
+          "FAT-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "FAT-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-115585",
+        "item_binding_id": "FAT-ITEM-GUIDED",
+        "learner_operation": "ORDER_LONG_CHAIN_MITOCHONDRIAL_ENTRY",
+        "authorized_next_node_ids": [
+          "FAT-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "FAT-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-115585",
+        "item_binding_id": "FAT-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_BETA_OXIDATION_OUTPUTS",
+        "authorized_next_node_ids": [
+          "FAT-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "FAT-ACT-SOLO",
+        "primary_kc_id": "V3-KC-115585",
+        "item_binding_id": "FAT-ITEM-SOLO",
+        "learner_operation": "RELATE_CIS_UNSATURATION_TO_PACKING",
+        "authorized_next_node_ids": [
+          "FAT-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "FAT-ACT-NEAR",
+        "primary_kc_id": "V3-KC-115585",
+        "item_binding_id": "FAT-ITEM-NEAR",
+        "learner_operation": "TRACE_ADIPOSE_TO_MUSCLE_OXIDATION",
+        "authorized_next_node_ids": [
+          "FAT-NODE-CHANGED",
+          "FAT-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "FAT-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-115585",
+        "item_binding_id": "FAT-ITEM-CHANGED",
+        "learner_operation": "PREDICT_KETONE_PRODUCTION_FROM_STATE",
+        "authorized_next_node_ids": [
+          "FAT-NODE-RECAP",
+          "FAT-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "FAT-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-115585",
+        "item_binding_id": "FAT-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_MOBILIZED_FUEL_CARRIER",
+        "authorized_next_node_ids": [
+          "FAT-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "FAT-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-115585",
+        "item_binding_id": "FAT-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_FATTY_ACID_TRANSPORT_TRACE",
+        "authorized_next_node_ids": [
+          "FAT-NODE-CHANGED",
+          "FAT-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "FAT-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-115585",
+        "item_binding_id": "FAT-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_KETOGENIC_STATE_LINK",
+        "authorized_next_node_ids": [
+          "FAT-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "FAT-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-115585",
+        "item_binding_id": "FAT-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_KETONE_EXPORT_PREDICTION",
+        "authorized_next_node_ids": [
+          "FAT-NODE-RECAP",
+          "FAT-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-083129",
+        "item_binding_id": "ANA-ITEM-ENTRY",
+        "learner_operation": "CLASSIFY_GLYCOGEN_SYNTHESIS",
+        "authorized_next_node_ids": [
+          "ANA-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-083129",
+        "item_binding_id": "ANA-ITEM-GUIDED",
+        "learner_operation": "SELECT_LIPID_STORAGE_ROUTE",
+        "authorized_next_node_ids": [
+          "ANA-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-083129",
+        "item_binding_id": "ANA-ITEM-LIGHT",
+        "learner_operation": "EXPLAIN_NONTEMPLATE_POLYSACCHARIDE_SYNTHESIS",
+        "authorized_next_node_ids": [
+          "ANA-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-SOLO",
+        "primary_kc_id": "V3-KC-083129",
+        "item_binding_id": "ANA-ITEM-SOLO",
+        "learner_operation": "MATCH_ANABOLIC_PROCESS_TO_PRODUCT",
+        "authorized_next_node_ids": [
+          "ANA-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-NEAR",
+        "primary_kc_id": "V3-KC-083129",
+        "item_binding_id": "ANA-ITEM-NEAR",
+        "learner_operation": "PREDICT_FED_STATE_ANABOLIC_DIRECTION",
+        "authorized_next_node_ids": [
+          "ANA-NODE-CHANGED",
+          "ANA-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-083129",
+        "item_binding_id": "ANA-ITEM-CHANGED",
+        "learner_operation": "COMPARE_TEMPLATE_DEPENDENCE_ACROSS_ANABOLISM",
+        "authorized_next_node_ids": [
+          "ANA-NODE-RECAP",
+          "ANA-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-083129",
+        "item_binding_id": "ANA-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_ANABOLISM_DIRECTION_TEST",
+        "authorized_next_node_ids": [
+          "ANA-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-083129",
+        "item_binding_id": "ANA-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_GLYCOGEN_STORAGE_CLASSIFICATION",
+        "authorized_next_node_ids": [
+          "ANA-NODE-CHANGED",
+          "ANA-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-083129",
+        "item_binding_id": "ANA-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_NONTEMPLATE_DEFINITION",
+        "authorized_next_node_ids": [
+          "ANA-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ANA-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-083129",
+        "item_binding_id": "ANA-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_TEMPLATE_DEPENDENCE",
+        "authorized_next_node_ids": [
+          "ANA-NODE-RECAP",
+          "ANA-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "PRO-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-751698",
+        "item_binding_id": "PRO-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_PROTEIN_DIGESTION_PRODUCT",
+        "authorized_next_node_ids": [
+          "PRO-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "PRO-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-751698",
+        "item_binding_id": "PRO-ITEM-GUIDED",
+        "learner_operation": "TRACE_AMINO_ACID_NITROGEN_CARBON_SPLIT",
+        "authorized_next_node_ids": [
+          "PRO-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "PRO-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-751698",
+        "item_binding_id": "PRO-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_UREA_AS_NITROGEN_ENDPOINT",
+        "authorized_next_node_ids": [
+          "PRO-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "PRO-ACT-SOLO",
+        "primary_kc_id": "V3-KC-751698",
+        "item_binding_id": "PRO-ITEM-SOLO",
+        "learner_operation": "DISTINGUISH_PROTEIN_TURNOVER_FROM_STORAGE",
+        "authorized_next_node_ids": [
+          "PRO-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "PRO-ACT-NEAR",
+        "primary_kc_id": "V3-KC-751698",
+        "item_binding_id": "PRO-ITEM-NEAR",
+        "learner_operation": "TRACE_EXCESS_AMINO_ACID_FATE",
+        "authorized_next_node_ids": [
+          "PRO-NODE-CHANGED",
+          "PRO-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "PRO-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-751698",
+        "item_binding_id": "PRO-ITEM-CHANGED",
+        "learner_operation": "PREDICT_FASTING_AMINO_ACID_USE",
+        "authorized_next_node_ids": [
+          "PRO-NODE-RECAP",
+          "PRO-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "PRO-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-751698",
+        "item_binding_id": "PRO-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_AMINO_ACID_DESTINATION_MODEL",
+        "authorized_next_node_ids": [
+          "PRO-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "PRO-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-751698",
+        "item_binding_id": "PRO-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_EXCESS_AMINO_ACID_FATE",
+        "authorized_next_node_ids": [
+          "PRO-NODE-CHANGED",
+          "PRO-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "PRO-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-751698",
+        "item_binding_id": "PRO-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_BOUNDED_FASTING_PROTEIN_CLAIM",
+        "authorized_next_node_ids": [
+          "PRO-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "PRO-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-751698",
+        "item_binding_id": "PRO-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_FASTING_NITROGEN_DESTINATION",
+        "authorized_next_node_ids": [
+          "PRO-NODE-RECAP",
+          "PRO-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "REG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-991418",
+        "item_binding_id": "REG-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_DYNAMIC_STEADY_STATE",
+        "authorized_next_node_ids": [
+          "REG-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "REG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-991418",
+        "item_binding_id": "REG-ITEM-GUIDED",
+        "learner_operation": "PREDICT_ALLOSTERIC_FLUX_DECREASE",
+        "authorized_next_node_ids": [
+          "REG-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "REG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-991418",
+        "item_binding_id": "REG-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_PEPTIDE_HORMONE_RECEPTOR_LOCATION",
+        "authorized_next_node_ids": [
+          "REG-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "REG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-991418",
+        "item_binding_id": "REG-ITEM-SOLO",
+        "learner_operation": "PREDICT_INSULIN_STORAGE_DIRECTION",
+        "authorized_next_node_ids": [
+          "REG-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "REG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-991418",
+        "item_binding_id": "REG-ITEM-NEAR",
+        "learner_operation": "ANALYZE_RECIPROCAL_CONTROL",
+        "authorized_next_node_ids": [
+          "REG-NODE-CHANGED",
+          "REG-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "REG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-991418",
+        "item_binding_id": "REG-ITEM-CHANGED",
+        "learner_operation": "INTERPRET_FLUX_CHANGE_AT_STEADY_STATE",
+        "authorized_next_node_ids": [
+          "REG-NODE-RECAP",
+          "REG-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "REG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-991418",
+        "item_binding_id": "REG-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_RECIPROCAL_CONTROL_PURPOSE",
+        "authorized_next_node_ids": [
+          "REG-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "REG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-991418",
+        "item_binding_id": "REG-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_FASTING_HORMONAL_DIRECTION",
+        "authorized_next_node_ids": [
+          "REG-NODE-CHANGED",
+          "REG-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "REG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-991418",
+        "item_binding_id": "REG-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_FLUX_POOL_DISTINCTION",
+        "authorized_next_node_ids": [
+          "REG-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "REG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-991418",
+        "item_binding_id": "REG-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_DYNAMIC_STEADY_STATE_FROM_TABLE",
+        "authorized_next_node_ids": [
+          "REG-NODE-RECAP",
+          "REG-NODE-HANDOFF"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-115585",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-115585",
+        "scope_in_refs": [
+          "V3-KC-115585:SCOPE_IN:0",
+          "V3-KC-115585:SCOPE_IN:1",
+          "V3-KC-115585:SCOPE_IN:2",
+          "V3-KC-115585:SCOPE_IN:3",
+          "V3-KC-115585:SCOPE_IN:4"
+        ],
+        "scope_out_refs": [
+          "V3-KC-115585:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "FAT-CLAIM-BOUNDED"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "FAT-NODE-ENTRY",
+        "orientation_node_id": "FAT-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "FAT-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "FAT-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "FAT-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "FAT-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "FAT-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "FAT-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "FAT-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "FAT-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "FAT-NODE-NEAR",
+          "activity_ids": [
+            "FAT-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "FAT-NODE-CHANGED",
+          "activity_ids": [
+            "FAT-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "FAT-FEATURE-NEAR-FUNCTION",
+          "FAT-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "FAT-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "FAT-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "FAT-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "FAT-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "FAT-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "FAT-ACT-REENTRY-NEAR",
+            "success_next_node_id": "FAT-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "FAT-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "FAT-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "FAT-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "FAT-REP-CORE",
+          "FAT-REP-ALT"
+        ],
+        "accessibility_equivalent_ids": [
+          "FAT-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "FAT-NODE-ENTRY",
+            "FAT-NODE-ORIENTATION",
+            "FAT-NODE-EXPLANATION",
+            "FAT-NODE-MODEL",
+            "FAT-NODE-THINK",
+            "FAT-NODE-WORKED",
+            "FAT-NODE-GUIDED",
+            "FAT-NODE-LIGHT",
+            "FAT-NODE-SOLO",
+            "FAT-NODE-CONTRAST",
+            "FAT-NODE-NEAR",
+            "FAT-NODE-CHANGED",
+            "FAT-NODE-REPAIR-NEAR",
+            "FAT-NODE-REENTRY-NEAR",
+            "FAT-NODE-REPAIR-CHANGED",
+            "FAT-NODE-REENTRY-CHANGED",
+            "FAT-NODE-HANDOFF",
+            "FAT-NODE-RECAP"
+          ],
+          "standard": [
+            "FAT-NODE-ENTRY",
+            "FAT-NODE-ORIENTATION",
+            "FAT-NODE-EXPLANATION",
+            "FAT-NODE-MODEL",
+            "FAT-NODE-THINK",
+            "FAT-NODE-WORKED",
+            "FAT-NODE-GUIDED",
+            "FAT-NODE-LIGHT",
+            "FAT-NODE-SOLO",
+            "FAT-NODE-CONTRAST",
+            "FAT-NODE-NEAR",
+            "FAT-NODE-CHANGED",
+            "FAT-NODE-REPAIR-NEAR",
+            "FAT-NODE-REENTRY-NEAR",
+            "FAT-NODE-REPAIR-CHANGED",
+            "FAT-NODE-REENTRY-CHANGED",
+            "FAT-NODE-HANDOFF",
+            "FAT-NODE-RECAP"
+          ],
+          "misconception": [
+            "FAT-NODE-ENTRY",
+            "FAT-NODE-ORIENTATION",
+            "FAT-NODE-EXPLANATION",
+            "FAT-NODE-MODEL",
+            "FAT-NODE-THINK",
+            "FAT-NODE-WORKED",
+            "FAT-NODE-GUIDED",
+            "FAT-NODE-LIGHT",
+            "FAT-NODE-SOLO",
+            "FAT-NODE-CONTRAST",
+            "FAT-NODE-NEAR",
+            "FAT-NODE-CHANGED",
+            "FAT-NODE-REPAIR-NEAR",
+            "FAT-NODE-REENTRY-NEAR",
+            "FAT-NODE-REPAIR-CHANGED",
+            "FAT-NODE-REENTRY-CHANGED",
+            "FAT-NODE-HANDOFF",
+            "FAT-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "FAT-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-083129",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-083129",
+        "scope_in_refs": [
+          "V3-KC-083129:SCOPE_IN:0",
+          "V3-KC-083129:SCOPE_IN:1",
+          "V3-KC-083129:SCOPE_IN:2"
+        ],
+        "scope_out_refs": [
+          "V3-KC-083129:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "ANA-CLAIM-BOUNDED"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "ANA-NODE-ENTRY",
+        "orientation_node_id": "ANA-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "ANA-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "ANA-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "ANA-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "ANA-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "ANA-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "ANA-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "ANA-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "ANA-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "ANA-NODE-NEAR",
+          "activity_ids": [
+            "ANA-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "ANA-NODE-CHANGED",
+          "activity_ids": [
+            "ANA-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "ANA-FEATURE-NEAR-FUNCTION",
+          "ANA-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ANA-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "ANA-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ANA-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "ANA-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ANA-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "ANA-ACT-REENTRY-NEAR",
+            "success_next_node_id": "ANA-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ANA-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "ANA-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "ANA-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "ANA-REP-CORE",
+          "ANA-REP-ALT"
+        ],
+        "accessibility_equivalent_ids": [
+          "ANA-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "ANA-NODE-ENTRY",
+            "ANA-NODE-ORIENTATION",
+            "ANA-NODE-EXPLANATION",
+            "ANA-NODE-MODEL",
+            "ANA-NODE-THINK",
+            "ANA-NODE-WORKED",
+            "ANA-NODE-GUIDED",
+            "ANA-NODE-LIGHT",
+            "ANA-NODE-SOLO",
+            "ANA-NODE-CONTRAST",
+            "ANA-NODE-NEAR",
+            "ANA-NODE-CHANGED",
+            "ANA-NODE-REPAIR-NEAR",
+            "ANA-NODE-REENTRY-NEAR",
+            "ANA-NODE-REPAIR-CHANGED",
+            "ANA-NODE-REENTRY-CHANGED",
+            "ANA-NODE-HANDOFF",
+            "ANA-NODE-RECAP"
+          ],
+          "standard": [
+            "ANA-NODE-ENTRY",
+            "ANA-NODE-ORIENTATION",
+            "ANA-NODE-EXPLANATION",
+            "ANA-NODE-MODEL",
+            "ANA-NODE-THINK",
+            "ANA-NODE-WORKED",
+            "ANA-NODE-GUIDED",
+            "ANA-NODE-LIGHT",
+            "ANA-NODE-SOLO",
+            "ANA-NODE-CONTRAST",
+            "ANA-NODE-NEAR",
+            "ANA-NODE-CHANGED",
+            "ANA-NODE-REPAIR-NEAR",
+            "ANA-NODE-REENTRY-NEAR",
+            "ANA-NODE-REPAIR-CHANGED",
+            "ANA-NODE-REENTRY-CHANGED",
+            "ANA-NODE-HANDOFF",
+            "ANA-NODE-RECAP"
+          ],
+          "misconception": [
+            "ANA-NODE-ENTRY",
+            "ANA-NODE-ORIENTATION",
+            "ANA-NODE-EXPLANATION",
+            "ANA-NODE-MODEL",
+            "ANA-NODE-THINK",
+            "ANA-NODE-WORKED",
+            "ANA-NODE-GUIDED",
+            "ANA-NODE-LIGHT",
+            "ANA-NODE-SOLO",
+            "ANA-NODE-CONTRAST",
+            "ANA-NODE-NEAR",
+            "ANA-NODE-CHANGED",
+            "ANA-NODE-REPAIR-NEAR",
+            "ANA-NODE-REENTRY-NEAR",
+            "ANA-NODE-REPAIR-CHANGED",
+            "ANA-NODE-REENTRY-CHANGED",
+            "ANA-NODE-HANDOFF",
+            "ANA-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "ANA-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-751698",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-751698",
+        "scope_in_refs": [
+          "V3-KC-751698:SCOPE_IN:0",
+          "V3-KC-751698:SCOPE_IN:1",
+          "V3-KC-751698:SCOPE_IN:2"
+        ],
+        "scope_out_refs": [
+          "V3-KC-751698:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "PRO-CLAIM-BOUNDED"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "PRO-NODE-ENTRY",
+        "orientation_node_id": "PRO-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "PRO-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "PRO-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "PRO-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "PRO-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "PRO-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "PRO-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "PRO-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "PRO-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "PRO-NODE-NEAR",
+          "activity_ids": [
+            "PRO-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "PRO-NODE-CHANGED",
+          "activity_ids": [
+            "PRO-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "PRO-FEATURE-NEAR-FUNCTION",
+          "PRO-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "PRO-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "PRO-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "PRO-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "PRO-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "PRO-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "PRO-ACT-REENTRY-NEAR",
+            "success_next_node_id": "PRO-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "PRO-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "PRO-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "PRO-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "PRO-REP-CORE",
+          "PRO-REP-ALT"
+        ],
+        "accessibility_equivalent_ids": [
+          "PRO-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "PRO-NODE-ENTRY",
+            "PRO-NODE-ORIENTATION",
+            "PRO-NODE-EXPLANATION",
+            "PRO-NODE-MODEL",
+            "PRO-NODE-THINK",
+            "PRO-NODE-WORKED",
+            "PRO-NODE-GUIDED",
+            "PRO-NODE-LIGHT",
+            "PRO-NODE-SOLO",
+            "PRO-NODE-CONTRAST",
+            "PRO-NODE-NEAR",
+            "PRO-NODE-CHANGED",
+            "PRO-NODE-REPAIR-NEAR",
+            "PRO-NODE-REENTRY-NEAR",
+            "PRO-NODE-REPAIR-CHANGED",
+            "PRO-NODE-REENTRY-CHANGED",
+            "PRO-NODE-HANDOFF",
+            "PRO-NODE-RECAP"
+          ],
+          "standard": [
+            "PRO-NODE-ENTRY",
+            "PRO-NODE-ORIENTATION",
+            "PRO-NODE-EXPLANATION",
+            "PRO-NODE-MODEL",
+            "PRO-NODE-THINK",
+            "PRO-NODE-WORKED",
+            "PRO-NODE-GUIDED",
+            "PRO-NODE-LIGHT",
+            "PRO-NODE-SOLO",
+            "PRO-NODE-CONTRAST",
+            "PRO-NODE-NEAR",
+            "PRO-NODE-CHANGED",
+            "PRO-NODE-REPAIR-NEAR",
+            "PRO-NODE-REENTRY-NEAR",
+            "PRO-NODE-REPAIR-CHANGED",
+            "PRO-NODE-REENTRY-CHANGED",
+            "PRO-NODE-HANDOFF",
+            "PRO-NODE-RECAP"
+          ],
+          "misconception": [
+            "PRO-NODE-ENTRY",
+            "PRO-NODE-ORIENTATION",
+            "PRO-NODE-EXPLANATION",
+            "PRO-NODE-MODEL",
+            "PRO-NODE-THINK",
+            "PRO-NODE-WORKED",
+            "PRO-NODE-GUIDED",
+            "PRO-NODE-LIGHT",
+            "PRO-NODE-SOLO",
+            "PRO-NODE-CONTRAST",
+            "PRO-NODE-NEAR",
+            "PRO-NODE-CHANGED",
+            "PRO-NODE-REPAIR-NEAR",
+            "PRO-NODE-REENTRY-NEAR",
+            "PRO-NODE-REPAIR-CHANGED",
+            "PRO-NODE-REENTRY-CHANGED",
+            "PRO-NODE-HANDOFF",
+            "PRO-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "PRO-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-991418",
+        "canonical_ordinal": 4,
+        "objective_ref": "objective:V3-KC-991418",
+        "scope_in_refs": [
+          "V3-KC-991418:SCOPE_IN:0",
+          "V3-KC-991418:SCOPE_IN:1",
+          "V3-KC-991418:SCOPE_IN:2"
+        ],
+        "scope_out_refs": [
+          "V3-KC-991418:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "REG-CLAIM-BOUNDED"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "REG-NODE-ENTRY",
+        "orientation_node_id": "REG-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "REG-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "REG-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "REG-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "REG-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "REG-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "REG-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "REG-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "REG-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "REG-NODE-NEAR",
+          "activity_ids": [
+            "REG-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "REG-NODE-CHANGED",
+          "activity_ids": [
+            "REG-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "REG-FEATURE-NEAR-FUNCTION",
+          "REG-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "REG-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "REG-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "REG-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "REG-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "REG-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "REG-ACT-REENTRY-NEAR",
+            "success_next_node_id": "REG-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "REG-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "REG-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "REG-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "REG-REP-CORE",
+          "REG-REP-ALT"
+        ],
+        "accessibility_equivalent_ids": [
+          "REG-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "REG-NODE-ENTRY",
+            "REG-NODE-ORIENTATION",
+            "REG-NODE-EXPLANATION",
+            "REG-NODE-MODEL",
+            "REG-NODE-THINK",
+            "REG-NODE-WORKED",
+            "REG-NODE-GUIDED",
+            "REG-NODE-LIGHT",
+            "REG-NODE-SOLO",
+            "REG-NODE-CONTRAST",
+            "REG-NODE-NEAR",
+            "REG-NODE-CHANGED",
+            "REG-NODE-REPAIR-NEAR",
+            "REG-NODE-REENTRY-NEAR",
+            "REG-NODE-REPAIR-CHANGED",
+            "REG-NODE-REENTRY-CHANGED",
+            "REG-NODE-HANDOFF",
+            "REG-NODE-RECAP"
+          ],
+          "standard": [
+            "REG-NODE-ENTRY",
+            "REG-NODE-ORIENTATION",
+            "REG-NODE-EXPLANATION",
+            "REG-NODE-MODEL",
+            "REG-NODE-THINK",
+            "REG-NODE-WORKED",
+            "REG-NODE-GUIDED",
+            "REG-NODE-LIGHT",
+            "REG-NODE-SOLO",
+            "REG-NODE-CONTRAST",
+            "REG-NODE-NEAR",
+            "REG-NODE-CHANGED",
+            "REG-NODE-REPAIR-NEAR",
+            "REG-NODE-REENTRY-NEAR",
+            "REG-NODE-REPAIR-CHANGED",
+            "REG-NODE-REENTRY-CHANGED",
+            "REG-NODE-HANDOFF",
+            "REG-NODE-RECAP"
+          ],
+          "misconception": [
+            "REG-NODE-ENTRY",
+            "REG-NODE-ORIENTATION",
+            "REG-NODE-EXPLANATION",
+            "REG-NODE-MODEL",
+            "REG-NODE-THINK",
+            "REG-NODE-WORKED",
+            "REG-NODE-GUIDED",
+            "REG-NODE-LIGHT",
+            "REG-NODE-SOLO",
+            "REG-NODE-CONTRAST",
+            "REG-NODE-NEAR",
+            "REG-NODE-CHANGED",
+            "REG-NODE-REPAIR-NEAR",
+            "REG-NODE-REENTRY-NEAR",
+            "REG-NODE-REPAIR-CHANGED",
+            "REG-NODE-REENTRY-CHANGED",
+            "REG-NODE-HANDOFF",
+            "REG-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "REG-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "FAT-ITEM-ENTRY",
+        "activity_id": "FAT-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "FAT-FAMILY-ENTRY",
+        "stimulus_lineage_id": "FAT-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "FAT-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_MOBILIZED_FATTY_ACID_FORM",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "FAT_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#FAT-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#FAT-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "FAT-SOLUTION-ENTRY",
+        "decisive_cue_id": "FAT-CUE-ENTRY",
+        "distractor_lineage_id": "FAT-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "FAT-ITEM-GUIDED",
+        "activity_id": "FAT-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "FAT-FAMILY-GUIDED",
+        "stimulus_lineage_id": "FAT-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_PATHWAY_TRACE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "FAT-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "ORDER_LONG_CHAIN_MITOCHONDRIAL_ENTRY",
+        "hint_policy": "VISIBLE_PATHWAY_TRACE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "FAT_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#FAT-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#FAT-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "FAT-SOLUTION-GUIDED",
+        "decisive_cue_id": "FAT-CUE-GUIDED",
+        "distractor_lineage_id": "FAT-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "FAT-ITEM-LIGHT",
+        "activity_id": "FAT-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "FAT-FAMILY-LIGHT",
+        "stimulus_lineage_id": "FAT-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "FAT-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_BETA_OXIDATION_OUTPUTS",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "FAT_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#FAT-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#FAT-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "FAT-SOLUTION-LIGHT",
+        "decisive_cue_id": "FAT-CUE-LIGHT",
+        "distractor_lineage_id": "FAT-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "FAT-ITEM-SOLO",
+        "activity_id": "FAT-ACT-SOLO",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "FAT-FAMILY-SOLO",
+        "stimulus_lineage_id": "FAT-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "FAT-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "RELATE_CIS_UNSATURATION_TO_PACKING",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "FAT_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#FAT-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#FAT-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "FAT-SOLUTION-SOLO",
+        "decisive_cue_id": "FAT-CUE-SOLO",
+        "distractor_lineage_id": "FAT-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "FAT-ITEM-NEAR",
+        "activity_id": "FAT-ACT-NEAR",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "FAT-FAMILY-NEAR",
+        "stimulus_lineage_id": "FAT-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "FAT-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "TRACE_ADIPOSE_TO_MUSCLE_OXIDATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "FAT_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#FAT-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#FAT-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "FAT-SOLUTION-NEAR",
+        "decisive_cue_id": "FAT-CUE-NEAR",
+        "distractor_lineage_id": "FAT-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "FAT-ITEM-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "FAT-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "FAT-ITEM-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "FAT-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "FAT-ITEM-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "FAT-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "FAT-ITEM-CHANGED",
+        "activity_id": "FAT-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "FAT-FAMILY-CHANGED",
+        "stimulus_lineage_id": "FAT-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "FAT-REP-ALT",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "learner_operation": "PREDICT_KETONE_PRODUCTION_FROM_STATE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "FAT_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#FAT-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#FAT-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "FAT-SOLUTION-CHANGED",
+        "decisive_cue_id": "FAT-CUE-CHANGED",
+        "distractor_lineage_id": "FAT-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "FAT-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "FAT-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "FAT-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "FAT-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "FAT-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "FAT-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "FAT-ITEM-REPAIR-NEAR",
+        "activity_id": "FAT-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "FAT-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "FAT-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "FAT-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_MOBILIZED_FUEL_CARRIER",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "FAT_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#FAT-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#FAT-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "FAT-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "FAT-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "FAT-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "FAT-ITEM-REENTRY-NEAR",
+        "activity_id": "FAT-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "FAT-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "FAT-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "FAT-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "RECHECK_FATTY_ACID_TRANSPORT_TRACE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "FAT_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#FAT-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#FAT-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "FAT-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "FAT-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "FAT-DISTRACTOR-REENTRY-NEAR"
+      },
+      {
+        "item_binding_id": "FAT-ITEM-REPAIR-CHANGED",
+        "activity_id": "FAT-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "FAT-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "FAT-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "FAT-REP-ALT",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_KETOGENIC_STATE_LINK",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "FAT_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#FAT-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#FAT-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "FAT-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "FAT-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "FAT-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "FAT-ITEM-REENTRY-CHANGED",
+        "activity_id": "FAT-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "FAT-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "FAT-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "FAT-REP-ALT",
+        "changed_dimensions": [
+          "representation",
+          "domain_context"
+        ],
+        "learner_operation": "RECHECK_KETONE_EXPORT_PREDICTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "FAT_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#FAT-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#FAT-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "FAT-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "FAT-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "FAT-DISTRACTOR-REENTRY-CHANGED"
+      },
+      {
+        "item_binding_id": "FAT-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-115585",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "FAT-FAMILY-WORKED",
+        "stimulus_lineage_id": "FAT-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "FAT-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_PATHWAY_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:FAT-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "FAT-SOLUTION-WORKED",
+        "decisive_cue_id": "FAT-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "ANA-ITEM-ENTRY",
+        "activity_id": "ANA-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "ANA-FAMILY-ENTRY",
+        "stimulus_lineage_id": "ANA-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "ANA-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "CLASSIFY_GLYCOGEN_SYNTHESIS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANA_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-ENTRY",
+        "decisive_cue_id": "ANA-CUE-ENTRY",
+        "distractor_lineage_id": "ANA-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-GUIDED",
+        "activity_id": "ANA-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "ANA-FAMILY-GUIDED",
+        "stimulus_lineage_id": "ANA-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_PATHWAY_TRACE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "SELECT_LIPID_STORAGE_ROUTE",
+        "hint_policy": "VISIBLE_PATHWAY_TRACE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANA_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-GUIDED",
+        "decisive_cue_id": "ANA-CUE-GUIDED",
+        "distractor_lineage_id": "ANA-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-LIGHT",
+        "activity_id": "ANA-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "ANA-FAMILY-LIGHT",
+        "stimulus_lineage_id": "ANA-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "EXPLAIN_NONTEMPLATE_POLYSACCHARIDE_SYNTHESIS",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANA_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-LIGHT",
+        "decisive_cue_id": "ANA-CUE-LIGHT",
+        "distractor_lineage_id": "ANA-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-SOLO",
+        "activity_id": "ANA-ACT-SOLO",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "ANA-FAMILY-SOLO",
+        "stimulus_lineage_id": "ANA-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "MATCH_ANABOLIC_PROCESS_TO_PRODUCT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ANA_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-SOLO",
+        "decisive_cue_id": "ANA-CUE-SOLO",
+        "distractor_lineage_id": "ANA-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-NEAR",
+        "activity_id": "ANA-ACT-NEAR",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "ANA-FAMILY-NEAR",
+        "stimulus_lineage_id": "ANA-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "ANA-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "PREDICT_FED_STATE_ANABOLIC_DIRECTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-NEAR",
+        "decisive_cue_id": "ANA-CUE-NEAR",
+        "distractor_lineage_id": "ANA-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "ANA-ITEM-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ANA-ITEM-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "ANA-ITEM-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ANA-ITEM-CHANGED",
+        "activity_id": "ANA-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "ANA-FAMILY-CHANGED",
+        "stimulus_lineage_id": "ANA-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "ANA-REP-ALT",
+        "changed_dimensions": [
+          "representation",
+          "required_operation"
+        ],
+        "learner_operation": "COMPARE_TEMPLATE_DEPENDENCE_ACROSS_ANABOLISM",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-CHANGED",
+        "decisive_cue_id": "ANA-CUE-CHANGED",
+        "distractor_lineage_id": "ANA-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "ANA-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ANA-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ANA-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ANA-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ANA-ITEM-REPAIR-NEAR",
+        "activity_id": "ANA-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANA-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "ANA-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ANA-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_ANABOLISM_DIRECTION_TEST",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "ANA-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "ANA-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-REENTRY-NEAR",
+        "activity_id": "ANA-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANA-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "ANA-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "ANA-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "RECHECK_GLYCOGEN_STORAGE_CLASSIFICATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "ANA-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "ANA-DISTRACTOR-REENTRY-NEAR"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-REPAIR-CHANGED",
+        "activity_id": "ANA-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANA-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "ANA-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "ANA-REP-ALT",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_NONTEMPLATE_DEFINITION",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "ANA-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "ANA-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-REENTRY-CHANGED",
+        "activity_id": "ANA-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ANA-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "ANA-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "ANA-REP-ALT",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "RECHECK_TEMPLATE_DEPENDENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ANA_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#ANA-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#ANA-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "ANA-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "ANA-DISTRACTOR-REENTRY-CHANGED"
+      },
+      {
+        "item_binding_id": "ANA-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-083129",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "ANA-FAMILY-WORKED",
+        "stimulus_lineage_id": "ANA-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ANA-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_PATHWAY_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:ANA-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ANA-SOLUTION-WORKED",
+        "decisive_cue_id": "ANA-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "PRO-ITEM-ENTRY",
+        "activity_id": "PRO-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "PRO-FAMILY-ENTRY",
+        "stimulus_lineage_id": "PRO-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "PRO-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_PROTEIN_DIGESTION_PRODUCT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "PRO_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#PRO-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#PRO-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "PRO-SOLUTION-ENTRY",
+        "decisive_cue_id": "PRO-CUE-ENTRY",
+        "distractor_lineage_id": "PRO-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "PRO-ITEM-GUIDED",
+        "activity_id": "PRO-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "PRO-FAMILY-GUIDED",
+        "stimulus_lineage_id": "PRO-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_PATHWAY_TRACE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "PRO-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "TRACE_AMINO_ACID_NITROGEN_CARBON_SPLIT",
+        "hint_policy": "VISIBLE_PATHWAY_TRACE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "PRO_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#PRO-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#PRO-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "PRO-SOLUTION-GUIDED",
+        "decisive_cue_id": "PRO-CUE-GUIDED",
+        "distractor_lineage_id": "PRO-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "PRO-ITEM-LIGHT",
+        "activity_id": "PRO-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "PRO-FAMILY-LIGHT",
+        "stimulus_lineage_id": "PRO-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "PRO-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_UREA_AS_NITROGEN_ENDPOINT",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "PRO_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#PRO-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#PRO-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "PRO-SOLUTION-LIGHT",
+        "decisive_cue_id": "PRO-CUE-LIGHT",
+        "distractor_lineage_id": "PRO-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "PRO-ITEM-SOLO",
+        "activity_id": "PRO-ACT-SOLO",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "PRO-FAMILY-SOLO",
+        "stimulus_lineage_id": "PRO-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "PRO-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "DISTINGUISH_PROTEIN_TURNOVER_FROM_STORAGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "PRO_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#PRO-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#PRO-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "PRO-SOLUTION-SOLO",
+        "decisive_cue_id": "PRO-CUE-SOLO",
+        "distractor_lineage_id": "PRO-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "PRO-ITEM-NEAR",
+        "activity_id": "PRO-ACT-NEAR",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "PRO-FAMILY-NEAR",
+        "stimulus_lineage_id": "PRO-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "PRO-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "TRACE_EXCESS_AMINO_ACID_FATE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "PRO_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#PRO-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#PRO-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "PRO-SOLUTION-NEAR",
+        "decisive_cue_id": "PRO-CUE-NEAR",
+        "distractor_lineage_id": "PRO-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "PRO-ITEM-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "PRO-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "PRO-ITEM-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "PRO-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "PRO-ITEM-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "PRO-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "PRO-ITEM-CHANGED",
+        "activity_id": "PRO-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "PRO-FAMILY-CHANGED",
+        "stimulus_lineage_id": "PRO-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "PRO-REP-ALT",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "PREDICT_FASTING_AMINO_ACID_USE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "PRO_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#PRO-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#PRO-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "PRO-SOLUTION-CHANGED",
+        "decisive_cue_id": "PRO-CUE-CHANGED",
+        "distractor_lineage_id": "PRO-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "PRO-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "PRO-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "PRO-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "PRO-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "PRO-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "PRO-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "PRO-ITEM-REPAIR-NEAR",
+        "activity_id": "PRO-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "PRO-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "PRO-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "PRO-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_AMINO_ACID_DESTINATION_MODEL",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "PRO_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#PRO-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#PRO-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "PRO-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "PRO-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "PRO-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "PRO-ITEM-REENTRY-NEAR",
+        "activity_id": "PRO-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "PRO-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "PRO-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "PRO-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "RECHECK_EXCESS_AMINO_ACID_FATE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "PRO_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#PRO-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#PRO-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "PRO-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "PRO-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "PRO-DISTRACTOR-REENTRY-NEAR"
+      },
+      {
+        "item_binding_id": "PRO-ITEM-REPAIR-CHANGED",
+        "activity_id": "PRO-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "PRO-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "PRO-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "PRO-REP-ALT",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_BOUNDED_FASTING_PROTEIN_CLAIM",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "PRO_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#PRO-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#PRO-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "PRO-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "PRO-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "PRO-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "PRO-ITEM-REENTRY-CHANGED",
+        "activity_id": "PRO-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "PRO-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "PRO-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "PRO-REP-ALT",
+        "changed_dimensions": [
+          "representation",
+          "required_operation"
+        ],
+        "learner_operation": "RECHECK_FASTING_NITROGEN_DESTINATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "PRO_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#PRO-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#PRO-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "PRO-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "PRO-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "PRO-DISTRACTOR-REENTRY-CHANGED"
+      },
+      {
+        "item_binding_id": "PRO-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-751698",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "PRO-FAMILY-WORKED",
+        "stimulus_lineage_id": "PRO-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "PRO-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_PATHWAY_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:PRO-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "PRO-SOLUTION-WORKED",
+        "decisive_cue_id": "PRO-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "REG-ITEM-ENTRY",
+        "activity_id": "REG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "REG-FAMILY-ENTRY",
+        "stimulus_lineage_id": "REG-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "REG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_DYNAMIC_STEADY_STATE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "REG_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#REG-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#REG-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "REG-SOLUTION-ENTRY",
+        "decisive_cue_id": "REG-CUE-ENTRY",
+        "distractor_lineage_id": "REG-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "REG-ITEM-GUIDED",
+        "activity_id": "REG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "REG-FAMILY-GUIDED",
+        "stimulus_lineage_id": "REG-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_PATHWAY_TRACE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "PREDICT_ALLOSTERIC_FLUX_DECREASE",
+        "hint_policy": "VISIBLE_PATHWAY_TRACE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "REG_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#REG-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#REG-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "REG-SOLUTION-GUIDED",
+        "decisive_cue_id": "REG-CUE-GUIDED",
+        "distractor_lineage_id": "REG-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "REG-ITEM-LIGHT",
+        "activity_id": "REG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "REG-FAMILY-LIGHT",
+        "stimulus_lineage_id": "REG-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_PEPTIDE_HORMONE_RECEPTOR_LOCATION",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "REG_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#REG-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#REG-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "REG-SOLUTION-LIGHT",
+        "decisive_cue_id": "REG-CUE-LIGHT",
+        "distractor_lineage_id": "REG-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "REG-ITEM-SOLO",
+        "activity_id": "REG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "REG-FAMILY-SOLO",
+        "stimulus_lineage_id": "REG-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "PREDICT_INSULIN_STORAGE_DIRECTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "REG_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#REG-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#REG-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "REG-SOLUTION-SOLO",
+        "decisive_cue_id": "REG-CUE-SOLO",
+        "distractor_lineage_id": "REG-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "REG-ITEM-NEAR",
+        "activity_id": "REG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "REG-FAMILY-NEAR",
+        "stimulus_lineage_id": "REG-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "REG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "ANALYZE_RECIPROCAL_CONTROL",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REG_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#REG-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#REG-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "REG-SOLUTION-NEAR",
+        "decisive_cue_id": "REG-CUE-NEAR",
+        "distractor_lineage_id": "REG-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "REG-ITEM-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "REG-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "REG-ITEM-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "REG-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "REG-ITEM-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "REG-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "REG-ITEM-CHANGED",
+        "activity_id": "REG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "REG-FAMILY-CHANGED",
+        "stimulus_lineage_id": "REG-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "REG-REP-ALT",
+        "changed_dimensions": [
+          "representation",
+          "required_operation"
+        ],
+        "learner_operation": "INTERPRET_FLUX_CHANGE_AT_STEADY_STATE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REG_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#REG-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#REG-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "REG-SOLUTION-CHANGED",
+        "decisive_cue_id": "REG-CUE-CHANGED",
+        "distractor_lineage_id": "REG-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "REG-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "REG-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "REG-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "REG-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "REG-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "REG-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "REG-ITEM-REPAIR-NEAR",
+        "activity_id": "REG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "REG-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "REG-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "REG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_RECIPROCAL_CONTROL_PURPOSE",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REG_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#REG-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#REG-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "REG-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "REG-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "REG-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "REG-ITEM-REENTRY-NEAR",
+        "activity_id": "REG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "REG-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "REG-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "REG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "RECHECK_FASTING_HORMONAL_DIRECTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REG_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#REG-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#REG-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "REG-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "REG-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "REG-DISTRACTOR-REENTRY-NEAR"
+      },
+      {
+        "item_binding_id": "REG-ITEM-REPAIR-CHANGED",
+        "activity_id": "REG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "REG-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "REG-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "REG-REP-ALT",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_FLUX_POOL_DISTINCTION",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REG_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#REG-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#REG-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "REG-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "REG-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "REG-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "REG-ITEM-REENTRY-CHANGED",
+        "activity_id": "REG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "REG-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "REG-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "REG-REP-ALT",
+        "changed_dimensions": [
+          "representation",
+          "domain_context"
+        ],
+        "learner_operation": "RECHECK_DYNAMIC_STEADY_STATE_FROM_TABLE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REG_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#REG-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#REG-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "REG-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "REG-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "REG-DISTRACTOR-REENTRY-CHANGED"
+      },
+      {
+        "item_binding_id": "REG-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-991418",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "REG-FAMILY-WORKED",
+        "stimulus_lineage_id": "REG-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_PATHWAY_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:REG-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "REG-SOLUTION-WORKED",
+        "decisive_cue_id": "REG-CUE-WORKED",
+        "distractor_lineage_id": null
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "FAT-TO-ANA-ENTRY",
+        "from_node_id": "FAT-NODE-RECAP",
+        "to_node_id": "ANA-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "ANA-TO-PRO-ENTRY",
+        "from_node_id": "ANA-NODE-RECAP",
+        "to_node_id": "PRO-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "PRO-TO-REG-ENTRY",
+        "from_node_id": "PRO-NODE-RECAP",
+        "to_node_id": "REG-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      }
+    ],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-758857",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-282413",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-115585",
+            "V3-KC-083129",
+            "V3-KC-751698",
+            "V3-KC-991418"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-115585",
+          "V3-KC-083129",
+          "V3-KC-751698",
+          "V3-KC-991418"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-CAP-758857"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-EXT-007304",
+        "attachment_type": "EXTENSION",
+        "owner_lesson_id": "V3-LES-282413",
+        "host_scope": {
+          "kind": "LESSON"
+        },
+        "declared_host_core_ids": [],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-FD-282413"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false
+      }
+    ]
+  }
+}

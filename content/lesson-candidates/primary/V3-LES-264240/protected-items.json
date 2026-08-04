@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "SCI-ITEM-ENTRY",
+      "learner_prompt_key": "SCI_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "The dye has a net movement from higher toward lower concentration.",
+      "post_commitment_feedback": "The defining observation is net movement of dye down its concentration gradient, which identifies diffusion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SCI-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No energy-coupled movement against the gradient is described."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SCI-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SCI-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No selective membrane or net water movement is present."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SCI-ITEM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The concentrations are changing, so opposing movements are not yet balanced."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SCI-ITEM-GUIDED",
+      "learner_prompt_key": "SCI_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "Water can cross and moves toward the side with greater solute concentration.",
+      "post_commitment_feedback": "Track the species that can cross: water moves toward the more concentrated sucrose solution, so the process is osmosis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SCI-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt says sucrose cannot cross, so this movement is unavailable."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SCI-ITEM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Sucrose cannot cross, and the proposed direction does not describe the permitted species."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SCI-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SCI-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The net water movement follows an osmotic gradient; no energy-coupled transport is stated."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SCI-ITEM-LIGHT",
+      "learner_prompt_key": "SCI_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Energy coupling and movement against the concentration gradient identify active transport.",
+      "post_commitment_feedback": "ATP coupling plus movement from lower to higher concentration is the defining active-transport pattern.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SCI-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SCI-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Simple diffusion proceeds down, not against, a gradient and does not use ATP coupling."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SCI-ITEM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A directed concentration-building process is occurring, so there is net change."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SCI-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Osmosis specifically concerns net water movement across a selective barrier."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SCI-ITEM-SOLO",
+      "learner_prompt_key": "SCI_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Equal opposing rates produce no net change while molecules continue moving.",
+      "post_commitment_feedback": "Equal opposing oxygen fluxes mean zero net movement, not zero molecular motion: this is dynamic equilibrium.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SCI-ITEM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Microscopic random motion continues at equilibrium."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SCI-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal opposing diffusion rates do not imply energy-coupled pumping."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SCI-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt directly states that oxygen crosses the membrane."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SCI-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SCI-ITEM-NEAR",
+      "learner_prompt_key": "SCI_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Water can cross and moves toward the side with the higher solute concentration.",
+      "post_commitment_feedback": "Identify the moving species and barrier: water crosses a selective membrane toward the more concentrated interior, so the process is osmosis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SCI-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The water movement follows the concentration difference and is not described as ATP-coupled."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SCI-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SCI-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The solute is stated to be unable to cross."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SCI-ITEM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A concentration difference drives a net water movement before equilibrium is reached."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SCI-ITEM-CHANGED",
+      "learner_prompt_key": "SCI_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Equal opposing diffusive movements preserve equal concentrations while particles continue moving.",
+      "post_commitment_feedback": "The representation combines ongoing two-way diffusion with zero net concentration change, the defining relation for dynamic equilibrium.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SCI-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The diagram states constant motion, and the moving species is not identified as water only."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SCI-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The concentrations are equal and no energy-coupled process is shown."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SCI-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SCI-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal arrows show opposing movements of the same average size, not one-way flux."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SCI-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "SCI_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Osmosis is distinguished by water as the moving species and a selectively permeable barrier.",
+      "post_commitment_feedback": "Use the moving-species and barrier checks: osmosis requires net water movement across a selectively permeable barrier.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SCI-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SCI-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That pattern describes energy-coupled movement against a gradient."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SCI-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Molecular motion does not permanently cease in these processes."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SCI-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A concentration difference, not initial equality, drives net osmosis."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SCI-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "SCI_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Water crosses toward compartment A, which has the greater concentration of trapped solute.",
+      "post_commitment_feedback": "On this fresh membrane, water moves from B toward the more concentrated trapped-protein side A by osmosis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SCI-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The protein is blocked by the membrane."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SCI-ITEM-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The protein is blocked, and no energy-coupled transporter is described."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SCI-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Water moves toward, not away from, the side with the higher trapped-solute concentration."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SCI-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SCI-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "SCI_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Equal opposing fluxes yield no net change while preserving microscopic motion.",
+      "post_commitment_feedback": "Dynamic equilibrium requires two facts together: continued microscopic movement and equal opposing average fluxes.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SCI-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A one-sided distribution does not establish balanced opposing fluxes."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SCI-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SCI-ITEM-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "ATP consumption indicates an energy-coupled transport process."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SCI-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This observation describes the conditions for osmosis, not solute dynamic equilibrium."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SCI-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "SCI_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Equal opposing counts produce zero net transfer while diffusion continues.",
+      "post_commitment_feedback": "The fresh table encodes equal opposing movements, so diffusion continues with zero net transfer at dynamic equilibrium.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SCI-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal transfers preserve, rather than create, a concentration difference."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SCI-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The recorded crossings demonstrate continuing molecular motion."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SCI-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SCI-ITEM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The table describes molecules crossing in both directions and does not specify net water movement."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OBS-ITEM-ENTRY",
+      "learner_prompt_key": "OBS_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "The system is sealed and its measured total mass is unchanged.",
+      "post_commitment_feedback": "The unchanged total mass within a sealed boundary directly matches conservation of mass.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OBS-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No regulated deviation or opposing response is described."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OBS-ITEM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Only a before-and-after total is supplied, not varying input-output pairs."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OBS-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OBS-ITEM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The observation does not establish a catalyst or its consumption."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OBS-ITEM-GUIDED",
+      "learner_prompt_key": "OBS_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "The response opposes the initial upward deviation and returns the variable toward its reference value.",
+      "post_commitment_feedback": "The response counteracts the deviation, which is the observable signature of negative feedback.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OBS-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OBS-ITEM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No charge inventory is measured."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OBS-ITEM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The observation emphasizes reversal toward a reference, not a constant ratio."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OBS-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No sampling procedure is described."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OBS-ITEM-LIGHT",
+      "learner_prompt_key": "OBS_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "Each pair has the same output-to-input ratio of 2 mV per unit.",
+      "post_commitment_feedback": "A constant output-to-input ratio across the supplied pairs supports direct proportionality.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OBS-ITEM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The output rises across the three measurements."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OBS-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An inverse relation would decrease as input increases."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OBS-ITEM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No set point or opposing response is present."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OBS-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OBS-ITEM-SOLO",
+      "learner_prompt_key": "OBS_SOLO",
+      "correct_option_index": 1,
+      "rationale": "The measured incoming current equals the sum of measured outgoing currents.",
+      "post_commitment_feedback": "The current entering equals the total current leaving, directly instantiating current conservation at the junction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OBS-ITEM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The outgoing currents sum to the incoming current, so no creation is indicated."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OBS-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OBS-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Current balance does not establish zero resistance."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OBS-ITEM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No voltage-time measurements are supplied."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OBS-ITEM-NEAR",
+      "learner_prompt_key": "OBS_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The removal response increases in the direction that counters the upward perturbation.",
+      "post_commitment_feedback": "The increased removal process opposes the upward deviation, so the observation matches negative feedback.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OBS-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The concentration and a removal process are both observed."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OBS-ITEM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The defining feature is opposition to a deviation, not an unrestricted ratio claim."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OBS-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OBS-ITEM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The observation does not provide structural evidence about the enzyme."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OBS-ITEM-CHANGED",
+      "learner_prompt_key": "OBS_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The total is unchanged within the closed boundary even though the partition among forms changes.",
+      "post_commitment_feedback": "The table preserves the closed-system total while components change, which supports conservation without adding a mechanism.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OBS-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OBS-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No catalytic role is measured or required by the total."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OBS-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No reference value and opposing response are shown."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OBS-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt states that the amounts in the individual forms change."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OBS-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "OBS_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Opposition to the deviation is the direction test for negative feedback.",
+      "post_commitment_feedback": "For negative feedback, compare directions: the response must reduce, not reinforce, the deviation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OBS-ITEM-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Amplification describes a reinforcing rather than opposing response."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OBS-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That signature supports a conservation principle."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OBS-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That signature supports direct proportionality."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OBS-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OBS-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "OBS_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The response acts against the downward deviation and restores the variable toward its reference.",
+      "post_commitment_feedback": "The heart-rate response counters the pressure decrease, a fresh instance of negative feedback.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OBS-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No constant pressure-to-time ratio is provided."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OBS-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OBS-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pressure is a state variable here, not a conserved inventory in a closed boundary."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OBS-ITEM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The observations do not isolate one neural mechanism."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OBS-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "OBS_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The system boundary determines whether a changed measured total could reflect transfer across it.",
+      "post_commitment_feedback": "Conservation claims are boundary-dependent: define what is inside and whether the quantity can enter or leave.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OBS-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Components may redistribute while the total remains conserved."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OBS-ITEM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Conservation can be evaluated from an inventory without naming a complex mechanism."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OBS-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OBS-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Display color does not determine the conservation relation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OBS-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "OBS_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The closed-system nitrogen-atom total is unchanged even though molecular identities differ.",
+      "post_commitment_feedback": "The fresh observation supports conservation of nitrogen atoms, not conservation of each molecular form.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OBS-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OBS-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt explicitly says the atoms appear in different molecules."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OBS-ITEM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No set point or opposing regulatory response is described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OBS-ITEM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No additional nitrogen is measured, and the total is already accounted for."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REP-ITEM-ENTRY",
+      "learner_prompt_key": "REP_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "S/C = 5 mV per mmol/L, which is the invariant encoded by S = 5C.",
+      "post_commitment_feedback": "The equation preserves a constant ratio: the signal is 5 mV per 1 mmol/L of concentration.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REP-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REP-ITEM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A fixed difference would be S = C + 5."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REP-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses which quantity is multiplied by five."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REP-ITEM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The equation encodes a positive, not negative, relation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REP-ITEM-GUIDED",
+      "learner_prompt_key": "REP_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "The pair preserves E/n = 3 J per event.",
+      "post_commitment_feedback": "Substitute the table input: E = 3(4) = 12 J, so this row preserves the invariant.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REP-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "For n = 2, the relation requires E = 6 J."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REP-ITEM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "For n = 3, the relation requires E = 9 J."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REP-ITEM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "For n = 4, the relation requires E = 12 J."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REP-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REP-ITEM-LIGHT",
+      "learner_prompt_key": "REP_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "The ratio V/m is 2 mL/g and the relation passes through zero.",
+      "post_commitment_feedback": "“Two milliliters for every gram” specifies V/m = 2, so V = 2m.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REP-ITEM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This preserves a fixed difference rather than two milliliters per gram."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REP-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REP-ITEM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This makes mass twice the volume and reverses the stated ratio."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REP-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This encodes an inverse rather than direct relation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REP-ITEM-SOLO",
+      "learner_prompt_key": "REP_SOLO",
+      "correct_option_index": 2,
+      "rationale": "Each nonzero pair has d/t = 3 m/s and the zero pair also fits.",
+      "post_commitment_feedback": "The table preserves d/t = 3 m/s, so the matching symbolic form is d = 3t.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REP-ITEM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At t = 2 this would give 5 m, not 6 m."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REP-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At t = 2 this would give 10 m, not 6 m."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REP-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REP-ITEM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At t = 2 this would give 1.5 m and is undefined at zero."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REP-ITEM-NEAR",
+      "learner_prompt_key": "REP_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Every row preserves P/x = 2 kPa per input unit.",
+      "post_commitment_feedback": "The invariant is a constant ratio of 2 kPa per input unit across all supplied rows.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REP-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pressure changes across the rows."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REP-ITEM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At x = 3 this would predict 5 kPa rather than 6 kPa."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REP-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At x = 3 this would predict 9 kPa rather than 6 kPa."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REP-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REP-ITEM-CHANGED",
+      "learner_prompt_key": "REP_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The line passes through the origin and has slope 12/4 = 3.",
+      "post_commitment_feedback": "The graph’s invariant is a zero intercept and slope 3, so the matching equation is y = 3x.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REP-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REP-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This line would cross the y-axis at 3 and would give y = 7 at x = 4."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REP-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would give y = 48 at x = 4."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REP-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This has a nonzero intercept and gives y = 28 at x = 4."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REP-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "REP_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "For y = kx, dividing by x gives y/x = k.",
+      "post_commitment_feedback": "For a direct proportional relation, compute y/x in each nonzero row and check that it stays equal to k.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REP-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REP-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A constant difference corresponds to y = x + b, not generally y = kx."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REP-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This expression is not the defining invariant of direct proportionality."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REP-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The sum generally changes as the input changes."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REP-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "REP_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Each pair preserves F/x = 3 N/m.",
+      "post_commitment_feedback": "The fresh rows preserve a constant force-to-displacement ratio of 3 N/m.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REP-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At x = 5 this would predict 9 N, not 15 N."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REP-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REP-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At x = 5 this would predict 25 N, not 15 N."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REP-ITEM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The force values vary and do not remain at 8 N."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REP-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "REP_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The slope is 20/5 = 4 and passing through the origin gives intercept 0.",
+      "post_commitment_feedback": "Separate the graph features: slope is 20/5 = 4, and the origin fixes the intercept at zero.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REP-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The slope is vertical change divided by horizontal change, not the x-coordinate alone."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REP-ITEM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The point coordinates are not themselves slope and intercept."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REP-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REP-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A horizontal line would have slope 0 and would not pass through (5, 20)."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REP-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "REP_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Starting at zero gives the origin, and four response units per stimulus unit gives slope 4.",
+      "post_commitment_feedback": "The fresh verbal form preserves a zero intercept and constant slope 4 in the graph.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REP-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A horizontal line would not increase with stimulus."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REP-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This encodes an initial response of 4 and only one response unit per stimulus unit."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REP-ITEM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The statement gives a constant, not decreasing, rate of change."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REP-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQN-ITEM-ENTRY",
+      "learner_prompt_key": "EQN_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "Substitution gives 24 m / 6 s = 4 m/s.",
+      "post_commitment_feedback": "Map distance and time into the supplied quotient: v = 24 m / 6 s = 4 m/s.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQN-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds distance and time instead of dividing them."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQN-ITEM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts time from distance and does not follow the equation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQN-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the quotient as t/d."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQN-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQN-ITEM-GUIDED",
+      "learner_prompt_key": "EQN_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Multiplying 3 kg by 4 m/s² gives 12 kg·m/s², or 12 N.",
+      "post_commitment_feedback": "The target is force, so substitute directly: F = (3 kg)(4 m/s²) = 12 N.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQN-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides mass by acceleration rather than multiplying."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQN-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQN-ITEM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds the numerical values and does not use F = ma."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQN-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This value does not result from the supplied multiplication."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQN-ITEM-LIGHT",
+      "learner_prompt_key": "EQN_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The product (0.50)(200)(4.0) is 400, and the units reduce to joules.",
+      "post_commitment_feedback": "Substitute all three supplied quantities: Q = (0.50)(200)(4.0) = 400 J.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQN-ITEM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides rather than multiplies the three factors."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQN-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the temperature-change factor."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQN-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQN-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats 0.50 kg as 2 kg and overstates the product."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQN-ITEM-SOLO",
+      "learner_prompt_key": "EQN_SOLO",
+      "correct_option_index": 0,
+      "rationale": "Rearranging gives t = d/v = 45 m / (5 m/s) = 9 s.",
+      "post_commitment_feedback": "Isolate the target first: t = d/v, then 45 m divided by 5 m/s gives 9 s.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQN-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQN-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies distance by speed instead of dividing."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQN-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts the numerical values."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQN-ITEM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the quotient as v/d."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQN-ITEM-NEAR",
+      "learner_prompt_key": "EQN_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The temperature change is 5 °C, so Q = (0.30)(600)(5) = 900 J.",
+      "post_commitment_feedback": "Calculate ΔT = 5 °C, then substitute all three quantities to obtain 900 J.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQN-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses the final temperature in a division and omits the required product."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQN-ITEM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the 5 °C temperature change."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQN-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This combines values without following the supplied equation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQN-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQN-ITEM-CHANGED",
+      "learner_prompt_key": "EQN_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Rearranging gives m = Q/(cΔT) = 1200/(300×4.0) = 1.0 kg.",
+      "post_commitment_feedback": "The target changed, so isolate it: m = Q/(cΔT). The supplied values give 1.0 kg.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQN-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides by only one factor and does not satisfy the full equation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQN-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQN-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies the temperature change by itself rather than isolating mass."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQN-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies all supplied values and moves mass in the wrong direction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQN-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "EQN_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The change is final minus initial: 23 °C − 18 °C = 5 °C.",
+      "post_commitment_feedback": "Map a change, not an endpoint, into ΔT: final minus initial gives 5 °C.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQN-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQN-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the initial temperature, not the change."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQN-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the final temperature, not the change."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQN-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds the temperatures instead of finding their difference."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQN-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "EQN_REENTRY_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The change is 3 °C, so (0.25)(800)(3) = 600 J.",
+      "post_commitment_feedback": "For the fresh values, ΔT = 3 °C and direct substitution gives Q = 600 J.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQN-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides by the temperature change instead of multiplying."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQN-ITEM-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the 3 °C temperature change."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQN-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQN-ITEM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats the mass as 1 kg and overstates the result."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQN-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "EQN_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Dividing both sides by cΔT isolates m.",
+      "post_commitment_feedback": "Because c and ΔT multiply m, divide both sides by their product: m = Q/(cΔT).",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQN-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Multiplying by the other factors does not isolate m."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQN-ITEM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This takes the reciprocal of the required relation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQN-ITEM-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This leaves c in the numerator rather than dividing by both multiplying factors."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQN-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQN-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "EQN_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Rearranging gives m = F/a = 18 N / (6 m/s²) = 3 kg.",
+      "post_commitment_feedback": "The fresh product relation isolates as m = F/a, giving 3 kg with consistent units.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQN-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies force by acceleration rather than isolating mass."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQN-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQN-ITEM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds the numerical values."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQN-ITEM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the quotient as a/F."
+        }
+      ]
+    }
+  ]
+}

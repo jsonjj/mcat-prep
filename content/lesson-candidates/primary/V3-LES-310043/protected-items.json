@@ -1,0 +1,748 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "SEP-ITEM-ENTRY",
+      "learner_prompt_key": "SEP_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "A buffer pH above pI gives the protein an approximate net negative charge.",
+      "post_commitment_feedback": "Because pH 8 is above pI 6, Protein A is approximately net negative.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEP-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Above pI, deprotonation makes the protein net negative rather than positive."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEP-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEP-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neutrality occurs near the protein’s own pI, not at one universal pH."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEP-ITEM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Protein net charge changes with pH."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEP-ITEM-GUIDED",
+      "learner_prompt_key": "SEP_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "A net-positive protein is attracted to the negative electrode.",
+      "post_commitment_feedback": "pH 7 is below pI 9, so the protein is net positive and moves toward the negative left electrode.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEP-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At pH below pI, the protein is net positive, not negative."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEP-ITEM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The protein is neutral only near pH 9, not at pH 7."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEP-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEP-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A protein with one net-charge sign has one electric-force direction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEP-ITEM-LIGHT",
+      "learner_prompt_key": "SEP_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "The protein focuses where local pH equals its pI and net charge approaches zero.",
+      "post_commitment_feedback": "In isoelectric focusing, the stopping pH is the protein’s pI.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEP-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEP-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A pH value is not a molecular mass."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEP-ITEM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt describes a pH gradient, not SDS concentration."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEP-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The local gradient pH is not the electrode voltage."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEP-ITEM-SOLO",
+      "learner_prompt_key": "SEP_SOLO",
+      "correct_option_index": 3,
+      "rationale": "The smaller SDS-coated polypeptide generally migrates farther.",
+      "post_commitment_feedback": "Under stated SDS conditions, the 30 kDa chain migrates farther than the 90 kDa chain.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEP-ITEM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Larger denatured chains generally move less readily through the gel matrix."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEP-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "SDS-PAGE is not isoelectric focusing."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEP-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "SDS reduces charge differences but preserves size-dependent sieving."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEP-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEP-ITEM-NEAR",
+      "learner_prompt_key": "SEP_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The pH is below pI, so M is net positive and attracted to the negative cathode.",
+      "post_commitment_feedback": "M is net positive at pH 5.4 and therefore moves toward the negative cathode.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEP-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At pH below pI, M is positive rather than negative."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEP-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEP-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "M is near neutral only when local pH is near 8.4."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEP-ITEM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt states native conditions, not SDS treatment."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEP-ITEM-CHANGED",
+      "learner_prompt_key": "SEP_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "R reaches zero net charge in the acidic region and S in the basic region.",
+      "post_commitment_feedback": "R focuses near pH 5 on the left, while S focuses near pH 9 on the right.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEP-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Isoelectric focusing position follows pI rather than an average or size."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEP-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the proteins’ pI positions."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEP-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEP-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No SDS condition is stated, and proteins stop at their pI values."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEP-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "SEP_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "This rule follows protonation below pI and deprotonation above pI.",
+      "post_commitment_feedback": "Anchor the sign: below pI is positive, at pI is near neutral, and above pI is negative.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEP-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEP-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the charge signs."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEP-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neutrality is protein-specific and occurs near pI."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEP-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mass alone does not set net charge."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEP-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "SEP_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "A net-negative protein is attracted to the positive electrode.",
+      "post_commitment_feedback": "The fresh case has pH above pI, so Q is net negative and moves toward the positive electrode.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEP-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At pH above pI, Q is net negative rather than positive."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEP-ITEM-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Q is near neutral around pH 4.5, not 7.5."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEP-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Multiple charged groups combine into one approximate net charge."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEP-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEP-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "SEP_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Each protein focuses where the gradient pH reaches its pI, so increasing pH orders lower pI to the left of higher pI.",
+      "post_commitment_feedback": "Use the same operation as the failed exit: compare pI values, then place the lower-pI protein farther left in the increasing-pH gradient.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEP-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEP-ITEM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Isoelectric-focusing position is set by pI, not molecular mass."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEP-ITEM-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Net charge changes across the gradient; a protein stops where its net charge reaches approximately zero near its pI."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEP-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "SDS binding is not the decisive property in the stated isoelectric-focusing operation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SEP-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "SEP_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The increasing-pH gradient places U near its lower pI on the left and V near its higher pI on the right.",
+      "post_commitment_feedback": "The fresh case uses the failed exit’s exact operation: compare pI values to place U near pH 6.2 left of V near pH 8.7.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SEP-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The proteins focus at their distinct pI values rather than at a shared midpoint or size-based position."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SEP-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the positions: the lower pI belongs on the lower-pH left side."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SEP-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SEP-ITEM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Protein V stops near pH 8.7 when its net charge reaches approximately zero; it does not continue to the edge."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FUN-ITEM-ENTRY",
+      "learner_prompt_key": "FUN_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "Opposite charges at the aligned contact support attraction.",
+      "post_commitment_feedback": "A properly positioned positive group complements the negative pocket contact.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FUN-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Like charges at the contact would repel."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FUN-ITEM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A group that cannot enter lacks shape complementarity."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FUN-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A distant neutral surface does not satisfy the decisive contact."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FUN-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FUN-ITEM-GUIDED",
+      "learner_prompt_key": "FUN_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Loss of a hydrophobic contact can weaken the specified binding interface.",
+      "post_commitment_feedback": "The folded protein can still lose affinity if the decisive pocket surface is less complementary.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FUN-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A side-chain mutation does not change the protein into DNA."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FUN-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FUN-ITEM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One binding-site change does not warrant a universal immune-system claim."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FUN-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Removing a noncovalent contact does not establish stronger covalent attachment."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FUN-ITEM-LIGHT",
+      "learner_prompt_key": "FUN_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Recognition depends on matching geometry and contact chemistry.",
+      "post_commitment_feedback": "Antibody recognition follows complementarity between the variable binding site and the epitope.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FUN-ITEM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cell count does not specify this antibody–epitope interface."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FUN-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Diagram color is not a molecular interaction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FUN-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FUN-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Unrelated protein masses do not determine the supplied interface."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FUN-ITEM-SOLO",
+      "learner_prompt_key": "FUN_SOLO",
+      "correct_option_index": 0,
+      "rationale": "Collapse of the decisive pocket removes structural complementarity.",
+      "post_commitment_feedback": "Loss of the native pocket structure reduces selective ligand binding.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FUN-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FUN-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Denaturation disrupts rather than perfects the native site."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FUN-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reversible ligand binding does not insert the ligand into the amino-acid sequence."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FUN-ITEM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Denaturation does not give every protein one identical conformation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FUN-ITEM-NEAR",
+      "learner_prompt_key": "FUN_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The charge reversal removes the favorable opposite-charge contact.",
+      "post_commitment_feedback": "The preserved fold does not rescue a contact that changed from attraction to repulsion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FUN-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Like charges at the interface repel rather than attract."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FUN-ITEM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A contact mutation does not change the protein into a motor."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FUN-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Binding does not convert the antigen into an enzyme."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FUN-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FUN-ITEM-CHANGED",
+      "learner_prompt_key": "FUN_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Initial attachment can remain while loss of the shift blocks productive stepping.",
+      "post_commitment_feedback": "Without the movement-producing conformational shift, track binding can persist but directional stepping decreases.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FUN-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The conformational shift is the supplied link to forward movement."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FUN-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FUN-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A motor defect does not transform the track into a binding pocket."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FUN-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt concerns one motor cycle, not all antibodies."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FUN-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "FUN_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Selective binding depends on aligned geometric and chemical complementarity.",
+      "post_commitment_feedback": "Evaluate the actual interface: aligned shape and chemistry, not unrelated whole-system details.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FUN-ITEM-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Drawing choices do not encode molecular binding unless stated as features."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FUN-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FUN-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These organism-level quantities do not specify the interface."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FUN-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Name order has no molecular effect."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FUN-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "FUN_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Removing an aligned hydrogen-bond contact can reduce affinity.",
+      "post_commitment_feedback": "The fresh case preserves shape but loses a favorable chemical contact, so binding may weaken.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FUN-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FUN-ITEM-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fewer favorable contacts do not guarantee stronger binding."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FUN-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Loss of a noncovalent contact does not create covalent incorporation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FUN-ITEM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A pocket mutation does not reclassify the protein as an antibody."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FUN-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "FUN_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "This sequence links attachment state and conformational change to movement.",
+      "post_commitment_feedback": "Motor function couples track-binding cycles with conformational changes that generate steps.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FUN-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Directional motion requires cycling rather than permanent static binding."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FUN-ITEM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is not a motor-track sequence."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FUN-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FUN-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Denaturation does not define a productive motor cycle."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FUN-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "FUN_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Failure to release the rear contact prevents efficient reset and stepping.",
+      "post_commitment_feedback": "The fresh motor defect blocks cycle reset, so directional movement is impaired.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FUN-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A track-release defect does not change protein class to antibody."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FUN-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A motor protein does not become a peptide hormone through this mutation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FUN-ITEM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt assesses mechanical cycling, not glycogen catalysis."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FUN-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    }
+  ]
+}
