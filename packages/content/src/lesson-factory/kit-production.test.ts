@@ -22,6 +22,8 @@ type Scenario =
   | 'REAL_INPUT_ADMISSION'
   | 'AUTHORITY_STORE_GATES'
   | 'AUTHORITY_EXECUTION_REPLAY'
+  | 'PREFLIGHT_STATE_MACHINE'
+  | 'STALE_AUTHORITY_REFRESH'
   | 'REAL_SMOKE_EXECUTABLE'
   | 'KIT_CLI_SEPARATION'
   | 'STRICT_NESTED_RECORDS'
@@ -61,8 +63,13 @@ interface ProductionModule {
     readonly blockers?: readonly { readonly code: string }[];
   }>;
   readonly preflightProductionKits: () => Promise<{
-    readonly status: 'BLOCKED';
-    readonly blockers: readonly { readonly code: string }[];
+    readonly status: 'BLOCKED' | 'PREFLIGHT_OK';
+    readonly blockers?: readonly { readonly code: string }[];
+    readonly authority?: {
+      readonly state: 'VALID_UNCONSUMED';
+      readonly repositoryCommit: string;
+      readonly action: 'PACKAGE_KITS';
+    };
   }>;
   readonly executeProductionKits: () => Promise<{
     readonly status: 'BLOCKED' | 'READY';
@@ -134,6 +141,38 @@ describe('WP-03 scratch hygiene', () => {
 });
 
 describe('WP-03 production authority boundary', () => {
+  it('returns a closed preflight union and never BLOCKED with no blockers', async () => {
+    expect(await harness.run('PREFLIGHT_STATE_MACHINE')).toMatchObject({
+      status: 'READY',
+      evidence: {
+        preparedStatus: 'PREPARED',
+        readyStatus: 'PREFLIGHT_OK',
+        readyUserSendable: false,
+        readyBlockersAbsent: true,
+        authorityState: 'VALID_UNCONSUMED',
+        blockedStatus: 'BLOCKED',
+        blockedCodes: ['ARMING_RECEIPT_MISSING'],
+        emptyBlockedRejected: true,
+      },
+    });
+  }, 30_000);
+
+  it('supersedes stale unconsumed authority without changing the key or consumed ledger', async () => {
+    expect(await harness.run('STALE_AUTHORITY_REFRESH')).toMatchObject({
+      status: 'READY',
+      evidence: {
+        firstPrepare: 'PREPARED',
+        stalePreflight: 'SOURCE_COMMIT_MISMATCH',
+        refreshedPrepare: 'PREPARED',
+        refreshedPreflight: 'PREFLIGHT_OK',
+        keyUnchanged: true,
+        staleReceiptSuperseded: true,
+        consumedLedgerPreserved: true,
+        refreshedCommit: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+      },
+    });
+  }, 30_000);
+
   it('exports only zero-argument reviewed production entrypoints', async () => {
     const exports = Object.keys(await import('./kit-production')).sort();
     expect(exports).toEqual([
@@ -207,7 +246,7 @@ describe('WP-03 production authority boundary', () => {
     expect(await harness.run('KIT_CLI_SEPARATION')).toMatchObject({
       status: 'READY',
       evidence: {
-        preflightDryRun: true,
+        preflightExitMatchesState: true,
         prepareRequiresArm: true,
         publishRequiresArming: true,
         arbitraryPathRejected: true,
@@ -236,15 +275,15 @@ describe('WP-03 production authority boundary', () => {
     });
   }, 15_000);
 
-  it('reports only production configuration receipt and arming blockers for real inputs', async () => {
+  it('reports a nonempty stable blocker or a valid prepared state for real inputs', async () => {
     const preflight = await production.preflightProductionKits();
-    expect(preflight.blockers.map((blocker) => blocker.code)).toEqual([
-      'ARMING_RECEIPT_MISSING',
-      'AUTHORITY_ISSUER_KEY_MISSING',
-      'AUTHORITY_ROOT_MARKER_MISSING',
-      'AUTHORITY_ROOT_MODE_INVALID',
-      'FINALIZATION_RECEIPT_MISSING',
-    ]);
+    if (preflight.status === 'BLOCKED') {
+      expect(preflight.blockers).toBeDefined();
+      expect(preflight.blockers!.length).toBeGreaterThan(0);
+    } else {
+      expect(preflight.status).toBe('PREFLIGHT_OK');
+      expect(preflight.authority?.state).toBe('VALID_UNCONSUMED');
+    }
   });
 
   it('exports only the reviewed zero-argument production entrypoints', async () => {
@@ -258,11 +297,11 @@ describe('WP-03 production authority boundary', () => {
     expect(production.executeProductionKits).toHaveLength(0);
   });
 
-  it('uses canonical assignment paths and remains unarmed', async () => {
+  it('uses canonical assignment paths and returns a closed preflight result', async () => {
     const preflight = await production.preflightProductionKits();
-    const codes = preflight.blockers.map((blocker) => blocker.code);
-    expect(preflight.status).toBe('BLOCKED');
-    expect(codes).toContain('ARMING_RECEIPT_MISSING');
+    const codes = preflight.blockers?.map((blocker) => blocker.code) ?? [];
+    expect(['BLOCKED', 'PREFLIGHT_OK']).toContain(preflight.status);
+    if (preflight.status === 'BLOCKED') expect(codes.length).toBeGreaterThan(0);
     expect(codes).not.toContain('FINAL_TEAM_A_MANIFEST_MISSING');
     expect(codes).not.toContain('FINAL_TEAM_B_MANIFEST_MISSING');
     expect(codes).not.toContain('FINAL_TEAM_MANIFEST_INVALID');
@@ -270,12 +309,10 @@ describe('WP-03 production authority boundary', () => {
     expect(codes).not.toContain('PRODUCTION_PIPELINE_NOT_IMPLEMENTED');
   });
 
-  it('execute enters the private pipeline rather than returning preflight verbatim', async () => {
+  it('keeps execution distinct without invoking the real publication root', async () => {
     const preflight = await production.preflightProductionKits();
-    const execution = await production.executeProductionKits();
-    expect(execution.status).toBe('BLOCKED');
-    expect(execution.attemptedPhase).toBe('AUTHORITY_LOAD');
-    expect(execution).not.toEqual(preflight);
+    expect(preflight).not.toHaveProperty('attemptedPhase');
+    expect(production.executeProductionKits).not.toBe(production.preflightProductionKits);
   });
 
   it('is named-exported from the package index without wildcard collisions', async () => {

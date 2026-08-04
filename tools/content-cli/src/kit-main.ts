@@ -4,6 +4,8 @@ import {
   prepareProductionAuthority,
 } from '@mcat/content/lesson-factory';
 
+import { renderPreflightResult } from './kit-result';
+
 const rawArgs = process.argv.slice(2);
 const args = rawArgs[0] === '--' ? rawArgs.slice(1) : rawArgs;
 const command = args[2];
@@ -36,7 +38,9 @@ async function main(): Promise<void> {
     throw new Error('UNSUPPORTED_ARGUMENTS');
   }
   if (command === 'preflight' && remaining.length === 0) {
-    console.log(JSON.stringify(safeSummary(await preflightProductionKits())));
+    const rendered = renderPreflightResult(await preflightProductionKits());
+    console.log(JSON.stringify(rendered.summary));
+    process.exitCode = rendered.exitCode;
     return;
   }
   if (command === 'prepare' && remaining.length === 0) {
@@ -61,7 +65,11 @@ async function main(): Promise<void> {
 
 try {
   await main();
-} catch {
-  console.error(JSON.stringify({ status: 'ERROR', code: 'UNSUPPORTED_ARGUMENTS' }));
+} catch (error) {
+  const code =
+    error instanceof Error && error.message === 'INVALID_PREFLIGHT_RESULT'
+      ? 'INVALID_PREFLIGHT_RESULT'
+      : 'UNSUPPORTED_ARGUMENTS';
+  console.error(JSON.stringify({ status: 'ERROR', code }));
   process.exitCode = 2;
 }

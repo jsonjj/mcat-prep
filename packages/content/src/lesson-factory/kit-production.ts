@@ -77,6 +77,8 @@ const AUTHORITY_SOURCE_PATHS = Object.freeze([
   'tools/content-cli/bin/lesson-factory-kit-smoke.mjs',
   'tools/content-cli/src/entry.ts',
   'tools/content-cli/src/kit-main.ts',
+  'tools/content-cli/src/kit-result.ts',
+  'tools/content-cli/src/kit-result.test.ts',
   'tools/content-cli/package.json',
 ] as const);
 
@@ -158,6 +160,30 @@ interface BlockedResult {
   readonly artifacts: readonly [];
   readonly blockers: readonly Blocker[];
 }
+
+interface PreflightBlockedResult {
+  readonly status: 'BLOCKED';
+  readonly runId: typeof RUN_ID;
+  readonly userSendable: false;
+  readonly blockers: readonly [Blocker, ...Blocker[]];
+}
+
+interface PreflightOkResult {
+  readonly status: 'PREFLIGHT_OK';
+  readonly runId: typeof RUN_ID;
+  readonly userSendable: false;
+  readonly authority: {
+    readonly state: 'VALID_UNCONSUMED';
+    readonly repositoryCommit: string;
+    readonly action: 'PACKAGE_KITS';
+    readonly teams: readonly [
+      { readonly teamId: 'team-A'; readonly lessonCount: 30 },
+      { readonly teamId: 'team-B'; readonly lessonCount: 30 },
+    ];
+  };
+}
+
+type ProductionPreflightResult = PreflightBlockedResult | PreflightOkResult;
 
 interface ExecuteBlockedResult extends BlockedResult {
   readonly attemptedPhase: PipelinePhase;
@@ -465,6 +491,7 @@ function authorityPaths(root: string) {
     finalization: join(directory, 'finalization-receipt.json'),
     arming: join(directory, 'arming-receipt.json'),
     armingLedger: join(directory, 'arming-ledger.jsonl'),
+    superseded: join(directory, 'superseded'),
   } as const;
 }
 
@@ -720,15 +747,7 @@ function verifyArmingRecord(
   source: { readonly head: string; readonly blobClosureSha256: string },
   now = Date.now(),
 ): void {
-  const signature = createHmac('sha256', key)
-    .update(canonicalKitJson(unsignedArming(record)))
-    .digest('hex');
-  if (
-    !/^[0-9a-f]{64}$/.test(record.signature) ||
-    !timingSafeEqual(Buffer.from(signature), Buffer.from(record.signature))
-  ) {
-    throw new PipelineFailure('AUTHORITY_RECEIPT_SIGNATURE_INVALID');
-  }
+  verifyArmingAuthenticity(record, key);
   const issued = Date.parse(record.issuedAt);
   const expires = Date.parse(record.expiresAt);
   if (
@@ -786,6 +805,18 @@ function verifyArmingRecord(
   }
 }
 
+function verifyArmingAuthenticity(record: AuthorityArmingRecord, key: string): void {
+  const signature = createHmac('sha256', key)
+    .update(canonicalKitJson(unsignedArming(record)))
+    .digest('hex');
+  if (
+    !/^[0-9a-f]{64}$/.test(record.signature) ||
+    !timingSafeEqual(Buffer.from(signature), Buffer.from(record.signature))
+  ) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_SIGNATURE_INVALID');
+  }
+}
+
 function verifyArmingCandidates(record: AuthorityArmingRecord, candidates: CandidateSet): void {
   if (
     canonicalKitJson(record.pins) !== canonicalKitJson(candidates.pins) ||
@@ -838,6 +869,110 @@ async function consumeArmingReceipt(store: VerifiedAuthorityStore): Promise<void
   await syncDirectory(paths.directory);
 }
 
+async function armingLedgerReceiptIds(path: string): Promise<Set<string>> {
+  if (!(await pathExists(path))) return new Set();
+  const ids = new Set<string>();
+  for (const line of (await readFile(path, 'utf8')).trim().split('\n').filter(Boolean)) {
+    let record: unknown;
+    try {
+      record = JSON.parse(line);
+    } catch {
+      throw new PipelineFailure('PERSISTED_RECORD_INVALID');
+    }
+    const receiptId =
+      record !== null && typeof record === 'object' && !Array.isArray(record)
+        ? (record as Record<string, unknown>).receiptId
+        : undefined;
+    if (
+      record === null ||
+      typeof record !== 'object' ||
+      Array.isArray(record) ||
+      typeof receiptId !== 'string'
+    ) {
+      throw new PipelineFailure('PERSISTED_RECORD_INVALID');
+    }
+    ids.add(receiptId);
+  }
+  return ids;
+}
+
+async function preserveSupersededUnconsumedAuthority(root: OwnedRoot, key: string): Promise<void> {
+  const paths = authorityPaths(root.path);
+  const armingExists = await pathExists(paths.arming);
+  const finalizationExists = await pathExists(paths.finalization);
+  if (!armingExists && !finalizationExists) return;
+  if (!armingExists || !finalizationExists) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  }
+  let arming: AuthorityArmingRecord;
+  let finalization: FinalizationReceipt;
+  try {
+    arming = parseAuthorityArming(JSON.parse(await readFile(paths.arming, 'utf8')));
+    finalization = parseClosedReceipt(JSON.parse(await readFile(paths.finalization, 'utf8')));
+  } catch (error) {
+    if (error instanceof PipelineFailure) throw error;
+    throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  }
+  verifyArmingAuthenticity(arming, key);
+  verifyFinalizationAuthenticity(finalization, key, Date.now(), false);
+  if (
+    arming.externalRoot !== root.path ||
+    arming.finalizationReceiptId !== finalization.receiptId
+  ) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_MISMATCH');
+  }
+  if ((await armingLedgerReceiptIds(paths.armingLedger)).has(arming.receiptId)) {
+    throw new PipelineFailure('AUTHORIZATION_REPLAYED');
+  }
+  const target = join(paths.superseded, arming.receiptId);
+  const supersession = {
+    format: 'wp-03-authority-supersession/1',
+    reason: 'UNCONSUMED_AUTHORITY_REFRESH',
+    receiptId: arming.receiptId,
+    runId: RUN_ID,
+  };
+  if (await pathExists(target)) {
+    const targetInfo = await lstat(target);
+    if (targetInfo.isSymbolicLink() || !targetInfo.isDirectory()) {
+      throw new PipelineFailure('AUTHORITY_SUPERSESSION_INVALID');
+    }
+    for (const [name, value] of [
+      ['arming-receipt.json', arming],
+      ['finalization-receipt.json', finalization],
+      ['supersession.json', supersession],
+    ] as const) {
+      if (
+        (await readFile(join(target, name), 'utf8')) !==
+        Buffer.from(canonicalBytes(value)).toString('utf8')
+      ) {
+        throw new PipelineFailure('AUTHORITY_SUPERSESSION_INVALID');
+      }
+    }
+    return;
+  }
+  if (await pathExists(paths.superseded)) {
+    const supersededInfo = await lstat(paths.superseded);
+    if (supersededInfo.isSymbolicLink() || !supersededInfo.isDirectory()) {
+      throw new PipelineFailure('AUTHORITY_SUPERSESSION_INVALID');
+    }
+  }
+  await mkdir(paths.superseded, { recursive: true, mode: 0o700 });
+  await mkdir(target, { mode: 0o700 });
+  await writeCanonicalAtomic(join(target, 'arming-receipt.json'), arming, root);
+  await writeCanonicalAtomic(join(target, 'finalization-receipt.json'), finalization, root);
+  await writeCanonicalAtomic(join(target, 'supersession.json'), supersession, root);
+  for (const file of [
+    join(target, 'arming-receipt.json'),
+    join(target, 'finalization-receipt.json'),
+    join(target, 'supersession.json'),
+  ]) {
+    await chmod(file, 0o400);
+  }
+  await chmod(target, 0o500);
+  await syncDirectory(target);
+  await syncDirectory(paths.superseded);
+}
+
 async function loadVerifiedAuthorityStore(
   loaded: LoadedProductionInputs,
 ): Promise<VerifiedAuthorityStore> {
@@ -866,6 +1001,10 @@ async function loadVerifiedAuthorityStore(
   if (arming.finalizationReceiptId !== finalization.receiptId) {
     throw new PipelineFailure('AUTHORITY_RECEIPT_MISMATCH');
   }
+  const ledgerIds = await armingLedgerReceiptIds(paths.armingLedger);
+  if (ledgerIds.has(arming.receiptId)) {
+    throw new PipelineFailure('AUTHORIZATION_REPLAYED');
+  }
   const source = await authoritySourceIdentity();
   verifyArmingRecord(arming, key, loaded, source);
   const executableInfo = await lstat(SMOKE_EXECUTABLE_PATH);
@@ -876,20 +1015,6 @@ async function loadVerifiedAuthorityStore(
     sha256(await readFile(SMOKE_EXECUTABLE_PATH)) !== arming.smokeExecutableSha256
   ) {
     throw new PipelineFailure('AUTHORITY_EXECUTABLE_MISMATCH');
-  }
-  const ledger = (await pathExists(paths.armingLedger))
-    ? (await readFile(paths.armingLedger, 'utf8')).trim().split('\n').filter(Boolean)
-    : [];
-  if (
-    ledger.some((line) => {
-      try {
-        return (JSON.parse(line) as Record<string, unknown>).receiptId === arming.receiptId;
-      } catch {
-        throw new PipelineFailure('PERSISTED_RECORD_INVALID');
-      }
-    })
-  ) {
-    throw new PipelineFailure('AUTHORIZATION_REPLAYED');
   }
   return {
     root,
@@ -938,7 +1063,16 @@ async function collectAuthorityStoreBlockers(loaded: LoadedProductionInputs): Pr
     try {
       await loadVerifiedAuthorityStore(loaded);
     } catch (error) {
-      add(error instanceof PipelineFailure ? error.code : 'AUTHORITY_RECEIPT_INVALID');
+      const code = error instanceof PipelineFailure ? error.code : 'AUTHORITY_RECEIPT_INVALID';
+      add(
+        [
+          'AUTHORITY_SOURCE_DIRTY',
+          'AUTHORITY_COMMIT_MISMATCH',
+          'AUTHORITY_BLOB_CLOSURE_MISMATCH',
+        ].includes(code)
+          ? 'SOURCE_COMMIT_MISMATCH'
+          : code,
+      );
     }
   }
   return blockers;
@@ -1033,14 +1167,53 @@ async function collectProductionBlockers(): Promise<Blocker[]> {
   return uniqueBlockers(blockers);
 }
 
-export async function preflightProductionKits(): Promise<BlockedResult> {
+function blockedPreflightResult(blockers: readonly Blocker[]): PreflightBlockedResult {
+  if (blockers.length === 0) {
+    throw new PipelineFailure('INVALID_PREFLIGHT_RESULT');
+  }
   return {
     status: 'BLOCKED',
     runId: RUN_ID,
     userSendable: false,
-    artifacts: [],
-    blockers: await collectProductionBlockers(),
+    blockers: blockers as [Blocker, ...Blocker[]],
   };
+}
+
+export async function preflightProductionKits(): Promise<ProductionPreflightResult> {
+  const blockers = await collectProductionBlockers();
+  if (blockers.length > 0) return blockedPreflightResult(blockers);
+  try {
+    const loaded = await loadCanonicalProductionInputsForPreflight();
+    const store = await loadVerifiedAuthorityStore(loaded);
+    return {
+      status: 'PREFLIGHT_OK',
+      runId: RUN_ID,
+      userSendable: false,
+      authority: {
+        state: 'VALID_UNCONSUMED',
+        repositoryCommit: store.arming.repositoryCommit,
+        action: store.arming.action,
+        teams: [
+          { teamId: 'team-A', lessonCount: 30 },
+          { teamId: 'team-B', lessonCount: 30 },
+        ],
+      },
+    };
+  } catch (error) {
+    const code = error instanceof PipelineFailure ? error.code : 'AUTHORITY_RECEIPT_INVALID';
+    return blockedPreflightResult([
+      {
+        code: [
+          'AUTHORITY_SOURCE_DIRTY',
+          'AUTHORITY_COMMIT_MISMATCH',
+          'AUTHORITY_BLOB_CLOSURE_MISMATCH',
+        ].includes(code)
+          ? 'SOURCE_COMMIT_MISMATCH'
+          : code,
+        message: code,
+      },
+    ]);
+  }
 }
 
 export async function prepareProductionAuthority(): Promise<
@@ -1092,6 +1265,7 @@ export async function prepareProductionAuthority(): Promise<
       await chmod(paths.key, 0o600);
     }
     const key = await readAuthorityKey(paths.key);
+    await preserveSupersededUnconsumedAuthority(root, key);
     const finalization = signReceipt(candidates, key);
     const issuedAt = new Date();
     const receiptId = `wp03-arm-${randomBytes(16).toString('hex')}`;
@@ -2399,6 +2573,7 @@ function verifyFinalizationAuthenticity(
   receipt: FinalizationReceipt,
   key: string,
   now = Date.now(),
+  enforceFreshness = true,
 ): void {
   const parsed = Date.parse(receipt.validationTimestamp);
   const { signature, ...unsigned } = receipt;
@@ -2410,7 +2585,10 @@ function verifyFinalizationAuthenticity(
   if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) {
     throw new PipelineFailure('AUTHORIZATION_SIGNATURE_INVALID');
   }
-  if (!Number.isFinite(parsed) || parsed > now + 60_000 || now - parsed > 15 * 60_000) {
+  if (
+    enforceFreshness &&
+    (!Number.isFinite(parsed) || parsed > now + 60_000 || now - parsed > 15 * 60_000)
+  ) {
     throw new PipelineFailure('AUTHORIZATION_STALE');
   }
 }
@@ -3861,6 +4039,8 @@ async function runReviewScenario(
     | 'REAL_INPUT_ADMISSION'
     | 'AUTHORITY_STORE_GATES'
     | 'AUTHORITY_EXECUTION_REPLAY'
+    | 'PREFLIGHT_STATE_MACHINE'
+    | 'STALE_AUTHORITY_REFRESH'
     | 'REAL_SMOKE_EXECUTABLE'
     | 'KIT_CLI_SEPARATION'
     | 'STRICT_NESTED_RECORDS'
@@ -3957,6 +4137,92 @@ async function runReviewScenario(
           replayLedgerPersisted,
           replayExecution: replay.status,
           replayCode: replay.status === 'BLOCKED' ? replay.blockers[0]?.code : 'REPLAY_ACCEPTED',
+        },
+      };
+    } finally {
+      reviewAuthorityRoot = undefined;
+      reviewAuthorityHead = undefined;
+      reviewAuthorityDirty = false;
+      await cleanupOwnedRoot(container);
+    }
+  }
+  if (scenario === 'PREFLIGHT_STATE_MACHINE') {
+    const container = await createOwnedRoot();
+    reviewAuthorityRoot = join(container.path, 'fixed-authority-root');
+    reviewAuthorityHead = 'a'.repeat(40);
+    reviewAuthorityDirty = false;
+    try {
+      const prepared = await prepareProductionAuthority();
+      const ready = await preflightProductionKits();
+      const paths = authorityPaths(reviewAuthorityRoot);
+      await rename(paths.arming, `${paths.arming}.saved`);
+      const blocked = await preflightProductionKits();
+      await rename(`${paths.arming}.saved`, paths.arming);
+      let emptyBlockedRejected = false;
+      try {
+        blockedPreflightResult([]);
+      } catch (error) {
+        emptyBlockedRejected =
+          error instanceof PipelineFailure && error.code === 'INVALID_PREFLIGHT_RESULT';
+      }
+      return {
+        status: 'READY',
+        evidence: {
+          preparedStatus: prepared.status,
+          readyStatus: ready.status,
+          readyUserSendable: ready.userSendable,
+          readyBlockersAbsent: !('blockers' in ready),
+          authorityState: ready.status === 'PREFLIGHT_OK' ? ready.authority.state : 'MISSING',
+          blockedStatus: blocked.status,
+          blockedCodes:
+            blocked.status === 'BLOCKED' ? blocked.blockers.map((blocker) => blocker.code) : [],
+          emptyBlockedRejected,
+        },
+      };
+    } finally {
+      reviewAuthorityRoot = undefined;
+      reviewAuthorityHead = undefined;
+      reviewAuthorityDirty = false;
+      await cleanupOwnedRoot(container);
+    }
+  }
+  if (scenario === 'STALE_AUTHORITY_REFRESH') {
+    const container = await createOwnedRoot();
+    reviewAuthorityRoot = join(container.path, 'fixed-authority-root');
+    reviewAuthorityHead = 'a'.repeat(40);
+    reviewAuthorityDirty = false;
+    try {
+      const first = await prepareProductionAuthority();
+      const paths = authorityPaths(reviewAuthorityRoot);
+      const firstKeySha256 = sha256(await readFile(paths.key));
+      const firstArming = parseAuthorityArming(JSON.parse(await readFile(paths.arming, 'utf8')));
+      const consumedHistory = `${canonicalKitJson({
+        consumedAt: '2026-08-04T07:00:00.000Z',
+        receiptId: `wp03-arm-${'c'.repeat(32)}`,
+        repositoryCommit: 'c'.repeat(40),
+        signatureSha256: 'd'.repeat(64),
+      })}\n`;
+      await writeFile(paths.armingLedger, consumedHistory, { mode: 0o600 });
+      reviewAuthorityHead = 'b'.repeat(40);
+      const stale = await preflightProductionKits();
+      const refreshed = await prepareProductionAuthority();
+      const refreshedPreflight = await preflightProductionKits();
+      const refreshedArming = parseAuthorityArming(
+        JSON.parse(await readFile(paths.arming, 'utf8')),
+      );
+      return {
+        status: 'READY',
+        evidence: {
+          firstPrepare: first.status,
+          stalePreflight: stale.status === 'BLOCKED' ? stale.blockers[0]?.code : stale.status,
+          refreshedPrepare: refreshed.status,
+          refreshedPreflight: refreshedPreflight.status,
+          keyUnchanged: firstKeySha256 === sha256(await readFile(paths.key)),
+          staleReceiptSuperseded: await pathExists(
+            join(paths.superseded, firstArming.receiptId, 'supersession.json'),
+          ),
+          consumedLedgerPreserved: (await readFile(paths.armingLedger, 'utf8')) === consumedHistory,
+          refreshedCommit: refreshedArming.repositoryCommit,
         },
       };
     } finally {
@@ -4278,7 +4544,11 @@ async function runReviewScenario(
         });
       const preflight = await runCli(['lesson-factory', 'kits', 'preflight']);
       const prepare = await runCli(['lesson-factory', 'kits', 'prepare']);
-      const publish = await runCli(['lesson-factory', 'kits', 'publish']);
+      reviewAuthorityRoot = join(root.path, 'unarmed-authority-root');
+      reviewAuthorityHead = 'a'.repeat(40);
+      const publish = await executeProductionKits();
+      reviewAuthorityRoot = undefined;
+      reviewAuthorityHead = undefined;
       const arbitrary = await runCli([
         'lesson-factory',
         'kits',
@@ -4287,15 +4557,21 @@ async function runReviewScenario(
         '/tmp/other',
       ]);
       const packet = await runCli(['lesson-factory', 'packets', 'emit', '--bad']);
-      const combined = `${preflight.stdout}${preflight.stderr}${prepare.stdout}${prepare.stderr}${publish.stdout}${publish.stderr}`;
+      const combined = `${preflight.stdout}${preflight.stderr}${prepare.stdout}${prepare.stderr}`;
+      const preflightStatus = preflight.stdout.includes('"status":"PREFLIGHT_OK"')
+        ? 'PREFLIGHT_OK'
+        : preflight.stdout.includes('"status":"BLOCKED"')
+          ? 'BLOCKED'
+          : 'INVALID';
       return {
         status: 'READY',
         evidence: {
-          preflightDryRun: preflight.code === 0 && preflight.stdout.includes('"status":"BLOCKED"'),
+          preflightExitMatchesState:
+            (preflightStatus === 'PREFLIGHT_OK' && preflight.code === 0) ||
+            (preflightStatus === 'BLOCKED' && preflight.code === 1),
           prepareRequiresArm:
             prepare.code === 2 && prepare.stderr.includes('EXPLICIT_ARM_REQUIRED'),
-          publishRequiresArming:
-            publish.code === 1 && publish.stdout.includes('"status":"BLOCKED"'),
+          publishRequiresArming: publish.status === 'BLOCKED',
           arbitraryPathRejected:
             arbitrary.code === 2 && arbitrary.stderr.includes('UNSUPPORTED_ARGUMENTS'),
           packetDispatcherUnchanged:
