@@ -1,0 +1,1114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/owner-source-use-receipt.schema.json",
+  "x_contract_id": "lesson-factory.owner-source-use-receipt",
+  "x_contract_version": "2.0.0",
+  "title": "Owner source-use receipt",
+  "description": "One human decision, recorded once, about which uses of which sources are permitted while authoring deadline candidates. Version 1 decided by source class, which meant a packet had to work out which class a source belonged to before it could apply the decision — and every way of working that out from an identifier is a guess about a string. Version 2 decides per source id: thirteen rows, each naming the class, the uses, the derived fields, and the evidence the class rests on. A source id absent from this table is not decided, and an undecided source cannot be used. The receipt does not clear anybody else’s rights, does not license anything, and does not approve a lesson.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "receipt_id",
+    "decided_at",
+    "decision_role",
+    "decision_scope",
+    "source_decisions",
+    "undecided_source_disposition",
+    "source_classes",
+    "permitted_use_codes",
+    "prohibited_use_codes",
+    "derived_field_allowlist",
+    "statement_ref",
+    "human_statement_authoritative",
+    "nonclaims"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.owner-source-use-receipt"
+    },
+    "contract_version": {
+      "const": "2.0.0"
+    },
+    "receipt_id": {
+      "const": "lesson-factory-deadline-2026-08-03-source-use-01"
+    },
+    "decided_at": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "decision_role": {
+      "const": "PRODUCT_PEDAGOGY_OWNER"
+    },
+    "decision_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What the decision is about, and the six things it is not. Each refusal is a const rather than a boolean an instance chooses, because a receipt that could say otherwise is one somebody eventually uses to say otherwise.",
+      "required": [
+        "applies_to",
+        "grants_lesson_approval",
+        "grants_external_source_copying",
+        "grants_rights_clearance_for_third_party_material",
+        "is_legal_advice",
+        "is_third_party_license",
+        "establishes_efficacy",
+        "establishes_calibration"
+      ],
+      "properties": {
+        "applies_to": {
+          "const": "DEADLINE_CANDIDATE_INTERNAL_AUTHORING"
+        },
+        "grants_lesson_approval": {
+          "const": false
+        },
+        "grants_external_source_copying": {
+          "const": false
+        },
+        "grants_rights_clearance_for_third_party_material": {
+          "const": false
+        },
+        "is_legal_advice": {
+          "const": false
+        },
+        "is_third_party_license": {
+          "const": false
+        },
+        "establishes_efficacy": {
+          "const": false
+        },
+        "establishes_calibration": {
+          "const": false
+        }
+      }
+    },
+    "source_decisions": {
+      "type": "array",
+      "minItems": 13,
+      "maxItems": 13,
+      "uniqueItems": true,
+      "description": "One row per source id the curriculum cites. Exactly these thirteen, in this order: a shorter table leaves a cited source undecided, and a longer one decides about a source nothing cites.",
+      "prefixItems": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "AAMC-2020"
+            },
+            "source_class": {
+              "const": "PUBLIC_PRIMARY_RESEARCH"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 10,
+              "maxItems": 10,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "derived_summary",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "official_topic",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "printed_pdf_page"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_PRINTED_PAGE_IN_SUPPLIED_PUBLISHED_DOCUMENT"
+                }
+              }
+            },
+            "note_code": {
+              "const": "PUBLIC_PRIMARY_RIGHTS_SAFE_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "AAMC-2020-MCAT-CONTENT"
+            },
+            "source_class": {
+              "const": "PUBLIC_PRIMARY_RESEARCH"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "pdf_pages"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_PRINTED_PAGE_IN_SUPPLIED_PUBLISHED_DOCUMENT"
+                }
+              }
+            },
+            "note_code": {
+              "const": "PUBLIC_PRIMARY_RIGHTS_SAFE_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "CARS-SRC-AAMC-2020"
+            },
+            "source_class": {
+              "const": "PUBLIC_PRIMARY_RESEARCH"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "pdf_pages"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_PRINTED_PAGE_IN_SUPPLIED_PUBLISHED_DOCUMENT"
+                }
+              }
+            },
+            "note_code": {
+              "const": "PUBLIC_PRIMARY_RIGHTS_SAFE_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "BRAINLIFT-CA"
+            },
+            "source_class": {
+              "const": "REPOSITORY"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "markdown_lines"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_MARKDOWN_LINE_IN_REPOSITORY_NOTE"
+                }
+              }
+            },
+            "note_code": {
+              "const": "REPOSITORY_OWNED_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "BRAINLIFT-KCC"
+            },
+            "source_class": {
+              "const": "REPOSITORY"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "markdown_lines"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_MARKDOWN_LINE_IN_REPOSITORY_NOTE"
+                }
+              }
+            },
+            "note_code": {
+              "const": "REPOSITORY_OWNED_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "BRAINLIFT-KCC-CA"
+            },
+            "source_class": {
+              "const": "REPOSITORY"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "markdown_lines"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_MARKDOWN_LINE_IN_REPOSITORY_NOTE"
+                }
+              }
+            },
+            "note_code": {
+              "const": "REPOSITORY_OWNED_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "BRAINLIFT-KDT"
+            },
+            "source_class": {
+              "const": "REPOSITORY"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "markdown_lines"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_MARKDOWN_LINE_IN_REPOSITORY_NOTE"
+                }
+              }
+            },
+            "note_code": {
+              "const": "REPOSITORY_OWNED_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "BRAINLIFT-KGCG-CA"
+            },
+            "source_class": {
+              "const": "REPOSITORY"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "markdown_lines"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_MARKDOWN_LINE_IN_REPOSITORY_NOTE"
+                }
+              }
+            },
+            "note_code": {
+              "const": "REPOSITORY_OWNED_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "CARS-SRC-CA"
+            },
+            "source_class": {
+              "const": "REPOSITORY"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "markdown_lines"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_MARKDOWN_LINE_IN_REPOSITORY_NOTE"
+                }
+              }
+            },
+            "note_code": {
+              "const": "REPOSITORY_OWNED_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "CARS-SRC-KCC"
+            },
+            "source_class": {
+              "const": "REPOSITORY"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "markdown_lines"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_MARKDOWN_LINE_IN_REPOSITORY_NOTE"
+                }
+              }
+            },
+            "note_code": {
+              "const": "REPOSITORY_OWNED_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "CARS-SRC-KDT"
+            },
+            "source_class": {
+              "const": "REPOSITORY"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "markdown_lines"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_MARKDOWN_LINE_IN_REPOSITORY_NOTE"
+                }
+              }
+            },
+            "note_code": {
+              "const": "REPOSITORY_OWNED_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "CARS-SRC-KGCG"
+            },
+            "source_class": {
+              "const": "REPOSITORY"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "markdown_lines"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_MARKDOWN_LINE_IN_REPOSITORY_NOTE"
+                }
+              }
+            },
+            "note_code": {
+              "const": "REPOSITORY_OWNED_BOUNDED_DERIVED_USE"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_id",
+            "source_class",
+            "usable",
+            "permitted_use_codes",
+            "derived_field_allowlist",
+            "class_evidence",
+            "note_code"
+          ],
+          "properties": {
+            "source_id": {
+              "const": "V2-METHODOLOGY-FRZ-2026-07-22-01"
+            },
+            "source_class": {
+              "const": "REPOSITORY"
+            },
+            "usable": {
+              "const": true
+            },
+            "permitted_use_codes": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+              }
+            },
+            "derived_field_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 8,
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "content_category",
+                  "foundational_concept",
+                  "occurrence_kind",
+                  "official_path",
+                  "printed_pages",
+                  "scope_status",
+                  "section",
+                  "source_anchor_ids"
+                ]
+              }
+            },
+            "class_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "locator_kind",
+                "reason_code"
+              ],
+              "properties": {
+                "locator_kind": {
+                  "const": "markdown_lines"
+                },
+                "reason_code": {
+                  "const": "LOCATED_BY_MARKDOWN_LINE_IN_REPOSITORY_NOTE"
+                }
+              }
+            },
+            "note_code": {
+              "const": "REPOSITORY_OWNED_BOUNDED_DERIVED_USE"
+            }
+          }
+        }
+      ],
+      "items": false
+    },
+    "undecided_source_disposition": {
+      "const": "PROHIBITED",
+      "description": "What happens to a source this table does not name. It is prohibited — not pending, not defaulted to the safest class. A default class is how an unreviewed source becomes usable without anybody deciding it should be."
+    },
+    "source_classes": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "description": "The class-level statement, kept because the private comparison class must be visibly refused even though no cited source belongs to it. The binding decisions are the per-id rows above.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_class",
+          "usable",
+          "permitted_use_codes",
+          "note_code"
+        ],
+        "properties": {
+          "source_class": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/SourceClass"
+          },
+          "usable": {
+            "type": "boolean"
+          },
+          "permitted_use_codes": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+            }
+          },
+          "note_code": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]{7,63}$"
+          }
+        },
+        "allOf": [
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": [
+                "source_class"
+              ],
+              "properties": {
+                "source_class": {
+                  "const": "PRIVATE_COMPARISON"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "usable": {
+                  "const": false
+                },
+                "permitted_use_codes": {
+                  "type": "array",
+                  "maxItems": 0
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "permitted_use_codes": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+      },
+      "description": "Every use this receipt permits, drawn from a closed list that contains no way to reproduce source text."
+    },
+    "prohibited_use_codes": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/ProhibitedUseCode"
+      },
+      "description": "Every use it refuses, listed rather than left unmentioned, because an unmentioned use is one somebody argues was allowed."
+    },
+    "derived_field_allowlist": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "$ref": "shared-vocabulary.schema.json#/$defs/DerivedFieldCode"
+      },
+      "description": "The union of every field any source may carry. It bounds the per-id allowlists; it does not replace them."
+    },
+    "statement_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/SourceUseStatementRef"
+    },
+    "human_statement_authoritative": {
+      "const": false
+    },
+    "nonclaims": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Nonclaims"
+    }
+  }
+}

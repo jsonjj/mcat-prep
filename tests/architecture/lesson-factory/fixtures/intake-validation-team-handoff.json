@@ -6,7 +6,7 @@
   },
   "instance": {
     "contract_id": "lesson-factory.intake-validation",
-    "contract_version": "2.1.0",
+    "contract_version": "3.0.0",
     "document": {
       "kind": "team-handoff",
       "ref": "team-handoff:lane-01#sha256:cb9779a13f00e4f5d2cc45e48e2b5e08206e9c10b4256351a24c6a35a416462e",
@@ -40,11 +40,22 @@
         }
       ]
     },
+    "input_validation": {
+      "status": "PASS",
+      "checked_count": 0,
+      "unresolved_count": 0,
+      "inputs": []
+    },
+    "semantic_validation": {
+      "validator": "PACKET_SEMANTICS_V1",
+      "status": "NOT_APPLICABLE",
+      "error_count": 0
+    },
     "admission": "REJECTED",
     "refusal_code": "REFERENCES_UNRESOLVED",
     "admission_proof": {
-      "derivation": "INTAKE_DERIVATION_V2",
-      "derivation_sha256": "d506ed6937a3bca0d6d0259c06edb154f658d96b12d2f1895a5771b9716a65d5"
+      "derivation": "INTAKE_DERIVATION_V3",
+      "derivation_sha256": "65d2039bb5f920adaf0c997ac5f6be8738092e631eaa548b05b4ac7c86dddf51"
     },
     "validated_at": "2026-08-03T22:28:00Z"
   }

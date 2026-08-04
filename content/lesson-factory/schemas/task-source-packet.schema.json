@@ -2,61 +2,128 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/task-source-packet.schema.json",
   "x_contract_id": "lesson-factory.task-source-packet",
-  "x_contract_version": "3.0.0",
+  "x_contract_version": "5.0.0",
   "title": "Frozen task / source packet",
-  "description": "The immutable, revision-bound input a lesson author receives. It is a superset of the author-protocol input contract (key-docs/lesson-quality-author-protocol.md §4) and of key-docs/autonomous-lesson-authoring-context.md §5: every field those documents require appears here, so nothing is left for the author to invent. Route applicability is supplied to the author, never decided by the author.",
+  "description": "The immutable, revision-bound record of one authoring request: what the author is given, where every fact came from, and whether the request may proceed at all. Version 5 replaces version 4, which was never released. It closes what an independent review found when v4 met real lessons: eight inputs pinned where generation reads ten, rights decided by a class the packet had to infer from an identifier, one host field for five host shapes, a READY status reachable with unresolved facts underneath it, and no place to put the evidence of a refusal that was not also the author’s inbox.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "contract_id",
     "contract_version",
     "frozen",
+    "packet_id",
+    "packet_status",
+    "packet_surface",
+    "block_reasons",
     "request_id",
+    "assignment_id",
+    "team_id",
+    "lane_id",
     "requested_name",
     "lesson_id",
     "grouping_id",
+    "identity",
+    "source_sanitization",
     "curriculum_manifest_sha256",
-    "phase_placements",
-    "module_placements",
-    "pathway_placements",
-    "sequence_positions",
+    "input_hashes",
+    "placements",
     "ordered_kc_ids",
-    "kc_competency_and_scope",
-    "kc_non_goals",
-    "hard_prerequisites",
-    "helpful_context",
+    "ordered_kc_records",
+    "prerequisites",
     "attachments",
+    "holds",
     "source_anchors",
-    "open_holds",
-    "reasoning_operations",
+    "source_documents",
+    "research_evidence",
+    "adaptive_policy",
+    "dok_authoring",
+    "output_requirements",
     "route_universe",
     "route_proofs",
     "required_human_review_roles",
-    "source_records",
     "rubric_identity",
-    "anchor_set_version",
-    "output_directory",
-    "max_revision_cycles",
     "deadline_profile_ref",
+    "release_policy_ref",
+    "source_use_receipt_ref",
+    "allocation_proof_ref",
     "nonclaims",
     "route_scope_code",
     "applicable_routes",
-    "ratified_policy_version",
-    "release_policy_ref"
+    "ratified_policy_version"
   ],
   "properties": {
     "contract_id": {
       "const": "lesson-factory.task-source-packet"
     },
     "contract_version": {
-      "const": "3.0.0",
-      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+      "const": "5.0.0"
     },
     "frozen": {
       "const": true
     },
+    "packet_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/PacketId"
+    },
+    "packet_status": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/PacketStatus"
+    },
+    "packet_surface": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/PacketSurface"
+    },
+    "block_reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Why this packet may not be authored from. Empty exactly when the status is READY.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "path", "message"],
+        "properties": {
+          "code": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/PacketBlockCode"
+          },
+          "path": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/JsonPointer"
+          },
+          "message": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          }
+        }
+      }
+    },
+    "authorable_packet_ref": {
+      "oneOf": [
+        {
+          "$ref": "shared-vocabulary.schema.json#/$defs/PacketRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The authorable packet these bytes are, once it has been written and hashed. Null on every quarantine record: a blocked generation produces no authorable packet, so there is nothing for this to point at."
+    },
+    "packet_content_sha256": {
+      "oneOf": [
+        {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The digest of the authorable packet content. Null on every quarantine record, for the same reason."
+    },
     "request_id": {
       "$ref": "shared-vocabulary.schema.json#/$defs/RequestId"
+    },
+    "assignment_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/AssignmentId"
+    },
+    "team_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/TeamId"
+    },
+    "lane_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/LaneId"
     },
     "requested_name": {
       "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
@@ -67,201 +134,2241 @@
     "grouping_id": {
       "$ref": "shared-vocabulary.schema.json#/$defs/GroupingId"
     },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What this lesson is called and where the curriculum files it. An author who has to infer the title from the identifier is inventing one.",
+      "required": [
+        "canonical_title",
+        "short_alias",
+        "lesson_type",
+        "cluster_id",
+        "content_categories",
+        "foundational_concepts",
+        "source_sections"
+      ],
+      "properties": {
+        "canonical_title": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+        },
+        "short_alias": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/CanonicalLessonSlug"
+        },
+        "lesson_type": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/LessonTypeCode"
+        },
+        "cluster_id": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/GroupingId"
+        },
+        "content_categories": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/ContentCategoryCode"
+          },
+          "minItems": 1
+        },
+        "foundational_concepts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/FoundationalConceptCode"
+          }
+        },
+        "source_sections": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/SourceSectionCode"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "source_sanitization": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What the generator removed from the source material before the author saw it, counted over the occurrences this packet selected. Version 4 counted over the whole crosswalk, so every packet reported the same number and none reported anything about itself.",
+      "required": [
+        "scope",
+        "considered_occurrence_count",
+        "trusted_canonical_input",
+        "sanitized_raw_field_count",
+        "excluded_held_claim_count",
+        "codes"
+      ],
+      "properties": {
+        "scope": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/SanitizationScope"
+        },
+        "considered_occurrence_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "trusted_canonical_input": {
+          "type": "boolean"
+        },
+        "sanitized_raw_field_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "excluded_held_claim_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/SanitizationCode"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "type": "object",
+          "description": "A count without its code is a removal nobody can name; a code without its count is a claim with no quantity behind it. Both directions are required, so neither half can stand alone.",
+          "if": {
+            "type": "object",
+            "required": ["sanitized_raw_field_count"],
+            "properties": {
+              "sanitized_raw_field_count": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": ["codes", "trusted_canonical_input"],
+            "properties": {
+              "codes": {
+                "type": "array",
+                "contains": {
+                  "const": "TRUSTED_CANONICAL_RAW_FIELDS_SANITIZED"
+                }
+              },
+              "trusted_canonical_input": {
+                "const": true
+              }
+            }
+          },
+          "else": {
+            "type": "object",
+            "properties": {
+              "codes": {
+                "type": "array",
+                "not": {
+                  "contains": {
+                    "const": "TRUSTED_CANONICAL_RAW_FIELDS_SANITIZED"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "if": {
+            "type": "object",
+            "required": ["excluded_held_claim_count"],
+            "properties": {
+              "excluded_held_claim_count": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "required": ["codes"],
+            "properties": {
+              "codes": {
+                "type": "array",
+                "contains": {
+                  "const": "HELD_SOURCE_CLAIMS_EXCLUDED"
+                }
+              }
+            }
+          },
+          "else": {
+            "type": "object",
+            "properties": {
+              "codes": {
+                "type": "array",
+                "not": {
+                  "contains": {
+                    "const": "HELD_SOURCE_CLAIMS_EXCLUDED"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "curriculum_manifest_sha256": {
       "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
     },
-    "phase_placements": {
+    "input_hashes": {
       "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "uniqueItems": true,
+      "description": "The ten authoritative inputs, each pinned by the digest of its bytes and by the digest of its canonical content. Ten rows, and one `contains` rule per key below, so the set is exact: `uniqueItems` alone is satisfied by ten rows that name the rubric ten times with different digests.",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["phase_id", "source_relation_ids"],
+        "required": ["input", "path", "file_sha256", "content_sha256"],
         "properties": {
-          "phase_id": {
+          "input": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/PacketInputKey"
+          },
+          "path": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/PacketInputPath"
+          },
+          "file_sha256": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+          },
+          "content_sha256": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+          }
+        },
+        "allOf": [
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["input"],
+              "properties": {
+                "input": {
+                  "const": "assignmentProof"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "content/lesson-factory/assignments/partition-proof.json"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["input"],
+              "properties": {
+                "input": {
+                  "const": "ownerSourceUseReceipt"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "content/lesson-factory/deadline-profile/owner-source-use-receipt.json"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["input"],
+              "properties": {
+                "input": {
+                  "const": "curriculumManifest"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "curriculum/v3/v3-lesson-authoring-manifest.json"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["input"],
+              "properties": {
+                "input": {
+                  "const": "sourceCrosswalk"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "../research/mcat-curriculum-architecture-v3/v3-source-crosswalk.json"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["input"],
+              "properties": {
+                "input": {
+                  "const": "researchRegistry"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "../research/mcat-curriculum-architecture-v3/skill-integrated-knowledge-graph/work/research-evidence-registry.json"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["input"],
+              "properties": {
+                "input": {
+                  "const": "taskPacketSchema"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "content/lesson-factory/schemas/task-source-packet.schema.json"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["input"],
+              "properties": {
+                "input": {
+                  "const": "sharedVocabularySchema"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "content/lesson-factory/schemas/shared-vocabulary.schema.json"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["input"],
+              "properties": {
+                "input": {
+                  "const": "deadlineProfile"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "content/lesson-factory/deadline-profile/deadline-profile.json"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["input"],
+              "properties": {
+                "input": {
+                  "const": "releasePolicy"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "content/lesson-factory/deadline-profile/release-policy.json"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["input"],
+              "properties": {
+                "input": {
+                  "const": "rubric"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "key-docs/lesson-quality-rubric.md"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "allOf": [
+        {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["input"],
+            "properties": {
+              "input": {
+                "const": "assignmentProof"
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["input"],
+            "properties": {
+              "input": {
+                "const": "ownerSourceUseReceipt"
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["input"],
+            "properties": {
+              "input": {
+                "const": "curriculumManifest"
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["input"],
+            "properties": {
+              "input": {
+                "const": "sourceCrosswalk"
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["input"],
+            "properties": {
+              "input": {
+                "const": "researchRegistry"
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["input"],
+            "properties": {
+              "input": {
+                "const": "taskPacketSchema"
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["input"],
+            "properties": {
+              "input": {
+                "const": "sharedVocabularySchema"
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["input"],
+            "properties": {
+              "input": {
+                "const": "deadlineProfile"
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["input"],
+            "properties": {
+              "input": {
+                "const": "releasePolicy"
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["input"],
+            "properties": {
+              "input": {
+                "const": "rubric"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "placements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase_ids",
+        "module_ids",
+        "pathway_positions",
+        "first_delivery_relation_id",
+        "revisit_relation_ids"
+      ],
+      "properties": {
+        "phase_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
             "$ref": "shared-vocabulary.schema.json#/$defs/PhaseId"
-          },
-          "source_relation_ids": {
-            "$ref": "#/$defs/RelationIds"
           }
-        }
-      }
-    },
-    "module_placements": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["module_id", "source_relation_ids"],
-        "properties": {
-          "module_id": {
+        },
+        "module_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
             "$ref": "shared-vocabulary.schema.json#/$defs/ModuleId"
-          },
-          "source_relation_ids": {
-            "$ref": "#/$defs/RelationIds"
           }
-        }
-      }
-    },
-    "pathway_placements": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["pathway_id", "source_relation_ids"],
-        "properties": {
-          "pathway_id": {
-            "$ref": "shared-vocabulary.schema.json#/$defs/PathwayId"
-          },
-          "source_relation_ids": {
-            "$ref": "#/$defs/RelationIds"
+        },
+        "pathway_positions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["pathway_id", "position", "relation_ids"],
+            "properties": {
+              "pathway_id": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/PathwayId"
+              },
+              "position": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "relation_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/RelationId"
+                }
+              }
+            }
           }
-        }
-      }
-    },
-    "sequence_positions": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["scope_id", "position", "source_relation_ids"],
-        "properties": {
-          "scope_id": {
-            "$ref": "shared-vocabulary.schema.json#/$defs/ScopeId"
-          },
-          "position": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "source_relation_ids": {
-            "$ref": "#/$defs/RelationIds"
+        },
+        "first_delivery_relation_id": {
+          "oneOf": [
+            {
+              "$ref": "shared-vocabulary.schema.json#/$defs/RelationId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revisit_relation_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/RelationId"
           }
         }
       }
     },
     "ordered_kc_ids": {
       "type": "array",
-      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
-      }
+      },
+      "minItems": 1
     },
-    "kc_competency_and_scope": {
+    "ordered_kc_records": {
       "type": "array",
       "minItems": 1,
+      "uniqueItems": true,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["kc_id", "competency", "scope"],
+        "required": [
+          "kc_id",
+          "label",
+          "competency",
+          "scope_in",
+          "scope_out",
+          "representations",
+          "reasoning_operation",
+          "source_set_status",
+          "source_mappings",
+          "source_occurrences"
+        ],
         "properties": {
           "kc_id": {
             "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+          },
+          "label": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
           },
           "competency": {
             "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
           },
-          "scope": {
-            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
-          }
-        }
-      }
-    },
-    "kc_non_goals": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["kc_id", "non_goals"],
-        "properties": {
-          "kc_id": {
-            "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
-          },
-          "non_goals": {
+          "scope_in": {
             "type": "array",
             "items": {
               "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+            }
+          },
+          "scope_out": {
+            "type": "array",
+            "items": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+            }
+          },
+          "representations": {
+            "type": "array",
+            "items": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+            }
+          },
+          "reasoning_operation": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          },
+          "source_set_status": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/KcSourceSetStatus"
+          },
+          "source_mappings": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["mapping_id", "relation", "source_occurrence_ids"],
+              "properties": {
+                "mapping_id": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/SourceMappingId"
+                },
+                "relation": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/SourceMappingRelation"
+                },
+                "source_occurrence_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "shared-vocabulary.schema.json#/$defs/SourceOccurrenceId"
+                  },
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          "source_occurrences": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "One place in one source document, projected to the fields the owner receipt allows for that exact source. There is no field here for source text, which is what makes the prohibition a property of the contract rather than an instruction to the author.",
+              "required": [
+                "source_occurrence_id",
+                "occurrence_kind",
+                "source_id",
+                "source_class",
+                "official_path",
+                "official_topic",
+                "printed_pages",
+                "source_anchor_ids",
+                "derived_summary",
+                "scope_status",
+                "authority_status",
+                "rights_status",
+                "derived_fields_only",
+                "permitted_use",
+                "permission_receipt_refs"
+              ],
+              "properties": {
+                "source_occurrence_id": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/SourceOccurrenceId"
+                },
+                "occurrence_kind": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/SourceOccurrenceKind"
+                },
+                "source_id": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/SourceDocumentId"
+                },
+                "source_class": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/SourceClass"
+                },
+                "official_path": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+                  }
+                },
+                "official_topic": {
+                  "oneOf": [
+                    {
+                      "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "printed_pages": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "source_anchor_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "shared-vocabulary.schema.json#/$defs/SourceAnchorId"
+                  }
+                },
+                "derived_summary": {
+                  "oneOf": [
+                    {
+                      "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "scope_status": {
+                  "oneOf": [
+                    {
+                      "$ref": "shared-vocabulary.schema.json#/$defs/SourceScopeStatus"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "authority_status": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["source_id", "present_day_authority_refreshed"],
+                  "properties": {
+                    "source_id": {
+                      "$ref": "shared-vocabulary.schema.json#/$defs/SourceDocumentId"
+                    },
+                    "present_day_authority_refreshed": {
+                      "const": false
+                    }
+                  }
+                },
+                "rights_status": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/RightsStatus"
+                },
+                "derived_fields_only": {
+                  "type": "boolean"
+                },
+                "permitted_use": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+                  }
+                },
+                "permission_receipt_refs": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "shared-vocabulary.schema.json#/$defs/PermissionReceiptRef"
+                  }
+                },
+                "source_use_receipt_ref": {
+                  "oneOf": [
+                    {
+                      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenSourceUseReceiptRef"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "allOf": [
+                {
+                  "type": "object",
+                  "description": "A teachable topic has a scope status; an anchor is a place and has none.",
+                  "if": {
+                    "type": "object",
+                    "required": ["occurrence_kind"],
+                    "properties": {
+                      "occurrence_kind": {
+                        "const": "AAMC_TEACHABLE_TOPIC"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "properties": {
+                      "scope_status": {
+                        "$ref": "shared-vocabulary.schema.json#/$defs/SourceScopeStatus"
+                      }
+                    }
+                  },
+                  "else": {
+                    "type": "object",
+                    "properties": {
+                      "scope_status": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "PERMITTED means: under this exact receipt, for uses it grants, over derived fields only.",
+                  "if": {
+                    "type": "object",
+                    "required": ["rights_status"],
+                    "properties": {
+                      "rights_status": {
+                        "const": "PERMITTED"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_use_receipt_ref"],
+                    "properties": {
+                      "source_use_receipt_ref": {
+                        "$ref": "shared-vocabulary.schema.json#/$defs/FrozenSourceUseReceiptRef"
+                      },
+                      "derived_fields_only": {
+                        "const": true
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptPermittedUseCode"
+                        }
+                      }
+                    }
+                  },
+                  "else": {
+                    "type": "object",
+                    "properties": {
+                      "permitted_use": {
+                        "type": "array",
+                        "maxItems": 0
+                      },
+                      "permission_receipt_refs": {
+                        "type": "array",
+                        "maxItems": 0
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The private comparison material is never permitted and never copied.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "PRIVATE_COMPARISON"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "properties": {
+                      "rights_status": {
+                        "enum": ["PENDING", "RESTRICTED", "PROHIBITED"]
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "maxItems": 0
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for AAMC-2020, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "AAMC-2020"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "PUBLIC_PRIMARY_RESEARCH"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for AAMC-2020-MCAT-CONTENT, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "AAMC-2020-MCAT-CONTENT"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "PUBLIC_PRIMARY_RESEARCH"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for CARS-SRC-AAMC-2020, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "CARS-SRC-AAMC-2020"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "PUBLIC_PRIMARY_RESEARCH"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for BRAINLIFT-CA, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "BRAINLIFT-CA"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "REPOSITORY"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for BRAINLIFT-KCC, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "BRAINLIFT-KCC"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "REPOSITORY"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for BRAINLIFT-KCC-CA, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "BRAINLIFT-KCC-CA"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "REPOSITORY"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for BRAINLIFT-KDT, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "BRAINLIFT-KDT"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "REPOSITORY"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for BRAINLIFT-KGCG-CA, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "BRAINLIFT-KGCG-CA"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "REPOSITORY"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for CARS-SRC-CA, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "CARS-SRC-CA"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "REPOSITORY"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for CARS-SRC-KCC, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "CARS-SRC-KCC"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "REPOSITORY"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for CARS-SRC-KDT, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "CARS-SRC-KDT"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "REPOSITORY"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for CARS-SRC-KGCG, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "CARS-SRC-KGCG"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "REPOSITORY"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "The receipt's decision for V2-METHODOLOGY-FRZ-2026-07-22-01, carried in the contract so a validator applies it without reading a second file.",
+                  "if": {
+                    "type": "object",
+                    "required": ["source_id"],
+                    "properties": {
+                      "source_id": {
+                        "const": "V2-METHODOLOGY-FRZ-2026-07-22-01"
+                      }
+                    }
+                  },
+                  "then": {
+                    "type": "object",
+                    "required": ["source_class"],
+                    "properties": {
+                      "source_class": {
+                        "const": "REPOSITORY"
+                      },
+                      "permitted_use": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "DERIVED_SCOPE_METADATA",
+                            "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+                            "INTERNAL_HUMAN_REVIEW"
+                          ]
+                        }
+                      },
+                      "official_topic": {
+                        "type": "null"
+                      },
+                      "derived_summary": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                }
+              ]
             }
           }
         }
       }
     },
-    "hard_prerequisites": {
-      "type": "array",
-      "description": "A declared prerequisite is an evidence-bearing claim: it resolves to a named curriculum relation taught before this lesson's sequence position (rubric §4).",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["relation_id", "kc_id", "taught_at_sequence_position"],
-        "properties": {
-          "relation_id": {
-            "$ref": "shared-vocabulary.schema.json#/$defs/RelationId"
-          },
-          "kc_id": {
-            "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
-          },
-          "taught_at_sequence_position": {
-            "type": "integer",
-            "minimum": 1
+    "prerequisites": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hard", "helpful"],
+      "properties": {
+        "hard": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "lesson_id",
+              "relation_ids",
+              "source_kc_ids",
+              "taught_at_sequence_position"
+            ],
+            "properties": {
+              "lesson_id": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/LessonId"
+              },
+              "relation_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/RelationId"
+                }
+              },
+              "source_kc_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+                }
+              },
+              "taught_at_sequence_position": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        },
+        "helpful": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["lesson_id", "relation_ids"],
+            "properties": {
+              "lesson_id": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/LessonId"
+              },
+              "relation_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/RelationId"
+                }
+              }
+            }
           }
         }
-      }
-    },
-    "helpful_context": {
-      "type": "array",
-      "items": {
-        "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
       }
     },
     "attachments": {
       "type": "array",
+      "uniqueItems": true,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["attachment_id", "host_kc_id"],
+        "required": [
+          "attachment_id",
+          "kind",
+          "owner_lesson_id",
+          "host_scope",
+          "declared_host_core_ids",
+          "host_core_membership_status",
+          "credits_kc_evidence",
+          "relation_ids",
+          "relation_class",
+          "relation_direction",
+          "required_delivery"
+        ],
         "properties": {
           "attachment_id": {
             "$ref": "shared-vocabulary.schema.json#/$defs/AttachmentId"
           },
-          "host_kc_id": {
-            "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+          "kind": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/AttachmentKind"
+          },
+          "owner_lesson_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/LessonId"
+          },
+          "host_scope": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind"],
+                "properties": {
+                  "kind": {
+                    "const": "LESSON"
+                  }
+                },
+                "description": "The attachment hangs off the lesson as a whole: a support artifact, or an extension whose declared cores could not be resolved to this lesson."
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "kc_id"],
+                "properties": {
+                  "kind": {
+                    "const": "SINGLE_KC"
+                  },
+                  "kc_id": {
+                    "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "kc_ids"],
+                "properties": {
+                  "kind": {
+                    "const": "MULTI_KC"
+                  },
+                  "kc_ids": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+                    },
+                    "minItems": 2
+                  }
+                },
+                "description": "Two or more knowledge components of this lesson. A single-element multi is a single, and an empty one is a host nobody named."
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "capstone_ids"],
+                "properties": {
+                  "kind": {
+                    "const": "CAPSTONE"
+                  },
+                  "capstone_ids": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "$ref": "shared-vocabulary.schema.json#/$defs/CapstoneId"
+                    },
+                    "minItems": 1
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "primary_lesson_id"],
+                "properties": {
+                  "kind": {
+                    "const": "SECONDARY_APPLICATION"
+                  },
+                  "primary_lesson_id": {
+                    "$ref": "shared-vocabulary.schema.json#/$defs/LessonId"
+                  }
+                },
+                "description": "This lesson displays an attachment another lesson owns. The owner is named, because a secondary application that does not say what it is secondary to is just an attachment with a missing host."
+              }
+            ],
+            "description": "What this attachment hangs off, as one of five closed shapes. Version 4 had a singular `host_kc_id`; the curriculum has capstones spanning many components, extensions hosted by capstones, supports attached to a lesson, and attachments displayed in lessons that do not own them. A single field could hold exactly one of those, and the generator had to pick a knowledge component to fill it."
+          },
+          "declared_host_core_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+            },
+            "description": "Every host core the curriculum declares for this attachment, preserved verbatim whether or not it resolved. The resolved subset is in `host_scope`; this is the full set, so nothing is lost by resolving."
+          },
+          "host_core_membership_status": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/HostCoreMembershipStatus"
+          },
+          "credits_kc_evidence": {
+            "type": "boolean",
+            "description": "Whether evidence collected against this attachment may be attributed to a knowledge component. False whenever the host is the lesson, because a lesson-level attachment has no KC to credit."
+          },
+          "relation_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/RelationId"
+            },
+            "minItems": 1
+          },
+          "relation_class": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/AttachmentRelationClass"
+          },
+          "relation_direction": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/RelationDirection"
+          },
+          "required_delivery": {
+            "type": "boolean"
+          },
+          "lineage_nonclaim": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          },
+          "correction_required_after_deadline": {
+            "type": "boolean"
           }
-        }
+        },
+        "allOf": [
+          {
+            "type": "object",
+            "description": "The id says which family it is, so the kind cannot disagree with it.",
+            "if": {
+              "type": "object",
+              "required": ["attachment_id"],
+              "properties": {
+                "attachment_id": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/CapstoneId"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "CAPSTONE"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["attachment_id"],
+              "properties": {
+                "attachment_id": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/ExtensionId"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "EXTENSION"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["attachment_id"],
+              "properties": {
+                "attachment_id": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/SupportArtifactId"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "SUPPORT"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "A mismatched lineage is carried at lesson level, credits nothing, and says so in words as well as in codes. This is the deadline safe interim: the canonical ids survive, and no KC evidence, exit credit or mastery attribution may derive from them.",
+            "if": {
+              "type": "object",
+              "required": ["host_core_membership_status"],
+              "properties": {
+                "host_core_membership_status": {
+                  "const": "MISMATCH_PROVISIONAL"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "required": ["lineage_nonclaim", "correction_required_after_deadline"],
+              "properties": {
+                "host_scope": {
+                  "type": "object",
+                  "required": ["kind"],
+                  "properties": {
+                    "kind": {
+                      "const": "LESSON"
+                    }
+                  }
+                },
+                "credits_kc_evidence": {
+                  "const": false
+                },
+                "declared_host_core_ids": {
+                  "type": "array",
+                  "minItems": 1
+                },
+                "lineage_nonclaim": {
+                  "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+                },
+                "correction_required_after_deadline": {
+                  "const": true
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "A lesson-level or secondary host has no knowledge component to credit.",
+            "if": {
+              "type": "object",
+              "required": ["host_scope"],
+              "properties": {
+                "host_scope": {
+                  "type": "object",
+                  "required": ["kind"],
+                  "properties": {
+                    "kind": {
+                      "enum": ["LESSON", "SECONDARY_APPLICATION"]
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "credits_kc_evidence": {
+                  "const": false
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "holds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "hold_id",
+          "type",
+          "issue",
+          "classification",
+          "safe_interim_code",
+          "safe_interim_behavior",
+          "nonclaim",
+          "blocks_authoring"
+        ],
+        "properties": {
+          "hold_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/HoldId"
+          },
+          "type": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/HoldTypeCode"
+          },
+          "issue": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          },
+          "classification": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/HoldClassification"
+          },
+          "safe_interim_code": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/SafeInterimCode"
+          },
+          "safe_interim_behavior": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          },
+          "nonclaim": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          },
+          "blocks_authoring": {
+            "type": "boolean"
+          }
+        },
+        "allOf": [
+          {
+            "type": "object",
+            "description": "Only a blocking hold blocks; the classification and the flag agree.",
+            "if": {
+              "type": "object",
+              "required": ["classification"],
+              "properties": {
+                "classification": {
+                  "const": "BLOCKING_UNRESOLVED"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "blocks_authoring": {
+                  "const": true
+                }
+              }
+            },
+            "else": {
+              "type": "object",
+              "properties": {
+                "blocks_authoring": {
+                  "const": false
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "source_anchors": {
       "type": "array",
+      "uniqueItems": true,
       "items": {
-        "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+        "$ref": "shared-vocabulary.schema.json#/$defs/SourceAnchorId"
       }
     },
-    "open_holds": {
+    "source_documents": {
       "type": "array",
-      "items": {
-        "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
-      }
-    },
-    "reasoning_operations": {
-      "type": "array",
-      "minItems": 1,
+      "uniqueItems": true,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["kc_id", "operation"],
+        "required": [
+          "source_id",
+          "source_class",
+          "source_locator",
+          "present_day_authority_refreshed"
+        ],
         "properties": {
-          "kc_id": {
-            "$ref": "shared-vocabulary.schema.json#/$defs/KcId"
+          "source_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/SourceDocumentId"
           },
-          "operation": {
-            "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+          "source_class": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/SourceClass"
+          },
+          "source_locator": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/PacketInputPath"
+          },
+          "present_day_authority_refreshed": {
+            "const": false
+          }
+        },
+        "allOf": [
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "AAMC-2020"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "PUBLIC_PRIMARY_RESEARCH"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "AAMC-2020-MCAT-CONTENT"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "PUBLIC_PRIMARY_RESEARCH"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "CARS-SRC-AAMC-2020"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "PUBLIC_PRIMARY_RESEARCH"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "BRAINLIFT-CA"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "REPOSITORY"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "BRAINLIFT-KCC"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "REPOSITORY"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "BRAINLIFT-KCC-CA"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "REPOSITORY"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "BRAINLIFT-KDT"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "REPOSITORY"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "BRAINLIFT-KGCG-CA"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "REPOSITORY"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "CARS-SRC-CA"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "REPOSITORY"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "CARS-SRC-KCC"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "REPOSITORY"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "CARS-SRC-KDT"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "REPOSITORY"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "CARS-SRC-KGCG"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "REPOSITORY"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "if": {
+              "type": "object",
+              "required": ["source_id"],
+              "properties": {
+                "source_id": {
+                  "const": "V2-METHODOLOGY-FRZ-2026-07-22-01"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "properties": {
+                "source_class": {
+                  "const": "REPOSITORY"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "research_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registry_id", "authority", "used_as_domain_fact_authority", "nonclaim"],
+      "properties": {
+        "registry_id": {
+          "const": "v3-research-evidence-registry"
+        },
+        "authority": {
+          "const": "DESIGN_ONLY"
+        },
+        "used_as_domain_fact_authority": {
+          "const": false
+        },
+        "nonclaim": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "adaptive_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bypass_authorized",
+        "mastery_threshold",
+        "fluency_threshold",
+        "uncertainty_threshold"
+      ],
+      "properties": {
+        "bypass_authorized": {
+          "const": false
+        },
+        "mastery_threshold": {
+          "type": "null"
+        },
+        "fluency_threshold": {
+          "type": "null"
+        },
+        "uncertainty_threshold": {
+          "type": "null"
+        }
+      }
+    },
+    "dok_authoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["item_level_dok_labels_authorized", "requirement"],
+      "properties": {
+        "item_level_dok_labels_authorized": {
+          "const": false
+        },
+        "requirement": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "output_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Where the work goes and what it is written against. Every value here is a pinned authority or is derived from the lesson id; none of them is a caller’s choice.",
+      "required": [
+        "authorable_packet_path",
+        "output_directory",
+        "canonical_template_path",
+        "anchor_set_version",
+        "max_revision_cycles",
+        "required_handoff_files"
+      ],
+      "properties": {
+        "authorable_packet_path": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/AuthorablePacketPath"
+        },
+        "output_directory": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^\\.tmp/lesson-factory/lane-[0-9]{2}/v3-les-[0-9]{6}$"
+            },
+            {
+              "$ref": "shared-vocabulary.schema.json#/$defs/QuarantinePath"
+            }
+          ]
+        },
+        "canonical_template_path": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/CanonicalTemplatePath"
+        },
+        "anchor_set_version": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/FrozenAnchorSetVersion"
+        },
+        "max_revision_cycles": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2
+        },
+        "required_handoff_files": {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/RequiredHandoffFile"
           }
         }
       }
     },
     "route_universe": {
       "type": "array",
+      "uniqueItems": true,
       "minItems": 4,
       "maxItems": 4,
-      "uniqueItems": true,
       "items": {
         "$ref": "shared-vocabulary.schema.json#/$defs/Route"
       }
@@ -270,33 +2377,22 @@
       "$ref": "shared-vocabulary.schema.json#/$defs/RouteProofs"
     },
     "required_human_review_roles": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "shared-vocabulary.schema.json#/$defs/CanonicalRole"
-      }
-    },
-    "source_records": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/SourceRecord"
-      }
+      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenReviewRoles"
     },
     "rubric_identity": {
       "$ref": "shared-vocabulary.schema.json#/$defs/RubricIdentity"
     },
-    "anchor_set_version": {
-      "$ref": "shared-vocabulary.schema.json#/$defs/AnchorSetVersion"
-    },
-    "output_directory": {
-      "$ref": "shared-vocabulary.schema.json#/$defs/OutputDirectory"
-    },
-    "max_revision_cycles": {
-      "$ref": "shared-vocabulary.schema.json#/$defs/MaxRevisionCycles"
-    },
     "deadline_profile_ref": {
       "$ref": "shared-vocabulary.schema.json#/$defs/ProfileRef"
+    },
+    "release_policy_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenReleasePolicyRef"
+    },
+    "source_use_receipt_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenSourceUseReceiptRef"
+    },
+    "allocation_proof_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/AllocationProofRef"
     },
     "nonclaims": {
       "$ref": "shared-vocabulary.schema.json#/$defs/Nonclaims"
@@ -310,97 +2406,193 @@
     "ratified_policy_version": {
       "$ref": "shared-vocabulary.schema.json#/$defs/SemanticVersion"
     },
-    "release_policy_ref": {
-      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenReleasePolicyRef"
-    }
-  },
-  "$defs": {
-    "RelationIds": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "shared-vocabulary.schema.json#/$defs/RelationId"
-      }
-    },
-    "SourceRecord": {
+    "provisional_host_lineage": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Rights are cleared before extraction, storage, or calibration use. Anything other than PERMITTED carries no permitted use and no receipts (rubric §9.2).",
-      "required": [
-        "source_id",
-        "source_locator",
-        "permitted_use",
-        "rights_status",
-        "permission_receipt_refs"
-      ],
+      "required": ["present", "nonclaim", "correction_required_after_deadline"],
+      "description": "Present only when an attachment in this packet carries declared host cores that are not knowledge components of this lesson. The attachment is still delivered, at lesson level, crediting nothing.",
       "properties": {
-        "source_id": {
-          "$ref": "shared-vocabulary.schema.json#/$defs/SourceId"
+        "present": {
+          "const": true
         },
-        "source_locator": {
+        "nonclaim": {
           "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
         },
-        "permitted_use": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {
-            "$ref": "shared-vocabulary.schema.json#/$defs/PermittedUse"
-          }
-        },
-        "rights_status": {
-          "$ref": "shared-vocabulary.schema.json#/$defs/RightsStatus"
-        },
-        "permission_receipt_refs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {
-            "$ref": "shared-vocabulary.schema.json#/$defs/PermissionReceiptRef"
-          }
+        "correction_required_after_deadline": {
+          "const": true
         }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "rights_status": {
-                "const": "PERMITTED"
-              }
-            },
-            "required": ["rights_status"]
-          },
-          "then": {
-            "properties": {
-              "permitted_use": {
-                "type": "array",
-                "minItems": 1
-              },
-              "permission_receipt_refs": {
-                "type": "array",
-                "minItems": 1
-              }
-            }
-          },
-          "else": {
-            "properties": {
-              "permitted_use": {
-                "type": "array",
-                "maxItems": 0
-              },
-              "permission_receipt_refs": {
-                "type": "array",
-                "maxItems": 0
-              }
-            }
-          }
-        }
-      ]
+      }
     }
   },
   "allOf": [
     {
       "$ref": "shared-vocabulary.schema.json#/$defs/RouteScopeBinding"
+    },
+    {
+      "type": "object",
+      "description": "READY and AUTHORABLE are the same fact stated twice, and the contract requires them to agree. A READY record on a quarantine surface is a packet somebody can author from that nobody meant to release; a BLOCKED record on an authorable surface is the failure this reconciliation exists to prevent.",
+      "if": {
+        "type": "object",
+        "required": ["packet_status"],
+        "properties": {
+          "packet_status": {
+            "const": "READY"
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "required": ["packet_surface"],
+        "properties": {
+          "packet_surface": {
+            "const": "AUTHORABLE"
+          },
+          "block_reasons": {
+            "type": "array",
+            "maxItems": 0
+          },
+          "output_requirements": {
+            "type": "object",
+            "properties": {
+              "output_directory": {
+                "type": "string",
+                "pattern": "^\\.tmp/lesson-factory/lane-[0-9]{2}/v3-les-[0-9]{6}$"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "required": ["packet_surface", "authorable_packet_ref", "packet_content_sha256"],
+        "properties": {
+          "packet_surface": {
+            "const": "QUARANTINE"
+          },
+          "block_reasons": {
+            "type": "array",
+            "minItems": 1
+          },
+          "authorable_packet_ref": {
+            "type": "null"
+          },
+          "packet_content_sha256": {
+            "type": "null"
+          },
+          "output_requirements": {
+            "type": "object",
+            "properties": {
+              "output_directory": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/QuarantinePath"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "description": "A READY packet has no unresolved source anywhere in it. The rule is stated over the whole ordered scope rather than per occurrence, because \"one of the twenty is pending\" is exactly the case a per-occurrence rule misses.",
+      "if": {
+        "type": "object",
+        "required": ["packet_status"],
+        "properties": {
+          "packet_status": {
+            "const": "READY"
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "ordered_kc_records": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "source_set_status": {
+                  "enum": ["EXACT_SOURCE", "MULTI_SOURCE_CORROBORATED", "BOUNDED_SOURCE_SET"]
+                },
+                "source_mappings": {
+                  "type": "array",
+                  "minItems": 1
+                },
+                "source_occurrences": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "required": ["rights_status", "source_use_receipt_ref"],
+                    "properties": {
+                      "rights_status": {
+                        "const": "PERMITTED"
+                      },
+                      "source_use_receipt_ref": {
+                        "$ref": "shared-vocabulary.schema.json#/$defs/FrozenSourceUseReceiptRef"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "holds": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "blocks_authoring": {
+                  "const": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "description": "A packet carrying a provisional host-lineage mismatch says so at the top level too, so a reader who never reaches the attachment list still learns that something in it is uncorrected.",
+      "if": {
+        "type": "object",
+        "required": ["attachments"],
+        "properties": {
+          "attachments": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["host_core_membership_status"],
+              "properties": {
+                "host_core_membership_status": {
+                  "const": "MISMATCH_PROVISIONAL"
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "required": ["provisional_host_lineage"],
+        "properties": {
+          "provisional_host_lineage": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["present", "nonclaim", "correction_required_after_deadline"],
+            "properties": {
+              "present": {
+                "const": true
+              },
+              "nonclaim": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/NonEmptyString"
+              },
+              "correction_required_after_deadline": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
     }
-  ],
-  "$comment": "Route applicability is supplied by the frozen release policy, never chosen here: the document carries the policy reference, the ratified version, and the scope code, and the shared route binding derives the four proofs and their clauses from that code. A packet or handoff authored against a route the policy does not cover cannot validate."
+  ]
 }

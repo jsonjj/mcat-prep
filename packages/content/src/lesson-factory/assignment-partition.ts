@@ -7,9 +7,18 @@ export interface AssignmentPartitionInput {
   readonly assignmentSchemaText: string;
   readonly proofSchemaText: string;
   readonly sharedVocabularySchemaText: string;
+  readonly taskPacketSchemaText: string;
+  readonly deadlineProfileText: string;
+  readonly releasePolicyText: string;
+  readonly ownerSourceUseReceiptText: string;
   readonly sourceManifestPath: string;
   readonly assignmentSchemaPath: string;
   readonly proofSchemaPath: string;
+  readonly sharedVocabularySchemaPath: string;
+  readonly taskPacketSchemaPath: string;
+  readonly deadlineProfilePath: string;
+  readonly releasePolicyPath: string;
+  readonly ownerSourceUseReceiptPath: string;
   readonly createdAt: string;
   readonly deadlineProfileRef: string;
   readonly releasePolicyRef: string;
@@ -68,10 +77,12 @@ export interface TeamAssignmentArtifact extends AssignmentAllocationArtifact {
 
 export interface AssignmentPartitionProof {
   readonly contract_id: 'lesson-factory.assignment-partition-proof';
-  readonly contract_version: '1.0.0';
+  readonly contract_version: '2.0.0';
+  readonly run_id: string;
   readonly created_at: string;
   readonly deadline_profile_ref: string;
   readonly release_policy_ref: string;
+  readonly source_use_receipt_ref: string;
   readonly rubric_identity: AssignmentPartitionInput['rubricIdentity'];
   readonly source_manifest: {
     readonly path: string;
@@ -91,9 +102,32 @@ export interface AssignmentPartitionProof {
   readonly proof_schema: {
     readonly path: string;
     readonly contract_id: 'lesson-factory.assignment-partition-proof';
-    readonly contract_version: '1.0.0';
+    readonly contract_version: '2.0.0';
     readonly content_sha256: string;
     readonly file_sha256: string;
+  };
+  readonly packet_authorities: {
+    readonly shared_vocabulary_schema: AuthorityPin;
+    readonly task_packet_schema: AuthorityPin;
+    readonly deadline_profile: AuthorityPin & {
+      readonly profile_id: string;
+      readonly profile_version: string;
+    };
+    readonly release_policy: AuthorityPin & {
+      readonly policy_id: string;
+      readonly policy_version: string;
+    };
+    readonly owner_source_use_receipt: AuthorityPin & {
+      readonly receipt_id: string;
+    };
+  };
+  readonly authoring_scope: {
+    readonly disposition: 'AUTHORING_GENERATION_ONLY';
+    readonly canonical_lesson_count: 114;
+    readonly generation_lesson_count: 111;
+    readonly excluded_existing_lesson_count: 3;
+    readonly generation_rows_disjoint_from_exclusions: true;
+    readonly generation_rows_union_exclusions_equals_canonical: true;
   };
   readonly excluded_existing_lesson_ids: readonly string[];
   readonly capacities: Readonly<Record<AssignmentTeamId, number>>;
@@ -116,6 +150,7 @@ export interface AssignmentPartitionProof {
     readonly pairwise_disjoint: true;
     readonly union_equals_remaining: true;
     readonly existing_three_excluded: true;
+    readonly rows_union_exclusions_equals_canonical: true;
     readonly unique_slugs: true;
     readonly unique_output_paths: true;
     readonly proof_schema_valid: true;
@@ -136,11 +171,33 @@ export interface AssignmentAllocationResult {
 
 export type AssignmentPartitionResult = AssignmentAllocationResult;
 
-export interface AssignmentFinalizationInput {
+interface AuthorityPin {
+  readonly path: string;
+  readonly contract_id: string;
+  readonly contract_version: string;
+  readonly content_sha256: string;
+  readonly file_sha256: string;
+}
+
+export interface AssignmentProofParserInput {
   readonly allocationProof: unknown;
+  readonly manifestText: string;
   readonly assignmentSchemaText: string;
   readonly proofSchemaText: string;
   readonly sharedVocabularySchemaText: string;
+  readonly taskPacketSchemaText: string;
+  readonly deadlineProfileText: string;
+  readonly releasePolicyText: string;
+  readonly ownerSourceUseReceiptText: string;
+}
+
+export interface ParsedAssignmentPartitionProof {
+  readonly proof: AssignmentPartitionProof;
+  readonly generationRows: readonly AssignmentProofRow[];
+  readonly excludedExistingLessonIds: readonly string[];
+}
+
+export interface AssignmentFinalizationInput extends AssignmentProofParserInput {
   readonly packetRefs: Readonly<Record<string, string>>;
 }
 
@@ -968,6 +1025,37 @@ function exactContract(
   }
 }
 
+function exactDocumentContract(
+  document: JsonObject,
+  expectedId: string,
+  expectedVersion: string,
+  label: string,
+): void {
+  if (document.contract_id !== expectedId || document.contract_version !== expectedVersion) {
+    throw new Error(
+      `${label} is incompatible: expected ${expectedId} ${expectedVersion}, found ${String(
+        document.contract_id,
+      )} ${String(document.contract_version)}`,
+    );
+  }
+}
+
+function authorityPin(
+  path: string,
+  document: JsonObject,
+  text: string,
+  contractId: string,
+  contractVersion: string,
+): AuthorityPin {
+  return {
+    path,
+    contract_id: contractId,
+    contract_version: contractVersion,
+    content_sha256: sha256Hex(canonicalJson(document)),
+    file_sha256: sha256Hex(text),
+  };
+}
+
 export function createAssignmentAllocation(
   input: AssignmentPartitionInput,
 ): AssignmentAllocationResult {
@@ -991,6 +1079,20 @@ export function createAssignmentAllocation(
     input.proofSchemaText,
     'WP-02 assignment-partition-proof schema',
   );
+  const sharedVocabularySchema = parseJsonObject(
+    input.sharedVocabularySchemaText,
+    'WP-01 shared-vocabulary schema',
+  );
+  const taskPacketSchema = parseJsonObject(
+    input.taskPacketSchemaText,
+    'WP-01 task-source-packet schema',
+  );
+  const deadlineProfile = parseJsonObject(input.deadlineProfileText, 'WP-01 deadline profile');
+  const releasePolicy = parseJsonObject(input.releasePolicyText, 'WP-01 release policy');
+  const ownerSourceUseReceipt = parseJsonObject(
+    input.ownerSourceUseReceiptText,
+    'WP-01 owner source-use receipt',
+  );
   exactContract(
     assignmentSchema,
     'lesson-factory.assignment-manifest',
@@ -1000,9 +1102,54 @@ export function createAssignmentAllocation(
   exactContract(
     proofSchema,
     'lesson-factory.assignment-partition-proof',
-    '1.0.0',
+    '2.0.0',
     'WP-02 proof schema',
   );
+  exactContract(
+    sharedVocabularySchema,
+    'lesson-factory.shared-vocabulary',
+    '5.0.0',
+    'WP-01 shared vocabulary',
+  );
+  exactContract(
+    taskPacketSchema,
+    'lesson-factory.task-source-packet',
+    '5.0.0',
+    'WP-01 task packet schema',
+  );
+  exactDocumentContract(
+    deadlineProfile,
+    'lesson-factory.deadline-profile',
+    '7.0.0',
+    'WP-01 deadline profile',
+  );
+  exactDocumentContract(
+    releasePolicy,
+    'lesson-factory.release-policy',
+    '3.0.0',
+    'WP-01 release policy',
+  );
+  exactDocumentContract(
+    ownerSourceUseReceipt,
+    'lesson-factory.owner-source-use-receipt',
+    '2.0.0',
+    'WP-01 owner source-use receipt',
+  );
+  const expectedDeadlineProfileRef = `profile:${input.deadlineProfilePath}#sha256:${sha256Hex(
+    input.deadlineProfileText,
+  )}`;
+  const expectedReleasePolicyRef = `policy:${input.releasePolicyPath}#sha256:${sha256Hex(
+    input.releasePolicyText,
+  )}`;
+  if (
+    input.createdAt !== deadlineProfile.frozen_at ||
+    input.deadlineProfileRef !== expectedDeadlineProfileRef ||
+    input.releasePolicyRef !== expectedReleasePolicyRef ||
+    deadlineProfile.release_policy_ref !== expectedReleasePolicyRef ||
+    canonicalJson(input.rubricIdentity) !== canonicalJson(deadlineProfile.rubric_identity)
+  ) {
+    throw new Error('WP-02 allocation inputs do not match the exact current deadline authorities');
+  }
 
   const allocations = initialBucketAllocations(lessons);
   reconcileCapacities(allocations);
@@ -1043,10 +1190,14 @@ export function createAssignmentAllocation(
   const allocationContentSha256 = sha256Hex(canonicalJson(proofAssignments));
   const proof: AssignmentPartitionProof = {
     contract_id: 'lesson-factory.assignment-partition-proof',
-    contract_version: '1.0.0',
+    contract_version: '2.0.0',
+    run_id: String(deadlineProfile.profile_id),
     created_at: input.createdAt,
     deadline_profile_ref: input.deadlineProfileRef,
     release_policy_ref: input.releasePolicyRef,
+    source_use_receipt_ref: `source-use-receipt:${
+      input.ownerSourceUseReceiptPath
+    }#sha256:${sha256Hex(input.ownerSourceUseReceiptText)}`,
     rubric_identity: { ...input.rubricIdentity },
     source_manifest: {
       path: input.sourceManifestPath,
@@ -1066,9 +1217,65 @@ export function createAssignmentAllocation(
     proof_schema: {
       path: input.proofSchemaPath,
       contract_id: 'lesson-factory.assignment-partition-proof',
-      contract_version: '1.0.0',
+      contract_version: '2.0.0',
       content_sha256: sha256Hex(canonicalJson(proofSchema)),
       file_sha256: sha256Hex(input.proofSchemaText),
+    },
+    packet_authorities: {
+      shared_vocabulary_schema: authorityPin(
+        input.sharedVocabularySchemaPath,
+        sharedVocabularySchema,
+        input.sharedVocabularySchemaText,
+        'lesson-factory.shared-vocabulary',
+        '5.0.0',
+      ),
+      task_packet_schema: authorityPin(
+        input.taskPacketSchemaPath,
+        taskPacketSchema,
+        input.taskPacketSchemaText,
+        'lesson-factory.task-source-packet',
+        '5.0.0',
+      ),
+      deadline_profile: {
+        ...authorityPin(
+          input.deadlineProfilePath,
+          deadlineProfile,
+          input.deadlineProfileText,
+          'lesson-factory.deadline-profile',
+          '7.0.0',
+        ),
+        profile_id: String(deadlineProfile.profile_id),
+        profile_version: String(deadlineProfile.profile_version),
+      },
+      release_policy: {
+        ...authorityPin(
+          input.releasePolicyPath,
+          releasePolicy,
+          input.releasePolicyText,
+          'lesson-factory.release-policy',
+          '3.0.0',
+        ),
+        policy_id: String(releasePolicy.policy_id),
+        policy_version: String(releasePolicy.policy_version),
+      },
+      owner_source_use_receipt: {
+        ...authorityPin(
+          input.ownerSourceUseReceiptPath,
+          ownerSourceUseReceipt,
+          input.ownerSourceUseReceiptText,
+          'lesson-factory.owner-source-use-receipt',
+          '2.0.0',
+        ),
+        receipt_id: String(ownerSourceUseReceipt.receipt_id),
+      },
+    },
+    authoring_scope: {
+      disposition: 'AUTHORING_GENERATION_ONLY',
+      canonical_lesson_count: 114,
+      generation_lesson_count: 111,
+      excluded_existing_lesson_count: 3,
+      generation_rows_disjoint_from_exclusions: true,
+      generation_rows_union_exclusions_equals_canonical: true,
     },
     excluded_existing_lesson_ids: [...EXISTING_LESSON_IDS],
     capacities,
@@ -1083,6 +1290,7 @@ export function createAssignmentAllocation(
       pairwise_disjoint: true,
       union_equals_remaining: true,
       existing_three_excluded: true,
+      rows_union_exclusions_equals_canonical: true,
       unique_slugs: true,
       unique_output_paths: true,
       proof_schema_valid: true,
@@ -1119,7 +1327,9 @@ export function createAssignmentPartition(
   return createAssignmentAllocation(input);
 }
 
-function verifiedProof(input: AssignmentFinalizationInput): AssignmentPartitionProof {
+export function parseAssignmentPartitionProof(
+  input: AssignmentProofParserInput,
+): ParsedAssignmentPartitionProof {
   const validationErrors = validateAssignmentPartitionProof(
     input.allocationProof,
     input.proofSchemaText,
@@ -1139,6 +1349,21 @@ function verifiedProof(input: AssignmentFinalizationInput): AssignmentPartitionP
     input.proofSchemaText,
     'WP-02 assignment-partition-proof schema',
   );
+  const sharedVocabularySchema = parseJsonObject(
+    input.sharedVocabularySchemaText,
+    'WP-01 shared-vocabulary schema',
+  );
+  const taskPacketSchema = parseJsonObject(
+    input.taskPacketSchemaText,
+    'WP-01 task-source-packet schema',
+  );
+  const deadlineProfile = parseJsonObject(input.deadlineProfileText, 'WP-01 deadline profile');
+  const releasePolicy = parseJsonObject(input.releasePolicyText, 'WP-01 release policy');
+  const ownerSourceUseReceipt = parseJsonObject(
+    input.ownerSourceUseReceiptText,
+    'WP-01 owner source-use receipt',
+  );
+  const { manifest, lessons } = canonicalLessons(input.manifestText);
   exactContract(
     assignmentSchema,
     'lesson-factory.assignment-manifest',
@@ -1148,27 +1373,153 @@ function verifiedProof(input: AssignmentFinalizationInput): AssignmentPartitionP
   exactContract(
     proofSchema,
     'lesson-factory.assignment-partition-proof',
-    '1.0.0',
+    '2.0.0',
     'WP-02 proof schema',
   );
-  const expectedPins = {
-    assignmentContent: sha256Hex(canonicalJson(assignmentSchema)),
-    assignmentFile: sha256Hex(input.assignmentSchemaText),
-    sharedFile: sha256Hex(input.sharedVocabularySchemaText),
-    proofContent: sha256Hex(canonicalJson(proofSchema)),
-    proofFile: sha256Hex(input.proofSchemaText),
+  exactContract(
+    sharedVocabularySchema,
+    'lesson-factory.shared-vocabulary',
+    '5.0.0',
+    'WP-01 shared vocabulary',
+  );
+  exactContract(
+    taskPacketSchema,
+    'lesson-factory.task-source-packet',
+    '5.0.0',
+    'WP-01 task packet schema',
+  );
+  exactDocumentContract(
+    deadlineProfile,
+    'lesson-factory.deadline-profile',
+    '7.0.0',
+    'WP-01 deadline profile',
+  );
+  exactDocumentContract(
+    releasePolicy,
+    'lesson-factory.release-policy',
+    '3.0.0',
+    'WP-01 release policy',
+  );
+  exactDocumentContract(
+    ownerSourceUseReceipt,
+    'lesson-factory.owner-source-use-receipt',
+    '2.0.0',
+    'WP-01 owner source-use receipt',
+  );
+  const expectedDeadlineRef = `profile:${
+    proof.packet_authorities.deadline_profile.path
+  }#sha256:${sha256Hex(input.deadlineProfileText)}`;
+  const expectedPolicyRef = `policy:${
+    proof.packet_authorities.release_policy.path
+  }#sha256:${sha256Hex(input.releasePolicyText)}`;
+  const expectedReceiptRef = `source-use-receipt:${
+    proof.packet_authorities.owner_source_use_receipt.path
+  }#sha256:${sha256Hex(input.ownerSourceUseReceiptText)}`;
+  const expectedAuthorities: AssignmentPartitionProof['packet_authorities'] = {
+    shared_vocabulary_schema: authorityPin(
+      proof.packet_authorities.shared_vocabulary_schema.path,
+      sharedVocabularySchema,
+      input.sharedVocabularySchemaText,
+      'lesson-factory.shared-vocabulary',
+      '5.0.0',
+    ),
+    task_packet_schema: authorityPin(
+      proof.packet_authorities.task_packet_schema.path,
+      taskPacketSchema,
+      input.taskPacketSchemaText,
+      'lesson-factory.task-source-packet',
+      '5.0.0',
+    ),
+    deadline_profile: {
+      ...authorityPin(
+        proof.packet_authorities.deadline_profile.path,
+        deadlineProfile,
+        input.deadlineProfileText,
+        'lesson-factory.deadline-profile',
+        '7.0.0',
+      ),
+      profile_id: String(deadlineProfile.profile_id),
+      profile_version: String(deadlineProfile.profile_version),
+    },
+    release_policy: {
+      ...authorityPin(
+        proof.packet_authorities.release_policy.path,
+        releasePolicy,
+        input.releasePolicyText,
+        'lesson-factory.release-policy',
+        '3.0.0',
+      ),
+      policy_id: String(releasePolicy.policy_id),
+      policy_version: String(releasePolicy.policy_version),
+    },
+    owner_source_use_receipt: {
+      ...authorityPin(
+        proof.packet_authorities.owner_source_use_receipt.path,
+        ownerSourceUseReceipt,
+        input.ownerSourceUseReceiptText,
+        'lesson-factory.owner-source-use-receipt',
+        '2.0.0',
+      ),
+      receipt_id: String(ownerSourceUseReceipt.receipt_id),
+    },
   };
   if (
-    proof.assignment_schema.content_sha256 !== expectedPins.assignmentContent ||
-    proof.assignment_schema.file_sha256 !== expectedPins.assignmentFile ||
-    proof.assignment_schema.shared_vocabulary_file_sha256 !== expectedPins.sharedFile ||
-    proof.proof_schema.content_sha256 !== expectedPins.proofContent ||
-    proof.proof_schema.file_sha256 !== expectedPins.proofFile
+    proof.run_id !== deadlineProfile.profile_id ||
+    proof.created_at !== deadlineProfile.frozen_at ||
+    proof.deadline_profile_ref !== expectedDeadlineRef ||
+    proof.release_policy_ref !== expectedPolicyRef ||
+    proof.source_use_receipt_ref !== expectedReceiptRef ||
+    deadlineProfile.release_policy_ref !== expectedPolicyRef ||
+    canonicalJson(proof.rubric_identity) !== canonicalJson(deadlineProfile.rubric_identity) ||
+    proof.source_manifest.content_sha256 !== sha256Hex(canonicalJson(manifest)) ||
+    proof.source_manifest.file_sha256 !== sha256Hex(input.manifestText) ||
+    proof.assignment_schema.content_sha256 !== sha256Hex(canonicalJson(assignmentSchema)) ||
+    proof.assignment_schema.file_sha256 !== sha256Hex(input.assignmentSchemaText) ||
+    proof.assignment_schema.shared_vocabulary_file_sha256 !==
+      sha256Hex(input.sharedVocabularySchemaText) ||
+    proof.proof_schema.content_sha256 !== sha256Hex(canonicalJson(proofSchema)) ||
+    proof.proof_schema.file_sha256 !== sha256Hex(input.proofSchemaText) ||
+    canonicalJson(proof.packet_authorities) !== canonicalJson(expectedAuthorities)
   ) {
-    throw new Error('allocation proof schema pins do not match the supplied final contract bytes');
+    throw new Error(
+      'allocation proof authority pins do not match the supplied packet-v5 contract bytes',
+    );
   }
-  if (proof.allocation_content_sha256 !== sha256Hex(canonicalJson(proof.assignments))) {
-    throw new Error('allocation proof content hash does not match its assignment rows');
+
+  if (canonicalJson(proof.excluded_existing_lesson_ids) !== canonicalJson(EXISTING_LESSON_IDS)) {
+    throw new Error('allocation proof existing-corpus exclusion scope has drifted');
+  }
+
+  const allocationBuckets = initialBucketAllocations(lessons);
+  reconcileCapacities(allocationBuckets);
+  assertPartitionInvariants(allocationBuckets, lessons);
+  const expectedArtifacts = TEAM_SPECS.map((team) =>
+    createAllocationArtifact(allocationBuckets, team),
+  );
+  const expectedAssignments: AssignmentPartitionProof['assignments'] = expectedArtifacts.map(
+    (assignment) => {
+      const subjectDistribution: Record<string, number> = {};
+      for (const allocation of allocationBuckets) {
+        subjectDistribution[allocation.bucket] = allocation.byTeam[assignment.teamId].length;
+      }
+      return {
+        team_id: assignment.teamId,
+        lane_id: assignment.laneId,
+        assignment_id: assignment.assignmentId,
+        assignment_file: TEAM_SPECS.find((team) => team.teamId === assignment.teamId)!.file,
+        count: assignment.rows.length,
+        subject_distribution: subjectDistribution,
+        rows: assignment.rows,
+      };
+    },
+  );
+  if (canonicalJson(proof.assignments) !== canonicalJson(expectedAssignments)) {
+    throw new Error(
+      'allocation proof rows do not preserve the deterministic 51/30/30 lane membership',
+    );
+  }
+  if (proof.allocation_content_sha256 !== sha256Hex(canonicalJson(expectedAssignments))) {
+    throw new Error('allocation proof content hash does not match its canonical assignment rows');
   }
 
   const seenLessons = new Set<string>();
@@ -1210,7 +1561,29 @@ function verifiedProof(input: AssignmentFinalizationInput): AssignmentPartitionP
   ) {
     throw new Error('allocation proof does not preserve the canonical 111-lesson union');
   }
-  return proof;
+  const canonicalIds = new Set(
+    ((manifest.curriculum as JsonObject).lessons as JsonObject[]).map((row) =>
+      String(row.lesson_id),
+    ),
+  );
+  const scopeIds = new Set([...seenLessons, ...proof.excluded_existing_lesson_ids]);
+  if (
+    scopeIds.size !== CANONICAL_LESSON_COUNT ||
+    [...scopeIds].some((lessonId) => !canonicalIds.has(lessonId))
+  ) {
+    throw new Error(
+      'allocation proof generation rows and existing-corpus exclusions do not close all 114 lessons',
+    );
+  }
+  return {
+    proof,
+    generationRows: proof.assignments.flatMap((assignment) => assignment.rows),
+    excludedExistingLessonIds: [...proof.excluded_existing_lesson_ids],
+  };
+}
+
+function verifiedProof(input: AssignmentFinalizationInput): AssignmentPartitionProof {
+  return parseAssignmentPartitionProof(input).proof;
 }
 
 function finalizedTeamArtifact(

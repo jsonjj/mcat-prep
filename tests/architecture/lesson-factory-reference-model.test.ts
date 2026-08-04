@@ -33,12 +33,16 @@ import {
 
 const SCHEMA_DIR = join(import.meta.dirname, '..', '..', 'content', 'lesson-factory', 'schemas');
 
+// A shipped contract, read as data. Untyped on purpose: these tests are about what the
+// files say, and a declared shape here would be an assumption the files could contradict.
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const readSchema = (name: string): Record<string, any> =>
   JSON.parse(readFileSync(join(SCHEMA_DIR, name), 'utf8')) as Record<string, any>;
 
 const SCHEMA_FILES = readdirSync(SCHEMA_DIR).filter((name) => name.endsWith('.schema.json'));
 const VOCAB = readSchema('shared-vocabulary.schema.json');
 const DEFS = VOCAB['$defs'] as Record<string, any>;
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 /** Every `$ref` target named anywhere in the shipped contracts. */
 const referencedDefNames = (): Set<string> => {
@@ -151,13 +155,37 @@ describe('lesson factory reference model', () => {
     expect(outcome.status).toBe('NOT_YET_PRODUCED');
     if (outcome.status !== 'NOT_YET_PRODUCED') throw new Error('unreachable');
     expect(outcome.expectedPath).toBe(
-      '.tmp/lesson-factory/lane-01/v3-les-000002/task-source-packet.json',
+      'content/lesson-factory/packets/V3-LES-000002/task-source-packet.json',
     );
 
     // Same shape of reference, locator that is not a lane and a lesson: invalid, not pending.
     expect(() => resolveReference(`packet:answer-key-is-c#sha256:${digest}`, 'packet')).toThrow(
       ReferenceModelError,
     );
+  });
+
+  /**
+   * The two packet surfaces do not share a path, and that is the whole reconciliation.
+   * WP-04's brief chooses the author packet path, and a blocked generation still has to
+   * leave evidence somewhere — so the evidence goes somewhere else, under the lane's own
+   * scratch directory, where nobody looking for work to do will find it.
+   */
+  it('sends an authorable packet and a blocked audit record to different places', () => {
+    const digest = sha256OfPath('key-docs/lesson-quality-rubric.md');
+    const authorable = resolveReference(`packet:lane-01/v3-les-000002#sha256:${digest}`, 'packet');
+    const quarantined = resolveReference(
+      `quarantine-packet:lane-01/v3-les-000002#sha256:${digest}`,
+      'quarantine-packet',
+    );
+    expect(authorable.status).toBe('NOT_YET_PRODUCED');
+    expect(quarantined.status).toBe('NOT_YET_PRODUCED');
+    if (authorable.status !== 'NOT_YET_PRODUCED') throw new Error('unreachable');
+    if (quarantined.status !== 'NOT_YET_PRODUCED') throw new Error('unreachable');
+    expect(quarantined.expectedPath).toBe(
+      '.tmp/lesson-factory/lane-01/v3-les-000002/quarantine/blocked-packet-audit.json',
+    );
+    expect(quarantined.expectedPath).not.toBe(authorable.expectedPath);
+    expect(quarantined.expectedPath.startsWith('content/lesson-factory/packets/')).toBe(false);
   });
 
   it('refuses a correct digest attached to the wrong locator or the wrong kind', () => {

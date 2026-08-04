@@ -44,7 +44,7 @@ import {
   createAssignmentAllocation,
   finalizeAssignmentManifests,
   type AssignmentPartitionInput,
-} from '@mcat/content/lesson-factory';
+} from '../../../packages/content/src/lesson-factory/assignment-partition';
 
 /**
  * Where the v7 JSONL corpus is expected under the repo when a developer keeps a
@@ -352,7 +352,9 @@ function cmdDbSeed(path: string): void {
   console.log('  psql "$DATABASE_URL" -f database/migrations/0006_question_bank.sql');
   console.log('  psql "$DATABASE_URL" -f database/migrations/0008_reasoning_operation.sql');
   // 0015 adds question_protected.error_models, which the seed now populates (WS2).
-  console.log('  psql "$DATABASE_URL" -f database/migrations/0015_question_protected_error_models.sql');
+  console.log(
+    '  psql "$DATABASE_URL" -f database/migrations/0015_question_protected_error_models.sql',
+  );
   console.log('  psql "$DATABASE_URL" -f content/question-bank/.local/v7-load/seed.sql');
   console.log(
     '  psql "$DATABASE_URL" -c \'select section, count(*) from questions group by section order by section;\'',
@@ -378,25 +380,32 @@ function cmdRehash(lessonDirArg: string | undefined): void {
       .filter((f) => f.endsWith('.json') && f !== 'artifact-manifest.json')
       .map((relPath) => ({ relPath, rawText: readFileSync(join(dir, relPath), 'utf8') }));
   const manifestPath = join(dir, 'artifact-manifest.json');
-  const readManifest = (): string | null => (existsSync(manifestPath) ? readFileSync(manifestPath, 'utf8') : null);
+  const readManifest = (): string | null =>
+    existsSync(manifestPath) ? readFileSync(manifestPath, 'utf8') : null;
 
   const plan = planLessonRehash(readFiles(), readManifest());
   console.log(`rehash: ${dir}`);
   for (const c of plan.primaryContentSha) {
     const arrow = c.oldContentSha256 === c.newContentSha256 ? '==' : '->';
-    console.log(`  ${c.relPath.padEnd(28)} ${String(c.oldContentSha256).slice(0, 12)} ${arrow} ${c.newContentSha256.slice(0, 12)}`);
+    console.log(
+      `  ${c.relPath.padEnd(28)} ${String(c.oldContentSha256).slice(0, 12)} ${arrow} ${c.newContentSha256.slice(0, 12)}`,
+    );
   }
   if (!plan.changed) {
     console.log('  already consistent — no files written.');
     return;
   }
   for (const w of plan.writes) writeFileSync(join(dir, w.relPath), w.newText);
-  console.log(`  wrote ${plan.writes.length} file(s): ${plan.writes.map((w) => w.relPath).join(', ')}`);
+  console.log(
+    `  wrote ${plan.writes.length} file(s): ${plan.writes.map((w) => w.relPath).join(', ')}`,
+  );
 
   // Independent verification: a fresh read + rehash of what we just wrote must be a no-op.
   const verify = planLessonRehash(readFiles(), readManifest());
   if (verify.changed) {
-    console.error(`  VERIFY FAILED: re-rehash still reports changes to ${verify.writes.map((w) => w.relPath).join(', ')}`);
+    console.error(
+      `  VERIFY FAILED: re-rehash still reports changes to ${verify.writes.map((w) => w.relPath).join(', ')}`,
+    );
     process.exit(1);
     return;
   }
@@ -473,7 +482,14 @@ function cmdLessonValidate(): void {
       ? (JSON.parse(readFileSync(manifestPath, 'utf8')) as unknown)
       : null;
     // Browser evidence lives outside the lesson dir (L1 only today); supply it for R7 when present.
-    const reportPath = join(REPO_ROOT, 'tests', 'browser', 'evidence', dirName, 'browser-report.json');
+    const reportPath = join(
+      REPO_ROOT,
+      'tests',
+      'browser',
+      'evidence',
+      dirName,
+      'browser-report.json',
+    );
     const browserEvidence = existsSync(reportPath)
       ? {
           reportRawText: readFileSync(reportPath, 'utf8'),
@@ -531,16 +547,22 @@ function cmdProposedKcs(): void {
     .sort();
   const lessons: LessonKcRefs[] = lessonDirs.map((dir) => ({
     lessonId: basename(dir).toUpperCase(),
-    orderedKcIds: lessonOrderedKcIds(JSON.parse(readFileSync(join(dir, 'lesson-script.json'), 'utf8')) as unknown),
+    orderedKcIds: lessonOrderedKcIds(
+      JSON.parse(readFileSync(join(dir, 'lesson-script.json'), 'utf8')) as unknown,
+    ),
   }));
 
   const curriculumPath = join(REPO_ROOT, 'curriculum', 'v3', 'v3-lesson-authoring-manifest.json');
   if (!existsSync(curriculumPath)) {
-    console.error(`proposed-kcs: curriculum catalog missing at ${curriculumPath} (cannot decide what is unknown)`);
+    console.error(
+      `proposed-kcs: curriculum catalog missing at ${curriculumPath} (cannot decide what is unknown)`,
+    );
     process.exit(1);
     return;
   }
-  const catalogKcIds = buildResolvableIds(JSON.parse(readFileSync(curriculumPath, 'utf8')) as unknown).kcIds;
+  const catalogKcIds = buildResolvableIds(
+    JSON.parse(readFileSync(curriculumPath, 'utf8')) as unknown,
+  ).kcIds;
   const roadmapPath = join(REPO_ROOT, 'key-docs', 'roadmap-todo.md');
   const existing = existsSync(roadmapPath) ? readFileSync(roadmapPath, 'utf8') : '';
   const plan = planProposedKcs(lessons, catalogKcIds, existing);
@@ -548,7 +570,8 @@ function cmdProposedKcs(): void {
   console.log(
     `proposed-kcs: ${lessons.length} lesson(s), ${catalogKcIds.size} catalog KCs → ${plan.proposed.length} proposed (advisory; not a gate)`,
   );
-  for (const p of plan.proposed) console.log(`  ${p.kcId}  (referenced by ${p.lessons.join(', ')})`);
+  for (const p of plan.proposed)
+    console.log(`  ${p.kcId}  (referenced by ${p.lessons.join(', ')})`);
   if (plan.proposed.length === 0) {
     console.log('  none — every declared KC resolves against the curriculum catalog.');
   }
@@ -597,10 +620,13 @@ function cmdComputedQuality(): void {
   } else {
     for (const r of reports) {
       console.log(`\n  ${r.ok ? 'OK  ' : 'FAIL'} ${r.lessonId}`);
-      for (const c of r.checks) console.log(`     ${c.status.toUpperCase().padEnd(4)} ${c.check}: ${c.detail}`);
+      for (const c of r.checks)
+        console.log(`     ${c.status.toUpperCase().padEnd(4)} ${c.check}: ${c.detail}`);
     }
     const failed = reports.filter((r) => !r.ok).length;
-    console.log(`\ncomputed-quality: ${reports.length} lesson(s), ${failed} with FAIL(s) (N/A never blocks).`);
+    console.log(
+      `\ncomputed-quality: ${reports.length} lesson(s), ${failed} with FAIL(s) (N/A never blocks).`,
+    );
   }
   if (reports.some((r) => !r.ok)) process.exit(1);
 }
@@ -615,15 +641,20 @@ function assignmentAllocationInput(): AssignmentPartitionInput {
   const assignmentSchemaRel = 'content/lesson-factory/schemas/assignment-manifest.schema.json';
   const proofSchemaRel = 'content/lesson-factory/schemas/assignment-partition-proof.schema.json';
   const sharedSchemaRel = 'content/lesson-factory/schemas/shared-vocabulary.schema.json';
+  const taskPacketSchemaRel = 'content/lesson-factory/schemas/task-source-packet.schema.json';
   const profileRel = 'content/lesson-factory/deadline-profile/deadline-profile.json';
   const releasePolicyRel = 'content/lesson-factory/deadline-profile/release-policy.json';
+  const sourceUseReceiptRel =
+    'content/lesson-factory/deadline-profile/owner-source-use-receipt.json';
 
   const manifestText = readFileSync(join(REPO_ROOT, manifestRel), 'utf8');
   const assignmentSchemaText = readFileSync(join(REPO_ROOT, assignmentSchemaRel), 'utf8');
   const proofSchemaText = readFileSync(join(REPO_ROOT, proofSchemaRel), 'utf8');
   const sharedVocabularySchemaText = readFileSync(join(REPO_ROOT, sharedSchemaRel), 'utf8');
+  const taskPacketSchemaText = readFileSync(join(REPO_ROOT, taskPacketSchemaRel), 'utf8');
   const profileText = readFileSync(join(REPO_ROOT, profileRel), 'utf8');
   const releasePolicyText = readFileSync(join(REPO_ROOT, releasePolicyRel), 'utf8');
+  const ownerSourceUseReceiptText = readFileSync(join(REPO_ROOT, sourceUseReceiptRel), 'utf8');
   const profile = JSON.parse(profileText) as Record<string, unknown>;
   const rubricIdentity = profile.rubric_identity;
   if (
@@ -666,9 +697,18 @@ function assignmentAllocationInput(): AssignmentPartitionInput {
     assignmentSchemaText,
     proofSchemaText,
     sharedVocabularySchemaText,
+    taskPacketSchemaText,
+    deadlineProfileText: profileText,
+    releasePolicyText,
+    ownerSourceUseReceiptText,
     sourceManifestPath: manifestRel,
     assignmentSchemaPath: assignmentSchemaRel,
     proofSchemaPath: proofSchemaRel,
+    sharedVocabularySchemaPath: sharedSchemaRel,
+    taskPacketSchemaPath: taskPacketSchemaRel,
+    deadlineProfilePath: profileRel,
+    releasePolicyPath: releasePolicyRel,
+    ownerSourceUseReceiptPath: sourceUseReceiptRel,
     createdAt: profile.frozen_at,
     deadlineProfileRef: `profile:${profileRel}#sha256:${sha256(profileText)}`,
     releasePolicyRef: expectedReleasePolicyRef,
@@ -722,9 +762,14 @@ function cmdAssignmentFinalize(packetMapArg: string | undefined): void {
   const proofPath = join(REPO_ROOT, 'content/lesson-factory/assignments/partition-proof.json');
   const result = finalizeAssignmentManifests({
     allocationProof: JSON.parse(readFileSync(proofPath, 'utf8')) as unknown,
+    manifestText: allocationInput.manifestText,
     assignmentSchemaText: allocationInput.assignmentSchemaText,
     proofSchemaText: allocationInput.proofSchemaText,
     sharedVocabularySchemaText: allocationInput.sharedVocabularySchemaText,
+    taskPacketSchemaText: allocationInput.taskPacketSchemaText,
+    deadlineProfileText: allocationInput.deadlineProfileText,
+    releasePolicyText: allocationInput.releasePolicyText,
+    ownerSourceUseReceiptText: allocationInput.ownerSourceUseReceiptText,
     packetRefs: parsedPacketMap as Record<string, string>,
   });
   for (const [relativePath, bytes] of Object.entries(result.files)) {
@@ -788,6 +833,7 @@ switch (command) {
         '  proposed-kcs [--write]  Advisory queue of lesson KCs absent from the curriculum catalog (mirrors R14; never gates)\n' +
         '  computed-quality [--json]  estimatedMinutes plausibility + difficulty distribution (N/A when uncalibrated; FAIL gates)\n' +
         '  assignment-partition  Generate deterministic lesson-factory 51/30/30 allocation proof (removes stale manifests)\n' +
-        '  assignment-finalize <packet-ref-map.json>  Finalize assignment manifests after WP-04 packet generation\n',
+        '  assignment-finalize <packet-ref-map.json>  Finalize assignment manifests after WP-04 packet generation\n' +
+        '  packet publication uses the isolated `pnpm packets -- lesson-factory packets emit [--publish]` entry\n',
     );
 }

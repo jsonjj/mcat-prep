@@ -1,9 +1,11 @@
 {
   "contract_id": "lesson-factory.assignment-partition-proof",
-  "contract_version": "1.0.0",
+  "contract_version": "2.0.0",
+  "run_id": "lesson-factory-deadline-2026-08-03",
   "created_at": "2026-08-03T23:05:00Z",
-  "deadline_profile_ref": "profile:content/lesson-factory/deadline-profile/deadline-profile.json#sha256:f565393997bfd19c2aaf3a1f32e797f758e89bedcc4d7fb4169e9621b41fc0a6",
+  "deadline_profile_ref": "profile:content/lesson-factory/deadline-profile/deadline-profile.json#sha256:681d2864fbf22bfa3f947e4e21f846fe8ee5913ff91e82f56c95708cd344562c",
   "release_policy_ref": "policy:content/lesson-factory/deadline-profile/release-policy.json#sha256:0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e",
+  "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
   "rubric_identity": {
     "rubric_path": "key-docs/lesson-quality-rubric.md",
     "rubric_version": "0.9.1",
@@ -22,14 +24,64 @@
     "contract_version": "3.0.0",
     "content_sha256": "fa13db5acd38f473006eb71335077e78927b38b7db1350487559ef197c0d8c63",
     "file_sha256": "77491bb712094961dc164cfb04a83ab35cb35e04992c42e23bc3167389eb7993",
-    "shared_vocabulary_file_sha256": "181271be97e379d3f063dc5acfd838df76f29329a0f9cc293ee0b52955e1445d"
+    "shared_vocabulary_file_sha256": "279c33afcae9ef3dd3388169c2424fe3891dee0116ba32823130602bee1a9968"
   },
   "proof_schema": {
     "path": "content/lesson-factory/schemas/assignment-partition-proof.schema.json",
     "contract_id": "lesson-factory.assignment-partition-proof",
-    "contract_version": "1.0.0",
-    "content_sha256": "25330ff26ce74b02ce6ec59b7362a0cbe7d0b84e5a8db487d99d2ffed9390021",
-    "file_sha256": "2c6bc581028d0ad53610612964f44f484014919410bdd358292a2be3e392341e"
+    "contract_version": "2.0.0",
+    "content_sha256": "af8e65e2b38dd66f9c418442f9ed54c5e7ef0a67720558ba411c7a171586f255",
+    "file_sha256": "4d6d5645c6fc3771aab29795f18a522d01253956b5fa33ee95d3a9422a0e9cac"
+  },
+  "packet_authorities": {
+    "shared_vocabulary_schema": {
+      "path": "content/lesson-factory/schemas/shared-vocabulary.schema.json",
+      "contract_id": "lesson-factory.shared-vocabulary",
+      "contract_version": "5.0.0",
+      "content_sha256": "c2a165fb9e95819a18f989726cf41b91580632c6b89cf1dd54dbf0b2846b11d1",
+      "file_sha256": "279c33afcae9ef3dd3388169c2424fe3891dee0116ba32823130602bee1a9968"
+    },
+    "task_packet_schema": {
+      "path": "content/lesson-factory/schemas/task-source-packet.schema.json",
+      "contract_id": "lesson-factory.task-source-packet",
+      "contract_version": "5.0.0",
+      "content_sha256": "26912ebfab6dab3a14a5a10b01746796e7099cd1b75fc042c823d45897c33177",
+      "file_sha256": "24e31df12e7fc3a35f6a96594b8fe93bf70d88076cec5c4768216c1dc7291a11"
+    },
+    "deadline_profile": {
+      "path": "content/lesson-factory/deadline-profile/deadline-profile.json",
+      "contract_id": "lesson-factory.deadline-profile",
+      "contract_version": "7.0.0",
+      "content_sha256": "f2d4ca76a60afb3965c68b06f17392593e060e40d850307142771cc72e4a42ff",
+      "file_sha256": "681d2864fbf22bfa3f947e4e21f846fe8ee5913ff91e82f56c95708cd344562c",
+      "profile_id": "lesson-factory-deadline-2026-08-03",
+      "profile_version": "2.4.0"
+    },
+    "release_policy": {
+      "path": "content/lesson-factory/deadline-profile/release-policy.json",
+      "contract_id": "lesson-factory.release-policy",
+      "contract_version": "3.0.0",
+      "content_sha256": "e2726fe782683d7bdf7f5f8619c7b4377c1e73965d8f94f6a936f3dac067b0de",
+      "file_sha256": "0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e",
+      "policy_id": "lesson-factory-deadline-release",
+      "policy_version": "2.0.0"
+    },
+    "owner_source_use_receipt": {
+      "path": "content/lesson-factory/deadline-profile/owner-source-use-receipt.json",
+      "contract_id": "lesson-factory.owner-source-use-receipt",
+      "contract_version": "2.0.0",
+      "content_sha256": "dfdf92d79c59377d038a642cfea966ad7cda98f8384ae9dc65294fd1f8ba8157",
+      "file_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+      "receipt_id": "lesson-factory-deadline-2026-08-03-source-use-01"
+    }
+  },
+  "authoring_scope": {
+    "disposition": "AUTHORING_GENERATION_ONLY",
+    "canonical_lesson_count": 114,
+    "generation_lesson_count": 111,
+    "excluded_existing_lesson_count": 3,
+    "generation_rows_disjoint_from_exclusions": true,
+    "generation_rows_union_exclusions_equals_canonical": true
   },
   "excluded_existing_lesson_ids": ["V3-LES-130923", "V3-LES-789208", "V3-LES-844372"],
   "capacities": {
@@ -1210,6 +1262,7 @@
     "pairwise_disjoint": true,
     "union_equals_remaining": true,
     "existing_three_excluded": true,
+    "rows_union_exclusions_equals_canonical": true,
     "unique_slugs": true,
     "unique_output_paths": true,
     "proof_schema_valid": true

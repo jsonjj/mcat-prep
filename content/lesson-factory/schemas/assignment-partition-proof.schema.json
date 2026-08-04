@@ -2,21 +2,72 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/assignment-partition-proof.schema.json",
   "x_contract_id": "lesson-factory.assignment-partition-proof",
-  "x_contract_version": "1.0.0",
+  "x_contract_version": "2.0.0",
   "title": "Lesson factory assignment partition proof",
-  "description": "The deterministic allocation of the canonical lesson set to three authoring lanes. This proof deliberately contains no task-packet references: assignment manifests are finalized only after WP-04 supplies a complete real packet-reference map.",
+  "description": "The deterministic allocation of the 111 authoring-scope lessons to three authoring lanes, with the three existing-corpus lessons declared only as exclusions. This proof deliberately contains no task-packet references: assignment manifests are finalized only after WP-04 supplies a complete real packet-reference map.",
+  "$defs": {
+    "AuthorityPin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "contract_id", "contract_version", "content_sha256", "file_sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "profile_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profile_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "content_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        },
+        "file_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        }
+      }
+    }
+  },
   "type": "object",
   "additionalProperties": false,
   "required": [
     "contract_id",
     "contract_version",
+    "run_id",
     "created_at",
     "deadline_profile_ref",
     "release_policy_ref",
+    "source_use_receipt_ref",
     "rubric_identity",
     "source_manifest",
     "assignment_schema",
     "proof_schema",
+    "packet_authorities",
+    "authoring_scope",
     "excluded_existing_lesson_ids",
     "capacities",
     "algorithm",
@@ -29,7 +80,10 @@
       "const": "lesson-factory.assignment-partition-proof"
     },
     "contract_version": {
-      "const": "1.0.0"
+      "const": "2.0.0"
+    },
+    "run_id": {
+      "const": "lesson-factory-deadline-2026-08-03"
     },
     "created_at": {
       "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
@@ -39,6 +93,9 @@
     },
     "release_policy_ref": {
       "$ref": "shared-vocabulary.schema.json#/$defs/FrozenReleasePolicyRef"
+    },
+    "source_use_receipt_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenSourceUseReceiptRef"
     },
     "rubric_identity": {
       "$ref": "shared-vocabulary.schema.json#/$defs/RubricIdentity"
@@ -115,7 +172,7 @@
           "const": "lesson-factory.assignment-partition-proof"
         },
         "contract_version": {
-          "const": "1.0.0"
+          "const": "2.0.0"
         },
         "content_sha256": {
           "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
@@ -125,14 +182,176 @@
         }
       }
     },
-    "excluded_existing_lesson_ids": {
-      "type": "array",
-      "minItems": 3,
-      "maxItems": 3,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "shared-vocabulary.schema.json#/$defs/LessonId"
+    "packet_authorities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shared_vocabulary_schema",
+        "task_packet_schema",
+        "deadline_profile",
+        "release_policy",
+        "owner_source_use_receipt"
+      ],
+      "properties": {
+        "shared_vocabulary_schema": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/AuthorityPin"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "content/lesson-factory/schemas/shared-vocabulary.schema.json"
+                },
+                "contract_id": {
+                  "const": "lesson-factory.shared-vocabulary"
+                },
+                "contract_version": {
+                  "const": "5.0.0"
+                }
+              }
+            }
+          ]
+        },
+        "task_packet_schema": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/AuthorityPin"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "content/lesson-factory/schemas/task-source-packet.schema.json"
+                },
+                "contract_id": {
+                  "const": "lesson-factory.task-source-packet"
+                },
+                "contract_version": {
+                  "const": "5.0.0"
+                }
+              }
+            }
+          ]
+        },
+        "deadline_profile": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/AuthorityPin"
+            },
+            {
+              "type": "object",
+              "required": ["profile_id", "profile_version"],
+              "properties": {
+                "path": {
+                  "const": "content/lesson-factory/deadline-profile/deadline-profile.json"
+                },
+                "contract_id": {
+                  "const": "lesson-factory.deadline-profile"
+                },
+                "contract_version": {
+                  "const": "7.0.0"
+                },
+                "profile_id": {
+                  "const": "lesson-factory-deadline-2026-08-03"
+                },
+                "profile_version": {
+                  "const": "2.4.0"
+                }
+              }
+            }
+          ]
+        },
+        "release_policy": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/AuthorityPin"
+            },
+            {
+              "type": "object",
+              "required": ["policy_id", "policy_version"],
+              "properties": {
+                "path": {
+                  "const": "content/lesson-factory/deadline-profile/release-policy.json"
+                },
+                "contract_id": {
+                  "const": "lesson-factory.release-policy"
+                },
+                "contract_version": {
+                  "const": "3.0.0"
+                },
+                "policy_id": {
+                  "const": "lesson-factory-deadline-release"
+                },
+                "policy_version": {
+                  "const": "2.0.0"
+                }
+              }
+            }
+          ]
+        },
+        "owner_source_use_receipt": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/AuthorityPin"
+            },
+            {
+              "type": "object",
+              "required": ["receipt_id"],
+              "properties": {
+                "path": {
+                  "const": "content/lesson-factory/deadline-profile/owner-source-use-receipt.json"
+                },
+                "contract_id": {
+                  "const": "lesson-factory.owner-source-use-receipt"
+                },
+                "contract_version": {
+                  "const": "2.0.0"
+                },
+                "receipt_id": {
+                  "const": "lesson-factory-deadline-2026-08-03-source-use-01"
+                }
+              }
+            }
+          ]
+        }
       }
+    },
+    "authoring_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disposition",
+        "canonical_lesson_count",
+        "generation_lesson_count",
+        "excluded_existing_lesson_count",
+        "generation_rows_disjoint_from_exclusions",
+        "generation_rows_union_exclusions_equals_canonical"
+      ],
+      "properties": {
+        "disposition": {
+          "const": "AUTHORING_GENERATION_ONLY"
+        },
+        "canonical_lesson_count": {
+          "const": 114
+        },
+        "generation_lesson_count": {
+          "const": 111
+        },
+        "excluded_existing_lesson_count": {
+          "const": 3
+        },
+        "generation_rows_disjoint_from_exclusions": {
+          "const": true
+        },
+        "generation_rows_union_exclusions_equals_canonical": {
+          "const": true
+        }
+      }
+    },
+    "excluded_existing_lesson_ids": {
+      "const": ["V3-LES-130923", "V3-LES-789208", "V3-LES-844372"]
     },
     "capacities": {
       "type": "object",
@@ -277,6 +496,7 @@
         "pairwise_disjoint",
         "union_equals_remaining",
         "existing_three_excluded",
+        "rows_union_exclusions_equals_canonical",
         "unique_slugs",
         "unique_output_paths",
         "proof_schema_valid"
@@ -289,6 +509,9 @@
           "const": true
         },
         "existing_three_excluded": {
+          "const": true
+        },
+        "rows_union_exclusions_equals_canonical": {
           "const": true
         },
         "unique_slugs": {

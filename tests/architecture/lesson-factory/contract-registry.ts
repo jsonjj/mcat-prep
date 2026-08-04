@@ -32,13 +32,14 @@ export const RUBRIC_VERSION = '0.9.1';
  * ledger, handoff, and readiness contracts replaced prose lists with code vocabularies.
  */
 export const SCHEMA_VERSIONS = {
-  'shared-vocabulary.schema.json': '3.2.0',
-  'deadline-profile.schema.json': '5.0.0',
+  'shared-vocabulary.schema.json': '5.0.0',
+  'deadline-profile.schema.json': '7.0.0',
   'release-policy.schema.json': '3.0.0',
   'lifecycle-nonclaims.schema.json': '2.0.0',
   'owner-route-policy-receipt.schema.json': '4.0.0',
+  'owner-source-use-receipt.schema.json': '2.0.0',
   'assignment-manifest.schema.json': '3.0.0',
-  'task-source-packet.schema.json': '3.0.0',
+  'task-source-packet.schema.json': '5.0.0',
   'lesson-handoff.schema.json': '4.0.0',
   'team-handoff.schema.json': '3.0.0',
   'candidate-quality-ledger.schema.json': '4.0.0',
@@ -46,14 +47,17 @@ export const SCHEMA_VERSIONS = {
   'import-index.schema.json': '3.0.0',
   'bundle-readiness.schema.json': '4.0.0',
   'runner-log-record.schema.json': '4.0.0',
-  'intake-validation.schema.json': '2.1.0',
+  'intake-validation.schema.json': '3.0.0',
 } as const;
+
+/** The closed WP-01 contract set has sixteen schemas; WP-02's proof schema is separate. */
+export const CONTRACT_COUNT = 16 as const;
 
 export const SCHEMA_FILES = Object.keys(SCHEMA_VERSIONS) as Array<keyof typeof SCHEMA_VERSIONS>;
 
 /** WP-02's allocation-only proof contract, versioned separately from the frozen WP-01 set. */
 export const ASSIGNMENT_SCHEMA_VERSIONS = {
-  'assignment-partition-proof.schema.json': '1.0.0',
+  'assignment-partition-proof.schema.json': '2.0.0',
 } as const;
 
 export const ASSIGNMENT_ARTIFACTS = {
@@ -66,6 +70,7 @@ export const PROFILE_ARTIFACTS = {
   'release-policy.json': 'release-policy.schema.json',
   'lifecycle-nonclaims.json': 'lifecycle-nonclaims.schema.json',
   'owner-route-policy-receipt.json': 'owner-route-policy-receipt.schema.json',
+  'owner-source-use-receipt.json': 'owner-source-use-receipt.schema.json',
 } as const;
 
 /** Valid control instances for the contracts that have no shipped artifact yet. */
@@ -321,14 +326,22 @@ export const INJECTION_SURFACES: ReadonlyArray<{
     roots: [''],
     declaredProse: [
       /^\/requested_name$/,
-      /^\/kc_competency_and_scope\/\d+\/(?:competency|scope)$/,
-      /^\/kc_non_goals\/\d+\/non_goals\/\d+$/,
-      /^\/helpful_context\/\d+$/,
-      /^\/source_anchors\/\d+$/,
-      /^\/open_holds\/\d+$/,
-      /^\/reasoning_operations\/\d+\/operation$/,
-      /^\/source_records\/\d+\/source_locator$/,
+      /^\/identity\/canonical_title$/,
+      /^\/ordered_kc_records\/\d+\/(?:label|competency|reasoning_operation)$/,
+      /^\/ordered_kc_records\/\d+\/(?:scope_in|scope_out|representations)\/\d+$/,
+      /^\/ordered_kc_records\/\d+\/source_occurrences\/\d+\/(?:official_topic|derived_summary)$/,
+      /^\/ordered_kc_records\/\d+\/source_occurrences\/\d+\/official_path\/\d+$/,
+      /^\/holds\/\d+\/(?:issue|safe_interim_behavior|nonclaim)$/,
+      /^\/block_reasons\/\d+\/message$/,
+      /^\/research_evidence\/nonclaim$/,
+      /^\/dok_authoring\/requirement$/,
     ],
+  },
+  {
+    document: 'owner-source-use-receipt.json',
+    schemaFile: 'owner-source-use-receipt.schema.json',
+    source: 'artifact',
+    roots: [''],
   },
   ...INTAKE_CONTROLS.map((document) => ({
     document,

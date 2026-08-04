@@ -1,8 +1,8 @@
 {
   "contract_id": "lesson-factory.deadline-profile",
-  "contract_version": "5.0.0",
+  "contract_version": "7.0.0",
   "profile_id": "lesson-factory-deadline-2026-08-03",
-  "profile_version": "2.2.0",
+  "profile_version": "2.4.0",
   "status": "ACTIVE",
   "frozen_at": "2026-08-03T23:05:00Z",
   "rubric_identity": {
@@ -73,42 +73,56 @@
       "expected_state": "BLOCKED",
       "normalization_to_pass_allowed": false,
       "blocker_code": "BLOCKER_NO_BROWSER_RENDERED_EVIDENCE",
-      "required_roles": ["PRODUCT_PEDAGOGY_OWNER"]
+      "required_roles": [
+        "PRODUCT_PEDAGOGY_OWNER"
+      ]
     },
     "ACCESSIBILITY": {
       "description": "Keyboard, focus, contrast, reflow, target-size, and math-transcript results, plus an independent real Safari and VoiceOver receipt recorded by someone other than the primary author.",
       "expected_state": "BLOCKED",
       "normalization_to_pass_allowed": false,
       "blocker_code": "BLOCKER_NO_ACCESSIBILITY_REVIEW",
-      "required_roles": ["ACCESSIBILITY_REVIEWER", "PRODUCT_PEDAGOGY_OWNER"]
+      "required_roles": [
+        "ACCESSIBILITY_REVIEWER",
+        "PRODUCT_PEDAGOGY_OWNER"
+      ]
     },
     "DOMAIN_SME": {
       "description": "Domain construct comparison, distractor and error-model equivalence review, and two independent keyless blind solves.",
       "expected_state": "BLOCKED",
       "normalization_to_pass_allowed": false,
       "blocker_code": "BLOCKER_NO_DOMAIN_SME_RECEIPT",
-      "required_roles": ["DOMAIN_CONSTRUCT_SME", "INDEPENDENT_BLIND_SOLVER"]
+      "required_roles": [
+        "DOMAIN_CONSTRUCT_SME",
+        "INDEPENDENT_BLIND_SOLVER"
+      ]
     },
     "NOVICE_WALKTHROUGH": {
       "description": "A proxy-learner walkthrough answering the four fixed orientation questions per consequential screen, by a reviewer who does not hold the target knowledge component.",
       "expected_state": "BLOCKED",
       "normalization_to_pass_allowed": false,
       "blocker_code": "BLOCKER_NO_NOVICE_WALKTHROUGH_RECEIPT",
-      "required_roles": ["NOVICE_WALKTHROUGH_REVIEWER"]
+      "required_roles": [
+        "NOVICE_WALKTHROUGH_REVIEWER"
+      ]
     },
     "PLATFORM_RELIABILITY": {
       "description": "Interruption, recovery, persistence, and branch-termination runs against the exact build.",
       "expected_state": "BLOCKED",
       "normalization_to_pass_allowed": false,
       "blocker_code": "BLOCKER_NO_PLATFORM_RELIABILITY_RECEIPT",
-      "required_roles": ["PLATFORM_RELIABILITY_REVIEWER"]
+      "required_roles": [
+        "PLATFORM_RELIABILITY_REVIEWER"
+      ]
     },
     "HUMAN_DECISION": {
       "description": "The decision-role receipt that approves a lesson revision. Its absence never blocks a dimension; it withholds approval at the lesson level, permanently, until a qualified human records a reason.",
       "expected_state": "BLOCKED",
       "normalization_to_pass_allowed": false,
       "blocker_code": "BLOCKER_NO_HUMAN_DECISION_RECEIPT",
-      "required_roles": ["PRODUCT_PEDAGOGY_OWNER"]
+      "required_roles": [
+        "PRODUCT_PEDAGOGY_OWNER"
+      ]
     }
   },
   "namespaces": {
@@ -138,7 +152,11 @@
     "record_schema_path": "content/lesson-factory/schemas/runner-log-record.schema.json",
     "record_schema_sha256": "0ec265a5af0306501f91180e39e71130293124e1057cf68555e989950d3c845f",
     "free_text_permitted": false,
-    "permitted_payload_kinds": ["OPAQUE_CODE", "OPAQUE_HASH", "COUNT"],
+    "permitted_payload_kinds": [
+      "OPAQUE_CODE",
+      "OPAQUE_HASH",
+      "COUNT"
+    ],
     "forbidden_payload_kinds": [
       "PROTECTED_ANSWER",
       "SCORING_AUTHORITY",
@@ -170,9 +188,9 @@
   },
   "intake_contract": {
     "record_contract": "lesson-factory.intake-validation",
-    "record_contract_version": "2.1.0",
+    "record_contract_version": "3.0.0",
     "record_schema_path": "content/lesson-factory/schemas/intake-validation.schema.json",
-    "record_schema_sha256": "47bfbbcd2d08be5c1e46b2f5233506f4208ba498178b726313cefb9fd2738af2",
+    "record_schema_sha256": "688fda70c334dc6907821e28bf752f0404a1dc886241e42dea0fc63bc0a113d9",
     "schema_validation_required": true,
     "resolver_validation_required": true,
     "schema_validation_alone_sufficient": false,
@@ -184,6 +202,7 @@
       "lesson-factory.release-policy",
       "lesson-factory.lifecycle-nonclaims",
       "lesson-factory.owner-route-policy-receipt",
+      "lesson-factory.owner-source-use-receipt",
       "lesson-factory.assignment-manifest",
       "lesson-factory.task-source-packet",
       "lesson-factory.lesson-handoff",
@@ -211,6 +230,7 @@
       "assignment",
       "kit",
       "packet",
+      "quarantine-packet",
       "handoff",
       "team-handoff",
       "import-index",
@@ -219,5 +239,6 @@
       "bundle",
       "readiness"
     ]
-  }
+  },
+  "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
 }

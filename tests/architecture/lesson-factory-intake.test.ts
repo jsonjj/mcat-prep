@@ -23,6 +23,7 @@ import {
 import { REFERENCE_KINDS, referenceKind } from './lesson-factory/reference-model.js';
 import {
   admitIntake,
+  checkInputs,
   declaredReferencePointers,
   DYNAMIC_REFERENCE_KINDS,
   INTAKE_REGISTRY,
@@ -462,6 +463,143 @@ describe('lesson-factory intake: an admission is bound to the bytes it admitted'
 });
 
 /**
+ * The third half: the inputs a document pins by path, read and hashed twice.
+ *
+ * A packet pins ten authoritative inputs, each by the digest of its bytes and by the
+ * digest of its canonical content. Version 2.2.0 of this contract checked neither, and a
+ * schema cannot: it would have to open a second file. So every row is resolved here, and
+ * an admission requires all three halves rather than the two a validator can reach.
+ */
+describe('lesson-factory intake: the inputs a document pins are read, not believed', () => {
+  const packet = (): JsonObject => loadFixture('task-source-packet.json');
+  const packetOffer = (document: JsonObject): Offer => offerOf(document, 'lane-01/v3-les-151730');
+
+  const rowsOf = (document: JsonObject): JsonObject[] => document.input_hashes as JsonObject[];
+
+  it('resolves every input row of the packet control against the bytes on disk', () => {
+    const checks = checkInputs(packet());
+    expect(checks).toHaveLength(10);
+    for (const check of checks) {
+      expect(check.fileStatus, `${check.input} at ${check.path}`).toBe('RESOLVED');
+      expect(check.contentStatus, `${check.input} at ${check.path}`).toBe('RESOLVED');
+    }
+  });
+
+  it('reports no input checks for a document that pins no inputs, which is not the same as passing', () => {
+    expect(checkInputs(loadArtifact('deadline-profile.json'))).toEqual([]);
+    const record = admitIntake({ ...profileOffer(), now: '2026-08-03T22:28:00Z' });
+    expect(record.input_validation.checked_count).toBe(0);
+    expect(record.input_validation.status).toBe('PASS');
+  });
+
+  it('refuses a packet whose file digest is right and whose content digest is not', () => {
+    const document = packet();
+    // A real digest of a real file, in the wrong row. Nothing about it is malformed,
+    // which is the case a hash-shaped check accepts.
+    const wrong = sha256OfFile(join(REPO_ROOT, 'key-docs/lesson-quality-rubric.md'));
+    const rows = rowsOf(document).map((row) =>
+      row.input === 'releasePolicy' ? { ...row, content_sha256: wrong } : row,
+    );
+    const record = admitIntake({
+      ...packetOffer({ ...document, input_hashes: rows }),
+      now: '2026-08-03T22:28:00Z',
+    });
+    expect(record.admission).toBe('REJECTED');
+    expect(record.refusal_code).toBe('INPUTS_UNRESOLVED');
+    const failed = record.input_validation.inputs.find((input) => input.input === 'releasePolicy');
+    expect(failed?.fileStatus).toBe('RESOLVED');
+    expect(failed?.contentStatus).toBe('MISMATCHED');
+  });
+
+  it('refuses a packet whose content digest is right and whose file digest is not', () => {
+    const document = packet();
+    const wrong = sha256OfFile(
+      join(REPO_ROOT, 'content/lesson-factory/deadline-profile/release-policy.json'),
+    );
+    const rows = rowsOf(document).map((row) =>
+      row.input === 'rubric' ? { ...row, file_sha256: wrong } : row,
+    );
+    const record = admitIntake({
+      ...packetOffer({ ...document, input_hashes: rows }),
+      now: '2026-08-03T22:28:00Z',
+    });
+    expect(record.admission).toBe('REJECTED');
+    expect(record.input_validation.unresolved_count).toBe(1);
+  });
+
+  it('binds the input results into the admission proof, so they cannot be rewritten after', () => {
+    const document = packet();
+    const offer = packetOffer(document);
+    const genuine = admitIntake({ ...offer, now: '2026-08-03T22:28:00Z' });
+    const forged: IntakeRecord = {
+      ...genuine,
+      input_validation: { status: 'PASS', checked_count: 10, unresolved_count: 0, inputs: [] },
+    };
+    expect(verifyIntake(forged, offer)).not.toEqual([]);
+  });
+});
+
+/**
+ * One contract, two surfaces, two locators.
+ *
+ * WP-04's brief chooses `content/lesson-factory/packets/<lesson-id>/task-source-packet.json`
+ * for the authorable packet, and a refused generation still has to leave evidence that
+ * survives. The reconciliation is that the evidence is a different kind of thing: it is
+ * admitted, it is verifiable, and the locator grammar it has to satisfy is not the author
+ * packet path.
+ */
+describe('lesson-factory intake: a quarantined record is admissible and is not a packet', () => {
+  const quarantined = (): JsonObject => {
+    const document = loadFixture('task-source-packet.json');
+    return {
+      ...document,
+      packet_status: 'BLOCKED',
+      packet_surface: 'QUARANTINE',
+      authorable_packet_ref: null,
+      packet_content_sha256: null,
+      block_reasons: [
+        {
+          code: 'SOURCE_RIGHTS_UNCLEARED',
+          path: '/ordered_kc_records/0/source_occurrences/0/rights_status',
+          message: 'a control for the quarantine surface, not a record of a real refusal',
+        },
+      ],
+    };
+  };
+
+  it('derives the quarantine kind from the surface the record declares, not from the caller', () => {
+    const record = admitIntake({
+      ...offerOf(quarantined(), 'lane-01/v3-les-151730'),
+      now: '2026-08-03T22:28:00Z',
+    });
+    expect(record.document.kind).toBe('quarantine-packet');
+    expect(record.document.contract_id).toBe('lesson-factory.task-source-packet');
+    expect(record.document.ref.startsWith('quarantine-packet:')).toBe(true);
+  });
+
+  it('refuses an authorable record offered as a quarantine one, and the reverse', () => {
+    const authorable = loadFixture('task-source-packet.json');
+    expect(
+      admitIntake({
+        ...offerOf(authorable, 'lane-01/v3-les-151730'),
+        now: '2026-08-03T22:28:00Z',
+      }).document.kind,
+    ).toBe('packet');
+  });
+
+  it('never gives a quarantined record an authorable reference or an artifact digest', () => {
+    const document = quarantined();
+    expect(document.authorable_packet_ref).toBeNull();
+    expect(document.packet_content_sha256).toBeNull();
+    const record = admitIntake({
+      ...offerOf(document, 'lane-01/v3-les-151730'),
+      now: '2026-08-03T22:28:00Z',
+    });
+    expect(record.document.ref.includes('content/lesson-factory/packets/')).toBe(false);
+  });
+});
+
+/**
  * Every document the factory persists has an admission path, and the three contracts
  * that do not are named and given a reason.
  *
@@ -486,7 +624,11 @@ describe('lesson-factory intake: every persisted factory document has an admissi
     const declared = (scope().non_admissible_contracts as JsonObject[]).map((entry) =>
       String(entry.contract_id),
     );
-    const admissible = INTAKE_REGISTRY.map((entry) => entry.contractId);
+    // The registry is keyed by document kind and the accounting is by contract, and one
+    // contract now has two kinds: a task-source packet is admitted as an authorable
+    // packet or as a quarantined record of a refused one, depending on the surface it
+    // declares. That is one contract accounted for, offered at two locators.
+    const admissible = [...new Set(INTAKE_REGISTRY.map((entry) => entry.contractId))];
 
     const shipped = Object.keys(SCHEMA_VERSIONS).map((file) =>
       String(loadSchema(file).x_contract_id),

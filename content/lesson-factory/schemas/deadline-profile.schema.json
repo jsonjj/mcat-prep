@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/deadline-profile.schema.json",
   "x_contract_id": "lesson-factory.deadline-profile",
-  "x_contract_version": "5.0.0",
+  "x_contract_version": "7.0.0",
   "title": "Lesson factory deadline profile",
   "description": "The frozen operating profile for one deadline release of the lesson factory: which authorities it screens against, which gates are hard, which evidence classes stay BLOCKED, and what the resulting lifecycle status never claims.",
   "type": "object",
@@ -28,14 +28,15 @@
     "identifier_boundary",
     "log_boundary",
     "nonclaims",
-    "intake_contract"
+    "intake_contract",
+    "source_use_receipt_ref"
   ],
   "properties": {
     "contract_id": {
       "const": "lesson-factory.deadline-profile"
     },
     "contract_version": {
-      "const": "5.0.0",
+      "const": "7.0.0",
       "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
     },
     "profile_id": {
@@ -56,7 +57,11 @@
     "structural_authority": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["spec_path", "spec_sha256", "validator_rule_set"],
+      "required": [
+        "spec_path",
+        "spec_sha256",
+        "validator_rule_set"
+      ],
       "properties": {
         "spec_path": {
           "const": "docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md",
@@ -73,7 +78,10 @@
     "mastery_authority": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["contract_path", "contract_sha256"],
+      "required": [
+        "contract_path",
+        "contract_sha256"
+      ],
       "properties": {
         "contract_path": {
           "const": "docs/lesson-evidence-mastery-contract.md"
@@ -126,7 +134,11 @@
       "type": "object",
       "additionalProperties": false,
       "description": "`learner_safe_surfaces` are the contract surfaces that must carry no protected material of any kind; each is a closed object, so a protected field cannot be added without failing validation. Content hashes are not protected material. `protected_surfaces` names where protected material actually lives.",
-      "required": ["learner_safe_surfaces", "protected_surfaces", "protected_material_transport"],
+      "required": [
+        "learner_safe_surfaces",
+        "protected_surfaces",
+        "protected_material_transport"
+      ],
       "properties": {
         "learner_safe_surfaces": {
           "type": "array",
@@ -209,7 +221,11 @@
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "enum": ["OPAQUE_CODE", "OPAQUE_HASH", "COUNT"]
+            "enum": [
+              "OPAQUE_CODE",
+              "OPAQUE_HASH",
+              "COUNT"
+            ]
           }
         },
         "forbidden_payload_kinds": {
@@ -285,7 +301,7 @@
           "description": "The reference kinds whose targets a runner writes. These are exactly the references a schema validator cannot check."
         },
         "record_contract_version": {
-          "const": "2.1.0",
+          "const": "3.0.0",
           "description": "The one version of the intake contract this freeze runs. A consumer producing records under another version is producing records nothing here can read."
         },
         "caller_supplied_identity_permitted": {
@@ -298,12 +314,13 @@
         },
         "admissible_contracts": {
           "type": "array",
-          "minItems": 12,
+          "minItems": 13,
           "uniqueItems": true,
           "items": {
             "$ref": "shared-vocabulary.schema.json#/$defs/AdmissibleContractId"
           },
-          "description": "Every contract whose documents intake can identify and bind an admission to. A document of any other contract is refused at the door."
+          "description": "Every contract whose documents intake can identify and bind an admission to. A document of any other contract is refused at the door.",
+          "maxItems": 13
         },
         "non_admissible_contracts": {
           "type": "array",
@@ -313,7 +330,10 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["contract_id", "reason_code"],
+            "required": [
+              "contract_id",
+              "reason_code"
+            ],
             "properties": {
               "contract_id": {
                 "$ref": "shared-vocabulary.schema.json#/$defs/NonAdmissibleContractId"
@@ -325,6 +345,10 @@
           }
         }
       }
+    },
+    "source_use_receipt_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenSourceUseReceiptRef",
+      "description": "The one source-use decision in force for this deadline. A packet may call a source PERMITTED only under this exact receipt, so the profile pins it the same way it pins the release policy."
     }
   }
 }

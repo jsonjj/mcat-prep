@@ -24,6 +24,10 @@ const SHARED_SCHEMA_PATH = join(
   REPO_ROOT,
   'content/lesson-factory/schemas/shared-vocabulary.schema.json',
 );
+const TASK_PACKET_SCHEMA_PATH = join(
+  REPO_ROOT,
+  'content/lesson-factory/schemas/task-source-packet.schema.json',
+);
 const PROOF_SCHEMA_PATH = join(
   REPO_ROOT,
   'content/lesson-factory/schemas/assignment-partition-proof.schema.json',
@@ -33,6 +37,10 @@ const PROFILE_PATH = join(
   'content/lesson-factory/deadline-profile/deadline-profile.json',
 );
 const POLICY_PATH = join(REPO_ROOT, 'content/lesson-factory/deadline-profile/release-policy.json');
+const SOURCE_USE_RECEIPT_PATH = join(
+  REPO_ROOT,
+  'content/lesson-factory/deadline-profile/owner-source-use-receipt.json',
+);
 const ASSIGNMENT_FIXTURE_PATH = join(
   REPO_ROOT,
   'tests/architecture/lesson-factory/fixtures/assignment-manifest.json',
@@ -42,9 +50,11 @@ const CONTENT_CLI_PATH = join(REPO_ROOT, 'tools/content-cli/src/main.ts');
 const MANIFEST_TEXT = readFileSync(MANIFEST_PATH, 'utf8');
 const ASSIGNMENT_SCHEMA_TEXT = readFileSync(ASSIGNMENT_SCHEMA_PATH, 'utf8');
 const SHARED_SCHEMA_TEXT = readFileSync(SHARED_SCHEMA_PATH, 'utf8');
+const TASK_PACKET_SCHEMA_TEXT = readFileSync(TASK_PACKET_SCHEMA_PATH, 'utf8');
 const PROOF_SCHEMA_TEXT = readFileSync(PROOF_SCHEMA_PATH, 'utf8');
 const PROFILE_TEXT = readFileSync(PROFILE_PATH, 'utf8');
 const POLICY_TEXT = readFileSync(POLICY_PATH, 'utf8');
+const SOURCE_USE_RECEIPT_TEXT = readFileSync(SOURCE_USE_RECEIPT_PATH, 'utf8');
 const PROFILE = JSON.parse(PROFILE_TEXT) as JsonObject;
 const ASSIGNMENT_FIXTURE = (
   JSON.parse(readFileSync(ASSIGNMENT_FIXTURE_PATH, 'utf8')) as {
@@ -67,9 +77,19 @@ function partitionInput(
     assignmentSchemaText: ASSIGNMENT_SCHEMA_TEXT,
     proofSchemaText: PROOF_SCHEMA_TEXT,
     sharedVocabularySchemaText: SHARED_SCHEMA_TEXT,
+    taskPacketSchemaText: TASK_PACKET_SCHEMA_TEXT,
+    deadlineProfileText: PROFILE_TEXT,
+    releasePolicyText: POLICY_TEXT,
+    ownerSourceUseReceiptText: SOURCE_USE_RECEIPT_TEXT,
     sourceManifestPath: 'curriculum/v3/v3-lesson-authoring-manifest.json',
     assignmentSchemaPath: 'content/lesson-factory/schemas/assignment-manifest.schema.json',
     proofSchemaPath: 'content/lesson-factory/schemas/assignment-partition-proof.schema.json',
+    sharedVocabularySchemaPath: 'content/lesson-factory/schemas/shared-vocabulary.schema.json',
+    taskPacketSchemaPath: 'content/lesson-factory/schemas/task-source-packet.schema.json',
+    deadlineProfilePath: 'content/lesson-factory/deadline-profile/deadline-profile.json',
+    releasePolicyPath: 'content/lesson-factory/deadline-profile/release-policy.json',
+    ownerSourceUseReceiptPath:
+      'content/lesson-factory/deadline-profile/owner-source-use-receipt.json',
     createdAt: PROFILE.frozen_at as string,
     deadlineProfileRef:
       'profile:content/lesson-factory/deadline-profile/deadline-profile.json#sha256:' +
@@ -355,6 +375,7 @@ describe('lesson-factory package boundary', () => {
     expect(typeof api.createAssignmentPartition).toBe('function');
     expect(typeof api.createAssignmentAllocation).toBe('function');
     expect(typeof api.finalizeAssignmentManifests).toBe('function');
+    expect(typeof api.createTaskSourcePackets).toBe('function');
     expect(input.manifestText).toBe(MANIFEST_TEXT);
     expect(api.canonicalJson).toBe(canonicalJson);
     expect(api.createAssignmentAllocation).toBe(createAssignmentAllocation);

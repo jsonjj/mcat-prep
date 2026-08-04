@@ -1,6 +1,6 @@
 # Lesson factory deadline profile
 
-**Profile:** `lesson-factory-deadline-2026-08-03` version `2.2.0`
+**Profile:** `lesson-factory-deadline-2026-08-03` version `2.3.0`
 **Status:** frozen contract, no runner implemented
 **Rubric authority:** [`key-docs/lesson-quality-rubric.md`](../../key-docs/lesson-quality-rubric.md) version `0.9.1`, pinned by exact hash
 **Structural authority:** [`docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md`](../design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md) (R1–R15)
@@ -483,8 +483,8 @@ a statement about a document and there is not one to make a statement about.
 
 #### What intake admits, and what it does not
 
-Twelve contracts are admissible, and they are every document the factory persists and
-hands on: the four frozen profile artifacts, and the eight a runner writes — assignment
+Thirteen contracts are admissible, and they are every document the factory persists and
+hands on: the five frozen profile artifacts, and the eight a runner writes — assignment
 manifest, task-source packet, lesson handoff, **team handoff**, candidate quality ledger,
 kit manifest, **import index**, bundle readiness. Each has a reference kind, so each has a
 canonical location, so an admission has something to bind to. `intake_contract` lists them
@@ -551,6 +551,8 @@ object they define), versioned by `$id` and `x_contract_version`, and addressed 
 | `lifecycle-nonclaims.json`        | the candidate lifecycle, its transitions, and the nonclaims in prose             |
 | `owner-route-policy-receipt.json` | the `PRODUCT_PEDAGOGY_OWNER` decision that ratified the route scope              |
 | `owner-route-policy-statement.md` | that decision in the owner's own words, non-authoritative, pinned by the receipt |
+| `owner-source-use-receipt.json`   | the `PRODUCT_PEDAGOGY_OWNER` decision about which source uses are permitted      |
+| `owner-source-use-statement.md`   | that decision in the owner's own words, non-authoritative, pinned by the receipt |
 
 **Schemas** — `content/lesson-factory/schemas/`
 
@@ -561,6 +563,7 @@ object they define), versioned by `$id` and `x_contract_version`, and addressed 
 | `release-policy.schema.json`             | the release policy and four-route proof                         |
 | `lifecycle-nonclaims.schema.json`        | the lifecycle and nonclaims artifact                            |
 | `owner-route-policy-receipt.schema.json` | the owner route-scope decision receipt                          |
+| `owner-source-use-receipt.schema.json`   | the owner source-use decision receipt                           |
 | `assignment-manifest.schema.json`        | which lane authors which lesson, from which packet              |
 | `task-source-packet.schema.json`         | the frozen, revision-bound authoring input                      |
 | `lesson-handoff.schema.json`             | one lesson revision handed back by one lane                     |
@@ -584,11 +587,98 @@ The task/source packet is a superset of the input contract in
 and [`key-docs/autonomous-lesson-authoring-context.md`](../../key-docs/autonomous-lesson-authoring-context.md) §5,
 with the rubric identity triple grouped under `rubric_identity`.
 
+Version 4 is the first version that can hold a whole generation. Version 3 described the
+inputs an author reads and nothing about how the packet came to exist, so the generator
+computed a parallel audit — status, block reasons, input digests, hold classifications,
+what it had sanitized out of the source material — and had nowhere to put it. An audit
+that cannot be persisted alongside the thing it audits is a log line at best; it does not
+survive the run, and a reviewer reading the packet six weeks later sees only the answer.
+Version 4 carries all of it: `packet_status` and `block_reasons`, `input_hashes`,
+`ordered_kc_records` with each occurrence's rights and provenance, `holds` with their
+classification and safe interim behaviour, `source_sanitization`, and the release, DOK,
+output, and nonclaim terms the request was issued under.
+
+`source_sanitization` is the smallest of these and the easiest to get wrong. It carries a
+count and a code for each kind of removal, and the contract requires them to agree: a
+count above zero with no matching code, or a raw-field count on input the generator did
+not trust, both fail. A removal that is claimed but not counted is not evidence of
+anything.
+
+### 7.1 The identifiers are the curriculum's, verbatim
+
+Every canonical identifier grammar in this freeze is taken from
+[`curriculum/v3/v3-lesson-authoring-manifest.json`](../../curriculum/v3/v3-lesson-authoring-manifest.json)
+rather than from an example. That is a correction, not a preference. Version 3 of the
+packet contract required `V3-GRP-NNNNNN` for a grouping, four-digit numbers for phases,
+modules and pathways, `R<n>-XX-NN` for a relation, and one `V3-ATT-NNNNNN` family for
+attachments. The manifest issues none of those. When WP-04 ran the generator against all
+114 lessons and 422 knowledge components, every one of the 111 assigned lessons failed
+validation on identity alone, and the only way to make them pass would have been to
+rewrite the canonical identifier into the contract's preferred shape — which replaces
+curriculum identity with invented identity and breaks every trace back to the manifest.
+
+| Family              | Grammar                                           | In the manifest |
+| ------------------- | ------------------------------------------------- | --------------- |
+| Lesson              | `V3-LES-NNNNNN`                                   | 114             |
+| Knowledge component | `V3-KC-NNNNNN`                                    | 422             |
+| Cluster / grouping  | `V3-CL-NNNNNN`                                    | 114             |
+| Phase               | `V3-PHS-NNNNNN`                                   | 5               |
+| Module              | `V3-MOD-NNNNNN`                                   | 40              |
+| Pathway             | `V3-PTH-NNNNNN`                                   | 7               |
+| Attachment          | `V3-CAP-`, `V3-EXT-`, `V3-SUP-` + `NNNNNN`, typed | 43 / 53 / 11    |
+| Hold                | `V3-HOLD-NNNNNN`                                  | 14              |
+| Source occurrence   | `V3-SRC-NNNNNN`                                   | 272             |
+| Source anchor       | five closed families, `BB`/`CP`/`CARS`/`PS`/`V3`  | 110             |
+| Sequence relation   | fifteen `R14-*` families                          | 1,583           |
+| Graph edge          | `V3-EDG-NNNNNN`                                   | 634             |
+
+Attachments keep their kind: `attachment_id` and `kind` are the same fact twice and the
+contract requires them to agree, because flattening three typed families into one lost the
+distinction the curriculum drew. Two of the 422 knowledge components have a capstone as a
+prerequisite, so a KC prerequisite is `KcId | CapstoneId` rather than `KcId` — a small
+oddity in the data that a contract written from the data has to carry. The manifest spells
+the exam sections seven ways, `Bio/Biochem` and `B/B` among them, and `SourceSectionCode`
+admits all seven, because collapsing them to one spelling is exactly the alias this freeze
+is not allowed to introduce.
+
+None of these is a general identifier. Every grammar is fixed words and digits or a closed
+alternation, so no segment can hold a phrase.
+`lesson-factory-curriculum-compat.test.ts` validates every canonical identifier the
+curriculum issues against the grammar for its family, rejects mutated, lower-cased,
+payload-bearing and retired-family variants, and builds and validates a full packet for
+each of the 114 lessons.
+
+### 7.2 The owner source-use decision
+
+A source with no rights determination is `PENDING`, a `PENDING` source carries no permitted
+use, and a packet that needs one is blocked. That is correct, and it is also why all 111
+packets were blocked twice over: nobody had made the decision, so the generator kept
+reporting its absence.
+
+[`owner-source-use-receipt.json`](../../content/lesson-factory/deadline-profile/owner-source-use-receipt.json)
+records the decision. It permits three uses — `DERIVED_SCOPE_METADATA`,
+`ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS`, and `INTERNAL_HUMAN_REVIEW` — over a closed
+allowlist of ten derived fields, for repository sources and public primary research. It
+prohibits eleven, including raw source text, quotation, passage and figure reproduction,
+proprietary item reuse, private comparison content, redistribution, excerpt storage, and
+model calibration. The private comparison class is listed as unusable rather than omitted,
+so its exclusion is a recorded decision instead of an inference from silence.
+
+An occurrence may be `PERMITTED` only under this exact receipt, pinned by digest as
+`FrozenSourceUseReceiptRef`, only with `derived_fields_only: true`, and only for uses the
+receipt grants. There is no field in the occurrence for source text, which is what makes
+the prohibition a property of the contract rather than an instruction to the author.
+
+Every claim the receipt does not make is a `const false` rather than a boolean an instance
+chooses: it grants no lesson approval, no external source copying, no third-party rights
+clearance, and it is neither legal advice nor a licence. A receipt that could say otherwise
+is a receipt somebody would eventually use to say otherwise.
+
 ---
 
 ## 8. How this is enforced
 
-Six suites under `tests/architecture/`:
+Seven suites under `tests/architecture/`:
 
 - `lesson-factory-deadline-contract.test.ts` — the contract set exists, is closed and
   versioned, resolves every `$ref`, pins the rubric and structural-spec hashes against
@@ -617,6 +707,13 @@ Six suites under `tests/architecture/`:
   recomputation against the bytes. It also proves the scope is complete: every shipped
   contract is admissible or declared out of scope with a reason, and the team handoff and
   the import index are admitted end to end once the artifacts they name exist.
+- `lesson-factory-curriculum-compat.test.ts` — the contract against the curriculum it
+  governs, driven by the real manifest bytes rather than by fixtures. Every canonical
+  identifier the curriculum issues validates against the grammar for its family; mutated,
+  lower-cased, payload-bearing, and retired-family variants are rejected; a full packet is
+  built and validated for each of the 114 lessons; a blocked packet is representable and a
+  status-less or self-contradicting one is not; and the source-use receipt cannot be edited
+  into an approval, a licence, or a permission for a use it prohibits.
 
 ### Controls are unmistakably test-only
 

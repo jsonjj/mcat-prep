@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/shared-vocabulary.schema.json",
   "x_contract_id": "lesson-factory.shared-vocabulary",
-  "x_contract_version": "3.2.0",
+  "x_contract_version": "5.0.0",
   "title": "Lesson factory shared vocabulary",
   "description": "Definitions only; this document describes no instance. Every contract in the frozen deadline set references these definitions so that one spelling of an identity, a route proof, a gate, an evidence class, and a nonclaim exists across the factory.",
   "$comment": "Authorities: key-docs/lesson-quality-rubric.md v0.9.1 (§2 result model, §3.2 route universe, §7 evidence minimums, §9.2 rights), docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md (R1-R15, R12 claim limits), docs/lesson-evidence-mastery-contract.md.",
@@ -74,11 +74,20 @@
       "maximum": 10
     },
     "Route": {
-      "enum": ["STANDARD", "CONCISE", "MISCONCEPTION", "PREREQUISITE_SUPPORT"],
+      "enum": [
+        "STANDARD",
+        "CONCISE",
+        "MISCONCEPTION",
+        "PREREQUISITE_SUPPORT"
+      ],
       "description": "The rubric route universe (§3.2). Exactly these four, always."
     },
     "RouteApplicability": {
-      "enum": ["APPLICABLE", "NOT_APPLICABLE", "BLOCKED"]
+      "enum": [
+        "APPLICABLE",
+        "NOT_APPLICABLE",
+        "BLOCKED"
+      ]
     },
     "RouteList": {
       "type": "array",
@@ -90,7 +99,9 @@
       }
     },
     "RouteScopeCode": {
-      "enum": ["STANDARD_ONLY"],
+      "enum": [
+        "STANDARD_ONLY"
+      ],
       "description": "The single machine value that fixes which routes a release covers. Every other route-shaped field — the applicable list, the four route proofs, the clause each absence proof cites, the owner's four route decisions — is derived from this code by schema rule rather than restated, so a document cannot disagree with itself. Adding a scope means adding a code here and the derivation that goes with it, in review."
     },
     "DecisionBasisCode": {
@@ -127,7 +138,9 @@
       "description": "What is stopping a policy from being ratified, as codes. A blocker list written in prose is a place to write a blocker that reads like a resolution."
     },
     "DecisionAuthorityScope": {
-      "enum": ["RELEASE_ROUTE_SCOPE_ONLY"],
+      "enum": [
+        "RELEASE_ROUTE_SCOPE_ONLY"
+      ],
       "description": "The only authority a route-scope receipt carries. There is deliberately no value meaning lesson approval, release authorisation, or gate waiver: those decisions need evidence this record cannot hold."
     },
     "DiagnosticCode": {
@@ -167,7 +180,11 @@
       "description": "Why approval is withheld, as codes. Written as prose, this list is the natural place for someone to write `everything passed, just waiting on sign-off`."
     },
     "AbsenceProofBasis": {
-      "enum": ["VERSIONED_RELEASE_POLICY", "STRUCTURAL_RECORD", "CURRICULUM_AUTHORITY"],
+      "enum": [
+        "VERSIONED_RELEASE_POLICY",
+        "STRUCTURAL_RECORD",
+        "CURRICULUM_AUTHORITY"
+      ],
       "description": "The admissible kinds of absence proof. REVIEWER_OPINION, EMPTY_COVERAGE_ROW, and RUNTIME_FALLBACK are deliberately absent (rubric §3.2)."
     },
     "CanonicalRole": {
@@ -183,7 +200,12 @@
       "description": "The seven canonical roles (rubric §7.4). Legacy artifact aliases are read-only and are never written into a new record."
     },
     "RightsStatus": {
-      "enum": ["PENDING", "PERMITTED", "RESTRICTED", "PROHIBITED"]
+      "enum": [
+        "PENDING",
+        "PERMITTED",
+        "RESTRICTED",
+        "PROHIBITED"
+      ]
     },
     "PermittedUse": {
       "enum": [
@@ -195,10 +217,17 @@
       ]
     },
     "GateStatus": {
-      "enum": ["PASS", "FAIL", "BLOCKED"]
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED"
+      ]
     },
     "EvidenceClassState": {
-      "enum": ["PRESENT", "BLOCKED"],
+      "enum": [
+        "PRESENT",
+        "BLOCKED"
+      ],
       "description": "Two states only. There is no PASS, WAIVED, NORMALIZED, or NOT_APPLICABLE: missing evidence fails closed (rubric §7.1)."
     },
     "LifecycleState": {
@@ -259,7 +288,11 @@
       "type": "object",
       "additionalProperties": false,
       "description": "Which standard a record was screened against. A later rubric version cannot silently relabel it.",
-      "required": ["rubric_path", "rubric_version", "rubric_sha256"],
+      "required": [
+        "rubric_path",
+        "rubric_version",
+        "rubric_sha256"
+      ],
       "properties": {
         "rubric_path": {
           "const": "key-docs/lesson-quality-rubric.md",
@@ -295,7 +328,10 @@
           "$ref": "#/$defs/LessonRevisionId"
         },
         "envelope_kind": {
-          "enum": ["L1", "L2_L3"]
+          "enum": [
+            "L1",
+            "L2_L3"
+          ]
         },
         "lesson_script_content_sha256": {
           "$ref": "#/$defs/Sha256"
@@ -328,7 +364,9 @@
                 "const": "L1"
               }
             },
-            "required": ["envelope_kind"]
+            "required": [
+              "envelope_kind"
+            ]
           },
           "then": {
             "properties": {
@@ -351,7 +389,13 @@
       "type": "object",
       "additionalProperties": false,
       "description": "R1-R15 is a hard gate, so the only recordable status is PASS: a handoff cannot exist for a lesson the validator has not cleared.",
-      "required": ["rule_set", "status", "screen_code", "screen_ref", "validated_at"],
+      "required": [
+        "rule_set",
+        "status",
+        "screen_code",
+        "screen_ref",
+        "validated_at"
+      ],
       "properties": {
         "rule_set": {
           "const": "R1-R15"
@@ -383,7 +427,11 @@
       "type": "object",
       "additionalProperties": false,
       "description": "Protected keys, scoring material, and private rationales travel as a hash reference to server-only storage. They never appear in a handoff, a diagnostic, a log, or public metadata (rubric §7.3).",
-      "required": ["storage_class", "inventory_sha256", "item_count"],
+      "required": [
+        "storage_class",
+        "inventory_sha256",
+        "item_count"
+      ],
       "properties": {
         "storage_class": {
           "const": "SERVER_ONLY"
@@ -404,7 +452,10 @@
         "pattern": "^diag_[a-z0-9_]+$"
       },
       "description": "Producer commentary, expressed only in closed vocabularies. Every field is diag_-prefixed so no reader can mistake it for an official quality result, and none of them admits text: this record travels beside the lesson, so an unconstrained note here is a channel for an answer, a rationale, or a claim that the lesson passed (rubric §2.5).",
-      "required": ["diag_self_audit_codes", "diag_revision_cycles_used"],
+      "required": [
+        "diag_self_audit_codes",
+        "diag_revision_cycles_used"
+      ],
       "properties": {
         "diag_self_audit_codes": {
           "type": "array",
@@ -492,7 +543,9 @@
                 "const": "NOT_APPLICABLE"
               }
             },
-            "required": ["route_applicability"]
+            "required": [
+              "route_applicability"
+            ]
           },
           "then": {
             "properties": {
@@ -515,7 +568,9 @@
                 "const": "APPLICABLE"
               }
             },
-            "required": ["route_applicability"]
+            "required": [
+              "route_applicability"
+            ]
           },
           "then": {
             "properties": {
@@ -538,7 +593,9 @@
                 "const": "BLOCKED"
               }
             },
-            "required": ["route_applicability"]
+            "required": [
+              "route_applicability"
+            ]
           },
           "then": {
             "properties": {
@@ -562,7 +619,12 @@
       "minProperties": 4,
       "maxProperties": 4,
       "description": "An object with exactly the four canonical members, never a list: four entries named STANDARD satisfy any list-shaped contract, and three entries look identical to four with one omitted. An unconsidered route is a missing key, which is detectable.",
-      "required": ["STANDARD", "CONCISE", "MISCONCEPTION", "PREREQUISITE_SUPPORT"],
+      "required": [
+        "STANDARD",
+        "CONCISE",
+        "MISCONCEPTION",
+        "PREREQUISITE_SUPPORT"
+      ],
       "properties": {
         "STANDARD": {
           "$ref": "#/$defs/RouteProof"
@@ -582,10 +644,16 @@
       "type": "object",
       "additionalProperties": false,
       "description": "One route, as decided by the owner. There is no BLOCKED state here: a receipt exists only because a decision was made, and an undecided route is an absent key.",
-      "required": ["decision", "policy_clause_id"],
+      "required": [
+        "decision",
+        "policy_clause_id"
+      ],
       "properties": {
         "decision": {
-          "enum": ["APPLICABLE", "NOT_APPLICABLE"]
+          "enum": [
+            "APPLICABLE",
+            "NOT_APPLICABLE"
+          ]
         },
         "policy_clause_id": {
           "anyOf": [
@@ -606,7 +674,9 @@
                 "const": "NOT_APPLICABLE"
               }
             },
-            "required": ["decision"]
+            "required": [
+              "decision"
+            ]
           },
           "then": {
             "properties": {
@@ -631,7 +701,12 @@
       "minProperties": 4,
       "maxProperties": 4,
       "description": "The owner decides the whole route universe or none of it. Same four-member discipline as RouteProofs, for the same reason: a route nobody considered must be a missing key rather than an invisible omission.",
-      "required": ["STANDARD", "CONCISE", "MISCONCEPTION", "PREREQUISITE_SUPPORT"],
+      "required": [
+        "STANDARD",
+        "CONCISE",
+        "MISCONCEPTION",
+        "PREREQUISITE_SUPPORT"
+      ],
       "properties": {
         "STANDARD": {
           "$ref": "#/$defs/OwnerRouteDecision"
@@ -688,7 +763,12 @@
       ]
     },
     "LogSeverity": {
-      "enum": ["DEBUG", "INFO", "WARN", "ERROR"]
+      "enum": [
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR"
+      ]
     },
     "LogEventCode": {
       "enum": [
@@ -715,7 +795,13 @@
     "HardGateDeclaration": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["description", "enforcement", "fail_closed", "waivable", "authority_ref"],
+      "required": [
+        "description",
+        "enforcement",
+        "fail_closed",
+        "waivable",
+        "authority_ref"
+      ],
       "properties": {
         "description": {
           "$ref": "#/$defs/NonEmptyString"
@@ -772,7 +858,12 @@
       "type": "object",
       "additionalProperties": false,
       "description": "One machine screen's outcome. There is no waiver field, because a hard gate has no waiver.",
-      "required": ["status", "screened_at", "screen_code", "screen_ref"],
+      "required": [
+        "status",
+        "screened_at",
+        "screen_code",
+        "screen_ref"
+      ],
       "properties": {
         "status": {
           "$ref": "#/$defs/GateStatus"
@@ -1045,7 +1136,9 @@
                 "const": "BLOCKED"
               }
             },
-            "required": ["state"]
+            "required": [
+              "state"
+            ]
           },
           "then": {
             "properties": {
@@ -1475,33 +1568,42 @@
     },
     "GroupingId": {
       "type": "string",
-      "pattern": "^V3-GRP-[0-9]{6}$",
-      "description": "A curriculum grouping. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+      "pattern": "^V3-CL-[0-9]{6}$",
+      "description": "One curriculum cluster. The manifest calls these clusters and numbers them to six digits; this contract used to require a four-digit \"V3-GRP\", which no cluster has ever been called. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
     },
     "PhaseId": {
       "type": "string",
-      "pattern": "^V3-PHS-[0-9]{4}$",
-      "description": "A curriculum phase. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+      "pattern": "^V3-PHS-[0-9]{6}$",
+      "description": "One curriculum phase. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
     },
     "ModuleId": {
       "type": "string",
-      "pattern": "^V3-MOD-[0-9]{4}$",
-      "description": "A curriculum module. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+      "pattern": "^V3-MOD-[0-9]{6}$",
+      "description": "One curriculum module. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
     },
     "PathwayId": {
       "type": "string",
-      "pattern": "^V3-PTH-[0-9]{4}$",
-      "description": "A curriculum pathway. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+      "pattern": "^V3-PTH-[0-9]{6}$",
+      "description": "One curriculum pathway. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
     },
     "RelationId": {
       "type": "string",
-      "pattern": "^R[0-9]{1,2}-[A-Z]{2}-[0-9]{2}$",
-      "description": "One named curriculum relation. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+      "pattern": "^(?:R14-FD-[0-9]{6}|R14-RV-[0-9]{6}|R14-CAP-[0-9]{6}|R14-INTERNAL-[0-9]{6}|R14-PL-[0-9]{6}-[0-9]{3}|R14-PM-[0-9]{6}-[0-9]{2}|R14-PP-[0-9]{6}-[0-9]|R14-PM-[0-9]{2}|R14-SM-[0-9]{3}|R14-ACC-[0-9]{2}|R14-HELPFUL-[0-9]{2}|R14-REM-(?:BB|CP|PS)-[0-9]{3}|R14-CARS-REP-[0-9]{2}|R14-CARS-WEEKLY-P[0-9]|R14-HELD-(?:CAP|EXT)-[0-9]{6}|V3-EDG-[0-9]{6}|EDG-[0-9]{6}|BB-EDG-[0-9]{4}|CP-EDG-[0-9]{4}|PS-EDG-[0-9]{3}|CARS-EDGE-(?:CO|CONF|HARD|HELP|INT)-[0-9]{3}|CARS-EDGE-(?:CO|CONF|HARD|HELP|INT)-[0-9]{3})$",
+      "description": "One named curriculum relation. The manifest issues sixteen relation families — first delivery, revisit, capstone, lesson-internal order, pathway and module placement, sequence method, accelerated candidates, helpful order, three remediation banks, CARS repair and weekly schedule, held attachments, and six graph-edge families — and this contract used to admit exactly one shape none of them has. Each family is fixed words and digits: there is no segment in which to name something. The six edge families were added in version 5: they are reachable only by walking the graph, so an inventory that reads the fields a packet declares does not find them, and 945 of the 3162 canonical relation identifiers could not be written down."
     },
     "AttachmentId": {
-      "type": "string",
-      "pattern": "^V3-ATT-[0-9]{6}$",
-      "description": "One packet attachment. Constrained because a packet quotes curriculum identity into the authoring loop, and an identifier that accepts any text is a second channel into the lesson."
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CapstoneId"
+        },
+        {
+          "$ref": "#/$defs/ExtensionId"
+        },
+        {
+          "$ref": "#/$defs/SupportArtifactId"
+        }
+      ],
+      "description": "One attachment, of one of the three kinds the curriculum has. They were previously flattened into a single \"V3-ATT\" family, which no attachment has ever been called and which lost the kind. A packet field that carries an attachment states the kind separately and the two must agree."
     },
     "AnchorSetVersion": {
       "type": "string",
@@ -1537,13 +1639,19 @@
                     "const": "APPLICABLE"
                   }
                 },
-                "required": ["route_applicability"]
+                "required": [
+                  "route_applicability"
+                ]
               }
             },
-            "required": ["STANDARD"]
+            "required": [
+              "STANDARD"
+            ]
           }
         },
-        "required": ["route_proofs"]
+        "required": [
+          "route_proofs"
+        ]
       },
       "then": {
         "type": "object",
@@ -1586,13 +1694,19 @@
                     "const": "APPLICABLE"
                   }
                 },
-                "required": ["route_applicability"]
+                "required": [
+                  "route_applicability"
+                ]
               }
             },
-            "required": ["CONCISE"]
+            "required": [
+              "CONCISE"
+            ]
           }
         },
-        "required": ["route_proofs"]
+        "required": [
+          "route_proofs"
+        ]
       },
       "then": {
         "type": "object",
@@ -1635,13 +1749,19 @@
                     "const": "APPLICABLE"
                   }
                 },
-                "required": ["route_applicability"]
+                "required": [
+                  "route_applicability"
+                ]
               }
             },
-            "required": ["MISCONCEPTION"]
+            "required": [
+              "MISCONCEPTION"
+            ]
           }
         },
-        "required": ["route_proofs"]
+        "required": [
+          "route_proofs"
+        ]
       },
       "then": {
         "type": "object",
@@ -1684,13 +1804,19 @@
                     "const": "APPLICABLE"
                   }
                 },
-                "required": ["route_applicability"]
+                "required": [
+                  "route_applicability"
+                ]
               }
             },
-            "required": ["PREREQUISITE_SUPPORT"]
+            "required": [
+              "PREREQUISITE_SUPPORT"
+            ]
           }
         },
-        "required": ["route_proofs"]
+        "required": [
+          "route_proofs"
+        ]
       },
       "then": {
         "type": "object",
@@ -1730,13 +1856,17 @@
                 "const": "STANDARD_ONLY"
               }
             },
-            "required": ["route_scope_code"]
+            "required": [
+              "route_scope_code"
+            ]
           },
           "then": {
             "type": "object",
             "properties": {
               "applicable_routes": {
-                "const": ["STANDARD"]
+                "const": [
+                  "STANDARD"
+                ]
               },
               "policy_version": {
                 "const": "2.0.0"
@@ -1872,6 +2002,9 @@
         "policy",
         "lifecycle",
         "receipt",
+        "source-use-receipt",
+        "source-use-statement",
+        "allocation-proof",
         "statement",
         "spec",
         "rubric",
@@ -1879,6 +2012,7 @@
         "assignment",
         "kit",
         "packet",
+        "quarantine-packet",
         "handoff",
         "team-handoff",
         "import-index",
@@ -1900,6 +2034,7 @@
         "release-policy.schema.json",
         "lifecycle-nonclaims.schema.json",
         "owner-route-policy-receipt.schema.json",
+        "owner-source-use-receipt.schema.json",
         "assignment-manifest.schema.json",
         "task-source-packet.schema.json",
         "lesson-handoff.schema.json",
@@ -1914,11 +2049,20 @@
       "description": "One of the contracts this freeze ships, named exactly."
     },
     "ResolutionStatus": {
-      "enum": ["RESOLVED", "NOT_YET_PRODUCED", "IDENTITY_ONLY", "MISMATCHED", "MALFORMED"],
+      "enum": [
+        "RESOLVED",
+        "NOT_YET_PRODUCED",
+        "IDENTITY_ONLY",
+        "MISMATCHED",
+        "MALFORMED"
+      ],
       "description": "What the resolver found. NOT_YET_PRODUCED is distinct from MISMATCHED on purpose: a reference to an artifact no runner has written is honest and unadmittable, while a reference whose target exists and hashes differently is a broken chain."
     },
     "IntakeAdmission": {
-      "enum": ["ADMITTED", "REJECTED"],
+      "enum": [
+        "ADMITTED",
+        "REJECTED"
+      ],
       "description": "The two answers intake has. There is no PROVISIONAL: a document is either admitted on both halves or refused."
     },
     "JsonPointer": {
@@ -1933,6 +2077,7 @@
         "content/lesson-factory/schemas/release-policy.schema.json",
         "content/lesson-factory/schemas/lifecycle-nonclaims.schema.json",
         "content/lesson-factory/schemas/owner-route-policy-receipt.schema.json",
+        "content/lesson-factory/schemas/owner-source-use-receipt.schema.json",
         "content/lesson-factory/schemas/assignment-manifest.schema.json",
         "content/lesson-factory/schemas/task-source-packet.schema.json",
         "content/lesson-factory/schemas/lesson-handoff.schema.json",
@@ -1952,6 +2097,7 @@
         "lesson-factory.release-policy",
         "lesson-factory.lifecycle-nonclaims",
         "lesson-factory.owner-route-policy-receipt",
+        "lesson-factory.owner-source-use-receipt",
         "lesson-factory.assignment-manifest",
         "lesson-factory.task-source-packet",
         "lesson-factory.lesson-handoff",
@@ -1969,12 +2115,16 @@
       "description": "A digest the resolver read out of a reference, reported as found. Unlike Sha256 this admits placeholder conventions, because a record of a rejected document has to be able to say what the placeholder was; the rule that forbids placeholders lives on the fields that pin bytes, not on the report of what was seen."
     },
     "IntakeRefusalCode": {
-      "enum": ["SCHEMA_INVALID", "REFERENCES_UNRESOLVED"],
-      "description": "Why a document that intake could identify was refused. Documents intake cannot identify produce no record at all: there is no document to write a record about."
+      "enum": [
+        "SCHEMA_INVALID",
+        "REFERENCES_UNRESOLVED",
+        "INPUTS_UNRESOLVED"
+      ],
+      "description": "Why a document was refused: it did not have the shape, its references did not resolve, or the inputs it pins do not hash to what it says they do."
     },
     "IntakeDerivation": {
-      "const": "INTAKE_DERIVATION_V2",
-      "description": "Which derivation produced the admission proof. A proof is only checkable against the algorithm that made it, so the algorithm is named in the record."
+      "const": "INTAKE_DERIVATION_V3",
+      "description": "The derivation an admission proof is taken over. Bumped with the input-provenance half: a proof computed over two of the three results is not a proof of this record."
     },
     "TeamHandoffRef": {
       "allOf": [
@@ -2009,8 +2159,547 @@
       "description": "The three contracts intake does not admit, listed so the absence is a decision rather than an oversight. Together with AdmissibleContractId this covers every contract the freeze ships."
     },
     "NonAdmissionReasonCode": {
-      "enum": ["SCHEMA_ONLY", "ADMISSION_RECORD", "LOG_EVENT"],
+      "enum": [
+        "SCHEMA_ONLY",
+        "ADMISSION_RECORD",
+        "LOG_EVENT"
+      ],
       "description": "Why a contract is outside intake. SCHEMA_ONLY: the contract defines types other contracts use and has no instances of its own. ADMISSION_RECORD: it is what intake produces, so admitting it would be a second pass over its own output. LOG_EVENT: it describes one emitted line, bounded by the log boundary in the profile, not an artifact anyone persists and hands on."
+    },
+    "HoldId": {
+      "type": "string",
+      "pattern": "^V3-HOLD-[0-9]{6}$",
+      "description": "One open governance hold. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
+    },
+    "EdgeId": {
+      "type": "string",
+      "pattern": "^V3-EDG-[0-9]{6}$",
+      "description": "One curriculum graph edge. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
+    },
+    "SourceOccurrenceId": {
+      "type": "string",
+      "pattern": "^V3-SRC-[0-9]{6}$",
+      "description": "One occurrence of one source document at one place in the curriculum. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
+    },
+    "SourceMappingId": {
+      "type": "string",
+      "pattern": "^V3-MAP-[0-9]{6}$",
+      "description": "One source-to-target mapping in the crosswalk. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
+    },
+    "AdoptionDecisionId": {
+      "type": "string",
+      "pattern": "^V3-DEC-[0-9]{6}$",
+      "description": "One recorded curriculum adoption decision. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
+    },
+    "CapstoneId": {
+      "type": "string",
+      "pattern": "^V3-CAP-[0-9]{6}$",
+      "description": "One capstone. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
+    },
+    "ExtensionId": {
+      "type": "string",
+      "pattern": "^V3-EXT-[0-9]{6}$",
+      "description": "One extension. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
+    },
+    "SupportArtifactId": {
+      "type": "string",
+      "pattern": "^V3-SUP-[0-9]{6}$",
+      "description": "One support artifact. The number is the canonical one the curriculum manifest issued; it is never re-derived, because an alias would replace curriculum identity with invented identity."
+    },
+    "AttachmentKind": {
+      "enum": [
+        "CAPSTONE",
+        "EXTENSION",
+        "SUPPORT"
+      ],
+      "description": "Which of the three typed attachment families an attachment belongs to."
+    },
+    "SourceAnchorId": {
+      "type": "string",
+      "pattern": "^(?:(?:BB|CP)-SA-[0-9]{3,4}|CARS-SA-(?:AAMC|BL)-[0-9]{3}|PS-SA-AAMC-(?:[0-9]{1,2}[A-C]|SIRS[0-9]|COURSE-DEPTH|FRAMEWORK|SECTION)|PS-SA-METHOD-(?:CANONICAL|CLUSTER-FIRST|EDGES|GRAIN|INTEGRATION|REASONING)|V3-SA-AAMC-MATH-P[0-9]{3})$",
+      "description": "One anchor in a source document. The five families are the ones the manifest issues; every trailing segment is a number or a fixed word, so an anchor identifier cannot carry a phrase."
+    },
+    "SourceDocumentId": {
+      "enum": [
+        "AAMC-2020",
+        "AAMC-2020-MCAT-CONTENT",
+        "CARS-SRC-AAMC-2020",
+        "CARS-SRC-CA",
+        "CARS-SRC-KCC",
+        "CARS-SRC-KDT",
+        "CARS-SRC-KGCG",
+        "BRAINLIFT-CA",
+        "BRAINLIFT-KCC",
+        "BRAINLIFT-KCC-CA",
+        "BRAINLIFT-KDT",
+        "BRAINLIFT-KGCG-CA",
+        "V2-METHODOLOGY-FRZ-2026-07-22-01"
+      ],
+      "description": "Every source document the curriculum draws on, named. A closed list rather than a pattern, because a new source is a rights question before it is a formatting question."
+    },
+    "LessonTypeCode": {
+      "enum": [
+        "CORE"
+      ],
+      "description": "Every canonical lesson in this freeze is CORE. A second type is a curriculum change, and it should require a contract change rather than pass unnoticed."
+    },
+    "ContentCategoryCode": {
+      "enum": [
+        "1A",
+        "1B",
+        "1C",
+        "1D",
+        "2A",
+        "2B",
+        "2C",
+        "3A",
+        "3B",
+        "4A",
+        "4B",
+        "4C",
+        "4D",
+        "4E",
+        "5A",
+        "5B",
+        "5C",
+        "5D",
+        "5E",
+        "6A",
+        "6B",
+        "6C",
+        "7A",
+        "7B",
+        "7C",
+        "8A",
+        "8B",
+        "8C",
+        "9A",
+        "9B",
+        "10A",
+        "CARS_FOC",
+        "CARS_RBT",
+        "CARS_RWT",
+        "MATH-ENABLING",
+        "SIRS1",
+        "SIRS2",
+        "SIRS3",
+        "SIRS4"
+      ],
+      "description": "The thirty-nine content categories the curriculum places lessons in."
+    },
+    "FoundationalConceptCode": {
+      "enum": [
+        "FC1",
+        "FC2",
+        "FC3",
+        "FC4",
+        "FC5",
+        "FC6",
+        "FC7",
+        "FC8",
+        "FC9",
+        "FC10"
+      ],
+      "description": "The ten foundational concepts."
+    },
+    "CanonicalLessonSlug": {
+      "type": "string",
+      "pattern": "^v3-les-[0-9]{6}$",
+      "description": "The lesson identifier, lowercased. It names a directory and a file, so it is the identifier and not a title."
+    },
+    "SourceOccurrenceKind": {
+      "enum": [
+        "AAMC_TEACHABLE_TOPIC",
+        "AAMC_SOURCE_ANCHOR"
+      ],
+      "description": "What kind of place in the source document an occurrence is."
+    },
+    "SourceScopeStatus": {
+      "enum": [
+        "IN_SCOPE_DIRECT",
+        "IN_SCOPE_ENABLING"
+      ],
+      "description": "Whether an occurrence is directly in scope or enables something that is."
+    },
+    "SourceMappingRelation": {
+      "enum": [
+        "exact",
+        "broader",
+        "DIRECT_SCOPE"
+      ],
+      "description": "How a mapping relates its source to its target, as the crosswalk records it."
+    },
+    "KcSourceSetStatus": {
+      "enum": [
+        "EXACT_SOURCE",
+        "MULTI_SOURCE_CORROBORATED",
+        "BOUNDED_SOURCE_SET",
+        "UNRESOLVED"
+      ],
+      "description": "How well bounded the source set behind one knowledge component is. UNRESOLVED is a block, not a caveat."
+    },
+    "HoldTypeCode": {
+      "enum": [
+        "AAMC_PAGE_91_TERMINOLOGY",
+        "ADAPTIVE_BYPASS",
+        "AUTHORITY_CURRENCY",
+        "CAPSTONE_AND_GROUPING_GRAIN_VALIDATION",
+        "CARS_BOUNDARY_AND_WORKLOAD_VALIDATION",
+        "CARS_PASSAGE_CLASSIFICATION_POLICY",
+        "DEC_370451_EMPIRICAL_BOUNDARY",
+        "GRAPH_AND_SEQUENCE_EVIDENCE",
+        "KNOWLEDGE_TYPE_RATIFICATION",
+        "LEARNER_VALIDATION",
+        "PAGE_89_SCOPE",
+        "RESOLVED_CANONICAL_INTEGRATION_CONTROLS",
+        "RESOLVED_INDEPENDENT_ADJUDICATIONS",
+        "RESOLVED_SOURCE_PROVENANCE_CONTROLS"
+      ],
+      "description": "The fourteen hold types the governance record carries."
+    },
+    "HoldClassification": {
+      "enum": [
+        "CONTEXTUAL_NONBLOCKING",
+        "SAFE_INTERIM_DEFAULT",
+        "BLOCKING_UNRESOLVED"
+      ],
+      "description": "What a hold does to authoring: it is context an author must carry, a default an author must take, or a reason nobody may author at all."
+    },
+    "SafeInterimCode": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]{7,63}$",
+      "description": "What to do while a hold is open, as a code. Upper snake with no spaces: the behaviour it stands for is written out beside it, but the decision itself is a code so that two packets taking the same default say the same word."
+    },
+    "PacketStatus": {
+      "enum": [
+        "READY",
+        "BLOCKED"
+      ],
+      "description": "Whether this packet may be authored from. A blocked packet is still written down: a generator that refuses bytes leaves no record of why 111 lessons did not proceed."
+    },
+    "PacketBlockCode": {
+      "enum": [
+        "ASSIGNMENT_IDENTITY_MISMATCH",
+        "DUPLICATE_ASSIGNMENT_IDENTITY",
+        "DUPLICATE_LESSON_ID",
+        "INPUT_HASH_MISMATCH",
+        "PREREQUISITE_RELATION_UNRESOLVED",
+        "PROHIBITED_RAW_SOURCE_TEXT",
+        "PROHIBITED_SOURCE",
+        "REQUIRED_DECISION_UNRESOLVED",
+        "REQUIRED_KC_UNRESOLVED",
+        "REQUIRED_SEQUENCE_RELATION_UNRESOLVED",
+        "SOURCE_MAPPING_CONTRADICTION",
+        "SOURCE_MAPPING_MISSING",
+        "SOURCE_OCCURRENCE_MISSING",
+        "SOURCE_RIGHTS_UNCLEARED",
+        "SOURCE_SUMMARY_MISSING",
+        "UNKNOWN_LESSON_ID",
+        "WP01_SCHEMA_CANONICAL_ID_INCOMPATIBLE",
+        "WP01_SCHEMA_VALIDATION_FAILED"
+      ],
+      "description": "Why a packet is blocked, as a closed code. The message beside it is for a human; the code is what anybody counts."
+    },
+    "PacketId": {
+      "type": "string",
+      "pattern": "^packet:lane-[0-9]{2}/v3-les-[0-9]{6}$",
+      "description": "A packet names itself by the lane that received it and the lesson it is for. There is no digest here: the hash of a document lives in the reference to it, not inside it."
+    },
+    "TeamId": {
+      "type": "string",
+      "pattern": "^(?:primary|team-[A-Z])$",
+      "description": "One authoring team."
+    },
+    "CanonicalTemplatePath": {
+      "const": "docs/lesson-authoring/template/v3-les-000000",
+      "description": "The one canonical lesson template a packet is authored against."
+    },
+    "RequiredHandoffFile": {
+      "enum": [
+        "lesson-script.json",
+        "kc-coverage-matrix.json",
+        "lesson-presentation-plan.json",
+        "lesson-quality-report.json",
+        "lesson-handoff.json"
+      ],
+      "description": "The five files a lane must hand back. A sixth is a contract change."
+    },
+    "PacketInputKey": {
+      "enum": [
+        "assignmentProof",
+        "ownerSourceUseReceipt",
+        "curriculumManifest",
+        "sourceCrosswalk",
+        "researchRegistry",
+        "taskPacketSchema",
+        "sharedVocabularySchema",
+        "deadlineProfile",
+        "releasePolicy",
+        "rubric"
+      ],
+      "description": "The ten inputs generation reads before it decides anything. Version 4 named eight and left out the two that decide whether the request is legitimate at all: the allocation proof that says which lane owns this lesson, and the owner receipt that says which sources may be used. An input a packet does not pin is an input nobody can check it against."
+    },
+    "PacketInputPath": {
+      "enum": [
+        "content/lesson-factory/assignments/partition-proof.json",
+        "content/lesson-factory/deadline-profile/owner-source-use-receipt.json",
+        "curriculum/v3/v3-lesson-authoring-manifest.json",
+        "../research/mcat-curriculum-architecture-v3/v3-source-crosswalk.json",
+        "../research/mcat-curriculum-architecture-v3/skill-integrated-knowledge-graph/work/research-evidence-registry.json",
+        "content/lesson-factory/schemas/task-source-packet.schema.json",
+        "content/lesson-factory/schemas/shared-vocabulary.schema.json",
+        "content/lesson-factory/deadline-profile/deadline-profile.json",
+        "content/lesson-factory/deadline-profile/release-policy.json",
+        "key-docs/lesson-quality-rubric.md"
+      ],
+      "description": "Where each of the ten inputs was read from. A closed list of the ten real locations rather than a path pattern: a pattern admits a neighbouring file with the right shape."
+    },
+    "KcPrerequisiteId": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KcId"
+        },
+        {
+          "$ref": "#/$defs/CapstoneId"
+        }
+      ],
+      "description": "What one knowledge component requires first. Usually another knowledge component; for two of the 422 it is a capstone, which is why this is not simply a KcId."
+    },
+    "SourceUseStatementRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^source-use-statement:content/lesson-factory/deadline-profile/owner-source-use-statement\\.md#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The owner’s source-use decision in the owner’s own words. Pinned by hash and explicitly not authoritative: the codes in the receipt are what any machine reads."
+    },
+    "FrozenSourceUseReceiptRef": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/SourceUseReceiptRef"
+        },
+        {
+          "const": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+        }
+      ],
+      "description": "The one source-use decision in force for this deadline, pinned to its exact bytes. A well-formed reference to some other receipt does not satisfy it, which is the difference between citing a decision and citing a decision somebody made."
+    },
+    "SourceUseReceiptRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt\\.json#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The owner decision about which source uses are permitted for this deadline."
+    },
+    "SourceClass": {
+      "enum": [
+        "REPOSITORY",
+        "PUBLIC_PRIMARY_RESEARCH",
+        "PRIVATE_COMPARISON"
+      ],
+      "description": "What kind of source this is under the owner decision. Repository and public primary research may be used within the receipt’s bounds; private comparison material never may, and is recorded so that its exclusion is visible rather than assumed."
+    },
+    "ReceiptPermittedUseCode": {
+      "enum": [
+        "DERIVED_SCOPE_METADATA",
+        "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+        "INTERNAL_HUMAN_REVIEW"
+      ],
+      "description": "The three uses the owner decision permits: bounded derived scope metadata, original prose and questions written from uncopyrightable facts, and internal human review. Nothing here permits reproducing anybody’s text."
+    },
+    "ProhibitedUseCode": {
+      "enum": [
+        "RAW_SOURCE_TEXT",
+        "QUOTATION",
+        "PASSAGE_REPRODUCTION",
+        "FIGURE_REPRODUCTION",
+        "PROPRIETARY_ITEM_REUSE",
+        "PRIVATE_COMPARISON_CONTENT",
+        "REDISTRIBUTION",
+        "EXTERNAL_DISTRIBUTION",
+        "MODEL_CALIBRATION",
+        "EXCERPT_STORAGE",
+        "SYNTHETIC_TRANSFORMATION_OF_RAW_TEXT"
+      ],
+      "description": "The uses the owner decision refuses. They are listed rather than left unmentioned, because an unmentioned use is one somebody argues was allowed."
+    },
+    "SourceSectionCode": {
+      "enum": [
+        "Bio/Biochem",
+        "B/B",
+        "Chem/Phys",
+        "C/P",
+        "Psych/Soc",
+        "P/S",
+        "CARS"
+      ],
+      "description": "The exam sections a lesson serves, spelled the seven ways the manifest spells them. The long and short spellings are both live in the curriculum, so both are admissible here; normalising them would be an alias."
+    },
+    "SanitizationCode": {
+      "enum": [
+        "TRUSTED_CANONICAL_RAW_FIELDS_SANITIZED",
+        "HELD_SOURCE_CLAIMS_EXCLUDED"
+      ],
+      "description": "What the generator did to the source material on the way in. A packet that sanitized nothing has to say so, because an empty list and an absent field read the same in a review."
+    },
+    "HostScopeKind": {
+      "enum": [
+        "LESSON",
+        "SINGLE_KC",
+        "MULTI_KC",
+        "CAPSTONE",
+        "SECONDARY_APPLICATION"
+      ],
+      "description": "What an attachment hangs off. The curriculum uses all five: a support artifact attaches to the lesson, an extension to one core KC or to several, an extension to the capstones it elaborates, and any of them can appear in a lesson that is not their owner as a secondary application. Version 4 had a single `host_kc_id`, which can express exactly one of these five and forced the other four into a first-KC guess."
+    },
+    "HostCoreMembershipStatus": {
+      "enum": [
+        "RESOLVED",
+        "MISMATCH_PROVISIONAL"
+      ],
+      "description": "Whether the host cores an attachment declares are members of the lesson referencing it. `MISMATCH_PROVISIONAL` is the deadline safe interim for records whose declared cores belong to another lesson: the canonical ids are preserved as lineage, the attachment is carried at lesson level, and it credits no knowledge component."
+    },
+    "AttachmentRelationClass": {
+      "enum": [
+        "FIRST_DELIVERY",
+        "REVISIT",
+        "CAPSTONE_PLACEMENT",
+        "HELD_ATTACHMENT",
+        "LESSON_INTERNAL"
+      ],
+      "description": "What kind of sequence relation binds an attachment to its lesson. Recorded because \"there is a relation id\" and \"there is a relation of the right kind, pointing the right way\" are different facts, and only the second one places an attachment."
+    },
+    "RelationDirection": {
+      "enum": [
+        "ATTACHMENT_TO_LESSON",
+        "LESSON_TO_ATTACHMENT"
+      ],
+      "description": "Which way the placing relation points."
+    },
+    "PacketSurface": {
+      "enum": [
+        "AUTHORABLE",
+        "QUARANTINE"
+      ],
+      "description": "What this document is for. `AUTHORABLE` is a packet a lane may author from, and it is written where authors look. `QUARANTINE` is the evidence of a refusal — schema-valid, so the failure survives review, and carrying no artifact hash and no authorable location, so it can never be picked up and worked from. The two requirements the review reconciled are both real: a blocked generation must leave a record, and a blocked record must never be mistaken for work."
+    },
+    "AuthorablePacketPath": {
+      "type": "string",
+      "pattern": "^content/lesson-factory/packets/V3-LES-[0-9]{6}/task-source-packet\\.json$",
+      "description": "Where a READY packet is written, exactly as the WP-04 brief specifies. This is the production handoff location; it is derived from the canonical lesson id and nothing else."
+    },
+    "QuarantinePath": {
+      "type": "string",
+      "pattern": "^\\.tmp/lesson-factory/lane-[0-9]{2}/v3-les-[0-9]{6}/quarantine/blocked-packet-audit\\.json$",
+      "description": "Where the evidence of a refusal is written. Under the run scratch tree, under the lane that attempted it, and under a directory whose name says what it is."
+    },
+    "QuarantinePacketRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^quarantine-packet:lane-[0-9]{2}/v3-les-[0-9]{6}#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "One quarantined blocked-generation record."
+    },
+    "AllocationProofRef": {
+      "allOf": [
+        {
+          "type": "string",
+          "pattern": "^allocation-proof:content/lesson-factory/assignments/partition-proof\\.json#sha256:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/NoPlaceholderDigest"
+        }
+      ],
+      "description": "The WP-02 partition proof, pinned to its exact bytes. Lane, team and assignment identity are read from it; a packet that pins no proof is asserting an allocation nobody made."
+    },
+    "DerivedFieldCode": {
+      "enum": [
+        "official_path",
+        "official_topic",
+        "printed_pages",
+        "section",
+        "content_category",
+        "foundational_concept",
+        "source_anchor_ids",
+        "derived_summary",
+        "scope_status",
+        "occurrence_kind"
+      ],
+      "description": "The derived fields an occurrence may carry across the rights boundary. Which of them a given source permits is decided per source id in the receipt, not here: this is the vocabulary of the decision, not the decision."
+    },
+    "SourceLocatorKind": {
+      "enum": [
+        "pdf_pages",
+        "printed_pdf_page",
+        "markdown_lines"
+      ],
+      "description": "How the crosswalk locates a passage in one source. It is the evidence behind a source class — a document located by printed page is a published document, one located by markdown line is a repository note — and it is recorded so the class is traceable to something rather than asserted."
+    },
+    "SourceAuthorityRole": {
+      "enum": [
+        "architecture_policy",
+        "depth_ceiling",
+        "evidence_demand",
+        "scope",
+        "scope_constraint",
+        "scope_context",
+        "task_condition",
+        "weighting_prior"
+      ],
+      "description": "What role a source plays for the occurrence that cites it."
+    },
+    "SanitizationScope": {
+      "const": "SELECTED_PACKET_OCCURRENCES",
+      "description": "What the sanitization counts were taken over. Version 4 counted raw fields across the whole crosswalk, so every packet reported the same number and none of them reported anything about itself. The count is now over the occurrences this packet selected, which is the only population a reviewer of this packet can check."
+    },
+    "FrozenAnchorSetVersion": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/AnchorSetVersion"
+        },
+        {
+          "const": "0.9.1-candidate"
+        }
+      ],
+      "description": "The one anchor set this deadline authors against, derived from the rubric version the profile pins (0.9.1) and marked candidate. Version 4 accepted any well-formed version string, so a packet could name an anchor set nobody had frozen and still validate."
+    },
+    "FrozenReviewRoles": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/CanonicalRole"
+          },
+          {
+            "const": "PRODUCT_PEDAGOGY_OWNER"
+          }
+        ]
+      },
+      "description": "Who must review a candidate before it is anything. Exactly the role the owner receipt records as the deciding one: a packet cannot enlarge or substitute its own reviewer list, which is what a free list of canonical roles allowed."
+    },
+    "InputResolutionStatus": {
+      "enum": [
+        "RESOLVED",
+        "MISMATCHED",
+        "MISSING"
+      ],
+      "description": "What happened when one pinned input was read: the digest matched, the digest did not, or there was no file at the path. Unlike a reference to an artifact a runner has not written yet, an authoritative input is always supposed to be there, so there is no \"not yet produced\" here."
     }
   }
 }

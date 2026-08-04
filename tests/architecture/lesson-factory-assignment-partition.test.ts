@@ -42,10 +42,10 @@ function subsetRegistry(): SchemaRegistry {
 }
 
 describe('WP-02 final contract parity', () => {
-  it('pins and strictly compiles the allocation-proof schema at 1.0.0', () => {
+  it('pins and strictly compiles the allocation-proof schema at 2.0.0', () => {
     expect(proofSchema.x_contract_version).toBe(ASSIGNMENT_SCHEMA_VERSIONS[PROOF_SCHEMA]);
     expect(proofSchema.properties).toMatchObject({
-      contract_version: { const: '1.0.0' },
+      contract_version: { const: '2.0.0' },
     });
     expect(() => strictAjv().getSchema(schemaId(PROOF_SCHEMA))).not.toThrow();
   });

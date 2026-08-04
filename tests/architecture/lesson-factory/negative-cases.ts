@@ -48,6 +48,7 @@ const READINESS = 'bundle-readiness.schema.json';
 const ASSIGNMENT = 'assignment-manifest.schema.json';
 const PACKET = 'task-source-packet.schema.json';
 const RECEIPT = 'owner-route-policy-receipt.schema.json';
+const SOURCE_USE_RECEIPT = 'owner-source-use-receipt.schema.json';
 const LOG = 'runner-log-record.schema.json';
 const PROFILE = 'deadline-profile.schema.json';
 
@@ -247,7 +248,7 @@ const PUBLIC_IDENTIFIER_FIELDS: ReadonlyArray<{ spec: RowSpec; pointer: string }
   },
   {
     spec: { group: '', schemaFile: PACKET, source: 'fixture', document: 'task-source-packet.json' },
-    pointer: '/source_records/0/source_id',
+    pointer: '/ordered_kc_records/0/source_occurrences/0/source_occurrence_id',
   },
   {
     spec: { group: '', schemaFile: PROFILE, source: 'artifact', document: 'deadline-profile.json' },
@@ -608,8 +609,25 @@ const REFERENCE_FIELDS: ReadonlyArray<{
   },
   {
     spec: { group: '', schemaFile: PACKET, source: 'fixture', document: 'task-source-packet.json' },
-    pointer: '/source_records/0/permission_receipt_refs/0',
+    pointer: '/ordered_kc_records/0/source_occurrences/0/permission_receipt_refs/0',
     template: (digest) => `permission-receipt:src-0001/2026-08-03#sha256:${digest}`,
+  },
+  {
+    spec: { group: '', schemaFile: PACKET, source: 'fixture', document: 'task-source-packet.json' },
+    pointer: '/ordered_kc_records/0/source_occurrences/0/source_use_receipt_ref',
+    template: (digest) =>
+      `source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:${digest}`,
+  },
+  {
+    spec: {
+      group: '',
+      schemaFile: SOURCE_USE_RECEIPT,
+      source: 'artifact',
+      document: 'owner-source-use-receipt.json',
+    },
+    pointer: '/statement_ref',
+    template: (digest) =>
+      `source-use-statement:content/lesson-factory/deadline-profile/owner-source-use-statement.md#sha256:${digest}`,
   },
   {
     spec: { group: '', schemaFile: PACKET, source: 'fixture', document: 'task-source-packet.json' },
@@ -1081,10 +1099,147 @@ const EXPLICIT_CASES: NegativeCase[] = [
   ...['PENDING', 'RESTRICTED', 'PROHIBITED'].map((status) =>
     row(
       { ...separation, schemaFile: PACKET, document: 'task-source-packet.json' },
-      '/source_records/0/rights_status',
+      '/ordered_kc_records/0/source_occurrences/0/rights_status',
       status,
       /permitted_use/,
     ),
+  ),
+  // A permitted source is permitted under one receipt, for uses it grants, over derived
+  // fields only. Each of these is a way of claiming permission the receipt did not give.
+  row(
+    { ...separation, schemaFile: PACKET, document: 'task-source-packet.json' },
+    '/ordered_kc_records/0/source_occurrences/0/derived_fields_only',
+    false,
+    /derived_fields_only/,
+  ),
+  ...['EXCERPT_STORAGE', 'MODEL_CALIBRATION', 'EXTERNAL_DISTRIBUTION', 'RAW_SOURCE_TEXT'].map(
+    (use) =>
+      row(
+        { ...separation, schemaFile: PACKET, document: 'task-source-packet.json' },
+        '/ordered_kc_records/0/source_occurrences/0/permitted_use/0',
+        use,
+        /permitted_use/,
+      ),
+  ),
+  row(
+    { ...separation, schemaFile: PACKET, document: 'task-source-packet.json' },
+    '/ordered_kc_records/0/source_occurrences/0/source_class',
+    'PRIVATE_COMPARISON',
+    /rights_status|source_class/,
+  ),
+  row(
+    { ...separation, schemaFile: PACKET, document: 'task-source-packet.json' },
+    '/ordered_kc_records/0/source_occurrences/0/source_id',
+    'KAPLAN-2026',
+    /source_id/,
+  ),
+  // The sanitization record is the only evidence that anything was removed. A code with no
+  // count behind it, or a count with no code, is a removal nobody can check.
+  row(
+    { ...separation, schemaFile: PACKET, document: 'task-source-packet.json' },
+    '/source_sanitization/excluded_held_claim_count',
+    3,
+    /codes|source_sanitization/,
+  ),
+  row(
+    { ...separation, schemaFile: PACKET, document: 'task-source-packet.json' },
+    '/source_sanitization/codes',
+    ['SOURCE_TEXT_RETAINED'],
+    /codes|SanitizationCode/,
+  ),
+  // The receipt cannot be edited into an approval, or into permitting what it prohibits.
+  ...[
+    'grants_lesson_approval',
+    'grants_external_source_copying',
+    'grants_rights_clearance_for_third_party_material',
+    'is_legal_advice',
+    'is_third_party_license',
+    'establishes_efficacy',
+    'establishes_calibration',
+  ].map((claim) =>
+    row(
+      {
+        ...separation,
+        schemaFile: SOURCE_USE_RECEIPT,
+        source: 'artifact',
+        document: 'owner-source-use-receipt.json',
+      },
+      `/decision_scope/${claim}`,
+      true,
+      new RegExp(claim),
+    ),
+  ),
+  row(
+    {
+      ...separation,
+      schemaFile: SOURCE_USE_RECEIPT,
+      source: 'artifact',
+      document: 'owner-source-use-receipt.json',
+    },
+    '/human_statement_authoritative',
+    true,
+    /human_statement_authoritative/,
+  ),
+  row(
+    {
+      ...separation,
+      schemaFile: SOURCE_USE_RECEIPT,
+      source: 'artifact',
+      document: 'owner-source-use-receipt.json',
+    },
+    '/source_classes/2/usable',
+    true,
+    /usable/,
+  ),
+  row(
+    {
+      ...separation,
+      schemaFile: SOURCE_USE_RECEIPT,
+      source: 'artifact',
+      document: 'owner-source-use-receipt.json',
+    },
+    '/permitted_use_codes/0',
+    'EXTERNAL_DISTRIBUTION',
+    /permitted_use_codes/,
+  ),
+  // A packet cannot answer to a status it did not report, or to no status at all.
+  row(
+    { ...identity, schemaFile: PACKET, document: 'task-source-packet.json' },
+    '/packet_status',
+    'BLOCKED',
+    /block_reasons/,
+  ),
+  // The identifier families the curriculum does not issue, in the positions that used to
+  // require exactly them. Each of these was the shape the frozen contract asked for.
+  row(
+    { ...identity, schemaFile: PACKET, document: 'task-source-packet.json' },
+    '/grouping_id',
+    'V3-GRP-006619',
+    /grouping_id/,
+  ),
+  row(
+    { ...identity, schemaFile: PACKET, document: 'task-source-packet.json' },
+    '/placements/phase_ids/0',
+    'V3-PHS-0001',
+    /phase_ids/,
+  ),
+  row(
+    { ...identity, schemaFile: PACKET, document: 'task-source-packet.json' },
+    '/attachments/0/attachment_id',
+    'V3-ATT-004008',
+    /attachment_id/,
+  ),
+  row(
+    { ...identity, schemaFile: PACKET, document: 'task-source-packet.json' },
+    '/attachments/0/kind',
+    'EXTENSION',
+    /attachment_id|kind/,
+  ),
+  row(
+    { ...identity, schemaFile: PACKET, document: 'task-source-packet.json' },
+    '/placements/first_delivery_relation_id',
+    'R14-XX-006619',
+    /first_delivery_relation_id/,
   ),
   row(
     { ...separation, schemaFile: PACKET, document: 'task-source-packet.json' },
@@ -1660,6 +1815,23 @@ const EXPLICIT_CASES: NegativeCase[] = [
  * hand-written field list, so a new string field is covered the moment it appears in a
  * control — the failure mode of a hand-written list is the field nobody added to it.
  */
+/**
+ * What the rendered error has to say for an injection row to have proven its point.
+ *
+ * Normally: the name of the field that was injected into. A field inside a closed
+ * discriminated union is different — the union refuses the whole value, because the
+ * branch that would have named the field is one of several that failed, and the others
+ * failed for saying the value is not some other shape entirely. Accepting the union's own
+ * refusal at the immediate parent keeps the row about this field, and nothing else is
+ * accepted: an error somewhere else in the document still fails the row.
+ */
+function injectionExpectation(pointer: string): RegExp {
+  const leaf = escapeForRegExp(pointer.split('/').pop() ?? pointer);
+  const parent = pointer.slice(0, pointer.lastIndexOf('/'));
+  if (parent === '') return new RegExp(leaf);
+  return new RegExp(`${leaf}|^${escapeForRegExp(parent)}: value matches 0 oneOf branches`);
+}
+
 function injectionCases(): NegativeCase[] {
   const cases: NegativeCase[] = [];
   for (const surface of INJECTION_SURFACES) {
@@ -1674,7 +1846,7 @@ function injectionCases(): NegativeCase[] {
           source: surface.source,
           document: surface.document,
           mutations: [{ pointer, value: payload }],
-          expect: new RegExp(escapeForRegExp(pointer.split('/').pop() ?? pointer)),
+          expect: injectionExpectation(pointer),
         });
       }
     }
